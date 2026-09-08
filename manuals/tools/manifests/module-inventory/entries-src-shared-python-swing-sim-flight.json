@@ -1,0 +1,3683 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8202,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4f6783d6dada98765489de44fe14f83e94f97205f28fff30dbe556c447101fda",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-INIT-PY-30F53368FD96",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/__init__.py",
+      "purpose": "Ball-flight subpackage of :mod:`shared.python.swing_sim` (epic #4103, #4107).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "AvailabilityReason",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BallFlightModel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CAPABILITY_SAMPLE_OBSERVATION_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CancellationCheck",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CapabilityEvaluator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CapabilityFlightEvaluatorConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CapabilityObjective",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CapabilityOptimizationCancelled",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CapabilityOptimizationHooks",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CapabilityParameter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CapabilitySampleMetric",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CapabilitySampleObservation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CapabilitySampleParameter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CapabilitySampleStatus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CapabilitySpinDefault",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CenteredClubDeliveryAdapter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ClubCapability",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ClubProfileId",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ConstantCoefficientModel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ConstantCoefficientSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_BACKSPIN_AXIS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DecisionVariable",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DirectionalRisk",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "EvaluatedMetric",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "EvaluationStatus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FLIGHT_REGIONAL_GROUND_PIPELINE_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlightCancellationCallbackError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlightGroundTransferError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlightGroundTransferSettings",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlightMetricCatalog",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlightMetricDefinition",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlightMetricId",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlightMetricInputs",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlightMetricResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlightMetricValue",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlightModelRegistry",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlightModelType",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlightObjective",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlightRegionalGroundPipelineResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlightResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlightRunManifest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlightSimulationCancelled",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlightSimulatorProtocol",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlightStatePoint",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ForwardEvaluation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ForwardEvaluator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ForwardStatus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GroundModelResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactForwardEvaluator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactSolutionRequest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactSolutionResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InverseFlightRequest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InverseFlightResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LAUNCH_DIRECTION_DEFINITIONS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LaunchConditions",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LaunchDirection",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LaunchDirectionConvention",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MacDonaldHanzelyModel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MetricTrajectoryPoint",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ModelAvailability",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ModelManifest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ObjectiveMode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ObjectiveResidual",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ObservationSink",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "OptimizationAlternative",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "OptimizationRequest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "OptimizationResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ParameterValue",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PerfectInformationCounterfactual",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlayerCapabilityProfile",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ScalarDistribution",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SolutionCandidate",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SolverEvaluation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SolverStatus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StrategyAnalysisConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StrategyAnalysisRequest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StrategyShotOutcome",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StrategySummary",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SurfaceFlightSimulationSettings",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TargetDefinition",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TargetPoint",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TrajectoryPoint",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ValueStatus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WIND_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WIND_STRATEGY_ANALYSIS_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WIND_UNCERTAINTY_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WaterlooPennerModel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WindEstimateError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WindGust",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WindScenario",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WindStrategy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WindStrategyAnalysis",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WindTrial",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WindUncertaintySpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "analyze_wind_strategies",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_ground_simulation_request",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compare_models",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compute_flight_metrics",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "derive_flight_metric_result",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "derive_launch_conditions",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "execute_regional_ground_from_flight",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "execute_repeated_bounce_from_flight",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "flight_metric_catalog",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "from_flight_frame",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "is_rust_available",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "launch_direction_from_mapping",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "launch_direction_sign_labels",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "launch_direction_to_flight_azimuth",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "launch_relative_surface",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "make_capability_flight_evaluator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "migrate_launch_direction_mapping",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "optimize_capability",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "raise_if_flight_cancelled",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "sample_wind_trials",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "simulate",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "simulate_trajectory_rust",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "solve_impact_solution_families",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "solve_inverse_flight",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "to_flight_frame",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1182,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9b6eb432453e09a674413cde587c0bec44cd8258c6910063d8bfb6af0aae2a5d",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-CANCELLATION-PY-668799B61249",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/_cancellation.py",
+      "purpose": "Internal cooperative-cancellation boundary for flight execution.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FlightCancellationCallbackError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FlightSimulationCancelled",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "raise_if_flight_cancelled",
+            "signature": "cancellation_requested: CancellationCheck | None"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6013,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "51478d9a2b330c422411e9877edd306fe2ca744371a8f342f74619e93bebc2c9",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-CAPABILITY-OBSERVATION-RUNTIME-PY-FCA26840DA72",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/_capability_observation_runtime.py",
+      "purpose": "Private runtime normalization for streamed capability observations.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3775,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "deb8e7e0b205301ec083a400bcfc884682435f892d32da1038be7ae9a8e996f3",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-CAPABILITY-OPTIMIZER-METRICS-PY-B1333E9E963A",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/_capability_optimizer_metrics.py",
+      "purpose": "Private landing extraction and risk metrics for capability optimization.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1950,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "696a7bb2ae6a92d96a5ee2ec3b61174f708d5f90d4a5f1e7898923084569281d",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-CONSTANTS-PY-CE2CBA8C5D7E",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/_constants.py",
+      "purpose": "Vendored physical constants for the ball-flight package (with citations).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "AIR_DENSITY_SEA_LEVEL_KG_M3",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GOLF_BALL_DIAMETER_M",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GOLF_BALL_MASS_KG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GOLF_BALL_RADIUS_M",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GRAVITY_M_S2",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_GOLF_BALL_LIFT_COEFFICIENT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_SPEED_THRESHOLD_M_S",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MPH_TO_MPS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "NUMERICAL_EPSILON",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RPM_TO_RAD_S",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_launch_deriver.py"
+        ],
+        "unit_mentions": [
+          "kg",
+          "m/s",
+          "m/s^2",
+          "rad/s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9078,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f2576c64aef0bcac7500b2d11bc523ce92bcbfa4baf1ed21f99b999916dd5b8d",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-RUST-FACADE-PY-4038E918FE66",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/_rust_facade.py",
+      "purpose": "Rust-accelerated ball-flight facade (GRACEFUL dual-path posture).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "RUST_MODEL_NAME",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "is_rust_available",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "simulate_trajectory_rust",
+            "signature": "launch: LaunchConditions, max_time: float=10.0, dt: float=0.01"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_parity_rust_flight.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 731,
+      "classification": "calculation",
+      "classification_basis": "path-marker:aerodynamic",
+      "content_sha256_lf": "54f8fbce2f053b976e4bbf1c85c0c5eb72d53f0758e6b3c42d3eb4cbca4ecce5",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-AERODYNAMICS-PY-C7781858D69B",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/aerodynamics.py",
+      "purpose": "Small reusable aerodynamic coefficient helpers.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "capped_lift_coefficient",
+            "signature": "value: float"
+          },
+          {
+            "kind": "function",
+            "name": "spin_ratio_lift_coefficient",
+            "signature": "spin_ratio: float, maximum: float"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7670,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cc91411a128199c0ed5adebb14283d40036830b3acaaa7b88b2fde906b2ed78b",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-CAPABILITY-CONTRACT-PY-684367DFE34C",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/capability_contract.py",
+      "purpose": "Versioned robust capability-optimization request contracts and facade.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CapabilityObjective",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "OptimizationRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TargetDefinition",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CapabilityParameter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ClubCapability",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "OptimizationAlternative",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "OptimizationResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlayerCapabilityProfile",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_capability_observation.py",
+          "src/shared/python/swing_sim/flight/tests/test_capability_optimizer.py",
+          "tests/rate_of_closure/test_capability_observation_adapter.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 12482,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7993bdfbc482613082b2b2071ce70e99f6d5b92e02a3e88438034e510e35a033",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-CAPABILITY-FLIGHT-EVALUATOR-PY-F48A85B0AA0B",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/capability_flight_evaluator.py",
+      "purpose": "Model-backed capability evaluator for robust launch optimization.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CapabilityFlightEvaluatorConfig",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CapabilitySpinDefault",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "make_capability_flight_evaluator",
+            "signature": "profile: PlayerCapabilityProfile, request: OptimizationRequest, config: CapabilityFlightEvaluatorConfig | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_capability_flight_evaluator.py",
+          "tests/rate_of_closure/test_capability_result_export.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "g",
+          "m/s",
+          "rpm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10691,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "bdc62164b61e543ee54a5acc2aad3d050eb0b4001d8f4d1daa6b00f3e196ecc8",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-CAPABILITY-OBSERVATION-PY-A83D210C547B",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/capability_observation.py",
+      "purpose": "Immutable streaming observations for capability-optimizer sample attempts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CapabilityOptimizationCancelled",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CapabilityOptimizationHooks",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CapabilitySampleMetric",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CapabilitySampleObservation",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CapabilitySampleParameter",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CapabilitySampleStatus",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CAPABILITY_SAMPLE_OBSERVATION_SCHEMA_VERSION",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_capability_observation.py",
+          "src/shared/python/swing_sim/flight/tests/test_capability_observation_status_contract.py",
+          "tests/rate_of_closure/test_capability_observation_adapter.py",
+          "tests/rate_of_closure/test_capability_result_export.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_capability_observation_status_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10047,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "32420818eae02d69c6c0a7a38ceba9a2b72d00aab21b031235a969ba3008197a",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-CAPABILITY-OPTIMIZER-PY-8325C9E370E9",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/capability_optimizer.py",
+      "purpose": "Deterministic robust optimization over clubs and delivery capabilities.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "optimize_capability",
+            "signature": "profile: PlayerCapabilityProfile, request: OptimizationRequest, evaluator: CapabilityEvaluator, *, hooks: CapabilityOptimizationHooks | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_capability_observation.py",
+          "src/shared/python/swing_sim/flight/tests/test_capability_optimizer.py",
+          "tests/rate_of_closure/test_capability_result_export.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10342,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "81a6e92a40836518b84ca62cc195c0829ee9437ac2b4912b7e754401939068eb",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-CAPABILITY-PROFILE-PY-771965D061DE",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/capability_profile.py",
+      "purpose": "Player capability evidence contracts and covariance validation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CapabilityParameter",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ClubCapability",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlayerCapabilityProfile",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PROFILE_SCHEMA_VERSION",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10950,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "bf471ea1568280c5acc3e8875b2b1abe9dd4587e59164c69d4fa089646e13fb4",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-CAPABILITY-RESULT-PY-7928B347B9F3",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/capability_result.py",
+      "purpose": "Versioned robust capability-optimization result contracts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "OptimizationAlternative",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "OptimizationResult",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RESULT_SCHEMA_VERSION",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_capability_result_export.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3027,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "97c2fb8fa18630e5ea732c66e50d41b30caeb9440d3b498a602cb241126e1abe",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-CAPABILITY-SAMPLING-PY-33E85FCCFEB6",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/capability_sampling.py",
+      "purpose": "Deterministic low-discrepancy capability candidate and ensemble sampling.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "sample_candidate_parameters",
+            "signature": "club: ClubCapability, index: int, seed: int"
+          },
+          {
+            "kind": "function",
+            "name": "sample_perturbed_parameters",
+            "signature": "club: ClubCapability, nominal: dict[str, float], sample_index: int, seed: int"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5797,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b11cb92c7544a7e252074d58e2fe4a0bbf961cc31aecfdbee0be024d6459b5c1",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-DIRECTION-PY-AB5D14E15244",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/direction.py",
+      "purpose": "Registry-backed launch-direction conversion and legacy migration.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "LaunchDirection",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CANONICAL_DIRECTION_KEY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CONVENTION_KEY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFINITIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LEGACY_DIRECTION_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCHEMA_VERSION_KEY",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "launch_direction_from_mapping",
+            "signature": "values: Mapping[str, object]"
+          },
+          {
+            "kind": "function",
+            "name": "launch_direction_sign_labels",
+            "signature": "convention: ConventionId"
+          },
+          {
+            "kind": "function",
+            "name": "launch_direction_to_flight_azimuth",
+            "signature": "direction: LaunchDirection"
+          },
+          {
+            "kind": "function",
+            "name": "migrate_launch_direction_mapping",
+            "signature": "values: Mapping[str, object]"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_direction.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 4793,
+      "classification": "calculation",
+      "classification_basis": "path-marker:dynamics",
+      "content_sha256_lf": "b44b52e4dff58346dd8120cacba36cc9c963ab1b9aff62877ebee1de0b6af64c",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-DYNAMICS-PY-A15D0012F919",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/dynamics.py",
+      "purpose": "Callable aerodynamic dynamics used by the native flight integrator.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ConstantCoefficientDynamics",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WaterlooDynamics",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2259,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a195449d7afd7b23fff52309bc103e927535350d78fb9589a8deed0b4f0ac711",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-FRAMES-PY-A262DFBDF934",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/frames.py",
+      "purpose": "Frame adapters between the app frame and the UpstreamDrift flight frame.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "from_flight_frame",
+            "signature": "vec_flight: FloatArray"
+          },
+          {
+            "kind": "function",
+            "name": "to_flight_frame",
+            "signature": "vec_app: FloatArray"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_frames.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2119,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "225e9982ccec7d9012b68febfbee04b97c1c006d26e2ae729a18a3288f2d532a",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-GROUND-BOUNCE-EXECUTION-PY-2EA27D3704DF",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/ground_bounce_execution.py",
+      "purpose": "Authoritative composition from qualified flight output to repeated bounce.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "execute_repeated_bounce_from_flight",
+            "signature": "flight: FlightResult, launch: LaunchConditions, transfer: FlightGroundTransferSettings, capture_speed_m_s: float=0.05, *, is_cancelled: Callable[[], bool] | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_ground_bounce_execution.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7344,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4029e9a2e6ab263bf9834458919d039dd4f2e1ee87e4e21710aa7c04c6cd983c",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-GROUND-TRANSFER-PY-A8C7115969A9",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/ground_transfer.py",
+      "purpose": "Fail-closed adapter from Python flight output to ground request v1.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FlightGroundTransferError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FlightGroundTransferSettings",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_ground_simulation_request",
+            "signature": "result: FlightResult, launch: LaunchConditions, settings: FlightGroundTransferSettings"
+          },
+          {
+            "kind": "function",
+            "name": "launch_relative_surface",
+            "signature": "surface: GroundSurfaceProfile, ball_radius_m: float, ball_setup: BallSetup"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_ground_transfer.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 8201,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "0451e346db04429a1eef8fc541b9efaae7bbe343b1041cf1ffe69035ed828d73",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-IMPACT-SOLUTION-ADAPTER-PY-A8DDC35AE3D0",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/impact_solution_adapter.py",
+      "purpose": "Deterministic centered-club delivery to impact and flight evaluator.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CenteredClubDeliveryAdapter",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_impact_solution_families.py",
+          "src/shared/python/swing_sim/flight/tests/test_result_metrics.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 13442,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "713e77c65648b01af2b2a6492ed1368611313bd9f0f26c8fdfd0c19d1aec7909",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-IMPACT-SOLUTION-CONTRACT-PY-6CED8B1F85D0",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/impact_solution_contract.py",
+      "purpose": "Strict request and evaluator contracts for impact solution families.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ClubProfileId",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ForwardEvaluation",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ForwardStatus",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImpactSolutionRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ModelAvailability",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ModelManifest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactSolutionResult",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_impact_solution_families.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "m/s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 6251,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "1160935081dfe04149f2a4a2210ffcf9441a59e90520633fa0d8a6e3a32a311e",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-IMPACT-SOLUTION-PARSING-PY-CE51D29AEA4E",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/impact_solution_parsing.py",
+      "purpose": "Strict wire parsers for impact solution-family result records.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "parse_impact_solution_result",
+            "signature": "payload: dict[str, Any]"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 12930,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "c6d415f14725ceb12fa541e2f564e927d11f38431eb208645d813b1d553b2d49",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-IMPACT-SOLUTION-RESULT-PY-9095A60FF222",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/impact_solution_result.py",
+      "purpose": "Immutable result records for impact delivery solution families.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FamilyMember",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImpactSolutionResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MetricSensitivity",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MetricValue",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ParameterCorrelation",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ParameterInterval",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RejectedCandidate",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SolutionFamily",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 12780,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "7209f569ec9e2547912567bdb11e2ffb747769370c063c7a2279a68f76fe8bd7",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-IMPACT-SOLUTION-SOLVER-PY-4FE8E30FE817",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/impact_solution_solver.py",
+      "purpose": "Rank and summarize deterministic impact-delivery solution families.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ImpactForwardEvaluator",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "solve_impact_solution_families",
+            "signature": "request: ImpactSolutionRequest, evaluator: ImpactForwardEvaluator"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_impact_solution_families.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 12905,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0b4bfe2437ec7ef1cb0a698c8ca2d62e2b9b0bdf2e5a6bd03d710633d09aef58",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-INVERSE-CONTRACT-PY-F75029C11009",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/inverse_contract.py",
+      "purpose": "Strict contracts for deterministic desired-flight inverse solving.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DecisionVariable",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "EvaluatedMetric",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "EvaluationStatus",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FlightObjective",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "InverseFlightRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ObjectiveMode",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SolverEvaluation",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SolverStatus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InverseFlightResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ObjectiveResidual",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ParameterValue",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SolutionCandidate",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_capability_observation.py",
+          "src/shared/python/swing_sim/flight/tests/test_capability_observation_status_contract.py",
+          "src/shared/python/swing_sim/flight/tests/test_capability_optimizer.py",
+          "src/shared/python/swing_sim/flight/tests/test_impact_solution_families.py",
+          "src/shared/python/swing_sim/flight/tests/test_inverse_solver.py",
+          "tests/rate_of_closure/test_capability_observation_adapter.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_capability_observation_status_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11574,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e8fa31068909e38bd23573f2819d959d40defc0776ed5d04389835f7e16675d8",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-INVERSE-RESULT-PY-C725E76DEECA",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/inverse_result.py",
+      "purpose": "Immutable result records for desired-flight inverse solving.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "InverseFlightResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ObjectiveResidual",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ParameterValue",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SolutionCandidate",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 8739,
+      "classification": "calculation",
+      "classification_basis": "path-marker:solver",
+      "content_sha256_lf": "7be057f844482814dd306fe85a48132e9d5d4ebbd38176a87a91a1945b553a44",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-INVERSE-SOLVER-PY-078891FC0F53",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/inverse_solver.py",
+      "purpose": "Deterministic bounded search for desired ball-flight outcomes.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "solve_inverse_flight",
+            "signature": "request: InverseFlightRequest, evaluator: ForwardEvaluator"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_inverse_solver.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2878,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cc8c08777e4884139f68dc85521a601ab773bc674afbc219db348d59f5c4a205",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-LAUNCH-PY-6A77AE4E365F",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/launch.py",
+      "purpose": "Launch-condition derivation from post-impact ball kinematics.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "derive_launch_conditions",
+            "signature": "ball_velocity: np.ndarray, ball_angular_velocity: np.ndarray"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "m/s",
+          "rad",
+          "rad/s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11989,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5879c0bad4bedbe3b611729e17ed1b5a424603e5bb92b0f8ef5da306ab53adc5",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-MODELS-PY-A63E947D43C0",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/models.py",
+      "purpose": "Literature ball-flight models with adaptive physical-contact integration.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BallFlightModel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ConstantCoefficientModel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ConstantCoefficientSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MacDonaldHanzelyModel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WaterlooPennerModel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlightCancellationCallbackError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlightSimulationCancelled",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/ground/tests/test_contract.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "src/shared/python/swing_sim/ground/tests/test_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2488,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ea3935dabda4e32429c68d387abc0252ceaf8c45e447bf3741d8df58dad645f4",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-PIPELINE-PY-0B80B612F230",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/pipeline.py",
+      "purpose": "Flight-pipeline seam: DI protocol + one-call convenience simulate.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FlightSimulatorProtocol",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "simulate",
+            "signature": "launch: LaunchConditions, model_name: str='waterloo_penner', max_time: float=10.0, dt: float=0.01"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_pipeline.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8264,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f91b6d74b29ccf8742ce5db987bbf208e04b90a81eb17bcd2a501b20b43162d4",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-REGIONAL-GROUND-PIPELINE-PY-A42FEBCF8C6F",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/regional_ground_pipeline.py",
+      "purpose": "Authoritative flight, bounce, and regional-ground composition.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FlightRegionalGroundPipelineResult",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FLIGHT_REGIONAL_GROUND_PIPELINE_CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "execute_regional_ground_from_flight",
+            "signature": "flight: FlightResult, launch: LaunchConditions, transfer: FlightGroundTransferSettings, plan: GroundRegionalMaterialPlanRequest, capture_speed_m_s: float=0.05, *, options: RegionalGroundExecutionOptions | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_regional_ground_pipeline.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4118,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d651b7594b0c211b333967528499566dbe22db0473b336c5f192757205a777de",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-REGISTRY-PY-5BF40312109A",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/registry.py",
+      "purpose": "Flight model registry — all 7 literature models with citation metadata.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FlightModelRegistry",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FlightModelType",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compare_models",
+            "signature": "launch: LaunchConditions, models: list[BallFlightModel]"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/conventions/tests/test_registry.py",
+          "src/shared/python/swing_sim/flight/tests/test_registry.py",
+          "tests/rate_of_closure/test_derivation_models.py",
+          "tests/rate_of_closure/test_flight_explorer.py",
+          "tests/rate_of_closure/test_morris_ui_contract.py",
+          "tests/shared/python/gui_launcher/test_registry.py",
+          "tests/unit/ai/peer_review/test_registry.py",
+          "tests/unit/ai/skills/test_registry.py"
+        ],
+        "unit_mentions": [
+          "J"
+        ],
+        "validation_paths": [
+          "tests/rate_of_closure/test_morris_ui_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8531,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "06b9dd759f112212085340b490543fa127771a86e3c4cce02985e80aa9a86205",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-RESULT-CATALOG-DATA-PY-8CBF774854AE",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/result_catalog_data.py",
+      "purpose": "Static identities for the canonical ball-flight metric catalog.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MetricIdentity",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "IDENTITIES",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "deg",
+          "m/s",
+          "rpm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 12155,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0a2a658165337e3f4796d76056418faa5f1dcf7145ea356aca35fb321133b5ef",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-RESULT-CONTRACT-PY-AA31A820F1C8",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/result_contract.py",
+      "purpose": "Canonical, versioned ball-flight result metric contracts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://github.com/D-sorganization/Tools/blob/main/docs/specs/BALL_FLIGHT_RESULT_CONTRACT.md",
+          "https://help.foresightsports.com/hc/en-us/articles/47144162581523-Ball-Launch-Data-Measurements-Ball-Flight-Results",
+          "https://www.trackman.com/blog/golf/40-trackman-parameters"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AvailabilityReason",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ComparabilityStatus",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FlightMetricCatalog",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FlightMetricDefinition",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FlightMetricId",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SignRule",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ValueStatus",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "flight_metric_catalog",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_capability_observation.py",
+          "src/shared/python/swing_sim/flight/tests/test_capability_observation_status_contract.py",
+          "src/shared/python/swing_sim/flight/tests/test_capability_optimizer.py",
+          "src/shared/python/swing_sim/flight/tests/test_impact_solution_families.py",
+          "src/shared/python/swing_sim/flight/tests/test_inverse_solver.py",
+          "src/shared/python/swing_sim/flight/tests/test_result_contract.py",
+          "src/shared/python/swing_sim/flight/tests/test_result_metrics.py",
+          "tests/rate_of_closure/test_capability_observation_adapter.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_capability_observation_status_contract.py",
+          "src/shared/python/swing_sim/flight/tests/test_result_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11691,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5c75a87a85395261adf114e5bd28043b34204c9a9ebea3ce96d304394d52bfd4",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-RESULT-DERIVATION-PY-23B86F304CE2",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/result_derivation.py",
+      "purpose": "Pure calculations for the canonical ball-flight result contract.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "derive_flight_metric_result",
+            "signature": "inputs: FlightMetricInputs, manifest: FlightRunManifest"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9383,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c6eb060ae20bb6c04357bbdcaae6b47cddc5c1f5e725c5254014745f26847ba8",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-RESULT-METRICS-PY-E7151348C779",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/result_metrics.py",
+      "purpose": "Trajectory-derived values for the canonical ball-flight metric catalog.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FlightMetricInputs",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FlightMetricResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FlightMetricValue",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FlightRunManifest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GroundModelResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MetricTrajectoryPoint",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "derive_flight_metric_result",
+            "signature": "inputs: FlightMetricInputs, manifest: FlightRunManifest"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_result_metrics.py",
+          "tests/rate_of_closure/test_regional_ground_study_adapter.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 938,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "aa26b53f831126f13eb8367a84083838c94adc8be6dd63c77398c777fa15771a",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-SPIN-AXIS-CONVENTION-PY-A6987A392C32",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/spin_axis_convention.py",
+      "purpose": "Shared launch-monitor-style spin-axis convention calculations.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "spin_axis_tilt_deg",
+            "signature": "spin_vector: Iterable[float]"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_result_metrics.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 880,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9452a177464c803060023226ccf60ee012bd6849fa48312278e08f7fe4d00130",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-STATE-PY-B72CBF42B935",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/state.py",
+      "purpose": "Full kinematic trajectory state for qualified flight-to-ground transfer.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FlightStatePoint",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 2466,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "af7b7be558635f41a65015295cbf4a821a13d301110fb382787c0333b3156f83",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-SURFACE-SIMULATION-PY-872EB63665FE",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/surface_simulation.py",
+      "purpose": "Surface-aware native flight integration contracts and frame adapters.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SurfaceFlightSimulationSettings",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10649,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d8a004ddbe6618c4067cb248956955f4f8b715acc6b08b40e350c9dc64e8d716",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-TYPES-PY-25EE5456810A",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/types.py",
+      "purpose": "Ball-flight value types (DbC-validated dataclasses).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FlightResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LaunchConditions",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TrajectoryPoint",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_BACKSPIN_AXIS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compute_flight_metrics",
+            "signature": "trajectory: list[TrajectoryPoint] | tuple[TrajectoryPoint, ...], model_name: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "deg",
+          "m/s",
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6592,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a281b0bb9e3e85081a59091ab71f1b65d3605b79329eff21f795937be1325b2f",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-WIND-PY-FCF7D3295806",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/wind.py",
+      "purpose": "Pure, reproducible three-dimensional wind contracts and evaluation.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "WindGust",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WindScenario",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WIND_SCHEMA_VERSION",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_wind.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 12624,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "53f494da2980e0d89c7228e37fcd98f8c3d0e46498b56d8f9a3f4aef6ce27086",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-WIND-STRATEGY-PY-CE7949E32B7A",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/wind_strategy.py",
+      "purpose": "Paired wind-estimate strategy evaluation and risk contracts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DirectionalRisk",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PerfectInformationCounterfactual",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StrategyAnalysisConfig",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StrategyAnalysisRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StrategyShotOutcome",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StrategySummary",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TargetPoint",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WindStrategy",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WindStrategyAnalysis",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WindStrategyCancelledError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WindStrategyProgress",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WIND_STRATEGY_ANALYSIS_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "analyze_wind_strategies",
+            "signature": "request: StrategyAnalysisRequest, *, progress_cb: Callable[[WindStrategyProgress], None] | None=None, cancel_event: threading.Event | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_wind_uncertainty.py",
+          "tests/rate_of_closure/test_wind_strategy_plot_adapter.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5910,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f7b1d280487798c5ca2aa68f9fe0914fc02bcf67a4138e779a58f785acf28ae7",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-WIND-STRATEGY-METRICS-PY-53BF3A1D28D6",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/wind_strategy_metrics.py",
+      "purpose": "Pure summary metrics for paired wind-strategy outcomes.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "summarize_strategy_outcomes",
+            "signature": "request: StrategyAnalysisRequest, outcomes: tuple[StrategyShotOutcome, ...]"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_wind_uncertainty.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10569,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cce096b7caa8f176755d609777a44ff3e0165ef7f01b3d141276a3e5503ffcd2",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-WIND-UNCERTAINTY-PY-FCC838BBC2B5",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/wind_uncertainty.py",
+      "purpose": "Deterministic wind-estimate uncertainty sampling contracts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ScalarDistribution",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WindEstimateError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WindTrial",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WindUncertaintySpec",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WIND_UNCERTAINTY_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "sample_wind_trials",
+            "signature": "spec: WindUncertaintySpec"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_wind_uncertainty.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/shared/python/swing_sim/flight",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

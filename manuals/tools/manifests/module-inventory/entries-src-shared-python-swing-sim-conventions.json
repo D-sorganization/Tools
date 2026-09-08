@@ -1,0 +1,439 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 867,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1901218ef37c990e2f833b2aefbda62cbf240b1890770c55c80fa6484b9f4a0e",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-CONVENTIONS-INIT-PY-4C27C3CF84AF",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/conventions/__init__.py",
+      "purpose": "Public façade for launch-monitor convention contracts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "AvailabilityRule",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ComparabilityReason",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ComparisonCompatibility",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ConventionId",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ConventionRegistry",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "EventTime",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Matrix3",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ParameterDefinition",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ParameterId",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "QuantityStatus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ReferencePoint",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SignRule",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Vector3",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compare_definitions",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "convention_registry",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "shift_point_velocity",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "transform_vector",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9044,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b4ab440f9074ce9ada94c708bdbbec5588b840c150b0e77becaf79e9f6dfa384",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-CONVENTIONS-CATALOG-PY-4F32573503B4",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/conventions/catalog.py",
+      "purpose": "Source-backed foundation catalog for convention-aware calculations.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://github.com/D-sorganization/Tools/blob/main/docs/specs/D_PLANE_GEOMETRY.md",
+          "https://help.foresightsports.com/hc/en-us/articles/47144162581523-Ball-Launch-Data-Measurements-Ball-Flight-Results",
+          "https://help.foresightsports.com/hc/en-us/articles/47214673873811-Club-Head-Data-Measurements-Definitions",
+          "https://www.trackman.com/blog/golf/40-trackman-parameters",
+          "https://www.trackman.com/blog/golf/club-data-definitions"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_APP_POLICIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_APP_SOURCE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_FORESIGHT_BALL_SOURCE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_FORESIGHT_CLUB_SOURCE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_FORESIGHT_POLICIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_FRAME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_IDENTITIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_POLICIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_RETRIEVED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_TRACKMAN_CLUB_SOURCE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_TRACKMAN_PARAMETERS_SOURCE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_TRACKMAN_POLICIES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "convention_registry",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "deg",
+          "m/s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9164,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "95793f3bfe4b66b452cdb7d2f82f48f78fc94846537d96c94ef08a8edfa95a1d",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-CONVENTIONS-REGISTRY-PY-A5B58BEFA058",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/conventions/registry.py",
+      "purpose": "Immutable launch-monitor convention and comparability contracts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AvailabilityRule",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ComparabilityReason",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ComparisonCompatibility",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ConventionId",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ConventionRegistry",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "EventTime",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ParameterDefinition",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ParameterId",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "QuantityStatus",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ReferencePoint",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SignRule",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compare_definitions",
+            "signature": "first: ParameterDefinition, second: ParameterDefinition"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/conventions/tests/test_registry.py",
+          "src/shared/python/swing_sim/flight/tests/test_registry.py",
+          "tests/shared/python/gui_launcher/test_registry.py",
+          "tests/unit/ai/peer_review/test_registry.py",
+          "tests/unit/ai/skills/test_registry.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 1897,
+      "classification": "calculation",
+      "classification_basis": "path-marker:transform",
+      "content_sha256_lf": "9f8a932342c8186b0b10123dca97238915dc8b60ba853a4c9273d281e31802e5",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-CONVENTIONS-TRANSFORMS-PY-12135473A06E",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/conventions/transforms.py",
+      "purpose": "Reusable point and frame transforms for convention adapters.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "shift_point_velocity",
+            "signature": "reference_velocity: object, angular_velocity: object, point_offset: object"
+          },
+          {
+            "kind": "function",
+            "name": "transform_vector",
+            "signature": "vector: object, source_to_destination: object"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/shared/python/swing_sim/conventions",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}
