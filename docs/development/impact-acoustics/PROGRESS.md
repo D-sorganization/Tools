@@ -280,7 +280,9 @@ Real immutable samples, signed linear lag and shared segment detrending refuse
 undefined/nonfinite estimates. Odd/even PSD agrees with explicitly configured
 SciPy controls. The final Linux ingestion/report/API run passes 69 tests (152.47 s), with three
 optional-plugin warnings. All nine final manual gates pass. The local checkpoint
-is `31d8fa738`; protected-main integration and normal publication are pending.
+is `31d8fa738`; protected renderer integration is committed at `4ccaab389`,
+with all 69 Windows tests passing (13.41 s) and all nine manual gates passing.
+Normal publication is running.
 Its `SIGNAL_BOUNDARY_QUALIFICATION.md` and scoped vibroacoustics handoff retain
 calibration identity, complex FRF, noise/uncertainty, radiation and physical/
 blinded completion requirements. No acoustic experiment or prediction is made.
@@ -290,4 +292,20 @@ has now merged as protected main `b64a70f39`; integration into the inventory
 branch preserves all 410 reviewed source hashes and recomputes only the
 conflicted root handoff hash/count. All 95 post-integration tests pass (111.13 s) after an isolated rerun following
 a source-read timeout. The unchanged 60-second test limit and all nine manual
-gates pass. Integration is committed at `ace9a007b`; normal push is running.
+gates pass. Integration `ace9a007b` is published through all normal hooks;
+protected CI is running.
+
+## Current Authority Coordination Boundary
+
+UD remote `b8da0c0240c20926f8fb7ba9e55a7e5613c5d78d` restores the compatible
+dependency input pins, exactly matching the validated local input. The source
+also restores `_refresh_claims`, but its registry update still deletes and
+extends the selected claims instead of calling the preservation helper. The
+registration date remains 2026-08-21 and two local evidence-source links remain
+absent. The remote native record has SHA256
+`4fbb40ac2302e8111a19fc97903bc1877ab2cb07ced7258b8f78994ca4d627d8`;
+its schema_version, execution_profile, design and source_sha256 differ from
+the locally regenerated authority. No remote scientific qualification follows
+from restoring a helper's definition. The #9787 claim check reports held by
+codex through its claim label, with no active lease. No further edits or pushes
+are made to that shared branch; the tested local version remains preserved.
