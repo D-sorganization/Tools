@@ -16,7 +16,8 @@ PR #5084 introduced ingestion and spectral estimates. The current branch
 all 41 focused tests, scoped hook mypy and 69 Linux ingestion/report/API tests
 pass (three optional-plugin warnings). Public signatures are retained,
 with documented stricter refusal, immutable samples, signed lag and segment
-detrending. PR is not yet created; full #5074 completion is not claimed.
+detrending. PR #5106 is open at published `4ccaab389`; all normal push hooks pass.
+Full #5074 completion is not claimed.
 
 ## Must-Read Architecture Pointers
 

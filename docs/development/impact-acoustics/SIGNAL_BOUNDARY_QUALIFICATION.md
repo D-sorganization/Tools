@@ -110,3 +110,7 @@ renderer, transport and contact-fixture changes remain intact.
 All 69 ingestion/report/API tests also pass on Windows after this integration
 (13.41 s). Public JSON changes remain two private empty export entries;
 the remaining baseline diff is value-identical formatter output.
+
+Published `4ccaab3896e895f7473a9ac71fc6ca37c5525cc8` passes all normal
+commit/push hooks, including unit tests, mypy, Bandit, dependency audit and
+fleet guardrails. PR #5106 is open; current-head protected CI remains required.

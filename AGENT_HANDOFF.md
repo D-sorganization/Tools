@@ -2,7 +2,7 @@
 
 ## Impact Dynamics and Acoustics: #5068
 
-- IA-T5 #5074 boundary repair: 16 reproduced failures now pass; all 41 focused
+- IA-T5 #5074 / PR #5106 boundary repair: 16 reproduced failures now pass; all 41 focused
   ingestion/spectral tests, 69 Linux report/API tests and hook mypy pass. Full
   measurement validation remains
   open. Resume at `src/shared/python/swing_sim/vibroacoustics/AGENT_HANDOFF.md`.
