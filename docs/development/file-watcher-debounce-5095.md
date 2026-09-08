@@ -46,3 +46,11 @@ compatibility; private Gasification checkout returns 404 before tests and awaits
 the existing automation credential configuration. None is a shaft/contact or
 acoustic model result. Update this file and the root handoff with actual PR/CI
 evidence as delivery proceeds.
+
+PR #5097 published implementation `c0f277406c526c4172e3cb15e8fdd6da649ada87`
+with every applicable normal commit/push hook passing. Main then advanced to
+`86a725c6c2d4765d61aa9e7c59d771c3e075f6bd` with the early IA-T5 ingestion
+module. The merge retains that implementation and resolves only the adjacent
+root handoff and its digest; both SPEC rows remain. Inventory is regenerated
+from the combined tree before revalidation. The initial PR was conflicted and
+therefore had no Rust quality result; it is not a failed or passing Rust run.

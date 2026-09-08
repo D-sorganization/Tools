@@ -741,8 +741,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-signal-toolkit.json"
     },
     {
-      "content_sha256_lf": "426598eb2c8af7094cb7fd7e0d7656f9912cab9d10291d13fbca11c27d177953",
-      "entry_count": 220,
+      "content_sha256_lf": "3db9ef3caab2fc810fd79271afe88e1a8518566cd74ada541128dd61b92c4c24",
+      "entry_count": 223,
       "package": "src/shared/python/swing_sim",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim.json"
     },

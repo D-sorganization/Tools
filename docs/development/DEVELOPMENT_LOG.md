@@ -20,9 +20,10 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5095 · Deterministic Rust Watcher Debounce
 
-- **State:** in_progress
+- **State:** in_review
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5095
+- **PR:** https://github.com/D-sorganization/Tools/pull/5097
 - **Branch:** fix/5095-deterministic-debounce
 - **Paths:** `rust_core/file_watcher/src/debounce.rs`, `rust_core/file_watcher/src/watcher.rs`, `rust_core/file_watcher/src/watcher_tests.rs`
 - **Started:** 2026-09-08
