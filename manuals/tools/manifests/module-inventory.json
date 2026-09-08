@@ -129,8 +129,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
     },
     {
-      "content_sha256_lf": "ca89290260f6443c20074f1e659dc3534113bfa05839e427b0954fef6025c395",
-      "entry_count": 3,
+      "content_sha256_lf": "02cf0b85c5ce1acbc60873dad8941608ea095c9111ad16117b138087b93892bd",
+      "entry_count": 5,
       "package": "rust_core/file_watcher",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },

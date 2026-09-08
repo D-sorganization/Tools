@@ -18,12 +18,16 @@ from .types import (
     ImpactIntervalInitialState,
     ImpactIntervalResult,
     ImpactIntervalSample,
+    ImpactTermination,
+    IncompleteContactError,
 )
 
 __all__ = [
     "BoundaryKind",
     "ClubRigidBody",
     "ImpactIntervalAudit",
+    "ImpactTermination",
+    "IncompleteContactError",
     "ImpactIntervalConfig",
     "ImpactIntervalInitialState",
     "ImpactIntervalResult",
