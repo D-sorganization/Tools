@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5074 · Waveform and Spectral Numerical Contracts
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5074
+- **PR:** not created
+- **Branch:** fix/5074-waveform-spectral-contracts
+- **Paths:** `src/shared/python/swing_sim/vibroacoustics`, `docs/development/impact-acoustics/SIGNAL_BOUNDARY_QUALIFICATION.md`
+- **Started:** 2026-09-08
+- **Last verified:** 2026-09-08 (16 RED failures; 41 focused tests, nine API tests, scoped hook mypy and 69 Linux ingestion/report/API tests pass; three optional-plugin warnings)
+- **Summary:** Shared strict real samples, immutable recording storage, signed linear lag and segment preparation refuse undefined/nonfinite estimates while preserving public signatures. Independent SciPy odd/even PSD and gain controls pass. No physical calibration is inferred.
+- **Next step:** All nine manual gates pass; complete protected delivery, then qualify versioned calibration identity, supported-bin complex FRF, uncertainty and physical/blinded measurements separately.
+
 ### DL-#5095 · Deterministic Rust Watcher Debounce
 
 - **State:** in_review

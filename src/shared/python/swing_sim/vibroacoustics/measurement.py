@@ -14,6 +14,9 @@ from dataclasses import dataclass
 from enum import Enum
 
 import numpy as np
+from scipy import signal as _signal
+
+from ._waveform_contracts import real_samples as _real_samples
 
 
 class SourceKind(Enum):
@@ -44,14 +47,15 @@ def _label(value: object, name: str) -> str:
 
 @dataclass(frozen=True)
 class WaveformRecording:
-    """One calibrated waveform with complete measurement provenance.
+    """One waveform with caller-declared calibration and source metadata.
 
     Attributes:
-        samples: One-dimensional finite sample sequence.
+        samples: Owned, immutable, one-dimensional finite real sample sequence.
         sample_rate_hz: Uniform sampling rate in hertz.
         unit: Calibration unit of the samples, e.g. ``Pa`` or ``N``.
         calibration_id: Identity of the calibration record.
-        sensitivity_per_unit: Calibration sensitivity, finite and nonzero.
+        sensitivity_per_unit: Declared sensitivity, finite and nonzero; not
+            applied to samples by this record or the spectral estimators.
         source_id: Identity of the physical or synthetic source.
         source_kind: Whether the source was measured or synthesized.
     """
@@ -65,14 +69,10 @@ class WaveformRecording:
     source_kind: SourceKind = SourceKind.MEASURED
 
     def __post_init__(self) -> None:
-        samples = np.asarray(self.samples)
-        if samples.ndim != 1:
-            raise ValueError("samples must be one-dimensional")
-        if samples.size == 0:
-            raise ValueError("samples must be nonempty")
-        if not np.all(np.isfinite(samples)):
-            raise ValueError("samples must be finite")
-        object.__setattr__(self, "samples", samples.astype(float))
+        samples = _real_samples(self.samples)
+        # An immutable bytes owner prevents callers from re-enabling writes.
+        owned = np.frombuffer(samples.tobytes(), dtype=np.float64)
+        object.__setattr__(self, "samples", owned)
         rate = _finite(self.sample_rate_hz, "sample_rate_hz")
         if rate <= 0.0:
             raise ValueError("sample_rate_hz must be > 0")
@@ -91,11 +91,12 @@ class WaveformRecording:
 
 
 def raw_data_hash(recording: WaveformRecording) -> str:
-    """Return the SHA-256 content hash of the raw samples and calibration.
+    """Return the legacy hash of sample bytes and selected calibration metadata.
 
     The hash binds the sample bytes (little-endian float64) to the sample
-    rate and calibration unit so two recordings with equal bytes but
-    different physical calibration never share a hash.
+    rate, unit and calibration ID. Sensitivity and acquisition/source identity
+    are not bound; this legacy digest does not authenticate calibration. Its
+    existing byte convention is retained for archived-result compatibility.
     """
     if not isinstance(recording, WaveformRecording):
         raise TypeError("recording must be a WaveformRecording")
@@ -179,27 +180,29 @@ def bandwidth_report(
 
 
 def align_time_shift(reference: np.ndarray, delayed: np.ndarray) -> int:
-    """Return the integer sample lag maximizing cross-correlation.
+    """Return the signed lag maximizing unnormalized linear cross-correlation.
 
-    A return value ``k`` means ``delayed[n] == reference[n - k]``.
+    Positive ``k`` describes a delay: ``delayed[n] == reference[n - k]``
+    on their overlap. Outside the finite records samples are zero, not wrapped.
+    This peak heuristic does not establish synchronization or uncertainty.
 
     Raises:
         ValueError: If the arrays differ in length or are not finite
-            one-dimensional sequences of equal size.
+            real one-dimensional sequences of equal size, or the positive
+            correlation peak is absent, tied or nonfinite.
     """
-    reference_array = np.asarray(reference, dtype=float)
-    delayed_array = np.asarray(delayed, dtype=float)
+    reference_array = _real_samples(reference)
+    delayed_array = _real_samples(delayed)
     if reference_array.shape != delayed_array.shape or reference_array.ndim != 1:
         raise ValueError("inputs must be same length, one-dimensional arrays")
-    if reference_array.size == 0:
-        raise ValueError("inputs must be nonempty")
-    if not (
-        np.all(np.isfinite(reference_array)) and np.all(np.isfinite(delayed_array))
-    ):
-        raise ValueError("inputs must be finite")
-    spectrum = np.conj(np.fft.fft(reference_array)) * np.fft.fft(delayed_array)
-    correlation = np.fft.ifft(spectrum).real
-    return int(np.argmax(correlation))
+    with np.errstate(over="ignore", invalid="ignore"):
+        correlation = _signal.correlate(delayed_array, reference_array, mode="full")
+    if not np.all(np.isfinite(correlation)):
+        raise ValueError("correlation must be finite")
+    peak = np.max(correlation)
+    if peak <= 0 or np.count_nonzero(correlation == peak) != 1:
+        raise ValueError("correlation needs one positive, unambiguous peak")
+    return int(np.argmax(correlation) - (reference_array.size - 1))
 
 
 def as_measured(recording: WaveformRecording) -> WaveformRecording:

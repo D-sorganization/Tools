@@ -2,6 +2,11 @@
 
 ## Impact Dynamics and Acoustics: #5068
 
+- IA-T5 #5074 boundary repair: 16 reproduced failures now pass; all 41 focused
+  ingestion/spectral tests, 69 Linux report/API tests and hook mypy pass. Full
+  measurement validation remains
+  open. Resume at `src/shared/python/swing_sim/vibroacoustics/AGENT_HANDOFF.md`.
+
 - Foundation #5069 is locally verified on `feat/5068-impact-dynamics-foundation`,
   based on `b4875be19`; PR #5077; implementation `6d94f1d3d`. Theory: AffineDrift #4253; consumer: UpstreamDrift #9700.
 - TDD verified by `tests/shared/python/golf_club/test_impact_mobility.py`;

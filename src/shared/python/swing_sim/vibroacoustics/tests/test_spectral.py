@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
+from scipy.signal import fftconvolve
 
 from shared.python.swing_sim.vibroacoustics import (
     SourceKind,
@@ -83,8 +84,8 @@ def test_frf_h1_recovers_damped_oscillator_resonance() -> None:
     n = 16384
     rng = np.random.default_rng(20260908)
     force = rng.standard_normal(n)
-    # Exact discrete convolution with the analytic impulse response of a
-    # base-excited damped oscillator.
+    # Sample the analytic force-to-displacement impulse response of a unit-mass
+    # oscillator; the time-step factor supplies rectangular quadrature units.
     t = np.arange(n) / RATE
     omega_n = 2.0 * np.pi * natural_hz
     omega_d = omega_n * np.sqrt(1.0 - zeta**2)
@@ -93,7 +94,12 @@ def test_frf_h1_recovers_damped_oscillator_resonance() -> None:
         * np.sin(omega_d * t)
         / (omega_n * np.sqrt(1.0 - zeta**2))
     )
-    response = np.convolve(force, impulse)[:n]
+    response = fftconvolve(force, impulse, mode="full")[:n] / RATE
+    # A causal prefix independently checks FFT padding and truncation against
+    # direct linear convolution without a quadratic full-record fixture cost.
+    prefix = 256
+    direct = np.convolve(force[:prefix], impulse[:prefix])[:prefix] / RATE
+    np.testing.assert_allclose(response[:prefix], direct, rtol=1e-11, atol=1e-18)
     frequencies, magnitude = estimate_frf_h1(_recording(force), _recording(response))
     band = (frequencies > 50.0) & (frequencies < 900.0)
     peak_hz = frequencies[band][int(np.argmax(magnitude[band]))]
