@@ -456,14 +456,11 @@ class ControlsWidgetBase(QWidget):
 
     @staticmethod
     def _uai_or_parse(widget: object, label: str) -> float:
-        """Extract SI value from UnitAwareInput or parse from LabeledInput.
-
-        Works regardless of whether upstream_drift_tools is installed.
-        Subclasses should use this when parsing inputs that might be
-        UnitAwareInput or plain LabeledInput widgets.
-        """
+        """Return value_si from UnitAwareInput, or parse LabeledInput."""
         if widget is None:
             raise ValueError("widget must be provided")
+        if hasattr(widget, "value_si") and callable(getattr(widget, "value_si")):
+            return widget.value_si()  # type: ignore[no-any-return]
         from .controls_utils import parse_float
 
         try:

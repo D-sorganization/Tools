@@ -37,6 +37,7 @@ pendulum-golf = "double_pendulum_golf.__main__:main"
 where = ["src"]
 
 [tool.pytest.ini_options]
+qt_api = "pyqt6"
 testpaths = ["tests"]
 addopts = "-v --tb=short"
 

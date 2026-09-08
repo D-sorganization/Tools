@@ -1,4 +1,4 @@
-# AGENT_HANDOFF_TEMPLATE — copy to src/&lt;your_tool&gt;/AGENT_HANDOFF.md
+# AGENT_HANDOFF_TEMPLATE — copy to src/<your_tool>/AGENT_HANDOFF.md
 
 Copy this file to `src/<your_tool>/AGENT_HANDOFF.md` and fill in every
 section from the actual current state of the tool — do not leave
@@ -10,10 +10,10 @@ Delete this instructional preamble once you copy the file.
 
 ---
 
-# AGENT_HANDOFF — &lt;tool_name&gt;
+# AGENT_HANDOFF — <tool_name>
 
 > **Update this file with every PR and every push to main.**
-> Last updated: &lt;YYYY-MM-DD&gt;
+> Last updated: <YYYY-MM-DD>
 
 ## Where This Tool Is Headed
 
@@ -21,7 +21,7 @@ One or two paragraphs: what is this tool, what is its current development
 direction, and what epic(s)/issue(s) — if any — are actively driving it
 right now. Link the epic numbers. If no epic is currently open against this
 tool, say so explicitly and describe its role (e.g. "stable, maintenance
-only" or "shared dependency for &lt;other tool&gt;").
+only" or "shared dependency for <other tool>").
 
 ## Recent Activity (grounding)
 
