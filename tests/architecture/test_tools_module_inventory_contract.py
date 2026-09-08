@@ -57,9 +57,13 @@ def _with_first_entry(payload: dict[str, Any], **updates: object) -> dict[str, A
     return {**payload, "entries": [first, *payload["entries"][1:]]}
 
 
+def test_inventory_cli_checks_checked_in_freshness() -> None:
+    """The CLI independently checks the complete tracked-file projection."""
+    assert main(["--check"]) == 0
+
+
 def test_inventory_is_deterministic_and_fresh() -> None:
     """The checked-in registry must be exactly reproducible from tracked files."""
-    assert main(["--check"]) == 0
     assert _payload() == build_inventory(ROOT)
 
 

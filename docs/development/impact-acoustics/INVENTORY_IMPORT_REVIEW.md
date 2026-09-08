@@ -100,3 +100,33 @@ The first post-renderer regression times out while reading tracked source in
 the deterministic inventory test. An isolated rerun, with the same code and
 60-second per-test limit, passes all 95 inventory/import/merge, impact and API
 tests (111.13 s). No expectation or timeout is relaxed.
+
+## CI Freshness-Test Granularity
+
+At published head `ace9a007b`, the Python 3.12 unit shard loses a worker during
+`test_inventory_is_deterministic_and_fresh`. Its replacement passes the same
+test. The single allowed flake retry repeats that pattern: job `102214787890`
+reports a worker crash, then a replacement passes in 43.34 s. There is no
+reported assertion mismatch; the logs do not establish an OOM diagnosis.
+No second speculative rerun is requested. Other public tests and governance
+checks pass; the private Gasification_Model consumer separately fails at
+repository lookup before tests, with credential configuration unresolved.
+
+A local Windows cProfile run of one unchanged generator check takes 135.662 s
+under instrumentation. File opens account for 97.230 s cumulative; import
+classification takes 11.623 s and all AST parsing 9.052 s. These overlapping
+profile costs are not additive and are not CI timing measurements. Source
+reads dominate this local observation; replacing a correct AST parser with
+an unsafe heuristic is not justified by the profile.
+
+The original test performs two full repository builds under one 60-second
+deadline: the CLI projection check followed by independent equality with the
+checked-in registry. These become two single-purpose tests, retaining each
+original assertion verbatim. Both still discover, read and inspect the actual
+tracked files; no mocked inventory, persistent source cache, reduced denominator,
+schema bypass or timeout increase is introduced. This addresses test granularity
+without changing producer behavior. All 96 combined import/inventory/schema,
+merge-driver, contact-completion and public API tests pass (95.10 s). The CLI
+check takes 22.52 s and independent reproducibility 26.08 s, each below the
+unchanged 60-second limit. Scoped Ruff and all nine final manual gates pass.
+Normal delivery is pending; only current-head CI can qualify the CI outcome.

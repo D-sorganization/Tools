@@ -2,10 +2,10 @@
 
 ## Impact Dynamics and Acoustics: #5068
 
-- Inventory #5101: AST import detection passes 53 import/inventory/merge tests.
+- Inventory #5101 / PR #5103: all 96 import/inventory/merge/impact/API tests pass.
   All 410 newly detected candidates retain source hashes and ownership and stay
   provisional/publication-blocked. `docs/development/impact-acoustics/INVENTORY_IMPORT_REVIEW.md`
-  and its complete JSON delta record the scope; all nine manual gates pass; PR #5103 open.
+  and its complete JSON delta record the scope. CI's repeated worker crash motivates separate full-scan CLI/reproducibility tests (22.52/26.08 s); the 60-second limit and both assertions remain unchanged. Private consumer lookup remains unresolved.
 
 - Foundation #5069 is locally verified on `feat/5068-impact-dynamics-foundation`,
   based on `b4875be19`; PR #5077; implementation `6d94f1d3d`. Theory: AffineDrift #4253; consumer: UpstreamDrift #9700.
