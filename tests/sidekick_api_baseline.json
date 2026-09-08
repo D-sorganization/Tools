@@ -5360,11 +5360,58 @@
                   "annotation": "int",
                   "default": "_CACHE_MAX_SIZE",
                   "kind": "arg"
+                },
+                {
+                  "name": "fallback_policy",
+                  "annotation": "GlassFallbackPolicy",
+                  "default": "GlassFallbackPolicy.DEMO",
+                  "kind": "arg"
+                },
+                {
+                  "name": "conductivity_provider",
+                  "annotation": "ConductivityProvider | None",
+                  "default": "None",
+                  "kind": "arg"
                 }
               ],
               "returns": "None"
             },
             "get_conductivity": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "temperature_celsius",
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "composition",
+                  "annotation": "dict[str, float] | None",
+                  "default": "None",
+                  "kind": "arg"
+                },
+                {
+                  "name": "power_density",
+                  "annotation": "float",
+                  "default": "0",
+                  "kind": "arg"
+                },
+                {
+                  "name": "is_metal",
+                  "annotation": "bool",
+                  "default": "False",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "float"
+            },
+            "get_resistivity": {
               "args": [
                 {
                   "name": "self",
@@ -5416,6 +5463,34 @@
               ],
               "returns": "None"
             },
+            "set_conductivity_provider": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "provider",
+                  "annotation": "ConductivityProvider",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "get_last_provider_report": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ProviderResultReport | None"
+            },
             "update_properties": {
               "args": [
                 {
@@ -5443,41 +5518,6 @@
                 }
               ],
               "returns": "dict"
-            },
-            "get_resistivity": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "temperature_celsius",
-                  "annotation": "float",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "composition",
-                  "annotation": "dict[str, float] | None",
-                  "default": "None",
-                  "kind": "arg"
-                },
-                {
-                  "name": "power_density",
-                  "annotation": "float",
-                  "default": "0",
-                  "kind": "arg"
-                },
-                {
-                  "name": "is_metal",
-                  "annotation": "bool",
-                  "default": "False",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "float"
             },
             "clear_cache": {
               "args": [
@@ -5590,6 +5630,10 @@
         }
       }
     }
+  },
+  "calculators/electrical/glass_contracts.py": {
+    "__all__": [],
+    "symbols": {}
   },
   "calculators/electrical/config.py": {
     "__all__": ["ElectrodeConfig"],
@@ -5772,11 +5816,58 @@
                   "annotation": "int",
                   "default": "_CACHE_MAX_SIZE",
                   "kind": "arg"
+                },
+                {
+                  "name": "fallback_policy",
+                  "annotation": "GlassFallbackPolicy",
+                  "default": "GlassFallbackPolicy.DEMO",
+                  "kind": "arg"
+                },
+                {
+                  "name": "conductivity_provider",
+                  "annotation": "ConductivityProvider | None",
+                  "default": "None",
+                  "kind": "arg"
                 }
               ],
               "returns": "None"
             },
             "get_conductivity": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "temperature_celsius",
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "composition",
+                  "annotation": "dict[str, float] | None",
+                  "default": "None",
+                  "kind": "arg"
+                },
+                {
+                  "name": "power_density",
+                  "annotation": "float",
+                  "default": "0",
+                  "kind": "arg"
+                },
+                {
+                  "name": "is_metal",
+                  "annotation": "bool",
+                  "default": "False",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "float"
+            },
+            "get_resistivity": {
               "args": [
                 {
                   "name": "self",
@@ -5828,6 +5919,34 @@
               ],
               "returns": "None"
             },
+            "set_conductivity_provider": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "provider",
+                  "annotation": "ConductivityProvider",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "get_last_provider_report": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ProviderResultReport | None"
+            },
             "update_properties": {
               "args": [
                 {
@@ -5855,41 +5974,6 @@
                 }
               ],
               "returns": "dict"
-            },
-            "get_resistivity": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "temperature_celsius",
-                  "annotation": "float",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "composition",
-                  "annotation": "dict[str, float] | None",
-                  "default": "None",
-                  "kind": "arg"
-                },
-                {
-                  "name": "power_density",
-                  "annotation": "float",
-                  "default": "0",
-                  "kind": "arg"
-                },
-                {
-                  "name": "is_metal",
-                  "annotation": "bool",
-                  "default": "False",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "float"
             },
             "clear_cache": {
               "args": [

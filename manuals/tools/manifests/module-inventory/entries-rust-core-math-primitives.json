@@ -690,6 +690,7 @@
           "tests/rust_bindings/test_math_primitives_bindings.py",
           "tests/shared/python/golf_club/test_assembly.py",
           "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/golf_club/test_impact_mobility.py",
           "tests/shared/python/golf_club/test_turf_contact.py",
           "tests/shared/python/golf_club/test_wedge_ground_contact.py",
           "tests/shared/python/golf_club/test_wedge_sweep.py",
