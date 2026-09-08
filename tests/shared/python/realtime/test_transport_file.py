@@ -32,8 +32,8 @@ def root(tmp_path: Path, monkeypatch: pytest.MonkeyPatch) -> Path:
     return override
 
 
-def _make_transport() -> FileTransport:
-    return FileTransport(default_channel_path)
+def _make_transport(*, poll_thread: bool = False) -> FileTransport:
+    return FileTransport(default_channel_path, poll_thread=poll_thread)
 
 
 def _read_payloads(path: Path) -> list[Any]:
@@ -76,7 +76,7 @@ def test_publish_hoists_mkdir_and_handle_out_of_the_hot_path(
         "open": Path.open,
     }
 
-    def make_wrapper(name: str, original: Callable[..., Any]) -> Callable[..., Any]:
+    def make_wrapper(name: str, original: Any) -> Callable[..., Any]:
         def wrapper(self: Path, *args: Any, **kwargs: Any) -> Any:
             counts[name] += 1
             return original(self, *args, **kwargs)
@@ -165,3 +165,22 @@ def test_shutdown_closes_open_append_handles(root: Path) -> None:
     transport.shutdown()
 
     assert all(fh.closed for fh in transport._append_handles.values())
+
+
+def test_poll_thread_delivers_asynchronously(root: Path) -> None:
+    """When poll_thread=True, subscriptions receive messages via background thread."""
+    import time
+
+    transport = _make_transport(poll_thread=True)
+    channel = "pose/canonical"
+    received: list[Any] = []
+    transport.subscribe(channel, received.append)
+
+    transport.publish(channel, {"seq": 42})
+
+    deadline = time.time() + 2.0
+    while time.time() < deadline and not received:
+        time.sleep(0.05)
+
+    transport.shutdown()
+    assert received == [{"seq": 42}]

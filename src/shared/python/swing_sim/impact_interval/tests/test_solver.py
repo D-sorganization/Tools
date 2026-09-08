@@ -279,7 +279,7 @@ class TestIndependentEnergyAudit:
             compression_m: float,
             compression_rate_mps: float,
         ) -> float:
-            return 1.05 * original(self, compression_m, compression_rate_mps)
+            return float(1.05 * original(self, compression_m, compression_rate_mps))
 
         monkeypatch.setattr(KelvinVoigtContactLaw, "normal_force", scaled)
         result = solve_impact_interval(_initial(), _club(), _config())

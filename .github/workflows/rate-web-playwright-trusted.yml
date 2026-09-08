@@ -83,6 +83,8 @@ on:
       - "tests/ops/test_rate_web_playwright_workflow.py"
       - "tests/scripts/test_check_rate_pyqt_environment.py"
       - "scripts/check_rate_pyqt_environment.py"
+      - "scripts/config/rate_pyqt_font_stack.v1.json"
+      - "tests/scripts/test_rate_pyqt_renderer_identity.py"
       - "requirements-rate-pyqt.txt"
       - "pyproject.toml"
       - ".github/workflows/rate-web-playwright.yml"
@@ -193,12 +195,30 @@ jobs:
     needs: push-production-worker-e2e
     if: ${{ always() && needs.push-production-worker-e2e.result != 'cancelled' }}
     runs-on: d-sorg-fleet
+    container:
+      image: ubuntu:24.04@sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517
     timeout-minutes: 30
     env:
-      RATE_VISUAL_BASELINE_CANDIDATE_DIR: ${{ github.workspace }}/visual-baseline-candidates
       RATE_VISUAL_BASELINE_SOURCE_COMMIT: ${{ github.sha }}
     steps:
+      - name: Install container render system dependencies
+        working-directory: /
+        run: >-
+          apt-get update &&
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends
+          ca-certificates git python3 python3-venv python-is-python3 libgl1 libegl1 libglib2.0-0t64
+          libxkbcommon0 fontconfig fonts-dejavu-core fonts-liberation
+          fonts-noto-color-emoji fonts-unifont xfonts-cyrillic xfonts-scalable
+          fonts-ipafont-gothic fonts-wqy-zenhei fonts-tlwg-loma-otf fonts-freefont-ttf
+
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
+
+      - name: Initialize container workspace
+        working-directory: .
+        run: |-
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git -C "$GITHUB_WORKSPACE" rev-parse --show-toplevel
+          echo "RATE_VISUAL_BASELINE_CANDIDATE_DIR=$GITHUB_WORKSPACE/visual-baseline-candidates" >> "$GITHUB_ENV"
 
       - name: Set up Python
         uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6

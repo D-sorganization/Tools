@@ -85,6 +85,8 @@ on:
       - "tests/scripts/test_check_rate_visual_evidence_changes.py"
       - "tests/scripts/test_check_rate_pyqt_environment.py"
       - "scripts/check_rate_pyqt_environment.py"
+      - "scripts/config/rate_pyqt_font_stack.v1.json"
+      - "tests/scripts/test_rate_pyqt_renderer_identity.py"
       - "requirements-rate-pyqt.txt"
       - "pyproject.toml"
       - ".github/workflows/rate-web-playwright.yml"
@@ -100,18 +102,36 @@ permissions:
 jobs:
   production-worker-e2e:
     name: Rate web production Worker E2E (ephemeral PR)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    container:
+      image: ubuntu:24.04@sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517
     timeout-minutes: 30
     defaults:
       run:
         working-directory: src/rate_of_closure/web
     env:
-      RATE_VISUAL_BASELINE_CANDIDATE_DIR: ${{ github.workspace }}/visual-baseline-candidates
       RATE_VISUAL_BASELINE_SOURCE_COMMIT: ${{ github.event.pull_request.head.sha }}
     steps:
+      - name: Install container render system dependencies
+        working-directory: /
+        run: >-
+          apt-get update &&
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends
+          ca-certificates git python3 python3-venv python-is-python3 libgl1 libegl1 libglib2.0-0t64
+          libxkbcommon0 fontconfig fonts-dejavu-core fonts-liberation
+          fonts-noto-color-emoji fonts-unifont xfonts-cyrillic xfonts-scalable
+          fonts-ipafont-gothic fonts-wqy-zenhei fonts-tlwg-loma-otf fonts-freefont-ttf
+
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
+
+      - name: Initialize container workspace
+        working-directory: .
+        run: |-
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git -C "$GITHUB_WORKSPACE" rev-parse --show-toplevel
+          echo "RATE_VISUAL_BASELINE_CANDIDATE_DIR=$GITHUB_WORKSPACE/visual-baseline-candidates" >> "$GITHUB_ENV"
 
       - name: Enforce matched visual evidence co-changes
         working-directory: .
@@ -134,11 +154,17 @@ jobs:
       - name: Install locked web dependencies
         run: npm ci
 
+      - name: Prepare isolated browser home
+        run: |-
+          RATE_BROWSER_HOME="$(mktemp -d "$RUNNER_TEMP/rate-browser-home.XXXXXX")"
+          echo "RATE_BROWSER_HOME=$RATE_BROWSER_HOME" >> "$GITHUB_ENV"
+          env HOME="$RATE_BROWSER_HOME" git config --global --add safe.directory "$GITHUB_WORKSPACE"
+
       - name: Install Playwright-pinned browser runtimes
-        run: npx --no-install playwright install --with-deps chromium firefox webkit
+        run: env HOME="$RATE_BROWSER_HOME" npx --no-install playwright install --with-deps chromium firefox webkit
 
       - name: Exercise production Worker lifecycle, layouts, and browser parity
-        run: npm run test:e2e
+        run: env HOME="$RATE_BROWSER_HOME" npm run test:e2e
 
       - name: Install bounded PyQt render dependencies
         working-directory: .

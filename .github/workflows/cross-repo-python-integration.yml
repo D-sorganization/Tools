@@ -312,4 +312,3 @@ jobs:
               echo "- \`$f\`" >> "$GITHUB_STEP_SUMMARY"
             done
           fi
-
