@@ -129,15 +129,22 @@ function validateCoherence(exploration: FlightExplorationTs, plan: FlightSampleP
   requireClose(
     exploration.metrics.lateralM, last.rightM - first.rightM, "lateral landing offset",
   );
-  const sampledHeight = Math.max(...plan.samples.map((sample) => sample.heightM - first.heightM));
+  let sampledHeight = 0;
+  for (let i = 0; i < plan.samples.length; i++) {
+    const height = plan.samples[i].heightM - first.heightM;
+    if (height > sampledHeight) sampledHeight = height;
+  }
   if (exploration.metrics.maxHeightM + 1e-7 < sampledHeight) {
     throw new RangeError("maximum height is below sampled trajectory evidence");
   }
   if (exploration.metrics.maxHeightM < 0 || exploration.metrics.maxHeightM > 10_000) {
     throw new RangeError("maximum height exceeds the explorer evidence envelope");
   }
-  const maximumSampleGap = Math.max(...plan.samples.slice(1).map((sample, index) =>
-    sample.timeS - plan.samples[index].timeS));
+  let maximumSampleGap = 0;
+  for (let i = 1; i < plan.samples.length; i++) {
+    const gap = plan.samples[i].timeS - plan.samples[i - 1].timeS;
+    if (gap > maximumSampleGap) maximumSampleGap = gap;
+  }
   const hiddenApexAllowance = maximumSampleGap * MAX_FLIGHT_VELOCITY_MPS;
   if (exploration.metrics.maxHeightM > sampledHeight + hiddenApexAllowance + 1e-7) {
     throw new RangeError("maximum height exceeds the bounded sampled-apex allowance");

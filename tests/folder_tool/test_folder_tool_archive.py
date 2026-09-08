@@ -1,5 +1,6 @@
 """Unit tests for folder_tool_archive.py."""
 
+from datetime import UTC
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
@@ -211,7 +212,7 @@ class TestArchiveMixin:
         # Let's create the default ZIP file so that exists() returns True naturally
         from datetime import datetime
 
-        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        timestamp = datetime.now(UTC).strftime("%Y%m%d_%H%M%S")
         zip_filename = f"processed_files_{timestamp}.zip"
         zip_path = tmp_path / zip_filename
         zip_path.touch()

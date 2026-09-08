@@ -133,21 +133,25 @@ class UnitAwareInput(QWidget):
     ) -> None:
         self._updating = True
         try:
+            try:
+                f_val = float(value)
+            except (ValueError, TypeError):
+                return
             if is_si:
-                self._si_value = value
+                self._si_value = f_val
                 display = self._preferences.convert_from_si(
-                    value, self._category, self._current_unit
+                    f_val, self._category, self._current_unit
                 )
                 self._value_input.setValue(display)
             else:
                 unit = unit or self._current_unit
                 self._si_value = self._preferences.convert_to_si(
-                    value, self._category, unit
+                    f_val, self._category, unit
                 )
                 if unit != self._current_unit:
                     self._current_unit = unit
                     self._unit_combo.setCurrentText(unit)
-                self._value_input.setValue(value)
+                self._value_input.setValue(f_val)
         finally:
             self._updating = False
 

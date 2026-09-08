@@ -214,7 +214,16 @@ function SpeedPlot(props: PuttingVisualsProps) {
   const { result, plan } = props;
   if (!result || !plan) return null;
   const maxDistance = Math.max(plan.cumulativeDistanceM[plan.rawCount - 1], 0.1);
-  const maxSpeed = Math.max(...plan.samples.map(({ speedMps }) => speedMps), captureSpeedMps()) * 1.08;
+
+  // ⚡ Bolt Optimization: Use single-pass loop instead of Math.max(...array.map(...))
+  let maxSpeedRaw = captureSpeedMps();
+  for (let i = 0; i < plan.samples.length; i++) {
+    if (plan.samples[i].speedMps > maxSpeedRaw) {
+      maxSpeedRaw = plan.samples[i].speedMps;
+    }
+  }
+  const maxSpeed = maxSpeedRaw * 1.08;
+
   const scaleX = (value: number) => (value / maxDistance) * (SPEED_WIDTH - 20) + 10;
   const scaleY = (value: number) => SPEED_HEIGHT - 16 - (value / maxSpeed) * (SPEED_HEIGHT - 32);
   const points = plan.samples.map(({ rawIndex, cumulativeDistanceM, speedMps }) => ({
