@@ -147,7 +147,13 @@ class ImpactIntervalConfig:
 
 @dataclass(frozen=True)
 class ImpactIntervalAudit:
-    """Scientific reconciliation metrics for one interval solve."""
+    """Scientific reconciliation metrics for one interval solve.
+
+    Every term is computed independently of ``energy_residual_j`` from the
+    contact state, the declared contact law, and the declared boundary.
+    ``energy_residual_j`` stays signed and unfudged; a large magnitude means
+    the modelled ledger does not describe the integrated motion.
+    """
 
     initial_kinetic_energy_j: float
     final_kinetic_energy_j: float
@@ -159,6 +165,10 @@ class ImpactIntervalAudit:
     integrated_normal_impulse_n_s: float
     integrated_friction_impulse_n_s: float
     linear_momentum_residual_n_s: float
+    stored_contact_energy_initial_j: float
+    stored_contact_energy_final_j: float
+    torsional_damping_dissipation_j: float
+    supported_momentum_residual_n_m_s: float
 
 
 @dataclass(frozen=True)
