@@ -7,7 +7,7 @@
 - T3 #5072: `feat/5072-prestressed-shaft`, based on T2 `2f975d06e`; tensile FEM, stationary shaft/head/grip and distributed rotating transport implemented; 110 combined tests pass. Loaded-state/work/FRF qualification remains open.
 - Full offset-head and explicit section rotary inertia retained; independent kinetic Hessians, inertial-frame trajectory and radial frequency references pass. No general impact/acoustic qualification.
 - UpstreamDrift #9735 / PR #9745 merged as `1b48707d54fb47655e43eaaffaad7b1739445e40`; confirmed ancestor of main. Tools T2 downstream UD job 101951943569 passes; T1 retry requested.
-- T2 CI: UD consumer passes; Gasification checkout access and seven PyQt visual baseline drifts remain unresolved. Secret metadata read returned 403; credential state is unknown. Never bypass gates.
+- T2 CI: UD consumer passes; Gasification checkout access and nine PyQt visual baseline drifts remain unresolved. Secret metadata read returned 403; credential state is unknown. Never bypass gates.
 - T3 codex lease succeeds through 2026-09-08T06:40:24Z; renew before expiry.
 - Turnover: `docs/development/impact-acoustics/ROTATING_TRANSPORT.md`, `SHAFT_LINEAR_SYSTEM.md`, `GRIP_IMPEDANCE.md`, `SHAFT_PRESTRESS.md`; full requirement matrix: `PROGRESS.md` in the same directory.
 - T3-T6, exact-pin consumers, counterfactual studies, physical/blinded validation and final theory synthesis remain required.

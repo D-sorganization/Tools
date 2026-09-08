@@ -14,6 +14,8 @@ without introducing the shear locking of independently linear position fields.
 The strain energy uses a linear constitutive law in small section strains;
 geometric exactness does not remove this material restriction. The relative
 rotation logarithm also needs an explicit domain below its pi branch boundary.
+Section 7.1 retains only the material tangent in its examples; the omitted
+geometric and external-load derivatives must be derived for this prestress work.
 Their material-frame tangent and velocity coordinates must not be substituted
 unchanged for the current canonical small-rotation operators.
 

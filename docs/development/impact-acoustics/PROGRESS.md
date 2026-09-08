@@ -58,7 +58,8 @@ consumer contracts. The older T1 UD job 101870569015 (run 34163726663) has
 now also been rerun; that separate result is pending. Gasification_Model exists
 as a private repository but checkout previously failed; a secret-metadata query
 returned 403 and does not establish whether a credential is absent or expired.
-Seven PyQt view-baseline drifts also require inspection. Never weaken checkout
+Nine PyQt view-baseline drifts are listed in the complete log; CI_FINDINGS.md
+records the inspected images and a compiled/runtime Qt identity mismatch. Never weaken checkout
 failure handling, replace images without review or bypass protected checks.
 
 DATA_CANDIDATES.md records RealImpact as a measured household-object acoustic
