@@ -5838,6 +5838,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-08 | #5081 | perf(shared, UpstreamDrift#8942): resolve the codemap hash callable once at module import (`_HASH`, blake3-preferred/blake2b-16 fallback) instead of retrying a failing `import blake3` per file and per symbol, and land the tools-canonical file realtime transport at `src/shared/python/realtime/transport_file.py` with persistent per-channel append handles, offset-tracked tailing serialized under the transport lock, and the truncation size check off the per-message path. |
 | 2026-09-07 | #5069 | Add full-tensor detached contact mobility and normal-impulse references with analytic TDD gates, qualified legacy-model scope, and the distributed-impact/acoustics research specification. Explicit scalar return types preserve strict hook typing. |
 | 2026-09-07 | #5071 | Qualify lumped contact with event-resolved integration, timeout/resolution refusal, preload states, separate passive energy-loss channels and unchanged report v1 semantics. |
 | 2026-09-07 | #5076 | feat(mocap, #4715 TOOLS-M6): deliver pose backend adapters, skeleton mapping, fail-closed provider licensing manifest, MediaPipe adapter, and external service protocol in `sidekick.lab.mocap.adapters`. |

@@ -18,6 +18,25 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#8942 · Realtime Transport And Codemap Hashing Hot-Path Fixes
+
+- **State:** in_review
+- **PR:** https://github.com/D-sorganization/Tools/pull/5081
+- **Paths:** `src/shared/python/codemap/indexer.py`,
+  `src/shared/python/realtime/`, `tests/unit/codemap/`,
+  `tests/unit/realtime/`
+- **Started:** 2026-09-08
+- **Last verified:** 2026-09-08 (`SELF`)
+- **Summary:** Resolved the codemap hash callable once at module import
+  (the per-call `import blake3` retried a failing import — Python does not
+  cache failed imports — once per file and once per symbol) and added the
+  tools-canonical file realtime transport (`src/shared/python/realtime/`)
+  with persistent per-channel append handles and offset-tracked tailing,
+  removing per-message mkdir/exists/stat/open syscalls from publish.
+  Fixes UpstreamDrift#8942 Defects A and B on the provider side.
+- **Next step:** UpstreamDrift bumps its `vendor/ud-tools` pin and re-points
+  `src/shared/python/realtime/transport_file.py` at the vendored module.
+
 ### DL-0055 · Qualified Lumped Impact Dynamics
 
 - **State:** in_review
@@ -42,7 +61,6 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-07
 - **Last verified:** 2026-09-07 (`6d94f1d3d`)
 - **Summary:** Tensor mobility reference passes 30 TDD gates; additive public baseline recorded. 383 broader tests passed, 2 skipped; manifest and all push hooks pass. PR #5077 in review. #5068 retains future distributed/acoustic scope.
-
 - **Next step:** Resolve protected PR #5077 review/check results, then follow the separately scoped research dependencies.
 
 ### DL-0001 · Backup Tools 3300 Pyo3 Split
