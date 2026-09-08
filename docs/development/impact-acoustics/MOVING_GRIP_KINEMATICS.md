@@ -131,7 +131,8 @@ files), as does the actual pre-push mypy hook. Implementation is published at
 `0d45c4b7f32e0d2917c93e9ef6e492c032580dd7`, with its remote SHA verified and
 every normal commit/push hook passing. The published evidence is recorded in
 [issue #5072](https://github.com/D-sorganization/Tools/issues/5072#issuecomment-5591328984).
-Next, introduce an explicit constitutive model with these coordinate semantics,
-derive its loaded root balance and consistent tangent, and retain the anchor
-work in time evolution. Do not bolt a finite moving anchor onto the frozen
-clamped response or claim that local positive damping proves swing stability.
+The subsequent finite law and stationary loaded balance/tangent are documented
+in `FINITE_GRIP_RESPONSE.md` and `GRIPPED_CHAIN.md`. Retaining anchor work in
+time evolution remains required. Do not bolt a finite moving anchor onto the
+frozen clamped response or claim that local positive damping proves swing
+stability.

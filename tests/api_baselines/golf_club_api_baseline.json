@@ -2671,6 +2671,11 @@
     "explicit_all": true,
     "symbols": {}
   },
+  "_grip_stationary.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
   "_rotating_body_contracts.py": {
     "__all__": ["RotatingFrameState", "strict_vector3"],
     "explicit_all": false,
@@ -2860,6 +2865,21 @@
     "symbols": {}
   },
   "_shaft_frame_inertia.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_gripped_chain.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_gripped_dynamics.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_gripped_equilibrium.py": {
     "__all__": [],
     "explicit_all": true,
     "symbols": {}

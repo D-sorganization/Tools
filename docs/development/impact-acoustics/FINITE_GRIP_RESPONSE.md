@@ -99,8 +99,10 @@ root contribution is Ar^T g. Its directional derivative must retain
 consistent finite-pose boundary tangent. The full chain and grip residual
 must use the same material/fixed-chart convention and retain frame terms.
 
-Loaded root balance/tangent, time evolution with anchor work, mass/stability
-qualification and mesh/time/modal/FRF bandwidth checks remain open. Impact
+Subsequent stationary grip-supported root balance and its consistent tangent
+are implemented and verified in `GRIPPED_CHAIN.md`, including full-node
+M/G/C/K operators. Time evolution with anchor work, mass/stability qualification
+and mesh/time/modal/FRF bandwidth checks remain open. Impact
 contact, head/shaft ringdown, identified acoustic transfer/radiation and
 physical/blinded sweetness validation remain separate requirements. A passive
 relative coordinate law does not prove stability of a driven rotating swing.

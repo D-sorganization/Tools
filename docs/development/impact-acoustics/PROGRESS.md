@@ -369,6 +369,33 @@ path is used to bypass it. These are candidates for measured boundary-model
 checks, not golf impacts, full six-axis identification or sweetness evidence.
 The model-parameter comparison record is also catalogued for later review.
 
+## Current Grip-Supported Chain Checkpoint
+
+After published finite response `28c45eb15`, stationary grip attachments now
+couple at arbitrary shaft nodes with separate support reactions, combined
+elastic storage and the finite preload derivative. An all-node root solve
+shares the original bounded Newton/backtracking iteration; the clamped entry
+retains its exact root constraint. Frozen M/G/C/K arrays preserve existing
+distributed/head inertia and distinguish damping from gyroscopic transport.
+`GRIPPED_CHAIN.md` gives equations, frame/domain contracts and numerical oracles.
+
+Initial chain collection is RED (5.39 s); the first 28 coupled/clamped tests
+pass. Dynamic assembly is separately RED before implementation (6.80 s).
+All 38 final focused coupled/dynamic/clamped/grip tests pass (19.75 s), with
+independent additive axial/torsional compliance, interior/repeated support,
+nonplanar world force/moment, rotating rod and coordinate-energy checks.
+Nine API tests pass (5.40 s); only four empty private-module entries are added.
+Five-module hook mypy and repository Ruff 0.14.10 (3,751 files) pass.
+
+Complete Linux golf/API regression passes 646 tests (187.68 s), with two
+optional CAD skips and three unavailable-plugin warnings; one BLAS thread
+and the unchanged 60-second deadline are retained. All nine manual gates pass
+before and after edits; normal publication is pending. Stability,
+full grip-supported FRF/bandwidth and mesh/modal convergence, then nonlinear
+time evolution with anchor/frame work and time convergence remain required.
+Impact/acoustic/physical/blinded qualifications and protected inventory
+integration remain open. This is coupled model progress, not full epic closure.
+
 ## Current Authority Coordination Boundary
 
 UD remote `b8da0c0240c20926f8fb7ba9e55a7e5613c5d78d` restores the compatible

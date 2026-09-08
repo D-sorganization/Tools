@@ -7,6 +7,7 @@ response or experimental qualification is implied by the returned candidate.
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Protocol
 
 import numpy as np
 
@@ -14,11 +15,24 @@ from ._grip_contracts import Vector6, finite_array, vector6
 from ._shaft_chain import ChainLinearization, SectionChain, _material_chart_connection
 from ._shaft_rotating_chain import RotatingSectionChain
 from ._shaft_se3 import exp_twist
+from ._shaft_section import SectionElement
 from ._validation import require_finite_float
 
 _NODE_DOF = 6
 _BACKTRACK_FACTOR = 0.5
 _ARMIJO_FRACTION = 1e-4
+
+
+class _BalanceChain(Protocol):
+    """Minimal work/strain interface shared by supported chain compositions."""
+
+    @property
+    def node_count(self) -> int: ...
+
+    @property
+    def sections(self) -> tuple[SectionElement, ...]: ...
+
+    def linearize(self, poses: object) -> ChainLinearization: ...
 
 
 @dataclass(frozen=True)
@@ -87,6 +101,13 @@ class EquilibriumCandidate:
         return "unqualified"
 
 
+@dataclass(frozen=True)
+class _EquilibriumProblem:
+    chain: _BalanceChain
+    controls: EquilibriumControls
+    first_free_node: int
+
+
 def moving_residual_jacobian(response: ChainLinearization) -> np.ndarray:
     """Convert fixed-chart curvature to the derivative of material residual.
 
@@ -102,9 +123,7 @@ def moving_residual_jacobian(response: ChainLinearization) -> np.ndarray:
     return finite_array(tangent + connection, (size, size), "moving residual Jacobian")
 
 
-def _check_strains(
-    chain: SectionChain | RotatingSectionChain, poses: np.ndarray, limits: Vector6
-) -> None:
+def _check_strains(chain: _BalanceChain, poses: np.ndarray, limits: Vector6) -> None:
     for index, section in enumerate(chain.sections):
         strain = section.strain(poses[index], poses[index + 1])
         if np.any(np.abs(strain) > limits):
@@ -118,12 +137,15 @@ def _scales(controls: EquilibriumControls, nodes: int) -> tuple[np.ndarray, np.n
 
 
 def _newton_step(
-    response: ChainLinearization, scales: tuple[np.ndarray, np.ndarray]
+    response: ChainLinearization,
+    scales: tuple[np.ndarray, np.ndarray],
+    first_free_node: int,
 ) -> np.ndarray:
     force_scale, step_scale = scales
-    matrix = moving_residual_jacobian(response)[_NODE_DOF:, _NODE_DOF:]
+    start = _NODE_DOF * first_free_node
+    matrix = moving_residual_jacobian(response)[start:, start:]
     scaled = matrix * step_scale[None, :] / force_scale[:, None]
-    residual = response.residual[_NODE_DOF:] / force_scale
+    residual = response.residual[start:] / force_scale
     try:
         scaled_step = np.linalg.solve(scaled, -residual)
     except np.linalg.LinAlgError as error:
@@ -141,33 +163,38 @@ def _newton_step(
     return direction / largest
 
 
-def _trial_step(poses: np.ndarray, direction: np.ndarray) -> np.ndarray:
+def _trial_step(
+    poses: np.ndarray, direction: np.ndarray, first_free_node: int
+) -> np.ndarray:
     moved = poses.copy()
-    for index, delta in enumerate(direction.reshape(-1, _NODE_DOF), start=1):
+    for index, delta in enumerate(
+        direction.reshape(-1, _NODE_DOF), start=first_free_node
+    ):
         moved[index] = poses[index] @ exp_twist(delta)
     return moved
 
 
 def _backtrack(
-    chain: SectionChain | RotatingSectionChain,
+    problem: _EquilibriumProblem,
     state: tuple[np.ndarray, ChainLinearization],
     direction: np.ndarray,
-    controls: EquilibriumControls,
 ) -> tuple[np.ndarray, ChainLinearization]:
     poses, response = state
-    force_scale, _ = _scales(controls, chain.node_count - 1)
-    norm = np.linalg.norm(response.residual[_NODE_DOF:] / force_scale)
+    chain, controls, first = problem.chain, problem.controls, problem.first_free_node
+    start = _NODE_DOF * first
+    force_scale, _ = _scales(controls, chain.node_count - first)
+    norm = np.linalg.norm(response.residual[start:] / force_scale)
     fraction = 1.0
     for _ in range(controls.max_backtracks):
         try:
-            trial = _trial_step(poses, fraction * direction)
+            trial = _trial_step(poses, fraction * direction, first)
             _check_strains(chain, trial, controls.strain_limits)
             trial_response = chain.linearize(trial)
         except ValueError:
             # A trial may leave the declared material or numerical chart domain.
             fraction *= _BACKTRACK_FACTOR
             continue
-        trial_norm = np.linalg.norm(trial_response.residual[_NODE_DOF:] / force_scale)
+        trial_norm = np.linalg.norm(trial_response.residual[start:] / force_scale)
         if trial_norm <= (1 - _ARMIJO_FRACTION * fraction) * norm:
             return trial, trial_response
         fraction *= _BACKTRACK_FACTOR
@@ -188,6 +215,33 @@ def _candidate(
     )
 
 
+def _iterate_chain(
+    chain: _BalanceChain,
+    seed: object,
+    controls: EquilibriumControls,
+    first_free_node: int,
+) -> tuple[np.ndarray, ChainLinearization, int]:
+    """Shared bounded iteration; the caller declares clamped or all-free nodes."""
+    poses = finite_array(seed, (chain.node_count, 4, 4), "equilibrium seed")
+    response = chain.linearize(poses)
+    _check_strains(chain, poses, controls.strain_limits)
+    problem = _EquilibriumProblem(chain, controls, first_free_node)
+    scales = _scales(controls, chain.node_count - first_free_node)
+    start = _NODE_DOF * first_free_node
+    for iteration in range(controls.max_iterations + 1):
+        free = response.residual[start:].reshape(-1, _NODE_DOF)
+        if (
+            np.max(np.abs(free[:, :3])) <= controls.force_tolerance_n
+            and np.max(np.abs(free[:, 3:])) <= controls.moment_tolerance_nm
+        ):
+            return poses, response, iteration
+        if iteration == controls.max_iterations:
+            break
+        direction = _newton_step(response, scales, first_free_node)
+        poses, response = _backtrack(problem, (poses, response), direction)
+    raise RuntimeError("equilibrium iteration budget exhausted; no converged state")
+
+
 def solve_clamped_chain(
     chain: SectionChain | RotatingSectionChain,
     seed: object,
@@ -205,22 +259,7 @@ def solve_clamped_chain(
         raise TypeError(
             "expected SectionChain or RotatingSectionChain and EquilibriumControls"
         )
-    poses = finite_array(seed, (chain.node_count, 4, 4), "equilibrium seed")
-    response = chain.linearize(poses)
-    _check_strains(chain, poses, controls.strain_limits)
-    scales = _scales(controls, chain.node_count - 1)
-    for iteration in range(controls.max_iterations + 1):
-        candidate = _candidate(poses, response, iteration)
-        if (
-            candidate.force_residual_n <= controls.force_tolerance_n
-            and candidate.moment_residual_nm <= controls.moment_tolerance_nm
-        ):
-            return candidate
-        if iteration == controls.max_iterations:
-            break
-        direction = _newton_step(response, scales)
-        poses, response = _backtrack(chain, (poses, response), direction, controls)
-    raise RuntimeError("equilibrium iteration budget exhausted; no converged state")
+    return _candidate(*_iterate_chain(chain, seed, controls, first_free_node=1))
 
 
 __all__ = ()
