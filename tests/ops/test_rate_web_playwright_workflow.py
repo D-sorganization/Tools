@@ -229,14 +229,8 @@ def test_pr_runs_locked_cross_browser_gate_and_trusted_keeps_chromium_gate() -> 
         < baseline_index
     )
 
-    assert pr_job["env"]["RATE_VISUAL_BASELINE_CANDIDATE_DIR"] == (
-        "${{ github.workspace }}/visual-baseline-candidates"
-    )
     assert pr_job["env"]["RATE_VISUAL_BASELINE_SOURCE_COMMIT"] == (
         "${{ github.event.pull_request.head.sha }}"
-    )
-    assert trusted_pyqt_job["env"]["RATE_VISUAL_BASELINE_CANDIDATE_DIR"] == (
-        "${{ github.workspace }}/visual-baseline-candidates"
     )
     assert trusted_pyqt_job["env"]["RATE_VISUAL_BASELINE_SOURCE_COMMIT"] == (
         "${{ github.sha }}"
@@ -523,3 +517,26 @@ def test_both_pyqt_paths_share_an_immutable_container_and_font_setup() -> None:
         assert "fonts-dejavu-core" in first["run"]
         assert "fontconfig" in first["run"]
     assert pr_job["steps"][0] == trusted_job["steps"][0]
+
+
+def test_container_shell_uses_mounted_workspace_after_checkout() -> None:
+    for path, name in (
+        (PR_WORKFLOW_PATH, "production-worker-e2e"),
+        (TRUSTED_WORKFLOW_PATH, "push-pyqt-rendered-evidence"),
+    ):
+        job = _workflow(path)["jobs"][name]
+        step = _named_step(job, "Initialize container workspace")
+        steps = job["steps"]
+        assert steps.index(step) == steps.index(_checkout(job)) + 1
+        assert step["working-directory"] == "."
+        assert (
+            'git config --global --add safe.directory "$GITHUB_WORKSPACE"'
+            in step["run"]
+        )
+        assert 'git -C "$GITHUB_WORKSPACE" rev-parse --show-toplevel' in step["run"]
+        assert (
+            "RATE_VISUAL_BASELINE_CANDIDATE_DIR=$GITHUB_WORKSPACE/visual-baseline-candidates"
+            in step["run"]
+        )
+        assert '>> "$GITHUB_ENV"' in step["run"]
+        assert "RATE_VISUAL_BASELINE_CANDIDATE_DIR" not in job["env"]

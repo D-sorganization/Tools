@@ -110,7 +110,6 @@ jobs:
       run:
         working-directory: src/rate_of_closure/web
     env:
-      RATE_VISUAL_BASELINE_CANDIDATE_DIR: ${{ github.workspace }}/visual-baseline-candidates
       RATE_VISUAL_BASELINE_SOURCE_COMMIT: ${{ github.event.pull_request.head.sha }}
     steps:
       - name: Install container render system dependencies
@@ -126,6 +125,13 @@ jobs:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
+
+      - name: Initialize container workspace
+        working-directory: .
+        run: |-
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git -C "$GITHUB_WORKSPACE" rev-parse --show-toplevel
+          echo "RATE_VISUAL_BASELINE_CANDIDATE_DIR=$GITHUB_WORKSPACE/visual-baseline-candidates" >> "$GITHUB_ENV"
 
       - name: Enforce matched visual evidence co-changes
         working-directory: .

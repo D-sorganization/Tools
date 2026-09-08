@@ -76,3 +76,33 @@ Font package inventory was checked against [Playwright native dependencies](http
   then propose only justified reference changes through protected review.
 - Preserve old references until fresh capture exists. A passing unit suite
   is not a successful Linux render or human acceptance of the visual product.
+
+## Container shell checkout follow-up
+
+Published merge head `d01f42eda248e4d1588003622982caca52431725`
+contains protected main/T1 `f7254461399ac18e5667a0215afd90a9ebff9d22`.
+Run 34205681486, job 101994493233 successfully starts the Linux container,
+installs system dependencies, and checks out the repository. The first shell
+Git diff then exits 129 before capture. Checkout's log shows its safe-directory
+entry is written under a temporary HOME. The container runs as root over the
+host-mounted checkout. An isolated Git test with a simulated different owner
+reproduces exit 129; applying the actual new workflow step changes it to zero.
+This supports ownership trust as the cause; the next real run must confirm it.
+
+Both container jobs now register only `$GITHUB_WORKSPACE` in their ephemeral
+Git configuration and verify the checkout with `rev-parse` before subsequent
+work. Candidate output paths use that runtime mounted path through GITHUB_ENV;
+the earlier context expression expanded to the unmapped host path in CI logs.
+No wildcard trust, exemption, ignored Git error, image or tolerance change is
+introduced. The same experiment verifies paths containing spaces and continued
+rejection of an invalid base revision. The workflow regression failed before
+the new step; 52 related contracts pass afterward. All normal commit and push
+checks must still pass, followed by Linux capture and reference review.
+
+Checkout's temporary configuration behavior is visible in its pinned
+[primary implementation](https://github.com/actions/checkout/blob/3d3c42e5aac5ba805825da76410c181273ba90b1/src/git-auth-helper.ts#L76-L115).
+
+The normal commit hook also detected one newly inferred test link in the
+Rust AI-backend inventory shard from the workflow regression. The standard
+inventory generator adds only that link and its shard digest; no backend
+implementation changes. Re-run the complete hooks with this generated repair.
