@@ -111,7 +111,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "f7dadca411115ea57a894f8daf2e2f601b2b59599bb45d2309449833df549784",
+      "content_sha256_lf": "8f62a3aa5d8ac90183ad6fa316a29998bbba1630661106fea6875c7aaa9e5db4",
       "entry_count": 17,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
@@ -567,7 +567,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rotation-transforms.json"
     },
     {
-      "content_sha256_lf": "99eddf58b6d2bf7251b35e9f5581227a652972222cf71f465ff1b0ed82ee10b9",
+      "content_sha256_lf": "f4fc65f2759183795a26be84d7a9be53c20c79ad432da9886489f4f1a6269bfd",
       "entry_count": 26,
       "package": "src/rrt_path_planner",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rrt-path-planner.json"
@@ -609,7 +609,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-chat-contracts.json"
     },
     {
-      "content_sha256_lf": "0212b357369038b8fe7d224d2701c49aa7739a76ccbe352b58477f7c4bea34ff",
+      "content_sha256_lf": "a8abbb1dc2ad3cbdfa2ffe98eb8096d9ae1e669a71d575747361e8e147e2462e",
       "entry_count": 14,
       "package": "src/shared/python/codemap",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-codemap.json"
@@ -705,6 +705,12 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-programmatic-pid.json"
     },
     {
+      "content_sha256_lf": "6df304bea083a9add2fd2400c1dd0892c519f4d1c0b0889ef63ce1f11e6aed00",
+      "entry_count": 2,
+      "package": "src/shared/python/realtime",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-realtime.json"
+    },
+    {
       "content_sha256_lf": "95a572264144cce2bffa99693f4da3a7659412631d706f15bd5f82b9571211e6",
       "entry_count": 2,
       "package": "src/shared/python/reporting",
@@ -723,8 +729,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-scripting.json"
     },
     {
-      "content_sha256_lf": "85973760f6372d71ea2836da5162e7814d74f44ccb12f2c61fb36bc5402e0eee",
-      "entry_count": 220,
+      "content_sha256_lf": "24ff4a590ed3fd6f9477134912384b1fed2fa350f1c2da00c44556b06848bf3d",
+      "entry_count": 222,
       "package": "src/shared/python/sidekick",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick.json"
     },
@@ -735,7 +741,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-signal-toolkit.json"
     },
     {
-      "content_sha256_lf": "5912ecbcbe7b028af98a4e6d6e1866b2fc315946288728728c7ff669bd0bca8b",
+      "content_sha256_lf": "0c9065856f3183dc86edf67248e6121de9da83373b337071368f69125e79380b",
       "entry_count": 223,
       "package": "src/shared/python/swing_sim",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim.json"

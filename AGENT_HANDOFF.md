@@ -38,6 +38,11 @@ Tools is the fleet's shared engineering-tools monorepo (45+ tools: PyQt6 GUIs, F
 - TOOLS-D8 (#4728 / PR #5054) merged: enforces immutable public publication projection (`tools-publication-projection/1.0.0`).
 - TOOLS-D9 (#4730) enforces governed completion-audit handoff and maintenance contract (`tools-handoff-maintenance/1.0.0`) across root and per-tool handoffs with diff-aware CI gating, line budgets (<= 150 lines), and machine-checked evidence.
 - Completing and merging #4730 closes subepic #4730 and closes the entire parent epic [DOC-TOOLS] (#4707).
+- UpstreamDrift#8942 provider perf fix landed: codemap hashes resolve once at
+  module import, and `src/shared/python/realtime/transport_file.py` now ships
+  tools-canonical (persistent per-channel append handles, offset-tracked
+  tailing). Pending downstream wave: UpstreamDrift bumps its `vendor/ud-tools`
+  pin and re-points its transport copy at the vendored module.
 
 ## Must-Read Architecture Pointers
 
