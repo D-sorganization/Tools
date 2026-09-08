@@ -1,0 +1,298 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.d-sorganization.org/tools/publication-projection/1.0.0.json",
+  "title": "Tools Engineering Design Manual Public Publication Projection",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "manual_id",
+    "release_status",
+    "owner_subepic",
+    "authority_repository",
+    "catalog_repository",
+    "repository_license",
+    "private_content_allowed",
+    "evidence",
+    "blockers"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "tools-publication-projection/1.0.0"
+    },
+    "manual_id": {
+      "const": "tools"
+    },
+    "release_status": {
+      "enum": ["unapproved-projection-verified", "approved-for-publication"]
+    },
+    "owner_subepic": {
+      "const": 4728
+    },
+    "authority_repository": {
+      "const": "D-sorganization/Tools"
+    },
+    "catalog_repository": {
+      "const": "D-sorganization/Engineering-Design-Manuals"
+    },
+    "repository_license": {
+      "const": "MIT"
+    },
+    "private_content_allowed": {
+      "const": false
+    },
+    "evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "immutable_source_commit",
+        "source_tree_sha256",
+        "calculation_registry_sha256",
+        "toolchain_lock_sha256",
+        "artifact_sha256",
+        "semantic_parity",
+        "pdf_page_review",
+        "docx_page_review",
+        "accessibility_review",
+        "human_approval"
+      ],
+      "properties": {
+        "immutable_source_commit": {
+          "$ref": "#/$defs/gitRevision"
+        },
+        "source_tree_sha256": {
+          "$ref": "#/$defs/gitRevision"
+        },
+        "calculation_registry_sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "toolchain_lock_sha256": {
+          "$ref": "#/$defs/hash"
+        },
+        "artifact_sha256": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["docx", "html", "pdf", "tex"],
+          "properties": {
+            "docx": {
+              "$ref": "#/$defs/artifactDigest"
+            },
+            "html": {
+              "$ref": "#/$defs/artifactDigest"
+            },
+            "pdf": {
+              "$ref": "#/$defs/artifactDigest"
+            },
+            "tex": {
+              "$ref": "#/$defs/artifactDigest"
+            }
+          }
+        },
+        "semantic_parity": {
+          "const": "verified-semantic-parity"
+        },
+        "pdf_page_review": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "page_count",
+            "uninspected_pages",
+            "inspection_mode",
+            "sampling_rate",
+            "status"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "page_count": {
+              "type": "integer",
+              "const": 10
+            },
+            "uninspected_pages": {
+              "type": "integer",
+              "const": 0
+            },
+            "inspection_mode": {
+              "const": "complete-zero-sampling"
+            },
+            "sampling_rate": {
+              "const": 1.0
+            },
+            "status": {
+              "const": "verified"
+            }
+          }
+        },
+        "docx_page_review": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "path",
+            "paragraph_count",
+            "heading_count",
+            "math_element_count",
+            "table_count",
+            "drawing_count",
+            "bookmark_count",
+            "unresolved_reference_count",
+            "status"
+          ],
+          "properties": {
+            "path": {
+              "type": "string"
+            },
+            "paragraph_count": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "heading_count": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "math_element_count": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "table_count": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "drawing_count": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "bookmark_count": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "unresolved_reference_count": {
+              "type": "integer",
+              "const": 0
+            },
+            "status": {
+              "const": "verified"
+            }
+          }
+        },
+        "accessibility_review": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "html_path",
+            "has_lang",
+            "has_viewport",
+            "mathml_block_count",
+            "images_with_valid_alt",
+            "images_missing_alt",
+            "unresolved_reference_count",
+            "status"
+          ],
+          "properties": {
+            "html_path": {
+              "type": "string"
+            },
+            "has_lang": {
+              "type": "boolean",
+              "const": true
+            },
+            "has_viewport": {
+              "type": "boolean",
+              "const": true
+            },
+            "mathml_block_count": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "images_with_valid_alt": {
+              "type": "integer",
+              "minimum": 1
+            },
+            "images_missing_alt": {
+              "type": "integer",
+              "const": 0
+            },
+            "unresolved_reference_count": {
+              "type": "integer",
+              "const": 0
+            },
+            "status": {
+              "const": "verified"
+            }
+          }
+        },
+        "human_approval": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["state", "blocker_id", "review_boundary"],
+          "properties": {
+            "state": {
+              "enum": ["blocked-pending-human-approval", "approved"]
+            },
+            "blocker_id": {
+              "type": "string"
+            },
+            "review_boundary": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "blockers": {
+      "type": "array",
+      "minItems": 1,
+      "uniqueItems": true,
+      "items": {
+        "$ref": "#/$defs/blocker"
+      }
+    }
+  },
+  "$defs": {
+    "gitRevision": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{40}$"
+    },
+    "hash": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "artifactDigest": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "media_type", "bytes", "sha256"],
+      "properties": {
+        "path": {
+          "type": "string"
+        },
+        "media_type": {
+          "type": "string"
+        },
+        "bytes": {
+          "type": "integer",
+          "minimum": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/hash"
+        }
+      }
+    },
+    "blocker": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "owner", "resolution"],
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "owner": {
+          "type": "string"
+        },
+        "resolution": {
+          "type": "string"
+        }
+      }
+    }
+  }
+}

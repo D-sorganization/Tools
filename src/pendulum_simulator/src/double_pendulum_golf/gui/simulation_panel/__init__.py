@@ -12,7 +12,17 @@ The public API (``SimulationPanel``) is re-exported here so existing imports
 ``from .simulation_panel import SimulationPanel`` keep working.
 """
 
+import subprocess
+from PyQt6.QtWidgets import QFileDialog, QMessageBox
+
 from ._simulation_panel import SimulationPanel
 from ._worker import _SimViewer, _SimWorker
 
-__all__ = ["SimulationPanel", "_SimViewer", "_SimWorker"]
+__all__ = [
+    "SimulationPanel",
+    "_SimViewer",
+    "_SimWorker",
+    "QMessageBox",
+    "QFileDialog",
+    "subprocess",
+]

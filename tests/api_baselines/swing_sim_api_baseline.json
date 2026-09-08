@@ -57,9 +57,7 @@
       },
       "AttributionProvider": {
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "coordinate_names": {
               "args": [
@@ -896,10 +894,7 @@
       },
       "SwingRunMode": {
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         },
         "type": "class"
@@ -913,9 +908,7 @@
       },
       "SwingSource": {
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "duration": {
               "args": [
@@ -1060,10 +1053,7 @@
       },
       "TorqueProfileSource": {
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         },
         "type": "class"
@@ -1313,10 +1303,7 @@
     }
   },
   "_numeric_contracts.py": {
-    "__all__": [
-      "finite_real",
-      "integer"
-    ],
+    "__all__": ["finite_real", "integer"],
     "explicit_all": true,
     "symbols": {
       "finite_real": {
@@ -1792,10 +1779,7 @@
       },
       "BallSupportMode": {
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         },
         "type": "class"
@@ -1888,18 +1872,14 @@
     "symbols": {
       "AvailabilityRule": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "ComparabilityReason": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -1913,9 +1893,7 @@
       },
       "ConventionId": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -1998,9 +1976,7 @@
       },
       "EventTime": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -2057,36 +2033,28 @@
       },
       "ParameterId": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "QuantityStatus": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "ReferencePoint": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "SignRule": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -2170,9 +2138,7 @@
     }
   },
   "conventions/catalog.py": {
-    "__all__": [
-      "convention_registry"
-    ],
+    "__all__": ["convention_registry"],
     "explicit_all": false,
     "symbols": {
       "convention_registry": {
@@ -2204,18 +2170,14 @@
     "symbols": {
       "AvailabilityRule": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "ComparabilityReason": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -2229,9 +2191,7 @@
       },
       "ConventionId": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -2314,9 +2274,7 @@
       },
       "EventTime": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -2370,27 +2328,21 @@
       },
       "ParameterId": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "QuantityStatus": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "ReferencePoint": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -2400,9 +2352,7 @@
       },
       "SignRule": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -3287,18 +3237,14 @@
     "symbols": {
       "AvailabilityReason": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "BallFlightModel": {
         "info": {
-          "bases": [
-            "ABC"
-          ],
+          "bases": ["ABC"],
           "methods": {
             "description": {
               "args": [
@@ -3413,18 +3359,14 @@
       },
       "CapabilityObjective": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "CapabilityOptimizationCancelled": {
         "info": {
-          "bases": [
-            "RuntimeError"
-          ],
+          "bases": ["RuntimeError"],
           "methods": {
             "__init__": {
               "args": [
@@ -3577,9 +3519,7 @@
       },
       "CapabilitySampleStatus": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -3693,18 +3633,14 @@
       },
       "ClubProfileId": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "ConstantCoefficientModel": {
         "info": {
-          "bases": [
-            "BallFlightModel"
-          ],
+          "bases": ["BallFlightModel"],
           "methods": {
             "__init__": {
               "args": [
@@ -3822,9 +3758,7 @@
       },
       "EvaluationStatus": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -3834,18 +3768,14 @@
       },
       "FlightCancellationCallbackError": {
         "info": {
-          "bases": [
-            "RuntimeError"
-          ],
+          "bases": ["RuntimeError"],
           "methods": {}
         },
         "type": "class"
       },
       "FlightGroundTransferError": {
         "info": {
-          "bases": [
-            "ValueError"
-          ],
+          "bases": ["ValueError"],
           "methods": {
             "__init__": {
               "args": [
@@ -3978,9 +3908,7 @@
       },
       "FlightMetricId": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -4148,9 +4076,7 @@
       },
       "FlightModelType": {
         "info": {
-          "bases": [
-            "Enum"
-          ],
+          "bases": ["Enum"],
           "methods": {}
         },
         "type": "class"
@@ -4238,18 +4164,14 @@
       },
       "FlightSimulationCancelled": {
         "info": {
-          "bases": [
-            "RuntimeError"
-          ],
+          "bases": ["RuntimeError"],
           "methods": {}
         },
         "type": "class"
       },
       "FlightSimulatorProtocol": {
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "simulate": {
               "args": [
@@ -4286,9 +4208,7 @@
       },
       "FlightStatePoint": {
         "info": {
-          "bases": [
-            "TrajectoryPoint"
-          ],
+          "bases": ["TrajectoryPoint"],
           "methods": {}
         },
         "type": "class"
@@ -4351,9 +4271,7 @@
       },
       "ForwardStatus": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -4367,9 +4285,7 @@
       },
       "ImpactForwardEvaluator": {
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "evaluate": {
               "args": [
@@ -4741,9 +4657,7 @@
       },
       "MacDonaldHanzelyModel": {
         "info": {
-          "bases": [
-            "BallFlightModel"
-          ],
+          "bases": ["BallFlightModel"],
           "methods": {
             "__init__": {
               "args": [
@@ -4820,9 +4734,7 @@
       },
       "ModelAvailability": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -4865,9 +4777,7 @@
       },
       "ObjectiveMode": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -5190,9 +5100,7 @@
       },
       "SolverStatus": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -5284,9 +5192,7 @@
       },
       "ValueStatus": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -5302,9 +5208,7 @@
       },
       "WaterlooPennerModel": {
         "info": {
-          "bases": [
-            "BallFlightModel"
-          ],
+          "bases": ["BallFlightModel"],
           "methods": {
             "__init__": {
               "args": [
@@ -6107,18 +6011,14 @@
     "symbols": {
       "FlightCancellationCallbackError": {
         "info": {
-          "bases": [
-            "RuntimeError"
-          ],
+          "bases": ["RuntimeError"],
           "methods": {}
         },
         "type": "class"
       },
       "FlightSimulationCancelled": {
         "info": {
-          "bases": [
-            "RuntimeError"
-          ],
+          "bases": ["RuntimeError"],
           "methods": {}
         },
         "type": "class"
@@ -6243,10 +6143,7 @@
     }
   },
   "flight/aerodynamics.py": {
-    "__all__": [
-      "capped_lift_coefficient",
-      "spin_ratio_lift_coefficient"
-    ],
+    "__all__": ["capped_lift_coefficient", "spin_ratio_lift_coefficient"],
     "explicit_all": true,
     "symbols": {
       "capped_lift_coefficient": {
@@ -6300,9 +6197,7 @@
     "symbols": {
       "CapabilityObjective": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -6683,9 +6578,7 @@
       },
       "CapabilityOptimizationCancelled": {
         "info": {
-          "bases": [
-            "RuntimeError"
-          ],
+          "bases": ["RuntimeError"],
           "methods": {
             "__init__": {
               "args": [
@@ -6802,9 +6695,7 @@
       },
       "CapabilitySampleStatus": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -6815,10 +6706,7 @@
     }
   },
   "flight/capability_optimizer.py": {
-    "__all__": [
-      "CapabilityEvaluator",
-      "optimize_capability"
-    ],
+    "__all__": ["CapabilityEvaluator", "optimize_capability"],
     "explicit_all": true,
     "symbols": {
       "CapabilityEvaluator": {
@@ -7105,10 +6993,7 @@
     }
   },
   "flight/capability_sampling.py": {
-    "__all__": [
-      "sample_candidate_parameters",
-      "sample_perturbed_parameters"
-    ],
+    "__all__": ["sample_candidate_parameters", "sample_perturbed_parameters"],
     "explicit_all": true,
     "symbols": {
       "sample_candidate_parameters": {
@@ -7304,10 +7189,7 @@
     }
   },
   "flight/dynamics.py": {
-    "__all__": [
-      "ConstantCoefficientDynamics",
-      "WaterlooDynamics"
-    ],
+    "__all__": ["ConstantCoefficientDynamics", "WaterlooDynamics"],
     "explicit_all": true,
     "symbols": {
       "ConstantCoefficientDynamics": {
@@ -7327,10 +7209,7 @@
     }
   },
   "flight/frames.py": {
-    "__all__": [
-      "from_flight_frame",
-      "to_flight_frame"
-    ],
+    "__all__": ["from_flight_frame", "to_flight_frame"],
     "explicit_all": true,
     "symbols": {
       "from_flight_frame": {
@@ -7364,9 +7243,7 @@
     }
   },
   "flight/ground_bounce_execution.py": {
-    "__all__": [
-      "execute_repeated_bounce_from_flight"
-    ],
+    "__all__": ["execute_repeated_bounce_from_flight"],
     "explicit_all": true,
     "symbols": {
       "execute_repeated_bounce_from_flight": {
@@ -7420,9 +7297,7 @@
     "symbols": {
       "FlightGroundTransferError": {
         "info": {
-          "bases": [
-            "ValueError"
-          ],
+          "bases": ["ValueError"],
           "methods": {
             "__init__": {
               "args": [
@@ -7519,9 +7394,7 @@
     }
   },
   "flight/impact_solution_adapter.py": {
-    "__all__": [
-      "CenteredClubDeliveryAdapter"
-    ],
+    "__all__": ["CenteredClubDeliveryAdapter"],
     "explicit_all": true,
     "symbols": {
       "CenteredClubDeliveryAdapter": {
@@ -7593,9 +7466,7 @@
     "symbols": {
       "ClubProfileId": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -7655,9 +7526,7 @@
       },
       "ForwardStatus": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -7758,9 +7627,7 @@
       },
       "ModelAvailability": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -7804,9 +7671,7 @@
     }
   },
   "flight/impact_solution_parsing.py": {
-    "__all__": [
-      "parse_impact_solution_result"
-    ],
+    "__all__": ["parse_impact_solution_result"],
     "explicit_all": true,
     "symbols": {
       "parse_impact_solution_result": {
@@ -8021,17 +7886,12 @@
     }
   },
   "flight/impact_solution_solver.py": {
-    "__all__": [
-      "ImpactForwardEvaluator",
-      "solve_impact_solution_families"
-    ],
+    "__all__": ["ImpactForwardEvaluator", "solve_impact_solution_families"],
     "explicit_all": true,
     "symbols": {
       "ImpactForwardEvaluator": {
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "evaluate": {
               "args": [
@@ -8149,9 +8009,7 @@
       },
       "EvaluationStatus": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -8288,9 +8146,7 @@
       },
       "ObjectiveMode": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -8395,9 +8251,7 @@
       },
       "SolverStatus": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -8554,10 +8408,7 @@
     }
   },
   "flight/inverse_solver.py": {
-    "__all__": [
-      "ForwardEvaluator",
-      "solve_inverse_flight"
-    ],
+    "__all__": ["ForwardEvaluator", "solve_inverse_flight"],
     "explicit_all": true,
     "symbols": {
       "ForwardEvaluator": {
@@ -8586,9 +8437,7 @@
     }
   },
   "flight/launch.py": {
-    "__all__": [
-      "derive_launch_conditions"
-    ],
+    "__all__": ["derive_launch_conditions"],
     "explicit_all": true,
     "symbols": {
       "derive_launch_conditions": {
@@ -8627,9 +8476,7 @@
     "symbols": {
       "BallFlightModel": {
         "info": {
-          "bases": [
-            "ABC"
-          ],
+          "bases": ["ABC"],
           "methods": {
             "description": {
               "args": [
@@ -8728,9 +8575,7 @@
       },
       "ConstantCoefficientModel": {
         "info": {
-          "bases": [
-            "BallFlightModel"
-          ],
+          "bases": ["BallFlightModel"],
           "methods": {
             "__init__": {
               "args": [
@@ -8795,27 +8640,21 @@
       },
       "FlightCancellationCallbackError": {
         "info": {
-          "bases": [
-            "RuntimeError"
-          ],
+          "bases": ["RuntimeError"],
           "methods": {}
         },
         "type": "class"
       },
       "FlightSimulationCancelled": {
         "info": {
-          "bases": [
-            "RuntimeError"
-          ],
+          "bases": ["RuntimeError"],
           "methods": {}
         },
         "type": "class"
       },
       "MacDonaldHanzelyModel": {
         "info": {
-          "bases": [
-            "BallFlightModel"
-          ],
+          "bases": ["BallFlightModel"],
           "methods": {
             "__init__": {
               "args": [
@@ -8885,9 +8724,7 @@
       },
       "WaterlooPennerModel": {
         "info": {
-          "bases": [
-            "BallFlightModel"
-          ],
+          "bases": ["BallFlightModel"],
           "methods": {
             "__init__": {
               "args": [
@@ -8982,17 +8819,12 @@
     }
   },
   "flight/pipeline.py": {
-    "__all__": [
-      "FlightSimulatorProtocol",
-      "simulate"
-    ],
+    "__all__": ["FlightSimulatorProtocol", "simulate"],
     "explicit_all": true,
     "symbols": {
       "FlightSimulatorProtocol": {
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "simulate": {
               "args": [
@@ -9138,11 +8970,7 @@
     }
   },
   "flight/registry.py": {
-    "__all__": [
-      "FlightModelRegistry",
-      "FlightModelType",
-      "compare_models"
-    ],
+    "__all__": ["FlightModelRegistry", "FlightModelType", "compare_models"],
     "explicit_all": true,
     "symbols": {
       "FlightModelRegistry": {
@@ -9194,9 +9022,7 @@
       },
       "FlightModelType": {
         "info": {
-          "bases": [
-            "Enum"
-          ],
+          "bases": ["Enum"],
           "methods": {}
         },
         "type": "class"
@@ -9224,10 +9050,7 @@
     }
   },
   "flight/result_catalog_data.py": {
-    "__all__": [
-      "IDENTITIES",
-      "MetricIdentity"
-    ],
+    "__all__": ["IDENTITIES", "MetricIdentity"],
     "explicit_all": true,
     "symbols": {
       "IDENTITIES": {
@@ -9258,18 +9081,14 @@
     "symbols": {
       "AvailabilityReason": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "ComparabilityStatus": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -9365,9 +9184,7 @@
       },
       "FlightMetricId": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -9377,18 +9194,14 @@
       },
       "SignRule": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "ValueStatus": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -9403,9 +9216,7 @@
     }
   },
   "flight/result_derivation.py": {
-    "__all__": [
-      "derive_flight_metric_result"
-    ],
+    "__all__": ["derive_flight_metric_result"],
     "explicit_all": true,
     "symbols": {
       "derive_flight_metric_result": {
@@ -9600,9 +9411,7 @@
     }
   },
   "flight/spin_axis_convention.py": {
-    "__all__": [
-      "spin_axis_tilt_deg"
-    ],
+    "__all__": ["spin_axis_tilt_deg"],
     "explicit_all": true,
     "symbols": {
       "spin_axis_tilt_deg": {
@@ -9622,16 +9431,12 @@
     }
   },
   "flight/state.py": {
-    "__all__": [
-      "FlightStatePoint"
-    ],
+    "__all__": ["FlightStatePoint"],
     "explicit_all": true,
     "symbols": {
       "FlightStatePoint": {
         "info": {
-          "bases": [
-            "TrajectoryPoint"
-          ],
+          "bases": ["TrajectoryPoint"],
           "methods": {}
         },
         "type": "class"
@@ -9639,9 +9444,7 @@
     }
   },
   "flight/surface_simulation.py": {
-    "__all__": [
-      "SurfaceFlightSimulationSettings"
-    ],
+    "__all__": ["SurfaceFlightSimulationSettings"],
     "explicit_all": true,
     "symbols": {
       "SurfaceFlightSimulationSettings": {
@@ -9821,11 +9624,7 @@
     }
   },
   "flight/wind.py": {
-    "__all__": [
-      "WIND_SCHEMA_VERSION",
-      "WindGust",
-      "WindScenario"
-    ],
+    "__all__": ["WIND_SCHEMA_VERSION", "WindGust", "WindScenario"],
     "explicit_all": true,
     "symbols": {
       "WIND_SCHEMA_VERSION": {
@@ -10015,9 +9814,7 @@
       },
       "WindStrategyCancelledError": {
         "info": {
-          "bases": [
-            "RuntimeError"
-          ],
+          "bases": ["RuntimeError"],
           "methods": {}
         },
         "type": "class"
@@ -10058,9 +9855,7 @@
     }
   },
   "flight/wind_strategy_metrics.py": {
-    "__all__": [
-      "summarize_strategy_outcomes"
-    ],
+    "__all__": ["summarize_strategy_outcomes"],
     "explicit_all": true,
     "symbols": {
       "summarize_strategy_outcomes": {
@@ -10705,9 +10500,7 @@
       },
       "AttributionProvider": {
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "coordinate_names": {
               "args": [
@@ -11086,9 +10879,7 @@
     }
   },
   "force_attribution_providers.py": {
-    "__all__": [
-      "DoublePendulumAttributionProvider"
-    ],
+    "__all__": ["DoublePendulumAttributionProvider"],
     "explicit_all": true,
     "symbols": {
       "DoublePendulumAttributionProvider": {
@@ -11439,9 +11230,7 @@
       },
       "BounceTerminationReason": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -11458,9 +11247,7 @@
       },
       "CalibrationKind": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -11562,9 +11349,7 @@
       },
       "GroundCalibration": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {}
         },
         "type": "class"
@@ -11578,18 +11363,14 @@
       },
       "GroundCompositionError": {
         "info": {
-          "bases": [
-            "ValueError"
-          ],
+          "bases": ["ValueError"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundContactState": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {}
         },
         "type": "class"
@@ -11599,36 +11380,28 @@
       },
       "GroundEvent": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundEventType": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundEvidenceKind": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundFrame": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -11642,9 +11415,7 @@
       },
       "GroundMaterialProfile": {
         "info": {
-          "bases": [
-            "ProfileDocument"
-          ],
+          "bases": ["ProfileDocument"],
           "methods": {
             "parameter_value": {
               "args": [
@@ -11669,27 +11440,21 @@
       },
       "GroundModelUseStatus": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundParameterId": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundPhase": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -11703,9 +11468,7 @@
       },
       "GroundProfileLibrary": {
         "info": {
-          "bases": [
-            "ProfileDocument"
-          ],
+          "bases": ["ProfileDocument"],
           "methods": {
             "profile": {
               "args": [
@@ -11913,9 +11676,7 @@
       },
       "GroundProvenance": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {}
         },
         "type": "class"
@@ -11929,18 +11690,14 @@
       },
       "GroundQualificationGateId": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundQualificationStatus": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -11959,9 +11716,7 @@
       },
       "GroundRegionalMaterialPlanRequest": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {
             "from_dict": {
               "args": [
@@ -11997,9 +11752,7 @@
       },
       "GroundRegionalMaterialPlanResult": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {
             "base_surface": {
               "args": [
@@ -12035,9 +11788,7 @@
       },
       "GroundRegionalMaterialRegion": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {
             "from_dict": {
               "args": [
@@ -12079,27 +11830,21 @@
       },
       "GroundResultStatus": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundSimulationRequest": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundSimulationResult": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {}
         },
         "type": "class"
@@ -12124,18 +11869,14 @@
       },
       "GroundSummary": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundSurfaceProfile": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {
             "relative_normal_speed_m_s": {
               "args": [
@@ -12189,72 +11930,56 @@
       },
       "GroundTermination": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundTerminationReason": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundTrajectoryPoint": {
         "info": {
-          "bases": [
-            "GroundContactState"
-          ],
+          "bases": ["GroundContactState"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundUnavailableField": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundUnavailableFieldId": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundUnavailableReason": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundWarning": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundWarningSeverity": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -12275,27 +12000,21 @@
       },
       "ImpactRegime": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "ImpactRejectionReason": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "ImpactStateError": {
         "info": {
-          "bases": [
-            "ValueError"
-          ],
+          "bases": ["ValueError"],
           "methods": {
             "__init__": {
               "args": [
@@ -12423,36 +12142,28 @@
       },
       "ProfileStoreConflictError": {
         "info": {
-          "bases": [
-            "ProfileStoreError"
-          ],
+          "bases": ["ProfileStoreError"],
           "methods": {}
         },
         "type": "class"
       },
       "ProfileStoreCorruptionError": {
         "info": {
-          "bases": [
-            "ProfileStoreError"
-          ],
+          "bases": ["ProfileStoreError"],
           "methods": {}
         },
         "type": "class"
       },
       "ProfileStoreError": {
         "info": {
-          "bases": [
-            "RuntimeError"
-          ],
+          "bases": ["RuntimeError"],
           "methods": {}
         },
         "type": "class"
       },
       "ProfileStoreIndeterminateCommitError": {
         "info": {
-          "bases": [
-            "ProfileStoreCorruptionError"
-          ],
+          "bases": ["ProfileStoreCorruptionError"],
           "methods": {
             "__init__": {
               "args": [
@@ -12483,18 +12194,14 @@
       },
       "ProfileStoreLockError": {
         "info": {
-          "bases": [
-            "ProfileStoreError"
-          ],
+          "bases": ["ProfileStoreError"],
           "methods": {}
         },
         "type": "class"
       },
       "ProfileStorePathError": {
         "info": {
-          "bases": [
-            "ProfileStoreError"
-          ],
+          "bases": ["ProfileStoreError"],
           "methods": {}
         },
         "type": "class"
@@ -12540,9 +12247,7 @@
       },
       "RegionalGroundExecutionFailureReason": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -12556,9 +12261,7 @@
       },
       "RegionalGroundExecutionResult": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {
             "execution_input_sha256": {
               "args": [
@@ -12594,9 +12297,7 @@
       },
       "RegionalGroundExecutionStatus": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -12879,9 +12580,7 @@
       },
       "SkidRollTerminationReason": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -13180,9 +12879,7 @@
       },
       "TerrainDispositionKind": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -14177,9 +13874,7 @@
     }
   },
   "ground/bounce_execution.py": {
-    "__all__": [
-      "execute_repeated_bounce_request"
-    ],
+    "__all__": ["execute_repeated_bounce_request"],
     "explicit_all": true,
     "symbols": {
       "execute_repeated_bounce_request": {
@@ -14603,9 +14298,7 @@
     }
   },
   "ground/bounce_simulation.py": {
-    "__all__": [
-      "simulate_repeated_bounce"
-    ],
+    "__all__": ["simulate_repeated_bounce"],
     "explicit_all": true,
     "symbols": {
       "simulate_repeated_bounce": {
@@ -14689,9 +14382,7 @@
       },
       "BounceTerminationReason": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -14844,26 +14535,19 @@
     }
   },
   "ground/contract_records.py": {
-    "__all__": [
-      "GroundSimulationRequest",
-      "GroundSimulationResult"
-    ],
+    "__all__": ["GroundSimulationRequest", "GroundSimulationResult"],
     "explicit_all": true,
     "symbols": {
       "GroundSimulationRequest": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundSimulationResult": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {}
         },
         "type": "class"
@@ -14894,90 +14578,70 @@
     "symbols": {
       "CalibrationKind": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundCalibration": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundContactState": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundEvent": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundEventType": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundFrame": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundPhase": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundProvenance": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundResultStatus": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundSurfaceProfile": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {
             "relative_normal_speed_m_s": {
               "args": [
@@ -15025,27 +14689,21 @@
       },
       "GroundTerminationReason": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundTrajectoryPoint": {
         "info": {
-          "bases": [
-            "GroundContactState"
-          ],
+          "bases": ["GroundContactState"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundWarningSeverity": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -15138,17 +14796,12 @@
     }
   },
   "ground/ground_result_composer.py": {
-    "__all__": [
-      "GroundCompositionError",
-      "compose_ground_result"
-    ],
+    "__all__": ["GroundCompositionError", "compose_ground_result"],
     "explicit_all": true,
     "symbols": {
       "GroundCompositionError": {
         "info": {
-          "bases": [
-            "ValueError"
-          ],
+          "bases": ["ValueError"],
           "methods": {}
         },
         "type": "class"
@@ -15182,9 +14835,7 @@
     }
   },
   "ground/impact_impulse.py": {
-    "__all__": [
-      "resolve_sphere_plane_impact"
-    ],
+    "__all__": ["resolve_sphere_plane_impact"],
     "explicit_all": true,
     "symbols": {
       "resolve_sphere_plane_impact": {
@@ -15248,27 +14899,21 @@
       },
       "ImpactRegime": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "ImpactRejectionReason": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "ImpactStateError": {
         "info": {
-          "bases": [
-            "ValueError"
-          ],
+          "bases": ["ValueError"],
           "methods": {
             "__init__": {
               "args": [
@@ -15366,10 +15011,7 @@
     }
   },
   "ground/migration.py": {
-    "__all__": [
-      "migrate_request_to_current",
-      "migrate_result_to_current"
-    ],
+    "__all__": ["migrate_request_to_current", "migrate_result_to_current"],
     "explicit_all": true,
     "symbols": {
       "migrate_request_to_current": {
@@ -15492,45 +15134,35 @@
       },
       "GroundEvidenceKind": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundModelUseStatus": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundParameterId": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundQualificationGateId": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundQualificationStatus": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -15538,10 +15170,7 @@
     }
   },
   "ground/profile_migration.py": {
-    "__all__": [
-      "migrate_library_to_current",
-      "migrate_profile_to_current"
-    ],
+    "__all__": ["migrate_library_to_current", "migrate_profile_to_current"],
     "explicit_all": true,
     "symbols": {
       "migrate_library_to_current": {
@@ -15807,36 +15436,28 @@
       },
       "ProfileStoreConflictError": {
         "info": {
-          "bases": [
-            "ProfileStoreError"
-          ],
+          "bases": ["ProfileStoreError"],
           "methods": {}
         },
         "type": "class"
       },
       "ProfileStoreCorruptionError": {
         "info": {
-          "bases": [
-            "ProfileStoreError"
-          ],
+          "bases": ["ProfileStoreError"],
           "methods": {}
         },
         "type": "class"
       },
       "ProfileStoreError": {
         "info": {
-          "bases": [
-            "RuntimeError"
-          ],
+          "bases": ["RuntimeError"],
           "methods": {}
         },
         "type": "class"
       },
       "ProfileStoreIndeterminateCommitError": {
         "info": {
-          "bases": [
-            "ProfileStoreCorruptionError"
-          ],
+          "bases": ["ProfileStoreCorruptionError"],
           "methods": {
             "__init__": {
               "args": [
@@ -15867,18 +15488,14 @@
       },
       "ProfileStoreLockError": {
         "info": {
-          "bases": [
-            "ProfileStoreError"
-          ],
+          "bases": ["ProfileStoreError"],
           "methods": {}
         },
         "type": "class"
       },
       "ProfileStorePathError": {
         "info": {
-          "bases": [
-            "ProfileStoreError"
-          ],
+          "bases": ["ProfileStoreError"],
           "methods": {}
         },
         "type": "class"
@@ -16009,9 +15626,7 @@
       },
       "GroundMaterialProfile": {
         "info": {
-          "bases": [
-            "ProfileDocument"
-          ],
+          "bases": ["ProfileDocument"],
           "methods": {
             "parameter_value": {
               "args": [
@@ -16043,9 +15658,7 @@
       },
       "GroundProfileLibrary": {
         "info": {
-          "bases": [
-            "ProfileDocument"
-          ],
+          "bases": ["ProfileDocument"],
           "methods": {
             "profile": {
               "args": [
@@ -16733,9 +16346,7 @@
     }
   },
   "ground/reference_execution.py": {
-    "__all__": [
-      "run_ground_reference"
-    ],
+    "__all__": ["run_ground_reference"],
     "explicit_all": true,
     "symbols": {
       "run_ground_reference": {
@@ -16775,9 +16386,7 @@
       },
       "GroundReferenceCancelled": {
         "info": {
-          "bases": [
-            "GroundReferenceExecutionError"
-          ],
+          "bases": ["GroundReferenceExecutionError"],
           "methods": {}
         },
         "type": "class"
@@ -16814,9 +16423,7 @@
       },
       "GroundReferenceExecutionError": {
         "info": {
-          "bases": [
-            "RuntimeError"
-          ],
+          "bases": ["RuntimeError"],
           "methods": {
             "__init__": {
               "args": [
@@ -16853,9 +16460,7 @@
       },
       "GroundReferencePhase": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -16961,18 +16566,14 @@
       },
       "RegionalGroundExecutionFailureReason": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "RegionalGroundExecutionResult": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {
             "execution_input_sha256": {
               "args": [
@@ -17008,9 +16609,7 @@
       },
       "RegionalGroundExecutionStatus": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -17094,9 +16693,7 @@
     "symbols": {
       "GroundRegionalMaterialPlanRequest": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {
             "from_dict": {
               "args": [
@@ -17132,9 +16729,7 @@
       },
       "GroundRegionalMaterialPlanResult": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {
             "base_surface": {
               "args": [
@@ -17170,9 +16765,7 @@
       },
       "GroundRegionalMaterialRegion": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {
             "from_dict": {
               "args": [
@@ -17313,9 +16906,7 @@
     "symbols": {
       "GroundRegionalMaterialPlanRequest": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {
             "from_dict": {
               "args": [
@@ -17351,9 +16942,7 @@
       },
       "GroundRegionalMaterialPlanResult": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {
             "base_surface": {
               "args": [
@@ -17389,9 +16978,7 @@
       },
       "GroundRegionalMaterialRegion": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {
             "from_dict": {
               "args": [
@@ -17613,9 +17200,7 @@
     }
   },
   "ground/regional_transition_binding.py": {
-    "__all__": [
-      "validate_transition_against_plan"
-    ],
+    "__all__": ["validate_transition_against_plan"],
     "explicit_all": true,
     "symbols": {
       "validate_transition_against_plan": {
@@ -17647,10 +17232,7 @@
     }
   },
   "ground/request_identity.py": {
-    "__all__": [
-      "ground_request_fingerprint",
-      "validate_request_fingerprint"
-    ],
+    "__all__": ["ground_request_fingerprint", "validate_request_fingerprint"],
     "explicit_all": true,
     "symbols": {
       "ground_request_fingerprint": {
@@ -17721,36 +17303,26 @@
     }
   },
   "ground/result_types.py": {
-    "__all__": [
-      "GroundSummary",
-      "GroundTermination",
-      "GroundWarning"
-    ],
+    "__all__": ["GroundSummary", "GroundTermination", "GroundWarning"],
     "explicit_all": true,
     "symbols": {
       "GroundSummary": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundTermination": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundWarning": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {}
         },
         "type": "class"
@@ -18236,9 +17808,7 @@
     }
   },
   "ground/skid_roll_result_types.py": {
-    "__all__": [
-      "SkidRollResult"
-    ],
+    "__all__": ["SkidRollResult"],
     "explicit_all": true,
     "symbols": {
       "SkidRollResult": {
@@ -18251,10 +17821,7 @@
     }
   },
   "ground/skid_roll_runtime.py": {
-    "__all__": [
-      "AdvanceResult",
-      "SurfaceRun"
-    ],
+    "__all__": ["AdvanceResult", "SurfaceRun"],
     "explicit_all": true,
     "symbols": {
       "AdvanceResult": {
@@ -18451,10 +18018,7 @@
     }
   },
   "ground/skid_roll_simulation.py": {
-    "__all__": [
-      "SkidRollExecution",
-      "simulate_skid_roll"
-    ],
+    "__all__": ["SkidRollExecution", "simulate_skid_roll"],
     "explicit_all": true,
     "symbols": {
       "SkidRollExecution": {
@@ -18493,9 +18057,7 @@
     }
   },
   "ground/skid_roll_validation.py": {
-    "__all__": [
-      "validate_surface_run_inputs"
-    ],
+    "__all__": ["validate_surface_run_inputs"],
     "explicit_all": true,
     "symbols": {
       "validate_surface_run_inputs": {
@@ -18533,9 +18095,7 @@
     }
   },
   "ground/strict_json.py": {
-    "__all__": [
-      "strict_json_object"
-    ],
+    "__all__": ["strict_json_object"],
     "explicit_all": true,
     "symbols": {
       "strict_json_object": {
@@ -18555,10 +18115,7 @@
     }
   },
   "ground/study_derivation.py": {
-    "__all__": [
-      "derive_solver_eligibility",
-      "derive_study_status"
-    ],
+    "__all__": ["derive_solver_eligibility", "derive_study_status"],
     "explicit_all": true,
     "symbols": {
       "derive_solver_eligibility": {
@@ -18785,9 +18342,7 @@
     }
   },
   "ground/study_projection.py": {
-    "__all__": [
-      "project_ground_study"
-    ],
+    "__all__": ["project_ground_study"],
     "explicit_all": true,
     "symbols": {
       "project_ground_study": {
@@ -18825,9 +18380,7 @@
     }
   },
   "ground/study_record.py": {
-    "__all__": [
-      "GroundStudyProjection"
-    ],
+    "__all__": ["GroundStudyProjection"],
     "explicit_all": true,
     "symbols": {
       "GroundStudyProjection": {
@@ -18919,9 +18472,7 @@
     }
   },
   "ground/study_target.py": {
-    "__all__": [
-      "canonical_ground_target"
-    ],
+    "__all__": ["canonical_ground_target"],
     "explicit_all": true,
     "symbols": {
       "canonical_ground_target": {
@@ -18959,9 +18510,7 @@
       },
       "GroundEndpointKind": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -18975,9 +18524,7 @@
       },
       "GroundSolverEligibilityReason": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -19054,9 +18601,7 @@
       },
       "GroundStudyStatus": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -19082,9 +18627,7 @@
       },
       "GroundTargetUnavailableReason": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -19276,9 +18819,7 @@
       },
       "SkidRollTerminationReason": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -19318,9 +18859,7 @@
     }
   },
   "ground/surface_resolver.py": {
-    "__all__": [
-      "SurfaceResolver"
-    ],
+    "__all__": ["SurfaceResolver"],
     "explicit_all": true,
     "symbols": {
       "SurfaceResolver": {
@@ -19726,10 +19265,7 @@
     }
   },
   "ground/trajectory_transition_rules.py": {
-    "__all__": [
-      "EVENT_TRANSITIONS",
-      "PHASE_TRANSITIONS"
-    ],
+    "__all__": ["EVENT_TRANSITIONS", "PHASE_TRANSITIONS"],
     "explicit_all": true,
     "symbols": {
       "EVENT_TRANSITIONS": {
@@ -19750,27 +19286,21 @@
     "symbols": {
       "GroundUnavailableField": {
         "info": {
-          "bases": [
-            "_WireRecord"
-          ],
+          "bases": ["_WireRecord"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundUnavailableFieldId": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
       },
       "GroundUnavailableReason": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -19907,9 +19437,7 @@
       },
       "TerrainDispositionKind": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -20286,9 +19814,7 @@
       },
       "DPlaneStatus": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -20324,9 +19850,7 @@
       },
       "FiniteTimeImpactModel": {
         "info": {
-          "bases": [
-            "ImpactModel"
-          ],
+          "bases": ["ImpactModel"],
           "methods": {
             "solve": {
               "args": [
@@ -20380,9 +19904,7 @@
       },
       "ImpactModel": {
         "info": {
-          "bases": [
-            "ABC"
-          ],
+          "bases": ["ABC"],
           "methods": {
             "solve": {
               "args": [
@@ -20413,9 +19935,7 @@
       },
       "ImpactModelType": {
         "info": {
-          "bases": [
-            "Enum"
-          ],
+          "bases": ["Enum"],
           "methods": {}
         },
         "type": "class"
@@ -20776,9 +20296,7 @@
       },
       "RigidBodyImpactModel": {
         "info": {
-          "bases": [
-            "ImpactModel"
-          ],
+          "bases": ["ImpactModel"],
           "methods": {
             "solve": {
               "args": [
@@ -20812,9 +20330,7 @@
       },
       "SpringDamperImpactModel": {
         "info": {
-          "bases": [
-            "ImpactModel"
-          ],
+          "bases": ["ImpactModel"],
           "methods": {
             "__init__": {
               "args": [
@@ -21212,6 +20728,78 @@
       }
     }
   },
+  "impact/contact.py": {
+    "__all__": ["KelvinVoigtContactLaw"],
+    "explicit_all": true,
+    "symbols": {
+      "KelvinVoigtContactLaw": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "from_restitution": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "stiffness_n_per_m"
+                },
+                {
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "restitution"
+                },
+                {
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "effective_mass_kg"
+                },
+                {
+                  "annotation": "float",
+                  "default": "10000000.0",
+                  "kind": "arg",
+                  "name": "maximum_force_n"
+                }
+              ],
+              "returns": "KelvinVoigtContactLaw"
+            },
+            "normal_force": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "compression_m"
+                },
+                {
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "compression_rate_mps"
+                }
+              ],
+              "returns": "float"
+            }
+          }
+        },
+        "type": "class"
+      }
+    }
+  },
   "impact/delivery.py": {
     "__all__": [
       "DeliveryDerived",
@@ -21326,9 +20914,7 @@
       },
       "DPlaneStatus": {
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         },
         "type": "class"
@@ -21514,9 +21100,7 @@
     "symbols": {
       "FiniteTimeImpactModel": {
         "info": {
-          "bases": [
-            "ImpactModel"
-          ],
+          "bases": ["ImpactModel"],
           "methods": {
             "solve": {
               "args": [
@@ -21547,9 +21131,7 @@
       },
       "ImpactModel": {
         "info": {
-          "bases": [
-            "ABC"
-          ],
+          "bases": ["ABC"],
           "methods": {
             "solve": {
               "args": [
@@ -21580,9 +21162,7 @@
       },
       "RigidBodyImpactModel": {
         "info": {
-          "bases": [
-            "ImpactModel"
-          ],
+          "bases": ["ImpactModel"],
           "methods": {
             "solve": {
               "args": [
@@ -21616,9 +21196,7 @@
       },
       "SpringDamperImpactModel": {
         "info": {
-          "bases": [
-            "ImpactModel"
-          ],
+          "bases": ["ImpactModel"],
           "methods": {
             "__init__": {
               "args": [
@@ -21727,11 +21305,7 @@
     }
   },
   "impact/solver.py": {
-    "__all__": [
-      "ImpactRecorder",
-      "ImpactSolverAPI",
-      "logger"
-    ],
+    "__all__": ["ImpactRecorder", "ImpactSolverAPI", "logger"],
     "explicit_all": false,
     "symbols": {
       "ImpactRecorder": {
@@ -22091,9 +21665,7 @@
       },
       "ImpactModelType": {
         "info": {
-          "bases": [
-            "Enum"
-          ],
+          "bases": ["Enum"],
           "methods": {}
         },
         "type": "class"
@@ -22122,9 +21694,7 @@
     }
   },
   "impact/utils.py": {
-    "__all__": [
-      "validate_energy_balance"
-    ],
+    "__all__": ["validate_energy_balance"],
     "explicit_all": false,
     "symbols": {
       "validate_energy_balance": {
@@ -22155,11 +21725,385 @@
       }
     }
   },
-  "integration_grid.py": {
+  "impact_interval/__init__.py": {
     "__all__": [
-      "DEFAULT_SWING_RK4_DT_S",
-      "effective_rk4_duration"
+      "BoundaryKind",
+      "ClubRigidBody",
+      "ImpactIntervalAudit",
+      "ImpactIntervalConfig",
+      "ImpactIntervalInitialState",
+      "ImpactIntervalResult",
+      "ImpactIntervalSample",
+      "KelvinVoigtContactLaw",
+      "solve_impact_interval"
     ],
+    "explicit_all": true,
+    "symbols": {
+      "BoundaryKind": {
+        "info": {
+          "bases": ["Enum"],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ClubRigidBody": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "shaft_axis_body": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "np.ndarray"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ImpactIntervalAudit": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ImpactIntervalConfig": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ImpactIntervalInitialState": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "validate": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ImpactIntervalResult": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "at_time": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "time_s"
+                }
+              ],
+              "returns": "ImpactIntervalSample"
+            },
+            "channel": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "name"
+                }
+              ],
+              "returns": "np.ndarray"
+            },
+            "to_post_impact_state": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "PostImpactState"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ImpactIntervalSample": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "KelvinVoigtContactLaw": {
+        "type": "reexport"
+      },
+      "solve_impact_interval": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ImpactIntervalInitialState",
+              "default": null,
+              "kind": "arg",
+              "name": "initial"
+            },
+            {
+              "annotation": "ClubRigidBody",
+              "default": null,
+              "kind": "arg",
+              "name": "club"
+            },
+            {
+              "annotation": "ImpactIntervalConfig",
+              "default": null,
+              "kind": "arg",
+              "name": "config"
+            }
+          ],
+          "returns": "ImpactIntervalResult"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "impact_interval/_rotation.py": {
+    "__all__": ["exp_rotation", "log_rotation", "skew"],
+    "explicit_all": false,
+    "symbols": {
+      "exp_rotation": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "rotation_vector"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "log_rotation": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "rotation"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "skew": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "vector"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "impact_interval/solver.py": {
+    "__all__": ["solve_impact_interval"],
+    "explicit_all": true,
+    "symbols": {
+      "solve_impact_interval": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ImpactIntervalInitialState",
+              "default": null,
+              "kind": "arg",
+              "name": "initial"
+            },
+            {
+              "annotation": "ClubRigidBody",
+              "default": null,
+              "kind": "arg",
+              "name": "club"
+            },
+            {
+              "annotation": "ImpactIntervalConfig",
+              "default": null,
+              "kind": "arg",
+              "name": "config"
+            }
+          ],
+          "returns": "ImpactIntervalResult"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "impact_interval/types.py": {
+    "__all__": [
+      "BoundaryKind",
+      "ClubRigidBody",
+      "ImpactIntervalAudit",
+      "ImpactIntervalConfig",
+      "ImpactIntervalInitialState",
+      "ImpactIntervalResult",
+      "ImpactIntervalSample"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "BoundaryKind": {
+        "info": {
+          "bases": ["Enum"],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ClubRigidBody": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "shaft_axis_body": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "np.ndarray"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ImpactIntervalAudit": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ImpactIntervalConfig": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ImpactIntervalInitialState": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "validate": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ImpactIntervalResult": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "at_time": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "time_s"
+                }
+              ],
+              "returns": "ImpactIntervalSample"
+            },
+            "channel": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "name"
+                }
+              ],
+              "returns": "np.ndarray"
+            },
+            "to_post_impact_state": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "PostImpactState"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ImpactIntervalSample": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      }
+    }
+  },
+  "integration_grid.py": {
+    "__all__": ["DEFAULT_SWING_RK4_DT_S", "effective_rk4_duration"],
     "explicit_all": true,
     "symbols": {
       "DEFAULT_SWING_RK4_DT_S": {
@@ -22570,11 +22514,7 @@
     }
   },
   "model_interchange/parsers.py": {
-    "__all__": [
-      "chain_from_mjcf",
-      "chain_from_osim",
-      "chain_from_urdf"
-    ],
+    "__all__": ["chain_from_mjcf", "chain_from_osim", "chain_from_urdf"],
     "explicit_all": true,
     "symbols": {
       "chain_from_mjcf": {
@@ -26677,10 +26617,7 @@
     }
   },
   "rotating_base/integration.py": {
-    "__all__": [
-      "initial_state",
-      "rollout"
-    ],
+    "__all__": ["initial_state", "rollout"],
     "explicit_all": false,
     "symbols": {
       "initial_state": {
@@ -26750,11 +26687,7 @@
     }
   },
   "rotating_base/kinematics.py": {
-    "__all__": [
-      "constraint_jacobian",
-      "constraint_vector",
-      "kinematics"
-    ],
+    "__all__": ["constraint_jacobian", "constraint_vector", "kinematics"],
     "explicit_all": false,
     "symbols": {
       "constraint_jacobian": {
@@ -27185,10 +27118,7 @@
       },
       "SwingRunMode": {
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         },
         "type": "class"
@@ -27252,9 +27182,7 @@
       },
       "CancelledError": {
         "info": {
-          "bases": [
-            "Exception"
-          ],
+          "bases": ["Exception"],
           "methods": {}
         },
         "type": "class"
@@ -28478,9 +28406,7 @@
     "symbols": {
       "CancelledError": {
         "info": {
-          "bases": [
-            "Exception"
-          ],
+          "bases": ["Exception"],
           "methods": {}
         },
         "type": "class"
@@ -28925,9 +28851,7 @@
     }
   },
   "solver/targets.py": {
-    "__all__": [
-      "TargetRegion"
-    ],
+    "__all__": ["TargetRegion"],
     "explicit_all": true,
     "symbols": {
       "TargetRegion": {
@@ -29112,11 +29036,7 @@
     }
   },
   "swing_source.py": {
-    "__all__": [
-      "Backend",
-      "DoublePendulumSwing",
-      "SwingSource"
-    ],
+    "__all__": ["Backend", "DoublePendulumSwing", "SwingSource"],
     "explicit_all": false,
     "symbols": {
       "Backend": {
@@ -29342,9 +29262,7 @@
       },
       "SwingSource": {
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "duration": {
               "args": [
@@ -29381,9 +29299,7 @@
     }
   },
   "torque_export.py": {
-    "__all__": [
-      "fit_torque_history_profile"
-    ],
+    "__all__": ["fit_torque_history_profile"],
     "explicit_all": true,
     "symbols": {
       "fit_torque_history_profile": {
@@ -29463,9 +29379,7 @@
     }
   },
   "torque_fitting.py": {
-    "__all__": [
-      "fit_torque_polynomial"
-    ],
+    "__all__": ["fit_torque_polynomial"],
     "explicit_all": true,
     "symbols": {
       "fit_torque_polynomial": {
@@ -29503,9 +29417,7 @@
     }
   },
   "torque_library.py": {
-    "__all__": [
-      "TorqueProfileLibrary"
-    ],
+    "__all__": ["TorqueProfileLibrary"],
     "explicit_all": true,
     "symbols": {
       "TorqueProfileLibrary": {
@@ -29772,10 +29684,7 @@
       },
       "TorqueProfileSource": {
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         },
         "type": "class"
@@ -30123,9 +30032,7 @@
       },
       "CancelledError": {
         "info": {
-          "bases": [
-            "Exception"
-          ],
+          "bases": ["Exception"],
           "methods": {}
         },
         "type": "class"
@@ -30359,9 +30266,7 @@
       },
       "MorrisEvaluator": {
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {}
         },
         "type": "class"
@@ -32333,10 +32238,7 @@
     }
   },
   "variation/_execution_digest.py": {
-    "__all__": [
-      "canonical_sha256",
-      "normalized_float"
-    ],
+    "__all__": ["canonical_sha256", "normalized_float"],
     "explicit_all": true,
     "symbols": {
       "canonical_sha256": {
@@ -32409,9 +32311,7 @@
     }
   },
   "variation/_morris_observation_parser.py": {
-    "__all__": [
-      "parse_morris_observations"
-    ],
+    "__all__": ["parse_morris_observations"],
     "explicit_all": true,
     "symbols": {
       "parse_morris_observations": {
@@ -32835,10 +32735,7 @@
     }
   },
   "variation/contextual_registry.py": {
-    "__all__": [
-      "LOCALIZED_TORQUE_VARIABLES",
-      "ContextualVariable"
-    ],
+    "__all__": ["LOCALIZED_TORQUE_VARIABLES", "ContextualVariable"],
     "explicit_all": true,
     "symbols": {
       "ContextualVariable": {
@@ -33204,9 +33101,7 @@
     "symbols": {
       "CancelledError": {
         "info": {
-          "bases": [
-            "Exception"
-          ],
+          "bases": ["Exception"],
           "methods": {}
         },
         "type": "class"
@@ -34290,10 +34185,7 @@
     }
   },
   "variation/group_spec.py": {
-    "__all__": [
-      "MATRIX_KINDS",
-      "PerturbationGroup"
-    ],
+    "__all__": ["MATRIX_KINDS", "PerturbationGroup"],
     "explicit_all": true,
     "symbols": {
       "MATRIX_KINDS": {
@@ -34355,11 +34247,7 @@
     }
   },
   "variation/identity_contracts.py": {
-    "__all__": [
-      "stable_id",
-      "stable_id_array",
-      "strict_string"
-    ],
+    "__all__": ["stable_id", "stable_id_array", "strict_string"],
     "explicit_all": true,
     "symbols": {
       "stable_id": {
@@ -34577,9 +34465,7 @@
       },
       "MorrisEvaluator": {
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {}
         },
         "type": "class"
@@ -35027,10 +34913,7 @@
     }
   },
   "variation/noise_response_fingerprint.py": {
-    "__all__": [
-      "input_contract_fingerprint",
-      "response_field_fingerprint"
-    ],
+    "__all__": ["input_contract_fingerprint", "response_field_fingerprint"],
     "explicit_all": true,
     "symbols": {
       "input_contract_fingerprint": {
@@ -35094,9 +34977,7 @@
     }
   },
   "variation/noise_response_record.py": {
-    "__all__": [
-      "PositionNoiseResponseField"
-    ],
+    "__all__": ["PositionNoiseResponseField"],
     "explicit_all": true,
     "symbols": {
       "PositionNoiseResponseField": {
@@ -35394,9 +35275,7 @@
     }
   },
   "variation/paired_attribution_record.py": {
-    "__all__": [
-      "PairedAttributionRecord"
-    ],
+    "__all__": ["PairedAttributionRecord"],
     "explicit_all": true,
     "symbols": {
       "PairedAttributionRecord": {
@@ -36077,11 +35956,7 @@
     }
   },
   "variation/registry_mode_policy.py": {
-    "__all__": [
-      "keys_for_mode",
-      "mode_categories",
-      "swing_derived_keys"
-    ],
+    "__all__": ["keys_for_mode", "mode_categories", "swing_derived_keys"],
     "explicit_all": true,
     "symbols": {
       "keys_for_mode": {
