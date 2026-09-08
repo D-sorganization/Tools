@@ -81,8 +81,14 @@ class _ChannelTail:
 class FileTransport:
     """Append-log + polling-tail realtime transport."""
 
-    def __init__(self, path_for_channel: Callable[[str], Path]) -> None:
+    def __init__(
+        self,
+        path_for_channel: Callable[[str], Path],
+        *,
+        poll_thread: bool = True,
+    ) -> None:
         self._path_for_channel = path_for_channel
+        self._poll_thread_enabled = poll_thread
         self._lock = threading.RLock()
         self._channels: dict[str, _ChannelTail] = {}
         self._next_token = 1
@@ -184,6 +190,8 @@ class FileTransport:
     # ---- polling ------------------------------------------------------
 
     def _ensure_poll_thread(self) -> None:
+        if not self._poll_thread_enabled:
+            return
         if self._poll_thread is not None and self._poll_thread.is_alive():
             return
         self._stop_event.clear()

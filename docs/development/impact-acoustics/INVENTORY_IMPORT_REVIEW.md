@@ -89,3 +89,14 @@ The normal push rejects two missing return annotations in the incoming contact
 completion test helpers. Both now declare the existing `ImpactIntervalResult`
 return contract; no production calculation changes. Prettier also formats the
 incoming swing API baseline; parsed JSON equality is checked before acceptance.
+
+Protected renderer main `b64a70f39` is integrated. The sole merge conflict is
+the root handoff hash/line count, recomputed from the combined root document;
+all other incoming metadata is preserved. All 410 reviewed candidate source
+hashes remain identical. The annotation repair and value-identical API
+formatting are published at `1c2c9b19d` through every normal push hook.
+
+The first post-renderer regression times out while reading tracked source in
+the deterministic inventory test. An isolated rerun, with the same code and
+60-second per-test limit, passes all 95 inventory/import/merge, impact and API
+tests (111.13 s). No expectation or timeout is relaxed.

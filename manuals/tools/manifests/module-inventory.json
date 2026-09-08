@@ -117,7 +117,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "117a774ced4b0d513d2768fc4f61be1c65857340372f6a13d70c38db7024b907",
+      "content_sha256_lf": "24101d89d8604b514863fc6a6cf0b184d3964b776c4e1916ab667631d7a1b6f4",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
@@ -159,7 +159,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "f037d8416d6ff5235842c6ce4b1739fe1cee84356cf6d057ce70f84638c39e48",
+      "content_sha256_lf": "1c1d12499ca9de1a79e5aba918876f849e3d96c1b4437762ad35ea495929cad8",
       "entry_count": 104,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
@@ -705,7 +705,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-programmatic-pid.json"
     },
     {
-      "content_sha256_lf": "6df304bea083a9add2fd2400c1dd0892c519f4d1c0b0889ef63ce1f11e6aed00",
+      "content_sha256_lf": "ba94f233e0a3c0e824590d6a779267f6d736004b198359dfbb910305fd00dbaf",
       "entry_count": 2,
       "package": "src/shared/python/realtime",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-realtime.json"
