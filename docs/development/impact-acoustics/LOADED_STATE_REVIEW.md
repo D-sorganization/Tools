@@ -243,3 +243,9 @@ now applies the existing strict finite-array contract before immutable tuple
 normalization; the full rerun passes. Scoped mypy and Ruff checks pass. The API
 baseline adds only the private module with empty exports; existing signatures
 remain unchanged. This is verified numerical behavior, not a physical finding.
+
+Normal push-hook mypy (which skips imported implementation types) then found
+two `no-any-return` boundaries despite the earlier scoped mypy pass. The failed
+push was stopped. Power and force-potential results now explicitly convert the
+validated scalar to float; the actual pre-push mypy hook and all 24 point-load
+tests pass (7.35 s). Retry all normal hooks after regenerating inventory hashes.

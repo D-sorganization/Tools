@@ -79,8 +79,10 @@ class SpatialPointLoad:
         last three are physical angular velocity [rad/s], in material axes.
         """
         velocity = finite_array(body_twist, (6,), "body velocity")
-        return require_finite_float(
-            self._local_load(pose)[2] @ velocity, "point-load power"
+        return float(
+            require_finite_float(
+                self._local_load(pose)[2] @ velocity, "point-load power"
+            )
         )
 
     def force_potential(self, pose: object) -> float:
@@ -91,8 +93,8 @@ class SpatialPointLoad:
         """
         current = _rigid_pose(pose)
         point = current[:3, 3] + current[:3, :3] @ self.offset_m
-        return require_finite_float(
-            -np.asarray(self.force_n) @ point, "force potential"
+        return float(
+            require_finite_float(-np.asarray(self.force_n) @ point, "force potential")
         )
 
 

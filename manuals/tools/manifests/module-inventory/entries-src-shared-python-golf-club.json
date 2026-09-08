@@ -1250,10 +1250,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3818,
+      "bytes_lf": 3862,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f2c063987728bd5edc6b9c641069aad7d8d84f74743095306655aba902ed06a1",
+      "content_sha256_lf": "1bafd16ae7ed375467cd33ea17a729e59809544efa9734e03d33f2c004718288",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-POINT-LOAD-PY-0A6FE8F00F14",
       "language": "python",

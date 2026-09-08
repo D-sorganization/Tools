@@ -187,7 +187,7 @@
     },
     "src/shared/python/golf_club/AGENT_HANDOFF.md": {
       "path": "src/shared/python/golf_club/AGENT_HANDOFF.md",
-      "sha256_lf": "25440406b01a4303071a724cc0d57338a1504072dbfddfce8e859bac10f9a41b",
+      "sha256_lf": "dfdfd6343086daee9411d94404b91385fb952ec9ad144fbdddbd61d7385c0d7e",
       "line_count": 150,
       "max_line_budget": 150,
       "required_sections": [
