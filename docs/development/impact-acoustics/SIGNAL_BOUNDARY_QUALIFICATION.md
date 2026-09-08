@@ -102,3 +102,11 @@ Tools #5075 report boundaries and UpstreamDrift's exact provider-pin integration
 Scientific-import inventory correction is separately owned by PR #5103; merge
 that authority and regenerate this branch before final integrated delivery.
 Generated candidate labels must not be hand-edited into scientific approval.
+
+Local checkpoint `31d8fa738` preserves the complete boundary implementation.
+Protected renderer main `b64a70f39` is then integrated; the only conflict is
+the root handoff hash/count, recomputed from the combined document. Incoming
+renderer, transport and contact-fixture changes remain intact.
+All 69 ingestion/report/API tests also pass on Windows after this integration
+(13.41 s). Public JSON changes remain two private empty export entries;
+the remaining baseline diff is value-identical formatter output.
