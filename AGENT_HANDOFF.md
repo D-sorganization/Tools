@@ -21,7 +21,7 @@ Tools is the fleet's shared engineering-tools monorepo (45+ tools: PyQt6 GUIs, F
 | #4103 | Swing-Impact-Ball-Flight platform. Open. Remaining: camera cluster (#4571) and Phase 7 (WASM web parity, Pages CI).                                          |
 | #4120 | Investigation & Variation Suite. Open. PR #4124 merged.                                                                                                      |
 | #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 merged. H5 (release-management repo) pending.                                                |
-| #4130 | Impact-interval club dynamics. **COMPLETED** (F1–F4 in PR #4577) — 6-DOF transient package, tests, impact wire.                                              |
+| #4130 | Impact-interval club dynamics. F1–F4 landed (#4577, #4945); independent contact-energy audit (provider fix for UpstreamDrift#9548) in review — UI/report surfacing awaits the Tools#4946 model-type ruling. |
 | #4142 | Variation and sensitivity. R13.3, R13.5, R14.3 merged; R14.6/calibrated-renderer PRs #4835/#4837 on main.                                                    |
 | #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                       |
 | #4433 | Visual-first tab visibility and visualization-led UX. 8 verified / 23 partial; #4832 adds fifth acceptance manifest.                                         |

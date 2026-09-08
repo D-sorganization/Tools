@@ -117,11 +117,36 @@ club orientation, angular velocities, attachment and contact positions, moving
 normal, compression, normal/friction force, face angle, dynamic loft, and
 shaft-axis twist. `channel(name)` and `at_time(t)` provide stable query seams.
 
-The audit records initial/final kinetic energy, dashpot/friction loss,
-unilateral-release loss, torsional stored energy, residual energy, integrated
-normal/friction impulses, and total linear-momentum residual. A small residual
-is a numerical quality indicator; it is not permission to infer experimental
-validity.
+The audit reconciles an independent energy ledger (UpstreamDrift#9548): every
+term is computed from the contact state, the declared Kelvin-Voigt law, and
+the declared boundary — never from the residual itself.
+
+- Recoverable contact energy is the normal spring term `0.5 k x^2` of the
+  unilateral law evaluated at the current overlap; its tangential branch is
+  purely dissipative and stores nothing. Initial and final values are
+  reported separately, so an interrupted, still-compressed contact shows its
+  stored energy instead of a fabricated release.
+- Unilateral release is accumulated only at identified tensile-clip steps —
+  overlap where the one-sided law delivers no force while spring energy
+  still disappears. It is a physical loss at the one-sided contact boundary.
+- Dashpot and friction dissipation are integrated independently (`c v_n^2`
+  and the friction work rate); torsional-grip damping as `c_t omega_twist^2`,
+  with the stored grip energy `0.5 k_t theta^2` reported separately.
+- Support/driver work is zero under the declared boundaries: the attachment
+  is kinematically fixed and no driver force acts during the interval.
+
+`energy_residual_j` stays signed and unfudged: a positive value is energy the
+modelled ledger does not explain (numerical loss, omitted physics, or force
+cap clipping); a negative value is numerical energy gain. No balancing term
+may be defined from the residual and reported as physical dissipation.
+Halving the fixed time step halves the residual in the shipped cases.
+`linear_momentum_residual_n_s` (free-body balance) and
+`supported_momentum_residual_n_m_s` (angular balance about the attachment;
+NaN for the FREE boundary, where no support exists) are separate diagnostics.
+A small residual is a numerical quality indicator; it is not permission to
+infer experimental validity. Surfacing this evidence and blocking qualified
+output on a failed audit in the UI/report is a follow-up on the
+IMPACT_INTERVAL model-type seam (Tools#4946).
 
 ## Binding Validation Program
 
@@ -130,7 +155,10 @@ validity.
 3. A toe/high offset produces signed angular recoil from `r x F`.
 4. The pinned attachment remains fixed to numerical tolerance.
 5. A torsional grip reduces shaft-axis twist relative to the pinned case.
-6. Free-body total linear momentum closes, and the energy ledger reconciles.
+6. Free-body total linear momentum closes under the FREE boundary, the
+   supported angular balance closes under the declared supported boundaries,
+   and the independent energy ledger reconciles with a signed, unfudged
+   residual that converges when the time step is halved.
 7. Every public input rejects non-finite, nonphysical, or frame-invalid values.
 8. Python reference and any future Rust kernel must pass identical parity cases.
 
