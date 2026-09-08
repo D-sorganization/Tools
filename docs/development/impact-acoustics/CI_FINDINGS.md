@@ -138,3 +138,28 @@ pass while all four core scientific versions remain pinned. The lock has been
 regenerated with uv 0.10.11 and hash-enforced reinstallation passes. Actual
 two-process evidence generation, source consistency and claim registration
 remain pending; no old result has been relabeled with fabricated provenance.
+
+## Current Delivery Reconciliation
+
+Renderer compatibility UpstreamDrift #9784 merged at `9aa26e4f8`.
+Manufactured-authority #9787 / PR #9804 publishes `d1563dffa`: actual compatible
+URDF/TinyXML wheels retain the pinned scientific engines; two native processes
+produce identical current evidence (SHA-256 355157bd57d0c2eb19652d3bd109c8074cc6ba83dc949abda478551a470d390c).
+All 116 strict authority tests, three tests in a distinct rolling environment,
+canonical claim/numeric checks and all 253 existing PDF pages pass. Normal
+push hooks pass, including the approved-CLI hook alignment tracked in
+Repository_Management #1572. No measured/acoustic or archival approval follows.
+Open #9726's additional governed bootstrap source will require regeneration if
+merged. Current-head protected CI remains outstanding.
+
+Tools Rust #5097 publishes `76b982b73` with T5/T6 main integrated and every
+normal local hook passing. Run 34245271235 failed only its Python 3.12 inventory
+worker and dependent aggregate. The first retry request was rejected because
+the workflow was still running; after completion the normal job-rerun request
+succeeded. Attempt 2 passes. A subsequent PR read confirms #5097 had already merged
+at `d9dec3602605f5c03eb7dff507a02ef7c2995b1b` (15:51:55 UTC). Separate
+file-watcher Python 3.10 and private-consumer checks still fail; no whole-head
+green claim or worker-crash cause is inferred.
+T6 #5083 merged; issue #5075 records four confirmed schema/evidence gaps.
+The loaded-operator checkpoint's separate Windows timeout and Linux 567-test
+qualification are recorded in `LOADED_DYNAMIC_OPERATORS.md`.

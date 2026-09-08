@@ -13,10 +13,10 @@ perceptual validation cannot be inferred from numerical fixtures.
 | Final theory synthesis         | AffineDrift #4255              | Qualified downstream results with uncertainty and limits                                                                      | Not started; depends on evidence                                                                             |
 | Rigid reference                | Tools #5069 / PR #5077         | Analytic tensor/impulse gates and protected provider delivery                                                                 | Merged PR #5077 at `f7254461399ac18e5667a0215afd90a9ebff9d22`                                                |
 | Lumped qualification           | Tools #5071 / PR #5082         | Events, work/loss ledger, timeout/step contracts, law-consistent restitution, scaling counterexamples, parity and convergence | PR #5082 open; latest observed remote head `476eaa98b`                                                       |
-| Distributed shaft/grip         | Tools #5072                    | Prestressed rotating operators, passive impedance, beam limits, frame agreement, modal/mesh/time/FRF convergence              | Rotating loaded roots and continuum oracles pass; stability/work/grip/FRF open                               |
+| Distributed shaft/grip         | Tools #5072                    | Prestressed rotating operators, passive impedance, beam limits, frame agreement, modal/mesh/time/FRF convergence              | Loaded roots and M/G/K operators pass independent controls; stability/work/grip/FRF open                     |
 | Flexible contact               | Tools #5073                    | Off-center friction/contact and head/shaft modes; launch and ringdown; complete energy closure                                | Pending T3                                                                                                   |
 | Acoustics                      | Tools #5074                    | Calibrated signals, identified transfer, qualified radiation and held-out validation                                          | Early ingestion PR #5084 merged; boundary probes identify qualification work, radiation/measurements pending |
-| Reports/surfaces               | Tools #5075                    | Versioned provenance reports, consumer compatibility and truthful UI integration                                              | PR #5083 proposes study wire/surface; source review and qualified consumers pending                          |
+| Reports/surfaces               | Tools #5075                    | Versioned provenance reports, consumer compatibility and truthful UI integration                                              | PR #5083 merged at `cfca06449`; strict wire/evidence and consumer gaps remain on #5075                       |
 | Integration plan               | UpstreamDrift #9701 / PR #9706 | Source/state inventory and protected delivery                                                                                 | Merged PR #9706 at `dbc6727aa4f0d422b7adaf6957e658e8997f7f29`                                                |
 | Swing adapters                 | UpstreamDrift #9703            | Compatible rigid, elastic, prestress and wrench transfer on exact provider pin                                                | Pending provider contract                                                                                    |
 | Counterfactual studies         | UpstreamDrift #9704            | Registered matched-state and matched-input studies, reproducible results, uncertainty                                         | Pending verified coupled model                                                                               |
@@ -92,7 +92,7 @@ individually reviewed and refreshed without changing thresholds. The fresh
 production workflow 34217794994/job 102033568943 passes. The fresh Gasification consumer job 102039836106 fails checkout again. Rust
 quality job 102033732755 fails a timing-dependent debounce-count assertion;
 issue #5095 now owns its deterministic test repair, claim free and lease posted.
-No Rust repair is implemented yet. Other protected checks remain pending;
+Rust repair #5097 merged at `d9dec3602`; standard CI attempt 2 passes. Separate optional/private checks remain unqualified;
 overlapping PR #5087 is closed, unmerged. CI_FINDINGS.md links
 the exact review ledger. No whole-product or human approval is invented.
 AffineDrift #4282 merged as `1968897ec65044b8393705087fccdf755e3e89a2` after all
@@ -206,11 +206,23 @@ belongs in ROTATING_TRANSPORT.md; prior execution details remain in git history.
 
 ## Current Assembly Checkpoint
 
-Deformed-frame inertia is published at `0f3e591db`. Current rotating loaded-chain
-composition passes 560 golf/API tests, with two optional CAD skips (80.82 s).
-`ROTATING_LOADED_ROOTS.md` records the shared chart conversion, existing solver
-reuse and independent continuum extension/support oracles. This completes an
-instantaneous clamped force-balance slice; stability, moving work, passive grip,
-loaded mass/gyroscopic operators and FRF/convergence remain open.
-Newly merged T5 ingestion is inventoried in `VIBROACOUSTICS_INGESTION_REVIEW.md`.
+Rotating loaded roots are published at `f47f64acf`. Current private loaded
+M/G/K/residual assembly reuses those roots and deformed inertial kernels.
+All seven new Windows tests and nine API tests pass; the separate Linux run
+passes 567 golf/API tests with two optional CAD skips (296.00 s).
+`LOADED_DYNAMIC_OPERATORS.md` records the material-coordinate contract,
+physical energy/Coriolis controls, guided axial spin-softening limit and
+second-order frequency convergence. It also records the unchanged Windows
+report-sweep timeout and separate Linux qualification. Stability, moving work,
+passive grip/head integration and full FRF/convergence remain open.
+
+T5 ingestion #5084 and T6 study records #5083 are merged foundations. Reuse
+`swing_sim.vibroacoustics` and `swing_sim.impact_studies`. T6's 19 tests pass;
+read-only probes confirm contradictory empty-acoustic availability, discarded
+unknown fields, accepted dict-valued v1 report, and unverified measured/validated
+labels. Issue #5075 records those gaps; metadata labels do not authenticate data.
+UpstreamDrift renderer #9784 merged. Its authority prerequisite #9787 / PR #9804
+publishes `d1563dffa` with actual native provenance, 116 strict authority tests,
+three separate rolling tests and all 253 existing PDF pages computationally
+validated. All normal push hooks pass; current-head protected CI is pending.
 The complete program requirement/evidence matrix above remains authoritative.
