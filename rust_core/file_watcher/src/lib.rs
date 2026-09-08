@@ -15,6 +15,7 @@
 //! The pure-Rust `FileWatcher` is testable via `cargo test`. PyO3 bindings live
 //! behind the `python` feature gate and are activated by maturin when building
 //! the production wheel.
+mod debounce;
 pub mod watcher;
 
 #[cfg(feature = "python")]
