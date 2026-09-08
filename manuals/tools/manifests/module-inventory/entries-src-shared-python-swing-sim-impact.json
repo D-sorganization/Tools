@@ -1,0 +1,991 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 2643,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "ce5d660ff1dabeb15822ea9687cc46c6e1aeb7c3f5a320b7f5e5fd5809eb0687",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-INIT-PY-430FD94AE71F",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact/__init__.py",
+      "purpose": "Impact physics subpackage for swing_sim (epic #4103, issue #4106).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "DPlaneAnalysis",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DPlaneStatus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DRIVER_CG_DEPTH_M",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DRIVER_COR",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DRIVER_MASS_KG",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DRIVER_MOI_KG_M2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DeliveryDerived",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DeliveryParameters",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FaceNormalAtOffset",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FiniteTimeImpactModel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GOLF_BALL_MASS_KG",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GOLF_BALL_MOMENT_OF_INERTIA_KG_M2",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GOLF_BALL_RADIUS_M",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GearEffectResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactEvent",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactModel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactModelType",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactParameters",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactRecorder",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactSolverAPI",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PostImpactState",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PreImpactState",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RigidBodyImpactModel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SPHERE_ROLLING_CAP_FACTOR",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SpringDamperImpactModel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TYPICAL_CONTACT_DURATION_S",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "analyze_dplane",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compute_gear_effect",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "create_impact_model",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "derive_delivery",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "face_basis",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "offset_to_face_vector",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "resolve_contact_normal",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "spin_loft_sector_directions",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "to_pre_impact_state",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "validate_energy_balance",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 2492,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "1debfde471356d9fbfd235d110b97ae2e6072fd89587fdb9cf7741523ff1a5a8",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-CONSTANTS-PY-A2CF02934411",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact/constants.py",
+      "purpose": "Vendored physical constants for the impact package (SI units).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "DRIVER_CG_DEPTH_M",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DRIVER_COR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DRIVER_LIE_RAD",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DRIVER_LOFT_RAD",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DRIVER_MASS_KG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DRIVER_MOI_KG_M2",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GOLF_BALL_DIAMETER_M",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GOLF_BALL_MASS_KG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GOLF_BALL_MOMENT_OF_INERTIA_KG_M2",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GOLF_BALL_RADIUS_M",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TYPICAL_CONTACT_DURATION_S",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/impact/tests/test_gear_effect.py",
+          "src/shared/python/swing_sim/impact/tests/test_models.py",
+          "tests/shared/python/golf_club/test_impact_coupling.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "g",
+          "mm"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 2987,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "479351b89c946e8fef3a9e9ee2efba8c5893d303987b3499366b164c0b775aa1",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-CONTACT-PY-049E54D91934",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact/contact.py",
+      "purpose": "Canonical unilateral Kelvin-Voigt contact-force law.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "KelvinVoigtContactLaw",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 10724,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "943a507d544724a9765391a80c71e7895d6ae778b75a3f9eaa7b62a0204e0f80",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-DELIVERY-PY-6280D9E10DBF",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact/delivery.py",
+      "purpose": "Delivery front-end: launch-monitor parameters -> impact-model inputs.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DeliveryDerived",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DeliveryParameters",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_MAX_ANGLE_DEG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_MM_TO_M",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "derive_delivery",
+            "signature": "params: DeliveryParameters, clubhead_angular_velocity: np.ndarray | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "to_pre_impact_state",
+            "signature": "params: DeliveryParameters, clubhead_mass: float=DRIVER_MASS_KG, clubhead_moi: float=DRIVER_MOI_KG_M2, clubhead_moi_tensor: np.ndarray | None=None, ball_velocity: np.ndarray | None=None, ball_angular_velocity: np.ndarray | None=None, clubhead_angular_velocity: np.ndarray | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/impact/tests/test_delivery.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "kg",
+          "m/s",
+          "mm",
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 8825,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "e9ed3e3cce4c11f3519f937d69bfd5a13432dc9836dce8a55c5ebf202f1c4877",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-DPLANE-PY-2B75D87AF828",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact/dplane.py",
+      "purpose": "Reference-frame-explicit three-dimensional D-plane geometry.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "mapped",
+        "citations": "mapped",
+        "equation_pathway": "mapped",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [
+          "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd"
+        ],
+        "citation_refs": [
+          "src/rate_of_closure/web/src/model/__fixtures__/dplane_golden_v1.json",
+          "src/shared/python/swing_sim/impact/dplane.py"
+        ],
+        "equation_refs": [
+          "TOOLS-DPLANE-FRAME",
+          "TOOLS-DPLANE-NORMAL",
+          "TOOLS-DPLANE-SPIN-LOFT"
+        ],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DPlaneAnalysis",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DPlaneStatus",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_EPSILON",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "analyze_dplane",
+            "signature": "travel_vector: object, face_normal: object, *, target: object=(1.0, 0.0, 0.0), up: object=(0.0, 1.0, 0.0), frame_id: str='app_frame:x_target,y_up,z_right'"
+          },
+          {
+            "kind": "function",
+            "name": "spin_loft_sector_directions",
+            "signature": "analysis: DPlaneAnalysis, segments: int=24"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/impact/tests/test_dplane.py"
+        ],
+        "unit_mentions": [
+          "1",
+          "degree",
+          "m/s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 8450,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "40d91b550f5de257851a5290b86041b5ee7aab9ab9e532d37055410412d1cfca",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-GEAR-EFFECT-PY-B67DD6AE11A1",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact/gear_effect.py",
+      "purpose": "Physics-based gear-effect spin from off-center impact.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GearEffectResult",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_CONTACT_RAMP_FACTOR",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compute_gear_effect",
+            "signature": "impact_offset: np.ndarray, face_normal: np.ndarray, normal_impulse: float, clubhead_moi: float | np.ndarray, cg_depth_m: float=DRIVER_CG_DEPTH_M, friction_coefficient: float=0.4, reference_up: np.ndarray | None=None, face_normal_at_offset: FaceNormalAtOffset | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "resolve_contact_normal",
+            "signature": "impact_offset: np.ndarray, face_normal: np.ndarray, face_normal_at_offset: FaceNormalAtOffset | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/impact/tests/test_gear_effect.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "N",
+          "kg",
+          "m/s",
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 18266,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "e566e4da5234dfa28a67835918910f6c1a190e9d6f3d6bebea79169293911fae",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-MODELS-PY-F747EEBCCBA7",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact/models.py",
+      "purpose": "Impact models (rigid-body COR impulse, spring-damper, finite-time).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FiniteTimeImpactModel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImpactModel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RigidBodyImpactModel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SpringDamperImpactModel",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SPHERE_ROLLING_CAP_FACTOR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DEFAULT_REFERENCE_UP",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_FALLBACK_REFERENCE_UP",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "create_impact_model",
+            "signature": "model_type: ImpactModelType"
+          },
+          {
+            "kind": "function",
+            "name": "face_basis",
+            "signature": "face_normal: np.ndarray, reference_up: np.ndarray | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "offset_to_face_vector",
+            "signature": "impact_offset: np.ndarray, face_normal: np.ndarray, reference_up: np.ndarray | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/impact/tests/test_delivery.py",
+          "src/shared/python/swing_sim/impact/tests/test_gear_effect.py",
+          "src/shared/python/swing_sim/impact/tests/test_models.py",
+          "src/shared/python/swing_sim/impact/tests/test_solver.py",
+          "tests/shared/python/golf_club/test_impact_coupling.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "ms",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 17875,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "07091d9f336e1de1a8f7e45a23de48caad9a8a2d02c999695adea1cdc7ef5b5d",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-SOLVER-PY-852AB8DFC9BA",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact/solver.py",
+      "purpose": "Impact recorder and engine-agnostic solver API.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ImpactRecorder",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImpactSolverAPI",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/impact/tests/test_gear_effect.py",
+          "src/shared/python/swing_sim/impact/tests/test_solver.py",
+          "src/shared/python/swing_sim/impact_interval/tests/test_solver.py"
+        ],
+        "unit_mentions": [
+          "kg",
+          "m/s",
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 5326,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "e96803fe5dae95fa30ee477c4c50acd98400132be9e01a2c3f0117a793f61c82",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-TYPES-PY-F4CE9F20EB05",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact/types.py",
+      "purpose": "Impact model value types.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ImpactEvent",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImpactModelType",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImpactParameters",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PostImpactState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PreImpactState",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/impact/tests/test_delivery.py",
+          "src/shared/python/swing_sim/impact/tests/test_models.py",
+          "src/shared/python/swing_sim/impact/tests/test_solver.py",
+          "tests/shared/python/golf_club/test_impact_coupling.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "N",
+          "N/m",
+          "kg",
+          "m/s",
+          "rad",
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3616,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "1f8bc01c8349a8d028fcc3406dac6c1bc6f7a15d47e4c8777c5cea8e113cb485",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-UTILS-PY-C17B4FB26FAC",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact/utils.py",
+      "purpose": "Impact energy-balance validation.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "validate_energy_balance",
+            "signature": "pre_state: PreImpactState, post_state: PostImpactState, params: ImpactParameters"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/impact/tests/test_solver.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/shared/python/swing_sim/impact",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}
