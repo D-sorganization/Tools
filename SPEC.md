@@ -32,6 +32,37 @@
 
 ## 2. Purpose & Mission
 
+### 2026-09-07 Camera Extrinsic Calibration & Layout Alignment (#4706 / TOOLS-M5 (#4721))
+
+Subepic #4721 delivers multi-camera extrinsic calibration, flexible layout management, global bundle
+adjustment, and continuous camera movement invalidation in `sidekick.lab.mocap.extrinsics`. Defines
+`CameraPose` and `CameraLayout` with deterministic optical center derivation and world coordinate
+frame registration. Establishes reference robust `estimate_pnp_pose` (PnP) solver and `bundle_adjust_layout`
+with explicit gauge fixing. Enforces real-time displacement verification via `detect_camera_movement`,
+preventing stale spatial assumptions, and categorical qualification flooring (`ExtrinsicQuality`,
+`ExtrinsicDegeneracyKind`) to fail closed on degenerate or unconstrained layouts.
+
+### 2026-09-07 Camera Intrinsic Calibration & Quality Flooring (#4706 / TOOLS-M4 (#4714))
+
+Subepic #4714 delivers camera intrinsic calibration representations, observation provenance,
+distortion modeling, and qualification flooring in `sidekick.lab.mocap.calibration`. Defines
+`PinholeIntrinsics` and `FisheyeIntrinsics` with strict forward projection and inverse ray
+unprojection. Supports vendor-neutral `DistortionModel` and `DistortionCoefficients` (Brown-Conrady,
+rational, and Kannala-Brandt models). Captures `CalibrationTarget` board geometry and per-frame
+`CalibrationObservation` provenance, evaluating individual `ReprojectionResidual` vectors and
+parameter covariance. Establishes `evaluate_intrinsic_quality` and `check_coverage_and_degeneracy`
+to detect geometric degeneracies (`INSUFFICIENT_VIEWS`, `POOR_SENSOR_COVERAGE`, `HIGH_REPROJECTION_ERROR`)
+and enforce fail-closed qualification floors (`QUALIFIED`, `DEGRADED`, `UNQUALIFIED`) bound to `CameraIdentity.stable_key`.
+
+### 2026-09-07 Synchronization Analysis and Crash-Safe Recording (#4706 / TOOLS-M3 (#4718))
+
+Subepic #4718 delivers synchronization monitoring, clock skew estimation, and crash-safe session
+recording in `sidekick.lab.mocap.sync` and `sidekick.lab.mocap.recording`. Defines `SyncMonitor` for
+inter-camera clock drift, jitter bounding, and sequence anomaly detection (`DROPPED`, `DUPLICATE`,
+`OUT_OF_ORDER`) with fail-closed bounds. Establishes `RecordingWriter` and `RecordingReader` supporting
+append-only chunked frame streams with CRC32 verification, temporary-file atomic manifest persistence,
+and strict `RecordingPolicy` enforcement (`no_store` rejects persisting raw frame payloads to disk).
+
 ### 2026-09-07 Camera Acquisition Protocol & Multi-Camera Capture (#4706 / TOOLS-M2 (#4713))
 
 Subepic #4713 delivers the vendor-neutral camera acquisition protocol under the markerless-mocap
@@ -5795,6 +5826,9 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-07 | #5066 | feat(mocap, #4721 TOOLS-M5): deliver camera extrinsic calibration, flexible layout management, robust PnP, bundle adjustment, camera movement invalidation, and qualification floors in `sidekick.lab.mocap.extrinsics`. |
+| 2026-09-07 | #5064 | feat(mocap, #4714 TOOLS-M4): deliver camera intrinsic calibration models (pinhole and fisheye), distortion representations, observation provenance, reprojection residual evaluation, degeneracy detection, and qualification floors; permit sidekick api baseline budget. |
+| 2026-09-07 | #4718 | feat(mocap, #4718 TOOLS-M3): deliver synchronization analysis, sequence tracking, and crash-safe recording with atomic manifest persistence in `sidekick.lab.mocap.sync` and `sidekick.lab.mocap.recording`. |
 | 2026-09-07 | #4713 | feat(mocap, #4713 TOOLS-M2): establish vendor-neutral camera acquisition protocol in sidekick.lab.mocap.acquisition, providing FrameSource, CaptureGroup, FramePacket, SourceState, and reference synthetic/prerecorded drivers with bounded queues and fail-closed backpressure. |
 | 2026-09-07 | #4730 | docs(manual, #4707/#4730 TOOLS-D9): enforce governed completion-audit handoff and maintenance contract (`tools-handoff-maintenance/1.0.0`) binding commit evidence, working tree state, test digests, diff-aware CI gates, and strict 150-line budgets across all tracked handoffs; conclude epic #4707. |
 | 2026-09-07 | #4728 | docs(manual, #4707/#4728 TOOLS-D8): enforce immutable public publication projection contract (`tools-publication-projection/1.0.0`) binding source commit, tree, calculation registry, toolchain lock, artifact digests, zero-sampling reviews, and explicit unapproved/blocked human release boundary. |

@@ -11,24 +11,30 @@ Tools owns the MIT vendor-neutral markerless-mocap contracts and reference algor
 - Epic #4706: vendor-neutral acquisition, calibration, reconstruction, and C3D exchange.
 - #4708 / TOOLS-M0: authority ADR and acceptance program (merged in #4734).
 - #4710 / TOOLS-M1: canonical mocap schemas (merged in #4734).
-- #4713 / TOOLS-M2: camera acquisition protocol (current branch).
-- #4714, #4715, #4716, #4718, and #4721 have dependency-stacked slices; none is merged or release authority.
+- #4713 / TOOLS-M2: camera acquisition protocol (merged in #5056).
+- #4718 / TOOLS-M3: synchronization and recording (merged in #5059).
+- #4714 / TOOLS-M4: intrinsic calibration (merged in #5064).
+- #4721 / TOOLS-M5: extrinsic and flexible-layout calibration (current branch).
+- #4715, #4716, and #4724 have dependency-stacked slices; none is merged or release authority.
 
 ## Current branch
 
-- Branch: `feat/4713-camera-acquisition-protocol`
-- Base: `origin/main` at `c9fccd4ac`
+- Branch: `feat/4721-mocap-extrinsic-calibration`
+- Base: `origin/main` at `b4875be19`
 - Worktree: `C:\Users\diete\Repositories\Tools`
 - Pull request: Pending creation
 
 ## Delivered in this slice
 
-- Subepic #4713 (TOOLS-M2): Camera Acquisition Protocol.
-- `sidekick.lab.mocap.acquisition` defines:
-  - `SourceState`, `DropPolicy`, `FramePacket`, `FrameSource`, `CaptureGroup`.
-  - Synthetic and prerecorded reference drivers (`SyntheticFrameSource`, `PrerecordedFrameSource`).
-  - Strict bounded queue backpressure, fail-closed handling, and frame drop policies.
-- Unit and property contract tests in `tests/shared/python/sidekick/lab/mocap/test_acquisition_contracts.py`.
+- Subepic #4721 (TOOLS-M5): Extrinsic and flexible-layout calibration.
+- `sidekick.lab.mocap.extrinsics` defines:
+  - `CameraPose`, `CameraLayout`: multi-camera poses, world registration, and optical centers.
+  - `estimate_pnp_pose`: reference robust PnP solver with reprojection residual validation.
+  - `detect_camera_movement`: continuous verification of camera rigidity against world targets.
+  - `RelocalizationResult`, `MovementDetectionResult`: explicit typed outcomes.
+  - `bundle_adjust_layout`: joint refinement of camera poses with gauge fixing.
+  - `ExtrinsicQuality`, `ExtrinsicDegeneracyKind`: qualification floors and degeneracy detection.
+- Unit and contract test suites in `tests/shared/python/sidekick/lab/mocap/`.
 
 ## Required gates
 
@@ -40,7 +46,7 @@ python -m ruff check <changed-python-files>
 python -m mypy <changed-python-files>
 ```
 
-Consumer coordination: UpstreamDrift #9069 owns schema and acquisition adoption;
+Consumer coordination: UpstreamDrift #9069 owns schema, acquisition, sync, and calibration adoption;
 Gasification_Model #4751 owns exact-Tools-SHA impact qualification.
 
 ## Do not
