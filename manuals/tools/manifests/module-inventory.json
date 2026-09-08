@@ -747,8 +747,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim.json"
     },
     {
-      "content_sha256_lf": "6c12742907f3f500034910ac99d3f91da527a641b8f351abc916284b6f31922b",
-      "entry_count": 21,
+      "content_sha256_lf": "2575012ff07d350f8050d730f23138dd3f481a4dac50b52770706fd862c0c52d",
+      "entry_count": 22,
       "package": "src/shared/python/theme",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-theme.json"
     },

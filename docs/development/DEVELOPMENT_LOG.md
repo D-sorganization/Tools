@@ -18,6 +18,28 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5062 · Glass Conductivity Provider Contracts And Fallback Policy
+
+- **State:** in_review
+- **Owner:** claude (fleet wave 2, lease agent `claude` session
+  `omp-01a07e96`)
+- **PR:** #5080 (`claude/issue-5062-glass-contracts`)
+- **Paths:** `src/shared/python/sidekick/calculators/electrical/glass_interface.py`,
+  `src/shared/python/sidekick/calculators/electrical/glass_contracts.py`,
+  `tests/shared/python/sidekick/calculators/electrical/test_glass_interface.py`,
+  `src/shared/python/sidekick/tests/calculators/electrical/test_electrical_model.py`
+- **Started:** 2026-09-08
+- **Last verified:** 2026-09-08 (focused suites RED→GREEN:
+  74 passed — `tests/shared/python/sidekick/calculators/electrical/test_glass_interface.py`,
+  embedded `test_glass_interface.py`, embedded `test_electrical_model.py`)
+- **Summary:** Issue #5062 — public `ConductivityProvider` protocol (kelvin
+  in, S/m out), finite-positive conductivity validation before caching,
+  absolute-zero/composition/cache-capacity DbC contracts, explicit
+  `STRICT`/`DEMO`/`LEGACY` fallback policies with provenance reporting,
+  reciprocal resistivity instead of infinity, centralized unit conversion
+  (1 S/cm = 100 S/m), failed responses never cached, provider switch
+  invalidates cache.
+- **Next step:** Protect-merge the glass-contracts PR after CI acceptance.
 ### DL-#8942 · Realtime Transport And Codemap Hashing Hot-Path Fixes
 
 - **State:** in_review
