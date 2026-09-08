@@ -2,7 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
-  LAST_UPDATED: 2026-09-03
+  LAST_UPDATED: 2026-09-07
 
   This is the canonical specification template for all repositories in the
   D-sorganization fleet. Every repo MUST have a SPEC.md at its root.
@@ -27,10 +27,134 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.128                                   |
-| **Last Spec Update**    | 2026-09-06                                 |
+| **Spec Version**        | 1.18.133                                   |
+| **Last Spec Update**    | 2026-09-07                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-09-07 Camera Extrinsic Calibration & Layout Alignment (#4706 / TOOLS-M5 (#4721))
+
+Subepic #4721 delivers multi-camera extrinsic calibration, flexible layout management, global bundle
+adjustment, and continuous camera movement invalidation in `sidekick.lab.mocap.extrinsics`. Defines
+`CameraPose` and `CameraLayout` with deterministic optical center derivation and world coordinate
+frame registration. Establishes reference robust `estimate_pnp_pose` (PnP) solver and `bundle_adjust_layout`
+with explicit gauge fixing. Enforces real-time displacement verification via `detect_camera_movement`,
+preventing stale spatial assumptions, and categorical qualification flooring (`ExtrinsicQuality`,
+`ExtrinsicDegeneracyKind`) to fail closed on degenerate or unconstrained layouts.
+
+### 2026-09-07 Camera Intrinsic Calibration & Quality Flooring (#4706 / TOOLS-M4 (#4714))
+
+Subepic #4714 delivers camera intrinsic calibration representations, observation provenance,
+distortion modeling, and qualification flooring in `sidekick.lab.mocap.calibration`. Defines
+`PinholeIntrinsics` and `FisheyeIntrinsics` with strict forward projection and inverse ray
+unprojection. Supports vendor-neutral `DistortionModel` and `DistortionCoefficients` (Brown-Conrady,
+rational, and Kannala-Brandt models). Captures `CalibrationTarget` board geometry and per-frame
+`CalibrationObservation` provenance, evaluating individual `ReprojectionResidual` vectors and
+parameter covariance. Establishes `evaluate_intrinsic_quality` and `check_coverage_and_degeneracy`
+to detect geometric degeneracies (`INSUFFICIENT_VIEWS`, `POOR_SENSOR_COVERAGE`, `HIGH_REPROJECTION_ERROR`)
+and enforce fail-closed qualification floors (`QUALIFIED`, `DEGRADED`, `UNQUALIFIED`) bound to `CameraIdentity.stable_key`.
+
+### 2026-09-07 Synchronization Analysis and Crash-Safe Recording (#4706 / TOOLS-M3 (#4718))
+
+Subepic #4718 delivers synchronization monitoring, clock skew estimation, and crash-safe session
+recording in `sidekick.lab.mocap.sync` and `sidekick.lab.mocap.recording`. Defines `SyncMonitor` for
+inter-camera clock drift, jitter bounding, and sequence anomaly detection (`DROPPED`, `DUPLICATE`,
+`OUT_OF_ORDER`) with fail-closed bounds. Establishes `RecordingWriter` and `RecordingReader` supporting
+append-only chunked frame streams with CRC32 verification, temporary-file atomic manifest persistence,
+and strict `RecordingPolicy` enforcement (`no_store` rejects persisting raw frame payloads to disk).
+
+### 2026-09-07 Camera Acquisition Protocol & Multi-Camera Capture (#4706 / TOOLS-M2 (#4713))
+
+Subepic #4713 delivers the vendor-neutral camera acquisition protocol under the markerless-mocap
+epic #4706 in `sidekick.lab.mocap.acquisition`. Defines `FrameSource` abstract contracts, `SourceState`
+lifecycle machines, and immutable `FramePacket` records derived into formal `FrameStamp` evidence.
+Establishes `CaptureGroup` multi-camera synchronized acquisition with bounded queues, explicit
+`DropPolicy` (`DROP_OLDEST`, `DROP_NEWEST`, `FAIL_CLOSED`), and backpressure guarantees. Delivers
+deterministic `SyntheticFrameSource` and `PrerecordedFrameSource` reference drivers supporting zero,
+one, many, and mixed capability configurations without vendor SDKs or AGPL dependencies.
+
+### 2026-09-07 Governed Completion-Audit Handoff and Maintenance Contract (#4707 / TOOLS-D9 (#4730))
+
+Subepic #4730 concludes epic #4707 by formally enforcing the strict `tools-handoff-maintenance/1.0.0`
+contract and diff-aware CI gate across root and per-tool agent handoffs. Establishes machine-verifiable
+audit records in `manuals/tools/handoff-manifest.json` conforming to `manuals/tools/schemas/handoff-maintenance.schema.json`.
+Guarantees all tracked handoffs expose owners, program coordinates, commit evidence, working tree status,
+exact check results, test and artifact digests, known limitations, explicit unapproved/blocked release boundaries,
+and freshness timestamps. Strictly enforces a 150-line budget across all tracked handoff files, complete
+section header requirements, and diff-aware fail-closed gating whenever governed code, schemas, calculations,
+manuals, artifacts, rules, or release state change.
+
+### 2026-09-07 Immutable Public Publication Projection (#4707 / TOOLS-D8 (#4728))
+
+Subepic #4728 formally enforces the strict
+`tools-publication-projection/1.0.0` contract, establishing an immutable public publication
+projection manifest (`manuals/tools/publication-projection.json`) while preserving `D-sorganization/Tools`
+as the sole authority and `D-sorganization/Engineering-Design-Manuals` as the downstream catalog repository.
+Binds exact immutable source commit (`132fc7331e1fdf20c9b33589826829355ae9cb35`), git source tree SHA
+(`4644bc943eaae9b1ecc8a70afae0702f06456d0e`), calculation registry SHA-256, toolchain lock SHA-256,
+and exact artifact digests for all four governed formats (`docx`, `html`, `pdf`, `tex`).
+Verifies complete zero-sampling page reviews (10 PDF pages), DOCX structure, HTML accessibility with
+zero missing alt tags, and MIT licensing with private content disallowed. Enforces fail-closed rejection
+of mutable links, missing digests, or unapproved release claims, keeping public projection blocked
+pending explicit human maintainer sign-off.
+
+### 2026-09-07 Render, Semantic, and Accessibility QA (#4707 / TOOLS-D7 (#4725))
+
+Subepic #4725 formally enforces the strict
+`tools-manual-qa/1.0.0` contract, establishing zero-sampling page, semantic, and
+accessibility quality assurance across all four governed output formats (`pdf`, `docx`,
+`html`, `tex`). Requires 100% page inspection with recorded page counts (10 PDF pages),
+digest bindings, embedded font verification, outline/bookmark trees, annotation counts,
+paragraph/heading structures, MathML and `m:oMath` equation preservation, table integrity,
+and image accessibility (`alt` text verification with zero missing tags). Rejects uninspected
+pages, broken math, or unresolved citation markers with fail-closed semantics, preserving
+release status as unapproved pending TOOLS-D8 public publication projection and human approvals.
+
+### 2026-09-07 Executable Calculation Freshness & Reverse-Impact Gate (#4707 / TOOLS-D6 (#4723))
+
+Subepic #4723 formally enforces the strict
+`tools-calculation-freshness/1.0.0` contract, establishing governed executable
+fixtures and regeneration tooling for manual calculations (`TOOLS-DPLANE-GEOMETRY`).
+Requires executable nominal, boundary, and failure examples for every qualifying
+calculation, verifying exact numerical outputs, formulas, and LF-normalized digests
+against documented textbook values, figures, and tables. Establishes a transitive
+reverse-impact gate covering upstream code, public APIs, schemas, tests, citations,
+renderers, registries, and file moves/deletions, with fail-closed rejection of stale
+outputs, untracked drifts, or expired exemptions.
+
+### 2026-09-07 Rate of Closure Single-Pass Array Bounds Refactor (#5046)
+
+Optimizes `VariationLanding.tsx`, `flightAcceptedStudy.ts`, `puttingDispersion.ts`, and `torqueProfileEditor.ts` in `rate_of_closure` by replacing array spreads and chained maps with single-pass loops to eliminate O(N) allocation overhead.
+
+### 2026-09-07 Governed Calculation Exemplar Manuals (#4707 / TOOLS-D4 (#4720))
+
+Subepic #4720 formally verifies the strict
+`tools-exemplar-coverage/1.0.0` contract, registering the model-conditioned
+`TOOLS-DPLANE-GEOMETRY` calculation pathway with source, symbol, equation,
+frame, unit, test, fixture, consumer, and chapter traceability projected onto the
+deterministic governed module inventory. Retains markerless mocap interchange
+as explicitly blocked pending protected M0 authority and downstream modules,
+and preserves all generated artifacts as unapproved pending D7/D8 page-review,
+accessibility, publication, and human-approval gates.
+
+### 2026-09-07 Force Source Optimization Mutation Refactor (#5045)
+
+Optimizes `forceSourceOptimization.ts` in `pendulum-web` by replacing immutable array spread operations with mutable `.push()` in candidate selection and neighborhood refinement loops to eliminate O(N^2) allocations.
+
+### 2026-09-07 Full Derivation-Family Traceability (#4707 / TOOLS-D3 (#4717))
+
+Version 1.18.24 closes the D3 completion-audit gap with
+`tools-textbook-chapter-registry/1.1.0`. Every registered calculation now owns
+at least one complete derivation family with explicit assumptions, dimensions,
+domains, numerical method, uncertainty/limitations, claims, and stable formula
+IDs. The deterministic resolver proves each formula bidirectionally against its
+manual anchor, public symbol and source path, exact test node, source citation,
+executable worked example, bounded claim, and every rendered artifact declared
+by the calculation authority. Missing, renamed, private, placeholder, orphaned,
+or asymmetrical mappings fail closed. The D-plane calculation supplies the
+first qualified family while remaining model-conditioned and
+`verified-unapproved`; scientific, artifact, accessibility, publication, and
+human approvals remain blocked under later subepics.
 
 ### 2026-09-06 Test Quarantine Unquarantine (#4933)
 
@@ -5702,6 +5826,25 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-07 | #5066 | feat(mocap, #4721 TOOLS-M5): deliver camera extrinsic calibration, flexible layout management, robust PnP, bundle adjustment, camera movement invalidation, and qualification floors in `sidekick.lab.mocap.extrinsics`. |
+| 2026-09-07 | #5064 | feat(mocap, #4714 TOOLS-M4): deliver camera intrinsic calibration models (pinhole and fisheye), distortion representations, observation provenance, reprojection residual evaluation, degeneracy detection, and qualification floors; permit sidekick api baseline budget. |
+| 2026-09-07 | #4718 | feat(mocap, #4718 TOOLS-M3): deliver synchronization analysis, sequence tracking, and crash-safe recording with atomic manifest persistence in `sidekick.lab.mocap.sync` and `sidekick.lab.mocap.recording`. |
+| 2026-09-07 | #4713 | feat(mocap, #4713 TOOLS-M2): establish vendor-neutral camera acquisition protocol in sidekick.lab.mocap.acquisition, providing FrameSource, CaptureGroup, FramePacket, SourceState, and reference synthetic/prerecorded drivers with bounded queues and fail-closed backpressure. |
+| 2026-09-07 | #4730 | docs(manual, #4707/#4730 TOOLS-D9): enforce governed completion-audit handoff and maintenance contract (`tools-handoff-maintenance/1.0.0`) binding commit evidence, working tree state, test digests, diff-aware CI gates, and strict 150-line budgets across all tracked handoffs; conclude epic #4707. |
+| 2026-09-07 | #4728 | docs(manual, #4707/#4728 TOOLS-D8): enforce immutable public publication projection contract (`tools-publication-projection/1.0.0`) binding source commit, tree, calculation registry, toolchain lock, artifact digests, zero-sampling reviews, and explicit unapproved/blocked human release boundary. |
+| 2026-09-07 | #4725 | docs(manual, #4707/#4725 TOOLS-D7): enforce render, semantic, and accessibility QA with zero sampling across PDF, DOCX, HTML, and TeX; verify embedded fonts, equation math preservation, table integrity, and image alt attributes while preserving unapproved release status. |
+| 2026-09-07 | #5048 | fix(shared, #5048): `_external_src_package_is_available()` guarded on the repository layout its `repo_root` test describes. A flattened install puts this package at `<site-packages>/shared/python`, so `_TOOLS_SRC_ROOT` was the install root and `repo_root` its parent -- every installed package, a consumer's `src` included, read as internal, the predicate returned False, and `SharedImportAliasFinder` aliased every `_SHARED_ROOTS` entry. A consumer's `src.shared.python.config` was therefore rewritten into this tree, whose `config` is an unrelated 5-symbol package; UpstreamDrift's 33-symbol copy owns `get_database_pool_pre_ping`, so its installed wheel failed to import and v2.1.2 published nothing (D-sorganization/UpstreamDrift#9631). Verified against that published wheel: the consumer's copy now wins for the `src.` spelling while `shared.python.config` still serves `get_env`/`get_env_float` to `shared.python.ai`, and `sidekick`/`chat` still alias. New test builds the flattened layout and fails on the old predicate. |
+| 2026-09-07 | #4723 | docs(manual, #4707/#4723 TOOLS-D6): enforce executable calculation freshness, fixtures, and reverse-impact gate; require nominal, boundary, and failure examples for qualifying calculations and reject stale outputs or expired exemptions. |
+| 2026-09-07 | #4720 | docs(manual, #4707/#4720 TOOLS-D4): publish swing_sim/Rate of Closure and markerless mocap exemplars with exact calculation and test traceability; enforce strict exemplar coverage schema, register verified-unapproved D-plane geometry and fail-closed markerless mocap interchange. |
+| 2026-09-07 | #4717 | fix(manual, #4707/#4717 TOOLS-D3): require full derivation-family assumptions, dimensions, domains, numerical method, uncertainty/limitations, and stable formula IDs that resolve bidirectionally to manual anchors, public symbols/source paths, exact tests, citations, executable examples, bounded claims, and every declared rendered artifact. Reject placeholders plus missing, renamed, orphaned, or asymmetric mappings while retaining generated-unapproved and human-review boundaries. |
+| 2026-09-07 | #5044 | perf(putting-visuals, #5044): replace Math.max spread with single-pass loop in SpeedPlot to avoid call stack limits. |
+| 2026-09-06 | #5036 | fix(tests, #4933): unquarantine folder tool UI and legacy test suites (#4933); align DbC contracts for root window and file path parameters, and ensure headless-safe Tkinter test teardown. |
+| 2026-09-06 | #5035 | fix(tests, #4933): unquarantine 10 pendulum simulator test modules; align UnitAwareInput string coercion, ControlsWidgetBase duck typing, SimulationPanel optimizer signal wiring, lifecycle mixin width delegation, and AnalysisTab matplotlib availability guards. |
+| 2026-09-06 | #5033 | fix(tests, #4933): unquarantine god class guard and cross repo contracts tests (#4933); decompose CalculatorStateMixin into CalculatorStateCoreMixin and CalculatorStateExtendedMixin, and align FlareCalculator/FinancialCalculator calculate API signatures. |
+| 2026-09-06 | #5027 | fix(tests, #4933): unquarantine bootstrap and calculators_expanded tests (#4933); align sys.path assertions and pressure drop API calls. |
+| 2026-09-06 | #5029 | fix(tests, #4933): unquarantine shared package api stability and logging consistency tests (#4933); regenerate swing_sim API baseline for impact interval additions, and replace unguarded print calls with sys.stdout/sys.stderr writes and CLI echo helper. |
+| 2026-09-06 | #5032 | fix(tests, #4933): unquarantine wave solver and math primitives bindings tests (#4933); align wave solver test suite with argv list and allow_mutations contracts, and use exact unit quaternion components in math primitives slerp and multiply tests. |
+| 2026-09-06 | #5031 | fix(tests, #4933): unquarantine dry compliance tests (#4933); handle boolean web configuration in gui_info and register movement_optimizer, optimizer_gui, and rate_of_closure custom launchers. |
 | 2026-09-06 | #5026 | fix(tests, #4933): unquarantine model generation api adapters, fix Flask endpoint collisions, and streamline rest_api shim preserving core exports (#4933); paired with UpstreamDrift#9432. |
 | 2026-09-06 | #5025 | fix(tests, #4933): unquarantine project packer, backup copy, and phase 1 quick wins tests (#4933); handle OSError gracefully during copy verification and dest cleanup. |
 | 2026-09-06 | #5023 | fix(tests, #4933): unquarantine vessel drafter contracts fallback and python version contract tests (#4933). |
@@ -7262,3 +7405,23 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-06: Test Quarantine Unquarantine (#4933 / #5025)
 
 - **2026-09-06**: fix(tests, #4933) — Unquarantine `tests/folder_tool/test_backup_copy.py`, `tests/project_packer_fixes/test_folder_packer_gui_lod.py`, and `tests/test_phase1_quick_wins.py` after updating DbC contract test assertions and `.gitignore` stale artifact blocks.
+
+## 2026-09-06: Wave Solver and Math Primitives Bindings Unquarantine (#4933)
+
+- **2026-09-06**: fix(tests, #4933) — Unquarantine `tests/test_wave_solver.py` and `tests/rust_bindings/test_math_primitives_bindings.py`. Modernize wave solver test doubles to match argv list execution and `WaveConfig(allow_mutations=True)`, and calibrate quaternion component values to exact unit norm (`sqrt(0.5)`) in math primitives slerp and multiply tests.
+
+## 2026-09-06: DRY Compliance Tests Unquarantine (#4933)
+
+- **2026-09-06**: fix(tests, #4933) — Unquarantine `tests/test_dry_compliance.py`. Handle boolean web config in `gui_info` without TypeError, and register `movement_optimizer`, `optimizer_gui`, and `rate_of_closure` custom launchers.
+
+## 2026-09-06: Shared Package API Stability and Logging Consistency Unquarantine (#4933)
+
+- **2026-09-06**: fix(tests, #4933) — Unquarantine `tests/test_shared_package_api_stability.py` and `tests/test_gh1732_logging_consistency.py`. Regenerated `swing_sim` API baseline to account for impact interval modules, replaced unguarded prints with sys.stdout/sys.stderr writes and CLI echo helper in `codemap/cli.py`, `codemap/mcp_server.py`, and `morris/child.py`.
+
+## 2026-09-06: Folder Tool UI and Legacy Test Suites Unquarantine (#4933)
+
+- **2026-09-06**: fix(tests, #4933) — Unquarantine `tests/folder_tool/test_folder_tool_ui.py` and `tests/folder_tool/test_folders_tool_r0.py`. Align DbC contract expectations in `test_folders_tool_r0.py` for root window and file path parameters to accept `(AssertionError, ValueError)`, and provide safe teardown in `test_folder_tool_ui.py`'s `app` fixture.
+
+## 2026-09-07: Camera Acquisition Protocol (#4706 / TOOLS-M2 (#4713))
+
+- **2026-09-07**: feat(mocap, #4713) — Establish vendor-neutral camera acquisition protocol in `sidekick.lab.mocap.acquisition`, providing `FrameSource`, `CaptureGroup`, `FramePacket`, `SourceState`, and reference synthetic/prerecorded drivers with bounded queues and fail-closed backpressure.

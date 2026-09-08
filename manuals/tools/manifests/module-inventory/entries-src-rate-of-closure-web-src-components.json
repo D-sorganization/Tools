@@ -3989,10 +3989,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12712,
+      "bytes_lf": 12932,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ee048c038e0690b8e265d5c6a671a12364e51ca223da8f37364818df55c45dbf",
+      "content_sha256_lf": "0919088474f39b331ad4d6b8632f36879769c413381439a660990f92cb0f1117",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-PUTTINGVISUALS-TSX-C2CC13AE2A64",
       "language": "typescript-react",
@@ -6086,10 +6086,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6293,
+      "bytes_lf": 6833,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7ac3e8cb362607edc6a1cf0881ecf4923eb5c5fd0bacfba8ea3f589b3e7966e9",
+      "content_sha256_lf": "df80887a115bedb9a08ef72d17cf9d257723c8a5ddcb6b2ea1eb437a3eea7cfb",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-VARIATIONLANDING-TSX-68B456F6188B",
       "language": "typescript-react",
@@ -6110,7 +6110,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "not-applicable",
-        "units": "not-applicable",
+        "units": "mapped",
         "validation": "not-applicable"
       },
       "traceability": {
@@ -6131,7 +6131,9 @@
           }
         ],
         "test_paths": [],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "N"
+        ],
         "validation_paths": []
       }
     },
@@ -7529,10 +7531,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 15152,
+      "bytes_lf": 15321,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9244b60f2694f4b94f6595941b43c13cd9e4db6bc1ca15dcdf09098d4054716a",
+      "content_sha256_lf": "c14ff06112b29e7ed36599ed3c48d2426094b013dd07186a1ad0e3897cdec460",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-FLIGHTACCEPTEDSTUDY-TS-991EA44F473E",
       "language": "typescript",

@@ -372,3 +372,56 @@ assert upstream_process is shared_process
         env=env,
         check=True,
     )
+
+
+def test_installed_layout_does_not_alias_unrelated_downstream_packages(
+    tmp_path: Path,
+) -> None:
+    """A flattened install must still see a consumer's ``src`` as external.
+
+    ``_external_src_package_is_available`` gates which roots
+    ``SharedImportAliasFinder`` may alias. Its repo-relative test described a
+    repository layout (``<repo>/src/shared/python``); in an installed
+    distribution the package is flattened to ``<site-packages>/shared/python``,
+    so every installed package -- a consumer's ``src`` included -- looked
+    internal. The finder then aliased every shared root, and a consumer's
+    ``src.shared.python.config`` resolved to this tree even though the two
+    ``config`` packages are unrelated. That shipped a broken UpstreamDrift
+    wheel: ``src.api.database`` imports ``get_database_pool_pre_ping``, which
+    exists only in the consumer's package (UpstreamDrift#9631).
+
+    The layout here is the flattened one, so the assertion fails on the old
+    predicate and passes on the guarded one.
+    """
+    root = tmp_path / "site-packages"
+    (root / "shared" / "python").mkdir(parents=True)
+    (root / "src").mkdir()
+    (root / "shared" / "__init__.py").write_text("", encoding="utf-8")
+    (root / "shared" / "python" / "__init__.py").write_text("", encoding="utf-8")
+    (root / "src" / "__init__.py").write_text("", encoding="utf-8")
+    source = Path(__file__).resolve().parents[2] / "src/shared/python/import_aliases.py"
+    (root / "shared" / "python" / "import_aliases.py").write_text(
+        source.read_text(encoding="utf-8"), encoding="utf-8"
+    )
+
+    script = """
+import importlib
+import src  # the downstream package sitting beside the flattened install
+aliases = importlib.import_module('shared.python.import_aliases')
+assert aliases._external_src_package_is_available() is True, (
+    'a downstream src package beside a flattened install must read as external'
+)
+finder = aliases.SharedImportAliasFinder()
+assert finder._parse('src.shared.python.config.environment') == (None, ''), (
+    'an unrelated downstream root must not be aliased into this tree'
+)
+assert finder._parse('src.shared.python.sidekick') == ('sidekick', ''), (
+    'genuinely shared downstream roots must still alias'
+)
+"""
+    subprocess.run(
+        [sys.executable, "-c", script],
+        cwd=root,
+        env={**os.environ, "PYTHONPATH": str(root)},
+        check=True,
+    )

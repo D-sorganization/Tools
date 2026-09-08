@@ -393,3 +393,7 @@ class FinancialModelCalculator:
 
         self.yearly_projections = projections
         return projections
+
+    def calculate(self, parameters: FinancialParameters) -> FinancialResults:
+        """Alias for calculate_financial_model fulfilling ProcessCalculator protocol."""
+        return self.calculate_financial_model(parameters)

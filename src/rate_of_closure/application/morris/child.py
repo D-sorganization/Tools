@@ -106,9 +106,8 @@ def main() -> int:
         )
         server = uvicorn.Server(config)
         holder["server"] = server
-        print(  # noqa: T201 - private parent/child readiness protocol
-            port, flush=True
-        )
+        sys.stdout.write(f"{port}\n")
+        sys.stdout.flush()
         server.run(sockets=[listener])
         return 0
     finally:

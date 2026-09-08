@@ -1,0 +1,578 @@
+{
+  "schema_version": "tools-calculation-freshness/1.0.0",
+  "manual_id": "tools",
+  "release_status": "provisional",
+  "owner_subepic": 4723,
+  "calculations": [
+    {
+      "calculation_id": "TOOLS-DPLANE-GEOMETRY",
+      "title": "Frame-Explicit D-Plane Geometry and Rate-of-Closure Adaptation",
+      "status": "verified-unapproved",
+      "method_version": "1.0.0",
+      "generator_script": "scripts/generate_tools_calculations.py",
+      "source_links": [
+        {
+          "path": "src/rate_of_closure/simulation/impact_kinematics.py",
+          "symbol": "impact_kinematics_for_run",
+          "symbol_type": "function",
+          "sha256_lf": "9159087582286ddf9e473434f1e349a281415dc99d9c806e78fa7a9052b30ea1"
+        },
+        {
+          "path": "src/shared/python/swing_sim/impact/dplane.py",
+          "symbol": "analyze_dplane",
+          "symbol_type": "function",
+          "sha256_lf": "e9ed3e3cce4c11f3519f937d69bfd5a13432dc9836dce8a55c5ebf202f1c4877"
+        },
+        {
+          "path": "src/shared/python/swing_sim/impact/dplane.py",
+          "symbol": "spin_loft_sector_directions",
+          "symbol_type": "function",
+          "sha256_lf": "e9ed3e3cce4c11f3519f937d69bfd5a13432dc9836dce8a55c5ebf202f1c4877"
+        }
+      ],
+      "schema_links": [
+        {
+          "path": "manuals/tools/schemas/calculation-freshness.schema.json",
+          "schema_version": "tools-calculation-freshness/1.0.0",
+          "sha256_lf": "383403e995820a66eb820332ad1f401c40e4af2133fff1f6f2e0ab773cf8638c"
+        },
+        {
+          "path": "manuals/tools/fixtures/dplane-calculation-fixtures.json",
+          "schema_version": "dplane-calculation-fixtures/1.0.0",
+          "sha256_lf": "0266885e23a92825794ccf4774119124f6de917e0b2da2864b99946b02c903fc"
+        },
+        {
+          "path": "src/rate_of_closure/web/src/model/__fixtures__/dplane_golden_v1.json",
+          "schema_version": "dplane-golden-v1",
+          "sha256_lf": "a32f225b8c606be1bf6cb851f579fed7fa87e0ec63f978aff5937a7e139e3b93"
+        }
+      ],
+      "test_links": [
+        {
+          "test_id": "cross-client-golden",
+          "path": "src/shared/python/swing_sim/impact/tests/test_dplane.py::TestDPlaneAnalyticCases::test_matches_cross_client_golden_contract",
+          "level": "parity",
+          "sha256_lf": "4985fd805f7a25a7a18d99dcd3cb2ebd4f7df66b4fed7135cd5f1a36520d4319"
+        },
+        {
+          "test_id": "invalid-frame-rejection",
+          "path": "src/shared/python/swing_sim/impact/tests/test_dplane.py::TestDPlaneSingularStates::test_invalid_frame_is_rejected",
+          "level": "unit",
+          "sha256_lf": "4985fd805f7a25a7a18d99dcd3cb2ebd4f7df66b4fed7135cd5f1a36520d4319"
+        },
+        {
+          "test_id": "rate-face-center-consumer",
+          "path": "tests/rate_of_closure/test_impact_kinematics.py::test_face_center_dplane_uses_rigid_body_point_velocity",
+          "level": "integration",
+          "sha256_lf": "72e17de7499ce443179e94ada0251be6287e9d1c59a40a8a97df50d9ff06ef64"
+        }
+      ],
+      "citation_links": [
+        {
+          "citation_id": "TOOLS-DPLANE-CODE-D3",
+          "locator": "src/shared/python/swing_sim/impact/dplane.py"
+        },
+        {
+          "citation_id": "TOOLS-DPLANE-GOLDEN-V1",
+          "locator": "src/rate_of_closure/web/src/model/__fixtures__/dplane_golden_v1.json"
+        }
+      ],
+      "executable_examples": [
+        {
+          "example_id": "square-descending",
+          "category": "nominal",
+          "description": "Nominal delivery with square face and 3-degree descending attack angle.",
+          "fixture_path": "manuals/tools/fixtures/dplane-calculation-fixtures.json",
+          "fixture_case_id": "square-descending",
+          "inputs": {
+            "travel_vector": [
+              0.9986295347545738,
+              -0.052335956242943835,
+              0.0
+            ],
+            "face_normal": [
+              0.9781476007338057,
+              0.20791169081775934,
+              0.0
+            ]
+          },
+          "expected_outcome": {
+            "status": "defined",
+            "spin_loft_3d_deg": 15.0,
+            "planar_spin_loft_deg": 15.0,
+            "signed_planar_gap_deg": 15.0,
+            "spin_loft_residual_deg": 0.0,
+            "club_path_deg": 0.0,
+            "attack_angle_deg": -3.0,
+            "face_angle_deg": 0.0,
+            "dynamic_loft_deg": 12.0,
+            "face_to_path_deg": 0.0,
+            "dplane_normal_unit": [
+              0.0,
+              0.0,
+              1.0
+            ],
+            "dplane_normal_azimuth_deg": 90.0,
+            "dplane_tilt_deg": 0.0,
+            "dplane_inclination_deg": 90.0,
+            "ground_intersection_azimuth_deg": 0.0
+          },
+          "execution_digest": "6177cc4499e1d663cf8670c76654df91fb543f0cecedc42202ee84097fa706f7"
+        },
+        {
+          "example_id": "compound-rightward-face",
+          "category": "nominal",
+          "description": "Out-to-in swing with open face creating significant 3-D spin loft residual.",
+          "fixture_path": "manuals/tools/fixtures/dplane-calculation-fixtures.json",
+          "fixture_case_id": "compound-rightward-face",
+          "inputs": {
+            "travel_vector": [
+              0.995587843197948,
+              -0.08715574274765817,
+              -0.03476669358110182
+            ],
+            "face_normal": [
+              0.8524716485419714,
+              0.5150380749100542,
+              0.08959838070567443
+            ]
+          },
+          "expected_outcome": {
+            "status": "defined",
+            "spin_loft_3d_deg": 36.80234585197317,
+            "planar_spin_loft_deg": 36.0,
+            "signed_planar_gap_deg": 36.0,
+            "spin_loft_residual_deg": 0.8023458519731719,
+            "club_path_deg": -2.0,
+            "attack_angle_deg": -5.0,
+            "face_angle_deg": 6.0,
+            "dynamic_loft_deg": 31.0,
+            "face_to_path_deg": 8.0,
+            "dplane_normal_azimuth_deg": 89.01464232128987,
+            "dplane_tilt_deg": 11.442229522056229,
+            "dplane_inclination_deg": 78.55777047794376,
+            "ground_intersection_azimuth_deg": -0.9853576787101317
+          },
+          "execution_digest": "07d885bd720f34f82416bc219fb7fe49deb9a777e35f9acda7c8c0f629b44f07"
+        },
+        {
+          "example_id": "crossed-leftward-face",
+          "category": "nominal",
+          "description": "In-to-out swing with closed face creating negative face-to-path and tilt.",
+          "fixture_path": "manuals/tools/fixtures/dplane-calculation-fixtures.json",
+          "fixture_case_id": "crossed-leftward-face",
+          "inputs": {
+            "travel_vector": [
+              0.9901283591011188,
+              0.0697564737441253,
+              0.12157247580974431
+            ],
+            "face_normal": [
+              0.9361168066628592,
+              0.3420201433256687,
+              -0.08189960831908934
+            ]
+          },
+          "expected_outcome": {
+            "status": "defined",
+            "spin_loft_3d_deg": 19.817514323544046,
+            "planar_spin_loft_deg": 16.0,
+            "signed_planar_gap_deg": 16.0,
+            "spin_loft_residual_deg": 3.8175143235440494,
+            "club_path_deg": 7.0,
+            "attack_angle_deg": 4.0,
+            "face_angle_deg": -5.0,
+            "dynamic_loft_deg": 20.0,
+            "face_to_path_deg": -12.0,
+            "dplane_normal_azimuth_deg": 99.81600123921214,
+            "dplane_tilt_deg": -35.09085188935642,
+            "dplane_inclination_deg": 54.90914811064358,
+            "ground_intersection_azimuth_deg": 9.816001239212135
+          },
+          "execution_digest": "b2fd9d88e96e0406f09836e8f7a8ccb2979e5762c11afc45320214b7fe614df8"
+        },
+        {
+          "example_id": "boundary-zero-travel",
+          "category": "boundary",
+          "description": "Zero velocity vector retains face angles without inventing normal or loft.",
+          "fixture_path": "manuals/tools/fixtures/dplane-calculation-fixtures.json",
+          "fixture_case_id": "boundary-zero-travel",
+          "inputs": {
+            "travel_vector": [
+              0.0,
+              0.0,
+              0.0
+            ],
+            "face_normal": [
+              0.9396926207859084,
+              0.3420201433256687,
+              0.0
+            ]
+          },
+          "expected_outcome": {
+            "status": "zero_travel",
+            "travel_direction_unit": null,
+            "spin_loft_3d_deg": null,
+            "dplane_normal_unit": null,
+            "face_angle_deg": 0.0,
+            "dynamic_loft_deg": 20.0
+          },
+          "execution_digest": "29a64703678e7a2722e63d6b37b82377991dc8c45302cc8b6026cc5aec17ac77"
+        },
+        {
+          "example_id": "boundary-parallel-collinear",
+          "category": "boundary",
+          "description": "Collinear parallel vectors result in spin loft 0 without fabricated normal.",
+          "fixture_path": "manuals/tools/fixtures/dplane-calculation-fixtures.json",
+          "fixture_case_id": "boundary-parallel-collinear",
+          "inputs": {
+            "travel_vector": [
+              1.0,
+              0.0,
+              0.0
+            ],
+            "face_normal": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          },
+          "expected_outcome": {
+            "status": "parallel",
+            "spin_loft_3d_deg": 0.0,
+            "dplane_normal_unit": null
+          },
+          "execution_digest": "8f24cea7b449a1e23d2c6c74e5b77fbac00746a1b6beebe219aeced6be481e16"
+        },
+        {
+          "example_id": "boundary-antiparallel-collinear",
+          "category": "boundary",
+          "description": "Collinear antiparallel vectors result in spin loft 180 without fabricated normal.",
+          "fixture_path": "manuals/tools/fixtures/dplane-calculation-fixtures.json",
+          "fixture_case_id": "boundary-antiparallel-collinear",
+          "inputs": {
+            "travel_vector": [
+              1.0,
+              0.0,
+              0.0
+            ],
+            "face_normal": [
+              -1.0,
+              0.0,
+              0.0
+            ]
+          },
+          "expected_outcome": {
+            "status": "antiparallel",
+            "spin_loft_3d_deg": 180.0,
+            "dplane_normal_unit": null
+          },
+          "execution_digest": "42a5208cdbb62377ec67fbbf90458f9209eec54dfe56300e101233e3885c2a88"
+        },
+        {
+          "example_id": "boundary-vertical-projection",
+          "category": "boundary",
+          "description": "Pure vertical travel makes horizontal path heading explicitly unavailable.",
+          "fixture_path": "manuals/tools/fixtures/dplane-calculation-fixtures.json",
+          "fixture_case_id": "boundary-vertical-projection",
+          "inputs": {
+            "travel_vector": [
+              0.0,
+              1.0,
+              0.0
+            ],
+            "face_normal": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          },
+          "expected_outcome": {
+            "status": "defined",
+            "club_path_deg": null,
+            "face_to_path_deg": null,
+            "attack_angle_deg": 90.0
+          },
+          "execution_digest": "a15e7912efc7e505e7a4b83d558590b63bf8d358d525bb1372e0aa2546d0e266"
+        },
+        {
+          "example_id": "failure-non-orthogonal-frame",
+          "category": "failure",
+          "description": "Target and up frame vectors with dot product exceeding 1e-10 fail preconditions.",
+          "fixture_path": "manuals/tools/fixtures/dplane-calculation-fixtures.json",
+          "fixture_case_id": "failure-non-orthogonal-frame",
+          "inputs": {
+            "travel_vector": [
+              1.0,
+              0.0,
+              0.0
+            ],
+            "face_normal": [
+              1.0,
+              0.0,
+              0.0
+            ],
+            "target": [
+              1.0,
+              0.0,
+              0.0
+            ],
+            "up": [
+              1.0,
+              1.0,
+              0.0
+            ]
+          },
+          "expected_outcome": {
+            "error_type": "ValueError",
+            "error_match": "orthogonal"
+          },
+          "execution_digest": "33c175842426b3bff964c6cd6216ab096e9cf96d0ab3be0f7a03af12ab3d7e8e"
+        },
+        {
+          "example_id": "failure-degenerate-face-norm",
+          "category": "failure",
+          "description": "Face normal with Euclidean norm under 1e-12 fails preconditions.",
+          "fixture_path": "manuals/tools/fixtures/dplane-calculation-fixtures.json",
+          "fixture_case_id": "failure-degenerate-face-norm",
+          "inputs": {
+            "travel_vector": [
+              1.0,
+              0.0,
+              0.0
+            ],
+            "face_normal": [
+              0.0,
+              0.0,
+              0.0
+            ]
+          },
+          "expected_outcome": {
+            "error_type": "ValueError",
+            "error_match": "nonzero"
+          },
+          "execution_digest": "7f5e14e16611207f7a1807202d2ec3174728e3228202800a9afa9c40a17002ec"
+        },
+        {
+          "example_id": "failure-non-finite-vector",
+          "category": "failure",
+          "description": "Non-finite NaN or infinite vector elements fail preconditions.",
+          "fixture_path": "manuals/tools/fixtures/dplane-calculation-fixtures.json",
+          "fixture_case_id": "failure-non-finite-vector",
+          "inputs": {
+            "travel_vector": [
+              "NaN",
+              0.0,
+              0.0
+            ],
+            "face_normal": [
+              1.0,
+              0.0,
+              0.0
+            ]
+          },
+          "expected_outcome": {
+            "error_type": "ValueError",
+            "error_match": "finite"
+          },
+          "execution_digest": "a72d749b1197b62b4991a810ee6b2c07310b7484f9daf8b3997fc77b636c83ca"
+        }
+      ],
+      "documented_values": [
+        {
+          "value_id": "square_descending.spin_loft_3d_deg",
+          "field_name": "spin_loft_3d_deg",
+          "example_id": "square-descending",
+          "value": 15.0,
+          "unit": "degree",
+          "tolerance": 1e-09,
+          "manual_chapter": "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd",
+          "manual_anchor": "#example-results"
+        },
+        {
+          "value_id": "square_descending.planar_spin_loft_deg",
+          "field_name": "planar_spin_loft_deg",
+          "example_id": "square-descending",
+          "value": 15.0,
+          "unit": "degree",
+          "tolerance": 1e-09,
+          "manual_chapter": "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd",
+          "manual_anchor": "#example-results"
+        },
+        {
+          "value_id": "square_descending.spin_loft_residual_deg",
+          "field_name": "spin_loft_residual_deg",
+          "example_id": "square-descending",
+          "value": 0.0,
+          "unit": "degree",
+          "tolerance": 1e-09,
+          "manual_chapter": "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd",
+          "manual_anchor": "#example-results"
+        },
+        {
+          "value_id": "square_descending.dplane_normal_unit",
+          "field_name": "dplane_normal_unit",
+          "example_id": "square-descending",
+          "value": [
+            0.0,
+            0.0,
+            1.0
+          ],
+          "unit": "1",
+          "tolerance": 1e-09,
+          "manual_chapter": "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd",
+          "manual_anchor": "#example-results"
+        },
+        {
+          "value_id": "compound_rightward_face.spin_loft_3d_deg",
+          "field_name": "spin_loft_3d_deg",
+          "example_id": "compound-rightward-face",
+          "value": 36.80234585197317,
+          "unit": "degree",
+          "tolerance": 1e-09,
+          "manual_chapter": "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd",
+          "manual_anchor": "#example-results"
+        },
+        {
+          "value_id": "compound_rightward_face.face_to_path_deg",
+          "field_name": "face_to_path_deg",
+          "example_id": "compound-rightward-face",
+          "value": 8.0,
+          "unit": "degree",
+          "tolerance": 1e-09,
+          "manual_chapter": "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd",
+          "manual_anchor": "#example-results"
+        },
+        {
+          "value_id": "crossed_leftward_face.spin_loft_3d_deg",
+          "field_name": "spin_loft_3d_deg",
+          "example_id": "crossed-leftward-face",
+          "value": 19.817514323544046,
+          "unit": "degree",
+          "tolerance": 1e-09,
+          "manual_chapter": "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd",
+          "manual_anchor": "#example-results"
+        },
+        {
+          "value_id": "boundary_zero_travel.status",
+          "field_name": "status",
+          "example_id": "boundary-zero-travel",
+          "value": "zero_travel",
+          "unit": "1",
+          "tolerance": null,
+          "manual_chapter": "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd",
+          "manual_anchor": "#boundary-and-singular-delivery-cases"
+        },
+        {
+          "value_id": "boundary_parallel.spin_loft_3d_deg",
+          "field_name": "spin_loft_3d_deg",
+          "example_id": "boundary-parallel-collinear",
+          "value": 0.0,
+          "unit": "degree",
+          "tolerance": 1e-09,
+          "manual_chapter": "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd",
+          "manual_anchor": "#boundary-and-singular-delivery-cases"
+        },
+        {
+          "value_id": "boundary_antiparallel.spin_loft_3d_deg",
+          "field_name": "spin_loft_3d_deg",
+          "example_id": "boundary-antiparallel-collinear",
+          "value": 180.0,
+          "unit": "degree",
+          "tolerance": 1e-09,
+          "manual_chapter": "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd",
+          "manual_anchor": "#boundary-and-singular-delivery-cases"
+        }
+      ],
+      "documented_tables": [
+        {
+          "table_id": "table-dplane-worked-examples",
+          "title": "Governed D-Plane Analytic and Boundary Cases",
+          "manual_chapter": "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd",
+          "manual_anchor": "#dplane-worked-examples-table",
+          "headers": [
+            "Case ID",
+            "Category",
+            "Status",
+            "Spin Loft (deg)",
+            "Face to Path (deg)",
+            "Normal Unit"
+          ],
+          "rows": [
+            [
+              "square-descending",
+              "nominal",
+              "defined",
+              "15.00",
+              "0.00",
+              "[0, 0, 1]"
+            ],
+            [
+              "compound-rightward-face",
+              "nominal",
+              "defined",
+              "36.80",
+              "8.00",
+              "[0.017, -0.197, 0.980]"
+            ],
+            [
+              "crossed-leftward-face",
+              "nominal",
+              "defined",
+              "19.82",
+              "-12.00",
+              "[-0.141, 0.569, 0.810]"
+            ],
+            [
+              "boundary-zero-travel",
+              "boundary",
+              "zero_travel",
+              "null",
+              "null",
+              "null"
+            ],
+            [
+              "boundary-parallel-collinear",
+              "boundary",
+              "parallel",
+              "0.00",
+              "null",
+              "null"
+            ],
+            [
+              "boundary-antiparallel-collinear",
+              "boundary",
+              "antiparallel",
+              "180.00",
+              "null",
+              "null"
+            ]
+          ],
+          "digest": "a220c97fcdd944594fc77b42180bbefb3d43982abbe17baf6f9c4db2666f997c"
+        }
+      ],
+      "documented_figures": [
+        {
+          "figure_id": "fig-render-pipeline",
+          "path": "manuals/tools/figures/render-pipeline.png",
+          "media_type": "image/png",
+          "caption": "Reproducible multi-format rendering pipeline for Tools design manuals.",
+          "sha256": "78c80b6ac499ba7e96988c0d4f280734f63b1f1c5c38920281531a06824e4cb4"
+        }
+      ],
+      "transitive_dependencies": [
+        "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd",
+        "manuals/tools/figures/render-pipeline.png",
+        "manuals/tools/fixtures/dplane-calculation-fixtures.json",
+        "manuals/tools/schemas/calculation-freshness.schema.json",
+        "scripts/generate_tools_calculations.py",
+        "src/rate_of_closure/simulation/impact_kinematics.py",
+        "src/rate_of_closure/web/src/model/__fixtures__/dplane_golden_v1.json",
+        "src/shared/python/swing_sim/impact/dplane.py",
+        "src/shared/python/swing_sim/impact/tests/test_dplane.py",
+        "tests/rate_of_closure/test_impact_kinematics.py"
+      ]
+    }
+  ],
+  "exemptions": []
+}

@@ -156,7 +156,8 @@ class TestQuaternionMultiply:
     def test_identity_multiply(self) -> None:
         """Multiplying by identity must return the original quaternion."""
         identity = [1.0, 0.0, 0.0, 0.0]
-        q = [0.707, 0.707, 0.0, 0.0]
+        val = math.sqrt(0.5)
+        q = [val, val, 0.0, 0.0]
         result = mp.quaternion_multiply(identity, q)
         for i in range(4):
             assert abs(result[i] - q[i]) < 1e-6
@@ -196,7 +197,8 @@ class TestSlerp:
     def test_slerp_at_zero(self) -> None:
         """slerp(q1, q2, 0) must return q1."""
         q1 = [1.0, 0.0, 0.0, 0.0]
-        q2 = [0.707, 0.707, 0.0, 0.0]
+        val = math.sqrt(0.5)
+        q2 = [val, val, 0.0, 0.0]
         result = mp.slerp(q1, q2, 0.0)
         for i in range(4):
             assert abs(result[i] - q1[i]) < 1e-10
@@ -204,7 +206,8 @@ class TestSlerp:
     def test_slerp_at_one(self) -> None:
         """slerp(q1, q2, 1) must return q2."""
         q1 = [1.0, 0.0, 0.0, 0.0]
-        q2 = [0.707, 0.707, 0.0, 0.0]
+        val = math.sqrt(0.5)
+        q2 = [val, val, 0.0, 0.0]
         result = mp.slerp(q1, q2, 1.0)
         for i in range(4):
             assert abs(result[i] - q2[i]) < 1e-6

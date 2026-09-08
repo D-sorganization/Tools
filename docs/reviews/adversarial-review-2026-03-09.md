@@ -2,7 +2,7 @@
 
 ## Overview
 
-This document summarises the adversarial code review performed on the **Tools** repository on 2026-03-09 and records all quick-win fixes that were implemented in the same session. A companion DOCX report (`Adversarial_Code_Review_UpstreamDrift_Tools_2026-03-09.docx`) in the repository root contains the full issue catalogue with severity ratings.
+This document summarises the adversarial code review performed on the **Tools** repository on 2026-03-09 and records all quick-win fixes that were implemented in the same session. A companion DOCX report, [`Adversarial_Code_Review_UpstreamDrift_Tools_2026-03-09.docx`](Adversarial_Code_Review_UpstreamDrift_Tools_2026-03-09.docx) beside this file, contains the full issue catalogue with severity ratings (the C-/H-/M- identifiers used below). It was written to the session workspace root and committed to `D-sorganization/Repository_Management` under `docs/` by the root-level script migration; it was relocated here under [Repository_Management#1561](https://github.com/D-sorganization/Repository_Management/issues/1561).
 
 ## Scope
 
