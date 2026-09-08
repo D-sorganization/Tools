@@ -112,6 +112,13 @@ the [TU Delft beam dynamics teaching material](https://teachbooks.tudelft.nl/com
 The implementation reuses this repository's existing matrices; it does not
 copy the teaching page's example code or treat that page's execution as a test.
 
+Broader provider validation passed 334 tests and skipped two, with one expected
+failure in the exact facade export list. Adding the four new symbols retained
+all previous exports. The subsequent focused facade/shaft/API run passed all 62
+tests in 14.26 s. Pinned Ruff reports 3,700 files formatted with no lint errors;
+three-module mypy and all nine manual/governance checks pass. Implementation
+checkpoint: `f1f8da112`. Existing publication approval blockers remain.
+
 ## Remaining T3 Requirements
 
 The symmetric tensile Hessian alone is not a full rotating operator.

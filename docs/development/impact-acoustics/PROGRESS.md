@@ -148,31 +148,36 @@ limits aliases under an external src namespace. Investigate an explicit canonica
 provider import and fresh-process consumer tests, preserving downstream ownership.
 Do not broaden namespace takeover to hide the failure. T3 has not been claimed yet.
 
-## Current Checkpoint: T2 Published, Compatibility Reproduced
+## Current Checkpoint: T3 Tensile Reference Saved
 
-Draft Tools PR #5082 is open on `fix/5071-qualified-impact-coupling`; implementation
-commit `31ebe4993`, delivery record `eb78179b5`. All local push hooks pass in the
-qualified environment. First CI snapshot has running/queued checks, so no
-protected delivery or completion of #5071 is claimed. Default dt remains
-1e-7 s; the event/audit solver costs more than the old Euler loop. Keep this
-runtime tradeoff visible when qualifying interactive consumers in T6.
+T3 implementation is committed as `f1f8da112` in Tools-impact-shaft. The full
+program remains active; this is the first part of #5072. All nine manual gates,
+repository-wide pinned Ruff (3,700 files), three-module mypy and commit hooks
+pass. The broader provider run passed 334 tests, skipped two, and exposed the
+expected additive facade export-list update; after that correction, all 62
+focused facade/shaft/API tests pass (14.26 s). No failing result is counted as
+a complete passing broad run. Source/module inventory and governed handoff
+hashes are current. See SHAFT_PRESTRESS.md for the derivation and remaining T3.
 
-Focused prerequisite UpstreamDrift #9735 is attached under #9700. Claim check
-was free and the codex lease succeeded (session impact-acoustics-01a07d8a-provider,
-expiry 2026-09-08T04:17:08Z). New worktree:
-`C:/Users/diete/Repositories/UpstreamDrift-impact-provider`, branch
-`fix/9735-impact-provider-imports`, base `dbc6727aa`. It has no production edits.
-The existing failing fresh-provider contract was reproduced there: 1 failed in
-4.67 s with the same missing logging_pkg exception as CI. Test process used the
-Tools `.venv` Python, explicit TOOLS_REPO_ROOT and the same four provider
-PYTHONPATH entries as CI, no initialized vendor, serial/offscreen execution.
-A 90-second outer subprocess limit guarded collection; the failure returned
-normally. Log: system temp `impact-provider-repro.log`.
+Tools #5077/#5082 remain open ready PRs. T2 checks still need the UpstreamDrift
+consumer correction, Gasification checkout access, and inspection of seven
+PyQt visual-baseline drifts. Do not change reference images or tolerances just
+to obtain a green gate. The user-authorized theory/inventory and integration
+planning PRs are merged; later science and experimental gates are open.
 
-Further source inspection found an existing installed/vendored fallback in
-UpstreamDrift `src/__init__.py`. The canonical `shared.python` name can itself
-resolve to the downstream shadow during initialization; examine that ordering
-and the tests/conftest path setup before proposing a fix. A simple import rewrite
-is not yet established as sufficient. Reuse and qualify the existing fallback,
-retain ownership boundaries, and test both real layouts. No T3 implementation
-has started, and all remaining scientific/empirical milestones remain active.
+UpstreamDrift #9735 / PR #9745 contains the real-provider bootstrap/origin fix.
+Initial qualification passed 13 contracts without an initialized vendor, 72
+pinned-vendor/CLI/fallback tests, an actual installed-wheel bootstrap and an
+ownership-eviction mutation. CI then exposed a fixture mismatch between explicit
+vendored mode and the sibling checkout recorded in TOOLS_REPO_ROOT. Local RED
+reproduced seven failures; the mode-aware correction passes 13 contracts in
+each actual provider route. With its new explicit-mode assertion, all 14
+vendored-mode contracts pass (12.14 s). The corrective commit is `94034b56e`;
+protected CI remains required. Runtime imports and exact vendor pin are unchanged.
+
+Next: resolve those delivery checks and continue explicit axial/torsional
+properties, coupled rotating-base operators, full head inertia and passive
+six-axis grip. The complete T4-T6, U2-U4 and AffineDrift final-synthesis requirements
+are retained in the matrix. Hardware/data availability is still unanswered;
+no measurement, perceptual preference or acoustic effect is inferred from these
+synthetic beam checks.
