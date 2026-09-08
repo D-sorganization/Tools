@@ -3,12 +3,12 @@
 ## Impact Dynamics and Acoustics: #5068
 
 - Full epic execution is active; completion requires all model and empirical gates.
-- T1 foundation: PR #5077 (open at restart); theory PR AffineDrift #4258;
-  integration plan PR UpstreamDrift #9706. Do not equate open PRs with completion.
+- T1 foundation: Tools PR #5077 remains open with downstream CI failure.
+  Theory PR AffineDrift #4258 and integration plan UpstreamDrift #9706 are merged.
 - T2 #5071: `fix/5071-qualified-impact-coupling`, based on `5932146f1`; 396 broader tests pass, 2 skip, 15 final audit tests and 6 browser parser tests pass.
   Event-resolved solver and additive preload/energy audit; v1 wire retained.
 - RED: timeout/step refusal and energy-record validation failed before fixes.
-  GREEN: broader provider checks and final numerical audits pass; protected CI remains open.
+  GREEN: 1,614 unit tests also pass in isolated Python 3.12 + pytest-qt; use serial offscreen hooks. Protected Tools CI remains open.
 - Continuation matrix: `docs/development/impact-acoustics/PROGRESS.md`.
   T3–T6, consumer adapters/studies and physical/perceptual validation remain open.
 - Claim check was free; lease label posting failed again. Fleet fail-open rule applies.

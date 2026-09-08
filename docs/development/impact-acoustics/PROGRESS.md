@@ -6,20 +6,20 @@ perceptual validation cannot be inferred from numerical fixtures.
 
 ## Requirement and Evidence Matrix
 
-| Slice                          | Issue / Delivery               | Evidence Required Before Completion                                                                                           | Current State                                            |
-| ------------------------------ | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------- |
-| Theory review                  | AffineDrift #4254 / PR #4258   | Corrected rendered theory, source ledger and inventory; protected delivery                                                    | PR open at restart; local review evidence exists         |
-| Final theory synthesis         | AffineDrift #4255              | Qualified downstream results with uncertainty and limits                                                                      | Not started; depends on evidence                         |
-| Rigid reference                | Tools #5069 / PR #5077         | Analytic tensor/impulse gates and protected provider delivery                                                                 | PR open; prior local 383-test verification               |
-| Lumped qualification           | Tools #5071                    | Events, work/loss ledger, timeout/step contracts, law-consistent restitution, scaling counterexamples, parity and convergence | Implementation and numerical tests in progress here      |
-| Distributed shaft/grip         | Tools #5072                    | Prestressed rotating operators, passive impedance, beam limits, frame agreement, modal/mesh/time/FRF convergence              | Not implemented by this program                          |
-| Flexible contact               | Tools #5073                    | Off-center friction/contact and head/shaft modes; launch and ringdown; complete energy closure                                | Pending T3                                               |
-| Acoustics                      | Tools #5074                    | Calibrated signals, identified transfer, qualified radiation and held-out validation                                          | Pending; generic audio tools are not sufficient          |
-| Reports/surfaces               | Tools #5075                    | Versioned provenance reports, consumer compatibility and truthful UI integration                                              | Pending qualified provider tiers                         |
-| Integration plan               | UpstreamDrift #9701 / PR #9706 | Source/state inventory and protected delivery                                                                                 | PR open; remote head changed since initial delivery      |
-| Swing adapters                 | UpstreamDrift #9703            | Compatible rigid, elastic, prestress and wrench transfer on exact provider pin                                                | Pending provider contract                                |
-| Counterfactual studies         | UpstreamDrift #9704            | Registered matched-state and matched-input studies, reproducible results, uncertainty                                         | Pending verified coupled model                           |
-| Physical/perceptual validation | UpstreamDrift #9705            | Synchronized calibrated measurements, held-out validation, blinded sweetness analysis                                         | Data/equipment availability requested; no experiment run |
+| Slice                          | Issue / Delivery               | Evidence Required Before Completion                                                                                           | Current State                                                       |
+| ------------------------------ | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------- |
+| Theory review                  | AffineDrift #4254 / PR #4258   | Corrected rendered theory, source ledger and inventory; protected delivery                                                    | Merged PR #4258 at `1ce02d7ae4d916d4c598b62be78cefa83452aaa7`       |
+| Final theory synthesis         | AffineDrift #4255              | Qualified downstream results with uncertainty and limits                                                                      | Not started; depends on evidence                                    |
+| Rigid reference                | Tools #5069 / PR #5077         | Analytic tensor/impulse gates and protected provider delivery                                                                 | PR open; prior local 383-test verification                          |
+| Lumped qualification           | Tools #5071                    | Events, work/loss ledger, timeout/step contracts, law-consistent restitution, scaling counterexamples, parity and convergence | Implemented in `31ebe4993`; numerical checks pass, delivery pending |
+| Distributed shaft/grip         | Tools #5072                    | Prestressed rotating operators, passive impedance, beam limits, frame agreement, modal/mesh/time/FRF convergence              | Not implemented by this program                                     |
+| Flexible contact               | Tools #5073                    | Off-center friction/contact and head/shaft modes; launch and ringdown; complete energy closure                                | Pending T3                                                          |
+| Acoustics                      | Tools #5074                    | Calibrated signals, identified transfer, qualified radiation and held-out validation                                          | Pending; generic audio tools are not sufficient                     |
+| Reports/surfaces               | Tools #5075                    | Versioned provenance reports, consumer compatibility and truthful UI integration                                              | Pending qualified provider tiers                                    |
+| Integration plan               | UpstreamDrift #9701 / PR #9706 | Source/state inventory and protected delivery                                                                                 | Merged PR #9706 at `dbc6727aa4f0d422b7adaf6957e658e8997f7f29`       |
+| Swing adapters                 | UpstreamDrift #9703            | Compatible rigid, elastic, prestress and wrench transfer on exact provider pin                                                | Pending provider contract                                           |
+| Counterfactual studies         | UpstreamDrift #9704            | Registered matched-state and matched-input studies, reproducible results, uncertainty                                         | Pending verified coupled model                                      |
+| Physical/perceptual validation | UpstreamDrift #9705            | Synchronized calibrated measurements, held-out validation, blinded sweetness analysis                                         | Data/equipment availability requested; no experiment run            |
 
 ## Current Implementation: IA-T2
 
@@ -107,5 +107,32 @@ its failed shard. The rate shard passed 2,889 tests with 29 skips, then failed
 artifact upload with ETIMEDOUT; that failed workflow was retried. The UpstreamDrift
 consumer passed 10 tests and failed the fresh-provider import check with missing
 `src.shared.python.logging_pkg`. This is a real integration failure still to
-resolve. Gasification_Model previously failed repository checkout. No protection
-has been bypassed and no merge is claimed.
+resolve. Gasification_Model previously failed repository checkout. No Tools protection has been bypassed and no Tools merge is claimed.
+
+## Delivery Environment and Next Integration Audit
+
+The first push failed in system Python 3.13 when a MuJoCo plugin crashed a
+parallel unit-test worker. Python 3.12 imported MuJoCo successfully but lacked
+pytest-qt. An ignored worktree `.venv` now uses Python 3.12 system packages plus
+pytest-qt 4.5.0; serial offscreen execution passed 1,614 tests, with 29 skips,
+9 expected failures and one existing unexpected pass (161.32 s). Use this
+process-local environment for push hooks: prepend `.venv/Scripts` to PATH,
+set PYTEST_ADDOPTS=-n0 and QT_QPA_PLATFORM=offscreen. No hook was bypassed.
+
+AffineDrift A1 and UpstreamDrift U1 have been protected-merged; their parent
+issue checklists were updated and remain open. The later U1 branch commit was
+a merge from main containing unrelated motion-capture changes; it was preserved.
+
+The next inventory refinement must explicitly preserve the existing Tools
+`swing_sim.impact_interval` facade, its rigid full-inertia club/ball state,
+FREE/PINNED/TORSIONAL_GRIP boundaries, friction, trace queries and audit wire.
+Its fixed-step solver is a useful T4 integration point, not a distributed shaft
+or radiation solver. Read its contact geometry, termination and energy accounting
+before extending it, and use the T1 tensor reference for independent limits.
+
+The failing downstream import occurs in UpstreamDrift `cli_utils.py`, which
+imports Tools-owned logging via `src.shared.python.logging_pkg.logging_config`.
+UpstreamDrift has no physical logging_pkg there; the Tools alias finder deliberately
+limits aliases under an external src namespace. Investigate an explicit canonical
+provider import and fresh-process consumer tests, preserving downstream ownership.
+Do not broaden namespace takeover to hide the failure. T3 has not been claimed yet.
