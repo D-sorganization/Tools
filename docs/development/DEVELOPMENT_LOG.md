@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5095 · Deterministic Rust Watcher Debounce
+
+- **State:** in_review
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5095
+- **PR:** https://github.com/D-sorganization/Tools/pull/5097
+- **Branch:** fix/5095-deterministic-debounce
+- **Paths:** `rust_core/file_watcher/src/debounce.rs`, `rust_core/file_watcher/src/watcher.rs`, `rust_core/file_watcher/src/watcher_tests.rs`
+- **Started:** 2026-09-08
+- **Last verified:** 2026-09-08 (12 tests pass with default and Python features; Clippy and formatting pass)
+- **Summary:** TDD extracts the quiet-period accumulator to test exact supplied monotonic timestamps, coalescing, restart, shutdown, zero-delay and backward-time boundaries. Retains four real filesystem tests and existing filtered-notification timing.
+- **Next step:** Publish the focused prerequisite PR and verify normal protected CI; do not relax debounce expectations or bypass unrelated consumer gates.
+
 ### DL-0054 · Impact Dynamics Reference Foundation
 
 - **State:** in_review

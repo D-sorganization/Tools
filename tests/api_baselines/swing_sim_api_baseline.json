@@ -22125,6 +22125,236 @@
       }
     }
   },
+  "impact_studies/__init__.py": {
+    "__all__": [
+      "STUDY_WIRE_FORMAT",
+      "AcousticsUnavailableError",
+      "CompletenessChecks",
+      "EvidenceTier",
+      "ImpactStudyV1",
+      "InvalidCase",
+      "MetricRecord",
+      "Provenance",
+      "acoustic_metrics_or_raise",
+      "acoustics_available",
+      "parse_study_wire",
+      "serialize_study_wire",
+      "study_statement"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "AcousticsUnavailableError": {
+        "type": "reexport"
+      },
+      "CompletenessChecks": {
+        "type": "reexport"
+      },
+      "EvidenceTier": {
+        "type": "reexport"
+      },
+      "ImpactStudyV1": {
+        "type": "reexport"
+      },
+      "InvalidCase": {
+        "type": "reexport"
+      },
+      "MetricRecord": {
+        "type": "reexport"
+      },
+      "Provenance": {
+        "type": "reexport"
+      },
+      "STUDY_WIRE_FORMAT": {
+        "type": "reexport"
+      },
+      "acoustic_metrics_or_raise": {
+        "type": "reexport"
+      },
+      "acoustics_available": {
+        "type": "reexport"
+      },
+      "parse_study_wire": {
+        "type": "reexport"
+      },
+      "serialize_study_wire": {
+        "type": "reexport"
+      },
+      "study_statement": {
+        "type": "reexport"
+      }
+    }
+  },
+  "impact_studies/surface.py": {
+    "__all__": [
+      "AcousticsUnavailableError",
+      "acoustic_metrics_or_raise",
+      "acoustics_available",
+      "study_statement"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "AcousticsUnavailableError": {
+        "info": {
+          "bases": ["LookupError"],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "study_id"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "acoustic_metrics_or_raise": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ImpactStudyV1",
+              "default": null,
+              "kind": "arg",
+              "name": "study"
+            }
+          ],
+          "returns": "tuple[MetricRecord, ...]"
+        },
+        "type": "function"
+      },
+      "acoustics_available": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ImpactStudyV1",
+              "default": null,
+              "kind": "arg",
+              "name": "study"
+            }
+          ],
+          "returns": "bool"
+        },
+        "type": "function"
+      },
+      "study_statement": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ImpactStudyV1",
+              "default": null,
+              "kind": "arg",
+              "name": "study"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "impact_studies/wire.py": {
+    "__all__": [
+      "CompletenessChecks",
+      "EvidenceTier",
+      "ImpactStudyV1",
+      "InvalidCase",
+      "MetricRecord",
+      "Provenance",
+      "STUDY_WIRE_FORMAT",
+      "SUPPORTED_WIRE_FORMATS",
+      "parse_study_wire",
+      "serialize_study_wire"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "CompletenessChecks": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "EvidenceTier": {
+        "info": {
+          "bases": ["Enum"],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ImpactStudyV1": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "InvalidCase": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "MetricRecord": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "Provenance": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "STUDY_WIRE_FORMAT": {
+        "type": "variable"
+      },
+      "SUPPORTED_WIRE_FORMATS": {
+        "type": "variable"
+      },
+      "parse_study_wire": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "document"
+            }
+          ],
+          "returns": "ImpactStudyV1"
+        },
+        "type": "function"
+      },
+      "serialize_study_wire": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ImpactStudyV1",
+              "default": null,
+              "kind": "arg",
+              "name": "study"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      }
+    }
+  },
   "integration_grid.py": {
     "__all__": ["DEFAULT_SWING_RK4_DT_S", "effective_rk4_duration"],
     "explicit_all": true,
@@ -36601,6 +36831,287 @@
             }
           ],
           "returns": "TraceResamplingResult"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "vibroacoustics/__init__.py": {
+    "__all__": [
+      "BandwidthReport",
+      "ClippingReport",
+      "SourceKind",
+      "SynthesizedSourceError",
+      "WaveformRecording",
+      "align_time_shift",
+      "as_measured",
+      "bandwidth_report",
+      "clipping_fraction",
+      "estimate_frf_h1",
+      "estimate_modal_decay",
+      "psd_welch",
+      "raw_data_hash"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "BandwidthReport": {
+        "type": "reexport"
+      },
+      "ClippingReport": {
+        "type": "reexport"
+      },
+      "SourceKind": {
+        "type": "reexport"
+      },
+      "SynthesizedSourceError": {
+        "type": "reexport"
+      },
+      "WaveformRecording": {
+        "type": "reexport"
+      },
+      "align_time_shift": {
+        "type": "reexport"
+      },
+      "as_measured": {
+        "type": "reexport"
+      },
+      "bandwidth_report": {
+        "type": "reexport"
+      },
+      "clipping_fraction": {
+        "type": "reexport"
+      },
+      "estimate_frf_h1": {
+        "type": "reexport"
+      },
+      "estimate_modal_decay": {
+        "type": "reexport"
+      },
+      "psd_welch": {
+        "type": "reexport"
+      },
+      "raw_data_hash": {
+        "type": "reexport"
+      }
+    }
+  },
+  "vibroacoustics/measurement.py": {
+    "__all__": [
+      "BandwidthReport",
+      "ClippingReport",
+      "SourceKind",
+      "SynthesizedSourceError",
+      "WaveformRecording",
+      "align_time_shift",
+      "as_measured",
+      "bandwidth_report",
+      "clipping_fraction",
+      "raw_data_hash"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "BandwidthReport": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ClippingReport": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "SourceKind": {
+        "info": {
+          "bases": ["Enum"],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "SynthesizedSourceError": {
+        "info": {
+          "bases": ["ValueError"],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WaveformRecording": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "align_time_shift": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "reference"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "delayed"
+            }
+          ],
+          "returns": "int"
+        },
+        "type": "function"
+      },
+      "as_measured": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WaveformRecording",
+              "default": null,
+              "kind": "arg",
+              "name": "recording"
+            }
+          ],
+          "returns": "WaveformRecording"
+        },
+        "type": "function"
+      },
+      "bandwidth_report": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WaveformRecording",
+              "default": null,
+              "kind": "arg",
+              "name": "recording"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "max_expected_hz"
+            }
+          ],
+          "returns": "BandwidthReport"
+        },
+        "type": "function"
+      },
+      "clipping_fraction": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WaveformRecording",
+              "default": null,
+              "kind": "arg",
+              "name": "recording"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "rail"
+            }
+          ],
+          "returns": "ClippingReport"
+        },
+        "type": "function"
+      },
+      "raw_data_hash": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WaveformRecording",
+              "default": null,
+              "kind": "arg",
+              "name": "recording"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "vibroacoustics/spectral.py": {
+    "__all__": [
+      "DEFAULT_SEGMENT_LENGTH",
+      "ModalDecayFit",
+      "estimate_frf_h1",
+      "estimate_modal_decay",
+      "psd_welch"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "DEFAULT_SEGMENT_LENGTH": {
+        "type": "variable"
+      },
+      "ModalDecayFit": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "estimate_frf_h1": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WaveformRecording",
+              "default": null,
+              "kind": "arg",
+              "name": "force_recording"
+            },
+            {
+              "annotation": "WaveformRecording",
+              "default": null,
+              "kind": "arg",
+              "name": "response_recording"
+            },
+            {
+              "annotation": "int",
+              "default": "DEFAULT_SEGMENT_LENGTH",
+              "kind": "kwonlyarg",
+              "name": "segment_length"
+            }
+          ],
+          "returns": "tuple[np.ndarray, np.ndarray]"
+        },
+        "type": "function"
+      },
+      "estimate_modal_decay": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WaveformRecording",
+              "default": null,
+              "kind": "arg",
+              "name": "recording"
+            }
+          ],
+          "returns": "ModalDecayFit"
+        },
+        "type": "function"
+      },
+      "psd_welch": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WaveformRecording",
+              "default": null,
+              "kind": "arg",
+              "name": "recording"
+            },
+            {
+              "annotation": "int",
+              "default": "DEFAULT_SEGMENT_LENGTH",
+              "kind": "kwonlyarg",
+              "name": "segment_length"
+            }
+          ],
+          "returns": "tuple[np.ndarray, np.ndarray]"
         },
         "type": "function"
       }
