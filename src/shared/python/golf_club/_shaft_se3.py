@@ -106,6 +106,65 @@ def log_pose(value: object) -> np.ndarray:
     return finite_array(np.r_[linear, angular], (6,), "section logarithm")
 
 
+def _material_fraction(value: object) -> float:
+    coordinate = require_finite_float(value, "material fraction")
+    if not 0.0 <= coordinate <= 1.0:
+        raise ValueError("material fraction must lie in [0, 1]")
+    return float(coordinate)
+
+
+def _relative_maps(relative: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
+    """Return the relative-log derivative and its left/right inverse Jacobians."""
+    left = np.linalg.solve(right_jacobian(-relative), np.eye(6))
+    right = np.linalg.solve(right_jacobian(relative), np.eye(6))
+    return np.hstack((-left, right)), left, right
+
+
+def _velocity_inputs(
+    relative: object, fraction: object
+) -> tuple[np.ndarray, float, np.ndarray]:
+    twist = finite_array(relative, (6,), "relative section twist")
+    _rotation_chart(twist[3:])
+    coordinate = _material_fraction(fraction)
+    inverse = np.linalg.solve(right_jacobian(twist), np.eye(6))
+    return twist, coordinate, inverse
+
+
+def section_velocity_map(relative: object, fraction: object) -> np.ndarray:
+    """Map twelve nodal material velocities to one interpolated material twist.
+
+    For d=Log(H_left^-1 H_right) and alpha in [0,1], Q=[I-B,B],
+    B=alpha Jr(alpha*d) Jr(d)^-1. The same map transfers virtual work.
+    Principal-chart limits are numerical, not a material-domain qualification.
+    """
+    twist, coordinate, inverse = _velocity_inputs(relative, fraction)
+    right = coordinate * right_jacobian(coordinate * twist) @ inverse
+    return finite_array(
+        np.hstack((np.eye(6) - right, right)), (6, 12), "section velocity map"
+    )
+
+
+def section_velocity_map_derivative(
+    relative: object, fraction: object, direction: object
+) -> np.ndarray:
+    """Differentiate Q with respect to its relative logarithm in one direction.
+
+    Direction is d_dot or a relative-log variation, not an unconverted nodal
+    material velocity. Matrix-exponential Frechet derivatives retain zero and
+    tiny rotations; no finite differences or imposed symmetry are used.
+    """
+    twist, coordinate, inverse = _velocity_inputs(relative, fraction)
+    delta = finite_array(direction, (6,), "relative twist direction")
+    jacobian = right_jacobian(coordinate * twist)
+    derivative = coordinate * (
+        right_jacobian_derivative(coordinate * twist, coordinate * delta) @ inverse
+        - jacobian @ inverse @ right_jacobian_derivative(twist, delta) @ inverse
+    )
+    return finite_array(
+        np.hstack((-derivative, derivative)), (6, 12), "section velocity-map derivative"
+    )
+
+
 def interpolate_pose(left: object, right: object, fraction: object) -> np.ndarray:
     """Evaluate H_left Exp(fraction Log(H_left^-1 H_right)).
 
@@ -113,9 +172,7 @@ def interpolate_pose(left: object, right: object, fraction: object) -> np.ndarra
     real number in [0, 1]. Constant material strain yields a circular centerline
     under pure bending; a common rigid motion leaves relative strain unchanged.
     """
-    coordinate = require_finite_float(fraction, "material fraction")
-    if not 0.0 <= coordinate <= 1.0:
-        raise ValueError("material fraction must lie in [0, 1]")
+    coordinate = _material_fraction(fraction)
     left_pose, right_pose = _rigid_pose(left), _rigid_pose(right)
     relative = np.linalg.solve(left_pose, right_pose)
     return _rigid_pose(left_pose @ exp_twist(coordinate * log_pose(relative)))

@@ -27,9 +27,9 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/5072-prestressed-shaft
 - **Paths:** `src/shared/python/golf_club/*shaft*`, `src/shared/python/golf_club/_beam_fem.py`, `src/shared/python/golf_club/*grip*`, `src/shared/python/golf_club/*rotating_body*`, `tests/shared/python/golf_club/test_shaft*.py`, `tests/shared/python/golf_club/test_rotating_body.py`, `tests/shared/python/golf_club/test_grip_impedance.py`, `docs/development/impact-acoustics/*`
 - **Started:** 2026-09-07
-- **Last verified:** 2026-09-08 (524 golf/API tests pass; two optional CAD skips)
-- **Summary:** TDD tensile FEM, passive impedance, stationary spatial assembly and rotating full-head/distributed transport; kinetic Hessians, frame trajectory and published radial frequencies verified. Private SE(3) section/load/chain work and clamped equilibrium pass 117 focused contracts, including every moving-material Jacobian entry, axial/bending/torsion solutions, reactions and explicit strain/iteration refusal. Stability remains unqualified; no impact/acoustic qualification.
-- **Next step:** Derive consistent loaded inertia and boundary work; qualify stability/refusal, shear/rotary bandwidth, mesh/time/modal and FRF convergence. Preserve the distinction between a converged static root and a qualified dynamic operating point.
+- **Last verified:** 2026-09-08 (543 golf/API tests pass; two optional CAD skips)
+- **Summary:** Static root checkpoint `7d586c494` is published. Current private SE(3) kinetic quadrature reuses physical-body inertia, differentiates the velocity map consistently and passes independent COM/spin, angular-momentum and energy-rate oracles. All 136 focused section/load/equilibrium/inertia contracts pass. Stability and impact/acoustic qualification remain open.
+- **Next step:** Assemble complete rotating loaded residual/derivatives and boundary work; qualify stability/refusal, shear/rotary bandwidth, mesh/time/modal and FRF convergence. Preserve the distinction between verified element kernels and a qualified dynamic operating point.
 
 ### DL-0055 · Qualified Lumped Impact Dynamics
 

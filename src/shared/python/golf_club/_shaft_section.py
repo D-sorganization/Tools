@@ -13,10 +13,10 @@ import numpy as np
 
 from ._grip_contracts import Matrix6, Vector6, finite_array, vector6
 from ._shaft_se3 import (
+    _relative_maps,
     _rigid_pose,
     exp_twist,
     log_pose,
-    right_jacobian,
     right_jacobian_derivative,
     twist_ad,
 )
@@ -33,12 +33,6 @@ def _section_stiffness(value: object) -> Matrix6:
     except np.linalg.LinAlgError as error:
         raise ValueError("section stiffness must be positive definite") from error
     return tuple(tuple(float(item) for item in row) for row in matrix)
-
-
-def _strain_map(relative: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    left = np.linalg.solve(right_jacobian(-relative), np.eye(6))
-    right = np.linalg.solve(right_jacobian(relative), np.eye(6))
-    return np.hstack((-left, right)), left, right
 
 
 def _map_derivative(
@@ -142,7 +136,7 @@ class SectionElement:
         """
         relative = self._relative(left, right)
         energy, resultant = self._constitutive(relative)
-        mapping, inverse_left, inverse_right = _strain_map(relative)
+        mapping, inverse_left, inverse_right = _relative_maps(relative)
         gradient = mapping.T @ resultant
         material = mapping.T @ np.asarray(self.stiffness) @ mapping / self.length_m
         geometric = np.column_stack(

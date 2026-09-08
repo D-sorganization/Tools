@@ -6,21 +6,21 @@ perceptual validation cannot be inferred from numerical fixtures.
 
 ## Requirement and Evidence Matrix
 
-| Slice                          | Issue / Delivery               | Evidence Required Before Completion                                                                                           | Current State                                                                           |
-| ------------------------------ | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| Theory review                  | AffineDrift #4254 / PR #4258   | Corrected rendered theory, source ledger and inventory; protected delivery                                                    | Merged PR #4258 at `1ce02d7ae4d916d4c598b62be78cefa83452aaa7`                           |
-| Damping/transport correction   | AffineDrift #4277 / PR #4282   | Paired source, combined book, browser/PDF review and protected CI                                                             | Merged `1968897ec65044b8393705087fccdf755e3e89a2`; all CI passed                        |
-| Final theory synthesis         | AffineDrift #4255              | Qualified downstream results with uncertainty and limits                                                                      | Not started; depends on evidence                                                        |
-| Rigid reference                | Tools #5069 / PR #5077         | Analytic tensor/impulse gates and protected provider delivery                                                                 | Merged PR #5077 at `f7254461399ac18e5667a0215afd90a9ebff9d22`                           |
-| Lumped qualification           | Tools #5071 / PR #5082         | Events, work/loss ledger, timeout/step contracts, law-consistent restitution, scaling counterexamples, parity and convergence | PR #5082 open; latest observed remote head `476eaa98b`                                  |
-| Distributed shaft/grip         | Tools #5072                    | Prestressed rotating operators, passive impedance, beam limits, frame agreement, modal/mesh/time/FRF convergence              | Clamped static roots and derivatives verified; stability, loaded inertia, work/FRF open |
-| Flexible contact               | Tools #5073                    | Off-center friction/contact and head/shaft modes; launch and ringdown; complete energy closure                                | Pending T3                                                                              |
-| Acoustics                      | Tools #5074                    | Calibrated signals, identified transfer, qualified radiation and held-out validation                                          | Pending; generic audio tools are not sufficient                                         |
-| Reports/surfaces               | Tools #5075                    | Versioned provenance reports, consumer compatibility and truthful UI integration                                              | Pending qualified provider tiers                                                        |
-| Integration plan               | UpstreamDrift #9701 / PR #9706 | Source/state inventory and protected delivery                                                                                 | Merged PR #9706 at `dbc6727aa4f0d422b7adaf6957e658e8997f7f29`                           |
-| Swing adapters                 | UpstreamDrift #9703            | Compatible rigid, elastic, prestress and wrench transfer on exact provider pin                                                | Pending provider contract                                                               |
-| Counterfactual studies         | UpstreamDrift #9704            | Registered matched-state and matched-input studies, reproducible results, uncertainty                                         | Pending verified coupled model                                                          |
-| Physical/perceptual validation | UpstreamDrift #9705            | Synchronized calibrated measurements, held-out validation, blinded sweetness analysis                                         | Data/equipment availability requested; no experiment run                                |
+| Slice                          | Issue / Delivery               | Evidence Required Before Completion                                                                                           | Current State                                                                                                  |
+| ------------------------------ | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------- |
+| Theory review                  | AffineDrift #4254 / PR #4258   | Corrected rendered theory, source ledger and inventory; protected delivery                                                    | Merged PR #4258 at `1ce02d7ae4d916d4c598b62be78cefa83452aaa7`                                                  |
+| Damping/transport correction   | AffineDrift #4277 / PR #4282   | Paired source, combined book, browser/PDF review and protected CI                                                             | Merged `1968897ec65044b8393705087fccdf755e3e89a2`; all CI passed                                               |
+| Final theory synthesis         | AffineDrift #4255              | Qualified downstream results with uncertainty and limits                                                                      | Not started; depends on evidence                                                                               |
+| Rigid reference                | Tools #5069 / PR #5077         | Analytic tensor/impulse gates and protected provider delivery                                                                 | Merged PR #5077 at `f7254461399ac18e5667a0215afd90a9ebff9d22`                                                  |
+| Lumped qualification           | Tools #5071 / PR #5082         | Events, work/loss ledger, timeout/step contracts, law-consistent restitution, scaling counterexamples, parity and convergence | PR #5082 open; latest observed remote head `476eaa98b`                                                         |
+| Distributed shaft/grip         | Tools #5072                    | Prestressed rotating operators, passive impedance, beam limits, frame agreement, modal/mesh/time/FRF convergence              | Clamped roots and section kinetic quadrature verified; complete rotating loaded model, stability/work/FRF open |
+| Flexible contact               | Tools #5073                    | Off-center friction/contact and head/shaft modes; launch and ringdown; complete energy closure                                | Pending T3                                                                                                     |
+| Acoustics                      | Tools #5074                    | Calibrated signals, identified transfer, qualified radiation and held-out validation                                          | Pending; generic audio tools are not sufficient                                                                |
+| Reports/surfaces               | Tools #5075                    | Versioned provenance reports, consumer compatibility and truthful UI integration                                              | Pending qualified provider tiers                                                                               |
+| Integration plan               | UpstreamDrift #9701 / PR #9706 | Source/state inventory and protected delivery                                                                                 | Merged PR #9706 at `dbc6727aa4f0d422b7adaf6957e658e8997f7f29`                                                  |
+| Swing adapters                 | UpstreamDrift #9703            | Compatible rigid, elastic, prestress and wrench transfer on exact provider pin                                                | Pending provider contract                                                                                      |
+| Counterfactual studies         | UpstreamDrift #9704            | Registered matched-state and matched-input studies, reproducible results, uncertainty                                         | Pending verified coupled model                                                                                 |
+| Physical/perceptual validation | UpstreamDrift #9705            | Synchronized calibrated measurements, held-out validation, blinded sweetness analysis                                         | Data/equipment availability requested; no experiment run                                                       |
 
 ## Current Implementation: IA-T3 (Partial)
 
@@ -45,19 +45,22 @@ The section-kinematics checkpoint is `52d6ec791`; elastic energy and full
 internal tangent are published at `b625eb2cc`, and physical point-load work and
 derivatives at `6323944ee658f1254da1a08bb899551f082c7b5c`. All normal hooks
 passed for those pushes. Full-node assembly is published at
-`87231b2f0c8d6fea45b37e9b92795eca740ba578`. Current `SELF` adds private clamped
-root finding with the complete moving-material Jacobian, explicit material
-strain bounds, retained support reactions and refusal of unfinished states.
-All 117 focused derivative/equilibrium tests pass, including independent axial,
-bending and torsional solutions, every Jacobian entry and observer invariance.
-Full golf/API verification passes 524 tests with two optional CAD skips (87.52 s).
-Ruff 0.14.10 and scoped two-module mypy pass. Only a private no-export API entry
-is added. See LOADED_STATE_REVIEW.md for equations, domains and failure policy.
-A static root is not a stability certificate: loaded inertia, moving work and
-dynamic qualification remain open. T3 PR is not created. Inventory and handoff
-evidence are refreshed; all nine manual gates pass. Actual pre-push mypy found
-one reused-variable inference issue, now corrected with all 20 solver tests
-passing again. Run all normal commit/push checks before publication.
+`87231b2f0c8d6fea45b37e9b92795eca740ba578`; clamped root finding is published at
+`7d586c49467a1a5cf14a2ff860461022c6ad4128`, with all normal hooks passing.
+Current `SELF` adds consistent section kinetic quadrature, using the same SE(3)
+interpolation, existing physical mass properties and the existing spatial-inertia
+kernel. Independent COM/spin, acceleration/angular-momentum and energy-rate
+oracles pass. The shared relative-log map is reused by elasticity and inertia.
+All 136 focused contracts and 543 golf/API tests pass, with two optional CAD skips
+(75.67 s for the full run). Ruff 0.14.10 and actual three-module pre-push mypy pass.
+Only a private no-export API entry is added. LOADED_INERTIA.md gives equations,
+quadrature/input domains, TDD evidence and the distinction between geometric
+energy exchange and damping. These are synthetic numerical checks.
+
+Complete rotating loaded residual/derivatives, stability, moving work and
+mesh/time/modal/FRF qualification remain open. T3 PR is not created. Inventory
+and handoffs are refreshed and all nine manual gates pass. Run all normal
+commit/push checks before publishing this kinetic checkpoint.
 
 ## Current Delivery and Data Status
 
@@ -85,8 +88,11 @@ Renderer #5090 publishes `b8c6e6013ad9dab6eab0bbfe0096b449feb16abb`. Both Linux
 attempts of run 34213771459 pass 73 browser and 23 PyQt tests; all ten PyQt PNGs
 are byte-identical across attempts. All twenty initial desktop references were
 individually reviewed and refreshed without changing thresholds. The fresh
-production workflow 34217794994/job 102033568943 passes. Other protected checks
-remain pending; overlapping PR #5087 is closed, unmerged. CI_FINDINGS.md links
+production workflow 34217794994/job 102033568943 passes. The fresh Gasification consumer job 102039836106 fails checkout again. Rust
+quality job 102033732755 fails a timing-dependent debounce-count assertion;
+issue #5095 now owns its deterministic test repair, claim free and lease posted.
+No Rust repair is implemented yet. Other protected checks remain pending;
+overlapping PR #5087 is closed, unmerged. CI_FINDINGS.md links
 the exact review ledger. No whole-product or human approval is invented.
 AffineDrift #4282 merged as `1968897ec65044b8393705087fccdf755e3e89a2` after all
 CI passed. Its paired damping correction, 562-page combined book, eight browser
@@ -199,7 +205,7 @@ belongs in ROTATING_TRANSPORT.md; prior execution details remain in git history.
 
 ## Current Assembly Checkpoint
 
-The chain slice is published at `87231b2f0`; current clamped root finding passes
-117 focused and 524 full golf/API tests, with two optional CAD skips.
-It does not close stability, loaded inertia, contact, acoustics or measured gates.
+The clamped root slice is published at `7d586c494`; current section inertia passes
+136 focused and 543 full golf/API tests, with two optional CAD skips.
+It does not close complete rotating loaded dynamics, stability or measured gates.
 The complete program requirement/evidence matrix above remains authoritative.

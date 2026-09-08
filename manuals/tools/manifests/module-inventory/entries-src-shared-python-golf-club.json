@@ -1305,6 +1305,60 @@
       }
     },
     {
+      "authority_status": "provisional",
+      "bytes_lf": 5650,
+      "classification": "calculation",
+      "classification_basis": "path-marker:inertia",
+      "content_sha256_lf": "4f3ceca7129cdfed85407e17b700e40c2acf93a728dcfa40f40617cf46451220",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-INERTIA-PY-21715CC3CA18",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_inertia.py",
+      "purpose": "Consistent kinetic quadrature for a private finite-rotation section element.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_inertia.py"
+        ],
+        "unit_mentions": [
+          "kg",
+          "m/s",
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "not-applicable",
       "bytes_lf": 4137,
       "classification": "non-calculation",
@@ -1410,10 +1464,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5001,
+      "bytes_lf": 7401,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8022cfea05c4da6715721d8952a6d1afee6ee329fd91771b65b898571c94f0b8",
+      "content_sha256_lf": "2463302c0b46f789b29c9f7d53676c1d8ac54e81d3b5a3ef15befec81270fcdf",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-SE3-PY-D35A40EBEAC8",
       "language": "python",
@@ -1450,6 +1504,7 @@
         "test_paths": [
           "tests/shared/python/golf_club/test_shaft_chain.py",
           "tests/shared/python/golf_club/test_shaft_equilibrium.py",
+          "tests/shared/python/golf_club/test_shaft_inertia.py",
           "tests/shared/python/golf_club/test_shaft_point_load.py",
           "tests/shared/python/golf_club/test_shaft_se3.py",
           "tests/shared/python/golf_club/test_shaft_section.py"
@@ -1463,10 +1518,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6519,
+      "bytes_lf": 6256,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "745b7e50112b1057345ccb5b792747a1c0088ed9f3a2db0ef8c8c1cfbb165e84",
+      "content_sha256_lf": "c2ef4d974513d8f313c1ae88793aef92cb113158b60df59f418cb4723b44bf89",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-SECTION-PY-74B15AB54A0D",
       "language": "python",
@@ -4201,6 +4256,7 @@
         "test_paths": [
           "tests/shared/python/golf_club/test_grip_impedance.py",
           "tests/shared/python/golf_club/test_rotating_body.py",
+          "tests/shared/python/golf_club/test_shaft_inertia.py",
           "tests/shared/python/golf_club/test_shaft_linear_system.py",
           "tests/shared/python/golf_club/test_shaft_rotating_transport.py"
         ],

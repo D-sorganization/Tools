@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "91db0aff23ad144e18a342e0d3448501a5135560135dbe41c0159d65a04c3783",
+      "content_sha256_lf": "eb187ae363dfcf8939af766542a59afda261096e2527bfb3ca3e5a7554140c5c",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -639,8 +639,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-file-watcher.json"
     },
     {
-      "content_sha256_lf": "e5eb2d4aecf9d8be05db00d37c998b361037cdeeb7dcafe56457e8f1a249787f",
-      "entry_count": 59,
+      "content_sha256_lf": "4da3bb5c85b946d0f5c4626b78953693c7c43b4baf2c708551b742a006d2eb52",
+      "entry_count": 60,
       "package": "src/shared/python/golf_club",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-golf-club.json"
     },

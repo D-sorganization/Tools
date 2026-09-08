@@ -82,3 +82,15 @@ fallback, but masked logs do not identify which credential was selected. The
 browser is signed out and secret metadata is inaccessible. Existing access
 configuration was requested without secret values. Do not copy a local login
 token into CI, weaken checkout failure handling or claim consumer test success.
+
+The renderer head's fresh Gasification job 102039836106 again fails private
+checkout before tests. Its Rust quality job 102033732755 (run 34217794944) fails
+`watcher::tests::debounces_rapid_changes`: four callbacks exceed a ceiling of
+three, while the five watcher tests take 21.01 s. The test assumes ten writes
+separated by sleep(5ms) fit a 500ms quiet window; scheduling delays can legitimately
+split them. Scoped open-issue search found no matching owner. Issue #5095 now
+owns deterministic production debounce-state verification, retaining filesystem
+integration coverage and forbidding increased ceilings/sleeps or ignored tests.
+Claim was free; codex lease `impact-acoustics-01a07d8a-debounce` expires at
+2026-09-08T13:44:58Z. No Rust repair has been implemented yet. Renderer #4844's
+lease is renewed through 2026-09-08T13:42:43Z. These remain distinct CI gates.
