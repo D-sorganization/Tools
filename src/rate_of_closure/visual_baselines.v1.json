@@ -2,14 +2,14 @@
   "schema_id": "rate-of-closure/visual-baselines",
   "schema_version": 1,
   "approval_policy": "proposed-off-default-branch-approved-after-protected-merge",
-  "source_artifact_commit": "be71b03676eda7bbfa40c880ded3a3bb7112b868",
+  "source_artifact_commit": "df4101f2825b3b2d255dad1d6f8746818fc82812",
   "baselines": [
     {
       "surface": "react",
       "tab_id": "explorer",
       "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion-inter-5.3.0",
       "file": "initial-explorer-1440x900.png",
-      "sha256": "e12a1ba3458bde13c622e78a748af097548b719d2cd228f3542f35088bc5bf87",
+      "sha256": "5d95afd547d704e1548061d132a6855c442d9a923c853d6c37ce4d382b061f1e",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 4000,
@@ -21,7 +21,7 @@
       "tab_id": "calculation",
       "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion-inter-5.3.0",
       "file": "initial-calculation-1440x900.png",
-      "sha256": "c5475aceac625543b183679ae93578f5acd7a164f9c55a2b88c4fcdfadc73a7a",
+      "sha256": "eeaad66c186188496e544581305fd7f2d7760bfbbd565d2500656f306e8eea26",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 4000,
@@ -33,7 +33,7 @@
       "tab_id": "simulation",
       "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion-inter-5.3.0",
       "file": "initial-simulation-1440x900.png",
-      "sha256": "df5873db31253c57eca76da05cc8cf4575947f19739ef0dbdf07d0160a4a8c4d",
+      "sha256": "3524145be1f39b196a6f22ab59f61519ed0473c8e17ccbc85a92dd0549f73573",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 4000,
@@ -45,7 +45,7 @@
       "tab_id": "plots",
       "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion-inter-5.3.0",
       "file": "initial-plots-1440x900.png",
-      "sha256": "dcbd310c95f9fb0c96ed610771949133550719ea3bf98ff98a29e630aca5f84e",
+      "sha256": "3d53581802b5291cd6cafcc1a9dc9f276b6d858d9385d2066e4f07d16a516367",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 4000,
@@ -57,7 +57,7 @@
       "tab_id": "flight",
       "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion-inter-5.3.0",
       "file": "initial-flight-1440x900.png",
-      "sha256": "6e9687a8ae37431eb16e82795b0beb3e9c74b305608ea7c19f81d51c0255e202",
+      "sha256": "7f616bf28fa30be05621c9aa45dd4659f7c389d261d6c38c670005163b0b75a6",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 4000,
@@ -69,7 +69,7 @@
       "tab_id": "launch-monitor-analytics",
       "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion-inter-5.3.0",
       "file": "initial-launch-monitor-analytics-1440x900.png",
-      "sha256": "c321ab98fdc90e6f0f88dbdfbcbe72b2fff3913fbdaa4259624e6ad7d91ee9a3",
+      "sha256": "b34fc003a7281105e88e5b26e20275bb685fe18c4502be92fad3e30e97b91f85",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 4000,
@@ -81,7 +81,7 @@
       "tab_id": "neural-model-lab",
       "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion-inter-5.3.0",
       "file": "initial-neural-model-lab-1440x900.png",
-      "sha256": "dbbd4c1083046c336a8677616e1be0339ddc335f7b69323a0ebf269a9e6771f7",
+      "sha256": "351401caf0dab802648e90d46d66b0372271052ffe2101b3546335d1b0696090",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 4000,
@@ -93,7 +93,7 @@
       "tab_id": "variation",
       "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion-inter-5.3.0",
       "file": "initial-variation-1440x900.png",
-      "sha256": "178ee82bf5956cf6766a265c33c80021a56b19cb728b08218d6ffd5eafcf7bfd",
+      "sha256": "90ed3963ad123d9dc320e97ba98816a01f43147f7541451591ecb724ee4e9d16",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 4000,
@@ -105,7 +105,7 @@
       "tab_id": "putting",
       "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion-inter-5.3.0",
       "file": "initial-putting-1440x900.png",
-      "sha256": "9023b32414df5f95532b5df2a95c1c2dc0620d87f986f663e797db1a4db479a7",
+      "sha256": "ec8e468a8aaee2d081a7178fb92956f95c23601206984479d4aced109c91b1ae",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 4000,
@@ -117,7 +117,7 @@
       "tab_id": "glossary",
       "environment": "linux-chromium-desktop-1440x900-dark-reduced-motion-inter-5.3.0",
       "file": "initial-glossary-1440x900.png",
-      "sha256": "206c69cb1d34098c2606f06dde72bb2e1b09f40cb561bd95d6969dddba58b27c",
+      "sha256": "0032e515db91eee19fe73c609c6491de654ec2125843f73ea56369365424d585",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 4000,
@@ -129,7 +129,7 @@
       "tab_id": "clubhead",
       "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-clubhead-dpi-1.0.png",
-      "sha256": "4ef309788c40ebf88d3b240eb8a9709f1062c7ed7752f62cef586f5069a8149a",
+      "sha256": "5ab1bd9f278e87e0b8b984add8c78f1abc39db7c1b4cbd0219e1ec6b63d83629",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
@@ -141,7 +141,7 @@
       "tab_id": "plots",
       "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-plots-dpi-1.0.png",
-      "sha256": "b320a12490d1d18c9a26e9cb6732d434374ff58ecda72dc99ed762509aa0fbe4",
+      "sha256": "823ae0b7c9260853f6889a6d9977bafc852cd3e1792e4892345ea9c5cac59b49",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
@@ -153,7 +153,7 @@
       "tab_id": "calculation_description",
       "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-calculation_description-dpi-1.0.png",
-      "sha256": "9183ccec65a56b2cd4905281cc7a1cefc9bb61351c512ed38d497258c2304824",
+      "sha256": "ec0aca97e903f2650f319a7ddc8e5b6481a5b868656341cabe85b3bb3ea18baa",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
@@ -165,7 +165,7 @@
       "tab_id": "simulation",
       "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-simulation-dpi-1.0.png",
-      "sha256": "1dcccc190fc56fe383cb7af5ad9d2b37aecd688b7d2148708468812e1d5d6f75",
+      "sha256": "111c753131650ade867e2e87014df90b4f7ff73fa5154ffe06ad0b3938402c90",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 10000,
@@ -177,7 +177,7 @@
       "tab_id": "flight_explorer",
       "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-flight_explorer-dpi-1.0.png",
-      "sha256": "5abe4a83bc30c20f6631a4e94031b9c6dee7815aa3a18dcf1783ae31a6819136",
+      "sha256": "1bf239ea7c966eb89cd5477ce335c899ee049e479c4517ae8d0a3e75c62bffa0",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
@@ -189,7 +189,7 @@
       "tab_id": "launch_monitor_analytics",
       "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-launch_monitor_analytics-dpi-1.0.png",
-      "sha256": "066a1ae87000f737d04672b301ee18e93f024ccafe442aedca6c96753872dad1",
+      "sha256": "06d11bafdd03aff8ffea078c7f7f86d1c1caf7a6e6c08334c1d685862af4e8e4",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
@@ -201,7 +201,7 @@
       "tab_id": "neural_model_lab",
       "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-neural_model_lab-dpi-1.0.png",
-      "sha256": "c3ac1875fa028b0e6ec538e9c1a114f4eaf30e3834aa5eb02699955ad2869c0b",
+      "sha256": "0b06ce2be450dc1c0080bfcc632940841e37910c9abd87072aad120f99fea083",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
@@ -213,7 +213,7 @@
       "tab_id": "variation",
       "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-variation-dpi-1.0.png",
-      "sha256": "650267b346dab8651b6163d83046ed46cbe604c83c71908cca2b1168e84a78cd",
+      "sha256": "22f6640e896e9ea5c740e9db7e3d3201cdf7264f2cf1cff33966b539354f1d40",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
@@ -225,7 +225,7 @@
       "tab_id": "putting",
       "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-putting-dpi-1.0.png",
-      "sha256": "88a5d16870e1acc8d377ca5d468b5ceec3483e26c018838494637c4c518cd207",
+      "sha256": "b4eb9c2e20f19e99f96f7420df14713a22aa33a1e5321a08998434ab28ee4f79",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
@@ -237,7 +237,7 @@
       "tab_id": "glossary",
       "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-glossary-dpi-1.0.png",
-      "sha256": "1e1d6f140f3268931f842e2c2f73cd130f986cd32ac65b45b3f05bb0ce2fea94",
+      "sha256": "aedf5325b2908cadd1f86ad52faa3ad9bb40312fb8a48a01849df92ebe2d88bd",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,

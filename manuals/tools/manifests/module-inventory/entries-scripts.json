@@ -2462,10 +2462,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 7016,
+      "bytes_lf": 7314,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "43e77246ed2416bcc2384b98ff304f40514004c436a86b8f7cb187610db74fe3",
+      "content_sha256_lf": "06b23998912289c4abc4d6a94bc3d8e0fd81ac9bbdfa58edc3eb16d43dda5274",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-RATE-PYQT-ENVIRONMENT-PY-2A2535B6274E",
       "language": "python",

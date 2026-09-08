@@ -18,6 +18,8 @@ REQUIRED_DISTRIBUTIONS = {
     "numpy": "numpy",
     "scipy": "scipy",
     "pyqt6": "PyQt6",
+    "pyqt6-qt6": "PyQt6-Qt6",
+    "pyqt6-sip": "PyQt6-sip",
     "matplotlib": "matplotlib",
 }
 
@@ -130,25 +132,30 @@ def verify_font_stack(expectations_path: Path) -> dict[str, str]:
         The probed font stack when it matches the recorded expectations.
 
     Raises:
+        ValueError: If the font authority is empty, unknown, or lists alternatives.
         RuntimeError: Naming every identifier whose live probe differs
             from the recorded expectations — a host font upgrade is an
             environment change (issue #4844), not opaque pixel drift.
     """
 
-    expectations: dict[str, str | list[str]] = json.loads(
-        expectations_path.read_text(encoding="utf-8")
-    )
+    expectations = json.loads(expectations_path.read_text(encoding="utf-8"))
+    allowed_keys = {*_FONT_STACK_PACKAGES, "matplotlib_freetype"}
+    if (
+        not isinstance(expectations, dict)
+        or not expectations
+        or not set(expectations).issubset(allowed_keys)
+        or any(
+            not isinstance(value, str) or not value.strip()
+            for value in expectations.values()
+        )
+    ):
+        raise ValueError("font stack must name one exact version per known identifier")
     probed = probe_font_stack()
     mismatches: list[str] = []
     for key, expected in expectations.items():
         probed_val = probed.get(key, "unavailable")
-        if isinstance(expected, list):
-            if probed_val not in expected:
-                allowed_str = ", ".join(expected)
-                mismatches.append(f"{key} {probed_val} not in [{allowed_str}]")
-        else:
-            if probed_val != expected:
-                mismatches.append(f"{key} {probed_val} != expected {expected}")
+        if probed_val != expected:
+            mismatches.append(f"{key} {probed_val} != expected {expected}")
     if mismatches:
         raise RuntimeError(
             "system font stack changed (issue #4844): " + "; ".join(mismatches)
