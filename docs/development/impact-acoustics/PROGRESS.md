@@ -398,18 +398,15 @@ integration remain open. This is coupled model progress, not full epic closure.
 
 ## Current Authority Coordination Boundary
 
-UD remote `b8da0c0240c20926f8fb7ba9e55a7e5613c5d78d` restores the compatible
-dependency input pins, exactly matching the validated local input. The source
-also restores `_refresh_claims`, but its registry update still deletes and
-extends the selected claims instead of calling the preservation helper. The
-registration date remains 2026-08-21 and two local evidence-source links remain
-absent. The remote native record has SHA256
-`4fbb40ac2302e8111a19fc97903bc1877ab2cb07ced7258b8f78994ca4d627d8`;
-its schema_version, execution_profile, design and source_sha256 differ from
-the locally regenerated authority. No remote scientific qualification follows
-from restoring a helper's definition. The #9787 claim check reports held by
-codex through its claim label, with no active lease. No further edits or pushes
-are made to that shared branch; the tested local version remains preserved.
+A fresh GitHub check reports UD #9804 merged as
+`736ec2189a479fc1a9a7b45078b4d7d371b2590a`, from
+`b8da0c0240c20926f8fb7ba9e55a7e5613c5d78d`. That revision restores compatible
+pins but differs from the preserved locally tested authority `6235789dc`.
+The previous review found the update call bypasses the restored preservation
+helper and the native record has a different digest/schema/profile. A merged
+PR does not make local validation transfer to different bytes. Audit current
+protected main in a fresh claimed worktree; do not edit or overwrite the old
+shared branch. The Tools #5103/#5106 private lookup block remains separate.
 
 ## Finite-Support Frequency Response In Progress
 
@@ -417,5 +414,5 @@ The private response now retains every node and individual grip reaction,
 with balance/domain rechecks and shared clamped numerical/point-port code.
 `GRIPPED_FREQUENCY_RESPONSE.md` supplies the independent rod derivation and
 TDD evidence: RED collection, 36 initial passes, 50 focused final passes.
-All 665 Linux golf/API tests and nine manual/type/lint gates pass. Publication
-remains pending; stability and full program stay open.
+All 665 Linux golf/API tests and nine manual/type/lint gates pass. Published at 12bcf3d83 with all normal hooks passing and remote SHA verified.
+Stability and the full program remain open.

@@ -90,7 +90,7 @@ Full Linux golf/API regression passes 665 tests in 218.62 s, with two
 optional CAD skips and three unavailable-plugin configuration warnings. Python
 3.11.15, one BLAS/OMP/MKL thread and the unchanged 60-second per-test timeout
 are retained. All nine final manual gates, three-module hook-style mypy and
-repository Ruff 0.14.10 pass (3,753 formatted files). Publication is pending. The public facade is unchanged; the new module declares empty
+repository Ruff 0.14.10 pass (3,753 formatted files). Published at 12bcf3d83a5b33c14a21c998879b892b84ee57d8; normal commit/push hooks pass and remote SHA is verified. The public facade is unchanged; the new module declares empty
 `__all__` and receives only an empty private-module baseline entry.
 
 ## Remaining Work

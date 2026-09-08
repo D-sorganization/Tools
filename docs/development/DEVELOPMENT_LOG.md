@@ -29,7 +29,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-07
 - **Last verified:** 2026-09-08 (published 646 Linux golf/API passes; latest 50 focused finite-support/clamped response and coupled-model tests pass in 60.89 s; 665 final Linux golf/API tests and nine manual/type/lint gates pass)
 - **Summary:** All-node finite-grip frequency response extends published balance/operators eeea63b47. Shared point solve retains separate G/C, coefficient resolution and strain/root-balance checks. Independent dynamic-boundary rod, continuum convergence, separate supports, power and rotating preload controls pass.
-- **Next step:** Publish finite-support response through normal hooks. Then qualify spectrum/stability, modal/bandwidth limits and nonlinear time evolution. Integrate protected inventory #5103 before combined delivery; KIT metadata is not golf calibration.
+- **Next step:** Finite-support response is published at 12bcf3d83 through all normal hooks. Then qualify spectrum/stability, modal/bandwidth limits and nonlinear time evolution. Integrate protected inventory #5103 before combined delivery; KIT metadata is not golf calibration.
 
 ### DL-0055 · Qualified Lumped Impact Dynamics
 

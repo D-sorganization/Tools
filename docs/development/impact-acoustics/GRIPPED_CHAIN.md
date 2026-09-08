@@ -119,3 +119,7 @@ Contact/impact, flexible-head response, radiation/identified acoustic transfer,
 physical validation and blinded sweetness remain open. Inventory #5103 remains
 unmerged because its private consumer lookup fails before tests; integrate the
 protected classifier and regenerate inventory before final combined delivery.
+
+The subsequent finite-support response checkpoint is published at 12bcf3d83.
+See `GRIPPED_FREQUENCY_RESPONSE.md` for the independent dynamic-root rod,
+mesh and cycle-power controls, 665 Linux passes and remaining stability limits.
