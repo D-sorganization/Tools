@@ -27,9 +27,9 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/5072-prestressed-shaft
 - **Paths:** `src/shared/python/golf_club/*shaft*`, `src/shared/python/golf_club/_beam_fem.py`, `src/shared/python/golf_club/*grip*`, `src/shared/python/golf_club/*rotating_body*`, `tests/shared/python/golf_club/test_shaft*.py`, `tests/shared/python/golf_club/test_rotating_body.py`, `tests/shared/python/golf_club/test_grip_impedance.py`, `docs/development/impact-acoustics/*`
 - **Started:** 2026-09-07
-- **Last verified:** 2026-09-08 (published 646 Linux golf/API passes; latest 50 focused finite-support/clamped response and coupled-model tests pass in 60.89 s; 665 final Linux golf/API tests and nine manual/type/lint gates pass)
-- **Summary:** All-node finite-grip frequency response extends published balance/operators eeea63b47. Shared point solve retains separate G/C, coefficient resolution and strain/root-balance checks. Independent dynamic-boundary rod, continuum convergence, separate supports, power and rotating preload controls pass.
-- **Next step:** Finite-support response is published at 12bcf3d83 through all normal hooks. Then qualify spectrum/stability, modal/bandwidth limits and nonlinear time evolution. Integrate protected inventory #5103 before combined delivery; KIT metadata is not golf calibration.
+- **Last verified:** 2026-09-08 (published response: 665 Linux golf/API passes; new separate-G/C/all-node spectra: 49 focused passes in 20.22 s and three-module mypy; 692 Linux golf/API tests and nine final manual/type/lint gates pass)
+- **Summary:** Finite-support response is published at 12bcf3d83. Private frozen spectra now preserve separate G/C, all-node balance, support/frame metadata and shared eigensolver residual/conditioning checks. Independent rod polynomial/continuum poles, critical/unstable/semidefinite and invalid-input controls pass.
+- **Next step:** Publish the verified spectra through normal hooks, then explicit autonomous/time-varying stability, transient/bandwidth and nonlinear evolution. Follow UpstreamDrift #9825 for merged authority preservation; #8920/#8556 remain physical parameter gates. Integrate inventory #5103 before combined delivery.
 
 ### DL-0055 · Qualified Lumped Impact Dynamics
 

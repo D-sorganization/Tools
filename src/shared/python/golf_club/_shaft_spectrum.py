@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
+from typing import cast
 
 import numpy as np
 
 from ._grip_contracts import finite_array
+from ._rotating_body_contracts import RotatingFrameState
 from ._shaft_clamped import balanced_clamped_dynamics
 from ._shaft_equilibrium import EquilibriumControls
 from ._shaft_rotating_chain import RotatingSectionChain
@@ -56,6 +58,8 @@ class FrozenSpectrum:
     polynomial_relative_residuals: np.ndarray
     scaled_eigenbasis_rcond: float
     support_wrench: np.ndarray | None = None
+    frame: RotatingFrameState | None = None
+    grip_wrenches: tuple[np.ndarray, ...] = ()
 
     @property
     def stability_status(self) -> str:
@@ -68,19 +72,33 @@ def _scaled_generator(
 ) -> np.ndarray:
     if not isinstance(scales, SpectrumScales):
         raise TypeError("scales must be SpectrumScales")
+    gyro = finite_array(gyroscopic, np.asarray(mass).shape, "gyroscopic matrix")
+    _require_skew(gyro, scales.residual_tolerance)
+    return _general_generator(mass, gyro, stiffness, scales)
+
+
+def _require_skew(gyro: np.ndarray, tolerance: float) -> None:
+    if np.linalg.norm(gyro + gyro.T) > tolerance * np.linalg.norm(gyro):
+        raise ValueError("gyroscopic matrix must be skew symmetric")
+
+
+def _general_generator(
+    mass: object, velocity: object, stiffness: object, scales: SpectrumScales
+) -> np.ndarray:
+    """Shared positive-mass kernel; callers qualify the velocity coefficient."""
+    if not isinstance(scales, SpectrumScales):
+        raise TypeError("scales must be SpectrumScales")
     if scales.time_s**2 == 0:
         raise ValueError("time scale squared must be numerically representable")
     shape = np.asarray(mass).shape
     if len(shape) != 2 or shape[0] == 0 or shape[0] != shape[1]:
         raise ValueError("mass must be a nonempty square matrix")
     inertia = finite_array(mass, shape, "mass")
-    gyro = finite_array(gyroscopic, shape, "gyroscopic matrix")
+    transport = finite_array(velocity, shape, "velocity coefficient")
     tangent = finite_array(stiffness, shape, "stiffness")
     tolerance = scales.residual_tolerance
     if np.linalg.norm(inertia - inertia.T) > tolerance * np.linalg.norm(inertia):
         raise ValueError("mass must be symmetric within the declared tolerance")
-    if np.linalg.norm(gyro + gyro.T) > tolerance * np.linalg.norm(gyro):
-        raise ValueError("gyroscopic matrix must be skew symmetric")
     # No projection or regularization: diagnose the supplied mass, then solve it.
     eigenvalues = np.linalg.eigvalsh(inertia)
     if (
@@ -92,22 +110,26 @@ def _scaled_generator(
     generator = np.zeros((2 * size, 2 * size))
     generator[:size, size:] = np.eye(size)
     generator[size:, :size] = -(scales.time_s**2) * np.linalg.solve(inertia, tangent)
-    generator[size:, size:] = -scales.time_s * np.linalg.solve(inertia, gyro)
-    return finite_array(generator, generator.shape, "scaled generator")
+    generator[size:, size:] = -scales.time_s * np.linalg.solve(inertia, transport)
+    return cast(
+        np.ndarray, finite_array(generator, generator.shape, "scaled generator")
+    )
 
 
 def _polynomial_residuals(
-    matrices: tuple[object, object, object], rates: np.ndarray, modes: np.ndarray
+    matrices: tuple[object, ...], rates: np.ndarray, modes: np.ndarray
 ) -> np.ndarray:
     """Normwise residual in the original quadratic pencil, using Frobenius norms."""
-    mass, gyro, stiffness = (np.asarray(matrix) for matrix in matrices)
-    defect = (mass @ modes) * rates**2 + (gyro @ modes) * rates + stiffness @ modes
+    mass, *velocity, stiffness = (np.asarray(matrix) for matrix in matrices)
+    defect = (mass @ modes) * rates**2 + stiffness @ modes
+    for matrix in velocity:
+        defect += (matrix @ modes) * rates
     mode_norm = np.linalg.norm(modes, axis=0)
     if np.any(mode_norm == 0):
         raise ValueError("polynomial residual requires a nonzero displacement mode")
     denominator = (
         np.linalg.norm(mass) * np.abs(rates) ** 2
-        + np.linalg.norm(gyro) * np.abs(rates)
+        + sum(float(np.linalg.norm(matrix)) for matrix in velocity) * np.abs(rates)
         + np.linalg.norm(stiffness)
     ) * mode_norm
     result: np.ndarray = np.zeros_like(denominator)
@@ -154,34 +176,41 @@ def _frozen_spectrum(
     try:
         with np.errstate(over="raise", invalid="raise", divide="raise"):
             generator = _scaled_generator(mass, gyroscopic, stiffness, scales)
-            rates, modes = np.linalg.eig(generator)
-            defects = generator @ modes - modes * rates
-            denominator = (np.linalg.norm(generator) + np.abs(rates)) * np.linalg.norm(
-                modes, axis=0
-            )
-            residuals = np.divide(
-                np.linalg.norm(defects, axis=0),
-                denominator,
-                out=np.zeros_like(denominator),
-                where=denominator > 0,
-            )
-            singular_values = np.linalg.svd(modes, compute_uv=False)
-            rcond = float(singular_values[-1] / singular_values[0])
-            size = generator.shape[0] // 2
-            result = FrozenSpectrum(
-                rates / scales.time_s,
-                modes[:size].copy(),
-                modes[size:].copy() / scales.time_s,
-                residuals,
-                _polynomial_residuals(
-                    (mass, gyroscopic, stiffness), rates / scales.time_s, modes[:size]
-                ),
-                rcond,
+            result = _spectrum_from_generator(
+                generator, (mass, gyroscopic, stiffness), scales
             )
     except (np.linalg.LinAlgError, FloatingPointError, OverflowError) as error:
         raise ValueError("frozen spectrum numerical evaluation failed") from error
     _validate_result(result, scales.residual_tolerance)
     return result
+
+
+def _spectrum_from_generator(
+    generator: np.ndarray, matrices: tuple[object, ...], scales: SpectrumScales
+) -> FrozenSpectrum:
+    """Share eigenpair diagnostics, retaining each original pencil coefficient."""
+    rates, modes = np.linalg.eig(generator)
+    defects = generator @ modes - modes * rates
+    denominator = (np.linalg.norm(generator) + np.abs(rates)) * np.linalg.norm(
+        modes, axis=0
+    )
+    residuals = np.divide(
+        np.linalg.norm(defects, axis=0),
+        denominator,
+        out=np.zeros_like(denominator),
+        where=denominator > 0,
+    )
+    singular_values = np.linalg.svd(modes, compute_uv=False)
+    rcond = float(singular_values[-1] / singular_values[0])
+    size = generator.shape[0] // 2
+    return FrozenSpectrum(
+        rates / scales.time_s,
+        modes[:size].copy(),
+        modes[size:].copy() / scales.time_s,
+        residuals,
+        _polynomial_residuals(matrices, rates / scales.time_s, modes[:size]),
+        rcond,
+    )
 
 
 def clamped_chain_spectrum(

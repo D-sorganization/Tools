@@ -1554,6 +1554,52 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 3512,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e9fdaa56c96e40e85665384954796ce7c370cce45a6091e1aaa519fe1cb59589",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-DAMPED-SPECTRUM-PY-17FA5C689AF5",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_damped_spectrum.py",
+      "purpose": "Private frozen spectra retaining gyroscopic transport and damping separately.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_damped_spectrum.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 10098,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -1805,7 +1851,8 @@
         "public_surfaces": [],
         "test_paths": [
           "tests/shared/python/golf_club/test_shaft_gripped_chain.py",
-          "tests/shared/python/golf_club/test_shaft_gripped_response.py"
+          "tests/shared/python/golf_club/test_shaft_gripped_response.py",
+          "tests/shared/python/golf_club/test_shaft_gripped_spectrum.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -1856,6 +1903,52 @@
         "unit_mentions": [
           "s"
         ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3014,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4bddb29b7c4bc93418ae88207a5e9c759cfb1573b51bcb9b315eabf71a16ddfe",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-GRIPPED-SPECTRUM-PY-83CFB62ABEFE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_gripped_spectrum.py",
+      "purpose": "All-node frozen modes for finite stationary grip-supported shaft chains.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_gripped_spectrum.py"
+        ],
+        "unit_mentions": [],
         "validation_paths": []
       }
     },
@@ -2371,10 +2464,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8931,
+      "bytes_lf": 9892,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "38935e456089f684a036b3bde24c4a78a85f4d47881cd06f5a11551acc061b22",
+      "content_sha256_lf": "f2afb029b6803f6e5d48cadeb15fc238c87bc28b3cbe25a57662a52648d3a8d8",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-SPECTRUM-PY-0A114A6B9C20",
       "language": "python",
@@ -2409,6 +2502,7 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_damped_spectrum.py",
           "tests/shared/python/golf_club/test_shaft_spectrum.py"
         ],
         "unit_mentions": [

@@ -2859,6 +2859,11 @@
     "explicit_all": true,
     "symbols": {}
   },
+  "_shaft_damped_spectrum.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
   "_shaft_equilibrium.py": {
     "__all__": [],
     "explicit_all": true,
@@ -2885,6 +2890,11 @@
     "symbols": {}
   },
   "_shaft_gripped_response.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_gripped_spectrum.py": {
     "__all__": [],
     "explicit_all": true,
     "symbols": {}

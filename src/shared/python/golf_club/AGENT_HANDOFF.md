@@ -4,7 +4,7 @@
 
 `impact_mobility.py`: detached tensor reference, T1 PR #5077 merged at `f72544613`; not a flexible/acoustic solver.
 T2 #5071 adds event-resolved integration, preload states and all four passive loss channels; v1 report fields retain their meanings.
-T3 #5072: grip-supported balance/operators published at `eeea63b47` with 646 Linux golf/API passes. All-node finite-grip response now passes 50 focused controls and reuses the clamped numerical solve and conjugate point map. `GRIPPED_FREQUENCY_RESPONSE.md` records independent dynamic-boundary rod/continuum, cycle loss, interior/repeated support and rotating loaded controls. 665 Linux golf/API tests and all nine manual/type/lint gates pass; published at 12bcf3d83 with normal hooks passing. Every root balance and strain domain is rechecked; G and C remain separate. Stability, bandwidth, time evolution and impact/acoustic/physical qualification remain open.
+T3 #5072: finite-grip response published at `12bcf3d83` (665 Linux golf/API passes). New private spectra retain separate G/C, all-node balance and frame/support metadata; 49 spectral controls pass, including independent two-node/continuum damped poles and damping-induced instability. Shared eigensolver diagnostics preserve the legacy contract. See `GRIPPED_SPECTRUM.md`; 692 Linux golf/API tests and nine final manual/type/lint gates pass; publication pending. Explicit stability, bandwidth and nonlinear impact/acoustic work remain.
 
 > Update this file in every implementation commit that changes this package.
 > Last updated: 2026-09-08

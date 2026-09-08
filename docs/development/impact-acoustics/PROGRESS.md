@@ -416,3 +416,13 @@ with balance/domain rechecks and shared clamped numerical/point-port code.
 TDD evidence: RED collection, 36 initial passes, 50 focused final passes.
 All 665 Linux golf/API tests and nine manual/type/lint gates pass. Published at 12bcf3d83 with all normal hooks passing and remote SHA verified.
 Stability and the full program remain open.
+
+## Finite-Grip Spectra In Progress
+
+Separate G/C spectra and the all-node wrapper now pass 49 focused controls,
+including two-node axial characteristic roots, two convergent continuum poles,
+critical and unstable modes, immutable inputs and numerical/domain refusal.
+`GRIPPED_SPECTRUM.md` supplies equations and limits. All 692 Linux golf/API tests and nine final manual/type/lint gates pass.
+Publication remains pending; explicit stability and the
+full physical/acoustic program remain open. UD #9825 records the confirmed
+protected-main claim reconciliation bug; #8920/#8556 remain parameter gates.
