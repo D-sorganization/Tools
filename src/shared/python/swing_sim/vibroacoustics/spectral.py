@@ -9,7 +9,6 @@ response live in a later, independently qualified tier.
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import cast
 
 import numpy as np
 from scipy.signal import hilbert
@@ -26,7 +25,8 @@ def _detrended(samples: np.ndarray) -> np.ndarray:
 def _samples(recording: WaveformRecording) -> np.ndarray:
     if not isinstance(recording, WaveformRecording):
         raise TypeError("recording must be a WaveformRecording")
-    return cast(np.ndarray, recording.samples)
+    samples: np.ndarray = recording.samples
+    return samples
 
 
 def _longest_true_run(mask: np.ndarray) -> tuple[int, int]:
