@@ -2,9 +2,11 @@
 
 ## Current delivery state
 
-- Branch: `fix/4844-consistent-pyqt-renderer`; commit: `SELF`; PR: not created.
+- Branch: `fix/4844-consistent-pyqt-renderer`; commit: `SELF`; PR: [#5090](https://github.com/D-sorganization/Tools/pull/5090), open.
 - Worktree: `C:/Users/diete/Repositories/Tools-impact-render`.
-- Base: `20fff16ac` (`origin/main`, fetched 2026-09-08).
+- Initial base: `20fff16ac`; current-main merge includes `669b478e1` (2026-09-08).
+  The only conflict was the generated root handoff digest/count; both root
+  handoff updates and the independent main impact-energy audit (#5079) are preserved.
 - Codex lease: `impact-acoustics-01a07d8a-render`, expires 2026-09-08 08:21 UTC.
 - This prerequisite affects impact-program PRs #5077/#5082; it does not complete
   the impact physics or empirical program (#5068).
@@ -61,7 +63,11 @@ Font package inventory was checked against [Playwright native dependencies](http
   implementation and shard contents are unchanged.
 - Repository Ruff 0.14.10 lint/format, changed-script mypy with
   `--follow-imports=silent`, runner-policy guard, and 1,610-file shard partition pass.
-- Next: finish normal commit/push hooks, open a ready PR, execute the Linux
+- Implementation `53f072a58bce42a9c11a639329da01b093e30557` passed all normal
+  commit/push hooks and is published in ready PR #5090.
+- Current-main merge validation: 68 tests pass, including all 19 impact-interval
+  solver checks from preserved main PR #5079.
+- Next: execute the Linux
   workflow, inspect every new reference candidate and its exact provenance,
   then propose only justified reference changes through protected review.
 - Preserve old references until fresh capture exists. A passing unit suite

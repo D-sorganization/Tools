@@ -31,7 +31,7 @@ Five packaged manifests in `src/rate_of_closure/` declare the tab set, cross-che
 
 ## Renderer prerequisite #4844
 
-- Worktree `C:/Users/diete/Repositories/Tools-impact-render`; branch `fix/4844-consistent-pyqt-renderer`; commit `SELF`; PR not created.
+- Worktree `C:/Users/diete/Repositories/Tools-impact-render`; branch `fix/4844-consistent-pyqt-renderer`; commit `SELF`; PR #5090 open.
 - PR and trusted PyQt capture use one digest-pinned Ubuntu 24.04 container; trusted remains on fleet runners. Exact font versions replace alternate-version acceptance; Qt runtime/SIP pins are checked.
 - TDD: 10 original failures plus container RED reproduced; 49 focused and SPEC tests pass. Linux container execution and fresh baseline review are pending; no image or tolerance has changed.
 - Continue from `docs/development/rate-pyqt-renderer-4844.md`. Do not accept another host stack under the same image identity.

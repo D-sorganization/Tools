@@ -960,6 +960,27 @@ reachable from any live state and `abandoned` from `parked`.
   state; a live entry without a real issue is orphaned by
   definition.
 
+### DL-#4130 · Impact-Interval Independent Contact-Energy Audit
+
+- **State:** in_review
+- **Owner:** dieterolson (agent `claude`, fleet wave 2)
+- **PR:** #5079 (`claude/issue-9548-contact-energy` → `main`)
+- **Paths:** `src/shared/python/swing_sim/impact_interval/**`,
+  `src/shared/python/swing_sim/impact/contact.py`,
+  `docs/physics/IMPACT_INTERVAL_DYNAMICS.md`
+- **Started:** 2026-09-07
+- **Last verified:** 2026-09-07 (SELF)
+- **Summary:** Provider fix for UpstreamDrift#9548 under Tools#4130: the
+  impact-interval audit no longer assigns every positive energy deficit to
+  `unilateral_release`. The solver now integrates dashpot, friction, and
+  torsional-grip damping independently, tracks recoverable Kelvin-Voigt
+  spring energy from the contact state, counts release energy only at
+  identified tensile-clip steps, and reports an unfudged signed residual
+  plus separate free/supported momentum diagnostics with a demonstrated
+  halving-dt convergence. RED→GREEN cases live in
+  `impact_interval/tests/test_solver.py::TestIndependentEnergyAudit`.
+- **Next step:** Protect-merge the PR and hand the merged SHA to the
+  UpstreamDrift pin-bump that closes the provider issue.
 ### DL-0054 · ThemeColors 60-Token Derivation Restoration
 
 - **State:** in_review
