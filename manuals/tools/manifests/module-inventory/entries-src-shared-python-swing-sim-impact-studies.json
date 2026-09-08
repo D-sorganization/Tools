@@ -1,0 +1,307 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 1588,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "f3b35ea77c6d78cca56b549a07b75506b07f7ee6bd4c4f984f3ae480fe95985d",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-STUDIES-INIT-PY-3474E3CC24E2",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact_studies/__init__.py",
+      "purpose": "Versioned impact study wire and truthful application surface (IA-T6, #5075).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "AcousticsUnavailableError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CompletenessChecks",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "EvidenceTier",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ImpactStudyV1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InvalidCase",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MetricRecord",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Provenance",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "STUDY_WIRE_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "acoustic_metrics_or_raise",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "acoustics_available",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "parse_study_wire",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "serialize_study_wire",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "study_statement",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3309,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "7d6ab8cf11ea8f0f50971fc66a8308494a7387009afc85b6bda20132d915fb2a",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-STUDIES-SURFACE-PY-35A215AFD5B4",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact_studies/surface.py",
+      "purpose": "Truthful application surface for impact studies (IA-T6, #5075).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AcousticsUnavailableError",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_TIER_LABELS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "acoustic_metrics_or_raise",
+            "signature": "study: ImpactStudyV1"
+          },
+          {
+            "kind": "function",
+            "name": "acoustics_available",
+            "signature": "study: ImpactStudyV1"
+          },
+          {
+            "kind": "function",
+            "name": "study_statement",
+            "signature": "study: ImpactStudyV1"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/putting/tests/test_surface.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 12293,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "8d69ed454c19713467024dcad32c1b9b1607de9f32c68bf9d713630d20ac5dfe",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-STUDIES-WIRE-PY-2C55F2B8E72C",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact_studies/wire.py",
+      "purpose": "Versioned study wire schema for impact studies (IA-T6, #5075).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CompletenessChecks",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "EvidenceTier",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImpactStudyV1",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "InvalidCase",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MetricRecord",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Provenance",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "STUDY_WIRE_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUPPORTED_WIRE_FORMATS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "parse_study_wire",
+            "signature": "document: str"
+          },
+          {
+            "kind": "function",
+            "name": "serialize_study_wire",
+            "signature": "study: ImpactStudyV1"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/shared/python/swing_sim/impact_studies",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}
