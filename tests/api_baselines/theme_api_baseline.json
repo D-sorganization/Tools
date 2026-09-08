@@ -579,7 +579,70 @@
           "bases": [
             "BaseModel"
           ],
-          "methods": {}
+          "methods": {
+            "as_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
+            "get": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "key"
+                },
+                {
+                  "annotation": "Any",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "default"
+                }
+              ],
+              "returns": "Any"
+            },
+            "keys": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "list[str]"
+            },
+            "model_post_init": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "Any",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "__context"
+                }
+              ],
+              "returns": "None"
+            }
+          }
         },
         "type": "class"
       },
@@ -647,6 +710,70 @@
               "default": "None",
               "kind": "arg",
               "name": "palette"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "color_derivation.py": {
+    "__all__": [
+      "adjust",
+      "is_dark_bg",
+      "with_alpha"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "adjust": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "hex_color"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "factor"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "is_dark_bg": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "bg"
+            }
+          ],
+          "returns": "bool"
+        },
+        "type": "function"
+      },
+      "with_alpha": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "hex_color"
+            },
+            {
+              "annotation": "int",
+              "default": null,
+              "kind": "arg",
+              "name": "alpha"
             }
           ],
           "returns": "str"
