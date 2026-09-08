@@ -27,9 +27,9 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/5072-prestressed-shaft
 - **Paths:** `src/shared/python/golf_club/*shaft*`, `src/shared/python/golf_club/_beam_fem.py`, `src/shared/python/golf_club/*grip*`, `src/shared/python/golf_club/*rotating_body*`, `tests/shared/python/golf_club/test_shaft*.py`, `tests/shared/python/golf_club/test_rotating_body.py`, `tests/shared/python/golf_club/test_grip_impedance.py`, `docs/development/impact-acoustics/*`
 - **Started:** 2026-09-07
-- **Last verified:** 2026-09-08 (464 golf/API tests pass; two optional CAD skips)
-- **Summary:** TDD tensile FEM, passive impedance, stationary spatial assembly and rotating full-head/distributed transport; kinetic Hessians, frame trajectory and published radial frequencies verified. Private objective SE(3) interpolation and section energy now pass circular-bending, virtual-work, full geometric-tangent, rigid-motion and branch-contract gates. Partial T3; no equilibrium or impact/acoustic qualification.
-- **Next step:** Assemble consistent loaded equilibrium and applied-load derivatives with the verified internal tangent, then boundary work; qualify stability, shear/rotary bandwidth, mesh/time/modal and FRF convergence.
+- **Last verified:** 2026-09-08 (488 golf/API tests pass; two optional CAD skips)
+- **Summary:** TDD tensile FEM, passive impedance, stationary spatial assembly and rotating full-head/distributed transport; kinetic Hessians, frame trajectory and published radial frequencies verified. Private objective SE(3) interpolation and section energy now pass circular-bending, virtual-work, full geometric-tangent, rigid-motion and branch-contract gates. Offset dead-force and spatial-couple work/full load tangents pass independent pose-work and energy checks. Partial T3; no equilibrium or impact/acoustic qualification.
+- **Next step:** Assemble consistent loaded equilibrium using the verified internal and applied-load tangents, then boundary work; qualify stability, shear/rotary bandwidth, mesh/time/modal and FRF convergence.
 
 ### DL-0055 · Qualified Lumped Impact Dynamics
 

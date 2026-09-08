@@ -10,7 +10,7 @@ perceptual validation cannot be inferred from numerical fixtures.
 | ------------------------------ | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------- |
 | Theory review                  | AffineDrift #4254 / PR #4258   | Corrected rendered theory, source ledger and inventory; protected delivery                                                    | Merged PR #4258 at `1ce02d7ae4d916d4c598b62be78cefa83452aaa7`                                              |
 | Final theory synthesis         | AffineDrift #4255              | Qualified downstream results with uncertainty and limits                                                                      | Not started; depends on evidence                                                                           |
-| Rigid reference                | Tools #5069 / PR #5077         | Analytic tensor/impulse gates and protected provider delivery                                                                 | PR open; prior local 383-test verification                                                                 |
+| Rigid reference                | Tools #5069 / PR #5077         | Analytic tensor/impulse gates and protected provider delivery                                                                 | Merged PR #5077 at `f7254461399ac18e5667a0215afd90a9ebff9d22`                                              |
 | Lumped qualification           | Tools #5071 / PR #5082         | Events, work/loss ledger, timeout/step contracts, law-consistent restitution, scaling counterexamples, parity and convergence | PR #5082 open at `2f975d06e`; local push gates pass                                                        |
 | Distributed shaft/grip         | Tools #5072                    | Prestressed rotating operators, passive impedance, beam limits, frame agreement, modal/mesh/time/FRF convergence              | Rotating transport and objective section energy/full internal tangent verified; loaded state/work/FRF open |
 | Flexible contact               | Tools #5073                    | Off-center friction/contact and head/shaft modes; launch and ringdown; complete energy closure                                | Pending T3                                                                                                 |
@@ -64,7 +64,7 @@ CLI/fallback tests, actual installed-wheel bootstrap, ownership mutation and
 failures before correction. Obsolete branch parity/security failures are not
 reported as current blockers after the merge.
 
-Tools T1 #5077 and T2 #5082 remain open. The failed T2 UD consumer job
+Tools T1 #5077 merged at `f7254461399ac18e5667a0215afd90a9ebff9d22`; T2 #5082 remains open. The failed T2 UD consumer job
 101931398231 (run 34180114995) was rerun through the normal REST endpoint after
 confirming the upstream merge. The resulting UD job 101951943569 passed, including actual downstream
 consumer contracts. The older T1 UD job 101870569015 (run 34163726663) has
@@ -181,3 +181,15 @@ The previous stationary checkpoint passed 372 golf-club tests with two skips
 (192.03 s), repository-wide Ruff, all nine manual gates, and commit/push hooks.
 Publication approval remains separate. Refreshed rotating-checkpoint evidence
 belongs in ROTATING_TRANSPORT.md; prior execution details remain in git history.
+
+## Applied-Load Checkpoint in Progress
+
+`_shaft_point_load.py` now separates an offset dead force from a free spatial
+couple and includes their full canonical load derivatives and physical power.
+The 81 load/section/kinematic tests passed before final shared-validator reuse;
+final full golf/API validation passes 488 tests with two optional CAD skips (94.07 s). The previous elastic energy checkpoint is
+published at `b625eb2cca279472795a93896776fdef6ac33995`. No equilibrium,
+contact, acoustic or empirical gate is closed by this slice. AffineDrift #4277
+tracks the paired Coriolis/damping clarification and publication QA. Renderer
+PR #5090 has a scoped container-checkout trust repair under normal hook review;
+its first Linux run stopped before capture, and no references are approved.

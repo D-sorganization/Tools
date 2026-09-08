@@ -2844,6 +2844,11 @@
       }
     }
   },
+  "_shaft_point_load.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
   "_shaft_se3.py": {
     "__all__": [],
     "explicit_all": true,

@@ -181,3 +181,65 @@ In state coordinates `x=[q;v]`, viscous damping enters as
 `[0; -M(q)^-1 D(q)v]`, with a separate input/state block and constraint treatment.
 The book's unembedded effective-damping expression should be replaced with
 that explicit state mapping. No book files were changed by this Tools checkpoint.
+
+## Applied Point Forces and Physical Couples
+
+The private `_shaft_point_load.py` building block uses a fixed spatial force
+f [N] and free couple tau [N m] at material offset r [m] on a section pose
+H=(R,p). The loaded point is x=p+Rr. Its external power is
+`f dot xdot + tau dot omega_spatial`. Local force F=R^T f and couple T=R^T tau
+therefore give the material wrench W=[F; T+r cross F]. This is an applied-load
+contract, not an identified hand impedance, contact law or follower-load law.
+
+For the same fixed exponential chart as the elastic element, H(q)=H0 Exp(q),
+canonical force is Q(q)=J_r(q)^T W(H(q)). At q=0, Q=W. For direction
+a=[a_translation;a_rotation], dF=-a_rotation cross F,
+dT=-a_rotation cross T, and dW=[dF; dT+r cross dF]. Thus
+`K_external a = dW - ad(a)^T W/2`. The complete static residual derivative is
+`K_internal - K_external`; a physical constant load must not be treated as a
+constant canonical force. Implementation reuses the section pose/ad and strict
+vector validators. No production finite differences or symmetry repair occur.
+
+For a dead force alone, V_f=-f dot (p+Rr), so external K is the negative
+fixed-chart Hessian of V_f and is symmetric. The extra spatial couple generally
+has no scalar potential on unrestricted 3-D rotations. At identity with force
+zero its rotational tangent is `[tau]x/2`, which is skew. Forcing this tangent
+symmetric removes actual work terms. `force_potential` explicitly excludes
+couple work; `power` includes both force and couple and uses a physical material
+velocity, not an unconverted finite rotation-vector rate. A constant shift of
+observer origin changes force potential by a constant, while wrench derivatives
+and instantaneous power remain invariant after rotating spatial loads.
+
+Ritto-Correa and Camotim, _Work-conjugacy between rotation-dependent moments
+and finite rotations_, IJSS 40 (2003), 2851-2873,
+[DOI 10.1016/S0020-7683(03)00078-7](<https://doi.org/10.1016/S0020-7683(03)00078-7>),
+provides relevant finite-rotation work/conservativeness context. The publisher's
+indexed abstract and introduction were available; direct full-page retrieval
+returned 403. No full-text equation or benchmark reproduction is claimed. The
+specific linear-first SE(3) formulas above are derived here from spatial power.
+
+TDD began with missing-module collection failure. Initial 18 load tests passed;
+24 load tests plus the earlier 57 elastic/kinematic tests pass together (81,
+19.05 s before the final validator reuse). Their independent oracle differentiates
+4x4 pose exponentials with SciPy Frechet derivatives and computes spatial force
+and spin work directly. Central differences of that oracle at 1e-5 verify all
+load-tangent entries (rtol/atol 2e-9). Separate scalar-potential curvature at
+1e-4 verifies the conservative-force Hessian (rtol 2e-6, atol 1e-7). Other checks
+cover the nonsymmetric couple, observer invariance, immutable copied inputs,
+fresh results, malformed poses and nonnumeric/nonfinite vectors. These are
+synthetic numerical fixtures, not measured golf loads or impact effects.
+
+The section-energy checkpoint is published at
+`b625eb2cca279472795a93896776fdef6ac33995`. Tools T1 PR #5077 is merged at
+`f7254461399ac18e5667a0215afd90a9ebff9d22`. AffineDrift #4277 now owns the
+paired Coriolis/damping correction. This point-load slice still leaves chain
+assembly, converged equilibria, reactions, strain-domain/stability policies,
+consistent inertia/transport, moving-boundary work and FRF qualification open.
+
+Final golf/API verification passes 488 tests with two optional build123d skips
+in 94.07 s. Shared-validator reuse initially exposed six test failures because
+the legacy tuple normalizer accepts boolean/string coercion. The load boundary
+now applies the existing strict finite-array contract before immutable tuple
+normalization; the full rerun passes. Scoped mypy and Ruff checks pass. The API
+baseline adds only the private module with empty exports; existing signatures
+remain unchanged. This is verified numerical behavior, not a physical finding.

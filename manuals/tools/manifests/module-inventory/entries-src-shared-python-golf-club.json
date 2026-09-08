@@ -1250,6 +1250,61 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 3818,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f2c063987728bd5edc6b9c641069aad7d8d84f74743095306655aba902ed06a1",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-POINT-LOAD-PY-0A6FE8F00F14",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_point_load.py",
+      "purpose": "Physical point-load work and its full fixed-chart SE(3) derivative.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_point_load.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "N",
+          "N m",
+          "W",
+          "m/s",
+          "rad",
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 5001,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -1288,6 +1343,7 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_point_load.py",
           "tests/shared/python/golf_club/test_shaft_se3.py",
           "tests/shared/python/golf_club/test_shaft_section.py"
         ],
