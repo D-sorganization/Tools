@@ -25,11 +25,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5072
 - **PR:** not created
 - **Branch:** feat/5072-prestressed-shaft
-- **Paths:** `src/shared/python/golf_club/*shaft*`, `src/shared/python/golf_club/_beam_fem.py`, `tests/shared/python/golf_club/test_shaft_prestress.py`, `docs/development/impact-acoustics/*`
+- **Paths:** `src/shared/python/golf_club/*shaft*`, `src/shared/python/golf_club/_beam_fem.py`, `src/shared/python/golf_club/*grip*`, `tests/shared/python/golf_club/test_shaft_prestress.py`, `tests/shared/python/golf_club/test_grip_impedance.py`, `docs/development/impact-acoustics/*`
 - **Started:** 2026-09-07
-- **Last verified:** 2026-09-07 (38 focused/API tests pass)
-- **Summary:** TDD prescribed-tension FEM, point-tip inertia and beam benchmarks; common unloaded assembly retained. This is partial T3, with no impact/acoustic qualification.
-- **Next step:** Add axial/torsional properties, rotating-base operators, full head inertia and passive six-axis grip; qualify frame, work and convergence gates.
+- **Last verified:** 2026-09-07 (61 combined shaft/grip/API tests pass)
+- **Summary:** TDD tensile FEM and passive six-axis local impedance with frame/power tests; common unloaded assembly retained. This is partial T3, with no impact/acoustic qualification.
+- **Next step:** Add axial/torsional properties, rotating-base operators and full head inertia; assemble the passive grip and qualify frame, work and convergence gates.
 
 ### DL-0055 · Qualified Lumped Impact Dynamics
 

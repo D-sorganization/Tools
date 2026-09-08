@@ -1021,6 +1021,58 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 5514,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "76f0317575043e0da1cc1d3007da8151348fe5c69c10803d52af0943151be3b1",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-GRIP-CONTRACTS-PY-04DA695943CE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_grip_contracts.py",
+      "purpose": "Immutable local-port records for passive six-axis grip impedance.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "J",
+          "N",
+          "N m",
+          "W",
+          "m/s",
+          "rad",
+          "rad/s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 4729,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -1482,6 +1534,90 @@
         "unit_mentions": [
           "s"
         ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5966,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "478c59bebe6a51cfdb74741ce8371fe95582f16b8f11243e40c020a2d60434ba",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-GRIP-IMPEDANCE-PY-47375E654010",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/grip_impedance.py",
+      "purpose": "Passive local grip-port mechanics and power-preserving frame changes.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "evaluate_grip_impedance",
+            "signature": "grip: PassiveGripImpedance, state: GripPortState"
+          },
+          {
+            "kind": "function",
+            "name": "grip_frequency_impedance",
+            "signature": "grip: PassiveGripImpedance, angular_frequency_rad_s: float"
+          },
+          {
+            "kind": "function",
+            "name": "transform_grip_impedance",
+            "signature": "grip: PassiveGripImpedance, transform: RigidTransform"
+          },
+          {
+            "kind": "function",
+            "name": "transform_grip_state",
+            "signature": "state: GripPortState, transform: RigidTransform"
+          },
+          {
+            "kind": "re-export",
+            "name": "GripPortResponse",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GripPortState",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PassiveGripImpedance",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_grip_impedance.py"
+        ],
+        "unit_mentions": [],
         "validation_paths": []
       }
     },
@@ -3177,7 +3313,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "not-applicable"
       },
@@ -3228,7 +3364,9 @@
             "signature": null
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_grip_impedance.py"
+        ],
         "unit_mentions": [
           "s"
         ],

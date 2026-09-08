@@ -2536,6 +2536,126 @@
       }
     }
   },
+  "_grip_contracts.py": {
+    "__all__": [
+      "GripPortResponse",
+      "GripPortState",
+      "Matrix6",
+      "PassiveGripImpedance",
+      "Vector6",
+      "factor6",
+      "finite_array",
+      "vector6"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "GripPortResponse": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "power_residual_w": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "float"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "GripPortState": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "Matrix6": {
+        "type": "variable"
+      },
+      "PassiveGripImpedance": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "Vector6": {
+        "type": "variable"
+      },
+      "factor6": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "Matrix6"
+        },
+        "type": "function"
+      },
+      "finite_array": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "tuple[int, ...]",
+              "default": null,
+              "kind": "arg",
+              "name": "shape"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "vector6": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "Vector6"
+        },
+        "type": "function"
+      }
+    }
+  },
   "_validation.py": {
     "__all__": [
       "Matrix3",
@@ -3299,6 +3419,133 @@
             }
           ],
           "returns": "str"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "grip_impedance.py": {
+    "__all__": [
+      "PassiveGripImpedance",
+      "GripPortState",
+      "GripPortResponse",
+      "evaluate_grip_impedance",
+      "grip_frequency_impedance",
+      "transform_grip_impedance",
+      "transform_grip_state"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "GripPortResponse": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "power_residual_w": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "float"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "GripPortState": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PassiveGripImpedance": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "evaluate_grip_impedance": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PassiveGripImpedance",
+              "default": null,
+              "kind": "arg",
+              "name": "grip"
+            },
+            {
+              "annotation": "GripPortState",
+              "default": null,
+              "kind": "arg",
+              "name": "state"
+            }
+          ],
+          "returns": "GripPortResponse"
+        },
+        "type": "function"
+      },
+      "grip_frequency_impedance": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PassiveGripImpedance",
+              "default": null,
+              "kind": "arg",
+              "name": "grip"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "angular_frequency_rad_s"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "transform_grip_impedance": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PassiveGripImpedance",
+              "default": null,
+              "kind": "arg",
+              "name": "grip"
+            },
+            {
+              "annotation": "RigidTransform",
+              "default": null,
+              "kind": "arg",
+              "name": "transform"
+            }
+          ],
+          "returns": "PassiveGripImpedance"
+        },
+        "type": "function"
+      },
+      "transform_grip_state": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "GripPortState",
+              "default": null,
+              "kind": "arg",
+              "name": "state"
+            },
+            {
+              "annotation": "RigidTransform",
+              "default": null,
+              "kind": "arg",
+              "name": "transform"
+            }
+          ],
+          "returns": "GripPortState"
         },
         "type": "function"
       }

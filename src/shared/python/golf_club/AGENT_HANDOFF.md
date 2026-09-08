@@ -4,7 +4,7 @@
 
 `impact_mobility.py`: detached tensor reference, T1 PR #5077; not a flexible/acoustic solver.
 T2 #5071 adds event-resolved integration, preload states and all four passive loss channels; v1 report fields retain their meanings.
-T3 #5072 adds `shaft_prestress.py` and reuses `_beam_fem.py`; 38 focused/API tests pass. Partial rotating-shaft reference: `docs/development/impact-acoustics/SHAFT_PRESTRESS.md`; `PROGRESS.md` retains the full open matrix.
+T3 #5072 adds `shaft_prestress.py` and reuses `_beam_fem.py`; 61 combined shaft/grip/API tests pass; `grip_impedance.py` adds a passive local six-axis port. Partial T3 references: `docs/development/impact-acoustics/SHAFT_PRESTRESS.md`; `GRIP_IMPEDANCE.md` and `PROGRESS.md` retain scope limits and the full open matrix.
 
 > Update this file in every implementation commit that changes this package.
 > Last updated: 2026-08-27
