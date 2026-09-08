@@ -1,5 +1,11 @@
 # AGENT_HANDOFF — shared golf_club
 
+## Impact Dynamics Review: #5068 / #5069
+
+`impact_mobility.py`: detached full-tensor reference, 30 TDD gates; explicit scalar returns pass strict typing; existing API/wire v1 unchanged.
+`docs/specs/IMPACT_DYNAMICS_ACOUSTICS.md` owns #5071–#5075; distributed contact,
+measured grip impedance and acoustics remain unqualified.
+
 > Update this file in every implementation commit that changes this package.
 > Last updated: 2026-08-27
 
@@ -38,13 +44,10 @@ lazy, and do not add eager imports to `__init__` that reach `swing_sim.variation
 
 ## Heavy Hit Epic (#4562) — COMPLETED (#4568, #4577)
 
-`impact_coupling.py` (H1/H3) quantifies hand/body influence at impact: a
-ball–head–hands Kelvin-Voigt chain integrated in the **body frame** (fixed grip
-anchor, ball approaches — the anchor does no work, so energy accounting is
-exact). Physiological hands (3 kg, 5e4 N/m) change driver ball speed by **<1%**;
-the model always reports the **rigid-shaft upper bound** alongside, because any
-lumped `k_s` only approximates contact-timescale impedance. H4 GUI panels
-landed in PR #4577. Contract: `docs/specs/HEAVY_HIT_COUPLING.md`.
+`impact_coupling.py` (H1/H3) provides a translating-frame Kelvin–Voigt chain.
+Its <1% speed difference and rigid-shaft comparison are fixture-specific;
+`decoupling_fraction` is a clipped speed discrepancy, not coupled mass.
+H4 panels landed in #4577. Contract: `docs/specs/HEAVY_HIT_COUPLING.md`.
 
 `swing_sim/model_interchange/` (H2) imports golfer models from MJCF, URDF and
 `.osim` — MuJoCo, Drake, Pinocchio, OpenSim — by **runtime-free XML parsing**
@@ -52,12 +55,10 @@ landed in PR #4577. Contract: `docs/specs/HEAVY_HIT_COUPLING.md`.
 `GripBoundary`; nothing is guessed from body names. URDF carries no joint
 stiffness, so an explicit override is the sanctioned supply path there.
 
-**Two physics facts learned by probe — do not "simplify" them back:**
+**Fixture limits retained for regression (scope audit #5071):**
 
-1. The τ² decoupling law holds at _finite_ shaft stiffness (4× contact time →
-   16.0× influence, measured), but a **rigid** shaft's coupling is quasi-static
-   added mass and therefore τ-independent. The first gate draft assumed the
-   τ-law for the rigid case and was wrong.
+1. The fixture's finite-stiffness τ² limit is not the rigid added-mass limit.
+   Damping and preloads can add lower-order terms; do not generalize the fixture.
 2. Kelvin-Voigt restitution is **reduced-mass dependent** (ζ = c/2√(kμ)), so
    welding the head to a large mass legitimately makes it bouncier than
    `(1+e_free)·v₀`. Cross-case ceilings from a fixed `e` are invalid — bound
