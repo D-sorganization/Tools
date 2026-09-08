@@ -221,6 +221,7 @@
           "src/shared/python/sidekick/tests/calculators/test_electrical_config.py",
           "src/shared/python/sidekick/tests/calculators/test_electrical_model.py",
           "src/shared/python/swing_sim/flight/tests/test_capability_flight_evaluator.py",
+          "src/shared/python/swing_sim/impact_interval/tests/test_solver.py",
           "src/shared/python/swing_sim/tests/test_prescribed_run.py",
           "src/shared/python/swing_sim/variation/tests/noise_response_test_support.py",
           "src/shared/python/swing_sim/variation/tests/test_noise_response_falsification.py",
