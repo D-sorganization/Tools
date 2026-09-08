@@ -84,3 +84,8 @@ impact-interval, public API, import/inventory and merge-driver contracts pass
 (87.90 s). All nine final manual gates pass. All 410 reclassified source hashes
 and provisional/publication-blocked states remain identical to the complete
 review record after this main merge. Current-head protected CI remains required.
+
+The normal push rejects two missing return annotations in the incoming contact
+completion test helpers. Both now declare the existing `ImpactIntervalResult`
+return contract; no production calculation changes. Prettier also formats the
+incoming swing API baseline; parsed JSON equality is checked before acceptance.
