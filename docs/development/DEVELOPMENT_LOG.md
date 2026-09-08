@@ -40,6 +40,7 @@ reachable from any live state and `abandoned` from `parked`.
   (1 S/cm = 100 S/m), failed responses never cached, provider switch
   invalidates cache.
 - **Next step:** Protect-merge the glass-contracts PR after CI acceptance.
+
 ### DL-#8942 · Realtime Transport And Codemap Hashing Hot-Path Fixes
 
 - **State:** in_review
@@ -981,6 +982,7 @@ reachable from any live state and `abandoned` from `parked`.
   `impact_interval/tests/test_solver.py::TestIndependentEnergyAudit`.
 - **Next step:** Protect-merge the PR and hand the merged SHA to the
   UpstreamDrift pin-bump that closes the provider issue.
+
 ### DL-0054 · ThemeColors 60-Token Derivation Restoration
 
 - **State:** in_review

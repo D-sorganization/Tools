@@ -20793,8 +20793,7 @@
                 }
               ],
               "returns": "float"
-            }
-            ,
+            },
             "unclipped_normal_force": {
               "args": [
                 {
