@@ -11,61 +11,61 @@
   "issue_url": "https://github.com/D-sorganization/Tools/issues/4730",
   "pr_url": "https://github.com/D-sorganization/Tools/pull/5055",
   "commit_evidence": {
-    "local_head_sha": "6b27c4f0569ac486c491e073f87f67440a9521fa",
+    "local_head_sha": "f4cd7538653d53908950549115550e32642ac447",
     "remote_head_sha": null,
-    "reviewed_tree_sha": "f0a4dbf133748f3a1456da989af80390855a113f",
+    "reviewed_tree_sha": "ddea82e64073a84a9859305d2504ce34514b8804",
     "merge_sha": null
   },
   "branch_and_worktree": {
-    "branch": "claude/issue-5062-glass-contracts",
-    "worktree": "C:\\tmp\\Tools_w5062",
+    "branch": "feat/4715-mocap-pose-adapters",
+    "worktree": "C:\\Users\\diete\\Repositories\\Tools",
     "is_clean": false
   },
   "check_evidence": {
     "check_design_manual_governance": {
       "command": "python -m scripts.check_design_manual_governance",
       "status": "passed",
-      "timestamp": "2026-09-08T01:58:01Z"
+      "timestamp": "2026-09-07T21:00:30Z"
     },
     "build_tools_module_inventory": {
       "command": "python -m scripts.build_tools_module_inventory --check",
       "status": "passed",
-      "timestamp": "2026-09-08T01:58:01Z"
+      "timestamp": "2026-09-07T21:00:30Z"
     },
     "lint_tools_textbook_chapters": {
       "command": "python -m scripts.lint_tools_textbook_chapters",
       "status": "passed",
-      "timestamp": "2026-09-08T01:58:01Z"
+      "timestamp": "2026-09-07T21:00:30Z"
     },
     "check_tools_exemplars": {
       "command": "python -m scripts.check_tools_exemplars",
       "status": "passed",
-      "timestamp": "2026-09-08T01:58:01Z"
+      "timestamp": "2026-09-07T21:00:30Z"
     },
     "check_tools_calculation_freshness": {
       "command": "python -m scripts.check_tools_calculation_freshness --check",
       "status": "passed",
-      "timestamp": "2026-09-08T01:58:01Z"
+      "timestamp": "2026-09-07T21:00:30Z"
     },
     "check_tools_manual_qa": {
       "command": "python -m scripts.check_tools_manual_qa --check",
       "status": "passed",
-      "timestamp": "2026-09-08T01:58:01Z"
+      "timestamp": "2026-09-07T21:00:30Z"
     },
     "check_tools_publication_projection": {
       "command": "python -m scripts.check_tools_publication_projection --check",
       "status": "passed",
-      "timestamp": "2026-09-08T01:58:01Z"
+      "timestamp": "2026-09-07T21:00:30Z"
     },
     "render_tools_design_manual": {
       "command": "python -m scripts.render_tools_design_manual --check",
       "status": "passed",
-      "timestamp": "2026-09-08T01:58:01Z"
+      "timestamp": "2026-09-07T21:00:30Z"
     },
     "check_tools_handoff": {
       "command": "python -m scripts.check_tools_handoff --check",
       "status": "passed",
-      "timestamp": "2026-09-08T01:58:01Z"
+      "timestamp": "2026-09-07T21:00:30Z"
     }
   },
   "artifact_and_test_digests": {
@@ -112,7 +112,7 @@
       "TOOLS-HUMAN-APPROVAL-PENDING",
       "TOOLS-MARKERLESS-EXEMPLAR-BLOCKED"
     ],
-    "expiry_timestamp": "2026-12-07T01:58:01Z"
+    "expiry_timestamp": "2026-12-06T21:00:30Z"
   },
   "blockers": [
     {
@@ -127,7 +127,7 @@
     }
   ],
   "next_dependency": "TOOLS-M0 (#4708 / #4734) and parent epic DOC-TOOLS (#4707) closure",
-  "freshness_timestamp": "2026-09-08T01:58:01Z",
+  "freshness_timestamp": "2026-09-07T21:00:30Z",
   "governed_handoff_files": {
     "AGENT_HANDOFF.md": {
       "path": "AGENT_HANDOFF.md",
@@ -202,8 +202,8 @@
     },
     "src/shared/python/sidekick/lab/mocap/AGENT_HANDOFF.md": {
       "path": "src/shared/python/sidekick/lab/mocap/AGENT_HANDOFF.md",
-      "sha256_lf": "591decacfbdadcfacce9de0d350903eb7da232b00aa3507e01c240edab98b66e",
-      "line_count": 59,
+      "sha256_lf": "8d67890d0e5bef67140ff38499a79b4bfbc8bbd16a5d0afb7f03b5da3fd42a09",
+      "line_count": 62,
       "max_line_budget": 150,
       "required_sections": [
         "## Authority",

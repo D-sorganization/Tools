@@ -4245,10 +4245,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3361,
+      "bytes_lf": 4223,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "79026525398cc429aeadd88caf75314867b03cbbc257724d3d5db7d7b8046cec",
+      "content_sha256_lf": "a244e5eae524ce66055b30396dd1e8642648d73dff281e714df1b5bccfcf53a6",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-INIT-PY-BD60513A12BD",
       "language": "python",
@@ -4287,6 +4287,11 @@
           {
             "kind": "re-export",
             "name": "AcquisitionError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ApprovalStatus",
             "signature": null
           },
           {
@@ -4381,6 +4386,11 @@
           },
           {
             "kind": "re-export",
+            "name": "ExternalServicePoseAdapter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "ExtrinsicCalibrationResult",
             "signature": null
           },
@@ -4431,12 +4441,37 @@
           },
           {
             "kind": "re-export",
+            "name": "KeypointMapping",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "Landmark3D",
             "signature": null
           },
           {
             "kind": "re-export",
+            "name": "LicenseCategory",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LicenseEvaluationResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LicenseRecord",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "MOCAP_SESSION_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MediaPipePoseAdapter",
             "signature": null
           },
           {
@@ -4461,6 +4496,11 @@
           },
           {
             "kind": "re-export",
+            "name": "PermittedUse",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "PinholeIntrinsics",
             "signature": null
           },
@@ -4471,7 +4511,27 @@
           },
           {
             "kind": "re-export",
+            "name": "PoseBackendProtocol",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PoseInferenceResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PoseInferenceStatus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "PrerecordedFrameSource",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ProviderLicenseManifest",
             "signature": null
           },
           {
@@ -4526,6 +4586,11 @@
           },
           {
             "kind": "re-export",
+            "name": "SkeletonConverter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "SkeletonDefinition",
             "signature": null
           },
@@ -4566,6 +4631,11 @@
           },
           {
             "kind": "re-export",
+            "name": "SyntheticPoseAdapter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "bundle_adjust_layout",
             "signature": null
           },
@@ -4597,6 +4667,16 @@
           {
             "kind": "re-export",
             "name": "evaluate_intrinsic_quality",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_canonical_skeleton",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_default_mediapipe_mapping",
             "signature": null
           },
           {
@@ -4743,6 +4823,7 @@
         ],
         "test_paths": [
           "tests/shared/python/sidekick/lab/mocap/test_acquisition_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_adapter_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_sync_contracts.py"
         ],
@@ -4752,8 +4833,57 @@
         ],
         "validation_paths": [
           "tests/shared/python/sidekick/lab/mocap/test_acquisition_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_adapter_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_sync_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 17623,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2dd1920232b9e38bef2e2eae0adfd1a1098328598ba81ca4ad7426674b05af51",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-ADAPTERS-PY-C0DF198E7466",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/adapters.py",
+      "purpose": "Pose backend adapters, skeleton mapping, and licensing provenance (#4715).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_adapter_contracts.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_adapter_contracts.py"
         ]
       }
     },
@@ -4899,10 +5029,12 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_adapter_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
         ],
         "unit_mentions": [],
         "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_adapter_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
         ]
       }
@@ -5219,6 +5351,50 @@
         "validation_paths": [
           "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
         ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5579,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4b710c5e2867118fe425026d76c2bdb26bdd824f808b41ac558a5759d53084de",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-SKELETONS-PY-6B5B22C574E2",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/skeletons.py",
+      "purpose": "Canonical skeletons, keypoint mapping, and observation conversion (#4715).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
       }
     },
     {
