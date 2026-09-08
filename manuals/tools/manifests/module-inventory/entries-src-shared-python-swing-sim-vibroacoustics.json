@@ -1,0 +1,296 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1170,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c7118d5c5644b29f148449e2b3b741455fbcca4bbac17c507401063efcdff60d",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VIBROACOUSTICS-INIT-PY-268C42FB717E",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/vibroacoustics/__init__.py",
+      "purpose": "Vibroacoustic measurement ingestion for impact studies (IA-T5, #5074).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "BandwidthReport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ClippingReport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SourceKind",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SynthesizedSourceError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WaveformRecording",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "align_time_shift",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "as_measured",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "bandwidth_report",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "clipping_fraction",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "estimate_frf_h1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "estimate_modal_decay",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "psd_welch",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "raw_data_hash",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7761,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "439bbe2fddc9445959566c63ec6411d2ddf987162f79eaa6c496ee000877ada1",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VIBROACOUSTICS-MEASUREMENT-PY-83AD304E2A75",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/vibroacoustics/measurement.py",
+      "purpose": "Calibrated waveform measurement ingestion (IA-T5, #5074).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BandwidthReport",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ClippingReport",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SourceKind",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SynthesizedSourceError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WaveformRecording",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "align_time_shift",
+            "signature": "reference: np.ndarray, delayed: np.ndarray"
+          },
+          {
+            "kind": "function",
+            "name": "as_measured",
+            "signature": "recording: WaveformRecording"
+          },
+          {
+            "kind": "function",
+            "name": "bandwidth_report",
+            "signature": "recording: WaveformRecording, *, max_expected_hz: float"
+          },
+          {
+            "kind": "function",
+            "name": "clipping_fraction",
+            "signature": "recording: WaveformRecording, *, rail: float"
+          },
+          {
+            "kind": "function",
+            "name": "raw_data_hash",
+            "signature": "recording: WaveformRecording"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/vibroacoustics/tests/test_measurement.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "Pa",
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6726,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "34246c03c1c7761a28d96429b01dd35fe432c761c622f076816d26722bf702d8",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VIBROACOUSTICS-SPECTRAL-PY-EB52613EB4EC",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/vibroacoustics/spectral.py",
+      "purpose": "Spectral estimation for vibroacoustic measurements (IA-T5, #5074).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ModalDecayFit",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_SEGMENT_LENGTH",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "estimate_frf_h1",
+            "signature": "force_recording: WaveformRecording, response_recording: WaveformRecording, *, segment_length: int=DEFAULT_SEGMENT_LENGTH"
+          },
+          {
+            "kind": "function",
+            "name": "estimate_modal_decay",
+            "signature": "recording: WaveformRecording"
+          },
+          {
+            "kind": "function",
+            "name": "psd_welch",
+            "signature": "recording: WaveformRecording, *, segment_length: int=DEFAULT_SEGMENT_LENGTH"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/vibroacoustics/tests/test_spectral.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/shared/python/swing_sim/vibroacoustics",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

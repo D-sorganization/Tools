@@ -1,0 +1,4215 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9237,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "37f18a908ab6db90850070a6859f2f88682093a612b4bebd7f0ba408bcea04a1",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-INIT-PY-5F95F06C7E85",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/__init__.py",
+      "purpose": "Shared variation / Monte-Carlo engine (epic #4120, phase V3).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "AVAILABILITY_AVAILABLE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AVAILABILITY_MISSING",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AVAILABILITY_NONFINITE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AVAILABILITY_NO_IMPACT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AVAILABILITY_NUMERICAL_FAILURE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AVAILABILITY_UNSUPPORTED",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AttributionPair",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AttributionRunContext",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AttributionSource",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AttributionTarget",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CATEGORY_BALL_SETUP",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CATEGORY_CLUB",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CATEGORY_DELIVERY",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CATEGORY_LAUNCH",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CATEGORY_SWING",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CancelledError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CommonReferenceTrace",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ConfidenceEllipsoidSeries",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DATASET_HDF5_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DATASET_HDF5_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DATASET_JSON_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DELIVERY_OUTPUTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DISTRIBUTIONS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DispersionEllipse",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DispersionMetricSeries",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ELLIPSOID_VOLUME",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ESTIMABLE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "EnsemblePositionTraces",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FLIGHT_OUTPUTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GAUSSIAN_POSITION_CONTENT_REGION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "INSUFFICIENT_SAMPLES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "INTERPRETATION_BOUNDARY",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "INVALID_COVARIANCE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LARGEST_PRINCIPAL_SIGMA",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LAUNCH_OUTPUTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LOCALIZED_TORQUE_VARIABLE_JOINTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LOW_VARIABILITY_METRICS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LowVariabilityCriteria",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LowVariabilityInterval",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LowVariabilityMetricCriteria",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_DISPERSION_ACCUMULATOR_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_MORRIS_OBSERVATION_CELLS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_MORRIS_SAMPLES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MAX_MORRIS_WORKERS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MIN_CONFIDENCE_LEVEL",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MIN_SAMPLES_FOR_FULL_3D_COVARIANCE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MODES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MODE_CATEGORIES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MORRIS_OBSERVATION_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MORRIS_OBSERVATION_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MORRIS_PROGRESS_INTERVAL",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MORRIS_REPORT_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MORRIS_REPORT_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MorrisDesign",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MorrisEstimate",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MorrisEvaluation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MorrisEvaluator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MorrisExecutionOptions",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MorrisFactor",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MorrisObservationArchive",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MorrisObservations",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MorrisOutput",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MorrisReport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MorrisSample",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "NoiseSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "OutputStats",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PAIRED_INTERVENTION_METHOD_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "POSITION_NOISE_RESPONSE_FIELD_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "POSITION_NOISE_RESPONSE_FIELD_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PairedAttributionAccumulator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PairedAttributionInput",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PairedAttributionRecord",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PairedAttributionSnapshot",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PairedIntervention",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PerturbationGroup",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PositionDispersion",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PositionDispersionAccumulator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PositionNoiseResponseField",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PositionNoiseResponsePlotRow",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ProgressReport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PropagationResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RANK_DEFICIENT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RMS_RADIUS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RankedLowVariabilityInterval",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ResponseAccumulatorSnapshot",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ResponseFieldAccumulator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ResponseFieldInput",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SWING_DERIVED_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SensitivityResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TRACE_RESAMPLING_POLICY_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TraceResamplingResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VariableDef",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VariationDataset",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VariationPlan",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "analyze_morris",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "analyze_paired_intervention",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "attribution_contract_fingerprint",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "attribution_csv",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "attribution_record_fingerprint",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "attribution_rows",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_confidence_ellipsoids",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_dispersion_metric_series",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compute_paired_attribution",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compute_position_dispersion",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compute_position_dispersion_view",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compute_position_noise_response_field",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "dispersion_ellipse",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "evaluate_morris_design",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "evaluate_run",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "find_low_variability_intervals",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "find_ranked_low_variability_intervals",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "finite_sample_standard_deviation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "from_json_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "generate_morris_design",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "iter_position_noise_response_plot_rows",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "keys_for_mode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "make_morris_observation_archive",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "morris_design_sha256",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "morris_observations_from_json_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "morris_observations_to_json_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "one_at_a_time_sensitivity",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "outputs_for_mode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "read_csv",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "read_hdf5",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "read_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "register_variable",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "resample_position_traces",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "response_field_fingerprint",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "run_variation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "sample_input_block",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "sample_input_chunks",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "sample_inputs",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "sensitivity_from_standard_deviations",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "snapshot_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "snapshot_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "spearman_matrix",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "summary_stats",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "to_json_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "variable_registry",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "variables_in_category",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "write_csv",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "write_hdf5",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "write_json",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 1717,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "9cf173adb6882b483bf56afba9b26568e569d2186a12e2f9d71eb98c172bf995",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-EXECUTION-DIGEST-PY-0E12A445B251",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/_execution_digest.py",
+      "purpose": "Cross-runtime canonical numeric digests for variation documents.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "canonical_sha256",
+            "signature": "value: object"
+          },
+          {
+            "kind": "function",
+            "name": "normalized_float",
+            "signature": "value: float"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2377,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "59e5ed87a2aa43fc02f0048ba9d0329d59e466e1a3d3b85ca60d11fc86c63fe2",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-EXECUTION-METADATA-SCHEMA-PY-48D6B9CA7030",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/_execution_metadata_schema.py",
+      "purpose": "Schema identifiers and field sets for variation execution metadata.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "EXECUTION_DOCUMENT_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXECUTION_DOCUMENT_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXECUTION_METADATA_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXECUTION_METADATA_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LEGACY_CURRENT_REGISTRY_WARNING",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LEGACY_EXECUTION_DOCUMENT_MIGRATION_ERROR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "VARIABLE_REGISTRY_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "VARIABLE_REGISTRY_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DOCUMENT_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_IMPLEMENTATION_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_METADATA_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_PLAN_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_RNG_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SHA256",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_VARIABLE_FIELDS",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8825,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cecda0076c8c691f19b58d504d2bd27eb6b1ad0bf43b6e9c567cd075196c435d",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-MORRIS-OBSERVATION-PARSER-PY-4790719B1722",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/_morris_observation_parser.py",
+      "purpose": "Strict bounded parser for Morris scalar-observation archives.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "parse_morris_observations",
+            "signature": "value: object"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_morris_observation_io.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3431,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "59cf80e255d1baf2f57fa716fc4c34c8402dcc4b4982869d4c523f370a0aa868",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-MORRIS-OBSERVATION-VALIDATION-PY-DAF1BDC40B94",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/_morris_observation_validation.py",
+      "purpose": "Primitive validators for the Morris observation archive.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "exact_mapping",
+            "signature": "value: object, fields: frozenset[str], name: str"
+          },
+          {
+            "kind": "function",
+            "name": "finite",
+            "signature": "value: object, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "nonnegative_integer",
+            "signature": "value: object, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "nullable_finite",
+            "signature": "value: object, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "optional_text",
+            "signature": "value: object, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "provenance_mapping",
+            "signature": "value: object"
+          },
+          {
+            "kind": "function",
+            "name": "sha256_hex",
+            "signature": "value: object, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "stable_text",
+            "signature": "value: object, name: str, *, maximum: int=1024"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 860,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a0b6de91c07ed8de5ad110c314bec48dabd43ad04251c3abfe2c8d128c02db8d",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-MORRIS-VOCABULARY-PY-CED5D2AF33CD",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/_morris_vocabulary.py",
+      "purpose": "Canonical Morris wire vocabulary and status normalization.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "EVALUATED_HIT_VALUE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EVALUATED_NO_IMPACT_VALUE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "NUMERICAL_FAILURE_VALUE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OUTCOMES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OUTPUT_KINDS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "normalize_outcomes",
+            "signature": "value: Any"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14540,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "25c6b70121df512cfb076a7b98d5c0e3e873c7b2d0b3956aa2f24c75735e2f8f",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-ANALYSIS-PY-8DEB08B53946",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/analysis.py",
+      "purpose": "Dispersion and sensitivity analysis over variation datasets (#4120 V3).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DispersionEllipse",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "OutputStats",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SensitivityResult",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "dispersion_ellipse",
+            "signature": "dataset: VariationDataset, n_sigma: float=2.0"
+          },
+          {
+            "kind": "function",
+            "name": "finite_sample_standard_deviation",
+            "signature": "values: np.ndarray"
+          },
+          {
+            "kind": "function",
+            "name": "one_at_a_time_sensitivity",
+            "signature": "plan: VariationPlan, config: EvaluationConfig | None=None, n_workers: int=4, cancel_event: threading.Event | None=None, progress_cb: ProgressCallback | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "sensitivity_from_standard_deviations",
+            "signature": "input_keys: tuple[str, ...], output_names: tuple[str, ...], matrix: np.ndarray"
+          },
+          {
+            "kind": "function",
+            "name": "spearman_matrix",
+            "signature": "dataset: VariationDataset"
+          },
+          {
+            "kind": "function",
+            "name": "summary_stats",
+            "signature": "dataset: VariationDataset"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/putting/tests/test_variation.py",
+          "src/shared/python/swing_sim/variation/tests/test_analysis.py",
+          "tests/rate_of_closure/test_variation_streaming_ensemble_analysis.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1236,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2ea9d812d93962d5492276f6bfae56c6e66f63ca6550285e1cd85bc78200234b",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-CONTEXTUAL-REGISTRY-PY-355E19D49F07",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/contextual_registry.py",
+      "purpose": "Built-in variables that require an execution-context adapter.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ContextualVariable",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LOCALIZED_TORQUE_VARIABLES",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N·m"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9534,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9bc6d68f018ba4657c7137c7011641ad053d2f7872f408c352e48c214335519e",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-DATASET-IO-PY-226D8D679CE3",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/dataset_io.py",
+      "purpose": "Variation-dataset export/import (CSV + JSON) — epic #4120, V3.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "DATASET_HDF5_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DATASET_HDF5_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DATASET_JSON_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "from_json_dict",
+            "signature": "data: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "read_csv",
+            "signature": "path: str | Path, plan: VariationPlan"
+          },
+          {
+            "kind": "function",
+            "name": "read_hdf5",
+            "signature": "path: str | Path"
+          },
+          {
+            "kind": "function",
+            "name": "read_json",
+            "signature": "path: str | Path"
+          },
+          {
+            "kind": "function",
+            "name": "to_json_dict",
+            "signature": "dataset: VariationDataset"
+          },
+          {
+            "kind": "function",
+            "name": "write_csv",
+            "signature": "dataset: VariationDataset, path: str | Path"
+          },
+          {
+            "kind": "function",
+            "name": "write_hdf5",
+            "signature": "dataset: VariationDataset, path: str | Path"
+          },
+          {
+            "kind": "function",
+            "name": "write_json",
+            "signature": "dataset: VariationDataset, path: str | Path"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_dataset_io.py",
+          "tests/rate_of_closure/test_variation_gui_execution.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 12703,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4012762fcd630a6fffc37c5568cc34a372f582f65e3f8edf274fe378fe9d67ed",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-DISPERSION-METRIC-TYPES-PY-4E5F8AE613C3",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/dispersion_metric_types.py",
+      "purpose": "Immutable contracts for selectable geometric dispersion metrics.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ConfidenceEllipsoidSeries",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DispersionMetricSeries",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LowVariabilityMetricCriteria",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RankedLowVariabilityInterval",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ELLIPSOID_VOLUME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ESTIMABLE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GAUSSIAN_POSITION_CONTENT_REGION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "INSUFFICIENT_SAMPLES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "INVALID_COVARIANCE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LARGEST_PRINCIPAL_SIGMA",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LOW_VARIABILITY_METRICS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_CONFIDENCE_LEVEL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_SAMPLES_FOR_FULL_3D_COVARIANCE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RANK_DEFICIENT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RMS_RADIUS",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_dispersion_metrics.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11371,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0ec19a4e45e937d76a2644807b2edeafbe7fc8194add67e5acd95554c1d65300",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-DISPERSION-METRICS-PY-AACAACD2451A",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/dispersion_metrics.py",
+      "purpose": "Confidence-scaled dispersion and ranked quiet-zone analysis.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "build_confidence_ellipsoids",
+            "signature": "dispersion: PositionDispersion, point_id: str, confidence_level: float=0.95"
+          },
+          {
+            "kind": "function",
+            "name": "build_dispersion_metric_series",
+            "signature": "dispersion: PositionDispersion, point_id: str, metric: str, confidence_level: float=0.95"
+          },
+          {
+            "kind": "function",
+            "name": "find_ranked_low_variability_intervals",
+            "signature": "dispersion: PositionDispersion, criteria: LowVariabilityMetricCriteria"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_dispersion_metrics.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11663,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5949a6cd69bd605cc779aa3a486146e33907fcd765b7cbcf213e7a91d5268584",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-ENGINE-PY-EBB81049EEFE",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/engine.py",
+      "purpose": "Seeded, parallel N-run variation executor (epic #4120, V3).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "VariationDataset",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "run_variation",
+            "signature": "plan: VariationPlan, config: EvaluationConfig | None=None, n_workers: int=4, progress_cb: ProgressCallback | None=None, cancel_event: threading.Event | None=None"
+          },
+          {
+            "kind": "re-export",
+            "name": "CancelledError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DELIVERY_OUTPUTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FLIGHT_OUTPUTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LAUNCH_OUTPUTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ProgressReport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "evaluate_run",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "outputs_for_mode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "sample_inputs",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/noise_response_test_support.py",
+          "src/shared/python/swing_sim/variation/tests/test_engine.py",
+          "src/shared/python/swing_sim/variation/tests/test_execution_metadata.py",
+          "tests/rate_of_closure/test_variation_ensemble_io_reader.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 10274,
+      "classification": "calculation",
+      "classification_basis": "path-marker:geometry",
+      "content_sha256_lf": "d001686d00bfcb5e4f484c6830788cb1a07194ee7a1aefc214d5c65f443c67a2",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-ENSEMBLE-GEOMETRY-PY-A42876EE4753",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/ensemble_geometry.py",
+      "purpose": "Pure-data geometric analysis for multi-trial swing ensembles.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PositionDispersionAccumulator",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_DISPERSION_ACCUMULATOR_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compute_position_dispersion",
+            "signature": "ensemble: EnsemblePositionTraces"
+          },
+          {
+            "kind": "function",
+            "name": "compute_position_dispersion_view",
+            "signature": "ensemble: EnsemblePositionTraces, trial_indices: np.ndarray | None=None, sample_count: int | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "find_low_variability_intervals",
+            "signature": "dispersion: PositionDispersion, criteria: LowVariabilityCriteria"
+          },
+          {
+            "kind": "re-export",
+            "name": "EnsemblePositionTraces",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LowVariabilityCriteria",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LowVariabilityInterval",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PositionDispersion",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_ensemble_geometry.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11786,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "50137a3781fc45a8080c8052bf4eac5730bb5c4c0d0379bf3b9f6c34afa677aa",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-ENSEMBLE-TYPES-PY-3DFBF7A4A643",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/ensemble_types.py",
+      "purpose": "Contracts and immutable value types for ensemble swing geometry.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "EnsemblePositionTraces",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LowVariabilityCriteria",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LowVariabilityInterval",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PositionDispersion",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CARTESIAN_DIMENSIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_TRIALS_FOR_COVARIANCE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "immutable_array",
+            "signature": "value: np.ndarray, dtype: Any"
+          },
+          {
+            "kind": "function",
+            "name": "require_coordinate_frame_id",
+            "signature": "coordinate_frame: str"
+          },
+          {
+            "kind": "function",
+            "name": "require_point_ids",
+            "signature": "point_ids: tuple[str, ...]"
+          },
+          {
+            "kind": "function",
+            "name": "validated_sample_times",
+            "signature": "sample_times_s: np.ndarray"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/noise_response_test_support.py",
+          "tests/rate_of_closure/test_variation_ensemble_io_reader.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 18015,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2d386db078c338ea9e847735b86c038ceb91a4eb25aecd0f30e4a811bc96ee3c",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-EXECUTION-METADATA-PY-9F98D2D3E7D9",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/execution_metadata.py",
+      "purpose": "Strict resolved-base and registry identity for variation execution.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ExecutionImplementationIdentity",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ExecutionMetadataResolution",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ResolvedVariableSnapshot",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RngExecutionIdentity",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "VariationExecutionDocument",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "VariationExecutionMetadata",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PYTHON_PRODUCTION_IMPLEMENTATION_IDENTITY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PYTHON_TEST_INJECTED_IMPLEMENTATION_IDENTITY",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "execution_document_dumps",
+            "signature": "value: VariationPlan | VariationExecutionDocument, *, provenance: PlanProducerProvenance=PYTHON_DEFAULT_PROVENANCE"
+          },
+          {
+            "kind": "function",
+            "name": "execution_document_from_json_dict",
+            "signature": "value: object"
+          },
+          {
+            "kind": "function",
+            "name": "execution_document_to_json_dict",
+            "signature": "plan: VariationPlan, metadata: VariationExecutionMetadata | None=None, *, provenance: PlanProducerProvenance=PYTHON_DEFAULT_PROVENANCE"
+          },
+          {
+            "kind": "function",
+            "name": "make_execution_metadata",
+            "signature": "plan: VariationPlan, provenance: PlanProducerProvenance=PYTHON_DEFAULT_PROVENANCE"
+          },
+          {
+            "kind": "function",
+            "name": "resolve_execution_metadata",
+            "signature": "plan: VariationPlan, metadata: VariationExecutionMetadata | None, *, provenance: PlanProducerProvenance=PYTHON_DEFAULT_PROVENANCE"
+          },
+          {
+            "kind": "function",
+            "name": "validate_execution_metadata",
+            "signature": "plan: VariationPlan, metadata: VariationExecutionMetadata, *, provenance: PlanProducerProvenance=PYTHON_DEFAULT_PROVENANCE, expected_implementation_identity: ExecutionImplementationIdentity | None=None"
+          },
+          {
+            "kind": "re-export",
+            "name": "EXECUTION_DOCUMENT_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "EXECUTION_DOCUMENT_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "EXECUTION_METADATA_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "EXECUTION_METADATA_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LEGACY_CURRENT_REGISTRY_WARNING",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LEGACY_EXECUTION_DOCUMENT_MIGRATION_ERROR",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PYTHON_DEFAULT_PROVENANCE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlanProducerProvenance",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VARIABLE_REGISTRY_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VARIABLE_REGISTRY_SCHEMA_VERSION",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/noise_response_test_support.py",
+          "src/shared/python/swing_sim/variation/tests/test_execution_metadata.py",
+          "tests/rate_of_closure/test_workspace_document.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5296,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "185b701498b8bca69cbf860f0b6db9e03512f597fdd9e19d9bf08d831e0434e8",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-EXECUTION-PROVENANCE-PY-8D50FF055402",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/execution_provenance.py",
+      "purpose": "Explicit producer and source identity for persisted variation plans.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PlanProducerProvenance",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PRODUCER_PROVENANCE_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PRODUCER_PROVENANCE_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PYTHON_DEFAULT_PROVENANCE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "provenance_from_json_dict",
+            "signature": "value: object"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13286,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3a0e4a2354ccff7294f5ba7bb463fc638799bc70058e46649f613f1f10eb0964",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-GLOBAL-SENSITIVITY-PY-3BBF41F670BE",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/global_sensitivity.py",
+      "purpose": "Deterministic Morris screening with explicit scientific availability.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MorrisEstimate",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MorrisReport",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MORRIS_REPORT_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MORRIS_REPORT_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "analyze_morris",
+            "signature": "observations: MorrisObservations, minimum_effects: int=4"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_global_sensitivity.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5192,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "dffe3e502160551cf95c84fe14e7f913601a61e417000a883d430d39af0ee5f2",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-GROUP-SPEC-PY-AECC1C829EC7",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/group_spec.py",
+      "purpose": "Validated correlation/covariance group schema for perturbation plans.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PerturbationGroup",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MATRIX_KINDS",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_noise_response_falsification.py",
+          "src/shared/python/swing_sim/variation/tests/test_noise_response_field.py",
+          "tests/rate_of_closure/test_paired_attribution_adapter.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1338,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1f7ead435feec49bc866aedfbd2fb3a7b51980fe4da7f107ea092525debdd313",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-IDENTITY-CONTRACTS-PY-7819116348C1",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/identity_contracts.py",
+      "purpose": "Strict control-free identity contracts for variation models and JSON wires.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "stable_id",
+            "signature": "value: object, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "stable_id_array",
+            "signature": "value: object, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "strict_string",
+            "signature": "value: object, name: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 16714,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9aeb2f531833d6cd4d53e0995c7076126af3b003153d61de1fc95630b871da20",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-MORRIS-DESIGN-PY-011DF4ADE0EC",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/morris_design.py",
+      "purpose": "Validated deterministic design and observation contracts for Morris screening.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MorrisDesign",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MorrisFactor",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MorrisObservations",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MorrisOutput",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CONSTANT_TOLERANCE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "generate_morris_design",
+            "signature": "factors: tuple[MorrisFactor, ...], trajectories: int, levels: int=4, seed: int=0"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 15804,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6c75b1654b338a0d51e5d65f265a587dbc99df83d6eca9d0ae8e80c83cfef718",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-MORRIS-EXECUTION-PY-2878E04E4210",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/morris_execution.py",
+      "purpose": "Deterministic UI-neutral execution adapter for Morris designs.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MorrisEvaluation",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MorrisEvaluator",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MorrisExecutionOptions",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MorrisSample",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_MORRIS_WORKERS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MORRIS_PROGRESS_INTERVAL",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "evaluate_morris_design",
+            "signature": "design: MorrisDesign, outputs: tuple[MorrisOutput, ...], evaluator: MorrisEvaluator, options: MorrisExecutionOptions | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_morris_execution.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13370,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6734d8b187410469a7b447e8b9c338a4dba81aa63ee53b94d99207b05cbead36",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-MORRIS-OBSERVATION-IO-PY-6354CD992072",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/morris_observation_io.py",
+      "purpose": "Strict lossless archive for raw Morris design-point observations.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MorrisObservationArchive",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MORRIS_OBSERVATION_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MORRIS_OBSERVATION_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "make_morris_observation_archive",
+            "signature": "observations: MorrisObservations, *, study_id: str, provenance: Mapping[str, str]"
+          },
+          {
+            "kind": "function",
+            "name": "morris_design_sha256",
+            "signature": "design: MorrisDesign"
+          },
+          {
+            "kind": "function",
+            "name": "morris_observations_from_json_dict",
+            "signature": "value: object"
+          },
+          {
+            "kind": "function",
+            "name": "morris_observations_to_json_dict",
+            "signature": "observations: MorrisObservations, *, study_id: str, provenance: Mapping[str, str]"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_morris_observation_io.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14777,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b2e736894d85b5efdcb397b56fcfc333907d580c2bd8c69a1ba5568210d24329",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-NOISE-RESPONSE-PY-1BC93E5A7C1E",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/noise_response.py",
+      "purpose": "Streaming declared-scale response and denominator-matched scatter analysis.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ResponseFieldAccumulator",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_RESPONSE_ACCUMULATOR_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compute_position_noise_response_field",
+            "signature": "inputs: tuple[ResponseFieldInput, ...], chunk_size: int | None=None"
+          },
+          {
+            "kind": "re-export",
+            "name": "ADEQUACY_ESTIMABLE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ADEQUACY_INSUFFICIENT_PAIRS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ADEQUACY_UNSUPPORTED_BOUNDED",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ADEQUACY_UNSUPPORTED_CORRELATED",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ADEQUACY_UNSUPPORTED_DISCRETE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ADEQUACY_ZERO_PERTURBATION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "POSITION_NOISE_RESPONSE_FIELD_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "POSITION_NOISE_RESPONSE_FIELD_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PositionNoiseResponseField",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ResponseAccumulatorSnapshot",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ResponseFieldInput",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "response_field_fingerprint",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/noise_response_test_support.py",
+          "src/shared/python/swing_sim/variation/tests/test_noise_response_falsification.py",
+          "src/shared/python/swing_sim/variation/tests/test_noise_response_field.py",
+          "tests/rate_of_closure/test_variation_noise_response.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4031,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e5edfe88380f3994a5eb20afea0087cd084e9f8586db7cccfdfe78bb917d5649",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-NOISE-RESPONSE-FINGERPRINT-PY-BA2AC3293EC2",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/noise_response_fingerprint.py",
+      "purpose": "Deterministic identities for response inputs, state, and final fields.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "input_contract_fingerprint",
+            "signature": "inputs: tuple[ResponseFieldInput, ...]"
+          },
+          {
+            "kind": "function",
+            "name": "response_field_fingerprint",
+            "signature": "field: PositionNoiseResponseField"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3399,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "922988f87485c73d0bc052ddf41fa39f376b6eeed3fd3e38f4fc0c7e44bfdfa0",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-NOISE-RESPONSE-PLOT-PY-99822510C6F5",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/noise_response_plot.py",
+      "purpose": "Row-oriented plotting boundary for governed geometric response fields.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PositionNoiseResponsePlotRow",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "iter_position_noise_response_plot_rows",
+            "signature": "field: PositionNoiseResponseField"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_variation_noise_response.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9082,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1c1f43c04ab4c079d233e2f41aece03b479a3978594eb469c87210df7b46eb80",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-NOISE-RESPONSE-RECORD-PY-3DA6469F42E6",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/noise_response_record.py",
+      "purpose": "Immutable plot-ready record for geometric noise-response evidence.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PositionNoiseResponseField",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_noise_response_falsification.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9616,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "65b2170cd5dcd70c68998d0f06782c2fcccf5fc83e909796a1c2f6788d9e7995",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-NOISE-RESPONSE-TYPES-PY-DB357A113AB5",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/noise_response_types.py",
+      "purpose": "Input and resumable-state contracts for geometric response fields.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ResponseAccumulatorSnapshot",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ResponseFieldInput",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ADEQUACY_ESTIMABLE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ADEQUACY_INSUFFICIENT_PAIRS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ADEQUACY_STATES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ADEQUACY_UNSUPPORTED_BOUNDED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ADEQUACY_UNSUPPORTED_CORRELATED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ADEQUACY_UNSUPPORTED_DISCRETE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ADEQUACY_ZERO_PERTURBATION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DECLARED_SCALE_NORMALIZATION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "METRIC_IDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "METRIC_UNITS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PAIRED_OAT_RESPONSE_METHOD",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "POSITION_NOISE_RESPONSE_FIELD_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "POSITION_NOISE_RESPONSE_FIELD_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCIENTIFIC_BOUNDARY",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "require_sha256",
+            "signature": "value: str, name: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11345,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "64c6c38de8a9f7ecd445eb8d7c04ed0ea4b25902431dca645e57b5d90caac81e",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-PAIRED-ATTRIBUTION-PY-70D49367230F",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/paired_attribution.py",
+      "purpose": "Paired localized attribution production, resume, and reviewer exports.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_COUNT_STATES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "attribution_contract_fingerprint",
+            "signature": "contract: PairedAttributionContract"
+          },
+          {
+            "kind": "function",
+            "name": "attribution_csv",
+            "signature": "record: PairedAttributionRecord, **selectors: object"
+          },
+          {
+            "kind": "function",
+            "name": "attribution_record_fingerprint",
+            "signature": "record: PairedAttributionRecord"
+          },
+          {
+            "kind": "function",
+            "name": "attribution_rows",
+            "signature": "record: PairedAttributionRecord, *, source_id: str | None=None, target_id: str | None=None, kind: str | None=None, point_id: str | None=None, coordinate_value: float | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "compute_paired_attribution",
+            "signature": "field_input: PairedAttributionInput"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_paired_attribution.py",
+          "tests/rate_of_closure/test_paired_attribution_adapter.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7747,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "14c6ce12a191327d9b4f6a9fd9fb791a0b4fe9321c31727f9c26ff9af2ff717c",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-PAIRED-ATTRIBUTION-RECORD-PY-18B2B2CED3E6",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/paired_attribution_record.py",
+      "purpose": "Immutable result record for paired localized attribution.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PairedAttributionRecord",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8770,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cca0de698727b7b608f12a3892f4c278eb8bdddf45fa4b95380c16c4f1c321c1",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-PAIRED-ATTRIBUTION-SNAPSHOT-PY-F0CD48B145B8",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/paired_attribution_snapshot.py",
+      "purpose": "Bounded exact snapshots for paired localized attribution.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PairedAttributionAccumulator",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PairedAttributionSnapshot",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "snapshot_from_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "snapshot_to_json",
+            "signature": "snapshot: PairedAttributionSnapshot"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 12220,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "c88ffa8bae39db3dee482ff83912e46c908381481a4275ebbf95b124a1b44b02",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-PAIRED-ATTRIBUTION-TYPES-PY-3E3867061F33",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/paired_attribution_types.py",
+      "purpose": "Immutable input contracts for paired model-intervention attribution.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AttributionPair",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "AttributionRunContext",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "AttributionSource",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "AttributionTarget",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PairedAttributionContract",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PairedAttributionInput",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "AVAILABILITY_AVAILABLE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "AVAILABILITY_MISSING",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "AVAILABILITY_NONFINITE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "AVAILABILITY_NO_IMPACT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "AVAILABILITY_NUMERICAL_FAILURE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "AVAILABILITY_UNSUPPORTED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "INTERPRETATION_BOUNDARY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_ARCHIVE_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_OBSERVATIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_PAIRS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_TARGETS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PAIRED_ATTRIBUTION_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PAIRED_ATTRIBUTION_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PAIRED_INTERVENTION_METHOD_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PAIR_AVAILABILITY_STATES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TARGET_KINDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TRIAL_EVALUATED_HIT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TRIAL_EVALUATED_NO_IMPACT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TRIAL_NUMERICAL_FAILURE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TRIAL_STATUSES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "VALUE_STATES",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7447,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6b65b6da4a27f8d9a18388952d493c56baa1cca1feead18378f34e2e7c004587",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-PERSISTED-PLAN-IO-PY-75B36939DA7B",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/persisted_plan_io.py",
+      "purpose": "Canonical and explicitly legacy variation-plan persistence.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PersistedPlanResolution",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PLAN_BINDING_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PLAN_BINDING_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "persisted_plan_binding_from_json_dict",
+            "signature": "value: object"
+          },
+          {
+            "kind": "function",
+            "name": "persisted_plan_binding_to_json_dict",
+            "signature": "value: VariationPlan | PersistedPlanResolution"
+          },
+          {
+            "kind": "function",
+            "name": "persisted_plan_dumps",
+            "signature": "plan: VariationPlan, *, provenance: PlanProducerProvenance=PYTHON_DEFAULT_PROVENANCE"
+          },
+          {
+            "kind": "function",
+            "name": "persisted_plan_loads",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "write_persisted_plan",
+            "signature": "path: str | Path, plan: VariationPlan, *, provenance: PlanProducerProvenance=PYTHON_DEFAULT_PROVENANCE"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_execution_metadata.py",
+          "tests/rate_of_closure/test_variation_gui_roundtrip.py",
+          "tests/rate_of_closure/test_workspace_document.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7310,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0cbdda7a96558e46c3cdd16537ebda0cc4f4a98a39c2f9b1da33f8996f1737ae",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-PIPELINE-PY-7497A65A820D",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/pipeline.py",
+      "purpose": "Pipeline-slice evaluation for the variation engine (#4120 V3).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "DELIVERY_OUTPUTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FLIGHT_OUTPUTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LAUNCH_OUTPUTS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "evaluate_run",
+            "signature": "variables: Mapping[str, float], mode: str, config: EvaluationConfig"
+          },
+          {
+            "kind": "function",
+            "name": "outputs_for_mode",
+            "signature": "mode: str"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_pipeline.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10396,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a290859204dc545af99dbbb4de6a586f039dfcde0d30df757bbf6d505c54fd1f",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-PROPAGATION-PY-9B2ECDF9B6B2",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/propagation.py",
+      "purpose": "Honest paired-intervention propagation over common-grid position traces.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CommonReferenceTrace",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PairedIntervention",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PropagationResult",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "analyze_paired_intervention",
+            "signature": "intervention: PairedIntervention"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_propagation.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 13615,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "1f5783c2a3977a660f111223b5928881d602cbda3aecd00417c0515f92796e11",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-REGISTRY-PY-7CEBD71DF4F1",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/registry.py",
+      "purpose": "Namespaced variable registry for the variation engine (#4120 V3).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "VariableDef",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "APPLICABILITIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CATEGORY_BALL_SETUP",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CATEGORY_CLUB",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CATEGORY_DELIVERY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CATEGORY_LAUNCH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CATEGORY_SWING",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LOCALIZED_TORQUE_VARIABLE_JOINTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MODES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MODE_CATEGORIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SWING_DERIVED_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "UNIT_DIMENSIONS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "keys_for_mode",
+            "signature": "mode: str"
+          },
+          {
+            "kind": "function",
+            "name": "register_variable",
+            "signature": "definition: VariableDef"
+          },
+          {
+            "kind": "function",
+            "name": "unit_dimension",
+            "signature": "unit: str"
+          },
+          {
+            "kind": "function",
+            "name": "variable_registry",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "variables_in_category",
+            "signature": "category: str"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/conventions/tests/test_registry.py",
+          "src/shared/python/swing_sim/flight/tests/test_registry.py",
+          "src/shared/python/swing_sim/variation/tests/noise_response_test_support.py",
+          "tests/rate_of_closure/conftest.py",
+          "tests/rate_of_closure/test_variation_ensemble_io_reader.py",
+          "tests/shared/python/gui_launcher/test_registry.py",
+          "tests/unit/ai/peer_review/test_registry.py",
+          "tests/unit/ai/skills/test_registry.py"
+        ],
+        "unit_mentions": [
+          "N·m",
+          "deg",
+          "g",
+          "kg",
+          "m/s",
+          "mm",
+          "ms",
+          "rpm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1615,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f2a62379c557ed0ae41e1937b71429bdbbad26b94de9dda3e36444166276d341",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-REGISTRY-MODE-POLICY-PY-13EA501506D4",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/registry_mode_policy.py",
+      "purpose": "Pipeline-mode category and derived-variable policy for the registry.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "keys_for_mode",
+            "signature": "mode: str, categories: Mapping[str, tuple[str, ...]], variables_in_category: Callable[[str], tuple[Any, ...]], derived_swing_keys: tuple[str, ...]"
+          },
+          {
+            "kind": "function",
+            "name": "mode_categories",
+            "signature": "delivery: str, swing: str, club: str, ball_setup: str, launch: str"
+          },
+          {
+            "kind": "function",
+            "name": "swing_derived_keys",
+            "signature": "delivery: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7908,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "242be4c16d7265aecbd90256fcaa586afc91bea54a4964f65552894d4476bfb9",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-SAMPLING-PY-694CFAC35229",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/sampling.py",
+      "purpose": "Deterministic eager and bounded-chunk sampling for variation plans.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "SAMPLING_ALGORITHM_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SAMPLING_ALGORITHM_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SAMPLING_STREAM_DERIVATION_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SAMPLING_STREAM_DERIVATION_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "sample_input_block",
+            "signature": "plan: VariationPlan, *, start_index: int, row_count: int"
+          },
+          {
+            "kind": "function",
+            "name": "sample_input_chunks",
+            "signature": "plan: VariationPlan, *, chunk_size: int, start_index: int=0"
+          },
+          {
+            "kind": "function",
+            "name": "sample_inputs",
+            "signature": "plan: VariationPlan"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/putting/tests/test_variation.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 15988,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "0e9da3b8752f44fa4c480d1168e4aff5c955ec2580040ed5c9bda5876e07e0ac",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-SPEC-PY-5960C4B11C84",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/spec.py",
+      "purpose": "Shared, namespaced perturbation vocabulary for variation studies.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "NoiseSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "VariationPlan",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DISTRIBUTIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_SAFE_INTEGER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CATEGORY_BALL_SETUP",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CATEGORY_CLUB",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CATEGORY_DELIVERY",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CATEGORY_LAUNCH",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CATEGORY_SWING",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LOCALIZED_TORQUE_VARIABLE_JOINTS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MODES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MODE_CATEGORIES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PerturbationGroup",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SWING_DERIVED_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VariableDef",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "keys_for_mode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "register_variable",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "variable_registry",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "variables_in_category",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/noise_response_test_support.py",
+          "src/shared/python/swing_sim/variation/tests/test_dataset_io.py",
+          "src/shared/python/swing_sim/variation/tests/test_grouped_sampling.py",
+          "src/shared/python/swing_sim/variation/tests/test_noise_response_falsification.py",
+          "src/shared/python/swing_sim/variation/tests/test_noise_response_field.py",
+          "src/shared/python/swing_sim/variation/tests/test_spec.py",
+          "tests/rate_of_closure/test_paired_attribution_adapter.py",
+          "tests/rate_of_closure/test_variation_plot_data.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8550,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4a651a66739719d9b11a8583923a2e41bc989d02cd118541ed5187d0f65930cb",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-TRACE-RESAMPLING-PY-EB72303A889E",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/trace_resampling.py",
+      "purpose": "Fail-closed common-time-grid alignment for ensemble position traces.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "TraceResamplingResult",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TRACE_RESAMPLING_POLICY_ID",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "resample_position_traces",
+            "signature": "source: EnsemblePositionTraces, target_times_s: np.ndarray"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/noise_response_test_support.py",
+          "src/shared/python/swing_sim/variation/tests/test_noise_response_falsification.py",
+          "src/shared/python/swing_sim/variation/tests/test_trace_resampling.py",
+          "tests/rate_of_closure/test_variation_trace_resampling.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/shared/python/swing_sim/variation",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

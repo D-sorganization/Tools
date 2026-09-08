@@ -14,12 +14,13 @@ zero damping the initial ball kinetic energy is conserved across the
 reported components (a test gate). Reported ball speed is converted back
 to the lab frame.
 
-**Upper-bound semantics.** At contact timescales a real shaft transmits
+**Comparison semantics (review #5068).** At contact timescales a real shaft transmits
 force through its local impedance; any lumped ``k_s`` is an
-approximation. Callers therefore sweep ``k_s`` up to a rigid-link bound —
-"even a perfectly rigid shaft changes ball speed by X%" — with the static
-tip stiffness (``solve_cantilever_tip_response``) as the realistic low
-end. Reality lies below the rigid bound.
+approximation. Callers can sweep ``k_s`` toward a rigid-link comparison,
+with the static tip stiffness (``solve_cantilever_tip_response``) as one
+reference. This sweep does not prove an upper bound for distributed,
+preloaded, damped or resonant three-dimensional clubs. The clipped
+``decoupling_fraction`` is a ball-speed comparison, not an inertial fraction.
 
 **Consistency, not coincidence.** The contact spring/damper defaults are
 the impact package's own Kelvin-Voigt parameters, and the detached limit
