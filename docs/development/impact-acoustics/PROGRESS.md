@@ -310,7 +310,12 @@ test passes (54.72 s) with one BLAS thread, as does the broad rerun. The
 kinematic foundation, not the finite grip law or its loaded balance/tangent.
 Anchor work in time evolution, stability and physical/acoustic validation
 remain open. All nine final manual gates, repository Ruff 0.14.10 (3,742 files)
-and actual hook mypy pass. Normal publication is pending.
+and actual hook mypy pass. Implementation is published at
+`0d45c4b7f32e0d2917c93e9ef6e492c032580dd7` through every normal commit/push
+hook; the remote SHA is verified and issue #5072 records the evidence. The
+derivation explicitly distinguishes invariant summed internal-port power
+from observer-dependent individual anchor power: an inertial ledger requires
+inertial motion states, or explicit frame-work accounting for a moving observer.
 
 Acoustic repair PR #5106 publishes `3a9362530922346814e8be65a9b3fbd8ae95481d`.
 Both Python matrices, quality/docs checks and the UpstreamDrift consumer pass.

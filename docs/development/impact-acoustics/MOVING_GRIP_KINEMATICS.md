@@ -81,8 +81,13 @@ power accounting boundary for a future constitutive law. For example, a newly
 declared constant-coefficient coordinate law g=M qddot+C qdot+K q has storage
 E=(qdot^T M qdot+q^T K q)/2 and loss D=qdot^T C qdot when M,C,K are symmetric
 positive semidefinite. Then root-plus-anchor power is -Edot-D. If anchor motion
-is prescribed, actuator power into the attached system is -wa^T Va; it must
-be retained separately from dissipation. This is a derived candidate law,
+is prescribed, the anchor-port contribution into the attached system is
+-wa^T Va in the declared observer; it must be retained separately from
+dissipation. Individual port power depends on the observer. Use inertial
+motion states for an inertial energy ledger; if the observer moves, retain
+its frame-work terms before interpreting this contribution as actuator power.
+The sum of the two internal-port powers is invariant under a common rigid
+observer motion because their total force and moment close. This is a derived candidate law,
 not an implemented extension or an identification of hand mass.
 
 The geometric-control literature supports deriving force laws from declared
@@ -120,7 +125,10 @@ Both runs set OPENBLAS_NUM_THREADS, OMP_NUM_THREADS and MKL_NUM_THREADS to 1;
 equations, tolerances and the 60-second per-test limit remain unchanged. This
 runtime observation does not identify the original worker's BLAS thread count.
 All nine final manual gates pass. Repository Ruff 0.14.10 passes (3,742 Python
-files), as does the actual pre-push mypy hook. Normal delivery is pending.
+files), as does the actual pre-push mypy hook. Implementation is published at
+`0d45c4b7f32e0d2917c93e9ef6e492c032580dd7`, with its remote SHA verified and
+every normal commit/push hook passing. The published evidence is recorded in
+[issue #5072](https://github.com/D-sorganization/Tools/issues/5072#issuecomment-5591328984).
 Next, introduce an explicit constitutive model with these coordinate semantics,
 derive its loaded root balance and consistent tangent, and retain the anchor
 work in time evolution. Do not bolt a finite moving anchor onto the frozen
