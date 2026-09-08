@@ -1703,7 +1703,8 @@
         "public_surfaces": [],
         "test_paths": [
           "tests/shared/python/golf_club/test_shaft_gripped_chain.py",
-          "tests/shared/python/golf_club/test_shaft_gripped_dynamics.py"
+          "tests/shared/python/golf_club/test_shaft_gripped_dynamics.py",
+          "tests/shared/python/golf_club/test_shaft_gripped_response.py"
         ],
         "unit_mentions": [
           "s"
@@ -1713,10 +1714,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 2802,
+      "bytes_lf": 3783,
       "classification": "calculation",
       "classification_basis": "path-marker:dynamics",
-      "content_sha256_lf": "776744ca20e44451cccf0c0bca76018d11400c6d7097edea4ae648501d460db4",
+      "content_sha256_lf": "4b3959699eb06f0152ea75896e825d3383c8c9bfe0c299c4f422d3a7d5b96216",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-GRIPPED-DYNAMICS-PY-D14A82825202",
       "language": "python",
@@ -1754,7 +1755,8 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
-          "tests/shared/python/golf_club/test_shaft_gripped_dynamics.py"
+          "tests/shared/python/golf_club/test_shaft_gripped_dynamics.py",
+          "tests/shared/python/golf_club/test_shaft_gripped_response.py"
         ],
         "unit_mentions": [
           "s"
@@ -1802,7 +1804,8 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
-          "tests/shared/python/golf_club/test_shaft_gripped_chain.py"
+          "tests/shared/python/golf_club/test_shaft_gripped_chain.py",
+          "tests/shared/python/golf_club/test_shaft_gripped_response.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -1810,10 +1813,58 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 7581,
+      "bytes_lf": 4519,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "cb6fd8401b8806409004efec58a036347ae08c627c73a827ea8bd5843657aad5",
+      "content_sha256_lf": "9367d0203a0467b38a630d8bc7baa4c45dd468690b12cd7f7fa6655c155332b2",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-GRIPPED-RESPONSE-PY-ECEF573105C4",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_gripped_response.py",
+      "purpose": "Frozen point response of an all-node shaft with finite stationary grips.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_gripped_response.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8543,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "31a525a8d80dd7208d0fa0de7703baeda2eb18cde1b6ae6c6acafe12672c42bd",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-HARMONIC-RESPONSE-PY-DE8908D47BB7",
       "language": "python",

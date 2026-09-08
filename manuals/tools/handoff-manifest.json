@@ -131,7 +131,7 @@
   "governed_handoff_files": {
     "AGENT_HANDOFF.md": {
       "path": "AGENT_HANDOFF.md",
-      "sha256_lf": "421e971805460d205057407273bb6ca23bde907c780ac3594e39de759b85d88a",
+      "sha256_lf": "05a626e3ad09f392c47607f40d781fd86b1d302a67724ac8f386dfc1ef8ee09c",
       "line_count": 97,
       "max_line_budget": 150,
       "required_sections": [
@@ -187,7 +187,7 @@
     },
     "src/shared/python/golf_club/AGENT_HANDOFF.md": {
       "path": "src/shared/python/golf_club/AGENT_HANDOFF.md",
-      "sha256_lf": "20ca46f98b98d9ec4fdb2bcaf71958336f75414185d05458162862e0a26fcb88",
+      "sha256_lf": "d19ff3fa683541fef5ade0b54613969a262bbd56f8c3016c85886ac8bc180166",
       "line_count": 150,
       "max_line_budget": 150,
       "required_sections": [

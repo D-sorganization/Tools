@@ -410,3 +410,12 @@ the locally regenerated authority. No remote scientific qualification follows
 from restoring a helper's definition. The #9787 claim check reports held by
 codex through its claim label, with no active lease. No further edits or pushes
 are made to that shared branch; the tested local version remains preserved.
+
+## Finite-Support Frequency Response In Progress
+
+The private response now retains every node and individual grip reaction,
+with balance/domain rechecks and shared clamped numerical/point-port code.
+`GRIPPED_FREQUENCY_RESPONSE.md` supplies the independent rod derivation and
+TDD evidence: RED collection, 36 initial passes, 50 focused final passes.
+All 665 Linux golf/API tests and nine manual/type/lint gates pass. Publication
+remains pending; stability and full program stay open.

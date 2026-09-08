@@ -2884,6 +2884,11 @@
     "explicit_all": true,
     "symbols": {}
   },
+  "_shaft_gripped_response.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
   "_shaft_harmonic_response.py": {
     "__all__": [],
     "explicit_all": true,

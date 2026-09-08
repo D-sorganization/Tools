@@ -119,19 +119,58 @@ def _dynamic_operators(
 ) -> tuple[np.ndarray, np.ndarray, float]:
     """Keep cancellation scale relative to the original length-scaled pencil."""
     frequency = controls.angular_frequency_rad_s
-    scale = np.tile(
-        [controls.length_m] * 3 + [1.0] * 3, len(operators.residual) // 6 - 1
-    )
     terms = (
         operators.stiffness,
         -(frequency**2) * operators.mass,
         1j * frequency * operators.gyroscopic,
     )
+    return _scaled_pencil(terms, controls.length_m, 1)
+
+
+def _scaled_pencil(
+    terms: tuple[np.ndarray, ...], length_m: float, first_free_node: int
+) -> tuple[np.ndarray, np.ndarray, float]:
+    """Scale retained nodes while measuring cancellation against original terms."""
+    start = 6 * first_free_node
+    scale = np.tile([length_m] * 3 + [1.0] * 3, len(terms[0]) // 6 - first_free_node)
     congruence = scale[:, None] * scale[None, :]
     coefficient_scale = sum(
-        (float(np.linalg.norm(term[6:, 6:] * congruence)) for term in terms), 0.0
+        (float(np.linalg.norm(term[start:, start:] * congruence)) for term in terms),
+        0.0,
     )
-    return terms[0] + terms[1] + terms[2], scale, coefficient_scale
+    return np.add.reduce(terms), scale, coefficient_scale
+
+
+@dataclass(frozen=True)
+class _PointResponse:
+    displacement: np.ndarray
+    compliance: np.ndarray
+    mobility: np.ndarray
+    rcond: float
+    resolution: float
+    residuals: np.ndarray
+
+
+def _point_response(
+    dynamic: np.ndarray,
+    scale: np.ndarray,
+    coefficient_scale: float,
+    controls: TipHarmonicControls,
+) -> _PointResponse:
+    """Share the length-scaled point-wrench solve and conjugate SI output map."""
+    port = _point_motion(controls.point_offset_m)
+    reduced = dynamic * scale[:, None] * scale[None, :]
+    force = np.zeros((len(scale), 6))
+    force[-6:] = port.T
+    motion, rcond, resolution, residuals = _resolved_response(
+        reduced, scale[:, None] * force, controls, coefficient_scale
+    )
+    physical = scale[:, None] * motion
+    compliance = port @ physical[-6:]
+    mobility = 1j * controls.angular_frequency_rad_s * compliance
+    if not all(np.all(np.isfinite(item)) for item in (physical, compliance, mobility)):
+        raise ValueError("harmonic response is nonfinite after SI mapping")
+    return _PointResponse(physical, compliance, mobility, rcond, resolution, residuals)
 
 
 def clamped_tip_compliance(
@@ -152,37 +191,25 @@ def clamped_tip_compliance(
         raise TypeError("expected TipHarmonicControls")
     operators = balanced_clamped_dynamics(chain, poses, equilibrium)
     frequency = controls.angular_frequency_rad_s
-    port = _point_motion(controls.point_offset_m)
     try:
         with np.errstate(over="raise", invalid="raise", divide="raise"):
             dynamic, scale, coefficient_scale = _dynamic_operators(operators, controls)
-            reduced = dynamic[6:, 6:] * scale[:, None] * scale[None, :]
-            force = np.zeros((len(scale), 6))
-            force[-6:] = port.T
-            motion, rcond, resolution, residuals = _resolved_response(
-                reduced, scale[:, None] * force, controls, coefficient_scale
-            )
-            physical = scale[:, None] * motion
-            compliance = port @ physical[-6:]
-            mobility = 1j * frequency * compliance
-            support = dynamic[:6, 6:] @ physical
-            if not all(
-                np.all(np.isfinite(item))
-                for item in (physical, compliance, mobility, support)
-            ):
+            point = _point_response(dynamic[6:, 6:], scale, coefficient_scale, controls)
+            support = dynamic[:6, 6:] @ point.displacement
+            if not np.all(np.isfinite(support)):
                 raise ValueError("harmonic response is nonfinite after SI mapping")
     except (np.linalg.LinAlgError, FloatingPointError, OverflowError) as error:
         raise ValueError("harmonic response numerical evaluation failed") from error
     return FrozenTipCompliance(
         frequency,
-        compliance,
-        mobility,
-        physical,
+        point.compliance,
+        point.mobility,
+        point.displacement,
         support,
         operators.residual[:6].copy(),
-        rcond,
-        resolution,
-        residuals,
+        point.rcond,
+        point.resolution,
+        point.residuals,
     )
 
 

@@ -9,6 +9,7 @@ import numpy as np
 from ._grip_contracts import finite_array
 from ._grip_stationary import stationary_grip_operators
 from ._rotating_body_contracts import RotatingFrameState
+from ._shaft_equilibrium import EquilibriumControls, _check_strains
 from ._shaft_gripped_chain import GrippedSectionChain
 from ._shaft_loaded_dynamics import linearized_chain_dynamics
 from ._shaft_rotating_chain import RotatingSectionChain
@@ -70,6 +71,25 @@ def linearized_gripped_dynamics(
         finite_array(base.stiffness, (size, size), "gripped stiffness"),
         chain.shaft.frame,
     )
+
+
+def balanced_gripped_dynamics(
+    chain: GrippedSectionChain, poses: object, controls: EquilibriumControls
+) -> GrippedChainDynamics:
+    """Recheck strain domain and every nodal balance, including finite supports."""
+    if not isinstance(chain, GrippedSectionChain) or not isinstance(
+        controls, EquilibriumControls
+    ):
+        raise TypeError("expected GrippedSectionChain and EquilibriumControls")
+    current = finite_array(poses, (chain.node_count, 4, 4), "gripped poses")
+    operators = linearized_gripped_dynamics(chain, current)
+    _check_strains(chain, current, controls.strain_limits)
+    residual = operators.residual.reshape(-1, 6)
+    if np.any(np.abs(residual[:, :3]) > controls.force_tolerance_n) or np.any(
+        np.abs(residual[:, 3:]) > controls.moment_tolerance_nm
+    ):
+        raise ValueError("all nodes must satisfy the declared balance tolerances")
+    return operators
 
 
 __all__ = ()
