@@ -2759,10 +2759,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 7366,
+      "bytes_lf": 16473,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "410961bb4f6ef666239fbf4eb6ea46a0bafba6cb2bd30fb6762a2c941e487345",
+      "content_sha256_lf": "d987e05e12cdd9b7605f9a1f36417aa21016106a563479f4b5137d04d878b785",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-CALCULATORS-ELECTRICAL-GLASS-INTERFACE-PY-783DB2C95C7E",
       "language": "python",
@@ -2814,7 +2814,8 @@
           "tests/shared/python/sidekick/calculators/electrical/test_glass_interface.py"
         ],
         "unit_mentions": [
-          "J"
+          "J",
+          "s"
         ],
         "validation_paths": []
       }

@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — Tools (Monorepo Root)
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-09-07
+> Last updated: 2026-09-08
 > **Current state only**, capped at 150 lines by `CLAUDE.md`; history lives in git and `docs/agent_handoff_archive/`.
 > Do not append dated entries here again.
 
@@ -37,6 +37,7 @@ Tools is the fleet's shared engineering-tools monorepo (45+ tools: PyQt6 GUIs, F
 - TOOLS-D8 (#4728 / PR #5054) merged: enforces immutable public publication projection (`tools-publication-projection/1.0.0`).
 - TOOLS-D9 (#4730) enforces governed completion-audit handoff and maintenance contract (`tools-handoff-maintenance/1.0.0`) across root and per-tool handoffs with diff-aware CI gating, line budgets (<= 150 lines), and machine-checked evidence.
 - Completing and merging #4730 closes subepic #4730 and closes the entire parent epic [DOC-TOOLS] (#4707).
+- Issue #5062 (glass conductivity provider contracts and explicit fallback policy) in review on branch `claude/issue-5062-glass-contracts`: public `ConductivityProvider` protocol in `glass_contracts.py`, validated finite-positive outputs, STRICT/DEMO/LEGACY policies, reciprocal resistivity.
 
 ## Must-Read Architecture Pointers
 
