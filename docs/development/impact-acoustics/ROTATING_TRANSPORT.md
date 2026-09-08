@@ -159,6 +159,10 @@ loaded-shape geometric stiffness are not present in this transport builder.
 - Broader golf-club regression: 398 passed, two skipped in 109.87 s.
   Repository-wide pinned Ruff passes lint and formatting for 3,715 files.
 
+The implementation is pushed at `59ca36c60c03a67ce8b9cfdfaac0d195f7863ad5`.
+All nine manual/handoff gates and normal commit/push hooks pass, including unit
+tests, type checks and dependency audit. No publication approval is implied.
+
 ## Next Required Work
 
 Construct and qualify the loaded initial state, including axial/bending/torsional

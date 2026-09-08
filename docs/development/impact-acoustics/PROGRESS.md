@@ -25,7 +25,8 @@ perceptual validation cannot be inferred from numerical fixtures.
 
 `Tools-impact-shaft`, branch `feat/5072-prestressed-shaft`, base T2 `2f975d06e`.
 Pushed checkpoints include tensile FEM `f1f8da112`, grip `8f025d570` and stationary
-spatial shaft/full head `43c228da1`. Rotating transport is the next local checkpoint.
+spatial shaft/full head `43c228da1`. Rotating transport is pushed at `59ca36c60c03a67ce8b9cfdfaac0d195f7863ad5`,
+with all normal commit/push hooks passing and the remote head verified.
 It retains the full head COM/inertia and explicit distributed section rotary
 inertia, with separate gyroscopic, centrifugal, Euler and origin-acceleration
 terms. Nominal inertial forcing is returned; equilibrium is never presumed.
@@ -52,15 +53,19 @@ reported as current blockers after the merge.
 
 Tools T1 #5077 and T2 #5082 remain open. The failed T2 UD consumer job
 101931398231 (run 34180114995) was rerun through the normal REST endpoint after
-confirming the upstream merge. Its result is pending. Gasification_Model exists
+confirming the upstream merge. The resulting UD job 101951943569 passed, including actual downstream
+consumer contracts. The older T1 UD job 101870569015 (run 34163726663) has
+now also been rerun; that separate result is pending. Gasification_Model exists
 as a private repository but checkout previously failed; a secret-metadata query
 returned 403 and does not establish whether a credential is absent or expired.
 Seven PyQt view-baseline drifts also require inspection. Never weaken checkout
 failure handling, replace images without review or bypass protected checks.
 
 DATA_CANDIDATES.md records RealImpact as a measured household-object acoustic
-method candidate. No recordings have been inspected or calibrated; dataset
-licensing and preprocessing assumptions still need verification. It cannot
+method candidate. A bounded ZIP-directory inspection found only deconvolved audio plus geometry
+and location metadata for the iron-plate archive; raw paired force/audio is absent
+from that directory. No recording values have been inspected or calibrated;
+dataset licensing and preprocessing assumptions still need verification. It cannot
 replace golf/player measurements. Hardware/data availability remains unanswered;
 no experiment, acoustic effect or perceptual preference is inferred.
 
@@ -109,9 +114,10 @@ No scalar score is reinterpreted as coupled body mass.
 
 ## Next Actions and Completion Boundary
 
-Save the rotating checkpoint with refreshed inventories, handoff hashes and all
-required gates, then construct a consistent loaded state and moving boundary
-work audit. Preserve the existing `swing_sim.impact_interval` facade and rigid
+The rotating checkpoint is saved with refreshed inventories and all nine
+required gates. Construct a consistent loaded state and moving boundary work
+audit; LOADED_STATE_REVIEW.md records the next formulation candidates and reuse
+constraints. Preserve the existing `swing_sim.impact_interval` facade and rigid
 full-inertia/friction/trace/wire capabilities as T4 integration points. It is
 not a distributed shaft or radiation solver. Resolve remaining provider CI
 through normal protections and inspect remote heads before changing branches.

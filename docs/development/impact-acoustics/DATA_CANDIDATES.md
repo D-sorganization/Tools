@@ -1,7 +1,8 @@
 # Measured Data Candidates for Later Acoustic Qualification
 
 This is a source-access and suitability record, not experimental validation.
-No dataset recordings have been downloaded, inspected or fitted. The physical
+No dataset recordings have been downloaded, inspected or fitted. A bounded
+remote ZIP directory has been inspected as described below. The physical
 golf/player and blinded preference requirements remain open in PROGRESS.md.
 
 ## RealImpact
@@ -44,3 +45,26 @@ spatial sampling limits. Keep normalized shape metrics separate from calibrated
 pressure error. Report results as household-object method evidence, with a
 separate golf-equipment validation gate. Do not run the authors' bulk download
 script blindly or copy its unregularized division as a qualified estimator.
+
+## Iron-Plate Archive Access Check
+
+On 2026-09-08 UTC, HTTPS HEAD for the authors' `67_IronPlate.zip` URL returned
+200, length 2,310,122,028 bytes, byte-range support, Last-Modified
+`Mon, 10 Apr 2023 09:47:24 GMT`, and ETag `"6433db2c-89b1aa2c"`.
+A subsequent request for only the last 131,072 bytes returned 206 and the exact
+requested Content-Range. Python's ZIP reader inspected that directory without
+extracting files or reading the audio payload. ETag and partial access are not
+a complete archive SHA-256 or a recording-integrity check.
+
+The directory lists `preprocessed/deconvolved_0db.npy` (2,504,508,128 bytes
+uncompressed), `transformed.obj`, material assets, and NPY arrays for micID,
+vertexXYZ, listenerXYZ, angle, vertexID and distance. It lists no separate force,
+raw sound, or calibration file. The available archive is therefore narrower
+than the preprocessing script's possible outputs. It may support studying
+already-deconvolved responses; it does not by itself provide paired raw
+force/audio for an independent transfer-identification audit. Array headers,
+values, units, clipping and calibration remain uninspected. No model was fitted.
+
+Source: [authors' hosted archive](https://downloads.cs.stanford.edu/viscam/RealImpact/67_IronPlate.zip),
+selected from the pinned repository's `dataset/object_names.txt`. No external
+recordings or derived data are redistributed in this repository.
