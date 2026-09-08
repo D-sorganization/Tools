@@ -226,3 +226,14 @@ publishes `d1563dffa` with actual native provenance, 116 strict authority tests,
 three separate rolling tests and all 253 existing PDF pages computationally
 validated. All normal push hooks pass; current-head protected CI is pending.
 The complete program requirement/evidence matrix above remains authoritative.
+
+## Current Frozen Spectral Checkpoint
+
+Loaded operators are published at `78253741f`. Private frozen spectra now
+retain nonsymmetric stiffness, growing roots and defective eigenbases; both
+state and original quadratic residuals must pass explicit numerical tolerances.
+All 22 final Windows tests pass. The final Linux golf/API run passes 589
+tests with two optional CAD skips and three optional-plugin warnings (245.81 s).
+`FROZEN_SPECTRA.md` records the derivation, independent counterexamples and
+remaining stability, moving-work, loaded grip/head and FRF qualification.
+This is a T3 foundation, not a full epic or physical/acoustic qualification.

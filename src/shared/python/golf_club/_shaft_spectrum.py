@@ -1,0 +1,234 @@
+"""Private frozen shaft dynamics spectra; no stability certificates are inferred."""
+
+from __future__ import annotations
+
+from dataclasses import dataclass, replace
+
+import numpy as np
+
+from ._grip_contracts import finite_array
+from ._shaft_equilibrium import EquilibriumControls, _check_strains
+from ._shaft_loaded_dynamics import linearized_chain_dynamics
+from ._shaft_rotating_chain import RotatingSectionChain
+
+_NODE_DOF = 6
+
+
+@dataclass(frozen=True)
+class SpectrumScales:
+    """Explicit SI coordinate scales and dimensionless numerical tolerances.
+
+    Length scales translations relative to rotations; time scales velocity
+    relative to displacement. Both must be finite and positive. The mass
+    reciprocal-condition floor and residual tolerance lie strictly in (0, 1).
+    These choices affect conditioning, never the underlying physical model.
+    """
+
+    length_m: float
+    time_s: float
+    mass_rcond_floor: float
+    residual_tolerance: float
+
+    def __post_init__(self) -> None:
+        for name in ("length_m", "time_s", "mass_rcond_floor", "residual_tolerance"):
+            value = float(finite_array(getattr(self, name), (), name))
+            if value <= 0 or (name.endswith(("floor", "tolerance")) and value >= 1):
+                raise ValueError(f"{name} must be positive and tolerances below one")
+            object.__setattr__(self, name, value)
+
+
+@dataclass(frozen=True)
+class FrozenSpectrum:
+    """Fresh complex modes and diagnostics of a frozen linear differential system.
+
+    Rates have units 1/s, velocity modes are displacement modes times rate.
+    Modes have arbitrary complex normalization, and repeated-mode bases need
+    not be unique. Residuals and eigenbasis conditioning refer to the declared
+    dimensionless state coordinates. Small backward errors do not establish
+    small forward errors near defective or clustered eigenvalues. Root support
+    wrench, when present, is support-on-shaft in the root material frame.
+    """
+
+    rates_s_inv: np.ndarray
+    displacement_modes: np.ndarray
+    velocity_modes: np.ndarray
+    relative_residuals: np.ndarray
+    polynomial_relative_residuals: np.ndarray
+    scaled_eigenbasis_rcond: float
+    support_wrench: np.ndarray | None = None
+
+    @property
+    def stability_status(self) -> str:
+        """Frozen eigenvalues alone do not qualify swing or nonlinear stability."""
+        return "unqualified"
+
+
+def _scaled_generator(
+    mass: object, gyroscopic: object, stiffness: object, scales: SpectrumScales
+) -> np.ndarray:
+    if not isinstance(scales, SpectrumScales):
+        raise TypeError("scales must be SpectrumScales")
+    if scales.time_s**2 == 0:
+        raise ValueError("time scale squared must be numerically representable")
+    shape = np.asarray(mass).shape
+    if len(shape) != 2 or shape[0] == 0 or shape[0] != shape[1]:
+        raise ValueError("mass must be a nonempty square matrix")
+    inertia = finite_array(mass, shape, "mass")
+    gyro = finite_array(gyroscopic, shape, "gyroscopic matrix")
+    tangent = finite_array(stiffness, shape, "stiffness")
+    tolerance = scales.residual_tolerance
+    if np.linalg.norm(inertia - inertia.T) > tolerance * np.linalg.norm(inertia):
+        raise ValueError("mass must be symmetric within the declared tolerance")
+    if np.linalg.norm(gyro + gyro.T) > tolerance * np.linalg.norm(gyro):
+        raise ValueError("gyroscopic matrix must be skew symmetric")
+    # No projection or regularization: diagnose the supplied mass, then solve it.
+    eigenvalues = np.linalg.eigvalsh(inertia)
+    if (
+        eigenvalues[0] <= 0
+        or eigenvalues[0] / eigenvalues[-1] <= scales.mass_rcond_floor
+    ):
+        raise ValueError("mass must be positive definite and numerically resolved")
+    size = shape[0]
+    generator = np.zeros((2 * size, 2 * size))
+    generator[:size, size:] = np.eye(size)
+    generator[size:, :size] = -(scales.time_s**2) * np.linalg.solve(inertia, tangent)
+    generator[size:, size:] = -scales.time_s * np.linalg.solve(inertia, gyro)
+    return finite_array(generator, generator.shape, "scaled generator")
+
+
+def _polynomial_residuals(
+    matrices: tuple[object, object, object], rates: np.ndarray, modes: np.ndarray
+) -> np.ndarray:
+    """Normwise residual in the original quadratic pencil, using Frobenius norms."""
+    mass, gyro, stiffness = (np.asarray(matrix) for matrix in matrices)
+    defect = (mass @ modes) * rates**2 + (gyro @ modes) * rates + stiffness @ modes
+    mode_norm = np.linalg.norm(modes, axis=0)
+    if np.any(mode_norm == 0):
+        raise ValueError("polynomial residual requires a nonzero displacement mode")
+    denominator = (
+        np.linalg.norm(mass) * np.abs(rates) ** 2
+        + np.linalg.norm(gyro) * np.abs(rates)
+        + np.linalg.norm(stiffness)
+    ) * mode_norm
+    result: np.ndarray = np.zeros_like(denominator)
+    np.divide(
+        np.linalg.norm(defect, axis=0),
+        denominator,
+        out=result,
+        where=denominator > 0,
+    )
+    return result
+
+
+def _validate_result(result: FrozenSpectrum, tolerance: float) -> None:
+    if not all(
+        np.all(np.isfinite(value))
+        for value in (
+            result.rates_s_inv,
+            result.displacement_modes,
+            result.velocity_modes,
+            result.relative_residuals,
+            result.polynomial_relative_residuals,
+            result.scaled_eigenbasis_rcond,
+        )
+    ) or any(
+        np.any(value > tolerance)
+        for value in (
+            result.relative_residuals,
+            result.polynomial_relative_residuals,
+        )
+    ):
+        raise ValueError("frozen spectrum has nonfinite output or unresolved residuals")
+
+
+def _frozen_spectrum(
+    mass: object, gyroscopic: object, stiffness: object, scales: SpectrumScales
+) -> FrozenSpectrum:
+    """Diagnose already length-scaled M q'' + G q' + K q = 0.
+
+    Require finite real square matrices, resolved positive mass and skew G.
+    Retain nonsymmetric K, growing roots and deficient eigenbases. No damping,
+    boundary conditions, equilibrium or autonomous evolution are inferred.
+    Unresolved eigen residuals or failed numerical operations raise ValueError.
+    """
+    try:
+        with np.errstate(over="raise", invalid="raise", divide="raise"):
+            generator = _scaled_generator(mass, gyroscopic, stiffness, scales)
+            rates, modes = np.linalg.eig(generator)
+            defects = generator @ modes - modes * rates
+            denominator = (np.linalg.norm(generator) + np.abs(rates)) * np.linalg.norm(
+                modes, axis=0
+            )
+            residuals = np.divide(
+                np.linalg.norm(defects, axis=0),
+                denominator,
+                out=np.zeros_like(denominator),
+                where=denominator > 0,
+            )
+            singular_values = np.linalg.svd(modes, compute_uv=False)
+            rcond = float(singular_values[-1] / singular_values[0])
+            size = generator.shape[0] // 2
+            result = FrozenSpectrum(
+                rates / scales.time_s,
+                modes[:size].copy(),
+                modes[size:].copy() / scales.time_s,
+                residuals,
+                _polynomial_residuals(
+                    (mass, gyroscopic, stiffness), rates / scales.time_s, modes[:size]
+                ),
+                rcond,
+            )
+    except (np.linalg.LinAlgError, FloatingPointError, OverflowError) as error:
+        raise ValueError("frozen spectrum numerical evaluation failed") from error
+    _validate_result(result, scales.residual_tolerance)
+    return result
+
+
+def clamped_chain_spectrum(
+    chain: RotatingSectionChain,
+    poses: object,
+    controls: EquilibriumControls,
+    scales: SpectrumScales,
+) -> FrozenSpectrum:
+    """Recheck material domain and free-node balance, then clamp only node zero.
+
+    Uses full loaded M/G/K with a congruent translation/rotation length scale.
+    Returned modes use physical material coordinates. A balanced snapshot can
+    still be unstable or nonautonomous; no physical bandwidth is established.
+    """
+    if (
+        not isinstance(chain, RotatingSectionChain)
+        or not isinstance(controls, EquilibriumControls)
+        or not isinstance(scales, SpectrumScales)
+    ):
+        raise TypeError(
+            "expected RotatingSectionChain, EquilibriumControls, SpectrumScales"
+        )
+    current = finite_array(poses, (chain.node_count, 4, 4), "chain poses")
+    operators = linearized_chain_dynamics(chain, current)
+    _check_strains(chain, current, controls.strain_limits)
+    free = operators.residual[_NODE_DOF:].reshape(-1, _NODE_DOF)
+    if np.any(np.abs(free[:, :3]) > controls.force_tolerance_n) or np.any(
+        np.abs(free[:, 3:]) > controls.moment_tolerance_nm
+    ):
+        raise ValueError("free nodes must satisfy the declared balance tolerances")
+    coordinate_scale = np.tile([scales.length_m] * 3 + [1.0] * 3, chain.node_count - 1)
+    congruence = coordinate_scale[:, None] * coordinate_scale[None, :]
+    mass, gyroscopic, stiffness = (
+        matrix[_NODE_DOF:, _NODE_DOF:] * congruence
+        for matrix in (
+            operators.mass,
+            operators.gyroscopic,
+            operators.stiffness,
+        )
+    )
+    result = _frozen_spectrum(mass, gyroscopic, stiffness, scales)
+    return replace(
+        result,
+        displacement_modes=result.displacement_modes * coordinate_scale[:, None],
+        velocity_modes=result.velocity_modes * coordinate_scale[:, None],
+        support_wrench=operators.residual[:_NODE_DOF].copy(),
+    )
+
+
+__all__ = ()

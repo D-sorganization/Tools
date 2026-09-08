@@ -2935,6 +2935,11 @@
       }
     }
   },
+  "_shaft_spectrum.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
   "_shaft_transport_contracts.py": {
     "__all__": ["ShaftRotaryInertia", "ShaftRotatingModel"],
     "explicit_all": false,
