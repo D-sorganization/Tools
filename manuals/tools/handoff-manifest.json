@@ -131,7 +131,7 @@
   "governed_handoff_files": {
     "AGENT_HANDOFF.md": {
       "path": "AGENT_HANDOFF.md",
-      "sha256_lf": "84a058c219078c3cc77c2bd8e36e39338c1303febe86b91241733c4019bb5cbf",
+      "sha256_lf": "578fe920762095725b0dfce139f790008bdccc2215b7104ed2e26d48bc5bb8e6",
       "line_count": 94,
       "max_line_budget": 150,
       "required_sections": [
@@ -160,7 +160,7 @@
     },
     "src/rate_of_closure/AGENT_HANDOFF.md": {
       "path": "src/rate_of_closure/AGENT_HANDOFF.md",
-      "sha256_lf": "da1049e6a019983360596613445a48d394cb1ef0bbee8874c388dff2a68ec252",
+      "sha256_lf": "08d778bad6f62aa865a7d3167f9c312a428c2987e0ff23573bffbd2dfe1d57e3",
       "line_count": 63,
       "max_line_budget": 150,
       "required_sections": [

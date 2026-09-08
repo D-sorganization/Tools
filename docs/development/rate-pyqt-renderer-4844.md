@@ -67,6 +67,10 @@ Font package inventory was checked against [Playwright native dependencies](http
   commit/push hooks and is published in ready PR #5090.
 - Current-main merge validation: 68 tests pass, including all 19 impact-interval
   solver checks from preserved main PR #5079.
+- Merge push exposed inherited `test_solver.py:282` mypy `no-any-return` in the
+  deliberate 1.05 force perturbation. The failed push was stopped; an explicit
+  float return now passes mypy and all 19 impact-interval tests (10.94 s).
+  The perturbation and residual assertion retain their values.
 - Next: execute the Linux
   workflow, inspect every new reference candidate and its exact provenance,
   then propose only justified reference changes through protected review.
