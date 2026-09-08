@@ -270,10 +270,7 @@
       },
       "ClubLengthConvention": {
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         },
         "type": "class"
@@ -301,20 +298,14 @@
       },
       "ComponentRole": {
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         },
         "type": "class"
       },
       "ContactSequence": {
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         },
         "type": "class"
@@ -342,10 +333,7 @@
       },
       "ExtrapolationPolicy": {
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         },
         "type": "class"
@@ -400,10 +388,7 @@
       },
       "Handedness": {
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         },
         "type": "class"
@@ -726,10 +711,7 @@
       },
       "TurfCalibrationStatus": {
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         },
         "type": "class"
@@ -769,10 +751,7 @@
       },
       "TurfContactStatus": {
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         },
         "type": "class"
@@ -786,10 +765,7 @@
       },
       "TurfPreset": {
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         },
         "type": "class"
@@ -845,10 +821,7 @@
       },
       "WedgeContactFeature": {
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         },
         "type": "class"
@@ -862,10 +835,7 @@
       },
       "WedgeExportFormat": {
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         },
         "type": "class"
@@ -935,10 +905,7 @@
       },
       "WedgePreset": {
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         },
         "type": "class"
@@ -2508,10 +2475,7 @@
     }
   },
   "_wedge_delivery_metrics.py": {
-    "__all__": [
-      "delivered_bounce_deg",
-      "path_projected_metrics"
-    ],
+    "__all__": ["delivered_bounce_deg", "path_projected_metrics"],
     "explicit_all": false,
     "symbols": {
       "delivered_bounce_deg": {
@@ -2684,10 +2648,7 @@
     }
   },
   "assembly.py": {
-    "__all__": [
-      "ClubAssembly",
-      "assemble_mass_properties"
-    ],
+    "__all__": ["ClubAssembly", "assemble_mass_properties"],
     "explicit_all": true,
     "symbols": {
       "ClubAssembly": {
@@ -3176,6 +3137,90 @@
             }
           ],
           "returns": "CoupledImpactResult"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "impact_mobility.py": {
+    "__all__": [
+      "RigidContactBody",
+      "contact_inverse_mass",
+      "normal_effective_mass",
+      "normal_impulse"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "RigidContactBody": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "contact_inverse_mass": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "RigidContactBody",
+              "default": null,
+              "kind": "arg",
+              "name": "body"
+            }
+          ],
+          "returns": "NDArray[np.float64]"
+        },
+        "type": "function"
+      },
+      "normal_effective_mass": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "RigidContactBody",
+              "default": null,
+              "kind": "arg",
+              "name": "body"
+            },
+            {
+              "annotation": "Vector3",
+              "default": null,
+              "kind": "arg",
+              "name": "normal"
+            }
+          ],
+          "returns": "float"
+        },
+        "type": "function"
+      },
+      "normal_impulse": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "closing_speed_mps"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "first_effective_mass_kg"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "second_effective_mass_kg"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "restitution"
+            }
+          ],
+          "returns": "float"
         },
         "type": "function"
       }
@@ -3842,9 +3887,7 @@
     }
   },
   "shaft_assembly.py": {
-    "__all__": [
-      "shaft_component_mass_properties"
-    ],
+    "__all__": ["shaft_component_mass_properties"],
     "explicit_all": true,
     "symbols": {
       "shaft_component_mass_properties": {
@@ -3976,10 +4019,7 @@
     "symbols": {
       "ExtrapolationPolicy": {
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         },
         "type": "class"
@@ -4087,10 +4127,7 @@
     }
   },
   "shaft_scaling.py": {
-    "__all__": [
-      "ShaftProfileScaling",
-      "scale_shaft_profile"
-    ],
+    "__all__": ["ShaftProfileScaling", "scale_shaft_profile"],
     "explicit_all": true,
     "symbols": {
       "ShaftProfileScaling": {
@@ -4274,11 +4311,7 @@
     }
   },
   "stl_validation.py": {
-    "__all__": [
-      "StlMeshValidation",
-      "read_binary_stl",
-      "validate_binary_stl"
-    ],
+    "__all__": ["StlMeshValidation", "read_binary_stl", "validate_binary_stl"],
     "explicit_all": true,
     "symbols": {
       "StlMeshValidation": {
@@ -4346,10 +4379,7 @@
     "symbols": {
       "TurfCalibrationStatus": {
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         },
         "type": "class"
@@ -4389,20 +4419,14 @@
       },
       "TurfContactStatus": {
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         },
         "type": "class"
       },
       "TurfPreset": {
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         },
         "type": "class"
@@ -4451,10 +4475,7 @@
     }
   },
   "turf_convergence.py": {
-    "__all__": [
-      "TurfConvergenceStudy",
-      "run_turf_convergence_study"
-    ],
+    "__all__": ["TurfConvergenceStudy", "run_turf_convergence_study"],
     "explicit_all": true,
     "symbols": {
       "TurfConvergenceStudy": {
@@ -4523,10 +4544,7 @@
     }
   },
   "turf_dynamics.py": {
-    "__all__": [
-      "ReducedTurfContactResult",
-      "simulate_reduced_turf_contact"
-    ],
+    "__all__": ["ReducedTurfContactResult", "simulate_reduced_turf_contact"],
     "explicit_all": true,
     "symbols": {
       "ReducedTurfContactResult": {
@@ -4771,10 +4789,7 @@
       },
       "ClubLengthConvention": {
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         },
         "type": "class"
@@ -4795,10 +4810,7 @@
       },
       "ComponentRole": {
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         },
         "type": "class"
@@ -4908,10 +4920,7 @@
       },
       "WedgeExportFormat": {
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         },
         "type": "class"
@@ -4971,10 +4980,7 @@
       },
       "WedgeContactFeature": {
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         },
         "type": "class"
@@ -5048,10 +5054,7 @@
     "symbols": {
       "ContactSequence": {
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         },
         "type": "class"
@@ -5235,10 +5238,7 @@
     "symbols": {
       "Handedness": {
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         },
         "type": "class"
@@ -5259,10 +5259,7 @@
       },
       "WedgePreset": {
         "info": {
-          "bases": [
-            "str",
-            "Enum"
-          ],
+          "bases": ["str", "Enum"],
           "methods": {}
         },
         "type": "class"
