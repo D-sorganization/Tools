@@ -21,8 +21,7 @@ reachable from any live state and `abandoned` from `parked`.
 ### DL-#8942 · Realtime Transport And Codemap Hashing Hot-Path Fixes
 
 - **State:** in_review
-- **Owner:** claude (fleet wave 5)
-- **PR:** not created
+- **PR:** https://github.com/D-sorganization/Tools/pull/5081
 - **Paths:** `src/shared/python/codemap/indexer.py`,
   `src/shared/python/realtime/`, `tests/unit/codemap/`,
   `tests/unit/realtime/`
