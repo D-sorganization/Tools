@@ -111,7 +111,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "9039b478c3fed7b4e70e6a559c5c76e87285d0580c84dbedb4e68d5817979286",
+      "content_sha256_lf": "f7dadca411115ea57a894f8daf2e2f601b2b59599bb45d2309449833df549784",
       "entry_count": 17,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
@@ -735,8 +735,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-signal-toolkit.json"
     },
     {
-      "content_sha256_lf": "effaf642f2d614c4195f02f8db5a9c9637e06b9e29703d954f4cd3bcdcada726",
-      "entry_count": 220,
+      "content_sha256_lf": "5912ecbcbe7b028af98a4e6d6e1866b2fc315946288728728c7ff669bd0bca8b",
+      "entry_count": 223,
       "package": "src/shared/python/swing_sim",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim.json"
     },

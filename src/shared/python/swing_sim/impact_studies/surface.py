@@ -8,8 +8,6 @@ fabricating zeros.
 
 from __future__ import annotations
 
-from typing import cast
-
 from shared.python.swing_sim.impact_studies.wire import (
     EvidenceTier,
     ImpactStudyV1,
@@ -47,10 +45,10 @@ def acoustic_metrics_or_raise(study: ImpactStudyV1) -> tuple[MetricRecord, ...]:
         AcousticsUnavailableError: If the study has no acoustic section.
             Callers must surface the refusal, never substitute zeros.
     """
-    metrics = study.acoustic_metrics
+    metrics: tuple[MetricRecord, ...] | None = study.acoustic_metrics
     if metrics is None:
         raise AcousticsUnavailableError(study.study_id)
-    return cast(tuple[MetricRecord, ...], metrics)
+    return metrics
 
 
 def _format_metrics(title: str, records: tuple[MetricRecord, ...] | None) -> str:
