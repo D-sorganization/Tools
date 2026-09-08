@@ -20,10 +20,10 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5101 · Scientific Import Inventory Detection
 
-- **State:** in_progress
+- **State:** in_review
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5101
-- **PR:** not created
+- **PR:** https://github.com/D-sorganization/Tools/pull/5103
 - **Branch:** fix/5101-scientific-import-inventory
 - **Paths:** `scripts/build_tools_module_inventory.py`, `scripts/tools_module_inventory_imports.py`, inventory import/contract tests, generated inventory and `docs/development/impact-acoustics/INVENTORY_IMPORT_REVIEW.*`
 - **Started:** 2026-09-08

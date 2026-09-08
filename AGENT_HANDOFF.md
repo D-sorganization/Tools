@@ -5,7 +5,7 @@
 - Inventory #5101: AST import detection passes 53 import/inventory/merge tests.
   All 410 newly detected candidates retain source hashes and ownership and stay
   provisional/publication-blocked. `docs/development/impact-acoustics/INVENTORY_IMPORT_REVIEW.md`
-  and its complete JSON delta record the scope; all nine manual gates pass; PR pending.
+  and its complete JSON delta record the scope; all nine manual gates pass; PR #5103 open.
 
 - Foundation #5069 is locally verified on `feat/5068-impact-dynamics-foundation`,
   based on `b4875be19`; PR #5077; implementation `6d94f1d3d`. Theory: AffineDrift #4253; consumer: UpstreamDrift #9700.

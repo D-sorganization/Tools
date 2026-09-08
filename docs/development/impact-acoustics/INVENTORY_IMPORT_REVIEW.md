@@ -73,3 +73,14 @@ classification rows or copy the unmerged T3 implementation into this branch.
 After the classifier merges, T3 must regenerate its inventory to replace the
 documented false-negative spectrum label. The impact, acoustic, physical-data
 and blinded-validation requirements remain separate and open.
+
+Published as `f2ef920be9c4c5e34542f04ffbc4af459e31e66a` through all normal
+commit/push hooks, including unit tests, Bandit, dependency audit and fleet
+guardrails. PR #5103 is open. Prettier reformats the two JSON review/handoff
+records; parsed before/after values are verified identical before committing.
+Protected main `183b4bb1f` then adds impact-interval contact completion (#5088)
+and merges cleanly. Its source and API changes are retained. All 95 combined
+impact-interval, public API, import/inventory and merge-driver contracts pass
+(87.90 s). All nine final manual gates pass. All 410 reclassified source hashes
+and provisional/publication-blocked states remain identical to the complete
+review record after this main merge. Current-head protected CI remains required.
