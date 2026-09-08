@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6179,
+      "bytes_lf": 7150,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "72ff00068ba1e3bd23e7dac98603a0951fa6961db69f08571b7fa5196b09b0f7",
+      "content_sha256_lf": "a5904d81cbff24731805daebebe03aa5cb942fe535418d236fe7bc6a3112d661",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-INIT-PY-7E8BDC5230D7",
       "language": "python",
@@ -212,10 +212,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9069,
+      "bytes_lf": 19105,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "24d6b183a1147376248f69f017b0a5b45ef0f029fa1dd17dd055e46325ef10fd",
+      "content_sha256_lf": "b955ee6e1e3e18675a2189396483e100d98a89d0774c97e12de18caa3cf98d4e",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-API-PY-C02598C3E4DF",
       "language": "python",
@@ -293,7 +293,8 @@
           }
         ],
         "test_paths": [
-          "tests/shared/python/theme/test_api.py"
+          "tests/shared/python/theme/test_api.py",
+          "tests/shared/python/theme/test_theme_colors_derivation.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -355,6 +356,70 @@
           "src/urdf_builder_gui/tests/test_urdf_builder_gui.py"
         ],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2026,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "63989168b67e80cc509d05efec384963cf925f36e6557fa5570b385d30a3fd33",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-COLOR-DERIVATION-PY-1717AEF1A8BC",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/theme/color_derivation.py",
+      "purpose": "Pure colour-math helpers used by the semantic theme schema.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "adjust",
+            "signature": "hex_color: str, factor: float"
+          },
+          {
+            "kind": "function",
+            "name": "is_dark_bg",
+            "signature": "bg: str"
+          },
+          {
+            "kind": "function",
+            "name": "with_alpha",
+            "signature": "hex_color: str, alpha: int"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
         "validation_paths": []
       }
     },
