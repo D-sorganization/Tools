@@ -5838,6 +5838,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-08 | #5081 | perf(shared, UpstreamDrift#8942): resolve the codemap hash callable once at module import (`_HASH`, blake3-preferred/blake2b-16 fallback) instead of retrying a failing `import blake3` per file and per symbol, and land the tools-canonical file realtime transport at `src/shared/python/realtime/transport_file.py` with persistent per-channel append handles, offset-tracked tailing serialized under the transport lock, and the truncation size check off the per-message path. |
 | 2026-09-07 | #5076 | feat(mocap, #4715 TOOLS-M6): deliver pose backend adapters, skeleton mapping, fail-closed provider licensing manifest, MediaPipe adapter, and external service protocol in `sidekick.lab.mocap.adapters`. |
 | 2026-09-07 | #5066 | feat(mocap, #4721 TOOLS-M5): deliver camera extrinsic calibration, flexible layout management, robust PnP, bundle adjustment, camera movement invalidation, and qualification floors in `sidekick.lab.mocap.extrinsics`. |
 | 2026-09-07 | #5064 | feat(mocap, #4714 TOOLS-M4): deliver camera intrinsic calibration models (pinhole and fisheye), distortion representations, observation provenance, reprojection residual evaluation, degeneracy detection, and qualification floors; permit sidekick api baseline budget. |
