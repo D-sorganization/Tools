@@ -54,3 +54,12 @@ module. The merge retains that implementation and resolves only the adjacent
 root handoff and its digest; both SPEC rows remain. Inventory is regenerated
 from the combined tree before revalidation. The initial PR was conflicted and
 therefore had no Rust quality result; it is not a failed or passing Rust run.
+
+The first merged-head push was refused by normal hooks: Prettier reformatted
+main's incoming swing_sim API JSON and mypy reported an unused ignore in the
+incoming ingestion test helper. Parsed JSON before/after is exactly equal.
+The helper's adversarial keyword dictionary now explicitly permits invalid
+contract inputs via Any and no longer suppresses a nonexistent diagnostic.
+The actual mypy hook and all eighteen ingestion tests pass. #5074 was unclaimed
+and is leased to codex for this bounded prerequisite. No runtime calibration,
+alignment, spectral algorithm or source-provenance gate changed in this repair.
