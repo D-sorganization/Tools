@@ -1111,7 +1111,8 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
-          "tests/shared/python/golf_club/test_shaft_frame_inertia.py"
+          "tests/shared/python/golf_club/test_shaft_frame_inertia.py",
+          "tests/shared/python/golf_club/test_shaft_rotating_chain.py"
         ],
         "unit_mentions": [
           "m/s",
@@ -1205,10 +1206,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5168,
+      "bytes_lf": 6049,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0a09ea7277b03f26055b6ecb2da3cd850d7e50db84bf15b950a949601f3b294b",
+      "content_sha256_lf": "a8e3b2812a25bc28abd26ef92364c256c33e1ac5972600683d8e292a3e626b52",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-CHAIN-PY-E5C1779B3243",
       "language": "python",
@@ -1244,7 +1245,8 @@
         "public_surfaces": [],
         "test_paths": [
           "tests/shared/python/golf_club/test_shaft_chain.py",
-          "tests/shared/python/golf_club/test_shaft_equilibrium.py"
+          "tests/shared/python/golf_club/test_shaft_equilibrium.py",
+          "tests/shared/python/golf_club/test_shaft_rotating_chain.py"
         ],
         "unit_mentions": [
           "N",
@@ -1257,10 +1259,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9059,
+      "bytes_lf": 8935,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "43a7e2921cd553498f9af5cb06a9b1db2e8aa7cf184d2b5cc6349cfa04d3599f",
+      "content_sha256_lf": "6aefb10f8863050b36981e0b314590ca1543c28c87b3c30c13b7459921e0a5b2",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-EQUILIBRIUM-PY-DBC7CC38BEA0",
       "language": "python",
@@ -1295,7 +1297,8 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
-          "tests/shared/python/golf_club/test_shaft_equilibrium.py"
+          "tests/shared/python/golf_club/test_shaft_equilibrium.py",
+          "tests/shared/python/golf_club/test_shaft_rotating_chain.py"
         ],
         "unit_mentions": [
           "N",
@@ -1402,7 +1405,8 @@
         "public_surfaces": [],
         "test_paths": [
           "tests/shared/python/golf_club/test_shaft_frame_inertia.py",
-          "tests/shared/python/golf_club/test_shaft_inertia.py"
+          "tests/shared/python/golf_club/test_shaft_inertia.py",
+          "tests/shared/python/golf_club/test_shaft_rotating_chain.py"
         ],
         "unit_mentions": [
           "kg",
@@ -1519,6 +1523,54 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 3688,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f61b573499099a808533f658ff565f7bb02b40051d5e7829ca6ea2d502fde9a2",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-ROTATING-CHAIN-PY-93D3023F7B24",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_rotating_chain.py",
+      "purpose": "Instantaneous loaded-chain balance in a prescribed accelerating observer.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_rotating_chain.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 7401,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -1562,6 +1614,7 @@
           "tests/shared/python/golf_club/test_shaft_frame_inertia.py",
           "tests/shared/python/golf_club/test_shaft_inertia.py",
           "tests/shared/python/golf_club/test_shaft_point_load.py",
+          "tests/shared/python/golf_club/test_shaft_rotating_chain.py",
           "tests/shared/python/golf_club/test_shaft_se3.py",
           "tests/shared/python/golf_club/test_shaft_section.py"
         ],
@@ -1614,6 +1667,7 @@
         "test_paths": [
           "tests/shared/python/golf_club/test_shaft_chain.py",
           "tests/shared/python/golf_club/test_shaft_equilibrium.py",
+          "tests/shared/python/golf_club/test_shaft_rotating_chain.py",
           "tests/shared/python/golf_club/test_shaft_section.py"
         ],
         "unit_mentions": [
@@ -4314,6 +4368,7 @@
           "tests/shared/python/golf_club/test_rotating_body.py",
           "tests/shared/python/golf_club/test_shaft_inertia.py",
           "tests/shared/python/golf_club/test_shaft_linear_system.py",
+          "tests/shared/python/golf_club/test_shaft_rotating_chain.py",
           "tests/shared/python/golf_club/test_shaft_rotating_transport.py"
         ],
         "unit_mentions": [

@@ -12,11 +12,31 @@ import numpy as np
 
 from ._grip_contracts import finite_array
 from ._shaft_point_load import SpatialPointLoad
-from ._shaft_se3 import _rigid_pose
+from ._shaft_se3 import _rigid_pose, twist_ad
 from ._shaft_section import SectionElement
 from ._validation import require_finite_float
 
 _NODE_DOF = 6
+
+
+def _material_chart_connection(residual: object) -> np.ndarray:
+    """Return the nodal connection mapping fixed-chart to material derivatives.
+
+    For linear-first right-increment coordinates its action on a is
+    ad(a)^T residual/2. Subtract it for the reverse conversion. This is not
+    an elastic stiffness and no symmetry may be imposed away from balance.
+    """
+    size = np.size(residual)
+    if size == 0 or size % _NODE_DOF:
+        raise ValueError("residual must contain complete six-axis nodes")
+    force = finite_array(residual, (size,), "chain residual")
+    connection = np.zeros((size, size))
+    for start in range(0, size, _NODE_DOF):
+        rows = slice(start, start + _NODE_DOF)
+        connection[rows, rows] = np.column_stack(
+            [0.5 * twist_ad(axis).T @ force[rows] for axis in np.eye(_NODE_DOF)]
+        )
+    return connection
 
 
 @dataclass(frozen=True)

@@ -1,6 +1,6 @@
 """Private clamped-chain root finding with explicit material-domain checks.
 
-Convergence is force balance only. No stability, inertia, impact, frequency
+Convergence is force balance only. No stability, impact, frequency
 response or experimental qualification is implied by the returned candidate.
 """
 
@@ -11,8 +11,9 @@ from dataclasses import dataclass
 import numpy as np
 
 from ._grip_contracts import Vector6, finite_array, vector6
-from ._shaft_chain import ChainLinearization, SectionChain
-from ._shaft_se3 import exp_twist, twist_ad
+from ._shaft_chain import ChainLinearization, SectionChain, _material_chart_connection
+from ._shaft_rotating_chain import RotatingSectionChain
+from ._shaft_se3 import exp_twist
 from ._validation import require_finite_float
 
 _NODE_DOF = 6
@@ -96,19 +97,14 @@ def moving_residual_jacobian(response: ChainLinearization) -> np.ndarray:
     if not isinstance(response, ChainLinearization):
         raise TypeError("response must be a ChainLinearization")
     size = np.size(response.residual)
-    if size == 0 or size % _NODE_DOF:
-        raise ValueError("residual must contain complete six-axis nodes")
-    residual = finite_array(response.residual, (size,), "chain residual")
+    connection = _material_chart_connection(response.residual)
     tangent = finite_array(response.tangent, (size, size), "chain tangent")
-    for start in range(0, size, _NODE_DOF):
-        rows = slice(start, start + _NODE_DOF)
-        tangent[rows, rows] += np.column_stack(
-            [0.5 * twist_ad(axis).T @ residual[rows] for axis in np.eye(_NODE_DOF)]
-        )
-    return finite_array(tangent, (size, size), "moving residual Jacobian")
+    return finite_array(tangent + connection, (size, size), "moving residual Jacobian")
 
 
-def _check_strains(chain: SectionChain, poses: np.ndarray, limits: Vector6) -> None:
+def _check_strains(
+    chain: SectionChain | RotatingSectionChain, poses: np.ndarray, limits: Vector6
+) -> None:
     for index, section in enumerate(chain.sections):
         strain = section.strain(poses[index], poses[index + 1])
         if np.any(np.abs(strain) > limits):
@@ -153,7 +149,7 @@ def _trial_step(poses: np.ndarray, direction: np.ndarray) -> np.ndarray:
 
 
 def _backtrack(
-    chain: SectionChain,
+    chain: SectionChain | RotatingSectionChain,
     state: tuple[np.ndarray, ChainLinearization],
     direction: np.ndarray,
     controls: EquilibriumControls,
@@ -193,7 +189,9 @@ def _candidate(
 
 
 def solve_clamped_chain(
-    chain: SectionChain, seed: object, controls: EquilibriumControls
+    chain: SectionChain | RotatingSectionChain,
+    seed: object,
+    controls: EquilibriumControls,
 ) -> EquilibriumCandidate:
     """Find force balance while preserving the exact root pose and input arrays.
 
@@ -201,10 +199,12 @@ def solve_clamped_chain(
     Nonconvergence, singular operators or exhausted admissible steps raise
     RuntimeError. Never return an unfinished state or a stability certificate.
     """
-    if not isinstance(chain, SectionChain) or not isinstance(
+    if not isinstance(chain, (SectionChain, RotatingSectionChain)) or not isinstance(
         controls, EquilibriumControls
     ):
-        raise TypeError("expected SectionChain and EquilibriumControls")
+        raise TypeError(
+            "expected SectionChain or RotatingSectionChain and EquilibriumControls"
+        )
     poses = finite_array(seed, (chain.node_count, 4, 4), "equilibrium seed")
     response = chain.linearize(poses)
     _check_strains(chain, poses, controls.strain_limits)

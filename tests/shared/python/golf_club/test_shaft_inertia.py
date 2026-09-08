@@ -44,7 +44,7 @@ def _moved(poses: np.ndarray, velocity: np.ndarray, time: float) -> np.ndarray:
     return np.array(
         [
             pose @ expm(time * _hat(v))
-            for pose, v in zip(poses, velocity.reshape(2, 6), strict=True)
+            for pose, v in zip(poses, velocity.reshape(-1, 6), strict=True)
         ]
     )
 

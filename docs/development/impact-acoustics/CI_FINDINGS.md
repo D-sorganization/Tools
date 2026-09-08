@@ -123,5 +123,18 @@ Rust PR #5097's main merge is committed at `b268228bd` but its push was refused:
 Prettier reformatted the incoming swing_sim API JSON and mypy rejected an
 unused ignore in the incoming ingestion test helper. A claimed #5074 fixture
 annotation correction passes the actual mypy hook and all eighteen ingestion
-tests. The JSON formatting must preserve parsed content exactly; delivery remains
-pending until all applicable normal push checks pass.
+tests. The JSON formatting preserves parsed content exactly. Corrected head
+`e0369fdda2a2fdb5570e177c5fc35901fd691ccc` is published with every normal push
+hook passing. A newer main change again makes the PR conflict; protected merge
+and current-head Linux CI remain outstanding.
+
+UpstreamDrift #9787 now owns the manufactured-authority prerequisite. In an
+isolated Linux CPython 3.11.15 environment, the original hash lock installs and
+passes pip check but actual native import reproduces the missing URDF ABI 4.
+Pinocchio 3.8.0 links against liburdfdom 4; the lock installed version 6. Using
+cmeel-urdfdom 4.0.1 exposes a second missing TinyXML2 ABI 10. With
+cmeel-tinyxml2 10.0.0, actual Pinocchio/MuJoCo/NumPy/SciPy imports and pip check
+pass while all four core scientific versions remain pinned. The lock has been
+regenerated with uv 0.10.11 and hash-enforced reinstallation passes. Actual
+two-process evidence generation, source consistency and claim registration
+remain pending; no old result has been relabeled with fabricated provenance.

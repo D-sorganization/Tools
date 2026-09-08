@@ -13,7 +13,7 @@ perceptual validation cannot be inferred from numerical fixtures.
 | Final theory synthesis         | AffineDrift #4255              | Qualified downstream results with uncertainty and limits                                                                      | Not started; depends on evidence                                                                             |
 | Rigid reference                | Tools #5069 / PR #5077         | Analytic tensor/impulse gates and protected provider delivery                                                                 | Merged PR #5077 at `f7254461399ac18e5667a0215afd90a9ebff9d22`                                                |
 | Lumped qualification           | Tools #5071 / PR #5082         | Events, work/loss ledger, timeout/step contracts, law-consistent restitution, scaling counterexamples, parity and convergence | PR #5082 open; latest observed remote head `476eaa98b`                                                       |
-| Distributed shaft/grip         | Tools #5072                    | Prestressed rotating operators, passive impedance, beam limits, frame agreement, modal/mesh/time/FRF convergence              | Clamped roots, section kinetics and deformed-frame inertia verified; loaded assembly/stability/work/FRF open |
+| Distributed shaft/grip         | Tools #5072                    | Prestressed rotating operators, passive impedance, beam limits, frame agreement, modal/mesh/time/FRF convergence              | Rotating loaded roots and continuum oracles pass; stability/work/grip/FRF open                               |
 | Flexible contact               | Tools #5073                    | Off-center friction/contact and head/shaft modes; launch and ringdown; complete energy closure                                | Pending T3                                                                                                   |
 | Acoustics                      | Tools #5074                    | Calibrated signals, identified transfer, qualified radiation and held-out validation                                          | Early ingestion PR #5084 merged; boundary probes identify qualification work, radiation/measurements pending |
 | Reports/surfaces               | Tools #5075                    | Versioned provenance reports, consumer compatibility and truthful UI integration                                              | PR #5083 proposes study wire/surface; source review and qualified consumers pending                          |
@@ -47,7 +47,7 @@ derivatives at `6323944ee658f1254da1a08bb899551f082c7b5c`. All normal hooks
 passed for those pushes. Full-node assembly is published at
 `87231b2f0c8d6fea45b37e9b92795eca740ba578`; clamped root finding is published at
 `7d586c49467a1a5cf14a2ff860461022c6ad4128`, with all normal hooks passing.
-Current `SELF` adds consistent section kinetic quadrature, using the same SE(3)
+Published checkpoint `22cfc8df9` adds consistent section kinetic quadrature, using the same SE(3)
 interpolation, existing physical mass properties and the existing spatial-inertia
 kernel. Independent COM/spin, acceleration/angular-momentum and energy-rate
 oracles pass. The shared relative-log map is reused by elasticity and inertia.
@@ -57,10 +57,11 @@ Only a private no-export API entry is added. LOADED_INERTIA.md gives equations,
 quadrature/input domains, TDD evidence and the distinction between geometric
 energy exchange and damping. These are synthetic numerical checks.
 
-Complete rotating loaded residual/derivatives, stability, moving work and
-mesh/time/modal/FRF qualification remain open. T3 PR is not created. Inventory
+The later rotating loaded-root checkpoint below supersedes the residual/derivative
+assembly gap. Stability, moving work and mesh/time/modal/FRF qualification remain
+open. T3 PR is not created. Inventory
 and handoffs are refreshed and all nine manual gates pass. Run all normal
-commit/push checks before publishing this kinetic checkpoint.
+commit/push checks before publishing each subsequent checkpoint.
 
 ## Current Delivery and Data Status
 
@@ -205,10 +206,11 @@ belongs in ROTATING_TRANSPORT.md; prior execution details remain in git history.
 
 ## Current Assembly Checkpoint
 
-Section kinetics is published at `22cfc8df9`; current deformed-frame inertia passes
-147 focused and 554 full golf/API tests, with two optional CAD skips.
-See `DEFORMED_FRAME_INERTIA.md` for the residual/Jacobian/gyroscopic derivation.
-Newly merged T5 ingestion is inventoried in `VIBROACOUSTICS_INGESTION_REVIEW.md`,
-including exact-commit calibration/hash/alignment/spectral boundary probes.
-It does not close complete rotating loaded dynamics, stability or measured gates.
+Deformed-frame inertia is published at `0f3e591db`. Current rotating loaded-chain
+composition passes 560 golf/API tests, with two optional CAD skips (80.82 s).
+`ROTATING_LOADED_ROOTS.md` records the shared chart conversion, existing solver
+reuse and independent continuum extension/support oracles. This completes an
+instantaneous clamped force-balance slice; stability, moving work, passive grip,
+loaded mass/gyroscopic operators and FRF/convergence remain open.
+Newly merged T5 ingestion is inventoried in `VIBROACOUSTICS_INGESTION_REVIEW.md`.
 The complete program requirement/evidence matrix above remains authoritative.

@@ -27,9 +27,9 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/5072-prestressed-shaft
 - **Paths:** `src/shared/python/golf_club/*shaft*`, `src/shared/python/golf_club/_beam_fem.py`, `src/shared/python/golf_club/*grip*`, `src/shared/python/golf_club/*rotating_body*`, `tests/shared/python/golf_club/test_shaft*.py`, `tests/shared/python/golf_club/test_rotating_body.py`, `tests/shared/python/golf_club/test_grip_impedance.py`, `docs/development/impact-acoustics/*`
 - **Started:** 2026-09-07
-- **Last verified:** 2026-09-08 (554 golf/API tests pass; two optional CAD skips)
-- **Summary:** Kinetic checkpoint `22cfc8df9` is published. The current deformed-frame residual, full material derivative and gyroscopic terms agree with independent Newton/Euler, frame-change, conservative-curvature and absolute-mass/bias oracles; all 147 focused contracts pass. Complete loaded equilibrium, stability and impact/acoustics remain unqualified.
-- **Next step:** Assemble complete rotating loaded residual/derivatives and boundary work; qualify stability/refusal, shear/rotary bandwidth, mesh/time/modal and FRF convergence. Preserve the distinction between verified element kernels and a qualified dynamic operating point.
+- **Last verified:** 2026-09-08 (560 golf/API tests pass; two optional CAD skips)
+- **Summary:** Deformed-frame checkpoint `0f3e591db` is published. Rotating loaded-chain composition reuses the existing strain-bounded solver and shared chart conversion. Six new tests verify centrifugal extension convergence, origin-acceleration support, all assembled tangent entries, static compatibility and contract refusal. Stability and impact/acoustics remain unqualified.
+- **Next step:** Assemble loaded mass/gyroscopic operators and boundary work; qualify stability/refusal, shear/rotary bandwidth, mesh/time/modal and FRF convergence. Preserve the distinction between verified element kernels and a qualified dynamic operating point.
 
 ### DL-0055 · Qualified Lumped Impact Dynamics
 
