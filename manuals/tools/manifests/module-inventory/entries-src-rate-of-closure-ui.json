@@ -948,10 +948,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9107,
+      "bytes_lf": 9151,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "050cfbc589ba133f15a5082690ff4a2664ac4ecb46e05375962e809947a5821a",
+      "content_sha256_lf": "3447616a6d362befac67fffa4cdb88e5e7b0cc3f1c7c6726390141ec718e0648",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-CLUB-TESTER-MODELS-PY-E8440A5A8E02",
       "language": "python",
