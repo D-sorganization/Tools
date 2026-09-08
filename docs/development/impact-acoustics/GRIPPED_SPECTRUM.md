@@ -91,7 +91,7 @@ separate equilibrium reactions, balance and strain refusal, malformed matrices,
 indefinite/asymmetric coefficients, underflow/overflow and inaccurate eigenpairs.
 Three-module hook-style mypy and scoped Ruff pass after an explicit return-type
 cast in the shared kernel. No checker suppression or tolerance change is used.
-Full Linux golf/API regression passes 692 tests in 161.71 s, with two optional CAD skips and three unavailable-plugin configuration warnings. Python 3.11.15, one BLAS/OMP/MKL thread and the unchanged 60-second test limit are retained. All nine final manual gates and repository Ruff 0.14.10 pass (3,757 formatted files); all modified functions remain at most 50 lines. Normal publication is pending.
+Full Linux golf/API regression passes 692 tests in 161.71 s, with two optional CAD skips and three unavailable-plugin configuration warnings. Python 3.11.15, one BLAS/OMP/MKL thread and the unchanged 60-second test limit are retained. All nine final manual gates and repository Ruff 0.14.10 pass (3,757 formatted files); all modified functions remain at most 50 lines. Published at `97d46055c2ee7f2fef7b687f580bde93e23ae418` through all normal commit/push hooks, including type, security, unit and dependency-audit gates. Remote SHA is verified. Issue #5072 has the publication checkpoint; the parent program remains open.
 
 ## Completion Boundary
 

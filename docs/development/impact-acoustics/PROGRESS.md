@@ -423,6 +423,9 @@ Separate G/C spectra and the all-node wrapper now pass 49 focused controls,
 including two-node axial characteristic roots, two convergent continuum poles,
 critical and unstable modes, immutable inputs and numerical/domain refusal.
 `GRIPPED_SPECTRUM.md` supplies equations and limits. All 692 Linux golf/API tests and nine final manual/type/lint gates pass.
-Publication remains pending; explicit stability and the
-full physical/acoustic program remain open. UD #9825 records the confirmed
+Published at `97d46055c` through normal hooks; remote SHA verified. Explicit stability and the full physical/acoustic program remain open. UD #9825 records the confirmed
 protected-main claim reconciliation bug; #8920/#8556 remain parameter gates.
+
+## Grip Theory Merge and Claim Preservation Follow-Up
+
+AffineDrift #4298 merged normally as `d7e51655d` after all required checks passed. Its auxiliary benchmark workflow produced no measurements despite a green workflow status; no performance result is claimed. UpstreamDrift #9825 now exercises the actual registration path: six new failures become 11 focused passes after reusing the preservation helper. A fresh exact native regeneration retains the old numerical results and restores 14-source provenance; strict regression and publication qualification remain in progress. No physical or blinded evidence has been added.
