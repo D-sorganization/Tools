@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-0055 · Qualified Lumped Impact Dynamics
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5071
+- **PR:** not created
+- **Branch:** fix/5071-qualified-impact-coupling
+- **Paths:** `src/shared/python/golf_club/*coupl*`, `tests/shared/python/golf_club/test*coupl*`, `docs/specs/HEAVY_HIT_COUPLING.md`, `docs/development/impact-acoustics/PROGRESS.md`
+- **Started:** 2026-09-07
+- **Last verified:** 2026-09-07 (`5932146f1` base plus working changes)
+- **Summary:** RED-to-GREEN termination, passive energy and scaling gates; complete epic scope remains active.
+- **Next step:** Complete provider validation and PR, then distributed prestress/grip milestone #5072.
+
 ### DL-0054 · Impact Dynamics Reference Foundation
 
 - **State:** in_review

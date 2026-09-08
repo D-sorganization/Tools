@@ -281,6 +281,7 @@
           "tests/shared/python/chat/test_cli_provider_dropdown.py",
           "tests/shared/python/config/test_environment.py",
           "tests/shared/python/file_watcher/test_file_watcher.py",
+          "tests/shared/python/golf_club/test_coupled_impact_audit.py",
           "tests/shared/python/gui_launcher/test_launcher_factories.py",
           "tests/shared/python/gui_launcher/test_registry.py",
           "tests/shared/python/launch_monitor/test_dataset_reference_jobs.py",

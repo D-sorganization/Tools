@@ -2,16 +2,16 @@
 
 ## Impact Dynamics and Acoustics: #5068
 
-- Foundation #5069 is locally verified on `feat/5068-impact-dynamics-foundation`,
-  based on `b4875be19`; PR #5077; implementation `6d94f1d3d`. Theory: AffineDrift #4253; consumer: UpstreamDrift #9700.
-- TDD verified by `tests/shared/python/golf_club/test_impact_mobility.py`;
-  implementation reuses `golf_club._validation` and preserves existing APIs.
-- PR #5077 synced protected main `6b27c4f0569ac486c491e073f87f67440a9521fa`; provider inventory rechecked.
-- Strict pre-push typing uses explicit float returns at validated scalar boundaries.
-- Full tensor mobility is a detached rigid-body reference, not a validated flexible
-  shaft or acoustic solver. Follow-on design: `docs/specs/IMPACT_DYNAMICS_ACOUSTICS.md`.
-- Lease scripts found no claim; Tools label posting failed. Proceeding under the
-  fleet's documented fail-open rule; do not treat that as a successfully posted lease.
+- Full epic execution is active; completion requires all model and empirical gates.
+- T1 foundation: PR #5077 (open at restart); theory PR AffineDrift #4258;
+  integration plan PR UpstreamDrift #9706. Do not equate open PRs with completion.
+- T2 #5071: `fix/5071-qualified-impact-coupling`, based on `5932146f1`; 396 broader tests pass, 2 skip, 15 final audit tests and 6 browser parser tests pass.
+  Event-resolved solver and additive preload/energy audit; v1 wire retained.
+- RED: timeout/step refusal and energy-record validation failed before fixes.
+  GREEN: broader provider checks and final numerical audits pass; protected CI remains open.
+- Continuation matrix: `docs/development/impact-acoustics/PROGRESS.md`.
+  T3–T6, consumer adapters/studies and physical/perceptual validation remain open.
+- Claim check was free; lease label posting failed again. Fleet fail-open rule applies.
 
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-09-07

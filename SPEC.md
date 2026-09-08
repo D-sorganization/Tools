@@ -5827,6 +5827,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
 | 2026-09-07 | #5069 | Add full-tensor detached contact mobility and normal-impulse references with analytic TDD gates, qualified legacy-model scope, and the distributed-impact/acoustics research specification. Explicit scalar return types preserve strict hook typing. |
+| 2026-09-07 | #5071 | Qualify lumped contact with event-resolved integration, timeout/resolution refusal, preload states, separate passive energy-loss channels and unchanged report v1 semantics. |
 | 2026-09-07 | #5066 | feat(mocap, #4721 TOOLS-M5): deliver camera extrinsic calibration, flexible layout management, robust PnP, bundle adjustment, camera movement invalidation, and qualification floors in `sidekick.lab.mocap.extrinsics`. |
 | 2026-09-07 | #5064 | feat(mocap, #4714 TOOLS-M4): deliver camera intrinsic calibration models (pinhole and fisheye), distortion representations, observation provenance, reprojection residual evaluation, degeneracy detection, and qualification floors; permit sidekick api baseline budget. |
 | 2026-09-07 | #4718 | feat(mocap, #4718 TOOLS-M3): deliver synchronization analysis, sequence tracking, and crash-safe recording with atomic manifest persistence in `sidekick.lab.mocap.sync` and `sidekick.lab.mocap.recording`. |

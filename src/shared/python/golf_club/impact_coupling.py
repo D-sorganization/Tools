@@ -6,10 +6,10 @@ impact? The chain, along the hit direction:
 
     ball ←KV contact (k_c, c_c)→ head ←shaft (k_s, c_s)→ hands ←grip (k_g, c_g)→ body
 
-**Frame.** The simulation runs in the *body frame*: the grip anchor is
+**Frame.** The simulation uses an inertial translating reference: the grip anchor is
 fixed, the head and hands start at rest, and the ball approaches at the
 declared head speed. This is Galilean-equivalent to the lab picture and
-makes energy accounting exact — the fixed anchor does no work, so with
+defines the energy ledger — the fixed anchor does no work, so with
 zero damping the initial ball kinetic energy is conserved across the
 reported components (a test gate). Reported ball speed is converted back
 to the lab frame.
@@ -27,9 +27,13 @@ the impact package's own Kelvin-Voigt parameters, and the detached limit
 (``k_s = 0``) is gated against :class:`SpringDamperImpactModel`'s ball
 exit speed for identical contact parameters.
 
-Integration is semi-implicit Euler at the impact model's ``dt = 1e-7 s``
-from first contact until the contact force releases; the contact force is
-clamped non-adhesive (``F_c ≥ 0``), matching the shipped model.
+The event-resolved solver uses adaptive DOP853 with ``dt_s`` as the maximum
+accepted step, from first touch through geometric overlap clearance. A separate
+force-release event can precede clearance. The force is non-adhesive (``F_c ≥ 0``).
+Unresolved steps or maximum-time exhaustion are refused. Wire v1 fields retain
+their meanings: ``energy_balance_fraction`` is retained mechanical energy divided
+by initial energy, not a closed energy balance. Use ``impact_coupling_audit`` for
+separate dissipation channels, preload states and the numerical energy residual.
 """
 
 from __future__ import annotations
@@ -138,7 +142,7 @@ class CoupledImpactConfig:
 class CoupledImpactResult:
     """Coupled outcome plus the internally computed free-head reference.
 
-    Energy fields are in the simulation (body) frame, where the fixed grip
+    Energy fields are in the inertial translating frame, where the fixed grip
     anchor does no work; ``ball_speed_mps`` is the lab-frame exit speed.
     """
 
@@ -156,56 +160,10 @@ class CoupledImpactResult:
 
 
 def _integrate(config: CoupledImpactConfig, *, coupled: bool) -> tuple[float, ...]:
-    """Body-frame semi-implicit transient; returns terminal state summary."""
-    m_b = config.ball_mass_kg
-    m_h = config.head_mass_kg
-    m_g = config.grip.effective_mass_kg
-    k_c, c_c = config.contact_stiffness_n_m, config.contact_damping_n_s_m
-    k_s = config.shaft_stiffness_n_m if coupled else 0.0
-    c_s = config.shaft_damping_n_s_m if coupled else 0.0
-    k_g, c_g = config.grip.stiffness_n_m, config.grip.damping_n_s_m
-    dt = config.dt_s
+    """Delegate to the audited solver while retaining the v1 output contract."""
+    from ._coupled_impact_solver import _legacy_integrate
 
-    # Body frame: ball approaches at -v0 toward the head face at x = 0.
-    v0 = config.head_speed_mps
-    x_b, v_b = 0.0, -v0
-    x_h, v_h = 0.0, 0.0
-    x_g, v_g = 0.0, 0.0
-
-    time_s = 0.0
-    peak_force = 0.0
-    was_in_contact = True  # touching at t = 0
-    while time_s < config.max_time_s:
-        # Ball approaches from +x; overlap grows as it moves left of the face.
-        overlap = x_h - x_b
-        compression_rate = v_h - v_b
-        if overlap > 0.0:
-            force_contact = max(k_c * overlap + c_c * compression_rate, 0.0)
-        else:
-            force_contact = 0.0
-            if was_in_contact and time_s > 0.0:
-                break
-        was_in_contact = overlap > 0.0
-        peak_force = max(peak_force, force_contact)
-
-        # Contact pushes the ball toward +x and recoils the head toward -x.
-        force_shaft = k_s * (x_g - x_h) + c_s * (v_g - v_h)
-        force_grip = -k_g * x_g - c_g * v_g
-
-        a_b = force_contact / m_b
-        a_h = (-force_contact + force_shaft) / m_h
-        a_g = (-force_shaft + force_grip) / m_g
-
-        v_b += a_b * dt
-        v_h += a_h * dt
-        v_g += a_g * dt
-        x_b += v_b * dt
-        x_h += v_h * dt
-        x_g += v_g * dt
-        time_s += dt
-
-    spring_energy = 0.5 * k_s * (x_g - x_h) ** 2 + 0.5 * k_g * x_g**2
-    return (v_b, v_h, v_g, time_s, peak_force, spring_energy)
+    return _legacy_integrate(config, coupled=coupled)
 
 
 def simulate_coupled_impact(config: CoupledImpactConfig) -> CoupledImpactResult:
