@@ -8,6 +8,7 @@ from sidekick.calculators.electrical.config import ElectrodeConfig
 from sidekick.calculators.electrical.electrical_model import (
     ThreePhaseElectricalModelEnhanced,
 )
+from sidekick.calculators.electrical.glass_contracts import GlassFallbackPolicy
 from sidekick.calculators.electrical.glass_interface import (
     GlassPropertiesInterface,
 )
@@ -210,10 +211,13 @@ class TestGlassPropertiesInterface:
         assert abs(res - 1.0 / cond) < 1e-10
 
     def test_get_resistivity_zero_conductivity(self) -> Any:
-        """Line 180: zero conductivity → return inf."""
-        glass = GlassPropertiesInterface(external_calculator=lambda t, c, p: 0.0)
-        res = glass.get_resistivity(1200.0)
-        assert res == float("inf")
+        """Issue #5062: zero conductivity is rejected, never returns inf."""
+        glass = GlassPropertiesInterface(
+            external_calculator=lambda t, c, p: 0.0,
+            fallback_policy=GlassFallbackPolicy.STRICT,
+        )
+        with pytest.raises(ValueError, match="invalid conductivity"):
+            glass.get_resistivity(1200.0)
 
     def test_clear_cache(self) -> Any:
         """Line 184: clear_cache empties the cache."""

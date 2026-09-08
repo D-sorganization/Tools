@@ -21280,6 +21280,30 @@
               ],
               "returns": "float"
             }
+            ,
+            "unclipped_normal_force": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "compression_m"
+                },
+                {
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "compression_rate_mps"
+                }
+              ],
+              "returns": "float"
+            }
           }
         },
         "type": "class"
