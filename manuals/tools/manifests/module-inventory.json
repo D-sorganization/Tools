@@ -111,7 +111,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "8ce4f200fa0d7c75217fba3dfb6d62edf29ed68ec3550b09ac43a8227f0c4156",
+      "content_sha256_lf": "8f62a3aa5d8ac90183ad6fa316a29998bbba1630661106fea6875c7aaa9e5db4",
       "entry_count": 17,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
@@ -129,8 +129,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
     },
     {
-      "content_sha256_lf": "ca89290260f6443c20074f1e659dc3534113bfa05839e427b0954fef6025c395",
-      "entry_count": 3,
+      "content_sha256_lf": "02cf0b85c5ce1acbc60873dad8941608ea095c9111ad16117b138087b93892bd",
+      "entry_count": 5,
       "package": "rust_core/file_watcher",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
@@ -741,10 +741,94 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-signal-toolkit.json"
     },
     {
-      "content_sha256_lf": "426598eb2c8af7094cb7fd7e0d7656f9912cab9d10291d13fbca11c27d177953",
-      "entry_count": 220,
+      "content_sha256_lf": "f916fc65b5bb780e0ed0846a01c7e457db1f06e187f834176c85f40f984fee85",
+      "entry_count": 18,
       "package": "src/shared/python/swing_sim",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim.json"
+    },
+    {
+      "content_sha256_lf": "486dfbcd8da1589ff8b5838d53ae212a88bb2b9b86f340fb65b95f7a61065f49",
+      "entry_count": 4,
+      "package": "src/shared/python/swing_sim/conventions",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-conventions.json"
+    },
+    {
+      "content_sha256_lf": "695ae7f8fe7e01b1c691cb8c5141ddc1a6f86e522a2f1dceb3c7025bf53ccc5d",
+      "entry_count": 3,
+      "package": "src/shared/python/swing_sim/delivery_interchange",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-delivery-interchange.json"
+    },
+    {
+      "content_sha256_lf": "7372982ba5473ed4bdbae45039c316f2d3fff90e1960b3af4e40cf673f11c0ee",
+      "entry_count": 44,
+      "package": "src/shared/python/swing_sim/flight",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-flight.json"
+    },
+    {
+      "content_sha256_lf": "caf8bc940ca6a6a3b44924b9dac22171411e8e972fd5381a2c8bbe8642484180",
+      "entry_count": 4,
+      "package": "src/shared/python/swing_sim/flight_interchange",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-flight-interchange.json"
+    },
+    {
+      "content_sha256_lf": "feef7934353a59f1dcb70b59080aee4043e6b8a9f620cc9dadb7f15733aaa834",
+      "entry_count": 60,
+      "package": "src/shared/python/swing_sim/ground",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-ground.json"
+    },
+    {
+      "content_sha256_lf": "07015ba1ee5ffce9179fb6e0484cb2add57e5f7587b2895fcde6ebf3a85a5fd9",
+      "entry_count": 10,
+      "package": "src/shared/python/swing_sim/impact",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-impact.json"
+    },
+    {
+      "content_sha256_lf": "e6b5c2a87001daaf1b468ca56c2087188486848cbcede8b2bce937533e5a7b32",
+      "entry_count": 4,
+      "package": "src/shared/python/swing_sim/impact_interval",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-impact-interval.json"
+    },
+    {
+      "content_sha256_lf": "d810159e1d2d5c5e9d8812e4ea57c6ee4c7f9f11b8b818cae2d77c3ad87dc056",
+      "entry_count": 3,
+      "package": "src/shared/python/swing_sim/impact_studies",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-impact-studies.json"
+    },
+    {
+      "content_sha256_lf": "c2fd4fb189220365adc3cfbe6784ad3cfe771bea95ad294d25d10fbba08ed7be",
+      "entry_count": 3,
+      "package": "src/shared/python/swing_sim/model_interchange",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-model-interchange.json"
+    },
+    {
+      "content_sha256_lf": "ee69d77cd5562ce0f0f13b0fad6733eb1194afda68358df299d54bbc07780939",
+      "entry_count": 12,
+      "package": "src/shared/python/swing_sim/putting",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-putting.json"
+    },
+    {
+      "content_sha256_lf": "164296fee2e6c8e2ecdde22f9c73457318cb819eca2ab4df317a51c457c82820",
+      "entry_count": 10,
+      "package": "src/shared/python/swing_sim/rotating_base",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-rotating-base.json"
+    },
+    {
+      "content_sha256_lf": "cb2ff9ab22a33498840b12971f05673f5c6bffff4066cc6cc5c50f4ab5ae80e5",
+      "entry_count": 9,
+      "package": "src/shared/python/swing_sim/solver",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-solver.json"
+    },
+    {
+      "content_sha256_lf": "e5f93c5175f003fe53ca820bb3793978cb09c71edb6a64612933601b654d975c",
+      "entry_count": 39,
+      "package": "src/shared/python/swing_sim/variation",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-variation.json"
+    },
+    {
+      "content_sha256_lf": "d8ab867163ab477f940848e5461c19691ffb81954f4266d19adff36cae78bc9e",
+      "entry_count": 3,
+      "package": "src/shared/python/swing_sim/vibroacoustics",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-vibroacoustics.json"
     },
     {
       "content_sha256_lf": "2575012ff07d350f8050d730f23138dd3f481a4dac50b52770706fd862c0c52d",
