@@ -34,6 +34,8 @@ Usage:
     bg_color = colors["bg"]
 """
 
+from typing import Any
+
 from .colors import (
     BUILTIN_THEMES,
     CHART_COLORS,
@@ -136,6 +138,38 @@ except ImportError:
     ZoomTokenSet = None  # type: ignore[assignment, misc]
     install_application_zoom = None  # type: ignore[assignment]
     scale_px = None  # type: ignore[assignment]
+
+
+def _derive_full_palette(
+    partial: dict[str, Any], theme_name: str | None = None
+) -> dict[str, Any]:
+    """Promote a partial colour dict into a full 60+ token palette."""
+    from .api import ThemeColors
+
+    _BASE_DEFAULTS: dict[str, Any] = {
+        "bg": "#ffffff",
+        "group_bg": "#f8f9fa",
+        "input_bg": "#ffffff",
+        "border": "#ced4da",
+        "text": "#212529",
+        "text_secondary": "#495057",
+        "label": "#666e76",
+        "focus": "#80bdff",
+        "accent": "#5a8fc4",
+        "title_bg": "#e3f2fd",
+        "title_border": "#90caf9",
+        "table_header": "#e9ecef",
+        "table_alt": "#f8f9fa",
+        "button_hover": "#4a7ba7",
+    }
+    merged: dict[str, Any] = {**_BASE_DEFAULTS, **partial}
+    if theme_name and "name" not in merged:
+        merged["name"] = theme_name
+    try:
+        return ThemeColors(**merged).as_dict()
+    except Exception:  # noqa: BLE001
+        return merged
+
 
 __all__ = [
     # Protocols (no PyQt6 dependency)
