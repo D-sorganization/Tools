@@ -2965,10 +2965,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 34141,
+      "bytes_lf": 40114,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6daddb285ebeaa87712f8dbe415cfdff30ccafe9b3034b58dbfe3464a84e8739",
+      "content_sha256_lf": "d6352b3608b0abe4baa9844eec24782b3bb81bf49c928e18937d748a6c957e48",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-GUI-ASSISTANT-PANEL-PY-410C1925A399",
       "language": "python",
