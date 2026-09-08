@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9250,
+      "bytes_lf": 9515,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e5489a01be59c7238de7e75e0e913d6b0d71b0accc05fc451c0e1f4ae1e4c9ca",
+      "content_sha256_lf": "2c150cdeb94c088810ffe746dd619d8db42a24abbf90067da445ac8f38d5ffc7",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-INIT-PY-7496BE48C45A",
       "language": "python",
@@ -270,6 +270,11 @@
           {
             "kind": "re-export",
             "name": "ShaftModalSettings",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ShaftPrestress",
             "signature": null
           },
           {
@@ -644,6 +649,11 @@
           },
           {
             "kind": "re-export",
+            "name": "radial_shaft_tension",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "run_turf_convergence_study",
             "signature": null
           },
@@ -660,6 +670,11 @@
           {
             "kind": "re-export",
             "name": "shaft_component_mass_properties",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "shaft_geometric_stiffness",
             "signature": null
           },
           {
@@ -705,6 +720,11 @@
           {
             "kind": "re-export",
             "name": "solve_cantilever_tip_response",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "solve_prestressed_shaft_modes",
             "signature": null
           },
           {
@@ -791,6 +811,73 @@
             "kind": "re-export",
             "name": "wedge_preset",
             "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3235,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3074f6ebace1742660c395a44ed40f0d872530bad2d582a5a9e2f477b9b6708a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-BEAM-FEM-PY-2B5A1C205D15",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_beam_fem.py",
+      "purpose": "Shared private Euler-Bernoulli assembly; SI translation/slope coordinates.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "assemble_bending_axis",
+            "signature": "profile: ShaftProfile, element_count: int, stiffness_name: str"
+          },
+          {
+            "kind": "function",
+            "name": "beam_mass",
+            "signature": "linear_density_kg_m: float, length_m: float"
+          },
+          {
+            "kind": "function",
+            "name": "beam_stiffness",
+            "signature": "ei_n_m2: float, length_m: float"
+          },
+          {
+            "kind": "function",
+            "name": "generalized_eigenvalues",
+            "signature": "stiffness: np.ndarray, mass: np.ndarray"
           }
         ],
         "test_paths": [],
@@ -2201,10 +2288,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 7408,
+      "bytes_lf": 4718,
       "classification": "calculation",
       "classification_basis": "path-marker:dynamics",
-      "content_sha256_lf": "b443c1f3eeddd8560788a423b240a0dc1023f21116343c83f98d95daa847b76d",
+      "content_sha256_lf": "5987cdc3ceb7f775838c833b65c2fea7d6d106449d8ed0b306977ca7abc46a57",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-DYNAMICS-PY-41EE6183EB1D",
       "language": "python",
@@ -2261,9 +2348,83 @@
         ],
         "test_paths": [
           "tests/shared/python/golf_club/test_shaft_delivery.py",
-          "tests/shared/python/golf_club/test_shaft_dynamics.py"
+          "tests/shared/python/golf_club/test_shaft_dynamics.py",
+          "tests/shared/python/golf_club/test_shaft_prestress.py"
         ],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9107,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2cb7a82dadafba522797335f5a1077637922d5b02ac6a8b630b62db30d3f4258",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-PRESTRESS-PY-40721CC077A4",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/shaft_prestress.py",
+      "purpose": "Prescribed tensile beam operator: a partial reference for Tools #5072.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ShaftPrestress",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "radial_shaft_tension",
+            "signature": "profile: ShaftProfile, prestress: ShaftPrestress, position_m: float"
+          },
+          {
+            "kind": "function",
+            "name": "shaft_geometric_stiffness",
+            "signature": "profile: ShaftProfile, prestress: ShaftPrestress, settings: ShaftModalSettings=_DEFAULT_SETTINGS"
+          },
+          {
+            "kind": "function",
+            "name": "solve_prestressed_shaft_modes",
+            "signature": "profile: ShaftProfile, prestress: ShaftPrestress, settings: ShaftModalSettings=_DEFAULT_SETTINGS"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_prestress.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "rad",
+          "s"
+        ],
         "validation_paths": []
       }
     },
@@ -2330,6 +2491,7 @@
           }
         ],
         "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_prestress.py",
           "tests/shared/python/golf_club/test_shaft_profile.py"
         ],
         "unit_mentions": [],

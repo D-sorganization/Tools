@@ -2,16 +2,15 @@
 
 ## Impact Dynamics and Acoustics: #5068
 
-- Full epic execution is active; completion requires all model and empirical gates.
-- T1 foundation: Tools PR #5077 remains open with downstream CI failure.
-  Theory PR AffineDrift #4258 and integration plan UpstreamDrift #9706 are merged.
-- T2 #5071 / draft PR #5082: `fix/5071-qualified-impact-coupling`, based on `5932146f1`; 396 broader tests pass, 2 skip, 15 final audit tests and 6 browser parser tests pass.
-  Event-resolved solver and additive preload/energy audit; v1 wire retained.
-- RED: timeout/step refusal and energy-record validation failed before fixes.
-  GREEN: 1,614 unit tests also pass in isolated Python 3.12 + pytest-qt; use serial offscreen hooks. Protected Tools CI remains open.
-- Continuation matrix: `docs/development/impact-acoustics/PROGRESS.md`.
-  T3–T6, consumer adapters/studies and physical/perceptual validation remain open.
-- T2 lease posting failed; #9735 compatibility lease succeeded. Fresh downstream import regression reproduced; see continuation matrix.
+- Full program active; theory AffineDrift #4258 and integration plan UpstreamDrift #9706 merged.
+- T1 #5077 and T2 #5082 are open ready PRs. T2: 396 broader tests, 15 final audit tests, 6 browser tests and 1,614 unit tests pass locally.
+- T3 #5072: `feat/5072-prestressed-shaft`, based on T2 `2f975d06e`; tensile FEM/beam limits implemented, 38 focused/API tests pass. Full rotating shaft/grip remains open.
+- Shared unloaded FE kernel reused; explicit radial tension and point tip mass. No general rotating, impact or acoustic qualification is claimed.
+- UpstreamDrift prerequisite #9735 / PR #9745: 13 no-vendor, 72 pinned-vendor checks pass, installed-wheel smoke and eviction mutation verified. CI pending.
+- T2 CI: downstream UD bootstrap failure addressed by #9745; Gasification checkout Not Found; seven PyQt visual baseline drifts need inspection. Never bypass gates.
+- T3 codex lease succeeded through 2026-09-08T04:51:16Z; renew before expiry.
+- Turnover: `docs/development/impact-acoustics/SHAFT_PRESTRESS.md`; full requirement matrix: `docs/development/impact-acoustics/PROGRESS.md`.
+- T3-T6, exact-pin consumers, counterfactual studies, physical/blinded validation and final theory synthesis remain required.
 
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-09-07

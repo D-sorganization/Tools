@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-0056 · Distributed Shaft Prestress and Grip
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5072
+- **PR:** not created
+- **Branch:** feat/5072-prestressed-shaft
+- **Paths:** `src/shared/python/golf_club/*shaft*`, `src/shared/python/golf_club/_beam_fem.py`, `tests/shared/python/golf_club/test_shaft_prestress.py`, `docs/development/impact-acoustics/*`
+- **Started:** 2026-09-07
+- **Last verified:** 2026-09-07 (38 focused/API tests pass)
+- **Summary:** TDD prescribed-tension FEM, point-tip inertia and beam benchmarks; common unloaded assembly retained. This is partial T3, with no impact/acoustic qualification.
+- **Next step:** Add axial/torsional properties, rotating-base operators, full head inertia and passive six-axis grip; qualify frame, work and convergence gates.
+
 ### DL-0055 · Qualified Lumped Impact Dynamics
 
 - **State:** in_review

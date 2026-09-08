@@ -4,7 +4,7 @@
 
 `impact_mobility.py`: detached tensor reference, T1 PR #5077; not a flexible/acoustic solver.
 T2 #5071 adds event-resolved integration, preload states and all four passive loss channels; v1 report fields retain their meanings.
-See `docs/development/impact-acoustics/PROGRESS.md` for current validation and the full open research matrix.
+T3 #5072 adds `shaft_prestress.py` and reuses `_beam_fem.py`; 38 focused/API tests pass. Partial rotating-shaft reference: `docs/development/impact-acoustics/SHAFT_PRESTRESS.md`; `PROGRESS.md` retains the full open matrix.
 
 > Update this file in every implementation commit that changes this package.
 > Last updated: 2026-08-27

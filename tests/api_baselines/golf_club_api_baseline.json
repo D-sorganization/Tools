@@ -25,6 +25,10 @@
       "ShaftStation",
       "ShaftModalResponse",
       "ShaftModalSettings",
+      "ShaftPrestress",
+      "radial_shaft_tension",
+      "shaft_geometric_stiffness",
+      "solve_prestressed_shaft_modes",
       "ShaftTipLoad",
       "ShaftTipResponse",
       "TURF_PROFILE_FORMAT",
@@ -557,6 +561,13 @@
         "type": "class"
       },
       "ShaftModalSettings": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ShaftPrestress": {
         "info": {
           "bases": [],
           "methods": {}
@@ -1653,6 +1664,32 @@
         },
         "type": "function"
       },
+      "radial_shaft_tension": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "ShaftPrestress",
+              "default": null,
+              "kind": "arg",
+              "name": "prestress"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "position_m"
+            }
+          ],
+          "returns": "float"
+        },
+        "type": "function"
+      },
       "run_turf_convergence_study": {
         "signature": {
           "args": [
@@ -1766,6 +1803,32 @@
             }
           ],
           "returns": "ComponentMassProperties"
+        },
+        "type": "function"
+      },
+      "shaft_geometric_stiffness": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "ShaftPrestress",
+              "default": null,
+              "kind": "arg",
+              "name": "prestress"
+            },
+            {
+              "annotation": "ShaftModalSettings",
+              "default": "_DEFAULT_SETTINGS",
+              "kind": "arg",
+              "name": "settings"
+            }
+          ],
+          "returns": "np.ndarray"
         },
         "type": "function"
       },
@@ -1934,6 +1997,32 @@
             }
           ],
           "returns": "ShaftTipResponse"
+        },
+        "type": "function"
+      },
+      "solve_prestressed_shaft_modes": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "ShaftPrestress",
+              "default": null,
+              "kind": "arg",
+              "name": "prestress"
+            },
+            {
+              "annotation": "ShaftModalSettings",
+              "default": "_DEFAULT_SETTINGS",
+              "kind": "arg",
+              "name": "settings"
+            }
+          ],
+          "returns": "ShaftModalResponse"
         },
         "type": "function"
       },
@@ -2286,6 +2375,103 @@
             }
           ],
           "returns": "WedgeHeadParameters"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "_beam_fem.py": {
+    "__all__": [
+      "assemble_bending_axis",
+      "beam_mass",
+      "beam_stiffness",
+      "generalized_eigenvalues"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "assemble_bending_axis": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "int",
+              "default": null,
+              "kind": "arg",
+              "name": "element_count"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "stiffness_name"
+            }
+          ],
+          "returns": "tuple[np.ndarray, np.ndarray]"
+        },
+        "type": "function"
+      },
+      "beam_mass": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "linear_density_kg_m"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "length_m"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "beam_stiffness": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "ei_n_m2"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "length_m"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "generalized_eigenvalues": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "stiffness"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "mass"
+            }
+          ],
+          "returns": "np.ndarray"
         },
         "type": "function"
       }
@@ -4132,6 +4318,102 @@
             {
               "annotation": "ShaftModalSettings",
               "default": "_DEFAULT_MODAL_SETTINGS",
+              "kind": "arg",
+              "name": "settings"
+            }
+          ],
+          "returns": "ShaftModalResponse"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "shaft_prestress.py": {
+    "__all__": [
+      "ShaftPrestress",
+      "radial_shaft_tension",
+      "shaft_geometric_stiffness",
+      "solve_prestressed_shaft_modes"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "ShaftPrestress": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "radial_shaft_tension": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "ShaftPrestress",
+              "default": null,
+              "kind": "arg",
+              "name": "prestress"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "position_m"
+            }
+          ],
+          "returns": "float"
+        },
+        "type": "function"
+      },
+      "shaft_geometric_stiffness": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "ShaftPrestress",
+              "default": null,
+              "kind": "arg",
+              "name": "prestress"
+            },
+            {
+              "annotation": "ShaftModalSettings",
+              "default": "_DEFAULT_SETTINGS",
+              "kind": "arg",
+              "name": "settings"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "solve_prestressed_shaft_modes": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "ShaftPrestress",
+              "default": null,
+              "kind": "arg",
+              "name": "prestress"
+            },
+            {
+              "annotation": "ShaftModalSettings",
+              "default": "_DEFAULT_SETTINGS",
               "kind": "arg",
               "name": "settings"
             }

@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "b4de742a26fdb4183028685cb616f130a8676279155d0a29ffe8bc98cbc6ee36",
+      "content_sha256_lf": "5525f54c21ceb034dc8816d2fd7c1f2f2b09285a214ed81a2294e152caa5d723",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -639,8 +639,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-file-watcher.json"
     },
     {
-      "content_sha256_lf": "6505e4adb31a6fd1037c041516f74db6a97ff37d001a3f55a38ec70d43cf4b4d",
-      "entry_count": 41,
+      "content_sha256_lf": "7e90f2b6caa705f149a51183fe1c8f698ad325eefe901fd41f0b8431926d0c4a",
+      "entry_count": 43,
       "package": "src/shared/python/golf_club",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-golf-club.json"
     },

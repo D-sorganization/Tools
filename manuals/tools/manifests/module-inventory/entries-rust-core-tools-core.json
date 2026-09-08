@@ -2700,6 +2700,7 @@
           "tests/shared/python/golf_club/test_putter_head.py",
           "tests/shared/python/golf_club/test_shaft_delivery.py",
           "tests/shared/python/golf_club/test_shaft_dynamics.py",
+          "tests/shared/python/golf_club/test_shaft_prestress.py",
           "tests/shared/python/golf_club/test_shaft_statics.py",
           "tests/shared/python/golf_club/test_turf_contact.py",
           "tests/shared/python/golf_club/test_wedge_ground_contact.py",

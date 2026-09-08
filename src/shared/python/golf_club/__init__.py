@@ -87,6 +87,12 @@ from .shaft_dynamics import (
     ShaftModalSettings,
     solve_shaft_bending_modes,
 )
+from .shaft_prestress import (
+    ShaftPrestress,
+    radial_shaft_tension,
+    shaft_geometric_stiffness,
+    solve_prestressed_shaft_modes,
+)
 from .shaft_profile import (
     ExtrapolationPolicy,
     ShaftProfile,
@@ -225,6 +231,10 @@ __all__ = [
     "ShaftStation",
     "ShaftModalResponse",
     "ShaftModalSettings",
+    "ShaftPrestress",
+    "radial_shaft_tension",
+    "shaft_geometric_stiffness",
+    "solve_prestressed_shaft_modes",
     "ShaftTipLoad",
     "ShaftTipResponse",
     "TURF_PROFILE_FORMAT",
