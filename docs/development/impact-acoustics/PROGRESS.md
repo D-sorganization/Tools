@@ -250,13 +250,15 @@ stability, full FRF/bandwidth convergence and physical/acoustic gates stay open.
 
 ## Current Frozen Tip Response Checkpoint
 
-Rigid attachment is published at `42f229951`. The new private point-force/torque
+Rigid attachment is published at `42f229951`; frozen tip response is published
+at `f37e37bd2676ba0d6cbd590a2d6199fa22a4ef6d` through all normal hooks, with the
+remote SHA verified. The new private point-force/torque
 response reuses loaded operators and shared clamped balance/domain validation.
 `FROZEN_TIP_RESPONSE.md` derives six-axis ports, support transfer, continuum
 compliance, scaling and coefficient-cancellation refusal. All 41 harmonic and
 spectral Windows tests and nine API tests pass. Final Linux regression passes
 620 tests (216.99 s), with two optional CAD skips and three optional-plugin
-warnings; all nine manual gates pass. Publication is the next delivery step;
+warnings; all nine manual gates pass. Issue #5072 records the published evidence;
 this is not a stability, swing-trajectory, impact or acoustic qualification.
 
 Inventory #5101 / PR #5103 corrects scientific-import detection on a separate
@@ -267,3 +269,25 @@ rollbacks of compatible pins and claim-preservation guards. Validated local
 `6235789dc` is committed but not published; further shared-branch pushes are
 paused while the competing writer is active. Remote `3837792da` does not carry
 this task's validated scientific authority. The full goal remains active.
+
+## Current Acoustic Boundary Repair
+
+`Tools-impact-signals`, branch `fix/5074-waveform-spectral-contracts`, owns the
+renewed #5074 lease (`impact-acoustics-01a07d8a-t5`, expiry 2026-09-08T20:58Z).
+The initial boundary run reproduces 16 failures and seven passes. All 41
+focused ingestion/spectral tests now pass (24.04 s), with actual hook mypy.
+Real immutable samples, signed linear lag and shared segment detrending refuse
+undefined/nonfinite estimates. Odd/even PSD agrees with explicitly configured
+SciPy controls. The final Linux ingestion/report/API run passes 69 tests (152.47 s), with three
+optional-plugin warnings. All nine final manual gates pass. The local checkpoint
+is `31d8fa738`; protected-main integration and normal publication are pending.
+Its `SIGNAL_BOUNDARY_QUALIFICATION.md` and scoped vibroacoustics handoff retain
+calibration identity, complex FRF, noise/uncertainty, radiation and physical/
+blinded completion requirements. No acoustic experiment or prediction is made.
+
+Inventory PR #5103 publishes `1c2c9b19d` through normal hooks. Renderer PR #5090
+has now merged as protected main `b64a70f39`; integration into the inventory
+branch preserves all 410 reviewed source hashes and recomputes only the
+conflicted root handoff hash/count. All 95 post-integration tests pass (111.13 s) after an isolated rerun following
+a source-read timeout. The unchanged 60-second test limit and all nine manual
+gates pass. Integration is committed at `ace9a007b`; normal push is running.
