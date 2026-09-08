@@ -5826,6 +5826,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-08 | #5080 | fix(sidekick, #5062): enforce glass conductivity provider contracts in `sidekick.calculators.electrical` — public `ConductivityProvider` protocol (kelvin in, S/m out) in new `glass_contracts.py`, finite-positive output and composition/absolute-zero/cache-capacity DbC validation before caching, explicit STRICT/DEMO/LEGACY fallback policies with provider provenance reporting, reciprocal resistivity instead of infinity, centralized unit conversion (1 S/cm = 100 S/m), and RED-first contract tests. |
 | 2026-09-07 | #5066 | feat(mocap, #4721 TOOLS-M5): deliver camera extrinsic calibration, flexible layout management, robust PnP, bundle adjustment, camera movement invalidation, and qualification floors in `sidekick.lab.mocap.extrinsics`. |
 | 2026-09-07 | #5064 | feat(mocap, #4714 TOOLS-M4): deliver camera intrinsic calibration models (pinhole and fisheye), distortion representations, observation provenance, reprojection residual evaluation, degeneracy detection, and qualification floors; permit sidekick api baseline budget. |
 | 2026-09-07 | #4718 | feat(mocap, #4718 TOOLS-M3): deliver synchronization analysis, sequence tracking, and crash-safe recording with atomic manifest persistence in `sidekick.lab.mocap.sync` and `sidekick.lab.mocap.recording`. |

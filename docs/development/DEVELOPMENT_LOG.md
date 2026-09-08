@@ -23,7 +23,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **State:** in_review
 - **Owner:** claude (fleet wave 2, lease agent `claude` session
   `omp-01a07e96`)
-- **PR:** pending on branch `claude/issue-5062-glass-contracts`
+- **PR:** #5080 (`claude/issue-5062-glass-contracts`)
 - **Paths:** `src/shared/python/sidekick/calculators/electrical/glass_interface.py`,
   `src/shared/python/sidekick/calculators/electrical/glass_contracts.py`,
   `tests/shared/python/sidekick/calculators/electrical/test_glass_interface.py`,
