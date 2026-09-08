@@ -1,0 +1,336 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1432,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "dfdffcf08e7910860c4fa6b8738a1efa45bee20c97bc10400fd7ec653da4e80d",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-DELIVERY-INTERCHANGE-INIT-PY-B27593F6308E",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/delivery_interchange/__init__.py",
+      "purpose": "Neutral biomechanics delivery interchange (club-tester C5, #4554).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "DELIVERY_TRAJECTORY_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DRAKE_EXPORT_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DeliveryTrajectory",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DeliveryView",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MUJOCO_EXPORT_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TrajectorySample",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "body_export_envelope",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "body_kinematics_columns",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "delivery_trajectory_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "delivery_trajectory_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "delivery_view_at",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "euler_xyz_deg_to_quaternion",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "grip_kinematics_at",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "head_state_at",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "read_sto_table",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "trajectory_from_drake_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "trajectory_from_mujoco_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "trajectory_from_opensim_sto",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9956,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a357178112954cf9c3bf63626c5e6f184d565b6126840eecb94136539a4ecdc7",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-DELIVERY-INTERCHANGE-ADAPTERS-PY-7A8AC8D30A36",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/delivery_interchange/adapters.py",
+      "purpose": "Engine export adapters for the delivery-trajectory wire (C5, #4554).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "DRAKE_EXPORT_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MUJOCO_EXPORT_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "body_export_envelope",
+            "signature": "text: str, *, expected_format: str, name_field: str"
+          },
+          {
+            "kind": "function",
+            "name": "body_kinematics_columns",
+            "signature": "body_name: str"
+          },
+          {
+            "kind": "function",
+            "name": "euler_xyz_deg_to_quaternion",
+            "signature": "rx_deg: float, ry_deg: float, rz_deg: float"
+          },
+          {
+            "kind": "function",
+            "name": "read_sto_table",
+            "signature": "text: str, *, columns: Sequence[str]"
+          },
+          {
+            "kind": "function",
+            "name": "trajectory_from_drake_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "trajectory_from_mujoco_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "trajectory_from_opensim_sto",
+            "signature": "text: str, *, body_name: str, frame_id: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 13268,
+      "classification": "calculation",
+      "classification_basis": "path-marker:trajectory",
+      "content_sha256_lf": "9f5cc14ea2158d9d2b37b1c6674f260df94ea68aa7b8d18bf9b9ce51185916ab",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-DELIVERY-INTERCHANGE-TRAJECTORY-PY-55E3EF7A2288",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/delivery_interchange/trajectory.py",
+      "purpose": "Neutral delivery-trajectory contract (club-tester C5, #4554).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DeliveryTrajectory",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DeliveryView",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TrajectorySample",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DELIVERY_TRAJECTORY_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "delivery_trajectory_from_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "delivery_trajectory_to_json",
+            "signature": "trajectory: DeliveryTrajectory"
+          },
+          {
+            "kind": "function",
+            "name": "delivery_view_at",
+            "signature": "trajectory: DeliveryTrajectory, index: int, *, grip_to_head_m: float"
+          },
+          {
+            "kind": "function",
+            "name": "grip_kinematics_at",
+            "signature": "trajectory: DeliveryTrajectory, index: int, *, grip_to_head_m: float"
+          },
+          {
+            "kind": "function",
+            "name": "head_state_at",
+            "signature": "trajectory: DeliveryTrajectory, index: int, *, grip_to_head_m: float"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/shared/python/swing_sim/delivery_interchange",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}
