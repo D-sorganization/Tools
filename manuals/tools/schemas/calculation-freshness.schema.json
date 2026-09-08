@@ -1,0 +1,442 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.d-sorganization.org/tools/calculation-freshness/1.0.0.json",
+  "title": "Tools governed calculation freshness and executable evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "manual_id",
+    "release_status",
+    "owner_subepic",
+    "calculations",
+    "exemptions"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": "tools-calculation-freshness/1.0.0"
+    },
+    "manual_id": {
+      "const": "tools"
+    },
+    "release_status": {
+      "const": "provisional"
+    },
+    "owner_subepic": {
+      "const": 4723
+    },
+    "calculations": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "$ref": "#/$defs/calculationEntry"
+      }
+    },
+    "exemptions": {
+      "type": "array",
+      "items": {
+        "$ref": "#/$defs/exemptionEntry"
+      }
+    }
+  },
+  "$defs": {
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "pathString": {
+      "type": "string",
+      "pattern": "^[^\\\\]+$"
+    },
+    "sourceLink": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "symbol", "symbol_type", "sha256_lf"],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/pathString"
+        },
+        "symbol": {
+          "type": "string",
+          "minLength": 1
+        },
+        "symbol_type": {
+          "enum": ["function", "class", "module"]
+        },
+        "sha256_lf": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "schemaLink": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["path", "schema_version", "sha256_lf"],
+      "properties": {
+        "path": {
+          "$ref": "#/$defs/pathString"
+        },
+        "schema_version": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256_lf": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "testLink": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["test_id", "path", "level", "sha256_lf"],
+      "properties": {
+        "test_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "$ref": "#/$defs/pathString"
+        },
+        "level": {
+          "enum": ["parity", "unit", "integration"]
+        },
+        "sha256_lf": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "citationLink": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["citation_id", "locator"],
+      "properties": {
+        "citation_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "locator": {
+          "type": "string",
+          "minLength": 1
+        }
+      }
+    },
+    "executableExample": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "example_id",
+        "category",
+        "description",
+        "fixture_path",
+        "fixture_case_id",
+        "inputs",
+        "expected_outcome",
+        "execution_digest"
+      ],
+      "properties": {
+        "example_id": {
+          "type": "string",
+          "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$"
+        },
+        "category": {
+          "enum": ["nominal", "boundary", "failure"]
+        },
+        "description": {
+          "type": "string",
+          "minLength": 3
+        },
+        "fixture_path": {
+          "$ref": "#/$defs/pathString"
+        },
+        "fixture_case_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "inputs": {
+          "type": "object"
+        },
+        "expected_outcome": {
+          "type": "object"
+        },
+        "execution_digest": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "documentedValue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "value_id",
+        "field_name",
+        "example_id",
+        "value",
+        "unit",
+        "tolerance",
+        "manual_chapter",
+        "manual_anchor"
+      ],
+      "properties": {
+        "value_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "field_name": {
+          "type": "string",
+          "minLength": 1
+        },
+        "example_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "value": {},
+        "unit": {
+          "type": "string"
+        },
+        "tolerance": {
+          "type": ["number", "null"]
+        },
+        "manual_chapter": {
+          "$ref": "#/$defs/pathString"
+        },
+        "manual_anchor": {
+          "type": "string",
+          "pattern": "^#[a-z0-9-]+$"
+        }
+      }
+    },
+    "documentedTable": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "table_id",
+        "title",
+        "manual_chapter",
+        "manual_anchor",
+        "headers",
+        "rows",
+        "digest"
+      ],
+      "properties": {
+        "table_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "title": {
+          "type": "string",
+          "minLength": 1
+        },
+        "manual_chapter": {
+          "$ref": "#/$defs/pathString"
+        },
+        "manual_anchor": {
+          "type": "string",
+          "pattern": "^#[a-z0-9-]+$"
+        },
+        "headers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rows": {
+          "type": "array",
+          "items": {
+            "type": "array"
+          }
+        },
+        "digest": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "documentedFigure": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["figure_id", "path", "media_type", "caption", "sha256"],
+      "properties": {
+        "figure_id": {
+          "type": "string",
+          "minLength": 1
+        },
+        "path": {
+          "$ref": "#/$defs/pathString"
+        },
+        "media_type": {
+          "type": "string",
+          "minLength": 1
+        },
+        "caption": {
+          "type": "string",
+          "minLength": 1
+        },
+        "sha256": {
+          "$ref": "#/$defs/sha256"
+        }
+      }
+    },
+    "calculationEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "calculation_id",
+        "title",
+        "status",
+        "method_version",
+        "generator_script",
+        "source_links",
+        "schema_links",
+        "test_links",
+        "citation_links",
+        "executable_examples",
+        "documented_values",
+        "documented_tables",
+        "documented_figures",
+        "transitive_dependencies"
+      ],
+      "properties": {
+        "calculation_id": {
+          "type": "string",
+          "pattern": "^TOOLS-[A-Z0-9-]+$"
+        },
+        "title": {
+          "type": "string",
+          "minLength": 3
+        },
+        "status": {
+          "enum": ["verified-unapproved", "blocked"]
+        },
+        "method_version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+$"
+        },
+        "generator_script": {
+          "$ref": "#/$defs/pathString"
+        },
+        "source_links": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/sourceLink"
+          }
+        },
+        "schema_links": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/schemaLink"
+          }
+        },
+        "test_links": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/testLink"
+          }
+        },
+        "citation_links": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/citationLink"
+          }
+        },
+        "executable_examples": {
+          "type": "array",
+          "minItems": 3,
+          "items": {
+            "$ref": "#/$defs/executableExample"
+          }
+        },
+        "documented_values": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/documentedValue"
+          }
+        },
+        "documented_tables": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/documentedTable"
+          }
+        },
+        "documented_figures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/$defs/documentedFigure"
+          }
+        },
+        "transitive_dependencies": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "$ref": "#/$defs/pathString"
+          }
+        }
+      }
+    },
+    "exemptionEntry": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "exemption_id",
+        "calculation_id",
+        "drift_type",
+        "target_path",
+        "rationale",
+        "reviewed_by",
+        "created_at",
+        "expires_at",
+        "status"
+      ],
+      "properties": {
+        "exemption_id": {
+          "type": "string",
+          "pattern": "^EXEMPT-[A-Z0-9-]+$"
+        },
+        "calculation_id": {
+          "type": "string",
+          "pattern": "^TOOLS-[A-Z0-9-]+$|^ALL$"
+        },
+        "drift_type": {
+          "enum": [
+            "numerical-drift",
+            "source-drift",
+            "test-drift",
+            "schema-drift",
+            "missing-dependency"
+          ]
+        },
+        "target_path": {
+          "$ref": "#/$defs/pathString"
+        },
+        "rationale": {
+          "type": "string",
+          "minLength": 10
+        },
+        "reviewed_by": {
+          "type": "array",
+          "minItems": 1,
+          "uniqueItems": true,
+          "items": {
+            "type": "string",
+            "minLength": 1
+          }
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "expires_at": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "status": {
+          "enum": ["active", "expired", "revoked"]
+        }
+      }
+    }
+  }
+}

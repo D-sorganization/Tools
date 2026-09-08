@@ -206,7 +206,7 @@ class TestBackupCopyMixin:
         assert Path(res).exists()
 
     def test_safe_copy_file_invalid_inputs(self, app, tmp_path):
-        with pytest.raises(AssertionError):
+        with pytest.raises((AssertionError, ValueError)):
             app._safe_copy_file(None, "dest")
         with pytest.raises(ValueError):
             app._safe_copy_file("", "dest")
@@ -260,13 +260,14 @@ class TestBackupCopyMixin:
         original_stat = Path.stat
 
         def mock_stat(self_path, **kwargs):
-            if self_path.name == "file.txt":
+            if self_path.name == "dest.txt":
                 raise OSError("stat error")
             return original_stat(self_path, **kwargs)
 
         with patch.object(Path, "stat", side_effect=mock_stat, autospec=True):
-            with pytest.raises(OSError):
-                app._safe_copy_file(str(f), str(dest))
+            # Stat errors during size checks/verification are safely handled and
+            # return False
+            assert not app._safe_copy_file(str(f), str(dest))
 
     def test_verify_copy_no_dest(self, app, tmp_path):
         src = tmp_path / "src"

@@ -1,5 +1,5 @@
 {
-  "schema_version": "tools-textbook-chapter-registry/1.0.0",
+  "schema_version": "tools-textbook-chapter-registry/1.1.0",
   "manual_id": "tools",
   "contract_schema_version": "tools-textbook-chapter-contract/1.0.0",
   "release_status": "provisional",
@@ -14,7 +14,7 @@
       "chapter_id": "tools.textbook.swing-rate-of-closure-dplane",
       "path": "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd",
       "title": "Swing and Rate-of-Closure D-Plane Geometry",
-      "chapter_version": "1.0.0",
+      "chapter_version": "1.1.0",
       "authority_status": "verified-unapproved",
       "owner": "Swing simulation and Rate of Closure maintainers",
       "review_owner": "TOOLS-D7 and TOOLS-D8 reviewers",
@@ -38,11 +38,136 @@
         "D-plane geometry does not predict launch, spin magnitude, aerodynamics, or equipment performance.",
         "External scientific-source review remains outstanding."
       ],
+      "derivation_families": [
+        {
+          "family_id": "tools.derivation.dplane-geometry",
+          "calculation_id": "TOOLS-DPLANE-GEOMETRY",
+          "assumptions": [
+            "Finite vectors inhabit Euclidean three-space in one declared right-handed orthonormal target frame.",
+            "The delivered face normal and instantaneous travel direction define geometry only, not collision or flight response."
+          ],
+          "dimensions": [
+            "Angles are dimensionless radians internally and are returned in degrees.",
+            "Direction, dot-product, and cross-product terms are dimensionless after velocity normalization."
+          ],
+          "domains": [
+            "Face, target, and up vector norms exceed 1e-12 and target is orthogonal to up within 1e-10.",
+            "Spin loft lies on the principal interval from zero through 180 degrees; signed headings wrap to [-180, 180)."
+          ],
+          "numerical_method": "Validate finite three-vectors, normalize with the declared epsilon, clip inverse-cosine arguments, use atan2 for signed orientation, and return typed singular states without substitution.",
+          "uncertainty_and_limitations": [
+            "Input orientation, event interpolation, frame registration, and datum selection are not assigned covariance by this implementation.",
+            "Near vertical projections or collinear travel and face vectors are ill-conditioned and remain explicitly unavailable or singular."
+          ],
+          "claims": [
+            {
+              "claim_id": "TOOLS-DPLANE-CLAIM-FRAME",
+              "statement": "Target crossed with up fixes the positive-right axis and therefore every signed horizontal result.",
+              "evidence_class": "model-conditioned",
+              "authority_status": "verified-unapproved",
+              "manual_anchor": "#dplane-coordinate-frame"
+            },
+            {
+              "claim_id": "TOOLS-DPLANE-CLAIM-NORMAL",
+              "statement": "Normalized travel crossed with normalized face normal defines the oriented D-plane normal when the vectors are not collinear.",
+              "evidence_class": "model-conditioned",
+              "authority_status": "verified-unapproved",
+              "manual_anchor": "#dplane-normal-equation"
+            },
+            {
+              "claim_id": "TOOLS-DPLANE-CLAIM-SPIN-LOFT",
+              "statement": "The clipped principal angle between normalized travel and face-normal vectors is the three-dimensional spin loft.",
+              "evidence_class": "model-conditioned",
+              "authority_status": "verified-unapproved",
+              "manual_anchor": "#dplane-spin-loft-equation"
+            }
+          ],
+          "formulas": [
+            {
+              "formula_id": "TOOLS-DPLANE-FRAME",
+              "manual_anchor": "#dplane-coordinate-frame",
+              "implementation_symbols": [
+                {
+                  "path": "src/shared/python/swing_sim/impact/dplane.py",
+                  "symbol": "analyze_dplane"
+                }
+              ],
+              "verification_tests": [
+                "src/shared/python/swing_sim/impact/tests/test_dplane.py::TestDPlaneSingularStates::test_invalid_frame_is_rejected"
+              ],
+              "citation_ids": ["TOOLS-DPLANE-CODE-D3"],
+              "worked_example_ids": ["square-descending"],
+              "claim_ids": ["TOOLS-DPLANE-CLAIM-FRAME"],
+              "rendered_artifact_ids": [
+                "tools-engineering-design-manual.docx",
+                "tools-engineering-design-manual.html",
+                "tools-engineering-design-manual.pdf",
+                "tools-engineering-design-manual.tex"
+              ]
+            },
+            {
+              "formula_id": "TOOLS-DPLANE-NORMAL",
+              "manual_anchor": "#dplane-normal-equation",
+              "implementation_symbols": [
+                {
+                  "path": "src/rate_of_closure/simulation/impact_kinematics.py",
+                  "symbol": "impact_kinematics_for_run"
+                },
+                {
+                  "path": "src/shared/python/swing_sim/impact/dplane.py",
+                  "symbol": "analyze_dplane"
+                }
+              ],
+              "verification_tests": [
+                "tests/rate_of_closure/test_impact_kinematics.py::test_face_center_dplane_uses_rigid_body_point_velocity"
+              ],
+              "citation_ids": ["TOOLS-DPLANE-CODE-D3"],
+              "worked_example_ids": ["square-descending"],
+              "claim_ids": ["TOOLS-DPLANE-CLAIM-NORMAL"],
+              "rendered_artifact_ids": [
+                "tools-engineering-design-manual.docx",
+                "tools-engineering-design-manual.html",
+                "tools-engineering-design-manual.pdf",
+                "tools-engineering-design-manual.tex"
+              ]
+            },
+            {
+              "formula_id": "TOOLS-DPLANE-SPIN-LOFT",
+              "manual_anchor": "#dplane-spin-loft-equation",
+              "implementation_symbols": [
+                {
+                  "path": "src/shared/python/swing_sim/impact/dplane.py",
+                  "symbol": "analyze_dplane"
+                },
+                {
+                  "path": "src/shared/python/swing_sim/impact/dplane.py",
+                  "symbol": "spin_loft_sector_directions"
+                }
+              ],
+              "verification_tests": [
+                "src/shared/python/swing_sim/impact/tests/test_dplane.py::TestDPlaneAnalyticCases::test_matches_cross_client_golden_contract"
+              ],
+              "citation_ids": [
+                "TOOLS-DPLANE-CODE-D3",
+                "TOOLS-DPLANE-GOLDEN-V1"
+              ],
+              "worked_example_ids": ["square-descending"],
+              "claim_ids": ["TOOLS-DPLANE-CLAIM-SPIN-LOFT"],
+              "rendered_artifact_ids": [
+                "tools-engineering-design-manual.docx",
+                "tools-engineering-design-manual.html",
+                "tools-engineering-design-manual.pdf",
+                "tools-engineering-design-manual.tex"
+              ]
+            }
+          ]
+        }
+      ],
       "revision_history": [
         {
-          "version": "1.0.0",
+          "version": "1.1.0",
           "date": "2026-08-26",
-          "summary": "Registered the first governed swing and Rate-of-Closure calculation exemplar."
+          "summary": "Bound the complete D-plane derivation family bidirectionally to formula, public symbol, test, citation, example, claim, and rendered-artifact authorities."
         }
       ]
     }

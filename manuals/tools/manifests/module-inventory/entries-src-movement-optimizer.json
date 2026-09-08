@@ -68,7 +68,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "not-applicable"
       },
@@ -89,7 +89,9 @@
             "signature": "argv: list[str] | None=None"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/test_dry_compliance.py"
+        ],
         "unit_mentions": [
           "bar",
           "s"

@@ -771,8 +771,10 @@ export async function optimizeForceSource(
         const evaluated = evaluateCandidate(config, candidate);
         if (evaluated) qualifiedScores.push(evaluated.score);
         if (evaluated) {
+            // ⚡ Bolt Optimization: Replace O(N^2) immutable array spread with mutable .push()
             evaluatedPool.set(candidateKey(evaluated.candidate), evaluated);
-            elite = [...elite, evaluated]
+            elite.push(evaluated);
+            elite = elite
                 .sort(evaluatedOrder)
                 .slice(0, config.constraints.eliteCandidateCount);
             if (preferredCandidate(evaluated, best)) best = evaluated;
@@ -798,7 +800,9 @@ export async function optimizeForceSource(
                 qualifiedScores.push(evaluated.score);
             }
         }
-        elite = [...elite, ...refined]
+        // ⚡ Bolt Optimization: Replace O(N^2) immutable array spread with mutable .push()
+        elite.push(...refined);
+        elite = elite
             .sort(evaluatedOrder)
             .filter((item, index, values) => values.findIndex(other =>
                 candidateKey(other.candidate) === candidateKey(item.candidate)) === index)

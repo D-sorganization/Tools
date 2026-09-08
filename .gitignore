@@ -55,6 +55,12 @@ coverage.json
 .hypothesis/
 .dmypy.json
 dmypy.json
+/.ci_trigger.py
+/MUJOCO_LOG.TXT
+/error_log.txt
+/wave_log.txt
+/*Last
+
 
 # Binary documents (should not be in VCS)
 *.docx

@@ -281,10 +281,28 @@ def _src_search_locations() -> tuple[str, ...]:
 
 
 def _external_src_package_is_available() -> bool:
+    """Report whether a downstream ``src`` package exists beside this tree.
+
+    ``repo_root`` is only meaningful in a repository layout, where this module
+    lives at ``<repo>/src/shared/python`` and a downstream checkout's ``src``
+    is genuinely outside it. An installed distribution is flattened to
+    ``<site-packages>/shared/python``, so ``_TOOLS_SRC_ROOT`` is the install
+    root and ``repo_root`` is its *parent* -- which makes every installed
+    package, a downstream ``src`` included, look internal. The predicate then
+    reports False and ``SharedImportAliasFinder`` aliases every shared root,
+    so a consumer's ``src.shared.python.<root>`` silently resolves to this
+    tree even where the two packages are unrelated (UpstreamDrift#9631).
+
+    The repo-relative test is therefore guarded on the layout it describes.
+    """
+    repo_layout = _TOOLS_SRC_ROOT.name == "src"
     repo_root = _TOOLS_SRC_ROOT.parent
     for location in _src_search_locations():
         try:
-            if not Path(location).resolve().is_relative_to(repo_root):
+            resolved = Path(location).resolve()
+            if resolved == _TOOLS_SRC_ROOT:
+                continue
+            if not repo_layout or not resolved.is_relative_to(repo_root):
                 return True
         except (OSError, ValueError):
             return True

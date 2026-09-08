@@ -228,7 +228,6 @@
           "tests/test_sidekick_public_api_stability.py",
           "tests/test_signal_processing_expanded.py",
           "tests/test_subprocess_utils.py",
-          "tests/test_wave_solver.py",
           "tests/tools/gui/test_search_engine.py",
           "tests/tools/test_config_loader.py",
           "tests/tools/test_launch_utils.py",
