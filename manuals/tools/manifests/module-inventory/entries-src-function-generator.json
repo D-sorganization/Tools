@@ -404,6 +404,7 @@
           "tests/shared/python/plot_engine/test_pyqt6_widget.py",
           "tests/shared/python/plotting/test_identity_export.py",
           "tests/shared/python/process_calculators/test_analysis_utils.py",
+          "tests/shared/python/sidekick/calculators/electrical/test_glass_interface.py",
           "tests/shared/python/sidekick/ui/test_tools_sidebar_runtime_tabs.py",
           "tests/shared/python/test_contracts.py",
           "tests/shared/python/theme/test_api.py",
