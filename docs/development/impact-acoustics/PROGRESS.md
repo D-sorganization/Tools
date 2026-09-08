@@ -390,7 +390,7 @@ Five-module hook mypy and repository Ruff 0.14.10 (3,751 files) pass.
 Complete Linux golf/API regression passes 646 tests (187.68 s), with two
 optional CAD skips and three unavailable-plugin warnings; one BLAS thread
 and the unchanged 60-second deadline are retained. All nine manual gates pass
-before and after edits; normal publication is pending. Stability,
+before and after edits; published at eeea63b47 with all normal hooks passing. Stability,
 full grip-supported FRF/bandwidth and mesh/modal convergence, then nonlinear
 time evolution with anchor/frame work and time convergence remain required.
 Impact/acoustic/physical/blinded qualifications and protected inventory

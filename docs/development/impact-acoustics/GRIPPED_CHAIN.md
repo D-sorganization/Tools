@@ -110,8 +110,7 @@ added. Repository Ruff 0.14.10 passes (3,751 files). The tracked inventory is
 regenerated; all nine manual gates pass before edits. Complete Linux golf/API
 regression passes 646 tests (187.68 s), with two optional CAD skips and three
 unavailable-plugin warnings. One BLAS thread and the unchanged 60-second
-per-test deadline are retained. All nine final manual gates pass. Normal publication is
-pending at this checkpoint.
+per-test deadline are retained. All nine final manual gates pass. Published at eeea63b47 with all normal hooks passing.
 
 Required next steps are driven/frozen stability qualification, full grip-
 supported frequency response and bandwidth/mesh/modal convergence, then
