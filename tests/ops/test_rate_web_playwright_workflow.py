@@ -170,7 +170,7 @@ def test_pull_request_workflow_is_hosted_only_without_fleet_vocabulary() -> None
     expected_jobs = {"production-worker-e2e"}
     assert set(workflow["jobs"]) == expected_jobs
     assert all(
-        workflow["jobs"][job_name]["runs-on"] == "ubuntu-latest"
+        workflow["jobs"][job_name]["runs-on"] == "ubuntu-24.04"
         for job_name in expected_jobs
     )
 
@@ -190,7 +190,8 @@ def test_trusted_workflow_is_main_push_only_without_untrusted_ref_seam() -> None
         "push-production-worker-e2e",
         "push-pyqt-rendered-evidence",
     }
-    assert all(job["runs-on"] == "d-sorg-fleet" for job in jobs.values())
+    assert jobs["push-production-worker-e2e"]["runs-on"] == "d-sorg-fleet"
+    assert jobs["push-pyqt-rendered-evidence"]["runs-on"] == "d-sorg-fleet"
 
     for job in jobs.values():
         push_checkout = _checkout(job)
@@ -402,7 +403,7 @@ def test_pr_trigger_tracks_every_pyqt_render_authority() -> None:
 def test_pr_visual_job_requires_changed_path_governance_before_expensive_e2e() -> None:
     workflow = _workflow(PR_WORKFLOW_PATH)
     job = workflow["jobs"]["production-worker-e2e"]
-    checkout = job["steps"][0]
+    checkout = _checkout(job)
     commands = _run_steps(job)
     step_names = [step.get("name") for step in job["steps"]]
 
@@ -505,3 +506,20 @@ def test_touched_hosted_runner_guard_uses_only_immutable_actions() -> None:
     action_uses = [str(step["uses"]) for step in steps if "uses" in step]
     assert action_uses
     assert all(FULL_ACTION_SHA.fullmatch(value) for value in action_uses)
+
+
+def test_both_pyqt_paths_share_an_immutable_container_and_font_setup() -> None:
+    pr_job = _workflow(PR_WORKFLOW_PATH)["jobs"]["production-worker-e2e"]
+    trusted_job = _workflow(TRUSTED_WORKFLOW_PATH)["jobs"][
+        "push-pyqt-rendered-evidence"
+    ]
+    image = pr_job["container"]["image"]
+    assert re.fullmatch(r"ubuntu:24\.04@sha256:[0-9a-f]{64}", image)
+    assert trusted_job["container"]["image"] == image
+    for job in (pr_job, trusted_job):
+        first = job["steps"][0]
+        assert first["name"] == "Install container render system dependencies"
+        assert first["working-directory"] == "/"
+        assert "fonts-dejavu-core" in first["run"]
+        assert "fontconfig" in first["run"]
+    assert pr_job["steps"][0] == trusted_job["steps"][0]

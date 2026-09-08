@@ -18,13 +18,15 @@ def _write_constraints(path: Path, body: str) -> Path:
 def test_reads_exact_required_binary_stack_versions(tmp_path: Path) -> None:
     constraints = _write_constraints(
         tmp_path / "constraints.txt",
-        "numpy==2.3.5\nscipy==1.17.1\nPyQt6==6.11.0\nmatplotlib==3.11.1\npytest==9.1.1\n",
+        "numpy==2.3.5\nscipy==1.17.1\nPyQt6==6.11.0\nPyQt6-Qt6==6.11.2\nPyQt6-sip==13.12.0\nmatplotlib==3.11.1\npytest==9.1.1\n",
     )
 
     assert environment_check.read_expected_versions(constraints) == {
         "numpy": "2.3.5",
         "scipy": "1.17.1",
         "pyqt6": "6.11.0",
+        "pyqt6-qt6": "6.11.2",
+        "pyqt6-sip": "13.12.0",
         "matplotlib": "3.11.1",
     }
 
@@ -62,7 +64,7 @@ def test_runtime_check_fails_before_import_when_version_differs(
 ) -> None:
     constraints = _write_constraints(
         tmp_path / "constraints.txt",
-        "numpy==2.3.5\nscipy==1.17.1\nPyQt6==6.11.0\nmatplotlib==3.11.1\n",
+        "numpy==2.3.5\nscipy==1.17.1\nPyQt6==6.11.0\nPyQt6-Qt6==6.11.2\nPyQt6-sip==13.12.0\nmatplotlib==3.11.1\n",
     )
     imported = False
 
@@ -73,6 +75,8 @@ def test_runtime_check_fails_before_import_when_version_differs(
             else {
                 "scipy": "1.17.1",
                 "PyQt6": "6.11.0",
+                "PyQt6-Qt6": "6.11.2",
+                "PyQt6-sip": "13.12.0",
                 "matplotlib": "3.11.1",
             }[distribution]
         )
@@ -94,12 +98,14 @@ def test_runtime_check_imports_after_all_versions_match(
 ) -> None:
     constraints = _write_constraints(
         tmp_path / "constraints.txt",
-        "numpy==2.3.5\nscipy==1.17.1\nPyQt6==6.11.0\nmatplotlib==3.11.1\n",
+        "numpy==2.3.5\nscipy==1.17.1\nPyQt6==6.11.0\nPyQt6-Qt6==6.11.2\nPyQt6-sip==13.12.0\nmatplotlib==3.11.1\n",
     )
     expected = {
         "numpy": "2.3.5",
         "scipy": "1.17.1",
         "PyQt6": "6.11.0",
+        "PyQt6-Qt6": "6.11.2",
+        "PyQt6-sip": "13.12.0",
         "matplotlib": "3.11.1",
     }
     imported = False
@@ -115,6 +121,8 @@ def test_runtime_check_imports_after_all_versions_match(
         "numpy": "2.3.5",
         "scipy": "1.17.1",
         "pyqt6": "6.11.0",
+        "pyqt6-qt6": "6.11.2",
+        "pyqt6-sip": "13.12.0",
         "matplotlib": "3.11.1",
     }
     assert imported is True
@@ -174,43 +182,12 @@ def test_font_stack_match_returns_probe(
     assert environment_check.verify_font_stack(expectations) == probe
 
 
-def test_font_stack_match_with_allowed_version_list(
-    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
-) -> None:
+def test_font_stack_rejects_allowed_version_lists(tmp_path: Path) -> None:
     expectations = _font_expectations(
         tmp_path / "font_stack.json",
-        {
-            "libfontconfig1": ["2.15.0-1.1ubuntu2", "2.17.1-3ubuntu1"],
-            "libfreetype6": ["2.13.2+dfsg-1ubuntu0.1", "2.14.2+dfsg-1ubuntu0.1"],
-        },
+        {"libfontconfig1": ["2.15.0-1.1ubuntu2", "2.17.1-3ubuntu1"]},
     )
-    probe_control_tower = {
-        "matplotlib_freetype": "2.13.2",
-        "libfontconfig1": "2.15.0-1.1ubuntu2",
-        "libfreetype6": "2.13.2+dfsg-1ubuntu0.1",
-    }
-    monkeypatch.setattr(
-        environment_check, "probe_font_stack", lambda: probe_control_tower
-    )
-    assert environment_check.verify_font_stack(expectations) == probe_control_tower
-
-    probe_oglaptop = {
-        "matplotlib_freetype": "2.13.2",
-        "libfontconfig1": "2.17.1-3ubuntu1",
-        "libfreetype6": "2.14.2+dfsg-1ubuntu0.1",
-    }
-    monkeypatch.setattr(environment_check, "probe_font_stack", lambda: probe_oglaptop)
-    assert environment_check.verify_font_stack(expectations) == probe_oglaptop
-
-    probe_unsupported = {
-        "matplotlib_freetype": "2.13.2",
-        "libfontconfig1": "2.18.0-1",
-        "libfreetype6": "2.14.2+dfsg-1ubuntu0.1",
-    }
-    monkeypatch.setattr(
-        environment_check, "probe_font_stack", lambda: probe_unsupported
-    )
-    with pytest.raises(RuntimeError, match="libfontconfig1 2.18.0-1 not in"):
+    with pytest.raises(ValueError, match="font stack must name one exact version"):
         environment_check.verify_font_stack(expectations)
 
 

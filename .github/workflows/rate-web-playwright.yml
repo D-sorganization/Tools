@@ -85,6 +85,8 @@ on:
       - "tests/scripts/test_check_rate_visual_evidence_changes.py"
       - "tests/scripts/test_check_rate_pyqt_environment.py"
       - "scripts/check_rate_pyqt_environment.py"
+      - "scripts/config/rate_pyqt_font_stack.v1.json"
+      - "tests/scripts/test_rate_pyqt_renderer_identity.py"
       - "requirements-rate-pyqt.txt"
       - "pyproject.toml"
       - ".github/workflows/rate-web-playwright.yml"
@@ -100,7 +102,9 @@ permissions:
 jobs:
   production-worker-e2e:
     name: Rate web production Worker E2E (ephemeral PR)
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
+    container:
+      image: ubuntu:24.04@sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517
     timeout-minutes: 30
     defaults:
       run:
@@ -109,6 +113,16 @@ jobs:
       RATE_VISUAL_BASELINE_CANDIDATE_DIR: ${{ github.workspace }}/visual-baseline-candidates
       RATE_VISUAL_BASELINE_SOURCE_COMMIT: ${{ github.event.pull_request.head.sha }}
     steps:
+      - name: Install container render system dependencies
+        working-directory: /
+        run: >-
+          apt-get update &&
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends
+          ca-certificates git python3 python3-venv python-is-python3 libgl1 libegl1 libglib2.0-0t64
+          libxkbcommon0 fontconfig fonts-dejavu-core fonts-liberation
+          fonts-noto-color-emoji fonts-unifont xfonts-cyrillic xfonts-scalable
+          fonts-ipafont-gothic fonts-wqy-zenhei fonts-tlwg-loma-otf fonts-freefont-ttf
+
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           fetch-depth: 0
