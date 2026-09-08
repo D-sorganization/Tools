@@ -2834,6 +2834,11 @@
     "explicit_all": true,
     "symbols": {}
   },
+  "_shaft_frame_inertia.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
   "_shaft_inertia.py": {
     "__all__": [],
     "explicit_all": true,

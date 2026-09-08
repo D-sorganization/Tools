@@ -94,3 +94,19 @@ integration coverage and forbidding increased ceilings/sleeps or ignored tests.
 Claim was free; codex lease `impact-acoustics-01a07d8a-debounce` expires at
 2026-09-08T13:44:58Z. No Rust repair has been implemented yet. Renderer #4844's
 lease is renewed through 2026-09-08T13:42:43Z. These remain distinct CI gates.
+
+## Deterministic Debounce and Reviewed-Identity Compatibility
+
+Rust repair #5095 is published as PR #5097 at `c0f277406c526c4172e3cb15e8fdd6da649ada87`.
+Eight exact-time tests plus four filesystem tests pass with default and Python
+features; Clippy, formatting, all manual gates and applicable normal hooks pass.
+The PR initially conflicted with newly merged T5 ingestion #5084; its main merge
+preserves that module and resolves the adjacent handoff/digest. Remote Rust CI
+must still run on the combined head.
+
+Fresh renderer UD job 102039836077 passed thirteen contracts and failed the old
+variation hash assertion. UpstreamDrift #9783 reproduces that RED, accepts only
+the two reviewed source/hash pairs and rejects swaps/unknowns. All eighteen
+shared contracts pass against both the exact pin and renderer candidate; pinned
+Ruff 0.15.17, governance and commit hooks pass. PR #9784 publishes head `aa08217c5` with every normal commit/push hook passing. Pixel tolerances and vendor pin are unchanged. Private checkout access
+remains independently unresolved; the credential-configuration question is pending.

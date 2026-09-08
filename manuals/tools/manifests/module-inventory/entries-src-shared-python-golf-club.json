@@ -1096,7 +1096,7 @@
         "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "not-applicable"
       },
@@ -1110,7 +1110,9 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [],
-        "test_paths": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_frame_inertia.py"
+        ],
         "unit_mentions": [
           "m/s",
           "rad/s",
@@ -1306,6 +1308,58 @@
     },
     {
       "authority_status": "provisional",
+      "bytes_lf": 5397,
+      "classification": "calculation",
+      "classification_basis": "path-marker:inertia",
+      "content_sha256_lf": "58e98d4f228b44c824ac77e60e6f14ccdb8b3fa4bdbd1620cfca98d705b955a3",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-FRAME-INERTIA-PY-0C220E7DB5D1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_frame_inertia.py",
+      "purpose": "Rotating-frame inertial residual and derivatives on a deformed SE(3) section.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_frame_inertia.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "N m"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 5650,
       "classification": "calculation",
       "classification_basis": "path-marker:inertia",
@@ -1347,6 +1401,7 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_frame_inertia.py",
           "tests/shared/python/golf_club/test_shaft_inertia.py"
         ],
         "unit_mentions": [
@@ -1504,6 +1559,7 @@
         "test_paths": [
           "tests/shared/python/golf_club/test_shaft_chain.py",
           "tests/shared/python/golf_club/test_shaft_equilibrium.py",
+          "tests/shared/python/golf_club/test_shaft_frame_inertia.py",
           "tests/shared/python/golf_club/test_shaft_inertia.py",
           "tests/shared/python/golf_club/test_shaft_point_load.py",
           "tests/shared/python/golf_club/test_shaft_se3.py",
