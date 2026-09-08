@@ -111,13 +111,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "9039b478c3fed7b4e70e6a559c5c76e87285d0580c84dbedb4e68d5817979286",
+      "content_sha256_lf": "8f62a3aa5d8ac90183ad6fa316a29998bbba1630661106fea6875c7aaa9e5db4",
       "entry_count": 17,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "3384c84b273d9a3fc3c2b2f1e2fc6cde243203922fc4b4f734d9ea01d6a2e9ed",
+      "content_sha256_lf": "117a774ced4b0d513d2768fc4f61be1c65857340372f6a13d70c38db7024b907",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
@@ -129,13 +129,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
     },
     {
-      "content_sha256_lf": "ca89290260f6443c20074f1e659dc3534113bfa05839e427b0954fef6025c395",
-      "entry_count": 3,
+      "content_sha256_lf": "02cf0b85c5ce1acbc60873dad8941608ea095c9111ad16117b138087b93892bd",
+      "entry_count": 5,
       "package": "rust_core/file_watcher",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "e371511372d05a4033715128a533b4a16f7a867867c7e256cb4e11326ebc02b8",
+      "content_sha256_lf": "b1e7121ffa119b43a30f3ceef861360faead2c942e1c34c1cf300f00fcee7295",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "ac88a42c874cb53d5bdab540830edbc99ddd09b11467f0036950ad93a15ed79e",
+      "content_sha256_lf": "c7ccdf278712510769183a5ea46d364eae7e1c01e5acc46d42966a76e10ca1de",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -171,7 +171,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-shared-scripts.json"
     },
     {
-      "content_sha256_lf": "305f9a5df0c28ceb07235be894836d4c91c718096e1c9d3442c17ff44ded5076",
+      "content_sha256_lf": "69b80fe27714da57d4abee35ce7abf848e333cacc7882e08555e6951c905553b",
       "entry_count": 1,
       "package": "src",
       "path": "manuals/tools/manifests/module-inventory/entries-src.json"
@@ -261,7 +261,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-file-watcher.json"
     },
     {
-      "content_sha256_lf": "4fec487f4d77f6005b245753a85d997cb649e9751c5fbeb1f7e02d6f14e30789",
+      "content_sha256_lf": "532fe74806318c4833a52a0ff45e6d27691ae02760ccbd43f7ea212c6bce15e9",
       "entry_count": 18,
       "package": "src/financial_calculator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-financial-calculator.json"
@@ -291,7 +291,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-folder-tool-pro.json"
     },
     {
-      "content_sha256_lf": "4a6ad11e5455b8483a4701f823729b4e745a78a60c2437db0155fcb10feee0b1",
+      "content_sha256_lf": "9b7f672ef1e94d8b878b3db0365befe0fc6c2316593225943e916af72bded956",
       "entry_count": 20,
       "package": "src/function_generator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-function-generator.json"
@@ -387,7 +387,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
     {
-      "content_sha256_lf": "7cd97e47b2da3a113ee04f848e0bfe41a7c609294c531812d2e5ea109acf744a",
+      "content_sha256_lf": "531b90e7760985903b047996cef9fa9f9ddf41eb8fce3c28017f69948243fd47",
       "entry_count": 167,
       "package": "src/pendulum_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pendulum-simulator.json"
@@ -405,7 +405,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-plant-simulator.json"
     },
     {
-      "content_sha256_lf": "72ec17a82a7f14456a7c029b5215538e113e41a5486ceda94926925d0baa3610",
+      "content_sha256_lf": "2e83078a545ccfb7a4a16b21dd821002f5f2ec5d5fd5302aed57afe096274048",
       "entry_count": 18,
       "package": "src/pressure_drop_calculator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pressure-drop-calculator.json"
@@ -567,7 +567,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rotation-transforms.json"
     },
     {
-      "content_sha256_lf": "99eddf58b6d2bf7251b35e9f5581227a652972222cf71f465ff1b0ed82ee10b9",
+      "content_sha256_lf": "af6b9bd7f54e8e10e617922f60d99826c3ec2fccc0759ce8567e3e92c0ae950a",
       "entry_count": 26,
       "package": "src/rrt_path_planner",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rrt-path-planner.json"
@@ -579,7 +579,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "7122a7a5502604c6dd6d73949c5278291f74f51d723705e619ff801f21f1633f",
+      "content_sha256_lf": "7afcc2fa0cb25b3e1875129c64f020e9fcae1088bb383e6c70044ff4c3137a97",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
@@ -609,7 +609,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-chat-contracts.json"
     },
     {
-      "content_sha256_lf": "0212b357369038b8fe7d224d2701c49aa7739a76ccbe352b58477f7c4bea34ff",
+      "content_sha256_lf": "a8abbb1dc2ad3cbdfa2ffe98eb8096d9ae1e669a71d575747361e8e147e2462e",
       "entry_count": 14,
       "package": "src/shared/python/codemap",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-codemap.json"
@@ -639,8 +639,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-file-watcher.json"
     },
     {
-      "content_sha256_lf": "7f106ec75dfc2752f01bd3afb86d7f49040a26ca8a1d6ed79e1075ee9fcd0c3d",
-      "entry_count": 37,
+      "content_sha256_lf": "69f79b01943652352a06a6c6c992ea8840752d1bd70e975e000fab10c28c83a1",
+      "entry_count": 38,
       "package": "src/shared/python/golf_club",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-golf-club.json"
     },
@@ -705,6 +705,12 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-programmatic-pid.json"
     },
     {
+      "content_sha256_lf": "6df304bea083a9add2fd2400c1dd0892c519f4d1c0b0889ef63ce1f11e6aed00",
+      "entry_count": 2,
+      "package": "src/shared/python/realtime",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-realtime.json"
+    },
+    {
       "content_sha256_lf": "95a572264144cce2bffa99693f4da3a7659412631d706f15bd5f82b9571211e6",
       "entry_count": 2,
       "package": "src/shared/python/reporting",
@@ -723,8 +729,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-scripting.json"
     },
     {
-      "content_sha256_lf": "85973760f6372d71ea2836da5162e7814d74f44ccb12f2c61fb36bc5402e0eee",
-      "entry_count": 220,
+      "content_sha256_lf": "3ff56baf91e51d2f7a2ee8d486830644968c66c8fc15cbbdff91710d03a33f36",
+      "entry_count": 223,
       "package": "src/shared/python/sidekick",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick.json"
     },
@@ -735,14 +741,98 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-signal-toolkit.json"
     },
     {
-      "content_sha256_lf": "621cb632f843499a1ac0eac3e0612fabdc610afbcc61dd02146469a06f394233",
-      "entry_count": 220,
+      "content_sha256_lf": "f916fc65b5bb780e0ed0846a01c7e457db1f06e187f834176c85f40f984fee85",
+      "entry_count": 18,
       "package": "src/shared/python/swing_sim",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim.json"
     },
     {
-      "content_sha256_lf": "6c12742907f3f500034910ac99d3f91da527a641b8f351abc916284b6f31922b",
-      "entry_count": 21,
+      "content_sha256_lf": "486dfbcd8da1589ff8b5838d53ae212a88bb2b9b86f340fb65b95f7a61065f49",
+      "entry_count": 4,
+      "package": "src/shared/python/swing_sim/conventions",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-conventions.json"
+    },
+    {
+      "content_sha256_lf": "695ae7f8fe7e01b1c691cb8c5141ddc1a6f86e522a2f1dceb3c7025bf53ccc5d",
+      "entry_count": 3,
+      "package": "src/shared/python/swing_sim/delivery_interchange",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-delivery-interchange.json"
+    },
+    {
+      "content_sha256_lf": "7372982ba5473ed4bdbae45039c316f2d3fff90e1960b3af4e40cf673f11c0ee",
+      "entry_count": 44,
+      "package": "src/shared/python/swing_sim/flight",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-flight.json"
+    },
+    {
+      "content_sha256_lf": "caf8bc940ca6a6a3b44924b9dac22171411e8e972fd5381a2c8bbe8642484180",
+      "entry_count": 4,
+      "package": "src/shared/python/swing_sim/flight_interchange",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-flight-interchange.json"
+    },
+    {
+      "content_sha256_lf": "feef7934353a59f1dcb70b59080aee4043e6b8a9f620cc9dadb7f15733aaa834",
+      "entry_count": 60,
+      "package": "src/shared/python/swing_sim/ground",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-ground.json"
+    },
+    {
+      "content_sha256_lf": "07015ba1ee5ffce9179fb6e0484cb2add57e5f7587b2895fcde6ebf3a85a5fd9",
+      "entry_count": 10,
+      "package": "src/shared/python/swing_sim/impact",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-impact.json"
+    },
+    {
+      "content_sha256_lf": "e71f4792c076474ded6649d61b0e2b4b45f7e0fa2554505f0614e2ea1402b46a",
+      "entry_count": 4,
+      "package": "src/shared/python/swing_sim/impact_interval",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-impact-interval.json"
+    },
+    {
+      "content_sha256_lf": "d810159e1d2d5c5e9d8812e4ea57c6ee4c7f9f11b8b818cae2d77c3ad87dc056",
+      "entry_count": 3,
+      "package": "src/shared/python/swing_sim/impact_studies",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-impact-studies.json"
+    },
+    {
+      "content_sha256_lf": "c2fd4fb189220365adc3cfbe6784ad3cfe771bea95ad294d25d10fbba08ed7be",
+      "entry_count": 3,
+      "package": "src/shared/python/swing_sim/model_interchange",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-model-interchange.json"
+    },
+    {
+      "content_sha256_lf": "ee69d77cd5562ce0f0f13b0fad6733eb1194afda68358df299d54bbc07780939",
+      "entry_count": 12,
+      "package": "src/shared/python/swing_sim/putting",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-putting.json"
+    },
+    {
+      "content_sha256_lf": "164296fee2e6c8e2ecdde22f9c73457318cb819eca2ab4df317a51c457c82820",
+      "entry_count": 10,
+      "package": "src/shared/python/swing_sim/rotating_base",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-rotating-base.json"
+    },
+    {
+      "content_sha256_lf": "cb2ff9ab22a33498840b12971f05673f5c6bffff4066cc6cc5c50f4ab5ae80e5",
+      "entry_count": 9,
+      "package": "src/shared/python/swing_sim/solver",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-solver.json"
+    },
+    {
+      "content_sha256_lf": "e5f93c5175f003fe53ca820bb3793978cb09c71edb6a64612933601b654d975c",
+      "entry_count": 39,
+      "package": "src/shared/python/swing_sim/variation",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-variation.json"
+    },
+    {
+      "content_sha256_lf": "d8ab867163ab477f940848e5461c19691ffb81954f4266d19adff36cae78bc9e",
+      "entry_count": 3,
+      "package": "src/shared/python/swing_sim/vibroacoustics",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-vibroacoustics.json"
+    },
+    {
+      "content_sha256_lf": "2575012ff07d350f8050d730f23138dd3f481a4dac50b52770706fd862c0c52d",
+      "entry_count": 22,
       "package": "src/shared/python/theme",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-theme.json"
     },

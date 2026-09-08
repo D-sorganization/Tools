@@ -3,10 +3,60 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1713,
+      "bytes_lf": 6127,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b690019b74fe08f6f2a537b9f5335b4bf33b12dc382d12b6953e11bae3ec3cce",
+      "content_sha256_lf": "0dd5816251d6cbc1d9af6ef31294f47147450f0e1f31a4c22595abf1a5774402",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-FILE-WATCHER-SRC-DEBOUNCE-RS-661BBEA1D12D",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/file_watcher/src/debounce.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "src/p1am_control_system/backend/tests/test_temperature_controller.py",
+          "src/p1am_control_system/backend/tests/test_temperature_integration.py",
+          "src/web_applications/unit_converter/tests/converter.test.js",
+          "tests/p1am_control_system/test_desktop_alarm_state.py",
+          "tests/unit/codemap/test_codemap_watcher.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1727,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "69b1876350e8f880054fcaaa801ab3c01f064d61df8357f491658b1a82abc8e8",
       "family": "native-kernels-non-calculation",
       "id": "TOOLS-MODULE-RUST-CORE-FILE-WATCHER-SRC-LIB-RS-F6BC4225972C",
       "language": "rust",
@@ -310,10 +360,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 16594,
+      "bytes_lf": 9910,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "1fd91d5525af8e34812fbb5f57dce12935ac149ffb882312c4cb6054d88ece91",
+      "content_sha256_lf": "126fa381e5748958827c302edd374f88acaa8beebda69c84784a15fa0d43e250",
       "family": "native-kernels-non-calculation",
       "id": "TOOLS-MODULE-RUST-CORE-FILE-WATCHER-SRC-WATCHER-RS-16916BE09BFB",
       "language": "rust",
@@ -333,7 +383,7 @@
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
         "publication": "blocked",
-        "routes": "not-applicable",
+        "routes": "mapped",
         "tests": "mapped",
         "units": "mapped",
         "validation": "not-applicable"
@@ -346,7 +396,9 @@
         "chapter_paths": [],
         "citation_refs": [],
         "equation_refs": [],
-        "public_routes": [],
+        "public_routes": [
+          "watcher_tests.rs"
+        ],
         "public_surfaces": [
           {
             "kind": "enum",
@@ -414,9 +466,50 @@
           "tests/unit/codemap/test_codemap_watcher.py"
         ],
         "unit_mentions": [
-          "ms",
           "s"
         ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4596,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f5137309a686a652ef14ae4a5e36229a6f59abba6d71705b9153cf7731a4cb5b",
+      "family": "native-kernels-non-calculation",
+      "id": "TOOLS-MODULE-RUST-CORE-FILE-WATCHER-SRC-WATCHER-TESTS-RS-D34DD48AC7EC",
+      "language": "rust",
+      "maintainer": "Native kernel maintainers",
+      "path": "rust_core/file_watcher/src/watcher_tests.rs",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
         "validation_paths": []
       }
     }

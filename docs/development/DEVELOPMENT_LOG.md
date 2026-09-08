@@ -18,6 +18,75 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5095 · Deterministic Rust Watcher Debounce
+
+- **State:** in_review
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5095
+- **PR:** https://github.com/D-sorganization/Tools/pull/5097
+- **Branch:** fix/5095-deterministic-debounce
+- **Paths:** `rust_core/file_watcher/src/debounce.rs`, `rust_core/file_watcher/src/watcher.rs`, `rust_core/file_watcher/src/watcher_tests.rs`
+- **Started:** 2026-09-08
+- **Last verified:** 2026-09-08 (12 tests pass with default and Python features; Clippy and formatting pass)
+- **Summary:** TDD extracts the quiet-period accumulator to test exact supplied monotonic timestamps, coalescing, restart, shutdown, zero-delay and backward-time boundaries. Retains four real filesystem tests and existing filtered-notification timing.
+- **Next step:** Publish the focused prerequisite PR and verify normal protected CI; do not relax debounce expectations or bypass unrelated consumer gates.
+
+### DL-0054 · Impact Dynamics Reference Foundation
+
+- **State:** in_review
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5069
+- **PR:** https://github.com/D-sorganization/Tools/pull/5077
+- **Branch:** feat/5068-impact-dynamics-foundation
+- **Paths:** `src/shared/python/golf_club/impact_mobility.py`, `src/shared/python/golf_club/impact_coupling.py`, `tests/shared/python/golf_club/test_impact_mobility.py`, `docs/specs/IMPACT_DYNAMICS_ACOUSTICS.md`
+- **Started:** 2026-09-07
+- **Last verified:** 2026-09-07 (`6d94f1d3d`)
+- **Summary:** Tensor mobility reference passes 30 TDD gates; additive public baseline recorded. 383 broader tests passed, 2 skipped; manifest and all push hooks pass. PR #5077 in review. #5068 retains future distributed/acoustic scope.
+
+- **Next step:** Resolve protected PR #5077 review/check results, then follow the separately scoped research dependencies.
+
+### DL-#5062 · Glass Conductivity Provider Contracts And Fallback Policy
+
+- **State:** in_review
+- **Owner:** claude (fleet wave 2, lease agent `claude` session
+  `omp-01a07e96`)
+- **PR:** #5080 (`claude/issue-5062-glass-contracts`)
+- **Paths:** `src/shared/python/sidekick/calculators/electrical/glass_interface.py`,
+  `src/shared/python/sidekick/calculators/electrical/glass_contracts.py`,
+  `tests/shared/python/sidekick/calculators/electrical/test_glass_interface.py`,
+  `src/shared/python/sidekick/tests/calculators/electrical/test_electrical_model.py`
+- **Started:** 2026-09-08
+- **Last verified:** 2026-09-08 (focused suites RED→GREEN:
+  74 passed — `tests/shared/python/sidekick/calculators/electrical/test_glass_interface.py`,
+  embedded `test_glass_interface.py`, embedded `test_electrical_model.py`)
+- **Summary:** Issue #5062 — public `ConductivityProvider` protocol (kelvin
+  in, S/m out), finite-positive conductivity validation before caching,
+  absolute-zero/composition/cache-capacity DbC contracts, explicit
+  `STRICT`/`DEMO`/`LEGACY` fallback policies with provenance reporting,
+  reciprocal resistivity instead of infinity, centralized unit conversion
+  (1 S/cm = 100 S/m), failed responses never cached, provider switch
+  invalidates cache.
+- **Next step:** Protect-merge the glass-contracts PR after CI acceptance.
+
+### DL-#8942 · Realtime Transport And Codemap Hashing Hot-Path Fixes
+
+- **State:** in_review
+- **PR:** https://github.com/D-sorganization/Tools/pull/5081
+- **Paths:** `src/shared/python/codemap/indexer.py`,
+  `src/shared/python/realtime/`, `tests/unit/codemap/`,
+  `tests/unit/realtime/`
+- **Started:** 2026-09-08
+- **Last verified:** 2026-09-08 (`SELF`)
+- **Summary:** Resolved the codemap hash callable once at module import
+  (the per-call `import blake3` retried a failing import — Python does not
+  cache failed imports — once per file and once per symbol) and added the
+  tools-canonical file realtime transport (`src/shared/python/realtime/`)
+  with persistent per-channel append handles and offset-tracked tailing,
+  removing per-message mkdir/exists/stat/open syscalls from publish.
+  Fixes UpstreamDrift#8942 Defects A and B on the provider side.
+- **Next step:** UpstreamDrift bumps its `vendor/ud-tools` pin and re-points
+  `src/shared/python/realtime/transport_file.py` at the vendored module.
+
 ### DL-0001 · Backup Tools 3300 Pyo3 Split
 
 - **State:** parked
@@ -918,6 +987,52 @@ reachable from any live state and `abandoned` from `parked`.
   governing issue and set `Paths` before moving this to a live
   state; a live entry without a real issue is orphaned by
   definition.
+
+### DL-#4130 · Impact-Interval Independent Contact-Energy Audit
+
+- **State:** in_review
+- **Owner:** dieterolson (agent `claude`, fleet wave 2)
+- **PR:** #5079 (`claude/issue-9548-contact-energy` → `main`)
+- **Paths:** `src/shared/python/swing_sim/impact_interval/**`,
+  `src/shared/python/swing_sim/impact/contact.py`,
+  `docs/physics/IMPACT_INTERVAL_DYNAMICS.md`
+- **Started:** 2026-09-07
+- **Last verified:** 2026-09-07 (SELF)
+- **Summary:** Provider fix for UpstreamDrift#9548 under Tools#4130: the
+  impact-interval audit no longer assigns every positive energy deficit to
+  `unilateral_release`. The solver now integrates dashpot, friction, and
+  torsional-grip damping independently, tracks recoverable Kelvin-Voigt
+  spring energy from the contact state, counts release energy only at
+  identified tensile-clip steps, and reports an unfudged signed residual
+  plus separate free/supported momentum diagnostics with a demonstrated
+  halving-dt convergence. RED→GREEN cases live in
+  `impact_interval/tests/test_solver.py::TestIndependentEnergyAudit`.
+- **Next step:** Protect-merge the PR and hand the merged SHA to the
+  UpstreamDrift pin-bump that closes the provider issue.
+
+### DL-0054 · ThemeColors 60-Token Derivation Restoration
+
+- **State:** in_review
+- **Owner:** @dieterolson (agent `claude`, session `omp-01a07e96`)
+- **PR:** SELF (fixes #5063)
+- **Paths:** `src/shared/python/theme/api.py`,
+  `src/shared/python/theme/__init__.py`,
+  `src/shared/python/theme/color_derivation.py`,
+  `tests/shared/python/theme/test_theme_colors_derivation.py`,
+  `AGENT_HANDOFF.md`, `docs/development/DEVELOPMENT_LOG.md`
+- **Started:** 2026-09-08
+- **Last verified:** 2026-09-08 (SELF)
+- **Summary:** Restored the `ThemeColors` 60-token semantic derivation
+  pipeline (`model_post_init`, `is_dark` inference from `bg`, the derived
+  surface/border/text/brand/semantic/chart/effect tokens, dict-style
+  access, `as_dict`), the `_derive_full_palette` package shim, and the
+  orphaned `color_derivation` helper module that the UpstreamDrift
+  `b8d95ad25` sync wave had stripped from the canonical tree. Mirrored
+  the 8-case derivation regression oracle into
+  `tests/shared/python/theme/test_theme_colors_derivation.py`
+  (RED 7 failed/1 passed before restore, 8 passed after).
+- **Next step:** Bump UpstreamDrift's `vendor/ud-tools` pin to this
+  PR's merge commit so its child copies re-sync the restored pipeline.
 
 ## Shipped (Last 90 Days)
 
