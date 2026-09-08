@@ -10,6 +10,7 @@
 - Subepic #4728 protected-squash-merged as `682c1402b4bdb1b387877cbdaaf4999fa04a074a`; verify current `origin/main` before acting.
 - Live `main` rules require zero approving reviews. Do not require or request a named maintainer's approval; `@dieterolson` is not a standing release gate.
 - Never use admin bypass, force-push, check bypass, or protection changes to merge a failing or stale head.
+- `cross-repo-python-integration.yml` initializes UpstreamDrift's `vendor/ud-tools` pin in the _downstream checkout (#5085): UD retired tools-canonical child copies (UD #9569), so the consumer contract lane fails on every PR without it.
 
 ## Where This Repo Is Headed
 
