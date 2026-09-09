@@ -460,11 +460,15 @@ reconciling HEAVY_HIT_COUPLING.md; current conditional mathematics is retained.
 Canonical inventory regeneration is complete. Combined Linux regression
 passes 772 golf/signal/API tests in 286.02 s, with two optional CAD skips and
 three unavailable-plugin configuration warnings. All eight non-inventory
-manual gates pass. Inventory freshness, pinned root Ruff and normal merge
-hooks remain before committing this integration.
+manual gates pass. Inventory freshness and pinned root Ruff 0.14.10 also
+pass (3,787 files). Merge 96ba67aa6 preserves all reviewed resolutions and
+passes every normal merge hook after accepting its PROGRESS formatting fix.
+Normal push hooks and remote publication remain pending.
 
 UpstreamDrift #9826 has merged as a410ae705. Reference/Bioptim follow-up #9841
-is published at d165da461 through all normal hooks. It retains adaptive
+is published through e0d844cb9 with all normal hooks passing. The workflow
+checksum correction passes full computational publication validation for
+715 artifacts and the unchanged reviewed 253-page PDF. It retains adaptive
 endpoint evidence and separate position/velocity defects; 21 real Bioptim,
 factory/isolation and dependency controls pass on CasADi 3.6.7. Its 3.8
 consumer solve remains unsuccessful despite an expanded diagnostic budget;
