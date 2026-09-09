@@ -36,6 +36,7 @@ from PyQt6.QtWidgets import (
 from shared.python.sidekick.ui.widgets.base_calculator_widget import (
     BaseCalculatorWindow,
 )
+from shared.python.theme.catppuccin import CATPPUCCIN_MOCHA as COLORS
 
 if TYPE_CHECKING:
     from shared.python.sidekick.calculators.thermo.steam_engine import SteamProperties
@@ -44,29 +45,6 @@ _SCROLL_BAR_AS_NEEDED = Qt.ScrollBarPolicy.ScrollBarAsNeeded
 _FONT_WEIGHT_BOLD = QFont.Weight.Bold
 _ALIGN_CENTER = Qt.AlignmentFlag.AlignCenter
 _FRAME_STYLED_PANEL = QFrame.Shape.StyledPanel
-
-# Catppuccin Mocha color palette
-COLORS = {
-    "base": "#1e1e2e",
-    "mantle": "#181825",
-    "crust": "#11111b",
-    "surface0": "#313244",
-    "surface1": "#45475a",
-    "surface2": "#585b70",
-    "text": "#cdd6f4",
-    "subtext0": "#a6adc8",
-    "subtext1": "#bac2de",
-    "blue": "#89b4fa",
-    "green": "#a6e3a1",
-    "red": "#f38ba8",
-    "yellow": "#f9e2af",
-    "peach": "#fab387",
-    "mauve": "#cba6f7",
-    "teal": "#94e2d5",
-    "lavender": "#b4befe",
-    "sky": "#89dceb",
-    "sapphire": "#74c7ec",
-}
 
 
 def validate_temperature_k(value: float) -> tuple[bool, str]:

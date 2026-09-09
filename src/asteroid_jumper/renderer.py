@@ -22,27 +22,30 @@ from PyQt6.QtGui import (
 )
 from PyQt6.QtWidgets import QSizePolicy, QWidget
 
+from shared.python.theme.catppuccin import CATPPUCCIN_MOCHA
+
 if TYPE_CHECKING:
     from asteroid_jumper.controller import AsteroidJumperSnapshot, SimController
 
-# Catppuccin Mocha colour palette
-C_BASE = QColor("#1e1e2e")
-C_MANTLE = QColor("#181825")
-C_CRUST = QColor("#11111b")
-C_TEXT = QColor("#cdd6f4")
-C_SUBTEXT = QColor("#a6adc8")
-C_SURFACE0 = QColor("#313244")
-C_SURFACE1 = QColor("#45475a")
-C_BLUE = QColor("#89b4fa")
-C_GREEN = QColor("#a6e3a1")
-C_YELLOW = QColor("#f9e2af")
-C_RED = QColor("#f38ba8")
-C_MAUVE = QColor("#cba6f7")
-C_TEAL = QColor("#94e2d5")
-C_PEACH = QColor("#fab387")
-C_LAVENDER = QColor("#b4befe")
-C_SKY = QColor("#89dceb")
-C_FLAMINGO = QColor("#f2cdcd")
+# Catppuccin Mocha palette — canonical source of truth (issue #3992)
+_P = CATPPUCCIN_MOCHA
+C_BASE = QColor(_P["base"])
+C_MANTLE = QColor(_P["mantle"])
+C_CRUST = QColor(_P["crust"])
+C_TEXT = QColor(_P["text"])
+C_SUBTEXT = QColor(_P["subtext0"])
+C_SURFACE0 = QColor(_P["surface0"])
+C_SURFACE1 = QColor(_P["surface1"])
+C_BLUE = QColor(_P["blue"])
+C_GREEN = QColor(_P["green"])
+C_YELLOW = QColor(_P["yellow"])
+C_RED = QColor(_P["red"])
+C_MAUVE = QColor(_P["mauve"])
+C_TEAL = QColor(_P["teal"])
+C_PEACH = QColor(_P["peach"])
+C_LAVENDER = QColor(_P["lavender"])
+C_SKY = QColor(_P["sky"])
+C_FLAMINGO = QColor(_P["flamingo"])
 
 STAR_POSITIONS: list[tuple[float, float]] = [
     (i * 0.618033988 % 1.0, (i * 0.381966 % 1.0)) for i in range(200)

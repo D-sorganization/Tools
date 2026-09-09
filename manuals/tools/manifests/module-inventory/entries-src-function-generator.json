@@ -627,10 +627,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 24798,
+      "bytes_lf": 23192,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f1633050d07a9b22d4d170134ae6135d6333fb59db03df75d0216ff7c4188777",
+      "content_sha256_lf": "53ce5e88d1e2c5b96657d87b967462f9daafcec1b46fa7dbb68bcfe78cfcce83",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-FUNCTION-GENERATOR-PYTHON-FUNCTION-GENERATOR-UI-PYQT6-MAIN-WINDOW-PY-B47E9C944A11",
       "language": "python",
