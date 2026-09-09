@@ -2,12 +2,12 @@
 
 ## Impact Dynamics Review: #5068 / #5069
 
-`impact_mobility.py`: detached full-tensor reference, 30 TDD gates; explicit scalar returns pass strict typing; existing API/wire v1 unchanged.
-`docs/specs/IMPACT_DYNAMICS_ACOUSTICS.md` owns #5071–#5075; distributed contact,
-measured grip impedance and acoustics remain unqualified.
+`impact_mobility.py`: detached tensor reference, T1 PR #5077 merged at `f72544613`; not a flexible/acoustic solver.
+T2 #5071 adds event-resolved integration, preload states and all four passive loss channels; v1 report fields retain their meanings.
+PR #5133 is published at 00d17e7f9. The second local repair improves the independent momentum oracle with fourth-order inner/outer refinement, unchanged tolerance and a corrupted-acceleration control. Windows and Linux 3.11 each pass 17 cases; Linux 3.12 plus optimizer controls pass 36. Normal publication and protected review remain. Historical first-repair evidence follows. NumPy-aware typing passes 64 files; root Ruff passes 3,851 files. Exact section/grip reuse and bounded serial scientific resources preserve equations, domains and all tests. Linux coverage: 1,167 passed, two optional CAD skips, 550.51 s; slowest 58.78 s against 60 s needs CI confirmation. Final float-return typing delta passes 31 Windows and 31 Linux controls. The first push exposed an additional incremental-scope affine tuple annotation; all 14 hook files and 71 affected Windows tests now pass. API baseline, shard ownership, web build and nine manual gates pass; final inventory/handoff regeneration is required after turnover changes. UpstreamDrift PR #9916 supplies 24 provider and clean installed-wheel checks at the candidate pin; final reviewed repin remains. Private Gasification checkout access and physical/acoustic qualification remain open.
 
 > Update this file in every implementation commit that changes this package.
-> Last updated: 2026-09-08
+> Last updated: 2026-09-09
 
 ## Stack and Integration Position
 

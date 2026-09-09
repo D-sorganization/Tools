@@ -3950,10 +3950,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13695,
+      "bytes_lf": 14052,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6b0c77eb992da80f748e2a430850061bf78d0f859b20db96d1b2289c1a6ffa35",
+      "content_sha256_lf": "30b187e44c6707eb1642e0675a36c5a53fbfb9b024250f215c251fa671006056",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CI-TEST-SHARDS-PY-F0C2918F82E4",
       "language": "python",
