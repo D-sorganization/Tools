@@ -291,8 +291,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-folder-tool-pro.json"
     },
     {
-      "content_sha256_lf": "23b1f5fa7ff3d63525fd3212e8fe9d761cb7a84c028a643efaf66d8eed6e6ac6",
-      "entry_count": 20,
+      "content_sha256_lf": "4597c7d229bbbae4c5c0d6d611e50fa106047c97c522002a9f8815acbcc1f678",
+      "entry_count": 17,
       "package": "src/function_generator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-function-generator.json"
     },
@@ -837,8 +837,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-theme.json"
     },
     {
-      "content_sha256_lf": "24e3ad4637932b968c13481722d5191f0e7b558235077c4878ae9f5360a1ca4a",
-      "entry_count": 4,
+      "content_sha256_lf": "99f665aac5512ccd2e143d2165799da4bcd0f4b644fbbfcce37371cb2b4e6423",
+      "entry_count": 5,
       "package": "src/shared/python/ui",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-ui.json"
     },
@@ -855,7 +855,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-sidekick.json"
     },
     {
-      "content_sha256_lf": "712c75bcc57461abcbb116acac7eb54cbf61b4345855145ab166040c7f2df561",
+      "content_sha256_lf": "e06f5b54c38f6e23d3b8e81c82639c8a69a08a53b39b35e59a626d14d6928e2a",
       "entry_count": 7,
       "package": "src/signal_processing_studio",
       "path": "manuals/tools/manifests/module-inventory/entries-src-signal-processing-studio.json"

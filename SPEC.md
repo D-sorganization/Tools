@@ -5868,7 +5868,8 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
-| 2026-09-09 | n/a | perf: Replace Math.min/max spread in ScalarEnsembleScatter with single-pass loop (spec 1.18.134) |
+| 2026-09-09 | #5110 | refactor(ui, #3993): move FunctionGeneratorWidget from src/function_generator/gui.py to src/shared/python/ui/function_generator_widget.py so satellite applications like SPS import it through the shared tier rather than crossing application boundaries; guarded by tests/architecture/test_issue3993_no_cross_app_gui_imports.py. |
+| 2026-09-09 | #5124 | perf: Replace Math.min/max spread in ScalarEnsembleScatter with single-pass loop (spec 1.18.134) |
 | 2026-09-09 | #4716 | feat(mocap, #4716 TOOLS-M9): deliver C3D biomechanical exchange, header/point/analog/force-platform schemas, binary writer serialization, and center-of-pressure converters in `sidekick.lab.mocap.c3d`. |
 | 2026-09-09 | #5118 | feat(mocap, #4726 TOOLS-M8): deliver temporal reconstruction, Butterworth and Savitzky-Golay filtering, kinematic derivatives with covariance propagation, biomechanical constraints, and canonical DeliveryTrajectory mapping in `sidekick.lab.mocap.temporal`. |
 | 2026-09-08 | #5111 | feat(mocap, #4724 TOOLS-M7): deliver cross-view observation association, robust N-view triangulation, DLT solver with RANSAC subset consensus, spatial covariance projection, and qualification floors in `sidekick.lab.mocap.reconstruction`. |
