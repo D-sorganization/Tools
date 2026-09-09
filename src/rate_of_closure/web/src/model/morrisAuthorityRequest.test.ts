@@ -13,6 +13,7 @@ import {
 import { defaultMorrisAuthorityBase } from "./morrisWorkflowDefaults";
 import { getClub } from "./club";
 import { DEFAULT_SCENARIO } from "./impact";
+import pythonSuggestedDrafts from "./__fixtures__/morris_suggested_factor_drafts_v1.json";
 
 const draft = (overrides: Partial<MorrisFactorDraft> = {}): MorrisFactorDraft => ({
   variableKey: "swing_sim.swing.yaw_deg",
@@ -53,33 +54,28 @@ describe("Morris factor rows", () => {
     )).not.toThrow();
   });
 
-  it("matches Python R13.6 base-centered suggestions and ground applicability", () => {
+  it("matches the Python registry's R13.6 base-centered suggestions and ground applicability", () => {
+    // The drafts come from the Python-owned shared artifact
+    // (suggested_factor_drafts over the R13.6 authority base), pinned on the
+    // Python side by test_morris_ui_contract.py, so a Python registry drift
+    // fails this gate instead of being invisible to hardcoded literals
+    // (#4458).
+    const fixture = pythonSuggestedDrafts as {
+      drafts: Array<{
+        variableKey: string;
+        enabled: boolean;
+        lower: number;
+        upper: number;
+      }>;
+    };
     const suggested = suggestedMorrisFactorDrafts(base());
-    expect(suggested.map(({ variableKey, enabled }) => ({ variableKey, enabled }))).toEqual([
-      { variableKey: "swing_sim.swing.yaw_deg", enabled: true },
-      { variableKey: "swing_sim.swing.side_tilt_deg", enabled: true },
-      { variableKey: "swing_sim.swing.forward_tilt_deg", enabled: true },
-      { variableKey: "swing_sim.swing.damping_shoulder", enabled: true },
-      { variableKey: "swing_sim.swing.damping_wrist", enabled: true },
-      { variableKey: "swing_sim.impact.delivery.impact_offset_toe_mm", enabled: true },
-      { variableKey: "swing_sim.impact.delivery.impact_offset_high_mm", enabled: true },
-      { variableKey: "swing_sim.club.head_mass_kg", enabled: true },
-      { variableKey: "swing_sim.club.head_moi_kg_m2", enabled: true },
-      { variableKey: "swing_sim.ball_setup.tee_height_m", enabled: true },
-    ]);
-    const expectedBounds = [
-      { variableKey: "swing_sim.swing.yaw_deg", enabled: true, lower: -3, upper: 3 },
-      { variableKey: "swing_sim.swing.side_tilt_deg", enabled: true, lower: -48, upper: -42 },
-      { variableKey: "swing_sim.swing.forward_tilt_deg", enabled: true, lower: -3, upper: 3 },
-      { variableKey: "swing_sim.swing.damping_shoulder", enabled: true, lower: 0.3, upper: 0.5 },
-      { variableKey: "swing_sim.swing.damping_wrist", enabled: true, lower: 0.15, upper: 0.35 },
-      { variableKey: "swing_sim.impact.delivery.impact_offset_toe_mm", enabled: true, lower: -8, upper: 8 },
-      { variableKey: "swing_sim.impact.delivery.impact_offset_high_mm", enabled: true, lower: -6, upper: 6 },
-      { variableKey: "swing_sim.club.head_mass_kg", enabled: true, lower: 0.196, upper: 0.204 },
-      { variableKey: "swing_sim.club.head_moi_kg_m2", enabled: true, lower: 0.00048, upper: 0.00056 },
-      { variableKey: "swing_sim.ball_setup.tee_height_m", enabled: true, lower: 0.0321, upper: 0.0441 },
-    ];
-    expectedBounds.forEach((expected, index) => {
+    expect(suggested.map(({ variableKey, enabled }) => ({ variableKey, enabled }))).toEqual(
+      fixture.drafts.map(({ variable_key: variableKey, enabled }) => ({
+        variableKey,
+        enabled,
+      })),
+    );
+    fixture.drafts.forEach((expected, index) => {
       expect(suggested[index].lower).toBeCloseTo(expected.lower, 12);
       expect(suggested[index].upper).toBeCloseTo(expected.upper, 12);
     });
