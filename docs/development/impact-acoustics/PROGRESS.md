@@ -499,3 +499,33 @@ blocks PyQt6 also confirms the unavailable-Qt fallback and non-Qt exports.
 The JSON formatting change preserves parsed API content. Source inventory
 must be regenerated before retrying all normal push hooks. No new shaft
 calculation or physical validation is claimed by this integration repair.
+
+### Residual-forced affine response (2026-09-09, implementation under validation)
+
+Main integration and its narrow typing repair are published at
+5e4d82314eef412baad007634330e743e794ed13 through all normal push hooks;
+the remote SHA is verified. The earlier 772 golf/signal/API and 173 affected
+integration regressions remain the evidence for that checkpoint.
+
+New private `_shaft_affine_response` retains the left-side residual and its
+physical-time input, reuses the existing homogeneous Lyapunov evidence, and
+separates initial-state and persistent-input response terms. Operator and
+additive-input error bounds are separate assumptions. The initial absent-module
+RED became 32 passes. Four further RED controls exposed zero-time overflow and
+silent underflow of input/response terms; these now pass with explicit refusal
+of unrepresentable positive terms. Final Windows checks pass 97 affine/decay/
+spectral tests in 8.17 s, with actual mypy 1.13 and pinned Ruff passing. The API
+baseline adds only one empty-export module; every prior entry is identical.
+Linux Python 3.11.15 passes 106 focused/shared-API tests in 222.44 s, with
+three unavailable-plugin configuration warnings. All nine final governance
+gates and repository Ruff 0.14.10 pass (3,789 formatted files). Normal commit/
+push remains. The old classifier also misses the affine calculation; #5103
+remains a combined-delivery prerequisite, not scientific approval.
+
+`AFFINE_RESPONSE.md` supplies the coordinate/sign/time derivation, independent
+forced-oscillator oracle and scoped MIT primary-source context. This kernel
+requires a declared constant affine model; it does not infer constant frame,
+anchor or load histories from a snapshot. The next integration must make those
+prescriptions explicit and preserve residual scaling. Nonlinear, bandwidth,
+contact/radiation/calibration and blinded evidence gates remain open. No public
+API, measured dynamics or sweetness claim is added.

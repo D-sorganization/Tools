@@ -2844,6 +2844,11 @@
       }
     }
   },
+  "_shaft_affine_response.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
   "_shaft_autonomous_decay.py": {
     "__all__": [],
     "explicit_all": true,

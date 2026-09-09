@@ -1407,6 +1407,52 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 8133,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "67de8349c84040339dbd9582b23cfb7d280e764b07ef7424b5202797ff8f839a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-AFFINE-RESPONSE-PY-7989869DB77D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_affine_response.py",
+      "purpose": "Conditional response envelopes retaining a constant residual in a linear ODE.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 8110,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -1430,7 +1476,7 @@
         "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "not-applicable",
         "validation": "not-applicable"
       },
@@ -1444,7 +1490,9 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [],
-        "test_paths": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_affine_response.py"
+        ],
         "unit_mentions": [],
         "validation_paths": []
       }
@@ -1636,6 +1684,7 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_affine_response.py",
           "tests/shared/python/golf_club/test_shaft_autonomous_decay.py",
           "tests/shared/python/golf_club/test_shaft_damped_spectrum.py"
         ],
@@ -2547,6 +2596,7 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_affine_response.py",
           "tests/shared/python/golf_club/test_shaft_damped_spectrum.py",
           "tests/shared/python/golf_club/test_shaft_spectrum.py"
         ],
