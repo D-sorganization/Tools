@@ -385,7 +385,7 @@ class FunctionGeneratorWidget(QWidget):
         self.chirp_method_combo.currentTextChanged.connect(self._generate_signal)
         self.constant_value_spin.valueChanged.connect(self._generate_signal)
 
-    def _build_waveform(self, waveform: str, t: np.ndarray) -> np.ndarray | None:
+    def _build_waveform(self, waveform: str, t: np.ndarray) -> Signal | None:
         """Build the signal array for the given waveform type.
 
         Args:
@@ -393,7 +393,7 @@ class FunctionGeneratorWidget(QWidget):
             t: Time array
 
         Returns:
-            Generated signal array, or None if waveform is unknown
+            Generated signal, or None if waveform is unknown
         """
         if waveform is None:
             raise ValueError("waveform must be provided")

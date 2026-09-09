@@ -120,10 +120,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 22820,
+      "bytes_lf": 22810,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "3dee66f62281ecfbbc6044096ced245b1a5ec3c4168e046803eb374b81be336c",
+      "content_sha256_lf": "f6c4d50ded51b703877d6be40bc83404e2f7b83f4b7ee6edadaf3a8916a32b23",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-UI-FUNCTION-GENERATOR-WIDGET-PY-D9CC56B98182",
       "language": "python",
