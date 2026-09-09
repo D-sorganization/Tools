@@ -115,7 +115,8 @@ The combined Linux golf/signal/API regression passes 824 tests in 273.50 s,
 with two optional CAD skips and three unavailable-plugin configuration warnings.
 It uses the preserved Python 3.11.15, NumPy 2.3.5 and SciPy 1.15.3 runtime
 with one BLAS/OMP/MKL thread. All nine final manual/inventory/handoff gates and repository Ruff 0.14.10
-pass (3,792 formatted files). Normal commit/push publication remains.
+pass (3,792 formatted files). Normal commit/push publication completed at
+36aae1d57816799e4fd4023b8d591bf908e0885b, with the remote SHA verified.
 
 ## Remaining scope
 

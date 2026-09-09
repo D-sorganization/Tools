@@ -13,6 +13,7 @@ from ._shaft_affine_response import (
     ForcedResponseControls,
     assess_affine_response,
 )
+from ._shaft_affine_transient import affine_state_at
 from ._shaft_damped_spectrum import DampedPencil
 from ._shaft_equilibrium import EquilibriumControls
 from ._shaft_gripped_chain import GrippedSectionChain
@@ -98,6 +99,18 @@ class ConstantGrippedModel:
         """Use the same scaled residual, pencil and coordinate/error conventions."""
         return assess_affine_response(
             self.pencil, self.scaled_residual, self.scales, controls
+        )
+
+    def scaled_state_at(
+        self, initial_state: object, time_s: object
+    ) -> tuple[float, ...]:
+        """Return x=(y,T*ydot) under this model's explicit constant prescriptions.
+
+        This is local linear motion; departure from the recorded reference
+        strain domain and nonlinear or physical stability remain unqualified.
+        """
+        return affine_state_at(
+            self.pencil, self.scaled_residual, self.scales, initial_state, time_s
         )
 
 

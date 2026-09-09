@@ -1455,6 +1455,50 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 3214,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "510ee7056960a6122b4a6ae9ab30159f608bf0a12e20e882d3ab42614f80454f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-AFFINE-TRANSIENT-PY-C0563E0502CB",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_affine_transient.py",
+      "purpose": "Finite-time motion of an explicitly assumed constant affine shaft model.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 8110,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -1689,6 +1733,7 @@
         "public_surfaces": [],
         "test_paths": [
           "tests/shared/python/golf_club/test_shaft_affine_response.py",
+          "tests/shared/python/golf_club/test_shaft_affine_transient.py",
           "tests/shared/python/golf_club/test_shaft_autonomous_decay.py",
           "tests/shared/python/golf_club/test_shaft_damped_spectrum.py"
         ],
@@ -2003,10 +2048,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5331,
+      "bytes_lf": 5863,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "899a1d1833b8a4f79050634b06d502a352a152621fd3f084a21dff72fe860143",
+      "content_sha256_lf": "882017a9b28e2f28de3acf4d182456840cbb018a594aede35df46d279e813b6f",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-GRIPPED-OPERATING-PY-7033091E7755",
       "language": "python",
@@ -2026,7 +2071,7 @@
         "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "not-applicable"
       },
@@ -2040,7 +2085,9 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [],
-        "test_paths": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_affine_transient.py"
+        ],
         "unit_mentions": [
           "s"
         ],
@@ -2693,6 +2740,7 @@
         "public_surfaces": [],
         "test_paths": [
           "tests/shared/python/golf_club/test_shaft_affine_response.py",
+          "tests/shared/python/golf_club/test_shaft_affine_transient.py",
           "tests/shared/python/golf_club/test_shaft_damped_spectrum.py",
           "tests/shared/python/golf_club/test_shaft_gripped_operating.py",
           "tests/shared/python/golf_club/test_shaft_spectrum.py"

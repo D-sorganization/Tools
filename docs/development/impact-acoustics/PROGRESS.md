@@ -4,10 +4,47 @@ The user authorized completion of the full planned program, not merely its
 planning deliverables. All three parent epics remain open. Physical and
 perceptual validation cannot be inferred from numerical fixtures.
 
-Latest delivery: affine response is published at d5d1e6537; the constant gripped
-operating adapter passes 824 combined tests and all final structural gates and
-is awaiting normal publication. UD #9841 merged as 28d9bf79e; #9830/#9842 are
-closed. Detailed checkpoint history follows; the full scientific program remains open.
+Latest delivery: constant gripped operating models are published at
+36aae1d57816799e4fd4023b8d591bf908e0885b through all normal hooks; remote SHA
+verified. The affine transient extension passes 88 focused tests and scoped
+lint/types. All 860 Linux golf/signal/API tests pass in 274.37 s (two optional
+CAD skips, three plugin warnings); all nine gates and repository Ruff pass.
+Normal publication remains. UD #9841 merged as
+28d9bf79e; #9830/#9842 are closed. The full scientific program remains open.
+
+## Current Affine Transient and CI Investigation Checkpoint
+
+The transient evaluator uses an augmented matrix exponential with the existing
+scaled generator and residual-input conversion. It retains neutral/defective
+and growing motion, requires explicit constant-model assumptions and returns
+owned scaled states. Missing-module RED and a positive-time ratio-underflow RED
+preceded the fixes; 88 focused Windows tests pass in 11.74 s, with actual
+pre-push mypy and scoped Ruff passing. The broader Linux regression passes
+860 tests in 274.37 s (two optional CAD skips, three plugin warnings); all nine
+manual gates and repository Ruff pass. See AFFINE_TRANSIENT.md for derivation,
+independent analytic/IVP oracles and remaining numerical/physical limits.
+
+Tools #5114 remains unexplained: original head 02b53e2d8 passes the isolated
+lifecycle/render pair (2 tests, 167.25 s including Windows-mounted collection)
+and all 21 related PyQt tests on a native Linux archive (99.00 s, four workers,
+loadscope, CI hypothesis profile). Rendering took 33.99 s isolated and 8.83 s
+mixed. The 45-second native diagnostic dumped an unrelated tab-visibility child
+wait that subsequently passed at 57.29 s under its unchanged 60-second limit.
+No task pytest/probe processes remained afterward. This was a targeted runtime
+matching the critical Python 3.11.16/Qt 6.11.2/scientific/plugin versions, without
+the complete CI dependency set or the repository tools_core wheel/required flag.
+Exact archive, package freeze and mixed log are preserved in the external
+rate5114 task cache. Original archive SHA256:
+a29145399a7e21d767a695b5d686634371f7d4b75cd6115bf9e4033006c03c1b.
+
+PR #5103 advanced to 32c7b38cb by merging main's reviewed signal repair; relevant
+rate source/tests, conftests, pytest configuration and workflow are unchanged.
+Actual Python 3.11 rate job 102338506584 passed 2889 tests with 29 skips and 13
+warnings in 457 s, including the rendering case (~6.2 s). Python 3.12 job
+102338506622 remained in its test step at the latest read. No source fix,
+assertion change, timeout waiver or success claim for that job was made.
+[Full #5114 investigation](https://github.com/D-sorganization/Tools/issues/5114#issuecomment-5596052315).
+Private-consumer access is separate. Keep #5114 and the full program open.
 
 ## Requirement and Evidence Matrix
 
