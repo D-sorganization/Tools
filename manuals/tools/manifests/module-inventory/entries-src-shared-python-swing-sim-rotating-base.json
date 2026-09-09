@@ -382,7 +382,6 @@
         "public-api",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -394,7 +393,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "unavailable",
         "validation": "unavailable"
       },
@@ -450,7 +449,9 @@
             "signature": "results: Sequence[RotatingBaseRunResult]"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/unit/agent_context/test_catalog.py"
+        ],
         "unit_mentions": [],
         "validation_paths": []
       }

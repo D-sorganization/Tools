@@ -2274,7 +2274,8 @@
           "src/shared/python/sidekick/tests/calculators/conversion/test_conversion_accuracy_3384_3388_3389.py",
           "src/shared/python/sidekick/tests/calculators/conversion/test_conversion_service.py",
           "src/shared/python/sidekick/tests/test_unit_converter_widget.py",
-          "tests/shared/python/calculators/conversion/test_service.py"
+          "tests/shared/python/calculators/conversion/test_service.py",
+          "tests/unit/agent_context/test_service.py"
         ],
         "unit_mentions": [
           "N",

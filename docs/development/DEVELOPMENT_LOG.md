@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5138 · Verified Agent Context
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5138
+- **PR:** not created
+- **Branch:** feat/issue-5138-agent-context
+- **Paths:** `src/agent_context`, `src/shared/python/codemap`, `packages/agent-context`
+- **Started:** 2026-09-09
+- **Last verified:** 2026-09-09; 100 CodeMap tests pass with optional parsers installed; 30 context tests pass, one Windows symlink test skipped. Real MCP stdio passes. Ruff and scoped mypy pass before final CI edits. Standalone wheel builds; rebuild after final code edits.
+- **Summary:** Dependency-free source context package, real MCP transport, semantic boundary reviews, deterministic views and CodeMap freshness guards. Parent epic Repository_Management#1629 remains active; no subscription infrastructure is required.
+- **Next step:** Qualify the shared provider changes with the normal local checks before publishing its protected PR.
+
 ### DL-#5101 · Scientific Import Inventory Detection
 
 - **State:** in_review

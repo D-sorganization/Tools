@@ -1,0 +1,813 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 329,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "006c9010333e43b573b070577cb27692e848ba99311286f9a526d43756500fb5",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-AGENT-CONTEXT-INIT-PY-FB314DEDCEE7",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/agent_context/__init__.py",
+      "purpose": "Source-backed, subscription-free developer context owned by Tools.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "CatalogError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "load_catalog",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 122,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "30d96a6cfe60f53f8fc3be0e8c409b256571afd70d15830305809e1926d84133",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-AGENT-CONTEXT-MAIN-PY-B43FE4111C08",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/agent_context/__main__.py",
+      "purpose": "Support ``python -m agent_context`` without optional dependencies.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2775,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "82d7b7f30af9b7e665d2243868402b45b607a197046df198732cb5023fa1cd5b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-AGENT-CONTEXT-BROWSER-HTML-C2A96108BC10",
+      "language": "html",
+      "maintainer": "Tools module maintainers",
+      "path": "src/agent_context/browser.html",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8971,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "bcf17301974ec2deddc192c0cf5c6e7c3ce62f8115eb8353d683bcf65b9204d1",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-AGENT-CONTEXT-CATALOG-PY-84335D10FA64",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/agent_context/catalog.py",
+      "purpose": "Validated semantic catalog with explicit source and interaction evidence.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Catalog",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Component",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Reference",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Relation",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CATALOG_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CONTRACT_HEADINGS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "identifier",
+            "signature": "value: Any"
+          },
+          {
+            "kind": "function",
+            "name": "known_fields",
+            "signature": "row: dict[str, Any], allowed: set[str]"
+          },
+          {
+            "kind": "function",
+            "name": "load_catalog",
+            "signature": "root: Path, path: str=CATALOG_PATH"
+          },
+          {
+            "kind": "function",
+            "name": "records",
+            "signature": "value: Any, field: str"
+          },
+          {
+            "kind": "function",
+            "name": "strings",
+            "signature": "value: Any, field: str, *, required: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "symbol_lines",
+            "signature": "root: Path, ref: Reference"
+          },
+          {
+            "kind": "function",
+            "name": "text",
+            "signature": "value: Any, field: str"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/agent_context/test_catalog.py",
+          "tests/unit/agent_context/test_evaluation.py",
+          "tests/unit/agent_context/test_integrity.py",
+          "tests/unit/agent_context/test_service.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3347,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a8c15ce412999795a14a4ffdbc19bc50f0455461a461cb34b5b278543cb5da22",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-AGENT-CONTEXT-CLI-PY-478C04687823",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/agent_context/cli.py",
+      "purpose": "Local commands for retrieving and maintaining verified agent context.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "build_parser",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/agent_context/test_cli.py",
+          "tests/unit/agent_context/test_integrity.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 2539,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "92b657fd31e91b191b256631c75eebdea8fd493d83050d1a8e190f9321b90ee9",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-AGENT-CONTEXT-EVALUATION-PY-249488506E71",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/agent_context/evaluation.py",
+      "purpose": "Reproducible navigation task definitions with measured retrieval costs.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "evaluate",
+            "signature": "root: Path, tasks: Any"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/agent_context/test_evaluation.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1863,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "32c66e3ec8ea32e1fbd9380b92f4897bc101ff0b7662ea1a39121a1ce54a1ee8",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-AGENT-CONTEXT-MCP-SERVER-PY-5FC9E7DC5F8A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/agent_context/mcp_server.py",
+      "purpose": "Optional local stdio MCP adapter; no mutation tools or model calls.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "build_server",
+            "signature": "root: Path, *, factory: Any=None"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/agent_context/test_cli.py",
+          "tests/unit/agent_context/test_mcp_transport.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1981,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "11b9d28fb91a3c62aaa92a29e9745d16b2cc930afde4d5b6c6a212fb6769f220",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-AGENT-CONTEXT-PATHS-PY-D95A096040D0",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/agent_context/paths.py",
+      "purpose": "Bounded filesystem reads for repository context, without executing sources.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CatalogError",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_FILE_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "file_hash",
+            "signature": "path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "read_bytes",
+            "signature": "path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "read_text",
+            "signature": "path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "safe_path",
+            "signature": "root: Path, value: str, *, directory: bool=False"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/test_paths.py",
+          "tests/shared/python/utils/test_paths.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6569,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "829d73fc8968ff826bd896560946841d92763f7ae2e56a35b43280cbb7acecf1",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-AGENT-CONTEXT-RENDER-PY-3828275C3684",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/agent_context/render.py",
+      "purpose": "Deterministic portable documentation and an accessible offline browser.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "browser",
+            "signature": "catalog: Catalog, state: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "inventories",
+            "signature": "catalog: Catalog"
+          },
+          {
+            "kind": "function",
+            "name": "link",
+            "signature": "path: str"
+          },
+          {
+            "kind": "function",
+            "name": "markdown",
+            "signature": "catalog: Catalog, state: dict[str, Any]"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2780,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "defc8a7e0c471b48732117f5fcb9b94c756e1668c91ba52132643049dc797252",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-AGENT-CONTEXT-REVIEWS-PY-CAC501C76C94",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/agent_context/reviews.py",
+      "purpose": "Explicit boundary-review declarations tied to exact source evidence.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "REVIEW_PATH",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "fingerprint",
+            "signature": "relation: Relation, hashes: dict[str, str]"
+          },
+          {
+            "kind": "function",
+            "name": "inputs",
+            "signature": "catalog: Catalog, relation: Relation"
+          },
+          {
+            "kind": "function",
+            "name": "load_reviews",
+            "signature": "root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "statuses",
+            "signature": "catalog: Catalog"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10903,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1702e355025087eeb6488d39677fc68874c1c982b28e5a3af6967b62ae1f7053",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-AGENT-CONTEXT-SERVICE-PY-A91D6CDB8AB2",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/agent_context/service.py",
+      "purpose": "Focused live retrieval and deterministic checks over a semantic catalog.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ContextService",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "gather_sources",
+            "signature": "catalog: Catalog, component: Component, state: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "write_json",
+            "signature": "path: Path, data: Any"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/calculators/conversion/test_service.py",
+          "tests/unit/agent_context/test_integrity.py",
+          "tests/unit/agent_context/test_service.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5907,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4a0c2bed23ee8054147d850c4452cd471e4c2986a6a6e6ed6bd538751f3303be",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-AGENT-CONTEXT-WORKSPACE-PY-DD33920D598B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/agent_context/workspace.py",
+      "purpose": "Content fingerprints for one checkout, including working tree changes.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "INDEX_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_FILES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "dependency_state",
+            "signature": "catalog: Catalog"
+          },
+          {
+            "kind": "function",
+            "name": "digest",
+            "signature": "value: Any"
+          },
+          {
+            "kind": "function",
+            "name": "git",
+            "signature": "root: Path, *args: str, optional: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "implementation_id",
+            "signature": "folder: Path"
+          },
+          {
+            "kind": "function",
+            "name": "snapshot",
+            "signature": "catalog: Catalog"
+          },
+          {
+            "kind": "function",
+            "name": "source_files",
+            "signature": "catalog: Catalog"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/agent_context/test_catalog.py",
+          "tests/unit/agent_context/test_integrity.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/agent_context",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

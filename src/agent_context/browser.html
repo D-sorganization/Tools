@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>${title} Agent Context</title>
+<style>
+:root{color-scheme:light dark;font-family:system-ui,sans-serif;line-height:1.55}
+body{max-width:76rem;margin:auto;padding:2rem;background:#101925;color:#e5edf7}
+a{color:#8ed8ff;overflow-wrap:anywhere}a:focus-visible,input:focus-visible{outline:3px solid #ffcf70;outline-offset:4px}
+header{margin-bottom:2rem}h1{font-size:2.4rem;line-height:1.15}h2{margin-top:0}h3{font-size:1rem}
+input{display:block;width:min(95%,40rem);padding:.8rem;margin:.5rem 0;border:1px solid #8395ab;border-radius:.4rem;font:inherit}
+main{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,29rem),1fr));gap:1rem}
+article{padding:1.5rem;border:1px solid #47596e;border-radius:.7rem;background:#192637;scroll-margin-top:1rem}
+article[hidden]{display:none}.meta{color:#b3c6dc}code{overflow-wrap:anywhere}footer{margin-top:2rem}
+@media print{body,article{background:white;color:black}a{color:black}input,label{display:none}}
+</style></head><body><header><p class="meta">LOCAL · SOURCE-BACKED · SUBSCRIPTION-FREE</p>
+<h1>${title} Agent Context</h1>
+<p>Explore registered components, their consumers, integration contracts and executable evidence.</p>
+<p><a href="README.md">Markdown Map</a> · <a href="catalog.json">Source Catalog</a> · <a href="reviews.json">Boundary Reviews</a></p>
+<label for="search">Find a component, source path or interaction</label><input id="search" type="search" placeholder="Search registered context" autocomplete="off">
+<p id="count" role="status" aria-live="polite">${count} components</p></header>
+<main>${cards}</main><footer><p>Source fingerprint: <code>${digest}</code></p>
+<p>This generated view is a snapshot. Use the CLI to verify the current checkout. Review declarations do not prove test execution or scientific validity.</p></footer>
+<script>
+const field=document.getElementById('search');
+const cards=[...document.querySelectorAll('article')];
+field.addEventListener('input',()=>{
+const terms=field.value.toLowerCase().trim().split(/\s+/);let shown=0;
+cards.forEach(card=>{card.hidden=!terms.every(term=>card.textContent.toLowerCase().includes(term));if(!card.hidden)shown++;});
+document.getElementById('count').textContent=shown+' of '+cards.length+' components';
+});
+function revealTarget(){
+const target=cards.find(card=>'#'+card.id===location.hash);
+if(target&&target.hidden){field.value='';field.dispatchEvent(new Event('input'));target.scrollIntoView();}
+}
+window.addEventListener('hashchange',revealTarget);
+document.addEventListener('click',event=>{if(event.target.closest('a[href^="#"]'))setTimeout(revealTarget,0);});
+revealTarget();
+</script></body></html>
