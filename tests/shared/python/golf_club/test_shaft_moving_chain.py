@@ -6,6 +6,7 @@ import numpy as np
 import pytest
 from scipy.linalg import expm
 
+from shared.python.golf_club import _grip_finite_response as grip_response
 from shared.python.golf_club import _shaft_moving_chain as moving
 from shared.python.golf_club._shaft_chain import IndexedPointLoad
 from shared.python.golf_club._shaft_point_load import SpatialPointLoad
@@ -49,6 +50,41 @@ def _axial_case() -> tuple:
         grips=(replace(port, anchor=anchor),),
     )
     return chain, replace(state, poses=positions, twists=velocities), controls
+
+
+@pytest.mark.parametrize("nonplanar", [False, True])
+def test_one_grip_geometry_per_response_preserves_full_acceleration_law(
+    monkeypatch: pytest.MonkeyPatch,
+    nonplanar: bool,
+) -> None:
+    chain, state, controls = _nonplanar_case() if nonplanar else _axial_case()
+    calls = 0
+    original = moving.moving_grip_kinematics
+
+    def counted(*args: object, **kwargs: object) -> object:
+        nonlocal calls
+        calls += 1
+        return original(*args, **kwargs)
+
+    monkeypatch.setattr(moving, "moving_grip_kinematics", counted)
+    monkeypatch.setattr(grip_response, "moving_grip_kinematics", counted)
+    response = moving.moving_chain_response(chain, state, controls)
+    assert calls == len(chain.grips)
+    rates = np.asarray(response.twist_rates)
+    for port, actual in zip(chain.grips, response.grip_responses, strict=True):
+        root = moving._root_motion(state, port.node, rates)
+        expected = grip_response.finite_grip_response(port.grip, root, port.anchor)
+        np.testing.assert_allclose(actual.root_wrench, expected.root_wrench, atol=1e-12)
+        np.testing.assert_allclose(
+            actual.anchor_wrench, expected.anchor_wrench, atol=1e-12
+        )
+        assert actual.root_power_w == pytest.approx(expected.root_power_w, abs=1e-12)
+        assert actual.anchor_power_w == pytest.approx(
+            expected.anchor_power_w, abs=1e-12
+        )
+        assert actual.power_residual_w == pytest.approx(
+            expected.power_residual_w, abs=1e-12
+        )
 
 
 def test_moving_anchor_matches_independent_two_mass_equations_and_power() -> None:

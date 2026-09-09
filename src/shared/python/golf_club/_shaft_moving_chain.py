@@ -2,13 +2,17 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 import numpy as np
 
 from ._grip_contracts import _finite_norm, finite_array
-from ._grip_finite_response import FiniteGripResponse, finite_grip_response
-from ._grip_moving_kinematics import MaterialPointMotion, moving_grip_kinematics
+from ._grip_finite_response import FiniteGripResponse, _response_from_kinematics
+from ._grip_moving_kinematics import (
+    MaterialPointMotion,
+    MovingGripKinematics,
+    moving_grip_kinematics,
+)
 from ._shaft_chain import ChainWork
 from ._shaft_equilibrium import _check_strains
 from ._shaft_inertia import SectionKinetics
@@ -66,6 +70,7 @@ class _Assembly:
     elastic: ChainWork
     mass: np.ndarray
     known_wrench: np.ndarray
+    grip_motions: tuple[tuple[MaterialPointMotion, MovingGripKinematics], ...]
 
 
 def _kinetics(chain: InertialMovingChain, state: MovingChainState) -> SectionKinetics:
@@ -101,15 +106,17 @@ def _assemble(chain: InertialMovingChain, state: MovingChainState) -> _Assembly:
     mass = kinetics.mass.copy()
     known = kinetics.bias + elastic.residual
     zero_rates = np.zeros((chain.shaft.node_count, 6))
+    grip_motions = []
     for port in chain.grips:
         root = _root_motion(state, port.node, zero_rates)
         kinematics = moving_grip_kinematics(root, port.anchor)
+        grip_motions.append((root, kinematics))
         mapped = np.asarray(port.grip.inertance_factor) @ kinematics.root_motion_map
-        response = finite_grip_response(port.grip, root, port.anchor)
+        response = _response_from_kinematics(port.grip, root, port.anchor, kinematics)
         rows = slice(6 * port.node, 6 * (port.node + 1))
         mass[rows, rows] += mapped.T @ mapped
         known[rows] -= response.root_wrench
-    return _Assembly(kinetics, elastic, mass, known)
+    return _Assembly(kinetics, elastic, mass, known, tuple(grip_motions))
 
 
 def _solve(
@@ -156,10 +163,22 @@ def _finish(
 ) -> MovingChainResponse:
     rates, residual = solution
     grips = tuple(
-        finite_grip_response(
-            port.grip, _root_motion(state, port.node, rates), port.anchor
+        _response_from_kinematics(
+            port.grip,
+            root,
+            port.anchor,
+            replace(
+                motion,
+                # qdd = Ar*a_root + the transport/anchor terms evaluated at
+                # zero root acceleration. Poses, twists and maps are unchanged.
+                acceleration=finite_array(
+                    motion.acceleration + motion.root_motion_map @ rates[port.node],
+                    (6,),
+                    "solved grip relative acceleration",
+                ),
+            ),
         )
-        for port in chain.grips
+        for port, (root, motion) in zip(chain.grips, assembly.grip_motions, strict=True)
     )
     velocity = np.asarray(state.twists).ravel()
     applied = _applied_power(chain, state)

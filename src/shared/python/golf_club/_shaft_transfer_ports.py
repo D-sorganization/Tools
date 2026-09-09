@@ -10,7 +10,7 @@ from ._grip_contracts import finite_array
 
 
 def _matrix(value: object, name: str) -> tuple[tuple[float, ...], ...]:
-    shape = np.shape(value)
+    shape = np.asarray(value).shape
     if len(shape) != 2 or min(shape) < 1:
         raise ValueError(f"{name} must be a nonempty matrix")
     return tuple(

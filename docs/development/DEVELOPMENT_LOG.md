@@ -150,13 +150,13 @@ reachable from any live state and `abandoned` from `parked`.
 - **State:** in_progress
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5072
-- **PR:** not created
+- **PR:** https://github.com/D-sorganization/Tools/pull/5133
 - **Branch:** feat/5072-prestressed-shaft
 - **Paths:** `src/shared/python/golf_club/*shaft*`, `src/shared/python/golf_club/_beam_fem.py`, `src/shared/python/golf_club/*grip*`, `src/shared/python/golf_club/*rotating_body*`, `tests/shared/python/golf_club/test_shaft*.py`, `tests/shared/python/golf_club/test_rotating_body.py`, `tests/shared/python/golf_club/test_grip_impedance.py`, `docs/development/impact-acoustics/*`
 - **Started:** 2026-09-07
-- **Last verified:** 2026-09-09 (73 Windows and 73 Linux regression tests pass; actual mypy, root Ruff and all nine governance gates pass; publication pending)
-- **Summary:** Input checkpoint 29d8c8d2592ffb63f4eec93ed971a7def177cbd4 is published through all normal hooks, remote SHA verified; #5072 comment 5607459999 records delivery. Review child #5130 is open for the numerical implementation, preserving physical requirements on #5072. Current main b0c71779d brings three orthogonal merged changes; only the generated handoff manifest conflicts and is regenerated canonically. Merge validation passes 103 Windows tests in 10.97 s, no skips, including input/legacy/API controls and incoming Morris/UI architecture tests. Root Ruff and formatting pass (3,850 files); all nine governance gates pass. Shaft source/tests and the golf API baseline are unchanged from 29d8c8d25. Normal merge publication and protected PR review remain.
-- **Next step:** Complete main integration and review #5130, then T4 flexible contact. Preserve T3 physical/FRF qualification, acoustics, exact-pin consumers and physical/blinded synthesis.
+- **Last verified:** 2026-09-09 (published 608e85b24; base 421889407; local changes SELF; 1,167 Linux coverage tests and final 31-case typing delta pass)
+- **Summary:** Review #5130 covers the finite-rotation shaft and explicit input wire; #5072 retains physical/FRF qualification. First CI repairs reproduce and correct NumPy typing, fixture typing and scientific deadline failures through exact reuse and isolated resource ownership. Full serial golf coverage: 1,167 passed, two optional CAD skips; 58.78 s slowest retains a narrow CI margin. UpstreamDrift #9912 verifies the candidate vendor and installed wheel; final reviewed pin and protected CI remain. See CI_REPAIR_RESULTS.json and PROGRESS.md for controls, including failed runs.
+- **Next step:** Publish the verified CI repair through normal hooks for protected review #5133.
 
 ### DL-0055 · Qualified Lumped Impact Dynamics
 

@@ -21,7 +21,10 @@ def finite_array(value: object, shape: tuple[int, ...], name: str) -> np.ndarray
         raise TypeError(f"{name} must contain real numbers") from error
     if array.dtype.kind not in "iuf":
         raise TypeError(f"{name} must contain real numbers, not booleans or strings")
-    if any(
+    # A numeric ndarray has already lost any pre-construction scalar types;
+    # converting it to object cannot reveal hidden booleans. Inspect original
+    # Python sequences, where a mixed float/bool list would otherwise coerce.
+    if not isinstance(value, np.ndarray) and any(
         isinstance(item, (bool, np.bool_))
         for item in np.asarray(value, dtype=object).flat
     ):

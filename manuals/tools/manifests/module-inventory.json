@@ -159,7 +159,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "1c1d12499ca9de1a79e5aba918876f849e3d96c1b4437762ad35ea495929cad8",
+      "content_sha256_lf": "3959ba5f287d8b4720488a7ca83d991619625a8582038d355eef7bf7118dc608",
       "entry_count": 104,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
@@ -519,7 +519,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-hooks.json"
     },
     {
-      "content_sha256_lf": "f9969f69d85e5c389d3a2276b8dd04a65f1ac2d8bf48a07241ed70726babf622",
+      "content_sha256_lf": "d26322cefef70ed9375b2c1cac6a931b48ecb4f9ab13e6b0344225facbbbcd7a",
       "entry_count": 400,
       "package": "src/rate_of_closure/web/src/model",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-model.json"
@@ -639,7 +639,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-file-watcher.json"
     },
     {
-      "content_sha256_lf": "5479e8ccc07dd13587f5ced87d00175596e8ba86663b38f79545483f5a06d579",
+      "content_sha256_lf": "73f37ff28972e8928434fd82bcb623ab23c56d8d202bfa5440fb01465494c97d",
       "entry_count": 99,
       "package": "src/shared/python/golf_club",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-golf-club.json"

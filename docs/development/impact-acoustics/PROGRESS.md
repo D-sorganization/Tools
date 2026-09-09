@@ -1,3 +1,72 @@
+## PR #5133 First CI Repair (2026-09-09)
+
+Current published revision is 608e85b249e6f61238ac96abbe7dc37428629b9e;
+the following repairs are local pending commit/push and protected CI.
+All 12 errors in nine scientific files reproduce with mypy 1.13.0 and
+NumPy 2.3.5 installed. Explicit arrays, exact three-tuples and array-valued
+RK4 accumulation now pass all 63 changed production files. Earlier isolated
+mypy runs lacked NumPy; matching flags alone did not reproduce CI typing.
+The math, physical domains, refusal controls and tolerances are retained.
+Windows affected mechanics: 138 passed in 48.12 s, one JUnit-family warning.
+Morris JSON fixture uses variable_key; inferred TypeScript typing corrects the
+annotation. Type check and 38 Vitest cases pass.
+
+CI worker exits were reproduced on Linux Python 3.12.14, NumPy 2.3.5,
+SciPy 1.17.1, pytest 9.1.1 and xdist 3.8.0 with eight workers and coverage:
+four failures/33 passes, subsequent coverage database error and xdist failure.
+With OPENBLAS/OMP/MKL thread pools set to one, all 42 cases pass in 13.52 s;
+the same moving-base test takes 8.86 s, under the unchanged 60-second limit.
+This supports native thread contention as the local cause; full CI remains
+necessary. A workflow regression failed before adding the three job-scoped
+variables; all nine shard contracts then passed (1.23 s). No test is excluded.
+The full eight-worker golf run then exposed four further worker failures despite
+1,140 passes and two optional CAD skips. It was interrupted after 368.53 s when
+the controller stalled. An isolated two-element study passed at 52.84 s;
+the four-element study exceeded 60 s even serially. These are retained failures.
+
+The shared shard now runs every golf test once in a dedicated serial invocation;
+other shared tests retain configured fanout and coverage outputs remain distinct.
+Two new ownership/coverage contracts first failed; all 11 shard tests now pass.
+Exact kernel reuse removes redundant Frechet/exponential calculations and tiny
+general-purpose cross-matrix assembly. Numeric ndarray validation avoids an
+object conversion which cannot recover already-coerced scalar types; original
+Python sequences still reject hidden booleans. These changes alone did not
+resolve the four-element deadline, and their failed controls remain recorded.
+
+Moving-chain assembly now computes each grip's geometry once. After solving,
+qdd = Ar\*a_root + the zero-root-acceleration transport/anchor contribution gives
+the exact relative acceleration. The same law evaluates effort, storage and
+physical port powers; no persistent state cache or approximate derivative is used.
+The new call-budget test failed (three evaluations rather than one); axial and
+nonplanar law comparisons and existing mechanics pass, 31 Windows tests in 5.51 s.
+All 49 critical Linux coverage tests pass in 182.61 s on immutable tree dd0c310af;
+the formerly timing-out four-element midpoint study takes 41.55 s. Error ratios,
+refinement grids, branch/strain/input contracts and the 60 s deadline are unchanged.
+The full serial golf suite on that archived tree passes 1,167 tests with two
+optional CAD skips in 550.51 s, no failures or warnings. Its slowest study takes
+58.78 s, a narrow margin; protected CI remains necessary. A subsequent hook-only
+typing refusal (Any return when imported storage is skipped) is resolved with
+an explicit float return in the existing power-residual property. The production
+diff is exactly that return boundary; 31 Windows and 31 Linux coverage controls
+pass afterward, and all 64 NumPy-aware production checks plus the actual isolated
+hook pass. The golf API baseline remains unchanged. Root Ruff (3,851 files), all
+nine governance gates, 1,681-test shard ownership and the real #9916 paired-ledger
+check pass. The TypeScript/Vite production build passes with its existing large
+chunk advisory. Regenerate source inventory and handoff after this final typing
+and turnover delta, then publish normally; no physical qualification is inferred.
+
+The divergence ledger is fresh (77 rows), but diff-aware enforcement additionally
+requires a real UD-PAIR PR for theme. UpstreamDrift #9912 now has an isolated
+consumer worktree, a candidate pin and six passing new contracts after old-pin
+failures. All 24 provider contracts and clean Python-only installed-wheel checks
+pass at provider 608e85b24; pip check passes. Consumer commits b6107f8e2/c10db039d
+record the evidence. Final reviewed provider repinning remains required. Paired PR #9916 is open after normal push hooks; Tools #5133 now carries its UD-PAIR reference. Gasification checkout failed
+with Not Found before its tests; credential access remains unresolved.
+
+T4 private contact kinematics is now implemented in the separate
+Tools-impact-contact worktree (18 initial tests), superseding older no-code
+notes below. Full T4 coupling and physical/acoustic qualification remain open.
+
 # Impact and Acoustics Program Execution
 
 The user authorized completion of the full planned program, not merely its

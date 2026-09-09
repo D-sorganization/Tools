@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass, replace
-from typing import cast
 
 import numpy as np
 
@@ -117,9 +116,8 @@ def _general_generator(
     generator[:size, size:] = np.eye(size)
     generator[size:, :size] = -(scales.time_s**2) * np.linalg.solve(inertia, tangent)
     generator[size:, size:] = -scales.time_s * np.linalg.solve(inertia, transport)
-    return cast(
-        np.ndarray, finite_array(generator, generator.shape, "scaled generator")
-    )
+    result: np.ndarray = finite_array(generator, generator.shape, "scaled generator")
+    return result
 
 
 def _polynomial_residuals(

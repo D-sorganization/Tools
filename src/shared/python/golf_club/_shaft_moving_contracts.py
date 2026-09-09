@@ -86,7 +86,7 @@ class MovingChainState:
     observer_id: str
 
     def __post_init__(self) -> None:
-        shape = np.shape(self.twists)
+        shape = np.asarray(self.twists).shape
         if len(shape) != 2 or shape[0] < 1 or shape[1] != 6:
             raise ValueError("twists require one six-axis row per node")
         twists = finite_array(self.twists, shape, "body twists")

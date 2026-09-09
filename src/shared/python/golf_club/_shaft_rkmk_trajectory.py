@@ -88,12 +88,18 @@ def _step(
         )
         stages.append(_stage(problem, initial, increments, time_s))
     coordinates = sum(
-        weight * stage.chart_rate
-        for weight, stage in zip(_RK4_WEIGHTS, stages, strict=True)
+        (
+            weight * stage.chart_rate
+            for weight, stage in zip(_RK4_WEIGHTS, stages, strict=True)
+        ),
+        start=np.zeros_like(stages[0].chart_rate),
     )
     acceleration = sum(
-        weight * stage.acceleration
-        for weight, stage in zip(_RK4_WEIGHTS, stages, strict=True)
+        (
+            weight * stage.acceleration
+            for weight, stage in zip(_RK4_WEIGHTS, stages, strict=True)
+        ),
+        start=np.zeros_like(stages[0].acceleration),
     )
     final = _chart_state(
         initial,

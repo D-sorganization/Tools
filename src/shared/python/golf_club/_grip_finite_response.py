@@ -8,7 +8,11 @@ import numpy as np
 
 from ._grip_contracts import Matrix6, Vector6, factor6, vector6
 from ._grip_energy import CoordinateImpedanceResponse, coordinate_impedance
-from ._grip_moving_kinematics import MaterialPointMotion, moving_grip_kinematics
+from ._grip_moving_kinematics import (
+    MaterialPointMotion,
+    MovingGripKinematics,
+    moving_grip_kinematics,
+)
 from ._validation import require_identifier
 
 
@@ -55,7 +59,7 @@ class FiniteGripResponse:
     @property
     def power_residual_w(self) -> float:
         """Numerical closure, never counted as physical damping."""
-        return (
+        return float(
             self.root_power_w
             + self.anchor_power_w
             + self.storage.stored_energy_rate_w
@@ -75,12 +79,26 @@ def finite_grip_response(
     if not isinstance(grip, FinitePoseGrip):
         raise TypeError("grip must be FinitePoseGrip")
     motion = moving_grip_kinematics(root, anchor)
+    return _response_from_kinematics(grip, root, anchor, motion)
+
+
+def _response_from_kinematics(
+    grip: FinitePoseGrip,
+    root: MaterialPointMotion,
+    anchor: MaterialPointMotion,
+    motion: MovingGripKinematics,
+) -> FiniteGripResponse:
+    """Evaluate the common law from already validated relative kinematics.
+
+    Internal callers must supply motion from these same root/anchor states,
+    optionally adding the exact root-acceleration contribution Ar*a. All
+    effort, energy and power outputs retain their finite-value contracts.
+    """
     storage = coordinate_impedance(
-        tuple(
-            map(
-                np.asarray,
-                (grip.inertance_factor, grip.damping_factor, grip.stiffness_factor),
-            )
+        (
+            np.asarray(grip.inertance_factor),
+            np.asarray(grip.damping_factor),
+            np.asarray(grip.stiffness_factor),
         ),
         (motion.displacement, motion.velocity, motion.acceleration),
     )
@@ -94,8 +112,8 @@ def finite_grip_response(
             root_wrench,
             anchor_wrench,
             storage,
-            float(np.dot(root_wrench, root.twist)),
-            float(np.dot(anchor_wrench, anchor.twist)),
+            float(np.dot(root_wrench, np.asarray(root.twist))),
+            float(np.dot(anchor_wrench, np.asarray(anchor.twist))),
         )
     if not np.all(
         np.isfinite(

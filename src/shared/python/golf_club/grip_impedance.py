@@ -40,14 +40,15 @@ def evaluate_grip_impedance(
     if grip.frame_id != state.frame_id:
         raise ValueError("grip and state must use the same frame")
     result = _coordinate_impedance(
-        tuple(
-            map(
-                np.asarray,
-                (grip.inertance_factor, grip.damping_factor, grip.stiffness_factor),
-            )
+        (
+            np.asarray(grip.inertance_factor),
+            np.asarray(grip.damping_factor),
+            np.asarray(grip.stiffness_factor),
         ),
-        tuple(
-            map(np.asarray, (state.displacement, state.velocity, state.acceleration))
+        (
+            np.asarray(state.displacement),
+            np.asarray(state.velocity),
+            np.asarray(state.acceleration),
         ),
     )
     return GripPortResponse(

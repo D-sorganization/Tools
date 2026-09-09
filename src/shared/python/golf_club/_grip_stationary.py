@@ -35,7 +35,7 @@ def require_stationary_motion(motion: MaterialPointMotion) -> None:
     """Refuse a nonstationary boundary instead of dropping its rate terms."""
     if not isinstance(motion, MaterialPointMotion):
         raise TypeError("motion must be MaterialPointMotion")
-    if np.any(motion.twist) or np.any(motion.twist_rate):
+    if np.any(np.asarray(motion.twist)) or np.any(np.asarray(motion.twist_rate)):
         raise ValueError("stationary grip operators require zero relative twist/rate")
 
 

@@ -74,7 +74,7 @@ class ConstantGrippedModel:
         ):
             raise TypeError("expected DampedPencil and SpectrumScales")
         _require_constant_frame(self.frame)
-        size = np.shape(self.pencil.mass)[0]
+        size = np.asarray(self.pencil.mass).shape[0]
         if size % 6:
             raise ValueError("operating model requires complete six-axis nodes")
         residual = finite_array(self.scaled_residual, (size,), "scaled residual")

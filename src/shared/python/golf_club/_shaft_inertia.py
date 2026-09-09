@@ -17,8 +17,7 @@ from ._shaft_se3 import (
     _relative_maps,
     _rigid_pose,
     log_pose,
-    section_velocity_map,
-    section_velocity_map_derivative,
+    section_velocity_kinematics,
     twist_ad,
 )
 from ._shaft_spatial_element import tip_spatial_inertia
@@ -69,8 +68,9 @@ def _sample_kinetics(
     velocity: np.ndarray,
     relative_rate: np.ndarray,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    mapping = section_velocity_map(relative, sample.fraction)
-    rate = section_velocity_map_derivative(relative, sample.fraction, relative_rate)
+    mapping, rate = section_velocity_kinematics(
+        relative, sample.fraction, relative_rate
+    )
     inertia = tip_spatial_inertia(sample.body)
     motion = mapping @ velocity
     mass = mapping.T @ inertia @ mapping

@@ -26,7 +26,7 @@ def _material_chart_connection(residual: object) -> np.ndarray:
     ad(a)^T residual/2. Subtract it for the reverse conversion. This is not
     an elastic stiffness and no symmetry may be imposed away from balance.
     """
-    size = np.size(residual)
+    size = np.asarray(residual).size
     if size == 0 or size % _NODE_DOF:
         raise ValueError("residual must contain complete six-axis nodes")
     force = finite_array(residual, (size,), "chain residual")

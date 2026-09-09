@@ -13,6 +13,7 @@ from scipy.linalg import expm, expm_frechet
 from scipy.spatial.transform import Rotation
 
 from ._grip_contracts import finite_array
+from ._rotating_body_kernel import cross_matrix
 from ._validation import require_finite_float, require_rotation
 
 # A numerical chart guard, not an allowable material rotation/strain claim.
@@ -38,16 +39,18 @@ def _left_rotation_jacobian(vector: np.ndarray) -> np.ndarray:
     The upper block of Exp([[A, I], [0, 0]]) is phi_1(A). Using SciPy's
     matrix exponential avoids divisions by small angles and a dead zone.
     """
-    generator = _phi1_generator(np.cross(vector, np.eye(3)).T)
+    generator = _phi1_generator(cross_matrix(vector))
     return np.asarray(expm(generator)[:3, 3:])
 
 
 def twist_ad(value: object) -> np.ndarray:
     """Return the Lie bracket matrix for a finite linear-first twist."""
     twist = finite_array(value, (6,), "section twist")
-    angular = np.cross(twist[3:], np.eye(3)).T
-    linear = np.cross(twist[:3], np.eye(3)).T
-    return np.block([[angular, linear], [np.zeros((3, 3)), angular]])
+    angular = cross_matrix(twist[3:])
+    result = np.zeros((6, 6))
+    result[:3, :3] = result[3:, 3:] = angular
+    result[:3, 3:] = cross_matrix(twist[:3])
+    return result
 
 
 def right_jacobian(value: object) -> np.ndarray:
@@ -153,15 +156,49 @@ def section_velocity_map_derivative(
     material velocity. Matrix-exponential Frechet derivatives retain zero and
     tiny rotations; no finite differences or imposed symmetry are used.
     """
-    twist, coordinate, inverse = _velocity_inputs(relative, fraction)
+    return section_velocity_kinematics(relative, fraction, direction)[1]
+
+
+def _jacobian_pair(
+    twist: np.ndarray, direction: np.ndarray
+) -> tuple[np.ndarray, np.ndarray]:
+    """Reuse the exponential already computed by the Frechet algorithm."""
+    generator = _phi1_generator(-twist_ad(twist))
+    variation = np.zeros_like(generator)
+    variation[:6, :6] = -twist_ad(direction)
+    exponential, derivative = expm_frechet(generator, variation, compute_expm=True)
+    return exponential[:6, 6:], derivative[:6, 6:]
+
+
+def section_velocity_kinematics(
+    relative: object, fraction: object, direction: object
+) -> tuple[np.ndarray, np.ndarray]:
+    """Return Q and its directional derivative using two Frechet evaluations.
+
+    This is the same interpolation as the individual map/derivative routines.
+    Exact endpoint identities avoid matrix exponentials. All input and output
+    domains remain checked, including endpoint directions and chart limits.
+    No state cache, angle cutoff, finite difference or coefficient change occurs.
+    """
+    twist = finite_array(relative, (6,), "relative section twist")
+    _rotation_chart(twist[3:])
+    coordinate = _material_fraction(fraction)
     delta = finite_array(direction, (6,), "relative twist direction")
-    jacobian = right_jacobian(coordinate * twist)
-    derivative = coordinate * (
-        right_jacobian_derivative(coordinate * twist, coordinate * delta) @ inverse
-        - jacobian @ inverse @ right_jacobian_derivative(twist, delta) @ inverse
-    )
-    return finite_array(
-        np.hstack((-derivative, derivative)), (6, 12), "section velocity-map derivative"
+    if coordinate in (0.0, 1.0):
+        mapping = np.zeros((6, 12))
+        start = 6 * int(coordinate)
+        mapping[:, start : start + 6] = np.eye(6)
+        return mapping, np.zeros((6, 12))
+    full, full_rate = _jacobian_pair(twist, delta)
+    part, part_rate = _jacobian_pair(coordinate * twist, coordinate * delta)
+    inverse = np.linalg.solve(full, np.eye(6))
+    right = coordinate * part @ inverse
+    derivative = coordinate * (part_rate - part @ inverse @ full_rate) @ inverse
+    mapping = np.hstack((np.eye(6) - right, right))
+    rate = np.hstack((-derivative, derivative))
+    return (
+        finite_array(mapping, (6, 12), "section velocity map"),
+        finite_array(rate, (6, 12), "section velocity-map derivative"),
     )
 
 

@@ -10,7 +10,9 @@ from .types import ComponentMassProperties
 
 
 def cross_matrix(vector: np.ndarray) -> np.ndarray:
-    return np.cross(vector, np.eye(3)).T
+    """Cross-product matrix of a validated real three-vector."""
+    x, y, z = map(float, vector)
+    return np.array([[0.0, -z, y], [z, 0.0, -x], [-y, x, 0.0]])
 
 
 def rotation_hessian(left: np.ndarray, right: np.ndarray) -> np.ndarray:

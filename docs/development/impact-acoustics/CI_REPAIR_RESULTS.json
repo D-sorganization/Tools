@@ -1,0 +1,119 @@
+{
+  "tree": "33279d6a438e968a9b4176a00b0f478e1de7f768",
+  "bytes": 90378240,
+  "sha256": "a7277f764c6612ac66b44488b328a7bdb547697cf2458dbd57d97fbf2c55c6b9",
+  "windows_junit_sha256": "9b576654a70a1a90f324c9251364a0a0ef28e21a946eebe739ada5bc408aa131",
+  "windows_mechanics": {
+    "passed": 138,
+    "seconds": 48.12,
+    "warnings": 1
+  },
+  "mypy": {
+    "files": 64,
+    "mypy": "1.13.0",
+    "numpy": "2.3.5",
+    "passed": true
+  },
+  "qualification": "numerical and integration checks only; physical qualification open",
+  "performance_source": {
+    "tree": "dd0c310afbd379e9ea9c52aac245eb49f0e63846",
+    "bytes": 90388480,
+    "sha256": "fbead2f927c311458c32384324283be3849844ccf1ad30fbdc711cf7c238f26d"
+  },
+  "critical_linux_coverage": {
+    "passed": 49,
+    "seconds": 182.61,
+    "warnings": 0,
+    "slowest_seconds": 41.55,
+    "timeout_seconds": 60,
+    "workers": 0,
+    "native_threads": 1,
+    "junit_sha256": "8d0834c8523ca3da08e81d6ebe531b1a1c8400c3fbf9c163fca7caa939fd8fe2"
+  },
+  "failed_controls": [
+    {
+      "case": "full golf, eight workers and bounded native threads",
+      "passed": 1140,
+      "failed": 4,
+      "skipped": 2,
+      "seconds": 368.53,
+      "termination": "owned stalled controller interrupted"
+    },
+    {
+      "case": "serial original",
+      "result": "four-element midpoint exceeded unchanged 60 s deadline"
+    },
+    {
+      "case": "section Frechet reuse",
+      "result": "four-element midpoint exceeded unchanged 60 s deadline"
+    },
+    {
+      "case": "cross-matrix reuse",
+      "result": "four-element midpoint exceeded unchanged 60 s deadline"
+    },
+    {
+      "case": "numeric-array validation",
+      "result": "four-element midpoint exceeded unchanged 60 s deadline"
+    }
+  ],
+  "grip_reuse_windows": {
+    "passed": 31,
+    "seconds": 5.51,
+    "warnings": 0,
+    "junit_sha256": "5ad0fe27989346da3d28063c60e5112ebf353afaae80253b73f005d838bc5d0f"
+  },
+  "full_serial_linux_coverage": {
+    "passed": 1167,
+    "skipped": 2,
+    "failures": 0,
+    "warnings": 0,
+    "seconds": 550.51,
+    "slowest_seconds": 58.78,
+    "timeout_seconds": 60,
+    "workers": 0,
+    "native_threads": 1,
+    "skip_reason": "optional CAD dependencies",
+    "junit_sha256": "cc95f3c1484405541f7317dbdc80572ae15b1512b5aab605f47ee70912761686",
+    "source_tree": "dd0c310afbd379e9ea9c52aac245eb49f0e63846",
+    "limitation": "narrow slowest-test margin; protected CI confirmation required"
+  },
+  "final_typing_delta": {
+    "source": {
+      "tree": "6fd666be500517d0604a3efe29f9f68cded9b9e0",
+      "bytes": 90398720,
+      "sha256": "ecb361861b3414647879783e1db0a5d8f0086721d9560bc51f4b9828ad505bd5"
+    },
+    "production_delta": "Only explicit float return in FiniteGripResponse.power_residual_w; source diff verified against full-suite tree.",
+    "windows": {
+      "passed": 31,
+      "seconds": 16.9,
+      "warnings": 0,
+      "junit_sha256": "2f63192e8b6b003755d980274dcfc4db9fe9e33f21f5474e35bc494ecd65ffe9"
+    },
+    "linux_coverage": {
+      "passed": 31,
+      "seconds": 6.21,
+      "warnings": 0,
+      "junit_sha256": "27b035c411c3418cc92a2cb5ee7d7c2f1ba65483a0149f437694c446a772d8f6"
+    },
+    "isolated_hook_mypy": "six affected files pass after reproducing no-any-return",
+    "numpy_aware_mypy": "all 64 changed production files pass"
+  },
+  "ci_partition": {
+    "test_files": 1681,
+    "shards": 7,
+    "contracts_passed": 11,
+    "omitted_tests": 0
+  },
+  "consumer_pair": {
+    "pr": "https://github.com/D-sorganization/UpstreamDrift/pull/9916",
+    "candidate_provider": "608e85b249e6f61238ac96abbe7dc37428629b9e",
+    "final_repin": "pending reviewed provider"
+  },
+  "web": {
+    "typescript": "pass",
+    "vitest_passed": 38,
+    "production_build": "pass",
+    "build_warning": "existing chunk over 500 kB"
+  }
+}
