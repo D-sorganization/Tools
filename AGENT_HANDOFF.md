@@ -75,6 +75,13 @@ Tools is the fleet's shared engineering-tools monorepo (45+ tools: PyQt6 GUIs, F
   tools-canonical (persistent per-channel append handles, offset-tracked
   tailing). Pending downstream wave: UpstreamDrift bumps its `vendor/ud-tools`
   pin and re-points its transport copy at the vendored module.
+- Issue #3992 (single-source Catppuccin palette) in review on branch
+  `bot/issue-3992-theme-single-source`: the six hand-copied stylesheet/palette
+  sites named by the issue (function_generator, pressure_drop_calculator,
+  steam_engine_calculator, financial_calculator, asteroid_jumper, help_system)
+  now source colors from `shared.python.theme.catppuccin` (`get_stylesheet()` /
+  `CATPPUCCIN_MOCHA`). Guarded by
+  `tests/architecture/test_issue3992_no_pasted_palette.py`.
 
 ## Must-Read Architecture Pointers
 

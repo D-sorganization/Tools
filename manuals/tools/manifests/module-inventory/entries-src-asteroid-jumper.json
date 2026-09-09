@@ -584,10 +584,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 20643,
+      "bytes_lf": 20806,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2bfd377dbd07038b24708526a555e753b15b27385376c8a773424a664b022ae3",
+      "content_sha256_lf": "bdbd5cebd897ebbe8239dded8cd38dddac5366f83eed3d45e47293d524d7d4b0",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-ASTEROID-JUMPER-RENDERER-PY-3D18888E5419",
       "language": "python",
@@ -740,6 +740,11 @@
           {
             "kind": "constant",
             "name": "VIEWPORT_SCALE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_P",
             "signature": null
           }
         ],

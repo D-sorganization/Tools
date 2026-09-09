@@ -14,6 +14,7 @@ import os
 import numpy as np
 
 from shared.python.contracts import require, require_positive
+from shared.python.theme.catppuccin import CATPPUCCIN_MOCHA, get_stylesheet
 from shared.python.theme.integration import get_theme_manager
 from shared.python.theme.matplotlib_style import apply_plot_theme
 
@@ -165,7 +166,7 @@ class FunctionGeneratorWidget(QWidget):
         # Time domain tab
         time_tab = QWidget()
         time_layout_inner = QVBoxLayout(time_tab)
-        self.time_figure = Figure(figsize=(8, 5), facecolor="#1e1e2e")
+        self.time_figure = Figure(figsize=(8, 5), facecolor=CATPPUCCIN_MOCHA["base"])
         _tm = get_theme_manager()
         apply_plot_theme(self.time_figure, _tm.get_current_colors())
         _tm.themeChanged.connect(
@@ -182,7 +183,7 @@ class FunctionGeneratorWidget(QWidget):
         # Frequency domain tab
         freq_tab = QWidget()
         freq_layout_inner = QVBoxLayout(freq_tab)
-        self.freq_figure = Figure(figsize=(8, 5), facecolor="#1e1e2e")
+        self.freq_figure = Figure(figsize=(8, 5), facecolor=CATPPUCCIN_MOCHA["base"])
         _tm = get_theme_manager()
         apply_plot_theme(self.freq_figure, _tm.get_current_colors())
         _tm.themeChanged.connect(
@@ -524,23 +525,27 @@ class FunctionGeneratorWidget(QWidget):
         # Time domain plot
         self.time_figure.clear()
         ax = self.time_figure.add_subplot(111)
-        ax.set_facecolor("#313244")
-        ax.plot(signal.time, signal.values, color="#89b4fa", linewidth=1.5)
-        ax.set_xlabel("Time (s)", color="#cdd6f4")
-        ax.set_ylabel("Amplitude", color="#cdd6f4")
-        ax.set_title(f"{self.waveform_combo.currentText()}", color="#cdd6f4")
-        ax.tick_params(colors="#cdd6f4")
-        ax.grid(True, alpha=0.3, color="#585b70")
+        ax.set_facecolor(CATPPUCCIN_MOCHA["surface0"])
+        ax.plot(
+            signal.time, signal.values, color=CATPPUCCIN_MOCHA["blue"], linewidth=1.5
+        )
+        ax.set_xlabel("Time (s)", color=CATPPUCCIN_MOCHA["text"])
+        ax.set_ylabel("Amplitude", color=CATPPUCCIN_MOCHA["text"])
+        ax.set_title(
+            f"{self.waveform_combo.currentText()}", color=CATPPUCCIN_MOCHA["text"]
+        )
+        ax.tick_params(colors=CATPPUCCIN_MOCHA["text"])
+        ax.grid(True, alpha=0.3, color=CATPPUCCIN_MOCHA["surface2"])
         ax_spines = ax.spines
         for spine in ax_spines.values():
-            spine.set_color("#585b70")
+            spine.set_color(CATPPUCCIN_MOCHA["surface2"])
         self.time_figure.tight_layout()
         self.time_canvas.draw()
 
         # Frequency domain plot
         self.freq_figure.clear()
         ax2 = self.freq_figure.add_subplot(111)
-        ax2.set_facecolor("#313244")
+        ax2.set_facecolor(CATPPUCCIN_MOCHA["surface0"])
 
         # Compute FFT
         np_fft = np.fft
@@ -553,15 +558,17 @@ class FunctionGeneratorWidget(QWidget):
         fft_freq = fft_freq[pos_mask]
         fft_magnitude = np.abs(fft_vals[pos_mask]) * 2 / n
 
-        ax2.plot(fft_freq, fft_magnitude, color="#a6e3a1", linewidth=1.5)
-        ax2.set_xlabel("Frequency (Hz)", color="#cdd6f4")
-        ax2.set_ylabel("Magnitude", color="#cdd6f4")
-        ax2.set_title("Frequency Spectrum", color="#cdd6f4")
-        ax2.tick_params(colors="#cdd6f4")
-        ax2.grid(True, alpha=0.3, color="#585b70")
+        ax2.plot(
+            fft_freq, fft_magnitude, color=CATPPUCCIN_MOCHA["green"], linewidth=1.5
+        )
+        ax2.set_xlabel("Frequency (Hz)", color=CATPPUCCIN_MOCHA["text"])
+        ax2.set_ylabel("Magnitude", color=CATPPUCCIN_MOCHA["text"])
+        ax2.set_title("Frequency Spectrum", color=CATPPUCCIN_MOCHA["text"])
+        ax2.tick_params(colors=CATPPUCCIN_MOCHA["text"])
+        ax2.grid(True, alpha=0.3, color=CATPPUCCIN_MOCHA["surface2"])
         ax2_spines = ax2.spines
         for spine in ax2_spines.values():
-            spine.set_color("#585b70")
+            spine.set_color(CATPPUCCIN_MOCHA["surface2"])
 
         # Limit x-axis to meaningful frequencies
         max_freq = min(
@@ -594,70 +601,5 @@ RMS: {np.sqrt(np.mean(signal.values**2)):.4f}"""
         self.info_text.setText(info)
 
     def _apply_styling(self) -> None:
-        """Apply dark theme styling."""
-        self.setStyleSheet("""
-            QWidget {
-                background-color: #1e1e2e;
-                color: #cdd6f4;
-                font-family: 'Segoe UI', Arial, sans-serif;
-            }
-            QGroupBox {
-                border: 1px solid #45475a;
-                border-radius: 4px;
-                margin-top: 8px;
-                padding-top: 8px;
-                background-color: #313244;
-            }
-            QGroupBox::title {
-                color: #cba6f7;
-                subcontrol-origin: margin;
-                left: 10px;
-                padding: 0 5px;
-            }
-            QPushButton {
-                background-color: #89b4fa;
-                color: #1e1e2e;
-                border: none;
-                border-radius: 4px;
-                padding: 8px 16px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #b4befe;
-            }
-            QPushButton:pressed {
-                background-color: #7287fd;
-            }
-            QSpinBox, QDoubleSpinBox, QComboBox {
-                background-color: #45475a;
-                border: 1px solid #585b70;
-                border-radius: 4px;
-                padding: 4px 8px;
-                color: #cdd6f4;
-            }
-            QTextEdit {
-                background-color: #45475a;
-                border: 1px solid #585b70;
-                border-radius: 4px;
-                color: #cdd6f4;
-            }
-            QTabWidget::pane {
-                border: 1px solid #45475a;
-                border-radius: 4px;
-                background-color: #313244;
-            }
-            QTabBar::tab {
-                background-color: #45475a;
-                color: #cdd6f4;
-                padding: 8px 16px;
-                border-top-left-radius: 4px;
-                border-top-right-radius: 4px;
-            }
-            QTabBar::tab:selected {
-                background-color: #89b4fa;
-                color: #1e1e2e;
-            }
-            QSplitter::handle {
-                background-color: #585b70;
-            }
-        """)
+        """Apply the canonical Catppuccin Mocha theme (issue #3992)."""
+        self.setStyleSheet(get_stylesheet())

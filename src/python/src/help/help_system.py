@@ -34,7 +34,23 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from shared.python.theme.catppuccin import CATPPUCCIN_MOCHA
 from shared.python.theme.integration import ThemedDialogMixin
+
+# Catppuccin Mocha palette — canonical source of truth (issue #3992)
+C_BASE = CATPPUCCIN_MOCHA["base"]
+C_MANTLE = CATPPUCCIN_MOCHA["mantle"]
+C_CRUST = CATPPUCCIN_MOCHA["crust"]
+C_TEXT = CATPPUCCIN_MOCHA["text"]
+C_SUBTEXT0 = CATPPUCCIN_MOCHA["subtext0"]
+C_SURF0 = CATPPUCCIN_MOCHA["surface0"]
+C_SURF1 = CATPPUCCIN_MOCHA["surface1"]
+C_SURF2 = CATPPUCCIN_MOCHA["surface2"]
+C_BLUE = CATPPUCCIN_MOCHA["blue"]
+C_MAUVE = CATPPUCCIN_MOCHA["mauve"]
+C_PINK = CATPPUCCIN_MOCHA["pink"]
+C_SKY = CATPPUCCIN_MOCHA["sky"]
+C_OVERLAY0 = CATPPUCCIN_MOCHA["overlay0"]
 
 if TYPE_CHECKING:
     pass
@@ -203,10 +219,10 @@ def _handle_table_line(line: str, s: _MarkdownState) -> bool:
 
 
 _HEADER_MAP: list[tuple[str, str, str, str]] = [
-    ("####", "h4", "#89b4fa", "15px 0 8px 0"),
-    ("###", "h3", "#89b4fa", "18px 0 10px 0"),
-    ("##", "h2", "#cba6f7", "20px 0 12px 0"),
-    ("#", "h1", "#f5c2e7", "25px 0 15px 0"),
+    ("####", "h4", C_BLUE, "15px 0 8px 0"),
+    ("###", "h3", C_BLUE, "18px 0 10px 0"),
+    ("##", "h2", C_MAUVE, "20px 0 12px 0"),
+    ("#", "h1", C_PINK, "25px 0 15px 0"),
 ]
 
 
@@ -278,14 +294,14 @@ def _process_inline_formatting(text: str) -> str:
     # Links [text](url)
     text = re.sub(
         r"\[([^\]]+)\]\(([^)]+)\)",
-        r'<a href="\2" style="color: #89dceb;">\1</a>',
+        rf'<a href="\2" style="color: {C_SKY};">\1</a>',
         text,
     )
 
     # Inline code `code`
     text = re.sub(
         r"`([^`]+)`",
-        r'<code style="background-color: #45475a; padding: 2px 5px; '
+        rf'<code style="background-color: {C_SURF1}; padding: 2px 5px; '
         r'border-radius: 3px; font-family: Consolas, monospace;">\1</code>',
         text,
     )
@@ -340,6 +356,7 @@ class HelpDialog(ThemedDialogMixin, QDialog):
 
     def _setup_ui(self) -> None:
         """Set up the dialog UI."""
+        self.topic_list: QListWidget | None = None
         layout = QVBoxLayout(self)
         layout.setSpacing(10)
         layout.setContentsMargins(15, 15, 15, 15)
@@ -426,76 +443,76 @@ class HelpDialog(ThemedDialogMixin, QDialog):
 
     def _apply_theme(self) -> None:
         """Apply Catppuccin Mocha dark theme to the dialog."""
-        self.setStyleSheet("""
-            QDialog {
-                background-color: #1e1e2e;
-                color: #cdd6f4;
-            }
-            QLabel {
-                color: #cdd6f4;
-            }
-            QPushButton {
-                background-color: #45475a;
-                color: #cdd6f4;
-                border: 1px solid #585b70;
+        self.setStyleSheet(f"""
+            QDialog {{
+                background-color: {C_BASE};
+                color: {C_TEXT};
+            }}
+            QLabel {{
+                color: {C_TEXT};
+            }}
+            QPushButton {{
+                background-color: {C_SURF1};
+                color: {C_TEXT};
+                border: 1px solid {C_SURF2};
                 border-radius: 4px;
                 padding: 6px 12px;
-            }
-            QPushButton:hover {
-                background-color: #585b70;
-            }
-            QPushButton:pressed {
-                background-color: #313244;
-            }
-            QPushButton:disabled {
-                background-color: #313244;
-                color: #6c7086;
-            }
-            QComboBox {
-                background-color: #313244;
-                color: #cdd6f4;
-                border: 1px solid #45475a;
+            }}
+            QPushButton:hover {{
+                background-color: {C_SURF2};
+            }}
+            QPushButton:pressed {{
+                background-color: {C_SURF0};
+            }}
+            QPushButton:disabled {{
+                background-color: {C_SURF0};
+                color: {C_OVERLAY0};
+            }}
+            QComboBox {{
+                background-color: {C_SURF0};
+                color: {C_TEXT};
+                border: 1px solid {C_SURF1};
                 border-radius: 4px;
                 padding: 5px;
-            }
-            QComboBox:hover {
-                border-color: #89b4fa;
-            }
-            QComboBox::drop-down {
+            }}
+            QComboBox:hover {{
+                border-color: {C_BLUE};
+            }}
+            QComboBox::drop-down {{
                 border: none;
-            }
-            QComboBox::down-arrow {
+            }}
+            QComboBox::down-arrow {{
                 image: none;
                 border-left: 5px solid transparent;
                 border-right: 5px solid transparent;
-                border-top: 5px solid #cdd6f4;
+                border-top: 5px solid {C_TEXT};
                 margin-right: 5px;
-            }
-            QListWidget {
-                background-color: #181825;
-                color: #cdd6f4;
-                border: 1px solid #45475a;
+            }}
+            QListWidget {{
+                background-color: {C_MANTLE};
+                color: {C_TEXT};
+                border: 1px solid {C_SURF1};
                 border-radius: 4px;
-            }
-            QListWidget::item {
+            }}
+            QListWidget::item {{
                 padding: 8px;
-            }
-            QListWidget::item:selected {
-                background-color: #45475a;
-            }
-            QListWidget::item:hover {
-                background-color: #313244;
-            }
-            QTextBrowser {
-                background-color: #181825;
-                color: #cdd6f4;
-                border: 1px solid #45475a;
+            }}
+            QListWidget::item:selected {{
+                background-color: {C_SURF1};
+            }}
+            QListWidget::item:hover {{
+                background-color: {C_SURF0};
+            }}
+            QTextBrowser {{
+                background-color: {C_MANTLE};
+                color: {C_TEXT};
+                border: 1px solid {C_SURF1};
                 border-radius: 4px;
                 padding: 10px;
-            }
-            QSplitter::handle {
-                background-color: #45475a;
-            }
+            }}
+            QSplitter::handle {{
+                background-color: {C_SURF1};
+            }}
         """)
 
     def _display_content(self, title: str, content: str) -> None:
@@ -609,22 +626,22 @@ class HelpButton(QToolButton):
 
     def _apply_style(self) -> None:
         """Apply button styling."""
-        self.setStyleSheet("""
-            QToolButton {
-                background-color: #45475a;
-                color: #89b4fa;
-                border: 1px solid #585b70;
+        self.setStyleSheet(f"""
+            QToolButton {{
+                background-color: {C_SURF1};
+                color: {C_BLUE};
+                border: 1px solid {C_SURF2};
                 border-radius: 10px;
                 font-weight: bold;
                 font-size: 12px;
-            }
-            QToolButton:hover {
-                background-color: #585b70;
-                border-color: #89b4fa;
-            }
-            QToolButton:pressed {
-                background-color: #313244;
-            }
+            }}
+            QToolButton:hover {{
+                background-color: {C_SURF2};
+                border-color: {C_BLUE};
+            }}
+            QToolButton:pressed {{
+                background-color: {C_SURF0};
+            }}
         """)
 
     def _show_help(self) -> None:
@@ -682,8 +699,8 @@ class TooltipManager:
             raise TypeError(f"widget must be a QWidget, got {type(widget).__name__}")
         styled_text = f"""
             <div style="
-                background-color: #313244;
-                color: #cdd6f4;
+                background-color: {C_SURF0};
+                color: {C_TEXT};
                 padding: 8px;
                 border-radius: 4px;
                 max-width: 300px;
@@ -937,7 +954,7 @@ Part of the Tools Monorepo.
 def create_help_menu_actions(
     parent: QWidget,
     help_manager: HelpManager,
-) -> list[QAction]:
+) -> list[QAction | None]:
     """Create standard help menu actions.
 
     Args:
@@ -949,7 +966,7 @@ def create_help_menu_actions(
     """
     if not isinstance(parent, QWidget):
         raise TypeError(f"parent must be a QWidget, got {type(parent).__name__}")
-    actions: list[QAction] = []
+    actions: list[QAction | None] = []
 
     # User Manual action
     manual_action = QAction("User Manual", parent)
