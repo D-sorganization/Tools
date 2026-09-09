@@ -20,16 +20,16 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5137 · Identified Moving Reference Placements
 
-- **State:** in_progress
+- **State:** in_review
 - **Owner:** codex
 - **Issue:** #5137; consumer UpstreamDrift#9899
 - **Branch:** feat/5137-reference-placements
-- **PR:** pending
+- **PR:** #5140 (open)
 - **Paths:** src/shared/python/sidekick/lab/mocap/reference_placements.py, placement_solver.py, calibration_numerics.py; reference tests and manual inventory
 - **Started:** 2026-09-09
-- **Last verified:** 2026-09-09 (`14b35b57bc4ed44b607a21b6bc23bc7be7cd5c71` base plus working changes and #5136 OpenCV fix; 24 numerical/reference tests pass on OpenCV 4.13 and 5.0; all101 mocap/authority/API tests pass in17.03s; scoped lint/format/mypy and governance gates pass)
+- **Last verified:** 2026-09-09 (`d129737273800c8cb3c31e28c38c421f05993a95`; 24 numerical/reference tests pass on OpenCV 4.13 and 5.0; all101 mocap/authority/API tests pass in17.03s; scoped lint/format/mypy and governance gates pass)
 - **Summary:** Labelled target geometry, immutable per-camera/profile observations, connected pose initialization and joint camera/target fitting with a fixed anchor and independent held-out views; explicit unsupported/ambiguous geometry and cancellation outcomes.
-- **Next step:** Run normal commit/pre-push gates and publish the reference-placement PR.
+- **Next step:** Qualify protected CI/review and merge #5140 after numerical recovery.
 
 ### DL-#5132 · Calibration Numerical Recovery
 
