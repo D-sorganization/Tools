@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5132 · Calibration Numerical Recovery
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** #5132; consumer UpstreamDrift#9897/#9899
+- **Branch:** fix/5132-calibration-numerics
+- **PR:** pending
+- **Paths:** src/shared/python/sidekick/lab/mocap/calibration.py, extrinsics.py, calibration_numerics.py; numerical tests and inventory
+- **Started:** 2026-09-09
+- **Last verified:** 2026-09-09 (`421889407` baseline; six numerical failures reproduced, twelve repaired numerical tests pass)
+- **Summary:** Real distortion-aware pose recovery replaces silent fabricated poses and unchanged refinement results.
+- **Next step:** Finish API/manual traceability gates, clean export and protected CI; integrate qualified Tools behavior into the common-reference capture workflow.
+
 ### DL-#5101 · Scientific Import Inventory Detection
 
 - **State:** in_review

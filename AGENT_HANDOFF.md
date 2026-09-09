@@ -1,5 +1,11 @@
 # AGENT_HANDOFF — Tools (Monorepo Root)
 
+## Calibration Numerical Recovery: #5132
+
+- Isolated `fix/5132-calibration-numerics`, base421889407. Preserve the active impact and CLI scopes.
+- Removes fixed-pose failure substitution; restores inverse distortion and real pose refinement against known world targets. Twelve numerical regressions pass; all89 mocap/authority/API tests pass after the explicit helper-module inventory update.
+- Common-reference UX, unknown placements, physical accuracy and consumer qualification remain open in UpstreamDrift#9897/#9899. See `docs/development/HANDOFF.md` for current evidence and gates.
+
 ## Impact Dynamics and Acoustics: #5068
 
 - Full program active; all three parent epics remain open. Physical/perceptual validation is not inferred from numerical fixtures.

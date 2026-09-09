@@ -104,7 +104,8 @@
   "limitations": [
     "Formal human sign-off on design manual publication and production release remains pending TOOLS-HUMAN-APPROVAL-PENDING.",
     "Markerless motion-capture exemplar remains blocked on TOOLS-M0 issue #4708 and PR #4734.",
-    "Visual baselines are produced on Linux fleet runners and cannot be regenerated in local Windows environments without candidate download."
+    "Visual baselines are produced on Linux fleet runners and cannot be regenerated in local Windows environments without candidate download.",
+    "Root handoff refreshed for calibration repair #5132. Commit, check, artifact and approval evidence retained here is historical; current repair evidence and outstanding protected CI are recorded in docs/development/HANDOFF.md. Calibration remains provisional in the module inventory."
   ],
   "approvals_and_expiry": {
     "state": "unapproved-handoff-verified",
@@ -131,8 +132,8 @@
   "governed_handoff_files": {
     "AGENT_HANDOFF.md": {
       "path": "AGENT_HANDOFF.md",
-      "sha256_lf": "fceeff47a1b2c98162c96318ed8768ddc871ed28ef97b03f7383bfad540f9760",
-      "line_count": 136,
+      "sha256_lf": "1107bc272129a5711b6e28448ac416a98bb0534373817d9d5e1a0a10d70b49d2",
+      "line_count": 142,
       "max_line_budget": 150,
       "required_sections": [
         "## Impact Dynamics and Acoustics: #5068",

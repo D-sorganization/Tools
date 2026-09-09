@@ -696,6 +696,7 @@
           "tests/shared/python/golf_club/test_wedge_sweep.py",
           "tests/shared/python/model_generation/inertia/test_spatial.py",
           "tests/shared/python/rotation_transforms/test_rotation_transforms.py",
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_numerics.py",
           "tests/unit/lower_body_model/test_hip_rotation_target.py",
           "tests/unit/test_epic_2661_children_verification.py",
           "tests/video_analyzer/test_swing_score_derivation.py"
@@ -916,6 +917,7 @@
           "tests/shared/python/golf_club/test_contracts.py",
           "tests/shared/python/model_generation/inertia/test_spatial.py",
           "tests/shared/python/rotation_transforms/test_rotation_transforms.py",
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_numerics.py",
           "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py"
