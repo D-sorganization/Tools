@@ -9,63 +9,63 @@
   },
   "repository": "D-sorganization/Tools",
   "issue_url": "https://github.com/D-sorganization/Tools/issues/4730",
-  "pr_url": "https://github.com/D-sorganization/Tools/pull/5103",
+  "pr_url": "https://github.com/D-sorganization/Tools/pull/5055",
   "commit_evidence": {
-    "local_head_sha": "c0163768cd0946bd3d6705b8dbe52e733d4bf89a",
+    "local_head_sha": "a8e86970a58fd9ea4a7984bcf6dfe5000504e8f8",
     "remote_head_sha": null,
-    "reviewed_tree_sha": "61ed42d26ce57451c29753bdb460ffc09c3913ba",
+    "reviewed_tree_sha": "d63544b017b43ed2cdbcbbb8001bfc4d53f8ef69",
     "merge_sha": null
   },
   "branch_and_worktree": {
-    "branch": "fix/5101-current-main",
-    "worktree": "C:\\Users\\diete\\Repositories\\Tools-impact-inventory-integration",
+    "branch": "feat/4716-mocap-c3d-exchange",
+    "worktree": "C:\\Users\\diete\\Repositories\\Tools",
     "is_clean": false
   },
   "check_evidence": {
     "check_design_manual_governance": {
       "command": "python -m scripts.check_design_manual_governance",
       "status": "passed",
-      "timestamp": "2026-09-09T06:21:32Z"
+      "timestamp": "2026-09-09T08:57:21Z"
     },
     "build_tools_module_inventory": {
       "command": "python -m scripts.build_tools_module_inventory --check",
       "status": "passed",
-      "timestamp": "2026-09-09T06:21:32Z"
+      "timestamp": "2026-09-09T08:57:21Z"
     },
     "lint_tools_textbook_chapters": {
       "command": "python -m scripts.lint_tools_textbook_chapters",
       "status": "passed",
-      "timestamp": "2026-09-09T06:21:32Z"
+      "timestamp": "2026-09-09T08:57:21Z"
     },
     "check_tools_exemplars": {
       "command": "python -m scripts.check_tools_exemplars",
       "status": "passed",
-      "timestamp": "2026-09-09T06:21:32Z"
+      "timestamp": "2026-09-09T08:57:21Z"
     },
     "check_tools_calculation_freshness": {
       "command": "python -m scripts.check_tools_calculation_freshness --check",
       "status": "passed",
-      "timestamp": "2026-09-09T06:21:32Z"
+      "timestamp": "2026-09-09T08:57:21Z"
     },
     "check_tools_manual_qa": {
       "command": "python -m scripts.check_tools_manual_qa --check",
       "status": "passed",
-      "timestamp": "2026-09-09T06:21:32Z"
+      "timestamp": "2026-09-09T08:57:21Z"
     },
     "check_tools_publication_projection": {
       "command": "python -m scripts.check_tools_publication_projection --check",
       "status": "passed",
-      "timestamp": "2026-09-09T06:21:32Z"
+      "timestamp": "2026-09-09T08:57:21Z"
     },
     "render_tools_design_manual": {
       "command": "python -m scripts.render_tools_design_manual --check",
       "status": "passed",
-      "timestamp": "2026-09-09T06:21:32Z"
+      "timestamp": "2026-09-09T08:57:21Z"
     },
     "check_tools_handoff": {
       "command": "python -m scripts.check_tools_handoff --check",
       "status": "passed",
-      "timestamp": "2026-09-09T06:21:32Z"
+      "timestamp": "2026-09-09T08:57:21Z"
     }
   },
   "artifact_and_test_digests": {
@@ -112,7 +112,7 @@
       "TOOLS-HUMAN-APPROVAL-PENDING",
       "TOOLS-MARKERLESS-EXEMPLAR-BLOCKED"
     ],
-    "expiry_timestamp": "2026-12-08T06:21:32Z"
+    "expiry_timestamp": "2026-12-08T08:57:21Z"
   },
   "blockers": [
     {
@@ -127,12 +127,12 @@
     }
   ],
   "next_dependency": "TOOLS-M0 (#4708 / #4734) and parent epic DOC-TOOLS (#4707) closure",
-  "freshness_timestamp": "2026-09-09T06:21:32Z",
+  "freshness_timestamp": "2026-09-09T08:57:21Z",
   "governed_handoff_files": {
     "AGENT_HANDOFF.md": {
       "path": "AGENT_HANDOFF.md",
-      "sha256_lf": "9c5a6fc7969fb78eccbd1a171c7beea4579f2a540572b373f9b60fe81d7ad020",
-      "line_count": 135,
+      "sha256_lf": "fceeff47a1b2c98162c96318ed8768ddc871ed28ef97b03f7383bfad540f9760",
+      "line_count": 136,
       "max_line_budget": 150,
       "required_sections": [
         "## Impact Dynamics and Acoustics: #5068",
@@ -206,8 +206,8 @@
     },
     "src/shared/python/sidekick/lab/mocap/AGENT_HANDOFF.md": {
       "path": "src/shared/python/sidekick/lab/mocap/AGENT_HANDOFF.md",
-      "sha256_lf": "8d67890d0e5bef67140ff38499a79b4bfbc8bbd16a5d0afb7f03b5da3fd42a09",
-      "line_count": 62,
+      "sha256_lf": "80f2c040724a21ccfbf68e6f9f7f88381ac59d9a81e984c051361e2d0c407800",
+      "line_count": 64,
       "max_line_budget": 150,
       "required_sections": [
         "## Authority",

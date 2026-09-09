@@ -1,5 +1,6 @@
 """Camera-agnostic markerless-mocap contracts and deterministic interchange."""
 
+from . import c3d
 from .acquisition import (
     AcquisitionError,
     CaptureGroup,
@@ -61,6 +62,13 @@ from .extrinsics import (
 )
 from .geometry import CoordinateFrame, RigidTransform
 from .observations import Landmark3D, PixelObservation, SkeletonDefinition
+from .reconstruction import (
+    KeypointReconstruction,
+    ReconstructionConfig,
+    ReconstructionQuality,
+    reconstruct_frame_landmarks,
+    triangulate_n_views,
+)
 from .recording import (
     FrameIndexEntry,
     RecordingIntegrityReport,
@@ -81,6 +89,23 @@ from .sync import (
     SyncMonitor,
     SyncQuality,
 )
+from .temporal import (
+    ButterworthFilterConfig,
+    DeliveryTrajectoryMappingConfig,
+    GapPolicy,
+    JointAngleConstraint,
+    KinematicDerivatives,
+    SavitzkyGolayConfig,
+    SegmentLengthConstraint,
+    TemporalTrajectory,
+    adapt_to_delivery_trajectory,
+    apply_joint_angle_constraint,
+    apply_segment_length_constraint,
+    compute_kinematic_derivatives,
+    reconstruct_temporal_trajectory,
+    smooth_trajectory_butterworth,
+    smooth_trajectory_savgol,
+)
 from .timebase import ClockDomain, FrameStamp
 
 __all__ = [
@@ -88,6 +113,7 @@ __all__ = [
     "AcquisitionError",
     "ApprovalStatus",
     "Availability",
+    "ButterworthFilterConfig",
     "CalibrationDegeneracyKind",
     "CalibrationObservation",
     "CalibrationPatternKind",
@@ -102,6 +128,7 @@ __all__ = [
     "ClockKind",
     "ClockSkewEstimate",
     "CoordinateFrame",
+    "DeliveryTrajectoryMappingConfig",
     "DistortionCoefficients",
     "DistortionModel",
     "DropPolicy",
@@ -115,8 +142,12 @@ __all__ = [
     "FramePacket",
     "FrameSource",
     "FrameStamp",
+    "GapPolicy",
     "IntrinsicCalibrationResult",
+    "JointAngleConstraint",
     "KeypointMapping",
+    "KeypointReconstruction",
+    "KinematicDerivatives",
     "Landmark3D",
     "LicenseCategory",
     "LicenseEvaluationResult",
@@ -135,6 +166,8 @@ __all__ = [
     "PrerecordedFrameSource",
     "ProviderLicenseManifest",
     "QueueFullError",
+    "ReconstructionConfig",
+    "ReconstructionQuality",
     "RecordingIntegrityReport",
     "RecordingPolicy",
     "RecordingReader",
@@ -142,6 +175,8 @@ __all__ = [
     "RelocalizationResult",
     "ReprojectionResidual",
     "RigidTransform",
+    "SavitzkyGolayConfig",
+    "SegmentLengthConstraint",
     "SessionState",
     "ShutterKind",
     "SkeletonConverter",
@@ -154,8 +189,13 @@ __all__ = [
     "SyncQuality",
     "SyntheticFrameSource",
     "SyntheticPoseAdapter",
+    "TemporalTrajectory",
+    "adapt_to_delivery_trajectory",
+    "apply_joint_angle_constraint",
+    "apply_segment_length_constraint",
     "bundle_adjust_layout",
     "check_coverage_and_degeneracy",
+    "compute_kinematic_derivatives",
     "detect_camera_movement",
     "dumps_canonical",
     "estimate_pnp_pose",
@@ -164,4 +204,10 @@ __all__ = [
     "get_canonical_skeleton",
     "get_default_mediapipe_mapping",
     "load_session_manifest",
+    "reconstruct_frame_landmarks",
+    "reconstruct_temporal_trajectory",
+    "smooth_trajectory_butterworth",
+    "smooth_trajectory_savgol",
+    "triangulate_n_views",
+    "c3d",
 ]

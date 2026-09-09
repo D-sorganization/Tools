@@ -254,7 +254,6 @@
         "public-api",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -266,9 +265,9 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "mapped",
-        "validation": "unavailable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -327,11 +326,15 @@
             "signature": "trajectory: DeliveryTrajectory, index: int, *, grip_to_head_m: float"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_temporal_contracts.py"
+        ],
         "unit_mentions": [
           "s"
         ],
-        "validation_paths": []
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_temporal_contracts.py"
+        ]
       }
     }
   ],
