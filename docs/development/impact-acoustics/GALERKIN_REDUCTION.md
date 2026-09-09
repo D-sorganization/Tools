@@ -115,7 +115,8 @@ only one empty-export module; unrelated snapshot formatting was compared as
 parsed JSON and restored. Canonical inventory adds the new module and test
 links, with no source changes to other modules. All nine final governance gates
 pass, with the two existing release blockers retained. Normal publication
-remains. New source is 100 lines; every new source/test function is at most 50.
+completed at 5ea22307df76355324a9fd9d7f125e1423e5f542; remote SHA verified.
+New source is 100 lines; every new source/test function is at most 50.
 
 The unmerged branch's classifier still labels this calculation non-calculation;
 that known false negative is #5101 / PR #5103. It must be integrated and the

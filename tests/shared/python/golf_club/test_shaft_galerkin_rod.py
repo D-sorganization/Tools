@@ -26,9 +26,11 @@ def _transfer(
         - frequencies[:, None, None] ** 2 * mass
         + 1j * frequencies[:, None, None] * (gyro + damping)
     )
-    inputs = np.broadcast_to(load, (len(frequencies), len(load)))
-    motions = np.linalg.solve(dynamic, inputs[..., None])[..., 0]
-    return motions @ load
+    columns = load.reshape(len(load), -1)
+    inputs = np.broadcast_to(columns, (len(frequencies), *columns.shape))
+    motions = np.linalg.solve(dynamic, inputs)
+    response = columns.T @ motions
+    return response[:, 0, 0] if load.ndim == 1 else response
 
 
 def _record_errors(

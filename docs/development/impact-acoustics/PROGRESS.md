@@ -4,11 +4,33 @@ The user authorized completion of the full planned program, not merely its
 planning deliverables. All three parent epics remain open. Physical and
 perceptual validation cannot be inferred from numerical fixtures.
 
-Latest published shaft checkpoint: affine transient
-09d8e59cf24caccf3beca6ac050ac1113f6197a0, all normal hooks passed and remote SHA
-verified (860 Linux golf/signal/API passes). Classifier PR #5103 published
-c0163768cd0946bd3d6705b8dbe52e733d4bf89a with all normal hooks; a subsequent
-documentation-only main #5116 update is being integrated separately.
+Latest published shaft checkpoint: Galerkin reduction
+5ea22307df76355324a9fd9d7f125e1423e5f542, through all normal hooks and remote
+SHA verified. Classifier PR #5103 now publishes be38a827a51755de486c58446115f6acc8543103,
+is mergeable and awaits protected CI; its current Python 3.11 rate shard passes.
+
+## Current Bending Continuum Verification
+
+Production science and APIs are unchanged. A separate Timoshenko field-equation
+boundary solve checks bending with shear, distributed rotary inertia, a dynamic
+finite grip and tip inertia. Static force/couple/shear limits, reciprocity and
+passive cycle power pass. Four/eight/sixteen elements converge at five selected
+frequencies through 40 rad/s (6.37 Hz), with maximum fine-mesh component error
+0.832%. Joint mesh/modal comparisons retain separate truncation and continuum
+errors, including a nonmonotone total-error example. All 12 bending/axial tests
+pass in 86.44 s. All 21 Linux bending/axial/API checks pass in 294.88 s (three plugin warnings); final inventory/governance/publication remain.
+See BENDING_CONTINUUM.md for derivation, primary source, metrics and limits.
+
+The #5114 Python 3.12.14/Qt 6.11.2 isolated viewer passes; 45 mixed GUI cases
+pass with six workers (112.60 s), and three Club Tester cases pass under coverage
+with four workers (74.67 s). This does not reproduce the old CI worker failure
+or unfinished viewer case. No source fix or timeout waiver was made. The
+complete additional evidence is in issue comment 5597249096; targeted native
+archives and runtimes remain preserved outside git.
+
+All parent epics remain open. Continuous-band and loaded rotating qualification,
+moving nonlinear work, flexible contact, calibration/radiation, exact-pin
+consumers and physical/blinded final theory synthesis remain required.
 
 ## Current Galerkin Reduction Checkpoint
 
