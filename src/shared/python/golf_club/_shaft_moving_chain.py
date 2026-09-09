@@ -9,7 +9,7 @@ import numpy as np
 from ._grip_contracts import _finite_norm, finite_array
 from ._grip_finite_response import FiniteGripResponse, finite_grip_response
 from ._grip_moving_kinematics import MaterialPointMotion, moving_grip_kinematics
-from ._shaft_chain import ChainLinearization
+from ._shaft_chain import ChainWork
 from ._shaft_equilibrium import _check_strains
 from ._shaft_inertia import SectionKinetics
 from ._shaft_moving_contracts import (
@@ -63,7 +63,7 @@ class MovingChainResponse:
 @dataclass(frozen=True)
 class _Assembly:
     kinetics: SectionKinetics
-    elastic: ChainLinearization
+    elastic: ChainWork
     mass: np.ndarray
     known_wrench: np.ndarray
 
@@ -97,7 +97,7 @@ def _root_motion(
 def _assemble(chain: InertialMovingChain, state: MovingChainState) -> _Assembly:
     kinetics = _kinetics(chain, state)
     elastic_chain = chain.shaft.elastic
-    elastic = elastic_chain.linearize(state.poses)
+    elastic = elastic_chain.work(state.poses)
     mass = kinetics.mass.copy()
     known = kinetics.bias + elastic.residual
     zero_rates = np.zeros((chain.shaft.node_count, 6))

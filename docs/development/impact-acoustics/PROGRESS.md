@@ -4,7 +4,41 @@ The user authorized completion of the full planned program, not merely its
 planning deliverables. All three parent epics remain open. Physical and
 perceptual validation cannot be inferred from numerical fixtures.
 
-## Current Nonlinear Moving-Grip Assembly (2026-09-09)
+## Current Nonlinear Trajectories (2026-09-09)
+
+Moving-grip acceleration checkpoint 6c8a56d5856bb90429179654af635fac47713a19
+is published through every normal commit/push hook, with remote SHA verified and
+worktree clean at publication. Issue #5072 comment 5604709013 records that result.
+
+The new candidate advances proper poses with explicit Lie midpoint and integrates
+applied work, grip-on-anchor work and dissipation separately. It checks a complete
+representable grid and 2N+1 evaluation budget before any history call, reuses
+current nonlinear acceleration, and refuses partial histories/domain failures.
+Missing-module RED precedes implementation. The independent axial matrix
+exponential/work study initially exposes a coarse energy-error sign crossing;
+32/64/128 refinement passes unchanged accuracy/rate limits. All 23 controls pass
+in 30.46 s. The nonplanar quaternion reference converges, but 32 steps miss its
+1e-4 accuracy target. A 128/256/512 run hits the unchanged 60 s Windows test limit;
+limiting BLAS/OMP/MKL to one thread passes all five cases in 34.14 s, with the
+expensive reference/refinement test taking 29.19 s. No time or error limit changed.
+
+An independent work-only path RED exposes unnecessary curvature calculation.
+Shared section/chain force assembly now preserves exact force/energy/rate parity
+and retains the original full-tangent pathway. All 105 work, section/chain/load
+and moving acceleration controls pass in 15.89 s; actual mypy passes nine Python
+files. Existing parsed public API data is unchanged, with two private empty-export
+modules added. See NONLINEAR_TRAJECTORIES.md for derivation, assumptions, results
+and remaining full-program requirements. The final optimized axial/API Windows run passes 32 tests in 16.12 s.
+Full Linux golf/signal/API passes 1,018 tests, with two optional CAD skips and
+three absent-plugin warnings, in 122.27 s. Scientific tree
+a4027d37b2b3b92b3f6a25deac860503c705ff5d is archived as 60,815,360 bytes,
+SHA256 a377fcf07d90bf04ac076acc6bfe9fc70266911f41aab74c68416d4a120752bf;
+log: /home/dieterolson/.cache/codex-impact/trajectory-a4027d37b/scientific.log.
+Repository Ruff passes 3,824 formatted files; all nine final governance gates
+pass after canonical inventory regeneration. Normal publication remains.
+Lease renewed through 2026-09-09T18:05:21Z. The complete program remains open.
+
+## Previous Nonlinear Moving-Grip Assembly (2026-09-09)
 
 Published base d582b103bb1fdf6b685b15daa2369cf0648f94f3 includes the frequency-band
 implementation and main 0f2dfe3fd integration, with every normal hook passing and

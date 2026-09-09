@@ -4,7 +4,7 @@
 
 `impact_mobility.py`: detached tensor reference, T1 PR #5077 merged at `f72544613`; not a flexible/acoustic solver.
 T2 #5071 adds event-resolved integration, preload states and all four passive loss channels; v1 report fields retain their meanings.
-T3 #5072 is published through d582b103b with all normal hooks and remote verification. New inertial nonlinear acceleration supports prescribed moving grips, consistent section/head inertia and both energy ports. 91 combined Windows tests and actual mypy on nine files pass; final Linux golf/signal/API passes 988 with two CAD skips. Ruff and all nine governance gates pass. Normal publication remains. Actual trajectories, joint convergence, full/reduced bands, contact/radiation and physical/blinded evidence remain. See NONLINEAR_MOVING_CHAIN.md and PROGRESS.md.
+T3 #5072 publishes nonlinear acceleration at 6c8a56d58 through all normal hooks, remote verified. New proper-pose midpoint trajectories retain both work ports and strict budgets. Independent axial and nonplanar refinement pass unchanged targets. Work-only force/energy assembly passes 105 controls; actual mypy passes nine files. Final Linux science passes 1,018 with two CAD skips; Ruff and all nine gates pass. Normal publication remains. See NONLINEAR_TRAJECTORIES.md and PROGRESS.md; joint convergence, full/reduced bands, contact/radiation and physical/blinded evidence remain.
 
 > Update this file in every implementation commit that changes this package.
 > Last updated: 2026-09-09

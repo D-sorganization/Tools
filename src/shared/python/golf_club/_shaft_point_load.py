@@ -72,6 +72,10 @@ class SpatialPointLoad:
             finite_array(np.column_stack(columns), (6, 6), "point-load tangent"),
         )
 
+    def wrench(self, pose: object) -> np.ndarray:
+        """Return fresh physical material force/moment without load curvature."""
+        return self._local_load(pose)[2]
+
     def power(self, pose: object, body_twist: object) -> float:
         """Return instantaneous external power [W] for a local material twist.
 

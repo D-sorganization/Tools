@@ -1631,10 +1631,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 5800,
+      "bytes_lf": 6936,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "453a25f1ebcddd871203ba9c5c636637b9167677b3892fc63e270f9429a9fb53",
+      "content_sha256_lf": "9139c35096b64e7d10ef52cb0e62cfa3faa5aee5b7c434c13419e831db518ea1",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-CHAIN-PY-E5C1779B3243",
       "language": "python",
@@ -2644,10 +2644,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 8820,
+      "bytes_lf": 8797,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "19ad2f7c212c8d7ecccfeff0c097711ae4339d8c52f5702fa5464213fd0a863c",
+      "content_sha256_lf": "c227f952752733447ab85553c37021f206a319e3efce8622468e3337ab27a2e8",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-MOVING-CHAIN-PY-85DE7DE33669",
       "language": "python",
@@ -2659,7 +2659,6 @@
         "downstream-consumer-risk",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -2671,7 +2670,7 @@
         "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "unavailable"
       },
@@ -2685,7 +2684,10 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [],
-        "test_paths": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_trajectory_geometry.py",
+          "tests/shared/python/golf_club/test_shaft_work_path.py"
+        ],
         "unit_mentions": [
           "g"
         ],
@@ -2709,7 +2711,6 @@
         "downstream-consumer-risk",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -2721,7 +2722,7 @@
         "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "unavailable"
       },
@@ -2735,7 +2736,9 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [],
-        "test_paths": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_trajectory_geometry.py"
+        ],
         "unit_mentions": [
           "m/s",
           "rad/s"
@@ -2745,10 +2748,58 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 3862,
+      "bytes_lf": 6390,
+      "classification": "calculation",
+      "classification_basis": "path-marker:trajectory",
+      "content_sha256_lf": "412a71e76d05c3efa3b3b28b40d31ff1f40d013c2df7c2670b37fe810e5592c7",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-MOVING-TRAJECTORY-PY-F0202F7423C3",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_moving_trajectory.py",
+      "purpose": "Explicit Lie midpoint shaft trajectories with separate inertial work ports.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 4036,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "1bafd16ae7ed375467cd33ea17a729e59809544efa9734e03d33f2c004718288",
+      "content_sha256_lf": "2555f8eadb9376a960025ed101bea68d4d9da2c9e1cc7a22db7a6d861f40e1f6",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-POINT-LOAD-PY-0A6FE8F00F14",
       "language": "python",
@@ -2919,10 +2970,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 6256,
+      "bytes_lf": 6883,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "c2ef4d974513d8f313c1ae88793aef92cb113158b60df59f418cb4723b44bf89",
+      "content_sha256_lf": "0fcb4e5884a08a5a32658392e307d8ec8d1cd84ed4ae7a08be0c6d8aad76f767",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-SECTION-PY-74B15AB54A0D",
       "language": "python",
@@ -3114,6 +3165,54 @@
         "unit_mentions": [
           "s"
         ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3988,
+      "classification": "calculation",
+      "classification_basis": "path-marker:trajectory",
+      "content_sha256_lf": "a47ba5781831b93513b0b6bdb74ac711abfea3b527237e870ef83f3589278179",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-TRAJECTORY-CONTRACTS-PY-C7FE182C9D91",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_trajectory_contracts.py",
+      "purpose": "Bounded prescribed-anchor problems for inertial shaft time integration.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
         "validation_paths": []
       }
     },

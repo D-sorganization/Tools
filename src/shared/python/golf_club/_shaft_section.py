@@ -56,7 +56,15 @@ def _chart_correction(gradient: np.ndarray, direction: np.ndarray) -> np.ndarray
 
 
 @dataclass(frozen=True)
-class SectionLinearization:
+class SectionWork:
+    """Fresh elastic energy and material virtual work, without any curvature."""
+
+    energy_j: float
+    gradient: np.ndarray
+
+
+@dataclass(frozen=True)
+class SectionLinearization(SectionWork):
     """Fresh energy derivatives at q=0 for H_i(q)=H_i(0) Exp(q_i).
 
     Gradient is conjugate to nodal local translations [m] and rotations [rad].
@@ -64,8 +72,6 @@ class SectionLinearization:
     Jacobian. Material tangent is retained separately for geometric-term audits.
     """
 
-    energy_j: float
-    gradient: np.ndarray
     tangent: np.ndarray
     material_tangent: np.ndarray
 
@@ -134,10 +140,21 @@ class SectionElement:
         prestress terms are used. This is an internal elastic tangent only;
         external-load and kinetic derivatives remain separate responsibilities.
         """
+        result = self._evaluate(left, right, True)
+        assert isinstance(result, SectionLinearization)
+        return result
+
+    def work(self, left: object, right: object) -> SectionWork:
+        """Reuse the exact energy gradient without computing unused Hessians."""
+        return self._evaluate(left, right, False)
+
+    def _evaluate(self, left: object, right: object, curvature: bool) -> SectionWork:
         relative = self._relative(left, right)
         energy, resultant = self._constitutive(relative)
         mapping, inverse_left, inverse_right = _relative_maps(relative)
-        gradient = mapping.T @ resultant
+        gradient = finite_array(mapping.T @ resultant, (12,), "section gradient")
+        if not curvature:
+            return SectionWork(energy, gradient)
         material = mapping.T @ np.asarray(self.stiffness) @ mapping / self.length_m
         geometric = np.column_stack(
             [
@@ -151,7 +168,7 @@ class SectionElement:
         )
         return SectionLinearization(
             energy,
-            finite_array(gradient, (12,), "section gradient"),
+            gradient,
             finite_array(material + geometric, (12, 12), "section tangent"),
             finite_array(material, (12, 12), "material tangent"),
         )

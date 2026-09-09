@@ -13,7 +13,7 @@ import numpy as np
 from ._grip_contracts import _node_index, finite_array
 from ._shaft_point_load import SpatialPointLoad
 from ._shaft_se3 import _rigid_pose, twist_ad
-from ._shaft_section import SectionElement
+from ._shaft_section import SectionElement, SectionLinearization
 from ._validation import require_finite_float
 
 _NODE_DOF = 6
@@ -54,6 +54,14 @@ class IndexedPointLoad:
         object.__setattr__(self, "node", _node_index(self.node))
         if not isinstance(self.load, SpatialPointLoad):
             raise TypeError("load must be a SpatialPointLoad")
+
+
+@dataclass(frozen=True)
+class ChainWork:
+    """Fresh full-node material work and elastic energy, without a tangent."""
+
+    elastic_energy_j: float
+    residual: np.ndarray
 
 
 @dataclass(frozen=True)
@@ -111,29 +119,53 @@ class SectionChain:
         residual away from equilibrium is a different object; do not substitute
         it silently when selecting a nonlinear solution method.
         """
+        result = self._assemble(poses, True)
+        assert isinstance(result, ChainLinearization)
+        return result
+
+    def work(self, poses: object) -> ChainWork:
+        """Reuse full physical material work without unneeded force derivatives."""
+        result = self._assemble(poses, False)
+        assert isinstance(result, ChainWork)
+        return result
+
+    def _assemble(
+        self, poses: object, curvature: bool
+    ) -> ChainWork | ChainLinearization:
         current = finite_array(poses, (self.node_count, 4, 4), "chain poses")
         for pose in current:
             _rigid_pose(pose)
         size = _NODE_DOF * self.node_count
-        residual, tangent = np.zeros(size), np.zeros((size, size))
+        residual = np.zeros(size)
+        tangent = np.zeros((size, size)) if curvature else None
         elastic, potential = 0.0, 0.0
         for index, section in enumerate(self.sections):
-            response = section.linearize(current[index], current[index + 1])
+            evaluate = section.linearize if curvature else section.work
+            response = evaluate(current[index], current[index + 1])
             rows = slice(_NODE_DOF * index, _NODE_DOF * (index + 2))
             residual[rows] += response.gradient
-            tangent[rows, rows] += response.tangent
+            if tangent is not None:
+                assert isinstance(response, SectionLinearization)
+                tangent[rows, rows] += response.tangent
             elastic += response.energy_j
         for item in self.loads:
             point_load = item.load
-            load_response = point_load.linearize(current[item.node])
             rows = slice(_NODE_DOF * item.node, _NODE_DOF * (item.node + 1))
-            residual[rows] -= load_response.wrench
-            tangent[rows, rows] -= load_response.tangent
-            potential += point_load.force_potential(current[item.node])
+            if tangent is None:
+                residual[rows] -= point_load.wrench(current[item.node])
+            else:
+                load_response = point_load.linearize(current[item.node])
+                residual[rows] -= load_response.wrench
+                tangent[rows, rows] -= load_response.tangent
+                potential += point_load.force_potential(current[item.node])
+        energy = float(require_finite_float(elastic, "chain elastic energy"))
+        residual = finite_array(residual, (size,), "chain residual")
+        if tangent is None:
+            return ChainWork(energy, residual)
         return ChainLinearization(
-            float(require_finite_float(elastic, "chain elastic energy")),
+            energy,
             float(require_finite_float(potential, "chain force potential")),
-            finite_array(residual, (size,), "chain residual"),
+            residual,
             finite_array(tangent, (size, size), "chain tangent"),
         )
 

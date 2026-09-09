@@ -131,13 +131,14 @@ Zero-spin and loaded 3 rad/s corotation also agree between rotating and inertial
 assemblies. The exact-source Linux run passes 988 golf/signal/API tests in
 87.28 s, with two optional CAD skips and three absent-plugin warnings. Repository
 Ruff passes (3,819 formatted files), as do all nine final governance gates after
-canonical inventory regeneration. Normal publication remains; trajectory
-integration remains unqualified.
+canonical inventory regeneration. Published as 6c8a56d58 through all normal hooks,
+with remote SHA verified. NONLINEAR_TRAJECTORIES.md now describes the separate
+time integrator and its numerical qualification; physical validation remains open.
 
 ## Remaining T3 and downstream work
 
-Implement and qualify actual moving-anchor trajectories with proper-pose
-updates, bounded work, original material domains and joint time/mesh convergence.
+Moving-anchor proper-pose trajectories and bounded work are now implemented and
+tested as described in NONLINEAR_TRAJECTORIES.md. Complete joint time/mesh convergence.
 Complete rotating/prestressed controls and full/reduced continuous-band port
 error, including absolute error near antiresonances. Identify/version physical
 parameters before equipment claims. Flexible impact, contact/event/energy

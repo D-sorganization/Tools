@@ -154,9 +154,9 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/5072-prestressed-shaft
 - **Paths:** `src/shared/python/golf_club/*shaft*`, `src/shared/python/golf_club/_beam_fem.py`, `src/shared/python/golf_club/*grip*`, `src/shared/python/golf_club/*rotating_body*`, `tests/shared/python/golf_club/test_shaft*.py`, `tests/shared/python/golf_club/test_rotating_body.py`, `tests/shared/python/golf_club/test_grip_impedance.py`, `docs/development/impact-acoustics/*`
 - **Started:** 2026-09-07
-- **Last verified:** 2026-09-09 (91 combined Windows moving/frequency tests pass in 7.49 s; actual mypy passes nine Python files; final Linux run 988 passes in 87.28 s with two CAD skips and three absent-plugin warnings; Ruff and nine governance gates pass)
-- **Summary:** Published base d582b103b includes frequency bands and current mocap main. New private inertial moving-chain acceleration retains finite geometry, section/head inertia, moving-grip inertance and both work ports. Independent momentum/energy controls pass; a tiny-force corrupted-solve RED is repaired by sharing the existing hypot norm. Existing API data is unchanged.
-- **Next step:** Complete normal publication, then actual moving trajectories, joint convergence and full/reduced bands before flexible contact/radiation/consumer integration and physical/blinded final synthesis. See NONLINEAR_MOVING_CHAIN.md and PROGRESS.md.
+- **Last verified:** 2026-09-09 (published acceleration 6c8a56d58; new trajectory axial controls 23 pass, nonplanar/refusal controls five pass; work/full-tangent parity and moving controls 105 pass; actual mypy nine files; final Linux 1,018 passes/2 CAD skips/3 plugin warnings in 122.27 s; root Ruff and nine gates pass)
+- **Summary:** Bounded proper-pose nonlinear trajectories integrate both work ports with unchanged energy defects. Independent axial and quaternion-reference refinement pass unchanged accuracy targets. Shared work-only assembly removes redundant curvature without altering force/energy or the full-tangent pathway.
+- **Next step:** Complete normal publication, then joint time/mesh/rotating convergence, full/reduced bands, flexible impact, acoustic calibration/radiation, consumers and physical/blinded synthesis. See NONLINEAR_TRAJECTORIES.md and PROGRESS.md.
 
 ### DL-0055 · Qualified Lumped Impact Dynamics
 
