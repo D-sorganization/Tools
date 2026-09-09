@@ -161,10 +161,11 @@ def _project_world_point(
     cy = r10 * wx + r11 * wy + r12 * wz + ty
     cz = r20 * wx + r21 * wy + r22 * wz + tz
 
-    return intrinsics.project_point((cx, cy, cz))
+    proj = intrinsics.project_point((cx, cy, cz))
+    return (float(proj[0]), float(proj[1]))
 
 
-def test_triangulate_n_views_exact_recovery():
+def test_triangulate_n_views_exact_recovery() -> None:
     layout, intrinsics = _setup_4_camera_rig()
     pt_true = (0.2, 1.1, -0.1)
 
@@ -205,7 +206,7 @@ def test_triangulate_n_views_exact_recovery():
     assert result.landmark.availability is Availability.DERIVED
 
 
-def test_triangulate_n_views_outlier_rejection():
+def test_triangulate_n_views_outlier_rejection() -> None:
     layout, intrinsics = _setup_4_camera_rig()
     pt_true = (0.0, 1.0, 0.0)
 
@@ -269,7 +270,7 @@ def test_triangulate_n_views_outlier_rejection():
     assert pytest.approx(pt_true[2], abs=1e-2) == z
 
 
-def test_triangulate_n_views_minimum_views_fail_closed():
+def test_triangulate_n_views_minimum_views_fail_closed() -> None:
     layout, intrinsics = _setup_4_camera_rig()
     pt_true = (0.0, 1.0, 0.0)
 
@@ -302,7 +303,7 @@ def test_triangulate_n_views_minimum_views_fail_closed():
     assert len(result.inlier_camera_ids) == 0
 
 
-def test_reconstruct_frame_landmarks_multiple_keypoints():
+def test_reconstruct_frame_landmarks_multiple_keypoints() -> None:
     layout, intrinsics = _setup_4_camera_rig()
     points = {
         "nose": (0.0, 1.7, 0.0),

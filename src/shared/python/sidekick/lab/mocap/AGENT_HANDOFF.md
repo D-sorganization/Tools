@@ -16,26 +16,30 @@ Tools owns the MIT vendor-neutral markerless-mocap contracts and reference algor
 - #4714 / TOOLS-M4: intrinsic calibration (merged in #5064).
 - #4721 / TOOLS-M5: extrinsic calibration (merged in #5066).
 - #4715 / TOOLS-M6: pose backend adapters (merged in #5076).
-- #4724 / TOOLS-M7: association and N-view reconstruction (active PR).
-- #4726 / TOOLS-M8 and #4716 / TOOLS-M9 remain queued on this delivery.
+- #4724 / TOOLS-M7: association and N-view reconstruction (merged in #5111).
+- #4726 / TOOLS-M8: temporal reconstruction and biomechanical mapping (active PR).
+- #4716 / TOOLS-M9 remains queued on this delivery.
 
 ## Current branch
 
-- Branch: `feat/4724-mocap-reconstruction`
-- Base: `origin/main` at `902328ad8`
+- Branch: `feat/4726-mocap-temporal-mapping`
+- Base: `origin/main` at `f9a5d736e`
 - Worktree: `C:\Users\diete\Repositories\Tools`
 - Pull request: Pending creation
 
 ## Delivered in this slice
 
-- Subepic #4724 (TOOLS-M7): Association and N-view reconstruction.
-- `sidekick.lab.mocap.reconstruction` defines:
-  - `ReconstructionQuality`: categorical qualification floor (`QUALIFIED`, `DEGRADED`, `UNQUALIFIED`).
-  - `ReconstructionConfig`: parameterization for minimum camera views, reprojection gating, and outlier rejection.
-  - `KeypointReconstruction`: structured result holding `Landmark3D`, per-camera reprojection errors, inliers, and outliers.
-  - `triangulate_n_views`: confidence-weighted DLT multi-view triangulation with RANSAC subset consensus and spatial covariance estimation ($J^T W J)^{-1}$.
-  - `reconstruct_frame_landmarks`: frame-level multi-keypoint 3-D reconstruction.
-- Contract test suites in `tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py`.
+- Subepic #4726 (TOOLS-M8): Temporal reconstruction and biomechanical mapping.
+- `sidekick.lab.mocap.temporal` defines:
+  - `GapPolicy`: policy enum (`REJECT`, `LINEAR_INTERPOLATE`, `HOLD_PREVIOUS`, `DROP`).
+  - `ButterworthFilter`: zero-phase forward-backward IIR Butterworth low-pass filter.
+  - `SavitzkyGolayFilter`: polynomial least-squares convolution filter for smoothing and derivative estimation.
+  - `fill_trajectory_gaps`: gap handling with length-bounded interpolation and explicit `GapPolicy`.
+  - `compute_kinematic_derivatives`: numerical velocity and acceleration derivation with covariance propagation.
+  - `apply_segment_length_constraint`: bone-length invariance enforcement preserving anatomical rigidity.
+  - `apply_joint_angle_constraint`: physiological range-of-motion bounding for hinge and spherical joints.
+  - `landmarks_to_delivery_trajectory`: canonical adapter mapping filtered landmark streams to `DeliveryTrajectory` (`swing_sim.delivery_trajectory/1`).
+- Contract test suites in `tests/shared/python/sidekick/lab/mocap/test_temporal_contracts.py`.
 
 ## Required gates
 

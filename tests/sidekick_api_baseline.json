@@ -8348,6 +8348,7 @@
       "AcquisitionError",
       "ApprovalStatus",
       "Availability",
+      "ButterworthFilterConfig",
       "CalibrationDegeneracyKind",
       "CalibrationObservation",
       "CalibrationPatternKind",
@@ -8362,6 +8363,7 @@
       "ClockKind",
       "ClockSkewEstimate",
       "CoordinateFrame",
+      "DeliveryTrajectoryMappingConfig",
       "DistortionCoefficients",
       "DistortionModel",
       "DropPolicy",
@@ -8375,9 +8377,12 @@
       "FramePacket",
       "FrameSource",
       "FrameStamp",
+      "GapPolicy",
       "IntrinsicCalibrationResult",
+      "JointAngleConstraint",
       "KeypointMapping",
       "KeypointReconstruction",
+      "KinematicDerivatives",
       "Landmark3D",
       "LicenseCategory",
       "LicenseEvaluationResult",
@@ -8405,6 +8410,8 @@
       "RelocalizationResult",
       "ReprojectionResidual",
       "RigidTransform",
+      "SavitzkyGolayConfig",
+      "SegmentLengthConstraint",
       "SessionState",
       "ShutterKind",
       "SkeletonConverter",
@@ -8417,8 +8424,13 @@
       "SyncQuality",
       "SyntheticFrameSource",
       "SyntheticPoseAdapter",
+      "TemporalTrajectory",
+      "adapt_to_delivery_trajectory",
+      "apply_joint_angle_constraint",
+      "apply_segment_length_constraint",
       "bundle_adjust_layout",
       "check_coverage_and_degeneracy",
+      "compute_kinematic_derivatives",
       "detect_camera_movement",
       "dumps_canonical",
       "estimate_pnp_pose",
@@ -8428,6 +8440,9 @@
       "get_default_mediapipe_mapping",
       "load_session_manifest",
       "reconstruct_frame_landmarks",
+      "reconstruct_temporal_trajectory",
+      "smooth_trajectory_butterworth",
+      "smooth_trajectory_savgol",
       "triangulate_n_views"
     ],
     "symbols": {
@@ -8452,6 +8467,13 @@
         "type": "class",
         "info": {
           "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "ButterworthFilterConfig": {
+        "type": "class",
+        "info": {
+          "bases": [],
           "methods": {}
         }
       },
@@ -8783,6 +8805,13 @@
               "returns": "CoordinateFrame"
             }
           }
+        }
+      },
+      "DeliveryTrajectoryMappingConfig": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
         }
       },
       "DistortionCoefficients": {
@@ -9191,6 +9220,13 @@
           }
         }
       },
+      "GapPolicy": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
       "IntrinsicCalibrationResult": {
         "type": "class",
         "info": {
@@ -9210,6 +9246,13 @@
           }
         }
       },
+      "JointAngleConstraint": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
       "KeypointMapping": {
         "type": "class",
         "info": {
@@ -9218,6 +9261,13 @@
         }
       },
       "KeypointReconstruction": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "KinematicDerivatives": {
         "type": "class",
         "info": {
           "bases": [],
@@ -9956,6 +10006,20 @@
           }
         }
       },
+      "SavitzkyGolayConfig": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "SegmentLengthConstraint": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
       "SessionState": {
         "type": "class",
         "info": {
@@ -10419,6 +10483,109 @@
           }
         }
       },
+      "TemporalTrajectory": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "adapt_to_delivery_trajectory": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "butt_trajectory",
+              "annotation": "TemporalTrajectory",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "shaft_guide_trajectory",
+              "annotation": "TemporalTrajectory",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "config",
+              "annotation": "DeliveryTrajectoryMappingConfig",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "DeliveryTrajectory"
+        }
+      },
+      "apply_joint_angle_constraint": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "constraint",
+              "annotation": "JointAngleConstraint",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "proximal_pos",
+              "annotation": "Vec3",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "joint_pos",
+              "annotation": "Vec3",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "distal_pos",
+              "annotation": "Vec3",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "tuple[bool, float]"
+        }
+      },
+      "apply_segment_length_constraint": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "constraint",
+              "annotation": "SegmentLengthConstraint",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "proximal_pos",
+              "annotation": "Vec3",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "distal_pos",
+              "annotation": "Vec3",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "proximal_weight",
+              "annotation": "float",
+              "default": "0.5",
+              "kind": "arg"
+            },
+            {
+              "name": "distal_weight",
+              "annotation": "float",
+              "default": "0.5",
+              "kind": "arg"
+            }
+          ],
+          "returns": "tuple[Vec3, Vec3]"
+        }
+      },
       "bundle_adjust_layout": {
         "type": "function",
         "signature": {
@@ -10481,6 +10648,20 @@
             }
           ],
           "returns": "tuple[float, tuple[CalibrationDegeneracyKind, ...]]"
+        }
+      },
+      "compute_kinematic_derivatives": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "trajectory",
+              "annotation": "TemporalTrajectory",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "KinematicDerivatives"
         }
       },
       "detect_camera_movement": {
@@ -10708,6 +10889,72 @@
             }
           ],
           "returns": "tuple[KeypointReconstruction, ...]"
+        }
+      },
+      "reconstruct_temporal_trajectory": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "landmarks",
+              "annotation": "Sequence[Landmark3D]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "expected_sample_rate_hz",
+              "annotation": "float",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "gap_policy",
+              "annotation": "GapPolicy | None",
+              "default": "None",
+              "kind": "arg"
+            }
+          ],
+          "returns": "TemporalTrajectory"
+        }
+      },
+      "smooth_trajectory_butterworth": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "trajectory",
+              "annotation": "TemporalTrajectory",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "config",
+              "annotation": "ButterworthFilterConfig | None",
+              "default": "None",
+              "kind": "arg"
+            }
+          ],
+          "returns": "TemporalTrajectory"
+        }
+      },
+      "smooth_trajectory_savgol": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "trajectory",
+              "annotation": "TemporalTrajectory",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "config",
+              "annotation": "SavitzkyGolayConfig | None",
+              "default": "None",
+              "kind": "arg"
+            }
+          ],
+          "returns": "TemporalTrajectory"
         }
       },
       "triangulate_n_views": {
@@ -11766,6 +12013,10 @@
         }
       }
     }
+  },
+  "lab/mocap/temporal.py": {
+    "__all__": [],
+    "symbols": {}
   },
   "lab/mocap/timebase.py": {
     "__all__": [],

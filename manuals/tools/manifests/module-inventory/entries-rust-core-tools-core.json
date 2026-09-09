@@ -2730,6 +2730,7 @@
           "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_temporal_contracts.py",
           "tests/shared/python/signal_toolkit/test_series.py",
           "tests/shared/python/test_safe_eval.py",
           "tests/shared/python/utils/test_unit_constants.py",
@@ -2753,6 +2754,7 @@
           "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_temporal_contracts.py",
           "tests/tools/test_scientific_auditor.py",
           "tests/vessel_drafter/test_contracts_unified.py"
         ]
@@ -3346,6 +3348,7 @@
           "tests/shared/python/data_processing/test_processor.py",
           "tests/shared/python/plot_engine/test_matplotlib_renderer.py",
           "tests/shared/python/plot_engine/test_plotly_converter.py",
+          "tests/shared/python/sidekick/lab/mocap/test_temporal_contracts.py",
           "tests/shared/python/signal_toolkit/test_adaptive_filter.py",
           "tests/shared/python/signal_toolkit/test_calculus.py",
           "tests/shared/python/signal_toolkit/test_generators.py",
@@ -3373,6 +3376,7 @@
           "tests/heavy_integration/test_tools_contracts.py",
           "tests/shared/python/ai/test_adapter_contract.py",
           "tests/shared/python/data_processing/test_data_processing_contract.py",
+          "tests/shared/python/sidekick/lab/mocap/test_temporal_contracts.py",
           "tests/unit/lower_body_model/test_public_api_contract.py"
         ]
       }

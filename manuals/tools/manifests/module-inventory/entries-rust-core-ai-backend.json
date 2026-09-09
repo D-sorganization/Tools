@@ -291,6 +291,7 @@
           "tests/shared/python/launch_monitor/test_treatment.py",
           "tests/shared/python/plotting/test_identity_export.py",
           "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_temporal_contracts.py",
           "tests/shared/python/theme/test_zoom.py",
           "tests/shared/python/utils/test_launcher_factory.py",
           "tests/test_anthropometry_parity.py",
@@ -333,6 +334,7 @@
           "tests/rate_of_closure/test_morris_authority_contracts.py",
           "tests/rate_of_closure/test_morris_ui_contract.py",
           "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_temporal_contracts.py",
           "tests/test_validation.py"
         ]
       }

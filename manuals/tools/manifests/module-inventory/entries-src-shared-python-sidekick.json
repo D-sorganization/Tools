@@ -4254,10 +4254,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4543,
+      "bytes_lf": 5505,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "cd1855a90a1c04d34070ddf0efc92a03e6a3d8b13f78b9f886d4bb007575696d",
+      "content_sha256_lf": "3851d3bc72861cb4991853c646a52b55d4d853f8ec66ea49f0075a92ff1afa89",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-INIT-PY-BD60513A12BD",
       "language": "python",
@@ -4306,6 +4306,11 @@
           {
             "kind": "re-export",
             "name": "Availability",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ButterworthFilterConfig",
             "signature": null
           },
           {
@@ -4380,6 +4385,11 @@
           },
           {
             "kind": "re-export",
+            "name": "DeliveryTrajectoryMappingConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "DistortionCoefficients",
             "signature": null
           },
@@ -4445,7 +4455,17 @@
           },
           {
             "kind": "re-export",
+            "name": "GapPolicy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "IntrinsicCalibrationResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "JointAngleConstraint",
             "signature": null
           },
           {
@@ -4456,6 +4476,11 @@
           {
             "kind": "re-export",
             "name": "KeypointReconstruction",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "KinematicDerivatives",
             "signature": null
           },
           {
@@ -4600,6 +4625,16 @@
           },
           {
             "kind": "re-export",
+            "name": "SavitzkyGolayConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SegmentLengthConstraint",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "SessionState",
             "signature": null
           },
@@ -4660,12 +4695,37 @@
           },
           {
             "kind": "re-export",
+            "name": "TemporalTrajectory",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "adapt_to_delivery_trajectory",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "apply_joint_angle_constraint",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "apply_segment_length_constraint",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "bundle_adjust_layout",
             "signature": null
           },
           {
             "kind": "re-export",
             "name": "check_coverage_and_degeneracy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compute_kinematic_derivatives",
             "signature": null
           },
           {
@@ -4711,6 +4771,21 @@
           {
             "kind": "re-export",
             "name": "reconstruct_frame_landmarks",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "reconstruct_temporal_trajectory",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "smooth_trajectory_butterworth",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "smooth_trajectory_savgol",
             "signature": null
           },
           {
@@ -5074,13 +5149,15 @@
         "test_paths": [
           "tests/shared/python/sidekick/lab/mocap/test_adapter_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
-          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_temporal_contracts.py"
         ],
         "unit_mentions": [],
         "validation_paths": [
           "tests/shared/python/sidekick/lab/mocap/test_adapter_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
-          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_temporal_contracts.py"
         ]
       }
     },
@@ -5236,11 +5313,13 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
-          "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py"
+          "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_temporal_contracts.py"
         ],
         "unit_mentions": [],
         "validation_paths": [
-          "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py"
+          "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_temporal_contracts.py"
         ]
       }
     },
@@ -5612,6 +5691,59 @@
         "unit_mentions": [],
         "validation_paths": [
           "tests/shared/python/sidekick/lab/mocap/test_sync_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 17741,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "1005ec7197e9b1210a14a833336f05ac2eeb6df8785bfea4b3ec233fbc3015dd",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-TEMPORAL-PY-1E08155EF20F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/temporal.py",
+      "purpose": "Temporal reconstruction, filtering, constraints, and delivery mapping.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_temporal_contracts.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_temporal_contracts.py"
         ]
       }
     },
