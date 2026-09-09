@@ -2,7 +2,7 @@
 
 Written before the implementation (TDD): every assertion here is either a
 closed-form limit, a consistency requirement against the shipped
-Kelvin-Voigt impact model, or a published-band claim — never a pin on the
+Kelvin-Voigt impact model, or a named synthetic fixture comparison — never a pin on the
 implementation's own output.
 """
 
@@ -26,11 +26,11 @@ from shared.python.swing_sim.impact.types import ImpactParameters, PreImpactStat
 pytestmark = [pytest.mark.unit, pytest.mark.contract]
 
 _HEAD_SPEED_MPS = 44.0
-_PHYSIOLOGICAL_GRIP = GripBoundary(
+_SYNTHETIC_GRIP = GripBoundary(
     effective_mass_kg=3.0,
     stiffness_n_m=5.0e4,
     damping_n_s_m=50.0,
-    provenance="literature: hand+forearm effective mass 2-4 kg, grip ~1e4-1e5 N/m",
+    provenance="synthetic hand/grip fixture; not calibrated physiological impedance",
 )
 
 
@@ -40,7 +40,8 @@ def _config(**overrides: object) -> CoupledImpactConfig:
         "head_speed_mps": _HEAD_SPEED_MPS,
         "shaft_stiffness_n_m": 200.0,
         "shaft_damping_n_s_m": 0.0,
-        "grip": _PHYSIOLOGICAL_GRIP,
+        "grip": _SYNTHETIC_GRIP,
+        "dt_s": 5.0e-7,  # Resolved even for the synthetic 1e9 N/m sweep.
     }
     base.update(overrides)
     return CoupledImpactConfig(**base)  # type: ignore[arg-type]
@@ -74,8 +75,8 @@ class TestLimits:
     def test_welded_rigid_limit_is_bounded_and_monotone_in_grip_stiffness(
         self,
     ) -> None:
-        """Stiffer coupling monotonically raises ball speed toward the
-        infinite-effective-mass bound (1+e)·v_head, never beyond it."""
+        """The selected stiffness grid has monotone speed and lies below
+        the passive, initially relaxed elastic ceiling 2*v_head."""
         free = simulate_coupled_impact(_config(shaft_stiffness_n_m=0.0))
         speeds = []
         for k_g in (1.0e3, 1.0e5, 1.0e7, 1.0e9):
@@ -109,8 +110,8 @@ class TestLimits:
             provenance="conservative variant",
         )
         result = simulate_coupled_impact(_config(grip=grip, contact_damping_n_s_m=0.0))
-        # Body frame (documented): the fixed grip anchor does no work, so the
-        # conserved total is the ball's initial kinetic energy.
+        # Inertial translating frame: the fixed grip anchor does no work.
+        # The conserved total is the ball's initial kinetic energy.
         initial = 0.5 * GOLF_BALL_MASS_KG * _HEAD_SPEED_MPS**2
         assert result.energy_balance_fraction == pytest.approx(1.0, abs=5e-3)
         total = (
@@ -123,9 +124,9 @@ class TestLimits:
 
 
 class TestDecoupling:
-    def test_physiological_hand_influence_is_sub_percent(self) -> None:
-        """The quantified classical claim: with realistic grip stiffness and
-        static shaft stiffness, hands change ball speed by well under 1%."""
+    def test_named_synthetic_grip_fixture_has_sub_percent_influence(self) -> None:
+        """This specified synthetic fixture changes ball speed by under 1%;
+        the assertion is not a universal physiological claim."""
         free = simulate_coupled_impact(_config(shaft_stiffness_n_m=0.0))
         coupled = simulate_coupled_impact(_config())
         influence = (
@@ -133,8 +134,8 @@ class TestDecoupling:
         )
         assert influence < 0.01
 
-    def test_rigid_shaft_upper_bound_exceeds_the_realistic_case(self) -> None:
-        """The reported worst case must dominate the realistic case."""
+    def test_stiff_link_fixture_exceeds_static_stiffness_fixture(self) -> None:
+        """This fixture ordering is a regression, not a universal bound."""
         free = simulate_coupled_impact(_config(shaft_stiffness_n_m=0.0))
         realistic = simulate_coupled_impact(_config())
         rigid = simulate_coupled_impact(_config(shaft_stiffness_n_m=1.0e9))
@@ -142,7 +143,7 @@ class TestDecoupling:
         rigid_influence = abs(rigid.ball_speed_mps - free.ball_speed_mps)
         assert rigid_influence >= real_influence
 
-    def test_hand_influence_follows_the_tau_squared_decoupling_law(self) -> None:
+    def test_relaxed_elastic_fixture_has_quadratic_short_time_scaling(self) -> None:
         """The decoupling law, quantitatively: at *finite* shaft stiffness the
         transmitted influence scales as (contact time)² — quadrupling the
         contact duration multiplies the influence ~16x. (With a rigid shaft
@@ -223,7 +224,8 @@ class TestCouplingReport:
         ]
         assert influences == sorted(influences)
         assert all(
-            "literature" in row["grip_provenance"] for row in payload["counterfactuals"]
+            row["grip_provenance"] == _SYNTHETIC_GRIP.provenance
+            for row in payload["counterfactuals"]
         )
 
     def test_empty_grids_are_refused(self) -> None:

@@ -7,7 +7,7 @@
 measured grip impedance and acoustics remain unqualified.
 
 > Update this file in every implementation commit that changes this package.
-> Last updated: 2026-08-27
+> Last updated: 2026-09-08
 
 ## Stack and Integration Position
 

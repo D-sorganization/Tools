@@ -2,6 +2,16 @@
 
 ## Impact Dynamics and Acoustics: #5068
 
+- Full epic execution is active; completion requires all model and empirical gates.
+- T1 foundation: Tools PR #5077 remains open with downstream CI failure.
+  Theory PR AffineDrift #4258 and integration plan UpstreamDrift #9706 are merged.
+- T2 #5071 / draft PR #5082: `fix/5071-qualified-impact-coupling`, based on `5932146f1`; 396 broader tests pass, 2 skip, 15 final audit tests and 6 browser parser tests pass.
+  Event-resolved solver and additive preload/energy audit; v1 wire retained.
+- RED: timeout/step refusal and energy-record validation failed before fixes.
+  GREEN: 1,614 unit tests also pass in isolated Python 3.12 + pytest-qt; use serial offscreen hooks. Protected Tools CI remains open.
+- Continuation matrix: `docs/development/impact-acoustics/PROGRESS.md`.
+  T3–T6, consumer adapters/studies and physical/perceptual validation remain open.
+- T2 lease posting failed; #9735 compatibility lease succeeded. Fresh downstream import regression reproduced; see continuation matrix.
 - Foundation #5069 is locally verified on `feat/5068-impact-dynamics-foundation`,
   based on `b4875be19`; PR #5077; implementation `6d94f1d3d`. Theory: AffineDrift #4253; consumer: UpstreamDrift #9700.
 - TDD verified by `tests/shared/python/golf_club/test_impact_mobility.py`;
