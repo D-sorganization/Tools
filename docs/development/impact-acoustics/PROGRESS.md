@@ -1,7 +1,26 @@
+## PR #5133 Second CI Repair (2026-09-09)
+
+Published 00d17e7f9 passes protected quality and divergence checks. The full
+Python 3.11 golf lane completes with 1,166 passes, two optional CAD skips and
+one nested-difference momentum failure (2.959e-5 error). Independent fourth-order
+stencils resolve both differentiation scales without relaxing the original
+2e-5 tolerances; a tighter 1e-7 check and deliberately corrupted acceleration
+control pass. Windows: 17 pass; Linux 3.11.15 with CI NumPy/SciPy: 17 pass,
+three absent-plugin configuration warnings (CI Python is 3.11.16).
+The embedded pendulum lane compares two residuals at 3.89e-13 and 1.66e-13.
+A strict ordering there is not a valid scientific scaling criterion. Both
+formulations now must satisfy the unchanged 1e-9 feasibility and success
+requirements; separate controls verify normalized solver inputs/bounds and
+physical output reconstruction. Windows: 19 pass. Combined Linux 3.12 coverage:
+36 pass, 68.80 s, no warnings. No solver equation or tolerance is changed.
+Source and failure evidence remain in CI_REPAIR_RESULTS.json. These repairs
+are local pending normal publication and protected review. Private Gasification
+checkout access remains a separate unresolved gate. Parent epics stay open.
+
 ## PR #5133 First CI Repair (2026-09-09)
 
-Current published revision is 608e85b249e6f61238ac96abbe7dc37428629b9e;
-the following repairs are local pending commit/push and protected CI.
+The first repair was published as 00d17e7f91fe8541bc8882ee745fda58ee2ad7af.
+The following records retain its development and qualification evidence.
 All 12 errors in nine scientific files reproduce with mypy 1.13.0 and
 NumPy 2.3.5 installed. Explicit arrays, exact three-tuples and array-valued
 RK4 accumulation now pass all 63 changed production files. Earlier isolated

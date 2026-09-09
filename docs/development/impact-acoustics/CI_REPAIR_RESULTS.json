@@ -131,5 +131,59 @@
     },
     "other_first_push_hooks": "unit tests, bandit, dependency audit and fleet guardrails passed; push refused for mypy",
     "publication": "normal full-hook retry required"
+  },
+  "second_ci_oracle_repair": {
+    "published_failure_revision": "00d17e7f91fe8541bc8882ee745fda58ee2ad7af",
+    "failed_controls": [
+      {
+        "job": 102668158641,
+        "case": "multisection momentum rate",
+        "error_max": 2.95910286e-5,
+        "rtol": 2e-5,
+        "atol": 2e-5,
+        "golf_passed": 1166,
+        "golf_failed": 1,
+        "skipped": 2,
+        "seconds": 337.83
+      },
+      {
+        "job": 102668158758,
+        "case": "strict scaled versus unscaled optimizer residual ordering",
+        "scaled": 3.8902214782865485e-13,
+        "unscaled": 1.6608936448392342e-13,
+        "unchanged_feasibility_limit": 1e-9
+      }
+    ],
+    "source": {
+      "tree": "f2c3062631841232fada8f7231a99a61651ce424",
+      "bytes": 90398720,
+      "sha256": "ad08a908868c788661593710228c3af9752a273688c7a14578672b1d223cfe13"
+    },
+    "momentum_windows": {
+      "passed": 17,
+      "seconds": 6.32,
+      "junit_sha256": "b7a19113ff8737b7a47eab690910fca9edb6c53fa2eff1ac3e6c8ef6cc490a73"
+    },
+    "momentum_linux311_coverage": {
+      "passed": 17,
+      "seconds": 6.56,
+      "warnings": 3,
+      "python": "3.11.15 (CI uses 3.11.16)",
+      "numpy": "2.3.5",
+      "scipy": "1.17.1",
+      "junit_sha256": "cee899a5f28054324310ddc55da8f9a724977b7f6ca7bffea4d69498a18470e5"
+    },
+    "optimizer_windows": {
+      "passed": 19,
+      "seconds": 75.43,
+      "junit_sha256": "6d9b222a96ecb547688caae67ccbd5e4b4263e77900021b5fb0e68f742690eb7"
+    },
+    "combined_linux312_coverage": {
+      "passed": 36,
+      "seconds": 68.8,
+      "warnings": 0,
+      "junit_sha256": "4ec3d24ef0ca74c1461fa9373811cf4709c8031714463dd936b468caee4b6664"
+    },
+    "repair": "Independent fourth-order momentum stencils with outer and inner refinement, same original tolerance and tighter 1e-7 reference checks, plus 10% acceleration-corruption control. Scaled and unscaled optimizations both must meet the same 1e-9 physical defect and success gates; direct solver-boundary controls verify normalization and physical reconstruction. No scientific solver equations or tolerances changed."
   }
 }

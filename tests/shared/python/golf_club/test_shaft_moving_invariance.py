@@ -1,5 +1,6 @@
 """Independent momentum, observer/scaling and refusal checks for moving shafts."""
 
+from collections.abc import Callable
 from dataclasses import replace
 
 import numpy as np
@@ -98,19 +99,32 @@ def _free_chain() -> tuple:
     return moving.InertialMovingChain(shaft, ()), state, controls
 
 
+def _five_point_derivative(
+    function: Callable[[float], np.ndarray], step: float
+) -> np.ndarray:
+    return (
+        8 * (function(step) - function(-step))
+        - (function(2 * step) - function(-2 * step))
+    ) / (12 * step)
+
+
 def _field_momentum(
-    chain: moving.InertialMovingChain, state: moving.MovingChainState
+    chain: moving.InertialMovingChain,
+    state: moving.MovingChainState,
+    inner_step: float = 1e-3,
 ) -> np.ndarray:
     poses, twists = np.asarray(state.poses), np.asarray(state.twists)
     momentum = np.zeros(6)
-    step = 1e-6
     for index, inertia in enumerate(chain.shaft.inertias):
         pair, velocity = poses[index : index + 2], twists[index : index + 2].ravel()
         for sample in inertia.samples:
             center = _point(pair, sample.fraction)
-            plus = _point(_moved(pair, velocity, step), sample.fraction)
-            minus = _point(_moved(pair, velocity, -step), sample.fraction)
-            derivative = (plus - minus) / (2 * step)
+            derivative = _five_point_derivative(
+                lambda step, pair=pair, velocity=velocity, fraction=sample.fraction: (
+                    _point(_moved(pair, velocity, step), fraction)
+                ),
+                inner_step,
+            )
             body, rotation = sample.body, center[:3, :3]
             com = center[:3, 3] + rotation @ body.center_of_mass_m
             com_rate = derivative[:3, 3] + derivative[:3, :3] @ body.center_of_mass_m
@@ -127,10 +141,7 @@ def _field_momentum(
 def test_multisection_com_and_spin_momentum_rates_equal_external_wrench() -> None:
     chain, state, controls = _free_chain()
     response = moving.moving_chain_response(chain, state, controls)
-    step = 2e-5
     rates = np.asarray(response.twist_rates)
-    plus = _field_momentum(chain, _advance(state, rates, step))
-    minus = _field_momentum(chain, _advance(state, rates, -step))
     elastic = chain.shaft.elastic
     load = elastic.loads[0].load
     tip = np.asarray(state.poses)[-1]
@@ -138,9 +149,28 @@ def test_multisection_com_and_spin_momentum_rates_equal_external_wrench() -> Non
     expected = np.r_[
         load.force_n, np.asarray(load.couple_nm) + np.cross(point, load.force_n)
     ]
-    np.testing.assert_allclose(
-        (plus - minus) / (2 * step), expected, rtol=2e-5, atol=2e-5
+
+    # Nested two-point differences at 1e-6 and 2e-5 amplified logm roundoff
+    # to 3e-5 on Python 3.11. Resolve the independent momentum derivative
+    # with fourth-order stencils and check both differentiation scales.
+    def momentum(step: float, inner_step: float = 1e-3) -> np.ndarray:
+        return _field_momentum(chain, _advance(state, rates, step), inner_step)
+
+    estimates = [
+        _five_point_derivative(momentum, step) for step in (1e-3, 5e-4, 2.5e-4)
+    ]
+    errors = [float(np.max(np.abs(value - expected))) for value in estimates]
+    assert errors[1] < errors[0] / 8
+    assert errors[2] < errors[1] / 4
+    np.testing.assert_allclose(estimates[-1], expected, rtol=2e-5, atol=2e-5)
+    refined_inner = _five_point_derivative(lambda step: momentum(step, 5e-4), 2.5e-4)
+    np.testing.assert_allclose(refined_inner, estimates[-1], rtol=0, atol=1e-7)
+    np.testing.assert_allclose(refined_inner, expected, rtol=0, atol=1e-7)
+    corrupted = _five_point_derivative(
+        lambda step: _field_momentum(chain, _advance(state, 0.9 * rates, step)),
+        2.5e-4,
     )
+    assert np.max(np.abs(corrupted - expected)) > 1e-2
     assert response.grip_responses == ()
     assert response.anchor_power_w == response.dissipated_power_w == 0
     assert response.energy_rate_w == pytest.approx(response.applied_power_w, abs=2e-10)

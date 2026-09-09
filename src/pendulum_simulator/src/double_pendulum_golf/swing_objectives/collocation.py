@@ -5,12 +5,12 @@ as equality constraints between consecutive nodes. This module owns the
 transcription only — packing, defects, bounds, slew margins and the
 non-dimensional scaling — so the solver module stays about solving.
 
-The scaling is not cosmetic. SLSQP applies one trust region across the whole
-decision vector, so mixing radians (order 1), angular rates (order 30) and
-torques (order 200) makes it declare convergence after a handful of iterations
-having done nothing but find feasibility. Solving in units of each variable's
-characteristic scale drives the dynamics defects down by roughly ten orders of
-magnitude.
+Scaling changes the numerical conditioning of the SQP subproblems and finite
+differences: radians, angular rates and torques have different characteristic
+magnitudes. It does not guarantee a smaller final physical defect for every
+solver version or problem. Both formulations are checked against the same
+physical feasibility limit; residuals already below that limit are not ranked
+as evidence that one scaling is better.
 
 Closes #4769.
 """
