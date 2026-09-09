@@ -9,7 +9,7 @@ coordinates/residuals in pixels. These numerical fits do not certify field accur
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeAlias
 
 import numpy as np
 import numpy.typing as npt
@@ -18,7 +18,7 @@ if TYPE_CHECKING:
     from .calibration import FisheyeIntrinsics, PinholeIntrinsics
     from .extrinsics import CameraLayout, CameraPose
 
-Array = npt.NDArray[np.float64]
+Array: TypeAlias = npt.NDArray[np.float64]
 __all__: list[str] = []
 
 

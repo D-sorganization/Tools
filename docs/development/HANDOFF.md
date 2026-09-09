@@ -58,7 +58,13 @@ the API baseline adds only the new module's empty surface.
   and automatic test associations to existing transform modules. No prior modules
   or classifications are removed. Textbook/exemplar/render checks pass; final
   inventory freshness/governance recheck remains.
-- Normal commit/push hooks, clean-export qualification and protected CI remain.
+- Clean git export of684fbfb06be6d066be2a005c752b63d63572f900:25 calibration tests
+  passed. Pre-push found the older mypy needs an explicit TypeAlias declaration;
+  that annotation is corrected and both the actual hook and local mypy pass.
+- Normal final push hooks, updated clean-export qualification and protected CI remain.
+- Temporary clean export is retained at TEMP/capture-tools-clean-05c2c95d640a468099b6b38fe505429e;
+  automatic approval review rejected its removal with blocked-by-policy. Do not
+  work around that rejection; logs remain in TEMP/capture-tools-clean-qualification.log.
 
 ## Limits and Coordination
 
