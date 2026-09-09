@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.133                                   |
+| **Spec Version**        | 1.18.134                                   |
 | **Last Spec Update**    | 2026-09-07                                 |
 
 ## 2. Purpose & Mission
@@ -5868,6 +5868,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-09 | [PR] | perf: Replace Math.min/max spread in ScalarEnsembleScatter with single-pass loop (spec 1.18.134) |
 | 2026-09-09 | #4716 | feat(mocap, #4716 TOOLS-M9): deliver C3D biomechanical exchange, header/point/analog/force-platform schemas, binary writer serialization, and center-of-pressure converters in `sidekick.lab.mocap.c3d`. |
 | 2026-09-09 | #5118 | feat(mocap, #4726 TOOLS-M8): deliver temporal reconstruction, Butterworth and Savitzky-Golay filtering, kinematic derivatives with covariance propagation, biomechanical constraints, and canonical DeliveryTrajectory mapping in `sidekick.lab.mocap.temporal`. |
 | 2026-09-08 | #5111 | feat(mocap, #4724 TOOLS-M7): deliver cross-view observation association, robust N-view triangulation, DLT solver with RANSAC subset consensus, spatial covariance projection, and qualification floors in `sidekick.lab.mocap.reconstruction`. |
