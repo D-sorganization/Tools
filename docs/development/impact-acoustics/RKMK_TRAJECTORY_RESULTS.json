@@ -1,0 +1,151 @@
+{
+  "schema": "impact-rkmk-trajectory-evidence/1",
+  "status": "synthetic-numerical",
+  "physical_evidence": false,
+  "source_archive": {
+    "tree": "6cdf0553a2b1ed20f418a9224335c545b3c524cd",
+    "archive": "C:\\Users\\diete\\AppData\\Local\\Temp\\impact-rkmk-source.tar",
+    "bytes": 90296320,
+    "sha256": "30efb3f3706e97f02aa3e445ba13b2b53f6444d414e26e98765b620e4a5d6f15"
+  },
+  "windows": {
+    "junit_sha256": "d7babeaab418b12ac544788a21607ba3ae3be1f8868688a0cd853d7c80088149",
+    "passed": 77,
+    "skipped": 0,
+    "new_cases_passed": 31,
+    "maximum_case_duration_s": 42.595,
+    "studies": [
+      {
+        "test": "test_noncommuting_motion_has_fourth_order_against_quaternion_reference",
+        "properties": {
+          "study": "{\"steps\": [16, 32, 64], \"errors\": [4.780853978629618e-05, 3.449544048313918e-06, 2.2980517553034124e-07]}"
+        }
+      },
+      {
+        "test": "test_midpoint_converges_but_256_steps_miss_disturbance_accuracy_target[2]",
+        "properties": {
+          "study": "{\"elements\": 2, \"time_s\": 0.004, \"scaled_reference_difference\": 1.5494321275286053e-07, \"refinements\": [{\"steps\": 64, \"scaled_state_error\": 0.11009192573647603, \"energy_balance_error_j\": 1.0903435665174171e-08, \"anchor_work_j\": 5.991782983856247e-05}, {\"steps\": 128, \"scaled_state_error\": 0.02749931427032584, \"energy_balance_error_j\": 1.3608812589468392e-09, \"anchor_work_j\": 5.981787214145011e-05}, {\"steps\": 256, \"scaled_state_error\": 0.0068700509370010834, \"energy_balance_error_j\": 1.7066110453127373e-10, \"anchor_work_j\": 5.979291272879256e-05}]}"
+        }
+      },
+      {
+        "test": "test_midpoint_converges_but_256_steps_miss_disturbance_accuracy_target[4]",
+        "properties": {
+          "study": "{\"elements\": 4, \"time_s\": 0.004, \"scaled_reference_difference\": 3.874046929874433e-09, \"refinements\": [{\"steps\": 64, \"scaled_state_error\": 0.41538132031621844, \"energy_balance_error_j\": 6.377789779036126e-08, \"anchor_work_j\": 5.702509173626761e-05}, {\"steps\": 128, \"scaled_state_error\": 0.09852963578338261, \"energy_balance_error_j\": 7.872524242372788e-09, \"anchor_work_j\": 5.7197705547738934e-05}, {\"steps\": 256, \"scaled_state_error\": 0.02375532348655567, \"energy_balance_error_j\": 9.839589783079239e-10, \"anchor_work_j\": 5.723828908616736e-05}]}"
+        }
+      },
+      {
+        "test": "test_rkmk_rotating_disturbance_meets_the_same_accuracy_target[2]",
+        "properties": {
+          "study": "{\"elements\": 2, \"time_s\": 0.004, \"scaled_reference_difference\": 1.5494321275286053e-07, \"refinements\": [{\"steps\": 16, \"scaled_state_error\": 0.027747260238980484, \"energy_balance_error_j\": -1.2776864161032867e-08, \"anchor_work_j\": 5.975297868128791e-05}, {\"steps\": 32, \"scaled_state_error\": 0.0018887877955653823, \"energy_balance_error_j\": -4.1475143163090776e-10, \"anchor_work_j\": 5.9782450820413015e-05}, {\"steps\": 64, \"scaled_state_error\": 0.00011993333836329607, \"energy_balance_error_j\": -1.3069631585749947e-11, \"anchor_work_j\": 5.9784465393256006e-05}]}"
+        }
+      },
+      {
+        "test": "test_rkmk_rotating_disturbance_meets_the_same_accuracy_target[4]",
+        "properties": {
+          "study": "{\"elements\": 4, \"time_s\": 0.004, \"scaled_reference_difference\": 3.874046929874433e-09, \"refinements\": [{\"steps\": 16, \"scaled_state_error\": 0.3260303925716005, \"energy_balance_error_j\": -1.3803720985830693e-07, \"anchor_work_j\": 5.743511269609566e-05}, {\"steps\": 32, \"scaled_state_error\": 0.017915266558480046, \"energy_balance_error_j\": -4.779161860114995e-09, \"anchor_work_j\": 5.726120553549211e-05}, {\"steps\": 64, \"scaled_state_error\": 0.0009785780639149184, \"energy_balance_error_j\": -1.5204695769305884e-10, \"anchor_work_j\": 5.725168779199885e-05}]}"
+        }
+      },
+      {
+        "test": "test_rotating_tangent_error_is_quadratic_in_resolved_bending_amplitude[0.001]",
+        "properties": {
+          "study": "{\"elements\": 2, \"time_s\": 0.004, \"rows\": [{\"amplitude_m\": 0.001, \"scaled_linearization_error\": 3.6100922040416e-06, \"scaled_reference_difference\": 3.142813400631616e-10}, {\"amplitude_m\": 0.0005, \"scaled_linearization_error\": 9.025232129958756e-07, \"scaled_reference_difference\": 8.260476127898472e-10}]}"
+        }
+      },
+      {
+        "test": "test_rotating_tangent_error_is_quadratic_in_resolved_bending_amplitude[0.0005]",
+        "properties": {
+          "study": "{\"elements\": 2, \"time_s\": 0.004, \"rows\": [{\"amplitude_m\": 0.0005, \"scaled_linearization_error\": 9.025232129958756e-07, \"scaled_reference_difference\": 8.260476127898472e-10}, {\"amplitude_m\": 0.00025, \"scaled_linearization_error\": 2.2563085133012107e-07, \"scaled_reference_difference\": 1.9281076274865956e-12}]}"
+        }
+      },
+      {
+        "test": "test_rotating_release_initial_and_dynamic_states_converge_on_nested_meshes",
+        "properties": {
+          "study": "{\"reference_elements\": 32, \"time_s\": 0.004, \"rows\": [{\"elements\": 4, \"relative_initial_error\": 0.008279582071227976, \"relative_final_error\": 0.008341430603954736, \"relative_motion_increment_error\": 0.001550283549461539}, {\"elements\": 8, \"relative_initial_error\": 0.0019712618943848845, \"relative_final_error\": 0.002124604884994977, \"relative_motion_increment_error\": 0.0008751085877770171}, {\"elements\": 16, \"relative_initial_error\": 0.0003942490112130672, \"relative_final_error\": 0.0005260664770321914, \"relative_motion_increment_error\": 0.0003583302937512595}]}"
+        }
+      }
+    ],
+    "duration_s": 245.08,
+    "runtime": {
+      "python": "3.12.10",
+      "numpy": "2.4.1",
+      "scipy": "1.17.0"
+    }
+  },
+  "linux": {
+    "junit_sha256": "00fd0c30c4c3a92b43445bfe42a4b0a047b1c5fdccaed100c5b7bdf55a370631",
+    "passed": 1157,
+    "skipped": 2,
+    "new_cases_passed": 31,
+    "maximum_case_duration_s": 40.91,
+    "studies": [
+      {
+        "test": "test_noncommuting_motion_has_fourth_order_against_quaternion_reference",
+        "properties": {
+          "study": "{\"steps\": [16, 32, 64], \"errors\": [4.780853978629618e-05, 3.4495440483138163e-06, 2.2980517553034124e-07]}"
+        }
+      },
+      {
+        "test": "test_midpoint_converges_but_256_steps_miss_disturbance_accuracy_target[2]",
+        "properties": {
+          "study": "{\"elements\": 2, \"time_s\": 0.004, \"scaled_reference_difference\": 1.5494321275286053e-07, \"refinements\": [{\"steps\": 64, \"scaled_state_error\": 0.11009192573647603, \"energy_balance_error_j\": 1.0903435665174171e-08, \"anchor_work_j\": 5.991782983856247e-05}, {\"steps\": 128, \"scaled_state_error\": 0.02749931427032584, \"energy_balance_error_j\": 1.3608812589468392e-09, \"anchor_work_j\": 5.981787214145011e-05}, {\"steps\": 256, \"scaled_state_error\": 0.0068700509370010834, \"energy_balance_error_j\": 1.7066110453127373e-10, \"anchor_work_j\": 5.979291272879256e-05}]}"
+        }
+      },
+      {
+        "test": "test_midpoint_converges_but_256_steps_miss_disturbance_accuracy_target[4]",
+        "properties": {
+          "study": "{\"elements\": 4, \"time_s\": 0.004, \"scaled_reference_difference\": 3.874046929874433e-09, \"refinements\": [{\"steps\": 64, \"scaled_state_error\": 0.41538132031621844, \"energy_balance_error_j\": 6.377789779036126e-08, \"anchor_work_j\": 5.702509173626761e-05}, {\"steps\": 128, \"scaled_state_error\": 0.09852963578338261, \"energy_balance_error_j\": 7.872524242372788e-09, \"anchor_work_j\": 5.7197705547738934e-05}, {\"steps\": 256, \"scaled_state_error\": 0.023755323486555666, \"energy_balance_error_j\": 9.839589783079239e-10, \"anchor_work_j\": 5.723828908616736e-05}]}"
+        }
+      },
+      {
+        "test": "test_rkmk_rotating_disturbance_meets_the_same_accuracy_target[2]",
+        "properties": {
+          "study": "{\"elements\": 2, \"time_s\": 0.004, \"scaled_reference_difference\": 1.5494321275286053e-07, \"refinements\": [{\"steps\": 16, \"scaled_state_error\": 0.027747260238975356, \"energy_balance_error_j\": -1.2776864383294312e-08, \"anchor_work_j\": 5.975297868128769e-05}, {\"steps\": 32, \"scaled_state_error\": 0.0018887877955653823, \"energy_balance_error_j\": -4.1475143163090776e-10, \"anchor_work_j\": 5.9782450820413015e-05}, {\"steps\": 64, \"scaled_state_error\": 0.00011993333836329607, \"energy_balance_error_j\": -1.3069631585749947e-11, \"anchor_work_j\": 5.9784465393256006e-05}]}"
+        }
+      },
+      {
+        "test": "test_rkmk_rotating_disturbance_meets_the_same_accuracy_target[4]",
+        "properties": {
+          "study": "{\"elements\": 4, \"time_s\": 0.004, \"scaled_reference_difference\": 3.874046929874433e-09, \"refinements\": [{\"steps\": 16, \"scaled_state_error\": 0.3260303925716005, \"energy_balance_error_j\": -1.3803720985830693e-07, \"anchor_work_j\": 5.743511269609566e-05}, {\"steps\": 32, \"scaled_state_error\": 0.017915266558480046, \"energy_balance_error_j\": -4.779161860114995e-09, \"anchor_work_j\": 5.726120553549211e-05}, {\"steps\": 64, \"scaled_state_error\": 0.0009785780639168299, \"energy_balance_error_j\": -1.5204695769305884e-10, \"anchor_work_j\": 5.725168779199885e-05}]}"
+        }
+      },
+      {
+        "test": "test_rotating_tangent_error_is_quadratic_in_resolved_bending_amplitude[0.001]",
+        "properties": {
+          "study": "{\"elements\": 2, \"time_s\": 0.004, \"rows\": [{\"amplitude_m\": 0.001, \"scaled_linearization_error\": 3.6100922040416e-06, \"scaled_reference_difference\": 3.142813400631616e-10}, {\"amplitude_m\": 0.0005, \"scaled_linearization_error\": 9.025232129958756e-07, \"scaled_reference_difference\": 8.260472713093263e-10}]}"
+        }
+      },
+      {
+        "test": "test_rotating_tangent_error_is_quadratic_in_resolved_bending_amplitude[0.0005]",
+        "properties": {
+          "study": "{\"elements\": 2, \"time_s\": 0.004, \"rows\": [{\"amplitude_m\": 0.0005, \"scaled_linearization_error\": 9.025232129958756e-07, \"scaled_reference_difference\": 8.260472713093263e-10}, {\"amplitude_m\": 0.00025, \"scaled_linearization_error\": 2.256308530704247e-07, \"scaled_reference_difference\": 1.9276169653631343e-12}]}"
+        }
+      },
+      {
+        "test": "test_rotating_release_initial_and_dynamic_states_converge_on_nested_meshes",
+        "properties": {
+          "study": "{\"reference_elements\": 32, \"time_s\": 0.004, \"rows\": [{\"elements\": 4, \"relative_initial_error\": 0.008279582071228008, \"relative_final_error\": 0.008341430603969162, \"relative_motion_increment_error\": 0.001550283549567763}, {\"elements\": 8, \"relative_initial_error\": 0.0019712618943848923, \"relative_final_error\": 0.002124604884943692, \"relative_motion_increment_error\": 0.0008751085876646221}, {\"elements\": 16, \"relative_initial_error\": 0.0003942490112130688, \"relative_final_error\": 0.0005260664769426317, \"relative_motion_increment_error\": 0.0003583302936264544}]}"
+        }
+      }
+    ],
+    "duration_s": 340.34,
+    "warnings": 3,
+    "native_directory": "/home/dieterolson/.cache/codex-impact/rkmk-6cdf0553a",
+    "runtime": {
+      "python": "3.11.15",
+      "numpy": "2.3.5",
+      "scipy": "1.15.3"
+    }
+  },
+  "tdd": [
+    "New method missing-module RED; initial core/midpoint checks then pass",
+    "Fourth-order controls silently accepted by midpoint: RED, then concrete-control refusal",
+    "Initial midpoint disturbance accuracy failures retained as counterexamples; targets unchanged"
+  ],
+  "limits": [
+    "Shared-force quaternion reference is independent integration, not independent mechanics",
+    "32-element release reference is a fine-mesh comparison, not an independent continuum oracle",
+    "No adaptivity, continuous-domain enclosure, symplecticity, exact-energy or unconditional-stability claim",
+    "Synthetic parameters and 0.004 s interval do not establish physical impact/acoustic bandwidth",
+    "No identified player grip, equipment calibration, radiation or blinded perceptual evidence"
+  ]
+}

@@ -2278,6 +2278,7 @@
           "tests/shared/python/golf_club/test_shaft_gripped_response.py",
           "tests/shared/python/golf_club/test_shaft_gripped_spectrum.py",
           "tests/shared/python/golf_club/test_shaft_moving_invariance.py",
+          "tests/shared/python/golf_club/test_shaft_rotating_mesh.py",
           "tests/shared/python/golf_club/test_shaft_trajectory_rotation.py"
         ],
         "unit_mentions": [],
@@ -2333,6 +2334,8 @@
           "tests/shared/python/golf_club/test_shaft_frequency_interval.py",
           "tests/shared/python/golf_club/test_shaft_galerkin_rod.py",
           "tests/shared/python/golf_club/test_shaft_reduction_rod.py",
+          "tests/shared/python/golf_club/test_shaft_rotating_linearization.py",
+          "tests/shared/python/golf_club/test_shaft_rotating_mesh.py",
           "tests/shared/python/golf_club/test_shaft_siso_rod.py"
         ],
         "unit_mentions": [
@@ -2754,6 +2757,8 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_rotating_disturbance.py",
+          "tests/shared/python/golf_club/test_shaft_rotating_linearization.py",
           "tests/shared/python/golf_club/test_shaft_trajectory_continuum.py",
           "tests/shared/python/golf_club/test_shaft_trajectory_geometry.py",
           "tests/shared/python/golf_club/test_shaft_trajectory_rotation.py"
@@ -2767,10 +2772,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 6390,
+      "bytes_lf": 7702,
       "classification": "calculation",
       "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "412a71e76d05c3efa3b3b28b40d31ff1f40d013c2df7c2670b37fe810e5592c7",
+      "content_sha256_lf": "640c03b171348086ff56293693487bf1769901a7f9d01f3ea28371f67ac95360",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-MOVING-TRAJECTORY-PY-F0202F7423C3",
       "language": "python",
@@ -2794,7 +2799,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "unavailable",
+        "units": "mapped",
         "validation": "unavailable"
       },
       "traceability": {
@@ -2808,10 +2813,15 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_rkmk_geometry.py",
+          "tests/shared/python/golf_club/test_shaft_rkmk_trajectory.py",
+          "tests/shared/python/golf_club/test_shaft_rotating_disturbance.py",
           "tests/shared/python/golf_club/test_shaft_trajectory_continuum.py",
           "tests/shared/python/golf_club/test_shaft_trajectory_rotation.py"
         ],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "s"
+        ],
         "validation_paths": []
       }
     },
@@ -2979,6 +2989,56 @@
       }
     },
     {
+      "authority_status": "provisional",
+      "bytes_lf": 4306,
+      "classification": "calculation",
+      "classification_basis": "path-marker:trajectory",
+      "content_sha256_lf": "f08eba42a6d066ddeb640c49c58105a9d63c58fa9b27f8b5c12cc45647589108",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-RKMK-TRAJECTORY-PY-FBBF1195143E",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_rkmk_trajectory.py",
+      "purpose": "Classical RK4 in local SE(3) charts with explicit body-Jacobian correction.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_rkmk_trajectory.py",
+          "tests/shared/python/golf_club/test_shaft_rotating_disturbance.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "not-applicable",
       "bytes_lf": 3688,
       "classification": "non-calculation",
@@ -3079,6 +3139,8 @@
           "tests/shared/python/golf_club/test_shaft_loaded_dynamics.py",
           "tests/shared/python/golf_club/test_shaft_point_load.py",
           "tests/shared/python/golf_club/test_shaft_rotating_chain.py",
+          "tests/shared/python/golf_club/test_shaft_rotating_disturbance.py",
+          "tests/shared/python/golf_club/test_shaft_rotating_linearization.py",
           "tests/shared/python/golf_club/test_shaft_se3.py",
           "tests/shared/python/golf_club/test_shaft_section.py"
         ],

@@ -565,6 +565,7 @@
           "tests/rotation_converter/test_rigid_transform.py",
           "tests/rotation_converter/test_rotation_core.py",
           "tests/rust_bindings/test_math_primitives_bindings.py",
+          "tests/shared/python/golf_club/test_shaft_rotating_disturbance.py",
           "tests/shared/python/golf_club/test_shaft_trajectory_geometry.py",
           "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/unit/lower_body_model/test_simulator.py"
@@ -702,6 +703,7 @@
           "tests/shared/python/golf_club/test_shaft_inertia.py",
           "tests/shared/python/golf_club/test_shaft_loaded_dynamics.py",
           "tests/shared/python/golf_club/test_shaft_moving_invariance.py",
+          "tests/shared/python/golf_club/test_shaft_rkmk_geometry.py",
           "tests/shared/python/golf_club/test_shaft_rotating_transport.py",
           "tests/shared/python/golf_club/test_shaft_se3.py",
           "tests/shared/python/golf_club/test_shaft_siso_rod.py",

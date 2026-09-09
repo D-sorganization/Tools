@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import math
+from collections.abc import Callable
 from dataclasses import dataclass
 
 import numpy as np
@@ -101,18 +102,24 @@ def _sample(
     )
 
 
+def _chart_state(
+    state: MovingChainState, increments: np.ndarray, velocities: np.ndarray
+) -> MovingChainState:
+    poses = np.array(
+        [
+            pose @ exp_twist(increment)
+            for pose, increment in zip(np.asarray(state.poses), increments, strict=True)
+        ]
+    )
+    return MovingChainState(poses, velocities, state.observer_id)
+
+
 def _advance(
     state: MovingChainState, motion: tuple[np.ndarray, np.ndarray], step_s: float
 ) -> MovingChainState:
     velocity, rates = motion
-    poses = np.array(
-        [
-            pose @ exp_twist(step_s * twist)
-            for pose, twist in zip(np.asarray(state.poses), velocity, strict=True)
-        ]
-    )
-    return MovingChainState(
-        poses, np.asarray(state.twists) + step_s * rates, state.observer_id
+    return _chart_state(
+        state, step_s * velocity, np.asarray(state.twists) + step_s * rates
     )
 
 
@@ -127,7 +134,7 @@ def _step(
     state: MovingChainState,
     response: MovingChainResponse,
     cell: tuple[float, float, float],
-) -> tuple[MovingChainState, MovingChainResponse, MovingChainResponse]:
+) -> _StepResult:
     start, middle, end = cell
     midpoint = _advance(
         state,
@@ -140,7 +147,62 @@ def _step(
         (np.asarray(midpoint.twists), np.asarray(midpoint_response.twist_rates)),
         end - start,
     )
-    return final, _response(problem, final, end), midpoint_response
+    return final, _response(problem, final, end), ((midpoint_response, 1.0),)
+
+
+_StepResult = tuple[
+    MovingChainState,
+    MovingChainResponse,
+    tuple[tuple[MovingChainResponse, float], ...],
+]
+
+
+@dataclass(frozen=True)
+class _MethodPlan:
+    evaluations_per_step: int
+    step: Callable[
+        [
+            MovingTrajectoryProblem,
+            MovingChainState,
+            MovingChainResponse,
+            tuple[float, float, float],
+        ],
+        _StepResult,
+    ]
+
+
+def _integrate(
+    problem: MovingTrajectoryProblem,
+    initial: MovingChainState,
+    controls: MovingTrajectoryControls,
+    method: _MethodPlan,
+) -> MovingTrajectory:
+    """Share owned endpoints, numerical refusal and explicit work quadrature."""
+    if not isinstance(problem, MovingTrajectoryProblem):
+        raise TypeError("problem must be MovingTrajectoryProblem")
+    if not isinstance(initial, MovingChainState):
+        raise TypeError("initial must be MovingChainState")
+    if not isinstance(controls, MovingTrajectoryControls):
+        raise TypeError("controls must be MovingTrajectoryControls")
+    cells = controls.time_cells()
+    try:
+        with np.errstate(over="raise", invalid="raise", divide="raise", under="raise"):
+            response = _response(problem, initial, controls.bounds_s[0])
+            ledger = _WorkLedger(response.total_energy_j)
+            samples = [_sample(controls.bounds_s[0], initial, response, ledger)]
+            state = initial
+            for cell in cells:
+                state, response, work_samples = method.step(
+                    problem, state, response, cell
+                )
+                for work_response, weight in work_samples:
+                    ledger = ledger.advance(work_response, weight * (cell[2] - cell[0]))
+                samples.append(_sample(cell[2], state, response, ledger))
+    except (np.linalg.LinAlgError, FloatingPointError, OverflowError) as error:
+        raise ValueError("moving trajectory numerical evaluation failed") from error
+    return MovingTrajectory(
+        controls, tuple(samples), method.evaluations_per_step * controls.steps + 1
+    )
 
 
 def integrate_moving_chain(
@@ -156,29 +218,12 @@ def integrate_moving_chain(
     work quadrature and unaltered energy defects, or an exception without a
     partial result. Second-order accuracy requires smoothness and refinement;
     no implicit stabilization, energy projection or domain clipping is applied.
+    Require the concrete midpoint controls; another method's controls must not
+    silently produce midpoint motion or a different evaluation-count contract.
     """
-    if not isinstance(problem, MovingTrajectoryProblem):
-        raise TypeError("problem must be MovingTrajectoryProblem")
-    if not isinstance(initial, MovingChainState):
-        raise TypeError("initial must be MovingChainState")
-    if not isinstance(controls, MovingTrajectoryControls):
-        raise TypeError("controls must be MovingTrajectoryControls")
-    cells = controls.time_cells()
-    try:
-        with np.errstate(over="raise", invalid="raise", divide="raise", under="raise"):
-            response = _response(problem, initial, controls.bounds_s[0])
-            ledger = _WorkLedger(response.total_energy_j)
-            samples = [_sample(controls.bounds_s[0], initial, response, ledger)]
-            state = initial
-            for cell in cells:
-                state, response, midpoint_response = _step(
-                    problem, state, response, cell
-                )
-                ledger = ledger.advance(midpoint_response, cell[2] - cell[0])
-                samples.append(_sample(cell[2], state, response, ledger))
-    except (np.linalg.LinAlgError, FloatingPointError, OverflowError) as error:
-        raise ValueError("moving trajectory numerical evaluation failed") from error
-    return MovingTrajectory(controls, tuple(samples), 2 * controls.steps + 1)
+    if type(controls) is not MovingTrajectoryControls:
+        raise TypeError("midpoint controls must be MovingTrajectoryControls")
+    return _integrate(problem, initial, controls, _MethodPlan(2, _step))
 
 
 __all__ = ()

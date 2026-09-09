@@ -4,7 +4,66 @@ The user authorized completion of the full planned program, not merely its
 planning deliverables. All three parent epics remain open. Physical and
 perceptual validation cannot be inferred from numerical fixtures.
 
-## Current SISO Magnitude/Phase Qualification (2026-09-09)
+## Current Lie RK4 and Disturbed Rotating Qualification (2026-09-09)
+
+SISO checkpoint 083caaaa614fa07ff7cdf4e0f15ce5d4f032c843 is published through
+every normal commit/push hook. Remote SHA is verified; issue #5072 body and
+comment 5606590032 record delivery. Four post-format stat-cache entries were
+inspected as byte-identical to committed blobs; refreshing them produced no
+staged diff and a clean worktree before this new work.
+
+Initial two/four-element disturbed midpoint studies show second-order
+convergence, but fail the unchanged 1e-3 scaled target with errors
+0.00687005094/0.02375532349 at 256 steps. The first tests take 25.84/55.98 s
+(86.43 s total). They remain counterexamples; no deadline, target or physical
+interval is relaxed. These are qualification failures, not a manufactured
+missing-production RED.
+
+New private local SE(3) RK4 starts with a missing-module RED (4.03 s). It uses
+the existing body/right Jacobian, classical RK weights and a separate 4N+1
+evaluation budget. Shared pose reconstruction, endpoint traversal, work ledger
+and numerical refusal preserve the midpoint method. A second RED exposes
+fourth-order controls silently accepted by the midpoint entrypoint (2.86 s);
+concrete midpoint controls now prevent that method/count mismatch. Thirty
+analytic/new-method/original-midpoint controls pass after the fix (21.00 s).
+
+Seventeen geometric/domain controls pass in 21.11 s, including a two-tolerance
+independent quaternion integrator and deliberately omitted/wrong-sign Jacobians.
+The reference shares the force law; it is independent integration, not mechanics.
+Two/four-element RK4 disturbance studies meet the same state/energy targets at
+64 steps, with errors 0.000119933/0.000978578; both pass in 97.15 s total and
+remain below the 60-second individual deadline. Nonzero anchor work is retained.
+Two amplitude studies pass in 56.67 s: nonlinear/tangent discrepancies decrease
+quadratically from 3.61009e-6 to 9.02523e-7 to 2.25631e-7 as amplitudes halve.
+A nested 4/8/16/32-element rotating release study passes in 11.31 s. The final
+relative errors versus 32 elements are 0.00834143/0.00212460/0.000526066. This is
+a fine-mesh reference, not an independent continuum oracle.
+
+Actual two-source and seven-file mypy, root Ruff and formatting pass (3,846
+files); no changed function exceeds 50 lines. Existing parsed API records are
+identical; one private empty-export module record is added. The canonical
+inventory is regenerated. Final Windows scientific/API regression passes all
+77 tests in 245.08 s, with every individual case below 60 s. Broad native science
+passes 1,157 in 340.34 s, with two optional CAD skips and three plugin warnings.
+Exact scientific source tree 6cdf0553a2b1ed20f418a9224335c545b3c524cd
+is archived as 90,296,320 bytes with SHA256
+30efb3f3706e97f02aa3e445ba13b2b53f6444d414e26e98765b620e4a5d6f15.
+Both-platform source/JUnit provenance and study properties are recorded in
+RKMK_TRAJECTORY_RESULTS.json. All nine final governance gates pass. The handoff
+snapshot is refreshed after this evidence update; normal publication remains.
+
+See RKMK_TRAJECTORIES.md for equations, conventions, work/accounting, test roles
+and limitations. Primary method reference: Celledoni et al., arXiv:1207.0069,
+Section 2.1. The Cambridge survey URL failed 502 and was not read. No symplectic,
+exact-energy, adaptive, unconditional-stability or continuous-domain claim is made.
+
+Physically identified versioned coefficient/FRF provenance, flexible contact,
+calibrated radiation, exact-pin consumers and physical/blinded AffineDrift
+synthesis remain required. The #5072 lease expires 2026-09-09T19:30:11Z.
+All parent epics remain active. Keep the separate policy/Chrome-APT task's
+ownership and files untouched.
+
+## Previous SISO Magnitude/Phase Qualification (2026-09-09)
 
 The previous normalized transfer checkpoint is published through
 b3c90e87426be15d1bd2c8d9c99da797972b1c4f after the actual changed-source mypy
