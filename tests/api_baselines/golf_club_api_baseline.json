@@ -2291,6 +2291,65 @@
       }
     }
   },
+  "_coupled_impact_solver.py": {
+    "__all__": [],
+    "explicit_all": false,
+    "symbols": {}
+  },
+  "_coupled_impact_state.py": {
+    "__all__": [
+      "CoupledImpactAudit",
+      "CoupledImpactEnergyLedger",
+      "CoupledImpactInitialState"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "CoupledImpactAudit": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "CoupledImpactEnergyLedger": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "residual_j": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "float"
+            },
+            "total_dissipation_j": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "float"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "CoupledImpactInitialState": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      }
+    }
+  },
   "_validation.py": {
     "__all__": [
       "Matrix3",
@@ -3137,6 +3196,81 @@
             }
           ],
           "returns": "CoupledImpactResult"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "impact_coupling_audit.py": {
+    "__all__": [
+      "CoupledImpactInitialState",
+      "CoupledImpactEnergyLedger",
+      "CoupledImpactAudit",
+      "audit_coupled_impact"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "CoupledImpactAudit": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "CoupledImpactEnergyLedger": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "residual_j": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "float"
+            },
+            "total_dissipation_j": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "float"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "CoupledImpactInitialState": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "audit_coupled_impact": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "CoupledImpactConfig",
+              "default": null,
+              "kind": "arg",
+              "name": "config"
+            },
+            {
+              "annotation": "CoupledImpactInitialState | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "initial_state"
+            }
+          ],
+          "returns": "CoupledImpactAudit"
         },
         "type": "function"
       }

@@ -117,7 +117,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "24101d89d8604b514863fc6a6cf0b184d3964b776c4e1916ab667631d7a1b6f4",
+      "content_sha256_lf": "193e6c1de5c47ca44a76acb209707a1b09b48d35cd4e6e86607bf34c1c1adb88",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "fd3cb19b6a244c239611e2f88b3fbc8efa187f93ba56af01d73fe68819f326ee",
+      "content_sha256_lf": "bb408967f8e648c4355c42e4dff933eec1fff7335e33ceeea03df7b05994ef1b",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -465,7 +465,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-simulation.json"
     },
     {
-      "content_sha256_lf": "5cfab397aede884a1c6adfd020a342395d446511392aefc9103b182066366e95",
+      "content_sha256_lf": "d1e3e74e5d4e02c757f82471bd0430628bfdc7f626f24fa044b7550c6c8a8048",
       "entry_count": 189,
       "package": "src/rate_of_closure/ui",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-ui.json"
@@ -639,8 +639,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-file-watcher.json"
     },
     {
-      "content_sha256_lf": "69f79b01943652352a06a6c6c992ea8840752d1bd70e975e000fab10c28c83a1",
-      "entry_count": 38,
+      "content_sha256_lf": "6505e4adb31a6fd1037c041516f74db6a97ff37d001a3f55a38ec70d43cf4b4d",
+      "entry_count": 41,
       "package": "src/shared/python/golf_club",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-golf-club.json"
     },

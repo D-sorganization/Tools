@@ -14,6 +14,11 @@ Status: **active** · Epic: heavy-hit (GitHub epic issue) · Owner: shared
 
 ## 1. The Question
 
+How can the declared hand/shaft boundary change a one-dimensional collision?
+This model answers that bounded mathematical question. An XML body reduction
+is not measured dynamic impedance, and one wave-transit estimate cannot prove
+that every shaft or hand mechanism is absent. The distributed, rotating and
+acoustic extensions are tracked in #5068; no universal percentage is inferred.
 During the ~500 µs of club-ball contact, how much can the golfer's hands and
 body actually change the impact — and therefore, how _separate_ is the impact
 model from whatever multibody system drives it? The classical claim (Cochran &
@@ -32,8 +37,8 @@ H2  model interchange   swing_sim/model_interchange/: body-chain wire
                         → GripBoundary {effective mass, stiffness, damping}
 H1  coupled transient   golf_club/impact_coupling.py: ball–head–hands lumped
                         chain, Kelvin-Voigt contact (constants reused from
-                        swing_sim.impact), semi-implicit integration at the
-                        impact model's dt; free-head / welded limits
+                        swing_sim.impact), event-resolved integration with
+                        declared maximum dt; free-head / stiff comparisons
 H3  counterfactuals     grip-stiffness/mass sweeps → decoupling fraction →
                         `golf_club.impact_coupling_report/1` (deterministic)
 H4  surfaces            GUI panels (follow-on children, after the club-tester
@@ -52,18 +57,59 @@ ball m_b ←KV contact (k_c, c_c)→ head m_h ←shaft (k_s, c_s)→ hands m_g �
   parameters (`ImpactParameters.contact_stiffness/damping`), so the
   free-head limit of this model and `SpringDamperImpactModel` agree — a
   consistency gate, not a coincidence.
-- **Upper-bound semantics, stated loudly:** at contact timescales the shaft
-  transmits force through its local impedance, and any lumped `k_s` is an
-  approximation. The model therefore reports hand influence with `k_s`
-  swept up to a **rigid-link bound** — "even if the shaft were perfectly
-  rigid, the hands change ball speed by X%" — and with the static tip
-  stiffness (from `solve_cantilever_tip_response`, reused) as the realistic
-  low end. Reality lies below the rigid bound; the epic's headline number
-  is that bound.
-- Integration: semi-implicit Euler at `dt = 1e-7 s` (the spring-damper
-  impact model's step), from first contact until the contact force returns
-  to zero; ball exit velocity and the energy split (ball / head / shaft
-  spring / grip spring) are reported.
+- **Comparison semantics:** a stiff-link sweep is a specified fixture, not a
+  universal upper bound. Preload, damping, modal history and three-dimensional
+  motion can change the ordering. Static tip stiffness is not a measured
+  contact-band impedance.
+- Integration uses adaptive DOP853 with `dt_s` as maximum step, local relative
+  tolerance 2e-9 and absolute tolerance 1e-11. A conservative mass-normalized
+  stiffness/damping rate safeguard refuses grossly under-resolved steps.
+  This safeguard is not a proof that every possible grazing event is resolved;
+  independent step refinement remains necessary.
+- First touch is followed to geometric overlap clearance, preserving the v1
+  terminal convention. First force release can occur earlier. Timeout is an
+  explicit failure, never a successful result. Peak force is sampled at accepted
+  steps plus its first-touch right-hand limit; refine dt for peak accuracy.
+- `impact_coupling_audit.audit_coupled_impact` adds initial displacement/velocity
+  and a complete energy ledger without changing the report v1 fields. The
+  translating reference is inertial; it is not a rotating/accelerating body frame.
+
+**Analytic/consistency gates (TDD):** undamped detached duration and impulse;
+clipped Kelvin-Voigt force release and geometric clearance; passive damping and
+cutoff energy; preload initial energy; step refinement; timeout and resolution
+refusal; existing detached-model parity and deterministic v1 report shape.
+The old sub-percent/stiff-link tests remain synthetic fixture regressions.
+The finite relaxed-spring example exhibits quadratic short-time influence;
+shaft damping and preload fixtures exhibit first-order influence. None of
+these fixtures identifies a physiological parameter or proves global ordering.
+
+### Energy and Event Convention
+
+With overlap `delta = x_head - x_ball` and rate `u = v_head - v_ball`,
+`F = max(k_c * delta + c_c * u, 0)` for positive overlap, otherwise zero.
+The coupled model is uncapped. `KelvinVoigtContactLaw` also supports a force cap
+for other callers; a capped model is a different law and is not qualified by
+this audit's energy equations.
+
+Let `U_c = k_c * max(delta, 0)^2 / 2`. During active force, the contact loss rate
+is `c_c * u^2`. During clipped unloading it is `-k_c * delta * u`, which is
+nonnegative and accounts for loss of remaining contact potential. Shaft and
+grip losses are respectively `c_s * (v_grip-v_head)^2` and `c_g * v_grip^2`.
+The fixed anchor does no work. The audit reports
+`initial energy + boundary work - terminal mechanical energy - all losses`
+as a numerical residual; it never renames numerical drift as damping.
+
+The v1 `energy_balance_fraction` remains terminal retained mechanical energy
+(over all three masses and shaft/grip springs) divided by initial energy. It
+is less than one in dissipative cases and is not itself an energy-closure error.
+The v1 `contact_time_s` remains clearance time. `decoupling_fraction` remains
+`clip(1 - abs(v_ball-v_free)/v_free, 0, 1)`, a speed discrepancy, not mass.
+
+The conventional damped-oscillator restitution-to-damping formula assumes the
+untruncated linear oscillator's half period. It is not an exact inversion of
+force-clipped Kelvin-Voigt restitution. Use the actual event law when comparing
+or calibrating restitution; never transfer one fixed restitution across changed
+reduced masses or changed cutoff/cap conventions.
 
 **Gates (analytic/consistency, TDD):**
 

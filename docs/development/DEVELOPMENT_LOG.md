@@ -100,6 +100,32 @@ reachable from any live state and `abandoned` from `parked`.
 - **Next step:** UpstreamDrift bumps its `vendor/ud-tools` pin and re-points
   `src/shared/python/realtime/transport_file.py` at the vendored module.
 
+### DL-0055 · Qualified Lumped Impact Dynamics
+
+- **State:** in_review
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5071
+- **PR:** https://github.com/D-sorganization/Tools/pull/5082
+- **Branch:** fix/5071-qualified-impact-coupling
+- **Paths:** `src/shared/python/golf_club/*coupl*`, `tests/shared/python/golf_club/test*coupl*`, `docs/specs/HEAVY_HIT_COUPLING.md`, `docs/development/impact-acoustics/PROGRESS.md`
+- **Started:** 2026-09-07
+- **Last verified:** 2026-09-07 (`31ebe4993` implementation; `eb78179b5` delivery record)
+- **Summary:** RED-to-GREEN termination, passive energy and scaling gates; complete epic scope remains active.
+- **Next step:** Resolve protected CI and UpstreamDrift #9735 compatibility, then distributed prestress/grip milestone #5072.
+
+### DL-0054 · Impact Dynamics Reference Foundation
+
+- **State:** in_review
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5069
+- **PR:** https://github.com/D-sorganization/Tools/pull/5077
+- **Branch:** feat/5068-impact-dynamics-foundation
+- **Paths:** `src/shared/python/golf_club/impact_mobility.py`, `src/shared/python/golf_club/impact_coupling.py`, `tests/shared/python/golf_club/test_impact_mobility.py`, `docs/specs/IMPACT_DYNAMICS_ACOUSTICS.md`
+- **Started:** 2026-09-07
+- **Last verified:** 2026-09-07 (`6d94f1d3d`)
+- **Summary:** Tensor mobility reference passes 30 TDD gates; additive public baseline recorded. 383 broader tests passed, 2 skipped; manifest and all push hooks pass. PR #5077 in review. #5068 retains future distributed/acoustic scope.
+- **Next step:** Resolve protected PR #5077 review/check results, then follow the separately scoped research dependencies.
+
 ### DL-0001 · Backup Tools 3300 Pyo3 Split
 
 - **State:** parked
