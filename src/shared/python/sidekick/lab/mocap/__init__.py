@@ -1,5 +1,6 @@
 """Camera-agnostic markerless-mocap contracts and deterministic interchange."""
 
+from . import c3d
 from .acquisition import (
     AcquisitionError,
     CaptureGroup,
@@ -208,4 +209,5 @@ __all__ = [
     "smooth_trajectory_butterworth",
     "smooth_trajectory_savgol",
     "triangulate_n_views",
+    "c3d",
 ]
