@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — Rate_of_Closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-09-07
+> Last updated: 2026-09-08
 > **Current state only**, capped at 150 lines; history lives in git and `docs/agent_handoff_archive/`.
 
 ## What This Tool Is Now
@@ -28,6 +28,13 @@ Five packaged manifests in `src/rate_of_closure/` declare the tab set, cross-che
 - PyQt6 registration: build widget in `ui/pyqt6/main_window.py`, add `PrimaryTabSpec(module_id, widget, label)`.
 - Visual baselines are captured on Linux fleet runners (`RATE_VISUAL_BASELINE_CANDIDATE_DIR`).
 - Gates: `tests/rate_of_closure/test_visualization_*_manifest`, `test_visual_baseline_compare.py`, `test_pyqt_visualization_tab_visibility.py`.
+
+## Renderer prerequisite #4844
+
+- Worktree `C:/Users/diete/Repositories/Tools-impact-render`; branch `fix/4844-consistent-pyqt-renderer`; commit `SELF`; PR #5090 open.
+- PR and trusted PyQt capture use one digest-pinned Ubuntu 24.04 container; trusted remains on fleet runners. Exact font versions replace alternate-version acceptance; Qt runtime/SIP pins are checked.
+- Published `df4101f28`: two Linux captures pass 73 browser and 23 PyQt tests; all ten PyQt PNGs are byte-identical. The reviewed 20-image proposal preserves tolerances; its provenance test fails before and all 60 local contracts pass after refresh. Both captured sets pass the comparison CLI. Normal hooks and fresh CI remain; #5087 closed unmerged.
+- Continue from `docs/development/rate-pyqt-renderer-4844.md`. Do not accept another host stack under the same image identity.
 
 ## Must-Read Architecture Pointers
 

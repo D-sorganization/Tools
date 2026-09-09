@@ -18,6 +18,120 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5074 · Waveform and Spectral Numerical Contracts
+
+- **State:** in_review
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5074
+- **PR:** https://github.com/D-sorganization/Tools/pull/5106
+- **Branch:** fix/5074-waveform-spectral-contracts
+- **Paths:** `src/shared/python/swing_sim/vibroacoustics`, `docs/development/impact-acoustics/SIGNAL_BOUNDARY_QUALIFICATION.md`
+- **Started:** 2026-09-08
+- **Last verified:** 2026-09-08 (16 RED failures; 41 focused tests, nine API tests, scoped hook mypy and 69 Linux ingestion/report/API tests pass; three optional-plugin warnings)
+- **Summary:** Shared strict real samples, immutable recording storage, signed linear lag and segment preparation refuse undefined/nonfinite estimates while preserving public signatures. Independent SciPy odd/even PSD and gain controls pass. No physical calibration is inferred.
+- **Next step:** All normal push hooks pass; PR #5106 is open; complete protected CI/delivery, then qualify versioned calibration identity, supported-bin complex FRF, uncertainty and physical/blinded measurements separately.
+
+### DL-#5095 · Deterministic Rust Watcher Debounce
+
+- **State:** in_review
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5095
+- **PR:** https://github.com/D-sorganization/Tools/pull/5097
+- **Branch:** fix/5095-deterministic-debounce
+- **Paths:** `rust_core/file_watcher/src/debounce.rs`, `rust_core/file_watcher/src/watcher.rs`, `rust_core/file_watcher/src/watcher_tests.rs`
+- **Started:** 2026-09-08
+- **Last verified:** 2026-09-08 (12 tests pass with default and Python features; Clippy and formatting pass)
+- **Summary:** TDD extracts the quiet-period accumulator to test exact supplied monotonic timestamps, coalescing, restart, shutdown, zero-delay and backward-time boundaries. Retains four real filesystem tests and existing filtered-notification timing.
+- **Next step:** Publish the focused prerequisite PR and verify normal protected CI; do not relax debounce expectations or bypass unrelated consumer gates.
+
+### DL-#5062 · Glass Conductivity Provider Contracts And Fallback Policy
+
+- **State:** in_review
+- **Owner:** claude (fleet wave 2, lease agent `claude` session
+  `omp-01a07e96`)
+- **PR:** #5080 (`claude/issue-5062-glass-contracts`)
+- **Paths:** `src/shared/python/sidekick/calculators/electrical/glass_interface.py`,
+  `src/shared/python/sidekick/calculators/electrical/glass_contracts.py`,
+  `tests/shared/python/sidekick/calculators/electrical/test_glass_interface.py`,
+  `src/shared/python/sidekick/tests/calculators/electrical/test_electrical_model.py`
+- **Started:** 2026-09-08
+- **Last verified:** 2026-09-08 (focused suites RED→GREEN:
+  74 passed — `tests/shared/python/sidekick/calculators/electrical/test_glass_interface.py`,
+  embedded `test_glass_interface.py`, embedded `test_electrical_model.py`)
+- **Summary:** Issue #5062 — public `ConductivityProvider` protocol (kelvin
+  in, S/m out), finite-positive conductivity validation before caching,
+  absolute-zero/composition/cache-capacity DbC contracts, explicit
+  `STRICT`/`DEMO`/`LEGACY` fallback policies with provenance reporting,
+  reciprocal resistivity instead of infinity, centralized unit conversion
+  (1 S/cm = 100 S/m), failed responses never cached, provider switch
+  invalidates cache.
+- **Next step:** Protect-merge the glass-contracts PR after CI acceptance.
+
+### DL-#8942 · Realtime Transport And Codemap Hashing Hot-Path Fixes
+
+- **State:** in_review
+- **PR:** https://github.com/D-sorganization/Tools/pull/5081
+- **Paths:** `src/shared/python/codemap/indexer.py`,
+  `src/shared/python/realtime/`, `tests/unit/codemap/`,
+  `tests/unit/realtime/`
+- **Started:** 2026-09-08
+- **Last verified:** 2026-09-08 (`SELF`)
+- **Summary:** Resolved the codemap hash callable once at module import
+  (the per-call `import blake3` retried a failing import — Python does not
+  cache failed imports — once per file and once per symbol) and added the
+  tools-canonical file realtime transport (`src/shared/python/realtime/`)
+  with persistent per-channel append handles and offset-tracked tailing,
+  removing per-message mkdir/exists/stat/open syscalls from publish.
+  Fixes UpstreamDrift#8942 Defects A and B on the provider side.
+- **Next step:** UpstreamDrift bumps its `vendor/ud-tools` pin and re-points
+  `src/shared/python/realtime/transport_file.py` at the vendored module.
+
+### DL-#4130 · Impact-Interval Independent Contact-Energy Audit
+
+- **State:** in_review
+- **Owner:** dieterolson (agent `claude`, fleet wave 2)
+- **PR:** #5079 (`claude/issue-9548-contact-energy` → `main`)
+- **Paths:** `src/shared/python/swing_sim/impact_interval/**`,
+  `src/shared/python/swing_sim/impact/contact.py`,
+  `docs/physics/IMPACT_INTERVAL_DYNAMICS.md`
+- **Started:** 2026-09-07
+- **Last verified:** 2026-09-07 (SELF)
+- **Summary:** Provider fix for UpstreamDrift#9548 under Tools#4130: the
+  impact-interval audit no longer assigns every positive energy deficit to
+  `unilateral_release`. The solver now integrates dashpot, friction, and
+  torsional-grip damping independently, tracks recoverable Kelvin-Voigt
+  spring energy from the contact state, counts release energy only at
+  identified tensile-clip steps, and reports an unfudged signed residual
+  plus separate free/supported momentum diagnostics with a demonstrated
+  halving-dt convergence. RED→GREEN cases live in
+  `impact_interval/tests/test_solver.py::TestIndependentEnergyAudit`.
+- **Next step:** Protect-merge the PR and hand the merged SHA to the
+  UpstreamDrift pin-bump that closes the provider issue.
+
+### DL-0054 · ThemeColors 60-Token Derivation Restoration
+
+- **State:** in_review
+- **Owner:** @dieterolson (agent `claude`, session `omp-01a07e96`)
+- **PR:** SELF (fixes #5063)
+- **Paths:** `src/shared/python/theme/api.py`,
+  `src/shared/python/theme/__init__.py`,
+  `src/shared/python/theme/color_derivation.py`,
+  `tests/shared/python/theme/test_theme_colors_derivation.py`,
+  `AGENT_HANDOFF.md`, `docs/development/DEVELOPMENT_LOG.md`
+- **Started:** 2026-09-08
+- **Last verified:** 2026-09-08 (SELF)
+- **Summary:** Restored the `ThemeColors` 60-token semantic derivation
+  pipeline (`model_post_init`, `is_dark` inference from `bg`, the derived
+  surface/border/text/brand/semantic/chart/effect tokens, dict-style
+  access, `as_dict`), the `_derive_full_palette` package shim, and the
+  orphaned `color_derivation` helper module that the UpstreamDrift
+  `b8d95ad25` sync wave had stripped from the canonical tree. Mirrored
+  the 8-case derivation regression oracle into
+  `tests/shared/python/theme/test_theme_colors_derivation.py`
+  (RED 7 failed/1 passed before restore, 8 passed after).
+- **Next step:** Bump UpstreamDrift's `vendor/ud-tools` pin to this
+  PR's merge commit so its child copies re-sync the restored pipeline.
+
 ### DL-0056 · Distributed Shaft Prestress and Grip
 
 - **State:** in_progress
@@ -27,9 +141,9 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/5072-prestressed-shaft
 - **Paths:** `src/shared/python/golf_club/*shaft*`, `src/shared/python/golf_club/_beam_fem.py`, `src/shared/python/golf_club/*grip*`, `src/shared/python/golf_club/*rotating_body*`, `tests/shared/python/golf_club/test_shaft*.py`, `tests/shared/python/golf_club/test_rotating_body.py`, `tests/shared/python/golf_club/test_grip_impedance.py`, `docs/development/impact-acoustics/*`
 - **Started:** 2026-09-07
-- **Last verified:** 2026-09-08 (39 autonomous decay controls; 731 Linux golf/API passes in 284.12 s, two optional CAD skips and three unavailable-plugin warnings; two-module hook-style mypy and scoped Ruff pass)
+- **Last verified:** 2026-09-09 (merged main 287767dfa: 772 Linux golf/signal/API tests pass in 286.02 s; two optional CAD skips and three unavailable-plugin warnings; all eight non-inventory manual gates pass)
 - **Summary:** Response 12bcf3d83 and spectra 97d46055c are published. New constant homogeneous ODE assessment shares plant validation, recomputes Lyapunov dissipation and qualifies a coordinate-dependent envelope with explicit numerical/error margins. Independent scalar and nonnormal trajectories, critical damping and unresolved-margin refusal pass after recorded RED tests.
-- **Next step:** All nine final structural/manual gates and repository Ruff pass; autonomous assessment 58f33e403 is published through all normal hooks with remote SHA verified; continue operating-model integration, time-varying stability, transient/bandwidth and nonlinear evolution. UD #9826 native/publication CI passes; separate shooting defect #9830 remains. #8920/#8556 retain physical gates; integrate inventory #5103 before combined delivery.
+- **Next step:** Complete inventory freshness/pinned Ruff and normal merge hooks; main integration preserves golf source/tests and incorporates the previously reviewed signal repair. Continue explicit operating-model/residual-forcing, time-varying, transient/bandwidth and nonlinear work. UD #9841 is published with protected CI pending; #8920/#8556 retain physical gates. Integrate classifier #5103 before combined delivery.
 
 ### DL-0055 · Qualified Lumped Impact Dynamics
 

@@ -9,7 +9,6 @@
 //! - A `Gitignore` matcher (built once at start) filters events before they
 //!   reach the debouncer.
 
-use std::collections::HashMap;
 use std::path::{Path, PathBuf};
 use std::sync::atomic::{AtomicBool, Ordering};
 use std::sync::{Arc, Mutex, MutexGuard};
@@ -19,6 +18,8 @@ use std::time::{Duration, Instant};
 use crossbeam_channel::{bounded, Receiver, Sender};
 use ignore::gitignore::{Gitignore, GitignoreBuilder};
 use notify::{Event, EventKind, RecommendedWatcher, RecursiveMode, Watcher};
+
+use crate::debounce::DebounceBatch;
 
 /// What happened to a path. Mirrors the four high-level operations the rest of
 /// the system cares about; finer-grained `notify` event types collapse into
@@ -240,8 +241,7 @@ fn spawn_debounce_thread(
             None
         };
         let debounce = Duration::from_millis(config.debounce_ms);
-        let mut pending: HashMap<(PathBuf, ChangeKind), ChangeEvent> = HashMap::new();
-        let mut last_event_at: Option<Instant> = None;
+        let mut pending = DebounceBatch::new(debounce);
         // Use a short poll interval so the loop wakes promptly to flush pending
         // events even if no new events arrive on the channel.
         let poll = Duration::from_millis(20);
@@ -253,16 +253,9 @@ fn spawn_debounce_thread(
 
             match rx.recv_timeout(poll) {
                 Ok(event) => {
-                    let Some(kind) = classify(&event.kind) else {
+                    if !accumulate_event(event, &config, gitignore.as_ref(), &mut pending) {
                         continue;
-                    };
-                    for path in event.paths {
-                        if should_ignore(&path, &config.root, gitignore.as_ref()) {
-                            continue;
-                        }
-                        pending.insert((path.clone(), kind), ChangeEvent { path, kind });
                     }
-                    last_event_at = Some(Instant::now());
                 }
                 Err(crossbeam_channel::RecvTimeoutError::Timeout) => {
                     // Fall through to flush check.
@@ -272,25 +265,40 @@ fn spawn_debounce_thread(
                 }
             }
 
-            if let Some(t) = last_event_at {
-                if !pending.is_empty() && t.elapsed() >= debounce {
-                    let batch: Vec<ChangeEvent> = pending.drain().map(|(_, v)| v).collect();
-                    last_event_at = None;
-                    if let Some(cb) = callback.as_ref() {
-                        cb(batch);
-                    }
-                }
+            if let Some(batch) = pending.take_due(Instant::now()) {
+                emit_batch(batch, callback.as_ref());
             }
         }
 
         // Final flush on shutdown.
-        if !pending.is_empty() {
-            let batch: Vec<ChangeEvent> = pending.drain().map(|(_, v)| v).collect();
-            if let Some(cb) = callback.as_ref() {
-                cb(batch);
-            }
-        }
+        emit_batch(pending.drain(), callback.as_ref());
     })
+}
+
+fn accumulate_event(
+    event: Event,
+    config: &FileWatcherConfig,
+    gitignore: Option<&Gitignore>,
+    pending: &mut DebounceBatch<(PathBuf, ChangeKind), ChangeEvent>,
+) -> bool {
+    let Some(kind) = classify(&event.kind) else {
+        return false;
+    };
+    for path in event.paths {
+        if !should_ignore(&path, &config.root, gitignore) {
+            pending.insert((path.clone(), kind), ChangeEvent { path, kind });
+        }
+    }
+    pending.restart(Instant::now());
+    true
+}
+
+fn emit_batch(batch: Vec<ChangeEvent>, callback: Option<&Callback>) {
+    if !batch.is_empty() {
+        if let Some(cb) = callback {
+            cb(batch);
+        }
+    }
 }
 
 fn should_ignore(path: &Path, root: &Path, gitignore: Option<&Gitignore>) -> bool {
@@ -305,177 +313,5 @@ fn should_ignore(path: &Path, root: &Path, gitignore: Option<&Gitignore>) -> boo
 }
 
 #[cfg(test)]
-mod tests {
-    use super::*;
-    use std::sync::Mutex;
-    use std::time::Duration;
-    use tempfile::tempdir;
-
-    fn collect_events(watcher: &FileWatcher) -> Arc<Mutex<Vec<ChangeEvent>>> {
-        let bucket: Arc<Mutex<Vec<ChangeEvent>>> = Arc::new(Mutex::new(Vec::new()));
-        let bucket_cb = bucket.clone();
-        watcher.on_change(move |events| {
-            bucket_cb.lock().unwrap().extend(events);
-        });
-        bucket
-    }
-
-    #[test]
-    fn detects_create_event() {
-        let dir = tempdir().unwrap();
-        let watcher = FileWatcher::new(FileWatcherConfig {
-            root: dir.path().to_path_buf(),
-            debounce_ms: 50,
-            respect_gitignore: false,
-        });
-        let bucket = collect_events(&watcher);
-        watcher.start().unwrap();
-
-        std::thread::sleep(Duration::from_millis(100));
-        std::fs::write(dir.path().join("hello.txt"), b"hi").unwrap();
-        std::thread::sleep(Duration::from_millis(400));
-
-        watcher.stop().unwrap();
-        let events = bucket.lock().unwrap();
-        assert!(
-            events.iter().any(|e| e.path.ends_with("hello.txt")),
-            "expected create event for hello.txt, got: {events:?}"
-        );
-    }
-
-    #[test]
-    fn debounces_rapid_changes() {
-        let dir = tempdir().unwrap();
-        // Use a 500 ms debounce window so that all writes land inside one
-        // window even on a heavily-loaded CI runner where sleep(5ms) can
-        // stretch to 100+ ms per iteration.
-        let watcher = FileWatcher::new(FileWatcherConfig {
-            root: dir.path().to_path_buf(),
-            debounce_ms: 500,
-            respect_gitignore: false,
-        });
-        let call_count: Arc<Mutex<u32>> = Arc::new(Mutex::new(0));
-        let cc = call_count.clone();
-        watcher.on_change(move |_| {
-            *cc.lock().unwrap() += 1;
-        });
-        watcher.start().unwrap();
-        std::thread::sleep(Duration::from_millis(50));
-
-        let path = dir.path().join("rapid.txt");
-        for i in 0..10 {
-            std::fs::write(&path, format!("v{i}")).unwrap();
-            std::thread::sleep(Duration::from_millis(5));
-        }
-        // Wait long enough for the debounce window to close and the callback
-        // to fire, even after timing variation on the CI runner.
-        std::thread::sleep(Duration::from_millis(2000));
-        watcher.stop().unwrap();
-
-        // Debounce should collapse the burst to a single (or at most a small
-        // handful of) callback invocations.
-        let count = *call_count.lock().unwrap();
-        assert!(
-            count <= 3,
-            "expected debounce to coalesce, got {count} flushes"
-        );
-    }
-
-    #[test]
-    fn detects_create_modify_delete_burst() {
-        // Exercise the full create → modify → delete lifecycle in one burst and
-        // assert the coalesced batch carries the distinct change kinds (#3556).
-        let dir = tempdir().unwrap();
-        let watcher = FileWatcher::new(FileWatcherConfig {
-            root: dir.path().to_path_buf(),
-            debounce_ms: 300,
-            respect_gitignore: false,
-        });
-        let bucket = collect_events(&watcher);
-        watcher.start().unwrap();
-        std::thread::sleep(Duration::from_millis(100));
-
-        let path = dir.path().join("burst.txt");
-        std::fs::write(&path, b"v1").unwrap();
-        std::thread::sleep(Duration::from_millis(20));
-        std::fs::write(&path, b"v2-modified").unwrap();
-        std::thread::sleep(Duration::from_millis(20));
-        std::fs::remove_file(&path).unwrap();
-
-        std::thread::sleep(Duration::from_millis(1500));
-        watcher.stop().unwrap();
-
-        let events = bucket.lock().unwrap();
-        assert!(
-            events.iter().any(|e| e.path.ends_with("burst.txt")),
-            "expected events for burst.txt, got: {events:?}"
-        );
-        // The final state is a delete; the OS may or may not surface every
-        // intermediate kind, but a delete must be observed.
-        assert!(
-            events
-                .iter()
-                .any(|e| e.path.ends_with("burst.txt") && e.kind == ChangeKind::Delete),
-            "expected a delete event for burst.txt, got: {events:?}"
-        );
-    }
-
-    #[test]
-    fn gitignore_filters_ignored_paths() {
-        // A path matched by .gitignore must NOT be delivered, while a
-        // non-ignored sibling must be (#3556).
-        let dir = tempdir().unwrap();
-        std::fs::write(dir.path().join(".gitignore"), b"ignored.log\n").unwrap();
-
-        let watcher = FileWatcher::new(FileWatcherConfig {
-            root: dir.path().to_path_buf(),
-            debounce_ms: 100,
-            respect_gitignore: true,
-        });
-        let bucket = collect_events(&watcher);
-        watcher.start().unwrap();
-        std::thread::sleep(Duration::from_millis(100));
-
-        std::fs::write(dir.path().join("ignored.log"), b"noise").unwrap();
-        std::fs::write(dir.path().join("kept.txt"), b"signal").unwrap();
-        std::thread::sleep(Duration::from_millis(600));
-        watcher.stop().unwrap();
-
-        let events = bucket.lock().unwrap();
-        assert!(
-            events.iter().any(|e| e.path.ends_with("kept.txt")),
-            "expected non-ignored kept.txt to be delivered, got: {events:?}"
-        );
-        assert!(
-            !events.iter().any(|e| e.path.ends_with("ignored.log")),
-            "expected ignored.log to be filtered out, got: {events:?}"
-        );
-    }
-
-    #[test]
-    fn gitignore_filter_is_applied_only_when_enabled() {
-        // With respect_gitignore = false, the same .gitignore entry must NOT
-        // suppress the event — proves the toggle is wired through.
-        let dir = tempdir().unwrap();
-        std::fs::write(dir.path().join(".gitignore"), b"ignored.log\n").unwrap();
-
-        let watcher = FileWatcher::new(FileWatcherConfig {
-            root: dir.path().to_path_buf(),
-            debounce_ms: 100,
-            respect_gitignore: false,
-        });
-        let bucket = collect_events(&watcher);
-        watcher.start().unwrap();
-        std::thread::sleep(Duration::from_millis(100));
-
-        std::fs::write(dir.path().join("ignored.log"), b"noise").unwrap();
-        std::thread::sleep(Duration::from_millis(600));
-        watcher.stop().unwrap();
-
-        let events = bucket.lock().unwrap();
-        assert!(
-            events.iter().any(|e| e.path.ends_with("ignored.log")),
-            "with gitignore disabled, ignored.log should be delivered, got: {events:?}"
-        );
-    }
-}
+#[path = "watcher_tests.rs"]
+mod tests;

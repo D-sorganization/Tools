@@ -9,63 +9,63 @@
   },
   "repository": "D-sorganization/Tools",
   "issue_url": "https://github.com/D-sorganization/Tools/issues/4730",
-  "pr_url": "https://github.com/D-sorganization/Tools/pull/5055",
+  "pr_url": "https://github.com/D-sorganization/Tools/pull/5106",
   "commit_evidence": {
-    "local_head_sha": "b4875be1986e14a8d21d2cd116f564e57cdd3e02",
+    "local_head_sha": "df3bb1cf3e9afbfe75c34a53daaa5a23fa00b748",
     "remote_head_sha": null,
-    "reviewed_tree_sha": "e72a635d7a92dd79a7b756841a42aa85df664f7f",
+    "reviewed_tree_sha": "67a407b0851790e93ce6ea25d95c989701ad56e3",
     "merge_sha": null
   },
   "branch_and_worktree": {
-    "branch": "feat/4721-mocap-extrinsic-calibration",
-    "worktree": "C:\\Users\\diete\\Repositories\\Tools",
+    "branch": "pr-5106",
+    "worktree": "C:\\tmp\\Tools-2PRs",
     "is_clean": false
   },
   "check_evidence": {
     "check_design_manual_governance": {
       "command": "python -m scripts.check_design_manual_governance",
       "status": "passed",
-      "timestamp": "2026-09-07T19:59:06Z"
+      "timestamp": "2026-09-09T00:08:24Z"
     },
     "build_tools_module_inventory": {
       "command": "python -m scripts.build_tools_module_inventory --check",
       "status": "passed",
-      "timestamp": "2026-09-07T19:59:06Z"
+      "timestamp": "2026-09-09T00:08:24Z"
     },
     "lint_tools_textbook_chapters": {
       "command": "python -m scripts.lint_tools_textbook_chapters",
       "status": "passed",
-      "timestamp": "2026-09-07T19:59:06Z"
+      "timestamp": "2026-09-09T00:08:24Z"
     },
     "check_tools_exemplars": {
       "command": "python -m scripts.check_tools_exemplars",
       "status": "passed",
-      "timestamp": "2026-09-07T19:59:06Z"
+      "timestamp": "2026-09-09T00:08:24Z"
     },
     "check_tools_calculation_freshness": {
       "command": "python -m scripts.check_tools_calculation_freshness --check",
       "status": "passed",
-      "timestamp": "2026-09-07T19:59:06Z"
+      "timestamp": "2026-09-09T00:08:24Z"
     },
     "check_tools_manual_qa": {
       "command": "python -m scripts.check_tools_manual_qa --check",
       "status": "passed",
-      "timestamp": "2026-09-07T19:59:06Z"
+      "timestamp": "2026-09-09T00:08:24Z"
     },
     "check_tools_publication_projection": {
       "command": "python -m scripts.check_tools_publication_projection --check",
       "status": "passed",
-      "timestamp": "2026-09-07T19:59:06Z"
+      "timestamp": "2026-09-09T00:08:24Z"
     },
     "render_tools_design_manual": {
       "command": "python -m scripts.render_tools_design_manual --check",
       "status": "passed",
-      "timestamp": "2026-09-07T19:59:06Z"
+      "timestamp": "2026-09-09T00:08:24Z"
     },
     "check_tools_handoff": {
       "command": "python -m scripts.check_tools_handoff --check",
       "status": "passed",
-      "timestamp": "2026-09-07T19:59:06Z"
+      "timestamp": "2026-09-09T00:08:24Z"
     }
   },
   "artifact_and_test_digests": {
@@ -112,7 +112,7 @@
       "TOOLS-HUMAN-APPROVAL-PENDING",
       "TOOLS-MARKERLESS-EXEMPLAR-BLOCKED"
     ],
-    "expiry_timestamp": "2026-12-06T19:59:06Z"
+    "expiry_timestamp": "2026-12-08T00:08:24Z"
   },
   "blockers": [
     {
@@ -127,21 +127,23 @@
     }
   ],
   "next_dependency": "TOOLS-M0 (#4708 / #4734) and parent epic DOC-TOOLS (#4707) closure",
-  "freshness_timestamp": "2026-09-07T19:59:06Z",
+  "freshness_timestamp": "2026-09-09T00:08:24Z",
   "governed_handoff_files": {
     "AGENT_HANDOFF.md": {
       "path": "AGENT_HANDOFF.md",
-      "sha256_lf": "2c360e71655bb8b8a973aee4c46b290be3f420cad8424cbb70bfa89f1df5fdce",
-      "line_count": 97,
+      "sha256_lf": "172c02807705adabb63c4757865640bc1a6de674b5163454938b63b809ffc17c",
+      "line_count": 123,
       "max_line_budget": 150,
       "required_sections": [
+        "## Impact Dynamics and Acoustics: #5068",
         "## Merge Governance",
         "## Where This Repo Is Headed",
         "## Active Delivery Boundaries",
         "## Must-Read Architecture Pointers",
         "## Gate Commands (Repo-Wide)",
         "## Do-Not List",
-        "## Short-Term Roadmap (Ordered)"
+        "## Short-Term Roadmap (Ordered)",
+        "## PR Disposition \u2014 2026-09-07/08 Fleet Backlog Sweep (Tools, 22 open PRs)"
       ]
     },
     "src/pendulum_simulator/AGENT_HANDOFF.md": {
@@ -160,12 +162,13 @@
     },
     "src/rate_of_closure/AGENT_HANDOFF.md": {
       "path": "src/rate_of_closure/AGENT_HANDOFF.md",
-      "sha256_lf": "2928e8ca4e78bee752431800dafdc9166f19ee9ff4465799705cb56e04524176",
-      "line_count": 56,
+      "sha256_lf": "7311b23eecba4d643a2994e486972813fb7f0b54e636a5703d7dfa81a8f11e1d",
+      "line_count": 63,
       "max_line_budget": 150,
       "required_sections": [
         "## What This Tool Is Now",
         "## Active Epics \u2014 Golf Epics Merged",
+        "## Renderer prerequisite #4844",
         "## Must-Read Architecture Pointers",
         "## Gate Commands (This Tool)",
         "## Do-Not List"
@@ -187,10 +190,11 @@
     },
     "src/shared/python/golf_club/AGENT_HANDOFF.md": {
       "path": "src/shared/python/golf_club/AGENT_HANDOFF.md",
-      "sha256_lf": "f96eb764e70f2cdc66bac3a193ffe62e1c38589b8a6bf513a586abee7fae9943",
+      "sha256_lf": "cbff8b02832a7ef07046f47727727eb478a3a591438b119938740c713da29949",
       "line_count": 150,
       "max_line_budget": 150,
       "required_sections": [
+        "## Impact Dynamics Review: #5068 / #5069",
         "## Stack and Integration Position",
         "## Club Fitting Tester Epic (#4549) \u2014 COMPLETED (#4557, #4577)",
         "## Heavy Hit Epic (#4562) \u2014 COMPLETED (#4568, #4577)",
@@ -202,8 +206,8 @@
     },
     "src/shared/python/sidekick/lab/mocap/AGENT_HANDOFF.md": {
       "path": "src/shared/python/sidekick/lab/mocap/AGENT_HANDOFF.md",
-      "sha256_lf": "591decacfbdadcfacce9de0d350903eb7da232b00aa3507e01c240edab98b66e",
-      "line_count": 59,
+      "sha256_lf": "8d67890d0e5bef67140ff38499a79b4bfbc8bbd16a5d0afb7f03b5da3fd42a09",
+      "line_count": 62,
       "max_line_budget": 150,
       "required_sections": [
         "## Authority",

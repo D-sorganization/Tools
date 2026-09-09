@@ -15,6 +15,7 @@ from shared.python.swing_sim.impact import (
 from shared.python.swing_sim.impact_interval import (
     BoundaryKind,
     ClubRigidBody,
+    ImpactIntervalAudit,
     ImpactIntervalConfig,
     ImpactIntervalInitialState,
     KelvinVoigtContactLaw,
@@ -151,6 +152,186 @@ class TestBoundaryConditions:
         )
         assert abs(sprung.twist_angle_rad[-1]) < abs(pinned.twist_angle_rad[-1])
         assert sprung.audit.boundary_stored_energy_j >= 0.0
+
+
+@pytest.mark.unit
+@pytest.mark.physics
+class TestIndependentEnergyAudit:
+    """The audit must compute every ledger term independently of the residual."""
+
+    def _elastic_config(self, **overrides: float) -> ImpactIntervalConfig:
+        parameters = {
+            "contact_law": KelvinVoigtContactLaw(
+                stiffness_n_per_m=5.0e7, damping_n_s_per_m=0.0
+            ),
+            "friction_coefficient": 0.0,
+        }
+        parameters.update(overrides)
+        return ImpactIntervalConfig(**parameters)
+
+    def _compressed_initial(self, compression_m: float) -> ImpactIntervalInitialState:
+        state = _initial()
+        state.ball_position_m = np.array([GOLF_BALL_RADIUS_M - compression_m, 0.0, 0.0])
+        state.club_velocity_mps = np.zeros(3)
+        return state
+
+    def test_truncated_compression_stores_energy_without_release(self) -> None:
+        config = ImpactIntervalConfig(
+            contact_law=KelvinVoigtContactLaw.from_restitution(
+                stiffness_n_per_m=5.0e7,
+                restitution=0.83,
+                effective_mass_kg=_reduced_mass(),
+            ),
+            time_step_s=1.0e-7,
+            maximum_time_s=3.0e-5,
+            friction_coefficient=0.4,
+        )
+        result = solve_impact_interval(_initial(), _club(), config)
+        assert result.did_contact
+        assert result.compression_m[-1] > 0.0
+        audit = result.audit
+        assert audit.stored_contact_energy_initial_j == 0.0
+        assert audit.stored_contact_energy_final_j > 0.0
+        assert audit.unilateral_release_energy_j == 0.0
+        # Declared tolerance: the residual is O(dt) semi-implicit-Euler
+        # truncation, quantified by the halving-dt convergence tests below.
+        assert abs(audit.energy_residual_j) < 0.15
+
+    def test_elastic_frictionless_completion_closes_without_dissipation(self) -> None:
+        result = solve_impact_interval(_initial(), _club(), self._elastic_config())
+        audit = result.audit
+        assert audit.dissipated_energy_j == 0.0
+        assert audit.unilateral_release_energy_j == 0.0
+        assert audit.stored_contact_energy_initial_j == 0.0
+        assert audit.stored_contact_energy_final_j == 0.0
+        assert abs(audit.energy_residual_j) < 0.05
+        assert abs(audit.linear_momentum_residual_n_s) < 1.0e-9
+
+    def test_initial_stored_contact_energy_is_recovered_not_faked(self) -> None:
+        compression = 1.0e-3
+        stored = 0.5 * 5.0e7 * compression**2
+        result = solve_impact_interval(
+            self._compressed_initial(compression), _club(), self._elastic_config()
+        )
+        audit = result.audit
+        assert audit.initial_kinetic_energy_j == 0.0
+        assert audit.stored_contact_energy_initial_j == pytest.approx(stored, rel=1e-12)
+        assert audit.unilateral_release_energy_j == 0.0
+        assert audit.final_kinetic_energy_j == pytest.approx(stored, rel=0.01)
+        assert abs(audit.energy_residual_j) < 0.05
+
+    def test_unilateral_clipping_releases_tracked_energy(self) -> None:
+        config = ImpactIntervalConfig(
+            contact_law=KelvinVoigtContactLaw(
+                stiffness_n_per_m=5.0e7, damping_n_s_per_m=400.0
+            ),
+            friction_coefficient=0.0,
+        )
+        result = solve_impact_interval(_initial(), _club(), config)
+        audit = result.audit
+        clipped = (result.compression_m > 0.0) & (result.normal_force_n == 0.0)
+        assert np.any(clipped)
+        first_clipped = (
+            0.5 * 5.0e7 * float(result.compression_m[int(np.argmax(clipped))]) ** 2
+        )
+        assert audit.unilateral_release_energy_j > 1.0
+        assert audit.unilateral_release_energy_j == pytest.approx(
+            first_clipped, rel=0.2
+        )
+        assert audit.dashpot_and_friction_dissipation_j > 0.0
+        assert abs(audit.energy_residual_j) < 0.05
+
+    def test_off_center_friction_audit_identifies_friction_loss(self) -> None:
+        offset = np.array([0.0, 0.0, 0.02])
+        result = solve_impact_interval(_initial(offset), _club(offset), _config())
+        audit = result.audit
+        assert audit.dashpot_and_friction_dissipation_j > 0.0
+        assert audit.dissipated_energy_j == (
+            audit.dashpot_and_friction_dissipation_j
+            + audit.torsional_damping_dissipation_j
+        )
+        assert abs(audit.energy_residual_j) < 0.15
+
+    def test_damped_torsional_grip_ledger_is_independent(self) -> None:
+        offset = np.array([0.0, 0.0, 0.02])
+        result = solve_impact_interval(
+            _pinned_initial(offset),
+            _club(offset),
+            _config(BoundaryKind.TORSIONAL_GRIP, torsional_stiffness=2_000.0),
+        )
+        audit = result.audit
+        assert audit.torsional_damping_dissipation_j > 0.0
+        assert audit.boundary_stored_energy_j > 0.0
+        assert audit.dissipated_energy_j == (
+            audit.dashpot_and_friction_dissipation_j
+            + audit.torsional_damping_dissipation_j
+        )
+        assert abs(audit.energy_residual_j) < 0.15
+        assert audit.supported_momentum_residual_n_m_s < 1.0e-3
+
+    def test_perturbed_force_law_stays_visible_in_residual(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        original = KelvinVoigtContactLaw.normal_force
+
+        def scaled(
+            self: KelvinVoigtContactLaw,
+            compression_m: float,
+            compression_rate_mps: float,
+        ) -> float:
+            return float(1.05 * original(self, compression_m, compression_rate_mps))
+
+        monkeypatch.setattr(KelvinVoigtContactLaw, "normal_force", scaled)
+        result = solve_impact_interval(_initial(), _club(), _config())
+        assert abs(result.audit.energy_residual_j) > 0.5
+
+    def test_free_residual_converges_with_halved_time_step(self) -> None:
+        def audit_for(dt: float) -> ImpactIntervalAudit:
+            config = ImpactIntervalConfig(
+                contact_law=KelvinVoigtContactLaw(
+                    stiffness_n_per_m=5.0e7, damping_n_s_per_m=0.0
+                ),
+                time_step_s=dt,
+                friction_coefficient=0.0,
+            )
+            return solve_impact_interval(_initial(), _club(), config).audit
+
+        coarse = audit_for(4.0e-7)
+        fine = audit_for(2.0e-7)
+        finer = audit_for(1.0e-7)
+        assert abs(coarse.energy_residual_j) > abs(fine.energy_residual_j)
+        assert abs(fine.energy_residual_j) > abs(finer.energy_residual_j)
+        assert abs(finer.energy_residual_j) < 0.05
+        assert abs(finer.linear_momentum_residual_n_s) < 1.0e-9
+
+    def test_supported_momentum_diagnostic_converges_and_is_separate(self) -> None:
+        offset = np.array([0.0, 0.0, 0.02])
+
+        def audit_for(dt: float) -> ImpactIntervalAudit:
+            config = ImpactIntervalConfig(
+                contact_law=KelvinVoigtContactLaw.from_restitution(
+                    stiffness_n_per_m=5.0e7,
+                    restitution=0.83,
+                    effective_mass_kg=_reduced_mass(),
+                ),
+                time_step_s=dt,
+                friction_coefficient=0.4,
+                boundary=BoundaryKind.TORSIONAL_GRIP,
+                torsional_stiffness_n_m_per_rad=2_000.0,
+                torsional_damping_n_m_s_per_rad=0.02,
+            )
+            return solve_impact_interval(
+                _pinned_initial(offset), _club(offset), config
+            ).audit
+
+        coarse = audit_for(2.0e-7)
+        fine = audit_for(1.0e-7)
+        assert abs(coarse.supported_momentum_residual_n_m_s) > abs(
+            fine.supported_momentum_residual_n_m_s
+        )
+        assert fine.supported_momentum_residual_n_m_s < 1.0e-3
+        # The supported angular balance closes; free-body linear-momentum
+        # closure is asserted separately under the FREE boundary test.
 
 
 @pytest.mark.unit

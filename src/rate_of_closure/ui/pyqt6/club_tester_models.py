@@ -260,6 +260,8 @@ def execute_heavy_hit_sweep(state: ClubTesterState) -> str:
             damping_n_s_m=state.grip_damping_n_s_m,
             provenance=state.grip_provenance,
         ),
+        dt_s=2e-6,
+        max_time_s=0.01,
     )
     res = impact_coupling_report(
         cfg,

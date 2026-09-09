@@ -132,6 +132,16 @@ jobs:
           sparse-checkout: ${{ matrix.downstream.sparse_checkout }}
           sparse-checkout-cone-mode: ${{ matrix.downstream.sparse_cone }}
 
+      - name: Initialize downstream vendor pins (UpstreamDrift)
+        # UpstreamDrift retired its src/shared/python child copies of
+        # tools-canonical packages (UD #9569); its src/shared/python/__init__
+        # import chain resolves them through the pinned vendor/ud-tools
+        # submodule. The sparse checkout above does not populate submodule
+        # worktrees, so without this step every fresh-provider-import contract
+        # fails with ModuleNotFoundError for e.g. logging_pkg (#5085).
+        if: steps.checkout_downstream.outcome == 'success' && matrix.downstream.repo == 'D-sorganization/UpstreamDrift'
+        run: git -C "${{ matrix.downstream.path }}" submodule update --init --depth 1 vendor/ud-tools
+
       - name: Select persistent Python tool cache
         run: |
           if [ -z "${RUNNER_TOOL_CACHE:-}" ]; then
@@ -302,4 +312,3 @@ jobs:
               echo "- \`$f\`" >> "$GITHUB_STEP_SUMMARY"
             done
           fi
-

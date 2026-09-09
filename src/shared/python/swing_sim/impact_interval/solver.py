@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass
+from typing import cast
 
 import numpy as np
 
@@ -26,6 +27,7 @@ from .types import (
     ImpactIntervalConfig,
     ImpactIntervalInitialState,
     ImpactIntervalResult,
+    ImpactTermination,
 )
 
 
@@ -80,22 +82,20 @@ def _contact_state(
 
 def _torsional_torque(
     state: _State,
-    initial_orientation: np.ndarray,
+    twist: float,
     club: ClubRigidBody,
     config: ImpactIntervalConfig,
 ) -> tuple[np.ndarray, float]:
+    """Return the torsional-grip torque on the club and its twist rate."""
     if config.boundary is not BoundaryKind.TORSIONAL_GRIP:
         return np.zeros(3), 0.0
-    relative = state.orientation @ initial_orientation.T
-    rotation_vector = log_rotation(relative)
     shaft_axis = state.orientation @ club.shaft_axis_body
-    twist = float(np.dot(rotation_vector, shaft_axis))
     twist_rate = float(np.dot(state.club_omega, shaft_axis))
     magnitude = -(
         config.torsional_stiffness_n_m_per_rad * twist
         + config.torsional_damping_n_m_s_per_rad * twist_rate
     )
-    return magnitude * shaft_axis, twist
+    return magnitude * shaft_axis, twist_rate
 
 
 def _advance_club(
@@ -105,25 +105,21 @@ def _advance_club(
     force_on_ball: np.ndarray,
     r_contact: np.ndarray,
     anchor: np.ndarray,
-    initial_orientation: np.ndarray,
-) -> float:
+    spring_torque: np.ndarray,
+) -> None:
     dt = config.time_step_s
     inertia_world = state.orientation @ club.inertia_body_kg_m2 @ state.orientation.T
-    spring_torque, twist = _torsional_torque(state, initial_orientation, club, config)
     if config.boundary is BoundaryKind.FREE:
-        torque = np.cross(r_contact, -force_on_ball)
+        torque = np.cross(r_contact, -force_on_ball) + spring_torque
         angular_acceleration = np.linalg.solve(
             inertia_world,
-            torque
-            + spring_torque
-            - np.cross(state.club_omega, inertia_world @ state.club_omega),
+            torque - np.cross(state.club_omega, inertia_world @ state.club_omega),
         )
         state.club_velocity += (-force_on_ball / club.mass_kg) * dt
         state.club_omega += angular_acceleration * dt
         state.club_position += state.club_velocity * dt
         state.orientation = exp_rotation(state.club_omega * dt) @ state.orientation
-        return twist
-
+        return
     r_attachment = state.orientation @ club.cg_to_attachment_body_m
     pivot_inertia = inertia_world + club.mass_kg * (
         float(np.dot(r_attachment, r_attachment)) * np.eye(3)
@@ -140,7 +136,30 @@ def _advance_club(
     r_attachment_new = state.orientation @ club.cg_to_attachment_body_m
     state.club_position = anchor - r_attachment_new
     state.club_velocity = -np.cross(state.club_omega, r_attachment_new)
-    return twist
+
+
+def _angular_momentum_about(
+    state: _State, club: ClubRigidBody, anchor: np.ndarray
+) -> np.ndarray:
+    """Return total club+ball angular momentum about the fixed attachment."""
+    inertia_world = state.orientation @ club.inertia_body_kg_m2 @ state.orientation.T
+    r_club = state.club_position - anchor
+    club_momentum = inertia_world @ state.club_omega + club.mass_kg * np.cross(
+        r_club, state.club_velocity
+    )
+    r_ball = state.ball_position - anchor
+    ball_momentum = (
+        GOLF_BALL_MOMENT_OF_INERTIA_KG_M2 * state.ball_omega
+        + GOLF_BALL_MASS_KG * np.cross(r_ball, state.ball_velocity)
+    )
+    return cast(np.ndarray, club_momentum + ball_momentum)
+
+
+def _stored_contact_energy(config: ImpactIntervalConfig, compression_m: float) -> float:
+    """Return recoverable Kelvin-Voigt spring energy at the given overlap."""
+    return float(
+        0.5 * config.contact_law.stiffness_n_per_m * max(compression_m, 0.0) ** 2
+    )
 
 
 def _state_arrays(
@@ -162,7 +181,20 @@ def solve_impact_interval(
         not more than one ball radius beyond the ball center.
     Postconditions:
         The returned histories have equal length, finite values, monotonic
-        time, and contain the separated post-impact state when contact occurs.
+        time. ``termination`` states whether contact separated, ran out of
+        time budget, or never occurred; ``to_post_impact_state`` refuses to
+        convert anything but a separated contact.
+        Every audit ledger term is integrated from the contact state, the
+        declared law, and the declared boundary independently of the signed
+        energy residual; no term is derived from that residual. The ledger
+        reconciles initial kinetic + initial stored contact energy against
+        final kinetic + final stored contact energy + unilateral release +
+        dissipation + boundary storage + residual. The tangential branch of
+        the Kelvin-Voigt law is purely dissipative, so recoverable contact
+        energy is the normal spring term only. The fixed attachment of the
+        supported boundaries performs no work, so support work is zero by
+        the declared boundary, and supported_momentum_residual_n_m_s is NaN
+        for the FREE boundary, where no support balance exists.
     """
     if not isinstance(initial, ImpactIntervalInitialState):
         raise TypeError("initial must be an ImpactIntervalInitialState")
@@ -185,6 +217,10 @@ def solve_impact_interval(
     initial_energy = _kinetic_energy(state, club)
     initial_momentum = (
         club.mass_kg * state.club_velocity + GOLF_BALL_MASS_KG * state.ball_velocity
+    )
+    initial_angular_momentum = _angular_momentum_about(state, club, anchor)
+    stored_contact_initial = _stored_contact_energy(
+        config, _contact_state(state, club)[4]
     )
     history: dict[str, list[np.ndarray | float]] = {
         name: []
@@ -214,7 +250,18 @@ def solve_impact_interval(
     normal_impulse = 0.0
     friction_impulse = 0.0
     modelled_dissipation = 0.0
-    max_steps = int(math.ceil(config.maximum_time_s / config.time_step_s)) + 1
+    torsional_damping_loss = 0.0
+    unilateral_release = 0.0
+    stored_contact_previous = stored_contact_initial
+    tensile_clip_pending = False
+    supported_torque_impulse = np.zeros(3)
+    # Samples are taken at step * dt, so the last admissible index is
+    # floor(T/dt): `ceil(T/dt) + 1` sampled one step *past* the configured
+    # budget, reporting a final time of 1.01e-5 s under a 1e-5 s cap. A
+    # non-integer T/dt therefore stops just short of the cap rather than
+    # silently running over it.
+    max_steps = int(math.floor(config.maximum_time_s / config.time_step_s)) + 1
+    termination = ImpactTermination.NO_CONTACT
 
     for step in range(max_steps):
         time_s = step * config.time_step_s
@@ -222,6 +269,13 @@ def solve_impact_interval(
             state, club
         )
         normal_force = config.contact_law.normal_force(compression, rate)
+        stored_contact = _stored_contact_energy(config, compression)
+        if tensile_clip_pending:
+            unilateral_release += max(0.0, stored_contact_previous - stored_contact)
+        tensile_clip_pending = compression > 0.0 and (
+            config.contact_law.unclipped_normal_force(compression, rate) < 0.0
+        )
+        stored_contact_previous = stored_contact
         tangent_velocity = relative - rate * normal
         tangent_speed = float(np.linalg.norm(tangent_velocity))
         friction_force = np.zeros(3)
@@ -237,6 +291,7 @@ def solve_impact_interval(
         rotation_vector = log_rotation(relative_orientation)
         shaft_axis = state.orientation @ club.shaft_axis_body
         twist = float(np.dot(rotation_vector, shaft_axis))
+        spring_torque, twist_rate = _torsional_torque(state, twist, club, config)
         face_angle = math.degrees(math.atan2(normal[2], normal[0]))
         loft = math.degrees(math.atan2(normal[1], math.hypot(normal[0], normal[2])))
         attachment = (
@@ -270,8 +325,16 @@ def solve_impact_interval(
             did_contact = True
             last_contact_time = time_s
         elif did_contact and compression <= 0.0 and rate < 0.0:
+            termination = ImpactTermination.SEPARATED
             break
         if step == max_steps - 1:
+            # Budget exhausted. If contact began and never separated, the final
+            # sample is mid-contact and must not be mistaken for a result.
+            termination = (
+                ImpactTermination.TIME_LIMIT
+                if did_contact
+                else ImpactTermination.NO_CONTACT
+            )
             break
 
         dt = config.time_step_s
@@ -281,6 +344,16 @@ def solve_impact_interval(
             damping_power = config.contact_law.damping_n_s_per_m * rate**2
             friction_power = float(np.dot(friction_force, tangent_velocity))
             modelled_dissipation += max(0.0, damping_power + friction_power) * dt
+        if config.boundary is BoundaryKind.TORSIONAL_GRIP:
+            torsional_damping_loss += (
+                config.torsional_damping_n_m_s_per_rad * twist_rate**2 * dt
+            )
+        if config.boundary is not BoundaryKind.FREE:
+            supported_torque_impulse += (
+                np.cross(state.ball_position - anchor, force_on_ball)
+                + np.cross(point - anchor, -force_on_ball)
+                + spring_torque
+            ) * dt
 
         r_ball = -GOLF_BALL_RADIUS_M * normal
         ball_torque = np.cross(r_ball, force_on_ball)
@@ -294,7 +367,7 @@ def solve_impact_interval(
             force_on_ball,
             r_contact,
             anchor,
-            initial_orientation,
+            spring_torque,
         )
 
     arrays = _state_arrays(history)
@@ -308,22 +381,37 @@ def solve_impact_interval(
     final_momentum = (
         club.mass_kg * state.club_velocity + GOLF_BALL_MASS_KG * state.ball_velocity
     )
-    raw_energy_residual = (
-        initial_energy - final_energy - modelled_dissipation - boundary_energy
-    )
-    # A unilateral Kelvin-Voigt law clips tensile force during rebound. Any
-    # spring energy remaining at that clipping instant is a physical loss at
-    # the one-sided contact boundary, distinct from dashpot/friction loss.
-    unilateral_release = max(0.0, raw_energy_residual)
-    total_dissipation = modelled_dissipation + unilateral_release
+    final_compression = _contact_state(state, club)[4]
+    stored_contact_final = _stored_contact_energy(config, final_compression)
+    dashpot_friction_dissipation = modelled_dissipation
+    total_dissipation = dashpot_friction_dissipation + torsional_damping_loss
+    # Signed, unfudged residual over the declared boundary. Release energy
+    # above was accumulated only at identified tensile-clip steps of the
+    # unilateral law; no ledger term is derived from this residual.
     energy_residual = (
-        initial_energy - final_energy - total_dissipation - boundary_energy
+        initial_energy
+        - final_energy
+        + (stored_contact_initial - stored_contact_final)
+        - unilateral_release
+        - total_dissipation
+        - boundary_energy
+    )
+    supported_momentum_residual = (
+        float(
+            np.linalg.norm(
+                _angular_momentum_about(state, club, anchor)
+                - initial_angular_momentum
+                - supported_torque_impulse
+            )
+        )
+        if config.boundary is not BoundaryKind.FREE
+        else math.nan
     )
     audit = ImpactIntervalAudit(
         initial_kinetic_energy_j=initial_energy,
         final_kinetic_energy_j=final_energy,
         dissipated_energy_j=total_dissipation,
-        dashpot_and_friction_dissipation_j=modelled_dissipation,
+        dashpot_and_friction_dissipation_j=dashpot_friction_dissipation,
         unilateral_release_energy_j=unilateral_release,
         boundary_stored_energy_j=boundary_energy,
         energy_residual_j=energy_residual,
@@ -332,6 +420,10 @@ def solve_impact_interval(
         linear_momentum_residual_n_s=float(
             np.linalg.norm(final_momentum - initial_momentum)
         ),
+        stored_contact_energy_initial_j=stored_contact_initial,
+        stored_contact_energy_final_j=stored_contact_final,
+        torsional_damping_dissipation_j=torsional_damping_loss,
+        supported_momentum_residual_n_m_s=supported_momentum_residual,
     )
     contact_duration = (
         last_contact_time - first_contact_time + config.time_step_s
@@ -342,6 +434,7 @@ def solve_impact_interval(
         **arrays,
         contact_duration_s=contact_duration,
         did_contact=did_contact,
+        termination=termination,
         audit=audit,
     )
 

@@ -6,21 +6,21 @@ perceptual validation cannot be inferred from numerical fixtures.
 
 ## Requirement and Evidence Matrix
 
-| Slice                          | Issue / Delivery               | Evidence Required Before Completion                                                                                           | Current State                                                                                                |
-| ------------------------------ | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| Theory review                  | AffineDrift #4254 / PR #4258   | Corrected rendered theory, source ledger and inventory; protected delivery                                                    | Merged PR #4258 at `1ce02d7ae4d916d4c598b62be78cefa83452aaa7`                                                |
-| Damping/transport correction   | AffineDrift #4277 / PR #4282   | Paired source, combined book, browser/PDF review and protected CI                                                             | Merged `1968897ec65044b8393705087fccdf755e3e89a2`; all CI passed                                             |
-| Final theory synthesis         | AffineDrift #4255              | Qualified downstream results with uncertainty and limits                                                                      | Not started; depends on evidence                                                                             |
-| Rigid reference                | Tools #5069 / PR #5077         | Analytic tensor/impulse gates and protected provider delivery                                                                 | Merged PR #5077 at `f7254461399ac18e5667a0215afd90a9ebff9d22`                                                |
-| Lumped qualification           | Tools #5071 / PR #5082         | Events, work/loss ledger, timeout/step contracts, law-consistent restitution, scaling counterexamples, parity and convergence | Merged #5082 at `80d580d57`; #5071 closed; golf source/tests equal reviewed head                             |
-| Distributed shaft/grip         | Tools #5072                    | Prestressed rotating operators, passive impedance, beam limits, frame agreement, modal/mesh/time/FRF convergence              | Finite-grip balance/FRF/spectra and autonomous decay published; driven/nonlinear/bandwidth gates remain      |
-| Flexible contact               | Tools #5073                    | Off-center friction/contact and head/shaft modes; launch and ringdown; complete energy closure                                | Pending T3                                                                                                   |
-| Acoustics                      | Tools #5074                    | Calibrated signals, identified transfer, qualified radiation and held-out validation                                          | Early ingestion PR #5084 merged; boundary probes identify qualification work, radiation/measurements pending |
-| Reports/surfaces               | Tools #5075                    | Versioned provenance reports, consumer compatibility and truthful UI integration                                              | PR #5083 merged at `cfca06449`; strict wire/evidence and consumer gaps remain on #5075                       |
-| Integration plan               | UpstreamDrift #9701 / PR #9706 | Source/state inventory and protected delivery                                                                                 | Merged PR #9706 at `dbc6727aa4f0d422b7adaf6957e658e8997f7f29`                                                |
-| Swing adapters                 | UpstreamDrift #9703            | Compatible rigid, elastic, prestress and wrench transfer on exact provider pin                                                | Pending provider contract                                                                                    |
-| Counterfactual studies         | UpstreamDrift #9704            | Registered matched-state and matched-input studies, reproducible results, uncertainty                                         | Pending verified coupled model                                                                               |
-| Physical/perceptual validation | UpstreamDrift #9705            | Synchronized calibrated measurements, held-out validation, blinded sweetness analysis                                         | Data/equipment availability requested; no experiment run                                                     |
+| Slice                          | Issue / Delivery               | Evidence Required Before Completion                                                                                           | Current State                                                                                                         |
+| ------------------------------ | ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+| Theory review                  | AffineDrift #4254 / PR #4258   | Corrected rendered theory, source ledger and inventory; protected delivery                                                    | Merged PR #4258 at `1ce02d7ae4d916d4c598b62be78cefa83452aaa7`                                                         |
+| Damping/transport correction   | AffineDrift #4277 / PR #4282   | Paired source, combined book, browser/PDF review and protected CI                                                             | Merged `1968897ec65044b8393705087fccdf755e3e89a2`; all CI passed                                                      |
+| Final theory synthesis         | AffineDrift #4255              | Qualified downstream results with uncertainty and limits                                                                      | Not started; depends on evidence                                                                                      |
+| Rigid reference                | Tools #5069 / PR #5077         | Analytic tensor/impulse gates and protected provider delivery                                                                 | Merged PR #5077 at `f7254461399ac18e5667a0215afd90a9ebff9d22`                                                         |
+| Lumped qualification           | Tools #5071 / PR #5082         | Events, work/loss ledger, timeout/step contracts, law-consistent restitution, scaling counterexamples, parity and convergence | Merged #5082 at `80d580d57`; #5071 closed; golf source/tests equal reviewed head                                      |
+| Distributed shaft/grip         | Tools #5072                    | Prestressed rotating operators, passive impedance, beam limits, frame agreement, modal/mesh/time/FRF convergence              | Finite-grip balance/FRF/spectra and autonomous decay published; driven/nonlinear/bandwidth gates remain               |
+| Flexible contact               | Tools #5073                    | Off-center friction/contact and head/shaft modes; launch and ringdown; complete energy closure                                | Pending T3                                                                                                            |
+| Acoustics                      | Tools #5074                    | Calibrated signals, identified transfer, qualified radiation and held-out validation                                          | Ingestion #5084 and signal-boundary repair #5106 merged; calibration, complex FRF, radiation and measurements pending |
+| Reports/surfaces               | Tools #5075                    | Versioned provenance reports, consumer compatibility and truthful UI integration                                              | PR #5083 merged at `cfca06449`; strict wire/evidence and consumer gaps remain on #5075                                |
+| Integration plan               | UpstreamDrift #9701 / PR #9706 | Source/state inventory and protected delivery                                                                                 | Merged PR #9706 at `dbc6727aa4f0d422b7adaf6957e658e8997f7f29`                                                         |
+| Swing adapters                 | UpstreamDrift #9703            | Compatible rigid, elastic, prestress and wrench transfer on exact provider pin                                                | Pending provider contract                                                                                             |
+| Counterfactual studies         | UpstreamDrift #9704            | Registered matched-state and matched-input studies, reproducible results, uncertainty                                         | Pending verified coupled model                                                                                        |
+| Physical/perceptual validation | UpstreamDrift #9705            | Synchronized calibrated measurements, held-out validation, blinded sweetness analysis                                         | Data/equipment availability requested; no experiment run                                                              |
 
 ## Current Implementation: IA-T3 (Partial)
 
@@ -446,3 +446,35 @@ modal bandwidth, nonlinear impact, head radiation and physical/blinded acoustics
 ## Current Protected Delivery Review
 
 T2 #5082 merged as 80d580d57 and #5071 is closed. A source/test comparison matches reviewed e47fde4e and prior 476eaa98 exactly for the golf package. T3 still needs current-main and classifier integration. Inventory #5103 advances to 02b53e2d8 with pending CI; signal #5106 advances to c8f3b4d1 with a failed private-consumer lane and other checks pending. Preserve the older local worktrees as historical evidence. UpstreamDrift #9830 publishes its three-refinement study at 1887ac59f; independent reference controls and physical qualification remain open.
+
+## Current-Main Integration and Numerical Consumer Qualification
+
+The T3 branch now incorporates main 287767dfa, including signal repair #5106
+and the merged T1/T2 contact implementations. Golf implementation/test paths
+are unchanged by the merge. The complete vibroacoustics package, including its
+tests, matches the previously reviewed 3a9362530 exactly; incoming handoff and
+development-log entries are retained. The golf API baseline preserves its T3
+additions; the only common-module difference is the four T3 facade exports.
+Older duplicated universal sub-percent/monotonic claims are excluded when
+reconciling HEAVY_HIT_COUPLING.md; current conditional mathematics is retained.
+Canonical inventory regeneration is complete. Combined Linux regression
+passes 772 golf/signal/API tests in 286.02 s, with two optional CAD skips and
+three unavailable-plugin configuration warnings. All eight non-inventory
+manual gates pass. Inventory freshness, pinned root Ruff and normal merge
+hooks remain before committing this integration.
+
+UpstreamDrift #9826 has merged as a410ae705. Reference/Bioptim follow-up #9841
+is published at d165da461 through all normal hooks. It retains adaptive
+endpoint evidence and separate position/velocity defects; 21 real Bioptim,
+factory/isolation and dependency controls pass on CasADi 3.6.7. Its 3.8
+consumer solve remains unsuccessful despite an expanded diagnostic budget;
+matrix import compatibility is not numerical or physical qualification.
+Protected CI remains pending. Tools #5114 separately tracks the unfinished
+rendered-interaction test behind #5103; private lookup still lacks resolution.
+
+T3 lease session impact-acoustics-01a07d8a-shaft5072 expires
+2026-09-09T04:46:13Z. Next numerical work must explicitly define constant
+operation and retain equilibrium residual forcing instead of silently
+converting a tolerance-balanced state into a homogeneous decay claim.
+Time-varying operation, contact, acoustic radiation and physical/blinded
+validation remain required; no full-epic completion is claimed.

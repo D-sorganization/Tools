@@ -5360,11 +5360,58 @@
                   "annotation": "int",
                   "default": "_CACHE_MAX_SIZE",
                   "kind": "arg"
+                },
+                {
+                  "name": "fallback_policy",
+                  "annotation": "GlassFallbackPolicy",
+                  "default": "GlassFallbackPolicy.DEMO",
+                  "kind": "arg"
+                },
+                {
+                  "name": "conductivity_provider",
+                  "annotation": "ConductivityProvider | None",
+                  "default": "None",
+                  "kind": "arg"
                 }
               ],
               "returns": "None"
             },
             "get_conductivity": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "temperature_celsius",
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "composition",
+                  "annotation": "dict[str, float] | None",
+                  "default": "None",
+                  "kind": "arg"
+                },
+                {
+                  "name": "power_density",
+                  "annotation": "float",
+                  "default": "0",
+                  "kind": "arg"
+                },
+                {
+                  "name": "is_metal",
+                  "annotation": "bool",
+                  "default": "False",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "float"
+            },
+            "get_resistivity": {
               "args": [
                 {
                   "name": "self",
@@ -5416,6 +5463,34 @@
               ],
               "returns": "None"
             },
+            "set_conductivity_provider": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "provider",
+                  "annotation": "ConductivityProvider",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "get_last_provider_report": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ProviderResultReport | None"
+            },
             "update_properties": {
               "args": [
                 {
@@ -5443,41 +5518,6 @@
                 }
               ],
               "returns": "dict"
-            },
-            "get_resistivity": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "temperature_celsius",
-                  "annotation": "float",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "composition",
-                  "annotation": "dict[str, float] | None",
-                  "default": "None",
-                  "kind": "arg"
-                },
-                {
-                  "name": "power_density",
-                  "annotation": "float",
-                  "default": "0",
-                  "kind": "arg"
-                },
-                {
-                  "name": "is_metal",
-                  "annotation": "bool",
-                  "default": "False",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "float"
             },
             "clear_cache": {
               "args": [
@@ -5590,6 +5630,10 @@
         }
       }
     }
+  },
+  "calculators/electrical/glass_contracts.py": {
+    "__all__": [],
+    "symbols": {}
   },
   "calculators/electrical/config.py": {
     "__all__": ["ElectrodeConfig"],
@@ -5772,11 +5816,58 @@
                   "annotation": "int",
                   "default": "_CACHE_MAX_SIZE",
                   "kind": "arg"
+                },
+                {
+                  "name": "fallback_policy",
+                  "annotation": "GlassFallbackPolicy",
+                  "default": "GlassFallbackPolicy.DEMO",
+                  "kind": "arg"
+                },
+                {
+                  "name": "conductivity_provider",
+                  "annotation": "ConductivityProvider | None",
+                  "default": "None",
+                  "kind": "arg"
                 }
               ],
               "returns": "None"
             },
             "get_conductivity": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "temperature_celsius",
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "composition",
+                  "annotation": "dict[str, float] | None",
+                  "default": "None",
+                  "kind": "arg"
+                },
+                {
+                  "name": "power_density",
+                  "annotation": "float",
+                  "default": "0",
+                  "kind": "arg"
+                },
+                {
+                  "name": "is_metal",
+                  "annotation": "bool",
+                  "default": "False",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "float"
+            },
+            "get_resistivity": {
               "args": [
                 {
                   "name": "self",
@@ -5828,6 +5919,34 @@
               ],
               "returns": "None"
             },
+            "set_conductivity_provider": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "provider",
+                  "annotation": "ConductivityProvider",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "get_last_provider_report": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ProviderResultReport | None"
+            },
             "update_properties": {
               "args": [
                 {
@@ -5855,41 +5974,6 @@
                 }
               ],
               "returns": "dict"
-            },
-            "get_resistivity": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "temperature_celsius",
-                  "annotation": "float",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "composition",
-                  "annotation": "dict[str, float] | None",
-                  "default": "None",
-                  "kind": "arg"
-                },
-                {
-                  "name": "power_density",
-                  "annotation": "float",
-                  "default": "0",
-                  "kind": "arg"
-                },
-                {
-                  "name": "is_metal",
-                  "annotation": "bool",
-                  "default": "False",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "float"
             },
             "clear_cache": {
               "args": [
@@ -8262,6 +8346,7 @@
     "__all__": [
       "MOCAP_SESSION_SCHEMA_VERSION",
       "AcquisitionError",
+      "ApprovalStatus",
       "Availability",
       "CalibrationDegeneracyKind",
       "CalibrationObservation",
@@ -8280,6 +8365,7 @@
       "DistortionCoefficients",
       "DistortionModel",
       "DropPolicy",
+      "ExternalServicePoseAdapter",
       "ExtrinsicCalibrationResult",
       "ExtrinsicDegeneracyKind",
       "ExtrinsicQuality",
@@ -8290,14 +8376,24 @@
       "FrameSource",
       "FrameStamp",
       "IntrinsicCalibrationResult",
+      "KeypointMapping",
       "Landmark3D",
+      "LicenseCategory",
+      "LicenseEvaluationResult",
+      "LicenseRecord",
+      "MediaPipePoseAdapter",
       "MethodDescriptor",
       "MocapSessionManifest",
       "MovementDetectionResult",
       "NumericRange",
+      "PermittedUse",
       "PinholeIntrinsics",
       "PixelObservation",
+      "PoseBackendProtocol",
+      "PoseInferenceResult",
+      "PoseInferenceStatus",
       "PrerecordedFrameSource",
+      "ProviderLicenseManifest",
       "QueueFullError",
       "RecordingIntegrityReport",
       "RecordingPolicy",
@@ -8308,6 +8404,7 @@
       "RigidTransform",
       "SessionState",
       "ShutterKind",
+      "SkeletonConverter",
       "SkeletonDefinition",
       "SourceState",
       "SupportLevel",
@@ -8316,6 +8413,7 @@
       "SyncMonitor",
       "SyncQuality",
       "SyntheticFrameSource",
+      "SyntheticPoseAdapter",
       "bundle_adjust_layout",
       "check_coverage_and_degeneracy",
       "detect_camera_movement",
@@ -8323,6 +8421,8 @@
       "estimate_pnp_pose",
       "evaluate_extrinsic_quality",
       "evaluate_intrinsic_quality",
+      "get_canonical_skeleton",
+      "get_default_mediapipe_mapping",
       "load_session_manifest"
     ],
     "symbols": {
@@ -8333,6 +8433,13 @@
         "type": "class",
         "info": {
           "bases": ["RuntimeError"],
+          "methods": {}
+        }
+      },
+      "ApprovalStatus": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -8694,6 +8801,122 @@
           "methods": {}
         }
       },
+      "ExternalServicePoseAdapter": {
+        "type": "class",
+        "info": {
+          "bases": ["PoseBackendProtocol"],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "adapter_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "skeleton",
+                  "annotation": "SkeletonDefinition",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "license_manifest",
+                  "annotation": "ProviderLicenseManifest",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "service_url",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "dispatcher",
+                  "annotation": "Callable[[dict[str, Any]], dict[str, Any]] | None",
+                  "default": "None",
+                  "kind": "arg"
+                },
+                {
+                  "name": "required_use",
+                  "annotation": "PermittedUse",
+                  "default": "PermittedUse.COMMERCIAL",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "backend_id": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "skeleton": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "SkeletonDefinition"
+            },
+            "license_manifest": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ProviderLicenseManifest"
+            },
+            "is_available": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            },
+            "infer_frame": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "frame",
+                  "annotation": "FramePacket",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "PoseInferenceResult"
+            }
+          }
+        }
+      },
       "ExtrinsicCalibrationResult": {
         "type": "class",
         "info": {
@@ -8982,11 +9205,149 @@
           }
         }
       },
+      "KeypointMapping": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
       "Landmark3D": {
         "type": "class",
         "info": {
           "bases": [],
           "methods": {}
+        }
+      },
+      "LicenseCategory": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "LicenseEvaluationResult": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "LicenseRecord": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "MediaPipePoseAdapter": {
+        "type": "class",
+        "info": {
+          "bases": ["PoseBackendProtocol"],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "adapter_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "license_manifest",
+                  "annotation": "ProviderLicenseManifest",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "model_complexity",
+                  "annotation": "int",
+                  "default": "1",
+                  "kind": "arg"
+                },
+                {
+                  "name": "min_detection_confidence",
+                  "annotation": "float",
+                  "default": "0.5",
+                  "kind": "arg"
+                },
+                {
+                  "name": "required_use",
+                  "annotation": "PermittedUse",
+                  "default": "PermittedUse.COMMERCIAL",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "backend_id": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "skeleton": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "SkeletonDefinition"
+            },
+            "license_manifest": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ProviderLicenseManifest"
+            },
+            "is_available": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            },
+            "infer_frame": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "frame",
+                  "annotation": "FramePacket",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "PoseInferenceResult"
+            }
+          }
         }
       },
       "MethodDescriptor": {
@@ -9035,6 +9396,13 @@
           }
         }
       },
+      "PermittedUse": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
       "PinholeIntrinsics": {
         "type": "class",
         "info": {
@@ -9081,6 +9449,89 @@
         "type": "class",
         "info": {
           "bases": [],
+          "methods": {}
+        }
+      },
+      "PoseBackendProtocol": {
+        "type": "class",
+        "info": {
+          "bases": ["ABC"],
+          "methods": {
+            "backend_id": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "skeleton": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "SkeletonDefinition"
+            },
+            "license_manifest": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ProviderLicenseManifest"
+            },
+            "is_available": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            },
+            "infer_frame": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "frame",
+                  "annotation": "FramePacket",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "PoseInferenceResult"
+            }
+          }
+        }
+      },
+      "PoseInferenceResult": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "PoseInferenceStatus": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -9234,6 +9685,31 @@
                 }
               ],
               "returns": "None"
+            }
+          }
+        }
+      },
+      "ProviderLicenseManifest": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "evaluate_licensing": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "required_use",
+                  "annotation": "PermittedUse",
+                  "default": "PermittedUse.COMMERCIAL",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "LicenseEvaluationResult"
             }
           }
         }
@@ -9466,6 +9942,55 @@
         "info": {
           "bases": ["StrEnum"],
           "methods": {}
+        }
+      },
+      "SkeletonConverter": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "convert_detections": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "camera_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "frame_sequence",
+                  "annotation": "int",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "timestamp_ns",
+                  "annotation": "int",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "detections",
+                  "annotation": "collections.abc.Mapping[str | int, tuple[float, float, float]]",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "observation_id_prefix",
+                  "annotation": "str",
+                  "default": "'obs'",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[PixelObservation, ...]"
+            }
+          }
         }
       },
       "SkeletonDefinition": {
@@ -9758,6 +10283,116 @@
           }
         }
       },
+      "SyntheticPoseAdapter": {
+        "type": "class",
+        "info": {
+          "bases": ["PoseBackendProtocol"],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "adapter_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "skeleton",
+                  "annotation": "SkeletonDefinition",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "license_manifest",
+                  "annotation": "ProviderLicenseManifest",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "canned_detections",
+                  "annotation": "collections.abc.Mapping[str, tuple[float, float, float]] | None",
+                  "default": "None",
+                  "kind": "arg"
+                },
+                {
+                  "name": "required_use",
+                  "annotation": "PermittedUse",
+                  "default": "PermittedUse.COMMERCIAL",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "backend_id": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "skeleton": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "SkeletonDefinition"
+            },
+            "license_manifest": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ProviderLicenseManifest"
+            },
+            "is_available": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            },
+            "infer_frame": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "frame",
+                  "annotation": "FramePacket",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "PoseInferenceResult"
+            }
+          }
+        }
+      },
       "bundle_adjust_layout": {
         "type": "function",
         "signature": {
@@ -9982,6 +10617,27 @@
           "returns": "tuple[CalibrationQuality, tuple[CalibrationDegeneracyKind, ...]]"
         }
       },
+      "get_canonical_skeleton": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "skeleton_id",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "SkeletonDefinition"
+        }
+      },
+      "get_default_mediapipe_mapping": {
+        "type": "function",
+        "signature": {
+          "args": [],
+          "returns": "KeypointMapping"
+        }
+      },
       "load_session_manifest": {
         "type": "function",
         "signature": {
@@ -10002,11 +10658,656 @@
     "__all__": [],
     "symbols": {}
   },
+  "lab/mocap/acquisition.py": {
+    "__all__": [
+      "AcquisitionError",
+      "CaptureGroup",
+      "DropPolicy",
+      "FramePacket",
+      "FrameSource",
+      "PrerecordedFrameSource",
+      "QueueFullError",
+      "SourceState",
+      "SyntheticFrameSource"
+    ],
+    "symbols": {
+      "AcquisitionError": {
+        "type": "class",
+        "info": {
+          "bases": ["RuntimeError"],
+          "methods": {}
+        }
+      },
+      "CaptureGroup": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "sources",
+                  "annotation": "tuple[FrameSource, ...]",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "max_queue_size",
+                  "annotation": "int",
+                  "default": "100",
+                  "kind": "arg"
+                },
+                {
+                  "name": "drop_policy",
+                  "annotation": "DropPolicy",
+                  "default": "DropPolicy.DROP_OLDEST",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "sources": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Mapping[str, FrameSource]"
+            },
+            "initialize": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "start_capture": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "push_frame_direct": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "frame",
+                  "annotation": "FramePacket",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "read_frames": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "timeout_seconds",
+                  "annotation": "float",
+                  "default": "5.0",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "dict[str, FramePacket]"
+            },
+            "stop_capture": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "close": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        }
+      },
+      "DropPolicy": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "FramePacket": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "to_frame_stamp": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "stream_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "clock_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "FrameStamp"
+            }
+          }
+        }
+      },
+      "FrameSource": {
+        "type": "class",
+        "info": {
+          "bases": ["ABC"],
+          "methods": {
+            "source_id": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "identity": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CameraIdentity"
+            },
+            "capabilities": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CameraCapabilities"
+            },
+            "state": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "SourceState"
+            },
+            "initialize": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "start_capture": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "read_frame": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "timeout_seconds",
+                  "annotation": "float",
+                  "default": "5.0",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "FramePacket"
+            },
+            "stop_capture": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "close": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        }
+      },
+      "PrerecordedFrameSource": {
+        "type": "class",
+        "info": {
+          "bases": ["FrameSource"],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "identity",
+                  "annotation": "CameraIdentity",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "capabilities",
+                  "annotation": "CameraCapabilities",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "frames",
+                  "annotation": "list[FramePacket]",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "loop",
+                  "annotation": "bool",
+                  "default": "False",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "source_id": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "identity": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CameraIdentity"
+            },
+            "capabilities": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CameraCapabilities"
+            },
+            "state": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "SourceState"
+            },
+            "initialize": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "start_capture": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "read_frame": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "timeout_seconds",
+                  "annotation": "float",
+                  "default": "5.0",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "FramePacket"
+            },
+            "stop_capture": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "close": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        }
+      },
+      "QueueFullError": {
+        "type": "class",
+        "info": {
+          "bases": ["AcquisitionError"],
+          "methods": {}
+        }
+      },
+      "SourceState": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "SyntheticFrameSource": {
+        "type": "class",
+        "info": {
+          "bases": ["FrameSource"],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "identity",
+                  "annotation": "CameraIdentity",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "capabilities",
+                  "annotation": "CameraCapabilities",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "resolution_px",
+                  "annotation": "tuple[int, int]",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "frame_rate_hz",
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "pixel_format",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "source_id": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "identity": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CameraIdentity"
+            },
+            "capabilities": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CameraCapabilities"
+            },
+            "state": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "SourceState"
+            },
+            "initialize": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "start_capture": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "read_frame": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "timeout_seconds",
+                  "annotation": "float",
+                  "default": "5.0",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "FramePacket"
+            },
+            "stop_capture": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "close": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        }
+      }
+    }
+  },
+  "lab/mocap/adapters.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/calibration.py": {
+    "__all__": [],
+    "symbols": {}
+  },
   "lab/mocap/devices.py": {
     "__all__": [],
     "symbols": {}
   },
   "lab/mocap/enums.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/extrinsics.py": {
     "__all__": [],
     "symbols": {}
   },
@@ -10018,6 +11319,221 @@
     "__all__": [],
     "symbols": {}
   },
+  "lab/mocap/recording.py": {
+    "__all__": [
+      "FrameIndexEntry",
+      "RecordingIntegrityReport",
+      "RecordingReader",
+      "RecordingWriter"
+    ],
+    "symbols": {
+      "FrameIndexEntry": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "to_json": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "from_dict": {
+              "args": [
+                {
+                  "name": "cls",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "data",
+                  "annotation": "dict[str, Any]",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "FrameIndexEntry"
+            }
+          }
+        }
+      },
+      "RecordingIntegrityReport": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "is_valid": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            }
+          }
+        }
+      },
+      "RecordingReader": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "session_dir",
+                  "annotation": "Path | str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "read_manifest": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "MocapSessionManifest"
+            },
+            "read_index": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "list[FrameIndexEntry]"
+            },
+            "read_frames": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "Iterator[FramePacket]"
+            },
+            "verify_integrity": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "RecordingIntegrityReport"
+            }
+          }
+        }
+      },
+      "RecordingWriter": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "session_dir",
+                  "annotation": "Path | str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "manifest",
+                  "annotation": "MocapSessionManifest",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "initialize": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "write_frame": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "packet",
+                  "annotation": "FramePacket",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "FrameIndexEntry"
+            },
+            "finalize": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "close": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        }
+      }
+    }
+  },
   "lab/mocap/serialization.py": {
     "__all__": [],
     "symbols": {}
@@ -10025,6 +11541,137 @@
   "lab/mocap/session.py": {
     "__all__": [],
     "symbols": {}
+  },
+  "lab/mocap/skeletons.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/sync.py": {
+    "__all__": [
+      "ClockSkewEstimate",
+      "SyncAnomaly",
+      "SyncAnomalyType",
+      "SyncMonitor",
+      "SyncQuality"
+    ],
+    "symbols": {
+      "ClockSkewEstimate": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "SyncAnomaly": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "SyncAnomalyType": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "SyncMonitor": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "max_allowable_skew_ns",
+                  "annotation": "int",
+                  "default": "5000000",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "record_frame": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "packet",
+                  "annotation": "FramePacket",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "list[SyncAnomaly]"
+            },
+            "estimate_skew": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_a",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_b",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ClockSkewEstimate | None"
+            },
+            "evaluate_quality": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_a",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "source_b",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "SyncQuality"
+            }
+          }
+        }
+      },
+      "SyncQuality": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      }
+    }
   },
   "lab/mocap/timebase.py": {
     "__all__": [],
@@ -37216,988 +38863,5 @@
         }
       }
     }
-  },
-  "lab/mocap/acquisition.py": {
-    "__all__": [
-      "AcquisitionError",
-      "CaptureGroup",
-      "DropPolicy",
-      "FramePacket",
-      "FrameSource",
-      "PrerecordedFrameSource",
-      "QueueFullError",
-      "SourceState",
-      "SyntheticFrameSource"
-    ],
-    "symbols": {
-      "AcquisitionError": {
-        "type": "class",
-        "info": {
-          "bases": ["RuntimeError"],
-          "methods": {}
-        }
-      },
-      "CaptureGroup": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {
-            "__init__": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "sources",
-                  "annotation": "tuple[FrameSource, ...]",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "max_queue_size",
-                  "annotation": "int",
-                  "default": "100",
-                  "kind": "arg"
-                },
-                {
-                  "name": "drop_policy",
-                  "annotation": "DropPolicy",
-                  "default": "DropPolicy.DROP_OLDEST",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "sources": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "Mapping[str, FrameSource]"
-            },
-            "initialize": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "start_capture": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "push_frame_direct": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "source_id",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "frame",
-                  "annotation": "FramePacket",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "read_frames": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "timeout_seconds",
-                  "annotation": "float",
-                  "default": "5.0",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "dict[str, FramePacket]"
-            },
-            "stop_capture": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "close": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            }
-          }
-        }
-      },
-      "DropPolicy": {
-        "type": "class",
-        "info": {
-          "bases": ["StrEnum"],
-          "methods": {}
-        }
-      },
-      "FramePacket": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {
-            "to_frame_stamp": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "stream_id",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "clock_id",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "FrameStamp"
-            }
-          }
-        }
-      },
-      "FrameSource": {
-        "type": "class",
-        "info": {
-          "bases": ["ABC"],
-          "methods": {
-            "source_id": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "str"
-            },
-            "identity": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "CameraIdentity"
-            },
-            "capabilities": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "CameraCapabilities"
-            },
-            "state": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "SourceState"
-            },
-            "initialize": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "start_capture": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "read_frame": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "timeout_seconds",
-                  "annotation": "float",
-                  "default": "5.0",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "FramePacket"
-            },
-            "stop_capture": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "close": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            }
-          }
-        }
-      },
-      "PrerecordedFrameSource": {
-        "type": "class",
-        "info": {
-          "bases": ["FrameSource"],
-          "methods": {
-            "__init__": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "source_id",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "identity",
-                  "annotation": "CameraIdentity",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "capabilities",
-                  "annotation": "CameraCapabilities",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "frames",
-                  "annotation": "list[FramePacket]",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "loop",
-                  "annotation": "bool",
-                  "default": "False",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "source_id": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "str"
-            },
-            "identity": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "CameraIdentity"
-            },
-            "capabilities": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "CameraCapabilities"
-            },
-            "state": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "SourceState"
-            },
-            "initialize": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "start_capture": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "read_frame": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "timeout_seconds",
-                  "annotation": "float",
-                  "default": "5.0",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "FramePacket"
-            },
-            "stop_capture": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "close": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            }
-          }
-        }
-      },
-      "QueueFullError": {
-        "type": "class",
-        "info": {
-          "bases": ["AcquisitionError"],
-          "methods": {}
-        }
-      },
-      "SourceState": {
-        "type": "class",
-        "info": {
-          "bases": ["StrEnum"],
-          "methods": {}
-        }
-      },
-      "SyntheticFrameSource": {
-        "type": "class",
-        "info": {
-          "bases": ["FrameSource"],
-          "methods": {
-            "__init__": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "source_id",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "identity",
-                  "annotation": "CameraIdentity",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "capabilities",
-                  "annotation": "CameraCapabilities",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "resolution_px",
-                  "annotation": "tuple[int, int]",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "frame_rate_hz",
-                  "annotation": "float",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "pixel_format",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "source_id": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "str"
-            },
-            "identity": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "CameraIdentity"
-            },
-            "capabilities": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "CameraCapabilities"
-            },
-            "state": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "SourceState"
-            },
-            "initialize": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "start_capture": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "read_frame": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "timeout_seconds",
-                  "annotation": "float",
-                  "default": "5.0",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "FramePacket"
-            },
-            "stop_capture": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "close": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            }
-          }
-        }
-      }
-    }
-  },
-  "lab/mocap/recording.py": {
-    "__all__": [
-      "FrameIndexEntry",
-      "RecordingIntegrityReport",
-      "RecordingReader",
-      "RecordingWriter"
-    ],
-    "symbols": {
-      "FrameIndexEntry": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {
-            "to_json": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "str"
-            },
-            "from_dict": {
-              "args": [
-                {
-                  "name": "cls",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "data",
-                  "annotation": "dict[str, Any]",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "FrameIndexEntry"
-            }
-          }
-        }
-      },
-      "RecordingIntegrityReport": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {
-            "is_valid": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "bool"
-            }
-          }
-        }
-      },
-      "RecordingReader": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {
-            "__init__": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "session_dir",
-                  "annotation": "Path | str",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "read_manifest": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "MocapSessionManifest"
-            },
-            "read_index": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "list[FrameIndexEntry]"
-            },
-            "read_frames": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "Iterator[FramePacket]"
-            },
-            "verify_integrity": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "RecordingIntegrityReport"
-            }
-          }
-        }
-      },
-      "RecordingWriter": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {
-            "__init__": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "session_dir",
-                  "annotation": "Path | str",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "manifest",
-                  "annotation": "MocapSessionManifest",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "initialize": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "write_frame": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "packet",
-                  "annotation": "FramePacket",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "FrameIndexEntry"
-            },
-            "finalize": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "close": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            }
-          }
-        }
-      }
-    }
-  },
-  "lab/mocap/sync.py": {
-    "__all__": [
-      "ClockSkewEstimate",
-      "SyncAnomaly",
-      "SyncAnomalyType",
-      "SyncMonitor",
-      "SyncQuality"
-    ],
-    "symbols": {
-      "ClockSkewEstimate": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {}
-        }
-      },
-      "SyncAnomaly": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {}
-        }
-      },
-      "SyncAnomalyType": {
-        "type": "class",
-        "info": {
-          "bases": ["StrEnum"],
-          "methods": {}
-        }
-      },
-      "SyncMonitor": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {
-            "__init__": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "max_allowable_skew_ns",
-                  "annotation": "int",
-                  "default": "5000000",
-                  "kind": "arg"
-                }
-              ],
-              "returns": "None"
-            },
-            "record_frame": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "packet",
-                  "annotation": "FramePacket",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "list[SyncAnomaly]"
-            },
-            "estimate_skew": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "source_a",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "source_b",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "ClockSkewEstimate | None"
-            },
-            "evaluate_quality": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "source_a",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "source_b",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "SyncQuality"
-            }
-          }
-        }
-      },
-      "SyncQuality": {
-        "type": "class",
-        "info": {
-          "bases": ["StrEnum"],
-          "methods": {}
-        }
-      }
-    }
-  },
-  "lab/mocap/calibration.py": {
-    "__all__": [],
-    "symbols": {}
-  },
-  "lab/mocap/extrinsics.py": {
-    "__all__": [],
-    "symbols": {}
   }
 }
