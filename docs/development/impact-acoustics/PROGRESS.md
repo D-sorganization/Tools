@@ -4,13 +4,28 @@ The user authorized completion of the full planned program, not merely its
 planning deliverables. All three parent epics remain open. Physical and
 perceptual validation cannot be inferred from numerical fixtures.
 
-Latest delivery: constant gripped operating models are published at
-36aae1d57816799e4fd4023b8d591bf908e0885b through all normal hooks; remote SHA
-verified. The affine transient extension passes 88 focused tests and scoped
-lint/types. All 860 Linux golf/signal/API tests pass in 274.37 s (two optional
-CAD skips, three plugin warnings); all nine gates and repository Ruff pass.
-Normal publication remains. UD #9841 merged as
-28d9bf79e; #9830/#9842 are closed. The full scientific program remains open.
+Latest published shaft checkpoint: affine transient
+09d8e59cf24caccf3beca6ac050ac1113f6197a0, all normal hooks passed and remote SHA
+verified (860 Linux golf/signal/API passes). Classifier PR #5103 published
+c0163768cd0946bd3d6705b8dbe52e733d4bf89a with all normal hooks; a subsequent
+documentation-only main #5116 update is being integrated separately.
+
+## Current Galerkin Reduction Checkpoint
+
+The explicit real reduction uses the existing pencil and plant contracts,
+preserves work-conjugate loads, separate G/C and nonsymmetric K, and retains
+original and reduced validation. Missing-module RED preceded production code.
+All 81 combined Galerkin/transient/operating cases pass in 27.68 s; actual mypy and repository Ruff pass. The broader Linux suite has 888 passes in 245.03 s (two optional CAD skips, three plugin warnings), before the final overflow test, which is checked separately.
+Full-basis transient/complex-FRF equivalence, omitted instability/resonance,
+ownership and strict domains are checked. The eight-element finite-grip rod's
+sampled maximum complex errors are 149.39%, 10.35%, 0.512% and roundoff for
+1/2/4/9 axial modes, respectively. These eight frequency samples establish no
+continuous-band guarantee or measured club property. See GALERKIN_REDUCTION.md
+for the primary literature, equations, domains, metrics and planned gates.
+
+Final inventory/API/handoff checks and normal publication remain. Full T3, flexible contact, acoustic identification/radiation,
+exact-pin consumers, physical/blinded studies and final theory synthesis remain
+required. All three parent epics stay open.
 
 ## Current Affine Transient and CI Investigation Checkpoint
 
@@ -21,7 +36,7 @@ owned scaled states. Missing-module RED and a positive-time ratio-underflow RED
 preceded the fixes; 88 focused Windows tests pass in 11.74 s, with actual
 pre-push mypy and scoped Ruff passing. The broader Linux regression passes
 860 tests in 274.37 s (two optional CAD skips, three plugin warnings); all nine
-manual gates and repository Ruff pass. See AFFINE_TRANSIENT.md for derivation,
+manual gates and repository Ruff pass. Publication completed at 09d8e59cf through all normal hooks. See AFFINE_TRANSIENT.md for derivation,
 independent analytic/IVP oracles and remaining numerical/physical limits.
 
 Tools #5114 remains unexplained: original head 02b53e2d8 passes the isolated

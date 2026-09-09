@@ -143,7 +143,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-07
 - **Last verified:** 2026-09-09 (88 focused transient/operating/affine Windows tests in 11.74 s; 860 Linux golf/signal/API tests in 274.37 s, two optional CAD skips and three plugin warnings; all nine gates, repository Ruff and actual mypy pass)
 - **Summary:** Response 12bcf3d83 and spectra 97d46055c are published. New constant homogeneous ODE assessment shares plant validation, recomputes Lyapunov dissipation and qualifies a coordinate-dependent envelope with explicit numerical/error margins. Independent scalar and nonnormal trajectories, critical damping and unresolved-margin refusal pass after recorded RED tests.
-- **Next step:** Constant gripped models published at 36aae1d578 through all normal hooks. Validate/publish the affine transient checkpoint, then complete modal/mesh/FRF bandwidth and moving/nonlinear qualification. Preserve #5114 isolated/mixed non-reproduction and the current #5103 CI distinction. No physical/acoustic completion is inferred.
+- **Next step:** Affine transient published at 09d8e59cf through all normal hooks. New Galerkin reduction has 81 combined Windows passes after missing-module RED and 888 broader Linux passes (before the separately checked final overflow test); sampled rod response converges with retained modes, while omitted resonance/instability remains explicit. Complete broad regression, inventory/handoffs and publication, then mesh/FRF continuous-band and moving/nonlinear qualification. Preserve separate classifier #5103 and #5114 CI evidence. Full scientific/acoustic program remains open.
 
 ### DL-0055 · Qualified Lumped Impact Dynamics
 

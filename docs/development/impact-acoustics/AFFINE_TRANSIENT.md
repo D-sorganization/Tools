@@ -95,7 +95,7 @@ It uses the preserved Python 3.11.15, NumPy 2.3.5 and SciPy 1.15.3 environment
 and one BLAS/OMP/MKL thread. All nine manual/inventory/handoff gates pass;
 repository Ruff 0.14.10 passes with 3,794 formatted files. The API baseline adds
 one empty-export private module; every prior API entry is unchanged. Normal
-commit/push publication remains.
+commit/push publication completed at 09d8e59cf24caccf3beca6ac050ac1113f6197a0; the remote SHA was verified.
 
 The current inventory classifier still misses scientific imports and labels
 this new calculation module non-calculation. That known false negative is
