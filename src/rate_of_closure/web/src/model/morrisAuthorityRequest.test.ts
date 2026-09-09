@@ -60,14 +60,7 @@ describe("Morris factor rows", () => {
     // Python side by test_morris_ui_contract.py, so a Python registry drift
     // fails this gate instead of being invisible to hardcoded literals
     // (#4458).
-    const fixture = pythonSuggestedDrafts as {
-      drafts: Array<{
-        variableKey: string;
-        enabled: boolean;
-        lower: number;
-        upper: number;
-      }>;
-    };
+    const fixture = pythonSuggestedDrafts;
     const suggested = suggestedMorrisFactorDrafts(base());
     expect(suggested.map(({ variableKey, enabled }) => ({ variableKey, enabled }))).toEqual(
       fixture.drafts.map(({ variable_key: variableKey, enabled }) => ({

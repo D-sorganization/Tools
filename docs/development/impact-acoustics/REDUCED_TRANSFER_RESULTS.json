@@ -1,0 +1,115 @@
+{
+  "schema": "impact-reduced-transfer-evidence/1",
+  "status": "conditional-numerical",
+  "physical_evidence": false,
+  "source_archive": {
+    "tree": "cac9ca3750b10aab4073f81c53d2d63707416c9f",
+    "archive": "C:\\Users\\diete\\AppData\\Local\\Temp\\impact-port-source.tar",
+    "bytes": 60876800,
+    "sha256": "526d9316eb57bab41a4d771b429f3f030fde54293277944e7bb31871059476ed"
+  },
+  "windows": {
+    "junit_sha256": "44a0e81cf985b0ff94118699f5df95a8ef935c9b817df22f4ea32b2e88cb82ea",
+    "passed": 132,
+    "skipped": 0,
+    "new_cases_passed": 48,
+    "studies": [
+      {
+        "test": "test_assembled_rod_complete_band_meets_declared_normalized_error[2]",
+        "properties": {
+          "retained_axial_modes": "2",
+          "paired_cell_evaluations": "21",
+          "complete_band_absolute_error_bound": "0.04664706561492662"
+        }
+      },
+      {
+        "test": "test_assembled_rod_complete_band_meets_declared_normalized_error[4]",
+        "properties": {
+          "retained_axial_modes": "4",
+          "paired_cell_evaluations": "19",
+          "complete_band_absolute_error_bound": "0.040401595464980226"
+        }
+      },
+      {
+        "test": "test_assembled_rod_complete_band_meets_declared_normalized_error[5]",
+        "properties": {
+          "retained_axial_modes": "5",
+          "paired_cell_evaluations": "19",
+          "complete_band_absolute_error_bound": "0.04016724495857273"
+        }
+      }
+    ],
+    "runtime": {
+      "python": "3.12.10",
+      "numpy": "2.4.1",
+      "scipy": "1.17.0"
+    },
+    "duration_s": 7.54
+  },
+  "linux": {
+    "junit_sha256": "aa07ab2fc733399501c6b2aacf9e1daf3e000484419e293d46a336ea3ba1f9ce",
+    "passed": 1075,
+    "skipped": 2,
+    "new_cases_passed": 48,
+    "studies": [
+      {
+        "test": "test_assembled_rod_complete_band_meets_declared_normalized_error[2]",
+        "properties": {
+          "retained_axial_modes": "2",
+          "paired_cell_evaluations": "21",
+          "complete_band_absolute_error_bound": "0.04664706561492662"
+        }
+      },
+      {
+        "test": "test_assembled_rod_complete_band_meets_declared_normalized_error[4]",
+        "properties": {
+          "retained_axial_modes": "4",
+          "paired_cell_evaluations": "19",
+          "complete_band_absolute_error_bound": "0.040401595464980226"
+        }
+      },
+      {
+        "test": "test_assembled_rod_complete_band_meets_declared_normalized_error[5]",
+        "properties": {
+          "retained_axial_modes": "5",
+          "paired_cell_evaluations": "19",
+          "complete_band_absolute_error_bound": "0.04016724495857273"
+        }
+      }
+    ],
+    "duration_s": 183.26,
+    "warnings": 3,
+    "runtime": {
+      "python": "3.11.15",
+      "numpy": "2.3.5",
+      "scipy": "1.15.3"
+    }
+  },
+  "limits": [
+    "Uncertified floating evaluation of exact-arithmetic bounds",
+    "Synthetic 0-8 rad/s assembled example; not impact or acoustic qualification",
+    "Full-inverse framework refuses unobservable full-pencil singularities",
+    "No port/basis/calibration/radiation uncertainty identification"
+  ],
+  "typing_followup": {
+    "reason": "Real five-source pre-push mypy required an explicit float return when imported types are skipped",
+    "change": "Wrap existing maximum_inverse_norm_bound result in float; numerical expression unchanged",
+    "source_overlay": {
+      "base_archive_tree": "cac9ca3750b10aab4073f81c53d2d63707416c9f",
+      "changed_file": "src/shared/python/golf_club/_shaft_frequency_band.py",
+      "lf_sha256": "30296e117763c07430a98179097e7175537bc09909e018eb518248101666e94d",
+      "native_dir": "/home/dieterolson/.cache/codex-impact/port-typing-30296e117"
+    },
+    "windows": {
+      "passed": 84,
+      "duration_s": 17.47
+    },
+    "linux": {
+      "passed": 84,
+      "duration_s": 5.05,
+      "warnings": 3,
+      "junit_sha256": "ed9ea4d3136e854d903d1e4695e3d2761ddd7d47550e27cae49d7d96843011e7"
+    },
+    "mypy_changed_source_files": 5
+  }
+}

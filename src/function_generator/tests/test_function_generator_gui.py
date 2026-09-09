@@ -9,6 +9,7 @@ from __future__ import annotations
 import importlib.util
 import os
 import sys
+from collections.abc import Iterator
 from pathlib import Path
 from unittest.mock import patch
 
@@ -111,7 +112,7 @@ class TestFunctionGeneratorGUI:
     """Test suite for Function Generator GUI."""
 
     @pytest.fixture
-    def mock_qt_app(self):
+    def mock_qt_app(self) -> Iterator[None]:
         """Create a mock Qt application for testing."""
         with patch("PyQt6.QtWidgets.QApplication"):
             yield
@@ -122,6 +123,7 @@ class TestFunctionGeneratorGUI:
         spec = importlib.util.spec_from_file_location(
             "function_generator_launch_pyqt6", launcher_path
         )
+        assert spec is not None and spec.loader is not None
         mod = importlib.util.module_from_spec(spec)
         spec.loader.exec_module(mod)
 
@@ -139,7 +141,7 @@ class TestFunctionGeneratorGUI:
         os.environ.get("DISPLAY") is None and sys.platform != "win32",
         reason="No display available",
     )
-    def test_widget_creation(self, mock_qt_app) -> None:
+    def test_widget_creation(self, mock_qt_app: None) -> None:
         """Test that the widget can be created."""
         try:
             from shared.python.ui.function_generator_widget import (

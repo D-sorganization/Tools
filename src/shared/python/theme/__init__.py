@@ -34,7 +34,7 @@ Usage:
     bg_color = colors["bg"]
 """
 
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from .colors import (
     BUILTIN_THEMES,
@@ -111,33 +111,35 @@ try:
     _PYQT6_AVAILABLE = True
 except ImportError:
     _PYQT6_AVAILABLE = False
-    ThemeManager = None  # type: ignore[assignment, misc]
-    get_theme_manager = None  # type: ignore[assignment]
-    FontManager = None  # type: ignore[assignment, misc]
-    get_font_manager = None  # type: ignore[assignment]
-    get_qcolor = None  # type: ignore[assignment]
-    ThemedWindowMixin = None  # type: ignore[assignment, misc]
-    apply_theme_to_window = None  # type: ignore[assignment]
-    create_theme_menu = None  # type: ignore[assignment]
-    setup_themed_app = None  # type: ignore[assignment]
-    ColorFieldEditor = None  # type: ignore[assignment, misc]
-    ColorPickerButton = None  # type: ignore[assignment, misc]
-    CustomThemeDialog = None  # type: ignore[assignment, misc]
-    CustomThemeEditor = None  # type: ignore[assignment, misc]
-    ThemeListItem = None  # type: ignore[assignment, misc]
-    ThemeManagerDialog = None  # type: ignore[assignment, misc]
-    ThemePreviewWidget = None  # type: ignore[assignment, misc]
-    TextWidthSpec = None  # type: ignore[assignment, misc]
-    configure_form_layout_for_readability = None  # type: ignore[assignment]
-    derive_text_candidates = None  # type: ignore[assignment]
-    readable_text_width = None  # type: ignore[assignment]
-    set_text_minimum_width = None  # type: ignore[assignment]
-    wrap_in_scroll_area = None  # type: ignore[assignment]
-    ApplicationZoomController = None  # type: ignore[assignment, misc]
-    ZoomConfig = None  # type: ignore[assignment, misc]
-    ZoomTokenSet = None  # type: ignore[assignment, misc]
-    install_application_zoom = None  # type: ignore[assignment]
-    scale_px = None  # type: ignore[assignment]
+    # Runtime fallbacks preserve the imported static types in both mypy modes.
+    if not TYPE_CHECKING:
+        ThemeManager = None
+        get_theme_manager = None
+        FontManager = None
+        get_font_manager = None
+        get_qcolor = None
+        ThemedWindowMixin = None
+        apply_theme_to_window = None
+        create_theme_menu = None
+        setup_themed_app = None
+        ColorFieldEditor = None
+        ColorPickerButton = None
+        CustomThemeDialog = None
+        CustomThemeEditor = None
+        ThemeListItem = None
+        ThemeManagerDialog = None
+        ThemePreviewWidget = None
+        TextWidthSpec = None
+        configure_form_layout_for_readability = None
+        derive_text_candidates = None
+        readable_text_width = None
+        set_text_minimum_width = None
+        wrap_in_scroll_area = None
+        ApplicationZoomController = None
+        ZoomConfig = None
+        ZoomTokenSet = None
+        install_application_zoom = None
+        scale_px = None
 
 
 def _derive_full_palette(
@@ -166,7 +168,8 @@ def _derive_full_palette(
     if theme_name and "name" not in merged:
         merged["name"] = theme_name
     try:
-        return ThemeColors(**merged).as_dict()
+        palette: dict[str, Any] = ThemeColors(**merged).as_dict()
+        return palette
     except Exception:  # noqa: BLE001
         return merged
 

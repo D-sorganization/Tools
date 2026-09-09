@@ -13106,10 +13106,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10499,
+      "bytes_lf": 10355,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "1d3ec849f49733141c1203be2ef3cdaf32ba7e38040939ac53c04068de21927b",
+      "content_sha256_lf": "c018f09803e23bd7fb3b968e9eb547de8473db417e7c7fd4d9e33b879891f97b",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-MORRISAUTHORITYREQUEST-TEST-TS-094087FE07BD",
       "language": "typescript",

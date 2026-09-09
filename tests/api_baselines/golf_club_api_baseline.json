@@ -25,6 +25,10 @@
       "ShaftStation",
       "ShaftModalResponse",
       "ShaftModalSettings",
+      "ShaftPrestress",
+      "radial_shaft_tension",
+      "shaft_geometric_stiffness",
+      "solve_prestressed_shaft_modes",
       "ShaftTipLoad",
       "ShaftTipResponse",
       "TURF_PROFILE_FORMAT",
@@ -557,6 +561,13 @@
         "type": "class"
       },
       "ShaftModalSettings": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ShaftPrestress": {
         "info": {
           "bases": [],
           "methods": {}
@@ -1653,6 +1664,32 @@
         },
         "type": "function"
       },
+      "radial_shaft_tension": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "ShaftPrestress",
+              "default": null,
+              "kind": "arg",
+              "name": "prestress"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "position_m"
+            }
+          ],
+          "returns": "float"
+        },
+        "type": "function"
+      },
       "run_turf_convergence_study": {
         "signature": {
           "args": [
@@ -1766,6 +1803,32 @@
             }
           ],
           "returns": "ComponentMassProperties"
+        },
+        "type": "function"
+      },
+      "shaft_geometric_stiffness": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "ShaftPrestress",
+              "default": null,
+              "kind": "arg",
+              "name": "prestress"
+            },
+            {
+              "annotation": "ShaftModalSettings",
+              "default": "_DEFAULT_SETTINGS",
+              "kind": "arg",
+              "name": "settings"
+            }
+          ],
+          "returns": "np.ndarray"
         },
         "type": "function"
       },
@@ -1934,6 +1997,32 @@
             }
           ],
           "returns": "ShaftTipResponse"
+        },
+        "type": "function"
+      },
+      "solve_prestressed_shaft_modes": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "ShaftPrestress",
+              "default": null,
+              "kind": "arg",
+              "name": "prestress"
+            },
+            {
+              "annotation": "ShaftModalSettings",
+              "default": "_DEFAULT_SETTINGS",
+              "kind": "arg",
+              "name": "settings"
+            }
+          ],
+          "returns": "ShaftModalResponse"
         },
         "type": "function"
       },
@@ -2291,6 +2380,103 @@
       }
     }
   },
+  "_beam_fem.py": {
+    "__all__": [
+      "assemble_bending_axis",
+      "beam_mass",
+      "beam_stiffness",
+      "generalized_eigenvalues"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "assemble_bending_axis": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "int",
+              "default": null,
+              "kind": "arg",
+              "name": "element_count"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "stiffness_name"
+            }
+          ],
+          "returns": "tuple[np.ndarray, np.ndarray]"
+        },
+        "type": "function"
+      },
+      "beam_mass": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "linear_density_kg_m"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "length_m"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "beam_stiffness": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "ei_n_m2"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "length_m"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "generalized_eigenvalues": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "stiffness"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "mass"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      }
+    }
+  },
   "_coupled_impact_solver.py": {
     "__all__": [],
     "explicit_all": false,
@@ -2347,6 +2533,672 @@
           "methods": {}
         },
         "type": "class"
+      }
+    }
+  },
+  "_grip_contracts.py": {
+    "__all__": [
+      "GripPortResponse",
+      "GripPortState",
+      "Matrix6",
+      "PassiveGripImpedance",
+      "Vector6",
+      "factor6",
+      "finite_array",
+      "vector6"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "GripPortResponse": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "power_residual_w": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "float"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "GripPortState": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "Matrix6": {
+        "type": "variable"
+      },
+      "PassiveGripImpedance": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "Vector6": {
+        "type": "variable"
+      },
+      "factor6": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "Matrix6"
+        },
+        "type": "function"
+      },
+      "finite_array": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "tuple[int, ...]",
+              "default": null,
+              "kind": "arg",
+              "name": "shape"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "vector6": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "Vector6"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "_grip_energy.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_grip_finite_response.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_grip_moving_kinematics.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_grip_stationary.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_rotating_body_contracts.py": {
+    "__all__": ["RotatingFrameState", "strict_vector3"],
+    "explicit_all": false,
+    "symbols": {
+      "RotatingFrameState": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "strict_vector3": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "Vector3"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "_rotating_body_kernel.py": {
+    "__all__": [
+      "BodyGeometry",
+      "body_geometry",
+      "cross_matrix",
+      "equilibrium_force",
+      "kinetic_position_hessian",
+      "rotation_hessian",
+      "velocity_position"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "BodyGeometry": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "body_geometry": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ComponentMassProperties",
+              "default": null,
+              "kind": "arg",
+              "name": "body"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "reference"
+            }
+          ],
+          "returns": "BodyGeometry"
+        },
+        "type": "function"
+      },
+      "cross_matrix": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "vector"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "equilibrium_force": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "BodyGeometry",
+              "default": null,
+              "kind": "arg",
+              "name": "data"
+            },
+            {
+              "annotation": "tuple[np.ndarray, ...]",
+              "default": null,
+              "kind": "arg",
+              "name": "motion"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "kinetic_position_hessian": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "BodyGeometry",
+              "default": null,
+              "kind": "arg",
+              "name": "data"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "omega"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "rotation_hessian": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "left"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "right"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "velocity_position": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "BodyGeometry",
+              "default": null,
+              "kind": "arg",
+              "name": "data"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "omega"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "_shaft_affine_response.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_affine_transient.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_autonomous_decay.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_body_assembly.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_chain.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_clamped.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_damped_spectrum.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_equilibrium.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_frame_inertia.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_frequency_band.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_frequency_interval.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_galerkin.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_gripped_chain.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_gripped_coordinates.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_gripped_dynamics.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_gripped_equilibrium.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_gripped_operating.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_gripped_response.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_gripped_spectrum.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_harmonic_response.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_inertia.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_linear_contracts.py": {
+    "__all__": ["ShaftAttachments", "ShaftRodProperties"],
+    "explicit_all": false,
+    "symbols": {
+      "ShaftAttachments": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ShaftRodProperties": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      }
+    }
+  },
+  "_shaft_loaded_dynamics.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_model_contracts.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_model_provider.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_moving_chain.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_moving_contracts.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_moving_trajectory.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_point_load.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_reduction_band.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_reduction_interval.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_rkmk_trajectory.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_rotating_chain.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_se3.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_section.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_siso_band.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_siso_interval.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_spatial_element.py": {
+    "__all__": ["spatial_element", "tip_spatial_inertia"],
+    "explicit_all": false,
+    "symbols": {
+      "spatial_element": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftRodProperties",
+              "default": null,
+              "kind": "arg",
+              "name": "rod"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "raw_midpoint"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "length"
+            }
+          ],
+          "returns": "tuple[np.ndarray, np.ndarray]"
+        },
+        "type": "function"
+      },
+      "tip_spatial_inertia": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ComponentMassProperties",
+              "default": null,
+              "kind": "arg",
+              "name": "body"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "_shaft_spectrum.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_trajectory_contracts.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_transfer_polynomial.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_transfer_ports.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_transport_contracts.py": {
+    "__all__": ["ShaftRotaryInertia", "ShaftRotatingModel"],
+    "explicit_all": false,
+    "symbols": {
+      "ShaftRotaryInertia": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ShaftRotatingModel": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      }
+    }
+  },
+  "_shaft_transport_quadrature.py": {
+    "__all__": ["element_quadrature", "quadrature_body", "section_motion_map"],
+    "explicit_all": false,
+    "symbols": {
+      "element_quadrature": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "tuple[float, float]",
+              "default": null,
+              "kind": "arg",
+              "name": "bounds"
+            }
+          ],
+          "returns": "tuple[np.ndarray, np.ndarray]"
+        },
+        "type": "function"
+      },
+      "quadrature_body": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftRotatingModel",
+              "default": null,
+              "kind": "arg",
+              "name": "model"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "position"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "weight"
+            }
+          ],
+          "returns": "ComponentMassProperties"
+        },
+        "type": "function"
+      },
+      "section_motion_map": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "coordinate"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "length"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
       }
     }
   },
@@ -3113,6 +3965,133 @@
             }
           ],
           "returns": "str"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "grip_impedance.py": {
+    "__all__": [
+      "PassiveGripImpedance",
+      "GripPortState",
+      "GripPortResponse",
+      "evaluate_grip_impedance",
+      "grip_frequency_impedance",
+      "transform_grip_impedance",
+      "transform_grip_state"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "GripPortResponse": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "power_residual_w": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "float"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "GripPortState": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PassiveGripImpedance": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "evaluate_grip_impedance": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PassiveGripImpedance",
+              "default": null,
+              "kind": "arg",
+              "name": "grip"
+            },
+            {
+              "annotation": "GripPortState",
+              "default": null,
+              "kind": "arg",
+              "name": "state"
+            }
+          ],
+          "returns": "GripPortResponse"
+        },
+        "type": "function"
+      },
+      "grip_frequency_impedance": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PassiveGripImpedance",
+              "default": null,
+              "kind": "arg",
+              "name": "grip"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "angular_frequency_rad_s"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "transform_grip_impedance": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PassiveGripImpedance",
+              "default": null,
+              "kind": "arg",
+              "name": "grip"
+            },
+            {
+              "annotation": "RigidTransform",
+              "default": null,
+              "kind": "arg",
+              "name": "transform"
+            }
+          ],
+          "returns": "PassiveGripImpedance"
+        },
+        "type": "function"
+      },
+      "transform_grip_state": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "GripPortState",
+              "default": null,
+              "kind": "arg",
+              "name": "state"
+            },
+            {
+              "annotation": "RigidTransform",
+              "default": null,
+              "kind": "arg",
+              "name": "transform"
+            }
+          ],
+          "returns": "GripPortState"
         },
         "type": "function"
       }
@@ -3945,6 +4924,45 @@
       }
     }
   },
+  "rotating_body.py": {
+    "__all__": ["RotatingFrameState", "rotating_body_tangent"],
+    "explicit_all": true,
+    "symbols": {
+      "RotatingFrameState": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "rotating_body_tangent": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ComponentMassProperties",
+              "default": null,
+              "kind": "arg",
+              "name": "body"
+            },
+            {
+              "annotation": "RotatingFrameState",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "Vector3",
+              "default": null,
+              "kind": "arg",
+              "name": "reference_position_m"
+            }
+          ],
+          "returns": "_BodyTangent"
+        },
+        "type": "function"
+      }
+    }
+  },
   "serialization.py": {
     "__all__": [
       "CURRENT_FORMAT",
@@ -4142,6 +5160,265 @@
       }
     }
   },
+  "shaft_linear_system.py": {
+    "__all__": [
+      "ShaftRodProperties",
+      "ShaftAttachments",
+      "assemble_shaft_linear_system"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "ShaftAttachments": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ShaftRodProperties": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "assemble_shaft_linear_system": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftRodProperties",
+              "default": null,
+              "kind": "arg",
+              "name": "rod"
+            },
+            {
+              "annotation": "ShaftModalSettings",
+              "default": "_DEFAULT_SETTINGS",
+              "kind": "arg",
+              "name": "settings"
+            },
+            {
+              "annotation": "ShaftAttachments",
+              "default": "_NO_ATTACHMENTS",
+              "kind": "arg",
+              "name": "attachments"
+            }
+          ],
+          "returns": "_LinearOperators"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "shaft_model_data.py": {
+    "__all__": [
+      "DISTRIBUTED_SHAFT_FORMAT",
+      "DistributedShaftModel",
+      "ShaftModelSection",
+      "ShaftModelSource",
+      "shaft_model_from_json",
+      "shaft_model_to_json",
+      "shaft_model_digest",
+      "verify_shaft_source_bytes"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "DISTRIBUTED_SHAFT_FORMAT": {
+        "type": "variable"
+      },
+      "DistributedShaftModel": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ShaftModelSection": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "material_frame_ids": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "frozenset[str]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ShaftModelSource": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "shaft_model_digest": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "DistributedShaftModel",
+              "default": null,
+              "kind": "arg",
+              "name": "model"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "shaft_model_from_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "document"
+            }
+          ],
+          "returns": "DistributedShaftModel"
+        },
+        "type": "function"
+      },
+      "shaft_model_to_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "DistributedShaftModel",
+              "default": null,
+              "kind": "arg",
+              "name": "model"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "verify_shaft_source_bytes": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "DistributedShaftModel",
+              "default": null,
+              "kind": "arg",
+              "name": "model"
+            },
+            {
+              "annotation": "Mapping[str, bytes]",
+              "default": null,
+              "kind": "arg",
+              "name": "blobs"
+            }
+          ],
+          "returns": "tuple[str, ...]"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "shaft_prestress.py": {
+    "__all__": [
+      "ShaftPrestress",
+      "radial_shaft_tension",
+      "shaft_geometric_stiffness",
+      "solve_prestressed_shaft_modes"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "ShaftPrestress": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "radial_shaft_tension": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "ShaftPrestress",
+              "default": null,
+              "kind": "arg",
+              "name": "prestress"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "position_m"
+            }
+          ],
+          "returns": "float"
+        },
+        "type": "function"
+      },
+      "shaft_geometric_stiffness": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "ShaftPrestress",
+              "default": null,
+              "kind": "arg",
+              "name": "prestress"
+            },
+            {
+              "annotation": "ShaftModalSettings",
+              "default": "_DEFAULT_SETTINGS",
+              "kind": "arg",
+              "name": "settings"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "solve_prestressed_shaft_modes": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftProfile",
+              "default": null,
+              "kind": "arg",
+              "name": "profile"
+            },
+            {
+              "annotation": "ShaftPrestress",
+              "default": null,
+              "kind": "arg",
+              "name": "prestress"
+            },
+            {
+              "annotation": "ShaftModalSettings",
+              "default": "_DEFAULT_SETTINGS",
+              "kind": "arg",
+              "name": "settings"
+            }
+          ],
+          "returns": "ShaftModalResponse"
+        },
+        "type": "function"
+      }
+    }
+  },
   "shaft_profile.py": {
     "__all__": [
       "ExtrapolationPolicy",
@@ -4257,6 +5534,56 @@
           "methods": {}
         },
         "type": "class"
+      }
+    }
+  },
+  "shaft_rotating_transport.py": {
+    "__all__": [
+      "ShaftRotaryInertia",
+      "ShaftRotatingModel",
+      "assemble_shaft_rotating_transport"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "ShaftRotaryInertia": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ShaftRotatingModel": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "assemble_shaft_rotating_transport": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ShaftRotatingModel",
+              "default": null,
+              "kind": "arg",
+              "name": "model"
+            },
+            {
+              "annotation": "RotatingFrameState",
+              "default": null,
+              "kind": "arg",
+              "name": "frame"
+            },
+            {
+              "annotation": "ShaftModalSettings",
+              "default": "_DEFAULT_SETTINGS",
+              "kind": "arg",
+              "name": "settings"
+            }
+          ],
+          "returns": "_ShaftTransport"
+        },
+        "type": "function"
       }
     }
   },

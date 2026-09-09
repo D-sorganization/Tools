@@ -97,6 +97,9 @@ class Invocation:
     # the sub-app, not the repo). Such suites must be invoked on their own so
     # their markers, ``pythonpath`` and conftest apply.
     own_config: bool = False
+    # Numerically intensive convergence studies retain their per-test deadline
+    # but run without competing xdist workers (Tools #5130).
+    serial: bool = False
 
     def claims(self, rel_path: str) -> bool:
         if not any(_under(rel_path, root) for root in self.paths):
@@ -132,7 +135,13 @@ _SRC_OWNED_ELSEWHERE = (
 )
 
 SHARDS: tuple[Shard, ...] = (
-    Shard("tests-shared", (Invocation(("tests/shared",)),)),
+    Shard(
+        "tests-shared",
+        (
+            Invocation(("tests/shared",), ignores=("tests/shared/python/golf_club",)),
+            Invocation(("tests/shared/python/golf_club",), serial=True),
+        ),
+    ),
     Shard("tests-rate", (Invocation(("tests/rate_of_closure",)),)),
     Shard(
         "tests-unit",
@@ -248,7 +257,7 @@ def pytest_command(
     for rel in quarantine:
         if invocation.claims(rel):
             cmd.append(f"--ignore={rel}")
-    cmd += ["-m", PYTEST_MARKER_EXPR, "-n", fanout]
+    cmd += ["-m", PYTEST_MARKER_EXPR, "-n", "0" if invocation.serial else fanout]
     if not invocation.own_config:
         # Root addopts already carry --strict-markers/--durations; only the
         # xdist fan-out and marker expression are overridden per lane.

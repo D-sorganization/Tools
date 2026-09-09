@@ -27,9 +27,9 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/issue-5138-agent-context
 - **Paths:** `src/agent_context`, `src/shared/python/codemap`, `packages/agent-context`
 - **Started:** 2026-09-09
-- **Last verified:** 2026-09-09; all normal commit/push hooks pass with2workers. Linux CI:36 context and103 CodeMap tests pass. Current CI failed only minimum-test discovery and required paired-PR metadata; fixes are in progress.
+- **Last verified:** 2026-09-09; all normal commit/push hooks pass with2workers. Linux CI:36 context and103 CodeMap tests pass. Current CI failed only minimum-test discovery and required paired-PR metadata; the test filename and paired UpstreamDrift#9920 metadata are fixed. Main 2c9a8d6c9 preserves merged shaft provider #5133.
 - **Summary:** Dependency-free source context package, real MCP transport, semantic boundary reviews, deterministic views and CodeMap freshness guards. Parent epic Repository_Management#1629 remains active; no subscription infrastructure is required.
-- **Next step:** Publish minimum-test discovery fix and link the paired UpstreamDrift PR; verify current-head CI before protected delivery.
+- **Next step:** Publish the merged-main revision and verify current-head CI before protected delivery and final consumer pins.
 
 ### DL-#5101 · Scientific Import Inventory Detection
 
@@ -69,20 +69,6 @@ reachable from any live state and `abandoned` from `parked`.
 - **Last verified:** 2026-09-08 (12 tests pass with default and Python features; Clippy and formatting pass)
 - **Summary:** TDD extracts the quiet-period accumulator to test exact supplied monotonic timestamps, coalescing, restart, shutdown, zero-delay and backward-time boundaries. Retains four real filesystem tests and existing filtered-notification timing.
 - **Next step:** Publish the focused prerequisite PR and verify normal protected CI; do not relax debounce expectations or bypass unrelated consumer gates.
-
-### DL-0054 · Impact Dynamics Reference Foundation
-
-- **State:** in_review
-- **Owner:** codex
-- **Issue:** https://github.com/D-sorganization/Tools/issues/5069
-- **PR:** https://github.com/D-sorganization/Tools/pull/5077
-- **Branch:** feat/5068-impact-dynamics-foundation
-- **Paths:** `src/shared/python/golf_club/impact_mobility.py`, `src/shared/python/golf_club/impact_coupling.py`, `tests/shared/python/golf_club/test_impact_mobility.py`, `docs/specs/IMPACT_DYNAMICS_ACOUSTICS.md`
-- **Started:** 2026-09-07
-- **Last verified:** 2026-09-07 (`6d94f1d3d`)
-- **Summary:** Tensor mobility reference passes 30 TDD gates; additive public baseline recorded. 383 broader tests passed, 2 skipped; manifest and all push hooks pass. PR #5077 in review. #5068 retains future distributed/acoustic scope.
-
-- **Next step:** Resolve protected PR #5077 review/check results, then follow the separately scoped research dependencies.
 
 ### DL-#5062 · Glass Conductivity Provider Contracts And Fallback Policy
 
@@ -126,31 +112,91 @@ reachable from any live state and `abandoned` from `parked`.
 - **Next step:** UpstreamDrift bumps its `vendor/ud-tools` pin and re-points
   `src/shared/python/realtime/transport_file.py` at the vendored module.
 
-### DL-0055 · Qualified Lumped Impact Dynamics
+### DL-#4130 · Impact-Interval Independent Contact-Energy Audit
 
 - **State:** in_review
+- **Owner:** dieterolson (agent `claude`, fleet wave 2)
+- **PR:** #5079 (`claude/issue-9548-contact-energy` → `main`)
+- **Paths:** `src/shared/python/swing_sim/impact_interval/**`,
+  `src/shared/python/swing_sim/impact/contact.py`,
+  `docs/physics/IMPACT_INTERVAL_DYNAMICS.md`
+- **Started:** 2026-09-07
+- **Last verified:** 2026-09-07 (SELF)
+- **Summary:** Provider fix for UpstreamDrift#9548 under Tools#4130: the
+  impact-interval audit no longer assigns every positive energy deficit to
+  `unilateral_release`. The solver now integrates dashpot, friction, and
+  torsional-grip damping independently, tracks recoverable Kelvin-Voigt
+  spring energy from the contact state, counts release energy only at
+  identified tensile-clip steps, and reports an unfudged signed residual
+  plus separate free/supported momentum diagnostics with a demonstrated
+  halving-dt convergence. RED→GREEN cases live in
+  `impact_interval/tests/test_solver.py::TestIndependentEnergyAudit`.
+- **Next step:** Protect-merge the PR and hand the merged SHA to the
+  UpstreamDrift pin-bump that closes the provider issue.
+
+### DL-0054 · ThemeColors 60-Token Derivation Restoration
+
+- **State:** in_review
+- **Owner:** @dieterolson (agent `claude`, session `omp-01a07e96`)
+- **PR:** SELF (fixes #5063)
+- **Paths:** `src/shared/python/theme/api.py`,
+  `src/shared/python/theme/__init__.py`,
+  `src/shared/python/theme/color_derivation.py`,
+  `tests/shared/python/theme/test_theme_colors_derivation.py`,
+  `AGENT_HANDOFF.md`, `docs/development/DEVELOPMENT_LOG.md`
+- **Started:** 2026-09-08
+- **Last verified:** 2026-09-08 (SELF)
+- **Summary:** Restored the `ThemeColors` 60-token semantic derivation
+  pipeline (`model_post_init`, `is_dark` inference from `bg`, the derived
+  surface/border/text/brand/semantic/chart/effect tokens, dict-style
+  access, `as_dict`), the `_derive_full_palette` package shim, and the
+  orphaned `color_derivation` helper module that the UpstreamDrift
+  `b8d95ad25` sync wave had stripped from the canonical tree. Mirrored
+  the 8-case derivation regression oracle into
+  `tests/shared/python/theme/test_theme_colors_derivation.py`
+  (RED 7 failed/1 passed before restore, 8 passed after).
+- **Next step:** Bump UpstreamDrift's `vendor/ud-tools` pin to this
+  PR's merge commit so its child copies re-sync the restored pipeline.
+
+### DL-0056 · Distributed Shaft Prestress and Grip
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5072
+- **PR:** https://github.com/D-sorganization/Tools/pull/5133
+- **Branch:** feat/5072-prestressed-shaft
+- **Paths:** `src/shared/python/golf_club/*shaft*`, `src/shared/python/golf_club/_beam_fem.py`, `src/shared/python/golf_club/*grip*`, `src/shared/python/golf_club/*rotating_body*`, `tests/shared/python/golf_club/test_shaft*.py`, `tests/shared/python/golf_club/test_rotating_body.py`, `tests/shared/python/golf_club/test_grip_impedance.py`, `docs/development/impact-acoustics/*`
+- **Started:** 2026-09-07
+- **Last verified:** 2026-09-09 (published 00d17e7f9; base 421889407; oracle repair SELF; 17 Linux 3.11 and 36 Linux 3.12 coverage checks pass)
+- **Summary:** Review #5130 covers the finite-rotation shaft and explicit input wire; #5072 retains physical/FRF qualification. First CI repairs reproduce and correct NumPy typing, fixture typing and scientific deadline failures through exact reuse and isolated resource ownership. Full serial golf coverage: 1,167 passed, two optional CAD skips; 58.78 s slowest retains a narrow CI margin. UpstreamDrift #9912 verifies the candidate vendor and installed wheel; final reviewed pin and protected CI remain. Actual incremental mypy now passes 14 files after a tuple-return annotation; 71 affected tests pass. See CI_REPAIR_RESULTS.json and PROGRESS.md for controls, including failed runs.
+- **Next step:** Publish the second CI repair: resolved momentum differentiation and physically meaningful scaling controls; retain original tolerances.
+
+### DL-0055 · Qualified Lumped Impact Dynamics
+
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5071
 - **PR:** https://github.com/D-sorganization/Tools/pull/5082
 - **Branch:** fix/5071-qualified-impact-coupling
 - **Paths:** `src/shared/python/golf_club/*coupl*`, `tests/shared/python/golf_club/test*coupl*`, `docs/specs/HEAVY_HIT_COUPLING.md`, `docs/development/impact-acoustics/PROGRESS.md`
 - **Started:** 2026-09-07
-- **Last verified:** 2026-09-07 (`31ebe4993` implementation; `eb78179b5` delivery record)
+- **Last verified:** 2026-09-08 (#5082 merged as 80d580d57; #5071 closed; golf source/tests equal reviewed e47fde4e and prior 476eaa98)
 - **Summary:** RED-to-GREEN termination, passive energy and scaling gates; complete epic scope remains active.
-- **Next step:** Resolve protected CI and UpstreamDrift #9735 compatibility, then distributed prestress/grip milestone #5072.
+- **Next step:** Delivery complete for this slice; integrate current main into T3 and continue distributed milestone #5072. The full scientific/acoustic program remains open.
 
 ### DL-0054 · Impact Dynamics Reference Foundation
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5069
 - **PR:** https://github.com/D-sorganization/Tools/pull/5077
 - **Branch:** feat/5068-impact-dynamics-foundation
 - **Paths:** `src/shared/python/golf_club/impact_mobility.py`, `src/shared/python/golf_club/impact_coupling.py`, `tests/shared/python/golf_club/test_impact_mobility.py`, `docs/specs/IMPACT_DYNAMICS_ACOUSTICS.md`
 - **Started:** 2026-09-07
-- **Last verified:** 2026-09-07 (`6d94f1d3d`)
-- **Summary:** Tensor mobility reference passes 30 TDD gates; additive public baseline recorded. 383 broader tests passed, 2 skipped; manifest and all push hooks pass. PR #5077 in review. #5068 retains future distributed/acoustic scope.
-- **Next step:** Resolve protected PR #5077 review/check results, then follow the separately scoped research dependencies.
+- **Last verified:** 2026-09-08 (#5077 merged as f72544613; #5069 closed)
+- **Summary:** Tensor mobility reference passes 30 TDD gates; additive public baseline recorded. 383 broader tests passed, 2 skipped; manifest and all push hooks pass. PR #5077 merged. #5068 retains future distributed/acoustic scope.
+
+- **Next step:** Delivery complete for this reference slice; continue separately scoped distributed and acoustic work.
 
 ### DL-0001 · Backup Tools 3300 Pyo3 Split
 
@@ -1052,52 +1098,6 @@ reachable from any live state and `abandoned` from `parked`.
   governing issue and set `Paths` before moving this to a live
   state; a live entry without a real issue is orphaned by
   definition.
-
-### DL-#4130 · Impact-Interval Independent Contact-Energy Audit
-
-- **State:** in_review
-- **Owner:** dieterolson (agent `claude`, fleet wave 2)
-- **PR:** #5079 (`claude/issue-9548-contact-energy` → `main`)
-- **Paths:** `src/shared/python/swing_sim/impact_interval/**`,
-  `src/shared/python/swing_sim/impact/contact.py`,
-  `docs/physics/IMPACT_INTERVAL_DYNAMICS.md`
-- **Started:** 2026-09-07
-- **Last verified:** 2026-09-07 (SELF)
-- **Summary:** Provider fix for UpstreamDrift#9548 under Tools#4130: the
-  impact-interval audit no longer assigns every positive energy deficit to
-  `unilateral_release`. The solver now integrates dashpot, friction, and
-  torsional-grip damping independently, tracks recoverable Kelvin-Voigt
-  spring energy from the contact state, counts release energy only at
-  identified tensile-clip steps, and reports an unfudged signed residual
-  plus separate free/supported momentum diagnostics with a demonstrated
-  halving-dt convergence. RED→GREEN cases live in
-  `impact_interval/tests/test_solver.py::TestIndependentEnergyAudit`.
-- **Next step:** Protect-merge the PR and hand the merged SHA to the
-  UpstreamDrift pin-bump that closes the provider issue.
-
-### DL-0054 · ThemeColors 60-Token Derivation Restoration
-
-- **State:** in_review
-- **Owner:** @dieterolson (agent `claude`, session `omp-01a07e96`)
-- **PR:** SELF (fixes #5063)
-- **Paths:** `src/shared/python/theme/api.py`,
-  `src/shared/python/theme/__init__.py`,
-  `src/shared/python/theme/color_derivation.py`,
-  `tests/shared/python/theme/test_theme_colors_derivation.py`,
-  `AGENT_HANDOFF.md`, `docs/development/DEVELOPMENT_LOG.md`
-- **Started:** 2026-09-08
-- **Last verified:** 2026-09-08 (SELF)
-- **Summary:** Restored the `ThemeColors` 60-token semantic derivation
-  pipeline (`model_post_init`, `is_dark` inference from `bg`, the derived
-  surface/border/text/brand/semantic/chart/effect tokens, dict-style
-  access, `as_dict`), the `_derive_full_palette` package shim, and the
-  orphaned `color_derivation` helper module that the UpstreamDrift
-  `b8d95ad25` sync wave had stripped from the canonical tree. Mirrored
-  the 8-case derivation regression oracle into
-  `tests/shared/python/theme/test_theme_colors_derivation.py`
-  (RED 7 failed/1 passed before restore, 8 passed after).
-- **Next step:** Bump UpstreamDrift's `vendor/ud-tools` pin to this
-  PR's merge commit so its child copies re-sync the restored pipeline.
 
 ## Shipped (Last 90 Days)
 

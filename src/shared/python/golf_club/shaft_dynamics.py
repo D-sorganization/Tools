@@ -7,6 +7,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
+from ._beam_fem import assemble_bending_axis, generalized_eigenvalues
 from .shaft_profile import ShaftProfile
 
 _MODEL_NAME = "euler_bernoulli_bending_fem/1"
@@ -114,25 +115,10 @@ def _solve_axis(
     *,
     stiffness_name: str,
 ) -> tuple[float, ...]:
-    element_count = settings.element_count
-    element_length = profile.flexible_length_m / element_count
-    degrees = 2 * (element_count + 1)
-    stiffness: np.ndarray = np.zeros((degrees, degrees), dtype=float)
-    mass: np.ndarray = np.zeros((degrees, degrees), dtype=float)
-    start = profile.butt_trim_m
-    for element in range(element_count):
-        midpoint = start + (element + 0.5) * element_length
-        station = profile.station_at(midpoint)
-        local_stiffness = _beam_stiffness(
-            float(getattr(station, stiffness_name)), element_length
-        )
-        local_mass = _beam_mass(station.linear_density_kg_m, element_length)
-        indices = np.array(
-            [2 * element, 2 * element + 1, 2 * element + 2, 2 * element + 3]
-        )
-        stiffness[np.ix_(indices, indices)] += local_stiffness
-        mass[np.ix_(indices, indices)] += local_mass
-    eigenvalues = _generalized_eigenvalues(stiffness[2:, 2:], mass[2:, 2:])
+    stiffness, mass = assemble_bending_axis(
+        profile, settings.element_count, stiffness_name
+    )
+    eigenvalues = generalized_eigenvalues(stiffness[2:, 2:], mass[2:, 2:])
     positive = eigenvalues[eigenvalues > np.finfo(float).eps]
     if len(positive) < settings.mode_count:
         raise RuntimeError("modal solve did not return enough positive eigenvalues")
@@ -140,70 +126,6 @@ def _solve_axis(
         float(math.sqrt(value) / (2.0 * math.pi))
         for value in positive[: settings.mode_count]
     )
-
-
-def _beam_stiffness(ei_n_m2: float, length_m: float) -> np.ndarray:
-    length_squared = length_m**2
-    result: np.ndarray = np.asarray(
-        ei_n_m2
-        / length_m**3
-        * np.array(
-            [
-                [12.0, 6.0 * length_m, -12.0, 6.0 * length_m],
-                [
-                    6.0 * length_m,
-                    4.0 * length_squared,
-                    -6.0 * length_m,
-                    2.0 * length_squared,
-                ],
-                [-12.0, -6.0 * length_m, 12.0, -6.0 * length_m],
-                [
-                    6.0 * length_m,
-                    2.0 * length_squared,
-                    -6.0 * length_m,
-                    4.0 * length_squared,
-                ],
-            ]
-        )
-    )
-    return result
-
-
-def _beam_mass(linear_density_kg_m: float, length_m: float) -> np.ndarray:
-    length_squared = length_m**2
-    result: np.ndarray = np.asarray(
-        linear_density_kg_m
-        * length_m
-        / 420.0
-        * np.array(
-            [
-                [156.0, 22.0 * length_m, 54.0, -13.0 * length_m],
-                [
-                    22.0 * length_m,
-                    4.0 * length_squared,
-                    13.0 * length_m,
-                    -3.0 * length_squared,
-                ],
-                [54.0, 13.0 * length_m, 156.0, -22.0 * length_m],
-                [
-                    -13.0 * length_m,
-                    -3.0 * length_squared,
-                    -22.0 * length_m,
-                    4.0 * length_squared,
-                ],
-            ]
-        )
-    )
-    return result
-
-
-def _generalized_eigenvalues(stiffness: np.ndarray, mass: np.ndarray) -> np.ndarray:
-    factor = np.linalg.cholesky(mass)
-    left_solved = np.linalg.solve(factor, stiffness)
-    transformed = np.linalg.solve(factor, left_solved.T).T
-    symmetric = 0.5 * (transformed + transformed.T)
-    eigenvalues: np.ndarray = np.asarray(np.linalg.eigvalsh(symmetric))
-    return eigenvalues
 
 
 __all__ = [

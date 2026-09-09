@@ -152,9 +152,7 @@
       },
       "StylesheetGenerator": {
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "generate": {
               "args": [
@@ -194,9 +192,7 @@
       },
       "ThemePalette": {
         "info": {
-          "bases": [
-            "dict[str, str]"
-          ],
+          "bases": ["dict[str, str]"],
           "methods": {
             "get_current_colors": {
               "args": [
@@ -218,9 +214,7 @@
       },
       "ThemeProvider": {
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "current_theme_name": {
               "args": [
@@ -261,9 +255,7 @@
       },
       "ThemeSwitcher": {
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "change_theme": {
               "args": [
@@ -549,36 +541,28 @@
     "symbols": {
       "ActiveThemeResponse": {
         "info": {
-          "bases": [
-            "BaseModel"
-          ],
+          "bases": ["BaseModel"],
           "methods": {}
         },
         "type": "class"
       },
       "SaveCustomThemeRequest": {
         "info": {
-          "bases": [
-            "BaseModel"
-          ],
+          "bases": ["BaseModel"],
           "methods": {}
         },
         "type": "class"
       },
       "SetActiveThemeRequest": {
         "info": {
-          "bases": [
-            "BaseModel"
-          ],
+          "bases": ["BaseModel"],
           "methods": {}
         },
         "type": "class"
       },
       "ThemeColors": {
         "info": {
-          "bases": [
-            "BaseModel"
-          ],
+          "bases": ["BaseModel"],
           "methods": {
             "as_dict": {
               "args": [
@@ -648,27 +632,21 @@
       },
       "ThemeDefinition": {
         "info": {
-          "bases": [
-            "BaseModel"
-          ],
+          "bases": ["BaseModel"],
           "methods": {}
         },
         "type": "class"
       },
       "ThemeListResponse": {
         "info": {
-          "bases": [
-            "BaseModel"
-          ],
+          "bases": ["BaseModel"],
           "methods": {}
         },
         "type": "class"
       },
       "ThemeOperationResponse": {
         "info": {
-          "bases": [
-            "BaseModel"
-          ],
+          "bases": ["BaseModel"],
           "methods": {}
         },
         "type": "class"
@@ -693,10 +671,7 @@
     }
   },
   "catppuccin.py": {
-    "__all__": [
-      "CATPPUCCIN_MOCHA",
-      "get_stylesheet"
-    ],
+    "__all__": ["CATPPUCCIN_MOCHA", "get_stylesheet"],
     "explicit_all": true,
     "symbols": {
       "CATPPUCCIN_MOCHA": {
@@ -719,11 +694,7 @@
     }
   },
   "color_derivation.py": {
-    "__all__": [
-      "adjust",
-      "is_dark_bg",
-      "with_alpha"
-    ],
+    "__all__": ["adjust", "is_dark_bg", "with_alpha"],
     "explicit_all": true,
     "symbols": {
       "adjust": {
@@ -915,9 +886,7 @@
     "symbols": {
       "ColorFieldEditor": {
         "info": {
-          "bases": [
-            "QWidget"
-          ],
+          "bases": ["QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -976,9 +945,7 @@
       },
       "ColorPickerButton": {
         "info": {
-          "bases": [
-            "QPushButton"
-          ],
+          "bases": ["QPushButton"],
           "methods": {
             "__init__": {
               "args": [
@@ -1037,9 +1004,7 @@
       },
       "CustomThemeDialog": {
         "info": {
-          "bases": [
-            "QDialog"
-          ],
+          "bases": ["QDialog"],
           "methods": {
             "__init__": {
               "args": [
@@ -1081,9 +1046,7 @@
       },
       "CustomThemeEditor": {
         "info": {
-          "bases": [
-            "QDialog"
-          ],
+          "bases": ["QDialog"],
           "methods": {
             "__init__": {
               "args": [
@@ -1120,9 +1083,7 @@
       },
       "ThemeListItem": {
         "info": {
-          "bases": [
-            "QListWidgetItem"
-          ],
+          "bases": ["QListWidgetItem"],
           "methods": {
             "__init__": {
               "args": [
@@ -1176,9 +1137,7 @@
       },
       "ThemeManagerDialog": {
         "info": {
-          "bases": [
-            "QDialog"
-          ],
+          "bases": ["QDialog"],
           "methods": {
             "__init__": {
               "args": [
@@ -1209,9 +1168,7 @@
       },
       "ThemePreviewWidget": {
         "info": {
-          "bases": [
-            "QWidget"
-          ],
+          "bases": ["QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -1270,9 +1227,7 @@
       },
       "ColorFieldEditor": {
         "info": {
-          "bases": [
-            "QWidget"
-          ],
+          "bases": ["QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -1331,9 +1286,7 @@
       },
       "CustomThemeDialog": {
         "info": {
-          "bases": [
-            "QDialog"
-          ],
+          "bases": ["QDialog"],
           "methods": {
             "__init__": {
               "args": [
@@ -1398,9 +1351,7 @@
     "symbols": {
       "ColorPickerButton": {
         "info": {
-          "bases": [
-            "QPushButton"
-          ],
+          "bases": ["QPushButton"],
           "methods": {
             "__init__": {
               "args": [
@@ -1459,9 +1410,7 @@
       },
       "CustomThemeEditor": {
         "info": {
-          "bases": [
-            "QDialog"
-          ],
+          "bases": ["QDialog"],
           "methods": {
             "__init__": {
               "args": [
@@ -1498,9 +1447,7 @@
       },
       "ThemePreviewWidget": {
         "info": {
-          "bases": [
-            "QWidget"
-          ],
+          "bases": ["QWidget"],
           "methods": {
             "__init__": {
               "args": [
@@ -1546,18 +1493,12 @@
     }
   },
   "dialogs/theme_manager_dialog.py": {
-    "__all__": [
-      "ThemeListItem",
-      "ThemeManagerDialog",
-      "logger"
-    ],
+    "__all__": ["ThemeListItem", "ThemeManagerDialog", "logger"],
     "explicit_all": false,
     "symbols": {
       "ThemeListItem": {
         "info": {
-          "bases": [
-            "QListWidgetItem"
-          ],
+          "bases": ["QListWidgetItem"],
           "methods": {
             "__init__": {
               "args": [
@@ -1611,9 +1552,7 @@
       },
       "ThemeManagerDialog": {
         "info": {
-          "bases": [
-            "QDialog"
-          ],
+          "bases": ["QDialog"],
           "methods": {
             "__init__": {
               "args": [
@@ -1690,12 +1629,7 @@
     }
   },
   "font_manager.py": {
-    "__all__": [
-      "BUILTIN_FONTS",
-      "FontManager",
-      "get_font_manager",
-      "logger"
-    ],
+    "__all__": ["BUILTIN_FONTS", "FontManager", "get_font_manager", "logger"],
     "explicit_all": false,
     "symbols": {
       "BUILTIN_FONTS": {
@@ -1703,9 +1637,7 @@
       },
       "FontManager": {
         "info": {
-          "bases": [
-            "QObject"
-          ],
+          "bases": ["QObject"],
           "methods": {
             "__init__": {
               "args": [
@@ -1828,10 +1760,7 @@
     }
   },
   "icon_utils.py": {
-    "__all__": [
-      "IconColorizer",
-      "SVG_REGISTRY"
-    ],
+    "__all__": ["IconColorizer", "SVG_REGISTRY"],
     "explicit_all": false,
     "symbols": {
       "IconColorizer": {
@@ -1894,9 +1823,7 @@
     "symbols": {
       "ThemedDialogMixin": {
         "info": {
-          "bases": [
-            "ThemedWindowMixin"
-          ],
+          "bases": ["ThemedWindowMixin"],
           "methods": {
             "setup_theme_support": {
               "args": [
@@ -2276,9 +2203,7 @@
       },
       "ThemePalette": {
         "info": {
-          "bases": [
-            "dict[str, str]"
-          ],
+          "bases": ["dict[str, str]"],
           "methods": {
             "get_current_colors": {
               "args": [
@@ -2305,18 +2230,12 @@
     }
   },
   "protocols.py": {
-    "__all__": [
-      "StylesheetGenerator",
-      "ThemeProvider",
-      "ThemeSwitcher"
-    ],
+    "__all__": ["StylesheetGenerator", "ThemeProvider", "ThemeSwitcher"],
     "explicit_all": false,
     "symbols": {
       "StylesheetGenerator": {
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "generate": {
               "args": [
@@ -2341,9 +2260,7 @@
       },
       "ThemeProvider": {
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "current_theme_name": {
               "args": [
@@ -2384,9 +2301,7 @@
       },
       "ThemeSwitcher": {
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "change_theme": {
               "args": [
@@ -2555,9 +2470,7 @@
     }
   },
   "style_constants.py": {
-    "__all__": [
-      "Styles"
-    ],
+    "__all__": ["Styles"],
     "explicit_all": true,
     "symbols": {
       "Styles": {
@@ -2633,10 +2546,7 @@
     }
   },
   "stylesheets.py": {
-    "__all__": [
-      "generate_minimal_stylesheet",
-      "generate_stylesheet"
-    ],
+    "__all__": ["generate_minimal_stylesheet", "generate_stylesheet"],
     "explicit_all": true,
     "symbols": {
       "generate_minimal_stylesheet": {
@@ -2670,17 +2580,12 @@
     }
   },
   "theme_manager.py": {
-    "__all__": [
-      "ThemeManager",
-      "get_theme_manager"
-    ],
+    "__all__": ["ThemeManager", "get_theme_manager"],
     "explicit_all": true,
     "symbols": {
       "ThemeManager": {
         "info": {
-          "bases": [
-            "QObject"
-          ],
+          "bases": ["QObject"],
           "methods": {
             "__init__": {
               "args": [
@@ -3186,9 +3091,7 @@
     "symbols": {
       "ApplicationZoomController": {
         "info": {
-          "bases": [
-            "QObject"
-          ],
+          "bases": ["QObject"],
           "methods": {
             "__init__": {
               "args": [
@@ -3360,9 +3263,7 @@
       },
       "ZoomSettings": {
         "info": {
-          "bases": [
-            "Protocol"
-          ],
+          "bases": ["Protocol"],
           "methods": {
             "setValue": {
               "args": [

@@ -256,7 +256,7 @@ class ThemeColors(BaseModel):
 
     def as_dict(self) -> dict[str, Any]:
         """Return the resolved token dict (all derived defaults applied)."""
-        data = self.model_dump(exclude_none=False)
+        data: dict[str, Any] = self.model_dump(exclude_none=False)
         data.update(self.__pydantic_extra__ or {})
         return data
 

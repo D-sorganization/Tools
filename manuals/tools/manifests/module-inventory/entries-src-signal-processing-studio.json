@@ -294,10 +294,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 6642,
+      "bytes_lf": 6673,
       "classification": "calculation",
       "classification_basis": "path-marker:signal",
-      "content_sha256_lf": "4b3d849d3b51f2ec7fe9a386770b9bb462729ddd923d7ffb54d7dd6cc56c08bd",
+      "content_sha256_lf": "7570020a561e55c89b4529d576bf78df49a553d6f4e523a79d4a18190d0ad7cb",
       "family": "signal-processing-calculation",
       "id": "TOOLS-MODULE-SRC-SIGNAL-PROCESSING-STUDIO-PYTHON-SIGNAL-PROCESSING-STUDIO-MAIN-WINDOW-PY-8A45A626C80B",
       "language": "python",

@@ -57,7 +57,7 @@ selectors are cleared before explicit-checkout reads and temporary Git fixtures.
 
 ## Ordered Continuation
 
-1. Normal push with2workers passes; Linux CI passes36 context and103 CodeMap tests. Complete test-discovery naming and paired UD PR linkage, then verify the updated head.
+1. Normal push with2workers passes; Linux CI passes36 context and103 CodeMap tests. Test discovery naming is fixed and UpstreamDrift#9920 supplies the required paired PR. Main 2c9a8d6c9 preserves shaft provider #5133; verify updated-head CI.
 2. Deliver the provider through a protected PR and verify its exact revision.
 3. Pin consumers, run real boundary tests, review contracts and qualify generated maps.
 4. Reconcile fleet guidance and epic acceptance against actual delivered evidence.

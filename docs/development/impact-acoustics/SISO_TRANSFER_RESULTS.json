@@ -1,0 +1,235 @@
+{
+  "schema": "impact-siso-transfer-evidence/1",
+  "status": "conditional-numerical",
+  "physical_evidence": false,
+  "source_archive": {
+    "tree": "bdd6e0f1aaa618fc35b8e4e5c1b8f12289d400cf",
+    "archive": "C:\\Users\\diete\\AppData\\Local\\Temp\\impact-siso-source.tar",
+    "bytes": 90234880,
+    "sha256": "90e7bc31a4f1e78631bef2479416e67a1a617cb1066ecdc7a982eb3dcd84ab4c"
+  },
+  "windows": {
+    "junit_sha256": "c0d0adc93152a31a907fe851789bf61918c88f41da87697e749f3a60896779bb",
+    "passed": 83,
+    "skipped": 0,
+    "new_cases_passed": 51,
+    "studies": [
+      {
+        "test": "test_original_axial_fixture_meets_one_percent_and_phase_targets[2]",
+        "properties": {
+          "paired_cell_evaluations": "31",
+          "minimum_full_response_lower_bound": "3.4945212050482435",
+          "relative_complex_error_bound": "0.008982765325999276",
+          "phase_error_bound_rad": "0.008982886133717423"
+        }
+      },
+      {
+        "test": "test_original_axial_fixture_meets_one_percent_and_phase_targets[4]",
+        "properties": {
+          "paired_cell_evaluations": "21",
+          "minimum_full_response_lower_bound": "3.4778151687785472",
+          "relative_complex_error_bound": "0.009397916228719834",
+          "phase_error_bound_rad": "0.009398054572844363"
+        }
+      },
+      {
+        "test": "test_original_axial_fixture_meets_one_percent_and_phase_targets[5]",
+        "properties": {
+          "paired_cell_evaluations": "21",
+          "minimum_full_response_lower_bound": "3.4778151687785472",
+          "relative_complex_error_bound": "0.009331092977479102",
+          "phase_error_bound_rad": "0.009331228391401164"
+        }
+      },
+      {
+        "test": "test_explicit_six_axis_damped_fixture_across_resonant_band[0-interfaces]",
+        "properties": {
+          "paired_cell_evaluations": "1437",
+          "minimum_full_response_lower_bound": "3.5288885846118325",
+          "relative_complex_error_bound": "0.01973493869960918",
+          "phase_error_bound_rad": "0.019736219944717987",
+          "basis_kind": "interfaces",
+          "retained_coordinates": "19"
+        }
+      },
+      {
+        "test": "test_explicit_six_axis_damped_fixture_across_resonant_band[0-full]",
+        "properties": {
+          "paired_cell_evaluations": "1439",
+          "minimum_full_response_lower_bound": "3.5288885846118325",
+          "relative_complex_error_bound": "0.019923530809244954",
+          "phase_error_bound_rad": "0.019924849142643426",
+          "basis_kind": "full",
+          "retained_coordinates": "30"
+        }
+      },
+      {
+        "test": "test_explicit_six_axis_damped_fixture_across_resonant_band[2-modal]",
+        "properties": {
+          "paired_cell_evaluations": "243",
+          "minimum_full_response_lower_bound": "3.4648325558053443",
+          "relative_complex_error_bound": "0.019689805661154677",
+          "phase_error_bound_rad": "0.01969107813485902",
+          "basis_kind": "modal",
+          "retained_coordinates": "16"
+        }
+      },
+      {
+        "test": "test_explicit_six_axis_damped_fixture_across_resonant_band[2-full]",
+        "properties": {
+          "paired_cell_evaluations": "243",
+          "minimum_full_response_lower_bound": "3.4648325558053443",
+          "relative_complex_error_bound": "0.019812005651376266",
+          "phase_error_bound_rad": "0.01981330196713519",
+          "basis_kind": "full",
+          "retained_coordinates": "30"
+        }
+      },
+      {
+        "test": "test_explicit_six_axis_damped_fixture_across_resonant_band[5-interfaces]",
+        "properties": {
+          "paired_cell_evaluations": "2017",
+          "minimum_full_response_lower_bound": "155.11015593292967",
+          "relative_complex_error_bound": "0.005995321130594147",
+          "phase_error_bound_rad": "0.005995357047021099",
+          "basis_kind": "interfaces",
+          "retained_coordinates": "18"
+        }
+      },
+      {
+        "test": "test_explicit_six_axis_damped_fixture_across_resonant_band[5-full]",
+        "properties": {
+          "paired_cell_evaluations": "2021",
+          "minimum_full_response_lower_bound": "155.11015593292967",
+          "relative_complex_error_bound": "0.0060171184909393344",
+          "phase_error_bound_rad": "0.006017154800543716",
+          "basis_kind": "full",
+          "retained_coordinates": "30"
+        }
+      }
+    ],
+    "duration_s": 51.24,
+    "runtime": {
+      "python": "3.12.10",
+      "numpy": "2.4.1",
+      "scipy": "1.17.0"
+    },
+    "source_note": "Before local-access-only interval variable refactor; 35 API/interval tests pass after it in 9.04 s. No numerical expression changed."
+  },
+  "linux": {
+    "junit_sha256": "9225509f190a9cc92726f1246565587b3722018c5ef4744c7eeff6a3988f78ed",
+    "passed": 1126,
+    "skipped": 2,
+    "new_cases_passed": 51,
+    "studies": [
+      {
+        "test": "test_original_axial_fixture_meets_one_percent_and_phase_targets[2]",
+        "properties": {
+          "paired_cell_evaluations": "31",
+          "minimum_full_response_lower_bound": "3.4945212050482435",
+          "relative_complex_error_bound": "0.008982765325999276",
+          "phase_error_bound_rad": "0.008982886133717423"
+        }
+      },
+      {
+        "test": "test_original_axial_fixture_meets_one_percent_and_phase_targets[4]",
+        "properties": {
+          "paired_cell_evaluations": "21",
+          "minimum_full_response_lower_bound": "3.4778151687785472",
+          "relative_complex_error_bound": "0.009397916228719834",
+          "phase_error_bound_rad": "0.009398054572844363"
+        }
+      },
+      {
+        "test": "test_original_axial_fixture_meets_one_percent_and_phase_targets[5]",
+        "properties": {
+          "paired_cell_evaluations": "21",
+          "minimum_full_response_lower_bound": "3.4778151687785472",
+          "relative_complex_error_bound": "0.009331092977479102",
+          "phase_error_bound_rad": "0.009331228391401164"
+        }
+      },
+      {
+        "test": "test_explicit_six_axis_damped_fixture_across_resonant_band[0-interfaces]",
+        "properties": {
+          "paired_cell_evaluations": "1437",
+          "minimum_full_response_lower_bound": "3.5288885846118325",
+          "relative_complex_error_bound": "0.01973493869960889",
+          "phase_error_bound_rad": "0.019736219944717696",
+          "basis_kind": "interfaces",
+          "retained_coordinates": "19"
+        }
+      },
+      {
+        "test": "test_explicit_six_axis_damped_fixture_across_resonant_band[0-full]",
+        "properties": {
+          "paired_cell_evaluations": "1439",
+          "minimum_full_response_lower_bound": "3.5288885846118325",
+          "relative_complex_error_bound": "0.019923530809251012",
+          "phase_error_bound_rad": "0.019924849142649487",
+          "basis_kind": "full",
+          "retained_coordinates": "30"
+        }
+      },
+      {
+        "test": "test_explicit_six_axis_damped_fixture_across_resonant_band[2-modal]",
+        "properties": {
+          "paired_cell_evaluations": "243",
+          "minimum_full_response_lower_bound": "3.4648325558053443",
+          "relative_complex_error_bound": "0.01968980566116986",
+          "phase_error_bound_rad": "0.019691078134874206",
+          "basis_kind": "modal",
+          "retained_coordinates": "16"
+        }
+      },
+      {
+        "test": "test_explicit_six_axis_damped_fixture_across_resonant_band[2-full]",
+        "properties": {
+          "paired_cell_evaluations": "243",
+          "minimum_full_response_lower_bound": "3.4648325558053443",
+          "relative_complex_error_bound": "0.019812005651389433",
+          "phase_error_bound_rad": "0.019813301967148356",
+          "basis_kind": "full",
+          "retained_coordinates": "30"
+        }
+      },
+      {
+        "test": "test_explicit_six_axis_damped_fixture_across_resonant_band[5-interfaces]",
+        "properties": {
+          "paired_cell_evaluations": "2017",
+          "minimum_full_response_lower_bound": "155.11015593292967",
+          "relative_complex_error_bound": "0.00599532113059517",
+          "phase_error_bound_rad": "0.005995357047022121",
+          "basis_kind": "interfaces",
+          "retained_coordinates": "18"
+        }
+      },
+      {
+        "test": "test_explicit_six_axis_damped_fixture_across_resonant_band[5-full]",
+        "properties": {
+          "paired_cell_evaluations": "2021",
+          "minimum_full_response_lower_bound": "155.11015593292967",
+          "relative_complex_error_bound": "0.006017118490939814",
+          "phase_error_bound_rad": "0.006017154800544195",
+          "basis_kind": "full",
+          "retained_coordinates": "30"
+        }
+      }
+    ],
+    "duration_s": 176.67,
+    "warnings": 3,
+    "native_directory": "/home/dieterolson/.cache/codex-impact/siso-bdd6e0f1a",
+    "runtime": {
+      "python": "3.11.15",
+      "numpy": "2.3.5",
+      "scipy": "1.15.3"
+    }
+  },
+  "limits": [
+    "Exact-arithmetic derivation evaluated in ordinary floating arithmetic; no outward rounding",
+    "Principal relative SISO phase only; no MIMO phase or global phase unwrap",
+    "Synthetic 0–40 rad/s damped shaft control; not impact or audible-band qualification",
+    "Tip/grip static enrichment is explicit test fixture construction, not a general selector",
+    "No physical grip/head/shaft, acoustic radiation or perceptual calibration"
+  ]
+}

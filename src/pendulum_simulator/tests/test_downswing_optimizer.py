@@ -17,8 +17,10 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
+from scipy.optimize import OptimizeResult
 
 from double_pendulum_golf.physics import JointLimits, PendulumParams, TorqueClamp
+from double_pendulum_golf.swing_objectives import downswing
 from double_pendulum_golf.swing_objectives.downswing import (
     DownswingConfig,
     DownswingOptimizer,
@@ -158,13 +160,44 @@ def test_loose_tolerance_regression_pin() -> None:
     assert not np.allclose(result.states, guess_states, atol=1e-3)
 
 
-def test_scaling_is_what_makes_the_defects_small() -> None:
-    """The non-dimensional decision vector is load-bearing, not cosmetic."""
+def test_scaled_and_unscaled_solutions_satisfy_physical_feasibility() -> None:
+    """Residual ordering below the feasibility limit is not a scaling oracle."""
     scaled = DownswingOptimizer(_config()).solve("clubhead_speed")
     unscaled = DownswingOptimizer(_config(use_variable_scaling=False)).solve("clubhead_speed")
 
     assert scaled.max_defect < _FEASIBLE_DEFECT
-    assert scaled.max_defect < unscaled.max_defect
+    assert unscaled.max_defect < _FEASIBLE_DEFECT
+    assert scaled.success and scaled.feasible
+    assert unscaled.success and unscaled.feasible
+
+
+@pytest.mark.parametrize("scaled", [False, True])
+def test_optimizer_scaling_preserves_physical_units(
+    monkeypatch: pytest.MonkeyPatch, scaled: bool
+) -> None:
+    """The optimizer receives normalized coordinates and returns SI values."""
+    config = _config(use_variable_scaling=scaled)
+    optimizer = DownswingOptimizer(config)
+    states, torques = optimizer.initial_guess()
+    state_units = config.state_scale if scaled else np.ones(4)
+    torque_units = config.torque_limit_vector if scaled else np.ones(2)
+    expected = np.r_[(states / state_units).ravel(), (torques / torque_units).ravel()]
+
+    def inspect_solver(**kwargs: object) -> OptimizeResult:
+        decision = np.asarray(kwargs["x0"])
+        np.testing.assert_allclose(decision, expected, rtol=0, atol=1e-14)
+        bounds = np.asarray(kwargs["bounds"])
+        expected_torque_bounds = np.array(config.torque_bounds()) / torque_units[:, None]
+        np.testing.assert_allclose(bounds[-2:], expected_torque_bounds, rtol=0, atol=0)
+        # No optimization is performed by this inspection; never label the
+        # initial guess a successful physical solution.
+        return OptimizeResult(x=decision, success=False, message="inspection only", nit=0)
+
+    monkeypatch.setattr(downswing, "minimize", inspect_solver)
+    result = optimizer.solve("clubhead_speed")
+    np.testing.assert_allclose(result.states, states, rtol=0, atol=1e-14)
+    np.testing.assert_allclose(result.torques, torques, rtol=0, atol=1e-14)
+    assert not result.success
 
 
 def test_result_exposes_signals_for_downstream_scoring() -> None:
