@@ -1430,7 +1430,7 @@
         "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "not-applicable"
       },
@@ -1444,7 +1444,9 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [],
-        "test_paths": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_gripped_operating.py"
+        ],
         "unit_mentions": [
           "s"
         ],
@@ -1491,7 +1493,8 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
-          "tests/shared/python/golf_club/test_shaft_affine_response.py"
+          "tests/shared/python/golf_club/test_shaft_affine_response.py",
+          "tests/shared/python/golf_club/test_shaft_gripped_operating.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -1588,6 +1591,7 @@
         "test_paths": [
           "tests/shared/python/golf_club/test_shaft_chain.py",
           "tests/shared/python/golf_club/test_shaft_equilibrium.py",
+          "tests/shared/python/golf_club/test_shaft_gripped_operating.py",
           "tests/shared/python/golf_club/test_shaft_loaded_dynamics.py",
           "tests/shared/python/golf_club/test_shaft_rotating_chain.py"
         ],
@@ -1853,6 +1857,50 @@
       }
     },
     {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1963,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "92e1a424b8d37764d9057b6cb014588036f57a7132f160cdfb7f6d7a2ede3ece",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-GRIPPED-COORDINATES-PY-5D8A50EB9093",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_gripped_coordinates.py",
+      "purpose": "Shared work-conjugate length scaling of full-node gripped operators.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "provisional",
       "bytes_lf": 3783,
       "classification": "calculation",
@@ -1945,10 +1993,57 @@
         "public_surfaces": [],
         "test_paths": [
           "tests/shared/python/golf_club/test_shaft_gripped_chain.py",
+          "tests/shared/python/golf_club/test_shaft_gripped_operating.py",
           "tests/shared/python/golf_club/test_shaft_gripped_response.py",
           "tests/shared/python/golf_club/test_shaft_gripped_spectrum.py"
         ],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5331,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "899a1d1833b8a4f79050634b06d502a352a152621fd3f084a21dff72fe860143",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-GRIPPED-OPERATING-PY-7033091E7755",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_gripped_operating.py",
+      "purpose": "Explicit constant-input prescriptions for local gripped-shaft linear models.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
         "validation_paths": []
       }
     },
@@ -2002,10 +2097,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3014,
+      "bytes_lf": 2630,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4bddb29b7c4bc93418ae88207a5e9c759cfb1573b51bcb9b315eabf71a16ddfe",
+      "content_sha256_lf": "d168787da9add5ffb415b364b93e61a0d81c81db3eb8a677ed38db127f6fda06",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-GRIPPED-SPECTRUM-PY-83CFB62ABEFE",
       "language": "python",
@@ -2296,6 +2391,7 @@
         "test_paths": [
           "tests/shared/python/golf_club/test_shaft_chain.py",
           "tests/shared/python/golf_club/test_shaft_equilibrium.py",
+          "tests/shared/python/golf_club/test_shaft_gripped_operating.py",
           "tests/shared/python/golf_club/test_shaft_point_load.py"
         ],
         "unit_mentions": [
@@ -2598,6 +2694,7 @@
         "test_paths": [
           "tests/shared/python/golf_club/test_shaft_affine_response.py",
           "tests/shared/python/golf_club/test_shaft_damped_spectrum.py",
+          "tests/shared/python/golf_club/test_shaft_gripped_operating.py",
           "tests/shared/python/golf_club/test_shaft_spectrum.py"
         ],
         "unit_mentions": [

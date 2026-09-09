@@ -4,6 +4,11 @@ The user authorized completion of the full planned program, not merely its
 planning deliverables. All three parent epics remain open. Physical and
 perceptual validation cannot be inferred from numerical fixtures.
 
+Latest delivery: affine response is published at d5d1e6537; the constant gripped
+operating adapter passes 824 combined tests and all final structural gates and
+is awaiting normal publication. UD #9841 merged as 28d9bf79e; #9830/#9842 are
+closed. Detailed checkpoint history follows; the full scientific program remains open.
+
 ## Requirement and Evidence Matrix
 
 | Slice                          | Issue / Delivery               | Evidence Required Before Completion                                                                                           | Current State                                                                                                         |
@@ -529,3 +534,39 @@ anchor or load histories from a snapshot. The next integration must make those
 prescriptions explicit and preserve residual scaling. Nonlinear, bandwidth,
 contact/radiation/calibration and blinded evidence gates remain open. No public
 API, measured dynamics or sweetness claim is added.
+
+### Explicit gripped operating prescription (2026-09-09)
+
+The affine response checkpoint is published at d5d1e6537fa684e4b7b007d8f5d52479f8775e00
+through every normal hook, with the remote SHA verified; issue #5072 records
+this evidence at issuecomment-5595479647. The new constant gripped-model factory
+prescribes observer inputs, anchor poses and load laws; it does not infer their
+history from a sample. It rechecks full-node balance/strain, retains the residual
+and owns the reference geometry/frame/scales/source IDs. The spectrum and
+operating adapter now share work-conjugate scaling. All existing APIs remain
+unchanged; two private empty-export entries are added.
+
+TDD: absent module RED, 11 initial passes, then two RED source-sequence failures
+repaired by explicit ordered-sequence validation. Sixteen operating controls
+and the existing affine/gripped-spectrum checks pass (57 Windows tests in
+17.95 s); actual mypy and scoped pinned Ruff pass. The full Linux golf/signal/API
+suite passes 824 tests in 273.50 s, with two optional CAD skips and three
+unavailable-plugin configuration warnings. See CONSTANT_GRIPPED_MODEL.md for
+constant observer/world motion, nonzero anchor work, the independent two-node
+rod oracle, numerical refusal and the distinction from nonlinear/physical
+stability. All nine final manual/inventory/handoff gates and repository Ruff 0.14.10
+pass (3,792 formatted files). Normal commit/push publication remains.
+
+UpstreamDrift PR #9841 merged as 28d9bf79e468accbf80807a38d22b8c63d99255c at
+2026-09-09T03:43:29Z from 69f56058e846851a05e600899f3d4530d2164aca. Issues
+#9830 and #9842 are closed. Optional queued jobs are not represented as executed
+qualification. The numerical fixes, 21-case real Bioptim/CasADi 3.6.7 result and
+preserved publication evidence remain documented in the UD turnover. The
+camera/capability task and this task exchanged and acknowledged scopes using
+its requested prototype coordination board; the presence tied to closed #9830
+was released. No UpstreamDrift source edit is active now.
+
+Next: finish this operating-model checkpoint, integrate classifier #5103, and
+continue transient/bandwidth/modal/mesh/time qualification, nonlinear/moving
+boundary work, flexible contact and acoustic/physical/blinded gates. The full
+program remains open; no physical validation follows from these synthetic tests.

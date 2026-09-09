@@ -2889,12 +2889,22 @@
     "explicit_all": true,
     "symbols": {}
   },
+  "_shaft_gripped_coordinates.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
   "_shaft_gripped_dynamics.py": {
     "__all__": [],
     "explicit_all": true,
     "symbols": {}
   },
   "_shaft_gripped_equilibrium.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_gripped_operating.py": {
     "__all__": [],
     "explicit_all": true,
     "symbols": {}
