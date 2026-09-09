@@ -2287,10 +2287,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 5871,
+      "bytes_lf": 5912,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "1d4256f098a73783c7f1f85b03e8bf95f7174cfdd9ccc6bc8dbd6e34f37bee86",
+      "content_sha256_lf": "0093ea1a735c9e8676ccc5249c9635b8215aafe961653dffdbde20ee50a73824",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-GRIPPED-OPERATING-PY-7033091E7755",
       "language": "python",

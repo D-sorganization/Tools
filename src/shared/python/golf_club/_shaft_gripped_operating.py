@@ -109,9 +109,10 @@ class ConstantGrippedModel:
         This is local linear motion; departure from the recorded reference
         strain domain and nonlinear or physical stability remain unqualified.
         """
-        return affine_state_at(
+        state: tuple[float, ...] = affine_state_at(
             self.pencil, self.scaled_residual, self.scales, initial_state, time_s
         )
+        return state
 
 
 def constant_gripped_model(

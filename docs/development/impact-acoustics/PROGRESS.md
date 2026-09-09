@@ -55,6 +55,14 @@ check pass. The TypeScript/Vite production build passes with its existing large
 chunk advisory. Regenerate source inventory and handoff after this final typing
 and turnover delta, then publish normally; no physical qualification is inferred.
 
+The first normal push of local repair 5b8aad105 was refused by the actual
+14-file incremental mypy scope: the affine-state wrapper's imported helper is
+skipped there and its direct return became Any. A typed local names that same
+tuple without changing its delegated calculation. All 14 actual-hook files and
+the NumPy-aware changed module now pass; 71 affected Windows tests pass in
+15.34 s. The other push hooks (unit tests, bandit, dependency audit and fleet
+guardrails) passed. Normal full-hook publication is retried after this correction.
+
 The divergence ledger is fresh (77 rows), but diff-aware enforcement additionally
 requires a real UD-PAIR PR for theme. UpstreamDrift #9912 now has an isolated
 consumer worktree, a candidate pin and six passing new contracts after old-pin

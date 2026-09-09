@@ -115,5 +115,21 @@
     "vitest_passed": 38,
     "production_build": "pass",
     "build_warning": "existing chunk over 500 kB"
+  },
+  "incremental_push_typing": {
+    "parent_commit": "5b8aad105",
+    "failure": "Actual 14-file push scope skips imported affine helper and reported an Any return.",
+    "repair": "Name the unchanged delegated tuple return with an explicit local annotation.",
+    "source_sha256_lf": "0093ea1a735c9e8676ccc5249c9635b8215aafe961653dffdbde20ee50a73824",
+    "actual_hook_files_passed": 14,
+    "numpy_aware_changed_module": "pass",
+    "windows": {
+      "passed": 71,
+      "seconds": 15.34,
+      "warnings": 0,
+      "junit_sha256": "0ecb06a09110ef71f2220d49769a24d9a2c3019e6ef50ced19c5f9e3a0dd182e"
+    },
+    "other_first_push_hooks": "unit tests, bandit, dependency audit and fleet guardrails passed; push refused for mypy",
+    "publication": "normal full-hook retry required"
   }
 }
