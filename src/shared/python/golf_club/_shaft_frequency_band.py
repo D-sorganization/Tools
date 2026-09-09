@@ -82,7 +82,7 @@ class FrequencyBandAssessment:
 
     @property
     def maximum_inverse_norm_bound(self) -> float:
-        return max(cell.assessment.inverse_norm_bound for cell in self.cells)
+        return float(max(cell.assessment.inverse_norm_bound for cell in self.cells))
 
     @property
     def evidence_status(self) -> str:

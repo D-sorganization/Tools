@@ -1909,10 +1909,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 5906,
+      "bytes_lf": 5913,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "be44aaa55737629a51ef26944f867a9db1365c3fab50fb65f6f5908017ac9c78",
+      "content_sha256_lf": "30296e117763c07430a98179097e7175537bc09909e018eb518248101666e94d",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-FREQUENCY-BAND-PY-8346C4932D77",
       "language": "python",

@@ -33,6 +33,21 @@ snapshot to match the updated files. Normal publication remains. Exact scientifi
 as 60,876,800 bytes with SHA256
 526d9316eb57bab41a4d771b429f3f030fde54293277944e7bb31871059476ed.
 
+The first normal push of local commit 36f507fd7 exposes an imported-Any return
+in the actual five-source mypy invocation; including dependencies in the earlier
+11-file check had hidden that diagnostic. An explicit float return preserves
+the existing maximum-inverse-bound value. The exact five-source check now
+passes, plus 84 affected Windows tests (17.47 s) and 84 Linux tests (5.05 s,
+three absent-plugin warnings) on a fresh base-archive copy with the single
+source overlay. Its LF SHA256 is
+30296e117763c07430a98179097e7175537bc09909e018eb518248101666e94d.
+The original 1,075 broad passes remain attached to the pre-typing archive;
+REDUCED_TRANSFER_RESULTS.json distinguishes the follow-up. Normal publication
+must be retried; refreshed inventory and all nine final governance gates pass. The first push's unit
+suite passes 1,616, with 29 skips, nine expected failures and one unexpected
+pass, but its hook notices the concurrent typing edit; it is not a passed
+publication hook and must run normally again.
+
 REDUCED_TRANSFER_BANDS.md gives the derivation, normalization, error sources,
 independent controls and domain limitations. Complete physical parameter
 identification, broader disturbed rotating/bending convergence, flexible
