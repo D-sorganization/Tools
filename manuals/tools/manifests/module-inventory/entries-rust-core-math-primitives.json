@@ -704,6 +704,7 @@
           "tests/shared/python/golf_club/test_shaft_moving_invariance.py",
           "tests/shared/python/golf_club/test_shaft_rotating_transport.py",
           "tests/shared/python/golf_club/test_shaft_se3.py",
+          "tests/shared/python/golf_club/test_shaft_siso_rod.py",
           "tests/shared/python/golf_club/test_shaft_trajectory_geometry.py",
           "tests/shared/python/golf_club/test_turf_contact.py",
           "tests/shared/python/golf_club/test_wedge_ground_contact.py",

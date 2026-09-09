@@ -3019,6 +3019,16 @@
     "explicit_all": true,
     "symbols": {}
   },
+  "_shaft_siso_band.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_siso_interval.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
   "_shaft_spatial_element.py": {
     "__all__": ["spatial_element", "tip_spatial_inertia"],
     "explicit_all": false,

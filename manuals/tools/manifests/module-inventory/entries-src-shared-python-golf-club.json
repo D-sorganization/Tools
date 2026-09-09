@@ -1788,7 +1788,8 @@
           "tests/shared/python/golf_club/test_shaft_frequency_interval.py",
           "tests/shared/python/golf_club/test_shaft_galerkin.py",
           "tests/shared/python/golf_club/test_shaft_galerkin_rod.py",
-          "tests/shared/python/golf_club/test_shaft_reduction_interval.py"
+          "tests/shared/python/golf_club/test_shaft_reduction_interval.py",
+          "tests/shared/python/golf_club/test_shaft_siso_interval.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -1951,7 +1952,9 @@
         "public_surfaces": [],
         "test_paths": [
           "tests/shared/python/golf_club/test_shaft_reduction_band.py",
-          "tests/shared/python/golf_club/test_shaft_reduction_rod.py"
+          "tests/shared/python/golf_club/test_shaft_reduction_rod.py",
+          "tests/shared/python/golf_club/test_shaft_siso_band.py",
+          "tests/shared/python/golf_club/test_shaft_siso_rod.py"
         ],
         "unit_mentions": [
           "rad/s",
@@ -2062,7 +2065,10 @@
           "tests/shared/python/golf_club/test_shaft_galerkin_rod.py",
           "tests/shared/python/golf_club/test_shaft_reduction_band.py",
           "tests/shared/python/golf_club/test_shaft_reduction_interval.py",
-          "tests/shared/python/golf_club/test_shaft_reduction_rod.py"
+          "tests/shared/python/golf_club/test_shaft_reduction_rod.py",
+          "tests/shared/python/golf_club/test_shaft_siso_band.py",
+          "tests/shared/python/golf_club/test_shaft_siso_interval.py",
+          "tests/shared/python/golf_club/test_shaft_siso_rod.py"
         ],
         "unit_mentions": [
           "N",
@@ -2326,7 +2332,8 @@
           "tests/shared/python/golf_club/test_shaft_frequency_band.py",
           "tests/shared/python/golf_club/test_shaft_frequency_interval.py",
           "tests/shared/python/golf_club/test_shaft_galerkin_rod.py",
-          "tests/shared/python/golf_club/test_shaft_reduction_rod.py"
+          "tests/shared/python/golf_club/test_shaft_reduction_rod.py",
+          "tests/shared/python/golf_club/test_shaft_siso_rod.py"
         ],
         "unit_mentions": [
           "s"
@@ -2911,7 +2918,9 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
-          "tests/shared/python/golf_club/test_shaft_reduction_rod.py"
+          "tests/shared/python/golf_club/test_shaft_reduction_rod.py",
+          "tests/shared/python/golf_club/test_shaft_siso_band.py",
+          "tests/shared/python/golf_club/test_shaft_siso_rod.py"
         ],
         "unit_mentions": [
           "s"
@@ -3133,6 +3142,106 @@
           "N",
           "N m",
           "rad",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 4891,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "90a0482a10ca68fdc096b5af7199cfd4577e572e6a5f3e7941b9179d0c7e8071",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-SISO-BAND-PY-8CF5F766B51E",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_siso_band.py",
+      "purpose": "Complete SISO bands qualified against absolute, relative and phase targets.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_siso_rod.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 5550,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "db01062c25a90036aad16691da573be1f3d1f4acd1e7f6f6a4fa2e3f1604afbe",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-SISO-INTERVAL-PY-D498CA1834ED",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_siso_interval.py",
+      "purpose": "Nonzero-response floors and pointwise SISO reduction magnitude/phase bounds.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_siso_interval.py"
+        ],
+        "unit_mentions": [
           "s"
         ],
         "validation_paths": []
@@ -3424,6 +3533,9 @@
           "tests/shared/python/golf_club/test_shaft_reduction_band.py",
           "tests/shared/python/golf_club/test_shaft_reduction_interval.py",
           "tests/shared/python/golf_club/test_shaft_reduction_rod.py",
+          "tests/shared/python/golf_club/test_shaft_siso_band.py",
+          "tests/shared/python/golf_club/test_shaft_siso_interval.py",
+          "tests/shared/python/golf_club/test_shaft_siso_rod.py",
           "tests/shared/python/golf_club/test_shaft_transfer_ports.py"
         ],
         "unit_mentions": [],

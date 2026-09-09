@@ -21,11 +21,8 @@ from .test_shaft_gripped_operating import _scales
 from .test_shaft_gripped_response import _model
 
 
-@pytest.mark.parametrize("retained", [2, 4, 5])
-def test_assembled_rod_complete_band_meets_declared_normalized_error(
-    retained: int,
-    record_property: Callable[[str, object], None],
-) -> None:
+def _axial_reduction(retained: int) -> tuple[GalerkinReduction, DisplacementPorts]:
+    """Share the unchanged axial modal fixture with magnitude/phase controls."""
     chain, poses = _model(4)
     scales = _scales()
     full = constant_gripped_model(chain, poses, _controls(), scales)
@@ -38,6 +35,17 @@ def test_assembled_rod_complete_band_meets_declared_normalized_error(
     load = np.zeros((len(mass), 1))
     load[axial[-1]] = scales.length_m  # S.T unit SI axial tip force.
     ports = DisplacementPorts(load, load.T, [1], [0.001])
+    return reduced, ports
+
+
+@pytest.mark.parametrize("retained", [2, 4, 5])
+def test_assembled_rod_complete_band_meets_declared_normalized_error(
+    retained: int,
+    record_property: Callable[[str, object], None],
+) -> None:
+    reduced, ports = _axial_reduction(retained)
+    load, _ = ports.normalized_arrays()
+    basis = reduced.basis_array()
     # Full transverse modes near 10.19/10.23 rad/s are undamped in this axial
     # fixture. The full-inverse method legitimately refuses a band across them.
     controls = ReductionBandControls(
@@ -48,7 +56,7 @@ def test_assembled_rod_complete_band_meets_declared_normalized_error(
     assert result.maximum_absolute_error_bound <= 0.05
     for cell in result.cells:
         frequencies = np.array([cell.lower_rad_s, cell.upper_rad_s])
-        exact = _transfer(full.pencil, load, frequencies)
+        exact = _transfer(reduced.full_pencil, load, frequencies)
         predicted = _transfer(reduced.pencil, basis.T @ load, frequencies)
         assert (
             np.max(np.abs(exact - predicted)) / 0.001

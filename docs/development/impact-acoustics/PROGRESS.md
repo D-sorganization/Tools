@@ -4,7 +4,55 @@ The user authorized completion of the full planned program, not merely its
 planning deliverables. All three parent epics remain open. Physical and
 perceptual validation cannot be inferred from numerical fixtures.
 
-## Current Full/Reduced Transfer Bands (2026-09-09)
+## Current SISO Magnitude/Phase Qualification (2026-09-09)
+
+The previous normalized transfer checkpoint is published through
+b3c90e87426be15d1bd2c8d9c99da797972b1c4f after the actual changed-source mypy
+correction and successful normal publication retry. Remote SHA was verified,
+and issue #5072 comment 5606004662 records delivery. Earlier pending-publication
+language below is historical. The current lease expires 2026-09-09T19:30:11Z.
+
+New missing-module RED tests precede the SISO interval and band implementations.
+A further RED catches silent scalar underflow in segment geometry; checked
+division refuses unresolved scaling. Relative magnitude and principal relative
+phase require a positive full-response floor, computed from the residual-corrected
+polynomial. All three absolute/relative/phase targets must hold across the
+complete band using the shared traversal and original work budget.
+
+The initial six-axis damped shaft tests fail with 16 low modes: small relative
+errors near resonance coexist with absolute errors above the unchanged limit.
+Tip-only enrichment remains insufficient. Explicit tip/grip static-response
+enrichment succeeds with 19 bending and 18 torsion coordinates; 16 axial and
+30-coordinate complete controls also pass across 0–40 rad/s. A fixture span
+check initially exposes residual cancellation in the enriched basis; explicit
+mass-weighted QR corrects it without changing its tolerance. These failures
+and the original undamped-pole refusal are preserved in tests and the derivation.
+
+Windows: 83 scientific controls pass in 51.24 s. The subsequent local-access
+refactor changes no calculation; all 35 API/interval controls pass in 9.04 s.
+Actual two-source mypy, six-file mypy and root Ruff pass (3,840 formatted files).
+Existing parsed public API records are identical; only two private empty-export
+records are added. The canonical inventory is regenerated, including its
+automatically discovered static-fixture test association in the Rust math shard.
+Broad native regression passes 1,126 tests in 176.67 s, with two optional CAD
+skips and three absent-plugin warnings, on exact source tree
+bdd6e0f1aaa618fc35b8e4e5c1b8f12289d400cf, archive 90,234,880 bytes,
+SHA256 90e7bc31a4f1e78631bef2479416e67a1a617cb1066ecdc7a982eb3dcd84ab4c.
+Both-platform properties and archive/JUnit hashes are recorded in
+SISO_TRANSFER_RESULTS.json. The archived production/tests match the current
+source; only turnover documents have subsequently changed. All nine final governance gates pass. The canonical handoff snapshot
+is refreshed after the evidence update; normal publication remains.
+
+See SISO_TRANSFER_BANDS.md for the derivation and test roles. Its 0–40 rad/s
+(6.37 Hz) synthetic result is not an impact/acoustic validity band. The NASA
+static-residual/interface discussion was accessible only as an indexed abstract;
+no full-paper or physical validation claim is made. Disturbed rotating/bending
+time/mesh qualification, identified parameters, flexible contact, calibrated
+radiation, exact-pin consumers and physical/blinded final synthesis remain open.
+The separate policy/CI task owns its Chrome APT failure investigation for
+UpstreamDrift #9890; this task has no runner-maintenance agent and avoids its scope.
+
+## Previous Full/Reduced Transfer Bands (2026-09-09)
 
 Time/mesh/corotation checkpoint a2429e51a is published with all normal hooks,
 remote SHA verified and clean worktree at publication. Issue #5072 comment
