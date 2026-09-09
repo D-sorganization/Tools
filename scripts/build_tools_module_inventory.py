@@ -29,6 +29,7 @@ from scripts.tools_module_inventory_extractors import (
     normalized_bytes,
     public_surfaces,
 )
+from scripts.tools_module_inventory_imports import python_scientific_import
 from scripts.tools_module_inventory_storage import (
     check_projection,
     project_shards,
@@ -193,7 +194,12 @@ def _classification(path: Path, text: str) -> tuple[str, str]:
     markers = sorted(marker for marker in CALCULATION_MARKERS if marker in normalized)
     if markers:
         return "calculation", f"path-marker:{markers[0]}"
-    if MATH_IMPORT_PATTERN.search(text):
+    scientific_import = (
+        python_scientific_import(path, text)
+        if path.suffix.lower() == ".py"
+        else bool(MATH_IMPORT_PATTERN.search(text))
+    )
+    if scientific_import:
         return "calculation", "scientific-library-import"
     return "non-calculation", "no-conservative-calculation-signal"
 

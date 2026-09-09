@@ -57,9 +57,13 @@ def _with_first_entry(payload: dict[str, Any], **updates: object) -> dict[str, A
     return {**payload, "entries": [first, *payload["entries"][1:]]}
 
 
+def test_inventory_cli_checks_checked_in_freshness() -> None:
+    """The CLI independently checks the complete tracked-file projection."""
+    assert main(["--check"]) == 0
+
+
 def test_inventory_is_deterministic_and_fresh() -> None:
     """The checked-in registry must be exactly reproducible from tracked files."""
-    assert main(["--check"]) == 0
     assert _payload() == build_inventory(ROOT)
 
 
@@ -116,8 +120,8 @@ def test_inventory_denominator_covers_every_governed_module() -> None:
         ),
         (
             "src/rate_of_closure/application/camera_preferences.py",
-            "non-calculation",
-            "not-applicable",
+            "calculation",
+            "provisional",
             "Rate of Closure maintainers",
         ),
         (
@@ -199,7 +203,10 @@ def test_calculation_candidate_stays_provisional_and_unapproved() -> None:
 
 
 def test_non_calculation_is_not_promoted_to_scientific_authority() -> None:
-    entry = _entry("src/rate_of_closure/application/camera_preferences.py")
+    # Camera preferences imports math for finite-value validation and now
+    # correctly trips the conservative review signal. Pure configuration is
+    # the non-calculation control; neither entry receives publication approval.
+    entry = _entry("config/design_manual_governance.json")
     assert entry["classification"] == "non-calculation"
     assert entry["authority_status"] == "not-applicable"
     assert entry["states"]["equation_pathway"] == "not-applicable"

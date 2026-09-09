@@ -405,7 +405,7 @@ class FunctionGeneratorWidget(QWidget):
         offset = self.offset_spin.value()
 
         if waveform == "Sinusoid":
-            return SignalGenerator.sinusoid(  # type: ignore[no-any-return]
+            return SignalGenerator.sinusoid(
                 t,
                 amplitude=amp,
                 frequency=freq,
@@ -413,7 +413,7 @@ class FunctionGeneratorWidget(QWidget):
                 offset=offset,
             )
         elif waveform == "Cosine":
-            return SignalGenerator.cosine(  # type: ignore[no-any-return]
+            return SignalGenerator.cosine(
                 t,
                 amplitude=amp,
                 frequency=freq,
@@ -421,7 +421,7 @@ class FunctionGeneratorWidget(QWidget):
                 offset=offset,
             )
         elif waveform == "Square Wave":
-            return SignalGenerator.square(  # type: ignore[no-any-return]
+            return SignalGenerator.square(
                 t,
                 frequency=freq,
                 amplitude=amp,
@@ -429,21 +429,21 @@ class FunctionGeneratorWidget(QWidget):
                 offset=offset,
             )
         elif waveform == "Triangle Wave":
-            return SignalGenerator.triangle(  # type: ignore[no-any-return]
+            return SignalGenerator.triangle(
                 t,
                 frequency=freq,
                 amplitude=amp,
                 offset=offset,
             )
         elif waveform == "Sawtooth":
-            return SignalGenerator.sawtooth(  # type: ignore[no-any-return]
+            return SignalGenerator.sawtooth(
                 t,
                 frequency=freq,
                 amplitude=amp,
                 offset=offset,
             )
         elif waveform == "Pulse":
-            return SignalGenerator.pulse(  # type: ignore[no-any-return]
+            return SignalGenerator.pulse(
                 t,
                 start_time=self.pulse_start_spin.value(),
                 duration=self.pulse_duration_spin.value(),
@@ -451,21 +451,21 @@ class FunctionGeneratorWidget(QWidget):
                 baseline=offset,
             )
         elif waveform == "Step":
-            return SignalGenerator.step(  # type: ignore[no-any-return]
+            return SignalGenerator.step(
                 t,
                 step_time=self.step_time_spin.value(),
                 step_value=amp,
                 initial_value=offset,
             )
         elif waveform == "Exponential":
-            return SignalGenerator.exponential(  # type: ignore[no-any-return]
+            return SignalGenerator.exponential(
                 t,
                 amplitude=amp,
                 decay_rate=self.decay_rate_spin.value(),
                 offset=offset,
             )
         elif waveform == "Linear":
-            return SignalGenerator.linear(  # type: ignore[no-any-return]
+            return SignalGenerator.linear(
                 t,
                 slope=self.slope_spin.value(),
                 intercept=self.intercept_spin.value(),
@@ -475,9 +475,9 @@ class FunctionGeneratorWidget(QWidget):
             coeffs = [float(c.strip()) for c in coeffs_text.split(",") if c.strip()]
             if not coeffs:
                 coeffs = [0, 1]
-            return SignalGenerator.polynomial(t, coeffs)  # type: ignore[no-any-return]
+            return SignalGenerator.polynomial(t, coeffs)
         elif waveform == "Chirp":
-            return SignalGenerator.chirp(  # type: ignore[no-any-return]
+            return SignalGenerator.chirp(
                 t,
                 f0=self.chirp_f0_spin.value(),
                 f1=self.chirp_f1_spin.value(),
@@ -485,7 +485,7 @@ class FunctionGeneratorWidget(QWidget):
                 method=self.chirp_method_combo.currentText(),
             )
         elif waveform == "Constant":
-            return SignalGenerator.constant(t, value=self.constant_value_spin.value())  # type: ignore[no-any-return]
+            return SignalGenerator.constant(t, value=self.constant_value_spin.value())
         return None
 
     def _generate_signal(self) -> None:

@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5101 · Scientific Import Inventory Detection
+
+- **State:** in_review
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5101
+- **PR:** https://github.com/D-sorganization/Tools/pull/5103
+- **Branch:** fix/5101-scientific-import-inventory
+- **Paths:** `scripts/build_tools_module_inventory.py`, `scripts/tools_module_inventory_imports.py`, inventory import/contract tests, generated inventory and `docs/development/impact-acoustics/INVENTORY_IMPORT_REVIEW.*`
+- **Started:** 2026-09-08
+- **Last verified:** 2026-09-09 (202 combined import/inventory/merge/contact/theme/API tests pass in 59.46 s, 11 existing deprecation warnings; CLI/reproducibility scans 13.89/15.98 s under unchanged limits; incoming mypy RED 12 unused ignores repaired with identical executable AST, eight-file mypy passes)
+- **Summary:** TDD classifier is preserved during main 21690dcfc integration. All 3,632 module paths and classifications remain; all 410 original scientific candidates retain owners and provisional/publication-blocked status. Four original source hashes have evolved through reviewed signal/theme changes; the historical JSON remains intact and the new integration delta records those revisions.
+- **Next step:** All nine final metadata/manual gates pass. Complete normal hooks, then push this existing PR and qualify current-head CI. #5114 has isolated/mixed non-reproduction, not a claimed fix; private checkout remains separate. T3 is published separately and must consume the classifier before combined delivery.
+
 ### DL-#5074 · Waveform and Spectral Numerical Contracts
 
 - **State:** in_review

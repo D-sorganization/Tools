@@ -1,0 +1,94 @@
+{
+  "base": "32c7b38cb7f5926de8854f8888e20b549f83715c",
+  "incoming_main": "21690dcfceebef731f68277cb74599ccc75a2db6",
+  "entry_count": 3632,
+  "classes_before": {
+    "non-calculation": 2351,
+    "calculation": 1281
+  },
+  "classes_after": {
+    "non-calculation": 2351,
+    "calculation": 1281
+  },
+  "original_candidates_retained": 410,
+  "changed_original_candidate_sources": [
+    {
+      "path": "src/asteroid_jumper/renderer.py",
+      "original_review_sha256_lf": "2bfd377dbd07038b24708526a555e753b15b27385376c8a773424a664b022ae3",
+      "current_sha256_lf": "bdbd5cebd897ebbe8239dded8cd38dddac5366f83eed3d45e47293d524d7d4b0"
+    },
+    {
+      "path": "src/function_generator/python/function_generator/ui/pyqt6/main_window.py",
+      "original_review_sha256_lf": "f1633050d07a9b22d4d170134ae6135d6333fb59db03df75d0216ff7c4188777",
+      "current_sha256_lf": "3dee66f62281ecfbbc6044096ced245b1a5ec3c4168e046803eb374b81be336c"
+    },
+    {
+      "path": "src/shared/python/swing_sim/vibroacoustics/measurement.py",
+      "original_review_sha256_lf": "439bbe2fddc9445959566c63ec6411d2ddf987162f79eaa6c496ee000877ada1",
+      "current_sha256_lf": "b2e31bae56c155f196d35fbb40f1f429f48e5dde4170a9d83178942b73125f32"
+    },
+    {
+      "path": "src/shared/python/swing_sim/vibroacoustics/spectral.py",
+      "original_review_sha256_lf": "34246c03c1c7761a28d96429b01dd35fe432c761c622f076816d26722bf702d8",
+      "current_sha256_lf": "23589ff820273201056b6da9cfa667632af427ea8c13ed18d686803d355959ed"
+    }
+  ],
+  "changes": [
+    {
+      "path": "src/asteroid_jumper/renderer.py",
+      "fields": ["bytes_lf", "content_sha256_lf", "traceability"],
+      "before_classification": "calculation",
+      "after_classification": "calculation",
+      "before_sha256_lf": "2bfd377dbd07038b24708526a555e753b15b27385376c8a773424a664b022ae3",
+      "after_sha256_lf": "bdbd5cebd897ebbe8239dded8cd38dddac5366f83eed3d45e47293d524d7d4b0"
+    },
+    {
+      "path": "src/financial_calculator/python/financial_calculator/ui/pyqt6/main_window.py",
+      "fields": ["bytes_lf", "content_sha256_lf"],
+      "before_classification": "calculation",
+      "after_classification": "calculation",
+      "before_sha256_lf": "7338be2d51bf53a45b4264a9da97d44702c68a4084d6dba4a8e39ac7ea6d614c",
+      "after_sha256_lf": "2ff22e27cc3e8dc23b0ba37e940f9fb30ea91fd338a3a9e2f7c206efdb36702a"
+    },
+    {
+      "path": "src/function_generator/python/function_generator/ui/pyqt6/main_window.py",
+      "fields": ["bytes_lf", "content_sha256_lf"],
+      "before_classification": "calculation",
+      "after_classification": "calculation",
+      "before_sha256_lf": "f1633050d07a9b22d4d170134ae6135d6333fb59db03df75d0216ff7c4188777",
+      "after_sha256_lf": "3dee66f62281ecfbbc6044096ced245b1a5ec3c4168e046803eb374b81be336c"
+    },
+    {
+      "path": "src/pressure_drop_calculator/python/pressure_drop_calculator/ui/pyqt6/main_window.py",
+      "fields": ["bytes_lf", "content_sha256_lf"],
+      "before_classification": "calculation",
+      "after_classification": "calculation",
+      "before_sha256_lf": "37364f4c4e2dc8a46e940627b73683eb54f4d9bbe469fd2fa4cfa3845fa96570",
+      "after_sha256_lf": "c6ab91dc8be47dc3570aa677bb1559f9c0066ee3a37ddad98a7008149c26938b"
+    },
+    {
+      "path": "src/python/src/help/help_system.py",
+      "fields": ["bytes_lf", "content_sha256_lf", "traceability"],
+      "before_classification": "non-calculation",
+      "after_classification": "non-calculation",
+      "before_sha256_lf": "95fb42c2f3f1395c5b646fd5d5d9bd7afe2887c75fbec713e26086816edc2051",
+      "after_sha256_lf": "fbc83f5c5b242ca9a70697c7b9903fdb7dc82da335b0c10d12c0d874730d7718"
+    },
+    {
+      "path": "src/shared/python/theme/catppuccin.py",
+      "fields": ["traceability"],
+      "before_classification": "non-calculation",
+      "after_classification": "non-calculation",
+      "before_sha256_lf": "eca9b33110b87043a152abc7f47e8d56bf3964dbd360f96380d8ca3900c4169e",
+      "after_sha256_lf": "eca9b33110b87043a152abc7f47e8d56bf3964dbd360f96380d8ca3900c4169e"
+    },
+    {
+      "path": "src/steam_engine_calculator/python/steam_engine_calculator/ui/pyqt6/main_window.py",
+      "fields": ["bytes_lf", "content_sha256_lf", "traceability"],
+      "before_classification": "calculation",
+      "after_classification": "calculation",
+      "before_sha256_lf": "15dbf9220b741b8e15f1024d9ef54ef70572f0033758a89da85c254ec1afee3b",
+      "after_sha256_lf": "36636281c27fc7b80ab1affe1dfd24d865f7fef5055f85f5cd8f5b4860a16447"
+    }
+  ]
+}

@@ -11,61 +11,61 @@
   "issue_url": "https://github.com/D-sorganization/Tools/issues/4730",
   "pr_url": "https://github.com/D-sorganization/Tools/pull/5103",
   "commit_evidence": {
-    "local_head_sha": "21690dcfceebef731f68277cb74599ccc75a2db6",
+    "local_head_sha": "c0163768cd0946bd3d6705b8dbe52e733d4bf89a",
     "remote_head_sha": null,
-    "reviewed_tree_sha": "df1bf4efac796df519775afe54365526d87d5a1d",
+    "reviewed_tree_sha": "61ed42d26ce57451c29753bdb460ffc09c3913ba",
     "merge_sha": null
   },
   "branch_and_worktree": {
-    "branch": "bot/handoff-pr-disposition-wave2",
-    "worktree": "C:\\tmp\\Tools-2PRs",
+    "branch": "fix/5101-current-main",
+    "worktree": "C:\\Users\\diete\\Repositories\\Tools-impact-inventory-integration",
     "is_clean": false
   },
   "check_evidence": {
     "check_design_manual_governance": {
       "command": "python -m scripts.check_design_manual_governance",
       "status": "passed",
-      "timestamp": "2026-09-09T05:36:58Z"
+      "timestamp": "2026-09-09T06:21:32Z"
     },
     "build_tools_module_inventory": {
       "command": "python -m scripts.build_tools_module_inventory --check",
       "status": "passed",
-      "timestamp": "2026-09-09T05:36:58Z"
+      "timestamp": "2026-09-09T06:21:32Z"
     },
     "lint_tools_textbook_chapters": {
       "command": "python -m scripts.lint_tools_textbook_chapters",
       "status": "passed",
-      "timestamp": "2026-09-09T05:36:58Z"
+      "timestamp": "2026-09-09T06:21:32Z"
     },
     "check_tools_exemplars": {
       "command": "python -m scripts.check_tools_exemplars",
       "status": "passed",
-      "timestamp": "2026-09-09T05:36:58Z"
+      "timestamp": "2026-09-09T06:21:32Z"
     },
     "check_tools_calculation_freshness": {
       "command": "python -m scripts.check_tools_calculation_freshness --check",
       "status": "passed",
-      "timestamp": "2026-09-09T05:36:58Z"
+      "timestamp": "2026-09-09T06:21:32Z"
     },
     "check_tools_manual_qa": {
       "command": "python -m scripts.check_tools_manual_qa --check",
       "status": "passed",
-      "timestamp": "2026-09-09T05:36:58Z"
+      "timestamp": "2026-09-09T06:21:32Z"
     },
     "check_tools_publication_projection": {
       "command": "python -m scripts.check_tools_publication_projection --check",
       "status": "passed",
-      "timestamp": "2026-09-09T05:36:58Z"
+      "timestamp": "2026-09-09T06:21:32Z"
     },
     "render_tools_design_manual": {
       "command": "python -m scripts.render_tools_design_manual --check",
       "status": "passed",
-      "timestamp": "2026-09-09T05:36:58Z"
+      "timestamp": "2026-09-09T06:21:32Z"
     },
     "check_tools_handoff": {
       "command": "python -m scripts.check_tools_handoff --check",
       "status": "passed",
-      "timestamp": "2026-09-09T05:36:58Z"
+      "timestamp": "2026-09-09T06:21:32Z"
     }
   },
   "artifact_and_test_digests": {
@@ -112,7 +112,7 @@
       "TOOLS-HUMAN-APPROVAL-PENDING",
       "TOOLS-MARKERLESS-EXEMPLAR-BLOCKED"
     ],
-    "expiry_timestamp": "2026-12-08T05:36:58Z"
+    "expiry_timestamp": "2026-12-08T06:21:32Z"
   },
   "blockers": [
     {
@@ -127,12 +127,12 @@
     }
   ],
   "next_dependency": "TOOLS-M0 (#4708 / #4734) and parent epic DOC-TOOLS (#4707) closure",
-  "freshness_timestamp": "2026-09-09T05:36:58Z",
+  "freshness_timestamp": "2026-09-09T06:21:32Z",
   "governed_handoff_files": {
     "AGENT_HANDOFF.md": {
       "path": "AGENT_HANDOFF.md",
-      "sha256_lf": "e0bbc9cfea728569036a0c39414544b36143177b08c257a22b651ecd577256b1",
-      "line_count": 150,
+      "sha256_lf": "9c5a6fc7969fb78eccbd1a171c7beea4579f2a540572b373f9b60fe81d7ad020",
+      "line_count": 135,
       "max_line_budget": 150,
       "required_sections": [
         "## Impact Dynamics and Acoustics: #5068",

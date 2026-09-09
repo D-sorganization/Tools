@@ -4,6 +4,43 @@ The user authorized completion of the full planned program, not merely its
 planning deliverables. All three parent epics remain open. Physical and
 perceptual validation cannot be inferred from numerical fixtures.
 
+## Published Classifier and Documentation Integration
+
+Classifier #5103 published c0163768cd0946bd3d6705b8dbe52e733d4bf89a through
+all normal hooks; remote SHA verified. Subsequent main 184e453db changes only
+handoff documentation, preserved in this integration with refreshed metadata.
+Scientific code/tests/inventory are unchanged. Current-head CI remains required.
+The prior 3.12 rate shard was cancelled; its rendering case passed, while
+test_viewers_gui.py's display-area-sub-tabs case lacked a completion record.
+See INVENTORY_IMPORT_REVIEW.md. No GUI repair or complete-program claim is made.
+
+## Current Classifier Integration Status
+
+PR #5103 is being reconciled from 32c7b38cb with main 21690dcfc in the isolated
+Tools-impact-inventory-integration checkout. The original inventory evidence
+checkout remains at 81b28da05. Classifier code/tests are unchanged; generated
+metadata is reconstructed from the combined source. All 3,632 module paths and
+classifications remain, including 410 original provisional scientific candidates.
+The full integration delta records four evolved original source hashes (two
+signal-boundary files and two theme consumers). The old review JSON remains
+historical evidence rather than being rewritten to match new source.
+
+The combined import/inventory/merge/contact/theme/API run passes 202 tests in
+59.46 s, with 11 existing deprecation warnings. Actual push mypy catches 12
+unused suppression comments in incoming Function Generator code; their removal
+preserves the executable AST and makes the scoped eight-file check pass. All nine final
+metadata/manual gates pass; normal publication and current-head CI remain. The GUI stall #5114 is not reproduced
+by 2 isolated and 21 mixed original-source tests; actual Python 3.11 CI on
+32c7b38cb passes, while Python 3.12 remained running at the latest read.
+Private-consumer repository lookup is a distinct unresolved gate.
+
+Current program milestones supersede historical rows below: Tools T1 #5077 and
+T2 #5082, signal repair #5106 and wire #5083 are merged. AffineDrift theory
+#4258/#4282/#4298 and UD #9706/#9826/#9841 are merged. Distributed T3 remains
+partial; published transient checkpoint 09d8e59cf has 860 Linux regression
+passes and normal hooks on its separate branch. This PR does not contain that
+unmerged implementation. Physical/acoustic/blinded qualification remains open.
+
 ## Requirement and Evidence Matrix
 
 | Slice                          | Issue / Delivery               | Evidence Required Before Completion                                                                                           | Current State                                                               |
