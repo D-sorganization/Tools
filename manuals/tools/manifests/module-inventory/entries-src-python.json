@@ -839,10 +839,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3705,
+      "bytes_lf": 3468,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f4bfbf565d194fc529b73c701eb1ba09552d9209251b43f48ddfe8d70622a4a4",
+      "content_sha256_lf": "e2ac7d5778b23abb72c50a3be9834d2cc779658d60083f983ec4410b51a927fb",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-PYTHON-SRC-UTILS-CONSTANTS-PY-D754BA297FF0",
       "language": "python",
@@ -884,17 +884,7 @@
           },
           {
             "kind": "constant",
-            "name": "AVOGADRO_NUMBER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
             "name": "BAR_TO_PA",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "BOLTZMANN_CONSTANT",
             "signature": null
           },
           {
@@ -959,17 +949,7 @@
           },
           {
             "kind": "constant",
-            "name": "R_UNIVERSAL",
-            "signature": null
-          },
-          {
-            "kind": "constant",
             "name": "SPEED_OF_LIGHT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "STANDARD_GRAVITY",
             "signature": null
           },
           {

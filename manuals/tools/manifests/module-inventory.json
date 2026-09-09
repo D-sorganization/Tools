@@ -339,7 +339,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-matlab.json"
     },
     {
-      "content_sha256_lf": "d7a6204a66c1e9e4f9495219cf8670815b41e2b5aa01d7d7905e67f070ccc413",
+      "content_sha256_lf": "8e47851a35e8cf3c59c3077f565aab85eb11db4d93d2c52fa8cc9cc6aa3048f7",
       "entry_count": 99,
       "package": "src/media_processing",
       "path": "manuals/tools/manifests/module-inventory/entries-src-media-processing.json"
@@ -423,7 +423,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-project-packer.json"
     },
     {
-      "content_sha256_lf": "cbde9c1184ee13ff1707e819b6498447cc57babc5e739fedabe13de96a5f2c59",
+      "content_sha256_lf": "013bf5f1bcdea26211201e0bbdd122800a37b5c35cd8c298a7af230238a72a06",
       "entry_count": 33,
       "package": "src/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-python.json"

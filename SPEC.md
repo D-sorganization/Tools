@@ -5868,6 +5868,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-09 | #5107 | fix(constants, #3994): import canonical gravity/gas constants in `src/python/src/utils/constants.py` and `src/media_processing/video_processor/python/video_processor_src/constants.py` from `shared.python.sidekick.utils.unit_constants` with standalone fallback literals. |
 | 2026-09-09 | #5113 | test(morris, #4458): anchor R13.6 suggested factor drafts to shared Python fixture `morris_suggested_factor_drafts_v1.json`, assert exact match in `test_morris_ui_contract.py` and TS `morrisAuthorityRequest.test.ts`. |
 | 2026-09-09 | #5110 | refactor(ui, #3993): move FunctionGeneratorWidget from src/function_generator/gui.py to src/shared/python/ui/function_generator_widget.py so satellite applications like SPS import it through the shared tier rather than crossing application boundaries; guarded by tests/architecture/test_issue3993_no_cross_app_gui_imports.py. |
 | 2026-09-09 | #5124 | perf: Replace Math.min/max spread in ScalarEnsembleScatter with single-pass loop (spec 1.18.134) |

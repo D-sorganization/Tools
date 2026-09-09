@@ -197,6 +197,8 @@ jobs:
             set -euo pipefail
             while fuser /var/lib/dpkg/lock >/dev/null 2>&1 || fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done
             rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock /var/cache/apt/pkgcache.bin /var/cache/apt/srcpkgcache.bin
+            rm -f /etc/apt/sources.list.d/*chrome* /etc/apt/sources.list.d/*google*
+            sed -i '/dl\.google\.com/d' /etc/apt/sources.list 2>/dev/null || true
             env DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=300 update --fix-missing
             env DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=300 install -y --fix-missing "${apt_packages[@]}"
           }
@@ -706,6 +708,8 @@ jobs:
             set -euo pipefail
             while fuser /var/lib/dpkg/lock >/dev/null 2>&1 || fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done
             rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock /var/cache/apt/pkgcache.bin /var/cache/apt/srcpkgcache.bin
+            rm -f /etc/apt/sources.list.d/*chrome* /etc/apt/sources.list.d/*google*
+            sed -i '/dl\.google\.com/d' /etc/apt/sources.list 2>/dev/null || true
             env DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=300 update --fix-missing
             env DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=300 install -y --fix-missing "${apt_packages[@]}"
           }

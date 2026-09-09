@@ -12,27 +12,23 @@ from __future__ import annotations
 
 from typing import Final
 
-# Note: Many of these constants duplicate those found in sidekick.utils.unit_constants.
-# They are kept here to avoid adding a dependency from the standalone src/python package
-# to the sidekick package. Values should be kept in sync.
-
-# ─────────────────────────────────────────────────────────────────────────────
-# Universal physical constants
-# ─────────────────────────────────────────────────────────────────────────────
-
-#: Gravitational acceleration at Earth's surface (m/s²)
-STANDARD_GRAVITY: Final[float] = 9.80665
-
-#: Universal gas constant (J/mol/K)
-R_UNIVERSAL: Final[float] = 8.314_462_618
-
-#: Boltzmann constant (J/K)
-BOLTZMANN_CONSTANT: Final[float] = 1.380_649e-23
-
-#: Avogadro's number (mol⁻¹)
-AVOGADRO_NUMBER: Final[float] = 6.022_140_76e23
-
-#: Speed of light in vacuum (m/s)
+try:
+    # Prefer the fleet-canonical constants (issue #3994) so this stays in
+    # sync with the rest of the fleet instead of drifting independently.
+    from shared.python.sidekick.utils.unit_constants import (
+        AVOGADRO_NUMBER,
+        BOLTZMANN_CONSTANT,
+        R_UNIVERSAL,
+        STANDARD_GRAVITY,
+    )
+except ImportError:
+    # The standalone src/python package must not hard-depend on the sidekick
+    # package; these literals are the fallback, not the primary source.
+    #: Gravitational acceleration at Earth's surface (m/s²)
+    STANDARD_GRAVITY: Final[float] = 9.80665  # type: ignore[misc,no-redef]
+    R_UNIVERSAL: Final[float] = 8.314_462_618  # type: ignore[misc,no-redef]
+    BOLTZMANN_CONSTANT: Final[float] = 1.380_649e-23  # type: ignore[misc,no-redef]
+    AVOGADRO_NUMBER: Final[float] = 6.022_140_76e23  # type: ignore[misc,no-redef]
 SPEED_OF_LIGHT: Final[float] = 299_792_458.0
 
 # ─────────────────────────────────────────────────────────────────────────────
