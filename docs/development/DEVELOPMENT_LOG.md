@@ -154,9 +154,9 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/5072-prestressed-shaft
 - **Paths:** `src/shared/python/golf_club/*shaft*`, `src/shared/python/golf_club/_beam_fem.py`, `src/shared/python/golf_club/*grip*`, `src/shared/python/golf_club/*rotating_body*`, `tests/shared/python/golf_club/test_shaft*.py`, `tests/shared/python/golf_club/test_rotating_body.py`, `tests/shared/python/golf_club/test_grip_impedance.py`, `docs/development/impact-acoustics/*`
 - **Started:** 2026-09-07
-- **Last verified:** 2026-09-09 (nine new time/mesh/corotation tests pass on Windows in 43.31 s and Linux in 29.77 s; actual mypy three files; repository Ruff and all nine final governance gates pass; normal publication pending)
-- **Summary:** Published e6b616308 supplies nonlinear trajectories. Independent axial continuum/FEM references now separate time, mesh and joint errors; radial rotating continuum and finite corotation qualify their stated domains. Relative grip inertance is distinguished from absolute rotating mass. Both-platform results/provenance are saved; production/API unchanged.
-- **Next step:** Complete normal publication and remaining disturbed rotating/bending, full/reduced bandwidth and physical parameter qualification, then flexible contact, radiation/calibration, exact-pin consumers and physical/blinded final synthesis. See JOINT_TRAJECTORY_CONVERGENCE.md and PROGRESS.md.
+- **Last verified:** 2026-09-09 (132 Windows scientific controls in 7.54 s; actual mypy 11 files; repository Ruff 3,835 files; 1,075 Linux science passes in 183.26 s with two CAD skips and three plugin warnings; all nine final governance gates pass; normal publication pending)
+- **Summary:** Published a2429e51a supplies time/mesh/corotation evidence. New TDD normalized full/reduced transfer bounds retain inverse defects and polynomial residual corrections; complete-band acceptance shares exact coverage/budgets. Synthetic 0–8 rad/s shaft controls pass, while unobservable undamped transverse poles retain 0–20 rad/s refusal. Existing public API data is unchanged; four private module records added.
+- **Next step:** Finish normal publication; continue physical parameters, disturbed rotating/bending, flexible impact, radiation/calibration, exact-pin consumers and physical/blinded final synthesis. See REDUCED_TRANSFER_BANDS.md and PROGRESS.md.
 
 ### DL-0055 · Qualified Lumped Impact Dynamics
 

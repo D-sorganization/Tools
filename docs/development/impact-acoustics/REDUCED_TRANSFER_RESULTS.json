@@ -1,0 +1,94 @@
+{
+  "schema": "impact-reduced-transfer-evidence/1",
+  "status": "conditional-numerical",
+  "physical_evidence": false,
+  "source_archive": {
+    "tree": "cac9ca3750b10aab4073f81c53d2d63707416c9f",
+    "archive": "C:\\Users\\diete\\AppData\\Local\\Temp\\impact-port-source.tar",
+    "bytes": 60876800,
+    "sha256": "526d9316eb57bab41a4d771b429f3f030fde54293277944e7bb31871059476ed"
+  },
+  "windows": {
+    "junit_sha256": "44a0e81cf985b0ff94118699f5df95a8ef935c9b817df22f4ea32b2e88cb82ea",
+    "passed": 132,
+    "skipped": 0,
+    "new_cases_passed": 48,
+    "studies": [
+      {
+        "test": "test_assembled_rod_complete_band_meets_declared_normalized_error[2]",
+        "properties": {
+          "retained_axial_modes": "2",
+          "paired_cell_evaluations": "21",
+          "complete_band_absolute_error_bound": "0.04664706561492662"
+        }
+      },
+      {
+        "test": "test_assembled_rod_complete_band_meets_declared_normalized_error[4]",
+        "properties": {
+          "retained_axial_modes": "4",
+          "paired_cell_evaluations": "19",
+          "complete_band_absolute_error_bound": "0.040401595464980226"
+        }
+      },
+      {
+        "test": "test_assembled_rod_complete_band_meets_declared_normalized_error[5]",
+        "properties": {
+          "retained_axial_modes": "5",
+          "paired_cell_evaluations": "19",
+          "complete_band_absolute_error_bound": "0.04016724495857273"
+        }
+      }
+    ],
+    "runtime": {
+      "python": "3.12.10",
+      "numpy": "2.4.1",
+      "scipy": "1.17.0"
+    },
+    "duration_s": 7.54
+  },
+  "linux": {
+    "junit_sha256": "aa07ab2fc733399501c6b2aacf9e1daf3e000484419e293d46a336ea3ba1f9ce",
+    "passed": 1075,
+    "skipped": 2,
+    "new_cases_passed": 48,
+    "studies": [
+      {
+        "test": "test_assembled_rod_complete_band_meets_declared_normalized_error[2]",
+        "properties": {
+          "retained_axial_modes": "2",
+          "paired_cell_evaluations": "21",
+          "complete_band_absolute_error_bound": "0.04664706561492662"
+        }
+      },
+      {
+        "test": "test_assembled_rod_complete_band_meets_declared_normalized_error[4]",
+        "properties": {
+          "retained_axial_modes": "4",
+          "paired_cell_evaluations": "19",
+          "complete_band_absolute_error_bound": "0.040401595464980226"
+        }
+      },
+      {
+        "test": "test_assembled_rod_complete_band_meets_declared_normalized_error[5]",
+        "properties": {
+          "retained_axial_modes": "5",
+          "paired_cell_evaluations": "19",
+          "complete_band_absolute_error_bound": "0.04016724495857273"
+        }
+      }
+    ],
+    "duration_s": 183.26,
+    "warnings": 3,
+    "runtime": {
+      "python": "3.11.15",
+      "numpy": "2.3.5",
+      "scipy": "1.15.3"
+    }
+  },
+  "limits": [
+    "Uncertified floating evaluation of exact-arithmetic bounds",
+    "Synthetic 0-8 rad/s assembled example; not impact or acoustic qualification",
+    "Full-inverse framework refuses unobservable full-pencil singularities",
+    "No port/basis/calibration/radiation uncertainty identification"
+  ]
+}

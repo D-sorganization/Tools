@@ -4,7 +4,42 @@ The user authorized completion of the full planned program, not merely its
 planning deliverables. All three parent epics remain open. Physical and
 perceptual validation cannot be inferred from numerical fixtures.
 
-## Current Time/Mesh and Corotation Qualification (2026-09-09)
+## Current Full/Reduced Transfer Bands (2026-09-09)
+
+Time/mesh/corotation checkpoint a2429e51a is published with all normal hooks,
+remote SHA verified and clean worktree at publication. Issue #5072 comment
+5605461837 records that delivery. New TDD work adds explicit normalized
+force/displacement ports, conditional paired interval bounds, residual-corrected
+response polynomials and complete-band error acceptance. The original inverse
+band and the new paired band share one exact-endpoint/budget traversal.
+
+Missing-module RED precedes the interval/ports and band implementations. Thirty
+initial controls pass; combined band/regression controls then pass 78. An
+assembled 0–20 rad/s request first exhausts its budget, then exposes undamped
+transverse poles at 10.19019669 and 10.23284437 rad/s. This is retained as a
+refusal regression, not hidden by damping or mode removal. The supported 0–8
+rad/s (about 1.27 Hz) example meets a 50 micrometre/N absolute transfer-error
+limit with 2/4/5 axial modes in 21/19/19 attempted cells. This low-frequency
+synthetic result is not an impact or acoustic validity band.
+
+Final Windows scientific controls pass 132 in 7.54 s. Repository Ruff passes
+3,835 formatted files; actual mypy passes 11 files, including the shared norm
+and interval dependency needed with skipped imports. The API baseline records
+four new private empty-export modules; every existing parsed API record is
+unchanged. Broad native science passes 1,075 with two CAD skips and three absent-plugin
+warnings in 183.26 s. All nine Windows API controls pass in 6.55 s. Both-platform
+results are in REDUCED_TRANSFER_RESULTS.json. All nine final governance gates pass after refreshing the canonical handoff
+snapshot to match the updated files. Normal publication remains. Exact scientific tree cac9ca3750b10aab4073f81c53d2d63707416c9f is archived
+as 60,876,800 bytes with SHA256
+526d9316eb57bab41a4d771b429f3f030fde54293277944e7bb31871059476ed.
+
+REDUCED_TRANSFER_BANDS.md gives the derivation, normalization, error sources,
+independent controls and domain limitations. Complete physical parameter
+identification, broader disturbed rotating/bending convergence, flexible
+contact, calibrated radiation, exact-pin consumers and physical/blinded final
+synthesis. All parent epics remain open.
+
+## Previous Time/Mesh and Corotation Qualification (2026-09-09)
 
 Nonlinear trajectories are published through e6b616308e8469ce71797b6e3aefa02cbe5e269a
 with every normal hook passing, remote SHA verified and a clean worktree at
@@ -31,7 +66,7 @@ source provenance. Scientific tree eda0b3efbaee46cf4ebdc57e6e67b131d31e6cdc has
 archive SHA256 f7c92000a51e3bd94a79b3130b47a2b101f849aeca976f18a0de08679daf95fd,
 60,835,840 bytes. Linux logs/XML remain in
 /home/dieterolson/.cache/codex-impact/joint-eda0b3efb. Repository Ruff passes 3,827 formatted files; all nine final governance gates
-pass. Normal publication remains. Complete disturbed rotating/bending convergence, full/reduced
+pass. Published at a2429e51a0de51c0458aff5eae06bd5972b08b8c with all normal hooks, remote verified and clean worktree; issue comment 5605461837 records publication. Complete disturbed rotating/bending convergence, full/reduced
 continuous-band port errors, physical parameters, flexible impact, calibrated
 radiation, consumers and physical/blinded final synthesis. Parent epics remain open.
 

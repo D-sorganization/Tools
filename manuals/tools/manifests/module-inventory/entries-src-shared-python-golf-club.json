@@ -1787,7 +1787,8 @@
           "tests/shared/python/golf_club/test_shaft_frequency_band.py",
           "tests/shared/python/golf_club/test_shaft_frequency_interval.py",
           "tests/shared/python/golf_club/test_shaft_galerkin.py",
-          "tests/shared/python/golf_club/test_shaft_galerkin_rod.py"
+          "tests/shared/python/golf_club/test_shaft_galerkin_rod.py",
+          "tests/shared/python/golf_club/test_shaft_reduction_interval.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -1908,10 +1909,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 5335,
+      "bytes_lf": 5906,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "9655c72d3b572961c6847d17bd3af66a47e271ea937fefb37b0daf272da80518",
+      "content_sha256_lf": "be44aaa55737629a51ef26944f867a9db1365c3fab50fb65f6f5908017ac9c78",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-FREQUENCY-BAND-PY-8346C4932D77",
       "language": "python",
@@ -1923,7 +1924,6 @@
         "downstream-consumer-risk",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -1935,7 +1935,7 @@
         "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "unavailable"
       },
@@ -1949,7 +1949,10 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [],
-        "test_paths": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_reduction_band.py",
+          "tests/shared/python/golf_club/test_shaft_reduction_rod.py"
+        ],
         "unit_mentions": [
           "rad/s",
           "s"
@@ -2001,7 +2004,9 @@
         "public_surfaces": [],
         "test_paths": [
           "tests/shared/python/golf_club/test_shaft_frequency_band.py",
-          "tests/shared/python/golf_club/test_shaft_frequency_interval.py"
+          "tests/shared/python/golf_club/test_shaft_frequency_interval.py",
+          "tests/shared/python/golf_club/test_shaft_reduction_band.py",
+          "tests/shared/python/golf_club/test_shaft_reduction_interval.py"
         ],
         "unit_mentions": [
           "rad/s"
@@ -2054,7 +2059,10 @@
         "test_paths": [
           "tests/shared/python/golf_club/test_shaft_bending_continuum.py",
           "tests/shared/python/golf_club/test_shaft_galerkin.py",
-          "tests/shared/python/golf_club/test_shaft_galerkin_rod.py"
+          "tests/shared/python/golf_club/test_shaft_galerkin_rod.py",
+          "tests/shared/python/golf_club/test_shaft_reduction_band.py",
+          "tests/shared/python/golf_club/test_shaft_reduction_interval.py",
+          "tests/shared/python/golf_club/test_shaft_reduction_rod.py"
         ],
         "unit_mentions": [
           "N",
@@ -2317,7 +2325,8 @@
           "tests/shared/python/golf_club/test_shaft_bending_continuum.py",
           "tests/shared/python/golf_club/test_shaft_frequency_band.py",
           "tests/shared/python/golf_club/test_shaft_frequency_interval.py",
-          "tests/shared/python/golf_club/test_shaft_galerkin_rod.py"
+          "tests/shared/python/golf_club/test_shaft_galerkin_rod.py",
+          "tests/shared/python/golf_club/test_shaft_reduction_rod.py"
         ],
         "unit_mentions": [
           "s"
@@ -2864,6 +2873,104 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 4253,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3558a605f2e51b4f21b58b495685d655b47be4660b7cf0934afb17fe0081a0df",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-REDUCTION-BAND-PY-FE2C46AEFD59",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_reduction_band.py",
+      "purpose": "Complete-band absolute transfer-error acceptance for a Galerkin shaft model.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_reduction_rod.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 6253,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "3627a353f92b0d92ba8728cf1d55c273a759938caffff266b620c306ffa28f11",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-REDUCTION-INTERVAL-PY-CA8EE0C361CE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_reduction_interval.py",
+      "purpose": "Conditional absolute full/reduced displacement transfer error on an interval.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_reduction_band.py",
+          "tests/shared/python/golf_club/test_shaft_reduction_interval.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 3688,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -3217,6 +3324,108 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3246,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "7fd4a587b8f9c9f16b2181151056d73a92092f7ad1c907cc8e0aadca171713cd",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-TRANSFER-POLYNOMIAL-PY-E370E8139206",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_transfer_polynomial.py",
+      "purpose": "Residual-corrected local transfer approximations with explicit remainders.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3279,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "cb4494d34e0187eb93eabe3bccb4a16f570b5c5e121845f8126548e36d1f39bb",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-TRANSFER-PORTS-PY-A8D379201CE2",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_transfer_ports.py",
+      "purpose": "Owned, explicitly normalized displacement input/output channels.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_reduction_band.py",
+          "tests/shared/python/golf_club/test_shaft_reduction_interval.py",
+          "tests/shared/python/golf_club/test_shaft_reduction_rod.py",
+          "tests/shared/python/golf_club/test_shaft_transfer_ports.py"
+        ],
         "unit_mentions": [],
         "validation_paths": []
       }

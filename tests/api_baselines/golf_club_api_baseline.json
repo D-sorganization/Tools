@@ -2989,12 +2989,17 @@
     "explicit_all": true,
     "symbols": {}
   },
-  "_shaft_trajectory_contracts.py": {
+  "_shaft_point_load.py": {
     "__all__": [],
     "explicit_all": true,
     "symbols": {}
   },
-  "_shaft_point_load.py": {
+  "_shaft_reduction_band.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_reduction_interval.py": {
     "__all__": [],
     "explicit_all": true,
     "symbols": {}
@@ -3061,6 +3066,21 @@
     }
   },
   "_shaft_spectrum.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_trajectory_contracts.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_transfer_polynomial.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_transfer_ports.py": {
     "__all__": [],
     "explicit_all": true,
     "symbols": {}

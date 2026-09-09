@@ -3,8 +3,11 @@
 from __future__ import annotations
 
 import math
+from collections.abc import Callable
 from dataclasses import dataclass
 from fractions import Fraction
+from functools import partial
+from typing import TypeVar
 
 import numpy as np
 
@@ -17,6 +20,8 @@ from ._shaft_frequency_interval import (
     assess_frequency_interval,
 )
 from ._shaft_spectrum import SpectrumScales
+
+_Assessment = TypeVar("_Assessment")
 
 
 @dataclass(frozen=True)
@@ -120,8 +125,21 @@ def assess_frequency_band(
     """
     if not isinstance(controls, FrequencyBandControls):
         raise TypeError("expected FrequencyBandControls")
+    cells, evaluations = _assess_cover(
+        controls, partial(assess_frequency_interval, pencil, scales)
+    )
+    return FrequencyBandAssessment(
+        controls, tuple(FrequencyBandCell(*cell) for cell in cells), evaluations
+    )
+
+
+def _assess_cover(
+    controls: FrequencyBandControls,
+    assess: Callable[[FrequencyIntervalControls], _Assessment],
+) -> tuple[tuple[tuple[float, float, _Assessment], ...], int]:
+    """Share exact endpoint coverage, attempted-cell budgets and fail-closed splits."""
     pending = [controls.bounds_rad_s]
-    cells: list[FrequencyBandCell] = []
+    cells: list[tuple[float, float, _Assessment]] = []
     evaluations = 0
     while pending:
         if evaluations >= controls.max_evaluations:
@@ -130,7 +148,7 @@ def assess_frequency_band(
         interval = _cover_interval(lower, upper, controls)
         evaluations += 1
         try:
-            assessment = assess_frequency_interval(pencil, scales, interval)
+            assessment = assess(interval)
         except _UnresolvedIntervalError:
             midpoint = interval.center_rad_s
             if not lower < midpoint < upper:
@@ -139,8 +157,8 @@ def assess_frequency_band(
                 ) from None
             pending.extend(((midpoint, upper), (lower, midpoint)))
         else:
-            cells.append(FrequencyBandCell(lower, upper, assessment))
-    return FrequencyBandAssessment(controls, tuple(cells), evaluations)
+            cells.append((lower, upper, assessment))
+    return tuple(cells), evaluations
 
 
 __all__ = ()
