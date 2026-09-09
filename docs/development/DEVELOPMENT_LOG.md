@@ -24,12 +24,12 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** codex
 - **Issue:** #5132; consumer UpstreamDrift#9897/#9899
 - **Branch:** fix/5132-calibration-numerics
-- **PR:** pending
+- **PR:** https://github.com/D-sorganization/Tools/pull/5136
 - **Paths:** src/shared/python/sidekick/lab/mocap/calibration.py, extrinsics.py, calibration_numerics.py; numerical tests and inventory
 - **Started:** 2026-09-09
-- **Last verified:** 2026-09-09 (`421889407` baseline; six numerical failures reproduced, twelve repaired numerical tests pass)
+- **Last verified:** 2026-09-09T21:06Z (SELF: reproduced3 OpenCV5 failures; all12 numerical tests now pass on actual OpenCV4.13 and5.0)
 - **Summary:** Real distortion-aware pose recovery replaces silent fabricated poses and unchanged refinement results.
-- **Next step:** Finish API/manual traceability gates, clean export and protected CI; integrate qualified Tools behavior into the common-reference capture workflow.
+- **Next step:** Publish the OpenCV4/5 compatibility correction and qualify exact-head protected CI on PR#5136.
 
 ### DL-#5101 · Scientific Import Inventory Detection
 

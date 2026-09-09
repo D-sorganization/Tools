@@ -3,12 +3,12 @@
 ## Identity
 
 - Repository: D-sorganization/Tools
-- Worktree: `C:/Users/diete/Repositories/Worktrees/Tools-calibration-numerics`
+- Worktree: `C:/Users/diete/Repositories/Worktrees/Tools-calibration-opencv5`
 - Branch: `fix/5132-calibration-numerics`
 - Baseline: `421889407a62fc541e8adc017a86dec2a7ab4f32`
 - Implementation commit: `SELF`
 - Issue: #5132; parent #4706; consumers UpstreamDrift #9897/#9898/#9899
-- PR: pending
+- PR: #5136 OPEN: https://github.com/D-sorganization/Tools/pull/5136
 - Session: `capture-product-01a08427-calibration-numerics`
 
 ## Objective and Scope
@@ -61,7 +61,7 @@ the API baseline adds only the new module's empty surface.
 - Clean git export of684fbfb06be6d066be2a005c752b63d63572f900:25 calibration tests
   passed. Pre-push found the older mypy needs an explicit TypeAlias declaration;
   that annotation is corrected and both the actual hook and local mypy pass.
-- Normal final push hooks, updated clean-export qualification and protected CI remain.
+- Exact14b35b57bc4ed44b607a21b6bc23bc7be7cd5c71 passed all normal push hooks and25 clean-export tests. CI then reproduced3 failures with OpenCV5.0.0.93: undistortPointsIter was folded into undistortPoints. SELF selects the supported iterative entry point without relaxing convergence checks. All12 numerical tests now pass separately on actual OpenCV4.13 and5.0. Both share the same test source and ordinary repo conftest; no test is skipped. Refreshed publication gates and exact-head protected CI remain.
 - Temporary clean export is retained at TEMP/capture-tools-clean-05c2c95d640a468099b6b38fe505429e;
   automatic approval review rejected its removal with blocked-by-policy. Do not
   work around that rejection; logs remain in TEMP/capture-tools-clean-qualification.log.
@@ -84,7 +84,7 @@ Do not reopen their closed policy PRs repeatedly. Central issue #1579 has receip
 
 ## Next Steps
 
-1. Finish numerical/API/manual inventory validation and review generated deltas.
+1. Finish OpenCV4/5 compatibility publication checks and require green PR#5136 before merging.
 2. Publish #5132 through protected review and qualify the exact merged Tools SHA.
 3. Adopt that SHA in the isolated UpstreamDrift capture setup worktree; implement
    common references and repeated placements through the shared authority.
@@ -93,3 +93,9 @@ Do not reopen their closed policy PRs repeatedly. Central issue #1579 has receip
 ## Change Log
 
 - `SELF`: replace fabricated/no-op numerical behavior with tested backend recovery.
+
+## Current Goal Additions
+
+UpstreamDrift#9913 now requires clear action feedback and capture/swing/model status, clickable next steps, contextual help, detachable screens that redock on close, and fullscreen video through familiar Qt conventions. These must be implemented and merged to remote main alongside #9897/#9902/#9906 and fleet adoption.
+
+Tools#5137 moving-reference work is in separate branch feat/5137-reference-placements at Worktrees/Tools-calibration-numerics; preserve its uncommitted source, tests and API baseline. Initial11 placement tests passed; expanded API/chain run pending.

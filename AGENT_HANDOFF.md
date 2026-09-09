@@ -2,9 +2,9 @@
 
 ## Calibration Numerical Recovery: #5132
 
-- Isolated `fix/5132-calibration-numerics`, base421889407. Preserve the active impact and CLI scopes.
+- Isolated `fix/5132-calibration-numerics`, PR#5136, now in Worktrees/Tools-calibration-opencv5. Preserve impact/CLI scopes and the separate #5137 placement branch.
 - Removes fixed-pose failure substitution; restores inverse distortion and real pose refinement against known world targets. Twelve numerical regressions pass; all89 mocap/authority/API tests and25 clean-export calibration tests pass; explicit TypeAlias also passes the older mypy hook.
-- Common-reference UX, unknown placements, physical accuracy and consumer qualification remain open in UpstreamDrift#9897/#9899. See `docs/development/HANDOFF.md` for current evidence and gates.
+- CI exposed OpenCV5 iterative API consolidation; SELF supports both versions, with12 numerical tests passing on actual4.13 and5.0. Common references, physical qualification, club/wizard and new UpstreamDrift#9913 journey/docking UX remain required; see `docs/development/HANDOFF.md`.
 
 ## Impact Dynamics and Acoustics: #5068
 

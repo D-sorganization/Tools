@@ -5475,10 +5475,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 10634,
+      "bytes_lf": 10966,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "bdb0db3aa72fa5fed394e452f1631e8807281ccaab6b0813a93d85532f645ec7",
+      "content_sha256_lf": "726eb1ad7c0167e70845e9a27cc5873d1fffa659766309af14fa7efd1e84d187",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-CALIBRATION-NUMERICS-PY-2226C716E3A5",
       "language": "python",
