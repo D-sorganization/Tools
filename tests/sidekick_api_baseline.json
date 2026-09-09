@@ -8700,7 +8700,7 @@
       "MocapServiceStatus": {
         "type": "class",
         "info": {
-          "bases": ["str", "enum.Enum"],
+          "bases": ["enum.StrEnum"],
           "methods": {}
         }
       },
