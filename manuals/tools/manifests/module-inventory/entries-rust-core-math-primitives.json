@@ -930,6 +930,7 @@
           "tests/shared/python/golf_club/test_contracts.py",
           "tests/shared/python/golf_club/test_grip_impedance.py",
           "tests/shared/python/golf_club/test_grip_moving_kinematics.py",
+          "tests/shared/python/golf_club/test_shaft_trajectory_rotation.py",
           "tests/shared/python/model_generation/inertia/test_spatial.py",
           "tests/shared/python/rotation_transforms/test_rotation_transforms.py",
           "tests/shared/python/sidekick/lab/mocap/test_contracts.py",

@@ -2263,7 +2263,8 @@
           "tests/shared/python/golf_club/test_shaft_gripped_operating.py",
           "tests/shared/python/golf_club/test_shaft_gripped_response.py",
           "tests/shared/python/golf_club/test_shaft_gripped_spectrum.py",
-          "tests/shared/python/golf_club/test_shaft_moving_invariance.py"
+          "tests/shared/python/golf_club/test_shaft_moving_invariance.py",
+          "tests/shared/python/golf_club/test_shaft_trajectory_rotation.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -2737,7 +2738,9 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
-          "tests/shared/python/golf_club/test_shaft_trajectory_geometry.py"
+          "tests/shared/python/golf_club/test_shaft_trajectory_continuum.py",
+          "tests/shared/python/golf_club/test_shaft_trajectory_geometry.py",
+          "tests/shared/python/golf_club/test_shaft_trajectory_rotation.py"
         ],
         "unit_mentions": [
           "m/s",
@@ -2763,7 +2766,6 @@
         "downstream-consumer-risk",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -2775,7 +2777,7 @@
         "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "unavailable",
         "validation": "unavailable"
       },
@@ -2789,7 +2791,10 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [],
-        "test_paths": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_trajectory_continuum.py",
+          "tests/shared/python/golf_club/test_shaft_trajectory_rotation.py"
+        ],
         "unit_mentions": [],
         "validation_paths": []
       }

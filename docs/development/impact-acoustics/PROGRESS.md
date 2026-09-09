@@ -4,7 +4,38 @@ The user authorized completion of the full planned program, not merely its
 planning deliverables. All three parent epics remain open. Physical and
 perceptual validation cannot be inferred from numerical fixtures.
 
-## Current Nonlinear Trajectories (2026-09-09)
+## Current Time/Mesh and Corotation Qualification (2026-09-09)
+
+Nonlinear trajectories are published through e6b616308e8469ce71797b6e3aefa02cbe5e269a
+with every normal hook passing, remote SHA verified and a clean worktree at
+publication. Issue #5072 comment 5605097448 records this delivery. The new work
+adds independent qualification without changing production implementations or
+public APIs. Nine final tests pass on Windows (43.31 s) and Linux (29.77 s),
+with three unavailable-plugin warnings only on Linux. Actual mypy passes all
+three new Python files. The earlier 1,018 broad Linux passes remain tied to the
+previous implementation archive; they are not a new full-suite run.
+
+An independent axial continuum mode and scalar consistent-mass FEM exponential
+separate temporal, spatial and combined error, including root spring/inertance
+and tip storage. Temporal error stays below 10% of spatial error; joint error
+falls from 1.23398e-3 to 7.73897e-5 on 2/4/8 elements with 32/64/128 steps.
+The ideal relative grip inertance remains zero-energy during exact corotation,
+while the root has nonzero absolute motion. Radial rotating shape errors fall
+at second order to 6.79924e-9 m; finite 3 rad/s corotation preserves the checked
+pose/twist and work histories. This is not disturbed rotating-mode or acoustic
+qualification.
+
+JOINT_TRAJECTORY_CONVERGENCE.md derives the references and domains;
+JOINT_TRAJECTORY_RESULTS.json retains both platform test properties and runtime/
+source provenance. Scientific tree eda0b3efbaee46cf4ebdc57e6e67b131d31e6cdc has
+archive SHA256 f7c92000a51e3bd94a79b3130b47a2b101f849aeca976f18a0de08679daf95fd,
+60,835,840 bytes. Linux logs/XML remain in
+/home/dieterolson/.cache/codex-impact/joint-eda0b3efb. Repository Ruff passes 3,827 formatted files; all nine final governance gates
+pass. Normal publication remains. Complete disturbed rotating/bending convergence, full/reduced
+continuous-band port errors, physical parameters, flexible impact, calibrated
+radiation, consumers and physical/blinded final synthesis. Parent epics remain open.
+
+## Previous Nonlinear Trajectories (2026-09-09)
 
 Moving-grip acceleration checkpoint 6c8a56d5856bb90429179654af635fac47713a19
 is published through every normal commit/push hook, with remote SHA verified and
