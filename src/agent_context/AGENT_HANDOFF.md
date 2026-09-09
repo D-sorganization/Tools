@@ -40,10 +40,11 @@ python3 -m mypy src/agent_context --follow-imports=skip --ignore-missing-imports
 python3 -m pip wheel --no-deps packages/agent-context
 ```
 
-Latest evidence: 32 context tests passed with one Windows symlink skip; actual
+Latest evidence: 33 context tests passed with one Windows symlink skip; actual
 MCP stdio passes after Git stdin isolation. All 103 CodeMap tests pass with the
 optional parser stack installed. Scoped Ruff and mypy pass. Re-run after final
-changes and qualify the packaged wheel, normal hooks and CI.
+changes and qualify the packaged wheel, normal hooks and CI. Hook repository
+selectors are cleared before explicit-checkout reads and temporary Git fixtures.
 
 ## Do-Not List
 

@@ -167,7 +167,7 @@ def browser(catalog: Catalog, state: dict[str, Any]) -> str:
         Path(__file__).with_name("browser.html").read_text(encoding="utf-8")
     )
     return template.substitute(
-        title=esc(catalog.repository),
+        title=esc(catalog.repository.replace("_", " ")),
         count=len(cards),
         cards="".join(cards),
         digest=state["digest"],

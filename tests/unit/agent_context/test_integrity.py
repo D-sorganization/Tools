@@ -12,7 +12,14 @@ from test_catalog import rewrite
 from agent_context.catalog import CatalogError, load_catalog
 from agent_context.cli import main
 from agent_context.service import ContextService
-from agent_context.workspace import snapshot
+from agent_context.workspace import git, snapshot
+
+
+def test_explicit_checkout_ignores_inherited_hook_index(
+    repository: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    monkeypatch.setenv("GIT_INDEX_FILE", str(repository / "unrelated-index"))
+    assert "src/provider.py" in git(repository, "ls-files")
 
 
 def test_catalog_change_after_validation_is_rejected(repository: Path) -> None:

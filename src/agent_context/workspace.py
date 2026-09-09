@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import shutil
 import subprocess
 from pathlib import Path
@@ -28,6 +29,12 @@ def git(root: Path, *args: str, optional: bool = False) -> str:
             stdin=subprocess.DEVNULL,
             timeout=30,
             check=False,
+            env={
+                key: value
+                for key, value in os.environ.items()
+                if key
+                not in {"GIT_DIR", "GIT_WORK_TREE", "GIT_INDEX_FILE", "GIT_COMMON_DIR"}
+            },
         )
     except (OSError, subprocess.TimeoutExpired) as exc:
         raise CatalogError(f"Cannot inspect Git checkout: {exc}") from exc
