@@ -831,7 +831,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-vibroacoustics.json"
     },
     {
-      "content_sha256_lf": "2575012ff07d350f8050d730f23138dd3f481a4dac50b52770706fd862c0c52d",
+      "content_sha256_lf": "fb03aad092935b80aef87dd5da3142386d151f2842aa9f6522ac9fb642f8b040",
       "entry_count": 22,
       "package": "src/shared/python/theme",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-theme.json"

@@ -25,6 +25,7 @@ import dataclasses
 import pytest
 
 from shared.python.swing_sim.impact_interval import (
+    ImpactIntervalResult,
     ImpactTermination,
     IncompleteContactError,
     solve_impact_interval,
@@ -35,13 +36,13 @@ from .test_solver import _club, _config, _initial
 pytestmark = pytest.mark.unit
 
 
-def _truncated():
+def _truncated() -> ImpactIntervalResult:
     """A strike cut off mid-compression by the time cap."""
     config = dataclasses.replace(_config(), maximum_time_s=1.0e-5)
     return solve_impact_interval(initial=_initial(), club=_club(), config=config)
 
 
-def _completed():
+def _completed() -> ImpactIntervalResult:
     """A strike that runs to separation under the default cap."""
     return solve_impact_interval(initial=_initial(), club=_club(), config=_config())
 

@@ -482,3 +482,20 @@ operation and retain equilibrium residual forcing instead of silently
 converting a tolerance-balanced state into a homogeneous decay claim.
 Time-varying operation, contact, acoustic radiation and physical/blinded
 validation remain required; no full-epic completion is claimed.
+
+### Main-integration pre-push typing repair (2026-09-09)
+
+The normal push of 4a38ffe1c was refused: Prettier reformatted CHANGELOG and
+its theme API JSON, and mypy 1.13 reported 42 errors in four incoming-main
+files. Unit, security and dependency-audit hooks passed. The same changed-file
+mypy invocation reproduced RED before editing. Fixture/helper annotations,
+an explicit Pydantic dictionary annotation, and a runtime-only Qt fallback
+remove those errors without suppressing type checks or changing runtime
+numerics. The fallback retains imported static types, while assigning None
+only when the optional runtime imports fail. Four-file mypy is GREEN;
+173 theme, API, electrical and impact-termination regressions pass in 24.40 s
+with 12 pre-existing deprecation warnings. A fresh subprocess that deliberately
+blocks PyQt6 also confirms the unavailable-Qt fallback and non-Qt exports.
+The JSON formatting change preserves parsed API content. Source inventory
+must be regenerated before retrying all normal push hooks. No new shaft
+calculation or physical validation is claimed by this integration repair.
