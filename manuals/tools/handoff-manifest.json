@@ -11,13 +11,13 @@
   "issue_url": "https://github.com/D-sorganization/Tools/issues/4730",
   "pr_url": "https://github.com/D-sorganization/Tools/pull/5055",
   "commit_evidence": {
-    "local_head_sha": "a8e86970a58fd9ea4a7984bcf6dfe5000504e8f8",
+    "local_head_sha": "d5675ac00010f78821b2eb34d010340641ad0625",
     "remote_head_sha": null,
-    "reviewed_tree_sha": "d63544b017b43ed2cdbcbbb8001bfc4d53f8ef69",
+    "reviewed_tree_sha": "1d7bf1f170890d84ea0a49d2a71704bd7443de79",
     "merge_sha": null
   },
   "branch_and_worktree": {
-    "branch": "feat/4716-mocap-c3d-exchange",
+    "branch": "bolt-optimize-scalar-ensemble-bounds-3489633297760464462",
     "worktree": "C:\\Users\\diete\\Repositories\\Tools",
     "is_clean": false
   },
@@ -25,47 +25,47 @@
     "check_design_manual_governance": {
       "command": "python -m scripts.check_design_manual_governance",
       "status": "passed",
-      "timestamp": "2026-09-09T08:57:21Z"
+      "timestamp": "2026-09-09T14:56:29Z"
     },
     "build_tools_module_inventory": {
       "command": "python -m scripts.build_tools_module_inventory --check",
       "status": "passed",
-      "timestamp": "2026-09-09T08:57:21Z"
+      "timestamp": "2026-09-09T14:56:29Z"
     },
     "lint_tools_textbook_chapters": {
       "command": "python -m scripts.lint_tools_textbook_chapters",
       "status": "passed",
-      "timestamp": "2026-09-09T08:57:21Z"
+      "timestamp": "2026-09-09T14:56:29Z"
     },
     "check_tools_exemplars": {
       "command": "python -m scripts.check_tools_exemplars",
       "status": "passed",
-      "timestamp": "2026-09-09T08:57:21Z"
+      "timestamp": "2026-09-09T14:56:29Z"
     },
     "check_tools_calculation_freshness": {
       "command": "python -m scripts.check_tools_calculation_freshness --check",
       "status": "passed",
-      "timestamp": "2026-09-09T08:57:21Z"
+      "timestamp": "2026-09-09T14:56:29Z"
     },
     "check_tools_manual_qa": {
       "command": "python -m scripts.check_tools_manual_qa --check",
       "status": "passed",
-      "timestamp": "2026-09-09T08:57:21Z"
+      "timestamp": "2026-09-09T14:56:29Z"
     },
     "check_tools_publication_projection": {
       "command": "python -m scripts.check_tools_publication_projection --check",
       "status": "passed",
-      "timestamp": "2026-09-09T08:57:21Z"
+      "timestamp": "2026-09-09T14:56:29Z"
     },
     "render_tools_design_manual": {
       "command": "python -m scripts.render_tools_design_manual --check",
       "status": "passed",
-      "timestamp": "2026-09-09T08:57:21Z"
+      "timestamp": "2026-09-09T14:56:29Z"
     },
     "check_tools_handoff": {
       "command": "python -m scripts.check_tools_handoff --check",
       "status": "passed",
-      "timestamp": "2026-09-09T08:57:21Z"
+      "timestamp": "2026-09-09T14:56:29Z"
     }
   },
   "artifact_and_test_digests": {
@@ -112,7 +112,7 @@
       "TOOLS-HUMAN-APPROVAL-PENDING",
       "TOOLS-MARKERLESS-EXEMPLAR-BLOCKED"
     ],
-    "expiry_timestamp": "2026-12-08T08:57:21Z"
+    "expiry_timestamp": "2026-12-08T14:56:29Z"
   },
   "blockers": [
     {
@@ -127,7 +127,7 @@
     }
   ],
   "next_dependency": "TOOLS-M0 (#4708 / #4734) and parent epic DOC-TOOLS (#4707) closure",
-  "freshness_timestamp": "2026-09-09T08:57:21Z",
+  "freshness_timestamp": "2026-09-09T14:56:29Z",
   "governed_handoff_files": {
     "AGENT_HANDOFF.md": {
       "path": "AGENT_HANDOFF.md",
