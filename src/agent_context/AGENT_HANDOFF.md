@@ -40,7 +40,7 @@ python3 -m mypy src/agent_context --follow-imports=skip --ignore-missing-imports
 python3 -m pip wheel --no-deps packages/agent-context
 ```
 
-Latest evidence: 33 context tests passed with one Windows symlink skip; actual
+Latest evidence: 35 context tests passed with one Windows symlink skip; actual
 MCP stdio passes after Git stdin isolation. All 103 CodeMap tests pass with the
 optional parser stack installed. Scoped Ruff and mypy pass. Re-run after final
 changes and qualify the packaged wheel, normal hooks and CI. Hook repository
@@ -57,7 +57,7 @@ selectors are cleared before explicit-checkout reads and temporary Git fixtures.
 
 ## Ordered Continuation
 
-1. Complete freshness edge cases, wheel isolation, module inventory and normal hooks.
+1. Qualify normal push with bounded workers; the real SDK probe now isolates pytest namespace collisions. Preserve native crash evidence until the full gate passes.
 2. Deliver the provider through a protected PR and verify its exact revision.
 3. Pin consumers, run real boundary tests, review contracts and qualify generated maps.
 4. Reconcile fleet guidance and epic acceptance against actual delivered evidence.

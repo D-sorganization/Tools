@@ -5868,7 +5868,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
-| 2026-09-09 | #5138 | Dependency-free source context package, real MCP transport, semantic boundary reviews, deterministic views and CodeMap freshness guards.; explicit-checkout hook isolation and responsive offline navigation. |
+| 2026-09-09 | #5138 | Dependency-free source context package, real MCP transport, semantic boundary reviews, deterministic views and CodeMap freshness guards.; explicit-checkout hook isolation and responsive offline navigation and isolated real-SDK transport qualification. Explicit unsupported state and concurrent dependency-change rejection. |
 | 2026-09-09 | #5108 | fix(ci, #5105): route the trusted push-pyqt-rendered-evidence job to ubuntu-24.04 rather than the self-hosted fleet where Docker is not guaranteed, matching ephemeral PR runs and backed by tests/ops/test_rate_web_playwright_workflow.py. |
 | 2026-09-09 | #5107 | fix(constants, #3994): import canonical gravity/gas constants in `src/python/src/utils/constants.py` and `src/media_processing/video_processor/python/video_processor_src/constants.py` from `shared.python.sidekick.utils.unit_constants` with standalone fallback literals. |
 | 2026-09-09 | #5113 | test(morris, #4458): anchor R13.6 suggested factor drafts to shared Python fixture `morris_suggested_factor_drafts_v1.json`, assert exact match in `test_morris_ui_contract.py` and TS `morrisAuthorityRequest.test.ts`. |

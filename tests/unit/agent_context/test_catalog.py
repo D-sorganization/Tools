@@ -26,6 +26,11 @@ def test_valid_catalog_resolves_public_symbols(repository: Path) -> None:
     assert catalog.relations[0].consumer == "consumer"
 
 
+def test_catalog_can_explicitly_mark_unsupported_components(repository: Path) -> None:
+    rewrite(repository, lambda data: data["components"][0].update(status="unsupported"))
+    assert load_catalog(repository).components[0].status == "unsupported"
+
+
 @pytest.mark.parametrize(
     "target", ["../outside.py", "/etc/passwd", "C:/secret", "src/../../escape"]
 )

@@ -77,6 +77,22 @@ def test_dependency_drift_is_never_source_authority(repository: Path) -> None:
     )
     (child / "module.py").write_text("# dirty provider\n", encoding="utf-8")
     assert service.context("provider")["authority"] == "dependency-unverified"
+    provider = child / "src/agent_context"
+    provider.mkdir(parents=True)
+    (provider / "__init__.py").write_text("# different runtime\n", encoding="utf-8")
+    state = service.status()["provenance"]["dependencies"]["vendor/shared"]
+    assert state["runtime"] == "different-context-package"
+
+
+def test_dependency_change_during_snapshot_is_rejected(
+    repository: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    from agent_context import workspace
+
+    states = iter([{}, {"vendor/shared": {"state": "unverified"}}])
+    monkeypatch.setattr(workspace, "dependency_state", lambda catalog: next(states))
+    with pytest.raises(CatalogError, match="changed"):
+        snapshot(load_catalog(repository))
 
 
 def test_corrupt_review_schema_is_a_controlled_error(repository: Path) -> None:

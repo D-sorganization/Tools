@@ -145,10 +145,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8971,
+      "bytes_lf": 9033,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "bcf17301974ec2deddc192c0cf5c6e7c3ce62f8115eb8353d683bcf65b9204d1",
+      "content_sha256_lf": "cfd12f6dca64d629eb13b7d7ee6d6d5c4eba0b48d31ecbf76b75a8a2273e740f",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-AGENT-CONTEXT-CATALOG-PY-84335D10FA64",
       "language": "python",
@@ -428,8 +428,8 @@
           }
         ],
         "test_paths": [
-          "tests/unit/agent_context/test_cli.py",
-          "tests/unit/agent_context/test_mcp_transport.py"
+          "tests/unit/agent_context/mcp_probe.py",
+          "tests/unit/agent_context/test_cli.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -720,10 +720,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6141,
+      "bytes_lf": 6218,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "00c31a9abe182da998ffbcdaad1eba08b8c81d7db6645edf94b1239f5b6a3e87",
+      "content_sha256_lf": "9802ab77f37568c7cc56105625d54ea5b27bf250c853d9af73f3f5ff15fed08d",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-AGENT-CONTEXT-WORKSPACE-PY-DD33920D598B",
       "language": "python",

@@ -145,7 +145,13 @@ def _component(root: Path, row: dict[str, Any]) -> Component:
     args = {
         key: text(row.get(key), key) for key in ("title", "summary", "owner", "status")
     }
-    if args["status"] not in {"implemented", "partial", "proposed", "deprecated"}:
+    if args["status"] not in {
+        "implemented",
+        "partial",
+        "proposed",
+        "deprecated",
+        "unsupported",
+    }:
         raise CatalogError(f"Unknown component status: {args['status']}")
     paths = {
         key: strings(row.get(key), key, required=True)

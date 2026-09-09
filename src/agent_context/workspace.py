@@ -137,7 +137,11 @@ def snapshot(catalog: Catalog) -> dict[str, Any]:
         p: file_hash(safe_path(catalog.root, p)) for p in source_files(catalog)
     }
     head_after = git(catalog.root, "rev-parse", "--verify", "HEAD", optional=True)
-    if head_before != head_after or files != second_read:
+    if (
+        head_before != head_after
+        or files != second_read
+        or dependencies != dependency_state(catalog)
+    ):
         raise CatalogError("Checkout changed during context inspection; retry")
     implementation = implementation_id(Path(__file__).parent)
     return {

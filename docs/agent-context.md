@@ -53,7 +53,7 @@ proof that an implementation does not exist.
 Maintain `docs/agent_context/catalog.json` and integration documents in Git.
 Catalog version 1 requires components with `id`, `title`, `summary`, `owner`,
 `status`, `sources`, `documentation`, `tests`, `entrypoints` and `tags`.
-Statuses are `implemented`, `partial`, `proposed` and `deprecated`. A relation
+Statuses are `implemented`, `partial`, `proposed`, `deprecated` and `unsupported`. A relation
 has `id`, `provider`, `consumer`, `kind`, `contract`, `inputs` and `tests`.
 Sources may name files or directories; all other evidence names real files.
 Python entry points identify declaration paths and qualified symbols without
