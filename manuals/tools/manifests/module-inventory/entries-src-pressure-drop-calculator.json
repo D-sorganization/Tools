@@ -727,10 +727,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 18326,
+      "bytes_lf": 16443,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "37364f4c4e2dc8a46e940627b73683eb54f4d9bbe469fd2fa4cfa3845fa96570",
+      "content_sha256_lf": "c6ab91dc8be47dc3570aa677bb1559f9c0066ee3a37ddad98a7008149c26938b",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-PYTHON-PRESSURE-DROP-CALCULATOR-UI-PYQT6-MAIN-WINDOW-PY-6F04AE2E7C05",
       "language": "python",

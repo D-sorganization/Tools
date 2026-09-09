@@ -183,7 +183,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-ai.json"
     },
     {
-      "content_sha256_lf": "e482c697145af74a8950d9c20f647beac84efbf85a3495e41118b7d4efdf00c5",
+      "content_sha256_lf": "26fdd255a50fd96a2a4ef4b2532ce4745d3e091e8ba84ad855517b2fc7c21172",
       "entry_count": 9,
       "package": "src/asteroid_jumper",
       "path": "manuals/tools/manifests/module-inventory/entries-src-asteroid-jumper.json"
@@ -261,7 +261,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-file-watcher.json"
     },
     {
-      "content_sha256_lf": "532fe74806318c4833a52a0ff45e6d27691ae02760ccbd43f7ea212c6bce15e9",
+      "content_sha256_lf": "b0bc41d370bb93fc5ff54a936d6f65a36522298818adb5481744fd548b367196",
       "entry_count": 18,
       "package": "src/financial_calculator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-financial-calculator.json"
@@ -291,7 +291,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-folder-tool-pro.json"
     },
     {
-      "content_sha256_lf": "97aaee299fa831844594ad2a6a3ec6b36e07cac8db4e0cdf174ad1a162c43023",
+      "content_sha256_lf": "23b1f5fa7ff3d63525fd3212e8fe9d761cb7a84c028a643efaf66d8eed6e6ac6",
       "entry_count": 20,
       "package": "src/function_generator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-function-generator.json"
@@ -405,7 +405,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-plant-simulator.json"
     },
     {
-      "content_sha256_lf": "2e83078a545ccfb7a4a16b21dd821002f5f2ec5d5fd5302aed57afe096274048",
+      "content_sha256_lf": "6d9660a21434da83b3fa3e242411df35b71c8ffc7bbeee46c91e387bd6c05450",
       "entry_count": 18,
       "package": "src/pressure_drop_calculator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pressure-drop-calculator.json"
@@ -423,7 +423,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-project-packer.json"
     },
     {
-      "content_sha256_lf": "3cdc1fed32367f164d20250a2e26a460ae9ca5c14375251b03111f3b97c6c203",
+      "content_sha256_lf": "cbde9c1184ee13ff1707e819b6498447cc57babc5e739fedabe13de96a5f2c59",
       "entry_count": 33,
       "package": "src/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-python.json"
@@ -831,7 +831,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-vibroacoustics.json"
     },
     {
-      "content_sha256_lf": "2575012ff07d350f8050d730f23138dd3f481a4dac50b52770706fd862c0c52d",
+      "content_sha256_lf": "6337b55612edc41e5a5a07e737e7b4b1491749b9abe736c5a8a23c30a78eb454",
       "entry_count": 22,
       "package": "src/shared/python/theme",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-theme.json"
@@ -873,7 +873,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-solar-system-model.json"
     },
     {
-      "content_sha256_lf": "a02701365b5942a6d909f5d79430ed97ce1c58808c513fdd8e8b567c3de2413b",
+      "content_sha256_lf": "27a5c2a49b6cf8b641a2a3e11f0c270f636490ba8f804e654e5c270ce6309e1e",
       "entry_count": 19,
       "package": "src/steam_engine_calculator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-steam-engine-calculator.json"

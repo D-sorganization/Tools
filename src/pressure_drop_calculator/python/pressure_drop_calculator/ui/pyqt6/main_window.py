@@ -12,6 +12,7 @@ from __future__ import annotations
 import os
 from typing import Any
 
+from shared.python.theme.catppuccin import CATPPUCCIN_MOCHA, get_stylesheet
 from shared.python.theme.integration import get_theme_manager
 from shared.python.theme.matplotlib_style import apply_plot_theme
 
@@ -292,7 +293,7 @@ class PressureDropCalculatorWidget(QWidget):
         tab = QWidget()
         layout = QVBoxLayout(tab)
 
-        self.figure = Figure(figsize=(8, 5), facecolor="#1e1e2e")
+        self.figure = Figure(figsize=(8, 5), facecolor=CATPPUCCIN_MOCHA["base"])
         _tm = get_theme_manager()
         apply_plot_theme(self.figure, _tm.get_current_colors())
         _tm.themeChanged.connect(
@@ -432,7 +433,7 @@ class PressureDropCalculatorWidget(QWidget):
 
         self.figure.clear()
         ax = self.figure.add_subplot(111)
-        ax.set_facecolor("#313244")
+        ax.set_facecolor(CATPPUCCIN_MOCHA["surface0"])
 
         inlet_p = self.pressure_spin.value() * 1e5  # Convert bar to Pa
         outlet_p = self.results.get("outlet_pressure_pa", inlet_p)
@@ -441,90 +442,24 @@ class PressureDropCalculatorWidget(QWidget):
         x = [0, length]
         y = [inlet_p / 1e5, outlet_p / 1e5]
 
-        ax.plot(x, y, color="#89b4fa", linewidth=2, marker="o", markersize=8)
-        ax.fill_between(x, y, alpha=0.3, color="#89b4fa")
+        ax.plot(
+            x, y, color=CATPPUCCIN_MOCHA["blue"], linewidth=2, marker="o", markersize=8
+        )
+        ax.fill_between(x, y, alpha=0.3, color=CATPPUCCIN_MOCHA["blue"])
 
-        ax.set_xlabel("Distance (m)", color="#cdd6f4")
-        ax.set_ylabel("Pressure (bar)", color="#cdd6f4")
-        ax.set_title("Pressure Profile Along Pipe", color="#cdd6f4")
-        ax.tick_params(colors="#cdd6f4")
-        ax.grid(True, alpha=0.3, color="#585b70")
+        ax.set_xlabel("Distance (m)", color=CATPPUCCIN_MOCHA["text"])
+        ax.set_ylabel("Pressure (bar)", color=CATPPUCCIN_MOCHA["text"])
+        ax.set_title("Pressure Profile Along Pipe", color=CATPPUCCIN_MOCHA["text"])
+        ax.tick_params(colors=CATPPUCCIN_MOCHA["text"])
+        ax.grid(True, alpha=0.3, color=CATPPUCCIN_MOCHA["surface2"])
 
         spines = ax.spines
         for spine in spines.values():
-            spine.set_color("#585b70")
+            spine.set_color(CATPPUCCIN_MOCHA["surface2"])
 
         self.figure.tight_layout()
         self.canvas.draw()
 
     def _apply_styling(self) -> None:
-        """Apply dark theme styling."""
-        self.setStyleSheet("""
-            QWidget {
-                background-color: #1e1e2e;
-                color: #cdd6f4;
-                font-family: 'Segoe UI', Arial, sans-serif;
-            }
-            QGroupBox {
-                border: 1px solid #45475a;
-                border-radius: 4px;
-                margin-top: 8px;
-                padding-top: 8px;
-                background-color: #313244;
-            }
-            QGroupBox::title {
-                color: #cba6f7;
-                subcontrol-origin: margin;
-                left: 10px;
-                padding: 0 5px;
-            }
-            QPushButton {
-                background-color: #89b4fa;
-                color: #1e1e2e;
-                border: none;
-                border-radius: 4px;
-                padding: 8px 16px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #b4befe;
-            }
-            QSpinBox, QDoubleSpinBox, QComboBox {
-                background-color: #45475a;
-                border: 1px solid #585b70;
-                border-radius: 4px;
-                padding: 4px 8px;
-                color: #cdd6f4;
-            }
-            QTableWidget {
-                background-color: #313244;
-                border: 1px solid #45475a;
-                gridline-color: #45475a;
-            }
-            QHeaderView::section {
-                background-color: #45475a;
-                color: #cdd6f4;
-                padding: 4px;
-                border: none;
-            }
-            QTextEdit {
-                background-color: #313244;
-                border: 1px solid #45475a;
-                color: #cdd6f4;
-            }
-            QTabWidget::pane {
-                border: 1px solid #45475a;
-                background-color: #313244;
-            }
-            QTabBar::tab {
-                background-color: #45475a;
-                color: #cdd6f4;
-                padding: 8px 16px;
-                border-top-left-radius: 4px;
-                border-top-right-radius: 4px;
-            }
-            QTabBar::tab:selected {
-                background-color: #89b4fa;
-                color: #1e1e2e;
-            }
-        """)
+        """Apply the canonical Catppuccin Mocha theme (issue #3992)."""
+        self.setStyleSheet(get_stylesheet())

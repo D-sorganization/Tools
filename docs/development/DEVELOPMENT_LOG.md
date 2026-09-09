@@ -27,9 +27,9 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** fix/5101-scientific-import-inventory
 - **Paths:** `scripts/build_tools_module_inventory.py`, `scripts/tools_module_inventory_imports.py`, inventory import/contract tests, generated inventory and `docs/development/impact-acoustics/INVENTORY_IMPORT_REVIEW.*`
 - **Started:** 2026-09-08
-- **Last verified:** 2026-09-08 (96 combined import/inventory/impact/API tests, 95.10 s; full-scan CLI/reproducibility checks separately take 22.52/26.08 s under the unchanged 60-second deadline; scoped Ruff passes)
-- **Summary:** TDD replaces false Python import regex matches with non-executing AST inspection. All 410 changed candidates have real scientific imports and retain source hashes, owners and publication blockers. No existing calculation is downgraded; the added parser is inventoried.
-- **Next step:** Publish the test granularity adjustment after final gates and normal hooks, then qualify current-head CI; one prior flake retry exhausted, private consumer repository lookup unresolved. Retain provisional classifications and existing approval boundaries.
+- **Last verified:** 2026-09-09 (202 combined import/inventory/merge/contact/theme/API tests pass in 59.46 s, 11 existing deprecation warnings; CLI/reproducibility scans 13.89/15.98 s under unchanged limits; incoming mypy RED 12 unused ignores repaired with identical executable AST, eight-file mypy passes)
+- **Summary:** TDD classifier is preserved during main 21690dcfc integration. All 3,632 module paths and classifications remain; all 410 original scientific candidates retain owners and provisional/publication-blocked status. Four original source hashes have evolved through reviewed signal/theme changes; the historical JSON remains intact and the new integration delta records those revisions.
+- **Next step:** All nine final metadata/manual gates pass. Complete normal hooks, then push this existing PR and qualify current-head CI. #5114 has isolated/mixed non-reproduction, not a claimed fix; private checkout remains separate. T3 is published separately and must consume the classifier before combined delivery.
 
 ### DL-#5074 · Waveform and Spectral Numerical Contracts
 

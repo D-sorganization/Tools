@@ -2,34 +2,15 @@
 
 ## Impact Dynamics and Acoustics: #5068
 
-- Full epic execution is active; completion requires all model and empirical gates.
-- T1 foundation: Tools PR #5077 remains open with downstream CI failure.
-  Theory PR AffineDrift #4258 and integration plan UpstreamDrift #9706 are merged.
-- T2 #5071 / draft PR #5082: `fix/5071-qualified-impact-coupling`, based on `5932146f1`; 396 broader tests pass, 2 skip, 15 final audit tests and 6 browser parser tests pass.
-  Event-resolved solver and additive preload/energy audit; v1 wire retained.
-- RED: timeout/step refusal and energy-record validation failed before fixes.
-  GREEN: 1,614 unit tests also pass in isolated Python 3.12 + pytest-qt; use serial offscreen hooks. Protected Tools CI remains open.
-- Continuation matrix: `docs/development/impact-acoustics/PROGRESS.md`.
-  T3–T6, consumer adapters/studies and physical/perceptual validation remain open.
-- Inventory #5101 / PR #5103: all 96 import/inventory/merge/impact/API tests pass.
-  All 410 newly detected candidates retain source hashes and ownership and stay
-  provisional/publication-blocked. `docs/development/impact-acoustics/INVENTORY_IMPORT_REVIEW.md`
-  and its complete JSON delta record the scope. CI's repeated worker crash motivates separate full-scan CLI/reproducibility tests (22.52/26.08 s); the 60-second limit and both assertions remain unchanged. Private consumer lookup remains unresolved.
-- IA-T5 #5074 / PR #5106 boundary repair: 16 reproduced failures now pass; all 41 focused
-  ingestion/spectral tests, 69 Linux report/API tests and hook mypy pass. Full
-  measurement validation remains
-  open. Resume at `src/shared/python/swing_sim/vibroacoustics/AGENT_HANDOFF.md`.
-- T2 lease posting failed; #9735 compatibility lease succeeded. Fresh downstream import regression reproduced; see continuation matrix.
-- Foundation #5069 is locally verified on `feat/5068-impact-dynamics-foundation`,
-  based on `b4875be19`; PR #5077; implementation `6d94f1d3d`. Theory: AffineDrift #4253; consumer: UpstreamDrift #9700.
-- TDD verified by `tests/shared/python/golf_club/test_impact_mobility.py`;
-  implementation reuses `golf_club._validation` and preserves existing APIs.
-- PR #5077 synced protected main `6b27c4f0569ac486c491e073f87f67440a9521fa`; provider inventory rechecked.
-- Strict pre-push typing uses explicit float returns at validated scalar boundaries.
-- Full tensor mobility is a detached rigid-body reference, not a validated flexible
-  shaft or acoustic solver. Follow-on design: `docs/specs/IMPACT_DYNAMICS_ACOUSTICS.md`.
-- Lease scripts found no claim; Tools label posting failed. Proceeding under the
-  fleet's documented fail-open rule; do not treat that as a successfully posted lease.
+- Full program active; all three parent epics remain open. Physical/perceptual validation is not inferred from numerical fixtures.
+- AffineDrift theory #4258/#4282/#4298 and UpstreamDrift integration plan #9706 are merged. Final theory synthesis awaits downstream evidence.
+- Tools T1 #5077 and T2 #5082 are merged; #5069/#5071 are closed. Signal boundary repair #5106 and study-wire #5083 are merged; remaining acoustic/report contracts stay open.
+- T3 #5072 is separate: constant gripped models 36aae1d578 and affine transient 09d8e59cf are published on feat/5072-prestressed-shaft, with 860 Linux golf/signal/API passes and normal hooks. That unmerged implementation is not copied into this classifier PR or treated as manual authority.
+- Inventory #5101 / PR #5103: current-main 21690dcfc integration preserves classifier code/tests, all 3,632 modules and all 410 original provisional/publication-blocked candidates. Four original reviewed source hashes have changed: two signal files from #5106 and two theme consumers from #5109. See INVENTORY_IMPORT_REVIEW.md and INVENTORY_MAIN_21690_REVIEW.json for the explicit delta.
+- Combined import/inventory/merge/contact/theme/API validation passes 202 tests (59.46 s, 11 existing deprecation warnings); full-scan checks remain under the original 60-second deadline. Actual mypy exposed 12 unused ignores in the incoming Function Generator file; removing comments preserves its executable AST and makes all eight scoped files pass. All nine final metadata/manual gates pass; normal publication and current-head CI remain.
+- #5114 remains unexplained: the original source passes 2 isolated and 21 mixed Qt tests. Actual #5103 head 32c7b38cb passed its Python 3.11 rate shard; Python 3.12 was still running at the last read. Private-consumer lookup is separate; no gate is waived.
+- UpstreamDrift numerical PR #9841 and claim-preservation PR #9826 are merged. Camera task owns #9860–#9863; preserve those scopes and its #9856/#9859 branches while their CI runs.
+- Resume the complete scientific requirement matrix in docs/development/impact-acoustics/PROGRESS.md. Modal/mesh/FRF bandwidth, nonlinear/moving work, flexible contact, calibrated radiation, exact-pin consumers and blinded validation remain required.
 
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-09-08
@@ -79,6 +60,13 @@ Tools is the fleet's shared engineering-tools monorepo (45+ tools: PyQt6 GUIs, F
   tools-canonical (persistent per-channel append handles, offset-tracked
   tailing). Pending downstream wave: UpstreamDrift bumps its `vendor/ud-tools`
   pin and re-points its transport copy at the vendored module.
+- Issue #3992 (single-source Catppuccin palette) in review on branch
+  `bot/issue-3992-theme-single-source`: the six hand-copied stylesheet/palette
+  sites named by the issue (function_generator, pressure_drop_calculator,
+  steam_engine_calculator, financial_calculator, asteroid_jumper, help_system)
+  now source colors from `shared.python.theme.catppuccin` (`get_stylesheet()` /
+  `CATPPUCCIN_MOCHA`). Guarded by
+  `tests/architecture/test_issue3992_no_pasted_palette.py`.
 
 ## Must-Read Architecture Pointers
 

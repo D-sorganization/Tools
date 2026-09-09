@@ -130,3 +130,48 @@ merge-driver, contact-completion and public API tests pass (95.10 s). The CLI
 check takes 22.52 s and independent reproducibility 26.08 s, each below the
 unchanged 60-second limit. Scoped Ruff and all nine final manual gates pass.
 Normal delivery is pending; only current-head CI can qualify the CI outcome.
+
+## Main 21690dcfc Integration
+
+Continue the task-owned PR #5103 in a new isolated integration checkout from
+32c7b38cb. Preserve the original 81b28da05 checkout and the original JSON review.
+All nine baseline manual gates pass. Main adds the protected #5109 theme
+refactor: shared Catppuccin palette/style consumption in six modules, the help
+menu's accurate optional-action annotation, and its six architecture controls.
+The production merge has no source conflict. Handoff context/hash metadata and
+three generated inventory files conflict; regenerate the inventory once from
+the fully merged source, retaining the prior PR context pending final checks.
+The optional in-merge regeneration driver is disabled only for this command so
+these generated conflicts remain explicit; no validation hook is disabled.
+
+Before the local typing repair, every production module equals current main.
+The prior two impact test-helper return annotations remain as the sole embedded
+source-tree test difference. Classifier producer/parser and both inventory test
+files equal the PR head. The canonical comparison retains all 3,632 module paths,
+1,281 calculation candidates and 2,351 non-calculation entries. Every original
+410 candidate remains provisional and publication-blocked with the same owner.
+
+Four original reviewed candidate hashes have legitimately evolved: measurement
+and spectral files through already reviewed #5106, and asteroid renderer and
+Function Generator through #5109. The latter retains its scientific NumPy import.
+The complete new JSON delta records these changes without altering the original
+review. No classification is downgraded or promoted to scientific approval.
+
+Validation of the merged source: 15 new-theme/API controls pass in 7.63 s;
+202 combined import/inventory/merge/contact/theme/API tests pass in 59.46 s with
+11 existing theme deprecation warnings. CLI freshness and independent full
+reproduction take 13.89 and 15.98 s under their unchanged 60-second deadlines.
+Root Ruff 0.14.10 passes (3,728 Python files). The actual push mypy command
+exposes 12 unused no-any-return suppressions in the incoming Function Generator
+file. Removing only those comments leaves its executable AST identical and
+makes all eight checked files pass; no numerical or visual behavior changes.
+Regenerate/recheck the final inventory after this source-byte change.
+
+The historical GUI stall #5114 is still not explained. Its original source
+passes 2 isolated and 21 mixed PyQt tests, and actual Python 3.11 CI on 32c7b38cb
+passes the rate shard; Python 3.12 was still in its test step at the last read.
+See the linked issue investigation. Private checkout failure remains separate.
+All nine final structural checks pass after refreshing the root handoff hash.
+The canonical final handoff manifest records this integration checkout and
+PR #5103; its dirty pre-commit base is explicit. Normal publication and
+current-head CI remain required.
