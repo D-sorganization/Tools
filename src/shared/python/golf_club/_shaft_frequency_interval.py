@@ -12,6 +12,10 @@ from ._shaft_damped_spectrum import DampedPencil, _validated_damped_generator
 from ._shaft_spectrum import SpectrumScales
 
 
+class _UnresolvedIntervalError(ValueError):
+    """The contraction test cannot qualify this interval; subdivision may help."""
+
+
 @dataclass(frozen=True)
 class FrequencyIntervalControls:
     """Symmetric nonnegative rad/s interval and assumed uniform pencil error.
@@ -119,7 +123,7 @@ def _interval_assessment(
         )
     )
     if contraction > controls.max_contraction:
-        raise ValueError(
+        raise _UnresolvedIntervalError(
             "frequency interval is unresolved at the declared contraction limit"
         )
     bound = inverse_norm / (1 - contraction)

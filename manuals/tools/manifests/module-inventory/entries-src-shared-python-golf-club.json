@@ -1782,6 +1782,7 @@
           "tests/shared/python/golf_club/test_shaft_affine_transient.py",
           "tests/shared/python/golf_club/test_shaft_autonomous_decay.py",
           "tests/shared/python/golf_club/test_shaft_damped_spectrum.py",
+          "tests/shared/python/golf_club/test_shaft_frequency_band.py",
           "tests/shared/python/golf_club/test_shaft_frequency_interval.py",
           "tests/shared/python/golf_club/test_shaft_galerkin.py",
           "tests/shared/python/golf_club/test_shaft_galerkin_rod.py"
@@ -1905,10 +1906,61 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 6093,
+      "bytes_lf": 5335,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "d215a9bd0875ee4342417ccb2ddfc8128156772be90c37043fe237b976fb5560",
+      "content_sha256_lf": "9655c72d3b572961c6847d17bd3af66a47e271ea937fefb37b0daf272da80518",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-FREQUENCY-BAND-PY-8346C4932D77",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_frequency_band.py",
+      "purpose": "Conditional complete-band bounds composed from the existing interval test.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 6236,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "7d5128ce0c03bce30d7b20388c51eaa897ce4a1ff6cf4647e3790781d1d2f61b",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-FREQUENCY-INTERVAL-PY-49C5688E18FD",
       "language": "python",
@@ -1946,6 +1998,7 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_frequency_band.py",
           "tests/shared/python/golf_club/test_shaft_frequency_interval.py"
         ],
         "unit_mentions": [
@@ -2258,6 +2311,7 @@
         "test_paths": [
           "tests/shared/python/golf_club/test_shaft_affine_transient.py",
           "tests/shared/python/golf_club/test_shaft_bending_continuum.py",
+          "tests/shared/python/golf_club/test_shaft_frequency_band.py",
           "tests/shared/python/golf_club/test_shaft_frequency_interval.py",
           "tests/shared/python/golf_club/test_shaft_galerkin_rod.py"
         ],
@@ -2946,6 +3000,7 @@
           "tests/shared/python/golf_club/test_shaft_affine_response.py",
           "tests/shared/python/golf_club/test_shaft_affine_transient.py",
           "tests/shared/python/golf_club/test_shaft_damped_spectrum.py",
+          "tests/shared/python/golf_club/test_shaft_frequency_band.py",
           "tests/shared/python/golf_club/test_shaft_gripped_operating.py",
           "tests/shared/python/golf_club/test_shaft_spectrum.py"
         ],

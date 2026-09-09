@@ -4,6 +4,73 @@ The user authorized completion of the full planned program, not merely its
 planning deliverables. All three parent epics remain open. Physical and
 perceptual validation cannot be inferred from numerical fixtures.
 
+## Current Frequency-Band Work (2026-09-09)
+
+Repository API access recovered at 14:26 UTC; an installation credential cannot
+read `/user`, but issue access and lease creation work. The unheld #5072 lease
+is renewed through 16:27:01 UTC. Integration 5c5fa16b932be819deb0b1988df3d799a473b752
+is now published through every normal push hook and its remote SHA is verified.
+The authentication/publication failure recorded below is historical.
+
+Adaptive complete-band coverage is implemented privately, reusing the interval
+assessor. Missing-module RED preceded implementation. All 59 Windows band and
+interval tests pass in 8.63 s; actual mypy passes the three changed Python files.
+The initial narrow gripped-shaft test incorrectly demanded multiple cells even
+though one cell qualifies. It now verifies exact requested coverage, adjacency
+and port bounds with the same endpoints, tolerances and evaluation budget.
+Independent scalar and coupled controls still require multiple cells.
+
+Only a private empty-export entry changes the API baseline; all pre-existing
+parsed API data is identical. Canonical inventory regeneration includes the new
+module. The exact staged scientific tree is 88d7d5854ab209585e1b9d71af88f6f5f52a4a0e;
+its src/tests/conftest/pyproject archive is 60,641,280 bytes, SHA256
+4631582eb358ee77a2255355b072d439495580ad55688cc5af62c93300f27990.
+The full Linux golf/signal/API run passes 956 tests, with two optional CAD
+skips and three absent-plugin configuration warnings, in 93.83 s. Its log is
+/home/dieterolson/.cache/codex-impact/frequency-band-88d7d5854/scientific.log.
+Repository Ruff passes 3,805 formatted files and all nine manual gates pass.
+Normal publication and later-main integration remain pending at this checkpoint.
+See FREQUENCY_BANDS.md for the derivation, contracts and remaining scope.
+
+## Historical Authentication Interruption (2026-09-09, 14:07 UTC)
+
+The classifier integration is committed locally as
+5c5fa16b932be819deb0b1988df3d799a473b752. Normal merge hooks passed. The push
+stopped before publication: its process handle no longer exists, no matching
+git push process remains, and a fresh remote lookup still reports
+6bf223941c2b369362db5a7b0bb30853a07620be. The last push output reached pip-audit;
+completion of that hook or the overall push is not established.
+
+GitHub CLI and connected-app authentication now fail with HTTP 401. Removing
+only process-local token/config overrides did not reveal a usable local
+sign-in. The in-app GitHub browser is also signed out. No credentials were
+displayed, created or changed. Public git fetch/read still works: origin/main
+is now 0f2dfe3fd48381bc608baf208b54c7b0d9396465, including mocap PR #5118. That
+later main change has not been integrated into this branch; preserve its
+implementation and other-task ownership.
+
+The #5072 lease expired at 10:57:31 UTC. A claim checker that cannot authenticate
+does not establish an unheld claim. Restore authentication, check ownership and
+renew the lease before further implementation. Then retry the stopped push
+through all normal hooks and verify the remote SHA. Do not force-push or bypass
+checks. The separate #5114 partial cleanup is already published at ea891eed29;
+its full-suite worker losses remain unresolved, and no PR or closure is claimed.
+
+Next scientific TDD scope is an adaptive cover of a declared frequency band,
+reusing the existing conditional interval assessor. Return only a complete
+cover; retain explicit evaluation budgets, exact endpoint-enclosure bookkeeping,
+hidden-pole/uncertainty refusal and unqualified stability. A temporary test draft
+exists outside the repository, but no band production module or repository test
+has been added, and no RED/GREEN result exists yet. Add independent coupled and
+gripped-shaft controls before implementation. Conditional matrix-norm bounds do
+not establish physical bandwidth, acoustic validity or outward-rounded arithmetic.
+
+This resume note supersedes pending merge/publication wording in earlier
+checkpoints, including the committed root handoff. The 217 integration tests
+and nine governance gates below belong to the verified merge; they have not
+been rerun for this documentation-only resume update. The full program and all
+remaining scientific, consumer, physical and blinded gates remain open.
+
 ## Current Main and Classifier Integration (2026-09-09)
 
 The shaft branch is published through 6bf223941c2b369362db5a7b0bb30853a07620be,

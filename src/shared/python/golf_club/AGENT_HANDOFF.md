@@ -4,7 +4,7 @@
 
 `impact_mobility.py`: detached tensor reference, T1 PR #5077 merged at `f72544613`; not a flexible/acoustic solver.
 T2 #5071 adds event-resolved integration, preload states and all four passive loss channels; v1 report fields retain their meanings.
-T3 #5072 is published through 6bf223941 with 920 Linux scientific/API passes, two optional CAD skips and all normal hooks. Conditional frequency intervals retain solve defects and uncertainty; independent bending and Galerkin controls retain separate mesh/modal errors. Main/classifier #5103 integration preserves scientific source/tests; 217 integration tests, actual mypy, root Ruff and all nine manual gates pass. Normal publication remains. Continuous-band and moving nonlinear qualification, flexible contact, calibration/radiation and physical/blinded evidence remain. See FREQUENCY_INTERVALS.md and PROGRESS.md.
+T3 #5072 is published through classifier integration 5c5fa16b9 with all normal hooks and remote verification. Its 217 integration tests preserve the prior 920-test Linux scientific evidence. New private complete-band coverage reuses conditional intervals and refuses incomplete covers; 59 Windows and 956 Linux golf/signal/API tests pass (two CAD skips), along with actual mypy, root Ruff and all nine gates. Normal publication remains at this checkpoint. Full/reduced bands, rotating/moving nonlinear qualification, flexible contact, calibration/radiation and physical/blinded evidence remain. See FREQUENCY_BANDS.md and PROGRESS.md.
 
 > Update this file in every implementation commit that changes this package.
 > Last updated: 2026-09-09
