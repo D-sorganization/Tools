@@ -1,6 +1,6 @@
 # Markerless Mocap Handoff
 
-Last updated: 2026-09-08
+Last updated: 2026-09-09
 
 ## Authority
 
@@ -17,29 +17,30 @@ Tools owns the MIT vendor-neutral markerless-mocap contracts and reference algor
 - #4721 / TOOLS-M5: extrinsic calibration (merged in #5066).
 - #4715 / TOOLS-M6: pose backend adapters (merged in #5076).
 - #4724 / TOOLS-M7: association and N-view reconstruction (merged in #5111).
-- #4726 / TOOLS-M8: temporal reconstruction and biomechanical mapping (active PR).
-- #4716 / TOOLS-M9 remains queued on this delivery.
+- #4726 / TOOLS-M8: temporal reconstruction and biomechanical mapping (PR #5118).
+- #4716 / TOOLS-M9: C3D biomechanical data exchange (active branch).
 
 ## Current branch
 
-- Branch: `feat/4726-mocap-temporal-mapping`
-- Base: `origin/main` at `f9a5d736e`
+- Branch: `feat/4716-mocap-c3d-exchange`
+- Base: `feat/4726-mocap-temporal-mapping`
 - Worktree: `C:\Users\diete\Repositories\Tools`
 - Pull request: Pending creation
 
 ## Delivered in this slice
 
-- Subepic #4726 (TOOLS-M8): Temporal reconstruction and biomechanical mapping.
-- `sidekick.lab.mocap.temporal` defines:
-  - `GapPolicy`: policy enum (`REJECT`, `LINEAR_INTERPOLATE`, `HOLD_PREVIOUS`, `DROP`).
-  - `ButterworthFilter`: zero-phase forward-backward IIR Butterworth low-pass filter.
-  - `SavitzkyGolayFilter`: polynomial least-squares convolution filter for smoothing and derivative estimation.
-  - `fill_trajectory_gaps`: gap handling with length-bounded interpolation and explicit `GapPolicy`.
-  - `compute_kinematic_derivatives`: numerical velocity and acceleration derivation with covariance propagation.
-  - `apply_segment_length_constraint`: bone-length invariance enforcement preserving anatomical rigidity.
-  - `apply_joint_angle_constraint`: physiological range-of-motion bounding for hinge and spherical joints.
-  - `landmarks_to_delivery_trajectory`: canonical adapter mapping filtered landmark streams to `DeliveryTrajectory` (`swing_sim.delivery_trajectory/1`).
-- Contract test suites in `tests/shared/python/sidekick/lab/mocap/test_temporal_contracts.py`.
+- Subepic #4716 (TOOLS-M9): C3D Biomechanical Data Exchange.
+- `sidekick.lab.mocap.c3d` defines:
+  - `C3DHeader`: binary header parameter schemas with fail-closed bounds checking.
+  - `C3DPointChannel`: 3D point trajectory channel with residual and camera masks.
+  - `C3DAnalogChannel`: 1D analog channel stream with scaling and offset metadata.
+  - `C3DForcePlatform`: force platform geometry and type 2 channel mapping.
+  - `C3DContainer`: in-memory container for points, analogs, events, and parameters.
+  - `serialize_c3d_header` & `write_c3d_file`: deterministic C3D binary writer with golden round-trip serialization.
+  - `parse_c3d_header` & `validate_c3d_header_magic`: header parser with magic byte validation.
+  - `unit_scale_factor`: metric and imperial length scaling factors.
+  - `compute_center_of_pressure`: ground reaction force and moment COP derivation with contact thresholding.
+- Contract test suites in `tests/shared/python/sidekick/lab/mocap/test_c3d_contracts.py`.
 
 ## Required gates
 
@@ -60,5 +61,4 @@ Gasification_Model #4751 owns exact-Tools-SHA impact qualification.
 - Do not call model-derived single-camera depth triangulated 3-D.
 - Do not collapse device, trigger, host-monotonic, and UTC clocks.
 - Do not introduce ambiguous transform direction or duplicate UpstreamDrift schemas.
-- Do not extend C3D here until the existing reader is characterized under #4716.
 - Do not change protected workflow/runner policy to force completion.

@@ -8443,7 +8443,8 @@
       "reconstruct_temporal_trajectory",
       "smooth_trajectory_butterworth",
       "smooth_trajectory_savgol",
-      "triangulate_n_views"
+      "triangulate_n_views",
+      "c3d"
     ],
     "symbols": {
       "MOCAP_SESSION_SCHEMA_VERSION": {
@@ -10988,6 +10989,9 @@
           ],
           "returns": "KeypointReconstruction"
         }
+      },
+      "c3d": {
+        "type": "unknown"
       }
     }
   },
@@ -11629,6 +11633,390 @@
     }
   },
   "lab/mocap/adapters.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/c3d/__init__.py": {
+    "__all__": [
+      "BIOMECHANICAL_MARKER_MAX_M",
+      "BIOMECHANICAL_MARKER_MIN_M",
+      "C3DAnalogChannel",
+      "C3DContainer",
+      "C3DEvent",
+      "C3DForcePlatform",
+      "C3DHeader",
+      "C3DPointChannel",
+      "C3D_HEADER_LENGTH",
+      "C3D_HEADER_MAGIC_BYTE",
+      "compute_center_of_pressure",
+      "parse_c3d_header",
+      "serialize_c3d_header",
+      "unit_scale_factor",
+      "validate_c3d_header_magic",
+      "write_c3d_file"
+    ],
+    "symbols": {
+      "BIOMECHANICAL_MARKER_MAX_M": {
+        "type": "variable"
+      },
+      "BIOMECHANICAL_MARKER_MIN_M": {
+        "type": "variable"
+      },
+      "C3DAnalogChannel": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "C3DContainer": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "header",
+                  "annotation": "C3DHeader",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "points",
+                  "annotation": "Sequence[C3DPointChannel]",
+                  "default": "()",
+                  "kind": "arg"
+                },
+                {
+                  "name": "analogs",
+                  "annotation": "Sequence[C3DAnalogChannel]",
+                  "default": "()",
+                  "kind": "arg"
+                },
+                {
+                  "name": "events",
+                  "annotation": "Sequence[C3DEvent]",
+                  "default": "()",
+                  "kind": "arg"
+                },
+                {
+                  "name": "parameters",
+                  "annotation": "dict[str, Any] | None",
+                  "default": "None",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "get_point": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "label",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "C3DPointChannel | None"
+            },
+            "get_analog": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "label",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "C3DAnalogChannel | None"
+            }
+          }
+        }
+      },
+      "C3DEvent": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "C3DForcePlatform": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "C3DHeader": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "frame_count": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "int"
+            },
+            "analog_sample_rate_hz": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "float"
+            }
+          }
+        }
+      },
+      "C3DPointChannel": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "C3D_HEADER_LENGTH": {
+        "type": "variable"
+      },
+      "C3D_HEADER_MAGIC_BYTE": {
+        "type": "variable"
+      },
+      "compute_center_of_pressure": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "fz",
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "mx",
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "my",
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "min_force_threshold_n",
+              "annotation": "float",
+              "default": "10.0",
+              "kind": "arg"
+            },
+            {
+              "name": "ground_height_m",
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "arg"
+            }
+          ],
+          "returns": "tuple[np.ndarray, np.ndarray, np.ndarray]"
+        }
+      },
+      "parse_c3d_header": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "data",
+              "annotation": "bytes",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "C3DHeader"
+        }
+      },
+      "serialize_c3d_header": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "header",
+              "annotation": "C3DHeader",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "bytes"
+        }
+      },
+      "unit_scale_factor": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "source_units",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "target_units",
+              "annotation": "str | None",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "float"
+        }
+      },
+      "validate_c3d_header_magic": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "file_path",
+              "annotation": "Path",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "None"
+        }
+      },
+      "write_c3d_file": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "output_path",
+              "annotation": "Path",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "container",
+              "annotation": "C3DContainer",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "None"
+        }
+      }
+    }
+  },
+  "lab/mocap/c3d/converters.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/c3d/reader.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/c3d/schema.py": {
+    "__all__": [
+      "BIOMECHANICAL_MARKER_MAX_M",
+      "BIOMECHANICAL_MARKER_MIN_M",
+      "C3DAnalogChannel",
+      "C3DEvent",
+      "C3DForcePlatform",
+      "C3DHeader",
+      "C3DPointChannel"
+    ],
+    "symbols": {
+      "BIOMECHANICAL_MARKER_MAX_M": {
+        "type": "variable"
+      },
+      "BIOMECHANICAL_MARKER_MIN_M": {
+        "type": "variable"
+      },
+      "C3DAnalogChannel": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "C3DEvent": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "C3DForcePlatform": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "C3DHeader": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "frame_count": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "int"
+            },
+            "analog_sample_rate_hz": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "float"
+            }
+          }
+        }
+      },
+      "C3DPointChannel": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      }
+    }
+  },
+  "lab/mocap/c3d/writer.py": {
     "__all__": [],
     "symbols": {}
   },

@@ -32,6 +32,15 @@
 
 ## 2. Purpose & Mission
 
+### 2026-09-09 C3D Biomechanical Data Exchange (#4706 / TOOLS-M9 (#4716))
+
+Subepic #4716 delivers typed contracts, binary reader/writer serialization, and biomechanical conversion
+utilities in `sidekick.lab.mocap.c3d`. Implements `C3DHeader`, `C3DPointChannel`, `C3DAnalogChannel`, and
+`C3DForcePlatform` data schemas with fail-closed bounds checking. Provides deterministic 512-byte block
+serialization and golden round-trip validation in `write_c3d_file` and `parse_c3d_header`. Delivers metric/imperial
+unit scale conversion and Center of Pressure (COP) calculation from ground reaction forces ($F_z, M_x, M_y$)
+with explicit minimum force contact thresholding.
+
 ### 2026-09-09 Temporal Reconstruction & Biomechanical Mapping (#4706 / TOOLS-M8 (#4726))
 
 Subepic #4726 delivers temporal reconstruction, kinematic derivatives, biomechanical constraints, and
@@ -5859,6 +5868,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-09 | #4716 | feat(mocap, #4716 TOOLS-M9): deliver C3D biomechanical exchange, header/point/analog/force-platform schemas, binary writer serialization, and center-of-pressure converters in `sidekick.lab.mocap.c3d`. |
 | 2026-09-09 | #5118 | feat(mocap, #4726 TOOLS-M8): deliver temporal reconstruction, Butterworth and Savitzky-Golay filtering, kinematic derivatives with covariance propagation, biomechanical constraints, and canonical DeliveryTrajectory mapping in `sidekick.lab.mocap.temporal`. |
 | 2026-09-08 | #5111 | feat(mocap, #4724 TOOLS-M7): deliver cross-view observation association, robust N-view triangulation, DLT solver with RANSAC subset consensus, spatial covariance projection, and qualification floors in `sidekick.lab.mocap.reconstruction`. |
 | 2026-09-08 | #5103 | Detect real Python scientific imports through non-executing AST inspection, refuse unparseable source, preserve non-Python/path rules, and regenerate the fully reviewed inventory delta without promoting scientific or publication approval; preserve incoming contact completion and separate complete CLI freshness/reproducibility tests under unchanged deadlines. Integrate main 21690dcfc without classification changes, document the four evolved original source hashes, and remove 12 unused incoming type-suppression comments without changing executable syntax. |

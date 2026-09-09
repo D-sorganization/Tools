@@ -4254,10 +4254,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5505,
+      "bytes_lf": 5534,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3851d3bc72861cb4991853c646a52b55d4d853f8ec66ea49f0075a92ff1afa89",
+      "content_sha256_lf": "29677ebfb461168b1749f3f5c3e73e9917ddcb487e26306ba14094c68c1cf5ed",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-INIT-PY-BD60513A12BD",
       "language": "python",
@@ -4720,6 +4720,11 @@
           },
           {
             "kind": "re-export",
+            "name": "c3d",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "check_coverage_and_degeneracy",
             "signature": null
           },
@@ -4998,6 +5003,416 @@
         "validation_paths": [
           "tests/shared/python/sidekick/lab/mocap/test_adapter_contracts.py"
         ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 938,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b67626db0b792e26e8796a25dfe6f6682d089153760cf91d31700a7348d18fb4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-C3D-INIT-PY-49B991F3A498",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/c3d/__init__.py",
+      "purpose": "C3D biomechanical data exchange (TOOLS-M9 #4716).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "BIOMECHANICAL_MARKER_MAX_M",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BIOMECHANICAL_MARKER_MIN_M",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "C3DAnalogChannel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "C3DContainer",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "C3DEvent",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "C3DForcePlatform",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "C3DHeader",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "C3DPointChannel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "C3D_HEADER_LENGTH",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "C3D_HEADER_MAGIC_BYTE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compute_center_of_pressure",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "parse_c3d_header",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "serialize_c3d_header",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "unit_scale_factor",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "validate_c3d_header_magic",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "write_c3d_file",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 1538,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "1fa1ca4a9ac481d09c93f8f23563a4b561323ebf483acb7aeae5a27d4c515a8d",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-C3D-CONVERTERS-PY-600A59287894",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/c3d/converters.py",
+      "purpose": "Biomechanical dataframe conversions, scaling, and COP (TOOLS-M9 #4716).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "compute_center_of_pressure",
+            "signature": "fz: np.ndarray, mx: np.ndarray, my: np.ndarray, min_force_threshold_n: float=10.0, ground_height_m: float=0.0"
+          },
+          {
+            "kind": "function",
+            "name": "unit_scale_factor",
+            "signature": "source_units: str, target_units: str | None"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "cm",
+          "mm"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3113,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2d7aa56b1eb6313256396696441bcee544a8449cd8a5bfa6fa847f9a21c12c9d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-C3D-READER-PY-22CEE3377D33",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/c3d/reader.py",
+      "purpose": "C3D binary parser and structured data extraction (TOOLS-M9 #4716).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "C3DContainer",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C3D_HEADER_LENGTH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C3D_HEADER_MAGIC_BYTE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "parse_c3d_header",
+            "signature": "data: bytes"
+          },
+          {
+            "kind": "function",
+            "name": "validate_c3d_header_magic",
+            "signature": "file_path: Path"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3791,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6781c1f894294e4d79572c39e63426bc009849c6af91eec06eeed6b6b6621bd9",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-C3D-SCHEMA-PY-351BDEA561CE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/c3d/schema.py",
+      "purpose": "Typed contracts and schemas for C3D biomechanical exchange (TOOLS-M9 #4716).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-008-markerless-mocap-authority-and-licensing.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "C3DAnalogChannel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "C3DEvent",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "C3DForcePlatform",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "C3DHeader",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "C3DPointChannel",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BIOMECHANICAL_MARKER_MAX_M",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BIOMECHANICAL_MARKER_MIN_M",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/launch_monitor/test_schema.py",
+          "tests/shared/python/sidekick/lab/mocap/test_schema.py"
+        ],
+        "unit_mentions": [
+          "mm"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3508,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6a71d043f987094d10c82bd32a9eff1a12ac1cfb8661ee9cacbc6f9e22487fca",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-C3D-WRITER-PY-5F79BB472A1D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/c3d/writer.py",
+      "purpose": "C3D binary writer and serialization (TOOLS-M9 #4716).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "serialize_c3d_header",
+            "signature": "header: C3DHeader"
+          },
+          {
+            "kind": "function",
+            "name": "write_c3d_file",
+            "signature": "output_path: Path, container: C3DContainer"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
       }
     },
     {
