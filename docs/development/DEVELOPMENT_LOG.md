@@ -31,6 +31,19 @@ reachable from any live state and `abandoned` from `parked`.
 - **Summary:** TDD replaces false Python import regex matches with non-executing AST inspection. All 410 changed candidates have real scientific imports and retain source hashes, owners and publication blockers. No existing calculation is downgraded; the added parser is inventoried.
 - **Next step:** Publish the test granularity adjustment after final gates and normal hooks, then qualify current-head CI; one prior flake retry exhausted, private consumer repository lookup unresolved. Retain provisional classifications and existing approval boundaries.
 
+### DL-#5074 · Waveform and Spectral Numerical Contracts
+
+- **State:** in_review
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5074
+- **PR:** https://github.com/D-sorganization/Tools/pull/5106
+- **Branch:** fix/5074-waveform-spectral-contracts
+- **Paths:** `src/shared/python/swing_sim/vibroacoustics`, `docs/development/impact-acoustics/SIGNAL_BOUNDARY_QUALIFICATION.md`
+- **Started:** 2026-09-08
+- **Last verified:** 2026-09-08 (16 RED failures; 41 focused tests, nine API tests, scoped hook mypy and 69 Linux ingestion/report/API tests pass; three optional-plugin warnings)
+- **Summary:** Shared strict real samples, immutable recording storage, signed linear lag and segment preparation refuse undefined/nonfinite estimates while preserving public signatures. Independent SciPy odd/even PSD and gain controls pass. No physical calibration is inferred.
+- **Next step:** All normal push hooks pass; PR #5106 is open; complete protected CI/delivery, then qualify versioned calibration identity, supported-bin complex FRF, uncertainty and physical/blinded measurements separately.
+
 ### DL-#5095 · Deterministic Rust Watcher Debounce
 
 - **State:** in_review

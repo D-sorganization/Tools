@@ -115,10 +115,106 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 7761,
+      "bytes_lf": 2019,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "439bbe2fddc9445959566c63ec6411d2ddf987162f79eaa6c496ee000877ada1",
+      "content_sha256_lf": "1968f9b680e374200eb3d52cefa5b3101b9d3e501dd0b27e54884928cb743776",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VIBROACOUSTICS-SPECTRAL-FRAMES-PY-6E8BD45D84C5",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/vibroacoustics/_spectral_frames.py",
+      "purpose": "Shared, explicitly windowed and segment-detrended spectral inputs.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 1513,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "2e0992264f00a175a17fd9025b2168fd4d23631704e7292a52789bb2816f06b5",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VIBROACOUSTICS-WAVEFORM-CONTRACTS-PY-B4A9D46BD3E8",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/vibroacoustics/_waveform_contracts.py",
+      "purpose": "Private real-sample boundary shared by recordings and alignment.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 8237,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "b2e31bae56c155f196d35fbb40f1f429f48e5dde4170a9d83178942b73125f32",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VIBROACOUSTICS-MEASUREMENT-PY-83AD304E2A75",
       "language": "python",
@@ -221,10 +317,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 6726,
+      "bytes_lf": 6273,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "34246c03c1c7761a28d96429b01dd35fe432c761c622f076816d26722bf702d8",
+      "content_sha256_lf": "23589ff820273201056b6da9cfa667632af427ea8c13ed18d686803d355959ed",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VIBROACOUSTICS-SPECTRAL-PY-EB52613EB4EC",
       "language": "python",

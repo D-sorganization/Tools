@@ -37009,6 +37009,16 @@
       }
     }
   },
+  "vibroacoustics/_spectral_frames.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "vibroacoustics/_waveform_contracts.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
   "vibroacoustics/measurement.py": {
     "__all__": [
       "BandwidthReport",

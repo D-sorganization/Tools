@@ -15,6 +15,10 @@
   All 410 newly detected candidates retain source hashes and ownership and stay
   provisional/publication-blocked. `docs/development/impact-acoustics/INVENTORY_IMPORT_REVIEW.md`
   and its complete JSON delta record the scope. CI's repeated worker crash motivates separate full-scan CLI/reproducibility tests (22.52/26.08 s); the 60-second limit and both assertions remain unchanged. Private consumer lookup remains unresolved.
+- IA-T5 #5074 / PR #5106 boundary repair: 16 reproduced failures now pass; all 41 focused
+  ingestion/spectral tests, 69 Linux report/API tests and hook mypy pass. Full
+  measurement validation remains
+  open. Resume at `src/shared/python/swing_sim/vibroacoustics/AGENT_HANDOFF.md`.
 - T2 lease posting failed; #9735 compatibility lease succeeded. Fresh downstream import regression reproduced; see continuation matrix.
 - Foundation #5069 is locally verified on `feat/5068-impact-dynamics-foundation`,
   based on `b4875be19`; PR #5077; implementation `6d94f1d3d`. Theory: AffineDrift #4253; consumer: UpstreamDrift #9700.
