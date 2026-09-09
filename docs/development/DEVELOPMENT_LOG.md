@@ -33,30 +33,30 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-0055 · Qualified Lumped Impact Dynamics
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5071
 - **PR:** https://github.com/D-sorganization/Tools/pull/5082
 - **Branch:** fix/5071-qualified-impact-coupling
 - **Paths:** `src/shared/python/golf_club/*coupl*`, `tests/shared/python/golf_club/test*coupl*`, `docs/specs/HEAVY_HIT_COUPLING.md`, `docs/development/impact-acoustics/PROGRESS.md`
 - **Started:** 2026-09-07
-- **Last verified:** 2026-09-07 (`31ebe4993` implementation; `eb78179b5` delivery record)
+- **Last verified:** 2026-09-08 (#5082 merged as 80d580d57; #5071 closed; golf source/tests equal reviewed e47fde4e and prior 476eaa98)
 - **Summary:** RED-to-GREEN termination, passive energy and scaling gates; complete epic scope remains active.
-- **Next step:** Resolve remaining protected CI; UpstreamDrift #9735 has merged and both Tools UD consumer retries pass. Continue distributed milestone #5072.
+- **Next step:** Delivery complete for this slice; integrate current main into T3 and continue distributed milestone #5072. The full scientific/acoustic program remains open.
 
 ### DL-0054 · Impact Dynamics Reference Foundation
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5069
 - **PR:** https://github.com/D-sorganization/Tools/pull/5077
 - **Branch:** feat/5068-impact-dynamics-foundation
 - **Paths:** `src/shared/python/golf_club/impact_mobility.py`, `src/shared/python/golf_club/impact_coupling.py`, `tests/shared/python/golf_club/test_impact_mobility.py`, `docs/specs/IMPACT_DYNAMICS_ACOUSTICS.md`
 - **Started:** 2026-09-07
-- **Last verified:** 2026-09-07 (`6d94f1d3d`)
-- **Summary:** Tensor mobility reference passes 30 TDD gates; additive public baseline recorded. 383 broader tests passed, 2 skipped; manifest and all push hooks pass. PR #5077 in review. #5068 retains future distributed/acoustic scope.
+- **Last verified:** 2026-09-08 (#5077 merged as f72544613; #5069 closed)
+- **Summary:** Tensor mobility reference passes 30 TDD gates; additive public baseline recorded. 383 broader tests passed, 2 skipped; manifest and all push hooks pass. PR #5077 merged. #5068 retains future distributed/acoustic scope.
 
-- **Next step:** Resolve protected PR #5077 review/check results, then follow the separately scoped research dependencies.
+- **Next step:** Delivery complete for this reference slice; continue separately scoped distributed and acoustic work.
 
 ### DL-0001 · Backup Tools 3300 Pyo3 Split
 
