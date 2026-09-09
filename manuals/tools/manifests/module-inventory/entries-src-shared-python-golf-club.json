@@ -800,6 +800,140 @@
     },
     {
       "authority_status": "provisional",
+      "bytes_lf": 8268,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "a94163c2cea74ef413d6884dbae64d5783abb62536d5dbc52de9a665819ca210",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-COUPLED-IMPACT-SOLVER-PY-E9D1619E3861",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_coupled_impact_solver.py",
+      "purpose": "One event-resolved transient implementation for legacy and audited results.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_ABSOLUTE_TOLERANCE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_MAX_RATE_STEP",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_RELATIVE_TOLERANCE",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3023,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "09fbba1ee29e70de59cad7db90eefea1e9e8806e55f7c338beef6febedca9952",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-COUPLED-IMPACT-STATE-PY-12D0F1E3D348",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_coupled_impact_state.py",
+      "purpose": "Immutable state and energy records shared by the IA-T2 solver and audit API.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CoupledImpactAudit",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CoupledImpactEnergyLedger",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CoupledImpactInitialState",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 4729,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
@@ -1287,10 +1421,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 13073,
+      "bytes_lf": 11810,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "0fc02ed495a920c2b25705f0a499d841ff51f3913c60100ce3bf87d17741a302",
+      "content_sha256_lf": "7b63d9ff6eb3eadef5ab1e21df8ce3686c551d82d65f3705966f7a40f00f8187",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-IMPACT-COUPLING-PY-08CD71D1C49A",
       "language": "python",
@@ -1362,6 +1496,7 @@
         ],
         "test_paths": [
           "src/shared/python/swing_sim/model_interchange/tests/test_model_interchange.py",
+          "tests/shared/python/golf_club/test_coupled_impact_audit.py",
           "tests/shared/python/golf_club/test_fitting_fixtures_parity.py",
           "tests/shared/python/golf_club/test_impact_coupling.py"
         ],
@@ -1369,6 +1504,78 @@
           "s",
           "µs"
         ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 1967,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "a0fd51c09e377cd9ec5bf0e16877262bac0a948caadb9c454a70c7e239e3e27f",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-IMPACT-COUPLING-AUDIT-PY-6B739F8B8543",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/impact_coupling_audit.py",
+      "purpose": "Additive energy/event audit for the v1 lumped contact model (IA-T2, #5071).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "audit_coupled_impact",
+            "signature": "config: CoupledImpactConfig, *, initial_state: CoupledImpactInitialState | None=None"
+          },
+          {
+            "kind": "re-export",
+            "name": "CoupledImpactAudit",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CoupledImpactEnergyLedger",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CoupledImpactInitialState",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_coupled_impact_audit.py"
+        ],
+        "unit_mentions": [],
         "validation_paths": []
       }
     },

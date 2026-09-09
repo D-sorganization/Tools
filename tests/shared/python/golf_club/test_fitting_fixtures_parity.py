@@ -218,7 +218,11 @@ def test_impact_coupling_report_golden_fixture_parity() -> None:
         head_mass_kg=0.200,
         head_speed_mps=45.0,
         shaft_stiffness_n_m=10000.0,
-        grip=GripBoundary(2.5, 50000.0, 50.0, "literature_fixture"),
+        grip=GripBoundary(2.5, 50000.0, 50.0, "synthetic_fixture"),
+        # The stiff synthetic case clears at ~7.17 ms, beyond the old 5 ms
+        # timeout. This is a numerical wire fixture, not calibrated golf contact.
+        dt_s=2e-6,
+        max_time_s=0.01,
     )
     json_text = impact_coupling_report(
         cfg,
@@ -227,10 +231,21 @@ def test_impact_coupling_report_golden_fixture_parity() -> None:
         shaft_stiffness_grid_n_m=(5000.0, 10000.0, 50000.0),
     )
     fixture_file = _FIXTURES_DIR / "impact_coupling_report_golden_v1.json"
-    fixture_file.write_text(json_text, encoding="utf-8", newline="")
-
     golden_text = fixture_file.read_text(encoding="utf-8")
-    assert json_text == golden_text
+    actual, expected = json.loads(json_text), json.loads(golden_text)
+    assert actual.keys() == expected.keys()
+    assert actual["format"] == expected["format"]
+    for actual_row, expected_row in zip(
+        [actual["baseline"], *actual["counterfactuals"]],
+        [expected["baseline"], *expected["counterfactuals"]],
+        strict=True,
+    ):
+        assert actual_row.keys() == expected_row.keys()
+        for key, value in expected_row.items():
+            if isinstance(value, float):
+                assert actual_row[key] == pytest.approx(value, rel=1e-8, abs=1e-10)
+            else:
+                assert actual_row[key] == value
     data = json.loads(golden_text)
     assert data["format"] == "golf_club.impact_coupling_report/1"
     assert len(data["counterfactuals"]) == 9
