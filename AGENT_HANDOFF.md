@@ -1,10 +1,10 @@
 # AGENT_HANDOFF — Tools (Monorepo Root)
 
-## Calibration Numerical Recovery: #5132
+## Calibration and Moving Reference Placements: #5132 / #5137
 
-- Isolated `fix/5132-calibration-numerics`, base421889407. Preserve the active impact and CLI scopes.
-- Removes fixed-pose failure substitution; restores inverse distortion and real pose refinement against known world targets. Twelve numerical regressions pass; all89 mocap/authority/API tests and25 clean-export calibration tests pass; explicit TypeAlias also passes the older mypy hook.
-- Common-reference UX, unknown placements, physical accuracy and consumer qualification remain open in UpstreamDrift#9897/#9899. See `docs/development/HANDOFF.md` for current evidence and gates.
+- #5132 repair is PR #5136 at e92cacd3f in Worktrees/Tools-calibration-opencv5; actual OpenCV 4.13/5.0 tests and normal hooks pass. CI checkout failures are tracked in #5139; no protections bypassed.
+- #5137 owns feat/5137-reference-placements in Worktrees/Tools-calibration-numerics: immutable labelled paper/ruler observations, profile identities and joint camera/target pose estimation with an explicit world anchor. Held-out views remain independent; ruler-only/full-lens calibration is refused.
+- Twenty-four numerical/reference tests pass on both actual OpenCV versions. Common-reference UX, physical accuracy and consumer qualification remain open in UpstreamDrift#9897/#9899. Preserve impact/CLI scopes; see docs/development/HANDOFF.md.
 
 ## Impact Dynamics and Acoustics: #5068
 

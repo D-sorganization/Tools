@@ -5461,7 +5461,8 @@
           "tests/shared/python/sidekick/lab/mocap/test_calibration_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_calibration_numerics.py",
           "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py",
-          "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py"
+          "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_reference_placements.py"
         ],
         "unit_mentions": [
           "g"
@@ -5475,10 +5476,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 10634,
+      "bytes_lf": 10966,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "bdb0db3aa72fa5fed394e452f1631e8807281ccaab6b0813a93d85532f645ec7",
+      "content_sha256_lf": "726eb1ad7c0167e70845e9a27cc5873d1fffa659766309af14fa7efd1e84d187",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-CALIBRATION-NUMERICS-PY-2226C716E3A5",
       "language": "python",
@@ -5730,7 +5731,8 @@
           "tests/shared/python/sidekick/lab/mocap/test_calibration_numerics.py",
           "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
-          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_reference_placements.py"
         ],
         "unit_mentions": [],
         "validation_paths": [
@@ -5788,6 +5790,54 @@
           "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_temporal_contracts.py"
         ]
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 12511,
+      "classification": "calculation",
+      "classification_basis": "path-marker:solver",
+      "content_sha256_lf": "314f9c041688dd387fff5fccff08e72b7df33b396659a4e06961fc923ea9a3f2",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-PLACEMENT-SOLVER-PY-6ACDF9665F4C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/placement_solver.py",
+      "purpose": "Joint camera/reference-placement estimation behind the shared contracts.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
       }
     },
     {
@@ -5942,6 +5992,97 @@
         "validation_paths": [
           "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
         ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10849,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cfda350e8396081899e06a0570cf23a424e775b7daf88567b0a967eadc2d3a50",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-REFERENCE-PLACEMENTS-PY-C7BA6AACC642",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/reference_placements.py",
+      "purpose": "Identified common references and multi-view placements in explicit SI frames.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PlacementObservation",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlacementResidual",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ReferenceCamera",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ReferenceLayoutResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ReferenceSolveCancelled",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ReferenceTarget",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "common_reference",
+            "signature": "reference_id: str"
+          },
+          {
+            "kind": "function",
+            "name": "estimate_reference_layout",
+            "signature": "*, layout_id: str, world_frame: CoordinateFrame, targets: Mapping[str, ReferenceTarget], cameras: Mapping[str, ReferenceCamera], observations: Sequence[PlacementObservation], anchor_placement_id: str, anchor: RigidTransform, cancel_requested: Callable[[], bool] | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_reference_placements.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
       }
     },
     {

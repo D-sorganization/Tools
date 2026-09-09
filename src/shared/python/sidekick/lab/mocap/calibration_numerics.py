@@ -80,7 +80,7 @@ def unproject(
         normalized = cv2.fisheye.undistortPoints(
             adjusted.reshape(1, 1, 2), matrix, distortion, criteria=criteria
         )
-    else:
+    elif hasattr(cv2, "undistortPointsIter"):
         normalized = cv2.undistortPointsIter(
             adjusted.reshape(1, 1, 2),
             matrix,
@@ -88,6 +88,16 @@ def unproject(
             np.eye(3),
             np.eye(3),
             criteria,
+        )
+    else:
+        # OpenCV 5 folds the iterative overload into undistortPoints.
+        normalized = cv2.undistortPoints(
+            adjusted.reshape(1, 1, 2),
+            matrix,
+            distortion,
+            R=np.eye(3),
+            P=np.eye(3),
+            criteria=criteria,
         )
     ray = np.append(normalized.reshape(2), 1.0)
     ray /= np.linalg.norm(ray)

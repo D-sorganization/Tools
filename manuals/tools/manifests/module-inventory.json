@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "4b0eb8a2ca94e989d502c7a8331d99ee761250486d35b3375513c6f6296eda17",
+      "content_sha256_lf": "d52e0819a816f386a4de1b181754b3b6ea7b3c470ba2031467587a66cd3533af",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -729,8 +729,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-scripting.json"
     },
     {
-      "content_sha256_lf": "cac03c415a2e22fa29a97a1d8214eb803c695b2f4ce96f84481fc62077fc28e2",
-      "entry_count": 231,
+      "content_sha256_lf": "57f5b3d43c424bbaf1cccb12af226898be96332be8c7771610bda45e975ff807",
+      "entry_count": 233,
       "package": "src/shared/python/sidekick",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick.json"
     },

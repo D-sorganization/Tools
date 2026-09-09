@@ -1,4 +1,33 @@
-# Calibration Numerical Recovery Handoff
+# Reference Placement and Calibration Recovery Handoff
+
+## Active Placement Work #5137
+
+- Worktree: `C:/Users/diete/Repositories/Worktrees/Tools-calibration-numerics`.
+- Branch: `feat/5137-reference-placements`, base14b35b57bc4ed44b607a21b6bc23bc7be7cd5c71.
+- PR: pending; source, tests and API baseline are staged for qualification and must be preserved.
+- Session: capture-product-01a08427-placements; lease/presence active through22:54UTC.
+- New reference_placements.py defines ordered physical rectangle/line references,
+  explicit camera/profile revisions, placement/view identities and immutable evidence.
+- New placement_solver.py initializes a connected camera/placement graph and jointly
+  refines camera and target poses with fixed intrinsics and an explicit world anchor.
+  Held-out views do not seed or fit; cancellation raises; no physical accuracy claim.
+- All101 mocap/authority/API tests pass in17.03s;24 numerical/reference tests also pass on each actual OpenCV4.13/5.0 runtime. Independent synthetic views,
+  noise, nonidentity anchor, disconnected graph, missing profiles, repeated placements,
+  invalid point IDs/pixels, mutable inputs, cancellation and indirect camera connections
+  are covered. Scoped Ruff/format/mypy and handoff/manual gates pass; normal publication hooks remain.
+- API baseline adds only the two new modules; prior entries are unchanged.
+- Remaining before publication: generated inventory and publication gates; root handoff/SPEC/DL-#5137 now updated,
+  full mocap regression, actual OpenCV4/5 runs and normal hooks. Do not publish without
+  qualifying the adopted compatibility correction from the separate repair worktree below. That correction is now copied exactly into this owned branch;24 numerical/reference tests pass on4.13 (9.35s) and5.0 (7.28s).
+
+Tools PR#5136 repair is now on `fix/5132-calibration-numerics` in
+`Worktrees/Tools-calibration-opencv5`. Commit e92cacd3f supports the OpenCV5 iterative
+API consolidation; all12 numerical tests pass on actual4.13 and5.0. Published e92cacd3f passes Python3.11/3.12 shared CI. Three pre-checkout permission failures are under #5139; current host ownership is correct and unchanged failed runs were retried.
+
+Latest user steering is UpstreamDrift#9913: full capture journey feedback, swing/model
+identity and status, clickable next steps, contextual help and documentation, detachable
+screens returning on close, and fullscreen video. UI commit8f590cc80 and merged candidate dd8136f15 passed445 capture/parity tests; normal publication is running on feat/9913-capture-journey
+in UpstreamDrift-capture-setup; none of this replaces #9897/#9902/#9906 or fleet adoption.
 
 ## Identity
 
