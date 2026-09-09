@@ -6,14 +6,15 @@ perceptual validation cannot be inferred from numerical fixtures.
 
 ## Current implementation review and main integration (2026-09-09)
 
-Input checkpoint 29d8c8d2592ffb63f4eec93ed971a7def177cbd4 is published through all normal hooks, remote SHA verified; #5072 comment 5607459999 records delivery. Review child #5130 is open for the numerical implementation, preserving physical requirements on #5072. Current main b0c71779d brings three orthogonal merged changes; only the generated handoff manifest conflicts and is regenerated canonically. Merge validation passes 103 Windows tests in 10.97 s, no skips, including input/legacy/API controls and incoming Morris/UI architecture tests. Root Ruff and formatting pass (3,850 files); all nine governance gates pass. Shaft source/tests and the golf API baseline are unchanged from 29d8c8d25. Normal merge publication and protected PR review remain.
+Input checkpoint 29d8c8d2592ffb63f4eec93ed971a7def177cbd4 is published; #5072 comment 5607459999 records delivery. Review child #5130 preserves physical qualification requirements on #5072. Main b0c71779d is integrated locally as c1a4aa4f7 with canonical handoff-manifest resolution. Initial merge validation passed 103 Windows tests (10.97 s), root Ruff and all nine governance gates. Normal push then exposed incoming UI typing errors and a generated-ledger formatting conflict; publication is pending their corrective validation. See the integration correction record below.
 
 Both-platform input evidence remains in DISTRIBUTED_MODEL_INPUT_RESULTS.json.
 Merge validation JUnit SHA256: ad275c7af5c83876c5fb4e6289924b4da7aed0b763849e2ffc0f3c7a963bd4f6.
 The first merge-test invocation used a wrong path and ran zero tests; the
 corrected invocation above completed all 103 cases.
 
-No existing scientific kernels are changed by this merge. Preserve all incoming
+The merge itself preserves scientific kernels; subsequent typing corrections
+reuse their validated values without changing equations. Preserve all incoming
 UI/Morris documentation and source; do not transfer their issue ownership.
 The #5072 lease now expires 2026-09-09T21:19:09Z. Review child #5130 is leased
 as codex/session impact-acoustics-01a07d8a-review5130 through 21:25:08Z.
@@ -21,6 +22,43 @@ The repository ci-watch-and-fix skill is read. Fleet API hygiene takes precedenc
 over its 60-second GraphQL polling recipe; use scoped REST at natural work
 breakpoints. This child can deliver reviewed numerical code without closing
 T3's measured coefficient/grip/FRF/physical-bandwidth requirements.
+
+## Integration correction record (2026-09-09)
+
+Normal push of c1a4aa4f7 failed; the remote remains at 29d8c8d25.
+Incoming GUI fixture/loader and event-loop return annotations repair six
+isolated-hook errors. Whole-branch production mypy additionally exposed an
+unrecognized aliased TYPE_CHECKING guard, two redundant shaft casts and a
+length operation on an object-typed mass. Standard TYPE_CHECKING spelling,
+explicit typed return locals and the already validated mass shape repair
+these without changing numerical equations or API signatures. An isolated
+hook then exposed an Any palette return; its explicit typed local passes the
+actual five-file hook. The preceding aggregate CI-mode check passed all 63
+production files; the final source also passes all 63 files.
+
+Runtime checks pass 100 Windows numerical/UI/API cases (16.04 s, one warning)
+and, after the last palette annotation, 18 theme cases (1.27 s, 11 warnings).
+Warnings concern existing import/package metadata. These are regression
+checks for typing corrections, not new physical validation. Including test
+files in the production follow-imports=silent check gave 11 errors from
+dynamic imports and intentional bad-input tests; CI excludes those tests.
+The actual skipped-import hook mode passed the 64-file scope.
+
+Prettier preserves both incoming JSON values but changes the generated
+divergence ledger's table/glob rendering and violates its byte freshness
+contract. The ledger is restored through its canonical renderer and excluded
+from Prettier, following existing generated-file exclusions. Canonical
+freshness still validates all 77 rows; the normal scoped Prettier hook passes.
+No manually edited ledger or disabled freshness gate is substituted.
+
+Final affected-shaft regression passes 39 Linux cases in 12.72 s, no skips,
+with three absent-plugin warnings. The staged source tree is
+fd022afd38e3b44c304998d2062ad64c64648449, archived as 90,368,000 bytes,
+SHA256 6fadb92b9e871112660aea0a65957deecba2c702dded000950b3fb6c7cad0fdd.
+INTEGRATION_CORRECTION_RESULTS.json records all three JUnit hashes and test
+scope. Final root Ruff and format checks pass (3,850 files). The generated
+inventory is refreshed and all nine final governance gates pass, preserving
+the two existing manual approval blockers. Normal publication remains.
 
 ## Previous explicit distributed coefficient inputs (2026-09-09)
 

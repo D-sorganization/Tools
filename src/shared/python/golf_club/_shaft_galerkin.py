@@ -57,8 +57,8 @@ class GalerkinReduction:
     pencil: DampedPencil = field(init=False)
 
     def __post_init__(self) -> None:
-        _validated_damped_generator(self.full_pencil, self.scales)
-        size = len(self.full_pencil.mass)
+        _, matrices = _validated_damped_generator(self.full_pencil, self.scales)
+        size = matrices[0].shape[0]
         shape = np.asarray(self.basis).shape
         if len(shape) != 2 or shape[0] != size or not 1 <= shape[1] <= size:
             raise ValueError("basis must have N rows and between one and N columns")

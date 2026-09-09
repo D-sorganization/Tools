@@ -1,0 +1,58 @@
+{
+  "schema": "impact-integration-correction-evidence/1",
+  "source_archive": {
+    "tree": "fd022afd38e3b44c304998d2062ad64c64648449",
+    "bytes": 90368000,
+    "sha256": "6fadb92b9e871112660aea0a65957deecba2c702dded000950b3fb6c7cad0fdd"
+  },
+  "linux_source_directory": "/home/dieterolson/.cache/codex-impact/review-typing-fd022afd3",
+  "results": {
+    "impact-review-typing-windows": {
+      "sha256": "277a711c6d759c2380d126559201212d0fb79415111b0a64525bad5f4130a4d9",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "100",
+          "time": "15.595",
+          "timestamp": "2026-09-09T12:41:06.147281-07:00",
+          "hostname": "OGLaptop"
+        }
+      ]
+    },
+    "impact-review-theme-windows": {
+      "sha256": "ad6b2755bbc1266d0bbb61f2dc8b03df8fa5d86e303e41b9acbff69707f60747",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "18",
+          "time": "1.089",
+          "timestamp": "2026-09-09T12:42:46.737580-07:00",
+          "hostname": "OGLaptop"
+        }
+      ]
+    },
+    "impact-review-typing-linux": {
+      "sha256": "6cb3201f93fcf11cbe1a86f2232558ef789fdf04832cad44430f7c00f970c87a",
+      "suites": [
+        {
+          "name": "pytest",
+          "errors": "0",
+          "failures": "0",
+          "skipped": "0",
+          "tests": "39",
+          "time": "12.723",
+          "timestamp": "2026-09-09T13:06:23.688344-07:00",
+          "hostname": "OGLaptop"
+        }
+      ]
+    }
+  },
+  "scope": "Typing and canonical generated-format integration corrections; equations unchanged.",
+  "limits": "Windows 100-case suite precedes final palette annotation; final 18-case suite covers it. Linux 39-case suite covers both corrected shaft modules. No physical qualification."
+}

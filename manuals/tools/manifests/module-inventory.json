@@ -639,7 +639,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-file-watcher.json"
     },
     {
-      "content_sha256_lf": "af0945f2c10f30e9d3010a6181ad57f960c4846152a707f27f824b0de6898fb4",
+      "content_sha256_lf": "5479e8ccc07dd13587f5ced87d00175596e8ba86663b38f79545483f5a06d579",
       "entry_count": 99,
       "package": "src/shared/python/golf_club",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-golf-club.json"
@@ -831,7 +831,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-vibroacoustics.json"
     },
     {
-      "content_sha256_lf": "a17c27a974b35df1b1c6c18bd494d7eca36120251e416149d10c534ac12c2e19",
+      "content_sha256_lf": "51887107eb51e0a3704df0a3b5e4cc287ac31d923e13af5ce885d091063edc0c",
       "entry_count": 22,
       "package": "src/shared/python/theme",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-theme.json"
@@ -855,7 +855,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-sidekick.json"
     },
     {
-      "content_sha256_lf": "e06f5b54c38f6e23d3b8e81c82639c8a69a08a53b39b35e59a626d14d6928e2a",
+      "content_sha256_lf": "caabd91f0800209c050327ec10e944c9c78f7b597e1664683479bb468b67017c",
       "entry_count": 7,
       "package": "src/signal_processing_studio",
       "path": "manuals/tools/manifests/module-inventory/entries-src-signal-processing-studio.json"

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import cast
 
 import numpy as np
 
@@ -72,11 +71,13 @@ class GrippedSectionChain:
 
     @property
     def node_count(self) -> int:
-        return cast(int, self.shaft.node_count)
+        count: int = self.shaft.node_count
+        return count
 
     @property
     def sections(self) -> tuple[SectionElement, ...]:
-        return cast(tuple[SectionElement, ...], self.shaft.sections)
+        sections: tuple[SectionElement, ...] = self.shaft.sections
+        return sections
 
     def linearize(self, poses: object) -> ChainLinearization:
         """Return combined elastic storage and the full fixed-chart derivative.

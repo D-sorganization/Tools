@@ -34,8 +34,7 @@ Usage:
     bg_color = colors["bg"]
 """
 
-from typing import TYPE_CHECKING as _TYPE_CHECKING
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 from .colors import (
     BUILTIN_THEMES,
@@ -113,7 +112,7 @@ try:
 except ImportError:
     _PYQT6_AVAILABLE = False
     # Runtime fallbacks preserve the imported static types in both mypy modes.
-    if not _TYPE_CHECKING:
+    if not TYPE_CHECKING:
         ThemeManager = None
         get_theme_manager = None
         FontManager = None
@@ -169,7 +168,8 @@ def _derive_full_palette(
     if theme_name and "name" not in merged:
         merged["name"] = theme_name
     try:
-        return ThemeColors(**merged).as_dict()
+        palette: dict[str, Any] = ThemeColors(**merged).as_dict()
+        return palette
     except Exception:  # noqa: BLE001
         return merged
 
