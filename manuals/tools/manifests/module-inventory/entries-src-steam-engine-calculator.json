@@ -539,10 +539,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 25230,
+      "bytes_lf": 24782,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "15dbf9220b741b8e15f1024d9ef54ef70572f0033758a89da85c254ec1afee3b",
+      "content_sha256_lf": "36636281c27fc7b80ab1affe1dfd24d865f7fef5055f85f5cd8f5b4860a16447",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-STEAM-ENGINE-CALCULATOR-PYTHON-STEAM-ENGINE-CALCULATOR-UI-PYQT6-MAIN-WINDOW-PY-FBF825AD2A19",
       "language": "python",
@@ -583,11 +583,6 @@
           {
             "kind": "class",
             "name": "SteamEngineCalculatorWindow",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "COLORS",
             "signature": null
           },
           {

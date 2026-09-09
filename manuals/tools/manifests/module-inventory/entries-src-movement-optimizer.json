@@ -100,33 +100,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 2482,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "c72af6d33bbf490c1e642c00817e8386ede96c21d4d6d1416f8ba71819562f3e",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-BACKEND-PY-707B030E5403",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/backend.py",
       "purpose": "Abstract physics backend interface.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -155,33 +158,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 10803,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "a0e98b0c241750dfd3060ac133bfba6e10d58e8791a566f1c0b3d34596e8403c",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-CLI-PY-B49008F9101C",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/cli.py",
       "purpose": "CLI for headless batch optimization.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -220,33 +226,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 3161,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "1a5d875b4544f5789b3ad75d91e04eb74660857a9373f843e5029af642c1610a",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-COMPARISON-PY-13C44EB75694",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/comparison.py",
       "purpose": "Trial comparison storage and metrics computation.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -345,33 +354,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 13317,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "b96733ff32e3b8d295edce3c9199f6bba06a1cf1095f3dc0fb0aa71e341af049",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-CONSTANTS-PY-0C5FE4190149",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/constants.py",
       "purpose": "Anthropometric and equipment constants.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -757,33 +769,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 1750,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "a47c0c849af7d3b8752186777f3048a752ca8a31be9cfcf857f3caeb9af0e5a5",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-EXERCISES-COMMON-PY-937FDBF01715",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/exercises/_common.py",
       "purpose": "Shared helpers for planar exercise configuration factories.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "unavailable",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -825,33 +841,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 2290,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "2c0406cc2e9222e24252b1d985255d58f17dffdd25644047bdcb2e870a4a3707",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-EXERCISES-CLEAN-PY-21082FCCF037",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/exercises/clean.py",
       "purpose": "Clean exercise configuration.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "unavailable",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -879,33 +899,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 5183,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "764401c87a95a74b09d9c95994acccf0207742c6167f982d8727873649da9b9f",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-EXERCISES-GAIT-PY-56BA9E670AE8",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/exercises/gait.py",
       "purpose": "Gait (walking) exercise configuration and analysis.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -935,33 +959,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 2193,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "0925b471f91a9441268cf60b107f0c2aba29c56160e16b62c2a4d555ae777d16",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-EXERCISES-JERK-PY-9CA63858C111",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/exercises/jerk.py",
       "purpose": "Jerk exercise configuration.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "unavailable",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -989,33 +1017,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 2815,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "f86da9d1f4c38147db48f1b952209e17a9176e951c4afab5449488a814f02d9e",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-EXERCISES-SIT-TO-STAND-PY-782613F7F40A",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/exercises/sit_to_stand.py",
       "purpose": "Sit-to-stand exercise configuration.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "unavailable",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -1042,33 +1074,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 2837,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "f59cbd0d8adfa01339ce9908cce891f13af0aebe104289cc9bf937d55e6ba1da",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-EXERCISES-SNATCH-PY-5A1D51EFAC3D",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/exercises/snatch.py",
       "purpose": "Snatch exercise configuration.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "unavailable",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -1173,33 +1209,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 7546,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "81107f146f21658365e3fa3d7d0e5637198ed09e87b1be4544a5a42d2e415299",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-EXPORT-EXCEL-PY-6F1B5BB8A0D4",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/export_excel.py",
       "purpose": "Excel export for optimization results.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -1454,33 +1493,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 6513,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "c4b5559b46aa903a086b01ac2bc82fc739616748ff037f7b25247e5b68317bf7",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-GUI-ANIM-RENDERER-PY-9A00E288ACA9",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/gui/anim_renderer.py",
       "purpose": "Animation/kinematic frame rendering for the Movement Optimizer.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -1667,33 +1709,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 2687,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "d101ecf9001013d9af0783cae7f587ca13e3883d1e73cf7521b9641f7a56e5e3",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-GUI-BILATERAL-3D-RENDERER-PY-F718E9610B83",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/gui/bilateral_3d_renderer.py",
       "purpose": "3D Bilateral rendering for the animation canvas.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -1793,33 +1838,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 6118,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "b871f64407209a8025012c2da7f55ba4853ad3658fa64317b39575b27b360f4b",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-GUI-COMPARISON-DIALOG-PY-9EE337316FE9",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/gui/comparison_dialog.py",
       "purpose": "ComparisonDialog -- display side-by-side metrics.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "unavailable",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -2014,33 +2063,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 13163,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "51521e155c3fbee9913437e72f59ef2913948d4178681dec35f789f4349c7a7e",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-GUI-FILE-OPERATIONS-PY-5EECF1659028",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/gui/file_operations.py",
       "purpose": "File I/O helpers extracted from MainWindow.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "unavailable",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -2377,33 +2430,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 40775,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "aff53a33822e2459f6c163168ce60ee2e1b25bfeb406c2ac9d63a898e9a7e238",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-GUI-MOTION-TABS-PY-4EE1AAC9A637",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/gui/motion_tabs.py",
       "purpose": "PyQt6 tabs for swingset policy search and chain dynamics analysis.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -2493,33 +2549,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 21671,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "6de8e12011774a5a235abfaaa30960b55b131cf519361f827d674a6aa03bf5fc",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-GUI-MOTION-TABS-CHAIN-PY-CA998240DC76",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/gui/motion_tabs_chain.py",
       "purpose": "Chain dynamics analysis tab.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "unavailable",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -2780,33 +2840,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 13418,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "c0b435fdcfe56e6f6f66e584cad83f23bb9b4c76a0e47418a54085cbe1a092f4",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-GUI-PLOT-RENDERER-PY-835E39DB29C6",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/gui/plot_renderer.py",
       "purpose": "Static plot renderers for the Movement Optimizer.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -2926,33 +2989,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 11913,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "3d1b9cb49a477f626e32822bf20446ddab8845e59e6a9a54839b1894cd2cdfa2",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-GUI-POLICY-TRACE-CANVAS-PY-32E58A3E6745",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/gui/policy_trace_canvas.py",
       "purpose": "Trace plot canvas for swingset policy searches.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -3261,33 +3327,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 7000,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "7ef65c7928568c657b63f66dfb7202dc0fa18b4fc4095f25b1d7de61e216e2a9",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-GUI-VECTOR-OVERLAY-PY-51D17BE09C95",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/gui/vector_overlay.py",
       "purpose": "Reusable force/torque vector overlay for the motion canvases.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -4059,33 +4128,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 5178,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "48b95afb2ab72ae7dc110924ab2899ba90de7c2baa28445b16c6f6f68356c074",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-MODELS-BENCH-PRESS-MODEL-PY-C91279B35280",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/models/bench_press_model.py",
       "purpose": "Bench press anthropometric model and exercise configuration factory.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -4120,33 +4192,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 9570,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "90b4025d2d5ef02de3866f666b631a6a8d6e5696037a671feb9cc177a877dbac",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-MODELS-BILATERAL-3D-PY-489B752343FC",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/models/bilateral_3d.py",
       "purpose": "3D Bilateral forward-kinematics model.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -4181,33 +4256,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 11464,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "4da89918a6ddbb4eed248d802592765d1f34431c8e7c6c2dc90d365ad723850c",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-MODELS-BODY-MODEL-PY-90326FBCDA7D",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/models/body_model.py",
       "purpose": "Anthropometric body model and related utilities.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -4510,33 +4588,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 4046,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "6971b6b3423dd18628a52b2e3408b2670bd2fd231a43e5ed813ec385e5b696b3",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-MODELS-EXERCISE-CONFIGS-PY-F7CA401465C4",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/models/exercise_configs.py",
       "purpose": "Exercise configuration factories for squat and deadlift movements.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -4576,33 +4657,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 4301,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "c8f4c6088a1102f9ec55933f0f4a54fe49f31b02266235d5e38db7360df40f06",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-MODELS-LAGRANGIAN-BALANCE-PY-6904CB81DD39",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/models/lagrangian_balance.py",
       "purpose": "Balance utilities for the Lagrangian planar-chain dynamics model.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "unavailable",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -4629,33 +4714,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 6129,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "698795cd59db9b97fdd395f1d3a6d97e1ad3ab3e1335a2bf8aeb2299e22c4e8b",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-MODELS-LAGRANGIAN-BATCH-PY-8456635A1678",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/models/lagrangian_batch.py",
       "purpose": "Vectorised (batch) inverse-dynamics helpers for the 3-link Lagrangian chain.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "unavailable",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -4887,33 +4976,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 40020,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "7e624270d9049d4685bad401d9acb3465a347a3bc9c8c913bf53c12c848e415b",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-MODELS-SWINGSET-PY-70B15D5E8964",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/models/swingset.py",
       "purpose": "Side-view swingset kinematics and trainable policy rollouts.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -5325,33 +5417,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 16780,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "4169ceb4f4f2a708a9773dba7250333213b30ceb374df36d77346e669766817a",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-PERSISTENCE-PY-D56764B1C053",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/persistence.py",
       "purpose": "Persistence layer for saving/loading solutions and app state.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -5438,33 +5533,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 10724,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "d1dfed9b9e55cafa02af912e340bb74ae9d80616deb54134a499aa0cba255bfd",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-RENDERING-PY-39404AB8FF35",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/rendering.py",
       "purpose": "Matplotlib rendering helpers for the animation panel.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -5539,33 +5637,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 4465,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "7eb065570c3a6733f6221ab20187e2a8831387467e223a3981a5dbaef679461e",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-RESULT-ANALYSIS-PY-F90E4A4C13F6",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/result_analysis.py",
       "purpose": "Reusable analysis helpers for optimization results.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -5659,33 +5760,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 5315,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "bffeada91d32fb5fee188d9aa94501588f719dc7fe927aaf1022c90bcbc42c0d",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-SPINE-LOADS-PY-F272F3F9624A",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/spine_loads.py",
       "purpose": "Spinal stress estimation at the L5/S1 joint.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -5726,33 +5830,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 10285,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "d72d944e02e47ecaf4243c35812214cf00928997051439e4516cb75ad3a040a7",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-STRENGTH-PY-91E6805C6FA9",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/strength.py",
       "purpose": "Joint strength models and load-capacity helpers.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "unavailable",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -6958,27 +7066,30 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 4305,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "5e3d73bfbb594c57cdb9f1468643a05af1127515839c7d7c70f19b4cbf43daf7",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-VALIDATION-PY-5742928A30E5",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/validation.py",
       "purpose": "Centralized parameter validation for body/exercise inputs.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",

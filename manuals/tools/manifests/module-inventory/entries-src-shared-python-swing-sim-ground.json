@@ -874,34 +874,38 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 2336,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "d03e7639c79fbb256b074552e2fba656a339e2e3317b628ce0ae478b78f77d5d",
-      "family": "swing-simulation-non-calculation",
+      "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-VECTOR-MATH-PY-C648E7E0C731",
       "language": "python",
       "maintainer": "Swing simulation maintainers",
       "path": "src/shared/python/swing_sim/ground/_vector_math.py",
       "purpose": "Small immutable-vector operations used by the ground impact solver.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
         "downstream-consumer-risk",
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -1249,34 +1253,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 19256,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "92eb55e713e452d59c79d7db4313beb7a58d8530b57f3e3049e9346fa02e31f9",
-      "family": "swing-simulation-non-calculation",
+      "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-BOUNCE-TYPES-PY-452125C474DE",
       "language": "python",
       "maintainer": "Swing simulation maintainers",
       "path": "src/shared/python/swing_sim/ground/bounce_types.py",
       "purpose": "Typed configuration and prefix result for repeated rigid impacts.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
         "downstream-consumer-risk",
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -1437,34 +1444,38 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 14679,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "0ab241006db2d1491c6bd7c0d3280c45ea920afba0eaabb369708ff7a7bdc16a",
-      "family": "swing-simulation-non-calculation",
+      "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-CONTRACT-RECORDS-PY-29AE1612EBB0",
       "language": "python",
       "maintainer": "Swing simulation maintainers",
       "path": "src/shared/python/swing_sim/ground/contract_records.py",
       "purpose": "Top-level request and result records for flight-to-ground v1.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
         "downstream-consumer-risk",
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -1494,34 +1505,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 14095,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "5736bcc17c21b62220c8ec9c939f0d049ac9c4d87d2ca03991669fd8e33a1adf",
-      "family": "swing-simulation-non-calculation",
+      "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-CONTRACT-TYPES-PY-6F06D7C96DA7",
       "language": "python",
       "maintainer": "Swing simulation maintainers",
       "path": "src/shared/python/swing_sim/ground/contract_types.py",
       "purpose": "Validated value types for the flight-to-ground v1 boundary.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
         "downstream-consumer-risk",
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -1708,34 +1722,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 9804,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "2301fbe651b076fabaddc0b3b6b4c0167dd13922f07e7c08c13055e6e39a7245",
-      "family": "swing-simulation-non-calculation",
+      "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-GROUND-RESULT-COMPOSER-PY-17CD044ED650",
       "language": "python",
       "maintainer": "Swing simulation maintainers",
       "path": "src/shared/python/swing_sim/ground/ground_result_composer.py",
       "purpose": "Compose #4270 impact/bounce and #4271 surface evidence into v1 results.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
         "downstream-consumer-risk",
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -2036,33 +2053,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 9519,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "007880601f8f9b429607697394fdfa2273e43727f024e40241f586eedec79452",
-      "family": "swing-simulation-non-calculation",
+      "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-PROFILE-BINDING-PY-1ED9EF64E6A3",
       "language": "python",
       "maintainer": "Swing simulation maintainers",
       "path": "src/shared/python/swing_sim/ground/profile_binding.py",
       "purpose": "Bind versioned ground material profiles to explicit solver geometry.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
         "downstream-consumer-risk",
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
+        "units": "unavailable",
         "validation": "mapped"
       },
       "traceability": {
@@ -2626,34 +2646,38 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 12113,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "55f67e09d24010e121772b021163fda0c2ff23901e696173feeb911fcfe2e17d",
-      "family": "swing-simulation-non-calculation",
+      "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-PROFILE-VALIDATION-PY-CFC2171B7F21",
       "language": "python",
       "maintainer": "Swing simulation maintainers",
       "path": "src/shared/python/swing_sim/ground/profile_validation.py",
       "purpose": "Primitive validators shared by ground material profile value records.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
         "downstream-consumer-risk",
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "unavailable",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -4007,34 +4031,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 14003,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "c4543b6b37d97d70f7658fe922ab939c2c187f1bd64cbfe72415d8d632fce0fc",
-      "family": "swing-simulation-non-calculation",
+      "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-SKID-ROLL-RUNTIME-PY-8A8C54F600B0",
       "language": "python",
       "maintainer": "Swing simulation maintainers",
       "path": "src/shared/python/swing_sim/ground/skid_roll_runtime.py",
       "purpose": "Mutable runtime ledger isolated from the skid/roll state-machine policy.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
         "downstream-consumer-risk",
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -4434,33 +4461,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 14572,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "05fb25598f8c21c864bafa0a6d8b0374d01f3ddd866a64e01ba3258027628f50",
-      "family": "swing-simulation-non-calculation",
+      "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-STUDY-RECORD-PY-FD746BA2E2B0",
       "language": "python",
       "maintainer": "Swing simulation maintainers",
       "path": "src/shared/python/swing_sim/ground/study_record.py",
       "purpose": "Top-level versioned record for one qualified ground study.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
         "downstream-consumer-risk",
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
+        "units": "unavailable",
         "validation": "mapped"
       },
       "traceability": {
@@ -4545,33 +4575,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 9392,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "c6924794a9b3d481f4b7a8ad8c0082f5f9b50bfe58085f8b1e43312895148d5b",
-      "family": "swing-simulation-non-calculation",
+      "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-STUDY-TYPES-PY-D7C5D88E2498",
       "language": "python",
       "maintainer": "Swing simulation maintainers",
       "path": "src/shared/python/swing_sim/ground/study_types.py",
       "purpose": "Immutable qualified ground-study projection contracts.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
         "downstream-consumer-risk",
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
+        "units": "unavailable",
         "validation": "mapped"
       },
       "traceability": {
@@ -4643,34 +4676,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 13631,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "f3268f64bc1ea9006caf63ec04ef5472e4b73283645d6969ae6bf78919a8f237",
-      "family": "swing-simulation-non-calculation",
+      "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-STUDY-WIRE-PY-356BC8F46E36",
       "language": "python",
       "maintainer": "Swing simulation maintainers",
       "path": "src/shared/python/swing_sim/ground/study_wire.py",
       "purpose": "Strict deterministic wire format for ground-study projections.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
         "downstream-consumer-risk",
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -4712,34 +4748,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 10836,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "519a552a6b35be83c75f8cf3c0afcfbc8630a755a550921a3a20bab64f85a942",
-      "family": "swing-simulation-non-calculation",
+      "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-SURFACE-MOTION-TYPES-PY-A7CDB84EEA40",
       "language": "python",
       "maintainer": "Swing simulation maintainers",
       "path": "src/shared/python/swing_sim/ground/surface_motion_types.py",
       "purpose": "Typed non-wire contracts for planar skid/roll surface motion.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
         "downstream-consumer-risk",
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -4935,34 +4974,38 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 1752,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "0525c8b17edf8e1ba8599e1d227a6ca57ec941935e123a7ad55e70b7bf5f0e39",
-      "family": "swing-simulation-non-calculation",
+      "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-TERRAIN-ADAPTER-MATH-PY-073C1C453176",
       "language": "python",
       "maintainer": "Swing simulation maintainers",
       "path": "src/shared/python/swing_sim/ground/terrain_adapter_math.py",
       "purpose": "Small strict vector helpers shared by neutral terrain adapter records.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
         "downstream-consumer-risk",
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -5298,33 +5341,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 4024,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "84dd91bb0e0a6f91692d994600c5fba675c1c699119ebd48e07269e91e9994fe",
-      "family": "swing-simulation-non-calculation",
+      "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-GROUND-VALIDATION-PY-BCF1D879F68E",
       "language": "python",
       "maintainer": "Swing simulation maintainers",
       "path": "src/shared/python/swing_sim/ground/validation.py",
       "purpose": "Shared result-state validation helpers for flight-to-ground v1.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
         "downstream-consumer-risk",
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
+        "units": "unavailable",
         "validation": "mapped"
       },
       "traceability": {

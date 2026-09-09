@@ -638,10 +638,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 22649,
+      "bytes_lf": 22283,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "7338be2d51bf53a45b4264a9da97d44702c68a4084d6dba4a8e39ac7ea6d614c",
+      "content_sha256_lf": "2ff22e27cc3e8dc23b0ba37e940f9fb30ea91fd338a3a9e2f7c206efdb36702a",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-FINANCIAL-CALCULATOR-PYTHON-FINANCIAL-CALCULATOR-UI-PYQT6-MAIN-WINDOW-PY-027D20E5AB36",
       "language": "python",

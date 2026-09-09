@@ -253,33 +253,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 11327,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "ede1786b34eebeac4b8d667ba910bc73d2c3dca7fb279e9c279cab7c56d99fc5",
-      "family": "rate-of-closure-non-calculation",
+      "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-CLUB-ASSEMBLY-BINDING-PY-D45782AE5A66",
       "language": "python",
       "maintainer": "Rate of Closure maintainers",
       "path": "src/rate_of_closure/club/assembly_binding.py",
       "purpose": "Strict identity and provenance binding to a shared golf-club assembly.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -531,33 +534,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 12542,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "7017b8151f3f59a7d53b35f2a02103c454cdeb8b8c2f2ddf91fdbd8fd16e857e",
-      "family": "rate-of-closure-non-calculation",
+      "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-CLUB-HEAD-PROFILES-PY-56C0CB8FD437",
       "language": "python",
       "maintainer": "Rate of Closure maintainers",
       "path": "src/rate_of_closure/club/head_profiles.py",
       "purpose": "Type-specific head profiles: cross-sections, hosel, face center (H1, #4125).",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -794,33 +800,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 11750,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "c56dedda595fc275ef7113a555a6440938e08fa751c6c2bf3c9d69d7628ad33a",
-      "family": "rate-of-closure-non-calculation",
+      "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-CLUB-PARAMETRIC-HEAD-PY-D3457B92491D",
       "language": "python",
       "maintainer": "Rate of Closure maintainers",
       "path": "src/rate_of_closure/club/parametric_head.py",
       "purpose": "Parametric clubhead meshes from a :class:`ClubSpec` — bulge & roll.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -1086,33 +1095,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 5009,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "f63f066101031726ed02ed7e697261e6e65fc3cd7f5ca7ec4891698c1a9cb609",
-      "family": "rate-of-closure-non-calculation",
+      "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-CLUB-VOLUMETRICS-PY-70B2BD594B54",
       "language": "python",
       "maintainer": "Rate of Closure maintainers",
       "path": "src/rate_of_closure/club/volumetrics.py",
       "purpose": "Closed-mesh volume and centroid via the divergence theorem (H1, #4125).",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [

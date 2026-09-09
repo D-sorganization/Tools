@@ -291,33 +291,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 18049,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "bf5fb3c3a1c9a475b0bc7a869d9cba0b2449fd038654b7cac875d5b48f37b417",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-BENCHMARKS-PERFORMANCE-BENCHMARK-PY-3DB6BFF284C2",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/benchmarks/performance_benchmark.py",
       "purpose": "Performance Benchmark Suite for Data Processor.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -951,30 +955,33 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 5849,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "f9c9c9db9a9eda90568a27eb24ce3e7fc934ebce5b3f1485bc852c1c08b45fa0",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CONTRACTS-PY-D4CC34B9E420",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/contracts.py",
       "purpose": "Design by Contract (DbC) adapter for the data_processor package.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "unit-contract-review"
+      ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "mapped",
-        "equation_pathway": "not-applicable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
+        "units": "unavailable",
         "validation": "mapped"
       },
       "traceability": {
@@ -1115,33 +1122,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 6268,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "ae776b3569aedf3a02fd48b8cfdb2d7511648d9c9e09b5ed0c0448a7ccca6826",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-ANOVA-PY-B0C2D80124D5",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/anova.py",
       "purpose": "Facade for the decomposed ANOVA analysis modules.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -1298,33 +1308,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 9687,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "ff5a37a8992fa202c6239e396dac95303f38bbfc5d4245e27ec869e0e954b148",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-ANOVA-ONE-WAY-PY-2BD2A5E824E9",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/anova_one_way.py",
       "purpose": "One-way ANOVA helpers and diagnostics.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "unavailable",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -1376,33 +1390,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 4284,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "dac1a4003d9f33f006bad8177ff501a6c21953bb58c5f0500c71fe64c165fc8b",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-ANOVA-REPEATED-PY-237327F53041",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/anova_repeated.py",
       "purpose": "Repeated-measures ANOVA helpers.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "unavailable",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -1434,33 +1452,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 7081,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "2854b437ad64a2a19d2c7479314e0c58e96f065c76cc86eba3efb658e75d2622",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-ANOVA-TWO-WAY-PY-860BE8AC0DD6",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/anova_two_way.py",
       "purpose": "Two-way ANOVA helpers.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -1507,33 +1528,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 4310,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "0e63e47cb2228422dc4427cd60c76f22655b52e81baff054f312401e1b05e0db",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-AUGMENTATION-NOISE-PY-3FFC10A6CB63",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/augmentation_noise.py",
       "purpose": "Noise injection augmentations.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -1613,33 +1638,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 2131,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "4afa0a3471e9941d4c95f988d8b98d0e80ca7a3de29b5c7637bd63938fb4f0d8",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-AUGMENTATION-TYPES-PY-959C69700107",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/augmentation_types.py",
       "purpose": "Data augmentation type definitions.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -1788,33 +1816,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 34445,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "608c1b4aee15f6426ab300c22ba193cc6f23daaa6dae7f6598d37e3e8d5dbd74",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-CROSS-CORRELATION-PY-5D99BE3C3AE5",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/cross_correlation.py",
       "purpose": "Cross-Correlation Analysis Module.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -1982,33 +2013,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 7477,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "e11cbc10a7bebbac733a81e85bf916c5add9d9f1a2d2ac6a48906d09dcf027a9",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-DATA-AUGMENTATION-PY-27B4D8D0177F",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/data_augmentation.py",
       "purpose": "Data Augmentation Module.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -2055,27 +2089,30 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 18737,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "299d8a1e856b726a70528f2067fdcffb5fe6465fc2e0ce91f9b56790d026e415",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-DATA-LOADER-PY-20394E7B0894",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/data_loader.py",
       "purpose": "Data loading and management operations.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
@@ -2381,33 +2418,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 24513,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "ff4843f37908abd1d18ee1482a10424ff77853b70b2b86a373bcc01291469745",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-FEATURE-EXTRACTOR-PY-1005B62220C0",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/feature_extractor.py",
       "purpose": "Feature extraction from time series and tabular data.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -2437,33 +2478,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 9146,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "ec1c330ac2c509fdc0bca5cf8bdb999e1f518014aa9239727f35ded72a37ee0f",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-FEATURE-SELECTOR-PY-0D75757F60B8",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/feature_selector.py",
       "purpose": "Feature selection based on various statistical criteria.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -2550,33 +2594,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 3051,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "b0dd1682e671f7253bf37a83e671a230f42169cf7d862b3e36b4d953e3535f41",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-FEATURE-TYPES-PY-D06379F19BE2",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/feature_types.py",
       "purpose": "Feature engineering types and configuration.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -2798,33 +2845,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 5684,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "f65029e8d795c707113ee597d94e1556cabf8b3d7f9ab57e589fe761af40b049",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-NEURAL-NETWORK-PY-D59576B65BBF",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/neural_network.py",
       "purpose": "Neural Network Training Interface with Script Export.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -2907,33 +2957,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 7495,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "7fc337b7427cadbe990a1af33f2e23de9fa846ce15e8374e0573293495b72b2b",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-NN-ARCHITECTURE-PY-5B3487FA1408",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/nn_architecture.py",
       "purpose": "Neural network architecture definitions.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -3057,33 +3110,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 2261,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "276d8430d5b21cafa0e271ea99df5cde110c7afb639744aacfc21b22a89442d7",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-NN-SCRIPT-EXPORTER-IO-PY-9C65ACF4E410",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/nn_script_exporter_io.py",
       "purpose": "IO helpers for neural network script export.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -3304,33 +3361,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 30379,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "ab47131e9b0c43e2dbebf129a6fd04da46591553ae5d463dffd47416140a60a8",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-NN-TRAINER-PY-F52FE4C717DC",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/nn_trainer.py",
       "purpose": "Neural network training engine.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -3365,33 +3425,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 23254,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "8f78ad743d2270c88e872c04facf10608ae5653feeeaf828b046dcbc56a02360",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-OUTLIER-DETECTION-PY-2894FC3B6AA4",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/outlier_detection.py",
       "purpose": "Outlier Detection Ensemble Module.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -3444,33 +3507,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 18511,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "dc07282f5b4204362ca6156626e7ab1c1dc8f67f19b7c02a785c78a31db1f845",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-PCA-ANALYSIS-PY-ABF85F018768",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/pca_analysis.py",
       "purpose": "Principal Component Analysis (PCA) Module.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -3688,33 +3754,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 12162,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "fb5af9236467405a241cfd63f063efccc7bd20237f0970764dd3aff816ee6ba5",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-PLOT-ZOOM-PY-F1C956812E2B",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/plot_zoom.py",
       "purpose": "Mouse Wheel Zoom Support for Matplotlib Plots.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -3764,33 +3833,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 10497,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "dfae6e601f9a6d172aa8a2dab27b208522f8986470dd11953aa2db4f1e03b901",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-REGRESSION-PY-5DC6754C76FC",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/regression.py",
       "purpose": "Multivariable Regression Module.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -3854,33 +3926,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 11727,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "16f85922be410de768b31849a619acc70dcc1dfb6e9aaa9f5bc6cc1032d8ef37",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-REGRESSION-DIAGNOSTICS-PY-5B11F800AFD7",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/regression_diagnostics.py",
       "purpose": "Regression diagnostics and statistics.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "unavailable",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -3907,33 +3983,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 12313,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "6ebe7f70a6b1ee104fca17025793e317b40ca1cf8b225cbbe40c622bf1d1d417",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-REGRESSION-FITTING-PY-E6A1A7575F45",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/regression_fitting.py",
       "purpose": "Regression fitting methods.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -3958,33 +4038,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 3243,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "71ba7962e2adba9488940ba459e452960626c7300affed1532613fee2c1550f1",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-REGRESSION-TYPES-PY-850D8A2CB9E1",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/regression_types.py",
       "purpose": "Regression type definitions.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -4388,33 +4471,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 23059,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "5bcdd496c9a69f8fccae8244d481ab782571f0cfac4f283ceccdcbc32e9261e4",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-SPECTRAL-ANALYSIS-PY-F723A24060C9",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/spectral_analysis.py",
       "purpose": "Spectral Analysis Module.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -4494,33 +4580,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 33690,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "295330455626345fafbe4e9b1e282f0ec0c38ea93f742db58e1f35ef37fd33ab",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-STATE-SPACE-PY-8C6042936D88",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/state_space.py",
       "purpose": "State Space Modeling Module.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -4610,33 +4699,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 20393,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "0c65f58934a4fdf5e2f70a0fe76c0a0a0122e0640a2adf1e38b13fed9f071dfc",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-SURFACE-PLOT-PY-2F77A811E15C",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/surface_plot.py",
       "purpose": "3D Surface Plot Module with axis selection and smoothing.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -4690,33 +4782,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 21920,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "40b916f3966e2a1e74178f9decc8797d68309e6a386ce23128e4daef7fe1450c",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-TIME-SERIES-DECOMPOSITION-PY-DB602920C403",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/time_series_decomposition.py",
       "purpose": "Time-Series Decomposition Module.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -4782,33 +4877,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 3567,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "0162db5c11a4d580746375c077f4ab1d4cee605f5c40b1367d4967598e28c887",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-TIME-SERIES-DECOMPOSITION-CONTRACTS-PY-997235BFC954",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/time_series_decomposition_contracts.py",
       "purpose": "Public contracts for time-series decomposition.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -4860,33 +4958,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 7202,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "4fd2dcf227608a18f834ec3f190cb3918e458e0ab97799743aa8cef17d31c038",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-TIME-SERIES-DECOMPOSITION-HELPERS-PY-E99BE2B6F522",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/time_series_decomposition_helpers.py",
       "purpose": "Low-level numeric helpers for time-series decomposition.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -4958,32 +5059,35 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 35932,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "9a4442b006d20458004712cfaa649d3bd348e898b0a276eefeff03492c2c9e43",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-UNCERTAINTY-QUANTIFICATION-PY-50078FEFC77A",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/uncertainty_quantification.py",
       "purpose": "Uncertainty Quantification Module.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
+        "units": "unavailable",
         "validation": "mapped"
       },
       "traceability": {
@@ -5165,33 +5269,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 18932,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "c0c527dda9711212f0461c590537efed0adbcc10b9629f0845084573498567eb",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-WAVELET-DENOISING-PY-044175EE8216",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/core/wavelet_denoising.py",
       "purpose": "Wavelet Denoising Module.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -5257,31 +5364,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 2536,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "491d3cddfa309e7dbcd05f1c28816f91f79108c8a6e5ab23eb15d9eac1177889",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-DATA-HALF-TON-DATA-PLOTTINGSCRIPT-PY-22862A5E2A5B",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/data/half_ton_data/PlottingScript.py",
       "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "mapped",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -5413,33 +5525,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 11236,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "f96ba91b33a0db038672bb931bab7f7c0e306664c81d5fb408dd14ca85b4d829",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-FILE-UTILS-PY-384C71F22DD0",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/file_utils.py",
       "purpose": "File utility functions for data processing operations.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -7173,31 +7288,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 12478,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "8fc4415d052e45bffe9320c2f90aef4d1a37a35fb21ab342184335457f5639ee",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-UI-PYQT6-PLOT-DIALOGS-PY-1E7935935639",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/ui/pyqt6/plot_dialogs.py",
       "purpose": "PyQt6 Dialog Widgets for Plot Visualizations.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -7215,31 +7335,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 21353,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "05909569831de59bd0afe3066f585a7bff13bf4ae0ec735e3ad2cf6e5da8e615",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-UI-PYQT6-STATISTICAL-WIDGETS-PY-4945579D789B",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/ui/pyqt6/statistical_widgets.py",
       "purpose": "PyQt6 Widgets for Statistical Analysis.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -7257,31 +7382,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 19634,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "348d4bfe7b407eb6366f13e7459e9deae3eb8f5e2d867fbf1cf9c267b57690a4",
-      "family": "data-processing-non-calculation",
+      "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-UI-PYQT6-VISUALIZATION-WIDGETS-PY-392181DF5A53",
       "language": "python",
       "maintainer": "Data processing maintainers",
       "path": "src/data_processing/data_processor/python/data_processor/ui/pyqt6/visualization_widgets.py",
       "purpose": "PyQt6 Widgets for Visualization and Neural Network.",
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "unavailable",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [

@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5101 · Scientific Import Inventory Detection
+
+- **State:** in_review
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5101
+- **PR:** https://github.com/D-sorganization/Tools/pull/5103
+- **Branch:** fix/5101-scientific-import-inventory
+- **Paths:** `scripts/build_tools_module_inventory.py`, `scripts/tools_module_inventory_imports.py`, inventory import/contract tests, generated inventory and `docs/development/impact-acoustics/INVENTORY_IMPORT_REVIEW.*`
+- **Started:** 2026-09-08
+- **Last verified:** 2026-09-09 (202 combined import/inventory/merge/contact/theme/API tests pass in 59.46 s, 11 existing deprecation warnings; CLI/reproducibility scans 13.89/15.98 s under unchanged limits; incoming mypy RED 12 unused ignores repaired with identical executable AST, eight-file mypy passes)
+- **Summary:** TDD classifier is preserved during main 21690dcfc integration. All 3,632 module paths and classifications remain; all 410 original scientific candidates retain owners and provisional/publication-blocked status. Four original source hashes have evolved through reviewed signal/theme changes; the historical JSON remains intact and the new integration delta records those revisions.
+- **Next step:** All nine final metadata/manual gates pass. Complete normal hooks, then push this existing PR and qualify current-head CI. #5114 has isolated/mixed non-reproduction, not a claimed fix; private checkout remains separate. T3 is published separately and must consume the classifier before combined delivery.
+
 ### DL-#5074 · Waveform and Spectral Numerical Contracts
 
 - **State:** in_review
@@ -141,9 +154,9 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/5072-prestressed-shaft
 - **Paths:** `src/shared/python/golf_club/*shaft*`, `src/shared/python/golf_club/_beam_fem.py`, `src/shared/python/golf_club/*grip*`, `src/shared/python/golf_club/*rotating_body*`, `tests/shared/python/golf_club/test_shaft*.py`, `tests/shared/python/golf_club/test_rotating_body.py`, `tests/shared/python/golf_club/test_grip_impedance.py`, `docs/development/impact-acoustics/*`
 - **Started:** 2026-09-07
-- **Last verified:** 2026-09-09 (88 focused transient/operating/affine Windows tests in 11.74 s; 860 Linux golf/signal/API tests in 274.37 s, two optional CAD skips and three plugin warnings; all nine gates, repository Ruff and actual mypy pass)
-- **Summary:** Response 12bcf3d83 and spectra 97d46055c are published. New constant homogeneous ODE assessment shares plant validation, recomputes Lyapunov dissipation and qualifies a coordinate-dependent envelope with explicit numerical/error margins. Independent scalar and nonnormal trajectories, critical damping and unresolved-margin refusal pass after recorded RED tests.
-- **Next step:** T3 #5072: bending continuum verification is published at 536ca60eb through all normal hooks. New conditional frequency-interval inverse bounds retain the center solve defect, coefficient uncertainty, separate G/C and nonsymmetric K. All 23 Windows controls pass in 3.30 s, including hidden-pole refusal and the existing gripped-shaft magnitude/phase disk; actual mypy and scoped Ruff pass. See FREQUENCY_INTERVALS.md. All 920 Linux golf/signal/API tests pass in 220.12 s, with two optional CAD skips and three plugin warnings. Repository Ruff and all nine final gates pass; normal publication remains. This is conditional numerical evidence, not certified arithmetic or physical/acoustic bandwidth. Classifier #5103 head be38a827a remains pending CI. Moving/rotating nonlinear work, flexible contact, radiation/calibration and physical/blinded evidence remain open.
+- **Last verified:** 2026-09-09 (217 merged-source import/inventory/merge/theme/API/frequency tests pass in 92.83 s with 11 existing warnings; actual mypy passes 11 changed Python files; root Ruff and all nine manual gates pass)
+- **Summary:** T3 is published through 6bf223941 with the prior 920-test Linux scientific/API result. Integrating main/classifier #5103 changes no shaft source/tests/API baselines. Canonical inventory records 448 new provisional candidates, including 55 unchanged-source golf modules, with no removals, downgrades or approval promotions.
+- **Next step:** Finish normal merge/push publication, then continuous-band/full-reduced qualification and moving nonlinear dynamics before flexible contact/radiation/consumer integration. Physical/blinded evidence and final theory synthesis remain required. See SHAFT_CLASSIFIER_INTEGRATION.md and PROGRESS.md.
 
 ### DL-0055 · Qualified Lumped Impact Dynamics
 

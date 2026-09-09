@@ -84,34 +84,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 7224,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "1f15074c15892e65710e4c58cfa9900d51827a35e4490cbc92bb4ea9141f34d6",
-      "family": "shared-plotting-non-calculation",
+      "family": "shared-plotting-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOTTING-EXPORT-PY-27B1E24DCA5E",
       "language": "python",
       "maintainer": "Plotting and visualization maintainers",
       "path": "src/shared/python/plotting/export.py",
       "purpose": "Figure and data export helpers with metadata injection (Issue #4740).",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
         "downstream-consumer-risk",
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [

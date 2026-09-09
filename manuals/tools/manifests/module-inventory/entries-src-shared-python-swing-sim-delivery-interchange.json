@@ -139,34 +139,38 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 9956,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "a357178112954cf9c3bf63626c5e6f184d565b6126840eecb94136539a4ecdc7",
-      "family": "swing-simulation-non-calculation",
+      "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-DELIVERY-INTERCHANGE-ADAPTERS-PY-7A8AC8D30A36",
       "language": "python",
       "maintainer": "Swing simulation maintainers",
       "path": "src/shared/python/swing_sim/delivery_interchange/adapters.py",
       "purpose": "Engine export adapters for the delivery-trajectory wire (C5, #4554).",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
         "downstream-consumer-risk",
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "unavailable",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [

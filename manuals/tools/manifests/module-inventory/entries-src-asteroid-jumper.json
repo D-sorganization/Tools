@@ -100,33 +100,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 6332,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "724b8d6a24665b6cc23990d49550f6ce01446135b3c12d64edc8f3d30bbc7bbe",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-ASTEROID-JUMPER-ASTEROID-SHAPE-PY-BEF2EB2FDDD8",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/asteroid_jumper/asteroid_shape.py",
       "purpose": "Asteroid shape generation.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -184,33 +187,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 10760,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "4381933ee5b65ad23f5e1319804e041f0307e287788343ecb385d955b5cf47d4",
-      "family": "shared-tools-non-calculation",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-ASTEROID-JUMPER-CONTROLLER-PY-706734BF7138",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/asteroid_jumper/controller.py",
       "purpose": "Simulation controller for the Asteroid Jumper.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -583,33 +589,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
-      "bytes_lf": 20643,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2bfd377dbd07038b24708526a555e753b15b27385376c8a773424a664b022ae3",
-      "family": "shared-tools-non-calculation",
+      "authority_status": "provisional",
+      "bytes_lf": 20806,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "bdbd5cebd897ebbe8239dded8cd38dddac5366f83eed3d45e47293d524d7d4b0",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-ASTEROID-JUMPER-RENDERER-PY-3D18888E5419",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/asteroid_jumper/renderer.py",
       "purpose": "Simulation renderer widget — PyQt6 QPainter-based canvas.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "unavailable",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -740,6 +750,11 @@
           {
             "kind": "constant",
             "name": "VIEWPORT_SCALE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_P",
             "signature": null
           }
         ],

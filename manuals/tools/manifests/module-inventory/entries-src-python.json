@@ -428,10 +428,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 30651,
+      "bytes_lf": 31417,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "95fb42c2f3f1395c5b646fd5d5d9bd7afe2887c75fbec713e26086816edc2051",
+      "content_sha256_lf": "fbc83f5c5b242ca9a70697c7b9903fdb7dc82da335b0c10d12c0d874730d7718",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-PYTHON-SRC-HELP-HELP-SYSTEM-PY-E6564F92819A",
       "language": "python",
@@ -484,6 +484,71 @@
           {
             "kind": "class",
             "name": "TooltipManager",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_BASE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_BLUE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_CRUST",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_MANTLE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_MAUVE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_OVERLAY0",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_PINK",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_SKY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_SUBTEXT0",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_SURF0",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_SURF1",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_SURF2",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C_TEXT",
             "signature": null
           },
           {

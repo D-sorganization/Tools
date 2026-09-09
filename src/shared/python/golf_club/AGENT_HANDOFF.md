@@ -4,10 +4,10 @@
 
 `impact_mobility.py`: detached tensor reference, T1 PR #5077 merged at `f72544613`; not a flexible/acoustic solver.
 T2 #5071 adds event-resolved integration, preload states and all four passive loss channels; v1 report fields retain their meanings.
-T3 #5072: bending continuum verification is published at 536ca60eb through all normal hooks. New conditional frequency-interval inverse bounds retain the center solve defect, coefficient uncertainty, separate G/C and nonsymmetric K. All 23 Windows controls pass in 3.30 s, including hidden-pole refusal and the existing gripped-shaft magnitude/phase disk; actual mypy and scoped Ruff pass. See FREQUENCY_INTERVALS.md. All 920 Linux golf/signal/API tests pass in 220.12 s, with two optional CAD skips and three plugin warnings. Repository Ruff and all nine final gates pass; normal publication remains. This is conditional numerical evidence, not certified arithmetic or physical/acoustic bandwidth. Classifier #5103 head be38a827a remains pending CI. Moving/rotating nonlinear work, flexible contact, radiation/calibration and physical/blinded evidence remain open.
+T3 #5072 is published through 6bf223941 with 920 Linux scientific/API passes, two optional CAD skips and all normal hooks. Conditional frequency intervals retain solve defects and uncertainty; independent bending and Galerkin controls retain separate mesh/modal errors. Main/classifier #5103 integration preserves scientific source/tests; 217 integration tests, actual mypy, root Ruff and all nine manual gates pass. Normal publication remains. Continuous-band and moving nonlinear qualification, flexible contact, calibration/radiation and physical/blinded evidence remain. See FREQUENCY_INTERVALS.md and PROGRESS.md.
 
 > Update this file in every implementation commit that changes this package.
-> Last updated: 2026-09-08
+> Last updated: 2026-09-09
 
 ## Stack and Integration Position
 

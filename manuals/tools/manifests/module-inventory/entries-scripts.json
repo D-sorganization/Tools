@@ -769,10 +769,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 16595,
+      "bytes_lf": 16825,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f92062bb7bea921b1aec23a0cbb93fcb2bf463d1003450b68c10f69fa5e9b37a",
+      "content_sha256_lf": "17dfab7b617945e7a0f52d40b4fd3198feab13cfbd227415e1e8e9ec718999c5",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-BUILD-TOOLS-MODULE-INVENTORY-PY-FFBDFD4ACF17",
       "language": "python",
@@ -881,6 +881,7 @@
         "test_paths": [
           "tests/architecture/test_phased_production_inventory.py",
           "tests/architecture/test_tools_module_inventory_contract.py",
+          "tests/architecture/test_tools_scientific_import_classification.py",
           "tests/rate_of_closure/test_variation_noise_response.py"
         ],
         "unit_mentions": [
@@ -906,7 +907,8 @@
           "µs"
         ],
         "validation_paths": [
-          "tests/architecture/test_tools_module_inventory_contract.py"
+          "tests/architecture/test_tools_module_inventory_contract.py",
+          "tests/architecture/test_tools_scientific_import_classification.py"
         ]
       }
     },
@@ -6750,33 +6752,35 @@
       }
     },
     {
-      "authority_status": "not-applicable",
+      "authority_status": "provisional",
       "bytes_lf": 15280,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
       "content_sha256_lf": "97b1a95b056438b9ed237d5c164635ab484c1ff1eae4a46d92d987fdef21ae53",
-      "family": "repository-tooling-non-calculation",
+      "family": "repository-tooling-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-RUNNER-CAPACITY-CHECK-PY-4F9F5C7E34BA",
       "language": "python",
       "maintainer": "Repository tooling maintainers",
       "path": "scripts/runner_capacity_check.py",
       "purpose": "Fleet runner capacity planning and alerting tool.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "mapped",
-        "equation_pathway": "not-applicable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -8630,6 +8634,61 @@
         "unit_mentions": [
           "s"
         ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1312,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "fcbc146c1de46a52a25927090d2d8d17958279af6042b02afdd263d6653ec6e8",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-TOOLS-MODULE-INVENTORY-IMPORTS-PY-F366EB60E75E",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/tools_module_inventory_imports.py",
+      "purpose": "Conservative Python import signals; parsing never imports or executes code.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_SCIENTIFIC_ROOTS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "python_scientific_import",
+            "signature": "path: Path, text: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
         "validation_paths": []
       }
     },

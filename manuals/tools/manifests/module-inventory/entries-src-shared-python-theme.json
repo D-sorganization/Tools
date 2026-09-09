@@ -353,7 +353,8 @@
           }
         ],
         "test_paths": [
-          "src/urdf_builder_gui/tests/test_urdf_builder_gui.py"
+          "src/urdf_builder_gui/tests/test_urdf_builder_gui.py",
+          "tests/architecture/test_issue3992_no_pasted_palette.py"
         ],
         "unit_mentions": [],
         "validation_paths": []

@@ -4,6 +4,39 @@ The user authorized completion of the full planned program, not merely its
 planning deliverables. All three parent epics remain open. Physical and
 perceptual validation cannot be inferred from numerical fixtures.
 
+## Current Main and Classifier Integration (2026-09-09)
+
+The shaft branch is published through 6bf223941c2b369362db5a7b0bb30853a07620be,
+including Galerkin 5ea22307d, bending 536ca60eb and conditional frequency
+intervals. All normal publication hooks passed; the latest Linux scientific/API
+suite has 920 passes, two optional CAD skips and three plugin warnings.
+
+Classifier #5103 merged as 33144678cb92719c3a1ea87c08ef75fb39fb88ab. Its main
+integration here has no scientific source/test conflicts. The three conflicts
+are root turnover, this history and generated handoff metadata. Both historical
+accounts are preserved below; their pending-status text describes those earlier
+checkpoints. Canonical regeneration identifies 448 additional provisional
+calculation candidates, including 55 unchanged-source golf modules. No module
+path is removed or candidate promoted to approval. The 217 merged-source
+import/inventory/merge/theme/API/frequency tests pass in 92.83 s (11 existing
+warnings); actual mypy passes 11 changed Python files, root Ruff passes 3,803
+files, and all nine manual gates pass. Normal merge/push publication remains.
+See SHAFT_CLASSIFIER_INTEGRATION.md and its complete JSON delta.
+
+GitHub CLI access recovered at 08:56 UTC after a temporary authentication
+failure. The unheld #5072 claim was renewed through 10:57:31 UTC. The separate
+#5114 cleanup candidate has two passing ownership/error regressions, but the
+full covered four-worker run failed (2,880 passed, 29 skipped, three worker
+losses, 900-second cap). Fourteen serial native-profiled GUI controls pass;
+sampling lag and repaint/deletion stacks do not identify the failure's cause.
+Issuecomment-5599216206 preserves evidence; no GUI repair is included here.
+
+All three parent epics remain open. Continue full-band/modal/mesh qualification,
+moving nonlinear boundary work, flexible contact, calibrated radiation,
+exact-pin consumer studies and physical/blinded evidence before final synthesis.
+
+## Preserved Pre-Merge Checkpoints
+
 Latest published shaft checkpoint: bending continuum verification
 536ca60ebd4c5d2802245a7753e65f034a1f5706, through all normal hooks and remote
 SHA verified. Classifier PR #5103 now publishes be38a827a51755de486c58446115f6acc8543103,
@@ -88,6 +121,43 @@ warnings in 457 s, including the rendering case (~6.2 s). Python 3.12 job
 assertion change, timeout waiver or success claim for that job was made.
 [Full #5114 investigation](https://github.com/D-sorganization/Tools/issues/5114#issuecomment-5596052315).
 Private-consumer access is separate. Keep #5114 and the full program open.
+
+## Published Classifier and Documentation Integration
+
+Classifier #5103 published c0163768cd0946bd3d6705b8dbe52e733d4bf89a through
+all normal hooks; remote SHA verified. Subsequent main 184e453db changes only
+handoff documentation, preserved in this integration with refreshed metadata.
+Scientific code/tests/inventory are unchanged. Current-head CI remains required.
+The prior 3.12 rate shard was cancelled; its rendering case passed, while
+test_viewers_gui.py's display-area-sub-tabs case lacked a completion record.
+See INVENTORY_IMPORT_REVIEW.md. No GUI repair or complete-program claim is made.
+
+## Current Classifier Integration Status
+
+PR #5103 is being reconciled from 32c7b38cb with main 21690dcfc in the isolated
+Tools-impact-inventory-integration checkout. The original inventory evidence
+checkout remains at 81b28da05. Classifier code/tests are unchanged; generated
+metadata is reconstructed from the combined source. All 3,632 module paths and
+classifications remain, including 410 original provisional scientific candidates.
+The full integration delta records four evolved original source hashes (two
+signal-boundary files and two theme consumers). The old review JSON remains
+historical evidence rather than being rewritten to match new source.
+
+The combined import/inventory/merge/contact/theme/API run passes 202 tests in
+59.46 s, with 11 existing deprecation warnings. Actual push mypy catches 12
+unused suppression comments in incoming Function Generator code; their removal
+preserves the executable AST and makes the scoped eight-file check pass. All nine final
+metadata/manual gates pass; normal publication and current-head CI remain. The GUI stall #5114 is not reproduced
+by 2 isolated and 21 mixed original-source tests; actual Python 3.11 CI on
+32c7b38cb passes, while Python 3.12 remained running at the latest read.
+Private-consumer repository lookup is a distinct unresolved gate.
+
+Current program milestones supersede historical rows below: Tools T1 #5077 and
+T2 #5082, signal repair #5106 and wire #5083 are merged. AffineDrift theory
+#4258/#4282/#4298 and UD #9706/#9826/#9841 are merged. Distributed T3 remains
+partial; published transient checkpoint 09d8e59cf has 860 Linux regression
+passes and normal hooks on its separate branch. This PR does not contain that
+unmerged implementation. Physical/acoustic/blinded qualification remains open.
 
 ## Requirement and Evidence Matrix
 

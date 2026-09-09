@@ -1,0 +1,4048 @@
+{
+  "base": "6bf223941c2b369362db5a7b0bb30853a07620be",
+  "incoming_main": "33144678cb92719c3a1ea87c08ef75fb39fb88ab",
+  "before_counts": {
+    "non-calculation": 2799,
+    "calculation": 875
+  },
+  "after_counts": {
+    "non-calculation": 2352,
+    "calculation": 1323
+  },
+  "new_paths": ["scripts/tools_module_inventory_imports.py"],
+  "removed_paths": [],
+  "classification_changes": [
+    {
+      "path": "benchmarks/run_baseline_capture.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "scripts/runner_capacity_check.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/asteroid_jumper/asteroid_shape.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/asteroid_jumper/controller.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/asteroid_jumper/renderer.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": false,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/benchmarks/performance_benchmark.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/contracts.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/anova.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/anova_one_way.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/anova_repeated.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/anova_two_way.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/augmentation_noise.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/augmentation_types.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/cross_correlation.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/data_augmentation.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/data_loader.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/feature_extractor.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/feature_selector.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/feature_types.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/neural_network.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/nn_architecture.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/nn_script_exporter_io.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/nn_trainer.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/outlier_detection.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/pca_analysis.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/plot_zoom.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/regression.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/regression_diagnostics.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/regression_fitting.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/regression_types.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/spectral_analysis.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/state_space.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/surface_plot.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/time_series_decomposition.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/time_series_decomposition_contracts.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/time_series_decomposition_helpers.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/uncertainty_quantification.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/core/wavelet_denoising.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/data/half_ton_data/PlottingScript.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/file_utils.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/ui/pyqt6/plot_dialogs.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/ui/pyqt6/statistical_widgets.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/data_processing/data_processor/python/data_processor/ui/pyqt6/visualization_widgets.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/function_generator/python/function_generator/ui/pyqt6/main_window.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": false,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/lower_body_model/simulator.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/media_processing/video_processor/python/video_processor_src/constants.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/backend.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/cli.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/comparison.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/constants.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/exercises/_common.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/exercises/clean.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/exercises/gait.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/exercises/jerk.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/exercises/sit_to_stand.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/exercises/snatch.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/export_excel.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/gui/anim_renderer.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/gui/bilateral_3d_renderer.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/gui/comparison_dialog.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/gui/file_operations.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/gui/motion_tabs.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/gui/motion_tabs_chain.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/gui/plot_renderer.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/gui/policy_trace_canvas.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/gui/vector_overlay.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/models/bench_press_model.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/models/bilateral_3d.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/models/body_model.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/models/exercise_configs.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/models/lagrangian_balance.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/models/lagrangian_batch.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/models/swingset.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/persistence.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/rendering.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/result_analysis.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/spine_loads.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/strength.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/movement_optimizer/validation.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/multi_param_analysis/python/multi_param_analysis/ui/pyqt6/main_window.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/p1am_control_system/backend/data_explorer_expression.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/p1am_control_system/backend/data_explorer_service.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/p1am_control_system/backend/data_explorer_stats.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/p1am_control_system/backend/hardware.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/p1am_control_system/backend/modbus_codec.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/p1am_control_system/backend/mpc.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/p1am_control_system/backend/pid_tuning.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/p1am_control_system/backend/power_supply.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/p1am_control_system/backend/power_supply_integration.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/p1am_control_system/backend/safety_state_machine.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/p1am_control_system/backend/scada_fallback.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/p1am_control_system/backend/state.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/p1am_control_system/backend/temperature_controller.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/p1am_control_system/backend/temperature_integration.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/p1am_control_system/desktop/alarm_state.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/p1am_control_system/desktop/routing_tab.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/p1am_control_system/desktop/trends_tab.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/plant_simulator/dataset.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/application/_flight_execution_profile_runtime.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/application/_regional_ground_execution_job_values.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/application/_workspace_validation.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/application/camera_commands.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/application/camera_preferences.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/application/capability_workflow.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/application/capability_workflow_wire.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/application/durable_ensemble/contracts.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/application/morris/_metric_validation.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/application/morris/_response_constants.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/application/morris/contracts.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/application/morris/request_document.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/application/morris/response_contract.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/application/morris/workspace_validation.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/application/regional_ground_variation_request.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/club/assembly_binding.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/club/head_profiles.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/club/parametric_head.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/club/volumetrics.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/plotting/_catalog_series_entries.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/plotting/catalog.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/plotting/catalog_contract.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/plotting/optional_values.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/plotting/putting_catalog.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/plotting/render.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/plotting/spec.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/scripts/generate_example_head.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/ball_setup_scene.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/club_view.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/club_view_lifecycle.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/club_view_render.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/course_scene.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/engineering_markers.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/engineering_number_input.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/flight_explorer_run.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/flight_playback_controls.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/flight_playback_rendering.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/flight_view.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/flight_view_bundle.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/flight_view_panels.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/flight_wind_overlay.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/ground_playback_view.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/kinetics_overlay.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/kinetics_panel.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_covariation_view.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_preview.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/main_window_club.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/playback_transport_controls.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/plots_process_worker.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/putting_playback.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/putting_visuals.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/screw_overlay.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/spatial_target_panel_text.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/spatial_target_rendering.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/spatial_target_workflow.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/strike_view.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/variation_distribution_matrix.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/variation_plot_exports.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/variation_plot_helpers.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/variation_results.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/variation_scatter_view.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/variation_tab_results.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/variation_trial_table.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/variation_visualizations.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/variation_worker.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/wedge_ground_scene.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/wind_strategy_basis.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/ui/pyqt6/wind_strategy_launch.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/_complete_trial_fields.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/_complete_trial_wire.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/_durable_ensemble_io.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/_ensemble_parser.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/capability_observation_adapter.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/chip_forgiveness.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/complete_trial_record.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/confidence_ellipsoid_mesh.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/ensemble_io.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/ensemble_scaling_evidence.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/ensemble_source.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/forgiveness_io.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/forgiveness_loss.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/forgiveness_projection.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/forgiveness_ranking.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/forgiveness_runner.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/geometric_plot_data.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/paired_attribution_adapter.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/plot_data.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/plot_definition.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/regional_ground_variation.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/request_builder.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/scalar_ensemble_contract.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/scalar_ensemble_wire.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/streaming_ensemble_analysis.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/streaming_ensemble_sensitivity.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/trial_projection.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation/wind_strategy_plot_adapter.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/_contracts.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/_launch_monitor_analysis_types.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/_player_covariation_scan.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/club_camera.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/club_mesh_source.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/derivation_swing.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/flight_accepted_study.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/flight_sample_inspector.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/launch_monitor_analysis.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/launch_monitor_import.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/launch_monitor_linked_scatter.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/launch_monitor_longitudinal.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/launch_monitor_numeric.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/launch_monitor_performance.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/launch_monitor_strokes_gained.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/launch_monitor_strokes_gained_baseline.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/mesh.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/model.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/neural_lab_contract.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/player_covariation.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/plot_point_inspector.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/putting_result_contract.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/putting_sample_inspector.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/variation_visual_state.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/view_workspace.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/view_workspace_recovery.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/visual_baseline_compare.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/visual_layout_preferences.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rate_of_closure/visualization_tab_manifest.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/rrt_path_planner/python/src/star_wars_rrt.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/calc_backend/routers/acid_gas_dewpoint.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/calc_backend/routers/syngas_water.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/calc_backend/routers/thermal_profile.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/data_processing/processor.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_beam_fem.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_grip_contracts.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_grip_finite_response.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_grip_stationary.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_rotating_body_contracts.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_rotating_body_kernel.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_shaft_affine_response.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_shaft_affine_transient.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_shaft_autonomous_decay.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_shaft_body_assembly.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_shaft_chain.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_shaft_clamped.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_shaft_damped_spectrum.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_shaft_equilibrium.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_shaft_frequency_interval.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_shaft_galerkin.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_shaft_gripped_chain.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_shaft_gripped_coordinates.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_shaft_gripped_equilibrium.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_shaft_gripped_operating.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_shaft_gripped_response.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_shaft_gripped_spectrum.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_shaft_harmonic_response.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_shaft_linear_contracts.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_shaft_point_load.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_shaft_se3.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_shaft_section.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_shaft_spatial_element.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_shaft_spectrum.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_shaft_transport_contracts.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_shaft_transport_quadrature.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_validation.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_wedge_delivery_metrics.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/_wedge_sweep.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/assembly.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/cad_validation.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/fitting_engine.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/grip_impedance.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/mesh_mass_properties.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/putter_head.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/rotating_body.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/shaft_delivery.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/shaft_linear_system.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/shaft_prestress.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/shaft_profile.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/shaft_rotating_transport.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/stl_validation.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/turf_contact.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/turf_convergence.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/turf_variation.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/types.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/wedge_cad.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/wedge_export.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/wedge_ground_contact.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/golf_club/wedge_turf_interaction.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/humanoid_character_builder/core/model.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/humanoid_character_builder/generators/_makehuman_generator.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/humanoid_character_builder/generators/_smplx_generator.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/humanoid_character_builder/generators/mesh_generator_smplx.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/humanoid_character_builder/interfaces/api.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/humanoid_character_builder/mesh/collision_generator.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/humanoid_character_builder/mesh/mesh_processor.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/launch_monitor/comparison.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/launch_monitor/contract_v2.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/launch_monitor/dispersion.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/launch_monitor/flexible_analysis.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/launch_monitor/importer.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/launch_monitor/longitudinal.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/launch_monitor/modeling.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/launch_monitor/multivariate.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/launch_monitor/outcome_proxy.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/launch_monitor/player_covariation.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/launch_monitor/player_covariation_core.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/launch_monitor/relationships.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/launch_monitor/strokes_gained.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/launch_monitor/treatment.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/launch_monitor/trends.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/logging_pkg/logger_utils.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/model_generation/builders/manual_builder.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/model_generation/builders/parametric_builder.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/model_generation/converters/simscape/simscape_converter.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/model_generation/converters/urdf_parser.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/model_generation/core/constants.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/model_generation/core/types.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/model_generation/core/validation.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/plot_engine/contour.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/plot_engine/matplotlib_renderer.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/plot_engine/plotly_converter.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/plot_engine/trendline.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/plotting/export.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/programmatic_pid/equipment.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/programmatic_pid/rendering.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/scripting/scripting_env.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/sidekick/data_processing/core.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/sidekick/data_processing/io.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/sidekick/lab/bio/c3d_reader.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/sidekick/lab/mocap/_validation.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/sidekick/lab/mocap/calibration.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/sidekick/lab/mocap/extrinsics.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/sidekick/lab/mocap/sync.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/sidekick/latex_renderer.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/sidekick/protocols.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/sidekick/symbolic_engine.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/sidekick/ui/tools_sidebar/registry.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/delivery_interchange/adapters.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/flight/_capability_observation_runtime.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/flight/_capability_optimizer_metrics.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/flight/_constants.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/flight/_rust_facade.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/flight/capability_contract.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/flight/capability_flight_evaluator.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/flight/capability_observation.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/flight/capability_profile.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/flight/capability_result.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/flight/capability_sampling.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/flight/direction.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/flight/frames.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/flight/ground_transfer.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/flight/inverse_contract.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/flight/inverse_result.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/flight/launch.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/flight/models.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/flight/result_derivation.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/flight/result_metrics.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/flight/spin_axis_convention.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/flight/state.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/flight/types.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/flight/wind.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/flight/wind_strategy.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/flight/wind_strategy_metrics.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/flight/wind_uncertainty.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/ground/_vector_math.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/ground/bounce_types.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/ground/contract_records.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/ground/contract_types.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/ground/ground_result_composer.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/ground/profile_binding.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/ground/profile_validation.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/ground/skid_roll_runtime.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/ground/study_record.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/ground/study_types.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/ground/study_wire.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/ground/surface_motion_types.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/ground/terrain_adapter_math.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/ground/validation.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/model_interchange/body_chain.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/model_interchange/parsers.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/putting/capture.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/putting/green.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/putting/roll.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/putting/stroke_interchange.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/putting/ud_adapter.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/putting/variation.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/rotating_base/_numeric.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/rotating_base/catalog.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/rotating_base/contract.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/rotating_base/integration.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/rotating_base/provider.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/rotating_base/types.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/variation/_morris_observation_parser.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/variation/_morris_vocabulary.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/variation/analysis.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/variation/dataset_io.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/variation/dispersion_metric_types.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/variation/dispersion_metrics.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/variation/engine.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/variation/ensemble_types.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/variation/execution_metadata.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/variation/global_sensitivity.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/variation/group_spec.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/variation/morris_design.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/variation/morris_execution.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/variation/morris_observation_io.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/variation/noise_response.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/variation/noise_response_fingerprint.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/variation/noise_response_plot.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/variation/noise_response_record.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/variation/noise_response_types.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/variation/paired_attribution.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/variation/paired_attribution_record.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/variation/paired_attribution_snapshot.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/variation/pipeline.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/variation/propagation.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/variation/sampling.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/variation/trace_resampling.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/vibroacoustics/_spectral_frames.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/vibroacoustics/_waveform_contracts.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/vibroacoustics/measurement.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/vibroacoustics/spectral.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/_rust_facade.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/ball_setup.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/swing_sim/canonical_numeric_json.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/contracts.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/shared/python/safe_eval.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/solar_system_model/solar_system/core/celestial_body.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/solar_system_model/solar_system/data/asteroids.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/solar_system_model/solar_system/data/famous_missions.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/solar_system_model/solar_system/data/star_catalog.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/solar_system_model/solar_system/visualization/camera.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/solar_system_model/solar_system/visualization/renderer.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/solar_system_model/solar_system/visualization/scene.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/solar_system_model/solar_system/visualization/scene_render_mixin.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/solar_system_model/solar_system/visualization/starfield.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/solar_system_model/solar_system/visualization/ui_renderer.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/vessel_drafter/python/vessel_drafter/contracts.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/vessel_drafter/python/vessel_drafter/gui/vessel_drafter_rendering.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/vessel_drafter/python/vessel_drafter/gui/vessel_drafter_three_d_canvas.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/vessel_drafter/python/vessel_drafter/models/cylindrical_bath.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/vessel_drafter/python/vessel_drafter/models/electrode_advisor.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/vessel_drafter/python/vessel_drafter/models/vessel_drafter.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/vessel_drafter/python/vessel_drafter/preview/vessel_drafter_preview.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/vessel_drafter/python/vessel_drafter/preview/vessel_drafter_scene.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/vessel_drafter/python/vessel_drafter/preview/vessel_drafter_view_options.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/vessel_drafter/python/vessel_drafter/projects/vessel_drafter_layout.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/vessel_drafter/python/vessel_drafter/projects/vessel_drafter_profiles.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/video_analyzer/analyzer.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/video_analyzer/pose_estimator.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/video_analyzer/video_processor.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/web_applications/health_checks.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    },
+    {
+      "path": "src/web_applications/unit_converter/converter.py",
+      "before": "non-calculation",
+      "after": "calculation",
+      "basis": "scientific-library-import",
+      "source_unchanged": true,
+      "authority_status": "provisional",
+      "publication": "blocked"
+    }
+  ]
+}
