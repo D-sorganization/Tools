@@ -6,7 +6,7 @@ perceptual validation cannot be inferred from numerical fixtures.
 
 ## Current implementation review and main integration (2026-09-09)
 
-Input checkpoint 29d8c8d2592ffb63f4eec93ed971a7def177cbd4 is published; #5072 comment 5607459999 records delivery. Review child #5130 preserves physical qualification requirements on #5072. Main b0c71779d is integrated locally as c1a4aa4f7 with canonical handoff-manifest resolution. Initial merge validation passed 103 Windows tests (10.97 s), root Ruff and all nine governance gates. Normal push then exposed incoming UI typing errors and a generated-ledger formatting conflict; publication is pending their corrective validation. See the integration correction record below.
+PR #5133 is open at https://github.com/D-sorganization/Tools/pull/5133 for review child #5130. Numerical/input checkpoint 0a4e2913f0fe0b005c7c28c6e87cce6f3821535a is published through all normal commit/push hooks, remote SHA verified and worktree clean. Parent #5072 retains physical qualification. GitHub reported a conflict with newer main 421889407; its constants and trusted-renderer changes are integrated locally, with only the generated handoff manifest requiring canonical regeneration. Merge validation passes 65 Windows tests (19.30 s, three deprecation warnings), both incoming-source mypy checks and root Ruff. Protected CI review and merge publication remain. Full program stays active.
 
 Both-platform input evidence remains in DISTRIBUTED_MODEL_INPUT_RESULTS.json.
 Merge validation JUnit SHA256: ad275c7af5c83876c5fb4e6289924b4da7aed0b763849e2ffc0f3c7a963bd4f6.
@@ -23,9 +23,35 @@ over its 60-second GraphQL polling recipe; use scoped REST at natural work
 breakpoints. This child can deliver reviewed numerical code without closing
 T3's measured coefficient/grip/FRF/physical-bandwidth requirements.
 
+## PR #5133 review and follow-on contact work (2026-09-09)
+
+The first scoped CI snapshot has queued/in-progress checks; no verdict yet.
+New main commits are 421889407 (#5108, Docker-capable trusted renderer runner)
+and fb64c1281 (#5107, canonical constants with standalone fallback and its
+already-merged apt changes). Preserve those changes and their ownership.
+The shaft source/tests and golf API baseline are unchanged by this merge.
+The repository requires full PRs, so #5133 is ready for review, not a draft.
+The ci-watch-and-fix workflow is active with scoped REST at work breakpoints.
+
+Main integration JUnit SHA256: 5fc46c4d95a204d7e68e1002d9754f5ed483a943f6d6c8619a360dda80dc0ecf.
+All 65 Windows workflow/constants/provider/API tests pass (19.30 s,
+three existing deprecated-alias warnings, no skips). A separate
+run_path/import-blocking probe confirms all six reused constants
+are identical in integrated and standalone execution. The actual
+two-file mypy hook and root Ruff/format (3,850 files) pass.
+
+T4 #5073 was unclaimed and is now leased to codex/session
+impact-acoustics-01a07d8a-contact5073 through 2026-09-09T22:13:55Z.
+No T4 production code yet. The next step verifies moving-plane contact
+kinematics, common-point force/moment work and frame invariance before
+coupling state-dependent contact loads into the existing shaft response.
+Existing T2 already distinguishes force release from geometric clearance;
+reuse that law and its underdamped oracle. Critical/overdamped analytical
+controls can extend verification without changing legacy calibration meaning.
+
 ## Integration correction record (2026-09-09)
 
-Normal push of c1a4aa4f7 failed; the remote remains at 29d8c8d25.
+The first normal push of c1a4aa4f7 failed; corrected 0a4e2913f is now published.
 Incoming GUI fixture/loader and event-loop return annotations repair six
 isolated-hook errors. Whole-branch production mypy additionally exposed an
 unrecognized aliased TYPE_CHECKING guard, two redundant shaft casts and a

@@ -882,6 +882,7 @@
           "src/web_applications/urdf_viewer/tests/conftest.py",
           "src/web_applications/urdf_viewer/tests/test_urdf_viewer.py",
           "tests/data_processor_io/test_rust_engine_contract.py",
+          "tests/ops/test_rate_web_playwright_workflow.py",
           "tests/ops/test_release_workflow.py",
           "tests/programmatic_pid/test_controls.py",
           "tests/programmatic_pid/test_equipment.py",

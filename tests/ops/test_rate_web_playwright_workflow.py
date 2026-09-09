@@ -191,7 +191,13 @@ def test_trusted_workflow_is_main_push_only_without_untrusted_ref_seam() -> None
         "push-pyqt-rendered-evidence",
     }
     assert jobs["push-production-worker-e2e"]["runs-on"] == "d-sorg-fleet"
-    assert jobs["push-pyqt-rendered-evidence"]["runs-on"] == "d-sorg-fleet"
+    # The PyQt evidence job builds a Docker container, and fleet runner hosts
+    # are not guaranteed to have Docker installed (see #5105: Oglaptop-2
+    # fails at job setup with "docker: command not found"). Route it to the
+    # GitHub-hosted pool, which always provides Docker; renderer identity is
+    # already host-independent because both PyQt paths pin the same
+    # immutable ubuntu:24.04 image.
+    assert jobs["push-pyqt-rendered-evidence"]["runs-on"] == "ubuntu-24.04"
 
     for job in jobs.values():
         push_checkout = _checkout(job)
@@ -518,6 +524,10 @@ def test_both_pyqt_paths_share_an_immutable_container_and_font_setup() -> None:
         assert "fonts-dejavu-core" in first["run"]
         assert "fontconfig" in first["run"]
     assert pr_job["steps"][0] == trusted_job["steps"][0]
+    # Container jobs require Docker on the assigned runner host, and the
+    # self-hosted fleet does not guarantee it (#5105).
+    assert pr_job["runs-on"] == "ubuntu-24.04"
+    assert trusted_job["runs-on"] == "ubuntu-24.04"
 
 
 def test_container_shell_uses_mounted_workspace_after_checkout() -> None:

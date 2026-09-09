@@ -7717,10 +7717,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 3105,
+      "bytes_lf": 3563,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "9824fb33bfbb0e120b0cdbd92833642e6d661fccf2cf71ea0494a06b23adf1fc",
+      "content_sha256_lf": "12abb8c51c0ea18875b7be3c0716fe9bc7ac18fe7ad4a47dc59b9e73f9929c53",
       "family": "media-processing-calculation",
       "id": "TOOLS-MODULE-SRC-MEDIA-PROCESSING-VIDEO-PROCESSOR-PYTHON-VIDEO-PROCESSOR-SRC-CONSTANTS-PY-23EE0171B41E",
       "language": "python",
@@ -7772,11 +7772,6 @@
           {
             "kind": "constant",
             "name": "ALUMINUM_DENSITY_KG_M3",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "ATMOSPHERIC_PRESSURE_PA",
             "signature": null
           },
           {
@@ -7837,11 +7832,6 @@
           {
             "kind": "constant",
             "name": "GRAPHITE_DENSITY_KG_M3",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "GRAVITY_M_S2",
             "signature": null
           },
           {
@@ -7913,17 +7903,10 @@
             "kind": "constant",
             "name": "TITANIUM_DENSITY_KG_M3",
             "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "UNIVERSAL_GAS_CONSTANT_J_MOL_K",
-            "signature": null
           }
         ],
         "test_paths": [],
         "unit_mentions": [
-          "J",
-          "Pa",
           "kg",
           "m/s",
           "s"

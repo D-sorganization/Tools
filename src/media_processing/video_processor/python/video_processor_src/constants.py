@@ -17,11 +17,22 @@ PI: float = math.pi  # [dimensionless] Ratio of circumference to diameter
 E: float = 2.718281828459045  # [dimensionless] Euler's number, base of natural logarithm  # noqa: E501
 
 # Physical constants - SI units
-GRAVITY_M_S2: float = 9.80665  # [m/s²] Standard gravity, ISO 80000-3:2006
+try:
+    # Prefer the fleet-canonical constants (issue #3994) so this stays in
+    # sync with the rest of the fleet instead of drifting independently.
+    from shared.python.sidekick.utils.unit_constants import (
+        R_UNIVERSAL as UNIVERSAL_GAS_CONSTANT_J_MOL_K,
+    )
+    from shared.python.sidekick.utils.unit_constants import (
+        STANDARD_GRAVITY as GRAVITY_M_S2,
+    )
+except ImportError:
+    # video_processor ships standalone (shared.python not on path): same
+    # values; citations: gravity ISO 80000-3:2006, gas constant CODATA 2018.
+    GRAVITY_M_S2: float = 9.80665  # type: ignore[no-redef]
+    UNIVERSAL_GAS_CONSTANT_J_MOL_K: float = 8.314462618  # type: ignore[no-redef]
 SPEED_OF_LIGHT_M_S: float = 299792458  # [m/s] Exact by definition, SI
 AIR_DENSITY_SEA_LEVEL_KG_M3: float = 1.225  # [kg/m³] ISA at sea level, 15°C
-ATMOSPHERIC_PRESSURE_PA: float = 101325  # [Pa] Standard atmospheric pressure, ISA
-UNIVERSAL_GAS_CONSTANT_J_MOL_K: float = 8.314462618  # [J/(mol·K)] CODATA 2018
 
 # Golf-specific constants
 GOLF_BALL_MASS_KG: float = 0.04593  # [kg] USGA Rule 5-1 (1.620 oz max)
