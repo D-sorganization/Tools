@@ -159,7 +159,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "mapped",
+        "tests": "not-applicable",
         "units": "mapped",
         "validation": "not-applicable"
       },
@@ -246,9 +246,7 @@
             "signature": ""
           }
         ],
-        "test_paths": [
-          "tests/unit/agent_context/test_catalog.py"
-        ],
+        "test_paths": [],
         "unit_mentions": [
           "deg",
           "m/s"

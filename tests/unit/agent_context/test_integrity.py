@@ -7,7 +7,7 @@ import subprocess
 from pathlib import Path
 
 import pytest
-from test_catalog import rewrite
+from test_agent_context_catalog import rewrite
 
 from agent_context.catalog import CatalogError, load_catalog
 from agent_context.cli import main

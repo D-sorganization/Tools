@@ -177,7 +177,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src.json"
     },
     {
-      "content_sha256_lf": "e2afa5d7ee59072e52cd3e685e660d21f38ea701c5e306e982be78b0d6e47dbb",
+      "content_sha256_lf": "46d675c2df77c4a33bb31180fb00b33f6f30433124572f1d5b914c8289cbb4b6",
       "entry_count": 12,
       "package": "src/agent_context",
       "path": "manuals/tools/manifests/module-inventory/entries-src-agent-context.json"
@@ -453,7 +453,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-club.json"
     },
     {
-      "content_sha256_lf": "a398965c4b89f457e405e39ca8676156cc2c414ca50550b974faeae1802b185e",
+      "content_sha256_lf": "b90c5805e800769a0547958423bf7a9f7acc7e2f331c7c42de7413b1aa43f2c3",
       "entry_count": 12,
       "package": "src/rate_of_closure/plotting",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-plotting.json"
@@ -753,7 +753,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim.json"
     },
     {
-      "content_sha256_lf": "b3d8f1588547d7c08970ae55a6e780cfbff99ceee19dee9e7adcba6407d064a4",
+      "content_sha256_lf": "486dfbcd8da1589ff8b5838d53ae212a88bb2b9b86f340fb65b95f7a61065f49",
       "entry_count": 4,
       "package": "src/shared/python/swing_sim/conventions",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-conventions.json"
@@ -813,7 +813,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-putting.json"
     },
     {
-      "content_sha256_lf": "d5c19d24328095c30309573a790e47d66b09d908de879beceec13d1b95048216",
+      "content_sha256_lf": "660b7c3283f8648896f1ae21c213f2e00e92c36527e61758d47ffa86daa1afd8",
       "entry_count": 10,
       "package": "src/shared/python/swing_sim/rotating_base",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-rotating-base.json"

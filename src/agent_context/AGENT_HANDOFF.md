@@ -5,7 +5,7 @@
 Tools #5138 supplies the local context engine for fleet epic
 Repository_Management#1629. UpstreamDrift#9915 and Gasification_Model#4944
 consume the same implementation through pinned Tools checkouts. All issues
-remain in progress; no PR has been created for this implementation.
+remain in progress. Tools PR #5141 is open; paired consumers are being qualified.
 
 ## Current Implementation
 
@@ -57,7 +57,7 @@ selectors are cleared before explicit-checkout reads and temporary Git fixtures.
 
 ## Ordered Continuation
 
-1. Qualify normal push with bounded workers; the real SDK probe now isolates pytest namespace collisions. Preserve native crash evidence until the full gate passes.
+1. Normal push with2workers passes; Linux CI passes36 context and103 CodeMap tests. Complete test-discovery naming and paired UD PR linkage, then verify the updated head.
 2. Deliver the provider through a protected PR and verify its exact revision.
 3. Pin consumers, run real boundary tests, review contracts and qualify generated maps.
 4. Reconcile fleet guidance and epic acceptance against actual delivered evidence.

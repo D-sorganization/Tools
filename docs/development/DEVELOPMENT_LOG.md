@@ -20,16 +20,16 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5138 · Verified Agent Context
 
-- **State:** in_progress
+- **State:** in_review
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5138
-- **PR:** not created
+- **PR:** https://github.com/D-sorganization/Tools/pull/5141
 - **Branch:** feat/issue-5138-agent-context
 - **Paths:** `src/agent_context`, `src/shared/python/codemap`, `packages/agent-context`
 - **Started:** 2026-09-09
-- **Last verified:** 2026-09-09; 103 CodeMap tests pass with optional parsers installed; 35 context tests pass, one Windows symlink test skipped. Real MCP stdio passes. Ruff and scoped mypy pass before final CI edits. Installed wheel/source identity passes. Pre-push exposed inherited Git index selectors; regression and fixture isolation now cover that case; rerun normal push hooks with bounded workers after isolating the real SDK probe from pytest namespace collisions. An unrelated Windows native worker crash is not waived.
+- **Last verified:** 2026-09-09; all normal commit/push hooks pass with2workers. Linux CI:36 context and103 CodeMap tests pass. Current CI failed only minimum-test discovery and required paired-PR metadata; fixes are in progress.
 - **Summary:** Dependency-free source context package, real MCP transport, semantic boundary reviews, deterministic views and CodeMap freshness guards. Parent epic Repository_Management#1629 remains active; no subscription infrastructure is required.
-- **Next step:** Qualify the shared provider changes with the normal local checks before publishing its protected PR.
+- **Next step:** Publish minimum-test discovery fix and link the paired UpstreamDrift PR; verify current-head CI before protected delivery.
 
 ### DL-#5101 · Scientific Import Inventory Detection
 

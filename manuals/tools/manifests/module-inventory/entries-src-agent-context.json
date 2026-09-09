@@ -250,7 +250,7 @@
           }
         ],
         "test_paths": [
-          "tests/unit/agent_context/test_catalog.py",
+          "tests/unit/agent_context/test_agent_context_catalog.py",
           "tests/unit/agent_context/test_evaluation.py",
           "tests/unit/agent_context/test_integrity.py",
           "tests/unit/agent_context/test_service.py"
@@ -800,7 +800,7 @@
           }
         ],
         "test_paths": [
-          "tests/unit/agent_context/test_catalog.py",
+          "tests/unit/agent_context/test_agent_context_catalog.py",
           "tests/unit/agent_context/test_integrity.py"
         ],
         "unit_mentions": [],
