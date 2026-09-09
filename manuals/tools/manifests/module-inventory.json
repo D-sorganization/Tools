@@ -519,7 +519,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-hooks.json"
     },
     {
-      "content_sha256_lf": "73d6717547800757b3027fdfe24a50a75276462653ec80908c7d3656f578b142",
+      "content_sha256_lf": "f9969f69d85e5c389d3a2276b8dd04a65f1ac2d8bf48a07241ed70726babf622",
       "entry_count": 400,
       "package": "src/rate_of_closure/web/src/model",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-model.json"
@@ -741,7 +741,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-signal-toolkit.json"
     },
     {
-      "content_sha256_lf": "001a0670c1a5d6c0752822e33badd82395eb0788443bcd9cb39d3dd4f6e1cb5d",
+      "content_sha256_lf": "0a8fe76f97721eb10f83b394e6b60997974755a9a440a054c260d783ada6597c",
       "entry_count": 18,
       "package": "src/shared/python/swing_sim",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim.json"

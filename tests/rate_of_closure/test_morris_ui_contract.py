@@ -35,6 +35,9 @@ from rate_of_closure.simulation import (
     SimulationConfig,
 )
 from shared.python.swing_sim.flight.registry import FlightModelType
+from shared.python.swing_sim.types import PendulumParameters, PlaneOrientation
+
+_REPO_ROOT = Path(__file__).parents[2].resolve()
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
 
@@ -161,6 +164,63 @@ def test_factor_drafts_have_canonical_order_bounds_and_tee_applicability() -> No
             request_id="all-suggested",
         )
         assert request.base_config() == config
+
+
+def _r136_base_config() -> SimulationConfig:
+    """The authority base mirrored by ``morrisAuthorityRequest.test.ts``."""
+    return SimulationConfig(
+        scenario=ImpactScenario(113.0),
+        club=CLUB_LIBRARY["Driver 10.5°"],
+        ball_setup=BallSetup(BallSupportMode.TEE, 0.0381),
+        source_kind="double_pendulum",
+        contact_mode=ContactMode.FIXED_BALL_CONTACT,
+        swing_duration_s=1.0,
+        plane=PlaneOrientation(0.0, -45.0, 0.0),
+        pendulum_parameters=PendulumParameters(
+            m1=4.0,
+            l1=0.65,
+            lc1=0.3,
+            i1=0.4,
+            m2=0.5,
+            l2=1.05,
+            lc2=0.55,
+            i2=0.08,
+            d1=0.4,
+            d2=0.25,
+        ),
+    )
+
+
+def test_r136_suggested_drafts_match_the_shared_python_artifact() -> None:
+    """Anchor the R13.6 base-centered suggestions to a shared fixture.
+
+    The TypeScript authority-request gate compares its computed drafts
+    against this same fixture (#4458), so neither runtime can drift from
+    the Python registry-derived bounds without failing exactly one gate.
+    """
+    fixture = json.loads(
+        (
+            _REPO_ROOT
+            / "src"
+            / "rate_of_closure"
+            / "web"
+            / "src"
+            / "model"
+            / "__fixtures__"
+            / "morris_suggested_factor_drafts_v1.json"
+        ).read_text(encoding="utf-8")
+    )
+    drafts = suggested_factor_drafts(_r136_base_config())
+
+    assert [
+        {
+            "variable_key": draft.variable_key,
+            "enabled": draft.enabled,
+            "lower": draft.lower,
+            "upper": draft.upper,
+        }
+        for draft in drafts
+    ] == fixture["drafts"]
 
 
 def test_request_builder_round_trips_full_config_and_is_non_mutating() -> None:
