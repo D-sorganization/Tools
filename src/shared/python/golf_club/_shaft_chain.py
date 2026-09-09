@@ -10,7 +10,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from ._grip_contracts import finite_array
+from ._grip_contracts import _node_index, finite_array
 from ._shaft_point_load import SpatialPointLoad
 from ._shaft_se3 import _rigid_pose, twist_ad
 from ._shaft_section import SectionElement
@@ -51,15 +51,9 @@ class IndexedPointLoad:
     load: SpatialPointLoad
 
     def __post_init__(self) -> None:
-        if isinstance(self.node, (bool, np.bool_)) or not isinstance(
-            self.node, (int, np.integer)
-        ):
-            raise TypeError("load node must be an integer")
-        if self.node < 0:
-            raise ValueError("load node must be nonnegative")
+        object.__setattr__(self, "node", _node_index(self.node))
         if not isinstance(self.load, SpatialPointLoad):
             raise TypeError("load must be a SpatialPointLoad")
-        object.__setattr__(self, "node", int(self.node))
 
 
 @dataclass(frozen=True)

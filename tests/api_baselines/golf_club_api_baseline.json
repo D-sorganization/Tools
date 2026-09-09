@@ -2974,6 +2974,16 @@
     "explicit_all": true,
     "symbols": {}
   },
+  "_shaft_moving_chain.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_moving_contracts.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
   "_shaft_point_load.py": {
     "__all__": [],
     "explicit_all": true,

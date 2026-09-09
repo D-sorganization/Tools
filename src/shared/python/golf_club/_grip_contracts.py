@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from dataclasses import dataclass
 
 import numpy as np
@@ -31,6 +32,23 @@ def finite_array(value: object, shape: tuple[int, ...], name: str) -> np.ndarray
     if not np.all(np.isfinite(array)):
         raise ValueError(f"{name} must be finite")
     return array
+
+
+def _finite_norm(matrix: np.ndarray, name: str) -> float:
+    """Finite Frobenius/Euclidean norm without squaring tiny or large entries."""
+    value = math.hypot(*np.abs(matrix).ravel())
+    if not math.isfinite(value):
+        raise ValueError(f"{name} is nonfinite")
+    return value
+
+
+def _node_index(value: object) -> int:
+    """Validate a nonnegative material-node index without boolean coercion."""
+    if isinstance(value, (bool, np.bool_)) or not isinstance(value, (int, np.integer)):
+        raise TypeError("node must be an integer")
+    if value < 0:
+        raise ValueError("node must be nonnegative")
+    return int(value)
 
 
 def vector6(value: object, name: str) -> Vector6:

@@ -7,7 +7,7 @@ from dataclasses import dataclass
 
 import numpy as np
 
-from ._grip_contracts import finite_array
+from ._grip_contracts import _finite_norm, finite_array
 from ._shaft_damped_spectrum import DampedPencil, _validated_damped_generator
 from ._shaft_spectrum import SpectrumScales
 
@@ -81,10 +81,7 @@ class FrequencyIntervalAssessment:
 
 def _norm(matrix: np.ndarray) -> float:
     """Scaled hypot avoids squaring tiny/large entries in the Frobenius norm."""
-    result = math.hypot(*np.abs(matrix).ravel())
-    if not math.isfinite(result):
-        raise ValueError("frequency interval norm is nonfinite")
-    return result
+    return _finite_norm(matrix, "frequency interval norm")
 
 
 def _product(*values: float) -> float:

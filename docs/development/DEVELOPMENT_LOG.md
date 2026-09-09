@@ -154,9 +154,9 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/5072-prestressed-shaft
 - **Paths:** `src/shared/python/golf_club/*shaft*`, `src/shared/python/golf_club/_beam_fem.py`, `src/shared/python/golf_club/*grip*`, `src/shared/python/golf_club/*rotating_body*`, `tests/shared/python/golf_club/test_shaft*.py`, `tests/shared/python/golf_club/test_rotating_body.py`, `tests/shared/python/golf_club/test_grip_impedance.py`, `docs/development/impact-acoustics/*`
 - **Started:** 2026-09-07
-- **Last verified:** 2026-09-09 (published band: 59 Windows / 956 Linux golf-signal-API passes, two CAD skips; later-main integration: 145 Windows passes in 17.03 s, actual mypy for all 11 incoming Python files, root Ruff for 3,815 formatted files, all nine final gates pass)
-- **Summary:** Private complete-band coverage is published as 842c39890 through all normal hooks, remote verified. Main 0f2dfe3fd mocap integration preserves every shaft source/test/API, reconciles both task handoffs and regenerates canonical inventory. Exact binary endpoint bookkeeping and explicit budgets do not imply physical bandwidth or stability.
-- **Next step:** Finish normal merge commit/publication, then full/reduced band comparisons, rotating/moving nonlinear work and flexible contact/radiation/consumer integration. Physical/blinded evidence and final theory synthesis remain required. See FREQUENCY_BANDS.md and PROGRESS.md.
+- **Last verified:** 2026-09-09 (91 combined Windows moving/frequency tests pass in 7.49 s; actual mypy passes nine Python files; final Linux run 988 passes in 87.28 s with two CAD skips and three absent-plugin warnings; Ruff and nine governance gates pass)
+- **Summary:** Published base d582b103b includes frequency bands and current mocap main. New private inertial moving-chain acceleration retains finite geometry, section/head inertia, moving-grip inertance and both work ports. Independent momentum/energy controls pass; a tiny-force corrupted-solve RED is repaired by sharing the existing hypot norm. Existing API data is unchanged.
+- **Next step:** Complete normal publication, then actual moving trajectories, joint convergence and full/reduced bands before flexible contact/radiation/consumer integration and physical/blinded final synthesis. See NONLINEAR_MOVING_CHAIN.md and PROGRESS.md.
 
 ### DL-0055 · Qualified Lumped Impact Dynamics
 

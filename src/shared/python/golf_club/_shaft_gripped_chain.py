@@ -7,7 +7,7 @@ from typing import cast
 
 import numpy as np
 
-from ._grip_contracts import finite_array
+from ._grip_contracts import _node_index, finite_array
 from ._grip_finite_response import FinitePoseGrip
 from ._grip_moving_kinematics import MaterialPointMotion
 from ._grip_stationary import require_stationary_motion, stationary_grip_operators
@@ -31,16 +31,10 @@ class GripAttachment:
     anchor: MaterialPointMotion
 
     def __post_init__(self) -> None:
-        if isinstance(self.node, (bool, np.bool_)) or not isinstance(
-            self.node, (int, np.integer)
-        ):
-            raise TypeError("grip node must be an integer")
-        if self.node < 0:
-            raise ValueError("grip node must be nonnegative")
+        object.__setattr__(self, "node", _node_index(self.node))
         if not isinstance(self.grip, FinitePoseGrip):
             raise TypeError("grip must be FinitePoseGrip")
         require_stationary_motion(self.anchor)
-        object.__setattr__(self, "node", int(self.node))
 
     def root_motion(self, pose: object) -> MaterialPointMotion:
         """Construct relative-rest state in this attachment's declared observer."""

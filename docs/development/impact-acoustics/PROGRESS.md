@@ -4,7 +4,46 @@ The user authorized completion of the full planned program, not merely its
 planning deliverables. All three parent epics remain open. Physical and
 perceptual validation cannot be inferred from numerical fixtures.
 
-## Current Frequency-Band Work (2026-09-09)
+## Current Nonlinear Moving-Grip Assembly (2026-09-09)
+
+Published base d582b103bb1fdf6b685b15daa2369cf0648f94f3 includes the frequency-band
+implementation and main 0f2dfe3fd integration, with every normal hook passing and
+remote SHA verified. New private inertial moving-chain contracts/acceleration
+compose the existing finite-pose section/head inertia and moving-grip work ports.
+No root is clamped; unknown grip inertance enters the mass solve. Known anchor
+acceleration, geometric velocity terms, applied forces/couples and both port
+powers are retained. This evaluates instantaneous nonlinear acceleration and
+energy; it is not a trajectory or physical/acoustic qualification.
+
+Missing-module RED preceded production implementation. Initial 15 controls pass
+in 6.79 s. Fourteen independent momentum/frame/scaling/domain controls pass in
+8.00 s. A deliberately inaccurate 1e-180 N solve then fails the new refusal test
+because squared norms hide its residual (one failed/one passed, 7.14 s). The
+shared hypot norm fixes that defect without changing frequency-interval norm
+semantics. All 89 combined moving/frequency Windows cases pass in 7.06 s. Two
+additional zero-spin/loaded-corotation controls pass in 8.79 s, with tighter
+predeclared equilibrium residuals and unchanged acceleration tolerances. Actual
+mypy passes all nine changed Python files. Existing parsed public API data is
+identical; only two private empty-export modules are added.
+
+The first Linux scientific snapshot c2d3725dd59a78b94bd58480d152c98ffebd1809
+passes 986 golf/signal/API tests with two CAD skips and three absent-plugin
+warnings in 90.33 s. The final expanded snapshot is
+11c64ccea5a6e05b1b68fc0d15d032fcf1d7c78c; its src/tests/conftest/pyproject tar
+is 60,784,640 bytes, SHA256
+79318938e7cd0cc3cd5074135ab5635da61031b54bc32a364c5fd8aed5b4a672.
+Its native run passes 988 tests, with two CAD skips and three absent-plugin
+warnings in 87.28 s. The final combined Windows run passes 91 in 7.49 s.
+Repository Ruff passes (3,819 formatted files). The native log is
+/home/dieterolson/.cache/codex-impact/moving-chain-11c64ccea/scientific.log.
+All nine final governance gates pass after canonical inventory regeneration;
+normal publication remains. Full trajectory integration,
+moving/rotating joint convergence, continuous full/reduced port errors, flexible
+contact, radiation/calibration, exact-pin consumers and physical/blinded final
+theory synthesis remain required. See NONLINEAR_MOVING_CHAIN.md for equations,
+primary sources, assumptions and evidence limits.
+
+## Previous Published Frequency-Band Work (2026-09-09)
 
 Repository API access recovered at 14:26 UTC; an installation credential cannot
 read `/user`, but issue access and lease creation work. The unheld #5072 lease

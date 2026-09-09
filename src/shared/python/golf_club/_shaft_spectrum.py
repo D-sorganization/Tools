@@ -82,20 +82,14 @@ def _require_skew(gyro: np.ndarray, tolerance: float) -> None:
         raise ValueError("gyroscopic matrix must be skew symmetric")
 
 
-def _general_generator(
-    mass: object, velocity: object, stiffness: object, scales: SpectrumScales
-) -> np.ndarray:
-    """Shared positive-mass kernel; callers qualify the velocity coefficient."""
+def _validated_mass(mass: object, scales: SpectrumScales) -> np.ndarray:
+    """Share unchanged mass-domain checks between spectra and acceleration solves."""
     if not isinstance(scales, SpectrumScales):
         raise TypeError("scales must be SpectrumScales")
-    if scales.time_s**2 == 0:
-        raise ValueError("time scale squared must be numerically representable")
     shape = np.asarray(mass).shape
     if len(shape) != 2 or shape[0] == 0 or shape[0] != shape[1]:
         raise ValueError("mass must be a nonempty square matrix")
     inertia = finite_array(mass, shape, "mass")
-    transport = finite_array(velocity, shape, "velocity coefficient")
-    tangent = finite_array(stiffness, shape, "stiffness")
     tolerance = scales.residual_tolerance
     if np.linalg.norm(inertia - inertia.T) > tolerance * np.linalg.norm(inertia):
         raise ValueError("mass must be symmetric within the declared tolerance")
@@ -106,7 +100,19 @@ def _general_generator(
         or eigenvalues[0] / eigenvalues[-1] <= scales.mass_rcond_floor
     ):
         raise ValueError("mass must be positive definite and numerically resolved")
-    size = shape[0]
+    return inertia
+
+
+def _general_generator(
+    mass: object, velocity: object, stiffness: object, scales: SpectrumScales
+) -> np.ndarray:
+    """Shared positive-mass kernel; callers qualify the velocity coefficient."""
+    inertia = _validated_mass(mass, scales)
+    if scales.time_s**2 == 0:
+        raise ValueError("time scale squared must be numerically representable")
+    transport = finite_array(velocity, inertia.shape, "velocity coefficient")
+    tangent = finite_array(stiffness, inertia.shape, "stiffness")
+    size = len(inertia)
     generator = np.zeros((2 * size, 2 * size))
     generator[:size, size:] = np.eye(size)
     generator[size:, :size] = -(scales.time_s**2) * np.linalg.solve(inertia, tangent)
