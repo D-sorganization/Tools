@@ -2889,6 +2889,11 @@
     "explicit_all": true,
     "symbols": {}
   },
+  "_shaft_frequency_interval.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
   "_shaft_galerkin.py": {
     "__all__": [],
     "explicit_all": true,

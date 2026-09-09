@@ -114,7 +114,8 @@ cases pass in 86.44 s. The corresponding bending/axial/API suite passes all
 21 tests on Linux in 294.88 s (three unavailable-plugin configuration warnings),
 using the preserved Python 3.11.15/NumPy 2.3.5/SciPy 1.15.3 environment and one
 BLAS/OMP/MKL thread. Repository Ruff 0.14.10 passes (3,798 formatted files).
-Final inventory/governance and publication remain. No production calculation
+All nine final inventory/governance gates and normal publication hooks pass;
+536ca60ebd4c5d2802245a7753e65f034a1f5706 is remotely verified. No production calculation
 or public API changes require a new runtime-behavior implementation.
 
 | Elements | Retained planar modes | Max modal error against full mesh | Max total error against continuum |

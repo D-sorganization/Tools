@@ -4,10 +4,14 @@ The user authorized completion of the full planned program, not merely its
 planning deliverables. All three parent epics remain open. Physical and
 perceptual validation cannot be inferred from numerical fixtures.
 
-Latest published shaft checkpoint: Galerkin reduction
-5ea22307df76355324a9fd9d7f125e1423e5f542, through all normal hooks and remote
+Latest published shaft checkpoint: bending continuum verification
+536ca60ebd4c5d2802245a7753e65f034a1f5706, through all normal hooks and remote
 SHA verified. Classifier PR #5103 now publishes be38a827a51755de486c58446115f6acc8543103,
 is mergeable and awaits protected CI; its current Python 3.11 rate shard passes.
+
+## Current Frequency-Interval Qualification
+
+T3 #5072: bending continuum verification is published at 536ca60eb through all normal hooks. New conditional frequency-interval inverse bounds retain the center solve defect, coefficient uncertainty, separate G/C and nonsymmetric K. All 23 Windows controls pass in 3.30 s, including hidden-pole refusal and the existing gripped-shaft magnitude/phase disk; actual mypy and scoped Ruff pass. See FREQUENCY_INTERVALS.md. All 920 Linux golf/signal/API tests pass in 220.12 s, with two optional CAD skips and three plugin warnings. Repository Ruff and all nine final gates pass; normal publication remains. This is conditional numerical evidence, not certified arithmetic or physical/acoustic bandwidth. Classifier #5103 head be38a827a remains pending CI. Moving/rotating nonlinear work, flexible contact, radiation/calibration and physical/blinded evidence remain open.
 
 ## Current Bending Continuum Verification
 
@@ -18,15 +22,17 @@ passive cycle power pass. Four/eight/sixteen elements converge at five selected
 frequencies through 40 rad/s (6.37 Hz), with maximum fine-mesh component error
 0.832%. Joint mesh/modal comparisons retain separate truncation and continuum
 errors, including a nonmonotone total-error example. All 12 bending/axial tests
-pass in 86.44 s. All 21 Linux bending/axial/API checks pass in 294.88 s (three plugin warnings); final inventory/governance/publication remain.
+pass in 86.44 s. All 21 Linux bending/axial/API checks pass in 294.88 s (three plugin warnings); all nine gates and normal publication hooks pass for 536ca60eb.
 See BENDING_CONTINUUM.md for derivation, primary source, metrics and limits.
 
-The #5114 Python 3.12.14/Qt 6.11.2 isolated viewer passes; 45 mixed GUI cases
-pass with six workers (112.60 s), and three Club Tester cases pass under coverage
-with four workers (74.67 s). This does not reproduce the old CI worker failure
-or unfinished viewer case. No source fix or timeout waiver was made. The
-complete additional evidence is in issue comment 5597249096; targeted native
-archives and runtimes remain preserved outside git.
+The #5114 full Python 3.12.14/Qt 6.11.2 covered four-worker run reproduces
+worker loss: 2,096 passed, 28 skipped, one worker-loss failure followed by
+xdist scheduling INTERNALERROR after 680.62 s. The reported test body had
+already passed. It passes alone (14.88 s), its ten-case file passes (39.65 s),
+and its two preceding files plus that file pass all 30 cases (20.52 s), all
+with coverage and unchanged timeouts. Ordering/concurrency/teardown causality
+remains unresolved; no source fix is claimed. Preserve native exact-source
+archives, environments and logs; see issue comment 5597785150.
 
 All parent epics remain open. Continuous-band and loaded rotating qualification,
 moving nonlinear work, flexible contact, calibration/radiation, exact-pin
