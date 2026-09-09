@@ -439,6 +439,6 @@ nonnormal transient amplification; it does not qualify a driven swing or physica
 energy. RED missing implementation and unresolved robust margin both become GREEN.
 All 39 decay cases and 731 Linux golf/API tests pass; two optional CAD skips and
 three unavailable-plugin warnings remain. Two-module hook-style mypy and scoped
-Ruff pass. All nine final structural/manual gates and repository Ruff pass (3,759 files). The old inventory classifier misses this calculation: integrate #5103 before combined delivery, without granting scientific authority. See `AUTONOMOUS_DECAY.md`; normal delivery follows.
+Ruff pass. All nine final structural/manual gates and repository Ruff pass (3,759 files). The old inventory classifier misses this calculation: integrate #5103 before combined delivery, without granting scientific authority. See `AUTONOMOUS_DECAY.md`; published at 58f33e403 through all normal hooks, with remote SHA verified.
 The remaining program includes operating-model integration, time-varying dynamics,
 modal bandwidth, nonlinear impact, head radiation and physical/blinded acoustics.

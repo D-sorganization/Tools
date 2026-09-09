@@ -80,8 +80,9 @@ All nine final manual/inventory/handoff gates and repository Ruff 0.14.10 pass
 The old inventory classifier labels this numerical module non-calculation;
 this is a known false negative, not accepted scientific categorization. Apply
 the AST classification correction in #5103 before combined delivery, retaining
-provisional calculation authority and publication blockers. Normal delivery
-hooks follow.
+provisional calculation authority and publication blockers. Published source
+58f33e403be065927ce459b7713bfdaa256d1b84 passes all normal commit/push hooks,
+including type, security, unit and dependency-audit gates; remote SHA is verified.
 Keep the full T3 and impact/acoustic program open. Next: attach qualification
 to explicitly selected operating models, time-varying/transient response,
 validated modal bandwidth, nonlinear contact and physical acoustic evidence.

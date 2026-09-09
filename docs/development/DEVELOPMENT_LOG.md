@@ -29,7 +29,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-07
 - **Last verified:** 2026-09-08 (39 autonomous decay controls; 731 Linux golf/API passes in 284.12 s, two optional CAD skips and three unavailable-plugin warnings; two-module hook-style mypy and scoped Ruff pass)
 - **Summary:** Response 12bcf3d83 and spectra 97d46055c are published. New constant homogeneous ODE assessment shares plant validation, recomputes Lyapunov dissipation and qualifies a coordinate-dependent envelope with explicit numerical/error margins. Independent scalar and nonnormal trajectories, critical damping and unresolved-margin refusal pass after recorded RED tests.
-- **Next step:** All nine final structural/manual gates and repository Ruff pass; publish autonomous assessment through normal hooks; continue operating-model integration, time-varying stability, transient/bandwidth and nonlinear evolution. UD #9826 native/publication CI passes; separate shooting defect #9830 remains. #8920/#8556 retain physical gates; integrate inventory #5103 before combined delivery.
+- **Next step:** All nine final structural/manual gates and repository Ruff pass; autonomous assessment 58f33e403 is published through all normal hooks with remote SHA verified; continue operating-model integration, time-varying stability, transient/bandwidth and nonlinear evolution. UD #9826 native/publication CI passes; separate shooting defect #9830 remains. #8920/#8556 retain physical gates; integrate inventory #5103 before combined delivery.
 
 ### DL-0055 · Qualified Lumped Impact Dynamics
 
