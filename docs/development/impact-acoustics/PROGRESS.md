@@ -1,3 +1,15 @@
+## Exact Provider Consumer Sweep (2026-09-09)
+
+Tools 0cd6dce22 passes every Python shard and both aggregate versions, plus
+UpstreamDrift consumer, wheel/browser and quality checks. Private Gasification
+checkout is the remaining failed check. UD #9916 independently exposes six
+provider migration defects, including an obsolete Function Generator module
+in the shared launcher YAML. The canonical Tools manifest now uses the existing
+shared widget registration. TDD records one failing control before repair and
+16 passing Function Generator GUI/engine tests afterward. The repair changes
+no mechanics. Consumer Cargo/inventory/catalog and explicit realtime migration
+debt are being reconciled in the separate UD worktree. Physical work remains.
+
 ## PR #5133 Second CI Repair (2026-09-09)
 
 Published 00d17e7f9 passes protected quality and divergence checks. The full

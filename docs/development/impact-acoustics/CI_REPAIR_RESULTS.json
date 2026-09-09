@@ -185,5 +185,25 @@
       "junit_sha256": "4ec3d24ef0ca74c1461fa9373811cf4709c8031714463dd936b468caee4b6664"
     },
     "repair": "Independent fourth-order momentum stencils with outer and inner refinement, same original tolerance and tighter 1e-7 reference checks, plus 10% acceleration-corruption control. Scaled and unscaled optimizations both must meet the same 1e-9 physical defect and success gates; direct solver-boundary controls verify normalization and physical reconstruction. No scientific solver equations or tolerances changed."
+  },
+  "protected_0cd6dce22": {
+    "revision": "0cd6dce22f5762ee0c6342000fb035eaa76579d5",
+    "checks_observed_utc": "2026-09-09T23:41:00Z",
+    "all_python_shards_and_aggregates": "success",
+    "upstreamdrift_consumer": "success",
+    "wheel_browser_quality_and_manual_checks": "success",
+    "gasification_consumer": "failure: private repository checkout/access; no bypass"
+  },
+  "function_generator_manifest_repair": {
+    "trigger": "UpstreamDrift #9916 unit-test gate at d2760f05c: launcher target no longer exists after Tools #5110 moved the widget",
+    "tdd": "New manifest/registration/source resolution control fails before the YAML repair",
+    "change": "Point the canonical manifest at shared.python.ui.function_generator_widget, matching gui_registration.py",
+    "windows": {
+      "passed": 16,
+      "seconds": 3.41,
+      "warnings": 0,
+      "junit_sha256": "3192074ea3f6d2f1eb298cf3ccf045e1e7d6ed3a5bbf767d38acd493771c6eaf"
+    },
+    "scientific_effect": "No mechanics, tolerances, physical qualification or public signatures changed."
   }
 }
