@@ -15,11 +15,11 @@ from scipy.signal import hilbert
 
 from shared.python.swing_sim.vibroacoustics.measurement import WaveformRecording
 
+from ._spectral_frames import detrended as _detrended
+from ._spectral_frames import finite_output as _finite_output
+from ._spectral_frames import spectral_frames as _spectral_frames
+
 DEFAULT_SEGMENT_LENGTH = 4096
-
-
-def _detrended(samples: np.ndarray) -> np.ndarray:
-    return samples - float(np.mean(samples))
 
 
 def _samples(recording: WaveformRecording) -> np.ndarray:
@@ -48,45 +48,28 @@ def psd_welch(
 ) -> tuple[np.ndarray, np.ndarray]:
     """Return the one-sided Welch PSD ``(frequencies_hz, psd)``.
 
+    Each complete segment has its own mean removed before applying a symmetric
+    Hann window. Stride is segment_length//2; no zero-padded tail is included.
     Power is normalized so ``sum(psd) * df`` estimates the mean square
     of a stationary signal (Parseval-consistent within window and
     segmenting tolerance).
 
     Raises:
-        ValueError: If ``segment_length`` is not a positive integer no
-            longer than the recording.
+        ValueError: If ``segment_length`` is not an integer >= 3 no longer
+            than the recording, or a numerical result is nonfinite.
     """
     samples = _samples(recording)
-    if (
-        isinstance(segment_length, bool)
-        or not isinstance(segment_length, int)
-        or segment_length < 2
-    ):
-        raise ValueError("segment_length must be an integer >= 2")
-    if segment_length > samples.size:
-        raise ValueError(
-            f"segment_length {segment_length} exceeds recording length {samples.size}"
-        )
-    detrended = _detrended(samples)
-    step = segment_length // 2
-    count = 1 + (detrended.size - segment_length) // step
-    window = np.hanning(segment_length)
-    window_power = float(np.sum(window**2))
-    frames = np.stack(
-        [
-            detrended[start : start + segment_length] * window
-            for start in range(0, count * step, step)
-        ]
+    spectrum, frequencies, divisor = _spectral_frames(
+        samples, recording.sample_rate_hz, segment_length
     )
-    spectrum = np.fft.rfft(frames, axis=1)
-    periodogram = np.abs(spectrum) ** 2 / (recording.sample_rate_hz * window_power)
-    if segment_length % 2 == 0:
-        periodogram[:, 1:-1] *= 2.0
-    else:
-        periodogram[:, 1:] *= 2.0
-    psd = np.mean(periodogram, axis=0)
-    frequencies = np.fft.rfftfreq(segment_length, d=1.0 / recording.sample_rate_hz)
-    return frequencies, psd
+    with np.errstate(over="ignore", invalid="ignore", divide="ignore"):
+        periodogram = np.abs(spectrum) ** 2 / divisor
+        if segment_length % 2 == 0:
+            periodogram[:, 1:-1] *= 2.0
+        else:
+            periodogram[:, 1:] *= 2.0
+        density = np.mean(periodogram, axis=0)
+    return frequencies, _finite_output(density)
 
 
 @dataclass(frozen=True)
@@ -111,7 +94,9 @@ def estimate_modal_decay(recording: WaveformRecording) -> ModalDecayFit:
     """
     samples = _samples(recording)
     analytic = hilbert(_detrended(samples))
-    envelope = np.abs(analytic)
+    envelope = _finite_output(np.abs(analytic))
+    if not np.any(envelope > 0):
+        raise ValueError("ring-down must carry nonzero energy")
     above = envelope >= float(np.max(envelope)) * 1e-2
     start, stop = _longest_true_run(above)
     if stop - start < 8:
@@ -125,7 +110,7 @@ def estimate_modal_decay(recording: WaveformRecording) -> ModalDecayFit:
     peak_bin = int(np.argmax(spectrum[1:])) + 1
     omega_d = 2.0 * np.pi * float(frequencies[peak_bin])
     omega_n = float(np.sqrt(omega_d**2 + slope**2))
-    if omega_n <= 0.0:
+    if not np.isfinite(omega_n) or not np.isfinite(slope) or omega_n <= 0.0:
         raise ValueError("modal frequency must be positive")
     return ModalDecayFit(
         natural_frequency_hz=omega_n / (2.0 * np.pi),
@@ -146,7 +131,9 @@ def estimate_frf_h1(
 
     Raises:
         ValueError: If the recordings differ in length or sampling rate,
-            or ``segment_length`` is invalid.
+            or ``segment_length`` is invalid, any excitation bin is zero, or
+            the numerical result is nonfinite. Positive excitation alone does not
+            qualify signal-to-noise ratio, identifiability or uncertainty.
     """
     force = _samples(force_recording)
     response = _samples(response_recording)
@@ -154,30 +141,17 @@ def estimate_frf_h1(
         raise ValueError("recordings must be same length, one-dimensional arrays")
     if force_recording.sample_rate_hz != response_recording.sample_rate_hz:
         raise ValueError("recordings must share one sample rate")
-    if (
-        isinstance(segment_length, bool)
-        or not isinstance(segment_length, int)
-        or segment_length < 2
-    ):
-        raise ValueError("segment_length must be an integer >= 2")
-    if segment_length > force.size:
-        raise ValueError(
-            f"segment_length {segment_length} exceeds recording length {force.size}"
-        )
-    step = segment_length // 2
-    count = 1 + (force.size - segment_length) // step
-    window = np.hanning(segment_length)
-    sxx = np.zeros(segment_length // 2 + 1)
-    syx = np.zeros(segment_length // 2 + 1, dtype=complex)
-    for start in range(0, count * step, step):
-        x_frame = _detrended(force[start : start + segment_length]) * window
-        y_frame = _detrended(response[start : start + segment_length]) * window
-        x_spectrum = np.fft.rfft(x_frame)
-        y_spectrum = np.fft.rfft(y_frame)
-        sxx += np.abs(x_spectrum) ** 2
-        syx += np.conj(x_spectrum) * y_spectrum
-    transfer = syx / sxx
-    frequencies = np.fft.rfftfreq(
-        segment_length, d=1.0 / force_recording.sample_rate_hz
+    x_spectrum, frequencies, _ = _spectral_frames(
+        force, force_recording.sample_rate_hz, segment_length
     )
-    return frequencies, np.abs(transfer)
+    y_spectrum, _, _ = _spectral_frames(
+        response, response_recording.sample_rate_hz, segment_length
+    )
+    with np.errstate(over="ignore", invalid="ignore"):
+        sxx = _finite_output(np.mean(np.abs(x_spectrum) ** 2, axis=0))
+        syx = _finite_output(np.mean(np.conj(x_spectrum) * y_spectrum, axis=0))
+    if np.any(sxx <= 0):
+        raise ValueError("H1 requires nonzero excitation in every returned bin")
+    with np.errstate(over="ignore", invalid="ignore", divide="ignore"):
+        magnitude = np.abs(syx / sxx)
+    return frequencies, _finite_output(magnitude)

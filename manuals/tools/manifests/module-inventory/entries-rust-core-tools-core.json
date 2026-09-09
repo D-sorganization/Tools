@@ -3318,6 +3318,7 @@
           "src/shared/python/signal_toolkit/tests/test_series.py",
           "src/shared/python/signal_toolkit/tests/test_signal_toolkit.py",
           "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
+          "src/shared/python/swing_sim/vibroacoustics/tests/test_signal_boundaries.py",
           "src/signal_processing_studio/tests/test_signal_processing_studio.py",
           "tests/architecture/test_layer_boundaries.py",
           "tests/architecture/test_tools_module_inventory_contract.py",
