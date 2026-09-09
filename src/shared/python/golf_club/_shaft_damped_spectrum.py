@@ -60,6 +60,23 @@ def _require_damping(damping: np.ndarray, tolerance: float) -> None:
         raise ValueError("damping must be positive semidefinite within tolerance")
 
 
+def _validated_damped_generator(
+    pencil: DampedPencil, scales: SpectrumScales
+) -> tuple[np.ndarray, tuple[np.ndarray, ...]]:
+    """Share unchanged plant validation between spectra and decay assessment."""
+    if not isinstance(pencil, DampedPencil) or not isinstance(scales, SpectrumScales):
+        raise TypeError("expected DampedPencil and SpectrumScales")
+    mass, gyro, damping, stiffness = pencil.arrays()
+    try:
+        with np.errstate(over="raise", invalid="raise", divide="raise"):
+            _require_skew(gyro, scales.residual_tolerance)
+            _require_damping(damping, scales.residual_tolerance)
+            generator = _general_generator(mass, gyro + damping, stiffness, scales)
+    except (np.linalg.LinAlgError, FloatingPointError, OverflowError) as error:
+        raise ValueError("damped generator numerical evaluation failed") from error
+    return generator, (mass, gyro, damping, stiffness)
+
+
 def frozen_damped_spectrum(
     pencil: DampedPencil, scales: SpectrumScales
 ) -> FrozenSpectrum:
@@ -70,17 +87,10 @@ def frozen_damped_spectrum(
     nonsymmetric stiffness, growing modes, neutral modes and defective bases.
     Frozen eigenvalues alone never establish swing/nonlinear stability.
     """
-    if not isinstance(pencil, DampedPencil) or not isinstance(scales, SpectrumScales):
-        raise TypeError("expected DampedPencil and SpectrumScales")
-    mass, gyro, damping, stiffness = pencil.arrays()
+    generator, coefficients = _validated_damped_generator(pencil, scales)
     try:
         with np.errstate(over="raise", invalid="raise", divide="raise"):
-            _require_skew(gyro, scales.residual_tolerance)
-            _require_damping(damping, scales.residual_tolerance)
-            generator = _general_generator(mass, gyro + damping, stiffness, scales)
-            result = _spectrum_from_generator(
-                generator, (mass, gyro, damping, stiffness), scales
-            )
+            result = _spectrum_from_generator(generator, coefficients, scales)
     except (np.linalg.LinAlgError, FloatingPointError, OverflowError) as error:
         raise ValueError("damped spectrum numerical evaluation failed") from error
     _validate_result(result, scales.residual_tolerance)

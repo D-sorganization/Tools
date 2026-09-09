@@ -428,4 +428,17 @@ protected-main claim reconciliation bug; #8920/#8556 remain parameter gates.
 
 ## Grip Theory Merge and Claim Preservation Follow-Up
 
-AffineDrift #4298 merged normally as `d7e51655d` after all required checks passed. Its auxiliary benchmark workflow produced no measurements despite a green workflow status; no performance result is claimed. UpstreamDrift #9825 now exercises the actual registration path: six new failures become 11 focused passes after reusing the preservation helper. A fresh exact native regeneration retains the old numerical results and restores 14-source provenance; strict regression and publication qualification remain in progress. No physical or blinded evidence has been added.
+AffineDrift #4298 merged normally as `d7e51655d` after all required checks passed. Its auxiliary benchmark workflow produced no measurements despite a green workflow status; no performance result is claimed. UpstreamDrift #9825 now exercises the actual registration path: six new failures become 11 focused passes after reusing the preservation helper. Native and rolling authority plus publication CI pass at e93ef5224 in PR #9826. Stale PDF regression expectations are repaired locally (all 11 publication tests pass); independent shooting defect is tracked in #9830. No physical or blinded evidence has been added.
+
+## Autonomous Decay Qualification
+
+The private constant homogeneous ODE assessment shares validated plant assembly
+with spectra and records candidate symmetry, Lyapunov residual, P/Q conditioning
+and a declared operator-error margin. It bounds the scaled state norm, including
+nonnormal transient amplification; it does not qualify a driven swing or physical
+energy. RED missing implementation and unresolved robust margin both become GREEN.
+All 39 decay cases and 731 Linux golf/API tests pass; two optional CAD skips and
+three unavailable-plugin warnings remain. Two-module hook-style mypy and scoped
+Ruff pass. All nine final structural/manual gates and repository Ruff pass (3,759 files). The old inventory classifier misses this calculation: integrate #5103 before combined delivery, without granting scientific authority. See `AUTONOMOUS_DECAY.md`; normal delivery follows.
+The remaining program includes operating-model integration, time-varying dynamics,
+modal bandwidth, nonlinear impact, head radiation and physical/blinded acoustics.

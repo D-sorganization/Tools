@@ -27,9 +27,9 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/5072-prestressed-shaft
 - **Paths:** `src/shared/python/golf_club/*shaft*`, `src/shared/python/golf_club/_beam_fem.py`, `src/shared/python/golf_club/*grip*`, `src/shared/python/golf_club/*rotating_body*`, `tests/shared/python/golf_club/test_shaft*.py`, `tests/shared/python/golf_club/test_rotating_body.py`, `tests/shared/python/golf_club/test_grip_impedance.py`, `docs/development/impact-acoustics/*`
 - **Started:** 2026-09-07
-- **Last verified:** 2026-09-08 (published response: 665 Linux golf/API passes; new separate-G/C/all-node spectra: 49 focused passes in 20.22 s and three-module mypy; 692 Linux golf/API tests and nine final manual/type/lint gates pass)
-- **Summary:** Finite-support response is published at 12bcf3d83. Private frozen spectra now preserve separate G/C, all-node balance, support/frame metadata and shared eigensolver residual/conditioning checks. Independent rod polynomial/continuum poles, critical/unstable/semidefinite and invalid-input controls pass.
-- **Next step:** Publish the verified spectra through normal hooks, then explicit autonomous/time-varying stability, transient/bandwidth and nonlinear evolution. Follow UpstreamDrift #9825 for merged authority preservation; #8920/#8556 remain physical parameter gates. Integrate inventory #5103 before combined delivery.
+- **Last verified:** 2026-09-08 (39 autonomous decay controls; 731 Linux golf/API passes in 284.12 s, two optional CAD skips and three unavailable-plugin warnings; two-module hook-style mypy and scoped Ruff pass)
+- **Summary:** Response 12bcf3d83 and spectra 97d46055c are published. New constant homogeneous ODE assessment shares plant validation, recomputes Lyapunov dissipation and qualifies a coordinate-dependent envelope with explicit numerical/error margins. Independent scalar and nonnormal trajectories, critical damping and unresolved-margin refusal pass after recorded RED tests.
+- **Next step:** All nine final structural/manual gates and repository Ruff pass; publish autonomous assessment through normal hooks; continue operating-model integration, time-varying stability, transient/bandwidth and nonlinear evolution. UD #9826 native/publication CI passes; separate shooting defect #9830 remains. #8920/#8556 retain physical gates; integrate inventory #5103 before combined delivery.
 
 ### DL-0055 · Qualified Lumped Impact Dynamics
 
