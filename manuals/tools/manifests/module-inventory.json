@@ -291,8 +291,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-folder-tool-pro.json"
     },
     {
-      "content_sha256_lf": "23b1f5fa7ff3d63525fd3212e8fe9d761cb7a84c028a643efaf66d8eed6e6ac6",
-      "entry_count": 20,
+      "content_sha256_lf": "4597c7d229bbbae4c5c0d6d611e50fa106047c97c522002a9f8815acbcc1f678",
+      "entry_count": 17,
       "package": "src/function_generator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-function-generator.json"
     },
@@ -507,7 +507,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src.json"
     },
     {
-      "content_sha256_lf": "5bdb0f4be2cbe312c49b0983bd474076eb1f9be8b0278c726f23312910449753",
+      "content_sha256_lf": "76e2ef5b221169e758f713e6b693f520c77a1d2c6c7923764489e7d0b702e334",
       "entry_count": 180,
       "package": "src/rate_of_closure/web/src/components",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-components.json"
@@ -519,7 +519,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-hooks.json"
     },
     {
-      "content_sha256_lf": "73d6717547800757b3027fdfe24a50a75276462653ec80908c7d3656f578b142",
+      "content_sha256_lf": "f9969f69d85e5c389d3a2276b8dd04a65f1ac2d8bf48a07241ed70726babf622",
       "entry_count": 400,
       "package": "src/rate_of_closure/web/src/model",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-model.json"
@@ -741,7 +741,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-signal-toolkit.json"
     },
     {
-      "content_sha256_lf": "001a0670c1a5d6c0752822e33badd82395eb0788443bcd9cb39d3dd4f6e1cb5d",
+      "content_sha256_lf": "0a8fe76f97721eb10f83b394e6b60997974755a9a440a054c260d783ada6597c",
       "entry_count": 18,
       "package": "src/shared/python/swing_sim",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim.json"
@@ -837,8 +837,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-theme.json"
     },
     {
-      "content_sha256_lf": "24e3ad4637932b968c13481722d5191f0e7b558235077c4878ae9f5360a1ca4a",
-      "entry_count": 4,
+      "content_sha256_lf": "99f665aac5512ccd2e143d2165799da4bcd0f4b644fbbfcce37371cb2b4e6423",
+      "entry_count": 5,
       "package": "src/shared/python/ui",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-ui.json"
     },
@@ -855,7 +855,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-sidekick.json"
     },
     {
-      "content_sha256_lf": "712c75bcc57461abcbb116acac7eb54cbf61b4345855145ab166040c7f2df561",
+      "content_sha256_lf": "e06f5b54c38f6e23d3b8e81c82639c8a69a08a53b39b35e59a626d14d6928e2a",
       "entry_count": 7,
       "package": "src/signal_processing_studio",
       "path": "manuals/tools/manifests/module-inventory/entries-src-signal-processing-studio.json"

@@ -12,7 +12,7 @@ GUI_INFO = {
     "category": "Signal Processing",
     "icon": "wave",
     "pyqt6": {
-        "module": "function_generator.python.function_generator.ui.pyqt6.main_window",
+        "module": "shared.python.ui.function_generator_widget",
         "class": "FunctionGeneratorWidget",
         "dependencies": ["PyQt6", "matplotlib", "numpy"],
         "settings_app": "FunctionGenerator",

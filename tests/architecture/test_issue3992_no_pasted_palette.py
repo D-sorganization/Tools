@@ -17,7 +17,7 @@ _REPO_ROOT = Path(__file__).resolve().parents[2]
 # (repo-relative module, minimum palette literals that used to be pasted there)
 _GUARDED_SITES: tuple[tuple[str, tuple[str, ...]], ...] = (
     (
-        "src/function_generator/python/function_generator/ui/pyqt6/main_window.py",
+        "src/shared/python/ui/function_generator_widget.py",
         ("#1e1e2e", "#cdd6f4", "#89b4fa", "#45475a", "#313244"),
     ),
     (

@@ -40,7 +40,7 @@ src/financial_calculator/python/financial_calculator/ui/pyqt6/main_window.py
 src/flow_rate_converter/python/flow_rate_converter/ui/pyqt6/main_window.py
 src/folder_packer_pro/ui_tabs.py
 src/folder_tool/folder_tool_ui.py
-src/function_generator/python/function_generator/ui/pyqt6/main_window.py
+src/shared/python/ui/function_generator_widget.py
 src/humanoid_builder_gui/python/humanoid_builder_gui/ui/pyqt6/main_window.py
 src/inertia_calculator/python/inertia_calculator/ui/pyqt6/main_window.py
 src/lower_body_model/simulator.py

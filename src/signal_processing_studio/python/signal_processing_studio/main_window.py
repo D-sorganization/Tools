@@ -34,13 +34,10 @@ try:
 except ImportError:
     HAS_THEME = False
 
-# Function Generator import (may need path setup)
-try:
-    from function_generator.ui.pyqt6.main_window import FunctionGeneratorWidget
-
-    HAS_FUNC_GEN = True
-except ImportError:
-    HAS_FUNC_GEN = False
+# Function Generator widget — shared component, imported explicitly so a
+# rename or missing dependency fails loudly instead of silently dropping
+# the tab (issue #3993).
+from shared.python.ui.function_generator_widget import FunctionGeneratorWidget
 
 
 def _connect_action(action: QAction, slot: Callable[..., Any]) -> None:
@@ -76,12 +73,11 @@ class SignalProcessingStudio(*_get_base_classes()):  # type: ignore[misc]
         self.tabs = QTabWidget()
         self.setCentralWidget(self.tabs)
 
-        # Create widgets (builtin themes disabled - host provides styling)
-        if HAS_FUNC_GEN:
-            self.func_gen = FunctionGeneratorWidget(self, use_builtin_theme=False)
-            self.tabs.addTab(self.func_gen, "Function Generator")
-        else:
-            self.func_gen = None
+        # Shared Function Generator widget (builtin themes disabled — the
+        # host provides styling). The explicit module-level import makes a
+        # missing widget a loud failure, not a silently missing tab (#3993).
+        self.func_gen = FunctionGeneratorWidget(self, use_builtin_theme=False)
+        self.tabs.addTab(self.func_gen, "Function Generator")
 
         self.toolkit = SignalToolkitWidget(self, use_builtin_theme=False)
         self.tabs.addTab(self.toolkit, "Signal Toolkit")
@@ -90,18 +86,12 @@ class SignalProcessingStudio(*_get_base_classes()):  # type: ignore[misc]
         self.tabs.addTab(self.poly_gen, "Polynomial Generator")
 
         # Wire cross-widget communication
-        self.signal_bus: SignalBus | None = None
-        if self.func_gen is not None:
-            self.signal_bus = SignalBus(
-                func_gen=self.func_gen,
-                toolkit=self.toolkit,
-                poly_gen=self.poly_gen,
-                status_callback=self._update_status,
-            )
-        else:
-            self.signal_bus = None
-            # Still wire polynomial -> toolkit
-            self.poly_gen.polynomial_generated.connect(self._on_poly_fallback)
+        self.signal_bus = SignalBus(
+            func_gen=self.func_gen,
+            toolkit=self.toolkit,
+            poly_gen=self.poly_gen,
+            status_callback=self._update_status,
+        )
 
         # Create menus
         self._create_menus()

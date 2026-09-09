@@ -4,7 +4,25 @@ The user authorized completion of the full planned program, not merely its
 planning deliverables. All three parent epics remain open. Physical and
 perceptual validation cannot be inferred from numerical fixtures.
 
-## Current explicit distributed coefficient inputs (2026-09-09)
+## Current implementation review and main integration (2026-09-09)
+
+Input checkpoint 29d8c8d2592ffb63f4eec93ed971a7def177cbd4 is published through all normal hooks, remote SHA verified; #5072 comment 5607459999 records delivery. Review child #5130 is open for the numerical implementation, preserving physical requirements on #5072. Current main b0c71779d brings three orthogonal merged changes; only the generated handoff manifest conflicts and is regenerated canonically. Merge validation passes 103 Windows tests in 10.97 s, no skips, including input/legacy/API controls and incoming Morris/UI architecture tests. Root Ruff and formatting pass (3,850 files); all nine governance gates pass. Shaft source/tests and the golf API baseline are unchanged from 29d8c8d25. Normal merge publication and protected PR review remain.
+
+Both-platform input evidence remains in DISTRIBUTED_MODEL_INPUT_RESULTS.json.
+Merge validation JUnit SHA256: ad275c7af5c83876c5fb4e6289924b4da7aed0b763849e2ffc0f3c7a963bd4f6.
+The first merge-test invocation used a wrong path and ran zero tests; the
+corrected invocation above completed all 103 cases.
+
+No existing scientific kernels are changed by this merge. Preserve all incoming
+UI/Morris documentation and source; do not transfer their issue ownership.
+The #5072 lease now expires 2026-09-09T21:19:09Z. Review child #5130 is leased
+as codex/session impact-acoustics-01a07d8a-review5130 through 21:25:08Z.
+The repository ci-watch-and-fix skill is read. Fleet API hygiene takes precedence
+over its 60-second GraphQL polling recipe; use scoped REST at natural work
+breakpoints. This child can deliver reviewed numerical code without closing
+T3's measured coefficient/grip/FRF/physical-bandwidth requirements.
+
+## Previous explicit distributed coefficient inputs (2026-09-09)
 
 Lie RK4 b5e0ec32a53cb49e280e5e934dff0713daad4a1a is published through
 all normal commit/push hooks. Remote SHA and clean worktree were verified;
