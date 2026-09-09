@@ -2663,6 +2663,96 @@
       }
     },
     {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5793,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0d067a8d4d43d3a9ee3700c1f5bee9f9cadff9a819d88552eae8c09904b8150a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-MODEL-CONTRACTS-PY-5BEBF4C6D44A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_model_contracts.py",
+      "purpose": "Immutable declared distributed coefficients, independent of operating state.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1169,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f5b4984b0c5236f078243c7b031250ca21a77495e050eb48880d230ba7d5b0e6",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-MODEL-PROVIDER-PY-6A9C2C3C7465",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_model_provider.py",
+      "purpose": "Compose declared portable coefficients into existing private shaft kernels.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_model_provider.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "provisional",
       "bytes_lf": 8797,
       "classification": "calculation",
@@ -2705,6 +2795,7 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_model_provider.py",
           "tests/shared/python/golf_club/test_shaft_trajectory_geometry.py",
           "tests/shared/python/golf_club/test_shaft_work_path.py"
         ],
@@ -5308,6 +5399,100 @@
         ],
         "unit_mentions": [
           "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7066,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "22b083e991956b6f4729753cdf76af1aab1047429edde4fc9765ee46e11e3b41",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-MODEL-DATA-PY-1B42F27A5EAD",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/shaft_model_data.py",
+      "purpose": "Versioned explicit distributed-shaft coefficients and source byte identity.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "DISTRIBUTED_SHAFT_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "shaft_model_digest",
+            "signature": "model: DistributedShaftModel"
+          },
+          {
+            "kind": "function",
+            "name": "shaft_model_from_json",
+            "signature": "document: str"
+          },
+          {
+            "kind": "function",
+            "name": "shaft_model_to_json",
+            "signature": "model: DistributedShaftModel"
+          },
+          {
+            "kind": "function",
+            "name": "verify_shaft_source_bytes",
+            "signature": "model: DistributedShaftModel, blobs: Mapping[str, bytes]"
+          },
+          {
+            "kind": "re-export",
+            "name": "DistributedShaftModel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ShaftModelSection",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ShaftModelSource",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_shaft_model_data.py",
+          "tests/shared/python/golf_club/test_shaft_model_provider.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "N m",
+          "rad"
         ],
         "validation_paths": []
       }

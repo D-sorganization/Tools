@@ -4,7 +4,38 @@ The user authorized completion of the full planned program, not merely its
 planning deliverables. All three parent epics remain open. Physical and
 perceptual validation cannot be inferred from numerical fixtures.
 
-## Current Lie RK4 and Disturbed Rotating Qualification (2026-09-09)
+## Current explicit distributed coefficient inputs (2026-09-09)
+
+Lie RK4 b5e0ec32a53cb49e280e5e934dff0713daad4a1a is published through
+all normal commit/push hooks. Remote SHA and clean worktree were verified;
+issue #5072 body and comment 5607144248 record delivery. Earlier pending
+publication language below is historical.
+
+All nine preflight gates pass. Inventory confirms existing shaft-profile and
+stationary rod contracts cannot supply all coupled finite-rotation coefficients.
+New golf_club.distributed_shaft/1 reuses section/inertia/mass contracts with
+explicit source references, deterministic full-input hashes and exact artifact
+byte verification. Its model status remains unqualified even for a declared
+measurement-derived source with matching calibration bytes. A private provider
+composes these records into the existing chain without reweighting inertia.
+
+TDD: missing wire module RED (5.18 s), then 33 new controls pass (6.78 s).
+Missing provider RED (8.75 s), plus four scalar-coercion REDs (9.98 s): three
+silently accepted coercions and one coercion reaching a later inertia error.
+Existing strict array validation repairs this boundary without changing legacy
+assembly parsing. All 39 controls then pass in 7.16 s, including exact response,
+energy and anchor-power integration equivalence with the rotating fixture.
+Actual three-source mypy and scoped Ruff pass. All changed files/functions
+remain below 400/50 lines. Existing API records are identical; three new module
+records include the additive public shaft_model_data surface.
+
+Final regression passes all 73 tests on Windows (14.59 s console) and Linux (8.50 s), no skips; Linux reports three unavailable-plugin configuration warnings. Actual three-source/five-file mypy, root Ruff (3,851 files), unchanged existing API records and all nine governance gates pass. Exact archive/JUnit evidence is in DISTRIBUTED_MODEL_INPUT_RESULTS.json. Normal publication remains.
+See DISTRIBUTED_MODEL_INPUTS.md. Measured coefficient identification,
+uncertainty, grip/FRF calibration and physical bandwidth remain unqualified.
+T4 contact, T5 radiation, T6 exact-pin study consumers, UpstreamDrift studies
+and AffineDrift physical/blinded synthesis retain their full scope.
+
+## Previous Lie RK4 and Disturbed Rotating Qualification (2026-09-09)
 
 SISO checkpoint 083caaaa614fa07ff7cdf4e0f15ce5d4f032c843 is published through
 every normal commit/push hook. Remote SHA is verified; issue #5072 body and

@@ -2974,6 +2974,16 @@
     "explicit_all": true,
     "symbols": {}
   },
+  "_shaft_model_contracts.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "_shaft_model_provider.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
   "_shaft_moving_chain.py": {
     "__all__": [],
     "explicit_all": true,
@@ -5195,6 +5205,119 @@
             }
           ],
           "returns": "_LinearOperators"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "shaft_model_data.py": {
+    "__all__": [
+      "DISTRIBUTED_SHAFT_FORMAT",
+      "DistributedShaftModel",
+      "ShaftModelSection",
+      "ShaftModelSource",
+      "shaft_model_from_json",
+      "shaft_model_to_json",
+      "shaft_model_digest",
+      "verify_shaft_source_bytes"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "DISTRIBUTED_SHAFT_FORMAT": {
+        "type": "variable"
+      },
+      "DistributedShaftModel": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ShaftModelSection": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "material_frame_ids": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "frozenset[str]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ShaftModelSource": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "shaft_model_digest": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "DistributedShaftModel",
+              "default": null,
+              "kind": "arg",
+              "name": "model"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "shaft_model_from_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "document"
+            }
+          ],
+          "returns": "DistributedShaftModel"
+        },
+        "type": "function"
+      },
+      "shaft_model_to_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "DistributedShaftModel",
+              "default": null,
+              "kind": "arg",
+              "name": "model"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "verify_shaft_source_bytes": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "DistributedShaftModel",
+              "default": null,
+              "kind": "arg",
+              "name": "model"
+            },
+            {
+              "annotation": "Mapping[str, bytes]",
+              "default": null,
+              "kind": "arg",
+              "name": "blobs"
+            }
+          ],
+          "returns": "tuple[str, ...]"
         },
         "type": "function"
       }
