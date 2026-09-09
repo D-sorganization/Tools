@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "600223d1ee0baed40170a64639bc0604319b0e3f96c6e4a584616719294a681e",
+      "content_sha256_lf": "f015bc642f183f1152e6a40cee8db2fc234ee717e825235f891c08ee56469671",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "0e0a6934490a3e16ab1b930e1ae5ac62348642ff65f39c532f2aff09dff26c65",
+      "content_sha256_lf": "1022942c156fbec2b1ecd5c67fede1137de843fa70bcb95669bb3505bb2eca55",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -159,7 +159,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "1c1d12499ca9de1a79e5aba918876f849e3d96c1b4437762ad35ea495929cad8",
+      "content_sha256_lf": "3959ba5f287d8b4720488a7ca83d991619625a8582038d355eef7bf7118dc608",
       "entry_count": 104,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
@@ -387,7 +387,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
     {
-      "content_sha256_lf": "531b90e7760985903b047996cef9fa9f9ddf41eb8fce3c28017f69948243fd47",
+      "content_sha256_lf": "3e9995902bf867e34a15b15db35b1647a5c899a07db18091fd3396bf341ac2ca",
       "entry_count": 167,
       "package": "src/pendulum_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pendulum-simulator.json"
@@ -519,7 +519,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-hooks.json"
     },
     {
-      "content_sha256_lf": "f9969f69d85e5c389d3a2276b8dd04a65f1ac2d8bf48a07241ed70726babf622",
+      "content_sha256_lf": "d26322cefef70ed9375b2c1cac6a931b48ecb4f9ab13e6b0344225facbbbcd7a",
       "entry_count": 400,
       "package": "src/rate_of_closure/web/src/model",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-model.json"
@@ -639,8 +639,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-file-watcher.json"
     },
     {
-      "content_sha256_lf": "e64ade21e5a07300594bac7d52c6e307a7dcb778ea77864bdc9361290f9f722d",
-      "entry_count": 41,
+      "content_sha256_lf": "c20795b4543a5409dd1a01eec3d9af857a95efaf2c7af46ce37d4a33d193e323",
+      "entry_count": 99,
       "package": "src/shared/python/golf_club",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-golf-club.json"
     },
@@ -831,7 +831,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-vibroacoustics.json"
     },
     {
-      "content_sha256_lf": "6337b55612edc41e5a5a07e737e7b4b1491749b9abe736c5a8a23c30a78eb454",
+      "content_sha256_lf": "51887107eb51e0a3704df0a3b5e4cc287ac31d923e13af5ce885d091063edc0c",
       "entry_count": 22,
       "package": "src/shared/python/theme",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-theme.json"
@@ -855,7 +855,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-sidekick.json"
     },
     {
-      "content_sha256_lf": "e06f5b54c38f6e23d3b8e81c82639c8a69a08a53b39b35e59a626d14d6928e2a",
+      "content_sha256_lf": "caabd91f0800209c050327ec10e944c9c78f7b597e1664683479bb468b67017c",
       "entry_count": 7,
       "package": "src/signal_processing_studio",
       "path": "manuals/tools/manifests/module-inventory/entries-src-signal-processing-studio.json"

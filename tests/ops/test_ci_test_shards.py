@@ -75,6 +75,50 @@ def test_workflow_matrix_lists_exactly_the_script_shards() -> None:
     assert _workflow()["jobs"]["tests"]["strategy"]["fail-fast"] is False
 
 
+def test_shard_workers_bound_native_math_threads_before_imports() -> None:
+    """#5130: xdist must not multiply native BLAS/OpenMP thread pools."""
+    environment = _workflow()["jobs"]["tests"]["env"]
+    for variable in ("OPENBLAS_NUM_THREADS", "OMP_NUM_THREADS", "MKL_NUM_THREADS"):
+        assert environment.get(variable) == "1"
+
+
+def test_shared_science_has_one_serial_invocation_without_dropping_tests() -> None:
+    """Long convergence studies need a core each, not competing worker pools."""
+    shards = _load_shards_module()
+    shared = shards.shard_by_name("tests-shared")
+    target = "tests/shared/python/golf_club/test_shaft_rotating_disturbance.py"
+    owners = [
+        invocation for invocation in shared.invocations if invocation.claims(target)
+    ]
+    assert len(owners) == 1
+    command = shards.pytest_command(owners[0], fanout="8", quarantine=())
+    assert command[command.index("-n") + 1] == "0"
+    remaining = next(
+        invocation for invocation in shared.invocations if invocation is not owners[0]
+    )
+    assert remaining.claims("tests/shared/python/theme/test_theme_colors_derivation.py")
+    command = shards.pytest_command(remaining, fanout="8", quarantine=())
+    assert command[command.index("-n") + 1] == "8"
+
+
+def test_shared_invocations_keep_distinct_coverage_outputs(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    shards = _load_shards_module()
+    outputs = []
+
+    def run(command: list[str], **kwargs: Any) -> Any:
+        outputs.append(kwargs["env"]["COVERAGE_FILE"])
+        return type("Result", (), {"returncode": 0})()
+
+    monkeypatch.setattr(shards.subprocess, "run", run)
+    assert (
+        shards.run_shard("tests-shared", fanout="8", coverage_data="coverage-shared")
+        == 0
+    )
+    assert outputs == ["coverage-shared.0", "coverage-shared.1"]
+
+
 def test_workflow_has_no_test_allowlist_or_branch_conditionals() -> None:
     text = CI_STANDARD.read_text(encoding="utf-8")
     assert "core_tests" not in text
