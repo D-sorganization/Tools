@@ -32,6 +32,17 @@
 
 ## 2. Purpose & Mission
 
+### 2026-09-08 Association and N-View Reconstruction (#4706 / TOOLS-M7 (#4724))
+
+Subepic #4724 delivers cross-view observation association, robust multi-view triangulation, and spatial
+covariance estimation in `sidekick.lab.mocap.reconstruction`. Implements confidence-weighted Direct Linear
+Transform (DLT) triangulation with RANSAC subset consensus to reject gross outlier detections exceeding
+configurable reprojection error thresholds. Evaluates spatial covariance matrices $(J^T W J)^{-1}$ in world
+frame coordinates derived from 2-D observation pixel uncertainties and perspective projection Jacobians.
+Enforces strict fail-closed minimum-view constraints ($N \ge 2$ required; $N < 2$ emits `Availability.UNAVAILABLE`)
+and assigns categorical reconstruction qualification floors (`QUALIFIED`, `DEGRADED`, `UNQUALIFIED`) with
+explicit tracking of contributing and rejected cameras on `Landmark3D`.
+
 ### 2026-09-07 Pose Backend Adapters & Fail-Closed Licensing (#4706 / TOOLS-M6 (#4715))
 
 Subepic #4715 delivers vendor-neutral pose backend adapters, skeleton mapping, model/version/license
@@ -5838,6 +5849,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-08 | #5111 | feat(mocap, #4724 TOOLS-M7): deliver cross-view observation association, robust N-view triangulation, DLT solver with RANSAC subset consensus, spatial covariance projection, and qualification floors in `sidekick.lab.mocap.reconstruction`. |
 | 2026-09-08 | #5103 | Detect real Python scientific imports through non-executing AST inspection, refuse unparseable source, preserve non-Python/path rules, and regenerate the fully reviewed inventory delta without promoting scientific or publication approval; preserve incoming contact completion and separate complete CLI freshness/reproducibility tests under unchanged deadlines. Integrate main 21690dcfc without classification changes, document the four evolved original source hashes, and remove 12 unused incoming type-suppression comments without changing executable syntax. |
 | 2026-09-08 | #5109 | refactor(theme, #3992): single-source the Catppuccin palette — the six hand-copied stylesheet/palette sites named by the issue (function_generator, pressure_drop_calculator, steam_engine_calculator, financial_calculator, asteroid_jumper, help_system) now build their QSS and color constants from `shared.python.theme.catppuccin` (`get_stylesheet()` / `CATPPUCCIN_MOCHA`), guarded by the new `tests/architecture/test_issue3992_no_pasted_palette.py` (red on main, green here). |
 | 2026-09-08 | #5106 | Require real immutable waveform samples, signed linear alignment, shared segment-detrended spectral estimates and explicit refusal of degenerate windows, absent excitation and nonfinite results; retain public signatures and unqualified physical/calibration status. |

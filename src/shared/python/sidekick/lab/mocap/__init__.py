@@ -61,6 +61,13 @@ from .extrinsics import (
 )
 from .geometry import CoordinateFrame, RigidTransform
 from .observations import Landmark3D, PixelObservation, SkeletonDefinition
+from .reconstruction import (
+    KeypointReconstruction,
+    ReconstructionConfig,
+    ReconstructionQuality,
+    reconstruct_frame_landmarks,
+    triangulate_n_views,
+)
 from .recording import (
     FrameIndexEntry,
     RecordingIntegrityReport,
@@ -117,6 +124,7 @@ __all__ = [
     "FrameStamp",
     "IntrinsicCalibrationResult",
     "KeypointMapping",
+    "KeypointReconstruction",
     "Landmark3D",
     "LicenseCategory",
     "LicenseEvaluationResult",
@@ -135,6 +143,8 @@ __all__ = [
     "PrerecordedFrameSource",
     "ProviderLicenseManifest",
     "QueueFullError",
+    "ReconstructionConfig",
+    "ReconstructionQuality",
     "RecordingIntegrityReport",
     "RecordingPolicy",
     "RecordingReader",
@@ -164,4 +174,6 @@ __all__ = [
     "get_canonical_skeleton",
     "get_default_mediapipe_mapping",
     "load_session_manifest",
+    "reconstruct_frame_landmarks",
+    "triangulate_n_views",
 ]

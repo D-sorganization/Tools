@@ -2729,6 +2729,7 @@
           "tests/shared/python/sidekick/lab/mocap/test_calibration_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
           "tests/shared/python/signal_toolkit/test_series.py",
           "tests/shared/python/test_safe_eval.py",
           "tests/shared/python/utils/test_unit_constants.py",
@@ -2751,6 +2752,7 @@
           "tests/shared/python/sidekick/lab/mocap/test_calibration_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
           "tests/tools/test_scientific_auditor.py",
           "tests/vessel_drafter/test_contracts_unified.py"
         ]

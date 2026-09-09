@@ -5631,10 +5631,6 @@
       }
     }
   },
-  "calculators/electrical/glass_contracts.py": {
-    "__all__": [],
-    "symbols": {}
-  },
   "calculators/electrical/config.py": {
     "__all__": ["ElectrodeConfig"],
     "symbols": {
@@ -5788,6 +5784,10 @@
         }
       }
     }
+  },
+  "calculators/electrical/glass_contracts.py": {
+    "__all__": [],
+    "symbols": {}
   },
   "calculators/electrical/glass_interface.py": {
     "__all__": ["GlassPropertiesInterface"],
@@ -8377,6 +8377,7 @@
       "FrameStamp",
       "IntrinsicCalibrationResult",
       "KeypointMapping",
+      "KeypointReconstruction",
       "Landmark3D",
       "LicenseCategory",
       "LicenseEvaluationResult",
@@ -8395,6 +8396,8 @@
       "PrerecordedFrameSource",
       "ProviderLicenseManifest",
       "QueueFullError",
+      "ReconstructionConfig",
+      "ReconstructionQuality",
       "RecordingIntegrityReport",
       "RecordingPolicy",
       "RecordingReader",
@@ -8423,7 +8426,9 @@
       "evaluate_intrinsic_quality",
       "get_canonical_skeleton",
       "get_default_mediapipe_mapping",
-      "load_session_manifest"
+      "load_session_manifest",
+      "reconstruct_frame_landmarks",
+      "triangulate_n_views"
     ],
     "symbols": {
       "MOCAP_SESSION_SCHEMA_VERSION": {
@@ -9212,6 +9217,13 @@
           "methods": {}
         }
       },
+      "KeypointReconstruction": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
       "Landmark3D": {
         "type": "class",
         "info": {
@@ -9718,6 +9730,20 @@
         "type": "class",
         "info": {
           "bases": ["AcquisitionError"],
+          "methods": {}
+        }
+      },
+      "ReconstructionConfig": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "ReconstructionQuality": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -10651,6 +10677,70 @@
           ],
           "returns": "MocapSessionManifest"
         }
+      },
+      "reconstruct_frame_landmarks": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "observations",
+              "annotation": "Sequence[PixelObservation]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "camera_layout",
+              "annotation": "CameraLayout",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "camera_intrinsics",
+              "annotation": "Mapping[str, PinholeIntrinsics | FisheyeIntrinsics]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "config",
+              "annotation": "ReconstructionConfig | None",
+              "default": "None",
+              "kind": "arg"
+            }
+          ],
+          "returns": "tuple[KeypointReconstruction, ...]"
+        }
+      },
+      "triangulate_n_views": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "observations",
+              "annotation": "Sequence[PixelObservation]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "camera_layout",
+              "annotation": "CameraLayout",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "camera_intrinsics",
+              "annotation": "Mapping[str, PinholeIntrinsics | FisheyeIntrinsics]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "config",
+              "annotation": "ReconstructionConfig | None",
+              "default": "None",
+              "kind": "arg"
+            }
+          ],
+          "returns": "KeypointReconstruction"
+        }
       }
     }
   },
@@ -11316,6 +11406,10 @@
     "symbols": {}
   },
   "lab/mocap/observations.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/reconstruction.py": {
     "__all__": [],
     "symbols": {}
   },

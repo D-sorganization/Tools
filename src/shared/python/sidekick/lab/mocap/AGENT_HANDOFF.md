@@ -1,6 +1,6 @@
 # Markerless Mocap Handoff
 
-Last updated: 2026-09-07
+Last updated: 2026-09-08
 
 ## Authority
 
@@ -15,41 +15,39 @@ Tools owns the MIT vendor-neutral markerless-mocap contracts and reference algor
 - #4718 / TOOLS-M3: synchronization and recording (merged in #5059).
 - #4714 / TOOLS-M4: intrinsic calibration (merged in #5064).
 - #4721 / TOOLS-M5: extrinsic calibration (merged in #5066).
-- #4715 / TOOLS-M6: pose backend adapters (current branch).
-- #4716 and #4724 have dependency-stacked slices; none is merged or release authority.
+- #4715 / TOOLS-M6: pose backend adapters (merged in #5076).
+- #4724 / TOOLS-M7: association and N-view reconstruction (active PR).
+- #4726 / TOOLS-M8 and #4716 / TOOLS-M9 remain queued on this delivery.
 
 ## Current branch
 
-- Branch: `feat/4715-mocap-pose-adapters`
-- Base: `origin/main` at `f583d26fc`
+- Branch: `feat/4724-mocap-reconstruction`
+- Base: `origin/main` at `902328ad8`
 - Worktree: `C:\Users\diete\Repositories\Tools`
 - Pull request: Pending creation
 
 ## Delivered in this slice
 
-- Subepic #4715 (TOOLS-M6): Pose backend adapters.
-- `sidekick.lab.mocap.adapters` defines:
-  - `ProviderLicenseManifest`, `LicenseRecord`: separate fail-closed authority across 5 asset categories.
-  - `LicenseCategory`, `PermittedUse`, `ApprovalStatus`, `LicenseEvaluationResult`: typed licensing outcomes.
-  - `KeypointMapping`, `SkeletonConverter`: map backend detections to canonical `PixelObservation` records.
-  - Built-in canonical skeletons: `mediapipe-pose-33-v1` and `coco-17-v1`.
-  - `PoseBackendProtocol`: abstract base protocol for pose inference providers.
-  - `MediaPipePoseAdapter`: fail-closed wrapper returning `UNAVAILABLE_BACKEND` when uninstalled.
-  - `ExternalServicePoseAdapter`: process-separated external mocap service adapter.
-  - `SyntheticPoseAdapter`: deterministic zero-dependency test provider.
-- Unit and contract test suites in `tests/shared/python/sidekick/lab/mocap/`.
+- Subepic #4724 (TOOLS-M7): Association and N-view reconstruction.
+- `sidekick.lab.mocap.reconstruction` defines:
+  - `ReconstructionQuality`: categorical qualification floor (`QUALIFIED`, `DEGRADED`, `UNQUALIFIED`).
+  - `ReconstructionConfig`: parameterization for minimum camera views, reprojection gating, and outlier rejection.
+  - `KeypointReconstruction`: structured result holding `Landmark3D`, per-camera reprojection errors, inliers, and outliers.
+  - `triangulate_n_views`: confidence-weighted DLT multi-view triangulation with RANSAC subset consensus and spatial covariance estimation ($J^T W J)^{-1}$.
+  - `reconstruct_frame_landmarks`: frame-level multi-keypoint 3-D reconstruction.
+- Contract test suites in `tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py`.
 
 ## Required gates
 
 ```powershell
 python -m pytest tests/shared/python/sidekick/lab/mocap tests/architecture/test_mocap_authority_program.py -q
 python -m pytest tests/test_sidekick_public_api_stability.py -q
-python -m ruff format --check <changed-python-files>
-python -m ruff check <changed-python-files>
-python -m mypy <changed-python-files>
+python -m ruff format --check src/shared/python/sidekick/lab/mocap
+python -m ruff check src/shared/python/sidekick/lab/mocap
+python -m mypy src/shared/python/sidekick/lab/mocap
 ```
 
-Consumer coordination: UpstreamDrift #9069 owns schema, acquisition, sync, calibration, and adapter adoption;
+Consumer coordination: UpstreamDrift #9069 owns schema, acquisition, sync, calibration, adapter, and reconstruction adoption;
 Gasification_Model #4751 owns exact-Tools-SHA impact qualification.
 
 ## Do not
