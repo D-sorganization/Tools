@@ -94,5 +94,18 @@ skips and three absent-plugin configuration warnings in 93.83 s. Actual
 scientific archive provenance is recorded in PROGRESS.md. Repository Ruff
 passes 3,805 formatted files; all nine manual gates pass. Only one private
 empty-export API entry is added, and canonical inventory keeps provisional
-calculation/publication status. Normal commit/push hooks remain at this
-pre-publication checkpoint; the full T3 and downstream program remain open.
+calculation/publication status. Commit 842c39890755a8fcfb419b3068bf0dc58b2e97f1
+is published through all normal hooks and remote verified. The full T3 and
+downstream program remain open; no physical bandwidth is inferred.
+
+## Main integration follow-up
+
+Main 0f2dfe3fd48381bc608baf208b54c7b0d9396465 adds mocap reconstruction,
+temporal mapping and C3D work owned by the separate camera task. The merge
+preserves every shaft source/test and the golf API baseline. All 145
+Windows mocap/authority/API/band tests pass in 17.03 s; actual mypy passes
+eight incoming source files, and root Ruff passes 3,815 formatted files.
+Both root-handoff entries are retained and canonical inventory is
+regenerated. The original 956-test Linux scientific result remains tied
+to its recorded archive. All nine final governance gates and actual mypy for
+the three incoming test files also pass. Normal merge publication remains.

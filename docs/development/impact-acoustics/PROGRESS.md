@@ -29,7 +29,17 @@ The full Linux golf/signal/API run passes 956 tests, with two optional CAD
 skips and three absent-plugin configuration warnings, in 93.83 s. Its log is
 /home/dieterolson/.cache/codex-impact/frequency-band-88d7d5854/scientific.log.
 Repository Ruff passes 3,805 formatted files and all nine manual gates pass.
-Normal publication and later-main integration remain pending at this checkpoint.
+Published as 842c39890755a8fcfb419b3068bf0dc58b2e97f1 through all normal
+commit/push hooks and remote verified. Main 0f2dfe3fd (mocap #5118) is now
+merging without scientific source/test conflicts; only root handoff and
+generated handoff metadata conflicted. Both task scopes are preserved;
+canonical inventory is regenerated. All 145 Windows mocap/authority/API/band
+integration tests pass in 17.03 s; actual mypy passes eight incoming source
+files and root Ruff passes 3,815 formatted files. The staged diff contains
+no shaft source, shaft test or golf API baseline changes. The 956-test Linux
+result identifies the preceding scientific archive, not a fresh full Linux run
+of this merge. All nine final gates pass, and the three incoming test files
+also pass actual mypy. Normal merge commit/publication remains at this checkpoint.
 See FREQUENCY_BANDS.md for the derivation, contracts and remaining scope.
 
 ## Historical Authentication Interruption (2026-09-09, 14:07 UTC)

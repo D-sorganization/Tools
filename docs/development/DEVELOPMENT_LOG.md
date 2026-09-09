@@ -154,9 +154,9 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/5072-prestressed-shaft
 - **Paths:** `src/shared/python/golf_club/*shaft*`, `src/shared/python/golf_club/_beam_fem.py`, `src/shared/python/golf_club/*grip*`, `src/shared/python/golf_club/*rotating_body*`, `tests/shared/python/golf_club/test_shaft*.py`, `tests/shared/python/golf_club/test_rotating_body.py`, `tests/shared/python/golf_club/test_grip_impedance.py`, `docs/development/impact-acoustics/*`
 - **Started:** 2026-09-07
-- **Last verified:** 2026-09-09 (59 Windows band/interval tests pass in 8.63 s; actual mypy passes three changed Python files; repository Ruff passes 3,805 formatted files; 956 Linux golf/signal/API tests pass with two CAD skips in 93.83 s; all nine manual gates pass)
-- **Summary:** Classifier integration 5c5fa16b9 is published through every normal hook and remote verified. Private adaptive frequency-band coverage composes existing conditional interval bounds, keeps exact endpoint enclosure and explicit budgets, and refuses incomplete results. Prior APIs remain unchanged; no physical bandwidth or stability claim is added.
-- **Next step:** Complete normal publication, integrate later main, then full/reduced frequency-band comparisons, rotating/moving nonlinear work and flexible contact/radiation/consumer integration. Physical/blinded evidence and final theory synthesis remain required. See FREQUENCY_BANDS.md and PROGRESS.md.
+- **Last verified:** 2026-09-09 (published band: 59 Windows / 956 Linux golf-signal-API passes, two CAD skips; later-main integration: 145 Windows passes in 17.03 s, actual mypy for all 11 incoming Python files, root Ruff for 3,815 formatted files, all nine final gates pass)
+- **Summary:** Private complete-band coverage is published as 842c39890 through all normal hooks, remote verified. Main 0f2dfe3fd mocap integration preserves every shaft source/test/API, reconciles both task handoffs and regenerates canonical inventory. Exact binary endpoint bookkeeping and explicit budgets do not imply physical bandwidth or stability.
+- **Next step:** Finish normal merge commit/publication, then full/reduced band comparisons, rotating/moving nonlinear work and flexible contact/radiation/consumer integration. Physical/blinded evidence and final theory synthesis remain required. See FREQUENCY_BANDS.md and PROGRESS.md.
 
 ### DL-0055 · Qualified Lumped Impact Dynamics
 
