@@ -32,6 +32,13 @@
 
 ## 2. Purpose & Mission
 
+### 2026-09-09 Reference CLI & Service (#4706 / TOOLS-M10 (#4727))
+
+Subepic #4727 delivers headless command-line interface (`sidekick.lab.mocap.cli`) and service endpoints (`sidekick.lab.mocap.service`).
+Implements headless `discover`, `capture`, `calibrate`, `reconstruct`, and `export` subcommands with structured JSON output and
+deterministic exit codes. Delivers `MocapService` with health, capability, graceful cancellation, and privacy no-store enforcement,
+preventing raw image data or personal recordings from being persisted to disk in ephemeral capture sessions.
+
 ### 2026-09-09 C3D Biomechanical Data Exchange (#4706 / TOOLS-M9 (#4716))
 
 Subepic #4716 delivers typed contracts, binary reader/writer serialization, and biomechanical conversion
@@ -5868,6 +5875,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-09 | #5121 | feat(mocap, #4727 TOOLS-M10): deliver reference CLI and service endpoints with headless discover/capture/calibrate/reconstruct/export subcommands, health/capability/cancel/no-store service protocol in `sidekick.lab.mocap.service` and `cli`. |
 | 2026-09-09 | #5108 | fix(ci, #5105): route the trusted push-pyqt-rendered-evidence job to ubuntu-24.04 rather than the self-hosted fleet where Docker is not guaranteed, matching ephemeral PR runs and backed by tests/ops/test_rate_web_playwright_workflow.py. |
 | 2026-09-09 | #5107 | fix(constants, #3994): import canonical gravity/gas constants in `src/python/src/utils/constants.py` and `src/media_processing/video_processor/python/video_processor_src/constants.py` from `shared.python.sidekick.utils.unit_constants` with standalone fallback literals. |
 | 2026-09-09 | #5113 | test(morris, #4458): anchor R13.6 suggested factor drafts to shared Python fixture `morris_suggested_factor_drafts_v1.json`, assert exact match in `test_morris_ui_contract.py` and TS `morrisAuthorityRequest.test.ts`. |

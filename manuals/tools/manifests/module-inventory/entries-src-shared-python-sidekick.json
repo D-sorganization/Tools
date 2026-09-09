@@ -4254,10 +4254,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5534,
+      "bytes_lf": 5925,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "29677ebfb461168b1749f3f5c3e73e9917ddcb487e26306ba14094c68c1cf5ed",
+      "content_sha256_lf": "51337c146a43a40974480cc5a9a8cb8dfdf6020451cda7fdd444ba36bad1f97e",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-INIT-PY-BD60513A12BD",
       "language": "python",
@@ -4520,7 +4520,37 @@
           },
           {
             "kind": "re-export",
+            "name": "MocapCapabilitiesReport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MocapHealthReport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MocapService",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MocapServiceConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MocapServiceStatus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "MocapSessionManifest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MocapTaskResult",
             "signature": null
           },
           {
@@ -4715,6 +4745,11 @@
           },
           {
             "kind": "re-export",
+            "name": "build_parser",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "bundle_adjust_layout",
             "signature": null
           },
@@ -4726,6 +4761,11 @@
           {
             "kind": "re-export",
             "name": "check_coverage_and_degeneracy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "cli_main",
             "signature": null
           },
           {
@@ -5474,6 +5514,70 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 8749,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "32f8209696a43c43e1a414ebc04205bd669d636bde072809b58be399702fb66f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-CLI-PY-D118EA68F7CD",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/cli.py",
+      "purpose": "Headless command-line interface for markerless mocap workflows (TOOLS-M10 #4727).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "build_parser",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "cli_main",
+            "signature": "argv: Sequence[str] | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_cli_service_contracts.py"
+        ],
+        "unit_mentions": [
+          "Hz",
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_cli_service_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 5389,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -5936,6 +6040,94 @@
         ],
         "unit_mentions": [],
         "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 13537,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "b7ce204034efd4b714052f79bad4a0d5d9c7c544cca35c73d86bacc132e3e928",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-SERVICE-PY-24BE82F902CB",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/service.py",
+      "purpose": "Headless mocap service endpoints and orchestration protocol (TOOLS-M10 #4727).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MocapCapabilitiesReport",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MocapHealthReport",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MocapService",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MocapServiceConfig",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MocapServiceStatus",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MocapTaskResult",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/calculators/conversion/test_service.py",
+          "tests/shared/python/sidekick/lab/mocap/test_cli_service_contracts.py"
+        ],
+        "unit_mentions": [
+          "mm",
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_cli_service_contracts.py"
+        ]
       }
     },
     {

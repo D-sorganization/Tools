@@ -916,6 +916,7 @@
           "tests/shared/python/golf_club/test_contracts.py",
           "tests/shared/python/model_generation/inertia/test_spatial.py",
           "tests/shared/python/rotation_transforms/test_rotation_transforms.py",
+          "tests/shared/python/sidekick/lab/mocap/test_cli_service_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py"
@@ -926,6 +927,7 @@
         "validation_paths": [
           "tests/contract/test_calc_backend_contract_surface.py",
           "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_cli_service_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py"
