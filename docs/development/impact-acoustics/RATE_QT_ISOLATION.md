@@ -151,3 +151,10 @@ Once access returns, recheck ownership, publish this evidence, integrate
 33144678cb where appropriate, and qualify any complete #5114 repair against
 the full covered four-worker suite. Physical and blinded evidence remain
 separate unanswered requirements of the impact program.
+
+**Recovery:** GitHub CLI access succeeded at 08:56 UTC. The #5072 lease was
+renewed through 10:57:31 UTC after an unheld claim check. Local checkpoint
+f788ca61252ca451224119a434e3325025749805 passed all normal commit hooks and is
+awaiting push hooks; the failed full-suite and profiling evidence is published
+in [issue comment 5599216206](https://github.com/D-sorganization/Tools/issues/5114#issuecomment-5599216206).
+The issue remains open and scientific implementation resumes independently.

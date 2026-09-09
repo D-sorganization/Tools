@@ -8,7 +8,7 @@
 - T5 #5106 boundary repair is on main at 287767dfa; calibration identity, complex FRF, radiation and physical/blinded validation remain open. T6 #5083 is merged; strict evidence/consumer qualification remains.
 - #5114: deferred Qt deletion has an ownership RED and two passing Windows regressions (17.10 s), with optional-Qt collection skips verified separately. Full Linux patch failed: 2,880 passed, 29 skipped, three worker losses and a 900-second cap. Fourteen serial profiled GUI controls pass but do not qualify the full suite; #5114 stays open.
 - Continue at docs/development/impact-acoustics/RATE_QT_ISOLATION.md. Classifier #5103 merged at 33144678cb; its Python 3.12 Rate shard was cancelled after another worker loss. Preserve failed controls and exact native sources; keep #5114 open.
-- GitHub CLI and connector require reauthentication as of 08:40 UTC Sept 9; user input is pending. No publication or claim renewal is possible. #5072 lease expired at 08:36:26 UTC; recheck before new shaft implementation.
+- GitHub CLI access recovered at 08:56 UTC Sept 9. #5114 evidence is published in issuecomment-5599216206; local checkpoint f788ca612 passed normal commit hooks and awaits push hooks. #5072 ownership was renewed through 10:57:31 UTC; scientific implementation resumes separately.
 
 > **Update this file with every PR and every push to main.**
 > Last updated: 2026-09-09
