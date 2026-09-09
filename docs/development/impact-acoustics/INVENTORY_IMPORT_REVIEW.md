@@ -175,3 +175,22 @@ All nine final structural checks pass after refreshing the root handoff hash.
 The canonical final handoff manifest records this integration checkout and
 PR #5103; its dirty pre-commit base is explicit. Normal publication and
 current-head CI remain required.
+
+## Subsequent Documentation-Only Main Integration
+
+Checkpoint c0163768cd0946bd3d6705b8dbe52e733d4bf89a was published through all
+normal commit/push hooks, with the remote SHA verified. Main then advanced to
+184e453dbc6cc6999b9309a6076b62604699a46b via #5116, changing only the root
+handoff disposition table and generated handoff manifest. The additions are
+preserved; #5103's own disposition is updated and its manifest is regenerated.
+No implementation, test or module-inventory entry changes in this integration.
+The earlier 202-test and eight-file type evidence therefore remains applicable;
+final document/governance checks and normal publication are still required.
+
+The prior Python 3.12 rate job 102338506622 was cancelled at 06:02Z. Its log
+shows the lifecycle and rendering tests passed; the only scheduled case lacking
+a completion record is test_viewers_gui.py::TestSimulationSubTabs::
+test_display_area_hosts_strike_swing_flight_sub_tabs (scheduled 04:43:06Z).
+This differs from the older #5114 unfinished case. The complete log is preserved
+outside git as impact-5114-old-rate312-cancelled.log. No source cause, timeout
+relaxation or passing result for the whole shard is claimed.

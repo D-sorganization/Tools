@@ -4,6 +4,16 @@ The user authorized completion of the full planned program, not merely its
 planning deliverables. All three parent epics remain open. Physical and
 perceptual validation cannot be inferred from numerical fixtures.
 
+## Published Classifier and Documentation Integration
+
+Classifier #5103 published c0163768cd0946bd3d6705b8dbe52e733d4bf89a through
+all normal hooks; remote SHA verified. Subsequent main 184e453db changes only
+handoff documentation, preserved in this integration with refreshed metadata.
+Scientific code/tests/inventory are unchanged. Current-head CI remains required.
+The prior 3.12 rate shard was cancelled; its rendering case passed, while
+test_viewers_gui.py's display-area-sub-tabs case lacked a completion record.
+See INVENTORY_IMPORT_REVIEW.md. No GUI repair or complete-program claim is made.
+
 ## Current Classifier Integration Status
 
 PR #5103 is being reconciled from 32c7b38cb with main 21690dcfc in the isolated
