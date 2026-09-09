@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5114 · Native Qt Test Isolation
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5114
+- **PR:** not created
+- **Branch:** fix/5114-qt-deferred-cleanup
+- **Paths:** `tests/rate_of_closure/conftest.py`, `tests/rate_of_closure/test_qt_teardown_isolation.py`, `docs/development/impact-acoustics/RATE_QT_ISOLATION.md`
+- **Started:** 2026-09-09
+- **Last verified:** 2026-09-09 (ownership RED; two Windows regressions pass in 17.10 s; missing optional-Qt collection controls, scoped Ruff and actual mypy pass; all nine manual gates pass)
+- **Summary:** Candidate delivers queued native Qt deletion inside pytest-qt exception capture, but full Linux qualification failed: 2,880 passed, 29 skipped, three worker losses; 900-second cap interrupted remaining work. External experiment's 2,889 passes do not qualify this patch. Classifier #5103 has merged independently.
+- **Next step:** Fourteen serial profiled GUI controls pass (224.51 s), with sampling lag and repaint/deletion stacks that do not explain full-suite losses. GitHub CLI/connector require reauthentication; publish evidence and renew ownership once restored, then qualify the full four-worker suite before closing #5114. No test deadlines or physical calculations changed.
+
 ### DL-#5074 · Waveform and Spectral Numerical Contracts
 
 - **State:** in_review

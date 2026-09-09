@@ -2,33 +2,16 @@
 
 ## Impact Dynamics and Acoustics: #5068
 
-- Full epic execution is active; completion requires all model and empirical gates.
-- T1 foundation: Tools PR #5077 remains open with downstream CI failure.
-  Theory PR AffineDrift #4258 and integration plan UpstreamDrift #9706 are merged.
-- T2 #5071 / draft PR #5082: `fix/5071-qualified-impact-coupling`, based on `5932146f1`; 396 broader tests pass, 2 skip, 15 final audit tests and 6 browser parser tests pass.
-  Event-resolved solver and additive preload/energy audit; v1 wire retained.
-- RED: timeout/step refusal and energy-record validation failed before fixes.
-  GREEN: 1,614 unit tests also pass in isolated Python 3.12 + pytest-qt; use serial offscreen hooks. Protected Tools CI remains open.
-- Continuation matrix: `docs/development/impact-acoustics/PROGRESS.md`.
-  T3–T6, consumer adapters/studies and physical/perceptual validation remain open.
-- IA-T5 #5074 / PR #5106 boundary repair: 16 reproduced failures now pass; all 41 focused
-  ingestion/spectral tests, 69 Linux report/API tests and hook mypy pass. Full
-  measurement validation remains
-  open. Resume at `src/shared/python/swing_sim/vibroacoustics/AGENT_HANDOFF.md`.
-- T2 lease posting failed; #9735 compatibility lease succeeded. Fresh downstream import regression reproduced; see continuation matrix.
-- Foundation #5069 is locally verified on `feat/5068-impact-dynamics-foundation`,
-  based on `b4875be19`; PR #5077; implementation `6d94f1d3d`. Theory: AffineDrift #4253; consumer: UpstreamDrift #9700.
-- TDD verified by `tests/shared/python/golf_club/test_impact_mobility.py`;
-  implementation reuses `golf_club._validation` and preserves existing APIs.
-- PR #5077 synced protected main `6b27c4f0569ac486c491e073f87f67440a9521fa`; provider inventory rechecked.
-- Strict pre-push typing uses explicit float returns at validated scalar boundaries.
-- Full tensor mobility is a detached rigid-body reference, not a validated flexible
-  shaft or acoustic solver. Follow-on design: `docs/specs/IMPACT_DYNAMICS_ACOUSTICS.md`.
-- Lease scripts found no claim; Tools label posting failed. Proceeding under the
-  fleet's documented fail-open rule; do not treat that as a successfully posted lease.
+- Full program remains active: distributed/flexible impact, calibrated acoustics, consumer studies and physical/blinded evidence are required.
+- T1 #5069/#5077 merged at f72544613 and T2 #5071/#5082 merged at 80d580d57; both are ancestors of current main. Theory AffineDrift #4258 and the UpstreamDrift #9706 integration plan are merged.
+- T3 #5072 remains on feat/5072-prestressed-shaft, published at 6bf223941 through normal hooks; it is not yet merged. There are 920 Linux scientific/API passes, two optional CAD skips, with conditional frequency-interval and independent bending/mesh/modal checks. These do not qualify physical acoustic bandwidth.
+- T5 #5106 boundary repair is on main at 287767dfa; calibration identity, complex FRF, radiation and physical/blinded validation remain open. T6 #5083 is merged; strict evidence/consumer qualification remains.
+- #5114: deferred Qt deletion has an ownership RED and two passing Windows regressions (17.10 s), with optional-Qt collection skips verified separately. Full Linux patch failed: 2,880 passed, 29 skipped, three worker losses and a 900-second cap. Fourteen serial profiled GUI controls pass but do not qualify the full suite; #5114 stays open.
+- Continue at docs/development/impact-acoustics/RATE_QT_ISOLATION.md. Classifier #5103 merged at 33144678cb; its Python 3.12 Rate shard was cancelled after another worker loss. Preserve failed controls and exact native sources; keep #5114 open.
+- GitHub CLI and connector require reauthentication as of 08:40 UTC Sept 9; user input is pending. No publication or claim renewal is possible. #5072 lease expired at 08:36:26 UTC; recheck before new shaft implementation.
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-09-08
+> Last updated: 2026-09-09
 > **Current state only**, capped at 150 lines by `CLAUDE.md`; history lives in git and `docs/agent_handoff_archive/`.
 > Do not append dated entries here again.
 
@@ -43,23 +26,23 @@
 
 Tools is the fleet's shared engineering-tools monorepo (45+ tools: PyQt6 GUIs, FastAPI/React web mirrors, Rust kernels). Delivery follows scoped consolidations directly on `main`.
 
-| Epic  | Status (one line)                                                                                                                                                                                                   |
-| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| #4103 | Swing-Impact-Ball-Flight platform. Open. Remaining: camera cluster (#4571) and Phase 7 (WASM web parity, Pages CI).                                                                                                 |
-| #4120 | Investigation & Variation Suite. Open. PR #4124 merged.                                                                                                                                                             |
-| #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 merged. H5 (release-management repo) pending.                                                                                                       |
-| #4130 | Impact-interval club dynamics. F1–F4 landed (#4577, #4945); independent contact-energy audit (provider fix for UpstreamDrift#9548) in review — UI/report surfacing awaits the Tools#4946 model-type ruling.         |
-| #4142 | Variation and sensitivity. R13.3, R13.5, R14.3 merged; R14.6/calibrated-renderer PRs #4835/#4837 on main.                                                                                                           |
-| #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                              |
-| #4433 | Visual-first tab visibility and visualization-led UX. 8 verified / 23 partial; #4832 adds fifth acceptance manifest.                                                                                                |
-| #4430 | Rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed provider through #8954.                                                                                                              |
-| #4549 | Club Fitting Tester. **COMPLETED** (#4557, #4577) — C1–C7 delivered (mesh inertia, shaft delivery, OEM doc).                                                                                                        |
-| #4562 | Heavy Hit. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import).                                                                                                              |
-| #4583 | Launch monitor analytics. Release A merged; Release B open (vendor emulation requires real paired data).                                                                                                            |
-| #4584 | Strokes gained v2. **COMPLETED** (#4599, #4600, #4602, #4608, #4610, #4613) — shared-first analytics.                                                                                                               |
-| #4706 | Markerless mocap. Open. TOOLS-M0 (#4708) / TOOLS-M1 (#4710) in review under PR #4734.                                                                                                                               |
-| #4707 | Engineering design manual authority. TOOLS-D1 (#4711), TOOLS-D2 (#4714), TOOLS-D3 (#4717) through TOOLS-D8 completed. TOOLS-D9 (#4730) active final subepic.                                                        |
-| #5068 | Impact & vibroacoustics models. Open. IA-T5 measurement ingestion landed (PR #5084); IA-T6 study wire/surface landed (PR #5083); IA-T1 (#5077) merged; IA-T2 (#5082) in review; IA-T3 partial; IA-T4 pending T1–T3. |
+| Epic  | Status (one line)                                                                                                                                                                                            |
+| ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| #4103 | Swing-Impact-Ball-Flight platform. Open. Remaining: camera cluster (#4571) and Phase 7 (WASM web parity, Pages CI).                                                                                          |
+| #4120 | Investigation & Variation Suite. Open. PR #4124 merged.                                                                                                                                                      |
+| #4125 | Realistic clubs / kinetics / putting / showcase. Open. PR #4129 merged. H5 (release-management repo) pending.                                                                                                |
+| #4130 | Impact-interval club dynamics. F1–F4 landed (#4577, #4945); independent contact-energy audit (provider fix for UpstreamDrift#9548) in review — UI/report surfacing awaits the Tools#4946 model-type ruling.  |
+| #4142 | Variation and sensitivity. R13.3, R13.5, R14.3 merged; R14.6/calibrated-renderer PRs #4835/#4837 on main.                                                                                                    |
+| #4146 | Shared Club Builder. Open. Assembly physics contracts landed in #4157.                                                                                                                                       |
+| #4433 | Visual-first tab visibility and visualization-led UX. 8 verified / 23 partial; #4832 adds fifth acceptance manifest.                                                                                         |
+| #4430 | Rotating-base companion. **COMPLETED** via #4618/#4619; UpstreamDrift consumed provider through #8954.                                                                                                       |
+| #4549 | Club Fitting Tester. **COMPLETED** (#4557, #4577) — C1–C7 delivered (mesh inertia, shaft delivery, OEM doc).                                                                                                 |
+| #4562 | Heavy Hit. **COMPLETED** (#4568, #4577) — H1–H4 delivered (coupled mechanics, MJCF/URDF/.osim import).                                                                                                       |
+| #4583 | Launch monitor analytics. Release A merged; Release B open (vendor emulation requires real paired data).                                                                                                     |
+| #4584 | Strokes gained v2. **COMPLETED** (#4599, #4600, #4602, #4608, #4610, #4613) — shared-first analytics.                                                                                                        |
+| #4706 | Markerless mocap. Open. TOOLS-M0 (#4708) / TOOLS-M1 (#4710) in review under PR #4734.                                                                                                                        |
+| #4707 | Engineering design manual authority. TOOLS-D1 (#4711), TOOLS-D2 (#4714), TOOLS-D3 (#4717) through TOOLS-D8 completed. TOOLS-D9 (#4730) active final subepic.                                                 |
+| #5068 | Impact and vibroacoustics program open. T1/T2 and initial T5/T6 merged; distributed T3 remains partial on feat/5072-prestressed-shaft; T4 flexible contact and calibrated acoustic/physical evidence remain. |
 
 ## Active Delivery Boundaries
 
@@ -131,20 +114,20 @@ python3 -m scripts.render_tools_design_manual --check
 
 ## PR Disposition — 2026-09-07/08 Fleet Backlog Sweep (Tools, 22 open PRs)
 
-| PR                             | Disposition                                                                                                                                                                                                 |
-| ------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| #5076                          | MERGED (1e6f21d61): dirty conflict resolved via local merge with the module-inventory-regen merge driver + sidekick shard regen.                                                                            |
-| #5081                          | MERGED (squash 69aeeed83): minimum-test-contract + divergence-ledger UD-PAIR fixes; main-merge conflict resolved in-branch first.                                                                           |
-| #5078                          | Theme-restore CI repaired (mypy duplicate module, inventory, theme API baseline) + main merged; merging when clean.                                                                                         |
-| #5079                          | API baseline (additive KelvinVoigt method), handoff-manifest re-pin, inventory regen; pushed, merging when clean.                                                                                           |
-| #5080                          | Sidekick API baseline re-pinned (glass contracts) + main merged; merging when clean.                                                                                                                        |
-| #5082                          | No PR-caused failure: E2E = hosted-runner font-stack drift (#5087), cancelled shards rerunning; merge when required checks green.                                                                           |
-| #5077                          | Awaiting CI (full-tensor impact reference; upstream defect UpstreamDrift#8942).                                                                                                                             |
-| 15 release bumps (#5024-#5070) | Stale mutually-conflicting v1.16.2 duplicates (newest = #5070 v1.17.0); branch-updated twice, required checks green; merge #5070 first, then close the rest as superseded duplicates under an exempt label. |
-| #5086                          | bot/ infra PR: initialize UD vendor/ud-tools pin in downstream lane (fixes #5085).                                                                                                                          |
-| #5087                          | bot/ infra PR: run PR-lane Worker E2E on the fleet-calibrated renderer image (hosted font-stack drift).                                                                                                     |
-| 8 release bumps (#5089-#5104)   | CLOSED as redundant: main already v1.17.0 via #5070 (four stale v1.16.2 downgrades, four duplicate v1.17.0); superseded-by-#5070 comments posted. |
+| PR                             | Disposition                                                                                                                                                                                                                                                                                                                                                                            |
+| ------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| #5076                          | MERGED (1e6f21d61): dirty conflict resolved via local merge with the module-inventory-regen merge driver + sidekick shard regen.                                                                                                                                                                                                                                                       |
+| #5081                          | MERGED (squash 69aeeed83): minimum-test-contract + divergence-ledger UD-PAIR fixes; main-merge conflict resolved in-branch first.                                                                                                                                                                                                                                                      |
+| #5078                          | Theme-restore CI repaired (mypy duplicate module, inventory, theme API baseline) + main merged; merging when clean.                                                                                                                                                                                                                                                                    |
+| #5079                          | API baseline (additive KelvinVoigt method), handoff-manifest re-pin, inventory regen; pushed, merging when clean.                                                                                                                                                                                                                                                                      |
+| #5080                          | Sidekick API baseline re-pinned (glass contracts) + main merged; merging when clean.                                                                                                                                                                                                                                                                                                   |
+| #5082                          | No PR-caused failure: E2E = hosted-runner font-stack drift (#5087), cancelled shards rerunning; merge when required checks green.                                                                                                                                                                                                                                                      |
+| #5077                          | Awaiting CI (full-tensor impact reference; upstream defect UpstreamDrift#8942).                                                                                                                                                                                                                                                                                                        |
+| 15 release bumps (#5024-#5070) | Stale mutually-conflicting v1.16.2 duplicates (newest = #5070 v1.17.0); branch-updated twice, required checks green; merge #5070 first, then close the rest as superseded duplicates under an exempt label.                                                                                                                                                                            |
+| #5086                          | bot/ infra PR: initialize UD vendor/ud-tools pin in downstream lane (fixes #5085).                                                                                                                                                                                                                                                                                                     |
+| #5087                          | bot/ infra PR: run PR-lane Worker E2E on the fleet-calibrated renderer image (hosted font-stack drift).                                                                                                                                                                                                                                                                                |
+| 8 release bumps (#5089-#5104)  | CLOSED as redundant: main already v1.17.0 via #5070 (four stale v1.16.2 downgrades, four duplicate v1.17.0); superseded-by-#5070 comments posted.                                                                                                                                                                                                                                      |
 | #5093                          | MERGED via auto-merge after branch update chain (incl. ToolsPRs squash d5a85a23e + main 287767dfa): added missing §12 row and refreshed module-inventory components shard after Spec Check (source changed without SPEC update) and Docs Governance (stale inventory shard) failures; Rate Web Playwright PR visual-evidence policy gate red (non-required; documented in PR comment). |
-| #5106                          | MERGED (squash 287767dfa): vibroacoustics ingestion/spectral contracts; SPEC/AGENT_HANDOFF/module-inventory unions + manifest re-pin during main merges. |
-| #5103                          | Auto-merge enabled on final head 32c7b38cb (AST import inventory; Fixes #5101): two main merges resolved (§12 union, handoff unions, DEVELOPMENT_LOG union), inventory + handoff-manifest regenerated locally; CI Standard rerun/draining after cancellation. |
-| #5085 (infra)                  | spec_rows_merge_driver.py Py3.14 fix (argparse %-format help strings) applied in Repository_Management shared clone; not a Tools PR. |
+| #5106                          | MERGED (squash 287767dfa): vibroacoustics ingestion/spectral contracts; SPEC/AGENT_HANDOFF/module-inventory unions + manifest re-pin during main merges.                                                                                                                                                                                                                               |
+| #5103                          | MERGED at 33144678cb from be38a827a on Sept 9. Scientific import inventory is on main. Its cancelled Python 3.12 Rate shard contains another Club Tester worker loss; #5114 remains open.                                                                                                                                                                                              |
+| #5085 (infra)                  | spec_rows_merge_driver.py Py3.14 fix (argparse %-format help strings) applied in Repository_Management shared clone; not a Tools PR.                                                                                                                                                                                                                                                   |

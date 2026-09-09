@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — Rate_of_Closure
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-09-08
+> Last updated: 2026-09-09
 > **Current state only**, capped at 150 lines; history lives in git and `docs/agent_handoff_archive/`.
 
 ## What This Tool Is Now
@@ -11,6 +11,13 @@ A swing → impact → ball-flight simulator with parity **PyQt6 and React surfa
 PyQt6 entry: `rate_of_closure.ui.pyqt6.main_window:RateOfClosureMainWindow`.
 React mirror: `web/` (Vite/TS, ~1,570 tests across 193 files).
 Physics lives in `src/shared/python/swing_sim/` and `src/shared/python/golf_club/`.
+
+## Test Isolation #5114
+
+- Candidate: fix/5114-qt-deferred-cleanup, based on 184e453db. Deliver queued native Qt deletions after fixture finalizers while retaining pytest-qt exception capture; no application is created for non-GUI cases.
+- TDD: widget/timer regression fails before the hook; two regressions pass afterward (17.10 s Windows). Missing PyQt6/pytest-qt collection skips are verified separately. Full Linux patch fails: 2,880 passed, 29 skipped, three worker losses and a 900-second cap. Fourteen serial profiled GUI controls pass; biased sampling does not explain full-suite losses. #5114 stays open.
+- GitHub CLI/connector require reauthentication; publication and lease renewal are unavailable. Current #5114 lease expires 2026-09-09T09:55:42Z. Recheck ownership once access returns.
+- Evidence, failed controls and preserved environments: docs/development/impact-acoustics/RATE_QT_ISOLATION.md. Keep existing test deadlines and renderer references.
 
 ## Active Epics — Golf Epics Merged
 

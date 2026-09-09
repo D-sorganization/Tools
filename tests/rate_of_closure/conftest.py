@@ -5,6 +5,23 @@ from __future__ import annotations
 import pytest
 
 
+@pytest.hookimpl(trylast=True)
+def pytest_runtest_teardown() -> None:
+    """Deliver native deletions after finalizers, inside pytest-qt's wrapper.
+
+    pytest-qt calls deleteLater, but processEvents without an event loop does
+    not deliver DeferredDelete. Retained wrappers can otherwise keep native
+    widgets and their children alive across cases. Keep Qt exception capture
+    active during deletion; do not create an application for non-GUI tests.
+    """
+    try:
+        from PyQt6.QtCore import QCoreApplication, QEvent
+    except ImportError:
+        return
+    if QCoreApplication.instance() is not None:
+        QCoreApplication.sendPostedEvents(None, QEvent.Type.DeferredDelete)
+
+
 @pytest.fixture(autouse=True)
 def _reset_distance_display_unit():  # type: ignore[no-untyped-def]
     """Pin the session distance display unit to its yards default.
