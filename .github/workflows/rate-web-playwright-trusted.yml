@@ -194,7 +194,10 @@ jobs:
     name: Rate PyQt rendered and baseline evidence (trusted push)
     needs: push-production-worker-e2e
     if: ${{ always() && needs.push-production-worker-e2e.result != 'cancelled' }}
-    runs-on: d-sorg-fleet
+    # Container jobs need Docker at job setup, and self-hosted fleet hosts do
+    # not all provide it (#5105). Route to the GitHub-hosted pool; renderer
+    # identity stays host-independent via the pinned immutable image below.
+    runs-on: ubuntu-24.04
     container:
       image: ubuntu:24.04@sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517
     timeout-minutes: 30
