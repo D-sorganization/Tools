@@ -12,7 +12,14 @@ const TICK_COUNT = 5;
 
 const bounds = (values: readonly number[]): readonly [number, number] => {
   if (!values.length) return [-1, 1];
-  const low = Math.min(...values); const high = Math.max(...values);
+  // ⚡ Bolt Optimization: Calculate bounds with a single pass instead of spreading large arrays
+  // This avoids "Maximum call stack size exceeded" errors and O(N) garbage collection on hot renders
+  let low = values[0];
+  let high = values[0];
+  for (let i = 1; i < values.length; i++) {
+    if (values[i] < low) low = values[i];
+    if (values[i] > high) high = values[i];
+  }
   const pad = Math.max((high - low) * 0.08, Math.max(Math.abs(low), 1) * 1e-6);
   return [low - pad, high + pad];
 };

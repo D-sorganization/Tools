@@ -161,3 +161,6 @@
 ## $(date +%Y-%m-%d) - Array Spread Operator Bottlenecks
 **Learning:** Using `Math.max(...array)` and `Math.min(...array)` on dynamically sized large arrays in React rendering loops (e.g. for dynamic charting bounds) creates massive call stack overhead and O(N) garbage collection pressure, especially when repeatedly called inside high-frequency render functions like `PuttingVisuals`.
 **Action:** Replace `Math.max(...array)` on hot rendering paths with simple single-pass `for` loops. This eliminates the intermediate array creation from `.map` and the function call overhead of the spread operator, leading to a much more memory-efficient O(N) single-pass bounds calculation.
+## 2026-09-09 - Prevent stack overflows when zooming on large scatter ensembles
+**Learning:** Using `Math.max(...values)` and `Math.min(...values)` to dynamically calculate zoomed zoom extents inside the scatter chart's zoom bounds calculation creates O(N) garbage collection and risks "Maximum call stack size exceeded" limits on huge point clouds.
+**Action:** Replace `Math.max(...values)` and `Math.min(...values)` inside dynamically rendered bounding extents calculation with single-pass `for` loops.
