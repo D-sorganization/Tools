@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 The trajectory review also preserves mocap CLI/service main 9899c5a6a (PR
 #5121). All 12 CLI/service controls and the separate sidekick API control
 pass. Golf/impact source, tests and APIs remain byte-identical to 7164a74d5;

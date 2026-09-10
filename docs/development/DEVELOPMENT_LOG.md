@@ -52,11 +52,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5073
 - **PR:** not created
-<<<<<<< HEAD
 - **Branch:** feat/5073-contact-trajectory
-=======
-- **Branch:** feat/5073-spatial-contact
->>>>>>> origin/main
 - **Paths:** src/shared/python/swing_sim/impact, docs/development/impact-acoustics, tests/api_baselines/swing_sim_api_baseline.json
 - **Started:** 2026-09-09
 - **Last verified:** 2026-09-09 (provider base 0cd6dce22; coupled-response staged tree ec863402f; changes SELF)
@@ -64,9 +60,8 @@ reachable from any live state and `abandoned` from `parked`.
 - **Evidence:** Geometry 18, normal work 20 and tangent work 28 controls. Normal/legacy: 148 Windows/Linux pass after retained timeout. Tangential full impact: 150 Windows and 150 Linux coverage pass; NumPy typing passes. Integrated 176 tests pass on Windows/Linux. New body and moving-shaft controls pass 75 tests; relative-inertia adversarial RED then all 24 body tests pass. Five production files pass NumPy-aware mypy. All 323 coupled-response/impact/shaft controls pass on Windows and Linux coverage; existing 99 golf-club and 228 swing API records are unchanged. Exact artifacts are recorded.
 - **Next step:** Couple the ball/head/shaft trajectory; finish canonical inventory/handoff and qualified provider integration.
 
-<<<<<<< HEAD
 - **Trajectory update (2026-09-10):** Shared Lie RK4 kernel: missing-module RED, eight GREEN, two deliberate-corruption delegation REDs, then all 36 kernel/shaft/geometry/disturbance controls GREEN. Two production modules pass NumPy-aware mypy. Kernel source tree 334822bb7. Normal-only contact trajectory now passes 12 controls, including independent motion/work refinement and free-ball clearance; all 371 Windows and Linux coverage controls pass at tree0433376b0. Evidence: CONTACT_TRAJECTORY_RESULTS.json.
-=======
+
 ### DL-#5138 · Verified Agent Context
 
 - **State:** shipped
