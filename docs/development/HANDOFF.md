@@ -172,3 +172,5 @@ pass;24 numerical/placement tests also pass on actual OpenCV5.0.0 using the
 retained dependency directory. Handoff149-line/digest and module inventory
 freshness checks pass. No solver or gate changed during merge. Normal commit
 and push hooks remain before updating PR#5140.
+
+Event reference-integrity continuation at SELF: production remains839ebe083. The next CI gate flagged the assertion-free independent oracle. Added SI root-residual and forward-time checks, with a shifted-root RED retained; local changed-test assertion gate passes andall16 event controls pass in69.91s. No allowlist, physics or numerical tolerance changed. Next action is to publish the verified reference repair on#5152. Standalone launcher#5144 was closed by dieterolson; preserve its correction through combined provider#5141.

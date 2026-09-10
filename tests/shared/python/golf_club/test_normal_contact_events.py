@@ -19,9 +19,23 @@ from shared.python.swing_sim.impact._normal_contact_trajectory import (
     NormalContactTrajectoryState,
 )
 
+from . import _normal_event_oracle as oracle
 from ._normal_event_oracle import reference
 from .test_normal_contact_trajectory import _problem
 from .test_normal_shaft_contact import _case
+
+
+def test_independent_oracle_refuses_an_inexact_event_root(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    solve = oracle.brentq
+
+    def shifted(*args: object, **kwargs: object) -> float:
+        return float(solve(*args, **kwargs)) + 1e-7
+
+    monkeypatch.setattr(oracle, "brentq", shifted)
+    with pytest.raises(AssertionError, match="reference event root"):
+        oracle.reference()
 
 
 def _request(

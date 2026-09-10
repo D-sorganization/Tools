@@ -27,7 +27,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/5073-contact-events
 - **Paths:** src/shared/python/swing_sim/impact, src/shared/python/golf_club, tests/shared/python/golf_club
 - **Started:** 2026-09-10
-- **Last verified:** 2026-09-10 (SELF repairs two CI ndarray no-any-return errors; local changed-file mypy passes; numerical expressions unchanged; all15 affected tests pass in37.40s; fresh protected CI pending)
+- **Last verified:** 2026-09-10 (SELF; production839ebe083; oracle root-residual tripwire RED then16 event controls pass69.91s; unchanged assertion gate passes; protected CI remains)
 - **Summary:** Adaptive local-chart normal contact with independent event/work reference, strict SI controls and unchanged canonical mechanics/APIs.
 - **Evidence:** NORMAL_EVENT_RESULTS.json records all RED/GREEN/source/JUnit identities; four production modules pass NumPy-aware mypy; Linux coverage58.64% exceeds unchanged20% floor; root Ruff/format3870 pass.
 - **Next step:** Resolve protected CI and review on #5152.

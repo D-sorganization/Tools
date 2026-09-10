@@ -173,5 +173,25 @@
       "sha256": "7ec7899465bc9e9e6ba1e19316d94107ed670b5a52c0a3f7a1296d7ddd7779b5"
     },
     "scope": "The archived386 results remain evidence for tree4e1b19810, not a rerun of this revision."
+  },
+  "reference_integrity_repair": {
+    "production_commit": "839ebe083520d0eeb146812e254bc28c9d0025f4",
+    "change": "SI root-residual and forward-time assertions in independent oracle; perturbed-root tripwire",
+    "receipts": {
+      "red": {
+        "tests": 1,
+        "failures": 1,
+        "seconds": 7.772,
+        "sha256": "a06ba838c0eb84b6959b9bbb92b7283b632151876eb7a5ae0c21e819384538c5"
+      },
+      "green": {
+        "tests": 16,
+        "failures": 0,
+        "seconds": 69.38,
+        "sha256": "097ec199c39cfc9ae4d9097cd4a263bec3f0acca8d9fdecd68fcdcd041ce8a7b"
+      }
+    },
+    "assertion_gate": "passed unchanged",
+    "physical_claim": false
   }
 }
