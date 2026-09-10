@@ -1,16 +1,18 @@
 # AGENT_HANDOFF — Tools (Monorepo Root)
 
+## Calibration and Moving Reference Placements: #5132 / #5137
+
+- #5132 repair is PR #5136 at45f3bd8b9, integrating main2c9a8d6c9 in Worktrees/Tools-calibration-opencv5;19 calibration checks and12 OpenCV5 tests pass. That merged baseline is now being qualified in this #5140 branch; private checkout remains unverified and no protections are bypassed.
+- #5137 owns feat/5137-reference-placements in Worktrees/Tools-calibration-numerics: immutable labelled paper/ruler observations, profile identities and joint camera/target pose estimation with an explicit world anchor. Held-out views remain independent; ruler-only/full-lens calibration is refused.
+- Twenty-four numerical/reference tests pass on both actual OpenCV versions. Common-reference UX, physical accuracy and consumer qualification remain open in UpstreamDrift#9897/#9899. Preserve impact/CLI scopes; see docs/development/HANDOFF.md.
+
 ## Impact Dynamics and Acoustics: #5068
 
-Numerical shaft #5133 is merged from 0cd6dce22 as 2c9a8d6c. Its later launcher
-correction is isolated in #5143 / PR #5144. Physical parent #5072 remains open.
-T4 #5073 has private geometry, normal/tangential work, full-tensor body response
-and instantaneous shaft/ball coupling. All 323 Windows/Linux controls pass at
-ec863402f; five production files pass mypy. Existing 99 golf-club and 228 swing
-API records are unchanged. Numerical review child #5145 bounds this foundation;
-PR #5146 is published at 3912b5604 after normal push checks passed. The parent retains trajectory and physical work.
-See SPATIAL_CONTACT_RESULTS.json and PROGRESS.md. Private-consumer access,
-physical/acoustic measurements and final qualification remain outstanding.
+Numerical shaft #5133 is merged from 0cd6dce22 as 2c9a8d6c. Its later launcher correction is isolated in #5143 / PR #5144. Physical parent #5072 remains open. T4 #5073 has private geometry, normal/tangential work, full-
+tensor body response and instantaneous shaft/ball coupling. All 323 Windows/Linux controls pass at ec863402f; five production files pass mypy. Existing 99 golf-club and 228 swing API records are unchanged. Numerical
+review child #5145 bounds this foundation; PR #5146 is published at 3912b5604 after normal push checks passed. The parent retains trajectory and physical work. See SPATIAL_CONTACT_RESULTS.json and PROGRESS.md. Private-
+consumer access, physical/acoustic measurements and final qualification remain outstanding. PR #5146 includes camera main 0a561daff; its private consumer lookup fails before tests (docs/ci-
+failures/impact5145-20260910.md).
 
 - Full program active; all three parent epics remain open. AffineDrift theory #4258/#4282/#4298 and UpstreamDrift integration #9706 are merged; final synthesis awaits downstream evidence.
 - T1 #5069/#5077 and T2 #5071/#5082 are merged at f72544613 and 80d580d57. Signal repair #5106 and initial study wire #5083 are merged; acoustic/report qualification remains.

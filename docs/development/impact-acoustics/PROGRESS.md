@@ -1,3 +1,9 @@
+The trajectory continuation preserves camera main 0a561daff through
+foundation merge 1be394e90. Every golf/impact implementation, test and API
+file remains byte-identical to temporal commit 37e322611; the camera
+implementation remains identical to main. The foundation-only merge
+evidence below is scoped to PR #5146, separately from this trajectory.
+
 UpstreamDrift #9916 was merged as c487265f at 2026-09-10T01:32:10Z.
 Its provider remains interim 4dabe900c. The active context integration task
 will preserve this merge and the launcher correction in its final coordinated
@@ -39,6 +45,21 @@ private empty-export records are added. Exact tree0433376b0 is archived for
 Contact switches, finite-duration friction, face/hosel modes and independent
 event/mesh/mode convergence remain open. Smooth RK4 order is insufficient for
 a contact-force jump. No full T4 delivery or physical/acoustic result is claimed.
+
+PR #5146 integrates camera-placement main 0a561daff. Every impact and
+golf-club source/test/API file is byte-identical to the qualified contact head;
+the camera development-log entries are retained alongside the impact entries.
+Canonical inventory and handoff are regenerated. The private consumer lookup
+failure is recorded in docs/ci-failures/impact5145-20260910.md and does not
+qualify that consumer. The separate normal-trajectory continuation is review
+child #5147 and passes all 371 Windows/Linux controls.
+
+The merged camera/API integration passes 40 controls (30.07 s), with 255
+existing import-loader deprecation warnings and no failures or skips. Impact
+source, tests and API baselines remain identical to 1edd0ddcf; the incoming
+camera source, tests and API remain identical to main 0a561daff. The first
+inventory check exposed a stale Rust math-primitives shard; the ordinary
+inventory generator repairs that generated merge drift without a Rust edit.
 
 Numerical foundation child #5145 is published for protected review in
 [PR #5146](https://github.com/D-sorganization/Tools/pull/5146) at 3912b5604. Normal commit/push checks pass after the isolated-import
