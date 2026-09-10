@@ -2,11 +2,11 @@
 
 ## Rate Shard Scientific Test Isolation: #5114
 
-- Identity: Tools, `C:/Users/diete/Repositories/.context-implementation/Tools-rate-5114`, branch `fix/issue-5114-rate-isolation`, implementation `SELF`, PR not created; session `context-01a0879e-rate5114`; entry DL-#5114.
+- Identity: Tools, `C:/Users/diete/Repositories/.context-implementation/Tools-rate-5114`, branch `fix/issue-5114-rate-isolation`, implementation `SELF`, draft PR #5158; session `context-01a0879e-rate5114`; entry DL-#5114.
 - Purpose: unblock required provider qualification without removing assertions, tests, coverage or the existing 60-second deadline. Existing science isolation from #5130 is reused for the entire Club Tester file; the remaining rate suite stays parallel.
 - Evidence: one full Linux diagnostic reproduces worker termination; a later full diagnostic completes. This establishes sensitivity to full-suite conditions, not a proven numerical or Qt defect. Four new shard regressions fail before the change; all 16 contracts and the complete 1,684-file partition pass afterward. Three unchanged Club Tester tests pass serially with coverage in 45.04 seconds; GUI body 21.07 seconds. All nine manual governance checks pass after regenerating the script inventory; existing release approval limits remain unchanged.
 - Limits: protected Linux CI remains required. Preserve context provider PR #5141 and application pins; this worktree changes only test scheduling and supporting records. No scientific code or GUI assertions changed.
-- Next: publish a focused PR, qualify its required Linux shards, and integrate the qualified repair into the context provider before final publication.
+- Next: qualify draft PR #5158 through its required Linux shards, then integrate the qualified repair into the context provider before final publication. Normal commit/push hooks pass.
 
 ## Active Placement Work #5137
 

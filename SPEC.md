@@ -5875,7 +5875,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
-| 2026-09-10 | #5114 | Isolate the complete Club Tester scientific GUI test file serially within the rate shard; retain every test, existing deadline, separate coverage outputs and failure propagation. |
+| 2026-09-10 | #5158 | Isolate the complete Club Tester scientific GUI test file serially within the rate shard; retain every test, existing deadline, separate coverage outputs and failure propagation. |
 | 2026-09-09 | #5121 | feat(mocap, #4727 TOOLS-M10): deliver reference CLI and service endpoints with headless discover/capture/calibrate/reconstruct/export subcommands, health/capability/cancel/no-store service protocol in `sidekick.lab.mocap.service` and `cli`. |
 | 2026-09-09 | #5137 | Add identified common-reference placements and profile-bound observations, joint camera/target pose estimation, independent held-out residuals, explicit gauge and cancellation; synthetic numerical evidence does not establish physical calibration. |
 | 2026-09-09 | #5132 | Repair calibration inverse distortion, explicit PnP failure and actual fixed-world-target camera pose refinement; qualify older mypy annotations and OpenCV4/5 iterative APIs while preserving provisional physical/publication status. |

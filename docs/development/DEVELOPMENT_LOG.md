@@ -20,14 +20,14 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5114 · Rate Shard Scientific Test Isolation
 
-- **State:** in_progress
+- **State:** in_review
 - **Owner:** codex
 - **Issue:** #5114
-- **PR:** not created
+- **PR:** #5158 (draft)
 - **Branch:** fix/issue-5114-rate-isolation
 - **Paths:** `scripts/ci_test_shards.py`, `tests/ops/test_ci_test_shards.py`
 - **Started:** 2026-09-10
-- **Last verified:** 2026-09-10; four new regression cases fail before isolation; all 16 shard contracts and the 1,684-file partition pass afterward. All three unchanged Club Tester tests pass serially with coverage and the existing deadline (45.04 seconds total). All nine manual governance checks pass after script-inventory regeneration.
+- **Last verified:** 2026-09-10; four new regression cases fail before isolation; all 16 shard contracts and the 1,684-file partition pass afterward. All three unchanged Club Tester tests pass serially with coverage and the existing deadline (45.04 seconds total). All nine manual governance checks and normal commit/push hooks pass after script-inventory regeneration.
 - **Summary:** Reuse serial scientific invocation support for the entire Club Tester file while retaining parallel execution elsewhere, separate coverage outputs and failure propagation. Full-suite worker exit is reproduced; exact root cause remains unproven.
 - **Next step:** Qualify the isolated invocation through protected Linux CI.
 
