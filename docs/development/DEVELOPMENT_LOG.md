@@ -27,7 +27,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** fix/5143-function-launcher
 - **Paths:** src/shared/python/gui_launcher/tool_manifest.yaml, src/function_generator/tests/test_function_generator_gui.py
 - **Started:** 2026-09-09
-- **Last verified:** 2026-09-10 (SELF integrates main92283cf3f; launcher source/tests unchanged fromfc453bf8e; repeated GUI timeout retained in docs/ci-failures/impact5143-20260910.md)
+- **Last verified:** 2026-09-10 (SELF; published db67c2651 passes quality, but missing formal UD-PAIR failed divergence; live-body correction now passes the exact local gate; protected fresh CI remains)
 - **Summary:** The post-#5133 launcher correction points at the widget moved in #5110. No source is copied.
 - **Evidence:** New resolution control fails before correction; all16 Function Generator tests pass. Main92283cf3f integration passes29 GUI/engine/CLI/API controls in26.57s. Prior publication gates pass; repeated GUI CI timeouts remain documented separately.
 - **Next step:** Publish the verified combined launcher/camera main revision for protected review.
