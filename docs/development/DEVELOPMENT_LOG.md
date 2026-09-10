@@ -29,7 +29,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-10
 - **Last verified:** 2026-09-10 (27 scale/placement tests passed; three implementation modules pass mypy and Ruff)
 - **Summary:** Immutable scale candidates from known ruler lengths and established camera geometry; independent held-out evidence and explicit lens/zoom association. No pose initialization or physical-accuracy approval.
-- **Next step:** Handoff requested. Resolve private Gasification checkout Not Found in PR #5169, then merge when qualified and integrate the ruler UI in UpstreamDrift #9899. Implementation/API repair3d7beb203 is published; existing APIs are unchanged.
+- **Next step:** Handoff requested. PR #5169 merged asd4ab52a926. Resolve private Gasification checkout qualification and integrate the ruler UI in UpstreamDrift #9899. Implementation/API repair3d7beb203 is published; existing APIs are unchanged.
 
 ### DL-#5157 · Applied Waveform Calibration and Shared Uncertainty
 

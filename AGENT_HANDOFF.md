@@ -4,7 +4,7 @@
 
 Transfer: `Worktrees/Tools-calibration-numerics`, `feat/5168-linear-reference-scale`.
 Implementation/API repair3d7beb203 passes numerical/API checks; later commits are turnover.
-Private Gasification checkout Not Found (job102883109039) remains; preserve the gate.
+PR #5169 merged asd4ab52a926; private checkout Not Found (job102883109039) remains unqualified.
 Read `docs/development/REFERENCE_SCALE.md` and UpstreamDrift's
 `docs/development/capture_product_turnover.md`. Coordinate the final consumer pin.
 

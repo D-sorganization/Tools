@@ -1,6 +1,6 @@
 # Established-layout ruler scale (#5168)
 
-Turnover: ready PR #5169 publishes implementation/API repair3d7beb203. All old
+Turnover: PR #5169 merged implementation/API repair3d7beb203 asd4ab52a926. All old
 API entries are unchanged; exactly three module entries were added. Normal hooks
 passed. CI's remaining private Gasification checkout failure occurs before tests
 (job102883109039/run34479121462); coordinate access without bypassing the gate.
