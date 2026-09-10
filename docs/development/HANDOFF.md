@@ -34,6 +34,38 @@
   copies as new source. Current integration is the only implementation pending
   publication at the audit. No worktree or branch deletion is needed for handoff.
 
+## Final Merge Blocker and Handoff
+
+- All implementation is committed and published at d4323c14ad364640b3f371ba8bed606ab958c990;
+  this turnover-only continuation is SELF. PR #5162 remains OPEN with
+  do-not-merge and auto-merge disabled. Do not treat the successful manual run
+  as proof that PR-hosted runtime is reliable.
+- Manual Standard34496105215 passed all14 Python shards, both aggregates and
+  quality-gate. Shared3.11/3.12 jobs102934882410/102934882320 each passed1334
+  tests with2 optional skips in412.18/677.55s.
+- PR Standard34496053564 attempt2 failed Python3.12 shared job102940510943
+  at the unchanged60s limit while running
+  test_production_entry_refines_separate_velocity_spin_impulse_and_work[60].
+  The log prints a PASSED marker during the timeout stack; the process exits1.
+  The interrupted case/result must not be counted as a completed pass. This
+  contrasts with the manual run; runner variance is a hypothesis, not a cause.
+- The original duplicate PR run was canceled while the manual run continued;
+  attempt2 restored required PR check contexts and exposed the timeout. No
+  numerical repair or test-limit change was made between these runs.
+- Next agent: inspect the linked failed job/log, compare exact checkout trees,
+  environment and per-test cost; reproduce and profile before changing code.
+  Require new TDD evidence for any optimization, retain independent mechanics
+  controls and60s limit, and qualify the exact final PR head. Remove the hold
+  only when the observed failure is addressed; no blind retry as a repair.
+- Affine turnover #4361 is MERGED f4a76f012305a921143f694a1d38d5d1ff571eeb;
+  Upstream turnover #9962 is MERGED5fb38430cf97cc33a8d071f7b8ad7784e0309687.
+  Their program issues record these merges. The user requested a takeover
+  checkpoint; no further scientific implementation is being started here.
+- Local log: TEMP/impact-d432-pr-shared312-failure.log; durable source:
+  https://github.com/D-sorganization/Tools/actions/runs/34496053564/job/102940510943.
+  Passing source/run details are on PR5162 comment5621436009. Both passing and
+  failing outcomes must accompany future performance and scientific claims.
+
 ## Ordered Takeover
 
 1. Read this canonical handoff and the live PR states. Fetch main into a clean

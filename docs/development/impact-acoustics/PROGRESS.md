@@ -1,5 +1,10 @@
 # Current Checkpoint — 2026-09-10
 
+Final checkpoint: PR5162 is held OPEN after PR Standard34496053564 attempt2
+timed out in Python3.12 entry60, despite both successful manual matrices.
+All source is committed; Affine4361 and Upstream9962 turnover are merged.
+See the canonical Final Merge Blocker section before proceeding.
+
 Canonical continuation: [HANDOFF.md](../HANDOFF.md). Contact foundation #5146,
 trajectory #5149, adaptive events #5152, prescribed loads #5154, complex FRF
 #5156 and calibration #5159 are merged. Friction #5162 is integrated locally

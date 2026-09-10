@@ -23,13 +23,13 @@ reachable from any live state and `abandoned` from `parked`.
 - **State:** in_progress
 - **Owner:** codex
 - **Issue:** [#5160](https://github.com/D-sorganization/Tools/issues/5160)
-- **PR:** https://github.com/D-sorganization/Tools/pull/5162 (draft)
+- **PR:** https://github.com/D-sorganization/Tools/pull/5162 (open; do-not-merge)
 - **Branch:** feat/5073-friction-trajectory
 - **Paths:** src/shared/python/swing_sim/impact, src/shared/python/golf_club, tests/shared/python/golf_club, docs/development/impact-acoustics/FRICTION_TRAJECTORY.md, SPEC.md and turnover/inventory
 - **Started:** 2026-09-10
-- **Last verified:** 2026-09-10 (ef796bf327386f2f4db0105c42fd039ef2869feb; integrated checkpoint SELF): main d4ab52a926cbd74d10b881a700c0c4f12f89728f integration passes1657 tests with2 optional CAD skips in716.72s,93.80% coverage and unchanged60s limit. CHECKPOINT_INTEGRATION_RESULTS.json binds source/JUnit/coverage; historical polynomial RED/proof remains separate. Hosted qualification and merge remain pending.
+- **Last verified:** 2026-09-10 (d4323c14ad364640b3f371ba8bed606ab958c990; turnover SELF):1657 local coverage tests pass/2 optional skips/93.80%; manual34496105215 all14 shards and both aggregates pass. PR34496053564 attempt2 Python3.12 job102940510943 times out in entry60 at unchanged60s. Both outcomes remain recorded; no runtime reliability or merge qualification is claimed.
 - **Summary:** Parent #5073. Coupled endpoint mechanics and objective elastic/Coulomb history with explicit transport, nonlinear solve criteria and disjoint energy accounting.
-- **Next step:** Complete hosted qualification and merge #5162; hand off the open numerical/physical/acoustic program in canonical HANDOFF. Preserve peer pin/runtime ownership.
+- **Next step:** Handoff to the next agent: investigate and address the exact hosted timeout before removing do-not-merge. Canonical HANDOFF records reproduction scope, source identities and remaining science. Affine4361 and Upstream9962 turnover are merged.
 
 ### DL-#5168 · Established-layout linear reference scale
 
