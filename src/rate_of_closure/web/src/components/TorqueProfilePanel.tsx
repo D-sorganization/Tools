@@ -340,7 +340,7 @@ export function TorqueProfilePanel({
         </select>
       </label>
       <div className="mt-2 flex flex-wrap gap-2">
-        <label className="cursor-pointer rounded border border-slate-700 px-2 py-1 text-xs text-slate-300 hover:border-sky-500">
+        <label className="cursor-pointer rounded border border-slate-700 px-2 py-1 text-xs text-slate-300 hover:border-sky-500 focus-within:border-sky-500 focus-within:outline focus-within:outline-2 focus-within:outline-sky-500">
           Import JSON
           <input
             type="file"
@@ -350,7 +350,7 @@ export function TorqueProfilePanel({
             onChange={(event) => void importProfile(event.target.files?.[0])}
           />
         </label>
-        <button type="button" title="Download the selected canonical torque profile as JSON" onClick={exportProfile} className="rounded border border-slate-700 px-2 py-1 text-xs text-slate-300 hover:border-sky-500">
+        <button type="button" title="Download the selected canonical torque profile as JSON" onClick={exportProfile} className="rounded border border-slate-700 px-2 py-1 text-xs text-slate-300 hover:border-sky-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-500">
           Export Selected JSON
         </button>
       </div>
@@ -369,7 +369,7 @@ export function TorqueProfilePanel({
           </div>
           <label className="text-xs text-slate-400">Shoulder c0, c1, …<input aria-label="Shoulder coefficients" value={editor.shoulder} onChange={(event) => edit("shoulder", event.target.value)} className={`${INPUT} mt-1 font-mono`} /></label>
           <label className="text-xs text-slate-400">Wrist c0, c1, …<input aria-label="Wrist coefficients" value={editor.wrist} onChange={(event) => edit("wrist", event.target.value)} className={`${INPUT} mt-1 font-mono`} /></label>
-          <button type="button" title="Validate and save this profile in the browser library" onClick={saveProfile} className="rounded border border-emerald-400/60 bg-emerald-500/10 px-3 py-2 text-sm font-semibold text-emerald-300 hover:bg-emerald-500/20">
+          <button type="button" title="Validate and save this profile in the browser library" onClick={saveProfile} className="rounded border border-emerald-400/60 bg-emerald-500/10 px-3 py-2 text-sm font-semibold text-emerald-300 hover:bg-emerald-500/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-400">
             Save Torque Profile
           </button>
         </div>
@@ -413,10 +413,10 @@ export function TorqueProfilePanel({
           </table>
           </>
         )}
-        <button type="button" title="Fit the editable torque points using the selected polynomial degree" onClick={fitSamples} className="mt-2 w-full rounded border border-violet-400/60 bg-violet-500/10 px-3 py-2 text-sm font-semibold text-violet-300 hover:bg-violet-500/20">
+        <button type="button" title="Fit the editable torque points using the selected polynomial degree" onClick={fitSamples} className="mt-2 w-full rounded border border-violet-400/60 bg-violet-500/10 px-3 py-2 text-sm font-semibold text-violet-300 hover:bg-violet-500/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-violet-400">
           Fit Torque Curves
         </button>
-        <button type="button" title="Fit the current run's retained torque history into a reusable profile" onClick={fitCurrentRun} disabled={!run || run.torqueRun.appliedTorqueHistory.length < 2} className="mt-2 w-full rounded border border-slate-600 px-3 py-2 text-sm text-slate-300 disabled:opacity-40">
+        <button type="button" title="Fit the current run's retained torque history into a reusable profile" onClick={fitCurrentRun} disabled={!run || run.torqueRun.appliedTorqueHistory.length < 2} className="mt-2 w-full rounded border border-slate-600 px-3 py-2 text-sm text-slate-300 hover:border-slate-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-slate-400 disabled:opacity-40">
           Fit Current Run to Profile
         </button>
         <TorqueFitPreview fit={fit} />

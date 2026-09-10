@@ -5683,10 +5683,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 18499,
+      "bytes_lf": 18936,
       "classification": "calculation",
       "classification_basis": "path-marker:torque",
-      "content_sha256_lf": "e0bbbea368728d606b31bf0b3b2d330ad94c1853d02ab86ad557631ec8e9ad81",
+      "content_sha256_lf": "5ead29613ead66316c390f03702891812e1a63c02b9b50fade440eb96fc6acf2",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-TORQUEPROFILEPANEL-TSX-25DBF7723F10",
       "language": "typescript-react",
