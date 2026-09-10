@@ -87,13 +87,24 @@ step; each actual response evaluation still consumes the caller's budget.
 The relative-iterate stopping criterion is sqrt(machine epsilon), following
 [MINPACK's recommendation](https://www.math.utah.edu/software/minpack/minpack/hybrd.html).
 It is distinct from the caller's mechanical equation-residual tolerance.
-Acceptance requires both a successful solver exit and a fresh independent
-endpoint evaluation with max(abs(scaled mechanical residual)) <= that tolerance.
-The test tolerance remains 1e-10; no test oracle, deadline, response budget or
-force/geometry domain was loosened. The original 0.1-times-residual iterate
-criterion could stall at residuals below 3e-17. Solver failure, an excessive
-fresh residual, exhausted budgets and invalid arithmetic still refuse the
-whole requested trajectory without returning a partial result.
+The application also stops a function evaluation when its maximum scaled
+residual is at most min(caller tolerance, machine epsilon times
+max(1, maximum absolute scaled velocity)). This roundoff-scale stopping
+threshold is not a rigorous floating-point backward-error bound. It avoids
+requiring further iterate progress after the endpoint equations are already
+satisfied. Jacobian difference probes cannot trigger this stop.
+
+An immutable record distinguishes this application stop (`roundoff-residual`)
+from a successful backend return (`backend-iterate`). Supplied initial data has
+its own `initial` record and makes no solved-equation claim. Every candidate,
+from either numerical criterion, requires a fresh budgeted endpoint evaluation
+with max(abs(scaled mechanical residual)) <= the caller tolerance. A backend
+that actually returns failure is still refused; no backend success flag is
+fabricated. Tests reject both misleading backend reports and a deliberately
+false residual callback. The test tolerance remains 1e-10; no test oracle,
+deadline, response budget or force/geometry domain was loosened. An excessive
+fresh residual, exhausted budgets and invalid arithmetic refuse the whole
+requested trajectory without returning a partial result.
 
 Backward Euler introduces mechanical numerical damping. It is first order,
 including between contact events. A small nonlinear residual does not establish
@@ -170,7 +181,7 @@ algorithmic loss. First touch and an initial 0.1 mm gap are separate cases.
 They do not establish event-exact peak force or an error bound for arbitrary
 club trajectories.
 
-Final Windows verification passes 253 tests in 97.32 s with no skips or
+The earlier implementation75f8328bb passes 253 Windows tests in 97.32 s with no skips or
 failures. Both seven-file typing modes pass; all prior API records are unchanged.
 Independent normal-force errors decrease from 0.1460 to 0.07337 to 0.03677 N;
 five-channel work errors decrease from 6.80e-6 to 3.47e-6 to 1.75e-6 J.
@@ -187,9 +198,9 @@ friction, mesh/mode and grazing/repeated-event qualification, radiation,
 held-out force/spin recordings and blinded sweetness. No numerical loss is
 promoted to physical heat, acoustic energy or perceived quality.
 
-## Finer-grid diagnostic and exact one-step failure
+## Preserved earlier failure and residual-stop qualification
 
-The same published production source completes 240 steps from the positive gap:
+Implementation75f8328bb completes 240 steps from the positive gap:
 y-spin 1.440045294 rad/s, normal impulse 0.004537435 N s, mechanical defect
 -0.000110616 J and tangential algorithmic loss 0.00000451942 J. These are
 additional diagnostics, not a componentwise asymptotic certificate.
@@ -202,9 +213,54 @@ trajectory is not returned. The exact accepted mechanical/tangential state is
 embedded in FRICTION_RESULTS.json; reconstructing that one step reproduces the
 refusal in 0.344 s, avoiding a full trajectory in the next RED regression.
 
-Review #5160 and draft PR#5162 remain open. Next, add that exact regression and
-repair the distinction between mathematical residual convergence and backend
-termination reporting. Preserve actual evaluation/domain limits, independent
-fresh residual and force/work/momentum controls; report termination evidence
-explicitly. Do not adjust tolerances merely to make this fixture pass. Finer
-individual spin convergence remains a separate requirement after that repair.
+That captured state first fails the new regression, then passes after the
+application residual stop described above. A separate contract-import RED
+precedes the termination record. The repaired source passes 258 affected
+Windows controls, including the five convergence cases, in 94.25 s. Both
+production typing modes pass. Historical source and failure receipts stay in
+FRICTION_RESULTS.json; FRICTION_CONVERGENCE_RESULTS.json identifies the repair,
+new reference tests and all finer-grid results separately.
+
+An independent continuous sticking reference integrates world history using
+zdot = omega_transport cross z + v_t and local Lie-chart pose rates with
+[SciPy DOP853](https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html).
+For mean-normal-spin transport, omega_transport is omega_face plus half the
+normal component of omega_ball minus omega_face. This reference shares the
+canonical mechanics, force evaluation and chart differential, but uses neither
+the discrete history return map nor the endpoint root solver. Both conventions
+remain strictly compressed and below half the Coulomb cap throughout. Raw
+history tangency is monitored before removing roundoff normal drift.
+
+The adaptive reference agrees with a tenfold tighter tolerance to 1e-10 in the
+declared scaled outputs. Against it, the 4/8/16-step backward-Euler errors are
+3.8841e-4/1.9419e-4/9.7093e-5 (face transport) and
+3.8614e-4/1.9306e-4/9.6526e-5 (mean spin). Both satisfy the preset 1.7–2.3
+first-order ratio bounds with zero plastic loss. These two additional tests
+qualify smooth sticking time convergence, not sliding or physical coefficients.
+
+The positive-gap compression/release diagnostic now completes all finer grids:
+
+| Steps | Final y-spin (rad/s) | Normal impulse (N s) | Mechanical defect (J) | Actual evaluations |
+| ----- | -------------------- | -------------------- | --------------------- | ------------------ |
+| 240   | 1.4400452942         | 0.0045374347         | -1.1061583e-4         | 5938               |
+| 480   | 1.4461078036         | 0.0045717032         | -5.5394438e-5         | 11754              |
+| 960   | 1.4456943845         | 0.0045892411         | -2.7720634e-5         | 23110              |
+| 1920  | 1.4454844460         | 0.0045980250         | -1.3866184e-5         | 46084              |
+
+All accepted steps use the explicitly recorded residual stop, with maximum
+fresh scaled defects below 2.22e-16. The 480/960/1920 spin-difference ratio is
+about 1.969; normal impulse, normal speed and energy defects also approach
+first-order refinement. This is observed evidence in one synthetic case, not
+an a priori error bound or proof of general contact-transition convergence.
+The 240-to-480 reversal and all earlier nonmonotone spin values remain visible.
+Tangential linear velocity has much smaller, non-asymptotic differences; a
+decreasing mixed norm cannot certify every output component.
+
+These standalone scientific runs explicitly allow 60000 total evaluations
+for the larger grids, with the same 150 per-step limit and 1e-10 residual
+tolerance. They are not a relaxation of regression-test budgets or deadlines.
+The earlier published cb7219f38 Linux Python3.11 shard timed out at the unchanged
+60-second limit in the zero-gap release test (job102797151274); its Python3.12
+shared shard passed. The repaired source still needs hosted qualification.
+Review #5160 and draft PR#5162 remain open for contact-transition/componentwise
+qualification, CI and review. All physical/acoustic parent requirements remain.

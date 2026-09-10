@@ -8,6 +8,8 @@ from scipy.optimize import root
 from ...golf_club._grip_contracts import finite_array
 from ._friction_contact_response import FrictionContactResponse, friction_response
 from ._friction_trajectory_contracts import (
+    FrictionConvergence,
+    FrictionTermination,
     FrictionTrajectoryControls,
     FrictionTrajectoryProblem,
     FrictionTrajectoryState,
@@ -32,6 +34,24 @@ class EvaluationBudget:
         if self.used >= self.maximum:
             raise ValueError("friction trajectory global evaluation budget exhausted")
         self.used += 1
+
+
+class _ResidualConverged(Exception):
+    """Internal solver stop carrying an owned, still-to-be-rechecked candidate."""
+
+    def __init__(self, candidate: np.ndarray) -> None:
+        super().__init__("scaled residual reached the roundoff stopping criterion")
+        self.candidate = candidate.copy()
+
+
+@dataclass(frozen=True)
+class FrictionStepResult:
+    """Accepted mechanics/history and the actual numerical convergence record."""
+
+    state: FrictionTrajectoryState
+    response: FrictionContactResponse
+    update: TangentialContactUpdate
+    convergence: FrictionConvergence
 
 
 @dataclass
@@ -104,10 +124,26 @@ class FrictionStep:
             "trial twist",
         )
         _, response, _ = self.evaluate(velocities)
-        defect = velocities - previous.twists - self.step_s * response.rates
+        return self._defect(velocities, response.rates).ravel()
+
+    def _defect(self, velocities: np.ndarray, rates: np.ndarray) -> np.ndarray:
+        previous = self.previous.mechanical
+        defect = velocities - previous.twists - self.step_s * rates
         return finite_array(
-            defect / self.velocity_scale, shape, "scaled endpoint residual"
-        ).ravel()
+            defect / self.velocity_scale,
+            previous.twists.shape,
+            "scaled endpoint residual",
+        )
+
+    def _solver_residual(self, point: np.ndarray) -> np.ndarray:
+        residual = self.residual(point)
+        # Stop only near roundoff (or a stricter caller tolerance). Waiting for
+        # relative iterate progress after this point can report false failure.
+        roundoff = np.finfo(float).eps * max(1.0, float(np.max(np.abs(point))))
+        threshold = min(self.controls.scaled_residual_tolerance, roundoff)
+        if float(np.max(np.abs(residual))) <= threshold:
+            raise _ResidualConverged(point)
+        return residual
 
     def jacobian(self, scaled_velocities: np.ndarray) -> np.ndarray:
         """Difference on physical scales, including components near zero.
@@ -138,40 +174,38 @@ class FrictionStep:
         self._jacobian_value = np.column_stack(columns)
         return self._jacobian_value.copy()
 
-    def solve(
-        self,
-    ) -> tuple[
-        FrictionTrajectoryState, FrictionContactResponse, TangentialContactUpdate, float
-    ]:
+    def _candidate(self) -> tuple[np.ndarray, FrictionTermination]:
         previous = self.previous.mechanical
         start = previous.twists
         guess = (start + self.step_s * self.response.rates) / self.velocity_scale
-        tolerance = self.controls.scaled_residual_tolerance
-        solved = root(
-            self.residual,
-            guess.ravel(),
-            method="hybr",
-            jac=self.jacobian,
-            options={
-                # MINPACK's recommended iterate criterion is distinct from
-                # the caller's independently checked mechanical residual.
-                "xtol": np.sqrt(np.finfo(float).eps),
-                "maxfev": self.controls.max_step_evaluations,
-            },
-        )
+        try:
+            solved = root(
+                self._solver_residual,
+                guess.ravel(),
+                method="hybr",
+                jac=self.jacobian,
+                options={
+                    "xtol": np.sqrt(np.finfo(float).eps),
+                    "maxfev": self.controls.max_step_evaluations,
+                },
+            )
+        except _ResidualConverged as converged:
+            return converged.candidate, FrictionTermination.RESIDUAL
         if not solved.success:
             raise ValueError(f"friction endpoint failed to converge: {solved.message}")
-        velocities = np.asarray(solved.x).reshape(start.shape) * self.velocity_scale
+        return np.asarray(solved.x), FrictionTermination.BACKEND
+
+    def solve(self) -> FrictionStepResult:
+        previous = self.previous.mechanical
+        point, reason = self._candidate()
+        velocities = point.reshape(previous.twists.shape) * self.velocity_scale
         state, response, update = self.evaluate(velocities)
-        defect = (
-            velocities - start - self.step_s * response.rates
-        ) / self.velocity_scale
-        norm = float(
-            np.max(np.abs(finite_array(defect, start.shape, "endpoint residual")))
-        )
-        if norm > tolerance:
+        norm = float(np.max(np.abs(self._defect(velocities, response.rates))))
+        if norm > self.controls.scaled_residual_tolerance:
             raise ValueError("friction endpoint residual exceeds convergence tolerance")
-        return state, response, update, norm
+        return FrictionStepResult(
+            state, response, update, FrictionConvergence(reason, norm)
+        )
 
 
 __all__ = ()

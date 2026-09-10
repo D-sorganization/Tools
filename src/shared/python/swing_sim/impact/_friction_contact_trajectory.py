@@ -9,6 +9,8 @@ from ...golf_club._validation import Vector3, require_finite_float, require_vect
 from ._friction_contact_response import FrictionContactResponse, initial_response
 from ._friction_contact_step import EvaluationBudget, FrictionStep
 from ._friction_trajectory_contracts import (
+    FrictionConvergence,
+    FrictionTermination,
     FrictionTrajectoryControls,
     FrictionTrajectoryProblem,
     FrictionTrajectoryState,
@@ -30,7 +32,11 @@ class FrictionTrajectorySample:
     normal_impulse_ns: float
     tangential_impulse_ns: Vector3
     energy_balance_error_j: float
-    scaled_solver_residual: float
+    convergence: FrictionConvergence
+
+    @property
+    def scaled_solver_residual(self) -> float:
+        return self.convergence.scaled_residual
 
 
 @dataclass(frozen=True)
@@ -89,7 +95,7 @@ class _Ledger:
         time_s: float,
         state: FrictionTrajectoryState,
         response: FrictionContactResponse,
-        residual: float,
+        convergence: FrictionConvergence,
     ) -> FrictionTrajectorySample:
         external, *outputs = self.work.values
         defect = math.fsum(
@@ -113,7 +119,7 @@ class _Ledger:
             self.normal_impulse_ns,
             self.tangential_impulse_ns,
             require_finite_float(defect, "mechanical integration defect"),
-            residual,
+            convergence,
         )
 
 
@@ -149,12 +155,20 @@ def integrate_friction_contact(
                 + initial.tangential.elastic_energy_j
             )
             state = initial
-            samples = [ledger.sample(controls.bounds_s[0], state, response, 0.0)]
+            initial_convergence = FrictionConvergence(FrictionTermination.INITIAL, 0.0)
+            samples = [
+                ledger.sample(
+                    controls.bounds_s[0], state, response, initial_convergence
+                )
+            ]
             for cell in cells:
                 solve = FrictionStep(problem, state, response, cell, controls, budget)
-                state, response, update, residual = solve.solve()
-                ledger = ledger.advance(response, update, cell[2] - cell[0])
-                samples.append(ledger.sample(cell[2], state, response, residual))
+                result = solve.solve()
+                state, response = result.state, result.response
+                ledger = ledger.advance(response, result.update, cell[2] - cell[0])
+                samples.append(
+                    ledger.sample(cell[2], state, response, result.convergence)
+                )
     except (np.linalg.LinAlgError, FloatingPointError, OverflowError) as error:
         raise ValueError("friction trajectory numerical evaluation failed") from error
     return FrictionTrajectory(controls, tuple(samples), budget.used)

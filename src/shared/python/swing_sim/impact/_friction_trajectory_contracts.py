@@ -1,6 +1,7 @@
 """Owned coupled mechanical/history state and bounded endpoint-solve controls."""
 
 from dataclasses import dataclass
+from enum import Enum
 
 from ...golf_club._shaft_trajectory_contracts import (
     MovingTrajectoryControls,
@@ -13,6 +14,36 @@ from ._normal_contact_trajectory import (
     NormalContactTrajectoryState,
 )
 from ._tangential_contact_work import TangentialContactLaw, TangentialContactState
+
+
+class FrictionTermination(Enum):
+    """Initial data versus the numerical criterion that ended an actual solve."""
+
+    INITIAL = "initial"
+    RESIDUAL = "roundoff-residual"
+    BACKEND = "backend-iterate"
+
+
+@dataclass(frozen=True)
+class FrictionConvergence:
+    """Recorded termination and freshly checked dimensionless endpoint residual.
+
+    INITIAL marks supplied data, not a solved equation. Neither termination
+    criterion certifies a time-discretization error or physical validity.
+    """
+
+    reason: FrictionTermination
+    scaled_residual: float
+
+    def __post_init__(self) -> None:
+        if not isinstance(self.reason, FrictionTermination):
+            raise TypeError("convergence reason must be FrictionTermination")
+        value = require_finite_float(self.scaled_residual, "endpoint residual")
+        if value < 0:
+            raise ValueError("endpoint residual must be nonnegative")
+        if self.reason is FrictionTermination.INITIAL and value != 0:
+            raise ValueError("initial data cannot claim a solved residual")
+        object.__setattr__(self, "scaled_residual", value)
 
 
 @dataclass(frozen=True)

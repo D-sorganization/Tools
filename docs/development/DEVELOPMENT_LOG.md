@@ -27,9 +27,9 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/5073-friction-trajectory
 - **Paths:** src/shared/python/swing_sim/impact, tests/shared/python/golf_club, docs/development/impact-acoustics/FRICTION_TRAJECTORY.md, SPEC.md and turnover/inventory
 - **Started:** 2026-09-10
-- **Last verified:** 2026-09-10: final253 controls pass in97.32s; both seven-file typing modes pass; existing API entries unchanged. Published75f8328bb / draft5162 with all normal hooks; exact source/results and all nine passing governance gates recorded; positive-gap individual spin refinement remains unresolved;240-step diagnostic completes and480-step stagnation has a preserved0.344s one-step reproducer.
+- **Last verified:** 2026-09-10: residual-stop repair SELF passes258 affected controls in94.25s plus seven final new/convergence controls in10.60s (two additional continuous references); both production typing modes and all nine governance gates pass. Captured interior-step and contract RED receipts retained. All240/480/960/1920 grids complete; latest spin-difference ratio1.96924 is case-specific. Exact sources/results in FRICTION_CONVERGENCE_RESULTS.json. Earlier cb Python3.11 shared shard times out at60s; repaired-source hosted qualification remains pending.
 - **Summary:** Coupled endpoint mechanics and objective elastic/Coulomb history with explicit transport, nonlinear solve criteria and disjoint energy accounting.
-- **Next step:** Add a one-step RED regression from the captured480-grid state before repairing stagnation handling.
+- **Next step:** Publish and qualify the residual-stop repair through draft PR#5162 hosted checks.
 
 ### DL-#5153 · Prescribed Force and Couple History Review
 

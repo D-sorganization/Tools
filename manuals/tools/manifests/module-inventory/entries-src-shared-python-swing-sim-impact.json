@@ -277,6 +277,7 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/golf_club/test_friction_continuous_reference.py",
           "tests/shared/python/golf_club/test_friction_momentum.py"
         ],
         "unit_mentions": [],
@@ -285,10 +286,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 6862,
+      "bytes_lf": 8293,
       "classification": "calculation",
       "classification_basis": "path-marker:friction",
-      "content_sha256_lf": "25d93c20cf66ac5bdbf2ff63333ec6fdc5b49341a7e45227273716aa17352ae9",
+      "content_sha256_lf": "6bc7565d45914fe3de0e575181da150fe65061cbe9d3ece5b7ce0ade92425462",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-FRICTION-CONTACT-STEP-PY-0C4D446DC626",
       "language": "python",
@@ -335,10 +336,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 5898,
+      "bytes_lf": 6345,
       "classification": "calculation",
       "classification_basis": "path-marker:friction",
-      "content_sha256_lf": "0098bbd3461afd935a6080d7e33eb5cfabca438f5b31c11d218e486fbc103ca9",
+      "content_sha256_lf": "796763ed779f229a3f65ed0008664fcfa810c6c18649683c4ac27f9d29de0132",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-FRICTION-CONTACT-TRAJECTORY-PY-05199237B1BF",
       "language": "python",
@@ -377,6 +378,8 @@
         "public_surfaces": [],
         "test_paths": [
           "tests/shared/python/golf_club/test_friction_contact_trajectory.py",
+          "tests/shared/python/golf_club/test_friction_continuous_reference.py",
+          "tests/shared/python/golf_club/test_friction_convergence.py",
           "tests/shared/python/golf_club/test_friction_modes.py",
           "tests/shared/python/golf_club/test_friction_momentum.py",
           "tests/shared/python/golf_club/test_friction_refinement.py",
@@ -388,10 +391,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 3008,
+      "bytes_lf": 4146,
       "classification": "calculation",
       "classification_basis": "path-marker:friction",
-      "content_sha256_lf": "290bcda9cc5cfd48c6dc449e1714545efce3f2b58fdc754e7eda4d610d111283",
+      "content_sha256_lf": "7e044af47d86c7c284ee3a28ac97cf564f2e215490fdd55c520947174d0f324a",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-FRICTION-TRAJECTORY-CONTRACTS-PY-556DE0E74432",
       "language": "python",
@@ -403,7 +406,6 @@
         "downstream-consumer-risk",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -415,7 +417,7 @@
         "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "unavailable",
         "validation": "unavailable"
       },
@@ -429,7 +431,9 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [],
-        "test_paths": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_friction_convergence.py"
+        ],
         "unit_mentions": [],
         "validation_paths": []
       }
@@ -478,6 +482,7 @@
         "public_surfaces": [],
         "test_paths": [
           "tests/shared/python/golf_club/test_friction_contact_trajectory.py",
+          "tests/shared/python/golf_club/test_friction_continuous_reference.py",
           "tests/shared/python/golf_club/test_friction_trajectory_invariants.py",
           "tests/shared/python/golf_club/test_friction_transport.py"
         ],
@@ -578,6 +583,7 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/golf_club/test_friction_continuous_reference.py",
           "tests/shared/python/golf_club/test_normal_contact_events.py",
           "tests/shared/python/golf_club/test_normal_contact_trajectory.py",
           "tests/shared/python/golf_club/test_shaft_load_history.py"
