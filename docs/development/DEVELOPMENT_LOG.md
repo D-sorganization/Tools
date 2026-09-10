@@ -27,7 +27,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/5073-contact-events
 - **Paths:** src/shared/python/swing_sim/impact, src/shared/python/golf_club, tests/shared/python/golf_club
 - **Started:** 2026-09-10
-- **Last verified:** 2026-09-10 (SELF preserves temporal0d6b99430 and event9a8241015; 15 integration controls and nine governance gates pass; source tree4e1b19810 passes386 Windows/Linux controls)
+- **Last verified:** 2026-09-10 (SELF preserves fleet-policy92283cf3f; no material implementation change from event9a8241015; 15 integration controls and nine governance gates pass; source tree4e1b19810 passes386 Windows/Linux controls)
 - **Summary:** Adaptive local-chart normal contact with independent event/work reference, strict SI controls and unchanged canonical mechanics/APIs.
 - **Evidence:** NORMAL_EVENT_RESULTS.json records all RED/GREEN/source/JUnit identities; four production modules pass NumPy-aware mypy; Linux coverage58.64% exceeds unchanged20% floor; root Ruff/format3870 pass.
 - **Next step:** Publish the verified event continuation for protected review under #5151.
@@ -69,7 +69,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/5073-contact-events
 - **Paths:** src/shared/python/swing_sim/impact, docs/development/impact-acoustics, tests/api_baselines/swing_sim_api_baseline.json
 - **Started:** 2026-09-09
-- **Last verified:** 2026-09-10 (SELF preserves temporal/main integration; event9a8241015 and source4e1b19810 pass386 Windows/Linux controls; 15 integration controls pass)
+- **Last verified:** 2026-09-10 (SELF preserves fleet-policy92283cf3f with no material implementation change; event9a8241015 and source4e1b19810 pass386 Windows/Linux controls; 15 integration controls pass)
 - **Summary:** Private common-point sphere/plane kinematics reuses canonical pose, force/moment and work ports. Point migration is kept distinct from material velocity. Normal and objective tangential work ports plus full-tensor free-body response are private; no qualified impact trajectory is inferred.
 - **Evidence:** Geometry 18, normal work 20 and tangent work 28 controls. Normal/legacy: 148 Windows/Linux pass after retained timeout. Tangential full impact: 150 Windows and 150 Linux coverage pass; NumPy typing passes. Integrated 176 tests pass on Windows/Linux. New body and moving-shaft controls pass 75 tests; relative-inertia adversarial RED then all 24 body tests pass. Five production files pass NumPy-aware mypy. All 323 coupled-response/impact/shaft controls pass on Windows and Linux coverage; existing 99 golf-club and 228 swing API records are unchanged. Exact artifacts are recorded.
 - **Next step:** Implement finite-duration tangential history coupling to the existing shaft/ball response.
