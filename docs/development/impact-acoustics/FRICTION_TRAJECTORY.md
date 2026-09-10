@@ -311,9 +311,9 @@ second centrifugal potential or turn Coriolis action into material damping.
 
 Two synthetic 40-microsecond cases use mu=0.02 and 5 m/s tangential ball speed,
 with normal ball velocities -0.4 and +0.4 m/s. One has growing tangential
-storage and one has shrinking storage. Every reference evaluation checks
-strict compression, positive force, planar motion, positive slip and outward
-plastic loading. No onset, reversal, stick/slide transition, force cutoff or
+storage and one has shrinking storage. The original reference refused loss of
+compression or force; the release extension below permits zero force after
+cutoff while retaining planar, slip-sign and positive plastic-rate checks. No onset, reversal, stick/slide transition, force cutoff or
 separation lies inside these reference intervals.
 
 DOP853 and a tenfold tighter reference agree in each reported output to 1e-10
@@ -336,3 +336,73 @@ equations unchanged. Both modified reference files pass NumPy-aware mypy and
 the file/function/attribute-depth contracts. This strengthens sliding qualification within
 the stated branch and retains the general event/mesh/mode, material,
 radiation and perception requirements.
+
+## Independent force cutoff and full separation
+
+The same planar saturated branch now continues through unloading to 3 ms.
+At positive normal force its moving Coulomb radius and plastic power retain
+the equations above. At zero normal force, tangential traction, elastic
+history and plastic power are zero. The canonical normal law continues to
+account for stored compression until the geometric gap clears. These are
+initially compressed, constant-sign sliding cases, not a general hybrid
+contact solver: onset, reversal, recontact and stick/slide switching remain
+outside this oracle. An initial history off the saturated branch is refused.
+
+DOP853 independently locates the raw normal-force zero and signed-gap zero.
+Both event families are retained in owned, read-only trajectory records.
+Detection uses accepted-step sign changes; more than one detected crossing
+per family is refused, but that refusal cannot establish completeness for
+unobserved repeated or grazing events. The reference shares the canonical
+mechanical equations, normal constitutive law and Lie-chart differential,
+while independently integrating time, sliding force, impulses and work.
+
+| Initial normal ball speed (m/s) | Force cutoff (ms) | Separation (ms) | Stored normal energy at cutoff (J) |
+| ------------------------------- | ----------------- | --------------- | ---------------------------------- |
+| -0.4                            | 2.1385984324      | 2.2869284692    | 0.0001757327312                    |
+| +0.4                            | 1.0914164802      | 1.2397682334    | 0.0002112765680                    |
+
+The normal-force cutoff occurs while the gap remains negative. Subsequent
+cutoff-work accumulation equals the stored normal energy at that event to
+1e-9 J. After separation, independent free-ball checks verify constant world
+linear velocity, linear center motion and constant world angular velocity to
+1e-8 in the respective SI units. The reference ends with zero contact force
+and tangential storage, positive clearance and positive separation speed.
+
+The complete continuous energy check is
+
+```text
+(E_mechanical+normal,final - E_mechanical+normal,initial - E_t,initial)
+- W_external + W_anchor + D_grip + D_normal_viscous + D_normal_cutoff
++ D_plastic = 0.
+```
+
+Here the final tangential storage is zero. The two residuals are approximately
+-2.31e-13 and -3.91e-13 J, comfortably inside the preset 1e-8 J bound. A tenfold
+tighter reference agrees separately in all twelve reported SI channels to
+1e-8. Cutoff and plastic losses remain model work channels; neither is a
+measurement or prediction of heat, radiated sound, or perceived sweetness.
+
+Production backward Euler uses 30/60/120 steps across the same 3 ms interval,
+with the unchanged 30000 total / 150 per-step evaluation limits and 1e-10
+requested residual tolerance. Against the continuous endpoint, separate
+x-velocity, y-spin, normal impulse, x tangential impulse, plastic work and
+z-velocity errors satisfy preset successive-error ratios of 1.5 to 2.5.
+Their finest-grid absolute limits are respectively 0.01 m/s, 0.05 rad/s,
+0.0005 N s, 0.00001 N s, 0.0001 J and 0.02 m/s. Each of the five other work
+channels decreases in error and satisfies its own 0.0005 J finest-grid bound.
+Full scaled-state error, mechanical energy defect and positive tangential
+algorithmic loss also decrease. No individual shaft-mode or peak-force
+certificate follows from a combined endpoint norm.
+
+The missing unloading behavior and missing event/history contracts were
+recorded as RED before their test-only implementation. Continuous release,
+event/free-ball and production comparison checks then passed before fixture
+consolidation. The final module shares immutable coarse/fine traces so all
+assertions reuse the same expensive reference integrations. The invalid-history
+control constructs a fresh reference. No production source, accuracy bound,
+test deadline or solver budget changes. Exact sources, JUnit identities,
+component errors and final regression results are in FRICTION_RELEASE_RESULTS.json.
+
+Final expanded Windows verification at SELF passes all274 tests in195.17s,
+with no failures or skips. Both modified files pass NumPy-aware mypy, Ruff
+and file/function/attribute-depth contracts. Hosted qualification remains open.

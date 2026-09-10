@@ -27,9 +27,9 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/5073-friction-trajectory
 - **Paths:** src/shared/python/swing_sim/impact, tests/shared/python/golf_club, docs/development/impact-acoustics/FRICTION_TRAJECTORY.md, SPEC.md and turnover/inventory
 - **Started:** 2026-09-10
-- **Last verified:** 2026-09-10: published residual-stop source4dcf1938e has258 affected plus two independent sticking controls. New rising/shrinking-cap planar sliding reference passes seven controls and NumPy-aware mypy after retained RED/typing failures; all267 expanded controls pass in104.24s at3a46d6d0 and all nine governance gates pass. A subsequent LoD access refactor passes nine reference controls in21.17s and the same typing/structural checks. No production equation or tolerance changes. Only Merge Hold Guard run34457281672 is queued for published7d953cdc7; Standard CI is not yet recorded.
+- **Last verified:** 2026-09-10 (SELF): all274 affected Windows controls pass in195.17s after test-only release/event extension and immutable fixture consolidation; both modified reference/test files pass NumPy-aware mypy, Ruff and structural contracts. Separate full-release velocity/spin/impulse/work errors refine within preset bounds. FRICTION_RELEASE_RESULTS.json retains source/JUnit identities and RED/PASS history. Production remains4dcf1938e; prior267/9 controls keep their original source identities. Publisheda22 Standard CI34460212232 remains queued; pending release-reference commit is not hosted-qualified.
 - **Summary:** Coupled endpoint mechanics and objective elastic/Coulomb history with explicit transport, nonlinear solve criteria and disjoint energy accounting.
-- **Next step:** Publish the qualified sliding-reference evidence and request Standard CI on PR#5162.
+- **Next step:** Qualify an independent friction reference across first contact and stick/slide transitions.
 
 ### DL-#5153 · Prescribed Force and Couple History Review
 

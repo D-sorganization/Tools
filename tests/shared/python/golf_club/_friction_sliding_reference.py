@@ -1,9 +1,10 @@
 """Continuous planar sliding oracle, independent of the discrete return map.
 
 Canonical mechanical response and chart differential are shared. Constant-sign
-planar slip and a positive outward plastic rate keep the history on its moving
-Coulomb boundary. This helper refuses departures from that branch; it is not
-a general friction integrator or a physical calibration.
+planar slip and a positive outward plastic rate keep active history on its
+moving Coulomb boundary. Zero force removes that history during unloading.
+Only initially compressed sliding and its release are covered; new contact,
+reversal and nonplanar friction remain outside this reference.
 """
 
 from dataclasses import dataclass, replace
@@ -19,8 +20,12 @@ from shared.python.swing_sim.impact._friction_trajectory_contracts import (
     FrictionTrajectoryProblem,
     FrictionTrajectoryState,
 )
-from shared.python.swing_sim.impact._normal_contact_trajectory import _shift
+from shared.python.swing_sim.impact._normal_contact_trajectory import (
+    NormalContactTrajectoryState,
+    _shift,
+)
 from shared.python.swing_sim.impact._normal_contact_work import normal_contact_work
+from shared.python.swing_sim.impact._normal_shaft_contact import NormalShaftContact
 from shared.python.swing_sim.impact._spatial_contact_kinematics import (
     ContactBodyState,
     PlaneSphereKinematics,
@@ -76,14 +81,57 @@ def _assert_planar(contact: PlaneSphereKinematics) -> None:
     assert _slip(contact)[0] > 1.0  # m/s; constant-sign branch, clear of reversal
 
 
+def _readonly(value: np.ndarray) -> np.ndarray:
+    result = np.array(value, dtype=float, copy=True)
+    assert np.all(np.isfinite(result))
+    result.setflags(write=False)
+    return result
+
+
+@dataclass(frozen=True)
+class SlidingReferenceTrace:
+    """Owned trajectory and detected raw-force/gap zero crossings.
+
+    Event detection uses sign changes between accepted steps. These records
+    are not a proof that arbitrary repeated or grazing events are complete.
+    """
+
+    times_s: np.ndarray
+    vectors: np.ndarray
+    event_times: tuple[np.ndarray, ...]
+    event_vectors: tuple[np.ndarray, ...]
+
+    def __post_init__(self) -> None:
+        times, vectors = _readonly(self.times_s), _readonly(self.vectors)
+        assert times.ndim == 1 and vectors.ndim == 2
+        assert vectors.shape[1] == times.size and np.all(np.diff(times) > 0)
+        event_times = tuple(_readonly(value) for value in self.event_times)
+        event_vectors = tuple(
+            _readonly(value.reshape(-1, vectors.shape[0]))
+            for value in self.event_vectors
+        )
+        assert len(event_times) == len(event_vectors) == 2
+        for time, vector in zip(event_times, event_vectors, strict=True):
+            assert time.ndim == 1 and vector.shape[0] == time.size
+        object.__setattr__(self, "times_s", times)
+        object.__setattr__(self, "vectors", vectors)
+        object.__setattr__(self, "event_times", event_times)
+        object.__setattr__(self, "event_vectors", event_vectors)
+
+
 @dataclass(frozen=True)
 class SlidingReference:
     problem: FrictionTrajectoryProblem
     initial: FrictionTrajectoryState
 
-    def snapshot(
+    def geometry(
         self, time_s: float, vector: np.ndarray
-    ) -> tuple[np.ndarray, FrictionTrajectoryState, FrictionContactResponse]:
+    ) -> tuple[
+        np.ndarray,
+        NormalContactTrajectoryState,
+        NormalShaftContact,
+        PlaneSphereKinematics,
+    ]:
         initial_mechanical = self.initial.mechanical
         shape = initial_mechanical.twists.shape
         size = int(np.prod(shape))
@@ -95,8 +143,13 @@ class SlidingReference:
         model = normal_problem.contact_at(time_s)
         contact = model.kinematics(mechanical.shaft, mechanical.ball)
         _assert_planar(contact)
+        return coordinates, mechanical, model, contact
+
+    def snapshot(
+        self, time_s: float, vector: np.ndarray
+    ) -> tuple[np.ndarray, FrictionTrajectoryState, FrictionContactResponse]:
+        coordinates, mechanical, model, contact = self.geometry(time_s, vector)
         normal = normal_contact_work(model.law, -contact.gap_m, -contact.gap_rate_mps)
-        assert normal.force_n > 0 and contact.gap_m < 0
         law = self.problem.tangential_law
         slip = _slip(contact)
         traction = (
@@ -114,6 +167,8 @@ class SlidingReference:
         return coordinates, state, response
 
     def plastic_power(self, response: FrictionContactResponse) -> float:
+        if response.normal.force_n == 0:
+            return 0.0
         bodies = response.bodies
         normal_problem = self.problem.normal
         model = normal_problem.contact
@@ -153,10 +208,32 @@ class SlidingReference:
     def integrate(
         self, end_s: float, rtol: float, atol: float
     ) -> tuple[FrictionTrajectoryState, FrictionContactResponse, np.ndarray]:
+        trace = self.trace(end_s, rtol, atol)
+        _, state, response = self.snapshot(end_s, trace.vectors[:, -1])
+        return state, response, trace.vectors[-10:, -1]
+
+    def force_cutoff_event(self, time_s: float, vector: np.ndarray) -> float:
+        _, _, model, contact = self.geometry(time_s, vector)
+        return float(
+            model.law.unclipped_normal_force(-contact.gap_m, -contact.gap_rate_mps)
+        )
+
+    def separation_event(self, time_s: float, vector: np.ndarray) -> float:
+        _, _, _, contact = self.geometry(time_s, vector)
+        return contact.gap_m
+
+    def trace(self, end_s: float, rtol: float, atol: float) -> SlidingReferenceTrace:
         mechanical = self.initial.mechanical
         twists = mechanical.twists
         # Ten integrals: five work ports, normal/vector tangent impulse, plastic work.
         initial = np.r_[np.zeros(twists.size), twists.ravel(), np.zeros(10)]
+        _, state, response = self.snapshot(0, initial)
+        assert response.normal.force_n > 0, (
+            "reference requires initially compressed sliding"
+        )
+        assert state.tangential == self.initial.tangential, (
+            "initial history must be saturated"
+        )
         result = solve_ivp(
             self.derivative,
             (0, end_s),
@@ -165,10 +242,16 @@ class SlidingReference:
             rtol=rtol,
             atol=atol,
             max_step=end_s / 8,
+            events=(self.force_cutoff_event, self.separation_event),
         )
         assert result.success and result.t[-1] == end_s
-        _, state, response = self.snapshot(end_s, result.y[:, -1])
-        return state, response, result.y[-10:, -1]
+        if any(len(events) > 1 for events in result.t_events):
+            raise ValueError(
+                "reference excludes repeated contact or cutoff transitions"
+            )
+        return SlidingReferenceTrace(
+            result.t, result.y, tuple(result.t_events), tuple(result.y_events)
+        )
 
 
 def sliding_case(ball_velocity_mps: float = -0.4) -> SlidingReference:

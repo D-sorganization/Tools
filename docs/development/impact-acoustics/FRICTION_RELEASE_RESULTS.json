@@ -1,0 +1,319 @@
+{
+  "schema_version": 1,
+  "governing_issue": "D-sorganization/Tools#5160",
+  "pr": 5162,
+  "base_publication": "a22f3f1cbda7b0107a4f59730ab19a04ed26b84d",
+  "production_commit": "4dcf1938ee49268ad3f756ea53084238eb56e2f3",
+  "reference_identity": "Exact LF-normalized source hashes below; release reference introduced with this artifact.",
+  "production_sources": {
+    "src/shared/python/swing_sim/impact/_friction_contact_response.py": "a3d5e56dc59620a18607eb782dc62b93f195330acb3e50a8c9b37a025bf56094",
+    "src/shared/python/swing_sim/impact/_friction_contact_step.py": "6bc7565d45914fe3de0e575181da150fe65061cbe9d3ece5b7ce0ade92425462",
+    "src/shared/python/swing_sim/impact/_friction_contact_trajectory.py": "796763ed779f229a3f65ed0008664fcfa810c6c18649683c4ac27f9d29de0132",
+    "src/shared/python/swing_sim/impact/_friction_trajectory_contracts.py": "7e044af47d86c7c284ee3a28ac97cf564f2e215490fdd55c520947174d0f324a",
+    "src/shared/python/swing_sim/impact/_friction_transport.py": "2e824f784bcb10a343eaca423dde4a1685861fafdca7367513c94e92deb23cef",
+    "src/shared/python/swing_sim/impact/_normal_contact_trajectory.py": "cdcf10778044663cac5eb5fc7334130780031e6df982389f2b840b694f2923aa",
+    "src/shared/python/swing_sim/impact/_normal_shaft_contact.py": "877a14b899bbb5633a196ab4b90260848dbe3ef40f3de677b87be9b53ad69c92"
+  },
+  "reference_sources": {
+    "tests/shared/python/golf_club/_friction_sliding_reference.py": "daaad86450ca7ac5ce3ade4db509a8f4e0001fef45eae4b790c54b98f463f9ab",
+    "tests/shared/python/golf_club/test_friction_sliding_reference.py": "124f3c61daaed4f776f10ae78d49bc4cd08df10b203e53c57f298843b1e7dd4e",
+    "tests/shared/python/golf_club/test_friction_continuous_reference.py": "dac771690b26cc235a4ed591257752c6881ea48b61d4d67d994de3d45c6401b6",
+    "tests/shared/python/golf_club/test_friction_contact_trajectory.py": "95a9c163dd6fcd506542d212a6f26354df10ce87d418affa30092a81279470f8",
+    "tests/shared/python/golf_club/test_normal_contact_trajectory.py": "5cc79ff9f1e4ca6a8431c3b5cff3cc17369ef7c2cfe0cb4e410931d13c20e603",
+    "tests/shared/python/golf_club/test_normal_shaft_contact.py": "ffe99a235286e2bbadbf46aca7477906cc2bacadb0d66d52cfbab4d73e65675e",
+    "tests/shared/python/golf_club/test_friction_separation_reference.py": "5ce95331b6796e773ac283ecb8df3f058477fd9353d578263429a9475f38dbcf"
+  },
+  "evidence_status": "synthetic-initially-compressed-planar-sliding-release-verification-only",
+  "environment": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10",
+    "numpy": "2.4.1",
+    "scipy": "1.17.0",
+    "BLAS_thread_environment": {
+      "OPENBLAS_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1"
+    }
+  },
+  "cases": {
+    "factory": "tests.shared.python.golf_club._friction_sliding_reference.sliding_case",
+    "normal_ball_velocity_mps": [-0.4, 0.4],
+    "tangential_ball_speed_mps": 5.0,
+    "friction_coefficient": 0.02,
+    "tangential_stiffness_n_per_m": 1000.0,
+    "bounds_s": [0, 0.003],
+    "steps": [30, 60, 120],
+    "reference_method": "DOP853",
+    "reference_rtol": [1e-11, 1e-12],
+    "reference_atol": [1e-13, 1e-14],
+    "reference_max_step_s": 0.000375
+  },
+  "reference_output_columns": [
+    "normal_force_n",
+    "world_tangential_force_x_n",
+    "world_ball_velocity_x_mps",
+    "world_ball_spin_y_radps",
+    "normal_impulse_ns",
+    "world_tangential_impulse_x_ns",
+    "plastic_work_j",
+    "external_work_j",
+    "anchor_work_j",
+    "grip_loss_j",
+    "normal_viscous_loss_j",
+    "normal_cutoff_loss_j"
+  ],
+  "production_output_columns": [
+    "world_ball_velocity_x_mps",
+    "world_ball_spin_y_radps",
+    "normal_impulse_ns",
+    "world_tangential_impulse_x_ns",
+    "plastic_work_j",
+    "world_ball_velocity_z_mps",
+    "external_work_j",
+    "anchor_work_j",
+    "grip_loss_j",
+    "normal_viscous_loss_j",
+    "normal_cutoff_loss_j"
+  ],
+  "preset_acceptance": {
+    "reference_each_channel_absolute": 1e-8,
+    "first_six_finest_absolute_limits": [
+      0.01, 0.05, 0.0005, 1e-5, 0.0001, 0.02
+    ],
+    "first_six_successive_error_ratio": [1.5, 2.5],
+    "each_other_work_finest_absolute_j": 0.0005,
+    "continuous_energy_defect_absolute_j": 1e-8,
+    "cutoff_storage_work_absolute_j": 1e-9,
+    "free_ball_each_component_absolute_si": 1e-8,
+    "production_finest_energy_defect_absolute_j": 0.02,
+    "work_state_energy_algorithmic_errors": "strictly decreasing; tangential algorithmic loss positive",
+    "global_evaluation_budget": 30000,
+    "per_step_evaluation_budget": 150,
+    "residual_tolerance": 1e-10,
+    "pytest_timeout_s": 60
+  },
+  "final_regression": {
+    "file": "impact-friction-release-final.xml",
+    "sha256": "699530dabf494950685967776f934c615ebf249925c3c1ff4a0fb429010d16ee",
+    "tests": 274,
+    "failures": 0,
+    "errors": 0,
+    "skipped": 0,
+    "elapsed_s": 194.926
+  },
+  "full_command": "'C:\\Users\\diete\\Repositories\\Tools-impact-shaft\\.venv\\Scripts\\python.exe' -m pytest tests/shared/python/golf_club/test_friction_contact_trajectory.py tests/shared/python/golf_club/test_friction_transport.py tests/shared/python/golf_club/test_friction_refinement.py tests/shared/python/golf_club/test_friction_trajectory_invariants.py tests/shared/python/golf_club/test_friction_modes.py tests/shared/python/golf_club/test_friction_momentum.py tests/shared/python/golf_club/test_normal_shaft_contact.py tests/shared/python/golf_club/test_normal_contact_trajectory.py tests/shared/python/golf_club/test_shaft_load_history.py src/shared/python/swing_sim/impact/tests tests/test_shared_package_api_stability.py tests/shared/python/golf_club/test_friction_convergence.py -o addopts= -o junit_family=legacy -q tests/shared/python/golf_club/test_friction_continuous_reference.py tests/shared/python/golf_club/test_friction_sliding_reference.py tests/shared/python/golf_club/test_friction_separation_reference.py '--junitxml=C:\\Users\\diete\\AppData\\Local\\Temp\\impact-friction-release-final.xml'",
+  "test_results": [
+    {
+      "name": "test_continuous_sliding_releases_storage_and_separates_with_closed_work[-0.4]",
+      "elapsed_s": 11.973,
+      "properties": {
+        "separation_reference_outputs": [
+          0.0, -0.0, 4.986512937939104, 1.4803271153321584,
+          0.031026394569975933, -0.0006205278913860487, 0.0031752493944009197,
+          -0.0009742392221289263, 0.012456007925257296, 0.00037915140655182984,
+          0.001887822173987533, 0.00017573273098352138
+        ],
+        "separation_reference_energy_defect_j": -2.305031165938942e-13
+      }
+    },
+    {
+      "name": "test_cutoff_precedes_separation_and_unforced_ball_motion_is_independent[-0.4]",
+      "elapsed_s": 0.015,
+      "properties": {
+        "cutoff_separation_times_s": [
+          0.0021385984323769505, 0.002286928469151076
+        ],
+        "cutoff_stored_normal_energy_j": 0.00017573273119999463
+      }
+    },
+    {
+      "name": "test_full_sliding_release_refines_each_impulse_spin_velocity_and_work_channel[-0.4]",
+      "elapsed_s": 30.401,
+      "properties": {
+        "full_release_reference_outputs": [
+          4.986512937939104, 1.4803271153321584, 0.031026394569975933,
+          -0.0006205278913860487, 0.0031752493944009197, 0.27448689195726367,
+          -0.0009742392221289263, 0.012456007925257296, 0.00037915140655182984,
+          0.001887822173987533, 0.00017573273098352138
+        ],
+        "full_release_channel_errors": [
+          [
+            0.0007621191334852284, 0.08719561977648937, 0.001861270747044036,
+            3.7225414943882745e-5, 0.000190756287738588, 0.04046336844536688,
+            5.076331224111957e-6, 5.0906686403316e-5, 3.68793046401746e-6,
+            0.00017267523210495175, 5.872687921115663e-5
+          ],
+          [
+            0.0003889380397881226, 0.04453557656801066, 0.0009505712200729433,
+            1.9011424402885758e-5, 9.746630558768671e-5, 0.020665089413911486,
+            2.622838125864043e-6, 2.5832863599001277e-5, 1.8498745021588948e-6,
+            0.00012960556273428786, 1.29159470075301e-5
+          ],
+          [
+            0.0001962144769436236, 0.022477361197295487, 0.0004797752371989636,
+            9.595504744679367e-6, 4.920341533664425e-5, 0.010430149811534117,
+            1.336437044320007e-6, 1.30008736498443e-5, 9.28851603533001e-7,
+            5.275069229496252e-5, 6.920264131178133e-6
+          ]
+        ],
+        "full_release_state_errors": [
+          0.04384992902301138, 0.022375495725914327, 0.011288992718513228
+        ],
+        "full_release_energy_defects_j": [
+          0.0026196219394833014, 0.0013465665782285477, 0.0006833842110784274
+        ],
+        "full_release_algorithmic_losses_j": [
+          5.5627002162624625e-6, 2.8904782575419384e-6, 1.4697907986934267e-6
+        ]
+      }
+    },
+    {
+      "name": "test_continuous_sliding_releases_storage_and_separates_with_closed_work[0.4]",
+      "elapsed_s": 13.738,
+      "properties": {
+        "separation_reference_outputs": [
+          0.0, -0.0, 4.995271066796413, 0.5233915734791535,
+          0.010876728443873829, -0.00021753456887744132, 0.001154286965043666,
+          -0.0007968040818754501, 0.012054833086345864, 0.0002934779763192407,
+          0.0020704646511131935, 0.00021127656871445998
+        ],
+        "separation_reference_energy_defect_j": -3.908674599262252e-13
+      }
+    },
+    {
+      "name": "test_cutoff_precedes_separation_and_unforced_ball_motion_is_independent[0.4]",
+      "elapsed_s": 0.017,
+      "properties": {
+        "cutoff_separation_times_s": [
+          0.0010914164801915074, 0.0012397682334375493
+        ],
+        "cutoff_stored_normal_energy_j": 0.0002112765680498704
+      }
+    },
+    {
+      "name": "test_full_sliding_release_refines_each_impulse_spin_velocity_and_work_channel[0.4]",
+      "elapsed_s": 29.354,
+      "properties": {
+        "full_release_reference_outputs": [
+          4.995271066796413, 0.5233915734791535, 0.010876728443873829,
+          -0.00021753456887744132, 0.001154286965043666, 0.6364506199283111,
+          -0.0007968040818754501, 0.012054833086345864, 0.0002934779763192407,
+          0.0020704646511131935, 0.00021127656871445998
+        ],
+        "full_release_channel_errors": [
+          [
+            0.00045369789336202615, 0.05016884289826978, 0.0010567764847741312,
+            2.1135529695504046e-5, 0.00011182608891439688, 0.02297353184201356,
+            3.8891186725679506e-6, 3.115641239832996e-5, 5.745760801172258e-6,
+            0.00022874378187986793, 0.00010370405684609663
+          ],
+          [
+            0.00022877877534988045, 0.025299075877011357, 0.0005331338259148746,
+            1.0662676518307724e-5, 5.639962259514292e-5, 0.011589934250980316,
+            2.0023941436085645e-6, 1.5650406507604353e-5, 2.8790336513610597e-6,
+            0.00010434072327953747, 3.453969563870323e-5
+          ],
+          [
+            0.0001150170794277372, 0.012719759566301891, 0.00026808519190564886,
+            5.361703838118056e-6, 2.835700790979924e-5, 0.005827974049189666,
+            1.013316471244188e-6, 7.849785706117232e-6, 1.439724494577718e-6,
+            4.059023885400652e-5, 5.149555095998004e-6
+          ]
+        ],
+        "full_release_state_errors": [
+          0.02551190748352173, 0.01286127475149584, 0.006464558170785377
+        ],
+        "full_release_energy_defects_j": [
+          0.001884492400761422, 0.0009618658495122065, 0.00048491873102890016
+        ],
+        "full_release_algorithmic_losses_j": [
+          6.298023945501427e-6, 3.1595387816859908e-6, 1.5848525259519764e-6
+        ]
+      }
+    },
+    {
+      "name": "test_sliding_trace_refuses_an_initial_history_off_the_saturated_branch",
+      "elapsed_s": 0.017,
+      "properties": {}
+    }
+  ],
+  "tdd_history": [
+    {
+      "file": "impact-friction-separation-red.xml",
+      "sha256": "4696577b34c10aac9be61fa2c31e0bfc004d7d6efef4d12f068b52357dd8d9b1",
+      "tests": 2,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0,
+      "elapsed_s": 4.129
+    },
+    {
+      "file": "impact-friction-separation-first.xml",
+      "sha256": "722c054175cc6f2e1f303ffabfe4bb6185e753e98fd43f1e2ae6d224232d55a2",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "elapsed_s": 23.492
+    },
+    {
+      "file": "impact-friction-event-trace-red.xml",
+      "sha256": "c58b4cdffd052216464f53efeb4e0d799b6de078df4e3f2f079639080d819ed3",
+      "tests": 2,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0,
+      "elapsed_s": 3.443
+    },
+    {
+      "file": "impact-friction-trace-contract-red.xml",
+      "sha256": "9cf1459382a1862179832d951916bb51523986077166a2fb3a180b60d0f060d5",
+      "tests": 1,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "elapsed_s": 3.306
+    },
+    {
+      "file": "impact-friction-separation-events-first.xml",
+      "sha256": "fd3a6f6ae3f04b7a513740cbbeecd18935e93f985e18281252f49d317cc05c8f",
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "elapsed_s": 44.006
+    },
+    {
+      "file": "impact-friction-release-accuracy-first.xml",
+      "sha256": "b72a0c3683baec445659f7aab0aafc0f8f84404a3166ed1a3b03f24686b2a1df",
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "elapsed_s": 73.213
+    }
+  ],
+  "preconsolidation_source_record": {
+    "base": "a22f3f1cbda7b0107a4f59730ab19a04ed26b84d",
+    "sources": {
+      "tests/shared/python/golf_club/_friction_sliding_reference.py": "daaad86450ca7ac5ce3ade4db509a8f4e0001fef45eae4b790c54b98f463f9ab",
+      "tests/shared/python/golf_club/test_friction_release_accuracy.py": "0b53043e9788d84b6563d9c6fbb770aabb7a3b5e1c91e500a77b6d7be2daac02"
+    },
+    "receipt": "impact-friction-release-accuracy-first.xml",
+    "result": "2 passed in73.44s before consolidating test fixtures"
+  },
+  "quality_checks": {
+    "numpy_aware_mypy": "both modified reference/test files pass",
+    "ruff": "both files pass",
+    "structure": "288/216 lines, each function <=50 lines, attribute chains <=2",
+    "production_changes": "none"
+  },
+  "limits": [
+    "Initial compressed saturated planar constant-sign sliding only.",
+    "No independent force law, shaft discretization, material coefficient, mesh/mode or peak-force qualification.",
+    "Event sign-change detection can miss repeated or grazing events; multiple detected roots are refused.",
+    "Force cutoff work and plastic loss are model work channels, not acoustic energy.",
+    "A decreasing combined state norm is not componentwise qualification of every shaft mode.",
+    "Hosted CI, protected review, eventual main/consumer integration and measured/perceptual validation remain open."
+  ]
+}
