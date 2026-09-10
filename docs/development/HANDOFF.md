@@ -1,3 +1,14 @@
+# Complex FRF Review #5155 / Parent #5074
+
+- Worktree: C:/Users/diete/Repositories/Tools-impact-frf-phase; branch feat/5074-complex-frf; source SELF; no PR yet.
+- Numerical complex H1, supported PSD bins and coherence reuse the existing waveform and spectral preparation. Legacy signatures and all existing symbols remain unchanged.
+- Missing-module and API RED evidence is retained. All 107 Windows ingestion/report/API controls pass in 7.67 s; changed-file and isolated-hook mypy pass. Root Ruff and all nine final governance gates pass; the 107-test coverage run also passes with 94.68% above the unchanged 20% floor.
+- WSL cannot launch due to host I/O errors following disk exhaustion. No Linux qualification is claimed. Our reproducible TAR recovery retained source trees, exact hashes/timestamps, study results and JUnit; peer data is untouched.
+- See docs/development/impact-acoustics/COMPLEX_FRF.md. Next: normal publication and protected review; acquisition/calibration identity, uncertainty and physical/perceptual validation stay open.
+- Preserve the peer camera records below and combined-provider #5141/final consumer pin ownership. This branch starts from main 92283cf3f and does not pretend to include pending contact reviews #5146/#5149/#5152/#5154.
+
+## Earlier Camera Turnover (preserved)
+
 # Reference Placement and Calibration Recovery Handoff
 
 ## Active Placement Work #5137

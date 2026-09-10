@@ -8,12 +8,12 @@
 
 ## Impact Dynamics and Acoustics: #5068
 
-Current #5133 publication: 00d17e7f9. A second local CI repair resolves nested
-momentum-oracle roundoff and an unsupported optimizer residual ordering claim.
-Windows: 17 momentum + 19 optimizer tests pass; Linux: 17 Python 3.11 and
-36 combined Python 3.12 coverage tests pass. Original tolerances and negative
-controls remain; see PROGRESS.md and CI_REPAIR_RESULTS.json. Normal publication,
-private-consumer access and physical qualification remain open.
+Complex FRF review #5155 (parent #5074) is active on feat/5074-complex-frf.
+All 107 Windows ingestion/report/API controls pass; four changed modules and
+actual pre-push mypy pass. Existing APIs are preserved; new complex H1/coherence
+uses explicit PSD floors and immutable unsupported bins. See COMPLEX_FRF.md.
+WSL cannot launch after host disk exhaustion; no Linux result is claimed here.
+Next: exact-source coverage/governance, normal publication and protected review.
 
 - Full program active; all three parent epics remain open. AffineDrift theory #4258/#4282/#4298 and UpstreamDrift integration #9706 are merged; final synthesis awaits downstream evidence.
 - T1 #5069/#5077 and T2 #5071/#5082 are merged at f72544613 and 80d580d57. Signal repair #5106 and initial study wire #5083 are merged; acoustic/report qualification remains.
@@ -21,7 +21,7 @@ private-consumer access and physical qualification remain open.
 - Classifier #5103 and main 0f2dfe3fd (mocap #5118) are integrated. Both task scopes are preserved; 145 merge tests, actual mypy, root Ruff and all nine gates passed. Camera/mocap ownership remains separate.
 - #5114 remains open: full Qt candidate loses three workers after 2,880 passes; 14 serial profiled controls pass without explaining the losses. Partial cleanup is separate on fix/5114-qt-deferred-cleanup; issuecomment-5599216206 records the evidence. No deadline or physical calculation changes.
 - T3 lease: codex/session impact-acoustics-01a07d8a-shaft5072 and review #5130/session impact-acoustics-01a07d8a-review5130 renewed through 2026-09-10T01:05Z. UpstreamDrift #9916 qualifies the pinned provider through source and clean installed-wheel checks; final reviewed revision remains pending.
-- T5 retains calibration identity, complex FRF, radiation and physical/blinded requirements. T6 retains strict evidence/report contracts; private-consumer lookup is an independent unresolved delivery gate.
+- T5 complex FRF is under #5155; calibration identity, uncertainty, radiation and physical/blinded requirements remain. T6 retains strict evidence/report contracts; private-consumer lookup is an independent unresolved delivery gate.
 - UpstreamDrift #9826 preserves all 328 claim outcomes; #9841 supplies adaptive reference diagnostics and 21 real Bioptim/Casadi 3.6.7 controls. The unsuccessful 3.8 OCP case and physical-data gates remain explicit.
 - Camera task owns UpstreamDrift #9860–#9863; preserve its scopes. Resume the complete requirement matrix in docs/development/impact-acoustics/PROGRESS.md; exact-pin consumers and physical/blinded final synthesis remain required.
 

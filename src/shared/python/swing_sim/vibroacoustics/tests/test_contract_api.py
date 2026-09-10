@@ -9,6 +9,9 @@ import shared.python.swing_sim.vibroacoustics as vibro
 EXPECTED_PUBLIC_API = {
     "BandwidthReport",
     "ClippingReport",
+    "H1Bin",
+    "H1Estimate",
+    "H1Settings",
     "SourceKind",
     "SynthesizedSourceError",
     "WaveformRecording",
@@ -16,6 +19,7 @@ EXPECTED_PUBLIC_API = {
     "as_measured",
     "bandwidth_report",
     "clipping_fraction",
+    "estimate_complex_frf_h1",
     "estimate_frf_h1",
     "estimate_modal_decay",
     "psd_welch",

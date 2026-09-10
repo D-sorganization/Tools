@@ -18,6 +18,7 @@ from shared.python.swing_sim.vibroacoustics.measurement import WaveformRecording
 from ._spectral_frames import detrended as _detrended
 from ._spectral_frames import finite_output as _finite_output
 from ._spectral_frames import spectral_frames as _spectral_frames
+from ._spectral_pair import spectral_pair as _spectral_pair
 
 DEFAULT_SEGMENT_LENGTH = 4096
 
@@ -135,23 +136,10 @@ def estimate_frf_h1(
             the numerical result is nonfinite. Positive excitation alone does not
             qualify signal-to-noise ratio, identifiability or uncertainty.
     """
-    force = _samples(force_recording)
-    response = _samples(response_recording)
-    if force.shape != response.shape or force.ndim != 1:
-        raise ValueError("recordings must be same length, one-dimensional arrays")
-    if force_recording.sample_rate_hz != response_recording.sample_rate_hz:
-        raise ValueError("recordings must share one sample rate")
-    x_spectrum, frequencies, _ = _spectral_frames(
-        force, force_recording.sample_rate_hz, segment_length
-    )
-    y_spectrum, _, _ = _spectral_frames(
-        response, response_recording.sample_rate_hz, segment_length
-    )
-    with np.errstate(over="ignore", invalid="ignore"):
-        sxx = _finite_output(np.mean(np.abs(x_spectrum) ** 2, axis=0))
-        syx = _finite_output(np.mean(np.conj(x_spectrum) * y_spectrum, axis=0))
+    pair = _spectral_pair(force_recording, response_recording, segment_length)
+    sxx, syx = pair.input_cross_spectra()
     if np.any(sxx <= 0):
         raise ValueError("H1 requires nonzero excitation in every returned bin")
     with np.errstate(over="ignore", invalid="ignore", divide="ignore"):
         magnitude = np.abs(syx / sxx)
-    return frequencies, _finite_output(magnitude)
+    return pair.frequencies, _finite_output(magnitude)
