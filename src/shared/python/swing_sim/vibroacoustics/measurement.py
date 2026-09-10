@@ -16,6 +16,7 @@ from enum import Enum
 import numpy as np
 from scipy import signal as _signal
 
+from ._waveform_contracts import owned_real_samples as _owned_real_samples
 from ._waveform_contracts import real_samples as _real_samples
 
 
@@ -69,10 +70,7 @@ class WaveformRecording:
     source_kind: SourceKind = SourceKind.MEASURED
 
     def __post_init__(self) -> None:
-        samples = _real_samples(self.samples)
-        # An immutable bytes owner prevents callers from re-enabling writes.
-        owned = np.frombuffer(samples.tobytes(), dtype=np.float64)
-        object.__setattr__(self, "samples", owned)
+        object.__setattr__(self, "samples", _owned_real_samples(self.samples))
         rate = _finite(self.sample_rate_hz, "sample_rate_hz")
         if rate <= 0.0:
             raise ValueError("sample_rate_hz must be > 0")

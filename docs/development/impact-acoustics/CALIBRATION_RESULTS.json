@@ -1,0 +1,113 @@
+{
+  "review_issue": 5157,
+  "review_pr": null,
+  "base_commit": "73704cf64673050bb90341bc126e38e4eef087f1",
+  "source_hash_convention": "SHA256 over LF-normalized Python source bytes",
+  "source_files": {
+    "src/shared/python/swing_sim/vibroacoustics/__init__.py": "c583f0ccc0bc6458d3fa35f3bdc7e902a7aadc06d6b7c3cfe7b397de8bd9a3e3",
+    "src/shared/python/swing_sim/vibroacoustics/_acquisition_records.py": "69799a9eb671583c74abc6557d789899f4eb84e03eef670cd5515a4252ca9b1d",
+    "src/shared/python/swing_sim/vibroacoustics/_affine_calibration_records.py": "8e4062dd43895034ccc4971b71c5b45511b789640162b22fe546b14bfcb865f9",
+    "src/shared/python/swing_sim/vibroacoustics/_calibration_identity.py": "2b544be539f56918eb99763f04d656f51a7d90fedf10b5e581ea35268c134190",
+    "src/shared/python/swing_sim/vibroacoustics/_calibration_primitives.py": "b463b27a241db463d46e5057081a064f4d20c6b0ed7a77d222fc0666f5490493",
+    "src/shared/python/swing_sim/vibroacoustics/_frf_contracts.py": "daa28992438465a8d4ddad895c6ed0224d2a89c7c9b5fbb4060bc2cfe42c490e",
+    "src/shared/python/swing_sim/vibroacoustics/_spectral_frames.py": "1968f9b680e374200eb3d52cefa5b3101b9d3e501dd0b27e54884928cb743776",
+    "src/shared/python/swing_sim/vibroacoustics/_spectral_pair.py": "e1273629cdecf78fe47830f965abe604f99edebcaa82235d224ef7cc0517da75",
+    "src/shared/python/swing_sim/vibroacoustics/_waveform_contracts.py": "16f3d3212559631fa2f095cd9c7cac10342e2fb7bb735361036277f97c539a9a",
+    "src/shared/python/swing_sim/vibroacoustics/frf_estimation.py": "9c5b5c6450410677ccefe601b4712cba14e7771c594ee5793060ba1f75cd5032",
+    "src/shared/python/swing_sim/vibroacoustics/measurement.py": "a1c123f788eff1db373a2c46ab83d929f6200178ba66988cb75fc51b82c89038",
+    "src/shared/python/swing_sim/vibroacoustics/spectral.py": "ef2f2220f290d0e8f34e8737fb933cb4d83134302d1375e34e68b93b58484923",
+    "src/shared/python/swing_sim/vibroacoustics/tests/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/shared/python/swing_sim/vibroacoustics/tests/test_calibration_domains.py": "7569c75da4883f8712eb5723c7ea1a7cebfefb3b39d15cf5308b9bd267896290",
+    "src/shared/python/swing_sim/vibroacoustics/tests/test_calibration_exact_moments.py": "8f48f30b1f1ed59244e0eb316fb7766253f4883c0956d109e35ed0e254d8ca11",
+    "src/shared/python/swing_sim/vibroacoustics/tests/test_calibration_identity.py": "a08495ce78e4c476460de9fc76499afebcf7fc0cb376b896ae9fd77e6e6b3793",
+    "src/shared/python/swing_sim/vibroacoustics/tests/test_complex_frf.py": "296dd03d88e63a4f017d03eaa2acad79d6fc0185a8be22aac508c1b03b0f2ecc",
+    "src/shared/python/swing_sim/vibroacoustics/tests/test_contract_api.py": "a6137d8806ca02da57009875393acc1361b34f0bbbabe4fa98fe979c1c8cb32a",
+    "src/shared/python/swing_sim/vibroacoustics/tests/test_measurement.py": "acdba4297a7fe9f55f866671edeb41f7e7fc4eacbe8e7f0ddd43e01b8c3926fa",
+    "src/shared/python/swing_sim/vibroacoustics/tests/test_signal_boundaries.py": "368e901475aa907bb7f76638de9434eaa95b23a84c56859c2ab68ad543486c0e",
+    "src/shared/python/swing_sim/vibroacoustics/tests/test_spectral.py": "c77d92240f5b4cd9bc1d256bf6115e56fd942167cd82a8dc9d3540dd883e28ec",
+    "src/shared/python/swing_sim/vibroacoustics/tests/test_waveform_calibration.py": "f6e99582684e066e7388e0bcd92f571ffd72f1a55e3bbf71693287a84e20a0bc",
+    "src/shared/python/swing_sim/vibroacoustics/waveform_calibration.py": "d32f4a900c979cd72f93005221d88c716de824a50ec18f4a404ff6f670a59f41"
+  },
+  "runtime": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10",
+    "numpy": "2.4.1",
+    "scipy": "1.17.0"
+  },
+  "junit": {
+    "red": {
+      "tests": "2",
+      "errors": "2",
+      "failures": "0",
+      "skipped": "0",
+      "time": "2.605",
+      "sha256": "bb6a48e1f37fbfaa1960d34e01144843a294c7886bb7d8de3507a177d78a063c"
+    },
+    "api-red": {
+      "tests": "1",
+      "errors": "0",
+      "failures": "1",
+      "skipped": "0",
+      "time": "3.756",
+      "sha256": "aeb3ab6b01eee670518f15f432d5dc3eaa4e105479cd50fdba5055d5ee758b5b"
+    },
+    "exact-red": {
+      "tests": "1",
+      "errors": "1",
+      "failures": "0",
+      "skipped": "0",
+      "time": "3.940",
+      "sha256": "bd066262c0e5a0ae5454c7adaa772a3c46a8cab1ebabe6b9c462d4e6baa9bd0d"
+    },
+    "exact-green": {
+      "tests": "61",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "time": "2.479",
+      "sha256": "c8ad52b4424ce91e9d99fa511aed712c09ef35cfd78d1840caf9c18d56c98d98"
+    },
+    "collection-error": {
+      "tests": "12",
+      "errors": "12",
+      "failures": "0",
+      "skipped": "0",
+      "time": "1.955",
+      "sha256": "5f0572a0e8b47893fe5be411cccd08cb6bc35735c3d14c22124bdc3cae1fb140"
+    },
+    "windows": {
+      "tests": "168",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "time": "8.119",
+      "sha256": "650500d52268448b6ebc0de233b0299d415d7d31bbbb64b09a62f54a5b38d4ac"
+    }
+  },
+  "coverage": {
+    "covered_lines": 667,
+    "num_statements": 687,
+    "percent_covered": 97.08879184861718,
+    "percent_covered_display": "97.09",
+    "missing_lines": 20,
+    "excluded_lines": 0,
+    "percent_statements_covered": 97.08879184861718,
+    "percent_statements_covered_display": "97.09"
+  },
+  "api": {
+    "existing_records_unchanged": 231,
+    "new_modules": [
+      "vibroacoustics/_acquisition_records.py",
+      "vibroacoustics/_affine_calibration_records.py",
+      "vibroacoustics/_calibration_identity.py",
+      "vibroacoustics/_calibration_primitives.py",
+      "vibroacoustics/waveform_calibration.py"
+    ]
+  },
+  "typing": "Seven changed production modules pass NumPy-aware mypy. Eleven production/test files pass the normal isolated hook in the established Python 3.12 pre-commit environment. A separate global Python 3.13 hook environment crashed in mypy cache serialization, including with a fresh cache; no product diagnostic was emitted.",
+  "lint": "Root Ruff check and format --check pass, 3872 files.",
+  "coverage_invocation": "File-path --cov=src/shared/python/swing_sim/vibroacoustics; package-name coverage invocation failed during NumPy collection before tests. No code or assertions changed to resolve invocation.",
+  "linux": "No Linux result for this calibration source yet. Prior complex FRF hosted evidence applies only to its recorded tree.",
+  "qualification": "Declared affine numerical model with first-order or exact independent-block second moments; no authenticated calibration, measured golf effect, radiation or perceptual qualification.",
+  "governance": "All nine final manual/inventory/handoff gates pass; two existing publication blockers remain."
+}

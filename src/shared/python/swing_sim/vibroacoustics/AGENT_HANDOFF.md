@@ -1,4 +1,4 @@
-# AGENT_HANDOFF — Vibroacoustic Ingestion
+# AGENT_HANDOFF â€” Vibroacoustic Ingestion
 
 Last updated: 2026-09-10. Update with each implementation PR and main delivery.
 
@@ -11,14 +11,14 @@ No calibrated golf data or perceptual evidence is available in this work.
 
 ## Recent Activity (grounding)
 
-PR #5084 introduced ingestion; #5106 merged its strict waveform/spectral repair
-as 287767dfa. Review #5155 now adds complex H1, explicit PSD support/coherence
-and immutable results on feat/5074-complex-frf. All 107 Windows ingestion,
-report and API tests pass; changed-file and isolated-hook mypy pass. Initial
-nine manual gates pass. WSL currently cannot launch after host disk exhaustion;
-no local Linux result is claimed. PR #5156 is published at c954e50a0 after
-normal hooks; 107 coverage tests pass at 94.68%. Protected review remains.
-See docs/development/impact-acoustics/COMPLEX_FRF.md for equations and limits.
+PR #5084 introduced ingestion; #5106 merged its strict boundary repair.
+PR #5156 supplies complex H1/coherence, with hosted Python 3.11/3.12 evidence
+on the exact recorded tree. Review #5157 now adds explicit affine calibration,
+exact identity and shared first-order/exact independent-block uncertainty.
+All 168 Windows ingestion/report/API controls pass (97.09% coverage), as do
+NumPy-aware and isolated-hook typing and root Ruff. Final governance/publication
+remain. See CALIBRATION_DEVELOPMENT.md and CALIBRATION_RESULTS.json under
+docs/development/impact-acoustics. No Linux calibration result is claimed.
 
 ## Must-Read Architecture Pointers
 

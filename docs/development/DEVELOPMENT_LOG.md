@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5157 · Applied Waveform Calibration and Shared Uncertainty
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5157; parent #5074
+- **Branch:** feat/5074-waveform-calibration
+- **PR:** not created
+- **Paths:** src/shared/python/swing_sim/vibroacoustics, tests/api_baselines/swing_sim_api_baseline.json, docs/development/impact-acoustics/CALIBRATION_DEVELOPMENT.md, SPEC.md and turnover/inventory
+- **Started:** 2026-09-10
+- **Last verified:** 2026-09-10 (base 73704cf64; 168 Windows ingestion/report/API tests pass in 8.33 s, coverage 97.09%; seven NumPy-aware production and eleven isolated-hook files pass; root Ruff passes)
+- **Summary:** Explicit affine sample conversion, complete declared acquisition/calibration identity and shared first-order or exact independent-block gain/offset covariance; no source-kind promotion or fabricated unknown uncertainty.
+- **Next step:** All nine final gates pass; publish through normal hooks. Linux calibration qualification, authentication and physical/acoustic evidence remain separate.
+
 ### DL-#5155 · Complex H1 Phase and Supported Spectral Bins
 
 - **State:** in_review
