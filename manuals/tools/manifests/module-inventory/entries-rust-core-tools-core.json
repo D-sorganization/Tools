@@ -2837,7 +2837,8 @@
           "src/shared/python/calc_backend/tests/test_calc_backend.py",
           "tests/programmatic_pid/test_title_block.py",
           "tests/shared/python/process_calculators/test_wave1_process_numerics.py",
-          "tests/shared/python/process_calculators/test_wgs_reactor_engine.py"
+          "tests/shared/python/process_calculators/test_wgs_reactor_engine.py",
+          "tests/unit/agent_context/test_service.py"
         ],
         "unit_mentions": [
           "J",

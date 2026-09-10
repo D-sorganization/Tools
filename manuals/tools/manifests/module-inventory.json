@@ -111,7 +111,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "b4af94b0ec0f691396dffff74b8ec2643a0b5456d7966ce9e5eaa783f73d0e6c",
+      "content_sha256_lf": "5cbc57e32727413645d6b9977a3c7f563cf59fb964cfea6f61afdbeadccbf68b",
       "entry_count": 17,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
@@ -123,19 +123,19 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
     },
     {
-      "content_sha256_lf": "3b2ec684abb0cacee0ee1351b17798031bbe12c9122cf1ff98deb49c921c7421",
+      "content_sha256_lf": "b9314784edc0555f64124fd12d4f68a59fdeb454b211c2dc0d4f3ac97d2f6fb2",
       "entry_count": 5,
       "package": "rust_core/data-processor-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
     },
     {
-      "content_sha256_lf": "02cf0b85c5ce1acbc60873dad8941608ea095c9111ad16117b138087b93892bd",
+      "content_sha256_lf": "4852aca47aa1c6c15bb142a23374ce2ede5085930d86d1159cc2fd730fa57ea0",
       "entry_count": 5,
       "package": "rust_core/file_watcher",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "77605d210f27ba7aae8d386b42a980fdc6e6d388a3c14ffab4af85ce53b28caa",
+      "content_sha256_lf": "15f094d95857510dae2c7166a7a83b59ecc4154b522a2e7d09d8c4e7eb9b4026",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "7c98ffa87dbd26f4a51f93b58f8cdaae3f375c785a8fbb2c9bc649735c7fa360",
+      "content_sha256_lf": "30a25e5d624857e63f5ba9ad4bb213f17fa8f20b20a1577baad0ec423c09af2e",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -159,7 +159,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "3959ba5f287d8b4720488a7ca83d991619625a8582038d355eef7bf7118dc608",
+      "content_sha256_lf": "0a8874caee9d35c8d82ed1894bb427b490932e7b3d0959cd1fab38845a25593c",
       "entry_count": 104,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
@@ -175,6 +175,12 @@
       "entry_count": 1,
       "package": "src",
       "path": "manuals/tools/manifests/module-inventory/entries-src.json"
+    },
+    {
+      "content_sha256_lf": "46d675c2df77c4a33bb31180fb00b33f6f30433124572f1d5b914c8289cbb4b6",
+      "entry_count": 12,
+      "package": "src/agent_context",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-agent-context.json"
     },
     {
       "content_sha256_lf": "01fdfc760ed4a1406f150bbbcf428ef68155fa7ab7e951ab252900d83e7d6859",
@@ -261,7 +267,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-file-watcher.json"
     },
     {
-      "content_sha256_lf": "b0bc41d370bb93fc5ff54a936d6f65a36522298818adb5481744fd548b367196",
+      "content_sha256_lf": "34c5fe9d2ecae1ebceb62e60d0c8be2b2e7e1d3f1b1d9d930a665ba97cc0d7c4",
       "entry_count": 18,
       "package": "src/financial_calculator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-financial-calculator.json"
@@ -291,7 +297,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-folder-tool-pro.json"
     },
     {
-      "content_sha256_lf": "4597c7d229bbbae4c5c0d6d611e50fa106047c97c522002a9f8815acbcc1f678",
+      "content_sha256_lf": "04a8d4011d1e316ebf771c68196025f800e720eacd20be2b8a80bf01411281b3",
       "entry_count": 17,
       "package": "src/function_generator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-function-generator.json"
@@ -339,7 +345,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-matlab.json"
     },
     {
-      "content_sha256_lf": "8e47851a35e8cf3c59c3077f565aab85eb11db4d93d2c52fa8cc9cc6aa3048f7",
+      "content_sha256_lf": "e694cf6cda4223239404c8668bd2ffa1603239caa376e2880f5b83384a66d0bd",
       "entry_count": 99,
       "package": "src/media_processing",
       "path": "manuals/tools/manifests/module-inventory/entries-src-media-processing.json"
@@ -387,7 +393,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
     {
-      "content_sha256_lf": "3e9995902bf867e34a15b15db35b1647a5c899a07db18091fd3396bf341ac2ca",
+      "content_sha256_lf": "79b71001801822b1e45008de285dff878e16b0f0ef27157ecee8db109226b5c0",
       "entry_count": 167,
       "package": "src/pendulum_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pendulum-simulator.json"
@@ -405,7 +411,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-plant-simulator.json"
     },
     {
-      "content_sha256_lf": "6d9660a21434da83b3fa3e242411df35b71c8ffc7bbeee46c91e387bd6c05450",
+      "content_sha256_lf": "f2055b84ef86f23737f190c8c35eeaffb35e8dea56b009def3353f8103f2628d",
       "entry_count": 18,
       "package": "src/pressure_drop_calculator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pressure-drop-calculator.json"
@@ -435,7 +441,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure.json"
     },
     {
-      "content_sha256_lf": "2a8b72a663229f5329bdb3aad8d4d2c5da2c50715e0f871c28b44385158c92fc",
+      "content_sha256_lf": "c8e5ca69549545fca88ab7b623a041ed0192a1c674e978c4174f4b291a411f33",
       "entry_count": 66,
       "package": "src/rate_of_closure/application",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-application.json"
@@ -471,7 +477,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-ui.json"
     },
     {
-      "content_sha256_lf": "e640ecb7ac4f174877eeb4c7c968e9006e0bde7839139e2d9edcfcb504dd1d6e",
+      "content_sha256_lf": "20304b7228b9803c791023c9a42c94f2ba8c08a4dcc7c5126a2786dc52013183",
       "entry_count": 54,
       "package": "src/rate_of_closure/variation",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-variation.json"
@@ -567,7 +573,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rotation-transforms.json"
     },
     {
-      "content_sha256_lf": "aa88038be1e72c9d83cc184230c682d3989bfa7b95debe9ddd9b656155f232ad",
+      "content_sha256_lf": "1797964b53a23ec42b5271f957ff3ecbc9b9b853eb8f800749dca1fa3757cdb6",
       "entry_count": 26,
       "package": "src/rrt_path_planner",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rrt-path-planner.json"
@@ -579,7 +585,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "463b368b643a63ac9b74888b9c1efbcf039a5e0507987b801379fa4e8ee00052",
+      "content_sha256_lf": "1000f9c389c7b1c092cfd3b17a6f98c5e7c23adf5a84e26c218869ea26c544d3",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
@@ -609,8 +615,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-chat-contracts.json"
     },
     {
-      "content_sha256_lf": "a8abbb1dc2ad3cbdfa2ffe98eb8096d9ae1e669a71d575747361e8e147e2462e",
-      "entry_count": 14,
+      "content_sha256_lf": "1741f6b95c73554aa750bdd7701b836a7757636cfe6633dae76e754c022e0ba1",
+      "entry_count": 15,
       "package": "src/shared/python/codemap",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-codemap.json"
     },
@@ -639,8 +645,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-file-watcher.json"
     },
     {
-      "content_sha256_lf": "c20795b4543a5409dd1a01eec3d9af857a95efaf2c7af46ce37d4a33d193e323",
-      "entry_count": 99,
+      "content_sha256_lf": "55304b212ccab407e69921ccf06f929a3bac9e6161542301facc6777644249b3",
+      "entry_count": 102,
       "package": "src/shared/python/golf_club",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-golf-club.json"
     },
@@ -729,7 +735,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-scripting.json"
     },
     {
-      "content_sha256_lf": "77e8242ac30de72afe9a473a79a87d72ea16b56df4ac8d2bd4c910bd9d46c27b",
+      "content_sha256_lf": "34860406959d21a000939205467769db74d53df9faad7ef46cc6dd79a2b1d1e1",
       "entry_count": 235,
       "package": "src/shared/python/sidekick",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick.json"
@@ -741,7 +747,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-signal-toolkit.json"
     },
     {
-      "content_sha256_lf": "0a8fe76f97721eb10f83b394e6b60997974755a9a440a054c260d783ada6597c",
+      "content_sha256_lf": "7452dff2b4d8fea339f7acd15a48a95ab1f94f2c03ad6739baeaf326105e5e20",
       "entry_count": 18,
       "package": "src/shared/python/swing_sim",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim.json"
@@ -771,14 +777,14 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-flight-interchange.json"
     },
     {
-      "content_sha256_lf": "948934e6b34f8ade611b94bf5dc0b7a4bd8114227536ad61a9a0e394d4a01c33",
+      "content_sha256_lf": "224bea0f5f224ce4b89a97abea7a734a7265d4462d2dfc95cf7b8f1d78b4baee",
       "entry_count": 60,
       "package": "src/shared/python/swing_sim/ground",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-ground.json"
     },
     {
-      "content_sha256_lf": "07015ba1ee5ffce9179fb6e0484cb2add57e5f7587b2895fcde6ebf3a85a5fd9",
-      "entry_count": 10,
+      "content_sha256_lf": "93151168b3599a2236209e3f380e9cd5f394fc4840fbdf867bd0ac1d89e9b286",
+      "entry_count": 18,
       "package": "src/shared/python/swing_sim/impact",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-impact.json"
     },
@@ -855,7 +861,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-sidekick.json"
     },
     {
-      "content_sha256_lf": "caabd91f0800209c050327ec10e944c9c78f7b597e1664683479bb468b67017c",
+      "content_sha256_lf": "cc10720aba577364dbd8ec84eddfbc1292409b25f13ac1625107fd2314288955",
       "entry_count": 7,
       "package": "src/signal_processing_studio",
       "path": "manuals/tools/manifests/module-inventory/entries-src-signal-processing-studio.json"
@@ -873,7 +879,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-solar-system-model.json"
     },
     {
-      "content_sha256_lf": "27a5c2a49b6cf8b641a2a3e11f0c270f636490ba8f804e654e5c270ce6309e1e",
+      "content_sha256_lf": "17cd9c80c7c408f698ee6657fd9e08c35dbb54bf7febaa9e10b19e67559dff5d",
       "entry_count": 19,
       "package": "src/steam_engine_calculator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-steam-engine-calculator.json"
@@ -897,7 +903,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-upstream-drift-tools.json"
     },
     {
-      "content_sha256_lf": "056a34d93c2a2d70968255723ccc8d499f91d2c1f98360d65e918d8bbde04f86",
+      "content_sha256_lf": "8f35523e1b5f53c9eae576d5336066c8d5fcdac36effb141ccdd7e08dbad0c08",
       "entry_count": 12,
       "package": "src/urdf_builder_gui",
       "path": "manuals/tools/manifests/module-inventory/entries-src-urdf-builder-gui.json"

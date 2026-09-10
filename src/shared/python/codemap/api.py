@@ -18,6 +18,7 @@ from pydantic import BaseModel, Field
 
 from ..trusted_git import resolve_trusted_git_executable
 from . import db as db_mod
+from . import freshness
 
 # ---------------------------------------------------------------------------
 # Pydantic models.
@@ -56,6 +57,7 @@ class RepoStats(BaseModel):
     db_size_bytes: int = 0
     last_indexed: float | None = None
     last_commit: str | None = None
+    freshness: dict[str, Any] = Field(default_factory=dict)
 
 
 # ---------------------------------------------------------------------------
@@ -65,6 +67,7 @@ class RepoStats(BaseModel):
 
 _DEFAULT_ROOT_LOCK = threading.Lock()
 _DEFAULT_ROOT: Path | None = None
+_DEFAULT_CWD: Path | None = None
 
 
 def discover_repo_root(start: str | os.PathLike[str] | None = None) -> Path:
@@ -95,11 +98,23 @@ def discover_repo_root(start: str | os.PathLike[str] | None = None) -> Path:
 def _resolve(repo_root: str | os.PathLike[str] | None) -> Path:
     if repo_root is not None:
         return Path(repo_root).resolve()
-    global _DEFAULT_ROOT
+    global _DEFAULT_ROOT, _DEFAULT_CWD
     with _DEFAULT_ROOT_LOCK:
-        if _DEFAULT_ROOT is None:
+        if _DEFAULT_ROOT is None or _DEFAULT_CWD != Path.cwd():
             _DEFAULT_ROOT = discover_repo_root()
+            _DEFAULT_CWD = Path.cwd()
         return _DEFAULT_ROOT
+
+
+def _open_current(repo: Path) -> Any:
+    """Open a query connection only when its source evidence is current."""
+    conn = db_mod.open_db(repo)
+    try:
+        freshness.require_current(repo, conn)
+    except (RuntimeError, OSError):
+        conn.close()
+        raise
+    return conn
 
 
 def _row_to_symbol(row: Any) -> Symbol:
@@ -152,7 +167,7 @@ def search_code(
 ) -> list[Hit]:
     """Free-text BM25 search across the symbol index."""
     repo = _resolve(repo_root)
-    conn = db_mod.open_db(repo)
+    conn = _open_current(repo)
     try:
         fts = _fts_query(query)
         if not fts:
@@ -184,7 +199,7 @@ def get_symbol(
 ) -> Symbol | None:
     """Look up a symbol by fully-qualified name (exact match, then suffix match)."""
     repo = _resolve(repo_root)
-    conn = db_mod.open_db(repo)
+    conn = _open_current(repo)
     try:
         row = conn.execute(
             "SELECT * FROM symbols WHERE qualified = ? LIMIT 1",
@@ -211,7 +226,7 @@ def who_calls(
     """Return symbols whose ``calls_out`` mentions ``qualified_name`` (lexical)."""
     repo = _resolve(repo_root)
     short = qualified_name.rsplit(".", 1)[-1].rsplit("::", 1)[-1]
-    conn = db_mod.open_db(repo)
+    conn = _open_current(repo)
     try:
         # Two-stage: FTS prefilter then exact JSON check.
         fts = _fts_query(short)
@@ -246,7 +261,7 @@ def imports_of(
 ) -> list[str]:
     """Return the imports declared by ``path``."""
     repo = _resolve(repo_root)
-    conn = db_mod.open_db(repo)
+    conn = _open_current(repo)
     try:
         rel = path.replace("\\", "/")
         row = conn.execute(
@@ -337,6 +352,7 @@ def repo_summary(
             db_size_bytes=size,
             last_indexed=last_indexed,
             last_commit=last_commit,
+            freshness=freshness.inspect(repo, conn),
         )
     finally:
         conn.close()

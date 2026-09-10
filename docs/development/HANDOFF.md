@@ -11,6 +11,34 @@
 
 # Reference Placement and Calibration Recovery Handoff
 
+## Prescribed Load Continuation #5073
+
+- Worktree: C:/Users/diete/Repositories/Tools-impact-load-history; branch feat/5073-load-history; implementation SELF; parent event PR#5152. PR#5154 https://github.com/D-sorganization/Tools/pull/5154 is published at 170fca54d after normal hooks.
+- Adds explicit observer/time-covered additional force/couple callbacks through the existing point-load and moving-grip work ports. Original loads remain once; no new inertia or force potential is added.
+- Missing-module RED then18 controls pass; expanded20 new controls and12 temporal controls pass before the old event-refinement test hits its unchanged60s timeout. Cause remains unestablished; no JUnit completed. Four changed modules pass both mypy modes. Source976d7ff43 is archived; All406 Linux controls pass in270.59s, coverage58.86% above unchanged20%; Windows406 also pass in169.77s.
+- Details: docs/development/impact-acoustics/LOAD_HISTORY_DEVELOPMENT.md. The event PR #5152 typing repair at 839ebe083 is incorporated; all35 affected event/load-history controls pass in42.90s. Final protected provider/wheel and measured/acoustic evidence remain open.
+- Next action: resolve protected CI and review on #5154. Development-log entry DL-#5153. Preserve peer camera records and all original test limits.
+
+## Earlier Event Foundation Integration Receipts #5152
+
+- Worktree: `C:/Users/diete/Repositories/Tools-impact-events`; branch `feat/5073-contact-events`; published event head 847e6927c; PR#5152 https://github.com/D-sorganization/Tools/pull/5152 (merged onto main via auto-merge).
+- Objective: integrate the separately qualified adaptive normal-contact implementation9a8241015 with published temporal PR#5149 at0d6b99430, retaining camera/CLI source and every pre-existing API record. The calibration records below are preserved as peer-owned context.
+- Exact archived source4e1b19810 passes386 Windows and386 Linux controls. Linux coverage58.64% exceeds the unchanged20% floor. NORMAL_EVENT_RESULTS.json records source/JUnit hashes, RED failures and preset independent event/work refinements. Four production modules pass NumPy-aware mypy; all3870 files pass root Ruff/format checks.
+- This integration changes no event/shaft/impact Python implementation or tests. All15 CLI/service/sidekick/golf/swing API controls pass in8.04s. Generated inventory and all nine governance gates pass; normal commit/push checks pass; protected CI/review remains required.
+- Publication repair at `SELF`: the first push at50935aefc was refused by three isolated mypy no-any-return errors. Explicit response typing and builtin scalar returns now pass the same hook; all15 affected event tests pass in28.94s. No equation, tolerance or gate changed. The archived386 receipts retain their original tree identity.
+- CI repair at SELF: two ndarray returns now use explicit local annotations after changed-file mypy failed in run34436796361. The same local changed-file invocation passes. Numerical expressions are unchanged; all15 affected event controls pass in37.40s; normal publication checks remain. Evidence: docs/ci-failures/impact5151-20260910.md.
+- Dense root work is not a nonnegative loss certificate; roots report state/response, while endpoint work remains strictly validated. Sign-change searches can miss repeated roots inside a step. No force-maximum or physical/acoustic approval is implied.
+- Open dependencies: protected reviews#5146/#5149, private consumer checkout404, final reviewed Tools/UpstreamDrift pin and installed wheel. Launcher#5144 must be preserved alongside camera main in that final pin. GUI lifecycle failures remain under#5114.
+- Remaining science: finite-duration friction, face/hosel modes, changing applied force/torque, independent mesh/mode/general event convergence, matched interventions, measured force/spin/radiation and blinded perception.
+- No user-owned changes are discarded. Fleet-policy main92283cf3f is now preserved without changing its managed blocks. This merge changes instructions and continuation records only; event Python remains9a8241015's qualified implementation. Next action: resolve protected CI/review on#5152; additional prescribed force/couple histories now continue separately in Tools-impact-load-history under#5073, before full friction coupling.
+- Development-log entries: DL-#5151 and DL-#5073. Canonical detailed evidence: docs/development/impact-acoustics/NORMAL_EVENT_DEVELOPMENT.md and NORMAL_EVENT_RESULTS.json.
+
+## Completed Rate Shard Isolation: #5114
+
+- Published: PR #5158 merged as `25367070fb2acea8ad2f836fba1f56aea939707b` after both Linux rate shards, both aggregate coverage gates and required quality passed. Entry DL-#5114 is shipped.
+- Change: the entire Club Tester file uses existing serial science isolation. All GUI assertions, test selection and the 60-second deadline remain unchanged; the rest of the rate suite stays parallel.
+- Validation at a7d025264: 16 shard contracts, the 1,684-file partition, three unchanged serial tests with coverage, nine governance checks and normal hooks pass. Windows full execution completes with 2,905 parallel passes, 17 skips and two independently reproduced unchanged-source Qt 6.9 GUI limitations, followed by all three serial passes. PR #5158 records that limitation explicitly.
+- Continuation: the published repair is integrated into the context-provider worktree below; qualify the combined provider before final publication. Scientific/manual approval remains separate.
 ## Active Placement Work #5137
 
 - Worktree: `C:/Users/diete/Repositories/Worktrees/Tools-calibration-numerics`.
@@ -169,3 +197,25 @@ pass;24 numerical/placement tests also pass on actual OpenCV5.0.0 using the
 retained dependency directory. Handoff149-line/digest and module inventory
 freshness checks pass. No solver or gate changed during merge. Normal commit
 and push hooks remain before updating PR#5140.
+
+Provider coordination: dieterolson closed standalone launcher PR#5144 unmerged at2026-09-10T04:26:49Z. Preserve this closure. Its exact correction is incorporated in combined provider#5141 atc80f2cf34; the context task retains final downstream pin ownership. No standalone reopening is requested. Load-history review#5153 passes406 Windows/Linux controls and35 after the annotation-only event repair; six affected production modules pass NumPy-aware mypy. Normal publication passed; next action is protected CI/review on#5154.
+
+Reference-integrity adoption at SELF: the two test files are byte-identical to event commit847e6927c. SI root-residual and forward-time checks strengthen the independent oracle, with a perturbed-root tripwire. All21 load-history/oracle controls pass in5.07s and the unchanged assertion gate passes. Production remainsc4e6d584d; the406-platform archive and35 annotation-integration receipts retain their source identities. Next action: resolve protected review on#5154.
+
+The Tools#5068, UpstreamDrift#9700 and AffineDrift#4253 epics now reflect completed rigid/lumped references, current numerical reviews and explicit unqualified empirical work. Tools#5073 owns native sub-issues5145,5147,5151,5153; T5#5074 distinguishes merged signal-boundary repair5106 from remaining calibration/complex-FRF/radiation/perception work. These updates do not close the research goal.
+
+## Temporal Contact Review #5147 / PR #5149
+
+- Worktree: C:/Users/diete/Repositories/Tools-impact-trajectory; branch feat/5073-contact-trajectory; documentation commit SELF; reviewed source0d6b9943019e74ff44e146c6e3621b8e6ffa1a70.
+- Objective: qualify the temporal contact foundation while preserving camera/CLI source. Archived371 Windows/Linux numerical controls,13 CLI/API integration controls and all9 governance gates pass with their original source identities.
+- Current CI is incomplete: run34433661011 cancelled both rate and Rust/toolcache jobs; non-rate Python shards pass. A repeated club-tester worker failure and unfinished simulation-subtabs control are retained in docs/ci-failures/impact5147-20260910.md. Cause is unestablished; capture owns related#5114. Private consumer404 and final provider/wheel remain separate dependencies.
+- No code, threshold, test selection or protected gate changed. Physical/acoustic qualification remains open. Next action: resolve the protected CI/review dependency with its owning task. Development-log entry DL-#5147.
+
+## Agent Context Delivery — #5138
+
+- Repository/worktree: Tools, `.context-implementation/Tools`; branch `feat/issue-5138-agent-context`; current commit `SELF`; PR #5141 open; epic Repository_Management#1629; DL-#5138.
+- Combined provider: published CI isolation25367070f, calibration0a561daff, CLI/service9899c5a6a and fleet policy92283cf3f; context/CodeMap implementation; and the exact two reviewed launcher files from fc453bf8e/c10baa1d8 (Tools#5143/#5144). The launcher owner agreed to this integration; their branch/worktree is preserved. The new regression fails against the old manifest before applying the canonical widget correction. All40 combined function-generator, CLI/service and reference-placement tests pass after integration (24.44 seconds).
+- Quality at0f84e2a9a passes36 context and109 CodeMap tests, including an explicit real-SDK import before the transport test. The unchanged c80 rate shards exhausted their 90-minute cap; the qualified isolation repair is now integrated for combined requalification. The earlier2696 run was superseded/cancelled. UpstreamDrift6e939bc6b passes the suite-marker gate after the14 documentation regression tests pass; source checks and12 navigation tasks pass before the deliberate publication guard. Gasff35c8a0b passes7 context,3 Linux checkout-recovery and34 manual tests; its old queued aggregate was force-cancelled only after normal cancellation did not finish, allowing new CI jobs to queue.
+- Combined validation after integrating25367070f: `python3 -m pytest tests/ops/test_ci_test_shards.py src/function_generator/tests/test_function_generator_gui.py tests/shared/python/sidekick/lab/mocap/test_cli_service_contracts.py tests/shared/python/sidekick/lab/mocap/test_reference_placements.py -o addopts= --timeout=60 -q` passes56 tests. Focused context passes35 with one Windows skip; the parser-enabled validation venv passes all109 CodeMap tests. Real MCP SDK imports pass. `python3 scripts/ci_test_shards.py --check` validates1,692 files across seven shards. All nine manual governance commands listed in AGENTS.md pass after inventory regeneration. The two integrated launcher files are byte-identical to fc453bf8e. Protected combined CI remains pending.
+- Current provider is not published on main. Final consumer gitlink, Cargo, pip and catalog alignment belongs to this session. Scientific/manual approval and physical qualification remain separate. Existing peer handoffs, root-handoff compaction and both reviewed source corrections are preserved.
+- Next: qualify this combined provider, publish through protected review, pin and test both consumers, then reconcile fleet audit#1634 and epic#1629. No user-owned changes in this worktree.

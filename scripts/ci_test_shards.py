@@ -1,12 +1,8 @@
 #!/usr/bin/env python3
 """Partition the whole Tools test tree into CI shards (Tools #4913).
 
-The PR lane used to run a hand-curated ``core_tests`` allowlist plus the tests
-changed by the diff, with branch-name special cases and a blanket exclusion of
-the two largest embedded suites (``src/pendulum_simulator`` and
-``src/movement_optimizer``). This module replaces all of that with one
-deterministic partition of *every* test file under ``tests/`` and ``src/`` into
-named shards that ``ci-standard.yml`` fans out as a matrix.
+Every test under ``tests/`` and ``src/``, including embedded apps, belongs to one
+named shard in the ``ci-standard.yml`` matrix.
 
 Design rules:
 
@@ -85,6 +81,7 @@ _NOT_TEST_MODULES = frozenset(
 )
 
 PYTEST_MARKER_EXPR = "not live_simulation and not e2e and not requires_network"
+CLUB_TESTER_SUITE = "tests/rate_of_closure/test_club_tester_tab.py"
 
 
 @dataclass(frozen=True)
@@ -142,7 +139,13 @@ SHARDS: tuple[Shard, ...] = (
             Invocation(("tests/shared/python/golf_club",), serial=True),
         ),
     ),
-    Shard("tests-rate", (Invocation(("tests/rate_of_closure",)),)),
+    Shard(
+        "tests-rate",
+        (
+            Invocation(("tests/rate_of_closure",), ignores=(CLUB_TESTER_SUITE,)),
+            Invocation((CLUB_TESTER_SUITE,), serial=True),
+        ),
+    ),
     Shard(
         "tests-unit",
         (

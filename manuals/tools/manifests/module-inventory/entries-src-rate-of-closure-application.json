@@ -1616,7 +1616,8 @@
           }
         ],
         "test_paths": [
-          "tests/shared/python/calculators/conversion/test_service.py"
+          "tests/shared/python/calculators/conversion/test_service.py",
+          "tests/unit/agent_context/test_service.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -2952,7 +2953,8 @@
           "tests/rate_of_closure/test_morris_authority_host.py",
           "tests/rate_of_closure/test_morris_authority_router.py",
           "tests/rate_of_closure/test_morris_authority_service.py",
-          "tests/shared/python/calculators/conversion/test_service.py"
+          "tests/shared/python/calculators/conversion/test_service.py",
+          "tests/unit/agent_context/test_service.py"
         ],
         "unit_mentions": [],
         "validation_paths": []

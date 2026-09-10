@@ -9,63 +9,63 @@
   },
   "repository": "D-sorganization/Tools",
   "issue_url": "https://github.com/D-sorganization/Tools/issues/4730",
-  "pr_url": "https://github.com/D-sorganization/Tools/pull/5156",
+  "pr_url": "https://github.com/D-sorganization/Tools/pull/5055",
   "commit_evidence": {
-    "local_head_sha": "c954e50a09fb466ade516cfc724aef552fc587e6",
+    "local_head_sha": "73704cf64673050bb90341bc126e38e4eef087f1",
     "remote_head_sha": null,
-    "reviewed_tree_sha": "1708fe06dce7753d98a83f97f420233702d257d7",
+    "reviewed_tree_sha": "7f5086d47bc172213ee67ba50cf9e080d6c13e67",
     "merge_sha": null
   },
   "branch_and_worktree": {
     "branch": "feat/5074-complex-frf",
-    "worktree": "C:\\Users\\diete\\Repositories\\Tools-impact-frf-phase",
+    "worktree": "C:\\Users\\diete\\Repositories\\Tools",
     "is_clean": false
   },
   "check_evidence": {
     "check_design_manual_governance": {
       "command": "python -m scripts.check_design_manual_governance",
       "status": "passed",
-      "timestamp": "2026-09-10T05:43:15Z"
+      "timestamp": "2026-09-10T09:13:19Z"
     },
     "build_tools_module_inventory": {
       "command": "python -m scripts.build_tools_module_inventory --check",
       "status": "passed",
-      "timestamp": "2026-09-10T05:43:15Z"
+      "timestamp": "2026-09-10T09:13:19Z"
     },
     "lint_tools_textbook_chapters": {
       "command": "python -m scripts.lint_tools_textbook_chapters",
       "status": "passed",
-      "timestamp": "2026-09-10T05:43:15Z"
+      "timestamp": "2026-09-10T09:13:19Z"
     },
     "check_tools_exemplars": {
       "command": "python -m scripts.check_tools_exemplars",
       "status": "passed",
-      "timestamp": "2026-09-10T05:43:15Z"
+      "timestamp": "2026-09-10T09:13:19Z"
     },
     "check_tools_calculation_freshness": {
       "command": "python -m scripts.check_tools_calculation_freshness --check",
       "status": "passed",
-      "timestamp": "2026-09-10T05:43:15Z"
+      "timestamp": "2026-09-10T09:13:19Z"
     },
     "check_tools_manual_qa": {
       "command": "python -m scripts.check_tools_manual_qa --check",
       "status": "passed",
-      "timestamp": "2026-09-10T05:43:15Z"
+      "timestamp": "2026-09-10T09:13:19Z"
     },
     "check_tools_publication_projection": {
       "command": "python -m scripts.check_tools_publication_projection --check",
       "status": "passed",
-      "timestamp": "2026-09-10T05:43:15Z"
+      "timestamp": "2026-09-10T09:13:19Z"
     },
     "render_tools_design_manual": {
       "command": "python -m scripts.render_tools_design_manual --check",
       "status": "passed",
-      "timestamp": "2026-09-10T05:43:15Z"
+      "timestamp": "2026-09-10T09:13:19Z"
     },
     "check_tools_handoff": {
       "command": "python -m scripts.check_tools_handoff --check",
       "status": "passed",
-      "timestamp": "2026-09-10T05:43:15Z"
+      "timestamp": "2026-09-10T09:13:19Z"
     }
   },
   "artifact_and_test_digests": {
@@ -112,7 +112,7 @@
       "TOOLS-HUMAN-APPROVAL-PENDING",
       "TOOLS-MARKERLESS-EXEMPLAR-BLOCKED"
     ],
-    "expiry_timestamp": "2026-12-09T05:43:15Z"
+    "expiry_timestamp": "2026-12-09T09:13:19Z"
   },
   "blockers": [
     {
@@ -127,14 +127,15 @@
     }
   ],
   "next_dependency": "TOOLS-M0 (#4708 / #4734) and parent epic DOC-TOOLS (#4707) closure",
-  "freshness_timestamp": "2026-09-10T05:43:15Z",
+  "freshness_timestamp": "2026-09-10T09:13:19Z",
   "governed_handoff_files": {
     "AGENT_HANDOFF.md": {
       "path": "AGENT_HANDOFF.md",
-      "sha256_lf": "cb46071fa66c520a235b4dc9751deda99e1084f8da1d89b5ac6c1b3a20728952",
-      "line_count": 149,
+      "sha256_lf": "d6bf33ffa5510cfdb970ac50e16c024c986cea5052001bf8f4f49917aa443e8f",
+      "line_count": 146,
       "max_line_budget": 150,
       "required_sections": [
+        "## Verified Agent Context: #5138",
         "## Calibration and Moving Reference Placements: #5132 / #5137",
         "## Impact Dynamics and Acoustics: #5068",
         "## Merge Governance",
@@ -191,7 +192,7 @@
     },
     "src/shared/python/golf_club/AGENT_HANDOFF.md": {
       "path": "src/shared/python/golf_club/AGENT_HANDOFF.md",
-      "sha256_lf": "8e630274d439fc9799e8ef0ea6b32041e0db103653caadd6c7dc8f99e12691dc",
+      "sha256_lf": "5b22a3e9ebec127f7e17ecb6b8cf7465885d71d44fc0d24b0105082e8473501d",
       "line_count": 150,
       "max_line_budget": 150,
       "required_sections": [

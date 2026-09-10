@@ -648,7 +648,8 @@
           "tests/rate_of_closure/test_regional_ground_execution_result.py",
           "tests/rate_of_closure/test_regional_surface_plan.py",
           "tests/shared/python/test_canonical_numeric_json.py",
-          "tests/shared/python/test_rotating_base_run_catalog.py"
+          "tests/shared/python/test_rotating_base_run_catalog.py",
+          "tests/shared/python/test_runtime_manifest_parity_fixture.py"
         ],
         "unit_mentions": [],
         "validation_paths": [
@@ -1545,6 +1546,7 @@
           "src/shared/python/swing_sim/tests/test_prescribed_run.py",
           "src/shared/python/swing_sim/tests/test_torque_library_export.py",
           "src/shared/python/swing_sim/tests/test_torque_profiles.py",
+          "src/shared/python/swing_sim/tests/test_torque_profiles_parity.py",
           "tests/rate_of_closure/test_prescribed_kinetics_presentation.py",
           "tests/rate_of_closure/test_torque_profile_ui.py",
           "tests/rate_of_closure/test_torque_run_history.py",
