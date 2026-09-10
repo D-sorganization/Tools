@@ -3268,10 +3268,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13383,
+      "bytes_lf": 13458,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2301c52584678383d8df6686fc8d4c8e9c3a5df724127e97ec9e1512bc315208",
+      "content_sha256_lf": "84a09f23fb0ad069affc335fdda4f3e555ac2134def7b55bee398fd89ce4f29a",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-NEURALMODELLABPANEL-TSX-E44BA04E96E4",
       "language": "typescript-react",
