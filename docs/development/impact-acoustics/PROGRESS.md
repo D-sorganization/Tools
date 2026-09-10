@@ -1,3 +1,18 @@
+PR #5146 integrates camera-placement main 0a561daff. Every impact and
+golf-club source/test/API file is byte-identical to the qualified contact head;
+the camera development-log entries are retained alongside the impact entries.
+Canonical inventory and handoff are regenerated. The private consumer lookup
+failure is recorded in docs/ci-failures/impact5145-20260910.md and does not
+qualify that consumer. The separate normal-trajectory continuation is review
+child #5147 and passes all 371 Windows/Linux controls.
+
+The merged camera/API integration passes 40 controls (30.07 s), with 255
+existing import-loader deprecation warnings and no failures or skips. Impact
+source, tests and API baselines remain identical to 1edd0ddcf; the incoming
+camera source, tests and API remain identical to main 0a561daff. The first
+inventory check exposed a stale Rust math-primitives shard; the ordinary
+inventory generator repairs that generated merge drift without a Rust edit.
+
 Numerical foundation child #5145 is published for protected review in
 [PR #5146](https://github.com/D-sorganization/Tools/pull/5146) at 3912b5604. Normal commit/push checks pass after the isolated-import
 typing repair. This review does not close #5073 or the physical/acoustic requirements.
