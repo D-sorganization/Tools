@@ -1,3 +1,45 @@
+UpstreamDrift #9916 was merged as c487265f at 2026-09-10T01:32:10Z.
+Its provider remains interim 4dabe900c. The active context integration task
+will preserve this merge and the launcher correction in its final coordinated
+pin; exact impact-consumer and installed-wheel qualification remains.
+
+## Contact Trajectory Development (2026-09-10)
+
+Temporal review child #5147 is created and leased; no PR exists yet.
+Parent #5073 continues in `Tools-impact-trajectory` on
+`feat/5073-contact-trajectory`, based on published foundation PR #5146 at
+1edd0ddcf. The shared local-chart RK4 kernel begins with missing-module RED,
+then eight closed-form/work/domain controls pass. Moving the deliberate
+Jacobian-corruption controls to the new authority exposes two delegation
+failures before refactoring the shaft solver. The shared implementation then
+passes all 36 kernel, shaft trajectory, geometry and rotating-disturbance
+controls, with the old tolerances unchanged. Both production modules pass
+NumPy-aware mypy. Exact JUnit/source evidence is in CONTACT_TRAJECTORY_RESULTS.json.
+
+The kernel retains the body-twist reconstruction correction and caller-owned
+state validation. See [Müller's corrected review, equations 1.2–1.7 and 2.2](https://arxiv.org/pdf/2303.07928)
+for the differential's sign convention. Our `right_jacobian(q)` is
+phi_1(-ad(q)); the naming convention must not replace the explicit equation.
+This numerical reference does not validate contact coefficients or sound.
+
+The private normal-contact trajectory now composes owned shaft/ball states,
+samples prescribed grips and contact at every stage, and accumulates external
+work, anchor output, grip loss, contact viscosity and cutoff removal separately.
+It passes 12 controls after missing-module RED and a corrected reserved pytest
+parameter. A three-mass matrix-exponential oracle gives state errors
+6.354e-8, 3.933e-9 and 2.446e-10 for 4/8/16 steps across a synthetic 0.4 ms
+compressive interval. The final energy defect is -1.430e-13 J; independent
+quadrature verifies every work channel. A separated spinning ball retains free
+translation/rotation, while frame, history, budget and force-ceiling failures
+are refused. Three modules pass NumPy-aware and actual-hook mypy.
+The existing 100 golf-club and 233 swing API records are unchanged; only two
+private empty-export records are added. Exact tree0433376b0 is archived for
+371 Windows (171.37 s) and Linux coverage (245.76 s) controls, all passing with no failures or skips.
+
+Contact switches, finite-duration friction, face/hosel modes and independent
+event/mesh/mode convergence remain open. Smooth RK4 order is insufficient for
+a contact-force jump. No full T4 delivery or physical/acoustic result is claimed.
+
 Numerical foundation child #5145 is published for protected review in
 [PR #5146](https://github.com/D-sorganization/Tools/pull/5146) at 3912b5604. Normal commit/push checks pass after the isolated-import
 typing repair. This review does not close #5073 or the physical/acoustic requirements.

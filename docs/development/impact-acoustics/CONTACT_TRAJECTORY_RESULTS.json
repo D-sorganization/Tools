@@ -1,0 +1,168 @@
+{
+  "parent_issue": 5073,
+  "foundation_pr": 5146,
+  "qualification": "Private fixed-step normal contact trajectory; smooth compressive motion/work and separated free-ball controls pass. Contact switches, tangential history, face modes and physical/acoustic qualification remain open.",
+  "rkmk_kernel": {
+    "source_tree": "334822bb7f7a1be60ef9b4bd615334836c6a08fd",
+    "base_commit": "1edd0ddcf",
+    "kernel_missing_module_red": {
+      "tests": 1,
+      "failures": 0,
+      "errors": 1,
+      "skipped": 0,
+      "seconds": 16.656,
+      "junit_sha256": "65e85d0516ffcc947a8b821ddde000a7e2cd9afaab99cc42aca61dabc3d77725"
+    },
+    "kernel_green": {
+      "tests": 8,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 2.992,
+      "junit_sha256": "b09ea2587b1461db0a287d6df2083c87094e1940bcae321c0bfd98872156506e"
+    },
+    "delegation_red": {
+      "tests": 2,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 18.999,
+      "junit_sha256": "ea525e32c76344d6c75887caf94bebab763570d62f2277c4fa3e494815cf958e"
+    },
+    "full_refactor_green": {
+      "tests": 36,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 97.573,
+      "junit_sha256": "fcdecaaa810a7380ca2925451e9a55e4f759104fbcfba5c4ffce33f4ca231014"
+    },
+    "numpy_aware_mypy": "PASS two production modules, mypy 1.13.0 with NumPy",
+    "ruff": "Changed-file check and format PASS",
+    "reference": "https://arxiv.org/pdf/2303.07928",
+    "physical_acoustic_validation": false
+  },
+  "normal_contact_trajectory": {
+    "source": {
+      "tree": "0433376b0460da96beaab72349efb135bcc9756a",
+      "bytes": 90572800,
+      "sha256": "a9574af1907cf9a8e7bcf3e7a6de76da2bc2c5851e3517f0e09e6ae2fa085c3b"
+    },
+    "missing_module_red": {
+      "tests": 1,
+      "failures": 0,
+      "errors": 1,
+      "skipped": 0,
+      "seconds": 3.776,
+      "junit_sha256": "e6407dea52a473ea49868285889eae8fad18304b18011f18b6e409b21f2f7aba"
+    },
+    "test_collection_repair": {
+      "evidence": {
+        "tests": 1,
+        "failures": 0,
+        "errors": 1,
+        "skipped": 0,
+        "seconds": 3.552,
+        "junit_sha256": "bd2d057d86abb9f1dc93ab6a0cbf6abf8103e12aa3ede895834c768f7988cde8"
+      },
+      "reason": "Renamed reserved pytest parameter request to bad_controls; bound the quadrature index explicitly."
+    },
+    "first_green": {
+      "tests": 5,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 3.074,
+      "junit_sha256": "64b03937bd31b03501f0ea071f6706a2508ecb975e51f352c61b369a3802466d"
+    },
+    "expanded_green": {
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 4.599,
+      "junit_sha256": "e24e713591478d5d9e39ab7828a33dbc1d563eeec949331019d50d55a35b8812"
+    },
+    "recorded_green": {
+      "tests": 12,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 5.284,
+      "junit_sha256": "6d9e85a44e4180e2176331396146328421e5856910f0fdefb0e331c99a0d9e1b",
+      "studies": [
+        {
+          "steps": [4, 8, 16],
+          "state_errors": [
+            6.3535276649048e-8, 3.933354540740781e-9, 2.4457189710350187e-10
+          ],
+          "work_expected_j": [
+            -4.410677351296505e-5, 0.0017511107850834101, 2.970041805618471e-6,
+            3.6124940593011954e-5, 0.0
+          ],
+          "work_observed_j": [
+            -4.410677349808495e-5, 0.0017511107848479886, 2.970041759433392e-6,
+            3.612493814152433e-5, 0.0
+          ],
+          "energy_balance_error_j": -1.4297255125140552e-13
+        }
+      ]
+    },
+    "typing": "NumPy-aware mypy PASS all three production modules after explicit array conversion of owned body twists; actual isolated-import hook also PASS.",
+    "api_red": {
+      "tests": 2,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 13.547,
+      "junit_sha256": "bfe745639f79a3f6179b498b99914ed637604bb34c46551f1177b1ff882e6b76"
+    },
+    "api_green": {
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 3.039,
+      "junit_sha256": "51a14680aa8a68049a78a189337fbfc63486f42e46228207b0fcd805aeca85f0"
+    },
+    "api_preservation": {
+      "golf_club_existing_records_unchanged": 100,
+      "swing_sim_existing_records_unchanged": 233,
+      "new_private_empty_export_modules": [
+        "golf_club/_rkmk_step.py",
+        "swing_sim/impact/_normal_contact_trajectory.py"
+      ]
+    },
+    "combined_windows": {
+      "tests": 371,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 171.368,
+      "junit_sha256": "8245ea807e09aec26a6183228007587e1f5eae58692806d3e9063104a8309992"
+    },
+    "combined_linux_coverage": {
+      "tests": 371,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 245.761,
+      "junit_sha256": "7502cdaf80de439d1a06ef5339c8aeed0748e006b9cab78c42fca10f3baabacb"
+    },
+    "physical_acoustic_qualification": false
+  },
+  "review": {
+    "issue": 5147,
+    "parent": 5073,
+    "status": "in_progress",
+    "pr_url": null
+  },
+  "upstream_integration": {
+    "pr": 9916,
+    "merged_at": "2026-09-10T01:32:10Z",
+    "head": "37790892f50d38b007b85bbb87aa58e9ceab2beb",
+    "merge": "c487265f1ebc9c61a2e124267ad9cd1c96a6c007",
+    "provider": "4dabe900c6ef7767b565c778cda9d9449bed28cf",
+    "qualification": "Interim pin. Final reviewed Tools descendant requires coordinated consumer update and exact installed-wheel qualification."
+  }
+}

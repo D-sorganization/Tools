@@ -639,8 +639,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-file-watcher.json"
     },
     {
-      "content_sha256_lf": "e84413f4c24f0ab703da01327786ca9fef1b6595a1d5d09d03b737690c3f54cf",
-      "entry_count": 100,
+      "content_sha256_lf": "8c43ac5b2602ccaa46dfc87cc91b70e421623b762dd8bc63cc37b6a3b3e60f7f",
+      "entry_count": 101,
       "package": "src/shared/python/golf_club",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-golf-club.json"
     },
@@ -777,8 +777,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-ground.json"
     },
     {
-      "content_sha256_lf": "6d15a1bf9e0cf73f8e0c52b4ad50a223b711275f5f1fe0cbd87911967b4684c3",
-      "entry_count": 15,
+      "content_sha256_lf": "41cdc8bcae246c6f687db80d3935a55255843a86c1baa32f275c4d3d12cad78e",
+      "entry_count": 16,
       "package": "src/shared/python/swing_sim/impact",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-impact.json"
     },

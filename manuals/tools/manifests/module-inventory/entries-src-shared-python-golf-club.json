@@ -1284,6 +1284,55 @@
     },
     {
       "authority_status": "provisional",
+      "bytes_lf": 4554,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "9e06e8b919a337eb5f26aaf657b56470fa1caa90f2006a231c83759c3798e4b5",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-RKMK-STEP-PY-DF89463261C5",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_rkmk_step.py",
+      "purpose": "Shared private RK4 step in local material SE(3) charts.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_rkmk_step.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 2739,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
@@ -2954,6 +3003,7 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/golf_club/test_normal_contact_trajectory.py",
           "tests/shared/python/golf_club/test_shaft_rkmk_geometry.py",
           "tests/shared/python/golf_club/test_shaft_rkmk_trajectory.py",
           "tests/shared/python/golf_club/test_shaft_rotating_disturbance.py",
@@ -3131,10 +3181,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 4468,
+      "bytes_lf": 2737,
       "classification": "calculation",
       "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "591831063c783139b5dc6698a0aea9898281210bb2bfc34ccb6f37871be50359",
+      "content_sha256_lf": "69bbb3a993b9332f05c3b471dd93a31a19f30e05e22a3b6458708fb5dc89bcac",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-RKMK-TRAJECTORY-PY-FBBF1195143E",
       "language": "python",
@@ -3172,6 +3222,7 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/golf_club/test_normal_contact_trajectory.py",
           "tests/shared/python/golf_club/test_shaft_rkmk_trajectory.py",
           "tests/shared/python/golf_club/test_shaft_rotating_disturbance.py"
         ],

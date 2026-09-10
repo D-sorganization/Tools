@@ -2,16 +2,16 @@
 
 ## Active Work
 
-- Parent #5073 remains active. Numerical foundation child #5145 is under protected review in PR #5146 at published 3912b5604, based on merged shaft main 2c9a8d6c.
+- Parent #5073 remains active. Numerical foundation child #5145 is under protected review in PR #5146 at published 1edd0ddcf, based on merged shaft main 2c9a8d6c.
 - Private geometry, normal/objective tangential work, full-tensor body response and instantaneous normal shaft/ball coupling are implemented. Head inertia is retained once; existing public APIs and legacy T2 equations are unchanged.
 - The archived foundation passes 323 Windows and 323 Linux coverage controls. The isolated pre-push typing repair passes 46 affected controls and mypy across all 13 changed source files. Normal publication hooks and repository-wide Ruff checks pass.
 - Exact source/JUnit hashes and retained failures are in `docs/development/impact-acoustics/SPATIAL_CONTACT_RESULTS.json`; derivations and remaining scope are in `SPATIAL_CONTACT_KINEMATICS.md` and `PROGRESS.md`.
-- These are synthetic numerical controls. No complete flexible-contact trajectory or physical/acoustic qualification is delivered.
+- These are synthetic numerical controls. The separate trajectory worktree now supplies fixed-step normal contact; full flexible-contact and physical/acoustic qualification remain open.
 
 ## Next Steps
 
 1. Resolve numerical foundation review; preserve canonical import paths.
-2. Reuse Lie-group stepping in a separate dynamic-contact problem, then integrate objective tangential history.
+2. Qualify the new private normal trajectory and its five-channel work ledger (12 controls pass; combined 371 Windows/Linux tests pass), then resolve contact events and integrate objective tangential history.
 3. Couple full ball/head/shaft states and face/hosel modes; verify time, mesh, modes and events independently.
 4. Compare matched-state detached/unloaded/preloaded cases with intervention energy and ringdown.
 5. Qualify held-out force/spin/face-map observations before physical claims.

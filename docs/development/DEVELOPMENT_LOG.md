@@ -32,19 +32,35 @@ reachable from any live state and `abandoned` from `parked`.
 - **Evidence:** All 323 Windows and 323 Linux coverage controls pass; five production files pass NumPy-aware mypy. Existing 99 golf-club and 228 swing API records are unchanged. Source/JUnit hashes and RED failures are retained in SPATIAL_CONTACT_RESULTS.json.
 - **Next step:** Resolve protected review on #5146; continue trajectory, modes, convergence and physical/acoustic requirements under parent #5073.
 
+### DL-#5147 · Normal Contact Temporal Foundation Review
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5147; parent #5073
+- **PR:** not created
+- **Branch:** feat/5073-contact-trajectory
+- **Paths:** src/shared/python/golf_club, src/shared/python/swing_sim/impact, tests/shared/python/golf_club
+- **Started:** 2026-09-10
+- **Last verified:** 2026-09-10 (source tree 0433376b0; base 1edd0ddcf; SELF)
+- **Summary:** Review the private normal-contact trajectory, shared Lie RK4 and five-channel work accounting. Retain fixed shaft laws and existing APIs.
+- **Evidence:** All 371 Windows and 371 Linux coverage controls pass; three modules pass both NumPy-aware and actual-hook mypy. Exact sources, REDs and refinement/JUnit records are in CONTACT_TRAJECTORY_RESULTS.json.
+- **Next step:** Publish for protected review; continue contact events, friction, face modes and physical/acoustic qualification under #5073.
+
 ### DL-#5073 · Spatial Flexible Contact Dynamics
 
 - **State:** in_progress
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5073
 - **PR:** not created
-- **Branch:** feat/5073-spatial-contact
+- **Branch:** feat/5073-contact-trajectory
 - **Paths:** src/shared/python/swing_sim/impact, docs/development/impact-acoustics, tests/api_baselines/swing_sim_api_baseline.json
 - **Started:** 2026-09-09
 - **Last verified:** 2026-09-09 (provider base 0cd6dce22; coupled-response staged tree ec863402f; changes SELF)
 - **Summary:** Private common-point sphere/plane kinematics reuses canonical pose, force/moment and work ports. Point migration is kept distinct from material velocity. Normal and objective tangential work ports plus full-tensor free-body response are private; no qualified impact trajectory is inferred.
 - **Evidence:** Geometry 18, normal work 20 and tangent work 28 controls. Normal/legacy: 148 Windows/Linux pass after retained timeout. Tangential full impact: 150 Windows and 150 Linux coverage pass; NumPy typing passes. Integrated 176 tests pass on Windows/Linux. New body and moving-shaft controls pass 75 tests; relative-inertia adversarial RED then all 24 body tests pass. Five production files pass NumPy-aware mypy. All 323 coupled-response/impact/shaft controls pass on Windows and Linux coverage; existing 99 golf-club and 228 swing API records are unchanged. Exact artifacts are recorded.
 - **Next step:** Couple the ball/head/shaft trajectory; finish canonical inventory/handoff and qualified provider integration.
+
+- **Trajectory update (2026-09-10):** Shared Lie RK4 kernel: missing-module RED, eight GREEN, two deliberate-corruption delegation REDs, then all 36 kernel/shaft/geometry/disturbance controls GREEN. Two production modules pass NumPy-aware mypy. Kernel source tree 334822bb7. Normal-only contact trajectory now passes 12 controls, including independent motion/work refinement and free-ball clearance; all 371 Windows and Linux coverage controls pass at tree0433376b0. Evidence: CONTACT_TRAJECTORY_RESULTS.json.
 
 ### DL-#5101 · Scientific Import Inventory Detection
 
