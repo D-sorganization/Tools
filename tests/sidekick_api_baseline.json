@@ -8344,6 +8344,14 @@
   },
   "lab/mocap/__init__.py": {
     "__all__": [
+      "MocapCapabilitiesReport",
+      "MocapHealthReport",
+      "MocapService",
+      "MocapServiceConfig",
+      "MocapServiceStatus",
+      "MocapTaskResult",
+      "build_parser",
+      "cli_main",
       "MOCAP_SESSION_SCHEMA_VERSION",
       "AcquisitionError",
       "ApprovalStatus",
@@ -8447,6 +8455,283 @@
       "c3d"
     ],
     "symbols": {
+      "MocapCapabilitiesReport": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "MocapHealthReport": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "MocapService": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "config",
+                  "annotation": "MocapServiceConfig | None",
+                  "default": "None",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "health": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "MocapHealthReport"
+            },
+            "capabilities": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "MocapCapabilitiesReport"
+            },
+            "cancel": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "task_id",
+                  "annotation": "str | None",
+                  "default": "None",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            },
+            "start_capture": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "camera_ids",
+                  "annotation": "list[str]",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "duration_seconds",
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "fps",
+                  "annotation": "float",
+                  "default": "30.0",
+                  "kind": "arg"
+                },
+                {
+                  "name": "output_dir",
+                  "annotation": "Path | str | None",
+                  "default": "None",
+                  "kind": "arg"
+                },
+                {
+                  "name": "synthetic",
+                  "annotation": "bool",
+                  "default": "True",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "wait_task": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "task_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "timeout_seconds",
+                  "annotation": "float",
+                  "default": "5.0",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "MocapTaskResult"
+            },
+            "calibrate": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "observations_path",
+                  "annotation": "Path | str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "output_path",
+                  "annotation": "Path | str | None",
+                  "default": "None",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
+            "reconstruct": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "observations_path",
+                  "annotation": "Path | str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "layout_path",
+                  "annotation": "Path | str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "output_path",
+                  "annotation": "Path | str | None",
+                  "default": "None",
+                  "kind": "arg"
+                },
+                {
+                  "name": "filter_kind",
+                  "annotation": "str",
+                  "default": "'none'",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
+            "export": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "input_path",
+                  "annotation": "Path | str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "format_kind",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "output_path",
+                  "annotation": "Path | str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "unit_scale",
+                  "annotation": "float",
+                  "default": "1.0",
+                  "kind": "arg"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
+        }
+      },
+      "MocapServiceConfig": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "MocapServiceStatus": {
+        "type": "class",
+        "info": {
+          "bases": ["enum.StrEnum"],
+          "methods": {}
+        }
+      },
+      "MocapTaskResult": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "build_parser": {
+        "type": "function",
+        "signature": {
+          "args": [],
+          "returns": "argparse.ArgumentParser"
+        }
+      },
+      "cli_main": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "argv",
+              "annotation": "Sequence[str] | None",
+              "default": "None",
+              "kind": "arg"
+            }
+          ],
+          "returns": "int"
+        }
+      },
       "MOCAP_SESSION_SCHEMA_VERSION": {
         "type": "variable"
       },
@@ -12024,6 +12309,10 @@
     "__all__": [],
     "symbols": {}
   },
+  "lab/mocap/cli.py": {
+    "__all__": [],
+    "symbols": {}
+  },
   "lab/mocap/devices.py": {
     "__all__": [],
     "symbols": {}
@@ -12264,6 +12553,10 @@
     }
   },
   "lab/mocap/serialization.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/service.py": {
     "__all__": [],
     "symbols": {}
   },
