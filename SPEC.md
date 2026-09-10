@@ -91,6 +91,13 @@ with explicit gauge fixing. Enforces real-time displacement verification via `de
 preventing stale spatial assumptions, and categorical qualification flooring (`ExtrinsicQuality`,
 `ExtrinsicDegeneracyKind`) to fail closed on degenerate or unconstrained layouts.
 
+Known two-endpoint references can estimate a positive global metric scale for an
+already established layout through `sidekick.lab.mocap.reference_scale` (#5168).
+Distinct placements, matching lens/zoom profiles, raw reprojection and parallax
+checks, and independent held-out lengths produce a reviewable new layout without
+changing rotations or source evidence. Rulers cannot initialize camera poses;
+repeatability excludes physical lens, reference-length and picking uncertainty.
+
 ### 2026-09-07 Camera Intrinsic Calibration & Quality Flooring (#4706 / TOOLS-M4 (#4714))
 
 Subepic #4714 delivers camera intrinsic calibration representations, observation provenance,
@@ -5875,6 +5882,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-10 | #5169 | Estimate global metric scale from identified ruler endpoints and established camera geometry; preserve source evidence, rotations and lens profiles. Validate independent held-out lengths, raw reprojection, parallax, zoom identity and anchored projection invariance. Physical accuracy and engineering-manual publication remain unapproved. |
 | 2026-09-10 | #5159 | Add explicit affine waveform calibration, declared acquisition/clock/source identity and first-order or exact independent-block shared gain/offset uncertainty. Preserve legacy recording/hash semantics; exact identity must retain sub-1e-11 changes. TDD covariance, domain, immutable and provenance refusal controls precede implementation. No physical calibration authentication or acoustic prediction. Preserve main e83bd2e4; annotate only the proven synthetic SHA oracle scanner false positive, retaining the exact assertion. |
 | 2026-09-10 | #5156 | Add complex H1 phase, explicit PSD support and coherence through shared spectral preparation; preserve all legacy symbols/signatures and finite magnitude-only domain. TDD independent odd/even spectra, delayed phase, extreme-scale/refusal and immutable-result controls. No calibrated acoustic, uncertainty or sweetness claim. |
 | 2026-09-10 | #5154 | Add private, explicit observer/time-covered additional shaft force and free-couple histories to moving-grip and normal-contact trajectories. Reuse canonical point-load work and one append helper; retain baseline loads and all existing APIs. Verify independent polynomial motion/work, strict history domains and SI event-root residuals with a deliberately corrupted-root tripwire; preserve the Windows timeout and exact Linux/Windows source evidence. No physical/acoustic qualification. |
