@@ -23,11 +23,22 @@ export function TorqueFitPreview({ fit }: Props) {
     const time = start + (index / 80) * (end - start);
     return { time, shoulder: fit.shoulder.evaluate(time), wrist: fit.wrist.evaluate(time) };
   });
-  const torques = [
-    ...samples.flatMap((point) => [point.shoulder, point.wrist]),
-    ...fit.rows.flatMap((row) => [row.shoulderNm, row.wristNm]),
-  ];
-  const minimum = Math.min(...torques); const maximum = Math.max(...torques);
+  // ⚡ Bolt Optimization: Use single-pass loop instead of chained map/flatMap
+  // and Math.max(...spread) to compute final bounds without intermediate arrays.
+  let minimum = Infinity;
+  let maximum = -Infinity;
+  for (let i = 0; i < samples.length; i++) {
+    if (samples[i].shoulder < minimum) minimum = samples[i].shoulder;
+    if (samples[i].shoulder > maximum) maximum = samples[i].shoulder;
+    if (samples[i].wrist < minimum) minimum = samples[i].wrist;
+    if (samples[i].wrist > maximum) maximum = samples[i].wrist;
+  }
+  for (let i = 0; i < fit.rows.length; i++) {
+    if (fit.rows[i].shoulderNm < minimum) minimum = fit.rows[i].shoulderNm;
+    if (fit.rows[i].shoulderNm > maximum) maximum = fit.rows[i].shoulderNm;
+    if (fit.rows[i].wristNm < minimum) minimum = fit.rows[i].wristNm;
+    if (fit.rows[i].wristNm > maximum) maximum = fit.rows[i].wristNm;
+  }
   const span = maximum === minimum ? 1 : maximum - minimum;
   const x = (time: number) => padding + ((time - start) / (end - start)) * (width - 2 * padding);
   const y = (torque: number) => height - padding - ((torque - minimum) / span) * (height - 2 * padding);
