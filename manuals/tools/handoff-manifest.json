@@ -11,61 +11,61 @@
   "issue_url": "https://github.com/D-sorganization/Tools/issues/4730",
   "pr_url": "https://github.com/D-sorganization/Tools/pull/5055",
   "commit_evidence": {
-    "local_head_sha": "9248c87c10a8da1bb07e0bc8c0daa8ba491d0c7a",
+    "local_head_sha": "6abb9b1e455864973675a5930bc6e3ce5819d822",
     "remote_head_sha": null,
-    "reviewed_tree_sha": "42d8f4d038e3819b98b4671fe67d80246bcf8704",
+    "reviewed_tree_sha": "94cbccaa786669c1503c0744d830cca83f1510d1",
     "merge_sha": null
   },
   "branch_and_worktree": {
-    "branch": "palette/add-focus-states-to-torque-panel-2699792544054811075",
+    "branch": "bolt-optimization-math-max-map-114777708485744154",
     "worktree": "C:\\Users\\diete\\Repositories\\Tools",
-    "is_clean": true
+    "is_clean": false
   },
   "check_evidence": {
     "check_design_manual_governance": {
       "command": "python -m scripts.check_design_manual_governance",
       "status": "passed",
-      "timestamp": "2026-09-10T10:33:04Z"
+      "timestamp": "2026-09-10T10:54:22Z"
     },
     "build_tools_module_inventory": {
       "command": "python -m scripts.build_tools_module_inventory --check",
       "status": "passed",
-      "timestamp": "2026-09-10T10:33:04Z"
+      "timestamp": "2026-09-10T10:54:22Z"
     },
     "lint_tools_textbook_chapters": {
       "command": "python -m scripts.lint_tools_textbook_chapters",
       "status": "passed",
-      "timestamp": "2026-09-10T10:33:04Z"
+      "timestamp": "2026-09-10T10:54:22Z"
     },
     "check_tools_exemplars": {
       "command": "python -m scripts.check_tools_exemplars",
       "status": "passed",
-      "timestamp": "2026-09-10T10:33:04Z"
+      "timestamp": "2026-09-10T10:54:22Z"
     },
     "check_tools_calculation_freshness": {
       "command": "python -m scripts.check_tools_calculation_freshness --check",
       "status": "passed",
-      "timestamp": "2026-09-10T10:33:04Z"
+      "timestamp": "2026-09-10T10:54:22Z"
     },
     "check_tools_manual_qa": {
       "command": "python -m scripts.check_tools_manual_qa --check",
       "status": "passed",
-      "timestamp": "2026-09-10T10:33:04Z"
+      "timestamp": "2026-09-10T10:54:22Z"
     },
     "check_tools_publication_projection": {
       "command": "python -m scripts.check_tools_publication_projection --check",
       "status": "passed",
-      "timestamp": "2026-09-10T10:33:04Z"
+      "timestamp": "2026-09-10T10:54:22Z"
     },
     "render_tools_design_manual": {
       "command": "python -m scripts.render_tools_design_manual --check",
       "status": "passed",
-      "timestamp": "2026-09-10T10:33:04Z"
+      "timestamp": "2026-09-10T10:54:22Z"
     },
     "check_tools_handoff": {
       "command": "python -m scripts.check_tools_handoff --check",
       "status": "passed",
-      "timestamp": "2026-09-10T10:33:04Z"
+      "timestamp": "2026-09-10T10:54:22Z"
     }
   },
   "artifact_and_test_digests": {
@@ -112,7 +112,7 @@
       "TOOLS-HUMAN-APPROVAL-PENDING",
       "TOOLS-MARKERLESS-EXEMPLAR-BLOCKED"
     ],
-    "expiry_timestamp": "2026-12-09T10:33:04Z"
+    "expiry_timestamp": "2026-12-09T10:54:22Z"
   },
   "blockers": [
     {
@@ -127,7 +127,7 @@
     }
   ],
   "next_dependency": "TOOLS-M0 (#4708 / #4734) and parent epic DOC-TOOLS (#4707) closure",
-  "freshness_timestamp": "2026-09-10T10:33:04Z",
+  "freshness_timestamp": "2026-09-10T10:54:22Z",
   "governed_handoff_files": {
     "AGENT_HANDOFF.md": {
       "path": "AGENT_HANDOFF.md",

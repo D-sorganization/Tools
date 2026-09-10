@@ -298,7 +298,12 @@ function validateObjectiveDominance(scenarios: ForceSourceScenario[]): void {
         if (Math.abs(ownScore - scenario.score) > tolerance) {
             throw new TypeError(`${scenario.objective} score does not match its registered series`);
         }
-        const displayedBest = Math.max(...scores.map(score => score[scenario.objective]));
+        // ⚡ Bolt Optimization: Single-pass for loop instead of Math.max(...map()) to avoid intermediate arrays
+        let displayedBest = -Infinity;
+        for (let i = 0; i < scores.length; i++) {
+            const v = scores[i][scenario.objective];
+            if (v > displayedBest) displayedBest = v;
+        }
         if (ownScore < displayedBest - tolerance) {
             throw new RangeError(`${scenario.objective} loses its objective to another displayed scenario`);
         }

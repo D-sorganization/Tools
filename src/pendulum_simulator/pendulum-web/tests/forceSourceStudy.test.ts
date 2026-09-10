@@ -284,8 +284,14 @@ describe('force-source artifact contract', () => {
             artifact.scenarios.find(item => item.objective === 'coriolis_impulse')?.profile_id,
         );
         for (const [index, scenario] of artifact.scenarios.entries()) {
+            // ⚡ Bolt Optimization: Single-pass for loop to avoid intermediate array allocation
+            let maxScore = -Infinity;
+            for (let i = 0; i < crossScores.length; i++) {
+                const s = crossScores[i][scenario.objective];
+                if (s > maxScore) maxScore = s;
+            }
             expect(crossScores[index][scenario.objective]).toBeCloseTo(
-                Math.max(...crossScores.map(scores => scores[scenario.objective])),
+                maxScore,
                 10,
             );
             expect(scenario.series.arm_angle_rad[0]).toBe(artifact.initial_pose.arm_angle_rad);
@@ -377,8 +383,15 @@ describe('cross-objective optimizer certification', () => {
         const speed = scenarios.find(item => item.objective === 'clubhead_speed');
 
         expect(speed).toBeDefined();
+        // ⚡ Bolt Optimization: Single-pass loop replaces Math.max(...map())
+        let maxSpeed = -Infinity;
+        for (let i = 0; i < crossScores.length; i++) {
+            if (crossScores[i].clubhead_speed > maxSpeed) {
+                maxSpeed = crossScores[i].clubhead_speed;
+            }
+        }
         expect(speed?.score).toBeCloseTo(
-            Math.max(...crossScores.map(scores => scores.clubhead_speed)),
+            maxSpeed,
             10,
         );
         expect(new Set(scenarios.map(item => item.comparison_contract_id)).size).toBe(1);
