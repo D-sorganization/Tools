@@ -3961,7 +3961,8 @@
         ],
         "test_paths": [
           "tests/rate_of_closure/test_regional_ground_authority_jobs.py",
-          "tests/rate_of_closure/test_regional_ground_execution_result.py"
+          "tests/rate_of_closure/test_regional_ground_execution_result.py",
+          "tests/rate_of_closure/test_regional_ground_scalar_ensemble_parity.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
