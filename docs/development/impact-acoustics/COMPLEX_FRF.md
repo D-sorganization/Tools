@@ -131,3 +131,8 @@ All nine final governance gates and root Ruff pass (3,863 files). The two
 existing manual release blockers remain. Next: normal publication and protected
 review, then
 qualified acquisition identity, uncertainty and physical acoustic experiments.
+
+Implementation c954e50a09fb466ade516cfc724aef552fc587e6 is published in
+[PR #5156](https://github.com/D-sorganization/Tools/pull/5156) after all normal
+commit/pre-push hooks. The first hosted checks are running. This is not a
+completed protected review or Linux/physical validation.

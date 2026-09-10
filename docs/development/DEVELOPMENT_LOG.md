@@ -20,16 +20,16 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5155 · Complex H1 Phase and Supported Spectral Bins
 
-- **State:** in_progress
+- **State:** in_review
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5155; parent #5074
 - **Branch:** feat/5074-complex-frf
-- **PR:** not created
+- **PR:** https://github.com/D-sorganization/Tools/pull/5156
 - **Paths:** src/shared/python/swing_sim/vibroacoustics, tests/api_baselines/swing_sim_api_baseline.json, docs/development/impact-acoustics/COMPLEX_FRF.md, SPEC.md and turnover/inventory
 - **Started:** 2026-09-10
 - **Last verified:** 2026-09-10 (SELF; 107 Windows ingestion/report/API controls pass in 7.67 s; four changed-file and actual isolated-hook mypy pass)
 - **Summary:** Explicit complex phase, caller-declared PSD support and coherence with immutable absent bins; shared spectral pair/cross laws preserve every existing public symbol and signature. No acoustic prediction or calibration authentication.
-- **Next step:** All 107 coverage controls pass (94.68%); root Ruff and all nine final gates pass. Complete normal publication/protected CI. WSL I/O failure prevents local Linux qualification; physical/acoustic/uncertainty gates remain open.
+- **Next step:** All 107 coverage controls pass (94.68%); root Ruff and all nine final gates pass. Normal commit/push hooks pass at c954e50a0; resolve protected CI/review on #5156. WSL I/O failure prevents local Linux qualification; physical/acoustic/uncertainty gates remain open.
 
 ### DL-#5137 · Identified Moving Reference Placements
 

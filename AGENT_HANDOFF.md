@@ -8,12 +8,12 @@
 
 ## Impact Dynamics and Acoustics: #5068
 
-Complex FRF review #5155 (parent #5074) is active on feat/5074-complex-frf.
+Complex FRF #5155 (parent #5074) is published in PR #5156 at c954e50a0.
 All 107 Windows ingestion/report/API controls pass; four changed modules and
 actual pre-push mypy pass. Existing APIs are preserved; new complex H1/coherence
 uses explicit PSD floors and immutable unsupported bins. See COMPLEX_FRF.md.
 WSL cannot launch after host disk exhaustion; no Linux result is claimed here.
-Next: exact-source coverage/governance, normal publication and protected review.
+All normal hooks and final governance pass; next: protected CI/review on #5156.
 
 - Full program active; all three parent epics remain open. AffineDrift theory #4258/#4282/#4298 and UpstreamDrift integration #9706 are merged; final synthesis awaits downstream evidence.
 - T1 #5069/#5077 and T2 #5071/#5082 are merged at f72544613 and 80d580d57. Signal repair #5106 and initial study wire #5083 are merged; acoustic/report qualification remains.

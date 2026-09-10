@@ -1,6 +1,6 @@
 {
   "review_issue": 5155,
-  "review_pr": null,
+  "review_pr": 5156,
   "base_commit": "92283cf3f447972071781d39870499887192f7fe",
   "source_hash_convention": "SHA256 over LF-normalized Python source bytes",
   "source_files": {
@@ -279,5 +279,7 @@
       "retention_ref": "refs/impact-evidence/impact-siso-source",
       "archive_name": "impact-siso-source.tar"
     }
-  ]
+  ],
+  "implementation_commit": "c954e50a09fb466ade516cfc724aef552fc587e6",
+  "publication": "Normal commit and pre-push hooks passed; protected CI/review pending."
 }
