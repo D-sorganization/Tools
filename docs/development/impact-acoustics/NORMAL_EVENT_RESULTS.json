@@ -158,5 +158,20 @@
     "dense root work is not reported as a nonnegative loss certificate",
     "normal-only, fixed material/load laws and prescribed grips",
     "friction history, face/hosel modes, general event/mesh/mode convergence, measured calibration, radiation and blinded perception remain open"
-  ]
+  ],
+  "publication_typing_repair": {
+    "commit": "SELF",
+    "red": "Normal initial push at50935aefc refused three no-any-return errors under isolated follow-imports=skip; no branch was published.",
+    "change": "Explicit response local annotation and builtin int/float scalar returns; constitutive equations and numerical tolerances unchanged.",
+    "isolated_pre_push_mypy": "passed",
+    "windows_affected": {
+      "tests": 15,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "seconds": 28.625,
+      "sha256": "7ec7899465bc9e9e6ba1e19316d94107ed670b5a52c0a3f7a1296d7ddd7779b5"
+    },
+    "scope": "The archived386 results remain evidence for tree4e1b19810, not a rerun of this revision."
+  }
 }

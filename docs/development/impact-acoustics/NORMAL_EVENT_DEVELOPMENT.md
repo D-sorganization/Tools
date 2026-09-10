@@ -61,6 +61,15 @@ unchanged 20% floor. Source/JUnit hashes and independent work/event results
 are in NORMAL_EVENT_RESULTS.json. Final governance, protected CI and review
 remain required.
 
+## Publication Typing Repair
+
+The first normal push at50935aefc refused three no-any-return errors under
+the isolated follow-imports=skip configuration. Explicit response typing and
+builtin scalar return conversions pass that same hook. All15 affected event
+controls pass in28.94s; equations, tolerances and gates are unchanged. The
+386-test archive remains attributed to its original tree; this later repair
+has its own JUnit identity in NORMAL_EVENT_RESULTS.json.
+
 ## Remaining Scientific Obligations
 
 This is normal-only contact with fixed material/load laws and prescribed grip

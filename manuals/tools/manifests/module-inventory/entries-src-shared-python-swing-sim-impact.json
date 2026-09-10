@@ -236,10 +236,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 8890,
+      "bytes_lf": 8958,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "516719d2e7487516c4d039da69f9d607a111a947c072e878aeb18ef0d56d3f91",
+      "content_sha256_lf": "4ef1c11a434b31d4f22595d4d0b33e54cd030834f6fabba7551bf69a03ff9c15",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-NORMAL-CONTACT-EVENTS-PY-BEA394783EC0",
       "language": "python",

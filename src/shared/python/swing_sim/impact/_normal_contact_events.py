@@ -42,7 +42,8 @@ class _Budget:
         if self.count >= self.maximum:
             raise ValueError("adaptive contact evaluation budget exhausted")
         self.count += 1
-        return self.problem.evaluate(state, time_s)
+        response: NormalShaftContactResponse = self.problem.evaluate(state, time_s)
+        return response
 
 
 @dataclass(frozen=True)
@@ -54,7 +55,7 @@ class _Chart:
 
     @property
     def rows(self) -> int:
-        return self.initial.twists.shape[0]
+        return int(self.initial.twists.shape[0])
 
     def unpack(self, vector: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
         size = self.rows * 6
@@ -86,7 +87,7 @@ class _Chart:
             raise ValueError(
                 "normal contact force ceiling invalidates first-touch limit"
             )
-        return force
+        return float(force)
 
     def root_sample(self, time_s: float, vector: np.ndarray) -> NormalContactRootSample:
         state = self.state(vector)
