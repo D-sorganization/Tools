@@ -8,7 +8,7 @@
 
 ## Impact Dynamics and Acoustics: #5068
 
-Friction#5160 is implemented on feat/5073-friction-trajectory; PR not created.
+Friction#5160 is on feat/5073-friction-trajectory; draft PR#5162 is published.
 Final253 controls pass; positive-gap spin refinement and review remain open.
 Calibration#5159 has both Python gates passing. Provider e83bd2e4/UD#9920
 are merged; installation evidence retains its source identity. See HANDOFF.md.

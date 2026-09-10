@@ -23,13 +23,13 @@ reachable from any live state and `abandoned` from `parked`.
 - **State:** in_progress
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5160; parent #5073
-- **PR:** not created
+- **PR:** https://github.com/D-sorganization/Tools/pull/5162 (draft)
 - **Branch:** feat/5073-friction-trajectory
 - **Paths:** src/shared/python/swing_sim/impact, tests/shared/python/golf_club, docs/development/impact-acoustics/FRICTION_TRAJECTORY.md, SPEC.md and turnover/inventory
 - **Started:** 2026-09-10
-- **Last verified:** 2026-09-10: final253 controls pass in97.32s; both seven-file typing modes pass; existing API entries unchanged. Exact source/results and all nine passing governance gates recorded; positive-gap individual spin refinement remains unresolved.
+- **Last verified:** 2026-09-10: final253 controls pass in97.32s; both seven-file typing modes pass; existing API entries unchanged. Published75f8328bb / draft5162 with all normal hooks; exact source/results and all nine passing governance gates recorded; positive-gap individual spin refinement remains unresolved.
 - **Summary:** Coupled endpoint mechanics and objective elastic/Coulomb history with explicit transport, nonlinear solve criteria and disjoint energy accounting.
-- **Next step:** Publish a draft review retaining the unresolved componentwise spin refinement requirement.
+- **Next step:** Run a finer positive-gap contact-transition study and verify individual spin convergence.
 
 ### DL-#5153 · Prescribed Force and Couple History Review
 

@@ -4,7 +4,7 @@
   "parent_issue": 5073,
   "branch": "feat/5073-friction-trajectory",
   "base_commit": "ea814296551cc48d766d2f858ac56743d7c94717",
-  "implementation_commit": "SELF",
+  "implementation_commit": "75f8328bb058fec2a13adbac5e9fccc5b58630e2",
   "evidence_status": "synthetic-numerical-verification-only",
   "source_hash_convention": "SHA256 of LF-normalized UTF-8 bytes",
   "production_sources": {
@@ -570,10 +570,12 @@
     "added_private_modules": 5
   },
   "delivery": {
-    "pr": "not created",
+    "pr": "https://github.com/D-sorganization/Tools/pull/5162",
     "final_governance": "all nine checks pass; original publication approval restrictions remain",
     "linux": "not yet qualified for friction source",
-    "normal_commit_push_hooks": "pending"
+    "normal_commit_push_hooks": "all passed at implementation75f8328bb",
+    "pr_state": "draft",
+    "review_closure": "held on componentwise positive-gap spin/contact-transition refinement"
   },
   "limitations": [
     "Synthetic constant friction and normal coefficients; no measured validity",
@@ -582,5 +584,6 @@
     "Face/hosel/material/ball deformation and radiation absent",
     "No held-out force/spin validation or blinded sweetness evidence",
     "Positive-gap combined norm decreases but coarse individual spin changes are not monotone: 1.4238182304, 1.4181187950, 1.4417118495 rad/s. Componentwise spin/contact-transition qualification remains open; review #5160 must not be closed by this result."
-  ]
+  ],
+  "publication_binding_commit": "SELF"
 }
