@@ -168,3 +168,7 @@
 ## 2026-09-09 - Eliminate Math.max(...map) chains
 **Learning:** Calling Math.max(...array.map()) creates intermediate arrays and pushes them all to the call stack via the spread operator, leading to GC pressure and potential stack overflow for large arrays.
 **Action:** Replace Math.max(...array.map()) and Math.min(...array.map()) with a standard single-pass for loop, allocating no intermediate memory and eliminating spread overhead.
+
+## 2026-09-10 - Avoid spread operator for large array bounds
+**Learning:** Spreading large arrays (like histogram plotting inputs which scale up to MAX_PLOT_SAMPLES) into Math.min/max causes severe GC pressure and risks exceeding the call stack.
+**Action:** Always use a single-pass loop to calculate extents dynamically for plot arrays instead of spreading elements onto the stack.

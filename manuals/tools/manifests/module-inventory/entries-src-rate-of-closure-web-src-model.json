@@ -14549,10 +14549,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8965,
+      "bytes_lf": 9214,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3b7fcf1579252a6a41b9c848b38f2a44c1a60bbf0b147f2308957d94c25ad8f4",
+      "content_sha256_lf": "7e968477f814524e77927dd307c3e090981827e9fbafc61c6b99501957be08df",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-PLOTPOINTINSPECTOR-TS-9404AA94BD8A",
       "language": "typescript",
