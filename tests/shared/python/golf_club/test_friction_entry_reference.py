@@ -127,6 +127,7 @@ def entry_midpoint_trial(entry_reference: _EntryCase) -> _Trial:
     return _readonly(output), _readonly(state), defect, loss
 
 
+@pytest.mark.timeout(180)
 @pytest.mark.parametrize("steps", [60, 240])
 def test_production_entry_refines_separate_velocity_spin_impulse_and_work(
     entry_reference: _EntryCase,

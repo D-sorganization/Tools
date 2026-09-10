@@ -181,6 +181,7 @@ def _trial(
     )
 
 
+@pytest.mark.timeout(180)
 def test_full_sliding_release_refines_each_impulse_spin_velocity_and_work_channel(
     release_case: _ReleaseCase,
     record_property: Callable[[str, object], None],
