@@ -1,10 +1,12 @@
 # Linear Reference Scale #5168
 
+- User-requested handoff: implementation/API repair3d7beb203 is published in ready PR #5169. All checks except private Gasification checkout passed at inspection; job102883109039/run34479121462 failed default-branch lookup with Not Found before tests. Do not disable that gate. The successor should coordinate access, merge the provider when qualified, then implement the UpstreamDrift scale worker/review UI under #9899.
+- The full successor ledger is UpstreamDrift `docs/development/capture_product_turnover.md`. No further feature expansion is part of this turnover.
 - Worktree: `Worktrees/Tools-calibration-numerics`; branch `feat/5168-linear-reference-scale`, based on main `2c3ab05e7`.
 - Draft PR: https://github.com/D-sorganization/Tools/pull/5169. All nine governance checks and strict inventory check pass; no publication approval is implied.
 - Additive canonical provider API only; source layout, rotations and lens profiles are preserved. Known endpoint lengths correct global scale about an explicit anchor. Existing four-point pose-initialization guard remains unchanged.
 - Missing-module RED preceded implementation. Expanded independent OpenCV/geometry and existing placement checks pass 27 tests; changed implementation passes mypy and Ruff. See `docs/development/REFERENCE_SCALE.md` for equations, consumer obligations and unapproved physical/manual evidence.
-- Next: finish generated inventory/governance and normal protected PR publication. UpstreamDrift #9899 retains UI, calibration revision and downstream invalidation integration. Do not reinstall the live Capture Rig candidate runtime.
+- Next: resolve private consumer checkout, then protected review/merge. UpstreamDrift #9959 adds revision-status validation; #9899 retains ruler UI integration. Do not reinstall the live Capture Rig candidate runtime.
 - Preserve the peer impact/acoustic records below. No impact, workflow, runner, or vendored consumer files are owned by this change.
 
 # Complex FRF Review #5155 / Parent #5074

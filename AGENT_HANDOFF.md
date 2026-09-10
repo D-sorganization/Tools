@@ -1,5 +1,13 @@
 # AGENT_HANDOFF — Tools (Monorepo Root)
 
+## Ruler Scale Turnover: #5168 / PR #5169
+
+Transfer: `Worktrees/Tools-calibration-numerics`, `feat/5168-linear-reference-scale`.
+Implementation/API repair3d7beb203 passes numerical/API checks; later commits are turnover.
+Private Gasification checkout Not Found (job102883109039) remains; preserve the gate.
+Read `docs/development/REFERENCE_SCALE.md` and UpstreamDrift's
+`docs/development/capture_product_turnover.md`. Coordinate the final consumer pin.
+
 ## Verified Agent Context: #5138
 
 - PR #5141; issue #5138; session `context-01a0879e-tools`; branch `feat/issue-5138-agent-context`; worktree `.context-implementation/Tools`; implementation `SELF`; log DL-#5138. Source-verified context, read-only MCP and CodeMap freshness implement fleet epic#1629. At0f84e2a9a, Linux quality passes36 context and109 CodeMap tests. Combined provider preserves main calibration0a561daff, CLI9899c5a6a and the exact reviewed launcher manifest/test correction from fc453bf8e/c10baa1d8, coordinated with its owner under#5143/#5144. The launcher regression fails before correcting the canonical widget path. Published rate-isolation25367070f is integrated for combined qualification. Final protected provider publication and consumer pins remain pending; scientific/manual approval is separate. See docs/development/HANDOFF.md for current evidence and ordered continuation.

@@ -20,7 +20,7 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5168 · Established-layout linear reference scale
 
-- **State:** in_progress
+- **State:** in_review
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5168
 - **Branch:** feat/5168-linear-reference-scale
@@ -29,7 +29,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-10
 - **Last verified:** 2026-09-10 (27 scale/placement tests passed; three implementation modules pass mypy and Ruff)
 - **Summary:** Immutable scale candidates from known ruler lengths and established camera geometry; independent held-out evidence and explicit lens/zoom association. No pose initialization or physical-accuracy approval.
-- **Next step:** Complete provider governance and protected publication, then integrate explicit review and downstream revision invalidation in UpstreamDrift #9899.
+- **Next step:** Handoff requested. Resolve private Gasification checkout Not Found in PR #5169, then merge when qualified and integrate the ruler UI in UpstreamDrift #9899. Implementation/API repair3d7beb203 is published; existing APIs are unchanged.
 
 ### DL-#5157 · Applied Waveform Calibration and Shared Uncertainty
 

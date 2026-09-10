@@ -1,5 +1,11 @@
 # Established-layout ruler scale (#5168)
 
+Turnover: ready PR #5169 publishes implementation/API repair3d7beb203. All old
+API entries are unchanged; exactly three module entries were added. Normal hooks
+passed. CI's remaining private Gasification checkout failure occurs before tests
+(job102883109039/run34479121462); coordinate access without bypassing the gate.
+No consumer/UI completion is claimed. See the root and development handoffs.
+
 The public entry point is `sidekick.lab.mocap.reference_scale.estimate_reference_scale`.
 It accepts an immutable snapshot of an existing metre-coordinate camera layout,
 its pinhole lens/zoom profile identities, two-endpoint reference definitions and
