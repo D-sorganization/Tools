@@ -29,7 +29,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-09
 - **Last verified:** 2026-09-09; all normal commit/push hooks pass with2workers. Linux CI:36 context and103 CodeMap tests pass. Current CI failed only minimum-test discovery and required paired-PR metadata; the test filename and paired UpstreamDrift#9920 metadata are fixed. Main 2c9a8d6c9 preserves merged shaft provider #5133.
 - **Summary:** Dependency-free source context package, real MCP transport, semantic boundary reviews, deterministic views and CodeMap freshness guards. Parent epic Repository_Management#1629 remains active; no subscription infrastructure is required.
-- **Next step:** Publish the merged-main revision and verify current-head CI before protected delivery and final consumer pins.
+- **Next step:** All normal push hooks pass in a clean declared pre-commit environment; e24ef5a68 is published. Reconcile CodeMap documentation with current worktree verification, then qualify protected CI and final consumer pins.
 
 ### DL-#5101 · Scientific Import Inventory Detection
 
