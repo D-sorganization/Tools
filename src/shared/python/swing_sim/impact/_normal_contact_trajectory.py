@@ -81,14 +81,18 @@ class NormalContactTrajectoryProblem:
     def evaluate(
         self, state: NormalContactTrajectoryState, time_s: float
     ) -> NormalShaftContactResponse:
+        contact = self.contact_at(time_s)
+        return contact.evaluate(state.shaft, state.ball, self.ball_material_frame_id)
+
+    def contact_at(self, time_s: float) -> NormalShaftContact:
+        """Resolve prescribed histories once per requested mechanical evaluation."""
         prescribed = MovingTrajectoryProblem(
             self.contact.chain,
             self.contact.controls,
             self.anchor_history,
             self.additional_load_history,
         )
-        contact = replace(self.contact, chain=prescribed.chain_at(time_s))
-        return contact.evaluate(state.shaft, state.ball, self.ball_material_frame_id)
+        return replace(self.contact, chain=prescribed.chain_at(time_s))
 
 
 def _powers(response: NormalShaftContactResponse) -> np.ndarray:

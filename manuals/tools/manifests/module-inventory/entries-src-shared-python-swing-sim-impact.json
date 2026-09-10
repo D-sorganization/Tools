@@ -236,6 +236,257 @@
     },
     {
       "authority_status": "provisional",
+      "bytes_lf": 3295,
+      "classification": "calculation",
+      "classification_basis": "path-marker:friction",
+      "content_sha256_lf": "a3d5e56dc59620a18607eb782dc62b93f195330acb3e50a8c9b37a025bf56094",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-FRICTION-CONTACT-RESPONSE-PY-82D532546173",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact/_friction_contact_response.py",
+      "purpose": "Shared mechanical and constitutive evaluation without mutating history.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_friction_momentum.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 6862,
+      "classification": "calculation",
+      "classification_basis": "path-marker:friction",
+      "content_sha256_lf": "25d93c20cf66ac5bdbf2ff63333ec6fdc5b49341a7e45227273716aa17352ae9",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-FRICTION-CONTACT-STEP-PY-0C4D446DC626",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact/_friction_contact_step.py",
+      "purpose": "Coupled backward-Euler mechanics and objective end-step return mapping.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 5898,
+      "classification": "calculation",
+      "classification_basis": "path-marker:friction",
+      "content_sha256_lf": "0098bbd3461afd935a6080d7e33eb5cfabca438f5b31c11d218e486fbc103ca9",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-FRICTION-CONTACT-TRAJECTORY-PY-05199237B1BF",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact/_friction_contact_trajectory.py",
+      "purpose": "First-order coupled friction dynamics with an uncorrected energy ledger.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_friction_contact_trajectory.py",
+          "tests/shared/python/golf_club/test_friction_modes.py",
+          "tests/shared/python/golf_club/test_friction_momentum.py",
+          "tests/shared/python/golf_club/test_friction_refinement.py",
+          "tests/shared/python/golf_club/test_friction_trajectory_invariants.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3008,
+      "classification": "calculation",
+      "classification_basis": "path-marker:friction",
+      "content_sha256_lf": "290bcda9cc5cfd48c6dc449e1714545efce3f2b58fdc754e7eda4d610d111283",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-FRICTION-TRAJECTORY-CONTRACTS-PY-556DE0E74432",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact/_friction_trajectory_contracts.py",
+      "purpose": "Owned coupled mechanical/history state and bounded endpoint-solve controls.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 2109,
+      "classification": "calculation",
+      "classification_basis": "path-marker:friction",
+      "content_sha256_lf": "2e824f784bcb10a343eaca423dde4a1685861fafdca7367513c94e92deb23cef",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-FRICTION-TRANSPORT-PY-34D0FD3109BE",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact/_friction_transport.py",
+      "purpose": "Explicit first-order contact-frame transport, including constitutive spin.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_friction_contact_trajectory.py",
+          "tests/shared/python/golf_club/test_friction_trajectory_invariants.py",
+          "tests/shared/python/golf_club/test_friction_transport.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 8994,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
@@ -286,10 +537,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 9272,
+      "bytes_lf": 9460,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "b3e70d22646768bd735e0b34bfe230435fa0965ee315df4bf19b91a6c7f62b53",
+      "content_sha256_lf": "cdcf10778044663cac5eb5fc7334130780031e6df982389f2b840b694f2923aa",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-NORMAL-CONTACT-TRAJECTORY-PY-A14C52A4620B",
       "language": "python",
@@ -439,10 +690,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 7329,
+      "bytes_lf": 8160,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "91b3a71fada75fa84b0c0856ce248faaee9bc8cacaa9a4077a10f73f392fc1d5",
+      "content_sha256_lf": "877a14b899bbb5633a196ab4b90260848dbe3ef40f3de677b87be9b53ad69c92",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-NORMAL-SHAFT-CONTACT-PY-FC7DC96D7399",
       "language": "python",
@@ -587,6 +838,8 @@
         "public_surfaces": [],
         "test_paths": [
           "src/shared/python/swing_sim/impact/tests/test_spatial_contact_kinematics.py",
+          "tests/shared/python/golf_club/test_friction_refinement.py",
+          "tests/shared/python/golf_club/test_friction_transport.py",
           "tests/shared/python/golf_club/test_normal_shaft_contact.py"
         ],
         "unit_mentions": [
@@ -640,7 +893,8 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
-          "src/shared/python/swing_sim/impact/tests/test_tangential_contact_work.py"
+          "src/shared/python/swing_sim/impact/tests/test_tangential_contact_work.py",
+          "tests/shared/python/golf_club/test_friction_contact_trajectory.py"
         ],
         "unit_mentions": [],
         "validation_paths": []

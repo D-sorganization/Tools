@@ -1,0 +1,586 @@
+{
+  "schema_version": 1,
+  "governing_issue": "D-sorganization/Tools#5160",
+  "parent_issue": 5073,
+  "branch": "feat/5073-friction-trajectory",
+  "base_commit": "ea814296551cc48d766d2f858ac56743d7c94717",
+  "implementation_commit": "SELF",
+  "evidence_status": "synthetic-numerical-verification-only",
+  "source_hash_convention": "SHA256 of LF-normalized UTF-8 bytes",
+  "production_sources": {
+    "src/shared/python/swing_sim/impact/_friction_contact_response.py": "a3d5e56dc59620a18607eb782dc62b93f195330acb3e50a8c9b37a025bf56094",
+    "src/shared/python/swing_sim/impact/_friction_contact_step.py": "25d93c20cf66ac5bdbf2ff63333ec6fdc5b49341a7e45227273716aa17352ae9",
+    "src/shared/python/swing_sim/impact/_friction_contact_trajectory.py": "0098bbd3461afd935a6080d7e33eb5cfabca438f5b31c11d218e486fbc103ca9",
+    "src/shared/python/swing_sim/impact/_friction_trajectory_contracts.py": "290bcda9cc5cfd48c6dc449e1714545efce3f2b58fdc754e7eda4d610d111283",
+    "src/shared/python/swing_sim/impact/_friction_transport.py": "2e824f784bcb10a343eaca423dde4a1685861fafdca7367513c94e92deb23cef",
+    "src/shared/python/swing_sim/impact/_normal_shaft_contact.py": "877a14b899bbb5633a196ab4b90260848dbe3ef40f3de677b87be9b53ad69c92",
+    "src/shared/python/swing_sim/impact/_normal_contact_trajectory.py": "cdcf10778044663cac5eb5fc7334130780031e6df982389f2b840b694f2923aa"
+  },
+  "environment": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10",
+    "numpy": "2.4.1",
+    "scipy": "1.17.0"
+  },
+  "final_windows": {
+    "command": "python -m pytest tests/shared/python/golf_club/test_friction_contact_trajectory.py tests/shared/python/golf_club/test_friction_transport.py tests/shared/python/golf_club/test_friction_refinement.py tests/shared/python/golf_club/test_friction_trajectory_invariants.py tests/shared/python/golf_club/test_friction_modes.py tests/shared/python/golf_club/test_friction_momentum.py tests/shared/python/golf_club/test_normal_shaft_contact.py tests/shared/python/golf_club/test_normal_contact_trajectory.py tests/shared/python/golf_club/test_shaft_load_history.py src/shared/python/swing_sim/impact/tests tests/test_shared_package_api_stability.py -o addopts= -o junit_family=legacy -q",
+    "summary": {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "253",
+      "time": "97.135",
+      "timestamp": "2026-09-10T00:50:26.205471-07:00",
+      "hostname": "OGLaptop"
+    },
+    "junit_sha256": "d71f3d9964f518096547bd82d6606c840a132d145a3112fc167eaa32e7da8530",
+    "properties": {
+      "test_first_order_motion_refines_against_independent_matrix_exponential": {
+        "first_order_matrix_exponential_errors": [
+          0.0006572839438004125, 0.00030220548211523966, 0.0001444391031430474
+        ],
+        "independent_normal_force_errors_n": [
+          0.14603145734366407, 0.07337147261835852, 0.03677041896709454
+        ],
+        "independent_work_errors_j": [
+          6.7964265997659425e-6, 3.4686710939883634e-6, 1.7520092911222248e-6
+        ]
+      },
+      "test_complete_frictional_compression_release_refines_motion_and_work[0.0]": {
+        "friction_release_refinement": {
+          "outputs": [
+            [
+              0.2855274639026602, -3.9515381917222107e-35, -0.2626531408422141,
+              -9.54243302060356e-33, 1.7365496363737372,
+              -1.9416855269143545e-35, 0.006280758470557195,
+              -0.0006997262193583761, -1.576241798775564e-39,
+              4.990452126123248e-10
+            ],
+            [
+              0.2850889386940129, 2.3198362299139214e-36, -0.25593177708425213,
+              1.8343813922749903e-34, 1.7830496248881418,
+              2.7113720452416058e-37, 0.0065905517303381875,
+              -0.0007186768469309959, -2.723968320730697e-41,
+              4.721097723914973e-10
+            ],
+            [
+              0.28485688318777663, 2.3812119849246014e-40, -0.2524736736814338,
+              -1.3069115816307082e-36, 1.8077188487163613,
+              -1.9127230421200406e-39, 0.006749941927950184,
+              -0.0007287336417565278, 1.2535036126294976e-42,
+              4.59254383438213e-10
+            ]
+          ],
+          "scaled_differences": [0.03176311006387682, 0.016344324034126674],
+          "mechanical_defect_j": [
+            0.0009435293488593317, 0.00047909354122109755,
+            0.00024145388121395904
+          ],
+          "tangential_algorithmic_loss_j": [
+            4.435416538115529e-5, 2.2901774023171437e-5, 1.2182465896440332e-5
+          ]
+        }
+      },
+      "test_complete_frictional_compression_release_refines_motion_and_work[0.0001]": {
+        "friction_release_refinement": {
+          "outputs": [
+            [
+              0.2882017073855837, 2.8014370731863436e-34, -0.3108070039597281,
+              3.364547739044668e-32, 1.423818230400104, 3.1397026421030634e-35,
+              0.004075129407083865, -0.0005725348745332059,
+              -1.1003034997919565e-38, 2.919512482235759e-10
+            ],
+            [
+              0.2881945246003172, -1.277281856702291e-36, -0.30520170255024703,
+              -9.624085849113089e-35, 1.4181187950225085,
+              -1.0480056863921587e-37, 0.0043348314099646255,
+              -0.0005704369605882915, 8.438246593626218e-42,
+              2.5721511499501553e-10
+            ],
+            [
+              0.287976411202784, 8.479245852713133e-38, -0.30230500652866893,
+              -1.737574776389963e-36, 1.441711849479085,
+              -1.9188461428467573e-39, 0.004468328669631449,
+              -0.0005800099489242984, 1.2586856334586991e-42,
+              2.5177899461226214e-10
+            ]
+          ],
+          "scaled_differences": [0.026569117773684106, 0.013697652680652818],
+          "mechanical_defect_j": [
+            0.0008650170493705703, 0.00043847581119331957,
+            0.00022045480286975527
+          ],
+          "tangential_algorithmic_loss_j": [
+            3.0420326364807758e-5, 1.728243929894013e-5, 8.870880545730443e-6
+          ]
+        }
+      },
+      "test_time_discrete_total_momentum_defect_decreases_with_refinement": {
+        "scaled_momentum_defects": [
+          4.823485428825124e-7, 2.388998889964554e-7, 1.1908523199856411e-7
+        ]
+      },
+      "test_compressive_contact_refines_against_independent_motion_and_work": {
+        "study": {
+          "steps": [4, 8, 16],
+          "state_errors": [
+            6.3535276649048e-8, 3.933354540740781e-9, 2.4457189710350187e-10
+          ],
+          "work_expected_j": [
+            -4.410677351296505e-5, 0.0017511107850834101, 2.970041805618471e-6,
+            3.6124940593011954e-5, 0.0
+          ],
+          "work_observed_j": [
+            -4.410677349808495e-5, 0.0017511107848479886, 2.970041759433392e-6,
+            3.612493814152433e-5, 0.0
+          ],
+          "energy_balance_error_j": -1.4297255125140552e-13
+        }
+      },
+      "test_prescribed_force_contact_motion_and_work_have_independent_refinement": {
+        "load_history_study": {
+          "end_s": 0.0004,
+          "rk4_steps": [4, 8, 16],
+          "state_errors": [
+            6.31192355480727e-8, 3.9068763297861685e-9, 2.42874589285822e-10
+          ],
+          "expected_state": [
+            0.010097873223726198, 0.029937231227950323, 0.028876876305982464,
+            0.28911199056940573, -0.21376646484520623, -0.21516886024423787
+          ],
+          "baseline_state": [
+            0.010097956027571601, 0.029936990323552903, 0.028876873001719934,
+            0.2895557876169995, -0.2150598200755489, -0.21519768132366845
+          ],
+          "expected_work_j": [
+            -7.647719101504499e-5, 0.0017470644967198152, 2.983079629446902e-6,
+            3.6263775478567e-5, 0.0
+          ],
+          "observed_work_j": [
+            -7.647719091671705e-5, 0.001747064496485969, 2.983079584040566e-6,
+            3.626377305278279e-5, 0.0
+          ],
+          "energy_defect_j": -1.4794493534848454e-13,
+          "qualification": "synthetic-prescribed-load-only"
+        }
+      }
+    },
+    "post_run_formatting": "Only Ruff line wrapping of independent quadrature call after the full run; no expression or production source changed."
+  },
+  "historical_red_receipts": [
+    {
+      "receipt": "impact-friction-red.xml",
+      "sha256": "9d671964d54ede887826a7ca6a13d0d673dd9f00248f36645cb295b016fba5e6",
+      "summary": {
+        "name": "pytest",
+        "errors": "2",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "2",
+        "time": "2.046",
+        "timestamp": "2026-09-09T23:58:04.190891-07:00",
+        "hostname": "OGLaptop"
+      },
+      "failures": [
+        {
+          "test": "tests.shared.python.golf_club.test_friction_contact_trajectory",
+          "message": "collection failure"
+        },
+        {
+          "test": "tests.shared.python.golf_club.test_friction_transport",
+          "message": "collection failure"
+        }
+      ]
+    },
+    {
+      "receipt": "impact-friction-initial.xml",
+      "sha256": "9ae1f2e2d5ce490d00ecaec918dd686b95ea6fe73201f7a74043ed711e94a645",
+      "summary": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "1",
+        "skipped": "0",
+        "tests": "25",
+        "time": "4.923",
+        "timestamp": "2026-09-10T00:03:02.328736-07:00",
+        "hostname": "OGLaptop"
+      },
+      "failures": [
+        {
+          "test": "test_zero_friction_matches_independent_backward_euler_three_mass_system",
+          "message": "ValueError: slip increment must be tangent to the contact normal"
+        }
+      ]
+    },
+    {
+      "receipt": "impact-friction-refinement.xml",
+      "sha256": "da8d59ce22686a58cd209e70864535b435ceeb2da6d3d1a4dd4096df478354e9",
+      "summary": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "1",
+        "skipped": "0",
+        "tests": "2",
+        "time": "48.046",
+        "timestamp": "2026-09-10T00:05:44.770259-07:00",
+        "hostname": "OGLaptop"
+      },
+      "failures": [
+        {
+          "test": "test_first_order_motion_refines_against_independent_matrix_exponential",
+          "message": "AssertionError: \nArrays are not strictly ordered `x < y`\n\nMismatched elements: 1 / 2 (50%)\nMismatch at index:\n [0]: 2.3154630303508354 (x), 2.2 (y)\nMax absolute difference among violations: 0.11546303\nMax relative difference among violations: 0.0524832\n x: array([2.315463, 2.174957])\n y: array(2.2)"
+        }
+      ]
+    },
+    {
+      "receipt": "impact-friction-invariants.xml",
+      "sha256": "33533f589560770a7c6fa07a0a189b75a1653b3dc02d8821b6b8e5450f379644",
+      "summary": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "2",
+        "skipped": "0",
+        "tests": "6",
+        "time": "6.120",
+        "timestamp": "2026-09-10T00:24:14.522073-07:00",
+        "hostname": "OGLaptop"
+      },
+      "failures": [
+        {
+          "test": "test_complete_step_is_covariant_under_constant_observer_pose[ContactTransport.FACE]",
+          "message": "ValueError: friction endpoint failed to converge: The iteration is not making good progress, as measured by the \n improvement from the last ten iterations."
+        },
+        {
+          "test": "test_complete_step_is_covariant_under_constant_observer_pose[ContactTransport.MEAN_NORMAL_SPIN]",
+          "message": "ValueError: friction endpoint failed to converge: The iteration is not making good progress, as measured by the \n improvement from the last ten iterations."
+        }
+      ]
+    },
+    {
+      "receipt": "impact-friction-correction-coordinates.xml",
+      "sha256": "2be37460f6fbec6e3bee9c183d3b221dcaff18171643d8245ac0c91673179a40",
+      "summary": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "2",
+        "skipped": "0",
+        "tests": "16",
+        "time": "9.554",
+        "timestamp": "2026-09-10T00:26:48.594168-07:00",
+        "hostname": "OGLaptop"
+      },
+      "failures": [
+        {
+          "test": "test_declared_relative_twirl_convention_affects_coupled_response",
+          "message": "ValueError: friction endpoint failed to converge: The iteration is not making good progress, as measured by the \n improvement from the last ten iterations."
+        },
+        {
+          "test": "test_zero_friction_matches_independent_backward_euler_three_mass_system",
+          "message": "ValueError: friction endpoint failed to converge: The iteration is not making good progress, as measured by the \n improvement from the last ten iterations."
+        }
+      ]
+    },
+    {
+      "receipt": "impact-friction-modes-momentum.xml",
+      "sha256": "a93974d856928bfde9bc326f95c368b52910a2fc90417da2c9a8a9172987bc0b",
+      "summary": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "2",
+        "skipped": "0",
+        "tests": "4",
+        "time": "8.097",
+        "timestamp": "2026-09-10T00:41:59.735746-07:00",
+        "hostname": "OGLaptop"
+      },
+      "failures": [
+        {
+          "test": "test_elastic_reversal_unloads_then_reloads_without_plastic_dissipation",
+          "message": "ValueError: friction endpoint failed to converge: The iteration is not making good progress, as measured by the \n improvement from the last ten iterations."
+        },
+        {
+          "test": "test_time_discrete_total_momentum_defect_decreases_with_refinement",
+          "message": "ValueError: friction endpoint failed to converge: The iteration is not making good progress, as measured by the \n improvement from the last ten iterations."
+        }
+      ]
+    },
+    {
+      "receipt": "impact-friction-api-red.xml",
+      "sha256": "e4f8a1cf92eff52f8fea9e3e7b2f59594f2a2880e9799b649d30846ea2d626c5",
+      "summary": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "1",
+        "skipped": "0",
+        "tests": "1",
+        "time": "1.900",
+        "timestamp": "2026-09-10T00:45:27.103267-07:00",
+        "hostname": "OGLaptop"
+      },
+      "failures": [
+        {
+          "test": "test_vendored_package_public_api_matches_baseline[swing_sim]",
+          "message": "AssertionError: shared.python.swing_sim gained public surface not in the baseline (new modules ['impact/_friction_contact_response.py', 'impact/_friction_contact_step.py', 'impact/_friction_contact_trajectory.py', 'impact/_friction_trajectory_contracts.py', 'impact/_friction_transport.py'], new symbols {}); regenerate the baseline in this PR so the export is reviewed\nassert (not ['impact/_friction_contact_response.py', 'impact/_friction_contact_step.py', 'impact/_friction_contact_trajectory.py', 'impact/_friction_trajectory_contracts.py', 'impact/_friction_transport.py'])"
+        }
+      ]
+    }
+  ],
+  "solver_diagnostics": {
+    "impact-friction-observer-solver-red.json": [
+      {
+        "success": true,
+        "message": "The solution converged.",
+        "nfev": 23,
+        "scaled_residual_max": 2.3769427680153315e-17,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "success": true,
+        "message": "The solution converged.",
+        "nfev": 23,
+        "scaled_residual_max": 4.192650088005999e-17,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "success": false,
+        "message": "The iteration is not making good progress, as measured by the \n improvement from the last ten iterations.",
+        "nfev": 49,
+        "scaled_residual_max": 4.5198092800157126e-6,
+        "xtol": 1.0000000000000001e-11
+      }
+    ],
+    "impact-friction-correction-solver-red.json": [
+      {
+        "success": true,
+        "message": "The solution converged.",
+        "nfev": 52,
+        "scaled_residual_max": 1.734394608851195e-16,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "success": false,
+        "message": "The iteration is not making good progress, as measured by the \n improvement from the last ten iterations.",
+        "nfev": 52,
+        "scaled_residual_max": 2.2338432801352385e-16,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "case": "twirl",
+        "error": "friction endpoint failed to converge: The iteration is not making good progress, as measured by the \n improvement from the last ten iterations."
+      },
+      {
+        "success": false,
+        "message": "The iteration is not making good progress, as measured by the \n improvement from the last ten iterations.",
+        "nfev": 52,
+        "scaled_residual_max": 9.54097911787244e-19,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "case": "linear",
+        "error": "friction endpoint failed to converge: The iteration is not making good progress, as measured by the \n improvement from the last ten iterations."
+      }
+    ],
+    "impact-friction-iterate-stagnation-red.json": [
+      {
+        "success": true,
+        "message": "The solution converged.",
+        "nfev": 5,
+        "scaled_residual_max": 2.3508737706553063e-18,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "success": true,
+        "message": "The solution converged.",
+        "nfev": 5,
+        "scaled_residual_max": 1.3335686721571705e-18,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "success": true,
+        "message": "The solution converged.",
+        "nfev": 5,
+        "scaled_residual_max": 3.859759734048396e-18,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "success": true,
+        "message": "The solution converged.",
+        "nfev": 5,
+        "scaled_residual_max": 3.043447536420995e-18,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "success": true,
+        "message": "The solution converged.",
+        "nfev": 5,
+        "scaled_residual_max": 2.190088388420719e-18,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "success": true,
+        "message": "The solution converged.",
+        "nfev": 5,
+        "scaled_residual_max": 4.119968255444917e-18,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "success": true,
+        "message": "The solution converged.",
+        "nfev": 5,
+        "scaled_residual_max": 5.204170427930421e-19,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "success": false,
+        "message": "The iteration is not making good progress, as measured by the \n improvement from the last ten iterations.",
+        "nfev": 14,
+        "scaled_residual_max": 1.1709383462843449e-18,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "case": "reversal",
+        "error": "friction endpoint failed to converge: The iteration is not making good progress, as measured by the \n improvement from the last ten iterations."
+      },
+      {
+        "success": true,
+        "message": "The solution converged.",
+        "nfev": 5,
+        "scaled_residual_max": 1.9847404969519644e-17,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "success": true,
+        "message": "The solution converged.",
+        "nfev": 5,
+        "scaled_residual_max": 2.532804695143387e-17,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "success": true,
+        "message": "The solution converged.",
+        "nfev": 5,
+        "scaled_residual_max": 8.182582215965351e-17,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "success": true,
+        "message": "The solution converged.",
+        "nfev": 5,
+        "scaled_residual_max": 1.6792123247455492e-17,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "success": true,
+        "message": "The solution converged.",
+        "nfev": 5,
+        "scaled_residual_max": 2.067763278310042e-17,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "success": true,
+        "message": "The solution converged.",
+        "nfev": 5,
+        "scaled_residual_max": 7.553121539674579e-17,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "success": true,
+        "message": "The solution converged.",
+        "nfev": 5,
+        "scaled_residual_max": 7.645847930476402e-17,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "success": true,
+        "message": "The solution converged.",
+        "nfev": 5,
+        "scaled_residual_max": 2.3627475843890357e-17,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "success": true,
+        "message": "The solution converged.",
+        "nfev": 5,
+        "scaled_residual_max": 2.2946054778483214e-17,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "success": true,
+        "message": "The solution converged.",
+        "nfev": 5,
+        "scaled_residual_max": 2.90842653780099e-17,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "success": true,
+        "message": "The solution converged.",
+        "nfev": 5,
+        "scaled_residual_max": 1.7832957333041576e-17,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "success": true,
+        "message": "The solution converged.",
+        "nfev": 5,
+        "scaled_residual_max": 1.4982589821577186e-17,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "success": true,
+        "message": "The solution converged.",
+        "nfev": 5,
+        "scaled_residual_max": 3.134591110981466e-17,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "success": true,
+        "message": "The solution converged.",
+        "nfev": 5,
+        "scaled_residual_max": 4.8498396054350026e-17,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "success": false,
+        "message": "The iteration is not making good progress, as measured by the \n improvement from the last ten iterations.",
+        "nfev": 15,
+        "scaled_residual_max": 2.2863384362831196e-17,
+        "xtol": 1.0000000000000001e-11
+      },
+      {
+        "case": "spatial_momentum",
+        "error": "friction endpoint failed to converge: The iteration is not making good progress, as measured by the \n improvement from the last ten iterations."
+      }
+    ]
+  },
+  "performance_repair": {
+    "red": "Uncached finite-difference Jacobian exceeded unchanged test timeout in complete release study; stack in Jacobian body-response evaluation. No completed JUnit.",
+    "green": "Exact-point per-step Jacobian reuse; 239 passed in 51.22 s; full final controls below retain original deadline."
+  },
+  "typing": {
+    "numpy_aware": "7 source files pass",
+    "isolated_pre_push": "7 source files pass",
+    "repairs": [
+      "Explicit builtin float return at shared energy boundary",
+      "Explicit cached-point None guard; no numerical equation changed"
+    ]
+  },
+  "api": {
+    "prior_records": "all identical to base",
+    "added_private_modules": 5
+  },
+  "delivery": {
+    "pr": "not created",
+    "final_governance": "all nine checks pass; original publication approval restrictions remain",
+    "linux": "not yet qualified for friction source",
+    "normal_commit_push_hooks": "pending"
+  },
+  "limitations": [
+    "Synthetic constant friction and normal coefficients; no measured validity",
+    "No general grazing/repeated-event or event-exact force-maximum guarantee",
+    "Canonical mass reused in momentum check; not independent quadrature/mesh qualification",
+    "Face/hosel/material/ball deformation and radiation absent",
+    "No held-out force/spin validation or blinded sweetness evidence",
+    "Positive-gap combined norm decreases but coarse individual spin changes are not monotone: 1.4238182304, 1.4181187950, 1.4417118495 rad/s. Componentwise spin/contact-transition qualification remains open; review #5160 must not be closed by this result."
+  ]
+}

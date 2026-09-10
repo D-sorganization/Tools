@@ -20677,6 +20677,31 @@
       }
     }
   },
+  "impact/_friction_contact_response.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "impact/_friction_contact_step.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "impact/_friction_contact_trajectory.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "impact/_friction_trajectory_contracts.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "impact/_friction_transport.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
   "impact/_normal_contact_events.py": {
     "__all__": [],
     "explicit_all": true,
