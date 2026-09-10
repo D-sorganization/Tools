@@ -89,19 +89,6 @@ SINGLE_RUNTIME_ALLOWLIST: dict[str, str] = {
         "Python-only execution metadata fixture ported in #4529; "
         "TypeScript consumer on #4447 tracked in #4558 and #4560"
     ),
-    # TypeScript-only fixtures (tracked in #4560)
-    "regional_ground_scalar_ensemble_golden_v1.json": (
-        "TypeScript-only regional ground ensemble fixture; "
-        "Python consumer tracked in #4560"
-    ),
-    "runtime_manifest_parity_v1.json": (
-        "TypeScript-only runtime manifest parity fixture; "
-        "Python consumer tracked in #4560"
-    ),
-    "torque_profile_parity.json": (
-        "TypeScript-only torque profile parity fixture; "
-        "Python consumer tracked in #4560"
-    ),
 }
 
 

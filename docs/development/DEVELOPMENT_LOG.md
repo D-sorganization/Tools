@@ -33,20 +33,92 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5155 · Complex H1 Phase and Supported Spectral Bins
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5155; parent #5074
 - **Branch:** feat/5074-complex-frf
 - **PR:** https://github.com/D-sorganization/Tools/pull/5156
 - **Paths:** src/shared/python/swing_sim/vibroacoustics, tests/api_baselines/swing_sim_api_baseline.json, docs/development/impact-acoustics/COMPLEX_FRF.md, SPEC.md and turnover/inventory
 - **Started:** 2026-09-10
-- **Last verified:** 2026-09-10 (SELF; 107 Windows ingestion/report/API controls pass in 7.67 s; four changed-file and actual isolated-hook mypy pass)
+- **Last verified:** 2026-09-10 (SELF; 107 Windows ingestion/report/API controls pass in 7.67 s; four changed-file and actual isolated-hook mypy pass; merged onto main via auto-merge)
 - **Summary:** Explicit complex phase, caller-declared PSD support and coherence with immutable absent bins; shared spectral pair/cross laws preserve every existing public symbol and signature. No acoustic prediction or calibration authentication.
-- **Next step:** All 107 coverage controls pass (94.68%); root Ruff and all nine final gates pass. Normal commit/push hooks pass at c954e50a0; resolve protected CI/review on #5156. WSL I/O failure prevents local Linux qualification; physical/acoustic/uncertainty gates remain open.
+- **Next step:** Merged as PR #5156 onto remote main.
+
+### DL-#5153 · Prescribed Force and Couple History Review
+
+- **State:** in_review
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5153; parent #5073
+- **PR:** https://github.com/D-sorganization/Tools/pull/5154
+- **Branch:** feat/5073-load-history
+- **Paths:** src/shared/python/golf_club, src/shared/python/swing_sim/impact, tests/shared/python/golf_club
+- **Started:** 2026-09-10
+- **Last verified:** 2026-09-10 (SELF; productionc4e6d584d published after normal hooks;406 Windows/Linux archive,35 annotation integration and21 oracle-integrity controls pass; unchanged assertion gate passes)
+- **Summary:** Explicit additional force/couple history and canonical point-load work without baseline accumulation or new inertia.
+- **Evidence:** LOAD_HISTORY_RESULTS.json retains source, TDD/API REDs, independent polynomial motion/work, strict domains and the original Windows event-test timeout.
+- **Next step:** Resolve protected CI and review on #5154.
+
+### DL-#5151 · Adaptive Normal Contact Event Review
+
+- **State:** shipped
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5151; parent #5073
+- **PR:** https://github.com/D-sorganization/Tools/pull/5152
+- **Branch:** feat/5073-contact-events
+- **Paths:** src/shared/python/swing_sim/impact, src/shared/python/golf_club, tests/shared/python/golf_club
+- **Started:** 2026-09-10
+- **Last verified:** 2026-09-10 (SELF; production839ebe083; oracle root-residual tripwire RED then16 event controls pass69.91s; unchanged assertion gate passes; merged onto main via auto-merge)
+- **Summary:** Adaptive local-chart normal contact with independent event/work reference, strict SI controls and unchanged canonical mechanics/APIs.
+- **Evidence:** NORMAL_EVENT_RESULTS.json records all RED/GREEN/source/JUnit identities; four production modules pass NumPy-aware mypy; Linux coverage58.64% exceeds unchanged20% floor; root Ruff/format3870 pass.
+- **Next step:** Merged as PR #5152 onto remote main.
+
+### DL-#5145 · Contact Numerical Foundation Review
+
+- **State:** in_review
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5145; parent #5073
+- **PR:** https://github.com/D-sorganization/Tools/pull/5146
+- **Branch:** feat/5073-spatial-contact
+- **Paths:** src/shared/python/swing_sim/impact, src/shared/python/golf_club, tests/shared/python/golf_club
+- **Started:** 2026-09-09
+- **Last verified:** 2026-09-10 (camera main 0a561daff integration: 40 controls pass, 255 existing deprecation warnings; impact source unchanged from published 1edd0ddcf; 323-test archive ec863402f plus 46 affected typing-repair controls; SELF)
+- **Summary:** Review private common-point geometry, separate normal/tangential work, full-tensor body response and instantaneous normal shaft/ball coupling. Preserve old APIs and shared mechanics.
+- **Evidence:** All 323 Windows and 323 Linux coverage controls pass; five production files pass NumPy-aware mypy. Existing 99 golf-club and 228 swing API records are unchanged. Source/JUnit hashes and RED failures are retained in SPATIAL_CONTACT_RESULTS.json.
+- **Next step:** Resolve protected review on #5146; continue trajectory, modes, convergence and physical/acoustic requirements under parent #5073.
+
+### DL-#5147 · Normal Contact Temporal Foundation Review
+
+- **State:** in_review
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5147; parent #5073
+- **PR:** https://github.com/D-sorganization/Tools/pull/5149
+- **Branch:** feat/5073-contact-trajectory
+- **Paths:** src/shared/python/golf_club, src/shared/python/swing_sim/impact, tests/shared/python/golf_club
+- **Started:** 2026-09-10
+- **Last verified:** 2026-09-10 (source tree 0433376b0; base 1edd0ddcf; SELF)
+- **Summary:** Review the private normal-contact trajectory, shared Lie RK4 and five-channel work accounting. Retain fixed shaft laws and existing APIs.
+- **Evidence:** All 371 Windows and 371 Linux coverage controls pass; three modules pass both NumPy-aware and actual-hook mypy. Exact sources, REDs and refinement/JUnit records are in CONTACT_TRAJECTORY_RESULTS.json.
+- **Next step:** Resolve protected review on #5149; continue contact events, friction, face modes and physical/acoustic qualification under #5073.
+
+### DL-#5073 · Spatial Flexible Contact Dynamics
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5073
+- **PR:** not created
+- **Branch:** feat/5073-load-history
+- **Paths:** src/shared/python/swing_sim/impact, docs/development/impact-acoustics, tests/api_baselines/swing_sim_api_baseline.json
+- **Started:** 2026-09-09
+- **Last verified:** 2026-09-10 (SELF; source976d7ff43 archived; new20 controls pass before unchanged event-test timeout; four production modules pass both mypy modes; all406 Windows/Linux controls pass)
+- **Summary:** Private common-point sphere/plane kinematics reuses canonical pose, force/moment and work ports. Point migration is kept distinct from material velocity. Normal and objective tangential work ports plus full-tensor free-body response are private; no qualified impact trajectory is inferred.
+- **Evidence:** Geometry 18, normal work 20 and tangent work 28 controls. Normal/legacy: 148 Windows/Linux pass after retained timeout. Tangential full impact: 150 Windows and 150 Linux coverage pass; NumPy typing passes. Integrated 176 tests pass on Windows/Linux. New body and moving-shaft controls pass 75 tests; relative-inertia adversarial RED then all 24 body tests pass. Five production files pass NumPy-aware mypy. All 323 coupled-response/impact/shaft controls pass on Windows and Linux coverage; existing 99 golf-club and 228 swing API records are unchanged. Exact artifacts are recorded.
+- **Next step:** Publish the verified prescribed-load continuation for protected review.
+
+- **Trajectory update (2026-09-10):** Shared Lie RK4 kernel: missing-module RED, eight GREEN, two deliberate-corruption delegation REDs, then all 36 kernel/shaft/geometry/disturbance controls GREEN. Two production modules pass NumPy-aware mypy. Kernel source tree 334822bb7. Normal-only contact trajectory now passes 12 controls, including independent motion/work refinement and free-ball clearance; all 371 Windows and Linux coverage controls pass at tree0433376b0. Evidence: CONTACT_TRAJECTORY_RESULTS.json.
 
 ### DL-#5138 · Verified Agent Context
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5138
 - **PR:** https://github.com/D-sorganization/Tools/pull/5141
@@ -113,7 +185,7 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5074 · Waveform and Spectral Numerical Contracts
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5074
 - **PR:** https://github.com/D-sorganization/Tools/pull/5106
@@ -122,7 +194,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-08
 - **Last verified:** 2026-09-08 (16 RED failures; 41 focused tests, nine API tests, scoped hook mypy and 69 Linux ingestion/report/API tests pass; three optional-plugin warnings)
 - **Summary:** Shared strict real samples, immutable recording storage, signed linear lag and segment preparation refuse undefined/nonfinite estimates while preserving public signatures. Independent SciPy odd/even PSD and gain controls pass. No physical calibration is inferred.
-- **Next step:** All normal push hooks pass; PR #5106 is open; complete protected CI/delivery, then qualify versioned calibration identity, supported-bin complex FRF, uncertainty and physical/blinded measurements separately.
+- **Next step:** PR #5106 merged as 287767dfa60567de136fbadc0da28c7e1ca7edf3. Complex FRF continues in DL-#5155; calibration identity, uncertainty and physical/blinded requirements stay under #5074.
 
 ### DL-#5095 · Deterministic Rust Watcher Debounce
 

@@ -14,14 +14,15 @@
 
 Calibration PR #5159 publishes a76d02d88: 168 Windows controls and both Linux aggregates pass. Shared first-order/exact covariance and full identity remain numerical models.
 The synthetic SHA oracle scanner finding is reproduced and narrowly annotated; nine identity tests pass. Main e83bd2e4 preserves the peer combined provider; final pins remain peer-owned.
+Complex FRF #5155 (PR #5156) is merged onto main. Numerical shaft #5133 is merged as 2c9a8d6c. T4 #5073 PR #5154 and PR #5152 are merged onto main.
 
 - Full program active; all three parent epics remain open. AffineDrift theory #4258/#4282/#4298 and UpstreamDrift integration #9706 are merged; final synthesis awaits downstream evidence.
 - T1 #5069/#5077 and T2 #5071/#5082 are merged at f72544613 and 80d580d57. Signal repair #5106 and initial study wire #5083 are merged; acoustic/report qualification remains.
-- T3 #5072 / review #5130: PR #5133 publishes 00d17e7f9; main 421889407 is integrated. The second local CI repair qualifies momentum and optimizer test oracles while preserving numerical equations and physical feasibility limits. Nine manual gates and root Ruff pass; source/JUnit evidence is in CI_REPAIR_RESULTS.json. Protected review and physical/FRF qualification remain open.
+- T3 numerical review #5130 is closed by merged #5133. Parent #5072 still requires physical/FRF qualification; source/JUnit evidence is in CI_REPAIR_RESULTS.json. UD #9916 merged as c487265f with interim 4dabe900c; the context integration task will align the final reviewed #5144 descendant before exact consumer/wheel qualification.
 - Classifier #5103 and main 0f2dfe3fd (mocap #5118) are integrated. Both task scopes are preserved; 145 merge tests, actual mypy, root Ruff and all nine gates passed. Camera/mocap ownership remains separate.
 - #5114 remains open: full Qt candidate loses three workers after 2,880 passes; 14 serial profiled controls pass without explaining the losses. Partial cleanup is separate on fix/5114-qt-deferred-cleanup; issuecomment-5599216206 records the evidence. No deadline or physical calculation changes.
-- T3 lease: codex/session impact-acoustics-01a07d8a-shaft5072 and review #5130/session impact-acoustics-01a07d8a-review5130 renewed through 2026-09-10T01:05Z. UpstreamDrift #9916 qualifies the pinned provider through source and clean installed-wheel checks; final reviewed revision remains pending.
-- T5 retains calibration identity, complex FRF, radiation and physical/blinded requirements. T6 retains strict evidence/report contracts; private-consumer lookup is an independent unresolved delivery gate.
+- T4 #5073 continuation: review child #5153 / PR #5154 prescribed force/couple histories and child #5151 / PR #5152 adaptive normal contact events are merged onto main.
+- T5 complex FRF is under #5155 (PR #5156); calibration identity, uncertainty, radiation and physical/blinded requirements remain. T6 retains strict evidence/report contracts; private-consumer lookup is an independent unresolved delivery gate.
 - UpstreamDrift #9826 preserves all 328 claim outcomes; #9841 supplies adaptive reference diagnostics and 21 real Bioptim/Casadi 3.6.7 controls. The unsuccessful 3.8 OCP case and physical-data gates remain explicit.
 - Camera task owns UpstreamDrift #9860–#9863; preserve its scopes. Resume the complete requirement matrix in docs/development/impact-acoustics/PROGRESS.md; exact-pin consumers and physical/blinded final synthesis remain required.
 

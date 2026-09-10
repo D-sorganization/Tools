@@ -20677,6 +20677,46 @@
       }
     }
   },
+  "impact/_normal_contact_events.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "impact/_normal_contact_trajectory.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "impact/_normal_contact_work.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "impact/_normal_event_contracts.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "impact/_normal_shaft_contact.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "impact/_rigid_body_response.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "impact/_spatial_contact_kinematics.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "impact/_tangential_contact_work.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
   "impact/constants.py": {
     "__all__": [
       "DRIVER_CG_DEPTH_M",
@@ -37025,26 +37065,6 @@
       }
     }
   },
-  "vibroacoustics/_acquisition_records.py": {
-    "__all__": [],
-    "explicit_all": true,
-    "symbols": {}
-  },
-  "vibroacoustics/_affine_calibration_records.py": {
-    "__all__": [],
-    "explicit_all": true,
-    "symbols": {}
-  },
-  "vibroacoustics/_calibration_identity.py": {
-    "__all__": [],
-    "explicit_all": true,
-    "symbols": {}
-  },
-  "vibroacoustics/_calibration_primitives.py": {
-    "__all__": [],
-    "explicit_all": true,
-    "symbols": {}
-  },
   "vibroacoustics/_frf_contracts.py": {
     "__all__": [],
     "explicit_all": true,
@@ -37337,287 +37357,6 @@
           "returns": "tuple[np.ndarray, np.ndarray]"
         },
         "type": "function"
-      }
-    }
-  },
-  "vibroacoustics/waveform_calibration.py": {
-    "__all__": [
-      "AcquisitionChannel",
-      "AcquisitionClock",
-      "WaveformProvenance",
-      "RawWaveform",
-      "IndependentSampleUncertainty",
-      "GainOffsetUncertainty",
-      "AffineCalibration",
-      "CalibrationDomain",
-      "CalibrationEvidence",
-      "CalibrationRecord",
-      "CalibratedWaveform",
-      "UncertaintyPropagation"
-    ],
-    "explicit_all": true,
-    "symbols": {
-      "AcquisitionChannel": {
-        "info": {
-          "bases": [],
-          "methods": {}
-        },
-        "type": "class"
-      },
-      "AcquisitionClock": {
-        "info": {
-          "bases": [],
-          "methods": {
-            "last_sample_time_s": {
-              "args": [
-                {
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg",
-                  "name": "self"
-                },
-                {
-                  "annotation": "int",
-                  "default": null,
-                  "kind": "arg",
-                  "name": "count"
-                }
-              ],
-              "returns": "float"
-            }
-          }
-        },
-        "type": "class"
-      },
-      "AffineCalibration": {
-        "info": {
-          "bases": [],
-          "methods": {}
-        },
-        "type": "class"
-      },
-      "CalibratedWaveform": {
-        "info": {
-          "bases": [],
-          "methods": {
-            "calibration_covariance": {
-              "args": [
-                {
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg",
-                  "name": "self"
-                },
-                {
-                  "annotation": "int",
-                  "default": null,
-                  "kind": "arg",
-                  "name": "first"
-                },
-                {
-                  "annotation": "int",
-                  "default": null,
-                  "kind": "arg",
-                  "name": "second"
-                }
-              ],
-              "returns": "float | None"
-            },
-            "covariance": {
-              "args": [
-                {
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg",
-                  "name": "self"
-                },
-                {
-                  "annotation": "int",
-                  "default": null,
-                  "kind": "arg",
-                  "name": "first"
-                },
-                {
-                  "annotation": "int",
-                  "default": null,
-                  "kind": "arg",
-                  "name": "second"
-                }
-              ],
-              "returns": "float | None"
-            },
-            "linear_standard_uncertainty": {
-              "args": [
-                {
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg",
-                  "name": "self"
-                },
-                {
-                  "annotation": "np.ndarray",
-                  "default": null,
-                  "kind": "arg",
-                  "name": "weights"
-                }
-              ],
-              "returns": "float | None"
-            },
-            "marginal_standard_uncertainty": {
-              "args": [
-                {
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg",
-                  "name": "self"
-                }
-              ],
-              "returns": "np.ndarray | None"
-            },
-            "source_kind": {
-              "args": [
-                {
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg",
-                  "name": "self"
-                }
-              ],
-              "returns": "SourceKind"
-            },
-            "unit": {
-              "args": [
-                {
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg",
-                  "name": "self"
-                }
-              ],
-              "returns": "str"
-            }
-          }
-        },
-        "type": "class"
-      },
-      "CalibrationDomain": {
-        "info": {
-          "bases": [],
-          "methods": {}
-        },
-        "type": "class"
-      },
-      "CalibrationEvidence": {
-        "info": {
-          "bases": [],
-          "methods": {}
-        },
-        "type": "class"
-      },
-      "CalibrationRecord": {
-        "info": {
-          "bases": [],
-          "methods": {
-            "validate_raw": {
-              "args": [
-                {
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg",
-                  "name": "self"
-                },
-                {
-                  "annotation": "RawWaveform",
-                  "default": null,
-                  "kind": "arg",
-                  "name": "raw"
-                }
-              ],
-              "returns": "tuple[float, float]"
-            }
-          }
-        },
-        "type": "class"
-      },
-      "GainOffsetUncertainty": {
-        "info": {
-          "bases": [],
-          "methods": {}
-        },
-        "type": "class"
-      },
-      "IndependentSampleUncertainty": {
-        "info": {
-          "bases": [],
-          "methods": {}
-        },
-        "type": "class"
-      },
-      "RawWaveform": {
-        "info": {
-          "bases": [],
-          "methods": {
-            "size": {
-              "args": [
-                {
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg",
-                  "name": "self"
-                }
-              ],
-              "returns": "int"
-            },
-            "source_kind": {
-              "args": [
-                {
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg",
-                  "name": "self"
-                }
-              ],
-              "returns": "SourceKind"
-            },
-            "time_extent_s": {
-              "args": [
-                {
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg",
-                  "name": "self"
-                }
-              ],
-              "returns": "tuple[float, float]"
-            },
-            "unit": {
-              "args": [
-                {
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg",
-                  "name": "self"
-                }
-              ],
-              "returns": "str"
-            }
-          }
-        },
-        "type": "class"
-      },
-      "UncertaintyPropagation": {
-        "info": {
-          "bases": ["Enum"],
-          "methods": {}
-        },
-        "type": "class"
-      },
-      "WaveformProvenance": {
-        "info": {
-          "bases": [],
-          "methods": {}
-        },
-        "type": "class"
       }
     }
   }

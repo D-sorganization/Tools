@@ -1,0 +1,161 @@
+{
+  "parent_issue": 5073,
+  "event_foundation_pr": 5152,
+  "source": {
+    "tree": "976d7ff43c72bffa7069c0de249e723cac0d8fe0",
+    "bytes": 90818560,
+    "sha256": "d239b271a77da194a20fab5f1e9891a91c678f8dea8881273cb7f407a34cf5ec"
+  },
+  "tdd_missing_module_red": {
+    "tests": 1,
+    "errors": 1,
+    "failures": 0,
+    "skipped": 0,
+    "seconds": 10.828,
+    "sha256": "58481838abbab2b83fcca8a68c35b081049148b7a48c3a0cd33d1bfe6e6fb700",
+    "studies": []
+  },
+  "initial_windows_green": {
+    "tests": 18,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "seconds": 6.987,
+    "sha256": "dca7a323b2e3b4eb1a2dc1e05c5d9e43fad6f02949ee22a710fd04786b365c6d",
+    "studies": []
+  },
+  "expanded_windows_timeout": {
+    "new_controls_passed": 20,
+    "temporal_controls_passed": 12,
+    "result": "60-second thread timeout in unchanged test_transversal_events_and_work_match_independent_piecewise_solution; stack in scipy.linalg.expm_frechet/lu_solve",
+    "junit": null,
+    "cause": "unestablished",
+    "response": "retain failure and unchanged test limits; qualify immutable source on Linux then retry Windows separately"
+  },
+  "api_red": {
+    "tests": 2,
+    "errors": 0,
+    "failures": 1,
+    "skipped": 0,
+    "seconds": 7.485,
+    "sha256": "630356e3c56ec669f1ce0cda916fc83d3fdf705b14ba7200c6bdf8272df1ad2a",
+    "studies": []
+  },
+  "api_green": {
+    "tests": 2,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "seconds": 4.072,
+    "sha256": "b89fbaca76de176110fb79d1ecc64bcaf45220396dbebc92c060dbbc3fbc3210",
+    "studies": []
+  },
+  "existing_api_records_unchanged": {
+    "golf_club": 101,
+    "swing_sim": 236
+  },
+  "new_private_empty_export_modules": ["golf_club/_shaft_load_history.py"],
+  "linux": {
+    "tests": 406,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "seconds": 269.964,
+    "sha256": "26ee8f8750cb59a0ee0d1c69f4272257ceb1d4e68acc0fbcef75ae3ef0843df5",
+    "studies": [
+      {
+        "end_s": 0.0004,
+        "rk4_steps": [4, 8, 16],
+        "state_errors": [
+          6.31192355480727e-8, 3.9068763297861685e-9, 2.42874589285822e-10
+        ],
+        "expected_state": [
+          0.010097873223726198, 0.029937231227950323, 0.028876876305982464,
+          0.28911199056940573, -0.21376646484520623, -0.21516886024423787
+        ],
+        "baseline_state": [
+          0.010097956027571601, 0.029936990323552903, 0.028876873001719934,
+          0.2895557876169995, -0.2150598200755489, -0.21519768132366845
+        ],
+        "expected_work_j": [
+          -7.647719101504499e-5, 0.0017470644967198152, 2.983079629446902e-6,
+          3.6263775478567e-5, 0.0
+        ],
+        "observed_work_j": [
+          -7.647719091671705e-5, 0.001747064496485969, 2.983079584040566e-6,
+          3.626377305278279e-5, 0.0
+        ],
+        "energy_defect_j": -1.4794493534848454e-13,
+        "qualification": "synthetic-prescribed-load-only"
+      }
+    ]
+  },
+  "linux_coverage_percent": 58.86,
+  "unchanged_coverage_floor_percent": 20,
+  "windows": {
+    "tests": 406,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "seconds": 169.507,
+    "sha256": "07b72982ebf045aa317c9cefb20ed6d287ccc71860b9a39f9cb1a80d721ef2b6",
+    "studies": [
+      {
+        "end_s": 0.0004,
+        "rk4_steps": [4, 8, 16],
+        "state_errors": [
+          6.31192355480727e-8, 3.9068763297861685e-9, 2.42874589285822e-10
+        ],
+        "expected_state": [
+          0.010097873223726198, 0.029937231227950323, 0.028876876305982464,
+          0.28911199056940573, -0.21376646484520623, -0.21516886024423787
+        ],
+        "baseline_state": [
+          0.010097956027571601, 0.029936990323552903, 0.028876873001719934,
+          0.2895557876169995, -0.2150598200755489, -0.21519768132366845
+        ],
+        "expected_work_j": [
+          -7.647719101504499e-5, 0.0017470644967198152, 2.983079629446902e-6,
+          3.6263775478567e-5, 0.0
+        ],
+        "observed_work_j": [
+          -7.647719091671705e-5, 0.001747064496485969, 2.983079584040566e-6,
+          3.626377305278279e-5, 0.0
+        ],
+        "energy_defect_j": -1.4794493534848454e-13,
+        "qualification": "synthetic-prescribed-load-only"
+      }
+    ]
+  },
+  "typing": "Four changed production modules pass NumPy-aware and isolated pre-push mypy.",
+  "qualification": "synthetic-prescribed-load-only",
+  "physical_acoustic_qualification": false,
+  "remaining": [
+    "protected review/CI",
+    "final exact provider/consumer/wheel",
+    "friction trajectory",
+    "face/hosel modes",
+    "time/mesh/mode/event studies",
+    "measured force/spin/radiation",
+    "blinded perception"
+  ],
+  "review_issue": 5153,
+  "review_pr": 5154,
+  "event_ci_annotation_adoption": {
+    "source_commit": "839ebe083",
+    "changes": "two ndarray local annotations; no numerical expression changes",
+    "windows_tests": 35,
+    "seconds": 42.469,
+    "junit_sha256": "d11ec02bf34c1ce30f7dca77af234a81ffb06d629695cbd4ac0424ea0e59b1d6",
+    "archive_scope": "406-platform receipts remain attributed to976d7ff43"
+  },
+  "oracle_integrity_adoption": {
+    "source_commit": "847e6927c",
+    "production_commit": "c4e6d584d9e740d000f0fd05528e2cfe0775fe2e",
+    "tests": 21,
+    "seconds": 4.845,
+    "junit_sha256": "7a24c205b6bae218687b8153e1d50ba68116c44f02248fd8437e29bb4cb47cc9",
+    "assertion_gate": "passed unchanged"
+  },
+  "publication": "Implementationc4e6d584d and reference-integrity170fca54d pass normal commit/push hooks; protected CI/review remains."
+}
