@@ -2974,6 +2974,11 @@
       }
     }
   },
+  "_shaft_load_history.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
   "_shaft_loaded_dynamics.py": {
     "__all__": [],
     "explicit_all": true,

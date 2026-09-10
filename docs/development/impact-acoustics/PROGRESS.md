@@ -1,3 +1,12 @@
+Prescribed load review child#5153 / PR#5154 continues in Tools-impact-load-history from
+event PR#5152. Explicit additional spatial forces/free couples use canonical
+point-load work and retain baseline loads once. Archived976d7ff43 passes406 Linux
+controls at58.86% coverage; all406 Windows controls also pass after the retained60s event
+test timeout. Subsequent annotation and oracle-integrity integrations pass35
+and21 affected controls respectively; original source identities remain. LOAD_HISTORY_RESULTS.json and LOAD_HISTORY_DEVELOPMENT.md preserve
+the independent motion/work reference and scientific limits. Event#5152 has a
+separate annotation-only CI repair; the final source must preserve it.
+
 Adaptive normal-contact review child #5151 now passes 386 Windows and
 386 Linux controls at exact archived tree4e1b19810. It continues parent #5073
 on feat/5073-contact-events. Temporal child #5147 is published as PR #5149;

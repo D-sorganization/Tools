@@ -13,6 +13,7 @@ import numpy as np
 
 from ...golf_club._grip_contracts import finite_array
 from ...golf_club._rkmk_step import RkmkStepModel, rkmk_step
+from ...golf_club._shaft_load_history import PrescribedPointLoads
 from ...golf_club._shaft_moving_contracts import MovingChainState
 from ...golf_club._shaft_moving_trajectory import _chart_state
 from ...golf_club._shaft_rkmk_trajectory import RkmkTrajectoryControls
@@ -50,20 +51,26 @@ class NormalContactTrajectoryState:
 class NormalContactTrajectoryProblem:
     """Fixed contact/shaft laws and explicit, consistent prescribed grips.
 
-    Only grip anchors vary in time; contact loads vary with every evaluated
-    state. Anchor history has the existing fixed-material shaft contract.
+    Grip anchors and explicit additional applied loads may vary in time;
+    contact loads vary with every evaluated state. Histories retain the
+    existing fixed-material shaft and canonical external-power contracts.
     No missing history is interpolated or inferred from a player label.
     """
 
     contact: NormalShaftContact
     anchor_history: AnchorHistory
     ball_material_frame_id: str
+    additional_load_history: PrescribedPointLoads | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.contact, NormalShaftContact):
             raise TypeError("contact must be NormalShaftContact")
         if not callable(self.anchor_history):
             raise TypeError("anchor history must be callable")
+        if self.additional_load_history is not None and not isinstance(
+            self.additional_load_history, PrescribedPointLoads
+        ):
+            raise TypeError("additional_load_history must be PrescribedPointLoads")
         identifier = require_identifier(
             self.ball_material_frame_id, "ball material frame"
         )
@@ -75,7 +82,10 @@ class NormalContactTrajectoryProblem:
         self, state: NormalContactTrajectoryState, time_s: float
     ) -> NormalShaftContactResponse:
         prescribed = MovingTrajectoryProblem(
-            self.contact.chain, self.contact.controls, self.anchor_history
+            self.contact.chain,
+            self.contact.controls,
+            self.anchor_history,
+            self.additional_load_history,
         )
         contact = replace(self.contact, chain=prescribed.chain_at(time_s))
         return contact.evaluate(state.shaft, state.ball, self.ball_material_frame_id)
