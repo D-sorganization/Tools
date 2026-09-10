@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 7150,
+      "bytes_lf": 6580,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a5904d81cbff24731805daebebe03aa5cb942fe535418d236fe7bc6a3112d661",
+      "content_sha256_lf": "5255d83271c225355a20ea2b1b10c9b1314ca4e98c45ca2798133ce5e1a74b7a",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-INIT-PY-7E8BDC5230D7",
       "language": "python",
@@ -212,10 +212,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 19105,
+      "bytes_lf": 19121,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b955ee6e1e3e18675a2189396483e100d98a89d0774c97e12de18caa3cf98d4e",
+      "content_sha256_lf": "a07263804feb38df89b1f46f645d756c79440148aea952d4f5e2f16c09bed7c3",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-API-PY-C02598C3E4DF",
       "language": "python",

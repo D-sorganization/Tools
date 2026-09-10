@@ -1,0 +1,245 @@
+{
+  "schema_version": "impact-joint-trajectory-evidence/1",
+  "implementation_commit": "e6b616308e8469ce71797b6e3aefa02cbe5e269a",
+  "scientific_tree": "eda0b3efbaee46cf4ebdc57e6e67b131d31e6cdc",
+  "archive_sha256": "f7c92000a51e3bd94a79b3130b47a2b101f849aeca976f18a0de08679daf95fd",
+  "archive_bytes": 60835840,
+  "physical_evidence": false,
+  "status": "synthetic-numerical-qualification",
+  "scope": [
+    "axial time/mesh convergence",
+    "radial rotating equilibrium mesh convergence",
+    "finite exact corotation"
+  ],
+  "limits": [
+    "not disturbed rotating/bending continuum convergence",
+    "not event/contact convergence",
+    "not equipment or acoustic validation",
+    "not an unconditional stability certificate"
+  ],
+  "threads": {
+    "OPENBLAS_NUM_THREADS": 1,
+    "OMP_NUM_THREADS": 1,
+    "MKL_NUM_THREADS": 1
+  },
+  "runs": {
+    "linux": {
+      "runtime": {
+        "python": "3.11.15",
+        "numpy": "2.3.5",
+        "scipy": "1.15.3"
+      },
+      "junit_sha256": "12a6b954f1842e2cdea721310df103ebdb6d6aa9a1d354831a4e7e9bfd8661e1",
+      "cases": [
+        {
+          "name": "test_time_refinement_uses_independent_semidiscrete_motion",
+          "status": "passed",
+          "study": {
+            "elements": 2,
+            "steps": [16, 32, 64],
+            "time_s": 0.01,
+            "scaled_time_errors": [
+              2.842131789003407e-5, 7.084134162567173e-6, 1.768049315895816e-6
+            ]
+          }
+        },
+        {
+          "name": "test_joint_mesh_time_refinement_separates_error_sources[2]",
+          "status": "passed",
+          "study": [
+            {
+              "elements": 2,
+              "steps": 32,
+              "time_s": 0.01,
+              "spatial_error": 0.0012272765837882658,
+              "time_error": 7.084134162567173e-6,
+              "joint_error": 0.0012339770414706343,
+              "energy_balance_error_j": 1.9398793823458688e-11
+            },
+            {
+              "elements": 4,
+              "steps": 64,
+              "time_s": 0.01,
+              "spatial_error": 0.00029465395220624167,
+              "time_error": 1.6725836556338574e-6,
+              "joint_error": 0.00029588000407839576,
+              "energy_balance_error_j": 2.4197605724696203e-12
+            }
+          ]
+        },
+        {
+          "name": "test_joint_mesh_time_refinement_separates_error_sources[4]",
+          "status": "passed",
+          "study": [
+            {
+              "elements": 4,
+              "steps": 64,
+              "time_s": 0.01,
+              "spatial_error": 0.00029465395220624167,
+              "time_error": 1.6725836556338574e-6,
+              "joint_error": 0.00029588000407839576,
+              "energy_balance_error_j": 2.4197605724696203e-12
+            },
+            {
+              "elements": 8,
+              "steps": 128,
+              "time_s": 0.01,
+              "spatial_error": 7.697558237452392e-5,
+              "time_error": 4.538327595590772e-7,
+              "joint_error": 7.738973972036875e-5,
+              "energy_balance_error_j": 3.0250097132061837e-13
+            }
+          ]
+        },
+        {
+          "name": "test_reference_continuum_energy_is_conserved_and_discrete_energy_converges",
+          "status": "passed",
+          "study": {
+            "omega_rad_s": 32.241776665090526,
+            "energy_j": 0.00023464619013768509,
+            "elements": [2, 4, 8],
+            "spatial_energy_errors_j": [
+              5.952981893689118e-7, 1.4872725658709096e-7, 3.717580729736304e-8
+            ]
+          }
+        },
+        {
+          "name": "test_loaded_corotation_preserves_exact_motion_and_all_work_ports[2]",
+          "status": "passed"
+        },
+        {
+          "name": "test_loaded_corotation_preserves_exact_motion_and_all_work_ports[4]",
+          "status": "passed"
+        },
+        {
+          "name": "test_loaded_corotation_preserves_exact_motion_and_all_work_ports[8]",
+          "status": "passed"
+        },
+        {
+          "name": "test_finite_root_rotating_shape_converges_to_independent_continuum",
+          "status": "passed",
+          "study": {
+            "spin_rad_s": 3.0,
+            "elements": [2, 4, 8],
+            "position_errors_m": [
+              1.0772207326148475e-7, 2.7143662206796648e-8, 6.799236285104371e-9
+            ]
+          }
+        },
+        {
+          "name": "test_relative_grip_inertance_is_not_added_as_rotating_ground_mass",
+          "status": "passed"
+        }
+      ]
+    },
+    "windows": {
+      "runtime": {
+        "python": "3.12.10",
+        "numpy": "2.4.1",
+        "scipy": "1.17.0"
+      },
+      "junit_sha256": "769b92ba63e54765555e1044574f97dbc827f525931b4a7170fef349632d9f40",
+      "cases": [
+        {
+          "name": "test_time_refinement_uses_independent_semidiscrete_motion",
+          "status": "passed",
+          "study": {
+            "elements": 2,
+            "steps": [16, 32, 64],
+            "time_s": 0.01,
+            "scaled_time_errors": [
+              2.8421317889603642e-5, 7.084134162136744e-6, 1.7680493154653871e-6
+            ]
+          }
+        },
+        {
+          "name": "test_joint_mesh_time_refinement_separates_error_sources[2]",
+          "status": "passed",
+          "study": [
+            {
+              "elements": 2,
+              "steps": 32,
+              "time_s": 0.01,
+              "spatial_error": 0.0012272765837882658,
+              "time_error": 7.084134162136744e-6,
+              "joint_error": 0.0012339770414706343,
+              "energy_balance_error_j": 1.9398793823458688e-11
+            },
+            {
+              "elements": 4,
+              "steps": 64,
+              "time_s": 0.01,
+              "spatial_error": 0.00029465395220279824,
+              "time_error": 1.6725836556338574e-6,
+              "joint_error": 0.00029588000407839576,
+              "energy_balance_error_j": 2.4197605724696203e-12
+            }
+          ]
+        },
+        {
+          "name": "test_joint_mesh_time_refinement_separates_error_sources[4]",
+          "status": "passed",
+          "study": [
+            {
+              "elements": 4,
+              "steps": 64,
+              "time_s": 0.01,
+              "spatial_error": 0.00029465395220279824,
+              "time_error": 1.6725836556338574e-6,
+              "joint_error": 0.00029588000407839576,
+              "energy_balance_error_j": 2.4197605724696203e-12
+            },
+            {
+              "elements": 8,
+              "steps": 128,
+              "time_s": 0.01,
+              "spatial_error": 7.69755823728022e-5,
+              "time_error": 4.538327595590772e-7,
+              "joint_error": 7.738973972036875e-5,
+              "energy_balance_error_j": 3.0250097132061837e-13
+            }
+          ]
+        },
+        {
+          "name": "test_reference_continuum_energy_is_conserved_and_discrete_energy_converges",
+          "status": "passed",
+          "study": {
+            "omega_rad_s": 32.241776665090526,
+            "energy_j": 0.00023464619013768509,
+            "elements": [2, 4, 8],
+            "spatial_energy_errors_j": [
+              5.952981893688576e-7, 1.4872725658706385e-7, 3.717580729736304e-8
+            ]
+          }
+        },
+        {
+          "name": "test_loaded_corotation_preserves_exact_motion_and_all_work_ports[2]",
+          "status": "passed"
+        },
+        {
+          "name": "test_loaded_corotation_preserves_exact_motion_and_all_work_ports[4]",
+          "status": "passed"
+        },
+        {
+          "name": "test_loaded_corotation_preserves_exact_motion_and_all_work_ports[8]",
+          "status": "passed"
+        },
+        {
+          "name": "test_finite_root_rotating_shape_converges_to_independent_continuum",
+          "status": "passed",
+          "study": {
+            "spin_rad_s": 3.0,
+            "elements": [2, 4, 8],
+            "position_errors_m": [
+              1.0772207326148475e-7, 2.7143662206796648e-8, 6.799236285104371e-9
+            ]
+          }
+        },
+        {
+          "name": "test_relative_grip_inertance_is_not_added_as_rotating_ground_mass",
+          "status": "passed"
+        }
+      ]
+    }
+  }
+}

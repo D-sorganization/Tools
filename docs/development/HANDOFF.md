@@ -3,9 +3,9 @@
 ## Active Placement Work #5137
 
 - Worktree: `C:/Users/diete/Repositories/Worktrees/Tools-calibration-numerics`.
-- Branch: `feat/5137-reference-placements`, base14b35b57bc4ed44b607a21b6bc23bc7be7cd5c71.
+- Branch: `feat/5137-reference-placements`; integrating numerical repair45f3bd8b9 and main2c9a8d6c9. Prior published head7b6fbcdbb remains on PR#5140 until this merge qualifies.
 - PR: #5140 https://github.com/D-sorganization/Tools/pull/5140; published d129737273800c8cb3c31e28c38c421f05993a95 after all normal hooks.
-- Session: capture-product-01a08427-placements; lease/presence active through22:54UTC.
+- Session: capture-product-01a08427-reference-placements; lease/presence renewed through02:03UTC.
 - New reference_placements.py defines ordered physical rectangle/line references,
   explicit camera/profile revisions, placement/view identities and immutable evidence.
 - New placement_solver.py initializes a connected camera/placement graph and jointly
@@ -24,20 +24,28 @@ Tools PR#5136 repair is now on `fix/5132-calibration-numerics` in
 `Worktrees/Tools-calibration-opencv5`. Commit e92cacd3f supports the OpenCV5 iterative
 API consolidation; all12 numerical tests pass on actual4.13 and5.0. Published e92cacd3f passes Python3.11/3.12 shared CI. Three pre-checkout permission failures are under #5139; current host ownership is correct and unchanged failed runs were retried.
 
-Latest user steering is UpstreamDrift#9913: full capture journey feedback, swing/model
-identity and status, clickable next steps, contextual help and documentation, detachable
-screens returning on close, and fullscreen video. UI commit8f590cc80 and merged candidate dd8136f15 passed445 capture/parity tests; normal publication is running on feat/9913-capture-journey
-in UpstreamDrift-capture-setup; none of this replaces #9897/#9902/#9906 or fleet adoption.
+Capture UX#9917, catalog#9919 and reference expansion#9918 are merged. My Clubs
+#9923 is published as a draft and integrating current main. Everyday calibration,
+club/wizard completion and fleet adoption remain active. The live test app remains
+in capture-setup and must be preserved.
+
+## Merge Qualification in Progress
+
+The #5136 merge preserves impact#5133. Only the root handoff/digest conflicted;
+combined handoff is149 lines. Numerical source changes are exactly the already
+qualified repair. Regenerate inventory, rerun placement/API/calibration checks and
+normal hooks before publication. Earlier rate timeouts and private Gasification
+checkout failure must be qualified on fresh CI; no exclusions or thresholds change.
 
 ## Numerical Recovery History
 
 - Repository: D-sorganization/Tools
-- Worktree: `C:/Users/diete/Repositories/Worktrees/Tools-calibration-numerics`
+- Worktree: `C:/Users/diete/Repositories/Worktrees/Tools-calibration-opencv5`
 - Branch: `fix/5132-calibration-numerics`
 - Baseline: `421889407a62fc541e8adc017a86dec2a7ab4f32`
 - Implementation commit: `SELF`
 - Issue: #5132; parent #4706; consumers UpstreamDrift #9897/#9898/#9899
-- PR: pending
+- PR: #5136 OPEN: https://github.com/D-sorganization/Tools/pull/5136
 - Session: `capture-product-01a08427-calibration-numerics`
 
 ## Objective and Scope
@@ -46,8 +54,8 @@ Qualify the existing shared numerical camera APIs before common-reference
 calibration adopts them. Preserve the user's full goal: everyday references and
 repeat placements, optical settings, club catalog/player bag, interactive wizard,
 and the remaining fleet communication adoption. This repair does not close those
-requirements. UpstreamDrift draft #9910 contains the profile UI and startup repair;
-its latest published head is `b743eef0914073c9433c2816078d337e5d60b6e8`.
+requirements. UpstreamDrift profile #9910 and capture UX #9917 are merged. Catalog
+#9919 and reference expansion #9918 are merged; bag #9923 is published as a draft.
 
 ## Findings and Implementation
 
@@ -90,7 +98,7 @@ the API baseline adds only the new module's empty surface.
 - Clean git export of684fbfb06be6d066be2a005c752b63d63572f900:25 calibration tests
   passed. Pre-push found the older mypy needs an explicit TypeAlias declaration;
   that annotation is corrected and both the actual hook and local mypy pass.
-- Normal final push hooks, updated clean-export qualification and protected CI remain.
+- Exact14b35b57bc4ed44b607a21b6bc23bc7be7cd5c71 passed all normal push hooks and25 clean-export tests. CI then reproduced3 failures with OpenCV5.0.0.93: undistortPointsIter was folded into undistortPoints. SELF selects the supported iterative entry point without relaxing convergence checks. All12 numerical tests now pass separately on actual OpenCV4.13 and5.0. Both share the same test source and ordinary repo conftest; no test is skipped. Refreshed publication gates and exact-head protected CI remain.
 - Temporary clean export is retained at TEMP/capture-tools-clean-05c2c95d640a468099b6b38fe505429e;
   automatic approval review rejected its removal with blocked-by-policy. Do not
   work around that rejection; logs remain in TEMP/capture-tools-clean-qualification.log.
@@ -113,7 +121,7 @@ Do not reopen their closed policy PRs repeatedly. Central issue #1579 has receip
 
 ## Next Steps
 
-1. Finish numerical/API/manual inventory validation and review generated deltas.
+1. Finish OpenCV4/5 compatibility publication checks and require green PR#5136 before merging.
 2. Publish #5132 through protected review and qualify the exact merged Tools SHA.
 3. Adopt that SHA in the isolated UpstreamDrift capture setup worktree; implement
    common references and repeated placements through the shared authority.
@@ -122,3 +130,31 @@ Do not reopen their closed policy PRs repeatedly. Central issue #1579 has receip
 ## Change Log
 
 - `SELF`: replace fabricated/no-op numerical behavior with tested backend recovery.
+
+## Current Goal Additions
+
+UpstreamDrift#9913 shipped in #9917 at8fce9f238 with445 capture/parity tests. Everyday calibration #9897, club/wizard #9902/#9906 and final fleet adoption remain open.
+
+Tools#5137 moving-reference work is published in PR#5140 at7b6fbcdbb5e72a61ebcc8e71c9e50644c7e0a2cd, Worktrees/Tools-calibration-numerics.24 combined numerical/placement tests passed on OpenCV4.13/5;101 broader mocap/authority/API tests passed. Its main integration remains separate.
+
+## Main Integration Receipt
+
+Main2c9a8d6c9 includes merged impact PR#5133. Source merge was clean; only the
+root handoff digest conflicted and was recomputed from the combined149-line
+handoff. Inventory merge driver ran normally; final generator/freshness and hooks
+remain.19 calibration contracts/numerics pass after merge;12 numerical tests also
+pass against actual OpenCV5.0.0 via TEMP/capture-opencv5-runtime/Lib/site-packages.
+The retained environment has no Python launcher, so global Python was used with
+that isolated dependency path; no environment was recreated or removed. Prior protected aggregate
+tests failed because the rate shards timed out at99%; private Gasification checkout
+also fails before tests. No tolerance, timeout or gate was relaxed. A fresh run will
+qualify the merged tree. User was asked to have the credential owner restore private
+read access; this App cannot inspect/update Actions secrets.
+
+## Combined Main Qualification Receipt
+
+Merged repair45f3bd8b9/main2c9a8d6c9:97 mocap tests plus4 authority/API tests
+pass;24 numerical/placement tests also pass on actual OpenCV5.0.0 using the
+retained dependency directory. Handoff149-line/digest and module inventory
+freshness checks pass. No solver or gate changed during merge. Normal commit
+and push hooks remain before updating PR#5140.

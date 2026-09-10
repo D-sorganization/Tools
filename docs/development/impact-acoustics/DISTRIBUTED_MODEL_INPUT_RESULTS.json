@@ -1,0 +1,36 @@
+{
+  "schema": "impact-distributed-model-input-evidence/1",
+  "evidence_kind": "synthetic-numerical",
+  "physical_validation": false,
+  "scientific_source": {
+    "tree": "6e3c18328d2cdc36ef89f76a376878c33317bbf9",
+    "archive": "C:\\Users\\diete\\AppData\\Local\\Temp\\impact-model-data-source.tar",
+    "bytes": 90368000,
+    "sha256": "b6e51b9239abcb35e1b3d3989691b22f950a801bfeecdf6ecf1737de35d97f79"
+  },
+  "results": {
+    "Windows": {
+      "tests": 73,
+      "skipped": 0,
+      "junit_sha256": "038837a7331a62e41a406091ee19da06567945996fe459bb9a0332203d212765",
+      "junit_suite_seconds": 13.683,
+      "console_seconds": 14.59
+    },
+    "Linux": {
+      "tests": 73,
+      "skipped": 0,
+      "junit_sha256": "3e5e58cb0ca24a39322839460596cfbd9afd9825b0dedb93be3b7c029f56a128",
+      "junit_suite_seconds": 8.505,
+      "console_seconds": 8.5
+    }
+  },
+  "new_tests": 39,
+  "scope": "new wire/provider plus legacy assembly/shaft serialization, shaft profile and all shared API baselines",
+  "linux_warnings": "three absent-plugin configuration warnings",
+  "limits": [
+    "Source byte identity is not authenticated provenance or physical calibration.",
+    "Provider equivalence reuses the existing force law; it is not an independent mechanics oracle.",
+    "No full mechanics rerun: no existing mechanics changed.",
+    "No grip/FRF data, physical bandwidth or measured validation supplied."
+  ]
+}
