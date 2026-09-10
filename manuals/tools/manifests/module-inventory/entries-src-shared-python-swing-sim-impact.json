@@ -236,6 +236,55 @@
     },
     {
       "authority_status": "provisional",
+      "bytes_lf": 8776,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "1fb4c0a9e51fcc2c3db36fdba29d15d491dafd9743b1b1d75c36dd6b2dfdb22b",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-NORMAL-CONTACT-TRAJECTORY-PY-A14C52A4620B",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact/_normal_contact_trajectory.py",
+      "purpose": "Private finite-duration normal contact with separate mechanical work ports.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_normal_contact_trajectory.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 3657,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",

@@ -3,9 +3,11 @@
 from __future__ import annotations
 
 from dataclasses import dataclass
+from functools import partial
 
 import numpy as np
 
+from ._rkmk_step import RkmkStepModel, rkmk_step
 from ._shaft_moving_chain import MovingChainResponse
 from ._shaft_moving_contracts import MovingChainState
 from ._shaft_moving_trajectory import (
@@ -16,13 +18,11 @@ from ._shaft_moving_trajectory import (
     _response,
     _StepResult,
 )
-from ._shaft_se3 import right_jacobian
 from ._shaft_trajectory_contracts import (
     MovingTrajectoryControls,
     MovingTrajectoryProblem,
 )
 
-_RK4_WEIGHTS = (1 / 6, 1 / 3, 1 / 3, 1 / 6)
 _EVALUATIONS_PER_STEP = 4
 
 
@@ -43,74 +43,19 @@ class RkmkTrajectoryControls(MovingTrajectoryControls):
         return tuple(super().time_cells())
 
 
-@dataclass(frozen=True)
-class _Stage:
-    chart_rate: np.ndarray
-    acceleration: np.ndarray
-    response: MovingChainResponse
-
-
-def _stage(
-    problem: MovingTrajectoryProblem,
-    initial: MovingChainState,
-    increments: tuple[np.ndarray, np.ndarray],
-    time_s: float,
-) -> _Stage:
-    coordinates, velocity_change = increments
-    velocities = np.asarray(initial.twists) + velocity_change
-    state = _chart_state(initial, coordinates, velocities)
-    response = _response(problem, state, time_s)
-    chart_rate = np.array(
-        [
-            np.linalg.solve(right_jacobian(coordinate), velocity)
-            for coordinate, velocity in zip(coordinates, velocities, strict=True)
-        ]
-    )
-    return _Stage(chart_rate, np.asarray(response.twist_rates), response)
-
-
 def _step(
     problem: MovingTrajectoryProblem,
     initial: MovingChainState,
     response: MovingChainResponse,
     cell: tuple[float, float, float],
 ) -> _StepResult:
-    start, middle, end = cell
-    step_s = end - start
-    stages = [
-        _Stage(np.asarray(initial.twists), np.asarray(response.twist_rates), response)
-    ]
-    for fraction, time_s in zip((0.5, 0.5, 1.0), (middle, middle, end), strict=True):
-        previous = stages[-1]
-        increments = (
-            step_s * fraction * previous.chart_rate,
-            step_s * fraction * previous.acceleration,
-        )
-        stages.append(_stage(problem, initial, increments, time_s))
-    coordinates = sum(
-        (
-            weight * stage.chart_rate
-            for weight, stage in zip(_RK4_WEIGHTS, stages, strict=True)
-        ),
-        start=np.zeros_like(stages[0].chart_rate),
+    model: RkmkStepModel[MovingChainState, MovingChainResponse] = RkmkStepModel(
+        _chart_state,
+        partial(_response, problem),
+        lambda state: state.twists,
+        lambda result: np.asarray(result.twist_rates),
     )
-    acceleration = sum(
-        (
-            weight * stage.acceleration
-            for weight, stage in zip(_RK4_WEIGHTS, stages, strict=True)
-        ),
-        start=np.zeros_like(stages[0].acceleration),
-    )
-    final = _chart_state(
-        initial,
-        step_s * coordinates,
-        np.asarray(initial.twists) + step_s * acceleration,
-    )
-    work = tuple(
-        (stage.response, weight)
-        for stage, weight in zip(stages, _RK4_WEIGHTS, strict=True)
-    )
-    return final, _response(problem, final, end), work
+    return rkmk_step(model, initial, response, cell)
 
 
 def integrate_rkmk_chain(

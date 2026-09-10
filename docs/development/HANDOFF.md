@@ -166,19 +166,12 @@ retained dependency directory. Handoff149-line/digest and module inventory
 freshness checks pass. No solver or gate changed during merge. Normal commit
 and push hooks remain before updating PR#5140.
 
-## Impact Foundation Review #5145 / PR #5146
+## Temporal Contact Review #5147 / PR #5149
 
-- Repository/worktree: `C:/Users/diete/Repositories/Tools-impact-contact`.
-- Branch: `feat/5073-spatial-contact`; integration commit `SELF`; PR #5146 remains open at published1be394e90 until this merge passes normal publication checks.
-- Objective: preserve main92283cf3f (mocap CLI/service and managed fleet instructions) without changing the qualified contact foundation. Parent epic#5068 and T4#5073 remain open.
-- Impact/golf implementation, tests and API records remain identical to1be394e90. Incoming CLI/service source and sidekick API remain identical to main. The camera handoff above is preserved as peer-owned context.
-- Numerical provenance:323 Windows/Linux foundation controls plus46 typing-repair controls; SPATIAL_CONTACT_RESULTS.json retains exact source/JUnit identities. The main integration passes13 CLI/service/API controls in6.50s and all nine manual gates. Normal commit/push hooks remain before publication.
-- Other continuations: temporal child#5147 is PR#5149 at0d6b99430; event child#5151 is committed9a8241015 with386 Windows/Linux controls and separate exact source tree4e1b19810. Do not imply these implementations exist in the foundation branch.
-- Known failures: private consumer lookup returns404 before tests, including head1be394e90 job102729910876. GUI rate-shard lifecycle failures are owned separately under#5114; no timeout, required check or physics tolerance is relaxed.
-- Context rollout: docs/agent_context/catalog.json is absent on this base; source, public API baselines and relevant tests are the verified fallback. A peer message or inventory timestamp is not implementation evidence.
-- No user-owned edits are discarded. This merge retains camera/CLI work and every fleet-managed instruction block.
-- Next action: validate and publish the main-preserving foundation merge to PR#5146. Then continue event/tangential/mode and measured acoustic work in the owned continuation; final reviewed consumer pin and physical/blinded evidence remain required.
-- Development-log entries: DL-#5145 and DL-#5073; the feature state remains in review/in progress, respectively.
+- Worktree: C:/Users/diete/Repositories/Tools-impact-trajectory; branch feat/5073-contact-trajectory; documentation commit SELF; reviewed source0d6b9943019e74ff44e146c6e3621b8e6ffa1a70.
+- Objective: qualify the temporal contact foundation while preserving camera/CLI source. Archived371 Windows/Linux numerical controls,13 CLI/API integration controls and all9 governance gates pass with their original source identities.
+- Current CI is incomplete: run34433661011 cancelled both rate and Rust/toolcache jobs; non-rate Python shards pass. A repeated club-tester worker failure and unfinished simulation-subtabs control are retained in docs/ci-failures/impact5147-20260910.md. Cause is unestablished; capture owns related#5114. Private consumer404 and final provider/wheel remain separate dependencies.
+- No code, threshold, test selection or protected gate changed. Physical/acoustic qualification remains open. Next action: resolve the protected CI/review dependency with its owning task. Development-log entry DL-#5147.
 
 ## Agent Context Delivery — #5138
 
@@ -188,3 +181,4 @@ and push hooks remain before updating PR#5140.
 - Combined validation after integrating25367070f: `python3 -m pytest tests/ops/test_ci_test_shards.py src/function_generator/tests/test_function_generator_gui.py tests/shared/python/sidekick/lab/mocap/test_cli_service_contracts.py tests/shared/python/sidekick/lab/mocap/test_reference_placements.py -o addopts= --timeout=60 -q` passes56 tests. Focused context passes35 with one Windows skip; the parser-enabled validation venv passes all109 CodeMap tests. Real MCP SDK imports pass. `python3 scripts/ci_test_shards.py --check` validates1,692 files across seven shards. All nine manual governance commands listed in AGENTS.md pass after inventory regeneration. The two integrated launcher files are byte-identical to fc453bf8e. Protected combined CI remains pending.
 - Current provider is not published on main. Final consumer gitlink, Cargo, pip and catalog alignment belongs to this session. Scientific/manual approval and physical qualification remain separate. Existing peer handoffs, root-handoff compaction and both reviewed source corrections are preserved.
 - Next: qualify this combined provider, publish through protected review, pin and test both consumers, then reconcile fleet audit#1634 and epic#1629. No user-owned changes in this worktree.
+>>>>>>> origin/main
