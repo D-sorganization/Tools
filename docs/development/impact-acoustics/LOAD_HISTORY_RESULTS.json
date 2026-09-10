@@ -148,5 +148,13 @@
     "seconds": 42.469,
     "junit_sha256": "d11ec02bf34c1ce30f7dca77af234a81ffb06d629695cbd4ac0424ea0e59b1d6",
     "archive_scope": "406-platform receipts remain attributed to976d7ff43"
+  },
+  "oracle_integrity_adoption": {
+    "source_commit": "847e6927c",
+    "production_commit": "c4e6d584d9e740d000f0fd05528e2cfe0775fe2e",
+    "tests": 21,
+    "seconds": 4.845,
+    "junit_sha256": "7a24c205b6bae218687b8153e1d50ba68116c44f02248fd8437e29bb4cb47cc9",
+    "assertion_gate": "passed unchanged"
   }
 }

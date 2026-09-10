@@ -27,7 +27,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/5073-load-history
 - **Paths:** src/shared/python/golf_club, src/shared/python/swing_sim/impact, tests/shared/python/golf_club
 - **Started:** 2026-09-10
-- **Last verified:** 2026-09-10 (SELF; archived976d7ff43 passes406 Linux controls, coverage58.86%; Windows406 pass; four modules pass both mypy modes)
+- **Last verified:** 2026-09-10 (SELF; productionc4e6d584d published after normal hooks;406 Windows/Linux archive,35 annotation integration and21 oracle-integrity controls pass; unchanged assertion gate passes)
 - **Summary:** Explicit additional force/couple history and canonical point-load work without baseline accumulation or new inertia.
 - **Evidence:** LOAD_HISTORY_RESULTS.json retains source, TDD/API REDs, independent polynomial motion/work, strict domains and the original Windows event-test timeout.
 - **Next step:** Publish the prescribed-load continuation for protected review.

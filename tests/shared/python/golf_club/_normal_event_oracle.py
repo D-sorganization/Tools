@@ -63,6 +63,11 @@ def reference(end_s: float = 0.003) -> tuple[np.ndarray, np.ndarray, tuple[float
             return float(2e4 * compression + 3 * speed if force else compression)
 
         dt = end_s - time_s if bracket is None else brentq(value, *bracket, xtol=1e-15)
+        assert dt > 0, "reference segments must advance time"
+        if bracket is not None:
+            # Separate SI residual checks: newtons for release, metres for gap.
+            tolerance = 1e-8 if force_event else 1e-11
+            assert abs(value(dt)) < tolerance, "reference event root is unresolved"
         for index in range(5):
 
             def power(
