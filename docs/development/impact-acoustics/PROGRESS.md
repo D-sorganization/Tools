@@ -1,3 +1,30 @@
+## Merged Foundation and Isolated Launcher Follow-Up
+
+PR #5133 was squash-merged by dieterolson at 2026-09-09T23:27:57Z as
+2c9a8d6c963cec2f140f2ee17469d27e506a3ba1 from 0cd6dce22. Numerical review
+child #5130 is closed; physical parent #5072 remains open. Earlier live-status
+notes below that describe #5133 as awaiting merge are historical.
+The later 4dabe900c launcher correction is outside that merged PR. Follow-up
+#5143 now isolates the same two implementation/test files on current merged
+main, under fix/5143-function-launcher. Their bytes are unchanged, and the
+16-test RED/GREEN evidence is retained. No new follow-up PR exists yet.
+UD #9916 publishes 32a8b36ec with 271 passing source controls at 4dabe900c;
+that candidate pin and its wheel evidence must retain their actual identities
+until the reviewed follow-up is integrated. Main's subsequent capture/club
+changes are being preserved by normal merge in the UD worktree.
+
+## Exact Provider Consumer Sweep (2026-09-09)
+
+Tools 0cd6dce22 passes every Python shard and both aggregate versions, plus
+UpstreamDrift consumer, wheel/browser and quality checks. Private Gasification
+checkout is the remaining failed check. UD #9916 independently exposes six
+provider migration defects, including an obsolete Function Generator module
+in the shared launcher YAML. The canonical Tools manifest now uses the existing
+shared widget registration. TDD records one failing control before repair and
+16 passing Function Generator GUI/engine tests afterward. The repair changes
+no mechanics. Consumer Cargo/inventory/catalog and explicit realtime migration
+debt are being reconciled in the separate UD worktree. Physical work remains.
+
 ## PR #5133 Second CI Repair (2026-09-09)
 
 Published 00d17e7f9 passes protected quality and divergence checks. The full

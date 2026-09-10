@@ -95,6 +95,7 @@
           }
         ],
         "test_paths": [
+          "src/function_generator/tests/test_function_generator_gui.py",
           "tests/folder_tool/test_gui_registration.py",
           "tests/rate_of_closure/test_gui_registration.py"
         ],

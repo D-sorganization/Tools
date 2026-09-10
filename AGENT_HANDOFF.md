@@ -2,16 +2,19 @@
 
 ## Impact Dynamics and Acoustics: #5068
 
-Current #5133 publication: 00d17e7f9. A second local CI repair resolves nested
-momentum-oracle roundoff and an unsupported optimizer residual ordering claim.
-Windows: 17 momentum + 19 optimizer tests pass; Linux: 17 Python 3.11 and
-36 combined Python 3.12 coverage tests pass. Original tolerances and negative
-controls remain; see PROGRESS.md and CI_REPAIR_RESULTS.json. Normal publication,
-private-consumer access and physical qualification remain open.
+Numerical shaft review #5133 / child #5130 is merged: source 0cd6dce22,
+squash commit 2c9a8d6c, merged by dieterolson at 2026-09-09T23:27:57Z.
+All Python scientific/version lanes and UD consumer checks pass on that
+source; private Gasification checkout remains an access limitation.
+The later canonical launcher correction was outside that merged PR.
+It is isolated on fix/5143-function-launcher from merged main, with unchanged
+TDD control and 16 passing GUI/engine tests. Follow-up #5143 has no PR yet.
+UD #9916 has 271 passing source controls for candidate 4dabe900c; its pin must
+advance to this follow-up's reviewed descendant. Physical epics remain open.
 
 - Full program active; all three parent epics remain open. AffineDrift theory #4258/#4282/#4298 and UpstreamDrift integration #9706 are merged; final synthesis awaits downstream evidence.
 - T1 #5069/#5077 and T2 #5071/#5082 are merged at f72544613 and 80d580d57. Signal repair #5106 and initial study wire #5083 are merged; acoustic/report qualification remains.
-- T3 #5072 / review #5130: PR #5133 publishes 00d17e7f9; main 421889407 is integrated. The second local CI repair qualifies momentum and optimizer test oracles while preserving numerical equations and physical feasibility limits. Nine manual gates and root Ruff pass; source/JUnit evidence is in CI_REPAIR_RESULTS.json. Protected review and physical/FRF qualification remain open.
+- T3 #5072 / review #5130: PR #5133 is merged as 2c9a8d6c from source 0cd6dce22. The second published CI repair qualifies momentum and optimizer test oracles while preserving numerical equations and physical feasibility limits. Nine manual gates and root Ruff pass; source/JUnit evidence is in CI_REPAIR_RESULTS.json. Protected review and physical/FRF qualification remain open.
 - Classifier #5103 and main 0f2dfe3fd (mocap #5118) are integrated. Both task scopes are preserved; 145 merge tests, actual mypy, root Ruff and all nine gates passed. Camera/mocap ownership remains separate.
 - #5114 remains open: full Qt candidate loses three workers after 2,880 passes; 14 serial profiled controls pass without explaining the losses. Partial cleanup is separate on fix/5114-qt-deferred-cleanup; issuecomment-5599216206 records the evidence. No deadline or physical calculation changes.
 - T3 lease: codex/session impact-acoustics-01a07d8a-shaft5072 and review #5130/session impact-acoustics-01a07d8a-review5130 renewed through 2026-09-10T01:05Z. UpstreamDrift #9916 qualifies the pinned provider through source and clean installed-wheel checks; final reviewed revision remains pending.

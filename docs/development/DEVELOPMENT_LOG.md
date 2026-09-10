@@ -18,6 +18,20 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5143 · Provider Launcher Target
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5143
+- **PR:** not created
+- **Branch:** fix/5143-function-launcher
+- **Paths:** src/shared/python/gui_launcher/tool_manifest.yaml, src/function_generator/tests/test_function_generator_gui.py
+- **Started:** 2026-09-09
+- **Last verified:** 2026-09-09 (merged main 2c9a8d6c; source-equivalent 4dabe900c; SELF)
+- **Summary:** The post-#5133 launcher correction points at the widget moved in #5110. No source is copied.
+- **Evidence:** New resolution control fails before correction; all 16 Function Generator tests pass. Canonical gates and normal hooks pass on the identical source.
+- **Next step:** Publish the isolated follow-up, then qualify the reviewed downstream pin and wheel.
+
 ### DL-#5101 · Scientific Import Inventory Detection
 
 - **State:** in_review
@@ -154,9 +168,9 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/5072-prestressed-shaft
 - **Paths:** `src/shared/python/golf_club/*shaft*`, `src/shared/python/golf_club/_beam_fem.py`, `src/shared/python/golf_club/*grip*`, `src/shared/python/golf_club/*rotating_body*`, `tests/shared/python/golf_club/test_shaft*.py`, `tests/shared/python/golf_club/test_rotating_body.py`, `tests/shared/python/golf_club/test_grip_impedance.py`, `docs/development/impact-acoustics/*`
 - **Started:** 2026-09-07
-- **Last verified:** 2026-09-09 (published 00d17e7f9; base 421889407; oracle repair SELF; 17 Linux 3.11 and 36 Linux 3.12 coverage checks pass)
+- **Last verified:** 2026-09-09 (published 0cd6dce22; base 421889407; launcher repair SELF; all protected Python lanes pass; 16 launcher controls pass)
 - **Summary:** Review #5130 covers the finite-rotation shaft and explicit input wire; #5072 retains physical/FRF qualification. First CI repairs reproduce and correct NumPy typing, fixture typing and scientific deadline failures through exact reuse and isolated resource ownership. Full serial golf coverage: 1,167 passed, two optional CAD skips; 58.78 s slowest retains a narrow CI margin. UpstreamDrift #9912 verifies the candidate vendor and installed wheel; final reviewed pin and protected CI remain. Actual incremental mypy now passes 14 files after a tuple-return annotation; 71 affected tests pass. See CI_REPAIR_RESULTS.json and PROGRESS.md for controls, including failed runs.
-- **Next step:** Publish the second CI repair: resolved momentum differentiation and physically meaningful scaling controls; retain original tolerances.
+- **Next step:** Numerical child #5130 is merged in #5133. Continue measured shaft/grip/FRF qualification and physical uncertainty; launcher integration is tracked separately in #5143.
 
 ### DL-0055 · Qualified Lumped Impact Dynamics
 

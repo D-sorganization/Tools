@@ -291,7 +291,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-folder-tool-pro.json"
     },
     {
-      "content_sha256_lf": "4597c7d229bbbae4c5c0d6d611e50fa106047c97c522002a9f8815acbcc1f678",
+      "content_sha256_lf": "0212ddd0839ea35a7200e2e75ae7000f2674231ece4dfe58f6aaf5ce90ea3014",
       "entry_count": 17,
       "package": "src/function_generator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-function-generator.json"
