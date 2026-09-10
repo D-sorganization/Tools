@@ -29,14 +29,28 @@ function profileProjection(options: InspectorOptions, cssWidth: number, cssHeigh
   const allPoints = [...points, ...comparisonPoints];
   const center = spatialTarget?.point.appCoordinatesM;
   const extents = spatialTarget ? spatialTargetHalfExtents(spatialTarget) : [0, 0, 0];
-  const carry = Math.max(10, center ? center[0] + extents[0] : 0,
-    ...allPoints.map((point) => point.position[0])) * 1.05;
   const targetVertical = center
     ? Math.abs(vertical === "height" ? center[1] : center[2]) +
       (vertical === "height" ? extents[1] : extents[2]) : 0;
+
+  // ⚡ Bolt Optimization: Use single-pass loop instead of Math.max(...array.map(...))
+  let maxPos0 = center ? center[0] + extents[0] : 0;
+  let maxVertical = targetVertical;
+  for (let i = 0; i < allPoints.length; i++) {
+    const p = allPoints[i].position;
+    if (p[0] > maxPos0) maxPos0 = p[0];
+    if (vertical === "height") {
+      if (p[1] > maxVertical) maxVertical = p[1];
+    } else {
+      const absP2 = Math.abs(p[2]);
+      if (absP2 > maxVertical) maxVertical = absP2;
+    }
+  }
+
+  const carry = Math.max(10, maxPos0) * 1.05;
   const verticalExtent = vertical === "height"
-    ? Math.max(5, targetVertical, ...allPoints.map((point) => point.position[1])) * 1.2
-    : Math.max(5, targetVertical, ...allPoints.map((point) => Math.abs(point.position[2]))) * 1.3;
+    ? Math.max(5, maxVertical) * 1.2
+    : Math.max(5, maxVertical) * 1.3;
   const zeroY = vertical === "height" ? logicalHeight - MARGIN : logicalHeight / 2;
   const usableY = vertical === "height"
     ? logicalHeight - 2 * MARGIN : logicalHeight / 2 - MARGIN;
