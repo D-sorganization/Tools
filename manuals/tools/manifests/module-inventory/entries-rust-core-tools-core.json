@@ -2837,7 +2837,8 @@
           "src/shared/python/calc_backend/tests/test_calc_backend.py",
           "tests/programmatic_pid/test_title_block.py",
           "tests/shared/python/process_calculators/test_wave1_process_numerics.py",
-          "tests/shared/python/process_calculators/test_wgs_reactor_engine.py"
+          "tests/shared/python/process_calculators/test_wgs_reactor_engine.py",
+          "tests/unit/agent_context/test_service.py"
         ],
         "unit_mentions": [
           "J",
@@ -3325,6 +3326,7 @@
           "src/shared/python/signal_toolkit/tests/test_series.py",
           "src/shared/python/signal_toolkit/tests/test_signal_toolkit.py",
           "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
+          "src/shared/python/swing_sim/vibroacoustics/tests/test_complex_frf.py",
           "src/shared/python/swing_sim/vibroacoustics/tests/test_signal_boundaries.py",
           "src/signal_processing_studio/tests/test_signal_processing_studio.py",
           "tests/architecture/test_layer_boundaries.py",

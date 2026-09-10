@@ -2801,10 +2801,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6754,
+      "bytes_lf": 6830,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "62a2507a533e37c858842fafb6b06f5b76255a978d3feb31b85ac8570ffaea25",
+      "content_sha256_lf": "cf6ac7b40974c7c60acdb2851feea9a87b0b866401950d99f49b966f016ff4f8",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-ROOT-ALLOWLIST-PY-94782E1774B7",
       "language": "python",
@@ -3950,10 +3950,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 14052,
+      "bytes_lf": 13950,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "30b187e44c6707eb1642e0675a36c5a53fbfb9b024250f215c251fa671006056",
+      "content_sha256_lf": "0cb612f3feed94afbf2be9addf73b0edab268f2cc157b9ed52dd53f7ec44520e",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CI-TEST-SHARDS-PY-F0C2918F82E4",
       "language": "python",
@@ -3995,6 +3995,11 @@
           {
             "kind": "class",
             "name": "Shard",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CLUB_TESTER_SUITE",
             "signature": null
           },
           {

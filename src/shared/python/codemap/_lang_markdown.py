@@ -43,12 +43,12 @@ def _walk(node: Any, source: bytes, out: list[ParsedSymbol]) -> None:
 def extract(path: str, source: str | bytes) -> ParseResult:
     parser = get_parser("markdown")
     if parser is None:
-        return ParseResult("markdown", [], [])
+        return ParseResult("markdown", [], [], complete=False)
     src = to_bytes(source)
     tree = parser.parse(src)
     symbols: list[ParsedSymbol] = []
     _walk(tree.root_node, src, symbols)
-    return ParseResult("markdown", [], symbols)
+    return ParseResult("markdown", [], symbols, complete=not tree.root_node.has_error)
 
 
 __all__ = ["extract"]

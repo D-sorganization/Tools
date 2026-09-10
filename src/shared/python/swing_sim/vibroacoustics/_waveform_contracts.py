@@ -38,4 +38,10 @@ def real_samples(value: object) -> np.ndarray:
     return result
 
 
+def owned_real_samples(value: object) -> np.ndarray:
+    """Own validated samples over immutable bytes, including the write flag."""
+    samples = real_samples(value)
+    return np.frombuffer(samples.tobytes(), dtype=np.float64)
+
+
 __all__ = ()

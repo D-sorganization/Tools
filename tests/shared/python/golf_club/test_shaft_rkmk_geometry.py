@@ -7,6 +7,7 @@ from dataclasses import replace
 import numpy as np
 import pytest
 
+from shared.python.golf_club import _rkmk_step as step_kernel
 from shared.python.golf_club import _shaft_rkmk_trajectory as rkmk
 from shared.python.golf_club._shaft_moving_trajectory import MovingTrajectoryProblem
 
@@ -50,9 +51,9 @@ def test_missing_or_wrong_sign_chart_correction_fails_the_same_reference(
     request = rkmk.RkmkTrajectoryControls((0, 0.004), 64, 257)
     correct = rkmk.integrate_rkmk_chain(problem, initial, request)
     correct_error = _state_error(correct.samples[-1].state, reference)
-    jacobian = rkmk.right_jacobian
+    jacobian = step_kernel.right_jacobian
     wrong = (lambda q: np.eye(6)) if mistake == "omit" else (lambda q: jacobian(-q))
-    monkeypatch.setattr(rkmk, "right_jacobian", wrong)
+    monkeypatch.setattr(step_kernel, "right_jacobian", wrong)
     corrupted = rkmk.integrate_rkmk_chain(problem, initial, request)
     wrong_error = _state_error(corrupted.samples[-1].state, reference)
     assert correct_error < 1e-4

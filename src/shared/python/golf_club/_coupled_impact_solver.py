@@ -10,6 +10,7 @@ import numpy as np
 from numpy.typing import NDArray
 from scipy.integrate import solve_ivp
 
+from ..swing_sim.impact._normal_contact_work import _normal_loss_rates
 from ..swing_sim.impact.contact import KelvinVoigtContactLaw
 from ._coupled_impact_state import (
     CoupledImpactAudit,
@@ -127,20 +128,16 @@ class _ImpactDerivative:
         self, time_s: float, state: NDArray[np.float64]
     ) -> NDArray[np.float64]:
         config, law = self.config, self.law
-        x_b, x_h, x_g, v_b, v_h, v_g = state[:6]
+        # Scalar force/work algebra does not need NumPy scalar dispatch at
+        # every ODE stage. Convert once, preserving the float64 coordinates.
+        x_b, x_h, x_g, v_b, v_h, v_g = map(float, state[:6])
         overlap, rate = x_h - x_b, v_h - v_b
         force = law.normal_force(float(overlap), float(rate))
         shaft = config.shaft_stiffness_n_m * (
             x_g - x_h
         ) + config.shaft_damping_n_s_m * (v_g - v_h)
         grip = -config.grip.stiffness_n_m * x_g - config.grip.damping_n_s_m * v_g
-        active = overlap > 0 and force > 0
-        viscous = config.contact_damping_n_s_m * rate**2 if active else 0.0
-        cutoff = (
-            -config.contact_stiffness_n_m * overlap * rate
-            if overlap > 0 and not active
-            else 0.0
-        )
+        viscous, cutoff = _normal_loss_rates(law, overlap, rate, force)
         return np.array(
             [
                 v_b,
