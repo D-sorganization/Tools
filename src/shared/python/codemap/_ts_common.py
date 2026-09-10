@@ -35,6 +35,7 @@ class ParseResult:
     language: str
     imports: list[str]
     symbols: list[ParsedSymbol]
+    complete: bool = True
 
 
 _LOCK = threading.Lock()
