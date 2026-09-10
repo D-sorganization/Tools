@@ -29,7 +29,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-10
 - **Last verified:** 2026-09-10 (base 73704cf64; 168 Windows ingestion/report/API tests pass in 8.33 s, coverage 97.09%; seven NumPy-aware production and eleven isolated-hook files pass; root Ruff passes)
 - **Summary:** Explicit affine sample conversion, complete declared acquisition/calibration identity and shared first-order or exact independent-block gain/offset covariance; no source-kind promotion or fabricated unknown uncertainty.
-- **Next step:** All nine final gates and normal commit/push hooks pass at d5f842278787fa4188102fb41c812612ec941162; resolve protected review/CI on #5159. Linux calibration qualification, authentication and physical/acoustic evidence remain separate.
+- **Next step:** All nine final gates and normal commit/push hooks pass at d5f842278787fa4188102fb41c812612ec941162; resolve protected review/CI on #5159. Both Linux aggregates and all 61 new calibration cases pass at a76d02d88. The synthetic SHA oracle scanner finding is reproduced and narrowly annotated; nine identity and 208 combined-provider controls pass. Publish the e83bd2e4 integration/repair through normal hooks; authentication and physical/acoustic evidence remain separate.
 
 ### DL-#5155 · Complex H1 Phase and Supported Spectral Bins
 
@@ -44,18 +44,31 @@ reachable from any live state and `abandoned` from `parked`.
 - **Summary:** Explicit complex phase, caller-declared PSD support and coherence with immutable absent bins; shared spectral pair/cross laws preserve every existing public symbol and signature. No acoustic prediction or calibration authentication.
 - **Next step:** All 107 coverage controls pass (94.68%); root Ruff and all nine final gates pass. Normal commit/push hooks pass at c954e50a0; resolve protected CI/review on #5156. WSL I/O failure prevents local Linux qualification; physical/acoustic/uncertainty gates remain open.
 
-### DL-#5114 · Rate Shard Scientific Test Isolation
+### DL-#5138 · Verified Agent Context
 
 - **State:** in_review
 - **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5138
+- **PR:** https://github.com/D-sorganization/Tools/pull/5141
+- **Branch:** feat/issue-5138-agent-context
+- **Paths:** `src/agent_context`, `src/shared/python/codemap`, `packages/agent-context`
+- **Started:** 2026-09-09
+- **Last verified:** 2026-09-10; Linux quality at0f84e2a9a passes36 context and109 CodeMap tests. Launcher#5143/#5144 integration is coordinated with its owner; its exact regression fails against the old manifest before applying the reviewed canonical widget path. All40 combined launcher/CLI/calibration controls pass. Published rate-isolation25367070f is integrated. Combined validation passes56 shard/launcher/CLI/calibration controls,35 context tests (one Windows skip),109 CodeMap tests with real parsers, the1,692-file partition and all nine governance checks; protected combined CI remains pending.
+- **Summary:** Dependency-free source context package, real MCP transport, semantic boundary reviews, deterministic views and CodeMap freshness guards. Parent epic Repository_Management#1629 remains active; no subscription infrastructure is required.
+- **Next step:** Qualify and publish the combined context, calibration and launcher provider through protected CI.
+
+### DL-#5114 · Rate Shard Scientific Test Isolation
+
+- **State:** shipped
+- **Owner:** codex
 - **Issue:** #5114
-- **PR:** #5158 (draft)
+- **PR:** #5158 (merged as 25367070f)
 - **Branch:** fix/issue-5114-rate-isolation
 - **Paths:** `scripts/ci_test_shards.py`, `tests/ops/test_ci_test_shards.py`
 - **Started:** 2026-09-10
-- **Last verified:** 2026-09-10; four new regression cases fail before isolation; all 16 shard contracts and the 1,684-file partition pass afterward. All three unchanged Club Tester tests pass serially with coverage and the existing deadline (45.04 seconds total). All nine manual governance checks and normal commit/push hooks pass after script-inventory regeneration.
+- **Last verified:** 2026-09-10; four new regression cases fail before isolation; all 16 shard contracts and the 1,684-file partition pass afterward. All three unchanged Club Tester tests pass serially with coverage and the existing deadline (45.04 seconds total). Both Linux rate shards and aggregate gates pass at a7d025264; all nine manual governance checks and normal hooks pass. Windows retains two independently reproduced, unchanged-source GUI limitations recorded in PR #5158.
 - **Summary:** Reuse serial scientific invocation support for the entire Club Tester file while retaining parallel execution elsewhere, separate coverage outputs and failure propagation. Full-suite worker exit is reproduced; exact root cause remains unproven.
-- **Next step:** Qualify the isolated invocation through protected Linux CI.
+- **Next step:** Qualify the combined context provider in PR #5141.
 
 ### DL-#5137 · Identified Moving Reference Placements
 
@@ -100,7 +113,7 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5074 · Waveform and Spectral Numerical Contracts
 
-- **State:** shipped
+- **State:** in_review
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5074
 - **PR:** https://github.com/D-sorganization/Tools/pull/5106
@@ -109,7 +122,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-08
 - **Last verified:** 2026-09-08 (16 RED failures; 41 focused tests, nine API tests, scoped hook mypy and 69 Linux ingestion/report/API tests pass; three optional-plugin warnings)
 - **Summary:** Shared strict real samples, immutable recording storage, signed linear lag and segment preparation refuse undefined/nonfinite estimates while preserving public signatures. Independent SciPy odd/even PSD and gain controls pass. No physical calibration is inferred.
-- **Next step:** PR #5106 merged as 287767dfa60567de136fbadc0da28c7e1ca7edf3. Complex FRF continues in DL-#5155; calibration identity, uncertainty and physical/blinded requirements stay under #5074.
+- **Next step:** All normal push hooks pass; PR #5106 is open; complete protected CI/delivery, then qualify versioned calibration identity, supported-bin complex FRF, uncertainty and physical/blinded measurements separately.
 
 ### DL-#5095 · Deterministic Rust Watcher Debounce
 

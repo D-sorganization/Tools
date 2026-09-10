@@ -421,6 +421,8 @@
           "tests/test_pendulum_provider_manifest.py",
           "tests/test_wave_solver.py",
           "tests/tools/test_mypy_autofix_agent.py",
+          "tests/unit/agent_context/test_cli.py",
+          "tests/unit/agent_context/test_integrity.py",
           "tests/unit/chat/conftest.py",
           "tests/unit/sidekick/test_dock_keyboard_shortcuts.py",
           "tests/unit/sidekick/test_standalone_canonical_package.py",

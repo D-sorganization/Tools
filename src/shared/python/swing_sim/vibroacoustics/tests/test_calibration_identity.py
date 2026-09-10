@@ -116,6 +116,8 @@ def test_legacy_hash_bytes_are_unchanged() -> None:
         replace(legacy, sensitivity_per_unit=2.0)
     )
     assert raw_data_hash(legacy) == (
+        # Fixed SHA-256 of the synthetic fixture above; contains no credential.
+        # pragma: allowlist nextline secret
         "d52731135e7064ab1e8dd46a194eb73373347ca360f672a31ab9bf8304103ed0"
     )
     assert legacy.samples.tobytes() == np.array([1.0, -2.0]).tobytes()

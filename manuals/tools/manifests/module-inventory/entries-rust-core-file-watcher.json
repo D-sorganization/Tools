@@ -303,6 +303,7 @@
           "tests/unit/codemap/test_codemap_api.py",
           "tests/unit/codemap/test_codemap_cli.py",
           "tests/unit/codemap/test_codemap_db.py",
+          "tests/unit/codemap/test_codemap_freshness.py",
           "tests/unit/codemap/test_codemap_indexer.py",
           "tests/unit/codemap/test_codemap_parsers.py",
           "tests/unit/codemap/test_codemap_python_parser.py",
