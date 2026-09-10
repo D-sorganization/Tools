@@ -41,10 +41,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/5073-contact-trajectory
 - **Paths:** src/shared/python/golf_club, src/shared/python/swing_sim/impact, tests/shared/python/golf_club
 - **Started:** 2026-09-10
-- **Last verified:** 2026-09-10 (source tree 0433376b0; base 1edd0ddcf; SELF)
+- **Last verified:** 2026-09-10 (SELF records cancelled CI run34433661011 at source0d6b99430; all12 non-rate Python shards pass; rate/Rust qualification incomplete; numerical source unchanged)
 - **Summary:** Review the private normal-contact trajectory, shared Lie RK4 and five-channel work accounting. Retain fixed shaft laws and existing APIs.
 - **Evidence:** All 371 Windows and 371 Linux coverage controls pass; three modules pass both NumPy-aware and actual-hook mypy. Exact sources, REDs and refinement/JUnit records are in CONTACT_TRAJECTORY_RESULTS.json.
-- **Next step:** Resolve protected review on #5149; continue contact events, friction, face modes and physical/acoustic qualification under #5073.
+- **Next step:** Resolve the protected CI/review dependency with the owning task.
 
 ### DL-#5073 · Spatial Flexible Contact Dynamics
 

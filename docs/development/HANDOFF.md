@@ -158,3 +158,10 @@ pass;24 numerical/placement tests also pass on actual OpenCV5.0.0 using the
 retained dependency directory. Handoff149-line/digest and module inventory
 freshness checks pass. No solver or gate changed during merge. Normal commit
 and push hooks remain before updating PR#5140.
+
+## Temporal Contact Review #5147 / PR #5149
+
+- Worktree: C:/Users/diete/Repositories/Tools-impact-trajectory; branch feat/5073-contact-trajectory; documentation commit SELF; reviewed source0d6b9943019e74ff44e146c6e3621b8e6ffa1a70.
+- Objective: qualify the temporal contact foundation while preserving camera/CLI source. Archived371 Windows/Linux numerical controls,13 CLI/API integration controls and all9 governance gates pass with their original source identities.
+- Current CI is incomplete: run34433661011 cancelled both rate and Rust/toolcache jobs; non-rate Python shards pass. A repeated club-tester worker failure and unfinished simulation-subtabs control are retained in docs/ci-failures/impact5147-20260910.md. Cause is unestablished; capture owns related#5114. Private consumer404 and final provider/wheel remain separate dependencies.
+- No code, threshold, test selection or protected gate changed. Physical/acoustic qualification remains open. Next action: resolve the protected CI/review dependency with its owning task. Development-log entry DL-#5147.
