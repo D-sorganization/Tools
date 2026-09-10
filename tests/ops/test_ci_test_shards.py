@@ -101,8 +101,30 @@ def test_shared_science_has_one_serial_invocation_without_dropping_tests() -> No
     assert command[command.index("-n") + 1] == "8"
 
 
-def test_shared_invocations_keep_distinct_coverage_outputs(
+def test_club_tester_is_serial_without_dropping_its_complete_gui_workflow() -> None:
+    """#5114: isolate the coupled solver while preserving all GUI assertions."""
+    shards = _load_shards_module()
+    rate = shards.shard_by_name("tests-rate")
+    target = "tests/rate_of_closure/test_club_tester_tab.py"
+    owners = [
+        invocation for invocation in rate.invocations if invocation.claims(target)
+    ]
+    assert len(owners) == 1
+    command = shards.pytest_command(owners[0], fanout="4", quarantine=())
+    assert command[command.index("-n") + 1] == "0"
+    assert owners[0].paths == (target,)
+    remaining = next(
+        invocation for invocation in rate.invocations if invocation is not owners[0]
+    )
+    assert remaining.claims("tests/rate_of_closure/test_viewers_gui.py")
+    command = shards.pytest_command(remaining, fanout="4", quarantine=())
+    assert command[command.index("-n") + 1] == "4"
+
+
+@pytest.mark.parametrize("shard_name", ["tests-shared", "tests-rate"])
+def test_serial_invocations_keep_distinct_coverage_outputs(
     monkeypatch: pytest.MonkeyPatch,
+    shard_name: str,
 ) -> None:
     shards = _load_shards_module()
     outputs = []
@@ -112,11 +134,24 @@ def test_shared_invocations_keep_distinct_coverage_outputs(
         return type("Result", (), {"returncode": 0})()
 
     monkeypatch.setattr(shards.subprocess, "run", run)
-    assert (
-        shards.run_shard("tests-shared", fanout="8", coverage_data="coverage-shared")
-        == 0
-    )
-    assert outputs == ["coverage-shared.0", "coverage-shared.1"]
+    assert shards.run_shard(shard_name, fanout="8", coverage_data="coverage-shard") == 0
+    assert outputs == ["coverage-shard.0", "coverage-shard.1"]
+
+
+@pytest.mark.parametrize("outcomes", [(1, 0), (0, 1), (0, 5)])
+def test_rate_shard_preserves_failures_from_either_invocation(
+    monkeypatch: pytest.MonkeyPatch,
+    outcomes: tuple[int, int],
+) -> None:
+    """Neither a serial failure nor empty collection can produce a green shard."""
+    shards = _load_shards_module()
+    results = iter(outcomes)
+
+    def run(command: list[str], **kwargs: Any) -> Any:
+        return type("Result", (), {"returncode": next(results)})()
+
+    monkeypatch.setattr(shards.subprocess, "run", run)
+    assert shards.run_shard("tests-rate", fanout="4", coverage_data=None) != 0
 
 
 def test_workflow_has_no_test_allowlist_or_branch_conditionals() -> None:
