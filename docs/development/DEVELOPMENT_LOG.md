@@ -27,7 +27,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/5073-friction-trajectory
 - **Paths:** src/shared/python/swing_sim/impact, tests/shared/python/golf_club, docs/development/impact-acoustics/FRICTION_TRAJECTORY.md, SPEC.md and turnover/inventory
 - **Started:** 2026-09-10
-- **Last verified:** 2026-09-10: published residual-stop source4dcf1938e has258 affected plus two independent sticking controls. New rising/shrinking-cap planar sliding reference passes seven controls and NumPy-aware mypy after retained RED/typing failures; all267 expanded controls pass in104.24s and all nine governance gates pass. No production equation or tolerance changes. Only Merge Hold Guard run34457281672 is queued for published7d953cdc7; Standard CI is not yet recorded.
+- **Last verified:** 2026-09-10: published residual-stop source4dcf1938e has258 affected plus two independent sticking controls. New rising/shrinking-cap planar sliding reference passes seven controls and NumPy-aware mypy after retained RED/typing failures; all267 expanded controls pass in104.24s at3a46d6d0 and all nine governance gates pass. A subsequent LoD access refactor passes nine reference controls in21.17s and the same typing/structural checks. No production equation or tolerance changes. Only Merge Hold Guard run34457281672 is queued for published7d953cdc7; Standard CI is not yet recorded.
 - **Summary:** Coupled endpoint mechanics and objective elastic/Coulomb history with explicit transport, nonlinear solve criteria and disjoint energy accounting.
 - **Next step:** Publish the qualified sliding-reference evidence and request Standard CI on PR#5162.
 

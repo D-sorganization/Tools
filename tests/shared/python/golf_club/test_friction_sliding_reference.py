@@ -110,7 +110,8 @@ def test_continuous_sliding_work_closes_without_endpoint_or_return_map(
     monkeypatch.setattr(stepper, "root", unavailable)
     monkeypatch.setattr(stepper, "advance_tangential_contact", unavailable)
     reference = sliding_case(ball_velocity_mps)
-    twists = reference.initial.mechanical.twists
+    mechanical = reference.initial.mechanical
+    twists = mechanical.twists
     _, initial, initial_response = reference.snapshot(
         0, np.r_[np.zeros(twists.size), twists.ravel()]
     )

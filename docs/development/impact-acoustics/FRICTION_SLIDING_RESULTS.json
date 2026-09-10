@@ -438,5 +438,28 @@
     "Hosted Standard CI is not yet recorded for prior7d953cdc7; only queued Merge Hold Guard34457281672 is verified."
   ],
   "primary_method_documentation": "https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html",
-  "initial_seven_case_receipt_note": "This interim receipt predates the array-return typing refactor. The full267 receipt is authoritative for the exact current source hashes."
+  "initial_seven_case_receipt_note": "This interim receipt predates the array-return typing refactor. The full267 receipt is authoritative for the exact current source hashes.",
+  "reference_commit": "3a46d6d0a87a383c46582d520a0e5595d2ef0c7d",
+  "law_of_demeter_refactor": {
+    "change": "Replace deeper-than-two attribute chains with named direct components; no equation, tolerance, interface or production change. Original267 receipt remains bound to3a46d6d0 and its original source hashes.",
+    "sources": {
+      "tests/shared/python/golf_club/_friction_sliding_reference.py": "aee2c7bf5be7442bb64e1f1d1a56e1af5ea134bbd048332627b352e75b9461bc",
+      "tests/shared/python/golf_club/test_friction_sliding_reference.py": "124f3c61daaed4f776f10ae78d49bc4cd08df10b203e53c57f298843b1e7dd4e"
+    },
+    "command": "python -m pytest tests/shared/python/golf_club/test_friction_sliding_reference.py tests/shared/python/golf_club/test_friction_continuous_reference.py -o addopts= -o junit_family=legacy -q",
+    "artifact": "impact-friction-sliding-lod-final.xml",
+    "sha256": "7abb4173e7e2ade44a462cc100053e85fb8c8bb3c6ec406ac741efb5449603db",
+    "summary": {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "9",
+      "time": "21.003",
+      "timestamp": "2026-09-10T02:15:22.788133-07:00",
+      "hostname": "OGLaptop"
+    },
+    "typing": "Both modified files pass the same NumPy-aware mypy command.",
+    "structural_check": "Both new files: <=400 lines, each function<=50 lines, attribute chains<=2 levels."
+  }
 }

@@ -84,13 +84,15 @@ class SlidingReference:
     def snapshot(
         self, time_s: float, vector: np.ndarray
     ) -> tuple[np.ndarray, FrictionTrajectoryState, FrictionContactResponse]:
-        shape = self.initial.mechanical.twists.shape
+        initial_mechanical = self.initial.mechanical
+        shape = initial_mechanical.twists.shape
         size = int(np.prod(shape))
         coordinates = vector[:size].reshape(shape)
         mechanical = _shift(
-            self.initial.mechanical, coordinates, vector[size : 2 * size].reshape(shape)
+            initial_mechanical, coordinates, vector[size : 2 * size].reshape(shape)
         )
-        model = self.problem.normal.contact_at(time_s)
+        normal_problem = self.problem.normal
+        model = normal_problem.contact_at(time_s)
         contact = model.kinematics(mechanical.shaft, mechanical.ball)
         _assert_planar(contact)
         normal = normal_contact_work(model.law, -contact.gap_m, -contact.gap_rate_mps)
@@ -113,7 +115,8 @@ class SlidingReference:
 
     def plastic_power(self, response: FrictionContactResponse) -> float:
         bodies = response.bodies
-        model = self.problem.normal.contact
+        normal_problem = self.problem.normal
+        model = normal_problem.contact
         normal_law, tangent_law = model.law, self.problem.tangential_law
         contact = bodies.contact
         acceleration = gap_acceleration(
@@ -150,7 +153,8 @@ class SlidingReference:
     def integrate(
         self, end_s: float, rtol: float, atol: float
     ) -> tuple[FrictionTrajectoryState, FrictionContactResponse, np.ndarray]:
-        twists = self.initial.mechanical.twists
+        mechanical = self.initial.mechanical
+        twists = mechanical.twists
         # Ten integrals: five work ports, normal/vector tangent impulse, plastic work.
         initial = np.r_[np.zeros(twists.size), twists.ravel(), np.zeros(10)]
         result = solve_ivp(

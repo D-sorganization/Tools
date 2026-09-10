@@ -330,7 +330,9 @@ tangential storage changes are +1.17e-6 and -3.58e-6 J, respectively. The seven
 initial reference controls pass after the missing-helper and new-parameter
 RED records; exact final source, typing and regression receipts belong to
 FRICTION_SLIDING_RESULTS.json. Final expanded Windows verification passes267 tests
-in104.24s with no failures or skips; both new reference files pass NumPy-aware
-mypy. This strengthens sliding qualification within
+in104.24s at3a46d6d0 with no failures or skips. A later direct-component access
+refactor passes all nine sliding/sticking reference controls in21.17s, with
+equations unchanged. Both modified reference files pass NumPy-aware mypy and
+the file/function/attribute-depth contracts. This strengthens sliding qualification within
 the stated branch and retains the general event/mesh/mode, material,
 radiation and perception requirements.
