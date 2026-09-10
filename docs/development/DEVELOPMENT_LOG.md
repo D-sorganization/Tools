@@ -20,17 +20,17 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5151 · Adaptive Normal Contact Event Review
 
-- **State:** in_progress
+- **State:** in_review
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5151; parent #5073
-- **PR:** not created
+- **PR:** https://github.com/D-sorganization/Tools/pull/5152
 - **Branch:** feat/5073-contact-events
 - **Paths:** src/shared/python/swing_sim/impact, src/shared/python/golf_club, tests/shared/python/golf_club
 - **Started:** 2026-09-10
 - **Last verified:** 2026-09-10 (SELF repairs three isolated publication typing errors; all15 affected controls and isolated mypy pass; fleet-policy92283cf3f retained; 15 integration controls and nine governance gates pass; source tree4e1b19810 passes386 Windows/Linux controls)
 - **Summary:** Adaptive local-chart normal contact with independent event/work reference, strict SI controls and unchanged canonical mechanics/APIs.
 - **Evidence:** NORMAL_EVENT_RESULTS.json records all RED/GREEN/source/JUnit identities; four production modules pass NumPy-aware mypy; Linux coverage58.64% exceeds unchanged20% floor; root Ruff/format3870 pass.
-- **Next step:** Publish the verified event continuation for protected review under #5151.
+- **Next step:** Resolve protected CI and review on #5152.
 
 ### DL-#5145 · Contact Numerical Foundation Review
 

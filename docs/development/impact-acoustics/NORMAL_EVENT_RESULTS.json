@@ -1,7 +1,7 @@
 {
   "parent_issue": 5073,
   "review_issue": 5151,
-  "review_pr": null,
+  "review_pr": 5152,
   "temporal_foundation_pr": 5149,
   "foundation_pr": 5146,
   "base_commit": "37e322611",
@@ -149,7 +149,7 @@
     "swing_existing_unchanged": 234,
     "new_private_modules": 2
   },
-  "type_checks": "Four production modules pass NumPy-aware mypy, including the final chart dependency refactor; normal commit/push hooks remain required.",
+  "type_checks": "Four production modules pass NumPy-aware mypy; repaired event returns also pass the isolated pre-push mode. All normal commit/push hooks pass atd212714c1. Protected CI/review remains required.",
   "style": "Repository-wide Ruff check and format check pass (3870 files).",
   "evidence_status": "event-sampled-contact-unqualified",
   "physical_acoustic_qualification": false,
@@ -160,7 +160,7 @@
     "friction history, face/hosel modes, general event/mesh/mode convergence, measured calibration, radiation and blinded perception remain open"
   ],
   "publication_typing_repair": {
-    "commit": "SELF",
+    "commit": "d212714c1db24e616f22a6b5085885c98a971375",
     "red": "Normal initial push at50935aefc refused three no-any-return errors under isolated follow-imports=skip; no branch was published.",
     "change": "Explicit response local annotation and builtin int/float scalar returns; constitutive equations and numerical tolerances unchanged.",
     "isolated_pre_push_mypy": "passed",

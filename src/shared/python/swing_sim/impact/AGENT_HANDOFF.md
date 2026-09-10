@@ -2,7 +2,7 @@
 
 ## Active Work
 
-- Event child #5151 passes386 Windows/Linux controls at tree4e1b19810; shared chart/geometry ports, independent piecewise event/work reference and strict SI/budget/history guards are retained. See NORMAL_EVENT_RESULTS.json; protected review, friction/modes and physical/acoustic qualification remain.
+- Event child #5151 is PR#5152 and passes386 Windows/Linux controls at tree4e1b19810; shared chart/geometry ports, independent piecewise event/work reference and strict SI/budget/history guards are retained. See NORMAL_EVENT_RESULTS.json; protected review, friction/modes and physical/acoustic qualification remain.
 - Parent #5073 remains active. Numerical foundation child #5145 is under protected review in PR #5146 at published 1be394e90, based on merged shaft main 2c9a8d6c.
 - Private geometry, normal/objective tangential work, full-tensor body response and instantaneous normal shaft/ball coupling are implemented. Head inertia is retained once; existing public APIs and legacy T2 equations are unchanged.
 - The archived foundation passes 323 Windows and 323 Linux coverage controls. The isolated pre-push typing repair passes 46 affected controls and mypy across all 13 changed source files. Normal publication hooks and repository-wide Ruff checks pass.
