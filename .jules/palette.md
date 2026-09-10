@@ -76,3 +76,7 @@
 ## 2026-09-09 - Focus Rings on Rate of Closure Inputs
 **Learning:** Found an accessibility issue pattern where inputs and canvas in Rate of Closure use `focus-visible:outline-none` but rely on `focus:ring` states, meaning mouse clicks incorrectly trigger focus rings and keyboard focus states are obscured if the wrong pseudo-class is targeted.
 **Action:** Replace `focus:` with `focus-visible:` on focus rings (`focus-visible:ring-2 focus-visible:ring-sky-500`) to preserve keyboard accessibility without polluting mouse interactions, ensuring the color tokens match the existing component theme.
+
+## 2026-09-10 - File Input Focus Visibility
+**Learning:** For file inputs that are visually hidden (`sr-only`) and wrapped in a `<label>` element acting as a button, keyboard focus states are often lost. Users tabbing through the interface cannot tell when the upload button is focused.
+**Action:** Always apply `focus-within:outline` and related focus styles to the wrapping `<label>` element so that when the hidden input receives focus, the parent container visually indicates it.
