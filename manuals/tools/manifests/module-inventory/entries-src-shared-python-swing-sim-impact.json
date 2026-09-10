@@ -277,8 +277,10 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/golf_club/_friction_entry_reference.py",
           "tests/shared/python/golf_club/_friction_sliding_reference.py",
           "tests/shared/python/golf_club/test_friction_continuous_reference.py",
+          "tests/shared/python/golf_club/test_friction_entry_reference.py",
           "tests/shared/python/golf_club/test_friction_momentum.py",
           "tests/shared/python/golf_club/test_friction_separation_reference.py"
         ],
@@ -436,8 +438,10 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/golf_club/_friction_entry_reference.py",
           "tests/shared/python/golf_club/_friction_sliding_reference.py",
-          "tests/shared/python/golf_club/test_friction_convergence.py"
+          "tests/shared/python/golf_club/test_friction_convergence.py",
+          "tests/shared/python/golf_club/test_friction_entry_reference.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -642,6 +646,7 @@
         "public_surfaces": [],
         "test_paths": [
           "src/shared/python/swing_sim/impact/tests/test_normal_contact_work.py",
+          "tests/shared/python/golf_club/_friction_entry_reference.py",
           "tests/shared/python/golf_club/_friction_sliding_reference.py"
         ],
         "unit_mentions": [
@@ -744,6 +749,7 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/golf_club/_friction_entry_reference.py",
           "tests/shared/python/golf_club/_friction_sliding_reference.py",
           "tests/shared/python/golf_club/test_normal_shaft_contact.py"
         ],
@@ -852,6 +858,7 @@
         "public_surfaces": [],
         "test_paths": [
           "src/shared/python/swing_sim/impact/tests/test_spatial_contact_kinematics.py",
+          "tests/shared/python/golf_club/_friction_entry_reference.py",
           "tests/shared/python/golf_club/_friction_sliding_reference.py",
           "tests/shared/python/golf_club/test_friction_refinement.py",
           "tests/shared/python/golf_club/test_friction_sliding_reference.py",

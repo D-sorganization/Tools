@@ -27,9 +27,9 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/5073-friction-trajectory
 - **Paths:** src/shared/python/swing_sim/impact, tests/shared/python/golf_club, docs/development/impact-acoustics/FRICTION_TRAJECTORY.md, SPEC.md and turnover/inventory
 - **Started:** 2026-09-10
-- **Last verified:** 2026-09-10 (SELF): all274 affected Windows controls pass in195.17s after test-only release/event extension and immutable fixture consolidation; both modified reference/test files pass NumPy-aware mypy, Ruff and structural contracts. Separate full-release velocity/spin/impulse/work errors refine within preset bounds. FRICTION_RELEASE_RESULTS.json retains source/JUnit identities and RED/PASS history. Production remains4dcf1938e; prior267/9 controls keep their original source identities. Publisheda22 Standard CI34460212232 remains queued; pending release-reference commit is not hosted-qualified.
+- **Last verified:** 2026-09-10 (SELF): all282 affected Windows controls pass in252.01s after independent first-touch/elastic/sliding entry and adjacent-pair validation; three modified/new helper/test files pass NumPy-aware mypy, Ruff and structural checks. FRICTION_ENTRY_RESULTS.json retains RED, coarse/refined failures, original60s timeout and exact source/JUnit identities. Invalid cutoff-monotonicity assumption is corrected using an analytic counterexample; useful relative cutoff/event-work accuracy remains unqualified. Production remains4dcf1938e. Published72b2efd47 Standard CI34464371054 has both shared shards failed at60s in zero-gap release (jobs102829404145/102829404209), despite its queued aggregate. Logs are retained; the pending entry-reference source has no hosted qualification.
 - **Summary:** Coupled endpoint mechanics and objective elastic/Coulomb history with explicit transport, nonlinear solve criteria and disjoint energy accounting.
-- **Next step:** Qualify an independent friction reference across first contact and stick/slide transitions.
+- **Next step:** Remove repeated section-kinematics work while retaining all numerical checks and the60s deadline.
 
 ### DL-#5153 · Prescribed Force and Couple History Review
 

@@ -406,3 +406,8 @@ component errors and final regression results are in FRICTION_RELEASE_RESULTS.js
 Final expanded Windows verification at SELF passes all274 tests in195.17s,
 with no failures or skips. Both modified files pass NumPy-aware mypy, Ruff
 and file/function/attribute-depth contracts. Hosted qualification remains open.
+
+The subsequent [first-contact and sliding-entry reference](FRICTION_ENTRY.md)
+extends verification to an initially separated planar case and documents the
+remaining event-work limits. Its282-case receipt has its own source identity;
+no earlier result is relabelled as a new run.

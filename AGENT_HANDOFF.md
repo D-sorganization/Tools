@@ -9,7 +9,7 @@
 ## Impact Dynamics and Acoustics: #5068
 
 Friction #5160 / draft PR #5162 remains on feat/5073-friction-trajectory.
-274 affected controls pass, including independent cutoff/separation references.
+282 controls pass, including independent first-contact and sliding-entry references.
 Hosted qualification, general transitions and physical validation remain open.
 Calibration #5159 has both Python gates passing. Provider e83bd2e4/UD #9920
 are merged; installation evidence retains its source identity. See HANDOFF.md.

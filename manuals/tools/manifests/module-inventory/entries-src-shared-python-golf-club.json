@@ -1326,6 +1326,7 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/golf_club/_friction_entry_reference.py",
           "tests/shared/python/golf_club/_friction_sliding_reference.py",
           "tests/shared/python/golf_club/test_friction_continuous_reference.py",
           "tests/shared/python/golf_club/test_rkmk_step.py"

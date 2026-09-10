@@ -24,7 +24,10 @@ from shared.python.swing_sim.impact._normal_contact_trajectory import (
     NormalContactTrajectoryState,
     _shift,
 )
-from shared.python.swing_sim.impact._normal_contact_work import normal_contact_work
+from shared.python.swing_sim.impact._normal_contact_work import (
+    NormalContactWork,
+    normal_contact_work,
+)
 from shared.python.swing_sim.impact._normal_shaft_contact import NormalShaftContact
 from shared.python.swing_sim.impact._spatial_contact_kinematics import (
     ContactBodyState,
@@ -32,6 +35,10 @@ from shared.python.swing_sim.impact._spatial_contact_kinematics import (
 )
 
 from .test_friction_contact_trajectory import _friction_case
+
+PlanarGeometry = tuple[
+    np.ndarray, NormalContactTrajectoryState, NormalShaftContact, PlaneSphereKinematics
+]
 
 
 def _origin_rates(
@@ -124,14 +131,7 @@ class SlidingReference:
     problem: FrictionTrajectoryProblem
     initial: FrictionTrajectoryState
 
-    def geometry(
-        self, time_s: float, vector: np.ndarray
-    ) -> tuple[
-        np.ndarray,
-        NormalContactTrajectoryState,
-        NormalShaftContact,
-        PlaneSphereKinematics,
-    ]:
+    def geometry(self, time_s: float, vector: np.ndarray) -> PlanarGeometry:
         initial_mechanical = self.initial.mechanical
         shape = initial_mechanical.twists.shape
         size = int(np.prod(shape))
@@ -148,13 +148,22 @@ class SlidingReference:
     def snapshot(
         self, time_s: float, vector: np.ndarray
     ) -> tuple[np.ndarray, FrictionTrajectoryState, FrictionContactResponse]:
-        coordinates, mechanical, model, contact = self.geometry(time_s, vector)
+        geometry = self.geometry(time_s, vector)
+        _, _, model, contact = geometry
         normal = normal_contact_work(model.law, -contact.gap_m, -contact.gap_rate_mps)
         law = self.problem.tangential_law
         slip = _slip(contact)
         traction = (
             -law.friction_coefficient * normal.force_n * slip / np.linalg.norm(slip)
         )
+        return self.respond(geometry, normal, traction)
+
+    def respond(
+        self, geometry: PlanarGeometry, normal: NormalContactWork, traction: np.ndarray
+    ) -> tuple[np.ndarray, FrictionTrajectoryState, FrictionContactResponse]:
+        """Share force application without sharing an oracle's phase law."""
+        coordinates, mechanical, model, contact = geometry
+        law = self.problem.tangential_law
         history = replace(
             self.initial.tangential,
             normal=contact.normal,
