@@ -111,5 +111,21 @@
   "qualification": "Declared affine numerical model with first-order or exact independent-block second moments; no authenticated calibration, measured golf effect, radiation or perceptual qualification.",
   "governance": "All nine final manual/inventory/handoff gates pass; two existing publication blockers remain.",
   "implementation_commit": "d5f842278787fa4188102fb41c812612ec941162",
-  "publication": "Normal commit and pre-push hooks pass; protected CI/review remains."
+  "publication": "Normal commit and pre-push hooks pass; protected CI/review remains.",
+  "main_integration": {
+    "main_commit": "25367070fb2acea8ad2f836fba1f56aea939707b",
+    "junit": {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "184",
+      "time": "5.177",
+      "timestamp": "2026-09-09T23:42:47.510603-07:00",
+      "hostname": "OGLaptop"
+    },
+    "junit_sha256": "a256388528caed596bb8a887264914a2ddbfa2345e639437f82c60dadcea7b5e",
+    "source_comparison": "All calibration/phase Python and test/API files match d5f842278; scheduling source/tests match main25367070f exactly. Both peer and calibration turnover retained.",
+    "pytest_summary": "184 passed in 5.35 s; no skips or errors."
+  }
 }
