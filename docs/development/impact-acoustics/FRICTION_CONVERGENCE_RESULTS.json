@@ -2,7 +2,7 @@
   "schema_version": 1,
   "governing_issue": "D-sorganization/Tools#5160",
   "pr": 5162,
-  "implementation_commit": "SELF",
+  "implementation_commit": "4dcf1938ee49268ad3f756ea53084238eb56e2f3",
   "predecessor_commit": "cb7219f38b436ff77ea5fb3e5de5651a6dc0e7ac",
   "evidence_status": "synthetic-numerical-verification-only",
   "source_hash_convention": "SHA256 of LF-normalized UTF-8 bytes",
