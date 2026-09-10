@@ -25,13 +25,9 @@ from typing import Any
 from ..trusted_git import resolve_trusted_git_executable
 from . import db as db_mod
 from . import parsers as parsers_mod
+from .freshness import implementation_id, reconcile
 
 logger = logging.getLogger(__name__)
-
-
-# ---------------------------------------------------------------------------
-# Hashing — prefer blake3 if available, else hashlib.blake2b.
-# ---------------------------------------------------------------------------
 
 
 _BLAKE2B_DIGEST_SIZE = 16
@@ -70,11 +66,6 @@ def _hash_bytes(data: bytes) -> str:
     """Hash *data* with the module-resolved hash callable."""
     digest = _HASH(data).hexdigest()
     return str(digest)
-
-
-# ---------------------------------------------------------------------------
-# Path walking + gitignore.
-# ---------------------------------------------------------------------------
 
 
 _DEFAULT_SKIP_DIRS = {
@@ -143,10 +134,15 @@ def _load_gitignore(repo_root: Path) -> Any:
     return _ignored_simple
 
 
+def _scan_error(error: OSError) -> None:
+    """An unreadable directory cannot establish complete index coverage."""
+    raise error
+
+
 def _walk(repo_root: Path) -> Any:
     """Yield ``(abs_path, rel_path)`` for every supported source file."""
     is_ignored = _load_gitignore(repo_root)
-    for dirpath, dirnames, filenames in os.walk(repo_root):
+    for dirpath, dirnames, filenames in os.walk(repo_root, onerror=_scan_error):
         # Prune.
         dirnames[:] = [
             d
@@ -211,11 +207,6 @@ def _current_commit(repo_root: Path) -> str | None:
         return None
 
 
-# ---------------------------------------------------------------------------
-# Stats.
-# ---------------------------------------------------------------------------
-
-
 @dataclass
 class RebuildStats:
     files_seen: int = 0
@@ -225,11 +216,6 @@ class RebuildStats:
     symbols_deleted: int = 0
     elapsed_s: float = 0.0
     errors: list[str] = field(default_factory=list)
-
-
-# ---------------------------------------------------------------------------
-# Core indexing routine.
-# ---------------------------------------------------------------------------
 
 
 def _read_bytes(path: Path) -> bytes | None:
@@ -249,6 +235,7 @@ def _process_file(
 ) -> None:
     data = _read_bytes(abs_path)
     if data is None:
+        stats.errors.append(f"{rel}: unreadable source")
         return
     stats.files_seen += 1
     file_hash = _hash_bytes(data)
@@ -260,7 +247,8 @@ def _process_file(
         return
 
     parsed = parsers_mod.dispatch(rel, data)
-    if parsed is None:
+    if parsed is None or not parsed.complete:
+        stats.errors.append(f"{rel}: parser unavailable or source has syntax errors")
         return
 
     # Delete prior symbols for this file then re-insert.
@@ -335,6 +323,7 @@ def rebuild(
     stats = RebuildStats()
     conn = db_mod.open_db(repo)
     try:
+        dirty = reconcile(repo, conn, stats)
         if since:
             changed = _git_changed_files(repo, since)
             if not changed:
@@ -342,8 +331,10 @@ def rebuild(
                 logger.info("codemap: no changes from git diff; running full rebuild")
                 iterator = _walk(repo)
             else:
-                pairs = []
+                pairs = list(dirty)
                 for rel in changed:
+                    if any(p[1] == rel for p in pairs):
+                        continue
                     abs_p = repo / rel
                     if not abs_p.exists():
                         # File deleted — remove from index.
@@ -365,26 +356,31 @@ def rebuild(
             iterator = _walk(repo)
 
         for abs_p, rel in iterator:
+            conn.execute("SAVEPOINT source_file")
             try:
                 _process_file(abs_p, rel, repo, conn, stats)
             except Exception as exc:  # noqa: BLE001 - pragma: no cover - defensive per-file error isolation
+                conn.execute("ROLLBACK TO source_file")
                 logger.warning("codemap: failed to index %s: %s", rel, exc)
                 stats.errors.append(f"{rel}: {exc}")
+            finally:
+                conn.execute("RELEASE source_file")
 
         # Refresh manifest.
         manifest = {
             "repo_root": str(repo),
             "schema_version": db_mod.SCHEMA_VERSION,
+            "implementation": implementation_id(),
+            "errors": stats.errors,
             "last_indexed": time.time(),
             "last_commit": _current_commit(repo),
             "files": stats.files_parsed,
             "symbols": stats.symbols_inserted,
         }
+        conn.commit()
         db_mod.manifest_path(repo).write_text(
             json.dumps(manifest, indent=2), encoding="utf-8"
         )
-
-        conn.commit()
     finally:
         conn.close()
 

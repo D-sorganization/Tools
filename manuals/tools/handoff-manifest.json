@@ -9,63 +9,63 @@
   },
   "repository": "D-sorganization/Tools",
   "issue_url": "https://github.com/D-sorganization/Tools/issues/4730",
-  "pr_url": "https://github.com/D-sorganization/Tools/pull/5146",
+  "pr_url": "https://github.com/D-sorganization/Tools/pull/5055",
   "commit_evidence": {
-    "local_head_sha": "1be394e908b869b911f22cd24ad5464d1fd894f1",
+    "local_head_sha": "1286c9f49dbcc8c4df1baf1fb76c5de31b2879dd",
     "remote_head_sha": null,
-    "reviewed_tree_sha": "34b7f255466c8ed41a295cdd2ffc71c3c1deccc7",
+    "reviewed_tree_sha": "580e553c5864c71214650ba5fe863df799562f50",
     "merge_sha": null
   },
   "branch_and_worktree": {
     "branch": "feat/5073-spatial-contact",
-    "worktree": "C:\\Users\\diete\\Repositories\\Tools-impact-contact",
+    "worktree": "C:\\Users\\diete\\Repositories\\Tools",
     "is_clean": false
   },
   "check_evidence": {
     "check_design_manual_governance": {
       "command": "python -m scripts.check_design_manual_governance",
       "status": "passed",
-      "timestamp": "2026-09-10T03:44:57Z"
+      "timestamp": "2026-09-10T07:15:18Z"
     },
     "build_tools_module_inventory": {
       "command": "python -m scripts.build_tools_module_inventory --check",
       "status": "passed",
-      "timestamp": "2026-09-10T03:44:57Z"
+      "timestamp": "2026-09-10T07:15:18Z"
     },
     "lint_tools_textbook_chapters": {
       "command": "python -m scripts.lint_tools_textbook_chapters",
       "status": "passed",
-      "timestamp": "2026-09-10T03:44:57Z"
+      "timestamp": "2026-09-10T07:15:18Z"
     },
     "check_tools_exemplars": {
       "command": "python -m scripts.check_tools_exemplars",
       "status": "passed",
-      "timestamp": "2026-09-10T03:44:57Z"
+      "timestamp": "2026-09-10T07:15:18Z"
     },
     "check_tools_calculation_freshness": {
       "command": "python -m scripts.check_tools_calculation_freshness --check",
       "status": "passed",
-      "timestamp": "2026-09-10T03:44:57Z"
+      "timestamp": "2026-09-10T07:15:18Z"
     },
     "check_tools_manual_qa": {
       "command": "python -m scripts.check_tools_manual_qa --check",
       "status": "passed",
-      "timestamp": "2026-09-10T03:44:57Z"
+      "timestamp": "2026-09-10T07:15:18Z"
     },
     "check_tools_publication_projection": {
       "command": "python -m scripts.check_tools_publication_projection --check",
       "status": "passed",
-      "timestamp": "2026-09-10T03:44:57Z"
+      "timestamp": "2026-09-10T07:15:18Z"
     },
     "render_tools_design_manual": {
       "command": "python -m scripts.render_tools_design_manual --check",
       "status": "passed",
-      "timestamp": "2026-09-10T03:44:57Z"
+      "timestamp": "2026-09-10T07:15:18Z"
     },
     "check_tools_handoff": {
       "command": "python -m scripts.check_tools_handoff --check",
       "status": "passed",
-      "timestamp": "2026-09-10T03:44:57Z"
+      "timestamp": "2026-09-10T07:15:18Z"
     }
   },
   "artifact_and_test_digests": {
@@ -112,7 +112,7 @@
       "TOOLS-HUMAN-APPROVAL-PENDING",
       "TOOLS-MARKERLESS-EXEMPLAR-BLOCKED"
     ],
-    "expiry_timestamp": "2026-12-09T03:44:57Z"
+    "expiry_timestamp": "2026-12-09T07:15:18Z"
   },
   "blockers": [
     {
@@ -127,14 +127,15 @@
     }
   ],
   "next_dependency": "TOOLS-M0 (#4708 / #4734) and parent epic DOC-TOOLS (#4707) closure",
-  "freshness_timestamp": "2026-09-10T03:44:57Z",
+  "freshness_timestamp": "2026-09-10T07:15:18Z",
   "governed_handoff_files": {
     "AGENT_HANDOFF.md": {
       "path": "AGENT_HANDOFF.md",
-      "sha256_lf": "864effd4cf45a273336c0ab9d33578c951f8c10515f6f4c969ab0a6cd1b5fd1f",
-      "line_count": 149,
+      "sha256_lf": "d625d20e87cfb9731879f9bed4932fffe5fb58cda3b2ca5b8c5703c077cf8566",
+      "line_count": 145,
       "max_line_budget": 150,
       "required_sections": [
+        "## Verified Agent Context: #5138",
         "## Calibration and Moving Reference Placements: #5132 / #5137",
         "## Impact Dynamics and Acoustics: #5068",
         "## Merge Governance",

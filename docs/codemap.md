@@ -13,8 +13,11 @@ pip install -e ".[codemap]"            # core CLI + indexer
 pip install -e ".[codemap,codemap-mcp]"  # also install MCP server
 ```
 
-The package vendors as `src/shared/python/codemap/`; both UpstreamDrift and
-Gasification_Model consume it through their existing symlink into Tools.
+The canonical implementation is `src/shared/python/codemap/`. Applications
+consume Tools through their pinned `vendor/ud-tools` checkout; do not copy or
+edit the vendor implementation. The smaller `fleet-agent-context` package has
+no CodeMap parser dependencies: install this optional environment separately.
+For reviewed module relationships, see [Local Agent Context](agent-context.md).
 
 ### Windows note
 
@@ -36,8 +39,10 @@ This walks the repo (respecting `.gitignore`), parses every supported file
 `.codemap/index.db` + `.codemap/manifest.json`. The `.codemap/` directory
 is gitignored.
 
-Performance budget: cold rebuild < 10 s/repo on the Tools fleet, search
-p50 < 30 ms, DB < 50 MB without embeddings (per design §7).
+Historical design targets were cold rebuild < 10 s, search p50 < 30 ms and
+DB < 50 MB. These are targets, not current benchmark results. Source freshness
+verification adds work proportional to the supported corpus; measure the actual
+checkout and environment before making performance claims.
 
 ## Search
 
@@ -46,7 +51,7 @@ codemap search "wgs reactor"
 codemap search "apply_theme" --kind function -k 5
 codemap who-calls ChatDockWidget._on_message
 codemap info
-codemap export --jsonl       # writes .codemap/exports/code_map.jsonl.gz
+codemap export               # writes .codemap/exports/code_map.jsonl.gz
 ```
 
 ## Incremental rebuild
@@ -55,18 +60,23 @@ codemap export --jsonl       # writes .codemap/exports/code_map.jsonl.gz
 codemap rebuild --since HEAD~1
 ```
 
-Calls `git diff --name-only HEAD~1..HEAD` and re-parses only the changed
-files. Hash-based deduplication means even a full rebuild skips files
-whose content hasn't changed.
+The revision is an incremental hint. Rebuild also reconciles actual worktree
+membership and content, including dirty, new and deleted supported files.
+Unchanged source hashes skip parsing only when parser and dependency identity
+still match. Parser failures are recorded and a partial rebuild exits with status 2.
 
-A git `post-commit` hook running the above keeps the index current without
-a daemon:
+Before using symbol results, CodeMap checks source hashes, membership, schema,
+parser implementation and dependency versions. Stale queries fail rather than
+returning an apparently current graph. `repo_summary().freshness` reports the
+reason. Rebuild or inspect source directly; an incomplete graph cannot prove that
+there are no callers or imports. Keep each worktree's `.codemap/` disposable and
+ignored. A background refresh or watcher is an optimization, not merge enforcement.
 
-```bash
-# .git/hooks/post-commit
-#!/bin/sh
-codemap rebuild --since HEAD~1 >/dev/null 2>&1 &
-```
+Qt translation catalogs also use `.ts`. CodeMap recognizes well-formed XML with
+a `TS` root as `qt-translation` resources and emits no code edges for them. Their
+content still participates in freshness checks. Malformed XML, entity-bearing
+documents and invalid TypeScript still fail validation. The existing `defusedxml`
+runtime dependency parses these resources; its version is part of index identity.
 
 ## Watcher daemon
 
@@ -76,7 +86,7 @@ For on-save reindexing (debounced 500 ms):
 codemap-watch
 ```
 
-Logs to `.codemap/watcher.log`. ~3 MB resident.
+Inspect `.codemap/watcher.log` for failures. Queries still enforce freshness.
 
 ## MCP integration
 
@@ -120,16 +130,26 @@ for hit in search_code("convert kinetic refs to json", k=5):
 callers = who_calls("ChatDockWidget._on_message")
 ```
 
+## Graph Navigation
+
+`who_calls` identifies candidate callers and `imports_of` exposes declared
+imports. The Python API also offers `neighbors(symbol, hops=1, repo_root=...)`
+for a focused inbound/outbound neighborhood. Lexical matching is heuristic;
+dynamic dispatch, plugins and runtime configuration need source inspection.
+Use the reviewed component graph for integration meaning and cite actual code
+and tests before changing an interface. No graph establishes scientific approval.
+
 ## Schema (summary)
 
-| Table         | Notes                                                          |
-| ------------- | -------------------------------------------------------------- |
-| `files`       | one row per indexed file; path, language, blake3 hash, imports |
-| `symbols`     | one row per function/class/method/struct/heading               |
-| `symbols_fts` | FTS5 virtual table over name + qualified + sig + docstring     |
-| `meta`        | schema version, etc.                                           |
+| Table         | Notes                                                           |
+| ------------- | --------------------------------------------------------------- |
+| `files`       | one row per indexed file; path, language, content hash, imports |
+| `symbols`     | one row per function/class/method/struct/heading                |
+| `symbols_fts` | FTS5 virtual table over name + qualified + sig + docstring      |
+| `meta`        | schema version, etc.                                            |
 
-Source slices are **not** stored — only line ranges + a blake3 hash so
+Source slices are **not** stored — only line ranges + a content hash (BLAKE3
+when available, otherwise BLAKE2b) so
 incremental rebuilds can skip unchanged symbols. Queries return paths +
 line ranges; the chat backend opens the file on click-through.
 

@@ -110,10 +110,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5430,
+      "bytes_lf": 5618,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6a7c1659fe361635e5800e50dae1d45cd7859a6e23c2f5767bc1b1faa0924210",
+      "content_sha256_lf": "f52367b17a194eaa611792a3761e85dad85f5e3a11ea8171c217df6566cf3555",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-LANG-JS-PY-B1E1247AE7F5",
       "language": "python",
@@ -167,10 +167,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1516,
+      "bytes_lf": 1571,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "157ae7e18ea256b932b74ecc4675876ae253b4f01ab0264658264d5538210384",
+      "content_sha256_lf": "6d9105d12ea53d7a14e620c40c866f7f6f818c2999fbfe48f539b144ced266cb",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-LANG-MARKDOWN-PY-A4C97209A644",
       "language": "python",
@@ -219,10 +219,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4447,
+      "bytes_lf": 4541,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a9f406e02762861dd672c96378820f1cf14a4823cc992092e60cbfe91ffe127d",
+      "content_sha256_lf": "0b684f1c6999e509e0b41dd1240c3d64ff707fc30b51c4fd80733ec804e24740",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-LANG-PYTHON-PY-1C073364BACD",
       "language": "python",
@@ -271,10 +271,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3220,
+      "bytes_lf": 3314,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "851cae0858c9e3ef21d99edf303531c3bf7a12c37f6d254fb48400480eaf5959",
+      "content_sha256_lf": "22d4349a7376479cf70ad96ca35cf7675dda9037c4776b8ed5a4bc3734242049",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-LANG-RUST-PY-F34DDB6B3B21",
       "language": "python",
@@ -323,10 +323,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3693,
+      "bytes_lf": 3719,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b9fbbe84b74bc327cec31a56b502772a2ce7ea9b8a7ec97ab821090759c689f1",
+      "content_sha256_lf": "99853600a82986bffe7c0ce1d43b62b73ba73db40fa0f396a46f11bb10edfc83",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-TS-COMMON-PY-8D4B5231DCF3",
       "language": "python",
@@ -404,6 +404,7 @@
           }
         ],
         "test_paths": [
+          "tests/unit/codemap/test_codemap_freshness.py",
           "tests/unit/codemap/test_codemap_indexer.py",
           "tests/unit/codemap/test_codemap_js_parser.py",
           "tests/unit/codemap/test_codemap_markdown_parser.py",
@@ -419,10 +420,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10522,
+      "bytes_lf": 11060,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e575f15d128c1385b9009d49914698e9018776ce3a4e3f4e3a0bd93ca4acbe8e",
+      "content_sha256_lf": "1fa6c9ef21a62815239326d67621dd7d2071d833a14aea654e52355715647289",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-API-PY-9260BAE7DFB4",
       "language": "python",
@@ -518,10 +519,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5128,
+      "bytes_lf": 5270,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2f153ab3c440d3e3c7bf39001bbfcec36cbcd0bae627a4582c8f5bb0dd82b3ea",
+      "content_sha256_lf": "32989bec054b483b73c164d9f560d47f44ab785bdbcb49098ca7ec6fbcc9c67f",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-CLI-PY-0C84314EA300",
       "language": "python",
@@ -731,10 +732,92 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11817,
+      "bytes_lf": 4684,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e3de7eb279862b702cbca01c97a36f708042e24accafe16e46791b37841cd2d9",
+      "content_sha256_lf": "2c475d86488a7ba79f648b7ea8416a27631e3699e76fab98368eb9ceac65902b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-FRESHNESS-PY-5B0A2583A146",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/codemap/freshness.py",
+      "purpose": "Content-based trust checks for the disposable lexical CodeMap index.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "StaleIndexError",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "current_files",
+            "signature": "repo: Path"
+          },
+          {
+            "kind": "function",
+            "name": "implementation_id",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "inspect",
+            "signature": "repo: Path, conn: sqlite3.Connection"
+          },
+          {
+            "kind": "function",
+            "name": "reconcile",
+            "signature": "repo: Path, conn: sqlite3.Connection, stats: Any"
+          },
+          {
+            "kind": "function",
+            "name": "require_current",
+            "signature": "repo: Path, conn: sqlite3.Connection"
+          },
+          {
+            "kind": "function",
+            "name": "reset_obsolete_parser",
+            "signature": "repo: Path, conn: sqlite3.Connection, stats: Any"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11841,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "09be46f8624b3c7472f542acd147c85408489e77ac02a2a465cdf655fece8391",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-INDEXER-PY-160B672BBD95",
       "language": "python",
@@ -845,10 +928,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 2533,
+      "bytes_lf": 3336,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c1602c57036887e7867b64549bf522433466815914c36ca13244ac7a25a06a65",
+      "content_sha256_lf": "e9148bf7a277b330d99fb0cd3f8e260330f4602f6e9e4087a95d528bcf281977",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-PARSERS-PY-057A23AC0258",
       "language": "python",
@@ -870,7 +953,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "not-applicable",
-        "units": "not-applicable",
+        "units": "mapped",
         "validation": "not-applicable"
       },
       "traceability": {
@@ -911,7 +994,9 @@
           }
         ],
         "test_paths": [],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "s"
+        ],
         "validation_paths": []
       }
     },

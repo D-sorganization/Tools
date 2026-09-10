@@ -167,6 +167,7 @@ def test_extract_returns_empty_result_when_python_parser_is_unavailable(
 
 @dataclass
 class FakeNode:
+    has_error: bool = field(default=False, init=False)
     type: str
     start_byte: int = 0
     end_byte: int = 0

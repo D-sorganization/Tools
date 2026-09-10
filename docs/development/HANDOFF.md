@@ -1,5 +1,12 @@
 # Reference Placement and Calibration Recovery Handoff
 
+## Completed Rate Shard Isolation: #5114
+
+- Published: PR #5158 merged as `25367070fb2acea8ad2f836fba1f56aea939707b` after both Linux rate shards, both aggregate coverage gates and required quality passed. Entry DL-#5114 is shipped.
+- Change: the entire Club Tester file uses existing serial science isolation. All GUI assertions, test selection and the 60-second deadline remain unchanged; the rest of the rate suite stays parallel.
+- Validation at a7d025264: 16 shard contracts, the 1,684-file partition, three unchanged serial tests with coverage, nine governance checks and normal hooks pass. Windows full execution completes with 2,905 parallel passes, 17 skips and two independently reproduced unchanged-source Qt 6.9 GUI limitations, followed by all three serial passes. PR #5158 records that limitation explicitly.
+- Continuation: the published repair is integrated into the context-provider worktree below; qualify the combined provider before final publication. Scientific/manual approval remains separate.
+
 ## Active Placement Work #5137
 
 - Worktree: `C:/Users/diete/Repositories/Worktrees/Tools-calibration-numerics`.
@@ -172,3 +179,12 @@ and push hooks remain before updating PR#5140.
 - No user-owned edits are discarded. This merge retains camera/CLI work and every fleet-managed instruction block.
 - Next action: validate and publish the main-preserving foundation merge to PR#5146. Then continue event/tangential/mode and measured acoustic work in the owned continuation; final reviewed consumer pin and physical/blinded evidence remain required.
 - Development-log entries: DL-#5145 and DL-#5073; the feature state remains in review/in progress, respectively.
+
+## Agent Context Delivery — #5138
+
+- Repository/worktree: Tools, `.context-implementation/Tools`; branch `feat/issue-5138-agent-context`; current commit `SELF`; PR #5141 open; epic Repository_Management#1629; DL-#5138.
+- Combined provider: published CI isolation25367070f, calibration0a561daff, CLI/service9899c5a6a and fleet policy92283cf3f; context/CodeMap implementation; and the exact two reviewed launcher files from fc453bf8e/c10baa1d8 (Tools#5143/#5144). The launcher owner agreed to this integration; their branch/worktree is preserved. The new regression fails against the old manifest before applying the canonical widget correction. All40 combined function-generator, CLI/service and reference-placement tests pass after integration (24.44 seconds).
+- Quality at0f84e2a9a passes36 context and109 CodeMap tests, including an explicit real-SDK import before the transport test. The unchanged c80 rate shards exhausted their 90-minute cap; the qualified isolation repair is now integrated for combined requalification. The earlier2696 run was superseded/cancelled. UpstreamDrift6e939bc6b passes the suite-marker gate after the14 documentation regression tests pass; source checks and12 navigation tasks pass before the deliberate publication guard. Gasff35c8a0b passes7 context,3 Linux checkout-recovery and34 manual tests; its old queued aggregate was force-cancelled only after normal cancellation did not finish, allowing new CI jobs to queue.
+- Combined validation after integrating25367070f: `python3 -m pytest tests/ops/test_ci_test_shards.py src/function_generator/tests/test_function_generator_gui.py tests/shared/python/sidekick/lab/mocap/test_cli_service_contracts.py tests/shared/python/sidekick/lab/mocap/test_reference_placements.py -o addopts= --timeout=60 -q` passes56 tests. Focused context passes35 with one Windows skip; the parser-enabled validation venv passes all109 CodeMap tests. Real MCP SDK imports pass. `python3 scripts/ci_test_shards.py --check` validates1,692 files across seven shards. All nine manual governance commands listed in AGENTS.md pass after inventory regeneration. The two integrated launcher files are byte-identical to fc453bf8e. Protected combined CI remains pending.
+- Current provider is not published on main. Final consumer gitlink, Cargo, pip and catalog alignment belongs to this session. Scientific/manual approval and physical qualification remain separate. Existing peer handoffs, root-handoff compaction and both reviewed source corrections are preserved.
+- Next: qualify this combined provider, publish through protected review, pin and test both consumers, then reconcile fleet audit#1634 and epic#1629. No user-owned changes in this worktree.

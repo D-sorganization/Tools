@@ -88,12 +88,17 @@ def _imports(root: Any, source: bytes) -> list[str]:
 def extract(path: str, source: str | bytes) -> ParseResult:
     parser = get_parser("rust")
     if parser is None:
-        return ParseResult("rust", [], [])
+        return ParseResult("rust", [], [], complete=False)
     src = to_bytes(source)
     tree = parser.parse(src)
     symbols: list[ParsedSymbol] = []
     _walk(tree.root_node, src, "", symbols)
-    return ParseResult("rust", _imports(tree.root_node, src), symbols)
+    return ParseResult(
+        "rust",
+        _imports(tree.root_node, src),
+        symbols,
+        complete=not tree.root_node.has_error,
+    )
 
 
 __all__ = ["extract"]

@@ -97,6 +97,7 @@ ROOT_ALLOWLIST: frozenset[str] = frozenset(
         "output",  # only a .gitkeep; tool output directory
         "package-lock.json",
         "package.json",
+        "packages",  # standalone lightweight distributions (agent-context)
         "pyproject.toml",
         "requirements-lock.txt",
         "requirements-rate-pyqt.txt",
