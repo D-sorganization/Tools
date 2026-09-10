@@ -11,9 +11,9 @@
   "issue_url": "https://github.com/D-sorganization/Tools/issues/4730",
   "pr_url": "https://github.com/D-sorganization/Tools/pull/5055",
   "commit_evidence": {
-    "local_head_sha": "48956d19d5ca2f6bc9e7487a2014e92cf5ae1fc8",
+    "local_head_sha": "23f58b71b75681bdddd0fcac631f3d1b78d67f13",
     "remote_head_sha": null,
-    "reviewed_tree_sha": "c1d7bc9fa5aaa10a8b8ef65782f37aef09af61de",
+    "reviewed_tree_sha": "27fe6f31c6d392b0e7c14d5fb6d78abe818e842e",
     "merge_sha": null
   },
   "branch_and_worktree": {
@@ -25,47 +25,47 @@
     "check_design_manual_governance": {
       "command": "python -m scripts.check_design_manual_governance",
       "status": "passed",
-      "timestamp": "2026-09-10T03:43:57Z"
+      "timestamp": "2026-09-10T03:56:28Z"
     },
     "build_tools_module_inventory": {
       "command": "python -m scripts.build_tools_module_inventory --check",
       "status": "passed",
-      "timestamp": "2026-09-10T03:43:57Z"
+      "timestamp": "2026-09-10T03:56:28Z"
     },
     "lint_tools_textbook_chapters": {
       "command": "python -m scripts.lint_tools_textbook_chapters",
       "status": "passed",
-      "timestamp": "2026-09-10T03:43:57Z"
+      "timestamp": "2026-09-10T03:56:28Z"
     },
     "check_tools_exemplars": {
       "command": "python -m scripts.check_tools_exemplars",
       "status": "passed",
-      "timestamp": "2026-09-10T03:43:57Z"
+      "timestamp": "2026-09-10T03:56:28Z"
     },
     "check_tools_calculation_freshness": {
       "command": "python -m scripts.check_tools_calculation_freshness --check",
       "status": "passed",
-      "timestamp": "2026-09-10T03:43:57Z"
+      "timestamp": "2026-09-10T03:56:28Z"
     },
     "check_tools_manual_qa": {
       "command": "python -m scripts.check_tools_manual_qa --check",
       "status": "passed",
-      "timestamp": "2026-09-10T03:43:57Z"
+      "timestamp": "2026-09-10T03:56:28Z"
     },
     "check_tools_publication_projection": {
       "command": "python -m scripts.check_tools_publication_projection --check",
       "status": "passed",
-      "timestamp": "2026-09-10T03:43:57Z"
+      "timestamp": "2026-09-10T03:56:28Z"
     },
     "render_tools_design_manual": {
       "command": "python -m scripts.render_tools_design_manual --check",
       "status": "passed",
-      "timestamp": "2026-09-10T03:43:57Z"
+      "timestamp": "2026-09-10T03:56:28Z"
     },
     "check_tools_handoff": {
       "command": "python -m scripts.check_tools_handoff --check",
       "status": "passed",
-      "timestamp": "2026-09-10T03:43:57Z"
+      "timestamp": "2026-09-10T03:56:28Z"
     }
   },
   "artifact_and_test_digests": {
@@ -112,7 +112,7 @@
       "TOOLS-HUMAN-APPROVAL-PENDING",
       "TOOLS-MARKERLESS-EXEMPLAR-BLOCKED"
     ],
-    "expiry_timestamp": "2026-12-09T03:43:57Z"
+    "expiry_timestamp": "2026-12-09T03:56:28Z"
   },
   "blockers": [
     {
@@ -127,12 +127,12 @@
     }
   ],
   "next_dependency": "TOOLS-M0 (#4708 / #4734) and parent epic DOC-TOOLS (#4707) closure",
-  "freshness_timestamp": "2026-09-10T03:43:57Z",
+  "freshness_timestamp": "2026-09-10T03:56:28Z",
   "governed_handoff_files": {
     "AGENT_HANDOFF.md": {
       "path": "AGENT_HANDOFF.md",
-      "sha256_lf": "88d517c3ca60808ff2a98d5e251e0e8add2f185d705ccf3944ab7d0b6ca3a08f",
-      "line_count": 148,
+      "sha256_lf": "5b33ad9d443a5cbc6e714ed24a12f90bc4d173c19befe771cb2c1a5c4080c21b",
+      "line_count": 139,
       "max_line_budget": 150,
       "required_sections": [
         "## Verified Agent Context: #5138",
