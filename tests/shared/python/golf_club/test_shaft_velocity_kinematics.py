@@ -30,16 +30,16 @@ def test_joint_mapping_computes_each_frechet_pair_once(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     calls = []
-    original = se3.expm_frechet
+    original = se3._jacobian_pair
 
-    def counted(*args: object, **kwargs: object) -> object:
-        calls.append(kwargs.get("compute_expm"))
-        return original(*args, **kwargs)
+    def counted(twist: np.ndarray, direction: np.ndarray) -> object:
+        calls.append(True)
+        return original(twist, direction)
 
     def redundant(*args: object, **kwargs: object) -> None:
         raise AssertionError("joint kinetics must reuse the Frechet exponential")
 
-    monkeypatch.setattr(se3, "expm_frechet", counted)
+    monkeypatch.setattr(se3, "_jacobian_pair", counted)
     monkeypatch.setattr(se3, "expm", redundant)
     se3.section_velocity_kinematics([0, 0, 1, 0.2, 0, 0], 0.3, np.ones(6))
     assert calls == [True, True]

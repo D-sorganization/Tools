@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5160 · Objective Coupled Friction Trajectory
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** [#5160](https://github.com/D-sorganization/Tools/issues/5160)
+- **PR:** https://github.com/D-sorganization/Tools/pull/5162 (open; do-not-merge)
+- **Branch:** feat/5073-friction-trajectory
+- **Paths:** src/shared/python/swing_sim/impact, src/shared/python/golf_club, tests/shared/python/golf_club, docs/development/impact-acoustics/FRICTION_TRAJECTORY.md, SPEC.md and turnover/inventory
+- **Started:** 2026-09-10
+- **Last verified:** 2026-09-10 (d4323c14ad364640b3f371ba8bed606ab958c990; turnover SELF):1657 local coverage tests pass/2 optional skips/93.80%; manual34496105215 all14 shards and both aggregates pass. PR34496053564 attempt2 times out at unchanged60s: Python3.12 job102940510943 entry60 and Python3.11 job102940510985 entry240. Both outcomes remain recorded; no runtime reliability or merge qualification is claimed.
+- **Summary:** Parent #5073. Coupled endpoint mechanics and objective elastic/Coulomb history with explicit transport, nonlinear solve criteria and disjoint energy accounting.
+- **Next step:** Handoff to the next agent: investigate and address the exact hosted timeout before removing do-not-merge. Canonical HANDOFF records reproduction scope, source identities and remaining science. Affine4361 and Upstream9962 turnover are merged.
+
 ### DL-#5168 · Established-layout linear reference scale
 
 - **State:** in_progress

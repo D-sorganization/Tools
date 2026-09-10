@@ -16,8 +16,8 @@ from ._shaft_se3 import (
     _material_fraction,
     _relative_maps,
     _rigid_pose,
+    _SectionVelocityKinematics,
     log_pose,
-    section_velocity_kinematics,
     twist_ad,
 )
 from ._shaft_spatial_element import tip_spatial_inertia
@@ -64,13 +64,10 @@ class SectionKinetics:
 
 def _sample_kinetics(
     sample: InertiaSample,
-    relative: np.ndarray,
+    kinematics: _SectionVelocityKinematics,
     velocity: np.ndarray,
-    relative_rate: np.ndarray,
 ) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    mapping, rate = section_velocity_kinematics(
-        relative, sample.fraction, relative_rate
-    )
+    mapping, rate = kinematics.at(sample.fraction)
     inertia = tip_spatial_inertia(sample.body)
     motion = mapping @ velocity
     mass = mapping.T @ inertia @ mapping
@@ -120,11 +117,12 @@ class SectionInertia:
         velocity = finite_array(nodal_velocity, (12,), "nodal velocity")
         relative_map, _, _ = _relative_maps(relative)
         relative_rate = relative_map @ velocity
+        kinematics = _SectionVelocityKinematics(relative, relative_rate)
         mass, bias, mass_rate = np.zeros((12, 12)), np.zeros(12), np.zeros((12, 12))
         with np.errstate(over="ignore", invalid="ignore"):
             for sample in self.samples:
                 sample_mass, sample_bias, sample_rate = _sample_kinetics(
-                    sample, relative, velocity, relative_rate
+                    sample, kinematics, velocity
                 )
                 mass += sample_mass
                 bias += sample_bias

@@ -91,6 +91,16 @@ class NormalShaftContactResponse:
 
 
 @dataclass(frozen=True)
+class ShaftBallContactResponse:
+    """Mechanical body responses before adding any contact storage or loss."""
+
+    contact: PlaneSphereKinematics
+    shaft: MovingChainResponse
+    ball: RigidBodyResponse
+    external_power_w: float
+
+
+@dataclass(frozen=True)
 class NormalShaftContact:
     """Normal-only sphere/plane composition with explicit moving grip ports.
 
@@ -165,9 +175,32 @@ class NormalShaftContact:
         contact = self.kinematics(shaft_state, ball_state)
         normal = normal_contact_work(self.law, -contact.gap_m, -contact.gap_rate_mps)
         force = normal.force_n * np.asarray(contact.normal)
+        bodies = self._body_response(
+            shaft_state, contact, force, ball_material_frame_id
+        )
+        shaft, ball = bodies.shaft, bodies.ball
+        energy = ContactEnergyBalance(
+            shaft.total_energy_j + ball.kinetic_energy_j + normal.elastic_energy_j,
+            shaft.energy_rate_w + ball.power_w + normal.elastic_power_w,
+            bodies.external_power_w,
+            shaft.anchor_power_w,
+            shaft.dissipated_power_w,
+            normal.viscous_power_w,
+            normal.cutoff_power_w,
+        )
+        return NormalShaftContactResponse(contact, normal, shaft, ball, energy)
+
+    def _body_response(
+        self,
+        shaft_state: MovingChainState,
+        contact: PlaneSphereKinematics,
+        force: np.ndarray,
+        ball_material_frame_id: str,
+    ) -> ShaftBallContactResponse:
+        """Share common-point mechanics for normal and tangential contact laws."""
         pair = contact.load_pair(force)
         ball = self.ball_inertia.response(
-            ball_state.twist,
+            contact.ball.twist,
             pair.ball_wrench,
             ball_material_frame_id,
             self.controls.scales,
@@ -177,16 +210,9 @@ class NormalShaftContact:
         )
         face_twist = np.asarray(shaft_state.twists)[self.face_node]
         face_power = float(np.asarray(pair.face_wrench) @ face_twist)
-        energy = ContactEnergyBalance(
-            shaft.total_energy_j + ball.kinetic_energy_j + normal.elastic_energy_j,
-            shaft.energy_rate_w + ball.power_w + normal.elastic_power_w,
-            shaft.applied_power_w - face_power,
-            shaft.anchor_power_w,
-            shaft.dissipated_power_w,
-            normal.viscous_power_w,
-            normal.cutoff_power_w,
+        return ShaftBallContactResponse(
+            contact, shaft, ball, shaft.applied_power_w - face_power
         )
-        return NormalShaftContactResponse(contact, normal, shaft, ball, energy)
 
 
 __all__ = ()

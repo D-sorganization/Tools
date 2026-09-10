@@ -2698,6 +2698,7 @@
           "tests/shared/python/calculators/thermo/test_steam_engine.py",
           "tests/shared/python/data_processing/test_data_processor_core.py",
           "tests/shared/python/golf_club/test_coupled_impact_audit.py",
+          "tests/shared/python/golf_club/test_friction_entry_reference.py",
           "tests/shared/python/golf_club/test_putter_head.py",
           "tests/shared/python/golf_club/test_shaft_delivery.py",
           "tests/shared/python/golf_club/test_shaft_dynamics.py",

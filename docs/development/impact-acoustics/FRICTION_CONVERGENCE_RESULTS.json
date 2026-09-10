@@ -1,0 +1,355 @@
+{
+  "schema_version": 1,
+  "governing_issue": "D-sorganization/Tools#5160",
+  "pr": 5162,
+  "implementation_commit": "4dcf1938ee49268ad3f756ea53084238eb56e2f3",
+  "predecessor_commit": "cb7219f38b436ff77ea5fb3e5de5651a6dc0e7ac",
+  "evidence_status": "synthetic-numerical-verification-only",
+  "source_hash_convention": "SHA256 of LF-normalized UTF-8 bytes",
+  "production_sources": {
+    "src/shared/python/swing_sim/impact/_friction_contact_response.py": "a3d5e56dc59620a18607eb782dc62b93f195330acb3e50a8c9b37a025bf56094",
+    "src/shared/python/swing_sim/impact/_friction_contact_step.py": "6bc7565d45914fe3de0e575181da150fe65061cbe9d3ece5b7ce0ade92425462",
+    "src/shared/python/swing_sim/impact/_friction_contact_trajectory.py": "796763ed779f229a3f65ed0008664fcfa810c6c18649683c4ac27f9d29de0132",
+    "src/shared/python/swing_sim/impact/_friction_trajectory_contracts.py": "7e044af47d86c7c284ee3a28ac97cf564f2e215490fdd55c520947174d0f324a",
+    "src/shared/python/swing_sim/impact/_friction_transport.py": "2e824f784bcb10a343eaca423dde4a1685861fafdca7367513c94e92deb23cef",
+    "src/shared/python/swing_sim/impact/_normal_contact_trajectory.py": "cdcf10778044663cac5eb5fc7334130780031e6df982389f2b840b694f2923aa",
+    "src/shared/python/swing_sim/impact/_normal_shaft_contact.py": "877a14b899bbb5633a196ab4b90260848dbe3ef40f3de677b87be9b53ad69c92"
+  },
+  "reference_and_regression_sources": {
+    "tests/shared/python/golf_club/test_friction_contact_trajectory.py": "95a9c163dd6fcd506542d212a6f26354df10ce87d418affa30092a81279470f8",
+    "tests/shared/python/golf_club/test_friction_continuous_reference.py": "dac771690b26cc235a4ed591257752c6881ea48b61d4d67d994de3d45c6401b6",
+    "tests/shared/python/golf_club/test_friction_convergence.py": "4bb891792f7c74f82c17275b2115200c34d78827117f15b646868054c44495cb",
+    "tests/shared/python/golf_club/test_friction_modes.py": "acebdbce116dee9f3b88f480741240dabcc42f0af0d14450d0b1b635394285ed",
+    "tests/shared/python/golf_club/test_friction_momentum.py": "f19022c205e0c67ce099700b344a0c9ccc050e911fe26c387ab8a4b3f8bdc432",
+    "tests/shared/python/golf_club/test_friction_refinement.py": "51b3ed68ce11697858a80981b24b223e093d875d3d64b67bbadcab35a3d38a86",
+    "tests/shared/python/golf_club/test_friction_trajectory_invariants.py": "eefcea3c378eb5acc3e0e0a1acdab2250ce10555da674a45ba1f7866ebedef1f",
+    "tests/shared/python/golf_club/test_friction_transport.py": "65b2f98f974ef02494ca30f7fac23e4964f11bafa01613a2eeb9947ef44d7658"
+  },
+  "captured_fixture": {
+    "path": "tests/fixtures/impact/friction_stagnation_v1.json",
+    "sha256_lf": "3d8a13371b2b51e9bcafb691f9c9850f7bcd500ac9850240f7dffcb87f09f103"
+  },
+  "environment": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10",
+    "numpy": "2.4.1",
+    "scipy": "1.17.0",
+    "OPENBLAS_NUM_THREADS": "1",
+    "OMP_NUM_THREADS": "1",
+    "MKL_NUM_THREADS": "1"
+  },
+  "regression_command": "python -m pytest tests/shared/python/golf_club/test_friction_contact_trajectory.py tests/shared/python/golf_club/test_friction_transport.py tests/shared/python/golf_club/test_friction_refinement.py tests/shared/python/golf_club/test_friction_trajectory_invariants.py tests/shared/python/golf_club/test_friction_modes.py tests/shared/python/golf_club/test_friction_momentum.py tests/shared/python/golf_club/test_normal_shaft_contact.py tests/shared/python/golf_club/test_normal_contact_trajectory.py tests/shared/python/golf_club/test_shaft_load_history.py src/shared/python/swing_sim/impact/tests tests/test_shared_package_api_stability.py tests/shared/python/golf_club/test_friction_convergence.py -o addopts= -o junit_family=legacy -q",
+  "regression": {
+    "artifact": "impact-friction-residual-full.xml",
+    "sha256": "4f4abf4ec4c2a4c827217a06250fb68c89f2c38dc930965fa2beef7db0c49c57",
+    "summary": {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "258",
+      "time": "93.998",
+      "timestamp": "2026-09-10T01:23:44.665949-07:00",
+      "hostname": "OGLaptop"
+    },
+    "properties": {
+      "test_first_order_motion_refines_against_independent_matrix_exponential": {
+        "first_order_matrix_exponential_errors": [
+          0.0006572839438004125, 0.00030220548211523966, 0.00014443910314305508
+        ],
+        "independent_normal_force_errors_n": [
+          0.14603145734366407, 0.07337147261835852, 0.03677041896709454
+        ],
+        "independent_work_errors_j": [
+          6.7964265997659425e-6, 3.4686710939883634e-6, 1.7520092911221977e-6
+        ]
+      },
+      "test_complete_frictional_compression_release_refines_motion_and_work[0.0]": {
+        "friction_release_refinement": {
+          "outputs": [
+            [
+              0.2855274639026602, -3.9515381917222107e-35, -0.2626531408422141,
+              -9.54243302060356e-33, 1.7365496363737372,
+              -1.9416855269143545e-35, 0.006280758470557195,
+              -0.0006997262193583761, -1.576241798775564e-39,
+              4.990452126123248e-10
+            ],
+            [
+              0.2850889386940129, 2.3198362299139214e-36, -0.25593177708425213,
+              1.8343813922749903e-34, 1.7830496248881418,
+              2.7113720452416058e-37, 0.0065905517303381875,
+              -0.0007186768469309959, -2.723968320730697e-41,
+              4.721097723914973e-10
+            ],
+            [
+              0.28485688318777663, 2.3812119849246014e-40, -0.2524736736814338,
+              -1.3069115816307082e-36, 1.8077188487163613,
+              -1.9127230421200406e-39, 0.006749941927950184,
+              -0.0007287336417565278, 1.2535036126294976e-42,
+              4.59254383438213e-10
+            ]
+          ],
+          "scaled_differences": [0.03176311006387682, 0.016344324034126674],
+          "mechanical_defect_j": [
+            0.0009435293488593317, 0.00047909354122109755,
+            0.00024145388121395904
+          ],
+          "tangential_algorithmic_loss_j": [
+            4.435416538115529e-5, 2.2901774023171437e-5, 1.2182465896440332e-5
+          ]
+        }
+      },
+      "test_complete_frictional_compression_release_refines_motion_and_work[0.0001]": {
+        "friction_release_refinement": {
+          "outputs": [
+            [
+              0.2882017073855837, 2.8014370731863436e-34, -0.3108070039597281,
+              3.364547739044668e-32, 1.423818230400104, 3.1397026421030634e-35,
+              0.004075129407083865, -0.0005725348745332059,
+              -1.1003034997919565e-38, 2.919512482235759e-10
+            ],
+            [
+              0.2881945246003172, -1.277281856702291e-36, -0.30520170255024703,
+              -9.624085849113089e-35, 1.4181187950225085,
+              -1.0480056863921587e-37, 0.0043348314099646255,
+              -0.0005704369605882915, 8.438246593626218e-42,
+              2.5721511499501553e-10
+            ],
+            [
+              0.2879764112027836, 2.0070548241516208e-38, -0.30230500652866865,
+              9.411217760193043e-37, 1.4417118494790877, 1.2326808412343971e-39,
+              0.004468328669631469, -0.0005800099489242992,
+              -5.146680061011241e-43, 2.5177899461226385e-10
+            ]
+          ],
+          "scaled_differences": [0.026569117773684106, 0.013697652680654832],
+          "mechanical_defect_j": [
+            0.0008650170493705703, 0.00043847581119331957, 0.0002204548028704448
+          ],
+          "tangential_algorithmic_loss_j": [
+            3.0420326364807758e-5, 1.728243929894013e-5, 8.870880545730511e-6
+          ]
+        }
+      },
+      "test_time_discrete_total_momentum_defect_decreases_with_refinement": {
+        "scaled_momentum_defects": [
+          4.823485428825124e-7, 2.388998891176375e-7, 1.1908523195110893e-7
+        ]
+      },
+      "test_compressive_contact_refines_against_independent_motion_and_work": {
+        "study": {
+          "steps": [4, 8, 16],
+          "state_errors": [
+            6.3535276649048e-8, 3.933354540740781e-9, 2.4457189710350187e-10
+          ],
+          "work_expected_j": [
+            -4.410677351296505e-5, 0.0017511107850834101, 2.970041805618471e-6,
+            3.6124940593011954e-5, 0.0
+          ],
+          "work_observed_j": [
+            -4.410677349808495e-5, 0.0017511107848479886, 2.970041759433392e-6,
+            3.612493814152433e-5, 0.0
+          ],
+          "energy_balance_error_j": -1.4297255125140552e-13
+        }
+      },
+      "test_prescribed_force_contact_motion_and_work_have_independent_refinement": {
+        "load_history_study": {
+          "end_s": 0.0004,
+          "rk4_steps": [4, 8, 16],
+          "state_errors": [
+            6.31192355480727e-8, 3.9068763297861685e-9, 2.42874589285822e-10
+          ],
+          "expected_state": [
+            0.010097873223726198, 0.029937231227950323, 0.028876876305982464,
+            0.28911199056940573, -0.21376646484520623, -0.21516886024423787
+          ],
+          "baseline_state": [
+            0.010097956027571601, 0.029936990323552903, 0.028876873001719934,
+            0.2895557876169995, -0.2150598200755489, -0.21519768132366845
+          ],
+          "expected_work_j": [
+            -7.647719101504499e-5, 0.0017470644967198152, 2.983079629446902e-6,
+            3.6263775478567e-5, 0.0
+          ],
+          "observed_work_j": [
+            -7.647719091671705e-5, 0.001747064496485969, 2.983079584040566e-6,
+            3.626377305278279e-5, 0.0
+          ],
+          "energy_defect_j": -1.4794493534848454e-13,
+          "qualification": "synthetic-prescribed-load-only"
+        }
+      }
+    }
+  },
+  "new_reference_and_regression_command": "python -m pytest tests/shared/python/golf_club/test_friction_continuous_reference.py tests/shared/python/golf_club/test_friction_convergence.py -o addopts= -o junit_family=legacy -q",
+  "new_reference_and_regression": {
+    "artifact": "impact-friction-residual-new-final.xml",
+    "sha256": "ec07fa19490157049571385debf258f964faf29a056fdce3104b708a967013de",
+    "summary": {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "7",
+      "time": "10.330",
+      "timestamp": "2026-09-10T01:39:25.467044-07:00",
+      "hostname": "OGLaptop"
+    },
+    "properties": {
+      "test_nonlinear_sticking_refines_against_independent_continuous_history[ContactTransport.FACE]": {
+        "continuous_sticking_errors": [
+          0.00038841221355618725, 0.00019419259591279373, 9.709328473500561e-5
+        ]
+      },
+      "test_nonlinear_sticking_refines_against_independent_continuous_history[ContactTransport.MEAN_NORMAL_SPIN]": {
+        "continuous_sticking_errors": [
+          0.0003861418037541124, 0.00019305725915235117, 9.652558849363983e-5
+        ]
+      }
+    }
+  },
+  "red_captured_state": {
+    "artifact": "impact-friction-convergence-red.xml",
+    "sha256": "8b8471e2b4c927f0f96a679f294bff22d13b8e88b8079a0f1d0edb230c284d7d",
+    "summary": {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "1",
+      "skipped": "0",
+      "tests": "4",
+      "time": "3.283",
+      "timestamp": "2026-09-10T01:20:02.381080-07:00",
+      "hostname": "OGLaptop"
+    },
+    "properties": {}
+  },
+  "red_convergence_contract": {
+    "artifact": "impact-friction-convergence-contract-red.xml",
+    "sha256": "1763681dff7b328a80077339aa299a3db110b9a1f1e21d4b1213b2d31e87d0c3",
+    "summary": {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "1",
+      "skipped": "0",
+      "tests": "1",
+      "time": "3.622",
+      "timestamp": "2026-09-10T01:20:56.598221-07:00",
+      "hostname": "OGLaptop"
+    },
+    "properties": {}
+  },
+  "finer_grids": {
+    "factory": "tests.shared.python.golf_club.test_friction_refinement._release_start(0.0001)",
+    "bounds_s": [0, 0.003],
+    "steps": [240, 480, 960, 1920],
+    "max_evaluations": 60000,
+    "max_step_evaluations": 150,
+    "scaled_residual_tolerance": 1e-10,
+    "results": [
+      {
+        "steps": 240,
+        "seconds": 29.593999999997322,
+        "ball_twist": [
+          0.28797663488356284, 2.151624043356626e-40, -0.3008130508356371,
+          1.0284607326879838e-40, 1.4400452942464521, 1.7130419158201838e-43
+        ],
+        "normal_impulse_ns": 0.004537434730702019,
+        "tangential_impulse_ns": [
+          -0.0005793898388387743, -3.3034786363544475e-45,
+          2.4414538737924865e-10
+        ],
+        "mechanical_defect_j": -0.00011061583390715788,
+        "algorithmic_j": 4.519417213824919e-6,
+        "evaluations": 5938,
+        "convergence_counts": {
+          "initial": 1,
+          "roundoff-residual": 240
+        },
+        "max_residual": 2.166683174022188e-16
+      },
+      {
+        "steps": 480,
+        "seconds": 62.09399999999732,
+        "ball_twist": [
+          0.2879205923147638, -4.1396476071379447e-38, -0.3000695136789103,
+          -4.909163258411998e-36, 1.4461078035703276, -8.810555878364965e-39
+        ],
+        "normal_impulse_ns": 0.004571703165991037,
+        "tangential_impulse_ns": [
+          -0.0005818502447132127, -1.9735530899910024e-39,
+          2.4288273483089887e-10
+        ],
+        "mechanical_defect_j": -5.539443806912959e-5,
+        "algorithmic_j": 2.2991053151174966e-6,
+        "evaluations": 11754,
+        "convergence_counts": {
+          "initial": 1,
+          "roundoff-residual": 480
+        },
+        "max_residual": 2.2185486954484634e-16
+      },
+      {
+        "steps": 960,
+        "seconds": 121.01600000000326,
+        "ball_twist": [
+          0.2879206221771788, 1.5039774619540048e-34, -0.29969085199988105,
+          -7.764053778220204e-36, 1.4456943844705072, -8.269544953402102e-39
+        ],
+        "normal_impulse_ns": 0.00458924108979494,
+        "tangential_impulse_ns": [
+          -0.0005816966212447691, -3.1218229308292455e-39,
+          2.4104050611073456e-10
+        ],
+        "mechanical_defect_j": -2.7720634316806372e-5,
+        "algorithmic_j": 1.1524867093804941e-6,
+        "evaluations": 23110,
+        "convergence_counts": {
+          "initial": 1,
+          "roundoff-residual": 960
+        },
+        "max_residual": 2.1898281798993224e-16
+      },
+      {
+        "steps": 1920,
+        "seconds": 228.42200000000594,
+        "ball_twist": [
+          0.28792066691334206, -1.0276423352989082e-35, -0.2995011958988452,
+          8.109643671405148e-36, 1.445484446000315, 1.6233102303922167e-38
+        ],
+        "normal_impulse_ns": 0.004598025015705019,
+        "tangential_impulse_ns": [
+          -0.000581618523942066, 3.261602610010374e-39, 2.401240886316812e-10
+        ],
+        "mechanical_defect_j": -1.3866183972103826e-5,
+        "algorithmic_j": 5.778969645977795e-7,
+        "evaluations": 46084,
+        "convergence_counts": {
+          "initial": 1,
+          "roundoff-residual": 1920
+        },
+        "max_residual": 2.0878264395118862e-16
+      }
+    ],
+    "observed_spin_difference_ratio": 1.9692393654274831
+  },
+  "reproduction": "From repository root with PYTHONPATH=src;src/shared/python;. on Windows (colon separators on POSIX), import _release_start from the named test module and FrictionTrajectoryControls, integrate_friction_contact from shared.python.swing_sim.impact._friction_contact_trajectory. For each declared steps value, reconstruct problem, initial = _release_start(0.0001), then call integrate_friction_contact(problem, initial, FrictionTrajectoryControls((0, 0.003), steps, 60000, 150, 1e-10)). Use a fresh initial state for every run. Read final ball twist, normal/tangential impulses, energy_balance_error_j, tangential_algorithmic_loss_j and trajectory evaluation_count; count sample.convergence.reason and maximum scaled_solver_residual.",
+  "limits": [
+    "Near-roundoff stop is not a rigorous floating-point backward-error bound, time error bound or physical qualification.",
+    "Backend failure is still refused; both actual convergence routes require a fresh budgeted mechanical residual.",
+    "Smooth continuous sticking reference shares canonical mechanical/force/chart kernels but independently integrates history and time. It does not qualify sliding.",
+    "All earlier nonmonotone spin and solver failures remain in FRICTION_RESULTS.json with their original source identities.",
+    "Latest three spin differences support first-order behavior only for this synthetic case; tangential linear-speed differences remain non-asymptotic.",
+    "General mode/mesh/grazing/repeated-event convergence, material calibration, acoustic radiation and blinded sweetness remain open.",
+    "These standalone finer-grid runs use an explicitly declared larger total budget; no regression deadline or per-step limit changes."
+  ],
+  "prior_hosted_failure": {
+    "head": "cb7219f38b436ff77ea5fb3e5de5651a6dc0e7ac",
+    "job": 102797151274,
+    "run": 34454234859,
+    "python": "3.11.16",
+    "test": "test_complete_frictional_compression_release_refines_motion_and_work[0.0]",
+    "result": "60-second timeout in canonical expm_frechet via inertia/Jacobian evaluation; no repaired-source hosted result claimed",
+    "log_sha256": "39b1d9d5c99d6a6ff92a52c8affffdb3195e34d7a54cd19066f38a2a76d32a0d"
+  }
+}

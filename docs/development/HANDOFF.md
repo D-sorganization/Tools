@@ -1,3 +1,102 @@
+# Impact Program Handoff Checkpoint — 2026-09-10
+
+- Repository/worktree: Tools, C:/Users/diete/Repositories/Tools-impact-friction.
+  Branch feat/5073-friction-trajectory; checkpoint SELF; PR #5162 targets main
+  after integration. Governing child #5160, parent #5073 and program #5068.
+- Integrated main d4ab52a926cbd74d10b881a700c0c4f12f89728f with published
+  ef796bf327386f2f4db0105c42fd039ef2869feb. Shared normal-contact helpers and
+  API inventory retain both friction and main calibration additions. Peer
+  workflow, context, mocap and camera changes are preserved from main.
+- Integrated regression: 1657 passed, two optional build123d CAD skips in
+  716.72 s; 93.80% coverage, unchanged 20% floor and 60 s test deadline.
+  impact-acoustics/CHECKPOINT_INTEGRATION_RESULTS.json binds exact source,
+  command, JUnit and coverage hashes. Hosted checks and merge remain pending
+  at this checkpoint; inspect https://github.com/D-sorganization/Tools/pull/5162.
+- The bounded SE(3) Jacobian evaluator retains its general fallback and
+  independent exponential oracle. JACOBIAN_POLYNOMIAL.md and RESULTS.json
+  retain derivation, RED/green sequence, rejected experiments and separately
+  identified earlier test runs. No physical law, tolerance or grid was relaxed.
+- Merged foundations: #5146 (5ccabd2e41d9aedc94b49f4701d453619617fee0),
+  #5149 (e9918d27f820e81e182935b52243c009996a81db),
+  #5152 (8011e90dd0e233b9a56e8a63ce6e0104945788b7),
+  #5154 (4ee00e3c5547c2fc9aa20face82c352a23b6938d),
+  #5156 (04332125bb151b14ad6bdcd2e1b742fff52f6149),
+  #5159 (90a5c9dc31054d3ac8c39c42b152f57238871c24).
+  Affine force-regularity #4356 merged963867d7 after all 15 checks passed.
+  Turnover reviews: Affine #4361 and UpstreamDrift #9962.
+- UpstreamDrift #9916/#9920 are merged. Its current main Python/Rust/gitlink
+  provider is e83bd2e4a7a29a2dcd8145ef2d1efa07123324f0. Coordinate the next
+  reviewed combined pin with context/capture owners and qualify exact consumer
+  contracts, wheel and installed runtime. Do not alter installed CaptureRig.
+- Source audit: older Tools and Upstream impact worktrees had no uncommitted
+  implementation. Affine impact-acoustics, impact-damping and impact-grip-review
+  retain generated site output only; preserve it without committing rendered
+  copies as new source. Current integration is the only implementation pending
+  publication at the audit. No worktree or branch deletion is needed for handoff.
+
+## Final Merge Blocker and Handoff
+
+- All implementation is committed and published at d4323c14ad364640b3f371ba8bed606ab958c990;
+  this turnover-only continuation is SELF. PR #5162 remains OPEN with
+  do-not-merge and auto-merge disabled. Do not treat the successful manual run
+  as proof that PR-hosted runtime is reliable.
+- Manual Standard34496105215 passed all14 Python shards, both aggregates and
+  quality-gate. Shared3.11/3.12 jobs102934882410/102934882320 each passed1334
+  tests with2 optional skips in412.18/677.55s.
+- PR Standard34496053564 attempt2 failed Python3.12 shared job102940510943
+  at the unchanged60s limit while running
+  test_production_entry_refines_separate_velocity_spin_impulse_and_work[60].
+  The log prints a PASSED marker during the timeout stack; the process exits1.
+  The interrupted case/result must not be counted as a completed pass. This
+  contrasts with the manual run; runner variance is a hypothesis, not a cause.
+- The same PR attempt also failed Python3.11 shared job102940510985 at60s
+  in test_production_entry_refines_separate_velocity_spin_impulse_and_work[240].
+  Its log exits1; TEMP/impact-d432-pr-shared311-failure.log retains the output.
+  Both observed failures require investigation before merge.
+- The original duplicate PR run was canceled while the manual run continued;
+  attempt2 restored required PR check contexts and exposed the timeout. No
+  numerical repair or test-limit change was made between these runs.
+- Next agent: inspect the linked failed job/log, compare exact checkout trees,
+  environment and per-test cost; reproduce and profile before changing code.
+  Require new TDD evidence for any optimization, retain independent mechanics
+  controls and60s limit, and qualify the exact final PR head. Remove the hold
+  only when the observed failure is addressed; no blind retry as a repair.
+- Affine turnover #4361 is MERGED f4a76f012305a921143f694a1d38d5d1ff571eeb;
+  Upstream turnover #9962 is MERGED5fb38430cf97cc33a8d071f7b8ad7784e0309687.
+  Their program issues record these merges. The user requested a takeover
+  checkpoint; no further scientific implementation is being started here.
+- Local log: TEMP/impact-d432-pr-shared312-failure.log; durable source:
+  https://github.com/D-sorganization/Tools/actions/runs/34496053564/job/102940510943.
+  Passing source/run details are on PR5162 comment5621436009. Both passing and
+  failing outcomes must accompany future performance and scientific claims.
+
+## Ordered Takeover
+
+1. Read this canonical handoff and the live PR states. Fetch main into a clean
+   isolated worktree; inspect policy, existing capability inventory, issue
+   claims and presence inbox before editing. Do not reopen merged foundations.
+2. Finish exact-head hosted qualification/merge of #5162 if still open. Retain
+   original numerical tolerances and deadline; investigate any observed failure
+   at its actual source. Earlier runs34464371054 and34471450139 failed at older
+   sources and do not qualify or invalidate the integrated source by themselves.
+3. Continue #5073 with event-resolved force peaks and work. Elastic entry lasts
+   about2.99 microseconds, shorter than production steps. Cutoff-work convergence
+   is nonmonotone; the1e-4 J absolute bound exceeds about9.17e-6 J cutoff energy.
+   Endpoint agreement does not establish useful relative work accuracy.
+4. Extend independent controls to reversal, nonplanar sliding and recontact;
+   establish spatial/modal convergence and driven/nonlinear stability. Use TDD,
+   explicit contracts, canonical shared mechanics and independent references.
+5. Complete #5072/#5074/#5075 and downstream studies with measured shaft/grip/
+   contact parameters, uncertainty, bandwidth and calibrated acoustic transfer.
+   Separate force spectrum, radiated pressure and perceived sweetness. Run
+   controlled blinded perception before player-dependent sound claims.
+6. Update Affine #4255 synthesis only from reviewed numerical/physical evidence.
+   All program epics remain open. Existing publication approval blockers and
+   protected authority/recovery restrictions remain; synthetic tests are not
+   empirical validation. See PROGRESS.md for the full retained requirement matrix.
+
+## Preserved Incoming Turnover
+
 # Linear Reference Scale #5168
 
 - Worktree: `Worktrees/Tools-calibration-numerics`; branch `feat/5168-linear-reference-scale`, based on main `2c3ab05e7`.

@@ -8,7 +8,10 @@ dynamic tangent. The principal relative rotation must remain below pi.
 
 from __future__ import annotations
 
+from math import factorial
+
 import numpy as np
+from numpy.polynomial.polynomial import polyder, polyval
 from scipy.linalg import expm, expm_frechet
 from scipy.spatial.transform import Rotation
 
@@ -18,6 +21,31 @@ from ._validation import require_finite_float, require_rotation
 
 # A numerical chart guard, not an allowable material rotation/strain claim.
 _LOG_BRANCH_MARGIN_RAD = 1e-6
+_POLYNOMIAL_NORM_LIMIT = 4.0
+_COEFFICIENT_DEGREE = 18
+
+
+def _coefficient_term(order: int) -> tuple[float, float, float, float]:
+    """Taylor coefficients of the four SE(3) Hermite coefficient functions."""
+    sign = (-1.0) ** order
+    return (
+        sign * (1 - order) / factorial(2 * order + 2),
+        sign * (1 - order) / factorial(2 * order + 3),
+        sign * (1 + order) / factorial(2 * order + 4),
+        sign * (1 + order) / factorial(2 * order + 5),
+    )
+
+
+_COEFFICIENTS = np.array(
+    [_coefficient_term(order) for order in range(_COEFFICIENT_DEGREE + 1)]
+)
+_COEFFICIENTS_AND_RATES = np.column_stack(
+    (
+        _COEFFICIENTS,
+        np.vstack((polyder(_COEFFICIENTS), np.zeros(4))),
+    )
+)
+_COEFFICIENTS_AND_RATES.setflags(write=False)
 
 
 def _rotation_chart(vector: np.ndarray) -> None:
@@ -62,14 +90,15 @@ def right_jacobian(value: object) -> np.ndarray:
 def right_jacobian_derivative(value: object, direction: object) -> np.ndarray:
     """Differentiate the right Jacobian without differencing or angle cutoffs.
 
-    The upper block of the matrix-exponential Frechet derivative differentiates
-    the integral defining phi_1. SciPy uses scaling, Pade and squaring.
+    A zero direction has exactly zero derivative after validating both inputs.
+    Otherwise share the bounded SE(3) evaluator and its general fallback.
     """
-    generator = _phi1_generator(-twist_ad(value))
-    derivative = np.zeros_like(generator)
-    derivative[:6, :6] = -twist_ad(direction)
-    result = expm_frechet(generator, derivative, compute_expm=False)
-    return finite_array(result[:6, 6:], (6, 6), "right Jacobian derivative")
+    twist = finite_array(value, (6,), "section twist")
+    variation = finite_array(direction, (6,), "section twist direction")
+    if not np.any(variation):
+        return np.zeros((6, 6))
+    result = _jacobian_pair(twist, variation)[1]
+    return finite_array(result, (6, 6), "right Jacobian derivative")
 
 
 def _rigid_pose(value: object) -> np.ndarray:
@@ -117,9 +146,14 @@ def _material_fraction(value: object) -> float:
 
 
 def _relative_maps(relative: np.ndarray) -> tuple[np.ndarray, np.ndarray, np.ndarray]:
-    """Return the relative-log derivative and its left/right inverse Jacobians."""
-    left = np.linalg.solve(right_jacobian(-relative), np.eye(6))
+    """Return relative-log rates using Jr^-1 - Jl^-1 = ad(relative).
+
+    With A=ad(relative), phi1(-A)=exp(-A) phi1(A), so the inverse
+    difference is phi1(A)^-1 (exp(A)-I)=A, including singular A by
+    analytic continuation. No inversion of A or angular cutoff is needed.
+    """
     right = np.linalg.solve(right_jacobian(relative), np.eye(6))
+    left = right - twist_ad(relative)
     return np.hstack((-left, right)), left, right
 
 
@@ -153,21 +187,120 @@ def section_velocity_map_derivative(
     """Differentiate Q with respect to its relative logarithm in one direction.
 
     Direction is d_dot or a relative-log variation, not an unconverted nodal
-    material velocity. Matrix-exponential Frechet derivatives retain zero and
+    material velocity. Analytic matrix-function derivatives retain zero and
     tiny rotations; no finite differences or imposed symmetry are used.
     """
     return section_velocity_kinematics(relative, fraction, direction)[1]
 
 
+def _weighted_powers(
+    coefficients: np.ndarray, powers: tuple[np.ndarray, ...]
+) -> np.ndarray:
+    """Combine the four terms of the same matrix polynomial or its variation."""
+    result: np.ndarray = (
+        coefficients[0] * powers[0]
+        + coefficients[1] * powers[1]
+        + coefficients[2] * powers[2]
+        + coefficients[3] * powers[3]
+    )
+    return result
+
+
+def _polynomial_jacobian_pair(
+    twist: np.ndarray, direction: np.ndarray
+) -> tuple[np.ndarray, np.ndarray] | None:
+    """Use the SE(3) degree-four Hermite form with stable scalar coefficients.
+
+    The matrix minimal polynomial divides x*(x*x+theta*theta)**2. The scalar
+    coefficient series and their derivatives are evaluated through degree 18
+    in theta**2, without small-angle divisions. Qualified numerical domain:
+    ||ad(twist)||_inf <= 4 in the declared SI coordinates, theta <= pi.
+    Return None outside it; no physical/chart limit is relaxed. Inputs are
+    finite real six-vectors; outputs are fresh and inputs are not modified.
+    """
+    matrix, change = -twist_ad(twist), -twist_ad(direction)
+    angle_squared = float(np.dot(twist[3:], twist[3:]))
+    if (
+        np.linalg.norm(matrix, ord=np.inf) > _POLYNOMIAL_NORM_LIMIT
+        or angle_squared > np.pi**2
+    ):
+        return None
+    values = polyval(angle_squared, _COEFFICIENTS_AND_RATES)
+    coefficients = values[:4]
+    rates = values[4:] * (2 * np.dot(twist[3:], direction[3:]))
+    square = matrix @ matrix
+    cube = square @ matrix
+    fourth = cube @ matrix
+    square_rate = change @ matrix + matrix @ change
+    cube_rate = square_rate @ matrix + square @ change
+    fourth_rate = cube_rate @ matrix + cube @ change
+    powers = matrix, square, cube, fourth
+    changes = change, square_rate, cube_rate, fourth_rate
+    return (
+        np.eye(6) + _weighted_powers(coefficients, powers),
+        _weighted_powers(rates, powers) + _weighted_powers(coefficients, changes),
+    )
+
+
 def _jacobian_pair(
     twist: np.ndarray, direction: np.ndarray
 ) -> tuple[np.ndarray, np.ndarray]:
-    """Reuse the exponential already computed by the Frechet algorithm."""
+    """Use bounded SE(3) evaluation or the original general Frechet routine."""
+    polynomial = _polynomial_jacobian_pair(twist, direction)
+    if polynomial is not None:
+        return polynomial
     generator = _phi1_generator(-twist_ad(twist))
     variation = np.zeros_like(generator)
     variation[:6, :6] = -twist_ad(direction)
     exponential, derivative = expm_frechet(generator, variation, compute_expm=True)
     return exponential[:6, 6:], derivative[:6, 6:]
+
+
+class _SectionVelocityKinematics:
+    """Own one section state and lazily reuse its full Frechet pair.
+
+    This object belongs to one evaluation, never a global or cross-state cache.
+    Relative pose and direction are copied; each fraction returns fresh arrays.
+    Endpoint-only quadrature still needs no exponential.
+    """
+
+    def __init__(self, relative: object, direction: object) -> None:
+        self._twist = finite_array(relative, (6,), "relative section twist")
+        _rotation_chart(self._twist[3:])
+        self._direction = finite_array(direction, (6,), "relative twist direction")
+        self._twist.setflags(write=False)
+        self._direction.setflags(write=False)
+        self._prepared: tuple[np.ndarray, np.ndarray] | None = None
+
+    def _matrices(self) -> tuple[np.ndarray, np.ndarray]:
+        if self._prepared is None:
+            full, full_rate = _jacobian_pair(self._twist, self._direction)
+            inverse = np.linalg.solve(full, np.eye(6))
+            inverse.setflags(write=False)
+            full_rate.setflags(write=False)
+            self._prepared = inverse, full_rate
+        return self._prepared
+
+    def at(self, fraction: object) -> tuple[np.ndarray, np.ndarray]:
+        """Evaluate one validated material fraction with the original algebra."""
+        coordinate = _material_fraction(fraction)
+        if coordinate in (0.0, 1.0):
+            mapping = np.zeros((6, 12))
+            start = 6 * int(coordinate)
+            mapping[:, start : start + 6] = np.eye(6)
+            return mapping, np.zeros((6, 12))
+        inverse, full_rate = self._matrices()
+        part, part_rate = _jacobian_pair(
+            coordinate * self._twist, coordinate * self._direction
+        )
+        right = coordinate * part @ inverse
+        derivative = coordinate * (part_rate - part @ inverse @ full_rate) @ inverse
+        mapping = np.hstack((np.eye(6) - right, right))
+        rate = np.hstack((-derivative, derivative))
+        return (
+            finite_array(mapping, (6, 12), "section velocity map"),
+            finite_array(rate, (6, 12), "section velocity-map derivative"),
+        )
 
 
 def section_velocity_kinematics(
@@ -178,28 +311,11 @@ def section_velocity_kinematics(
     This is the same interpolation as the individual map/derivative routines.
     Exact endpoint identities avoid matrix exponentials. All input and output
     domains remain checked, including endpoint directions and chart limits.
-    No state cache, angle cutoff, finite difference or coefficient change occurs.
+    No cross-evaluation cache, angle cutoff, finite difference or coefficient
+    change occurs. Inertia quadrature reuses the same private kernel across
+    fractions within one evaluation.
     """
-    twist = finite_array(relative, (6,), "relative section twist")
-    _rotation_chart(twist[3:])
-    coordinate = _material_fraction(fraction)
-    delta = finite_array(direction, (6,), "relative twist direction")
-    if coordinate in (0.0, 1.0):
-        mapping = np.zeros((6, 12))
-        start = 6 * int(coordinate)
-        mapping[:, start : start + 6] = np.eye(6)
-        return mapping, np.zeros((6, 12))
-    full, full_rate = _jacobian_pair(twist, delta)
-    part, part_rate = _jacobian_pair(coordinate * twist, coordinate * delta)
-    inverse = np.linalg.solve(full, np.eye(6))
-    right = coordinate * part @ inverse
-    derivative = coordinate * (part_rate - part @ inverse @ full_rate) @ inverse
-    mapping = np.hstack((np.eye(6) - right, right))
-    rate = np.hstack((-derivative, derivative))
-    return (
-        finite_array(mapping, (6, 12), "section velocity map"),
-        finite_array(rate, (6, 12), "section velocity-map derivative"),
-    )
+    return _SectionVelocityKinematics(relative, direction).at(fraction)
 
 
 def interpolate_pose(left: object, right: object, fraction: object) -> np.ndarray:
