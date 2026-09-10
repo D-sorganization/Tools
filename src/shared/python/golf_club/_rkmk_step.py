@@ -50,6 +50,21 @@ def _velocities(model: RkmkStepModel[_State, _Response], state: _State) -> np.nd
     return finite_array(value, shape, "material velocities")
 
 
+def material_chart_rates(coordinates: np.ndarray, velocities: np.ndarray) -> np.ndarray:
+    """Use the canonical body differential for finite, matching six-axis rows."""
+    shape = velocities.shape
+    if len(shape) != 2 or shape[1] != 6 or shape[0] < 1:
+        raise ValueError("material chart needs one six-axis row per pose")
+    coordinates = finite_array(coordinates, shape, "chart coordinates")
+    velocities = finite_array(velocities, shape, "material velocities")
+    return np.array(
+        [
+            np.linalg.solve(right_jacobian(coordinate), velocity)
+            for coordinate, velocity in zip(coordinates, velocities, strict=True)
+        ]
+    )
+
+
 def _stage(
     model: RkmkStepModel[_State, _Response],
     initial: _State,
@@ -60,12 +75,7 @@ def _stage(
     velocities = _velocities(model, initial) + velocity_change
     state = model.shift(initial, coordinates, velocities)
     response = model.evaluate(state, time_s)
-    chart_rate = np.array(
-        [
-            np.linalg.solve(right_jacobian(coordinate), velocity)
-            for coordinate, velocity in zip(coordinates, velocities, strict=True)
-        ]
-    )
+    chart_rate = material_chart_rates(coordinates, velocities)
     acceleration = finite_array(model.rates(response), velocities.shape, "acceleration")
     return _Stage(chart_rate, acceleration, response)
 

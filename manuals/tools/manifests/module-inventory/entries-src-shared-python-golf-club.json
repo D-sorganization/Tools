@@ -1284,10 +1284,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 4554,
+      "bytes_lf": 5089,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "9e06e8b919a337eb5f26aaf657b56470fa1caa90f2006a231c83759c3798e4b5",
+      "content_sha256_lf": "8a0e6918c90aa9465767a6f4be11211c7f77a50a4d489cd27b44314fc4bd247a",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-RKMK-STEP-PY-DF89463261C5",
       "language": "python",

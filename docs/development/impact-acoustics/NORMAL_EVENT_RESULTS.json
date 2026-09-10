@@ -1,0 +1,162 @@
+{
+  "parent_issue": 5073,
+  "review_issue": 5151,
+  "review_pr": null,
+  "temporal_foundation_pr": 5149,
+  "foundation_pr": 5146,
+  "base_commit": "37e322611",
+  "source": {
+    "tree": "4e1b198104dd82634c1eeecc0f1805c998299227",
+    "bytes": 90624000,
+    "sha256": "125fe3e89298871120c629f94441ba590f013ec43c02c03fce5a6b40535466f7"
+  },
+  "tdd": {
+    "missing_module_red": {
+      "tests": 1,
+      "errors": 1,
+      "failures": 0,
+      "skipped": 0,
+      "seconds": 1.981,
+      "sha256": "0730d00b6e779f704ee98caef317eb9a7c056c2801fec8c90a7a2d0b0988a4df"
+    },
+    "dense_work_interpolation_red": {
+      "tests": 7,
+      "errors": 0,
+      "failures": 1,
+      "skipped": 0,
+      "seconds": 14.33,
+      "sha256": "ad9d805ca2d3fff4f79b16498c5ddfbd4601f8a2307bb2f6713311d4caa0a1de"
+    },
+    "initial_green": {
+      "tests": 7,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "seconds": 51.628,
+      "sha256": "24e4e9ed8f296e3b31ec54791523290f229f293602ff1f3ad0ee285907deafaa"
+    },
+    "expanded_before_final_refactor": {
+      "tests": 52,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "seconds": 49.856,
+      "sha256": "6826a15e398c77a87f4b2fde75f22bf5529cf939c6e87533b38b4d0dbed95b1b",
+      "independent_study": {
+        "state_errors": [
+          6.172531028301231e-6, 3.6254594560561515e-10, 2.5078065908962583e-11
+        ],
+        "reference_event_times_s": [
+          0.00036730364778992384, 0.0025853957722836306, 0.0027286597634365553
+        ],
+        "observed_event_times_s": [
+          0.0003673036477904338, 0.002585395773492767, 0.0027286597646520704
+        ],
+        "reference_work_j": [
+          -0.0007030514181769303, 0.011939386153750679, 0.00026763994425655605,
+          0.0001233225517429504, 9.169233167694684e-6
+        ],
+        "observed_work_j": [
+          -0.000703051418136225, 0.011939386153781172, 0.0002676399442538716,
+          0.0001233225564217673, 9.169223414322863e-6
+        ],
+        "energy_balance_error_j": -3.442887922184331e-12,
+        "evaluation_count": 1678
+      }
+    },
+    "api_red": {
+      "tests": 2,
+      "errors": 0,
+      "failures": 1,
+      "skipped": 0,
+      "seconds": 7.045,
+      "sha256": "9e09b7f91e8e92c7e5f22fcd51671aab955b4d09a0bd1f4e738fac851f85c7a5"
+    },
+    "api_green": {
+      "tests": 2,
+      "errors": 0,
+      "failures": 0,
+      "skipped": 0,
+      "seconds": 5.52,
+      "sha256": "cc46a02f50ba19815dce2f74004abdb7cbfcc46f819d4bcd02daf89ecdbe47a3"
+    }
+  },
+  "windows": {
+    "tests": 386,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "seconds": 295.035,
+    "sha256": "1c96899e5a1b9173b2b36d6c559f71b101500d49141b4f346ab215e243560c17",
+    "independent_study": {
+      "state_errors": [
+        6.172531028301231e-6, 3.6254594560561515e-10, 2.5078065908962583e-11
+      ],
+      "reference_event_times_s": [
+        0.00036730364778992384, 0.0025853957722836306, 0.0027286597634365553
+      ],
+      "observed_event_times_s": [
+        0.0003673036477904338, 0.002585395773492767, 0.0027286597646520704
+      ],
+      "reference_work_j": [
+        -0.0007030514181769303, 0.011939386153750679, 0.00026763994425655605,
+        0.0001233225517429504, 9.169233167694684e-6
+      ],
+      "observed_work_j": [
+        -0.000703051418136225, 0.011939386153781172, 0.0002676399442538716,
+        0.0001233225564217673, 9.169223414322863e-6
+      ],
+      "energy_balance_error_j": -3.442887922184331e-12,
+      "evaluation_count": 1678
+    }
+  },
+  "linux": {
+    "tests": 386,
+    "errors": 0,
+    "failures": 0,
+    "skipped": 0,
+    "seconds": 269.206,
+    "sha256": "b0716d97e76657d783913297b9faecf48fc6a281a05df5320591897a1345773d",
+    "independent_study": {
+      "state_errors": [
+        6.172531028301231e-6, 3.6254594560561515e-10, 2.5078065908962583e-11
+      ],
+      "reference_event_times_s": [
+        0.00036730364778992384, 0.0025853957722836306, 0.0027286597634365553
+      ],
+      "observed_event_times_s": [
+        0.0003673036477904338, 0.002585395773492767, 0.0027286597646520704
+      ],
+      "reference_work_j": [
+        -0.0007030514181769303, 0.011939386153750679, 0.00026763994425655605,
+        0.0001233225517429504, 9.169233167694684e-6
+      ],
+      "observed_work_j": [
+        -0.000703051418136225, 0.011939386153781172, 0.0002676399442538716,
+        0.0001233225564217673, 9.169223414322863e-6
+      ],
+      "energy_balance_error_j": -3.442887922184331e-12,
+      "evaluation_count": 1678
+    }
+  },
+  "linux_coverage": {
+    "percent": 58.64,
+    "required_percent": 20,
+    "floor_override": false
+  },
+  "api": {
+    "golf_existing_unchanged": 101,
+    "swing_existing_unchanged": 234,
+    "new_private_modules": 2
+  },
+  "type_checks": "Four production modules pass NumPy-aware mypy, including the final chart dependency refactor; normal commit/push hooks remain required.",
+  "style": "Repository-wide Ruff check and format check pass (3870 files).",
+  "evidence_status": "event-sampled-contact-unqualified",
+  "physical_acoustic_qualification": false,
+  "limits": [
+    "directional sign-change roots may miss repeated crossings within a step",
+    "dense root work is not reported as a nonnegative loss certificate",
+    "normal-only, fixed material/load laws and prescribed grips",
+    "friction history, face/hosel modes, general event/mesh/mode convergence, measured calibration, radiation and blinded perception remain open"
+  ]
+}

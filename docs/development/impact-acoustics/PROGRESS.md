@@ -1,3 +1,10 @@
+Adaptive normal-contact review child #5151 now passes 386 Windows and
+386 Linux controls at exact archived tree4e1b19810. It continues parent #5073
+on feat/5073-contact-events. Temporal child #5147 is published as PR #5149;
+its published implementation stays separate. See NORMAL_EVENT_DEVELOPMENT.md
+and NORMAL_EVENT_RESULTS.json for the retained RED failures, independent
+event/work refinement, exact provenance and open physical/acoustic scope.
+
 UpstreamDrift #9916 was merged as c487265f at 2026-09-10T01:32:10Z.
 Its provider remains interim 4dabe900c. The active context integration task
 will preserve this merge and the launcher correction in its final coordinated
@@ -5,7 +12,7 @@ pin; exact impact-consumer and installed-wheel qualification remains.
 
 ## Contact Trajectory Development (2026-09-10)
 
-Temporal review child #5147 is created and leased; no PR exists yet.
+Temporal review child #5147 is published in PR #5149.
 Parent #5073 continues in `Tools-impact-trajectory` on
 `feat/5073-contact-trajectory`, based on published foundation PR #5146 at
 1edd0ddcf. The shared local-chart RK4 kernel begins with missing-module RED,

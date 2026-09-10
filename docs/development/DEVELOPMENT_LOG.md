@@ -18,6 +18,20 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5151 · Adaptive Normal Contact Event Review
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5151; parent #5073
+- **PR:** not created
+- **Branch:** feat/5073-contact-events
+- **Paths:** src/shared/python/swing_sim/impact, src/shared/python/golf_club, tests/shared/python/golf_club
+- **Started:** 2026-09-10
+- **Last verified:** 2026-09-10 (source tree4e1b19810; 386 Windows/Linux controls; SELF)
+- **Summary:** Adaptive local-chart normal contact with independent event/work reference, strict SI controls and unchanged canonical mechanics/APIs.
+- **Evidence:** NORMAL_EVENT_RESULTS.json records all RED/GREEN/source/JUnit identities; four production modules pass NumPy-aware mypy; Linux coverage58.64% exceeds unchanged20% floor; root Ruff/format3870 pass.
+- **Next step:** Integrate the reviewed temporal/main continuation, pass normal publication checks and resolve protected review. Parent #5073 retains friction, modes and physical/acoustic obligations.
+
 ### DL-#5145 · Contact Numerical Foundation Review
 
 - **State:** in_review
@@ -52,7 +66,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5073
 - **PR:** not created
-- **Branch:** feat/5073-contact-trajectory
+- **Branch:** feat/5073-contact-events
 - **Paths:** src/shared/python/swing_sim/impact, docs/development/impact-acoustics, tests/api_baselines/swing_sim_api_baseline.json
 - **Started:** 2026-09-09
 - **Last verified:** 2026-09-09 (provider base 0cd6dce22; coupled-response staged tree ec863402f; changes SELF)
