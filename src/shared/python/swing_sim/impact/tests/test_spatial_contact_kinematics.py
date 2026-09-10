@@ -167,7 +167,7 @@ def test_state_and_geometry_own_inputs_and_refuse_incompatible_observers() -> No
     assert np.asarray(state.pose)[0, 3] == 0
     assert state.twist[0] == 0
     with pytest.raises(FrozenInstanceError):
-        state.observer_id = "changed"  # type: ignore[misc]
+        state.__setattr__("observer_id", "changed")
     contact = _case()
     with pytest.raises(ValueError, match="observer"):
         PlaneSphereKinematics(

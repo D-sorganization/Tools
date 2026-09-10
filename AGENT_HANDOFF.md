@@ -8,7 +8,7 @@ T4 #5073 has private geometry, normal/tangential work, full-tensor body response
 and instantaneous shaft/ball coupling. All 323 Windows/Linux controls pass at
 ec863402f; five production files pass mypy. Existing 99 golf-club and 228 swing
 API records are unchanged. Numerical review child #5145 bounds this foundation;
-its first commit/PR is pending. The parent retains trajectory and physical work.
+implementation 9e3c7869b is committed; PR publication is pending. The parent retains trajectory and physical work.
 See SPATIAL_CONTACT_RESULTS.json and PROGRESS.md. Private-consumer access,
 physical/acoustic measurements and final qualification remain outstanding.
 
@@ -18,7 +18,7 @@ physical/acoustic measurements and final qualification remain outstanding.
 - Classifier #5103 and main 0f2dfe3fd (mocap #5118) are integrated. Both task scopes are preserved; 145 merge tests, actual mypy, root Ruff and all nine gates passed. Camera/mocap ownership remains separate.
 - #5114 remains open: full Qt candidate loses three workers after 2,880 passes; 14 serial profiled controls pass without explaining the losses. Partial cleanup is separate on fix/5114-qt-deferred-cleanup; issuecomment-5599216206 records the evidence. No deadline or physical calculation changes.
 - T4 #5073 lease/presence is renewed through 2026-09-10T02:57Z; numerical review #5145 lease runs through 03:05Z. UpstreamDrift #9916 final reviewed-pin qualification remains pending.
-- T4 source remains on provider 0cd6dce22, with all 323 combined controls passing. Review #5145 and current-main integration precede full trajectory development; no physical/acoustic qualification is inferred.
+- T4 includes identical-tree merged main 2c9a8d6c via fc33f2120, with all 323 combined controls passing. Review #5145 and current-main integration precede full trajectory development; no physical/acoustic qualification is inferred.
 - T5 retains calibration identity, complex FRF, radiation and physical/blinded requirements. T6 retains strict evidence/report contracts; private-consumer lookup is an independent unresolved delivery gate.
 - UpstreamDrift #9826 preserves all 328 claim outcomes; #9841 supplies adaptive reference diagnostics and 21 real Bioptim/Casadi 3.6.7 controls. The unsuccessful 3.8 OCP case and physical-data gates remain explicit.
 - Camera task owns UpstreamDrift #9860–#9863; preserve its scopes. Resume the complete requirement matrix in docs/development/impact-acoustics/PROGRESS.md; exact-pin consumers and physical/blinded final synthesis remain required.

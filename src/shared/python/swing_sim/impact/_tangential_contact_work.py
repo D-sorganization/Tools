@@ -25,7 +25,7 @@ _TRANSPORT_TOLERANCE = 1e-10
 
 
 def _nonnegative(value: object, name: str) -> float:
-    result = require_finite_float(value, name)
+    result = float(require_finite_float(value, name))
     if result < 0:
         raise ValueError(f"{name} must be nonnegative")
     return result
@@ -63,8 +63,10 @@ class TangentialContactLaw:
 
 def _elastic_energy(law: TangentialContactLaw, vector: object) -> float:
     array = np.asarray(vector)
-    return require_finite_float(
-        float(0.5 * law.stiffness_n_per_m * (array @ array)), "elastic energy"
+    return float(
+        require_finite_float(
+            float(0.5 * law.stiffness_n_per_m * (array @ array)), "elastic energy"
+        )
     )
 
 

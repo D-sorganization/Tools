@@ -272,5 +272,20 @@
         "junit_sha256": "cc1916603ae21b447d33ea44746081fe9e14cb95c3358840ab102bbe33142309"
       }
     }
+  },
+  "prepush_typing_repair": {
+    "initial_head": "fc33f2120",
+    "red": "Normal initial push refused: two no-any-return errors in tangential work under follow-imports=skip and one unused test suppression.",
+    "change": "Explicit float boundaries retain the validated values; frozen-state test calls __setattr__ without an environment-dependent suppression. No mechanics equation or tolerance changes.",
+    "tests": {
+      "passed": 46,
+      "failures": 0,
+      "errors": 0,
+      "seconds": 2.991,
+      "junit_sha256": "42eab98b15521f209787f5c55f9c68186c8dd82ed9fad5f69425f04c76ce808d"
+    },
+    "mypy": "PASS actual pre-push configuration on all 13 changed src Python files",
+    "ruff": "Repository-wide check and format check PASS (3862 files)",
+    "publication": "Initial push failed; retry pending. Earlier 323-test source identities remain unchanged historical evidence."
   }
 }

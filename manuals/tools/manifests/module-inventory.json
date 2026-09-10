@@ -777,7 +777,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-ground.json"
     },
     {
-      "content_sha256_lf": "61698947ec1e4e5a0ce4a6920dd97f6e14bc166a0815aaf361fb8e2a866a1e87",
+      "content_sha256_lf": "6d15a1bf9e0cf73f8e0c52b4ad50a223b711275f5f1fe0cbd87911967b4684c3",
       "entry_count": 15,
       "package": "src/shared/python/swing_sim/impact",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-impact.json"
