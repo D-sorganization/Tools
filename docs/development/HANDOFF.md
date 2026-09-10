@@ -328,3 +328,25 @@ The Tools#5068, UpstreamDrift#9700 and AffineDrift#4253 epics now reflect comple
 - Combined validation after integrating25367070f: `python3 -m pytest tests/ops/test_ci_test_shards.py src/function_generator/tests/test_function_generator_gui.py tests/shared/python/sidekick/lab/mocap/test_cli_service_contracts.py tests/shared/python/sidekick/lab/mocap/test_reference_placements.py -o addopts= --timeout=60 -q` passes56 tests. Focused context passes35 with one Windows skip; the parser-enabled validation venv passes all109 CodeMap tests. Real MCP SDK imports pass. `python3 scripts/ci_test_shards.py --check` validates1,692 files across seven shards. All nine manual governance commands listed in AGENTS.md pass after inventory regeneration. The two integrated launcher files are byte-identical to fc453bf8e. Protected combined CI remains pending.
 - Current provider is not published on main. Final consumer gitlink, Cargo, pip and catalog alignment belongs to this session. Scientific/manual approval and physical qualification remain separate. Existing peer handoffs, root-handoff compaction and both reviewed source corrections are preserved.
 - Next: qualify this combined provider, publish through protected review, pin and test both consumers, then reconcile fleet audit#1634 and epic#1629. No user-owned changes in this worktree.
+
+## C4 Architecture Map Contract — Repository_Management #1614
+
+- **Repository/worktree**: `Tools`, `c:\Users\diete\Repositories\Tools`
+- **Branch**: `docs/1614-c4-architecture-map`; commit `SELF`; PR not created
+- **Governing issue**: `D-sorganization/Repository_Management#1614` (parent epic `#1594`)
+- **Completed work**:
+  - Authored canonical `docs/architecture/C4.md` with real `C4Context` and `C4Container` views, detailed 7-row Feature Map tied to code components and test evidence, and Architecture Change Log baseline row.
+  - Copied canonical validator `scripts/architecture_map_contract.py` and unit test suite `tests/test_architecture_map_contract.py`.
+  - Added `.github/workflows/architecture-map-contract.yml`.
+  - Added maintainable architecture maps section (5o) in `AGENTS.md`.
+  - Linked `docs/architecture/C4.md` in `README.md`.
+  - Added row in `SPEC.md` change log for `#1614`.
+  - Updated `docs/development/DEVELOPMENT_LOG.md` with active entry `DL-#1614`.
+- **Validation**:
+  - `python scripts/architecture_map_contract.py --path docs/architecture/C4.md` -> PASS (1 context, 1 container, 7 features, 1 changelog rows)
+  - `python -m pytest tests/test_architecture_map_contract.py -v` -> 4 passed in 4.87s
+  - `python scripts/validate_workflows.py && python scripts/check_workflow_pinning.py && python scripts/check_blocking_quality_gates.py` -> all passed
+  - `python shared_scripts/spec_changelog.py validate --spec SPEC.md` -> passed (1027 rows)
+- **Next steps**:
+  - Push `docs/1614-c4-architecture-map`, create PR referencing `Fixes D-sorganization/Repository_Management#1614`, enable auto-merge, verify CI passes, and merge.
+  - Release lease on Repository_Management issue #1614 upon merge.

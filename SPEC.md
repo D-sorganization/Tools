@@ -6908,6 +6908,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | 2026-09-05 | #5001 | Remove dead vendored optimizer GUI copy and keep canonical registration shim (#3983). |
 | 2026-09-05 | #5002 | Delete vendored folder_tools leftover and update dead tests (#3985). |
 | 2026-09-05 | #5003 | Remove blanket [0,100] tag clamp and enforce interlock limit domain at boundary (#4032). |
+| 2026-09-10 | #1614 | Adopt maintainable Mermaid C4 architecture-map contract (C4Context, C4Container, Feature Map, Change Log, validator and workflow) (#1614). |
 ---
 
 <!--
