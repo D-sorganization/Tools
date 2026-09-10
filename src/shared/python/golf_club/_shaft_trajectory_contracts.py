@@ -9,6 +9,7 @@ import numpy as np
 
 from ._grip_contracts import _node_index, finite_array
 from ._grip_moving_kinematics import MaterialPointMotion
+from ._shaft_load_history import PrescribedPointLoads
 from ._shaft_moving_contracts import InertialMovingChain, MovingChainControls
 
 AnchorHistory = Callable[[float], tuple[MaterialPointMotion, ...]]
@@ -16,19 +17,21 @@ AnchorHistory = Callable[[float], tuple[MaterialPointMotion, ...]]
 
 @dataclass(frozen=True)
 class MovingTrajectoryProblem:
-    """Constant material/load laws with an explicitly prescribed anchor history.
+    """Fixed material laws with explicit anchor and optional additional loads.
 
     The callback returns one MaterialPointMotion per existing grip in order,
     including its pose, body twist and body-twist derivative in the declared
     inertial observer. It must be deterministic and kinematically consistent;
     sampling cannot establish either property. No interpolation, differentiation
-    or missing-data substitution is performed. Material, grip and applied load
-    laws are fixed; time-varying coefficients require extra storage/work terms.
+    or missing-data substitution is performed. Additional force/couple histories
+    use canonical point-load power; baseline loads remain. Material and grip
+    coefficients are fixed; varying coefficients require extra storage/work terms.
     """
 
     chain: InertialMovingChain
     controls: MovingChainControls
     anchor_history: AnchorHistory
+    additional_load_history: PrescribedPointLoads | None = None
 
     def __post_init__(self) -> None:
         if not isinstance(self.chain, InertialMovingChain):
@@ -37,6 +40,10 @@ class MovingTrajectoryProblem:
             raise TypeError("controls must be MovingChainControls")
         if not callable(self.anchor_history):
             raise TypeError("anchor history must be callable")
+        if self.additional_load_history is not None and not isinstance(
+            self.additional_load_history, PrescribedPointLoads
+        ):
+            raise TypeError("additional_load_history must be PrescribedPointLoads")
 
     def chain_at(self, time_s: float) -> InertialMovingChain:
         """Reuse fixed constitutive laws; validate every supplied anchor port."""
@@ -47,7 +54,10 @@ class MovingTrajectoryProblem:
             replace(port, anchor=anchor)
             for port, anchor in zip(self.chain.grips, anchors, strict=True)
         )
-        return replace(self.chain, grips=ports)
+        chain = replace(self.chain, grips=ports)
+        if self.additional_load_history is not None:
+            return self.additional_load_history.apply(chain, time_s)
+        return chain
 
 
 def _positive_count(value: object, name: str) -> int:

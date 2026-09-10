@@ -7,12 +7,13 @@ added. It does not integrate a trajectory or qualify contact coefficients.
 
 from __future__ import annotations
 
-from dataclasses import dataclass, fields, replace
+from dataclasses import dataclass, fields
 
 import numpy as np
 
 from ...golf_club._grip_contracts import _node_index
 from ...golf_club._shaft_chain import IndexedPointLoad
+from ...golf_club._shaft_load_history import append_point_loads
 from ...golf_club._shaft_moving_chain import MovingChainResponse, moving_chain_response
 from ...golf_club._shaft_moving_contracts import (
     InertialMovingChain,
@@ -126,14 +127,11 @@ class NormalShaftContact:
     def _loaded_chain(
         self, contact: PlaneSphereKinematics, force: np.ndarray
     ) -> InertialMovingChain:
-        shaft = self.chain.shaft
-        elastic = shaft.elastic
         point_load = SpatialPointLoad(
             require_vector3(-force, "face reaction"), (0, 0, 0), contact.face_offset_m
         )
-        loads = (*elastic.loads, IndexedPointLoad(self.face_node, point_load))
-        return replace(
-            self.chain, shaft=replace(shaft, elastic=replace(elastic, loads=loads))
+        return append_point_loads(
+            self.chain, (IndexedPointLoad(self.face_node, point_load),)
         )
 
     def kinematics(

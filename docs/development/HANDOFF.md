@@ -1,5 +1,13 @@
 # Reference Placement and Calibration Recovery Handoff
 
+## Prescribed Load Continuation #5073
+
+- Worktree: C:/Users/diete/Repositories/Tools-impact-load-history; branch feat/5073-load-history; implementation SELF; parent event PR#5152. No load-history PR yet.
+- Adds explicit observer/time-covered additional force/couple callbacks through the existing point-load and moving-grip work ports. Original loads remain once; no new inertia or force potential is added.
+- Missing-module RED then18 controls pass; expanded20 new controls and12 temporal controls pass before the old event-refinement test hits its unchanged60s timeout. Cause remains unestablished; no JUnit completed. Four changed modules pass both mypy modes. Source976d7ff43 is archived; All406 Linux controls pass in270.59s, coverage58.86% above unchanged20%; Windows406 also pass in169.77s.
+- Details: docs/development/impact-acoustics/LOAD_HISTORY_DEVELOPMENT.md. Event#5152 has a separate CI typing repair in progress; annotation-only source839ebe083 is now incorporated; all35 affected event/load-history controls pass in42.90s. Final protected provider/wheel and measured/acoustic evidence remain open.
+- Next action: publish the verified load-history continuation for protected review. Development-log entry DL-#5073. Preserve peer camera records and all original test limits.
+
 ## Impact Event Continuation #5151 / Parent #5073
 
 - Worktree: `C:/Users/diete/Repositories/Tools-impact-events`; branch `feat/5073-contact-events`; current integration commit `SELF`; PR#5152 https://github.com/D-sorganization/Tools/pull/5152 at publishedd212714c1.
@@ -171,3 +179,5 @@ pass;24 numerical/placement tests also pass on actual OpenCV5.0.0 using the
 retained dependency directory. Handoff149-line/digest and module inventory
 freshness checks pass. No solver or gate changed during merge. Normal commit
 and push hooks remain before updating PR#5140.
+
+Provider coordination: dieterolson closed standalone launcher PR#5144 unmerged at2026-09-10T04:26:49Z. Preserve this closure. Its exact correction is incorporated in combined provider#5141 atc80f2cf34; the context task retains final downstream pin ownership. No standalone reopening is requested. Load-history review#5153 passes406 Windows/Linux controls and35 after the annotation-only event repair; six affected production modules pass NumPy-aware mypy. Next action is normal publication and protected review.

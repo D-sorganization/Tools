@@ -99,11 +99,12 @@ class _Chart:
         coordinates, velocities, _ = self.unpack(vector)
         state = _shift(self.initial, coordinates, velocities)
         response = self.budget.evaluate(state, float(time_s))
-        return np.r_[
+        result: np.ndarray = np.r_[
             material_chart_rates(coordinates, velocities).ravel(),
             _rates(response).ravel(),
             _powers(response),
         ]
+        return result
 
     def sample(
         self, time_s: float, vector: np.ndarray

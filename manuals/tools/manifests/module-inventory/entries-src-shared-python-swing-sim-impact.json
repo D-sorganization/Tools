@@ -236,10 +236,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 8958,
+      "bytes_lf": 8994,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "4ef1c11a434b31d4f22595d4d0b33e54cd030834f6fabba7551bf69a03ff9c15",
+      "content_sha256_lf": "1fff21f0aded81f278134629570f1ae7bc7f35a097dee802e48a04c4a66392c4",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-NORMAL-CONTACT-EVENTS-PY-BEA394783EC0",
       "language": "python",
@@ -277,7 +277,8 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
-          "tests/shared/python/golf_club/test_normal_contact_events.py"
+          "tests/shared/python/golf_club/test_normal_contact_events.py",
+          "tests/shared/python/golf_club/test_shaft_load_history.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -285,10 +286,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 8776,
+      "bytes_lf": 9272,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "1fb4c0a9e51fcc2c3db36fdba29d15d491dafd9743b1b1d75c36dd6b2dfdb22b",
+      "content_sha256_lf": "b3e70d22646768bd735e0b34bfe230435fa0965ee315df4bf19b91a6c7f62b53",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-NORMAL-CONTACT-TRAJECTORY-PY-A14C52A4620B",
       "language": "python",
@@ -327,7 +328,8 @@
         "public_surfaces": [],
         "test_paths": [
           "tests/shared/python/golf_club/test_normal_contact_events.py",
-          "tests/shared/python/golf_club/test_normal_contact_trajectory.py"
+          "tests/shared/python/golf_club/test_normal_contact_trajectory.py",
+          "tests/shared/python/golf_club/test_shaft_load_history.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -386,10 +388,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 3682,
+      "bytes_lf": 3718,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "3c40248628f4cc5bbdba183f71e868fc7f1bbfe64b97830c642d56a33dbc149f",
+      "content_sha256_lf": "41af639ff93900d29992398f4e12116d81b5b9a2c03f801e5b18e4d6419d8102",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-NORMAL-EVENT-CONTRACTS-PY-1171D2374C9C",
       "language": "python",
@@ -437,10 +439,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 7419,
+      "bytes_lf": 7329,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "e58834f02d8916546f0dc5a8a5a4f89a7e885abded6ac465befba190b541e1a2",
+      "content_sha256_lf": "91b3a71fada75fa84b0c0856ce248faaee9bc8cacaa9a4077a10f73f392fc1d5",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-NORMAL-SHAFT-CONTACT-PY-FC7DC96D7399",
       "language": "python",

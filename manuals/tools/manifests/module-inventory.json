@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "a881a76fbcb92f3d2fab3ad5e1b6d94a831861c23c6f9198aafc5e21aa13b7df",
+      "content_sha256_lf": "15f094d95857510dae2c7166a7a83b59ecc4154b522a2e7d09d8c4e7eb9b4026",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -639,8 +639,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-file-watcher.json"
     },
     {
-      "content_sha256_lf": "ed043975d968b5ca142d75c07237fa697a5cc7925df1ff4bbc94d2c5211dcb1e",
-      "entry_count": 101,
+      "content_sha256_lf": "55304b212ccab407e69921ccf06f929a3bac9e6161542301facc6777644249b3",
+      "entry_count": 102,
       "package": "src/shared/python/golf_club",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-golf-club.json"
     },
@@ -777,7 +777,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-ground.json"
     },
     {
-      "content_sha256_lf": "510a76c3dd1ac2cab8b9ef17f2b95fe257b2d17505708d602d05bface151be07",
+      "content_sha256_lf": "93151168b3599a2236209e3f380e9cd5f394fc4840fbdf867bd0ac1d89e9b286",
       "entry_count": 18,
       "package": "src/shared/python/swing_sim/impact",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-impact.json"
