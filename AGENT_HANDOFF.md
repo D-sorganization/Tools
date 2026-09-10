@@ -2,10 +2,7 @@
 
 ## Verified Agent Context: #5138
 
-- Identity: `Tools`, working directory `C:/Users/diete/Repositories/.context-implementation/Tools`, branch `feat/issue-5138-agent-context`, implementation commit `SELF`; PR #5141; development entry DL-#5138; session `context-01a0879e-tools`. Objective: deliver subscription-free persistent source and integration context under Repository_Management epic #1629, with exact provider pins and protected CI enforcement. Implemented locally: Dependency-free source context package, real MCP transport, semantic boundary reviews, deterministic views and CodeMap freshness guards.
-- Validation: 103 CodeMap tests pass with optional parsers installed; 35 context tests pass locally, one Windows symlink test skipped; Linux CI passes all36. Real MCP stdio passes. Ruff and scoped mypy pass before final CI edits. Standalone wheel isolation passes; rebuild after final code edits. Compatibility: scientific/manual authority is unchanged. Catalog status does not prove runtime availability. Reviews declare inspected evidence; test execution remains separate. Existing communication and handoffs remain authoritative.
-- Current limits: no release/merge claim; consumer PRs UpstreamDrift#9920 and Gasification_Model#4945 pin candidate 82151279 and explicitly block unpublished providers. All 21 navigation tasks, reviewed contracts and responsive browser checks pass; final published pins remain pending. Original clones and other agents' progress are preserved. Push qualification: all normal Windows push hooks pass with2workers; Linux36 context/103 CodeMap tests pass. CI requires a discoverable test filename and a real paired UD PR; the test filename and paired PR metadata are fixed without waivers. Main 2c9a8d6c9, including shaft provider #5133, is integrated. Published e24ef5a68 passes all normal hooks in a clean declared pre-commit environment; CodeMap usage now explains current graph freshness and pin ownership.
-- Ordered continuation: (1) complete inherited Git-hook isolation regression and responsive browser checks; (2) publish and qualify protected Tools delivery; (3) pin consumers, run integration tests, record reviewed contracts, generate/inspect maps and qualify consumer CI; (4) reconcile fleet guide and epic against actual delivered PRs.
+- PR #5141; issue #5138; session `context-01a0879e-tools`; branch `feat/issue-5138-agent-context`; worktree `.context-implementation/Tools`; implementation `SELF`; log DL-#5138. Dependency-free context package, source/contract provenance, read-only MCP, deterministic maps and CodeMap freshness checks implement Repository_Management epic #1629. Linux:36 context and103 CodeMap tests pass; the Qt resource regression increases the local CodeMap suite to109 passing tests. All21 consumer navigation tasks pass; scientific/manual approval remains separate. Main9899c5a6a CLI/service and0a561daff calibration work are integrated, preserving peer scope. Tools publication and final consumer pins remain pending (UpstreamDrift#9920 currently18c36f5e8; Gasification_Model#4945 currently82151279). The18c36f5e8 targeted retry was cancelled when superseded; five isolated GUI diagnostics pass. d7eaf704e passed normal push hooks; current-main qualification is required. Gas backend graph qualifies1180 files/11025 symbols; whole-tree27 parser errors remain explicit. Qt .ts XML resources now parse distinctly, preserving malformed-source failures. Main integration45e9e3866 passed normal push hooks. Next: qualify merged provider, publish, pin/test consumers, reconcile fleet guide and epic. Existing communication and handoffs remain authoritative; preserve all peer work.
 
 ## Calibration and Moving Reference Placements: #5132 / #5137
 
@@ -15,12 +12,7 @@
 
 ## Impact Dynamics and Acoustics: #5068
 
-Current #5133 publication: 00d17e7f9. A second local CI repair resolves nested
-momentum-oracle roundoff and an unsupported optimizer residual ordering claim.
-Windows: 17 momentum + 19 optimizer tests pass; Linux: 17 Python 3.11 and
-36 combined Python 3.12 coverage tests pass. Original tolerances and negative
-controls remain; see PROGRESS.md and CI_REPAIR_RESULTS.json. Normal publication,
-private-consumer access and physical qualification remain open.
+Current #5133 publication: 00d17e7f9. A second local CI repair resolves nested momentum-oracle roundoff and an unsupported optimizer residual ordering claim. Windows: 17 momentum + 19 optimizer tests pass; Linux: 17 Python 3.11 and 36 combined Python 3.12 coverage tests pass. Original tolerances and negative controls remain; see PROGRESS.md and CI_REPAIR_RESULTS.json. Normal publication, private-consumer access and physical qualification remain open.
 
 - Full program active; all three parent epics remain open. AffineDrift theory #4258/#4282/#4298 and UpstreamDrift integration #9706 are merged; final synthesis awaits downstream evidence.
 - T1 #5069/#5077 and T2 #5071/#5082 are merged at f72544613 and 80d580d57. Signal repair #5106 and initial study wire #5083 are merged; acoustic/report qualification remains.

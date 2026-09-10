@@ -72,6 +72,12 @@ reason. Rebuild or inspect source directly; an incomplete graph cannot prove tha
 there are no callers or imports. Keep each worktree's `.codemap/` disposable and
 ignored. A background refresh or watcher is an optimization, not merge enforcement.
 
+Qt translation catalogs also use `.ts`. CodeMap recognizes well-formed XML with
+a `TS` root as `qt-translation` resources and emits no code edges for them. Their
+content still participates in freshness checks. Malformed XML, entity-bearing
+documents and invalid TypeScript still fail validation. The existing `defusedxml`
+runtime dependency parses these resources; its version is part of index identity.
+
 ## Watcher daemon
 
 For on-save reindexing (debounced 500 ms):

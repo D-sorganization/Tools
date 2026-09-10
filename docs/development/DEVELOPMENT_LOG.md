@@ -27,9 +27,8 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/issue-5138-agent-context
 - **Paths:** `src/agent_context`, `src/shared/python/codemap`, `packages/agent-context`
 - **Started:** 2026-09-09
-- **Last verified:** 2026-09-09; all normal commit/push hooks pass with2workers. Linux CI:36 context and103 CodeMap tests pass. Current CI failed only minimum-test discovery and required paired-PR metadata; the test filename and paired UpstreamDrift#9920 metadata are fixed. Main 2c9a8d6c9 preserves merged shaft provider #5133.
-- **Summary:** Dependency-free source context package, real MCP transport, semantic boundary reviews, deterministic views and CodeMap freshness guards. Parent epic Repository_Management#1629 remains active; no subscription infrastructure is required.
-- **Next step:** All normal push hooks pass in a clean declared pre-commit environment; e24ef5a68 is published. Reconcile CodeMap documentation with current worktree verification, then qualify protected CI and final consumer pins.
+- **Last verified:** 2026-09-10; 45e9e3866 passes all normal commit/push hooks with2workers. New Qt resource tests fail before the correction; all109 CodeMap tests pass after it. Linux CI:36 context and103 CodeMap tests pass. Current CI failed only minimum-test discovery and required paired-PR metadata; the test filename and paired UpstreamDrift#9920 metadata are fixed. Main9899c5a6a and0a561daff are integrated, preserving shaft, calibration, reference-placement and CLI/service providers.
+- **Next step:** All normal push hooks pass in a clean declared pre-commit environment; e24ef5a68 is published. Qualify the merged provider through normal hooks and protected CI, then publish final consumer pins. Gas backend graph qualifies1180 files/11025 symbols; its whole-tree27 errors remain explicit. Qualify UpstreamDrift after correcting the real Qt .ts resource classification.
 
 ### DL-#5137 · Identified Moving Reference Placements
 
@@ -58,7 +57,6 @@ reachable from any live state and `abandoned` from `parked`.
 - **Last verified:** 2026-09-09T21:06Z (SELF: reproduced3 OpenCV5 failures; all12 numerical tests now pass on actual OpenCV4.13 and5.0)
 - **Summary:** Real distortion-aware pose recovery replaces silent fabricated poses and unchanged refinement results.
 - **Next step:** Integrate main2c9a8d6c9 without changing numerical gates;19 merged calibration tests pass. Regenerate inventory, run hooks and qualify fresh exact-head CI on PR#5136.
->>>>>>> origin/main
 
 ### DL-#5101 · Scientific Import Inventory Detection
 

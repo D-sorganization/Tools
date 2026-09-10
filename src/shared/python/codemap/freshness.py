@@ -30,6 +30,7 @@ def implementation_id() -> str:
         "tree-sitter-typescript",
         "tree-sitter-rust",
         "tree-sitter-markdown",
+        "defusedxml",
         "pathspec",
         "blake3",
     ):
