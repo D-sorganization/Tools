@@ -1,5 +1,9 @@
 # AGENT_HANDOFF — Tools (Monorepo Root)
 
+## Verified Agent Context: #5138
+
+- PR #5141; issue #5138; session `context-01a0879e-tools`; branch `feat/issue-5138-agent-context`; worktree `.context-implementation/Tools`; implementation `SELF`; log DL-#5138. Dependency-free context package, source/contract provenance, read-only MCP, deterministic maps and CodeMap freshness checks implement Repository_Management epic #1629. Linux:36 context and103 CodeMap tests pass; the Qt resource regression increases the local CodeMap suite to109 passing tests. All21 consumer navigation tasks pass; scientific/manual approval remains separate. Main9899c5a6a CLI/service and0a561daff calibration work are integrated, preserving peer scope. Tools publication and final consumer pins remain pending (UpstreamDrift#9920 currently18c36f5e8; Gasification_Model#4945 currently82151279). The18c36f5e8 targeted retry was cancelled when superseded; five isolated GUI diagnostics pass. d7eaf704e passed normal push hooks; current-main qualification is required. Gas backend graph qualifies1180 files/11025 symbols; whole-tree27 parser errors remain explicit. Qt .ts XML resources now parse distinctly, preserving malformed-source failures. Main integration45e9e3866 passed normal push hooks. Next: qualify merged provider, publish, pin/test consumers, reconcile fleet guide and epic. Existing communication and handoffs remain authoritative; preserve all peer work.
+
 ## Calibration and Moving Reference Placements: #5132 / #5137
 
 - #5132 repair is PR #5136 at45f3bd8b9, integrating main2c9a8d6c9 in Worktrees/Tools-calibration-opencv5;19 calibration checks and12 OpenCV5 tests pass. That merged baseline is now being qualified in this #5140 branch; private checkout remains unverified and no protections are bypassed.
@@ -8,12 +12,7 @@
 
 ## Impact Dynamics and Acoustics: #5068
 
-Current #5133 publication: 00d17e7f9. A second local CI repair resolves nested
-momentum-oracle roundoff and an unsupported optimizer residual ordering claim.
-Windows: 17 momentum + 19 optimizer tests pass; Linux: 17 Python 3.11 and
-36 combined Python 3.12 coverage tests pass. Original tolerances and negative
-controls remain; see PROGRESS.md and CI_REPAIR_RESULTS.json. Normal publication,
-private-consumer access and physical qualification remain open.
+Current #5133 publication: 00d17e7f9. A second local CI repair resolves nested momentum-oracle roundoff and an unsupported optimizer residual ordering claim. Windows: 17 momentum + 19 optimizer tests pass; Linux: 17 Python 3.11 and 36 combined Python 3.12 coverage tests pass. Original tolerances and negative controls remain; see PROGRESS.md and CI_REPAIR_RESULTS.json. Normal publication, private-consumer access and physical qualification remain open.
 
 - Full program active; all three parent epics remain open. AffineDrift theory #4258/#4282/#4298 and UpstreamDrift integration #9706 are merged; final synthesis awaits downstream evidence.
 - T1 #5069/#5077 and T2 #5071/#5082 are merged at f72544613 and 80d580d57. Signal repair #5106 and initial study wire #5083 are merged; acoustic/report qualification remains.
