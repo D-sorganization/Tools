@@ -166,6 +166,20 @@ retained dependency directory. Handoff149-line/digest and module inventory
 freshness checks pass. No solver or gate changed during merge. Normal commit
 and push hooks remain before updating PR#5140.
 
+## Impact Foundation Review #5145 / PR #5146
+
+- Repository/worktree: `C:/Users/diete/Repositories/Tools-impact-contact`.
+- Branch: `feat/5073-spatial-contact`; integration commit `SELF`; PR #5146 remains open at published1be394e90 until this merge passes normal publication checks.
+- Objective: preserve main92283cf3f (mocap CLI/service and managed fleet instructions) without changing the qualified contact foundation. Parent epic#5068 and T4#5073 remain open.
+- Impact/golf implementation, tests and API records remain identical to1be394e90. Incoming CLI/service source and sidekick API remain identical to main. The camera handoff above is preserved as peer-owned context.
+- Numerical provenance:323 Windows/Linux foundation controls plus46 typing-repair controls; SPATIAL_CONTACT_RESULTS.json retains exact source/JUnit identities. The main integration passes13 CLI/service/API controls in6.50s and all nine manual gates. Normal commit/push hooks remain before publication.
+- Other continuations: temporal child#5147 is PR#5149 at0d6b99430; event child#5151 is committed9a8241015 with386 Windows/Linux controls and separate exact source tree4e1b19810. Do not imply these implementations exist in the foundation branch.
+- Known failures: private consumer lookup returns404 before tests, including head1be394e90 job102729910876. GUI rate-shard lifecycle failures are owned separately under#5114; no timeout, required check or physics tolerance is relaxed.
+- Context rollout: docs/agent_context/catalog.json is absent on this base; source, public API baselines and relevant tests are the verified fallback. A peer message or inventory timestamp is not implementation evidence.
+- No user-owned edits are discarded. This merge retains camera/CLI work and every fleet-managed instruction block.
+- Next action: validate and publish the main-preserving foundation merge to PR#5146. Then continue event/tangential/mode and measured acoustic work in the owned continuation; final reviewed consumer pin and physical/blinded evidence remain required.
+- Development-log entries: DL-#5145 and DL-#5073; the feature state remains in review/in progress, respectively.
+
 ## Agent Context Delivery — #5138
 
 - Repository/worktree: Tools, `.context-implementation/Tools`; branch `feat/issue-5138-agent-context`; current commit `SELF`; PR #5141 open; epic Repository_Management#1629; DL-#5138.

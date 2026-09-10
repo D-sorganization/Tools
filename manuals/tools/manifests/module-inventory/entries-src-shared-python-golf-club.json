@@ -891,10 +891,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 8268,
+      "bytes_lf": 8305,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "a94163c2cea74ef413d6884dbae64d5783abb62536d5dbc52de9a665819ca210",
+      "content_sha256_lf": "1a70d6b106f3cb324bf89d4fa1b1a6db84f4e6b929ea1d65b4ec5125fe832c02",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-COUPLED-IMPACT-SOLVER-PY-E9D1619E3861",
       "language": "python",
@@ -2663,6 +2663,56 @@
       }
     },
     {
+      "authority_status": "provisional",
+      "bytes_lf": 2108,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "e51e69ac263c32fb91b4036701e78a70f559ae12485871c19b1a9f23d1351b76",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-MASS-SOLVE-PY-F2E4F4666BE9",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_shaft_mass_solve.py",
+      "purpose": "Shared scaled positive-mass solve for material, linear-first body twists.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "not-applicable",
       "bytes_lf": 5793,
       "classification": "non-calculation",
@@ -2754,10 +2804,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 9537,
+      "bytes_lf": 8666,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "985f37b9da8d0e4e5d49542871b41f734fed7941bce2f444df35c609380c3d6c",
+      "content_sha256_lf": "d6e2d8c1dd7d16dbd71ebf394dc709772de8397d6e86f9b88e8f46f0c52d6d8e",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-MOVING-CHAIN-PY-85DE7DE33669",
       "language": "python",
@@ -3402,10 +3452,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 2682,
+      "bytes_lf": 3238,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "6009b9b5aebad48a3ca9d9db8d5705e7fe7b44fb89423eb8d37ae4de76752c55",
+      "content_sha256_lf": "a4ab684d6affa03ce34a0b7fdee7446f1b1cf68add3735e999b46a02ed235862",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-SPATIAL-ELEMENT-PY-2A0F2069AD1F",
       "language": "python",
@@ -3529,6 +3579,7 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "src/shared/python/swing_sim/impact/tests/test_rigid_body_response.py",
           "tests/shared/python/golf_club/test_shaft_affine_response.py",
           "tests/shared/python/golf_club/test_shaft_affine_transient.py",
           "tests/shared/python/golf_club/test_shaft_damped_spectrum.py",

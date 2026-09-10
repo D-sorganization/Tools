@@ -2974,6 +2974,11 @@
     "explicit_all": true,
     "symbols": {}
   },
+  "_shaft_mass_solve.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
   "_shaft_model_contracts.py": {
     "__all__": [],
     "explicit_all": true,

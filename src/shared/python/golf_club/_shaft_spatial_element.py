@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+from typing import Protocol
+
 import numpy as np
 
 from ._beam_fem import beam_mass, beam_stiffness
 from ._shaft_linear_contracts import ShaftRodProperties
+from ._validation import Matrix3, Vector3
 from .shaft_profile import ShaftStation
 from .types import ComponentMassProperties
 
@@ -56,7 +59,20 @@ def spatial_element(
     return rotation @ stiffness @ rotation.T, rotation @ mass @ rotation.T
 
 
-def tip_spatial_inertia(body: ComponentMassProperties) -> np.ndarray:
+class _MassProperties(Protocol):
+    """Read-only physical fields shared by club components and free bodies."""
+
+    @property
+    def mass_kg(self) -> float: ...
+
+    @property
+    def center_of_mass_m(self) -> Vector3: ...
+
+    @property
+    def inertia_at_com_kg_m2(self) -> Matrix3: ...
+
+
+def _material_spatial_inertia(body: _MassProperties) -> np.ndarray:
     """Kinetic energy of full COM inertia and v_com = v_tip + omega cross r."""
     # Column j is e_j cross r, avoiding an independent skew convention.
     com_motion = np.column_stack(
@@ -65,3 +81,8 @@ def tip_spatial_inertia(body: ComponentMassProperties) -> np.ndarray:
     result = body.mass_kg * com_motion.T @ com_motion
     result[3:, 3:] += body.inertia_at_com_kg_m2
     return result
+
+
+def tip_spatial_inertia(body: ComponentMassProperties) -> np.ndarray:
+    """Preserve the club-component entry point over the shared mass kernel."""
+    return _material_spatial_inertia(body)
