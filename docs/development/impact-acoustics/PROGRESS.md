@@ -1,3 +1,18 @@
+Adaptive normal-contact review child #5151 now passes 386 Windows and
+386 Linux controls at exact archived tree4e1b19810. It continues parent #5073
+on feat/5073-contact-events. Temporal child #5147 is published as PR #5149;
+its published implementation stays separate. See NORMAL_EVENT_DEVELOPMENT.md
+and NORMAL_EVENT_RESULTS.json for the retained RED failures, independent
+event/work refinement, exact provenance and open physical/acoustic scope.
+
+Event implementation9a8241015 now preserves temporal PR#5149 at0d6b99430.
+All15 CLI/service and public API integration controls pass in8.04s, with
+event/shaft/impact Python and tests unchanged. Canonical continuation is
+recorded alongside the preserved calibration context in docs/development/HANDOFF.md.
+
+The following integration receipts describe the published temporal/foundation
+reviews; event implementation 9a8241015 remains separately qualified.
+
 The trajectory review also preserves mocap CLI/service main 9899c5a6a (PR
 #5121). All 12 CLI/service controls and the separate sidekick API control
 pass. Golf/impact source, tests and APIs remain byte-identical to 7164a74d5;

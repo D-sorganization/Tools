@@ -18,6 +18,20 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5151 · Adaptive Normal Contact Event Review
+
+- **State:** in_review
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5151; parent #5073
+- **PR:** https://github.com/D-sorganization/Tools/pull/5152
+- **Branch:** feat/5073-contact-events
+- **Paths:** src/shared/python/swing_sim/impact, src/shared/python/golf_club, tests/shared/python/golf_club
+- **Started:** 2026-09-10
+- **Last verified:** 2026-09-10 (SELF; production839ebe083; oracle root-residual tripwire RED then16 event controls pass69.91s; unchanged assertion gate passes; protected CI remains)
+- **Summary:** Adaptive local-chart normal contact with independent event/work reference, strict SI controls and unchanged canonical mechanics/APIs.
+- **Evidence:** NORMAL_EVENT_RESULTS.json records all RED/GREEN/source/JUnit identities; four production modules pass NumPy-aware mypy; Linux coverage58.64% exceeds unchanged20% floor; root Ruff/format3870 pass.
+- **Next step:** Resolve protected CI and review on #5152.
+
 ### DL-#5145 · Contact Numerical Foundation Review
 
 - **State:** in_review
@@ -41,10 +55,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/5073-contact-trajectory
 - **Paths:** src/shared/python/golf_club, src/shared/python/swing_sim/impact, tests/shared/python/golf_club
 - **Started:** 2026-09-10
-- **Last verified:** 2026-09-10 (SELF records cancelled CI run34433661011 at source0d6b99430; all12 non-rate Python shards pass; rate/Rust qualification incomplete; numerical source unchanged)
+- **Last verified:** 2026-09-10 (source tree 0433376b0; base 1edd0ddcf; SELF)
 - **Summary:** Review the private normal-contact trajectory, shared Lie RK4 and five-channel work accounting. Retain fixed shaft laws and existing APIs.
 - **Evidence:** All 371 Windows and 371 Linux coverage controls pass; three modules pass both NumPy-aware and actual-hook mypy. Exact sources, REDs and refinement/JUnit records are in CONTACT_TRAJECTORY_RESULTS.json.
-- **Next step:** Resolve the protected CI/review dependency with the owning task.
+- **Next step:** Resolve protected review on #5149; continue contact events, friction, face modes and physical/acoustic qualification under #5073.
 
 ### DL-#5073 · Spatial Flexible Contact Dynamics
 
@@ -52,13 +66,13 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5073
 - **PR:** not created
-- **Branch:** feat/5073-contact-trajectory
+- **Branch:** feat/5073-contact-events
 - **Paths:** src/shared/python/swing_sim/impact, docs/development/impact-acoustics, tests/api_baselines/swing_sim_api_baseline.json
 - **Started:** 2026-09-09
-- **Last verified:** 2026-09-09 (provider base 0cd6dce22; coupled-response staged tree ec863402f; changes SELF)
+- **Last verified:** 2026-09-10 (SELF preserves fleet-policy92283cf3f with no material implementation change; event9a8241015 and source4e1b19810 pass386 Windows/Linux controls; 15 integration controls pass)
 - **Summary:** Private common-point sphere/plane kinematics reuses canonical pose, force/moment and work ports. Point migration is kept distinct from material velocity. Normal and objective tangential work ports plus full-tensor free-body response are private; no qualified impact trajectory is inferred.
 - **Evidence:** Geometry 18, normal work 20 and tangent work 28 controls. Normal/legacy: 148 Windows/Linux pass after retained timeout. Tangential full impact: 150 Windows and 150 Linux coverage pass; NumPy typing passes. Integrated 176 tests pass on Windows/Linux. New body and moving-shaft controls pass 75 tests; relative-inertia adversarial RED then all 24 body tests pass. Five production files pass NumPy-aware mypy. All 323 coupled-response/impact/shaft controls pass on Windows and Linux coverage; existing 99 golf-club and 228 swing API records are unchanged. Exact artifacts are recorded.
-- **Next step:** Couple the ball/head/shaft trajectory; finish canonical inventory/handoff and qualified provider integration.
+- **Next step:** Implement finite-duration tangential history coupling to the existing shaft/ball response.
 
 - **Trajectory update (2026-09-10):** Shared Lie RK4 kernel: missing-module RED, eight GREEN, two deliberate-corruption delegation REDs, then all 36 kernel/shaft/geometry/disturbance controls GREEN. Two production modules pass NumPy-aware mypy. Kernel source tree 334822bb7. Normal-only contact trajectory now passes 12 controls, including independent motion/work refinement and free-ball clearance; all 371 Windows and Linux coverage controls pass at tree0433376b0. Evidence: CONTACT_TRAJECTORY_RESULTS.json.
 
@@ -87,9 +101,6 @@ reachable from any live state and `abandoned` from `parked`.
 - **Last verified:** 2026-09-10; four new regression cases fail before isolation; all 16 shard contracts and the 1,684-file partition pass afterward. All three unchanged Club Tester tests pass serially with coverage and the existing deadline (45.04 seconds total). Both Linux rate shards and aggregate gates pass at a7d025264; all nine manual governance checks and normal hooks pass. Windows retains two independently reproduced, unchanged-source GUI limitations recorded in PR #5158.
 - **Summary:** Reuse serial scientific invocation support for the entire Club Tester file while retaining parallel execution elsewhere, separate coverage outputs and failure propagation. Full-suite worker exit is reproduced; exact root cause remains unproven.
 - **Next step:** Qualify the combined context provider in PR #5141.
->>>>>>> origin/main
->>>>>>> origin/main
-
 ### DL-#5137 · Identified Moving Reference Placements
 
 - **State:** in_review

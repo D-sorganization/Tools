@@ -136,6 +136,22 @@ class NormalShaftContact:
             self.chain, shaft=replace(shaft, elastic=replace(elastic, loads=loads))
         )
 
+    def kinematics(
+        self, shaft_state: MovingChainState, ball_state: ContactBodyState
+    ) -> PlaneSphereKinematics:
+        """Query canonical contact geometry without evaluating prescribed forces."""
+        if not isinstance(shaft_state, MovingChainState):
+            raise TypeError("shaft_state must be MovingChainState")
+        shaft_model = self.chain.shaft
+        if np.asarray(shaft_state.twists).shape[0] != shaft_model.node_count:
+            raise ValueError("shaft state must contain every model node")
+        face = ContactBodyState(
+            np.asarray(shaft_state.poses)[self.face_node],
+            np.asarray(shaft_state.twists)[self.face_node],
+            shaft_state.observer_id,
+        )
+        return PlaneSphereKinematics(face, ball_state, self.geometry)
+
     def evaluate(
         self,
         shaft_state: MovingChainState,
@@ -148,17 +164,7 @@ class NormalShaftContact:
         Both load power maps use material-point velocity. Tangential return
         maps must not be inserted here as ordinary RK derivatives.
         """
-        if not isinstance(shaft_state, MovingChainState):
-            raise TypeError("shaft_state must be MovingChainState")
-        shaft_model = self.chain.shaft
-        if np.asarray(shaft_state.twists).shape[0] != shaft_model.node_count:
-            raise ValueError("shaft state must contain every model node")
-        face = ContactBodyState(
-            np.asarray(shaft_state.poses)[self.face_node],
-            np.asarray(shaft_state.twists)[self.face_node],
-            shaft_state.observer_id,
-        )
-        contact = PlaneSphereKinematics(face, ball_state, self.geometry)
+        contact = self.kinematics(shaft_state, ball_state)
         normal = normal_contact_work(self.law, -contact.gap_m, -contact.gap_rate_mps)
         force = normal.force_n * np.asarray(contact.normal)
         pair = contact.load_pair(force)
@@ -171,7 +177,8 @@ class NormalShaftContact:
         shaft = moving_chain_response(
             self._loaded_chain(contact, force), shaft_state, self.controls
         )
-        face_power = float(np.asarray(pair.face_wrench) @ face.twist)
+        face_twist = np.asarray(shaft_state.twists)[self.face_node]
+        face_power = float(np.asarray(pair.face_wrench) @ face_twist)
         energy = ContactEnergyBalance(
             shaft.total_energy_j + ball.kinetic_energy_j + normal.elastic_energy_j,
             shaft.energy_rate_w + ball.power_w + normal.elastic_power_w,

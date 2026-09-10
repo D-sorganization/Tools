@@ -20677,12 +20677,22 @@
       }
     }
   },
+  "impact/_normal_contact_events.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
   "impact/_normal_contact_trajectory.py": {
     "__all__": [],
     "explicit_all": true,
     "symbols": {}
   },
   "impact/_normal_contact_work.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "impact/_normal_event_contracts.py": {
     "__all__": [],
     "explicit_all": true,
     "symbols": {}
