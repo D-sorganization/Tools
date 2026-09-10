@@ -5,6 +5,25 @@ its published implementation stays separate. See NORMAL_EVENT_DEVELOPMENT.md
 and NORMAL_EVENT_RESULTS.json for the retained RED failures, independent
 event/work refinement, exact provenance and open physical/acoustic scope.
 
+Event implementation9a8241015 now preserves temporal PR#5149 at0d6b99430.
+All15 CLI/service and public API integration controls pass in8.04s, with
+event/shaft/impact Python and tests unchanged. Canonical continuation is
+recorded alongside the preserved calibration context in docs/development/HANDOFF.md.
+
+The following integration receipts describe the published temporal/foundation
+reviews; event implementation 9a8241015 remains separately qualified.
+
+The trajectory review also preserves mocap CLI/service main 9899c5a6a (PR
+#5121). All 12 CLI/service controls and the separate sidekick API control
+pass. Golf/impact source, tests and APIs remain byte-identical to 7164a74d5;
+the incoming CLI/service files and sidekick API remain those of main.
+
+The trajectory continuation preserves camera main 0a561daff through
+foundation merge 1be394e90. Every golf/impact implementation, test and API
+file remains byte-identical to temporal commit 37e322611; the camera
+implementation remains identical to main. The foundation-only merge
+evidence below is scoped to PR #5146, separately from this trajectory.
+
 UpstreamDrift #9916 was merged as c487265f at 2026-09-10T01:32:10Z.
 Its provider remains interim 4dabe900c. The active context integration task
 will preserve this merge and the launcher correction in its final coordinated
@@ -12,7 +31,8 @@ pin; exact impact-consumer and installed-wheel qualification remains.
 
 ## Contact Trajectory Development (2026-09-10)
 
-Temporal review child #5147 is published in PR #5149.
+Temporal review child #5147 is published in [PR #5149](https://github.com/D-sorganization/Tools/pull/5149) at 0d6b99430.
+Normal commit/push hooks pass; fresh protected CI/review remains required.
 Parent #5073 continues in `Tools-impact-trajectory` on
 `feat/5073-contact-trajectory`, based on published foundation PR #5146 at
 1edd0ddcf. The shared local-chart RK4 kernel begins with missing-module RED,
@@ -46,6 +66,21 @@ private empty-export records are added. Exact tree0433376b0 is archived for
 Contact switches, finite-duration friction, face/hosel modes and independent
 event/mesh/mode convergence remain open. Smooth RK4 order is insufficient for
 a contact-force jump. No full T4 delivery or physical/acoustic result is claimed.
+
+PR #5146 integrates camera-placement main 0a561daff. Every impact and
+golf-club source/test/API file is byte-identical to the qualified contact head;
+the camera development-log entries are retained alongside the impact entries.
+Canonical inventory and handoff are regenerated. The private consumer lookup
+failure is recorded in docs/ci-failures/impact5145-20260910.md and does not
+qualify that consumer. The separate normal-trajectory continuation is review
+child #5147 and passes all 371 Windows/Linux controls.
+
+The merged camera/API integration passes 40 controls (30.07 s), with 255
+existing import-loader deprecation warnings and no failures or skips. Impact
+source, tests and API baselines remain identical to 1edd0ddcf; the incoming
+camera source, tests and API remain identical to main 0a561daff. The first
+inventory check exposed a stale Rust math-primitives shard; the ordinary
+inventory generator repairs that generated merge drift without a Rust edit.
 
 Numerical foundation child #5145 is published for protected review in
 [PR #5146](https://github.com/D-sorganization/Tools/pull/5146) at 3912b5604. Normal commit/push checks pass after the isolated-import

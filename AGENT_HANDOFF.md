@@ -1,16 +1,18 @@
 # AGENT_HANDOFF — Tools (Monorepo Root)
 
+## Calibration and Moving Reference Placements: #5132 / #5137
+
+- #5132 repair is PR #5136 at45f3bd8b9, integrating main2c9a8d6c9 in Worktrees/Tools-calibration-opencv5;19 calibration checks and12 OpenCV5 tests pass. That merged baseline is now being qualified in this #5140 branch; private checkout remains unverified and no protections are bypassed.
+- #5137 owns feat/5137-reference-placements in Worktrees/Tools-calibration-numerics: immutable labelled paper/ruler observations, profile identities and joint camera/target pose estimation with an explicit world anchor. Held-out views remain independent; ruler-only/full-lens calibration is refused.
+- Twenty-four numerical/reference tests pass on both actual OpenCV versions. Common-reference UX, physical accuracy and consumer qualification remain open in UpstreamDrift#9897/#9899. Preserve impact/CLI scopes; see docs/development/HANDOFF.md.
+
 ## Impact Dynamics and Acoustics: #5068
 
-Numerical shaft #5133 is merged from 0cd6dce22 as 2c9a8d6c. Its later launcher
-correction is isolated in #5143 / PR #5144. Physical parent #5072 remains open.
-T4 #5073 has private geometry, normal/tangential work, full-tensor body response
-and instantaneous shaft/ball coupling. All 323 Windows/Linux controls pass at
-ec863402f; five production files pass mypy. Existing 99 golf-club and 228 swing
-API records are unchanged. Numerical review child #5145 bounds this foundation;
-PR #5146 is published at 3912b5604 after normal push checks passed. The parent retains trajectory and physical work.
-See SPATIAL_CONTACT_RESULTS.json and PROGRESS.md. Private-consumer access,
-physical/acoustic measurements and final qualification remain outstanding.
+Numerical shaft #5133 is merged from 0cd6dce22 as 2c9a8d6c. Its later launcher correction is isolated in #5143 / PR #5144. Physical parent #5072 remains open. T4 #5073 has private geometry, normal/tangential work, full-
+tensor body response and instantaneous shaft/ball coupling. All 323 Windows/Linux controls pass at ec863402f; five production files pass mypy. Existing 99 golf-club and 228 swing API records are unchanged. Numerical
+review child #5145 bounds this foundation; PR #5146 is published at 1be394e90 after normal push checks passed. The parent retains trajectory and physical work. See SPATIAL_CONTACT_RESULTS.json and PROGRESS.md. Private-
+consumer access, physical/acoustic measurements and final qualification remain outstanding. PR #5146 includes camera main 0a561daff; its private consumer lookup fails before tests (docs/ci-
+failures/impact5145-20260910.md).
 
 - Full program active; all three parent epics remain open. AffineDrift theory #4258/#4282/#4298 and UpstreamDrift integration #9706 are merged; final synthesis awaits downstream evidence.
 - T1 #5069/#5077 and T2 #5071/#5082 are merged at f72544613 and 80d580d57. Signal repair #5106 and initial study wire #5083 are merged; acoustic/report qualification remains.
@@ -18,7 +20,7 @@ physical/acoustic measurements and final qualification remain outstanding.
 - Classifier #5103 and main 0f2dfe3fd (mocap #5118) are integrated. Both task scopes are preserved; 145 merge tests, actual mypy, root Ruff and all nine gates passed. Camera/mocap ownership remains separate.
 - #5114 remains open: full Qt candidate loses three workers after 2,880 passes; 14 serial profiled controls pass without explaining the losses. Partial cleanup is separate on fix/5114-qt-deferred-cleanup; issuecomment-5599216206 records the evidence. No deadline or physical calculation changes.
 - T4 #5073 continues on feat/5073-contact-events; child #5151 passes386 Windows/Linux controls at tree4e1b19810. Temporal child #5147 is PR #5149. Active leases/presence are on the fleet board; final consumer and physical/acoustic qualification remain pending.
-- T4 includes identical-tree merged main 2c9a8d6c via fc33f2120, with all 323 combined controls passing. Review #5146 covers child #5145; trajectory review child #5147 is in Tools-impact-trajectory (all 371 Windows/Linux controls pass); no physical/acoustic qualification is inferred.
+- T4 foundation PR #5146 covers child #5145. Temporal child #5147 is PR #5149 at0d6b99430 with all 371 Windows/Linux controls passing; event continuation remains separate and no physical/acoustic qualification is inferred.
 - T5 retains calibration identity, complex FRF, radiation and physical/blinded requirements. T6 retains strict evidence/report contracts; private-consumer lookup is an independent unresolved delivery gate.
 - UpstreamDrift #9826 preserves all 328 claim outcomes; #9841 supplies adaptive reference diagnostics and 21 real Bioptim/Casadi 3.6.7 controls. The unsuccessful 3.8 OCP case and physical-data gates remain explicit.
 - Camera task owns UpstreamDrift #9860–#9863; preserve its scopes. Resume the complete requirement matrix in docs/development/impact-acoustics/PROGRESS.md; exact-pin consumers and physical/blinded final synthesis remain required.

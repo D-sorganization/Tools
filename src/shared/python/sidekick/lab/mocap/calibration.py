@@ -118,6 +118,9 @@ class PinholeIntrinsics:
         if not isinstance(self.distortion, DistortionCoefficients):
             raise TypeError("distortion must be DistortionCoefficients")
 
+        if self.distortion.model is DistortionModel.KANNALA_BRANDT:
+            raise ValueError("pinhole intrinsics cannot use a fisheye distortion model")
+
         object.__setattr__(self, "fx", fx)
         object.__setattr__(self, "fy", fy)
         object.__setattr__(self, "cx", cx)
@@ -139,32 +142,17 @@ class PinholeIntrinsics:
             v = self.fy * yn + self.cy
             return (u, v)
 
-        if self.distortion.model is DistortionModel.BROWN_CONRADY:
-            coeffs = self.distortion.coefficients
-            k1, k2 = coeffs[0], coeffs[1]
-            p1, p2 = (coeffs[2], coeffs[3]) if len(coeffs) >= 4 else (0.0, 0.0)
-            k3 = coeffs[4] if len(coeffs) >= 5 else 0.0
+        from .calibration_numerics import project
 
-            r2 = xn * xn + yn * yn
-            radial = 1.0 + k1 * r2 + k2 * (r2 * r2) + k3 * (r2 * r2 * r2)
-            dx_tangential = 2.0 * p1 * xn * yn + p2 * (r2 + 2.0 * xn * xn)
-            dy_tangential = p1 * (r2 + 2.0 * yn * yn) + 2.0 * p2 * xn * yn
-
-            xd = xn * radial + dx_tangential
-            yd = yn * radial + dy_tangential
-
-            u = self.fx * xd + self.skew * yd + self.cx
-            v = self.fy * yd + self.cy
-            return (u, v)
-
-        # Fallback to undistorted
-        u = self.fx * xn + self.skew * yn + self.cx
-        v = self.fy * yn + self.cy
-        return (u, v)
+        return project(self, xyz)
 
     def unproject_point(self, uv: tuple[float, float]) -> tuple[float, float, float]:
         """Unproject pixel (u, v) to a normalized unit ray (x, y, z) in camera frame."""
         u, v = (require_finite(val, "pixel coordinate") for val in uv)
+        if self.distortion.model is not DistortionModel.NONE:
+            from .calibration_numerics import unproject
+
+            return unproject(self, uv)
         # Undistort approx (for NONE, exact)
         yn = (v - self.cy) / self.fy
         xn = (u - self.cx - self.skew * yn) / self.fx
@@ -203,6 +191,14 @@ class FisheyeIntrinsics:
 
         if not isinstance(self.distortion, DistortionCoefficients):
             raise TypeError("distortion must be DistortionCoefficients")
+
+        if self.distortion.model not in {
+            DistortionModel.NONE,
+            DistortionModel.KANNALA_BRANDT,
+        }:
+            raise ValueError(
+                "fisheye intrinsics require a Kannala-Brandt distortion model"
+            )
 
         object.__setattr__(self, "fx", fx)
         object.__setattr__(self, "fy", fy)
@@ -246,23 +242,9 @@ class FisheyeIntrinsics:
 
     def unproject_point(self, uv: tuple[float, float]) -> tuple[float, float, float]:
         """Unproject pixel (u, v) to a normalized unit ray (x, y, z) in camera frame."""
-        u, v = (require_finite(val, "pixel coordinate") for val in uv)
-        xd = (u - self.cx) / self.fx
-        yd = (v - self.cy) / self.fy
-        theta_d = math.sqrt(xd * xd + yd * yd)
-        if theta_d < 1e-12:
-            return (0.0, 0.0, 1.0)
+        from .calibration_numerics import unproject
 
-        # For zero or tiny distortion, theta = theta_d
-        theta = theta_d
-        sin_theta = math.sin(theta)
-        cos_theta = math.cos(theta)
-        scale = sin_theta / theta_d
-        x = xd * scale
-        y = yd * scale
-        z = cos_theta
-        norm = math.sqrt(x * x + y * y + z * z)
-        return (x / norm, y / norm, z / norm)
+        return unproject(self, uv)
 
 
 @dataclass(frozen=True, slots=True)

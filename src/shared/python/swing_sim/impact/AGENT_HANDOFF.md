@@ -3,11 +3,11 @@
 ## Active Work
 
 - Event child #5151 passes386 Windows/Linux controls at tree4e1b19810; shared chart/geometry ports, independent piecewise event/work reference and strict SI/budget/history guards are retained. See NORMAL_EVENT_RESULTS.json; protected review, friction/modes and physical/acoustic qualification remain.
-- Parent #5073 remains active. Numerical foundation child #5145 is under protected review in PR #5146 at published 1edd0ddcf, based on merged shaft main 2c9a8d6c.
+- Parent #5073 remains active. Numerical foundation child #5145 is under protected review in PR #5146 at published 1be394e90, based on merged shaft main 2c9a8d6c.
 - Private geometry, normal/objective tangential work, full-tensor body response and instantaneous normal shaft/ball coupling are implemented. Head inertia is retained once; existing public APIs and legacy T2 equations are unchanged.
 - The archived foundation passes 323 Windows and 323 Linux coverage controls. The isolated pre-push typing repair passes 46 affected controls and mypy across all 13 changed source files. Normal publication hooks and repository-wide Ruff checks pass.
 - Exact source/JUnit hashes and retained failures are in `docs/development/impact-acoustics/SPATIAL_CONTACT_RESULTS.json`; derivations and remaining scope are in `SPATIAL_CONTACT_KINEMATICS.md` and `PROGRESS.md`.
-- These are synthetic numerical controls. The separate trajectory worktree now supplies fixed-step normal contact; full flexible-contact and physical/acoustic qualification remain open.
+- These are synthetic numerical controls. PR #5149 now supplies fixed-step normal contact; full flexible-contact and physical/acoustic qualification remain open.
 
 ## Next Steps
 
