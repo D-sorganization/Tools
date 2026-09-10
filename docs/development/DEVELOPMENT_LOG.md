@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5168 · Established-layout linear reference scale
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5168
+- **Branch:** feat/5168-linear-reference-scale
+- **PR:** https://github.com/D-sorganization/Tools/pull/5169
+- **Paths:** src/shared/python/sidekick/lab/mocap/reference_scale\*.py, tests/shared/python/sidekick/lab/mocap/test_reference_scale.py, docs/development/REFERENCE_SCALE.md and generated module inventory
+- **Started:** 2026-09-10
+- **Last verified:** 2026-09-10 (27 scale/placement tests passed; three implementation modules pass mypy and Ruff)
+- **Summary:** Immutable scale candidates from known ruler lengths and established camera geometry; independent held-out evidence and explicit lens/zoom association. No pose initialization or physical-accuracy approval.
+- **Next step:** Complete provider governance and protected publication, then integrate explicit review and downstream revision invalidation in UpstreamDrift #9899.
+
 ### DL-#5157 · Applied Waveform Calibration and Shared Uncertainty
 
 - **State:** in_review

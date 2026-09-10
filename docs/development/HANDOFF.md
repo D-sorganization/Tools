@@ -1,3 +1,12 @@
+# Linear Reference Scale #5168
+
+- Worktree: `Worktrees/Tools-calibration-numerics`; branch `feat/5168-linear-reference-scale`, based on main `2c3ab05e7`.
+- Draft PR: https://github.com/D-sorganization/Tools/pull/5169. All nine governance checks and strict inventory check pass; no publication approval is implied.
+- Additive canonical provider API only; source layout, rotations and lens profiles are preserved. Known endpoint lengths correct global scale about an explicit anchor. Existing four-point pose-initialization guard remains unchanged.
+- Missing-module RED preceded implementation. Expanded independent OpenCV/geometry and existing placement checks pass 27 tests; changed implementation passes mypy and Ruff. See `docs/development/REFERENCE_SCALE.md` for equations, consumer obligations and unapproved physical/manual evidence.
+- Next: finish generated inventory/governance and normal protected PR publication. UpstreamDrift #9899 retains UI, calibration revision and downstream invalidation integration. Do not reinstall the live Capture Rig candidate runtime.
+- Preserve the peer impact/acoustic records below. No impact, workflow, runner, or vendored consumer files are owned by this change.
+
 # Complex FRF Review #5155 / Parent #5074
 
 - Worktree: C:/Users/diete/Repositories/Tools-impact-frf-phase; branch feat/5074-complex-frf; source c954e50a09fb466ade516cfc724aef552fc587e6; PR #5156 https://github.com/D-sorganization/Tools/pull/5156.
@@ -39,6 +48,7 @@
 - Change: the entire Club Tester file uses existing serial science isolation. All GUI assertions, test selection and the 60-second deadline remain unchanged; the rest of the rate suite stays parallel.
 - Validation at a7d025264: 16 shard contracts, the 1,684-file partition, three unchanged serial tests with coverage, nine governance checks and normal hooks pass. Windows full execution completes with 2,905 parallel passes, 17 skips and two independently reproduced unchanged-source Qt 6.9 GUI limitations, followed by all three serial passes. PR #5158 records that limitation explicitly.
 - Continuation: the published repair is integrated into the context-provider worktree below; qualify the combined provider before final publication. Scientific/manual approval remains separate.
+
 ## Active Placement Work #5137
 
 - Worktree: `C:/Users/diete/Repositories/Worktrees/Tools-calibration-numerics`.

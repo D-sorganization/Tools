@@ -40091,5 +40091,72 @@
   "lab/mocap/placement_solver.py": {
     "__all__": [],
     "symbols": {}
+  },
+  "lab/mocap/reference_scale.py": {
+    "__all__": [
+      "ReferenceScaleOptions",
+      "ReferenceScaleProblem",
+      "ReferenceScaleResult",
+      "ScaleResidual",
+      "estimate_reference_scale"
+    ],
+    "symbols": {
+      "ReferenceScaleOptions": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "ReferenceScaleProblem": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "ReferenceScaleResult": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "ScaleResidual": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "estimate_reference_scale": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "problem",
+              "annotation": "ReferenceScaleProblem",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "options",
+              "annotation": "ReferenceScaleOptions | None",
+              "default": "None",
+              "kind": "arg"
+            }
+          ],
+          "returns": "ReferenceScaleResult"
+        }
+      }
+    }
+  },
+  "lab/mocap/reference_scale_fit.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/reference_scale_triangulation.py": {
+    "__all__": [],
+    "symbols": {}
   }
 }
