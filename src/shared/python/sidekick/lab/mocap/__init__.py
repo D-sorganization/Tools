@@ -45,6 +45,7 @@ from .calibration import (
     check_coverage_and_degeneracy,
     evaluate_intrinsic_quality,
 )
+from .cli import build_parser, cli_main
 from .devices import CameraCapabilities, CameraIdentity, FeatureSupport, NumericRange
 from .enums import Availability, ClockKind, SessionState, ShutterKind, SupportLevel
 from .extrinsics import (
@@ -76,6 +77,14 @@ from .recording import (
     RecordingWriter,
 )
 from .serialization import dumps_canonical, load_session_manifest
+from .service import (
+    MocapCapabilitiesReport,
+    MocapHealthReport,
+    MocapService,
+    MocapServiceConfig,
+    MocapServiceStatus,
+    MocapTaskResult,
+)
 from .session import (
     MOCAP_SESSION_SCHEMA_VERSION,
     MethodDescriptor,
@@ -109,6 +118,14 @@ from .temporal import (
 from .timebase import ClockDomain, FrameStamp
 
 __all__ = [
+    "MocapCapabilitiesReport",
+    "MocapHealthReport",
+    "MocapService",
+    "MocapServiceConfig",
+    "MocapServiceStatus",
+    "MocapTaskResult",
+    "build_parser",
+    "cli_main",
     "MOCAP_SESSION_SCHEMA_VERSION",
     "AcquisitionError",
     "ApprovalStatus",

@@ -1,3 +1,9 @@
+Foundation PR #5146 integrates main92283cf3f, preserving the mocap
+CLI/service and fleet-policy synchronization. Impact/golf source, tests and
+APIs remain identical to1be394e90. Canonical continuation is also recorded
+in docs/development/HANDOFF.md; temporal/event implementations remain in
+their separate review branches.
+
 PR #5146 integrates camera-placement main 0a561daff. Every impact and
 golf-club source/test/API file is byte-identical to the qualified contact head;
 the camera development-log entries are retained alongside the impact entries.

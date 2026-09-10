@@ -32,6 +32,13 @@
 
 ## 2. Purpose & Mission
 
+### 2026-09-09 Reference CLI & Service (#4706 / TOOLS-M10 (#4727))
+
+Subepic #4727 delivers headless command-line interface (`sidekick.lab.mocap.cli`) and service endpoints (`sidekick.lab.mocap.service`).
+Implements headless `discover`, `capture`, `calibrate`, `reconstruct`, and `export` subcommands with structured JSON output and
+deterministic exit codes. Delivers `MocapService` with health, capability, graceful cancellation, and privacy no-store enforcement,
+preventing raw image data or personal recordings from being persisted to disk in ephemeral capture sessions.
+
 ### 2026-09-09 C3D Biomechanical Data Exchange (#4706 / TOOLS-M9 (#4716))
 
 Subepic #4716 delivers typed contracts, binary reader/writer serialization, and biomechanical conversion
@@ -5868,8 +5875,9 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
-| 2026-09-09 | #5146 | Preserve camera main 0a561daff with byte-identical impact source and record the independent private-consumer checkout failure. Preserve scalar typing under isolated pre-push imports and verify 46 affected controls. Review the private contact numerical foundation under #5073 with 323 Windows/Linux controls, unchanged existing API records, shared inertia/mass solve and current governance evidence. Full trajectory, physical and acoustic qualification remain under the parent epics. |
+| 2026-09-09 | #5146 | Preserve main92283cf3f CLI/service and managed instructions with unchanged impact source and canonical continuation. Preserve camera main 0a561daff with byte-identical impact source and record the independent private-consumer checkout failure. Preserve scalar typing under isolated pre-push imports and verify 46 affected controls. Review the private contact numerical foundation under #5073 with 323 Windows/Linux controls, unchanged existing API records, shared inertia/mass solve and current governance evidence. Full trajectory, physical and acoustic qualification remain under the parent epics. |
 | 2026-09-09 | #5073 | Add private common-point geometry, disjoint normal and objective tangential work ports, full-tensor free-body response and instantaneous shaft/ball normal coupling with moving-grip energy accounting. Share the canonical inertia and scaled mass solve; preserve existing API records and legacy T2 equations. Verify axial three-mass, nonplanar work, observer invariance and strict domains. Full trajectories, face modes, convergence and physical/acoustic qualification remain. |
+| 2026-09-09 | #5121 | feat(mocap, #4727 TOOLS-M10): deliver reference CLI and service endpoints with headless discover/capture/calibrate/reconstruct/export subcommands, health/capability/cancel/no-store service protocol in `sidekick.lab.mocap.service` and `cli`. |
 | 2026-09-09 | #5137 | Add identified common-reference placements and profile-bound observations, joint camera/target pose estimation, independent held-out residuals, explicit gauge and cancellation; synthetic numerical evidence does not establish physical calibration. |
 | 2026-09-09 | #5132 | Repair calibration inverse distortion, explicit PnP failure and actual fixed-world-target camera pose refinement; qualify older mypy annotations and OpenCV4/5 iterative APIs while preserving provisional physical/publication status. |
 | 2026-09-09 | #5133 | Resolve independent momentum differentiation through two-scale fourth-order refinement and a corruption control. Replace unsupported roundoff residual ordering with unchanged physical feasibility and solver-unit contracts.  Explicitly type the delegated affine tuple return for incremental hook scopes. Preserve exact section/grip kinematics while reusing repeated evaluations; keep intensive scientific tests serial with bounded native pools and distinct coverage outputs. Correct NumPy-aware and fixture typing. Review child #5130: integrate main 421889407 and preserve its constants/runner ownership. Review the accumulated finite-rotation shaft numerical implementation and additive coefficient wire; integrate main b0c71779d with canonical generated-manifest resolution. Preserve physical qualification requirements on #5072. Repair integrated GUI/theme and shaft typing without changing numerical equations; preserve canonical generated-ledger freshness by excluding that renderer-owned file from independent Prettier formatting. |

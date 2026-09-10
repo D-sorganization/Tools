@@ -27,10 +27,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/5073-spatial-contact
 - **Paths:** src/shared/python/swing_sim/impact, src/shared/python/golf_club, tests/shared/python/golf_club
 - **Started:** 2026-09-09
-- **Last verified:** 2026-09-10 (camera main 0a561daff integration: 40 controls pass, 255 existing deprecation warnings; impact source unchanged from published 1edd0ddcf; 323-test archive ec863402f plus 46 affected typing-repair controls; SELF)
+- **Last verified:** 2026-09-10 (SELF preserves main92283cf3f; impact source identical to1be394e90; CLI/API and publication checks recorded in HANDOFF.md)
 - **Summary:** Review private common-point geometry, separate normal/tangential work, full-tensor body response and instantaneous normal shaft/ball coupling. Preserve old APIs and shared mechanics.
 - **Evidence:** All 323 Windows and 323 Linux coverage controls pass; five production files pass NumPy-aware mypy. Existing 99 golf-club and 228 swing API records are unchanged. Source/JUnit hashes and RED failures are retained in SPATIAL_CONTACT_RESULTS.json.
-- **Next step:** Resolve protected review on #5146; continue trajectory, modes, convergence and physical/acoustic requirements under parent #5073.
+- **Next step:** Publish the verified main-preserving merge to PR #5146.
 
 ### DL-#5073 · Spatial Flexible Contact Dynamics
 
