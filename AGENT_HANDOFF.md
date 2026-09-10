@@ -10,7 +10,7 @@
 
 Numerical shaft #5133 is merged from 0cd6dce22 as 2c9a8d6c. Its later launcher correction is isolated in #5143 / PR #5144. Physical parent #5072 remains open. T4 #5073 has private geometry, normal/tangential work, full-
 tensor body response and instantaneous shaft/ball coupling. All 323 Windows/Linux controls pass at ec863402f; five production files pass mypy. Existing 99 golf-club and 228 swing API records are unchanged. Numerical
-review child #5145 bounds this foundation; PR #5146 is published at 3912b5604 after normal push checks passed. The parent retains trajectory and physical work. See SPATIAL_CONTACT_RESULTS.json and PROGRESS.md. Private-
+review child #5145 bounds this foundation; PR #5146 is published at 1be394e90 after normal push checks passed. The parent retains trajectory and physical work. See SPATIAL_CONTACT_RESULTS.json and PROGRESS.md. Private-
 consumer access, physical/acoustic measurements and final qualification remain outstanding. PR #5146 includes camera main 0a561daff; its private consumer lookup fails before tests (docs/ci-
 failures/impact5145-20260910.md).
 
@@ -19,8 +19,8 @@ failures/impact5145-20260910.md).
 - T3 numerical review #5130 is closed by merged #5133. Parent #5072 still requires physical/FRF qualification; source/JUnit evidence is in CI_REPAIR_RESULTS.json. UD #9916 merged as c487265f with interim 4dabe900c; the context integration task will align the final reviewed #5144 descendant before exact consumer/wheel qualification.
 - Classifier #5103 and main 0f2dfe3fd (mocap #5118) are integrated. Both task scopes are preserved; 145 merge tests, actual mypy, root Ruff and all nine gates passed. Camera/mocap ownership remains separate.
 - #5114 remains open: full Qt candidate loses three workers after 2,880 passes; 14 serial profiled controls pass without explaining the losses. Partial cleanup is separate on fix/5114-qt-deferred-cleanup; issuecomment-5599216206 records the evidence. No deadline or physical calculation changes.
-- T4 #5073 lease/presence is renewed through 2026-09-10T02:57Z; numerical review #5145 lease runs through 03:05Z. UpstreamDrift #9916 final reviewed-pin qualification remains pending.
-- T4 includes identical-tree merged main 2c9a8d6c via fc33f2120, with all 323 combined controls passing. Review #5146 covers child #5145; trajectory review child #5147 is in Tools-impact-trajectory (all 371 Windows/Linux controls pass); no physical/acoustic qualification is inferred.
+- T4 #5073 continues event development on feat/5073-contact-events; active lease/presence is recorded on the fleet board. UpstreamDrift final reviewed-pin qualification remains pending.
+- T4 foundation PR #5146 covers child #5145. Temporal child #5147 is PR #5149 at22fd7ffc9 with all 371 Windows/Linux controls passing; event continuation remains separate and no physical/acoustic qualification is inferred.
 - T5 retains calibration identity, complex FRF, radiation and physical/blinded requirements. T6 retains strict evidence/report contracts; private-consumer lookup is an independent unresolved delivery gate.
 - UpstreamDrift #9826 preserves all 328 claim outcomes; #9841 supplies adaptive reference diagnostics and 21 real Bioptim/Casadi 3.6.7 controls. The unsuccessful 3.8 OCP case and physical-data gates remain explicit.
 - Camera task owns UpstreamDrift #9860–#9863; preserve its scopes. Resume the complete requirement matrix in docs/development/impact-acoustics/PROGRESS.md; exact-pin consumers and physical/blinded final synthesis remain required.

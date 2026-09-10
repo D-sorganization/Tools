@@ -34,17 +34,17 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5147 · Normal Contact Temporal Foundation Review
 
-- **State:** in_progress
+- **State:** in_review
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5147; parent #5073
-- **PR:** not created
+- **PR:** https://github.com/D-sorganization/Tools/pull/5149
 - **Branch:** feat/5073-contact-trajectory
 - **Paths:** src/shared/python/golf_club, src/shared/python/swing_sim/impact, tests/shared/python/golf_club
 - **Started:** 2026-09-10
 - **Last verified:** 2026-09-10 (source tree 0433376b0; base 1edd0ddcf; SELF)
 - **Summary:** Review the private normal-contact trajectory, shared Lie RK4 and five-channel work accounting. Retain fixed shaft laws and existing APIs.
 - **Evidence:** All 371 Windows and 371 Linux coverage controls pass; three modules pass both NumPy-aware and actual-hook mypy. Exact sources, REDs and refinement/JUnit records are in CONTACT_TRAJECTORY_RESULTS.json.
-- **Next step:** Publish for protected review; continue contact events, friction, face modes and physical/acoustic qualification under #5073.
+- **Next step:** Resolve protected review on #5149; continue contact events, friction, face modes and physical/acoustic qualification under #5073.
 
 ### DL-#5073 · Spatial Flexible Contact Dynamics
 
