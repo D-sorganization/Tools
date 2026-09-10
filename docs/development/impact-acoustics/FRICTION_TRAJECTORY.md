@@ -186,3 +186,25 @@ Source/API/inventory/turnover and platform/review evidence remain required. Pare
 friction, mesh/mode and grazing/repeated-event qualification, radiation,
 held-out force/spin recordings and blinded sweetness. No numerical loss is
 promoted to physical heat, acoustic energy or perceived quality.
+
+## Finer-grid diagnostic and exact one-step failure
+
+The same published production source completes 240 steps from the positive gap:
+y-spin 1.440045294 rad/s, normal impulse 0.004537435 N s, mechanical defect
+-0.000110616 J and tangential algorithmic loss 0.00000451942 J. These are
+additional diagnostics, not a componentwise asymptotic certificate.
+
+The 480-step run refuses the interval [0.0014625, 0.00146875] s. Its previous
+gap is -0.000145563 m and normal force 2.94956 N, so this occurrence is inside
+compression, not contact onset. MINPACK reports stagnation with a residual of
+2.602085214e-18 even at its recommended iterate tolerance. The full requested
+trajectory is not returned. The exact accepted mechanical/tangential state is
+embedded in FRICTION_RESULTS.json; reconstructing that one step reproduces the
+refusal in 0.344 s, avoiding a full trajectory in the next RED regression.
+
+Review #5160 and draft PR#5162 remain open. Next, add that exact regression and
+repair the distinction between mathematical residual convergence and backend
+termination reporting. Preserve actual evaluation/domain limits, independent
+fresh residual and force/work/momentum controls; report termination evidence
+explicitly. Do not adjust tolerances merely to make this fixture pass. Finer
+individual spin convergence remains a separate requirement after that repair.

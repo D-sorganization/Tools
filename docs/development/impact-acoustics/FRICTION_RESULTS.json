@@ -575,7 +575,7 @@
     "linux": "not yet qualified for friction source",
     "normal_commit_push_hooks": "all passed at implementation75f8328bb",
     "pr_state": "draft",
-    "review_closure": "held on componentwise positive-gap spin/contact-transition refinement"
+    "review_closure": "held on reproducible backend stagnation at small true residual, and componentwise positive-gap spin/contact-transition refinement"
   },
   "limitations": [
     "Synthetic constant friction and normal coefficients; no measured validity",
@@ -583,7 +583,129 @@
     "Canonical mass reused in momentum check; not independent quadrature/mesh qualification",
     "Face/hosel/material/ball deformation and radiation absent",
     "No held-out force/spin validation or blinded sweetness evidence",
-    "Positive-gap combined norm decreases but coarse individual spin changes are not monotone: 1.4238182304, 1.4181187950, 1.4417118495 rad/s. Componentwise spin/contact-transition qualification remains open; review #5160 must not be closed by this result."
+    "Positive-gap combined norm decreases but coarse individual spin changes are not monotone: 1.4238182304, 1.4181187950, 1.4417118495 rad/s. Componentwise spin/contact-transition qualification remains open; review #5160 must not be closed by this result.",
+    "480-step diagnostic fails inside compression with backend stagnation despite a 2.602e-18 residual; exact one-step state reproduces refusal in0.344s. No partial trajectory or qualification was returned."
   ],
-  "publication_binding_commit": "SELF"
+  "publication_binding_commit": "SELF",
+  "finer_grid_diagnostics": {
+    "240_steps": {
+      "source": "75f8328bb058fec2a13adbac5e9fccc5b58630e2",
+      "qualification": "additional diagnostic; not closure of review5160",
+      "steps": 240,
+      "seconds": 42.53100000000268,
+      "ball_twist": [
+        0.2879766348835649, -1.4774840370305763e-39, -0.3008130508356377,
+        -7.310674531185485e-39, 1.4400452942464554, -1.081358848885174e-41
+      ],
+      "normal_impulse_ns": 0.004537434730702021,
+      "tangential_impulse_ns": [
+        -0.0005793898388387751, -9.424604592511071e-45, 2.441453873792493e-10
+      ],
+      "mechanical_defect_j": -0.00011061583390721689,
+      "algorithmic_j": 4.519417213824932e-6,
+      "onset_bracket_s": [0.00036250000000000003, 0.000375]
+    },
+    "480_steps_failure": [
+      {
+        "cell": [0.0014625, 0.001465625, 0.00146875],
+        "success": false,
+        "message": "The iteration is not making good progress, as measured by the \n improvement from the last ten iterations.",
+        "nfev": 16,
+        "scaled_residual_max": 2.6020852139652106e-18,
+        "initial_gap_m": -0.00014556314710234206,
+        "initial_gap_rate_mps": -0.012765061160887551,
+        "initial_normal_force_n": 2.949558125529504,
+        "xtol": 1.4901161193847656e-8
+      },
+      {
+        "error": "friction endpoint failed to converge: The iteration is not making good progress, as measured by the \n improvement from the last ten iterations.",
+        "seconds": 66.51499999999942,
+        "source": "75f8328bb058fec2a13adbac5e9fccc5b58630e2",
+        "qualification": "failed480-step diagnostic; no partial trajectory accepted"
+      }
+    ],
+    "one_step_state": {
+      "source": "75f8328bb058fec2a13adbac5e9fccc5b58630e2",
+      "cell": [0.0014625, 0.001465625, 0.00146875],
+      "shaft_poses": [
+        [
+          [
+            0.9999999999783403, 5.879925884992065e-50, -6.5820165099527565e-6,
+            5.394925607802877e-7
+          ],
+          [
+            6.345987731293608e-50, 0.9999999999999968, 1.857472341137589e-44,
+            1.999524504242075e-46
+          ],
+          [
+            6.5820165099527565e-6, -1.8574723411391228e-44, 0.9999999999783403,
+            0.01048191853702757
+          ],
+          [0.0, 0.0, 0.0, 1.0]
+        ],
+        [
+          [
+            0.99999999999999, -2.524929775501475e-52, 1.4723663442927427e-7,
+            6.384674558039213e-7
+          ],
+          [
+            2.757129810092073e-52, 1.0, -1.5770533976862097e-46,
+            6.424434345707668e-47
+          ],
+          [
+            -1.4723663442927427e-7, 1.5770533976865992e-46, 0.99999999999999,
+            1.0296858528268764
+          ],
+          [0.0, 0.0, 0.0, 1.0]
+        ]
+      ],
+      "shaft_twists": [
+        [
+          0.0014059359952161505, 5.728260179665269e-43, 0.4559847313364351,
+          -2.004385133912676e-41, -0.017215207923329222, -9.380343374198356e-47
+        ],
+        [
+          0.0017017570489290413, 1.8449072322059453e-43, -0.3326394210421963,
+          5.096331728510072e-43, 0.0004316859388483723, 6.587244463285855e-49
+        ]
+      ],
+      "ball_pose": [
+        [
+          0.9999999859659212, -2.6814905958532223e-51, 0.0001675355341122298,
+          0.0004372861492617029
+        ],
+        [
+          4.1250155688858116e-51, 0.9999999999999953, -8.616231313500409e-48,
+          7.504346153186424e-50
+        ],
+        [
+          -0.00016753553411222975, 8.61623188366626e-48, 0.9999999859659212,
+          1.0495402896154837
+        ],
+        [0.0, 0.0, 0.0, 1.0]
+      ],
+      "ball_twist": [
+        0.2961228590329357, 3.5760797209775275e-46, -0.34535510803349373,
+        4.1433159130652013e-44, 0.4498394640846429, 2.6392450536158447e-47
+      ],
+      "normal": [
+        1.4723663442927416e-7, -1.5770533976862085e-46, 0.9999999999999892
+      ],
+      "elastic_deflection_m": [
+        0.00032456831893454394, -6.399966777975944e-47, -4.7788346922290026e-11
+      ],
+      "observer_id": "observer",
+      "synthetic_problem_factory": "tests.shared.python.golf_club.test_friction_refinement._release_start(0.0001)",
+      "root_report": {
+        "success": false,
+        "residual": 2.6020852139652106e-18,
+        "message": "The iteration is not making good progress, as measured by the \n improvement from the last ten iterations."
+      }
+    },
+    "one_step_replay": {
+      "reproduced": true,
+      "error": "friction endpoint failed to converge: The iteration is not making good progress, as measured by the \n improvement from the last ten iterations.",
+      "seconds": 0.34399999999732245
+    }
+  }
 }
