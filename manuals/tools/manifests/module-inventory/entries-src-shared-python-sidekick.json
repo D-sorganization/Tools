@@ -4255,10 +4255,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5534,
+      "bytes_lf": 5925,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "29677ebfb461168b1749f3f5c3e73e9917ddcb487e26306ba14094c68c1cf5ed",
+      "content_sha256_lf": "51337c146a43a40974480cc5a9a8cb8dfdf6020451cda7fdd444ba36bad1f97e",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-INIT-PY-BD60513A12BD",
       "language": "python",
@@ -4521,7 +4521,37 @@
           },
           {
             "kind": "re-export",
+            "name": "MocapCapabilitiesReport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MocapHealthReport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MocapService",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MocapServiceConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MocapServiceStatus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "MocapSessionManifest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MocapTaskResult",
             "signature": null
           },
           {
@@ -4716,6 +4746,11 @@
           },
           {
             "kind": "re-export",
+            "name": "build_parser",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "bundle_adjust_layout",
             "signature": null
           },
@@ -4727,6 +4762,11 @@
           {
             "kind": "re-export",
             "name": "check_coverage_and_degeneracy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "cli_main",
             "signature": null
           },
           {
@@ -5418,10 +5458,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 17406,
+      "bytes_lf": 16633,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "07055504df55de1c220bb16d78c67d442c969c9fc71db130c903aca8cf7eae92",
+      "content_sha256_lf": "8d1eedd5149f1a4f2c961459ec66f4924cff7078ece7c5f0e5c279843319b04b",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-CALIBRATION-PY-881BCCB31ECE",
       "language": "python",
@@ -5460,8 +5500,10 @@
         "public_surfaces": [],
         "test_paths": [
           "tests/shared/python/sidekick/lab/mocap/test_calibration_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_numerics.py",
           "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py",
-          "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py"
+          "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_reference_placements.py"
         ],
         "unit_mentions": [
           "g"
@@ -5470,6 +5512,121 @@
           "tests/shared/python/sidekick/lab/mocap/test_calibration_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 10966,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "726eb1ad7c0167e70845e9a27cc5873d1fffa659766309af14fa7efd1e84d187",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-CALIBRATION-NUMERICS-PY-2226C716E3A5",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/calibration_numerics.py",
+      "purpose": "Numerical adapters for the canonical calibration contracts.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_numerics.py"
+        ],
+        "unit_mentions": [
+          "N"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8749,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "32f8209696a43c43e1a414ebc04205bd669d636bde072809b58be399702fb66f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-CLI-PY-D118EA68F7CD",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/cli.py",
+      "purpose": "Headless command-line interface for markerless mocap workflows (TOOLS-M10 #4727).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "build_parser",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "cli_main",
+            "signature": "argv: Sequence[str] | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_cli_service_contracts.py"
+        ],
+        "unit_mentions": [
+          "Hz",
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_cli_service_contracts.py"
         ]
       }
     },
@@ -5579,10 +5736,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 14668,
+      "bytes_lf": 10902,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "0b2486b16007a2887ff3390b02ad2601b55de675bd1f40c3424d1790d7bf4571",
+      "content_sha256_lf": "8fae63f1dec200877c74c59786d0f71182f77bb1b2355654aa0335d319bf6a52",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-EXTRINSICS-PY-FD8B0A3C2EFE",
       "language": "python",
@@ -5606,7 +5763,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "mapped",
+        "units": "unavailable",
         "validation": "mapped"
       },
       "traceability": {
@@ -5620,12 +5777,11 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_numerics.py",
           "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py"
         ],
-        "unit_mentions": [
-          "s"
-        ],
+        "unit_mentions": [],
         "validation_paths": [
           "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py"
@@ -5677,9 +5833,11 @@
         "test_paths": [
           "src/shared/python/programmatic_pid/tests/test_geometry.py",
           "tests/programmatic_pid/test_geometry.py",
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_numerics.py",
           "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
-          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_reference_placements.py"
         ],
         "unit_mentions": [],
         "validation_paths": [
@@ -5737,6 +5895,54 @@
           "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_temporal_contracts.py"
         ]
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 12511,
+      "classification": "calculation",
+      "classification_basis": "path-marker:solver",
+      "content_sha256_lf": "314f9c041688dd387fff5fccff08e72b7df33b396659a4e06961fc923ea9a3f2",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-PLACEMENT-SOLVER-PY-6ACDF9665F4C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/placement_solver.py",
+      "purpose": "Joint camera/reference-placement estimation behind the shared contracts.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
       }
     },
     {
@@ -5895,6 +6101,97 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 10849,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cfda350e8396081899e06a0570cf23a424e775b7daf88567b0a967eadc2d3a50",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-REFERENCE-PLACEMENTS-PY-C7BA6AACC642",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/reference_placements.py",
+      "purpose": "Identified common references and multi-view placements in explicit SI frames.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PlacementObservation",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlacementResidual",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ReferenceCamera",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ReferenceLayoutResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ReferenceSolveCancelled",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ReferenceTarget",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "common_reference",
+            "signature": "reference_id: str"
+          },
+          {
+            "kind": "function",
+            "name": "estimate_reference_layout",
+            "signature": "*, layout_id: str, world_frame: CoordinateFrame, targets: Mapping[str, ReferenceTarget], cameras: Mapping[str, ReferenceCamera], observations: Sequence[PlacementObservation], anchor_placement_id: str, anchor: RigidTransform, cancel_requested: Callable[[], bool] | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_reference_placements.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 5394,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -5937,6 +6234,95 @@
         ],
         "unit_mentions": [],
         "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 13537,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "b7ce204034efd4b714052f79bad4a0d5d9c7c544cca35c73d86bacc132e3e928",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-SERVICE-PY-24BE82F902CB",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/service.py",
+      "purpose": "Headless mocap service endpoints and orchestration protocol (TOOLS-M10 #4727).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MocapCapabilitiesReport",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MocapHealthReport",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MocapService",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MocapServiceConfig",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MocapServiceStatus",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MocapTaskResult",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/calculators/conversion/test_service.py",
+          "tests/shared/python/sidekick/lab/mocap/test_cli_service_contracts.py",
+          "tests/unit/agent_context/test_service.py"
+        ],
+        "unit_mentions": [
+          "mm",
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_cli_service_contracts.py"
+        ]
       }
     },
     {

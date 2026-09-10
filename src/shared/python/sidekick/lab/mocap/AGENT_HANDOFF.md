@@ -18,29 +18,29 @@ Tools owns the MIT vendor-neutral markerless-mocap contracts and reference algor
 - #4715 / TOOLS-M6: pose backend adapters (merged in #5076).
 - #4724 / TOOLS-M7: association and N-view reconstruction (merged in #5111).
 - #4726 / TOOLS-M8: temporal reconstruction and biomechanical mapping (PR #5118).
-- #4716 / TOOLS-M9: C3D biomechanical data exchange (active branch).
+- #4716 / TOOLS-M9: C3D biomechanical data exchange (merged in #5119).
+- #4727 / TOOLS-M10: reference CLI and service (active branch).
 
 ## Current branch
 
-- Branch: `feat/4716-mocap-c3d-exchange`
-- Base: `feat/4726-mocap-temporal-mapping`
+- Branch: `feat/4727-mocap-cli-service`
+- Base: `feat/4716-mocap-c3d-exchange`
 - Worktree: `C:\Users\diete\Repositories\Tools`
 - Pull request: Pending creation
 
 ## Delivered in this slice
 
-- Subepic #4716 (TOOLS-M9): C3D Biomechanical Data Exchange.
-- `sidekick.lab.mocap.c3d` defines:
-  - `C3DHeader`: binary header parameter schemas with fail-closed bounds checking.
-  - `C3DPointChannel`: 3D point trajectory channel with residual and camera masks.
-  - `C3DAnalogChannel`: 1D analog channel stream with scaling and offset metadata.
-  - `C3DForcePlatform`: force platform geometry and type 2 channel mapping.
-  - `C3DContainer`: in-memory container for points, analogs, events, and parameters.
-  - `serialize_c3d_header` & `write_c3d_file`: deterministic C3D binary writer with golden round-trip serialization.
-  - `parse_c3d_header` & `validate_c3d_header_magic`: header parser with magic byte validation.
-  - `unit_scale_factor`: metric and imperial length scaling factors.
-  - `compute_center_of_pressure`: ground reaction force and moment COP derivation with contact thresholding.
-- Contract test suites in `tests/shared/python/sidekick/lab/mocap/test_c3d_contracts.py`.
+- Subepic #4727 (TOOLS-M10): Reference CLI and Service.
+- `sidekick.lab.mocap.service`:
+  - `MocapService`: headless orchestration protocol for discover, capture, calibrate, reconstruct, and export workflows.
+  - `MocapServiceStatus`, `MocapHealthReport`, `MocapCapabilitiesReport`: structured health, capabilities, and lifecycle states.
+  - `cancel`: graceful task cancellation without resource leaks.
+  - `no-store` policy: enforces privacy rules preventing raw frame/video persistence in ephemeral sessions.
+- `sidekick.lab.mocap.cli`:
+  - Headless CLI subcommands: `discover`, `capture`, `calibrate`, `reconstruct`, and `export`.
+  - Structured `--json` and human-readable output formatting.
+  - Deterministic exit codes (0 for success, 1 for errors, 2 for arg errors, 130 for SIGINT).
+- Contract test suite: `tests/shared/python/sidekick/lab/mocap/test_cli_service_contracts.py` (12 passed).
 
 ## Required gates
 

@@ -31,6 +31,35 @@ reachable from any live state and `abandoned` from `parked`.
 - **Summary:** Dependency-free source context package, real MCP transport, semantic boundary reviews, deterministic views and CodeMap freshness guards. Parent epic Repository_Management#1629 remains active; no subscription infrastructure is required.
 - **Next step:** All normal push hooks pass in a clean declared pre-commit environment; e24ef5a68 is published. Reconcile CodeMap documentation with current worktree verification, then qualify protected CI and final consumer pins.
 
+### DL-#5137 · Identified Moving Reference Placements
+
+- **State:** in_review
+- **Owner:** codex
+- **Issue:** #5137; consumer UpstreamDrift#9899
+- **Branch:** feat/5137-reference-placements
+- **PR:** #5140 (open)
+- **Paths:** src/shared/python/sidekick/lab/mocap/reference_placements.py, placement_solver.py, calibration_numerics.py; reference tests and manual inventory
+- **Started:** 2026-09-09
+- **Last verified:** 2026-09-09 (`d129737273800c8cb3c31e28c38c421f05993a95`; 24 numerical/reference tests pass on OpenCV 4.13 and 5.0; all101 mocap/authority/API tests pass in17.03s; scoped lint/format/mypy and governance gates pass)
+- **Summary:** Labelled target geometry, immutable per-camera/profile observations, connected pose initialization and joint camera/target fitting with a fixed anchor and independent held-out views; explicit unsupported/ambiguous geometry and cancellation outcomes.
+- **Next step:** Qualify protected CI/review and merge #5140 after numerical recovery.
+
+- **Main integration:** repair45f3bd8b9/main2c9a8d6c9 retains impact work.101 mocap/authority/API tests and24 OpenCV5 numerical/placement checks pass; inventory/handoff gates pass. Normal publication checks pending.
+
+### DL-#5132 · Calibration Numerical Recovery
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** #5132; consumer UpstreamDrift#9897/#9899
+- **Branch:** fix/5132-calibration-numerics
+- **PR:** https://github.com/D-sorganization/Tools/pull/5136
+- **Paths:** src/shared/python/sidekick/lab/mocap/calibration.py, extrinsics.py, calibration_numerics.py; numerical tests and inventory
+- **Started:** 2026-09-09
+- **Last verified:** 2026-09-09T21:06Z (SELF: reproduced3 OpenCV5 failures; all12 numerical tests now pass on actual OpenCV4.13 and5.0)
+- **Summary:** Real distortion-aware pose recovery replaces silent fabricated poses and unchanged refinement results.
+- **Next step:** Integrate main2c9a8d6c9 without changing numerical gates;19 merged calibration tests pass. Regenerate inventory, run hooks and qualify fresh exact-head CI on PR#5136.
+>>>>>>> origin/main
+
 ### DL-#5101 · Scientific Import Inventory Detection
 
 - **State:** in_review
