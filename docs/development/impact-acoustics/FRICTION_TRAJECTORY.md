@@ -264,3 +264,73 @@ The earlier published cb7219f38 Linux Python3.11 shard timed out at the unchange
 shared shard passed. The repaired source still needs hosted qualification.
 Review #5160 and draft PR#5162 remain open for contact-transition/componentwise
 qualification, CI and review. All physical/acoustic parent requirements remain.
+
+## Independent planar sliding reference
+
+The test-only `_friction_sliding_reference.py` supplies a continuous saturated
+sliding oracle in addition to the sticking reference. It shares the canonical
+shaft/ball mechanical response, normal law and Lie-chart differential. It
+does not use the endpoint nonlinear solver or discrete tangential return map;
+tests disable both while checking its continuous work balance.
+
+Let v_t = s e with s > 0, |e| = 1. In planar motion with fixed slip sign,
+e rotates with the face frame. With constant mu and k_t, a saturated elastic
+history is z = r e, r = mu F_n/k_t. The objective history rate then gives
+
+```text
+lambda = s - r_dot > 0
+r_dot = mu F_n_dot / k_t
+F_t = -mu F_n e
+D_plastic_dot = mu F_n lambda
+E_t_dot = k_t r r_dot
+mu F_n s = E_t_dot + D_plastic_dot.
+```
+
+The explicit positive-lambda check is essential: if the normal cap expands
+faster than slip loads the spring, this saturated branch is invalid and the
+reference refuses it. A shrinking cap releases stored tangential energy;
+plastic work consequently cannot be replaced by mu F_n s alone. These are
+properties of the declared model, not measurements of heat or acoustic energy.
+
+While compression and raw normal force remain positive,
+F_n_dot = -k_n g_dot - c_n g_ddot. For a fixed material plane, let d be the
+ball-center minus face-origin vector in world axes. Its material plane offset
+contributes a constant to the gap and drops out of the derivatives:
+
+```text
+g_ddot = n_ddot dot d + 2 n_dot dot d_dot + n dot d_ddot
+n_dot = omega_face cross n
+n_ddot = alpha_face cross n + omega_face cross (omega_face cross n).
+```
+
+World origin acceleration is R (v_body_dot + omega_body cross v_body).
+The reference retains these rotating-frame terms; three independent expanded
+world-coordinate controls check them with nonzero plane offsets and body spin.
+The terms affect the changing contact force bound. They do not introduce a
+second centrifugal potential or turn Coriolis action into material damping.
+
+Two synthetic 40-microsecond cases use mu=0.02 and 5 m/s tangential ball speed,
+with normal ball velocities -0.4 and +0.4 m/s. One has growing tangential
+storage and one has shrinking storage. Every reference evaluation checks
+strict compression, positive force, planar motion, positive slip and outward
+plastic loading. No onset, reversal, stick/slide transition, force cutoff or
+separation lies inside these reference intervals.
+
+DOP853 and a tenfold tighter reference agree in each reported output to 1e-10
+in that output's stated SI unit. Against them, the 4/8/16-step production
+solutions satisfy the preset first-order ratio bounds separately for normal
+force, world tangential x-force, world ball x-speed, world y-spin, normal and
+tangential x-impulse, and plastic work. All five other work ports satisfy their
+separate 1e-6 J finest-grid bounds. The combined shaft/ball pose, twist and
+history error decreases, and tangential algorithmic loss decreases; that
+combined state norm is not a componentwise certificate for every shaft mode.
+
+The continuous total-energy defects are about 1.38e-15 and 2.10e-15 J. The
+tangential storage changes are +1.17e-6 and -3.58e-6 J, respectively. The seven
+initial reference controls pass after the missing-helper and new-parameter
+RED records; exact final source, typing and regression receipts belong to
+FRICTION_SLIDING_RESULTS.json. Final expanded Windows verification passes267 tests
+in104.24s with no failures or skips; both new reference files pass NumPy-aware
+mypy. This strengthens sliding qualification within
+the stated branch and retains the general event/mesh/mode, material,
+radiation and perception requirements.

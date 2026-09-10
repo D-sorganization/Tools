@@ -277,6 +277,7 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/golf_club/_friction_sliding_reference.py",
           "tests/shared/python/golf_club/test_friction_continuous_reference.py",
           "tests/shared/python/golf_club/test_friction_momentum.py"
         ],
@@ -383,6 +384,7 @@
           "tests/shared/python/golf_club/test_friction_modes.py",
           "tests/shared/python/golf_club/test_friction_momentum.py",
           "tests/shared/python/golf_club/test_friction_refinement.py",
+          "tests/shared/python/golf_club/test_friction_sliding_reference.py",
           "tests/shared/python/golf_club/test_friction_trajectory_invariants.py"
         ],
         "unit_mentions": [],
@@ -432,6 +434,7 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/golf_club/_friction_sliding_reference.py",
           "tests/shared/python/golf_club/test_friction_convergence.py"
         ],
         "unit_mentions": [],
@@ -583,6 +586,7 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/golf_club/_friction_sliding_reference.py",
           "tests/shared/python/golf_club/test_friction_continuous_reference.py",
           "tests/shared/python/golf_club/test_normal_contact_events.py",
           "tests/shared/python/golf_club/test_normal_contact_trajectory.py",
@@ -635,7 +639,8 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
-          "src/shared/python/swing_sim/impact/tests/test_normal_contact_work.py"
+          "src/shared/python/swing_sim/impact/tests/test_normal_contact_work.py",
+          "tests/shared/python/golf_club/_friction_sliding_reference.py"
         ],
         "unit_mentions": [
           "s"
@@ -844,7 +849,9 @@
         "public_surfaces": [],
         "test_paths": [
           "src/shared/python/swing_sim/impact/tests/test_spatial_contact_kinematics.py",
+          "tests/shared/python/golf_club/_friction_sliding_reference.py",
           "tests/shared/python/golf_club/test_friction_refinement.py",
+          "tests/shared/python/golf_club/test_friction_sliding_reference.py",
           "tests/shared/python/golf_club/test_friction_transport.py",
           "tests/shared/python/golf_club/test_normal_shaft_contact.py"
         ],

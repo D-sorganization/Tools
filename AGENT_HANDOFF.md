@@ -8,10 +8,10 @@
 
 ## Impact Dynamics and Acoustics: #5068
 
-Friction#5160 is on feat/5073-friction-trajectory; draft PR#5162 is published.
-Residual-stop repair passes258 controls plus two continuous references. Finer
-spin evidence is case-specific; hosted qualification and review remain open.
-Calibration#5159 has both Python gates passing. Provider e83bd2e4/UD#9920
+Friction #5160 / draft PR #5162 remains on feat/5073-friction-trajectory.
+267 affected controls pass, including independent sticking/sliding references.
+Hosted qualification, general transitions and physical validation remain open.
+Calibration #5159 has both Python gates passing. Provider e83bd2e4/UD #9920
 are merged; installation evidence retains its source identity. See HANDOFF.md.
 
 - Full program active; all three parent epics remain open. AffineDrift theory #4258/#4282/#4298 and UpstreamDrift integration #9706 are merged; final synthesis awaits downstream evidence.

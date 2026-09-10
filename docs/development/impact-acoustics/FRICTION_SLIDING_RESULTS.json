@@ -1,0 +1,442 @@
+{
+  "schema_version": 1,
+  "governing_issue": "D-sorganization/Tools#5160",
+  "pr": 5162,
+  "production_commit": "4dcf1938ee49268ad3f756ea53084238eb56e2f3",
+  "base_publication": "7d953cdc7a45fbbec0509156f7bec205b1b679e8",
+  "reference_identity": "Exact LF-normalized source hashes below; test-only reference is introduced with this artifact.",
+  "production_sources": {
+    "src/shared/python/swing_sim/impact/_friction_contact_response.py": "a3d5e56dc59620a18607eb782dc62b93f195330acb3e50a8c9b37a025bf56094",
+    "src/shared/python/swing_sim/impact/_friction_contact_step.py": "6bc7565d45914fe3de0e575181da150fe65061cbe9d3ece5b7ce0ade92425462",
+    "src/shared/python/swing_sim/impact/_friction_contact_trajectory.py": "796763ed779f229a3f65ed0008664fcfa810c6c18649683c4ac27f9d29de0132",
+    "src/shared/python/swing_sim/impact/_friction_trajectory_contracts.py": "7e044af47d86c7c284ee3a28ac97cf564f2e215490fdd55c520947174d0f324a",
+    "src/shared/python/swing_sim/impact/_friction_transport.py": "2e824f784bcb10a343eaca423dde4a1685861fafdca7367513c94e92deb23cef",
+    "src/shared/python/swing_sim/impact/_normal_contact_trajectory.py": "cdcf10778044663cac5eb5fc7334130780031e6df982389f2b840b694f2923aa",
+    "src/shared/python/swing_sim/impact/_normal_shaft_contact.py": "877a14b899bbb5633a196ab4b90260848dbe3ef40f3de677b87be9b53ad69c92"
+  },
+  "reference_sources": {
+    "tests/shared/python/golf_club/_friction_sliding_reference.py": "a754f8f89014a0740ba26fab4c2879893dde52875ee3c02477d9b697daf8d0b1",
+    "tests/shared/python/golf_club/test_friction_sliding_reference.py": "75181089b69120eaba3fc5cfb7dd1428c73b7b2969e2b9939d069a6a72cbb728",
+    "tests/shared/python/golf_club/test_friction_continuous_reference.py": "dac771690b26cc235a4ed591257752c6881ea48b61d4d67d994de3d45c6401b6",
+    "tests/shared/python/golf_club/test_friction_contact_trajectory.py": "95a9c163dd6fcd506542d212a6f26354df10ce87d418affa30092a81279470f8",
+    "tests/shared/python/golf_club/test_normal_contact_trajectory.py": "5cc79ff9f1e4ca6a8431c3b5cff3cc17369ef7c2cfe0cb4e410931d13c20e603",
+    "tests/shared/python/golf_club/test_normal_shaft_contact.py": "ffe99a235286e2bbadbf46aca7477906cc2bacadb0d66d52cfbab4d73e65675e"
+  },
+  "evidence_status": "synthetic-smooth-planar-sliding-verification-only",
+  "environment": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10",
+    "numpy": "2.4.1",
+    "scipy": "1.17.0",
+    "BLAS_thread_environment": {
+      "OPENBLAS_NUM_THREADS": "1",
+      "OMP_NUM_THREADS": "1",
+      "MKL_NUM_THREADS": "1"
+    }
+  },
+  "cases": {
+    "factory": "tests.shared.python.golf_club._friction_sliding_reference.sliding_case",
+    "normal_ball_velocity_mps": [-0.4, 0.4],
+    "tangential_ball_speed_mps": 5.0,
+    "friction_coefficient": 0.02,
+    "tangential_stiffness_n_per_m": 1000.0,
+    "bounds_s": [0.0, 4e-5],
+    "steps": [4, 8, 16],
+    "reference_method": "DOP853",
+    "reference_rtol": [1e-11, 1e-12],
+    "reference_atol": [1e-13, 1e-14],
+    "reference_max_step_s": 5e-6
+  },
+  "output_columns": [
+    "normal_force_n",
+    "world_tangential_force_x_n",
+    "world_ball_velocity_x_mps",
+    "world_ball_spin_y_radps",
+    "normal_impulse_ns",
+    "world_tangential_impulse_x_ns",
+    "plastic_work_j",
+    "external_work_j",
+    "anchor_work_j",
+    "grip_loss_j",
+    "normal_viscous_loss_j",
+    "normal_cutoff_loss_j"
+  ],
+  "preset_acceptance": {
+    "first_seven_finest_absolute_error_limits": [
+      0.01, 0.001, 0.0001, 0.01, 1e-6, 1e-7, 1e-6
+    ],
+    "first_seven_refinement_ratio_bounds": [1.7, 2.3],
+    "five_other_work_port_finest_absolute_error_limit_j": 1e-6,
+    "continuous_energy_defect_limit_j": 1e-10,
+    "reference_agreement_each_output_si": 1e-10,
+    "scaled_state_error_requirement": "strictly decreasing on4/8/16; coarsest below1e-3",
+    "algorithmic_loss_requirement": "positive and strictly decreasing"
+  },
+  "full_command": "python -m pytest tests/shared/python/golf_club/test_friction_contact_trajectory.py tests/shared/python/golf_club/test_friction_transport.py tests/shared/python/golf_club/test_friction_refinement.py tests/shared/python/golf_club/test_friction_trajectory_invariants.py tests/shared/python/golf_club/test_friction_modes.py tests/shared/python/golf_club/test_friction_momentum.py tests/shared/python/golf_club/test_normal_shaft_contact.py tests/shared/python/golf_club/test_normal_contact_trajectory.py tests/shared/python/golf_club/test_shaft_load_history.py src/shared/python/swing_sim/impact/tests tests/test_shared_package_api_stability.py tests/shared/python/golf_club/test_friction_convergence.py -o addopts= -o junit_family=legacy -q tests/shared/python/golf_club/test_friction_continuous_reference.py tests/shared/python/golf_club/test_friction_sliding_reference.py",
+  "full_windows": {
+    "artifact": "impact-friction-sliding-full.xml",
+    "sha256": "e355a727ca54f61c664eeda23854c6d367d995e71c964582bf8ad6f99228eac5",
+    "summary": {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "267",
+      "time": "104.016",
+      "timestamp": "2026-09-10T02:05:50.918634-07:00",
+      "hostname": "OGLaptop"
+    },
+    "properties": {
+      "test_first_order_motion_refines_against_independent_matrix_exponential": {
+        "first_order_matrix_exponential_errors": [
+          0.0006572839438004125, 0.00030220548211523966, 0.00014443910314305508
+        ],
+        "independent_normal_force_errors_n": [
+          0.14603145734366407, 0.07337147261835852, 0.03677041896709454
+        ],
+        "independent_work_errors_j": [
+          6.7964265997659425e-6, 3.4686710939883634e-6, 1.7520092911221977e-6
+        ]
+      },
+      "test_complete_frictional_compression_release_refines_motion_and_work[0.0]": {
+        "friction_release_refinement": {
+          "outputs": [
+            [
+              0.2855274639026602, -3.9515381917222107e-35, -0.2626531408422141,
+              -9.54243302060356e-33, 1.7365496363737372,
+              -1.9416855269143545e-35, 0.006280758470557195,
+              -0.0006997262193583761, -1.576241798775564e-39,
+              4.990452126123248e-10
+            ],
+            [
+              0.2850889386940129, 2.3198362299139214e-36, -0.25593177708425213,
+              1.8343813922749903e-34, 1.7830496248881418,
+              2.7113720452416058e-37, 0.0065905517303381875,
+              -0.0007186768469309959, -2.723968320730697e-41,
+              4.721097723914973e-10
+            ],
+            [
+              0.28485688318777663, 2.3812119849246014e-40, -0.2524736736814338,
+              -1.3069115816307082e-36, 1.8077188487163613,
+              -1.9127230421200406e-39, 0.006749941927950184,
+              -0.0007287336417565278, 1.2535036126294976e-42,
+              4.59254383438213e-10
+            ]
+          ],
+          "scaled_differences": [0.03176311006387682, 0.016344324034126674],
+          "mechanical_defect_j": [
+            0.0009435293488593317, 0.00047909354122109755,
+            0.00024145388121395904
+          ],
+          "tangential_algorithmic_loss_j": [
+            4.435416538115529e-5, 2.2901774023171437e-5, 1.2182465896440332e-5
+          ]
+        }
+      },
+      "test_complete_frictional_compression_release_refines_motion_and_work[0.0001]": {
+        "friction_release_refinement": {
+          "outputs": [
+            [
+              0.2882017073855837, 2.8014370731863436e-34, -0.3108070039597281,
+              3.364547739044668e-32, 1.423818230400104, 3.1397026421030634e-35,
+              0.004075129407083865, -0.0005725348745332059,
+              -1.1003034997919565e-38, 2.919512482235759e-10
+            ],
+            [
+              0.2881945246003172, -1.277281856702291e-36, -0.30520170255024703,
+              -9.624085849113089e-35, 1.4181187950225085,
+              -1.0480056863921587e-37, 0.0043348314099646255,
+              -0.0005704369605882915, 8.438246593626218e-42,
+              2.5721511499501553e-10
+            ],
+            [
+              0.2879764112027836, 2.0070548241516208e-38, -0.30230500652866865,
+              9.411217760193043e-37, 1.4417118494790877, 1.2326808412343971e-39,
+              0.004468328669631469, -0.0005800099489242992,
+              -5.146680061011241e-43, 2.5177899461226385e-10
+            ]
+          ],
+          "scaled_differences": [0.026569117773684106, 0.013697652680654832],
+          "mechanical_defect_j": [
+            0.0008650170493705703, 0.00043847581119331957, 0.0002204548028704448
+          ],
+          "tangential_algorithmic_loss_j": [
+            3.0420326364807758e-5, 1.728243929894013e-5, 8.870880545730511e-6
+          ]
+        }
+      },
+      "test_time_discrete_total_momentum_defect_decreases_with_refinement": {
+        "scaled_momentum_defects": [
+          4.823485428825124e-7, 2.388998891176375e-7, 1.1908523195110893e-7
+        ]
+      },
+      "test_compressive_contact_refines_against_independent_motion_and_work": {
+        "study": {
+          "steps": [4, 8, 16],
+          "state_errors": [
+            6.3535276649048e-8, 3.933354540740781e-9, 2.4457189710350187e-10
+          ],
+          "work_expected_j": [
+            -4.410677351296505e-5, 0.0017511107850834101, 2.970041805618471e-6,
+            3.6124940593011954e-5, 0.0
+          ],
+          "work_observed_j": [
+            -4.410677349808495e-5, 0.0017511107848479886, 2.970041759433392e-6,
+            3.612493814152433e-5, 0.0
+          ],
+          "energy_balance_error_j": -1.4297255125140552e-13
+        }
+      },
+      "test_prescribed_force_contact_motion_and_work_have_independent_refinement": {
+        "load_history_study": {
+          "end_s": 0.0004,
+          "rk4_steps": [4, 8, 16],
+          "state_errors": [
+            6.31192355480727e-8, 3.9068763297861685e-9, 2.42874589285822e-10
+          ],
+          "expected_state": [
+            0.010097873223726198, 0.029937231227950323, 0.028876876305982464,
+            0.28911199056940573, -0.21376646484520623, -0.21516886024423787
+          ],
+          "baseline_state": [
+            0.010097956027571601, 0.029936990323552903, 0.028876873001719934,
+            0.2895557876169995, -0.2150598200755489, -0.21519768132366845
+          ],
+          "expected_work_j": [
+            -7.647719101504499e-5, 0.0017470644967198152, 2.983079629446902e-6,
+            3.6263775478567e-5, 0.0
+          ],
+          "observed_work_j": [
+            -7.647719091671705e-5, 0.001747064496485969, 2.983079584040566e-6,
+            3.626377305278279e-5, 0.0
+          ],
+          "energy_defect_j": -1.4794493534848454e-13,
+          "qualification": "synthetic-prescribed-load-only"
+        }
+      },
+      "test_nonlinear_sticking_refines_against_independent_continuous_history[ContactTransport.FACE]": {
+        "continuous_sticking_errors": [
+          0.00038841221355618725, 0.00019419259591279373, 9.709328473500561e-5
+        ]
+      },
+      "test_nonlinear_sticking_refines_against_independent_continuous_history[ContactTransport.MEAN_NORMAL_SPIN]": {
+        "continuous_sticking_errors": [
+          0.0003861418037541124, 0.00019305725915235117, 9.652558849363983e-5
+        ]
+      },
+      "test_saturated_sliding_refines_each_force_spin_impulse_and_work_channel[-0.4]": {
+        "sliding_channel_errors": [
+          [
+            0.0030295508961089013, 6.059101792216248e-5, 2.716707934169449e-7,
+            2.6392277827524957e-5, 6.143930527376194e-7, 1.2287861054755369e-8,
+            8.329754457306532e-8, 4.018737622302505e-8, 2.2212153666400537e-8,
+            1.7090987141591228e-8, 2.537463224597118e-7, 0.0
+          ],
+          [
+            0.0015146860730652634, 3.0293721461294165e-5, 1.3780328611545656e-7,
+            1.3423286991880168e-5, 3.122482053223227e-7, 6.2449641064433374e-9,
+            4.2144033168446e-8, 2.0090405339419922e-8, 1.1221972749680563e-8,
+            8.562664212897173e-9, 1.2710854595685415e-7, 0.0
+          ],
+          [
+            0.0007573166486736227, 1.514633297350354e-5, 6.939363128566356e-8,
+            6.768431581143097e-6, 1.5738695902469714e-7, 3.147739180494756e-9,
+            2.1195783204744334e-8, 1.004434840487566e-8, 5.639950600375967e-9,
+            4.285617893479711e-9, 6.361272818953222e-8, 0.0
+          ]
+        ],
+        "sliding_reference_outputs": [
+          21.03903045524551, -0.42078060910491016, 4.999635277690038,
+          0.03983373126362982, 0.0008388613199843715, -1.6777226399687428e-5,
+          8.270921356409745e-5, -2.9604224694838313e-6, 0.0001745620958384059,
+          7.302758820421427e-7, 9.766948871308636e-6, 0.0
+        ],
+        "sliding_state_errors": [
+          6.235474064128254e-5, 3.120276464147617e-5, 1.5607728233769265e-5
+        ],
+        "sliding_algorithmic_losses_j": [
+          9.271039156521251e-10, 4.739674177688662e-10, 2.3960169387133773e-10
+        ]
+      },
+      "test_saturated_sliding_refines_each_force_spin_impulse_and_work_channel[0.4]": {
+        "sliding_channel_errors": [
+          [
+            0.0024114070079832572, 4.822814015964516e-5, 1.0912912431493282e-6,
+            0.00011482736578136837, 2.51782964788734e-6, 5.0356592957747414e-8,
+            2.4853983551205514e-7, 3.7360280277301827e-8, 4.098269700645728e-8,
+            1.65855077227293e-8, 4.0521812525724343e-7, 0.0
+          ],
+          [
+            0.0012084563218657252, 2.4169126437212363e-5, 5.440870909367845e-7,
+            5.7232249096227095e-5, 1.2549492496812583e-6, 2.5098984993628622e-8,
+            1.2382715750114252e-7, 1.8700303011140458e-8, 2.0393497335264394e-8,
+            8.313241597932367e-9, 2.0277117893467147e-7, 0.0
+          ],
+          [
+            0.0006049135307755193, 1.2098270615434892e-5, 2.7165243743354495e-7,
+            2.8570593519322562e-5, 6.264793154301101e-7, 1.2529586308604438e-8,
+            6.180249737238537e-8, 9.355165944472821e-9, 1.0172208114028747e-8,
+            4.161742042979853e-9, 1.0142540583602336e-7, 0.0
+          ]
+        ],
+        "sliding_reference_outputs": [
+          18.009390339042984, -0.36018780678085965, 4.999682498586207,
+          0.03470552799989177, 0.0007302532570719164, -1.460506514143833e-5,
+          7.659953696531447e-5, -2.9510025342204965e-6, 0.00017238804224026588,
+          7.320207185504609e-7, 3.163245920465365e-5, 0.0
+        ],
+        "sliding_state_errors": [
+          7.465785978915205e-5, 3.7294438063411994e-5, 1.8638543878161e-5
+        ],
+        "sliding_algorithmic_losses_j": [
+          1.2154974848008094e-8, 6.047911973066988e-9, 3.016545699792731e-9
+        ]
+      },
+      "test_continuous_sliding_work_closes_without_endpoint_or_return_map[-0.4]": {
+        "continuous_sliding_energy_defect_j": 1.3758932144655733e-15,
+        "continuous_sliding_storage_change_j": 1.1661604993709504e-6
+      },
+      "test_continuous_sliding_work_closes_without_endpoint_or_return_map[0.4]": {
+        "continuous_sliding_energy_defect_j": 2.1033793196761907e-15,
+        "continuous_sliding_storage_change_j": -3.5823719231781756e-6
+      }
+    }
+  },
+  "red_missing_helper": {
+    "artifact": "impact-friction-sliding-red.xml",
+    "sha256": "fcfca85c0ed6a44cc534b36c96a2c342ef4352de32fef6e0f13220fb6fb27891",
+    "summary": {
+      "name": "pytest",
+      "errors": "1",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "1",
+      "time": "2.975",
+      "timestamp": "2026-09-10T01:57:10.726814-07:00",
+      "hostname": "OGLaptop"
+    },
+    "properties": {}
+  },
+  "red_normal_velocity_parameter": {
+    "artifact": "impact-friction-sliding-cap-red.xml",
+    "sha256": "feb6948ae2de560db3cfe1ce0b4d32f4f4d1c2e93e29e14d2a882a791a8fa712",
+    "summary": {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "4",
+      "skipped": "0",
+      "tests": "7",
+      "time": "3.477",
+      "timestamp": "2026-09-10T02:02:58.056122-07:00",
+      "hostname": "OGLaptop"
+    },
+    "properties": {}
+  },
+  "initial_seven_case_receipt": {
+    "artifact": "impact-friction-sliding-cap-final.xml",
+    "sha256": "b993d0d2e2de14a05a945eefaad1d1867890621b84fb20a3e819103a5c2cd790",
+    "summary": {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "7",
+      "time": "12.901",
+      "timestamp": "2026-09-10T02:03:21.274239-07:00",
+      "hostname": "OGLaptop"
+    },
+    "properties": {
+      "test_saturated_sliding_refines_each_force_spin_impulse_and_work_channel[-0.4]": {
+        "sliding_channel_errors": [
+          [
+            0.0030295508961089013, 6.059101792216248e-5, 2.716707934169449e-7,
+            2.6392277827524957e-5, 6.143930527376194e-7, 1.2287861054755369e-8,
+            8.329754457306532e-8, 4.018737622302505e-8, 2.2212153666400537e-8,
+            1.7090987141591228e-8, 2.537463224597118e-7, 0.0
+          ],
+          [
+            0.0015146860730652634, 3.0293721461294165e-5, 1.3780328611545656e-7,
+            1.3423286991880168e-5, 3.122482053223227e-7, 6.2449641064433374e-9,
+            4.2144033168446e-8, 2.0090405339419922e-8, 1.1221972749680563e-8,
+            8.562664212897173e-9, 1.2710854595685415e-7, 0.0
+          ],
+          [
+            0.0007573166486736227, 1.514633297350354e-5, 6.939363128566356e-8,
+            6.768431581143097e-6, 1.5738695902469714e-7, 3.147739180494756e-9,
+            2.1195783204744334e-8, 1.004434840487566e-8, 5.639950600375967e-9,
+            4.285617893479711e-9, 6.361272818953222e-8, 0.0
+          ]
+        ],
+        "sliding_reference_outputs": [
+          21.03903045524551, -0.42078060910491016, 4.999635277690038,
+          0.03983373126362982, 0.0008388613199843715, -1.6777226399687428e-5,
+          8.270921356409745e-5, -2.9604224694838313e-6, 0.0001745620958384059,
+          7.302758820421427e-7, 9.766948871308636e-6, 0.0
+        ],
+        "sliding_state_errors": [
+          6.235474064128254e-5, 3.120276464147617e-5, 1.5607728233769265e-5
+        ],
+        "sliding_algorithmic_losses_j": [
+          9.271039156521251e-10, 4.739674177688662e-10, 2.3960169387133773e-10
+        ]
+      },
+      "test_saturated_sliding_refines_each_force_spin_impulse_and_work_channel[0.4]": {
+        "sliding_channel_errors": [
+          [
+            0.0024114070079832572, 4.822814015964516e-5, 1.0912912431493282e-6,
+            0.00011482736578136837, 2.51782964788734e-6, 5.0356592957747414e-8,
+            2.4853983551205514e-7, 3.7360280277301827e-8, 4.098269700645728e-8,
+            1.65855077227293e-8, 4.0521812525724343e-7, 0.0
+          ],
+          [
+            0.0012084563218657252, 2.4169126437212363e-5, 5.440870909367845e-7,
+            5.7232249096227095e-5, 1.2549492496812583e-6, 2.5098984993628622e-8,
+            1.2382715750114252e-7, 1.8700303011140458e-8, 2.0393497335264394e-8,
+            8.313241597932367e-9, 2.0277117893467147e-7, 0.0
+          ],
+          [
+            0.0006049135307755193, 1.2098270615434892e-5, 2.7165243743354495e-7,
+            2.8570593519322562e-5, 6.264793154301101e-7, 1.2529586308604438e-8,
+            6.180249737238537e-8, 9.355165944472821e-9, 1.0172208114028747e-8,
+            4.161742042979853e-9, 1.0142540583602336e-7, 0.0
+          ]
+        ],
+        "sliding_reference_outputs": [
+          18.009390339042984, -0.36018780678085965, 4.999682498586207,
+          0.03470552799989177, 0.0007302532570719164, -1.460506514143833e-5,
+          7.659953696531447e-5, -2.9510025342204965e-6, 0.00017238804224026588,
+          7.320207185504609e-7, 3.163245920465365e-5, 0.0
+        ],
+        "sliding_state_errors": [
+          7.465785978915205e-5, 3.7294438063411994e-5, 1.8638543878161e-5
+        ],
+        "sliding_algorithmic_losses_j": [
+          1.2154974848008094e-8, 6.047911973066988e-9, 3.016545699792731e-9
+        ]
+      },
+      "test_continuous_sliding_work_closes_without_endpoint_or_return_map[-0.4]": {
+        "continuous_sliding_energy_defect_j": 1.3758932144655733e-15,
+        "continuous_sliding_storage_change_j": 1.1661604993709504e-6
+      },
+      "test_continuous_sliding_work_closes_without_endpoint_or_return_map[0.4]": {
+        "continuous_sliding_energy_defect_j": 2.1033793196761907e-15,
+        "continuous_sliding_storage_change_j": -3.5823719231781756e-6
+      }
+    }
+  },
+  "typing": {
+    "command": "python -m mypy --ignore-missing-imports --follow-imports=silent tests/shared/python/golf_club/_friction_sliding_reference.py tests/shared/python/golf_club/test_friction_sliding_reference.py",
+    "result": "PASS in NumPy-aware mypy1.13 environment after eight findings; array return coercion and distinct list/array names change no equations or tolerances."
+  },
+  "limits": [
+    "No production source change; canonical mechanics, normal law and chart differential are shared.",
+    "History force and plastic rate use independent continuous saturated-branch algebra; endpoint solver and discrete return map are disabled during continuous work checks.",
+    "Strict compression, positive normal force, planar constant-sign slip and positive outward plastic rate are asserted at every reference derivative.",
+    "Two prescribed 40-microsecond intervals cover rising and falling friction caps, not contact onset, reversal, stick/slide transition, cutoff or separation.",
+    "The combined full-state norm is not a componentwise certificate for every shaft mode.",
+    "All numbers are synthetic model verification. Measured friction, face/hosel/ball deformation, radiation and blinded sweetness remain open.",
+    "Hosted Standard CI is not yet recorded for prior7d953cdc7; only queued Merge Hold Guard34457281672 is verified."
+  ],
+  "primary_method_documentation": "https://docs.scipy.org/doc/scipy/reference/generated/scipy.integrate.solve_ivp.html",
+  "initial_seven_case_receipt_note": "This interim receipt predates the array-return typing refactor. The full267 receipt is authoritative for the exact current source hashes."
+}
