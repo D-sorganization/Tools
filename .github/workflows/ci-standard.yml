@@ -189,6 +189,15 @@ jobs:
             exit 1
           fi
 
+      - name: Validate Local Agent Context and CodeMap
+        env:
+          PYTHONPATH: ${{ github.workspace }}/src:${{ github.workspace }}
+        run: |
+          python3 -m pip install ./packages/agent-context -r packages/agent-context/requirements-test.txt
+          python3 -c "from mcp.server.fastmcp import FastMCP; from mcp.client.stdio import stdio_client"
+          python3 -m pytest --confcutdir=tests/unit/agent_context -o addopts= tests/unit/agent_context --timeout=45 -q
+          python3 -m pytest --confcutdir=tests/unit/codemap -o addopts= tests/unit/codemap --timeout=45 -q
+
       - name: Install System Dependencies
         run: |
           set -o pipefail

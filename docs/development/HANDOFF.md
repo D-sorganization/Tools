@@ -1,12 +1,11 @@
 # Reference Placement and Calibration Recovery Handoff
 
-## Rate Shard Scientific Test Isolation: #5114
+## Completed Rate Shard Isolation: #5114
 
-- Identity: Tools, `C:/Users/diete/Repositories/.context-implementation/Tools-rate-5114`, branch `fix/issue-5114-rate-isolation`, implementation `SELF`, draft PR #5158; session `context-01a0879e-rate5114`; entry DL-#5114.
-- Purpose: unblock required provider qualification without removing assertions, tests, coverage or the existing 60-second deadline. Existing science isolation from #5130 is reused for the entire Club Tester file; the remaining rate suite stays parallel.
-- Evidence: one full Linux diagnostic reproduces worker termination; a later full diagnostic completes. This establishes sensitivity to full-suite conditions, not a proven numerical or Qt defect. Four new shard regressions fail before the change; all 16 contracts and the complete 1,684-file partition pass afterward. Three unchanged Club Tester tests pass serially with coverage in 45.04 seconds; GUI body 21.07 seconds. All nine manual governance checks pass after regenerating the script inventory; existing release approval limits remain unchanged.
-- Limits: protected Linux CI remains required. Preserve context provider PR #5141 and application pins; this worktree changes only test scheduling and supporting records. No scientific code or GUI assertions changed.
-- Next: qualify draft PR #5158 through its required Linux shards, then integrate the qualified repair into the context provider before final publication. Normal commit/push hooks pass.
+- Published: PR #5158 merged as `25367070fb2acea8ad2f836fba1f56aea939707b` after both Linux rate shards, both aggregate coverage gates and required quality passed. Entry DL-#5114 is shipped.
+- Change: the entire Club Tester file uses existing serial science isolation. All GUI assertions, test selection and the 60-second deadline remain unchanged; the rest of the rate suite stays parallel.
+- Validation at a7d025264: 16 shard contracts, the 1,684-file partition, three unchanged serial tests with coverage, nine governance checks and normal hooks pass. Windows full execution completes with 2,905 parallel passes, 17 skips and two independently reproduced unchanged-source Qt 6.9 GUI limitations, followed by all three serial passes. PR #5158 records that limitation explicitly.
+- Continuation: the published repair is integrated into the context-provider worktree below; qualify the combined provider before final publication. Scientific/manual approval remains separate.
 
 ## Active Placement Work #5137
 
@@ -166,3 +165,12 @@ pass;24 numerical/placement tests also pass on actual OpenCV5.0.0 using the
 retained dependency directory. Handoff149-line/digest and module inventory
 freshness checks pass. No solver or gate changed during merge. Normal commit
 and push hooks remain before updating PR#5140.
+
+## Agent Context Delivery — #5138
+
+- Repository/worktree: Tools, `.context-implementation/Tools`; branch `feat/issue-5138-agent-context`; current commit `SELF`; PR #5141 open; epic Repository_Management#1629; DL-#5138.
+- Combined provider: published CI isolation25367070f, calibration0a561daff, CLI/service9899c5a6a and fleet policy92283cf3f; context/CodeMap implementation; and the exact two reviewed launcher files from fc453bf8e/c10baa1d8 (Tools#5143/#5144). The launcher owner agreed to this integration; their branch/worktree is preserved. The new regression fails against the old manifest before applying the canonical widget correction. All40 combined function-generator, CLI/service and reference-placement tests pass after integration (24.44 seconds).
+- Quality at0f84e2a9a passes36 context and109 CodeMap tests, including an explicit real-SDK import before the transport test. The unchanged c80 rate shards exhausted their 90-minute cap; the qualified isolation repair is now integrated for combined requalification. The earlier2696 run was superseded/cancelled. UpstreamDrift6e939bc6b passes the suite-marker gate after the14 documentation regression tests pass; source checks and12 navigation tasks pass before the deliberate publication guard. Gasff35c8a0b passes7 context,3 Linux checkout-recovery and34 manual tests; its old queued aggregate was force-cancelled only after normal cancellation did not finish, allowing new CI jobs to queue.
+- Combined validation after integrating25367070f: `python3 -m pytest tests/ops/test_ci_test_shards.py src/function_generator/tests/test_function_generator_gui.py tests/shared/python/sidekick/lab/mocap/test_cli_service_contracts.py tests/shared/python/sidekick/lab/mocap/test_reference_placements.py -o addopts= --timeout=60 -q` passes56 tests. Focused context passes35 with one Windows skip; the parser-enabled validation venv passes all109 CodeMap tests. Real MCP SDK imports pass. `python3 scripts/ci_test_shards.py --check` validates1,692 files across seven shards. All nine manual governance commands listed in AGENTS.md pass after inventory regeneration. The two integrated launcher files are byte-identical to fc453bf8e. Protected combined CI remains pending.
+- Current provider is not published on main. Final consumer gitlink, Cargo, pip and catalog alignment belongs to this session. Scientific/manual approval and physical qualification remain separate. Existing peer handoffs, root-handoff compaction and both reviewed source corrections are preserved.
+- Next: qualify this combined provider, publish through protected review, pin and test both consumers, then reconcile fleet audit#1634 and epic#1629. No user-owned changes in this worktree.

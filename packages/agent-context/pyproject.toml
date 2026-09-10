@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=61.0,<85", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "fleet-agent-context"
+version = "0.1.0"
+description = "Source-verified local component and integration context for coding agents"
+requires-python = ">=3.11"
+license = {text = "MIT"}
+dependencies = []
+
+[project.optional-dependencies]
+mcp = ["mcp>=1.0,<2"]
+
+[project.scripts]
+agent-context = "agent_context.cli:main"
+agent-context-mcp = "agent_context.mcp_server:main"
+
+[tool.setuptools]
+packages = ["agent_context"]
+package-dir = {agent_context = "../../src/agent_context"}
+
+[tool.setuptools.package-data]
+agent_context = ["browser.html"]
