@@ -95,6 +95,7 @@
           }
         ],
         "test_paths": [
+          "src/function_generator/tests/test_function_generator_gui.py",
           "tests/folder_tool/test_gui_registration.py",
           "tests/rate_of_closure/test_gui_registration.py"
         ],
@@ -422,6 +423,7 @@
           "tests/test_sidekick_public_api_stability.py",
           "tests/test_src_package_import_contract.py",
           "tests/tools/test_matlab_quality_utils.py",
+          "tests/unit/agent_context/test_cli.py",
           "tests/unit/ai/gui/test_assistant_panel_sidekick_bridge.py",
           "tests/unit/ai/integrations/github_mcp/test_integration.py",
           "tests/unit/ai/mcp/test_client.py",

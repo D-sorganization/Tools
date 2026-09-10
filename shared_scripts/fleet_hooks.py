@@ -51,9 +51,9 @@ DEFAULT_MAX_BYTES = 1_000_000
 DEFAULT_MAX_SOURCE_LINES = 1500
 OVERSIZED_FILE_BYTE_BASELINES = {
     # Public API baseline for Sidekick AST verification (tracked in Tools #3032).
-    # As new subpackages are added (such as mocap #4714), this tracked AST file
+    # As new subpackages are added (such as mocap #4714, #4727), this tracked AST file
     # scales with the total public symbol surface.
-    "tests/sidekick_api_baseline.json": 1_100_000,
+    "tests/sidekick_api_baseline.json": 1_120_000,
 }
 OVERSIZED_SOURCE_LINE_BASELINES = {
     # Legacy MATLAB GUI monolith tracked by Tools #3359. It may be touched for

@@ -18,6 +18,117 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5151 · Adaptive Normal Contact Event Review
+
+- **State:** in_review
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5151; parent #5073
+- **PR:** https://github.com/D-sorganization/Tools/pull/5152
+- **Branch:** feat/5073-contact-events
+- **Paths:** src/shared/python/swing_sim/impact, src/shared/python/golf_club, tests/shared/python/golf_club
+- **Started:** 2026-09-10
+- **Last verified:** 2026-09-10 (SELF; production839ebe083; oracle root-residual tripwire RED then16 event controls pass69.91s; unchanged assertion gate passes; protected CI remains)
+- **Summary:** Adaptive local-chart normal contact with independent event/work reference, strict SI controls and unchanged canonical mechanics/APIs.
+- **Evidence:** NORMAL_EVENT_RESULTS.json records all RED/GREEN/source/JUnit identities; four production modules pass NumPy-aware mypy; Linux coverage58.64% exceeds unchanged20% floor; root Ruff/format3870 pass.
+- **Next step:** Resolve protected CI and review on #5152.
+
+### DL-#5145 · Contact Numerical Foundation Review
+
+- **State:** in_review
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5145; parent #5073
+- **PR:** https://github.com/D-sorganization/Tools/pull/5146
+- **Branch:** feat/5073-spatial-contact
+- **Paths:** src/shared/python/swing_sim/impact, src/shared/python/golf_club, tests/shared/python/golf_club
+- **Started:** 2026-09-09
+- **Last verified:** 2026-09-10 (camera main 0a561daff integration: 40 controls pass, 255 existing deprecation warnings; impact source unchanged from published 1edd0ddcf; 323-test archive ec863402f plus 46 affected typing-repair controls; SELF)
+- **Summary:** Review private common-point geometry, separate normal/tangential work, full-tensor body response and instantaneous normal shaft/ball coupling. Preserve old APIs and shared mechanics.
+- **Evidence:** All 323 Windows and 323 Linux coverage controls pass; five production files pass NumPy-aware mypy. Existing 99 golf-club and 228 swing API records are unchanged. Source/JUnit hashes and RED failures are retained in SPATIAL_CONTACT_RESULTS.json.
+- **Next step:** Resolve protected review on #5146; continue trajectory, modes, convergence and physical/acoustic requirements under parent #5073.
+
+### DL-#5147 · Normal Contact Temporal Foundation Review
+
+- **State:** in_review
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5147; parent #5073
+- **PR:** https://github.com/D-sorganization/Tools/pull/5149
+- **Branch:** feat/5073-contact-trajectory
+- **Paths:** src/shared/python/golf_club, src/shared/python/swing_sim/impact, tests/shared/python/golf_club
+- **Started:** 2026-09-10
+- **Last verified:** 2026-09-10 (source tree 0433376b0; base 1edd0ddcf; SELF)
+- **Summary:** Review the private normal-contact trajectory, shared Lie RK4 and five-channel work accounting. Retain fixed shaft laws and existing APIs.
+- **Evidence:** All 371 Windows and 371 Linux coverage controls pass; three modules pass both NumPy-aware and actual-hook mypy. Exact sources, REDs and refinement/JUnit records are in CONTACT_TRAJECTORY_RESULTS.json.
+- **Next step:** Resolve protected review on #5149; continue contact events, friction, face modes and physical/acoustic qualification under #5073.
+
+### DL-#5073 · Spatial Flexible Contact Dynamics
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5073
+- **PR:** not created
+- **Branch:** feat/5073-contact-events
+- **Paths:** src/shared/python/swing_sim/impact, docs/development/impact-acoustics, tests/api_baselines/swing_sim_api_baseline.json
+- **Started:** 2026-09-09
+- **Last verified:** 2026-09-10 (SELF preserves fleet-policy92283cf3f with no material implementation change; event9a8241015 and source4e1b19810 pass386 Windows/Linux controls; 15 integration controls pass)
+- **Summary:** Private common-point sphere/plane kinematics reuses canonical pose, force/moment and work ports. Point migration is kept distinct from material velocity. Normal and objective tangential work ports plus full-tensor free-body response are private; no qualified impact trajectory is inferred.
+- **Evidence:** Geometry 18, normal work 20 and tangent work 28 controls. Normal/legacy: 148 Windows/Linux pass after retained timeout. Tangential full impact: 150 Windows and 150 Linux coverage pass; NumPy typing passes. Integrated 176 tests pass on Windows/Linux. New body and moving-shaft controls pass 75 tests; relative-inertia adversarial RED then all 24 body tests pass. Five production files pass NumPy-aware mypy. All 323 coupled-response/impact/shaft controls pass on Windows and Linux coverage; existing 99 golf-club and 228 swing API records are unchanged. Exact artifacts are recorded.
+- **Next step:** Implement finite-duration tangential history coupling to the existing shaft/ball response.
+
+- **Trajectory update (2026-09-10):** Shared Lie RK4 kernel: missing-module RED, eight GREEN, two deliberate-corruption delegation REDs, then all 36 kernel/shaft/geometry/disturbance controls GREEN. Two production modules pass NumPy-aware mypy. Kernel source tree 334822bb7. Normal-only contact trajectory now passes 12 controls, including independent motion/work refinement and free-ball clearance; all 371 Windows and Linux coverage controls pass at tree0433376b0. Evidence: CONTACT_TRAJECTORY_RESULTS.json.
+
+### DL-#5138 · Verified Agent Context
+
+- **State:** shipped
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5138
+- **PR:** https://github.com/D-sorganization/Tools/pull/5141
+- **Branch:** feat/issue-5138-agent-context
+- **Paths:** `src/agent_context`, `src/shared/python/codemap`, `packages/agent-context`
+- **Started:** 2026-09-09
+- **Last verified:** 2026-09-10; Linux quality at0f84e2a9a passes36 context and109 CodeMap tests. Launcher#5143/#5144 integration is coordinated with its owner; its exact regression fails against the old manifest before applying the reviewed canonical widget path. All40 combined launcher/CLI/calibration controls pass. Published rate-isolation25367070f is integrated. Combined validation passes56 shard/launcher/CLI/calibration controls,35 context tests (one Windows skip),109 CodeMap tests with real parsers, the1,692-file partition and all nine governance checks; protected combined CI remains pending.
+- **Summary:** Dependency-free source context package, real MCP transport, semantic boundary reviews, deterministic views and CodeMap freshness guards. Parent epic Repository_Management#1629 remains active; no subscription infrastructure is required.
+- **Next step:** Qualify and publish the combined context, calibration and launcher provider through protected CI.
+
+### DL-#5114 · Rate Shard Scientific Test Isolation
+
+- **State:** shipped
+- **Owner:** codex
+- **Issue:** #5114
+- **PR:** #5158 (merged as 25367070f)
+- **Branch:** fix/issue-5114-rate-isolation
+- **Paths:** `scripts/ci_test_shards.py`, `tests/ops/test_ci_test_shards.py`
+- **Started:** 2026-09-10
+- **Last verified:** 2026-09-10; four new regression cases fail before isolation; all 16 shard contracts and the 1,684-file partition pass afterward. All three unchanged Club Tester tests pass serially with coverage and the existing deadline (45.04 seconds total). Both Linux rate shards and aggregate gates pass at a7d025264; all nine manual governance checks and normal hooks pass. Windows retains two independently reproduced, unchanged-source GUI limitations recorded in PR #5158.
+- **Summary:** Reuse serial scientific invocation support for the entire Club Tester file while retaining parallel execution elsewhere, separate coverage outputs and failure propagation. Full-suite worker exit is reproduced; exact root cause remains unproven.
+- **Next step:** Qualify the combined context provider in PR #5141.
+### DL-#5137 · Identified Moving Reference Placements
+
+- **State:** in_review
+- **Owner:** codex
+- **Issue:** #5137; consumer UpstreamDrift#9899
+- **Branch:** feat/5137-reference-placements
+- **PR:** #5140 (open)
+- **Paths:** src/shared/python/sidekick/lab/mocap/reference_placements.py, placement_solver.py, calibration_numerics.py; reference tests and manual inventory
+- **Started:** 2026-09-09
+- **Last verified:** 2026-09-09 (`d129737273800c8cb3c31e28c38c421f05993a95`; 24 numerical/reference tests pass on OpenCV 4.13 and 5.0; all101 mocap/authority/API tests pass in17.03s; scoped lint/format/mypy and governance gates pass)
+- **Summary:** Labelled target geometry, immutable per-camera/profile observations, connected pose initialization and joint camera/target fitting with a fixed anchor and independent held-out views; explicit unsupported/ambiguous geometry and cancellation outcomes.
+- **Next step:** Qualify protected CI/review and merge #5140 after numerical recovery.
+
+- **Main integration:** repair45f3bd8b9/main2c9a8d6c9 retains impact work.101 mocap/authority/API tests and24 OpenCV5 numerical/placement checks pass; inventory/handoff gates pass. Normal publication checks pending.
+
+### DL-#5132 · Calibration Numerical Recovery
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** #5132; consumer UpstreamDrift#9897/#9899
+- **Branch:** fix/5132-calibration-numerics
+- **PR:** https://github.com/D-sorganization/Tools/pull/5136
+- **Paths:** src/shared/python/sidekick/lab/mocap/calibration.py, extrinsics.py, calibration_numerics.py; numerical tests and inventory
+- **Started:** 2026-09-09
+- **Last verified:** 2026-09-09T21:06Z (SELF: reproduced3 OpenCV5 failures; all12 numerical tests now pass on actual OpenCV4.13 and5.0)
+- **Summary:** Real distortion-aware pose recovery replaces silent fabricated poses and unchanged refinement results.
+- **Next step:** Integrate main2c9a8d6c9 without changing numerical gates;19 merged calibration tests pass. Regenerate inventory, run hooks and qualify fresh exact-head CI on PR#5136.
+
 ### DL-#5101 · Scientific Import Inventory Detection
 
 - **State:** in_review

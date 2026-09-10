@@ -20677,6 +20677,46 @@
       }
     }
   },
+  "impact/_normal_contact_events.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "impact/_normal_contact_trajectory.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "impact/_normal_contact_work.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "impact/_normal_event_contracts.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "impact/_normal_shaft_contact.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "impact/_rigid_body_response.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "impact/_spatial_contact_kinematics.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "impact/_tangential_contact_work.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
   "impact/constants.py": {
     "__all__": [
       "DRIVER_CG_DEPTH_M",

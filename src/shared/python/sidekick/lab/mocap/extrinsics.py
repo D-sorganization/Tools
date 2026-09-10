@@ -1,4 +1,7 @@
-"""Extrinsic and flexible-layout camera calibration and relocalization."""
+"""Extrinsic and flexible-layout camera calibration and relocalization.
+
+World coordinates and translations are in m; reprojection errors are in pixels.
+"""
 
 from __future__ import annotations
 
@@ -179,96 +182,16 @@ def estimate_pnp_pose(
     source_frame_id: str,
 ) -> tuple[CameraPose, float]:
     """Estimate camera pose from 3-D world points and 2-D image observations."""
-    if len(object_points) != len(image_points):
-        raise ValueError("object_points and image_points must have identical lengths")
-    if len(object_points) < 4:
-        raise ValueError("PnP requires at least 4 point correspondences")
+    from .calibration_numerics import solve_pose
 
-    try:
-        import cv2
-        import numpy as np
-
-        obj_arr = np.ascontiguousarray(object_points, dtype=np.float64).reshape(-1, 3)
-        img_arr = np.ascontiguousarray(image_points, dtype=np.float64).reshape(-1, 2)
-        skew_val = intrinsics.skew if isinstance(intrinsics, PinholeIntrinsics) else 0.0
-        k_mat = np.array(
-            [
-                [intrinsics.fx, skew_val, intrinsics.cx],
-                [0.0, intrinsics.fy, intrinsics.cy],
-                [0.0, 0.0, 1.0],
-            ],
-            dtype=np.float64,
-        )
-        dist_coeffs = (
-            np.array(intrinsics.distortion.coefficients, dtype=np.float64)
-            if intrinsics.distortion.coefficients
-            else None
-        )
-
-        success, rvec, tvec = cv2.solvePnP(
-            obj_arr,
-            img_arr,
-            k_mat,
-            dist_coeffs,
-            flags=cv2.SOLVEPNP_ITERATIVE,
-        )
-        if not success:
-            raise RuntimeError(f"solvePnP failed to converge for camera {camera_key}")
-
-        rot_mat, _ = cv2.Rodrigues(rvec)
-        trace = float(np.trace(rot_mat))
-        if trace > 0.0:
-            s = math.sqrt(trace + 1.0) * 2.0
-            qw = 0.25 * s
-            qx = (rot_mat[2, 1] - rot_mat[1, 2]) / s
-            qy = (rot_mat[0, 2] - rot_mat[2, 0]) / s
-            qz = (rot_mat[1, 0] - rot_mat[0, 1]) / s
-        elif rot_mat[0, 0] > rot_mat[1, 1] and rot_mat[0, 0] > rot_mat[2, 2]:
-            s = math.sqrt(1.0 + rot_mat[0, 0] - rot_mat[1, 1] - rot_mat[2, 2]) * 2.0
-            qw = (rot_mat[2, 1] - rot_mat[1, 2]) / s
-            qx = 0.25 * s
-            qy = (rot_mat[0, 1] + rot_mat[1, 0]) / s
-            qz = (rot_mat[0, 2] + rot_mat[2, 0]) / s
-        elif rot_mat[1, 1] > rot_mat[2, 2]:
-            s = math.sqrt(1.0 + rot_mat[1, 1] - rot_mat[0, 0] - rot_mat[2, 2]) * 2.0
-            qw = (rot_mat[0, 2] - rot_mat[2, 0]) / s
-            qx = (rot_mat[0, 1] + rot_mat[1, 0]) / s
-            qy = 0.25 * s
-            qz = (rot_mat[1, 2] + rot_mat[2, 1]) / s
-        else:
-            s = math.sqrt(1.0 + rot_mat[2, 2] - rot_mat[0, 0] - rot_mat[1, 1]) * 2.0
-            qw = (rot_mat[1, 0] - rot_mat[0, 1]) / s
-            qx = (rot_mat[0, 2] + rot_mat[2, 0]) / s
-            qy = (rot_mat[1, 2] + rot_mat[2, 1]) / s
-            qz = 0.25 * s
-
-        norm_q = math.sqrt(qw * qw + qx * qx + qy * qy + qz * qz)
-        rotation_wxyz = (qw / norm_q, qx / norm_q, qy / norm_q, qz / norm_q)
-        translation_m = (float(tvec[0, 0]), float(tvec[1, 0]), float(tvec[2, 0]))
-
-    except (ImportError, Exception):
-        rotation_wxyz = (1.0, 0.0, 0.0, 0.0)
-        translation_m = (0.0, 0.0, 2.0)
-
-    transform = RigidTransform(
-        target_frame_id=target_frame_id,
-        source_frame_id=source_frame_id,
-        rotation_wxyz=rotation_wxyz,
-        translation_m=translation_m,
+    return solve_pose(
+        camera_key,
+        object_points,
+        image_points,
+        intrinsics,
+        target_frame_id,
+        source_frame_id,
     )
-    pose = CameraPose(camera_key=camera_key, t_camera_from_world=transform)
-
-    # Compute mean reprojection error
-    errors = []
-    for obj_p, img_p in zip(object_points, image_points, strict=True):
-        cam_p = _transform_point(transform, obj_p)
-        proj_p = intrinsics.project_point(cam_p)
-        du = proj_p[0] - img_p[0]
-        dv = proj_p[1] - img_p[1]
-        errors.append(math.sqrt(du * du + dv * dv))
-
-    mean_err = sum(errors) / max(1, len(errors))
-    return (pose, mean_err)
 
 
 def detect_camera_movement(
@@ -360,29 +283,20 @@ def bundle_adjust_layout(
     intrinsics_by_camera: Mapping[str, PinholeIntrinsics | FisheyeIntrinsics],
     fix_gauge_camera_key: str | None = None,
 ) -> ExtrinsicCalibrationResult:
-    """Refine camera poses globally using joint bundle adjustment."""
-    gauge_key = fix_gauge_camera_key or next(iter(initial_layout.camera_poses.keys()))
-    if gauge_key not in initial_layout.camera_poses:
-        raise KeyError(f"gauge camera {gauge_key!r} not found in layout")
+    """Refine camera poses against fixed, known world-coordinate targets.
 
-    all_residuals: list[float] = []
-    for cam_key, obs_list in observations_by_camera.items():
-        if (
-            cam_key not in initial_layout.camera_poses
-            or cam_key not in intrinsics_by_camera
-        ):
-            continue
-        pose = initial_layout.get_pose(cam_key)
-        intrinsics = intrinsics_by_camera[cam_key]
-        for obj_p, img_p in obs_list:
-            cam_p = _transform_point(pose.t_camera_from_world, obj_p)
-            if cam_p[2] <= 0.0:
-                continue
-            proj_p = intrinsics.project_point(cam_p)
-            du = proj_p[0] - img_p[0]
-            dv = proj_p[1] - img_p[1]
-            all_residuals.append(math.sqrt(du * du + dv * dv))
+    The known coordinates establish the gauge. Only an explicitly named gauge
+    camera stays fixed; other camera poses minimize robust pixel residuals.
+    This does not estimate unknown landmark positions or certify field accuracy.
+    """
+    from .calibration_numerics import refine_layout
 
+    layout, all_residuals = refine_layout(
+        initial_layout,
+        observations_by_camera,
+        intrinsics_by_camera,
+        fix_gauge_camera_key,
+    )
     mean_res = sum(all_residuals) / max(1, len(all_residuals))
     max_res = max(all_residuals) if all_residuals else 0.0
 
@@ -396,7 +310,7 @@ def bundle_adjust_layout(
     now_utc = datetime.now(UTC).isoformat()
 
     return ExtrinsicCalibrationResult(
-        layout=initial_layout,
+        layout=layout,
         mean_reprojection_residual_px=mean_res,
         max_reprojection_residual_px=max_res,
         quality=quality,
