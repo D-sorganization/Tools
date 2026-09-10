@@ -20,17 +20,17 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5143 · Provider Launcher Target
 
-- **State:** in_progress
+- **State:** in_review
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5143
-- **PR:** not created
+- **PR:** https://github.com/D-sorganization/Tools/pull/5144
 - **Branch:** fix/5143-function-launcher
 - **Paths:** src/shared/python/gui_launcher/tool_manifest.yaml, src/function_generator/tests/test_function_generator_gui.py
 - **Started:** 2026-09-09
 - **Last verified:** 2026-09-09 (merged main 2c9a8d6c; source-equivalent 4dabe900c; SELF)
 - **Summary:** The post-#5133 launcher correction points at the widget moved in #5110. No source is copied.
 - **Evidence:** New resolution control fails before correction; all 16 Function Generator tests pass. Canonical gates and normal hooks pass on the identical source.
-- **Next step:** Publish the isolated follow-up, then qualify the reviewed downstream pin and wheel.
+- **Next step:** Complete PR #5144 checks, then qualify the reviewed downstream pin and wheel.
 
 ### DL-#5101 · Scientific Import Inventory Detection
 

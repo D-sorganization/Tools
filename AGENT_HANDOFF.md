@@ -8,7 +8,7 @@ All Python scientific/version lanes and UD consumer checks pass on that
 source; private Gasification checkout remains an access limitation.
 The later canonical launcher correction was outside that merged PR.
 It is isolated on fix/5143-function-launcher from merged main, with unchanged
-TDD control and 16 passing GUI/engine tests. Follow-up #5143 has no PR yet.
+TDD control and 16 passing GUI/engine tests. Follow-up #5143 is PR #5144.
 UD #9916 has 271 passing source controls for candidate 4dabe900c; its pin must
 advance to this follow-up's reviewed descendant. Physical epics remain open.
 

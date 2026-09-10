@@ -7,11 +7,13 @@ notes below that describe #5133 as awaiting merge are historical.
 The later 4dabe900c launcher correction is outside that merged PR. Follow-up
 #5143 now isolates the same two implementation/test files on current merged
 main, under fix/5143-function-launcher. Their bytes are unchanged, and the
-16-test RED/GREEN evidence is retained. No new follow-up PR exists yet.
-UD #9916 publishes 32a8b36ec with 271 passing source controls at 4dabe900c;
+16-test RED/GREEN evidence is retained. Follow-up PR #5144 is open.
+UD #9916 publishes 6d602e9c8 with 271 passing source controls at 4dabe900c;
 that candidate pin and its wheel evidence must retain their actual identities
 until the reviewed follow-up is integrated. Main's subsequent capture/club
-changes are being preserved by normal merge in the UD worktree.
+changes are preserved by normal merge in the UD worktree. The isolated
+32a8b36ec Python/Qt wheel passes with its declared gui-tools extra; web assets
+are omitted. Final reviewed-pin qualification remains required.
 
 ## Exact Provider Consumer Sweep (2026-09-09)
 
