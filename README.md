@@ -215,6 +215,7 @@ directory belongs to that tool.
 **Architecture and development**
 
 - [Architecture overview](docs/ARCHITECTURE_OVERVIEW.md) — system structure and boundaries.
+- [Architecture map (C4)](docs/architecture/C4.md) — maintainable Mermaid C4Context and C4Container views and feature-evidence map.
 - [Canonical topology](docs/architecture/CANONICAL_TOPOLOGY.md) — directory policy.
 - [Fleet architecture](docs/architecture/FLEET_ARCHITECTURE.md) — shared code across repositories.
 - [Plugin system](docs/architecture/PLUGIN_SYSTEM.md) — automatic tool discovery.

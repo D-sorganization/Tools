@@ -368,6 +368,77 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 5902,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e5824711619272461e95e92dd2e626b19bfc9dd68c3a99ab3ca51819a2377bcf",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-ARCHITECTURE-MAP-CONTRACT-PY-1E0F02985506",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/architecture_map_contract.py",
+      "purpose": "Mermaid C4 Architecture Map Contract Validator.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ArchitectureMapContractError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ValidationResult",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "validate_architecture_map",
+            "signature": "path: Path"
+          }
+        ],
+        "test_paths": [
+          "tests/test_architecture_map_contract.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/test_architecture_map_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 24717,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
