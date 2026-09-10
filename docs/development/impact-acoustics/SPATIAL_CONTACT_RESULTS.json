@@ -286,6 +286,15 @@
     },
     "mypy": "PASS actual pre-push configuration on all 13 changed src Python files",
     "ruff": "Repository-wide check and format check PASS (3862 files)",
-    "publication": "Initial push failed; retry pending. Earlier 323-test source identities remain unchanged historical evidence."
+    "publication": "Normal commit and push PASS; published 3912b5604 in PR #5146. Earlier 323-test source identities remain exact historical evidence."
+  },
+  "review": {
+    "issue": 5145,
+    "parent": 5073,
+    "pr_url": "https://github.com/D-sorganization/Tools/pull/5146",
+    "status": "in_review",
+    "implementation_commit": "9e3c7869b",
+    "published_source_commit": "3912b5604",
+    "physical_acoustic_qualification": false
   }
 }

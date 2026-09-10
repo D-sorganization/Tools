@@ -1,5 +1,6 @@
-Numerical foundation review is tracked by child #5145 of #5073. This
-review does not close the full impact or physical/acoustic requirements.
+Numerical foundation child #5145 is published for protected review in
+[PR #5146](https://github.com/D-sorganization/Tools/pull/5146) at 3912b5604. Normal commit/push checks pass after the isolated-import
+typing repair. This review does not close #5073 or the physical/acoustic requirements.
 
 ## Coupled Normal-Response Qualification
 
@@ -49,8 +50,7 @@ identical-tree main 2c9a8d6c ancestry. Source requalification and all nine
 governance checks pass. Initial publication was refused by three typing errors;
 explicit float boundaries and an unsuppressed frozen-state control now pass
 all 13 changed source files in the actual hook configuration and all 46
-affected tests. Repository-wide Ruff/format checks pass. PR publication remains
-pending; the original 323-test archive remains exact historical evidence.
+affected tests. Repository-wide Ruff/format checks pass. PR #5146 is published at 3912b5604; the original 323-test archive remains exact historical evidence.
 Geometry (18), normal work (20) and tangent work (28) have independent controls.
 The latest pre-integration full-impact source passes 150 Windows tests in 6.86 s
 and 150 Linux coverage tests in 4.68 s. Normal/legacy controls separately pass

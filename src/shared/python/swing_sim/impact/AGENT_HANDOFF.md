@@ -2,23 +2,16 @@
 
 ## Active Work
 
-- IA-T4 #5073: private sphere/plane kinematics is in progress on `feat/5073-spatial-contact`, stacked on Tools PR #5133. No public flexible-contact solver is delivered yet.
-- Reuse canonical `contact.py` and the existing shaft force/moment/work ports. Preserve all legacy model and result semantics.
-- New `_spatial_contact_kinematics.py` owns pose/twist snapshots, moving-plane gap rate and equal/opposite common-point loads. It supplies no friction law, finite face patch, mass dynamics or physical calibration.
-- TDD: geometry 18 and normal-work 20 new controls started with missing-module RED. Combined 148 tests pass on Windows (40.57 s) and Linux coverage (57.80 s); the initial Linux timeout remains recorded. Scalar ODE conversion retains equations and deadlines. Provider integration, canonical inventory/handoff and publication remain.
-- Private `_normal_contact_work.py` reuses the canonical Kelvin-Voigt force and shares disjoint viscous/cutoff loss algebra with the legacy T2 solver. The new work port refuses force-ceiling activation; legacy clipping behavior stays unchanged.
-- See `docs/development/impact-acoustics/SPATIAL_CONTACT_KINEMATICS.md` and `PROGRESS.md` for derivation, evidence and complete remaining scope.
-
-The private tangential return map now has 28 work/objectivity/refinement and
-adverse controls (missing-module RED, then 18 and 10 cases). Full impact tests:
-150 Windows passes, 6.86 s; 150 Linux coverage passes, 4.68 s. The normal unit-vector validator is shared with
-sphere/plane geometry. All constitutive coefficients/history remain synthetic;
-no coupled spatial trajectory, physical friction or acoustics is qualified.
+- Parent #5073 remains active. Numerical foundation child #5145 is under protected review in PR #5146 at published 3912b5604, based on merged shaft main 2c9a8d6c.
+- Private geometry, normal/objective tangential work, full-tensor body response and instantaneous normal shaft/ball coupling are implemented. Head inertia is retained once; existing public APIs and legacy T2 equations are unchanged.
+- The archived foundation passes 323 Windows and 323 Linux coverage controls. The isolated pre-push typing repair passes 46 affected controls and mypy across all 13 changed source files. Normal publication hooks and repository-wide Ruff checks pass.
+- Exact source/JUnit hashes and retained failures are in `docs/development/impact-acoustics/SPATIAL_CONTACT_RESULTS.json`; derivations and remaining scope are in `SPATIAL_CONTACT_KINEMATICS.md` and `PROGRESS.md`.
+- These are synthetic numerical controls. No complete flexible-contact trajectory or physical/acoustic qualification is delivered.
 
 ## Next Steps
 
-1. Finish kinematic validation and input contracts; preserve canonical import paths.
-2. Integrate the reviewed shaft provider, then objective history into the coupled trajectory.
+1. Resolve numerical foundation review; preserve canonical import paths.
+2. Reuse Lie-group stepping in a separate dynamic-contact problem, then integrate objective tangential history.
 3. Couple full ball/head/shaft states and face/hosel modes; verify time, mesh, modes and events independently.
 4. Compare matched-state detached/unloaded/preloaded cases with intervention energy and ringdown.
 5. Qualify held-out force/spin/face-map observations before physical claims.

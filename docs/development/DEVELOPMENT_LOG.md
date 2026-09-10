@@ -20,17 +20,17 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5145 · Contact Numerical Foundation Review
 
-- **State:** in_progress
+- **State:** in_review
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5145; parent #5073
-- **PR:** not created
+- **PR:** https://github.com/D-sorganization/Tools/pull/5146
 - **Branch:** feat/5073-spatial-contact
 - **Paths:** src/shared/python/swing_sim/impact, src/shared/python/golf_club, tests/shared/python/golf_club
 - **Started:** 2026-09-09
-- **Last verified:** 2026-09-09 (source tree ec863402f; base 0cd6dce22; SELF)
+- **Last verified:** 2026-09-10 (published 3912b5604; 323-test archive ec863402f plus 46 affected typing-repair controls; SELF)
 - **Summary:** Review private common-point geometry, separate normal/tangential work, full-tensor body response and instantaneous normal shaft/ball coupling. Preserve old APIs and shared mechanics.
 - **Evidence:** All 323 Windows and 323 Linux coverage controls pass; five production files pass NumPy-aware mypy. Existing 99 golf-club and 228 swing API records are unchanged. Source/JUnit hashes and RED failures are retained in SPATIAL_CONTACT_RESULTS.json.
-- **Next step:** Publish the numerical foundation for protected review; continue trajectory, modes, convergence and physical/acoustic requirements under parent #5073.
+- **Next step:** Resolve protected review on #5146; continue trajectory, modes, convergence and physical/acoustic requirements under parent #5073.
 
 ### DL-#5073 · Spatial Flexible Contact Dynamics
 
