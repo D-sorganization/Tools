@@ -1,0 +1,315 @@
+{
+  "schema_version": 1,
+  "governing_issue": "D-sorganization/Tools#5160",
+  "pr": 5162,
+  "baseline_commit": "36ad1cc528aeb02a989b829bd08f99fbda834235",
+  "implementation_binding": "SELF; baseline commit plus exact changed-source hashes below",
+  "source_hash_convention": "SHA256 of UTF-8 source after CRLF-to-LF normalization",
+  "changed_sources": {
+    "src/shared/python/golf_club/_shaft_se3.py": "631f7a820b987daf2e885c2277420a568d9e22edc6c7dcbc92523f012add69c6",
+    "src/shared/python/golf_club/_shaft_inertia.py": "72ece6d0ce549a32042b8e95c2ca4a90c642ade612501fbc89b10f5850007dfd",
+    "tests/shared/python/golf_club/test_section_kinematics_reuse.py": "65a3ba7991be711eeb16f3faba19e7d6fa79f46752b7c74963324a542894e0ab"
+  },
+  "environment": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10",
+    "numpy": "2.4.1",
+    "scipy": "1.17.0",
+    "blas_threads": 1
+  },
+  "hosted_failure": {
+    "source": "72b2efd47b63d219c0460acb042b06dd47a02835",
+    "run": 34464371054,
+    "shared_python312_job": 102829404145,
+    "shared_python311_job": 102829404209,
+    "test": "test_complete_frictional_compression_release_refines_motion_and_work[0.0]",
+    "timeout_s": 60,
+    "scope": "Both shared shards failed; aggregate queued state is not a pending-test result."
+  },
+  "tdd_receipts": [
+    {
+      "filename": "impact-kinematics-reuse-red.xml",
+      "sha256": "fae6aef5cb4e6f7a801c04d210ff77a0e820f4f237237505e2cba520bd9e1f3f",
+      "suite": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "3",
+        "skipped": "0",
+        "tests": "3",
+        "time": "2.563",
+        "timestamp": "2026-09-10T03:55:15.230882-07:00",
+        "hostname": "OGLaptop"
+      }
+    },
+    {
+      "filename": "impact-kinematics-reuse-first.xml",
+      "sha256": "02585bf36a51de27f0fa76343a777ea92df313577eb9fcea3195752eb05fd126",
+      "suite": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "50",
+        "time": "5.561",
+        "timestamp": "2026-09-10T03:59:22.014001-07:00",
+        "hostname": "OGLaptop"
+      }
+    },
+    {
+      "filename": "impact-inverse-map-reuse-red.xml",
+      "sha256": "fd5413fb4de9d4af5ac6d2d9048bf39b40f5622443163b7be487f12a37428abd",
+      "suite": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "1",
+        "skipped": "0",
+        "tests": "8",
+        "time": "2.973",
+        "timestamp": "2026-09-10T04:05:08.894325-07:00",
+        "hostname": "OGLaptop"
+      }
+    },
+    {
+      "filename": "impact-kinematics-reuse-second.xml",
+      "sha256": "473be95a5cd3a7854a3fc48f142b5721ddb02b76e3965138bddc72b7e806d900",
+      "suite": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "55",
+        "time": "6.234",
+        "timestamp": "2026-09-10T04:06:00.592791-07:00",
+        "hostname": "OGLaptop"
+      }
+    }
+  ],
+  "full_regression": {
+    "command": [
+      "C:\\Users\\diete\\Repositories\\Tools-impact-shaft\\.venv\\Scripts\\python.exe",
+      "-m",
+      "pytest",
+      "tests/shared/python/golf_club",
+      "src/shared/python/swing_sim/impact/tests",
+      "tests/test_shared_package_api_stability.py",
+      "-o",
+      "addopts=",
+      "-o",
+      "junit_family=legacy",
+      "--cov=src/shared/python/golf_club",
+      "--cov=src/shared/python/swing_sim/impact",
+      "--cov-report=term",
+      "--cov-report=json:C:\\Users\\diete\\AppData\\Local\\Temp\\impact-kinematics-full-coverage.json",
+      "-q",
+      "--junitxml=C:\\Users\\diete\\AppData\\Local\\Temp\\impact-kinematics-full.xml"
+    ],
+    "actual_exit": 0,
+    "receipt": {
+      "filename": "impact-kinematics-full.xml",
+      "sha256": "4cb69772bceb67a7d1654df43a813248518e6b76e744b77c1e9125c0af34554f",
+      "suite": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "2",
+        "tests": "1483",
+        "time": "743.036",
+        "timestamp": "2026-09-10T04:07:16.326038-07:00",
+        "hostname": "OGLaptop"
+      }
+    },
+    "pytest_elapsed_s": 743.31,
+    "passed": 1481,
+    "skipped": 2,
+    "timeout_s": 60,
+    "timeout_method": "thread",
+    "coverage_json_sha256": "3871c228b3679e808bdb1f18eaa8aed7e583570f50721f10a9b9df31c19b6dd4",
+    "coverage": {
+      "covered_lines": 7991,
+      "num_statements": 8546,
+      "percent_covered": 93.50573367657384,
+      "percent_covered_display": "93.51",
+      "missing_lines": 555,
+      "excluded_lines": 36,
+      "percent_statements_covered": 93.50573367657384,
+      "percent_statements_covered_display": "93.51"
+    },
+    "coverage_floor_percent": 20,
+    "skips": [
+      {
+        "name": "tests.shared.python.golf_club.test_wedge_cad",
+        "reason": "('C:\\\\Users\\\\diete\\\\Repositories\\\\Tools-impact-friction\\\\tests\\\\shared\\\\python\\\\golf_club\\\\test_wedge_cad.py', 7, \"Skipped: could not import 'build123d': No module named 'build123d'\")"
+      },
+      {
+        "name": "tests.shared.python.golf_club.test_wedge_export",
+        "reason": "('C:\\\\Users\\\\diete\\\\Repositories\\\\Tools-impact-friction\\\\tests\\\\shared\\\\python\\\\golf_club\\\\test_wedge_export.py', 10, \"Skipped: could not import 'build123d': No module named 'build123d'\")"
+      }
+    ],
+    "slowest_tests": [
+      {
+        "name": "test_production_entry_refines_separate_velocity_spin_impulse_and_work[240]",
+        "time_s": 57.363
+      },
+      {
+        "name": "test_complete_frictional_compression_release_refines_motion_and_work[0.0]",
+        "time_s": 50.354
+      },
+      {
+        "name": "test_complete_frictional_compression_release_refines_motion_and_work[0.0001]",
+        "time_s": 49.249
+      },
+      {
+        "name": "test_full_sliding_release_refines_each_impulse_spin_velocity_and_work_channel[-0.4]",
+        "time_s": 43.43
+      },
+      {
+        "name": "test_full_sliding_release_refines_each_impulse_spin_velocity_and_work_channel[0.4]",
+        "time_s": 41.807
+      },
+      {
+        "name": "test_production_entry_refines_separate_velocity_spin_impulse_and_work[60]",
+        "time_s": 37.347
+      },
+      {
+        "name": "test_midpoint_converges_but_256_steps_miss_disturbance_accuracy_target[4]",
+        "time_s": 31.669
+      },
+      {
+        "name": "test_transversal_events_and_work_match_independent_piecewise_solution",
+        "time_s": 30.446
+      },
+      {
+        "name": "test_rkmk_rotating_disturbance_meets_the_same_accuracy_target[4]",
+        "time_s": 24.644
+      },
+      {
+        "name": "test_report_is_deterministic_versioned_and_monotone",
+        "time_s": 20.079
+      }
+    ]
+  },
+  "local_comparison": {
+    "baseline_plain": {
+      "time_s": 26.103,
+      "values": {
+        "outputs": [
+          [
+            0.2855274639026602, -3.9515381917222107e-35, -0.2626531408422141,
+            -9.54243302060356e-33, 1.7365496363737372, -1.9416855269143545e-35,
+            0.006280758470557195, -0.0006997262193583761,
+            -1.576241798775564e-39, 4.990452126123248e-10
+          ],
+          [
+            0.2850889386940129, 2.3198362299139214e-36, -0.25593177708425213,
+            1.8343813922749903e-34, 1.7830496248881418, 2.7113720452416058e-37,
+            0.0065905517303381875, -0.0007186768469309959,
+            -2.723968320730697e-41, 4.721097723914973e-10
+          ],
+          [
+            0.28485688318777663, 2.3812119849246014e-40, -0.2524736736814338,
+            -1.3069115816307082e-36, 1.8077188487163613,
+            -1.9127230421200406e-39, 0.006749941927950184,
+            -0.0007287336417565278, 1.2535036126294976e-42, 4.59254383438213e-10
+          ]
+        ],
+        "scaled_differences": [0.03176311006387682, 0.016344324034126674],
+        "mechanical_defect_j": [
+          0.0009435293488593317, 0.00047909354122109755, 0.00024145388121395904
+        ],
+        "tangential_algorithmic_loss_j": [
+          4.435416538115529e-5, 2.2901774023171437e-5, 1.2182465896440332e-5
+        ]
+      }
+    },
+    "full_pair_reuse_only_plain": {
+      "time_s": 24.776,
+      "values": {
+        "outputs": [
+          [
+            0.2855274639026602, -3.9515381917222107e-35, -0.2626531408422141,
+            -9.54243302060356e-33, 1.7365496363737372, -1.9416855269143545e-35,
+            0.006280758470557195, -0.0006997262193583761,
+            -1.576241798775564e-39, 4.990452126123248e-10
+          ],
+          [
+            0.2850889386940129, 2.3198362299139214e-36, -0.25593177708425213,
+            1.8343813922749903e-34, 1.7830496248881418, 2.7113720452416058e-37,
+            0.0065905517303381875, -0.0007186768469309959,
+            -2.723968320730697e-41, 4.721097723914973e-10
+          ],
+          [
+            0.28485688318777663, 2.3812119849246014e-40, -0.2524736736814338,
+            -1.3069115816307082e-36, 1.8077188487163613,
+            -1.9127230421200406e-39, 0.006749941927950184,
+            -0.0007287336417565278, 1.2535036126294976e-42, 4.59254383438213e-10
+          ]
+        ],
+        "scaled_differences": [0.03176311006387682, 0.016344324034126674],
+        "mechanical_defect_j": [
+          0.0009435293488593317, 0.00047909354122109755, 0.00024145388121395904
+        ],
+        "tangential_algorithmic_loss_j": [
+          4.435416538115529e-5, 2.2901774023171437e-5, 1.2182465896440332e-5
+        ]
+      }
+    },
+    "both_changes_with_coverage": {
+      "time_s": 50.354,
+      "values": {
+        "outputs": [
+          [
+            0.28552746390266015, -1.746927849437843e-34, -0.2626531408422141,
+            -2.6592135421899136e-32, 1.7365496363737367,
+            -4.0052709879773216e-35, 0.006280758470557195,
+            -0.0006997262193583761, 1.5191320135818457e-40,
+            4.990452126123248e-10
+          ],
+          [
+            0.2850889386940129, 9.600092145953084e-38, -0.25593177708425213,
+            1.4612142222708163e-34, 1.7830496248881418, 2.3930780860739003e-37,
+            0.0065905517303381875, -0.0007186768469309959,
+            1.9188324034767802e-41, 4.721097723914973e-10
+          ],
+          [
+            0.28485688318777663, -5.141737783286416e-38, -0.2524736736814338,
+            -8.159248498535949e-38, 1.8077188487163613, 1.3856773717794457e-40,
+            0.006749941927950184, -0.0007287336417565278,
+            -3.1855089127415536e-43, 4.59254383438213e-10
+          ]
+        ],
+        "scaled_differences": [0.03176311006387682, 0.016344324034126674],
+        "mechanical_defect_j": [
+          0.0009435293488593317, 0.00047909354122109755, 0.00024145388121395904
+        ],
+        "tangential_algorithmic_loss_j": [
+          4.43541653811553e-5, 2.2901774023171437e-5, 1.2182465896440332e-5
+        ]
+      }
+    },
+    "max_absolute_delta_by_channel": {
+      "outputs": 4.440892098500626e-16,
+      "scaled_differences": 0.0,
+      "mechanical_defect_j": 0.0,
+      "tangential_algorithmic_loss_j": 6.776263578034403e-21
+    },
+    "limit": "Individual timings under differing coverage conditions are not a qualified speedup or hosted-runtime guarantee."
+  },
+  "retained_failed_coverage_baseline": {
+    "receipt": {
+      "filename": "impact-kinematics-before.xml",
+      "sha256": "06d34bd9f45f9f5f3c59e64eb283a680128ebbb947102bd2e8fcfa48188d123b",
+      "suite": {
+        "name": "pytest",
+        "errors": "1",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "1",
+        "time": "1.063",
+        "timestamp": "2026-09-10T03:56:10.540449-07:00",
+        "hostname": "OGLaptop"
+      }
+    },
+    "reason": "Collection ImportError: cannot load module more than once per process (NumPy); no numerical result; module-name coverage targets."
+  },
+  "qualification": "Windows numerical and API regression only; fresh hosted CI, event/work, mesh/mode, measured and perceptual qualification remain open."
+}

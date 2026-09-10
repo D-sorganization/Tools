@@ -25,11 +25,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5160; parent #5073
 - **PR:** https://github.com/D-sorganization/Tools/pull/5162 (draft)
 - **Branch:** feat/5073-friction-trajectory
-- **Paths:** src/shared/python/swing_sim/impact, tests/shared/python/golf_club, docs/development/impact-acoustics/FRICTION_TRAJECTORY.md, SPEC.md and turnover/inventory
+- **Paths:** src/shared/python/swing_sim/impact, src/shared/python/golf_club, tests/shared/python/golf_club, docs/development/impact-acoustics/FRICTION_TRAJECTORY.md, SPEC.md and turnover/inventory
 - **Started:** 2026-09-10
-- **Last verified:** 2026-09-10 (SELF): all282 affected Windows controls pass in252.01s after independent first-touch/elastic/sliding entry and adjacent-pair validation; three modified/new helper/test files pass NumPy-aware mypy, Ruff and structural checks. FRICTION_ENTRY_RESULTS.json retains RED, coarse/refined failures, original60s timeout and exact source/JUnit identities. Invalid cutoff-monotonicity assumption is corrected using an analytic counterexample; useful relative cutoff/event-work accuracy remains unqualified. Production remains4dcf1938e. Published72b2efd47 Standard CI34464371054 has both shared shards failed at60s in zero-gap release (jobs102829404145/102829404209), despite its queued aggregate. Logs are retained; the pending entry-reference source has no hosted qualification.
+- **Last verified:** 2026-09-10 (SELF): full directory-path coverage1481PASS/2 optional build123d skips in743.31s, coverage93.51%; unchanged60s timeout/floor/budgets. Exact within-evaluation kinematics reuse and inverse-Jacobian identity pass55 focused checks after separate RED records; both production files/new test pass NumPy-aware typing/Ruff/format. KINEMATICS_REUSE_RESULTS.json retains exact source/JUnit/coverage/timings, prior collection failure and narrow57.363s entry runtime. Earlier36ad1cc52 entry282 receipt remains distinct. Published72 Standard34464371054 has both shared shards failed despite queued aggregate; PR/issue corrected, fresh hosted qualification pending. CONTACT_FORCE_REGULARITY.md gives cited follow-up requirements without changing the law or claiming acoustics.
 - **Summary:** Coupled endpoint mechanics and objective elastic/Coulomb history with explicit transport, nonlinear solve criteria and disjoint energy accounting.
-- **Next step:** Remove repeated section-kinematics work while retaining all numerical checks and the60s deadline.
+- **Next step:** Publish the qualified kinematics source through normal hooks and obtain fresh hosted CI.
 
 ### DL-#5153 · Prescribed Force and Couple History Review
 

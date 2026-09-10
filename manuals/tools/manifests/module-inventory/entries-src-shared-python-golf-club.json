@@ -2556,10 +2556,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 5577,
+      "bytes_lf": 5570,
       "classification": "calculation",
       "classification_basis": "path-marker:inertia",
-      "content_sha256_lf": "273a256f662324ec5bdd4ead80daf7a94c20afe459e1df06b70a908952680bd8",
+      "content_sha256_lf": "72ece6d0ce549a32042b8e95c2ca4a90c642ade612501fbc89b10f5850007dfd",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-INERTIA-PY-21715CC3CA18",
       "language": "python",
@@ -2597,6 +2597,7 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
+          "tests/shared/python/golf_club/test_section_kinematics_reuse.py",
           "tests/shared/python/golf_club/test_shaft_frame_inertia.py",
           "tests/shared/python/golf_club/test_shaft_inertia.py",
           "tests/shared/python/golf_club/test_shaft_loaded_dynamics.py",
@@ -3340,10 +3341,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 8955,
+      "bytes_lf": 10488,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "36c411e8d40a35345a97081d9b825e5021274a024c1f269d774a922888a81b94",
+      "content_sha256_lf": "631f7a820b987daf2e885c2277420a568d9e22edc6c7dcbc92523f012add69c6",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-SE3-PY-D35A40EBEAC8",
       "language": "python",
