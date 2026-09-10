@@ -31,7 +31,7 @@ pin; exact impact-consumer and installed-wheel qualification remains.
 
 ## Contact Trajectory Development (2026-09-10)
 
-Temporal review child #5147 is published in [PR #5149](https://github.com/D-sorganization/Tools/pull/5149) at 0d6b99430.
+Temporal review child #5147 is published in [PR #5149](https://github.com/D-sorganization/Tools/pull/5149) at 22fd7ffc9.
 Normal commit/push hooks pass; fresh protected CI/review remains required.
 Parent #5073 continues in `Tools-impact-trajectory` on
 `feat/5073-contact-trajectory`, based on published foundation PR #5146 at

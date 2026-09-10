@@ -15,10 +15,28 @@ from unittest.mock import patch
 
 import numpy as np
 import pytest
+import yaml
 
 _REPO_ROOT = Path(__file__).resolve().parents[3]
 
 os.environ["HEADLESS"] = "true"
+
+
+def test_manifest_resolves_the_registered_function_generator_widget() -> None:
+    """The shared launcher must resolve the widget after its canonical move."""
+    from function_generator.gui_registration import get_gui_info
+
+    manifest_path = _REPO_ROOT / "src/shared/python/gui_launcher/tool_manifest.yaml"
+    manifest = yaml.safe_load(manifest_path.read_text(encoding="utf-8"))
+    entry = next(
+        tool for tool in manifest["tools"] if tool["tool_name"] == "function_generator"
+    )
+    declared = entry["pyqt6"]
+    registered = get_gui_info()["pyqt6"]
+    assert declared["module"] == registered["module"]
+    assert declared["class"] == registered["class"]
+    module_path = _REPO_ROOT / "src" / Path(*declared["module"].split("."))
+    assert module_path.with_suffix(".py").is_file()
 
 
 class TestSignalGeneratorEngine:

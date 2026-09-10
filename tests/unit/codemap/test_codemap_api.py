@@ -6,7 +6,15 @@ import json
 import subprocess
 from pathlib import Path
 
+import pytest
+
 from codemap import api, db
+
+
+@pytest.fixture(autouse=True)
+def query_mapping_fixture(monkeypatch: pytest.MonkeyPatch) -> None:
+    """These SQL mapping fixtures are synthetic; real freshness is tested separately."""
+    monkeypatch.setattr(api, "_open_current", db.open_db)
 
 
 def _insert_file(
