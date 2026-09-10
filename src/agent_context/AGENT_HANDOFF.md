@@ -12,7 +12,9 @@ remain in progress. Tools PR #5141 is open; paired consumers are being qualified
 The package provides catalog validation, live source and provider fingerprints,
 boundary-review declarations, bounded source-cited retrieval, deterministic
 Markdown/offline HTML, CLI, evaluation and optional MCP. CodeMap freshness lives
-in its existing shared package. A standalone wheel builds without the full
+in its existing shared package. Actual application qualification identifies Qt XML
+resources sharing the .ts extension; distinct resource parsing preserves invalid
+source failures and all109 CodeMap tests pass after the RED/GREEN correction. A standalone wheel builds without the full
 engineering application's frontend build. Git and Python are the only required
 runtime dependencies; MCP is optional.
 

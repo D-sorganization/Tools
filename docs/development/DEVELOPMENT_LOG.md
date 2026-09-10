@@ -27,9 +27,9 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/issue-5138-agent-context
 - **Paths:** `src/agent_context`, `src/shared/python/codemap`, `packages/agent-context`
 - **Started:** 2026-09-09
-- **Last verified:** 2026-09-09; all normal commit/push hooks pass with2workers. Linux CI:36 context and103 CodeMap tests pass. Current CI failed only minimum-test discovery and required paired-PR metadata; the test filename and paired UpstreamDrift#9920 metadata are fixed. Main0a561daff is integrated, preserving shaft and calibration/reference-placement providers.
+- **Last verified:** 2026-09-10; 45e9e3866 passes all normal commit/push hooks with2workers. New Qt resource tests fail before the correction; all109 CodeMap tests pass after it. Linux CI:36 context and103 CodeMap tests pass. Current CI failed only minimum-test discovery and required paired-PR metadata; the test filename and paired UpstreamDrift#9920 metadata are fixed. Main0a561daff is integrated, preserving shaft and calibration/reference-placement providers.
 - **Summary:** Dependency-free source context package, real MCP transport, semantic boundary reviews, deterministic views and CodeMap freshness guards. Parent epic Repository_Management#1629 remains active; no subscription infrastructure is required.
-- **Next step:** All normal push hooks pass in a clean declared pre-commit environment; e24ef5a68 is published. Qualify the merged provider through normal hooks and protected CI, then publish final consumer pins. Full Gas CodeMap indexing identifies27 parser errors; verify a clearly scoped backend graph without suppressing those failures.
+- **Next step:** All normal push hooks pass in a clean declared pre-commit environment; e24ef5a68 is published. Qualify the merged provider through normal hooks and protected CI, then publish final consumer pins. Gas backend graph qualifies1180 files/11025 symbols; its whole-tree27 errors remain explicit. Qualify UpstreamDrift after correcting the real Qt .ts resource classification.
 
 ### DL-#5137 · Identified Moving Reference Placements
 

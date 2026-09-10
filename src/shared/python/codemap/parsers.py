@@ -18,7 +18,7 @@ from . import _lang_js as _js
 from . import _lang_markdown as _md
 from . import _lang_python as _py
 from . import _lang_rust as _rs
-from ._ts_common import ParsedSymbol, ParseResult
+from ._ts_common import ParsedSymbol, ParseResult, to_bytes
 
 # Re-export ParseResult / ParsedSymbol so callers can keep importing from
 # ``codemap.parsers`` without knowing about the internal split.
@@ -79,7 +79,28 @@ def dispatch(path: str | Path, source: str | bytes) -> ParseResult | None:
     lang = language_for(path)
     if lang is None:
         return None
+    if lang == "typescript":
+        resource = _qt_translation(source)
+        if resource is not None:
+            return resource
     extractor = _EXTRACTORS.get(lang)
     if extractor is None:
         return None
     return extractor(str(path), source)
+
+
+def _qt_translation(source: str | bytes) -> ParseResult | None:
+    """Recognize Qt's XML .ts resources without hiding malformed source files."""
+    data = to_bytes(source).lstrip(b"\xef\xbb\xbf \t\r\n")
+    if not data.startswith((b"<?xml", b"<!DOCTYPE TS", b"<TS")):
+        return None
+    from defusedxml import ElementTree
+    from defusedxml.common import DefusedXmlException
+
+    try:
+        root = ElementTree.fromstring(data)
+    except (ElementTree.ParseError, DefusedXmlException):
+        return ParseResult("qt-translation", [], [], complete=False)
+    if root.tag != "TS":
+        return None
+    return ParseResult("qt-translation", [], [])

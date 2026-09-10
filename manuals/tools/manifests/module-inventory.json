@@ -615,7 +615,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-chat-contracts.json"
     },
     {
-      "content_sha256_lf": "87295a30af414a7c0c5b4b87273cd64943d3a873339935c68263f56a0a6966b7",
+      "content_sha256_lf": "1741f6b95c73554aa750bdd7701b836a7757636cfe6633dae76e754c022e0ba1",
       "entry_count": 15,
       "package": "src/shared/python/codemap",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-codemap.json"

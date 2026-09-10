@@ -732,10 +732,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4662,
+      "bytes_lf": 4684,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "1c40be371eb2a3871f896b924e93ef8c8e4841aa591b777136d9ca2eae5f6225",
+      "content_sha256_lf": "2c475d86488a7ba79f648b7ea8416a27631e3699e76fab98368eb9ceac65902b",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-FRESHNESS-PY-5B0A2583A146",
       "language": "python",
@@ -928,10 +928,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 2533,
+      "bytes_lf": 3336,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c1602c57036887e7867b64549bf522433466815914c36ca13244ac7a25a06a65",
+      "content_sha256_lf": "e9148bf7a277b330d99fb0cd3f8e260330f4602f6e9e4087a95d528bcf281977",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CODEMAP-PARSERS-PY-057A23AC0258",
       "language": "python",
@@ -953,7 +953,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "not-applicable",
-        "units": "not-applicable",
+        "units": "mapped",
         "validation": "not-applicable"
       },
       "traceability": {
@@ -994,7 +994,9 @@
           }
         ],
         "test_paths": [],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "s"
+        ],
         "validation_paths": []
       }
     },
