@@ -27,9 +27,9 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/issue-5138-agent-context
 - **Paths:** `src/agent_context`, `src/shared/python/codemap`, `packages/agent-context`
 - **Started:** 2026-09-09
-- **Last verified:** 2026-09-10; Linux quality at2696d31d6 passed36 context and109 CodeMap tests. Published fleet policy92283cf3f and remote FastMCP availability correctionc78c99975 are integrated. Qualification explicitly imports the installed real SDK before pytest so optional skips cannot hide a broken required transport environment.
+- **Last verified:** 2026-09-10; Linux quality at0f84e2a9a passes36 context and109 CodeMap tests. Launcher#5143/#5144 integration is coordinated with its owner; its exact regression fails against the old manifest before applying the reviewed canonical widget path. All40 combined launcher/CLI/calibration controls pass.
 - **Summary:** Dependency-free source context package, real MCP transport, semantic boundary reviews, deterministic views and CodeMap freshness guards. Parent epic Repository_Management#1629 remains active; no subscription infrastructure is required.
-- **Next step:** Qualify and publish the merged Tools provider through protected CI, preserving the Function Generator correction required by the paired consumer.
+- **Next step:** Qualify and publish the combined context, calibration and launcher provider through protected CI.
 
 ### DL-#5137 · Identified Moving Reference Placements
 
