@@ -5,7 +5,15 @@ import json
 from pathlib import Path
 from types import SimpleNamespace
 
+import pytest
+
 from codemap import cli, db
+
+
+@pytest.fixture(autouse=True)
+def trusted_serialization_fixture(monkeypatch: pytest.MonkeyPatch) -> None:
+    """Serialization uses synthetic rows; stale exports have separate real tests."""
+    monkeypatch.setattr(cli.api_mod, "_open_current", db.open_db)
 
 
 def _insert_symbol(repo: Path) -> None:
@@ -56,7 +64,7 @@ def test_main_rebuild_reports_stats_and_first_error(monkeypatch, capsys) -> None
 
     monkeypatch.setattr(cli.indexer_mod, "rebuild", rebuild)
 
-    assert cli.main(["--repo", "repo-root", "rebuild", "--since", "HEAD~1"]) == 0
+    assert cli.main(["--repo", "repo-root", "rebuild", "--since", "HEAD~1"]) == 2
 
     captured = capsys.readouterr()
     assert calls == [("repo-root", "HEAD~1")]
