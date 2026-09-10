@@ -36,7 +36,11 @@ function ResidualPlot({ model }: { readonly model: PortableModel }) {
     Residual plot unavailable: {model.residuals.reason ?? "row-aligned held-out residuals were not exported."}</p>;
   const points = rows.flatMap((row, index) => typeof row.residual === "number" ? [{ x: index, y: row.residual }] : []);
   if (!points.length) return <p role="status" className="text-amber-300">Residual plot unavailable: residual rows lack finite residual values.</p>;
-  const extent = Math.max(1, ...points.map(({ y }) => Math.abs(y)));
+  let extent = 1;
+  for (let i = 0; i < points.length; i++) {
+    const absY = Math.abs(points[i].y);
+    if (absY > extent) extent = absY;
+  }
   return <svg viewBox="0 0 640 220" role="img" aria-label="Held-out residual by aligned row plot" className="w-full rounded bg-slate-950">
     <title>Held-out residual by aligned row; zero is perfect prediction</title>
     <line x1="45" x2="625" y1="110" y2="110" stroke="#64748b"/><text x="5" y="18" fill="#94a3b8">Residual (target unit)</text>
