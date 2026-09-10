@@ -43,7 +43,7 @@ python3 -m pip wheel --no-deps packages/agent-context
 ```
 
 Latest evidence: 35 context tests passed with one Windows symlink skip; actual
-MCP stdio passes after Git stdin isolation. All 103 CodeMap tests pass with the
+MCP stdio passes after Git stdin isolation. All 109 CodeMap tests pass with the
 optional parser stack installed. Scoped Ruff and mypy pass. Re-run after final
 changes and qualify the packaged wheel, normal hooks and CI. Hook repository
 selectors are cleared before explicit-checkout reads and temporary Git fixtures.
@@ -59,7 +59,7 @@ selectors are cleared before explicit-checkout reads and temporary Git fixtures.
 
 ## Ordered Continuation
 
-1. Normal push with2workers passes; Linux CI passes36 context and103 CodeMap tests. Test discovery naming is fixed and UpstreamDrift#9920 supplies the required paired PR. Main 2c9a8d6c9 preserves shaft provider #5133; all normal hooks pass with a clean declared pre-commit environment; e24ef5a68 is published. Qualify updated-head CI and corrected CodeMap usage documentation.
+1. Normal push with2workers passes; Linux CI passes36 context and103 CodeMap tests. Test discovery naming is fixed and UpstreamDrift#9920 supplies the required paired PR. Main9899c5a6a preserves the published shaft/calibration/CLI providers; d7eaf704e passes all normal hooks. Qualify the current-main integration through protected CI.
 2. Deliver the provider through a protected PR and verify its exact revision.
 3. Pin consumers, run real boundary tests, review contracts and qualify generated maps.
 4. Reconcile fleet guidance and epic acceptance against actual delivered evidence.
