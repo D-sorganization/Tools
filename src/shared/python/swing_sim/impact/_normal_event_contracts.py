@@ -38,7 +38,7 @@ class ContactAbsoluteTolerances:
             )
 
     def vector(self, nodes: int) -> np.ndarray:
-        return np.r_[
+        result: np.ndarray = np.r_[
             np.tile([self.position_m] * 3 + [self.rotation_rad] * 3, nodes),
             np.tile(
                 [self.linear_velocity_mps] * 3 + [self.angular_velocity_radps] * 3,
@@ -46,6 +46,7 @@ class ContactAbsoluteTolerances:
             ),
             [self.work_j] * 5,
         ]
+        return result
 
 
 @dataclass(frozen=True)
