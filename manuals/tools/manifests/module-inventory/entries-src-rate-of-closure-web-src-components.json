@@ -9025,10 +9025,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3446,
+      "bytes_lf": 3751,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3ef9764b4b318bd6f98984e8ac47236b30d396e19c927fdc5e0e74ff6670bd35",
+      "content_sha256_lf": "a392fd9c9fe89eacdac81b3d42a7bb367d3f2ac8ca948d46861dc043c4cfae55",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-USEFLIGHTSAMPLEINSPECTOR-TS-1856A5C153B8",
       "language": "typescript",
