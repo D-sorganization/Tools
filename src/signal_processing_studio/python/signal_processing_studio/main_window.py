@@ -190,7 +190,8 @@ def main() -> int:
 
     window = SignalProcessingStudio()
     window.show()
-    return app.exec()
+    exit_code: int = app.exec()
+    return exit_code
 
 
 if __name__ == "__main__":

@@ -4,8 +4,7 @@ Solves one downswing optimal control problem per objective under identical
 conditions, so the only difference between the resulting swings is what was being
 maximized.
 
-Two settings here are load-bearing rather than cosmetic, and both have a
-regression test:
+Two numerical settings have explicit regression checks:
 
 * **Non-dimensional decision vector** — see
   :mod:`double_pendulum_golf.swing_objectives.collocation`.

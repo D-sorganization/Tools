@@ -538,6 +538,12 @@ jobs:
       # hosted runner, while the same suite finished in 77.7 minutes serially on
       # fleet hardware, which has faster cores.
       PYTEST_FANOUT: ${{ needs.pick-runner.outputs.runner == 'd-sorg-fleet' && '0' || 'auto' }}
+      # Bound native pools before NumPy/SciPy imports: each xdist worker owns
+      # its own pool. Unbounded nested threads caused shaft test worker exits
+      # under coverage (#5130); retain the 60-second per-test deadline.
+      OPENBLAS_NUM_THREADS: "1"
+      OMP_NUM_THREADS: "1"
+      MKL_NUM_THREADS: "1"
       PIP_DEFAULT_TIMEOUT: "120"
       PIP_RETRIES: "8"
       # Keep matrix jobs isolated from stale runner-user packages. Python 3.12

@@ -17,8 +17,8 @@ Qualify the existing shared numerical camera APIs before common-reference
 calibration adopts them. Preserve the user's full goal: everyday references and
 repeat placements, optical settings, club catalog/player bag, interactive wizard,
 and the remaining fleet communication adoption. This repair does not close those
-requirements. UpstreamDrift draft #9910 contains the profile UI and startup repair;
-its latest published head is `b743eef0914073c9433c2816078d337e5d60b6e8`.
+requirements. UpstreamDrift profile #9910 and capture UX #9917 are merged. Catalog
+#9919 and reference expansion #9918 are merged; bag #9923 is published as a draft.
 
 ## Findings and Implementation
 
@@ -96,6 +96,20 @@ Do not reopen their closed policy PRs repeatedly. Central issue #1579 has receip
 
 ## Current Goal Additions
 
-UpstreamDrift#9913 now requires clear action feedback and capture/swing/model status, clickable next steps, contextual help, detachable screens that redock on close, and fullscreen video through familiar Qt conventions. These must be implemented and merged to remote main alongside #9897/#9902/#9906 and fleet adoption.
+UpstreamDrift#9913 shipped in #9917 at8fce9f238 with445 capture/parity tests. Everyday calibration #9897, club/wizard #9902/#9906 and final fleet adoption remain open.
 
-Tools#5137 moving-reference work is in separate branch feat/5137-reference-placements at Worktrees/Tools-calibration-numerics; preserve its uncommitted source, tests and API baseline. Initial11 placement tests passed; expanded API/chain run pending.
+Tools#5137 moving-reference work is published in PR#5140 at7b6fbcdbb5e72a61ebcc8e71c9e50644c7e0a2cd, Worktrees/Tools-calibration-numerics.24 combined numerical/placement tests passed on OpenCV4.13/5;101 broader mocap/authority/API tests passed. Its main integration remains separate.
+
+## Main Integration Receipt
+
+Main2c9a8d6c9 includes merged impact PR#5133. Source merge was clean; only the
+root handoff digest conflicted and was recomputed from the combined149-line
+handoff. Inventory merge driver ran normally; final generator/freshness and hooks
+remain.19 calibration contracts/numerics pass after merge;12 numerical tests also
+pass against actual OpenCV5.0.0 via TEMP/capture-opencv5-runtime/Lib/site-packages.
+The retained environment has no Python launcher, so global Python was used with
+that isolated dependency path; no environment was recreated or removed. Prior protected aggregate
+tests failed because the rate shards timed out at99%; private Gasification checkout
+also fails before tests. No tolerance, timeout or gate was relaxed. A fresh run will
+qualify the merged tree. User was asked to have the credential owner restore private
+read access; this App cannot inspect/update Actions secrets.

@@ -16,18 +16,20 @@ from sidekick.calculators.electrical.glass_interface import (
 
 class TestElectricalModel:
     @pytest.fixture
-    def model(self) -> Any:
+    def model(self) -> ThreePhaseElectricalModelEnhanced:
         config = ElectrodeConfig()
         glass = GlassPropertiesInterface()
         return ThreePhaseElectricalModelEnhanced(config, glass)
 
-    def test_initialization(self, model) -> Any:
+    def test_initialization(self, model: ThreePhaseElectricalModelEnhanced) -> None:
         assert len(model.electrode_positions) == 3
         np.testing.assert_allclose(
             model.electrode_positions, [0, 2.094395, 4.18879], rtol=1e-4
         )
 
-    def test_calculate_system_state(self, model) -> Any:
+    def test_calculate_system_state(
+        self, model: ThreePhaseElectricalModelEnhanced
+    ) -> None:
         depths = np.array([10.0, 10.0, 10.0])
         voltages = np.array([100.0, 100.0, 100.0])
 
@@ -46,25 +48,33 @@ class TestElectricalModel:
         assert "current_distribution" in result
         assert len(result["actual_currents"]) == 3
 
-    def test_parallel_resistance(self, model) -> Any:
+    def test_parallel_resistance(
+        self, model: ThreePhaseElectricalModelEnhanced
+    ) -> None:
         r1 = 100.0
         r2 = 100.0
         rp = model._parallel_resistance(r1, r2)
         assert rp == 50.0  # Parallel of two equal resistors is half
 
-    def test_parallel_resistance_nan_case(self, model) -> Any:
+    def test_parallel_resistance_nan_case(
+        self, model: ThreePhaseElectricalModelEnhanced
+    ) -> None:
         """Line 480: NaN input → returns max of the valid values."""
         import math
 
         result = model._parallel_resistance(float("nan"), 10.0)
         assert math.isnan(result)
 
-    def test_parallel_resistance_negative_case(self, model) -> Any:
+    def test_parallel_resistance_negative_case(
+        self, model: ThreePhaseElectricalModelEnhanced
+    ) -> None:
         """Line 480: Zero/negative r → returns max(r1, r2)."""
         result = model._parallel_resistance(0.0, 5.0)
         assert result == 5.0
 
-    def test_system_state_metal_nonconductive(self, model) -> Any:
+    def test_system_state_metal_nonconductive(
+        self, model: ThreePhaseElectricalModelEnhanced
+    ) -> None:
         """Lines 158-162: metal_conductive=False path (direct_fraction=1, metal=0)."""
         depths = np.array([10.0, 10.0, 10.0])
         voltages = np.array([100.0, 100.0, 100.0])
@@ -83,7 +93,9 @@ class TestElectricalModel:
             assert path["direct_fraction"] == 1.0
             assert path["metal_fraction"] == 0.0
 
-    def test_electrode_position_cache_hit(self, model) -> Any:
+    def test_electrode_position_cache_hit(
+        self, model: ThreePhaseElectricalModelEnhanced
+    ) -> None:
         """Line 193: second call returns cached positions."""
         depths = np.array([10.0, 10.0, 10.0])
         positions1 = model._calculate_electrode_positions_3d(depths, 60.0, 2.0)
@@ -91,7 +103,9 @@ class TestElectricalModel:
         # Should return the same object from cache
         assert positions1 is positions2
 
-    def test_vertical_segment_zero_area(self, model) -> Any:
+    def test_vertical_segment_zero_area(
+        self, model: ThreePhaseElectricalModelEnhanced
+    ) -> None:
         """Line 408: area_m2 == 0 → returns default_resistance."""
         result = model._vertical_glass_segment_resistance(
             electrode_length=0.0,  # Zero length → zero area
@@ -103,7 +117,9 @@ class TestElectricalModel:
         )
         assert result == 0.001
 
-    def test_calculate_path_currents_exception(self, model) -> Any:
+    def test_calculate_path_currents_exception(
+        self, model: ThreePhaseElectricalModelEnhanced
+    ) -> None:
         """Lines 501-502: exception in _calculate_path_currents returns zeros."""
         # Pass a None-keyed dict that will cause a TypeError during iteration
         resistances = {"1-2": float("nan"), "2-3": float("nan"), "3-1": float("nan")}
@@ -113,7 +129,9 @@ class TestElectricalModel:
         # Should work normally since nan division is valid float
         assert "1-2" in result
 
-    def test_calculate_path_currents_missing_phase(self, model) -> Any:
+    def test_calculate_path_currents_missing_phase(
+        self, model: ThreePhaseElectricalModelEnhanced
+    ) -> None:
         """Line 498: phase not in resistances → current is 0.0."""
         resistances = {"1-2": 10.0}  # Missing 2-3 and 3-1
         voltages = np.array([100.0, 100.0, 100.0])
@@ -141,7 +159,7 @@ class TestGlassPropertiesInterface:
     def test_external_calculator_used(self) -> Any:
         """Lines 95-100: external calculator returns custom conductivity."""
 
-        def my_calc(temp, comp, power) -> Any:
+        def my_calc(temp: float, comp: dict[str, float] | None, power: float) -> float:
             return 42.0
 
         glass = GlassPropertiesInterface(external_calculator=my_calc)
@@ -151,7 +169,7 @@ class TestGlassPropertiesInterface:
     def test_external_calculator_fallback_on_error(self) -> Any:
         """Lines 101-106: external calculator raises → fallback to default model."""
 
-        def bad_calc(temp, comp, power) -> Any:
+        def bad_calc(temp: float, comp: dict[str, float] | None, power: float) -> float:
             raise ValueError("External calc failed")
 
         glass = GlassPropertiesInterface(external_calculator=bad_calc)
