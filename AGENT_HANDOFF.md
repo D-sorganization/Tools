@@ -12,13 +12,9 @@
 
 ## Impact Dynamics and Acoustics: #5068
 
-Complex FRF #5155 (parent #5074) is published in PR #5156 at c954e50a0.
-All 107 Windows ingestion/report/API controls pass; four changed modules and
-actual pre-push mypy pass. Existing APIs are preserved; new complex H1/coherence
-uses explicit PSD floors and immutable unsupported bins. See COMPLEX_FRF.md.
-All normal hooks and final governance pass; next: protected CI/review on #5156.
-Numerical shaft #5133 is merged from 0cd6dce22 as 2c9a8d6c. Its later launcher correction is isolated in #5143 / PR #5144. Physical parent #5072 remains open. T4 #5073 has private geometry, normal/tangential work, full-
-tensor body response and instantaneous shaft/ball coupling. PR #5154 and PR #5152 are merged onto main.
+Calibration PR #5159 publishes a76d02d88: 168 Windows controls and both Linux aggregates pass. Shared first-order/exact covariance and full identity remain numerical models.
+The synthetic SHA oracle scanner finding is reproduced and narrowly annotated; nine identity tests pass. Main e83bd2e4 preserves the peer combined provider; final pins remain peer-owned.
+Complex FRF #5155 (PR #5156) is merged onto main. Numerical shaft #5133 is merged as 2c9a8d6c. T4 #5073 PR #5154 and PR #5152 are merged onto main.
 
 - Full program active; all three parent epics remain open. AffineDrift theory #4258/#4282/#4298 and UpstreamDrift integration #9706 are merged; final synthesis awaits downstream evidence.
 - T1 #5069/#5077 and T2 #5071/#5082 are merged at f72544613 and 80d580d57. Signal repair #5106 and initial study wire #5083 are merged; acoustic/report qualification remains.

@@ -135,6 +135,198 @@
     },
     {
       "authority_status": "provisional",
+      "bytes_lf": 4665,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "69799a9eb671583c74abc6557d789899f4eb84e03eef670cd5515a4252ca9b1d",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VIBROACOUSTICS-ACQUISITION-RECORDS-PY-D5DCD7DC3640",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/vibroacoustics/_acquisition_records.py",
+      "purpose": "Immutable declared acquisition identities and a uniform sample clock.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 5361,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "8e4062dd43895034ccc4971b71c5b45511b789640162b22fe546b14bfcb865f9",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VIBROACOUSTICS-AFFINE-CALIBRATION-RECORDS-PY-C3CBC4FBA909",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/vibroacoustics/_affine_calibration_records.py",
+      "purpose": "Declared affine conversion, metrology references and restricted validity.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 1949,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "2b544be539f56918eb99763f04d656f51a7d90fedf10b5e581ea35268c134190",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VIBROACOUSTICS-CALIBRATION-IDENTITY-PY-CD1343483196",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/vibroacoustics/_calibration_identity.py",
+      "purpose": "Versioned exact content identity, independent of legacy hash conventions.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1661,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b463b27a241db463d46e5057081a064f4d20c6b0ed7a77d222fc0666f5490493",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VIBROACOUSTICS-CALIBRATION-PRIMITIVES-PY-D1A4BD8822B3",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/vibroacoustics/_calibration_primitives.py",
+      "purpose": "Unconditional calibration boundaries; identity text is never a file path.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 4689,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
@@ -281,10 +473,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 1513,
+      "bytes_lf": 1744,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "2e0992264f00a175a17fd9025b2168fd4d23631704e7292a52789bb2816f06b5",
+      "content_sha256_lf": "16f3d3212559631fa2f095cd9c7cac10342e2fb7bb735361036277f97c539a9a",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VIBROACOUSTICS-WAVEFORM-CONTRACTS-PY-B4A9D46BD3E8",
       "language": "python",
@@ -403,10 +595,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 8237,
+      "bytes_lf": 8150,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "b2e31bae56c155f196d35fbb40f1f429f48e5dde4170a9d83178942b73125f32",
+      "content_sha256_lf": "a1c123f788eff1db373a2c46ab83d929f6200178ba66988cb75fc51b82c89038",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VIBROACOUSTICS-MEASUREMENT-PY-83AD304E2A75",
       "language": "python",
@@ -581,6 +773,123 @@
           "src/shared/python/swing_sim/vibroacoustics/tests/test_spectral.py"
         ],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 8763,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "d32f4a900c979cd72f93005221d88c716de824a50ec18f4a404ff6f670a59f41",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VIBROACOUSTICS-WAVEFORM-CALIBRATION-PY-70293BECBE03",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/vibroacoustics/waveform_calibration.py",
+      "purpose": "Explicit affine calibration with exact identity and shared uncertainty.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CalibratedWaveform",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AcquisitionChannel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AcquisitionClock",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "AffineCalibration",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalibrationDomain",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalibrationEvidence",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalibrationRecord",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GainOffsetUncertainty",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IndependentSampleUncertainty",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RawWaveform",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "UncertaintyPropagation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WaveformProvenance",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/vibroacoustics/tests/test_calibration_domains.py",
+          "src/shared/python/swing_sim/vibroacoustics/tests/test_calibration_exact_moments.py",
+          "src/shared/python/swing_sim/vibroacoustics/tests/test_calibration_identity.py",
+          "src/shared/python/swing_sim/vibroacoustics/tests/test_waveform_calibration.py"
+        ],
+        "unit_mentions": [
+          "g"
+        ],
         "validation_paths": []
       }
     }

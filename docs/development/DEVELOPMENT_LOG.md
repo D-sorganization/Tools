@@ -18,18 +18,31 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
-### DL-#5155 · Complex H1 Phase and Supported Spectral Bins
+### DL-#5157 · Applied Waveform Calibration and Shared Uncertainty
 
 - **State:** in_review
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5157; parent #5074
+- **Branch:** feat/5074-waveform-calibration
+- **PR:** https://github.com/D-sorganization/Tools/pull/5159
+- **Paths:** src/shared/python/swing_sim/vibroacoustics, tests/api_baselines/swing_sim_api_baseline.json, docs/development/impact-acoustics/CALIBRATION_DEVELOPMENT.md, SPEC.md and turnover/inventory
+- **Started:** 2026-09-10
+- **Last verified:** 2026-09-10 (base 73704cf64; 168 Windows ingestion/report/API tests pass in 8.33 s, coverage 97.09%; seven NumPy-aware production and eleven isolated-hook files pass; root Ruff passes)
+- **Summary:** Explicit affine sample conversion, complete declared acquisition/calibration identity and shared first-order or exact independent-block gain/offset covariance; no source-kind promotion or fabricated unknown uncertainty.
+- **Next step:** All nine final gates and normal commit/push hooks pass at d5f842278787fa4188102fb41c812612ec941162; resolve protected review/CI on #5159. Both Linux aggregates and all 61 new calibration cases pass at a76d02d88. The synthetic SHA oracle scanner finding is reproduced and narrowly annotated; nine identity and 208 combined-provider controls pass. Publish the e83bd2e4 integration/repair through normal hooks; authentication and physical/acoustic evidence remain separate.
+
+### DL-#5155 · Complex H1 Phase and Supported Spectral Bins
+
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5155; parent #5074
 - **Branch:** feat/5074-complex-frf
 - **PR:** https://github.com/D-sorganization/Tools/pull/5156
 - **Paths:** src/shared/python/swing_sim/vibroacoustics, tests/api_baselines/swing_sim_api_baseline.json, docs/development/impact-acoustics/COMPLEX_FRF.md, SPEC.md and turnover/inventory
 - **Started:** 2026-09-10
-- **Last verified:** 2026-09-10 (SELF; 107 Windows ingestion/report/API controls pass in 7.67 s; four changed-file and actual isolated-hook mypy pass)
+- **Last verified:** 2026-09-10 (SELF; 107 Windows ingestion/report/API controls pass in 7.67 s; four changed-file and actual isolated-hook mypy pass; merged onto main via auto-merge)
 - **Summary:** Explicit complex phase, caller-declared PSD support and coherence with immutable absent bins; shared spectral pair/cross laws preserve every existing public symbol and signature. No acoustic prediction or calibration authentication.
-- **Next step:** All 107 coverage controls pass (94.68%); root Ruff and all nine final gates pass. Normal commit/push hooks pass at c954e50a0; resolve protected CI/review on #5156. WSL I/O failure prevents local Linux qualification; physical/acoustic/uncertainty gates remain open.
+- **Next step:** Merged as PR #5156 onto remote main.
 
 ### DL-#5153 · Prescribed Force and Couple History Review
 

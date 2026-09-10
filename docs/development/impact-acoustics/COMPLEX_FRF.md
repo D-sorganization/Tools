@@ -120,7 +120,7 @@ hook also passes. Every existing API symbol and signature remains unchanged;
 three module entries and four package exports are additions.
 
 WSL currently fails even `/bin/true` with getpwuid/filesystem I/O errors after
-host disk exhaustion. No Linux result is claimed for this addition. The
+host disk exhaustion. No local Linux result is claimed; the later hosted result is recorded below. The
 separate load-history PR #5154 retains its already completed Windows/Linux
 source-specific evidence. Reproducible temporary TAR recovery is recorded in
 the session's `impact-reproducible-archive-recovery*.json`: verified SHA-256,
@@ -136,3 +136,18 @@ Implementation c954e50a09fb466ade516cfc724aef552fc587e6 is published in
 [PR #5156](https://github.com/D-sorganization/Tools/pull/5156) after all normal
 commit/pre-push hooks. The first hosted checks are running. This is not a
 completed protected review or Linux/physical validation.
+
+## Subsequent hosted Linux verification
+
+CI run 34442403712 tests merge 14b56e946d2756ab019a02ff23c554813467511e.
+Its tree 7f5086d47bc172213ee67ba50cf9e080d6c13e67 exactly matches published
+head 73704cf64673050bb90341bc126e38e4eef087f1. All 38 new complex-FRF tests
+are individually recorded PASSED in both Python 3.11 and 3.12 source-shared
+logs. The full shards report 5,007 passes/19 skips/49 warnings in 236.55 s
+and 4,994 passes/26 skips/51 warnings in 238.69 s, respectively. The skips
+and warnings are retained; none of the 38 new cases is skipped. See the
+[3.11 job](https://github.com/D-sorganization/Tools/actions/runs/34442403712/job/102760138087)
+and [3.12 job](https://github.com/D-sorganization/Tools/actions/runs/34442403712/job/102760138256).
+COMPLEX_FRF_RESULTS.json retains exact job-log hashes and pass lines. This
+qualifies that earlier phase source, not the subsequent calibration addition,
+remaining protected jobs or physical acoustic evidence.
