@@ -13,7 +13,7 @@
 ## Impact Dynamics and Acoustics: #5068
 
 Friction PR #5162 integrates main d4ab52a92 at checkpoint SELF.
-1657 local controls pass; manual hosted matrices pass, but PR run34496053564 attempt2 times out in entry60 on3.12.
+1657 local controls pass; manual hosted matrices pass, but PR run34496053564 attempt2 times out in entry60 on3.12 and entry240 on3.11.
 PR5162 remains held/open; canonical HANDOFF.md records the failure, merged turnover4361/9962 and takeover.
 
 Calibration PR #5159 publishes a76d02d88: 168 Windows controls and both Linux aggregates pass. Shared first-order/exact covariance and full identity remain numerical models.

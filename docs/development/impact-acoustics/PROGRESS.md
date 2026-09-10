@@ -1,7 +1,7 @@
 # Current Checkpoint — 2026-09-10
 
 Final checkpoint: PR5162 is held OPEN after PR Standard34496053564 attempt2
-timed out in Python3.12 entry60, despite both successful manual matrices.
+timed out in Python3.12 entry60 and Python3.11 entry240, despite successful manual matrices.
 All source is committed; Affine4361 and Upstream9962 turnover are merged.
 See the canonical Final Merge Blocker section before proceeding.
 

@@ -27,7 +27,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/5073-friction-trajectory
 - **Paths:** src/shared/python/swing_sim/impact, src/shared/python/golf_club, tests/shared/python/golf_club, docs/development/impact-acoustics/FRICTION_TRAJECTORY.md, SPEC.md and turnover/inventory
 - **Started:** 2026-09-10
-- **Last verified:** 2026-09-10 (d4323c14ad364640b3f371ba8bed606ab958c990; turnover SELF):1657 local coverage tests pass/2 optional skips/93.80%; manual34496105215 all14 shards and both aggregates pass. PR34496053564 attempt2 Python3.12 job102940510943 times out in entry60 at unchanged60s. Both outcomes remain recorded; no runtime reliability or merge qualification is claimed.
+- **Last verified:** 2026-09-10 (d4323c14ad364640b3f371ba8bed606ab958c990; turnover SELF):1657 local coverage tests pass/2 optional skips/93.80%; manual34496105215 all14 shards and both aggregates pass. PR34496053564 attempt2 times out at unchanged60s: Python3.12 job102940510943 entry60 and Python3.11 job102940510985 entry240. Both outcomes remain recorded; no runtime reliability or merge qualification is claimed.
 - **Summary:** Parent #5073. Coupled endpoint mechanics and objective elastic/Coulomb history with explicit transport, nonlinear solve criteria and disjoint energy accounting.
 - **Next step:** Handoff to the next agent: investigate and address the exact hosted timeout before removing do-not-merge. Canonical HANDOFF records reproduction scope, source identities and remaining science. Affine4361 and Upstream9962 turnover are merged.
 

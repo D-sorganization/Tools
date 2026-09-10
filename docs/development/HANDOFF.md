@@ -49,6 +49,10 @@
   The log prints a PASSED marker during the timeout stack; the process exits1.
   The interrupted case/result must not be counted as a completed pass. This
   contrasts with the manual run; runner variance is a hypothesis, not a cause.
+- The same PR attempt also failed Python3.11 shared job102940510985 at60s
+  in test_production_entry_refines_separate_velocity_spin_impulse_and_work[240].
+  Its log exits1; TEMP/impact-d432-pr-shared311-failure.log retains the output.
+  Both observed failures require investigation before merge.
 - The original duplicate PR run was canceled while the manual run continued;
   attempt2 restored required PR check contexts and exposed the timeout. No
   numerical repair or test-limit change was made between these runs.
