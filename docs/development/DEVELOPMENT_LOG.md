@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5155 · Complex H1 Phase and Supported Spectral Bins
+
+- **State:** in_review
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5155; parent #5074
+- **Branch:** feat/5074-complex-frf
+- **PR:** https://github.com/D-sorganization/Tools/pull/5156
+- **Paths:** src/shared/python/swing_sim/vibroacoustics, tests/api_baselines/swing_sim_api_baseline.json, docs/development/impact-acoustics/COMPLEX_FRF.md, SPEC.md and turnover/inventory
+- **Started:** 2026-09-10
+- **Last verified:** 2026-09-10 (SELF; 107 Windows ingestion/report/API controls pass in 7.67 s; four changed-file and actual isolated-hook mypy pass)
+- **Summary:** Explicit complex phase, caller-declared PSD support and coherence with immutable absent bins; shared spectral pair/cross laws preserve every existing public symbol and signature. No acoustic prediction or calibration authentication.
+- **Next step:** All 107 coverage controls pass (94.68%); root Ruff and all nine final gates pass. Normal commit/push hooks pass at c954e50a0; resolve protected CI/review on #5156. WSL I/O failure prevents local Linux qualification; physical/acoustic/uncertainty gates remain open.
+
 ### DL-#5153 · Prescribed Force and Couple History Review
 
 - **State:** in_review
@@ -115,6 +128,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Last verified:** 2026-09-10; four new regression cases fail before isolation; all 16 shard contracts and the 1,684-file partition pass afterward. All three unchanged Club Tester tests pass serially with coverage and the existing deadline (45.04 seconds total). Both Linux rate shards and aggregate gates pass at a7d025264; all nine manual governance checks and normal hooks pass. Windows retains two independently reproduced, unchanged-source GUI limitations recorded in PR #5158.
 - **Summary:** Reuse serial scientific invocation support for the entire Club Tester file while retaining parallel execution elsewhere, separate coverage outputs and failure propagation. Full-suite worker exit is reproduced; exact root cause remains unproven.
 - **Next step:** Qualify the combined context provider in PR #5141.
+
 ### DL-#5137 · Identified Moving Reference Placements
 
 - **State:** in_review
@@ -158,7 +172,7 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5074 · Waveform and Spectral Numerical Contracts
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5074
 - **PR:** https://github.com/D-sorganization/Tools/pull/5106
@@ -167,7 +181,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-08
 - **Last verified:** 2026-09-08 (16 RED failures; 41 focused tests, nine API tests, scoped hook mypy and 69 Linux ingestion/report/API tests pass; three optional-plugin warnings)
 - **Summary:** Shared strict real samples, immutable recording storage, signed linear lag and segment preparation refuse undefined/nonfinite estimates while preserving public signatures. Independent SciPy odd/even PSD and gain controls pass. No physical calibration is inferred.
-- **Next step:** All normal push hooks pass; PR #5106 is open; complete protected CI/delivery, then qualify versioned calibration identity, supported-bin complex FRF, uncertainty and physical/blinded measurements separately.
+- **Next step:** PR #5106 merged as 287767dfa60567de136fbadc0da28c7e1ca7edf3. Complex FRF continues in DL-#5155; calibration identity, uncertainty and physical/blinded requirements stay under #5074.
 
 ### DL-#5095 · Deterministic Rust Watcher Debounce
 

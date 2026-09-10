@@ -1,0 +1,285 @@
+{
+  "review_issue": 5155,
+  "review_pr": 5156,
+  "base_commit": "92283cf3f447972071781d39870499887192f7fe",
+  "source_hash_convention": "SHA256 over LF-normalized Python source bytes",
+  "source_files": {
+    "src/shared/python/swing_sim/vibroacoustics/__init__.py": "c583f0ccc0bc6458d3fa35f3bdc7e902a7aadc06d6b7c3cfe7b397de8bd9a3e3",
+    "src/shared/python/swing_sim/vibroacoustics/_frf_contracts.py": "daa28992438465a8d4ddad895c6ed0224d2a89c7c9b5fbb4060bc2cfe42c490e",
+    "src/shared/python/swing_sim/vibroacoustics/_spectral_frames.py": "1968f9b680e374200eb3d52cefa5b3101b9d3e501dd0b27e54884928cb743776",
+    "src/shared/python/swing_sim/vibroacoustics/_spectral_pair.py": "e1273629cdecf78fe47830f965abe604f99edebcaa82235d224ef7cc0517da75",
+    "src/shared/python/swing_sim/vibroacoustics/_waveform_contracts.py": "2e0992264f00a175a17fd9025b2168fd4d23631704e7292a52789bb2816f06b5",
+    "src/shared/python/swing_sim/vibroacoustics/frf_estimation.py": "9c5b5c6450410677ccefe601b4712cba14e7771c594ee5793060ba1f75cd5032",
+    "src/shared/python/swing_sim/vibroacoustics/measurement.py": "b2e31bae56c155f196d35fbb40f1f429f48e5dde4170a9d83178942b73125f32",
+    "src/shared/python/swing_sim/vibroacoustics/spectral.py": "ef2f2220f290d0e8f34e8737fb933cb4d83134302d1375e34e68b93b58484923",
+    "src/shared/python/swing_sim/vibroacoustics/tests/__init__.py": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "src/shared/python/swing_sim/vibroacoustics/tests/test_complex_frf.py": "296dd03d88e63a4f017d03eaa2acad79d6fc0185a8be22aac508c1b03b0f2ecc",
+    "src/shared/python/swing_sim/vibroacoustics/tests/test_contract_api.py": "a6137d8806ca02da57009875393acc1361b34f0bbbabe4fa98fe979c1c8cb32a",
+    "src/shared/python/swing_sim/vibroacoustics/tests/test_measurement.py": "acdba4297a7fe9f55f866671edeb41f7e7fc4eacbe8e7f0ddd43e01b8c3926fa",
+    "src/shared/python/swing_sim/vibroacoustics/tests/test_signal_boundaries.py": "368e901475aa907bb7f76638de9434eaa95b23a84c56859c2ab68ad543486c0e",
+    "src/shared/python/swing_sim/vibroacoustics/tests/test_spectral.py": "c77d92240f5b4cd9bc1d256bf6115e56fd942167cd82a8dc9d3540dd883e28ec"
+  },
+  "runtime": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10",
+    "numpy": "2.4.1",
+    "scipy": "1.17.0"
+  },
+  "junit": {
+    "red": {
+      "tests": "1",
+      "failures": "0",
+      "errors": "1",
+      "skipped": "0",
+      "time": "5.288",
+      "junit_sha256": "4e1e385d485eded5d49cc7db856df9906c533bf51804b7adf3eba22a2cf65b19"
+    },
+    "api-red": {
+      "tests": "1",
+      "failures": "1",
+      "errors": "0",
+      "skipped": "0",
+      "time": "2.867",
+      "junit_sha256": "8701edffeffe04ed081956ca78d86b9966bb5a1d6accaed698b85e4eb1a04e57"
+    },
+    "refactored": {
+      "tests": "79",
+      "failures": "1",
+      "errors": "0",
+      "skipped": "0",
+      "time": "2.888",
+      "junit_sha256": "80431bfc53f5ad9c60da8b6545aef22f9cf634d5104f907f34b714c7df8fb2d2"
+    },
+    "windows": {
+      "tests": "107",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "7.369",
+      "junit_sha256": "1a62718fb08c2b02f7dcc9a3f0ade0c65b403dfedddea75292c9e8cd66c1b4b5"
+    },
+    "coverage": {
+      "tests": "107",
+      "failures": "0",
+      "errors": "0",
+      "skipped": "0",
+      "time": "6.835",
+      "junit_sha256": "da2ed443754f85804269060302f0c98e2672cd8bfa72386d9ec994406bdebbb0"
+    }
+  },
+  "coverage": {
+    "covered_lines": 338,
+    "num_statements": 357,
+    "percent_covered": 94.67787114845939,
+    "percent_covered_display": "94.68",
+    "missing_lines": 19,
+    "excluded_lines": 0,
+    "percent_statements_covered": 94.67787114845939,
+    "percent_statements_covered_display": "94.68"
+  },
+  "linux": {
+    "status": "not-run",
+    "reason": "WSL getpwuid/filesystem I/O launch failure after host disk exhaustion; /bin/true fails"
+  },
+  "api": {
+    "old_modules": 228,
+    "new_modules": 231,
+    "existing_symbol_or_signature_changes": 0,
+    "new_package_exports": [
+      "H1Settings",
+      "H1Bin",
+      "H1Estimate",
+      "estimate_complex_frf_h1"
+    ]
+  },
+  "typing": "Four production modules pass NumPy-aware changed-file mypy; five selected files pass isolated pre-push hook.",
+  "qualification": "synthetic-numerical-estimator-only",
+  "remaining": [
+    "Linux/current-head protected CI",
+    "versioned calibration/acquisition identity",
+    "qualified uncertainty",
+    "multi-input/transient identification",
+    "physical radiation/observer validation",
+    "blinded sweetness study"
+  ],
+  "temporary_archive_recovery": [
+    {
+      "mtime": 1789014463,
+      "tree": "976d7ff43c72bffa7069c0de249e723cac0d8fe0",
+      "sha256": "d239b271a77da194a20fab5f1e9891a91c678f8dea8881273cb7f407a34cf5ec",
+      "bytes": 90818560,
+      "retention_ref": "refs/impact-evidence/impact-load-history-source",
+      "archive_name": "impact-load-history-source.tar"
+    },
+    {
+      "bytes": 90388480,
+      "sha256": "797941c2c4013a069d08c447ea5d93e229fe5e8fba4c022e0e47f1561bb0bc71",
+      "mtime": 1788989718,
+      "tree": "0a3ba746a69e76fac71760b0be344d04bb1df5a4",
+      "retention_ref": "refs/impact-evidence/impact-array-final-source",
+      "archive_name": "impact-array-final-source.tar"
+    },
+    {
+      "bytes": 90388480,
+      "sha256": "4d776cf65e3a9c00b4c1ea5339c0cc2389f12df40b740a1f8c0391582bc7e33a",
+      "mtime": 1788989311,
+      "tree": "203f4f66e4f2d36bcf5af2619f771d621f1b67a8",
+      "retention_ref": "refs/impact-evidence/impact-array-validation-source",
+      "archive_name": "impact-array-validation-source.tar"
+    },
+    {
+      "bytes": 90378240,
+      "sha256": "a7277f764c6612ac66b44488b328a7bdb547697cf2458dbd57d97fbf2c55c6b9",
+      "mtime": 1788987254,
+      "tree": "33279d6a438e968a9b4176a00b0f478e1de7f768",
+      "retention_ref": "refs/impact-evidence/impact-ci-numpy-source",
+      "archive_name": "impact-ci-numpy-source.tar"
+    },
+    {
+      "bytes": 90398720,
+      "sha256": "ad08a908868c788661593710228c3af9752a273688c7a14578672b1d223cfe13",
+      "mtime": 1788994668,
+      "tree": "f2c3062631841232fada8f7231a99a61651ce424",
+      "retention_ref": "refs/impact-evidence/impact-ci-oracles-source",
+      "archive_name": "impact-ci-oracles-source.tar"
+    },
+    {
+      "bytes": 90480640,
+      "sha256": "5ac269b70ac8dd4b8bb227fae5b74253ec612d1450d6dff44f0b353638ad9876",
+      "mtime": 1788996722,
+      "tree": "218006534be32bc0fc3cc0b5d11f1a0be5440e14",
+      "retention_ref": "refs/impact-evidence/impact-contact-integrated-source",
+      "archive_name": "impact-contact-integrated-source.tar"
+    },
+    {
+      "bytes": 90408960,
+      "sha256": "6407777d31b8fea00598946ac0185cfd37e6eead020321886c83d13e4540ded0",
+      "mtime": 1788993805,
+      "tree": "b8e857a9784ae88b85426d8944773db6d49476b0",
+      "retention_ref": "refs/impact-evidence/impact-contact-normal-source",
+      "archive_name": "impact-contact-normal-source.tar"
+    },
+    {
+      "bytes": 90408960,
+      "sha256": "a3b03fed21a21c711fbfa93e9b38695273aa4da322c100baa00a6bbcfd6ddff8",
+      "mtime": 1788991229,
+      "tree": "fa8e9e1c37ecb0f7e578c688d8d89421240972c5",
+      "retention_ref": "refs/impact-evidence/impact-contact-source",
+      "archive_name": "impact-contact-source.tar"
+    },
+    {
+      "bytes": 90439680,
+      "sha256": "ce1087bba2dfa05dd194cb4a569c38b1471784ec1f65dbf6068fcb83e0997653",
+      "mtime": 1788996193,
+      "tree": "5ee91c02408804d26eece885e2978ef4443ef923",
+      "retention_ref": "refs/impact-evidence/impact-contact-tangential-source",
+      "archive_name": "impact-contact-tangential-source.tar"
+    },
+    {
+      "bytes": 90572800,
+      "sha256": "a9574af1907cf9a8e7bcf3e7a6de76da2bc2c5851e3517f0e09e6ae2fa085c3b",
+      "mtime": 1789005627,
+      "tree": "0433376b0460da96beaab72349efb135bcc9756a",
+      "retention_ref": "refs/impact-evidence/impact-contact-trajectory-source",
+      "archive_name": "impact-contact-trajectory-source.tar"
+    },
+    {
+      "bytes": 90398720,
+      "sha256": "ecb361861b3414647879783e1db0a5d8f0086721d9560bc51f4b9828ad505bd5",
+      "mtime": 1788990915,
+      "tree": "6fd666be500517d0604a3efe29f9f68cded9b9e0",
+      "retention_ref": "refs/impact-evidence/impact-final-typing-source",
+      "archive_name": "impact-final-typing-source.tar"
+    },
+    {
+      "bytes": 90388480,
+      "sha256": "fbead2f927c311458c32384324283be3849844ccf1ad30fbdc711cf7c238f26d",
+      "mtime": 1788990028,
+      "tree": "dd0c310afbd379e9ea9c52aac245eb49f0e63846",
+      "retention_ref": "refs/impact-evidence/impact-grip-reuse-source",
+      "archive_name": "impact-grip-reuse-source.tar"
+    },
+    {
+      "bytes": 90388480,
+      "sha256": "e344f13b35043d90d5f4c42e234bfd71d6a7b67dde3c161c2d26bf8c2de656be",
+      "mtime": 1788989054,
+      "tree": "f7a62bdca4698491fdb50c99575ef99e43e2431a",
+      "retention_ref": "refs/impact-evidence/impact-kinetic-cross-source",
+      "archive_name": "impact-kinetic-cross-source.tar"
+    },
+    {
+      "bytes": 90388480,
+      "sha256": "081b21c4a2f123af1b17743131bef4fe7588992368661d7efded903672a6b2ef",
+      "mtime": 1788988566,
+      "tree": "0abb8b3aea951f7ef03e7d17d599fb3e6171c644",
+      "retention_ref": "refs/impact-evidence/impact-kinetic-reuse-source",
+      "archive_name": "impact-kinetic-reuse-source.tar"
+    },
+    {
+      "bytes": 90368000,
+      "sha256": "b6e51b9239abcb35e1b3d3989691b22f950a801bfeecdf6ecf1737de35d97f79",
+      "mtime": 1788981100,
+      "tree": "6e3c18328d2cdc36ef89f76a376878c33317bbf9",
+      "retention_ref": "refs/impact-evidence/impact-model-data-source",
+      "archive_name": "impact-model-data-source.tar"
+    },
+    {
+      "bytes": 90398720,
+      "sha256": "715c6ff5de1a105d7c0950fd45e8e6c2d5cf5cecc97149bcaa1a4170fb7cc955",
+      "mtime": 1788994209,
+      "tree": "e7bc325bcfb65bc0eb579e493bfc4db5d829d35c",
+      "retention_ref": "refs/impact-evidence/impact-momentum-repair-source",
+      "archive_name": "impact-momentum-repair-source.tar"
+    },
+    {
+      "bytes": 90542080,
+      "sha256": "054a5226f9ccf7cdd8bfb0e83dd04729e556e9c14649b7dd04f2ded0681518e7",
+      "mtime": 1789001816,
+      "tree": "ec863402f8c51a0c474b7eaf467c9f1154bd837e",
+      "retention_ref": "refs/impact-evidence/impact-normal-coupling-source",
+      "archive_name": "impact-normal-coupling-source.tar"
+    },
+    {
+      "bytes": 90624000,
+      "sha256": "125fe3e89298871120c629f94441ba590f013ec43c02c03fce5a6b40535466f7",
+      "mtime": 1789010289,
+      "tree": "4e1b198104dd82634c1eeecc0f1805c998299227",
+      "retention_ref": "refs/impact-evidence/impact-normal-events-source",
+      "archive_name": "impact-normal-events-source.tar"
+    },
+    {
+      "bytes": 90368000,
+      "sha256": "6fadb92b9e871112660aea0a65957deecba2c702dded000950b3fb6c7cad0fdd",
+      "mtime": 1788984315,
+      "tree": "fd022afd38e3b44c304998d2062ad64c64648449",
+      "retention_ref": "refs/impact-evidence/impact-review-typing-source",
+      "archive_name": "impact-review-typing-source.tar"
+    },
+    {
+      "bytes": 90501120,
+      "sha256": "a7ddb1aedfc61f879d575d20fc823fe50e4934b723564088b24a1e3fed1e6650",
+      "mtime": 1789000868,
+      "tree": "45ccf77268f3a519dc9fbee769423b5c239bc729",
+      "retention_ref": "refs/impact-evidence/impact-rigid-body-source",
+      "archive_name": "impact-rigid-body-source.tar"
+    },
+    {
+      "bytes": 90296320,
+      "sha256": "30efb3f3706e97f02aa3e445ba13b2b53f6444d414e26e98765b620e4a5d6f15",
+      "mtime": 1788978976,
+      "tree": "6cdf0553a2b1ed20f418a9224335c545b3c524cd",
+      "retention_ref": "refs/impact-evidence/impact-rkmk-source",
+      "archive_name": "impact-rkmk-source.tar"
+    },
+    {
+      "bytes": 90234880,
+      "sha256": "90e7bc31a4f1e78631bef2479416e67a1a617cb1066ecdc7a982eb3dcd84ab4c",
+      "mtime": 1788976857,
+      "tree": "bdd6e0f1aaa618fc35b8e4e5c1b8f12289d400cf",
+      "retention_ref": "refs/impact-evidence/impact-siso-source",
+      "archive_name": "impact-siso-source.tar"
+    }
+  ],
+  "implementation_commit": "c954e50a09fb466ade516cfc724aef552fc587e6",
+  "publication": "Normal commit and pre-push hooks passed; protected CI/review pending."
+}

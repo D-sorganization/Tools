@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "792528711e84b7ab25838004e109db513e5a2aa4e2d5826a8ff7a2758229127e",
+      "content_sha256_lf": "30a25e5d624857e63f5ba9ad4bb213f17fa8f20b20a1577baad0ec423c09af2e",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -831,8 +831,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-variation.json"
     },
     {
-      "content_sha256_lf": "a02616523746b75a60e6499f84c865b44190d42184674851c9f31cdef711ff2e",
-      "entry_count": 5,
+      "content_sha256_lf": "c7a2a3270d0159b4d210b924ae3ed0621f2bc132f985f549de18e28e47566f50",
+      "entry_count": 8,
       "package": "src/shared/python/swing_sim/vibroacoustics",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-vibroacoustics.json"
     },

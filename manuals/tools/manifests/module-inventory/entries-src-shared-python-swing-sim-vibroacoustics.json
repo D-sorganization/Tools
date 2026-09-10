@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1170,
+      "bytes_lf": 1392,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c7118d5c5644b29f148449e2b3b741455fbcca4bbac17c507401063efcdff60d",
+      "content_sha256_lf": "c583f0ccc0bc6458d3fa35f3bdc7e902a7aadc06d6b7c3cfe7b397de8bd9a3e3",
       "family": "swing-simulation-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VIBROACOUSTICS-INIT-PY-268C42FB717E",
       "language": "python",
@@ -54,6 +54,21 @@
           },
           {
             "kind": "re-export",
+            "name": "H1Bin",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "H1Estimate",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "H1Settings",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "SourceKind",
             "signature": null
           },
@@ -89,6 +104,11 @@
           },
           {
             "kind": "re-export",
+            "name": "estimate_complex_frf_h1",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "estimate_frf_h1",
             "signature": null
           },
@@ -115,6 +135,56 @@
     },
     {
       "authority_status": "provisional",
+      "bytes_lf": 4689,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "daa28992438465a8d4ddad895c6ed0224d2a89c7c9b5fbb4060bc2cfe42c490e",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VIBROACOUSTICS-FRF-CONTRACTS-PY-249B3C024FFC",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/vibroacoustics/_frf_contracts.py",
+      "purpose": "Immutable, finite numerical H1 contracts; no calibration qualification.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "Hz"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 2019,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
@@ -125,6 +195,54 @@
       "maintainer": "Swing simulation maintainers",
       "path": "src/shared/python/swing_sim/vibroacoustics/_spectral_frames.py",
       "purpose": "Shared, explicitly windowed and segment-detrended spectral inputs.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 2259,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "e1273629cdecf78fe47830f965abe604f99edebcaa82235d224ef7cc0517da75",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VIBROACOUSTICS-SPECTRAL-PAIR-PY-95A205597A78",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/vibroacoustics/_spectral_pair.py",
+      "purpose": "Shared synchronized-array boundary and unnormalized cross spectra.",
       "review_status": "review-required",
       "risk_tags": [
         "downstream-consumer-risk",
@@ -206,6 +324,80 @@
         "public_surfaces": [],
         "test_paths": [],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3526,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "9c5b5c6450410677ccefe601b4712cba14e7771c594ee5793060ba1f75cd5032",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VIBROACOUSTICS-FRF-ESTIMATION-PY-EE397BFB75DB",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/vibroacoustics/frf_estimation.py",
+      "purpose": "Complex Welch H1 with explicit PSD support; numerical estimation only.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "estimate_complex_frf_h1",
+            "signature": "force_recording: WaveformRecording, response_recording: WaveformRecording, *, settings: H1Settings"
+          },
+          {
+            "kind": "re-export",
+            "name": "H1Bin",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "H1Estimate",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "H1Settings",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/vibroacoustics/tests/test_complex_frf.py"
+        ],
+        "unit_mentions": [
+          "Hz"
+        ],
         "validation_paths": []
       }
     },
@@ -317,10 +509,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 6273,
+      "bytes_lf": 5655,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "23589ff820273201056b6da9cfa667632af427ea8c13ed18d686803d355959ed",
+      "content_sha256_lf": "ef2f2220f290d0e8f34e8737fb933cb4d83134302d1375e34e68b93b58484923",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VIBROACOUSTICS-SPECTRAL-PY-EB52613EB4EC",
       "language": "python",

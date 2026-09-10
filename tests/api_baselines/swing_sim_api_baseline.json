@@ -36994,6 +36994,9 @@
     "__all__": [
       "BandwidthReport",
       "ClippingReport",
+      "H1Bin",
+      "H1Estimate",
+      "H1Settings",
       "SourceKind",
       "SynthesizedSourceError",
       "WaveformRecording",
@@ -37001,6 +37004,7 @@
       "as_measured",
       "bandwidth_report",
       "clipping_fraction",
+      "estimate_complex_frf_h1",
       "estimate_frf_h1",
       "estimate_modal_decay",
       "psd_welch",
@@ -37012,6 +37016,15 @@
         "type": "reexport"
       },
       "ClippingReport": {
+        "type": "reexport"
+      },
+      "H1Bin": {
+        "type": "reexport"
+      },
+      "H1Estimate": {
+        "type": "reexport"
+      },
+      "H1Settings": {
         "type": "reexport"
       },
       "SourceKind": {
@@ -37035,6 +37048,9 @@
       "clipping_fraction": {
         "type": "reexport"
       },
+      "estimate_complex_frf_h1": {
+        "type": "reexport"
+      },
       "estimate_frf_h1": {
         "type": "reexport"
       },
@@ -37049,7 +37065,17 @@
       }
     }
   },
+  "vibroacoustics/_frf_contracts.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
   "vibroacoustics/_spectral_frames.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "vibroacoustics/_spectral_pair.py": {
     "__all__": [],
     "explicit_all": true,
     "symbols": {}
@@ -37058,6 +37084,59 @@
     "__all__": [],
     "explicit_all": true,
     "symbols": {}
+  },
+  "vibroacoustics/frf_estimation.py": {
+    "__all__": ["H1Settings", "H1Bin", "H1Estimate", "estimate_complex_frf_h1"],
+    "explicit_all": true,
+    "symbols": {
+      "H1Bin": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "H1Estimate": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "H1Settings": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "estimate_complex_frf_h1": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WaveformRecording",
+              "default": null,
+              "kind": "arg",
+              "name": "force_recording"
+            },
+            {
+              "annotation": "WaveformRecording",
+              "default": null,
+              "kind": "arg",
+              "name": "response_recording"
+            },
+            {
+              "annotation": "H1Settings",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "settings"
+            }
+          ],
+          "returns": "H1Estimate"
+        },
+        "type": "function"
+      }
+    }
   },
   "vibroacoustics/measurement.py": {
     "__all__": [

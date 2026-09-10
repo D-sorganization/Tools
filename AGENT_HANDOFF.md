@@ -12,20 +12,21 @@
 
 ## Impact Dynamics and Acoustics: #5068
 
+Complex FRF #5155 (parent #5074) is published in PR #5156 at c954e50a0.
+All 107 Windows ingestion/report/API controls pass; four changed modules and
+actual pre-push mypy pass. Existing APIs are preserved; new complex H1/coherence
+uses explicit PSD floors and immutable unsupported bins. See COMPLEX_FRF.md.
+All normal hooks and final governance pass; next: protected CI/review on #5156.
 Numerical shaft #5133 is merged from 0cd6dce22 as 2c9a8d6c. Its later launcher correction is isolated in #5143 / PR #5144. Physical parent #5072 remains open. T4 #5073 has private geometry, normal/tangential work, full-
-tensor body response and instantaneous shaft/ball coupling. All 323 Windows/Linux controls pass at ec863402f; five production files pass mypy. Existing 99 golf-club and 228 swing API records are unchanged. Numerical
-review child #5145 bounds this foundation; PR #5146 is published at 3912b5604 after normal push checks passed. The parent retains trajectory and physical work. See SPATIAL_CONTACT_RESULTS.json and PROGRESS.md. Private-
-consumer access, physical/acoustic measurements and final qualification remain outstanding. PR #5146 includes camera main 0a561daff; its private consumer lookup fails before tests (docs/ci-
-failures/impact5145-20260910.md).
+tensor body response and instantaneous shaft/ball coupling. PR #5154 and PR #5152 are merged onto main.
 
 - Full program active; all three parent epics remain open. AffineDrift theory #4258/#4282/#4298 and UpstreamDrift integration #9706 are merged; final synthesis awaits downstream evidence.
 - T1 #5069/#5077 and T2 #5071/#5082 are merged at f72544613 and 80d580d57. Signal repair #5106 and initial study wire #5083 are merged; acoustic/report qualification remains.
 - T3 numerical review #5130 is closed by merged #5133. Parent #5072 still requires physical/FRF qualification; source/JUnit evidence is in CI_REPAIR_RESULTS.json. UD #9916 merged as c487265f with interim 4dabe900c; the context integration task will align the final reviewed #5144 descendant before exact consumer/wheel qualification.
 - Classifier #5103 and main 0f2dfe3fd (mocap #5118) are integrated. Both task scopes are preserved; 145 merge tests, actual mypy, root Ruff and all nine gates passed. Camera/mocap ownership remains separate.
 - #5114 remains open: full Qt candidate loses three workers after 2,880 passes; 14 serial profiled controls pass without explaining the losses. Partial cleanup is separate on fix/5114-qt-deferred-cleanup; issuecomment-5599216206 records the evidence. No deadline or physical calculation changes.
-- T4 #5073 continues on feat/5073-load-history; review child #5153 / PR #5154 adds prescribed force/couple histories (406 Windows/Linux controls pass); child #5151 is merged as PR #5152; temporal child #5147 is merged as PR #5149. Active leases/presence are on the fleet board; final consumer and physical/acoustic qualification remain pending.
-- T4 foundation PR #5146 covers child #5145. Temporal child #5147 is PR #5149 with all 371 Windows/Linux controls passing; event continuation remains separate and no physical/acoustic qualification is inferred.
-- T5 retains calibration identity, complex FRF, radiation and physical/blinded requirements. T6 retains strict evidence/report contracts; private-consumer lookup is an independent unresolved delivery gate.
+- T4 #5073 continuation: review child #5153 / PR #5154 prescribed force/couple histories and child #5151 / PR #5152 adaptive normal contact events are merged onto main.
+- T5 complex FRF is under #5155 (PR #5156); calibration identity, uncertainty, radiation and physical/blinded requirements remain. T6 retains strict evidence/report contracts; private-consumer lookup is an independent unresolved delivery gate.
 - UpstreamDrift #9826 preserves all 328 claim outcomes; #9841 supplies adaptive reference diagnostics and 21 real Bioptim/Casadi 3.6.7 controls. The unsuccessful 3.8 OCP case and physical-data gates remain explicit.
 - Camera task owns UpstreamDrift #9860–#9863; preserve its scopes. Resume the complete requirement matrix in docs/development/impact-acoustics/PROGRESS.md; exact-pin consumers and physical/blinded final synthesis remain required.
 
