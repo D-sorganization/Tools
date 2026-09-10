@@ -39889,5 +39889,207 @@
         }
       }
     }
+  },
+  "lab/mocap/calibration_numerics.py": { "__all__": [], "symbols": {} },
+  "lab/mocap/reference_placements.py": {
+    "__all__": [
+      "ReferenceTarget",
+      "ReferenceCamera",
+      "PlacementObservation",
+      "PlacementResidual",
+      "ReferenceLayoutResult",
+      "ReferenceSolveCancelled",
+      "common_reference",
+      "estimate_reference_layout"
+    ],
+    "symbols": {
+      "ReferenceTarget": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "rectangle": {
+              "args": [
+                {
+                  "name": "cls",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "reference_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "width_m",
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "length_m",
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ReferenceTarget"
+            },
+            "line": {
+              "args": [
+                {
+                  "name": "cls",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "reference_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "length_m",
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ReferenceTarget"
+            }
+          }
+        }
+      },
+      "ReferenceCamera": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "PlacementObservation": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "calibration_observation": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "target",
+                  "annotation": "ReferenceTarget",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CalibrationObservation"
+            }
+          }
+        }
+      },
+      "PlacementResidual": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "ReferenceLayoutResult": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "ReferenceSolveCancelled": {
+        "type": "class",
+        "info": {
+          "bases": ["RuntimeError"],
+          "methods": {}
+        }
+      },
+      "common_reference": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "reference_id",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "ReferenceTarget"
+        }
+      },
+      "estimate_reference_layout": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "layout_id",
+              "annotation": "str",
+              "default": null,
+              "kind": "kwonlyarg"
+            },
+            {
+              "name": "world_frame",
+              "annotation": "CoordinateFrame",
+              "default": null,
+              "kind": "kwonlyarg"
+            },
+            {
+              "name": "targets",
+              "annotation": "Mapping[str, ReferenceTarget]",
+              "default": null,
+              "kind": "kwonlyarg"
+            },
+            {
+              "name": "cameras",
+              "annotation": "Mapping[str, ReferenceCamera]",
+              "default": null,
+              "kind": "kwonlyarg"
+            },
+            {
+              "name": "observations",
+              "annotation": "Sequence[PlacementObservation]",
+              "default": null,
+              "kind": "kwonlyarg"
+            },
+            {
+              "name": "anchor_placement_id",
+              "annotation": "str",
+              "default": null,
+              "kind": "kwonlyarg"
+            },
+            {
+              "name": "anchor",
+              "annotation": "RigidTransform",
+              "default": null,
+              "kind": "kwonlyarg"
+            },
+            {
+              "name": "cancel_requested",
+              "annotation": "Callable[[], bool] | None",
+              "default": "None",
+              "kind": "kwonlyarg"
+            }
+          ],
+          "returns": "ReferenceLayoutResult"
+        }
+      }
+    }
+  },
+  "lab/mocap/placement_solver.py": {
+    "__all__": [],
+    "symbols": {}
   }
 }

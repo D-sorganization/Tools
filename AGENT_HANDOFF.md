@@ -1,5 +1,11 @@
 # AGENT_HANDOFF — Tools (Monorepo Root)
 
+## Calibration and Moving Reference Placements: #5132 / #5137
+
+- #5132 repair is PR #5136 at45f3bd8b9, integrating main2c9a8d6c9 in Worktrees/Tools-calibration-opencv5;19 calibration checks and12 OpenCV5 tests pass. That merged baseline is now being qualified in this #5140 branch; private checkout remains unverified and no protections are bypassed.
+- #5137 owns feat/5137-reference-placements in Worktrees/Tools-calibration-numerics: immutable labelled paper/ruler observations, profile identities and joint camera/target pose estimation with an explicit world anchor. Held-out views remain independent; ruler-only/full-lens calibration is refused.
+- Twenty-four numerical/reference tests pass on both actual OpenCV versions. Common-reference UX, physical accuracy and consumer qualification remain open in UpstreamDrift#9897/#9899. Preserve impact/CLI scopes; see docs/development/HANDOFF.md.
+
 ## Impact Dynamics and Acoustics: #5068
 
 Current #5133 publication: 00d17e7f9. A second local CI repair resolves nested
