@@ -1,3 +1,62 @@
+Numerical foundation review is tracked by child #5145 of #5073. This
+review does not close the full impact or physical/acoustic requirements.
+
+## Coupled Normal-Response Qualification
+
+The normal-only shaft/ball composition now recomputes the contact point,
+normal force and common-point reaction for every supplied stage state. It
+retains the shaft's existing head inertia, loads and moving grips. It adds no
+second head mass and no approximate gear-effect correction. Independent
+three-mass controls cover compression, clearance and unilateral cutoff;
+nonplanar offset contact matches the total-energy derivative with moving
+grips and remains invariant under observer rotation/translation. Central
+normal contact creates no spurious spin of a centered isotropic ball.
+The incomplete-state RED is corrected by validating the node count before
+indexing. All 12 composition and 24 body tests pass together; five production
+files pass NumPy-aware mypy. API RED exposed a changed annotation, so the old
+club entry-point signature is preserved over a private shared inertia kernel.
+Every pre-existing golf_club and swing_sim API record is unchanged; new
+modules have no public exports. The earlier body/shaft archive passes all
+311 Linux coverage tests. Expanded composition qualification passes all 323 Windows tests (43.21 s) and 323 Linux coverage tests (60.28 s), with no failures or skips, at archived source tree ec863402f. Source/JUnit digests are in SPATIAL_CONTACT_RESULTS.json.
+
+Full spatial trajectories, discrete tangential-history coupling, face/hosel
+modes, independent time/mesh/mode/event convergence and measured impact and
+acoustic qualification remain required. The coefficient values are synthetic.
+
+## Rigid-Body Response Qualification
+
+The private full-tensor free-body response starts with missing-module RED.
+Its 18 initial controls and 57 existing moving-shaft controls pass together
+(75 tests). Six additional relative-inertia domain cases expose two failures
+for tiny nonphysical tensors; scaling the existing realizability check by
+the tensor magnitude makes all 24 body controls pass. No tensor is projected
+or regularized. NumPy-aware mypy passes all four changed production files.
+The canonical shaft mass solve is extracted unchanged and shared, and its
+linear-first spatial inertia accepts read-only physical fields without
+inventing a club-component role for the ball. Observer momentum derivatives,
+full-tensor Euler acceleration, eccentric COM, mechanical power, material-axis
+relabeling and singular/unresolved mass refusal have independent controls.
+Exact staged tree 45ccf7726 is archived for expanded Linux coverage. This is
+an instantaneous response; spatial coupling and trajectories remain open.
+
+## T4 Constitutive Ports and Provider Integration (2026-09-09)
+
+Tools-impact-contact now fast-forwards to published shaft provider 0cd6dce22.
+All private work was preserved in stash ef048cd67f4cbf032ba2a3bd0610bd5515e043c9
+and reapplied; only root handoff and this progress file conflicted. Canonical
+inventory merge drivers regenerated their outputs. Source requalification and
+final inventory/handoff remain. No T4 implementation commit or PR exists yet.
+Geometry (18), normal work (20) and tangent work (28) have independent controls.
+The latest pre-integration full-impact source passes 150 Windows tests in 6.86 s
+and 150 Linux coverage tests in 4.68 s. Normal/legacy controls separately pass
+148 Windows and Linux tests after the retained initial timeout. All 228 old
+API records are unchanged; the three new modules have empty public exports.
+SPATIAL_CONTACT_RESULTS.json preserves exact sources, JUnit hashes and failures.
+The tangent update accounts separately for elastic storage, plastic work and
+algorithmic loss; force-cap collapse is not measured sound or material damping.
+Coupled ball/head/shaft trajectories, face modes, event/time/mesh convergence,
+matched interventions and physical/acoustic qualification remain open.
+
 ## PR #5133 Second CI Repair (2026-09-09)
 
 Published 00d17e7f9 passes protected quality and divergence checks. The full
@@ -94,11 +153,43 @@ T4 private contact kinematics is now implemented in the separate
 Tools-impact-contact worktree (18 initial tests), superseding older no-code
 notes below. Full T4 coupling and physical/acoustic qualification remain open.
 
+Historical geometry-only qualification before normal/tangential work:
+
+## Spatial Contact Kinematics Verification (2026-09-09)
+
+The private #5073 sphere/plane work port passes all 102 impact-directory tests
+on Windows and Linux coverage, with no warnings or skips. All 228 existing
+swing_sim API records are unchanged; the new private module exports no public
+symbols. NumPy-aware typing passes. See SPATIAL_CONTACT_RESULTS.json for exact
+source and JUnit identities. The source still uses provider base 608e85b24;
+integrate the reviewed #5133 repair before final coupled delivery. Constitutive
+normal/tangential state, flexible impact, face modes, independent convergence,
+intervention studies and physical/acoustic qualification remain open.
+
 # Impact and Acoustics Program Execution
 
 The user authorized completion of the full planned program, not merely its
 planning deliverables. All three parent epics remain open. Physical and
 perceptual validation cannot be inferred from numerical fixtures.
+
+## Current IA-T4 Contact Kinematics (2026-09-09)
+
+Worktree Tools-impact-contact, branch feat/5073-spatial-contact, starts from
+608e85b249e6f61238ac96abbe7dc37428629b9e. That shaft review head is published
+through all normal hooks, remote SHA verified. PR #5133 is mergeable; CI is
+running with a paired-consumer requirement for theme and a reproduced
+incoming Morris fixture TypeScript annotation failure. Those repairs stay
+on the shaft review branch; carry them forward before contact publication.
+
+All nine preflight governance gates pass. New private sphere/plane contact
+kinematics starts with a missing-module RED (5.07 s), then 18 Windows cases
+pass (8.65 s). It reuses strict shaft pose/twist contracts and point-load
+wrench/power maps. Independent matrix-exponential pose differences verify
+gap rate; conservation and observer tests verify common-point moments/work.
+This is a geometric port, not a contact/friction/flexible/acoustic solver.
+Actual two-file mypy passes; Ruff's immutability-test setattr diagnostic is
+corrected. Final regression, API/inventory recording and publication remain.
+See SPATIAL_CONTACT_KINEMATICS.md and the impact package handoff.
 
 ## Current implementation review and main integration (2026-09-09)
 
@@ -1267,3 +1358,12 @@ Next: finish this operating-model checkpoint, integrate classifier #5103, and
 continue transient/bandwidth/modal/mesh/time qualification, nonlinear/moving
 boundary work, flexible contact and acoustic/physical/blinded gates. The full
 program remains open; no physical validation follows from these synthetic tests.
+
+## Integrated Port Qualification
+
+Provider 0cd6dce22 integration passes all 176 impact and legacy coupling
+controls on Windows (51.01 s) and Linux coverage (62.71 s), without warnings
+or skips. Exact source tree 218006534 and JUnit digests are retained in
+SPATIAL_CONTACT_RESULTS.json. No coupled spatial trajectory or physical/
+acoustic qualification is inferred. Further consumer CI repair is in progress
+in the separate shaft/provider worktrees; this contact source is preserved.

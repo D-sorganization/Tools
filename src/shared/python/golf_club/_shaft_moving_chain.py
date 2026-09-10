@@ -6,7 +6,7 @@ from dataclasses import dataclass, replace
 
 import numpy as np
 
-from ._grip_contracts import _finite_norm, finite_array
+from ._grip_contracts import finite_array
 from ._grip_finite_response import FiniteGripResponse, _response_from_kinematics
 from ._grip_moving_kinematics import (
     MaterialPointMotion,
@@ -16,6 +16,7 @@ from ._grip_moving_kinematics import (
 from ._shaft_chain import ChainWork
 from ._shaft_equilibrium import _check_strains
 from ._shaft_inertia import SectionKinetics
+from ._shaft_mass_solve import solve_material_mass
 from ._shaft_moving_contracts import (
     InertialMovingChain,
     MovingChainControls,
@@ -24,7 +25,6 @@ from ._shaft_moving_contracts import (
 from ._shaft_moving_contracts import (
     MovingGripAttachment as MovingGripAttachment,
 )
-from ._shaft_spectrum import _validated_mass
 
 
 @dataclass(frozen=True)
@@ -122,25 +122,9 @@ def _assemble(chain: InertialMovingChain, state: MovingChainState) -> _Assembly:
 def _solve(
     assembly: _Assembly, controls: MovingChainControls
 ) -> tuple[np.ndarray, float]:
-    size, scales = len(assembly.known_wrench), controls.scales
-    coordinates = np.tile([scales.length_m] * 3 + [1.0] * 3, size // 6)
-    with np.errstate(under="raise"):
-        mass = assembly.mass * coordinates[:, None] * coordinates[None, :]
-        force = assembly.known_wrench * coordinates
-    _validated_mass(mass, scales)
-    acceleration = np.linalg.solve(mass, -force)
-    defect = _finite_norm(mass @ acceleration + force, "acceleration residual")
-    denominator = _finite_norm(mass, "mass") * _finite_norm(
-        acceleration, "acceleration"
-    ) + _finite_norm(force, "force")
-    residual = float(defect / denominator) if denominator > 0 else float(defect)
-    if (
-        not np.isfinite(denominator)
-        or not np.isfinite(residual)
-        or residual > scales.residual_tolerance
-    ):
-        raise ValueError("moving chain acceleration residual is unresolved")
-    rates = finite_array(coordinates * acceleration, (size,), "body twist rates")
+    rates, residual = solve_material_mass(
+        assembly.mass, -assembly.known_wrench, controls.scales
+    )
     return rates.reshape(-1, 6), residual
 
 

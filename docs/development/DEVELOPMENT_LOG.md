@@ -18,6 +18,34 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5145 · Contact Numerical Foundation Review
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5145; parent #5073
+- **PR:** not created
+- **Branch:** feat/5073-spatial-contact
+- **Paths:** src/shared/python/swing_sim/impact, src/shared/python/golf_club, tests/shared/python/golf_club
+- **Started:** 2026-09-09
+- **Last verified:** 2026-09-09 (source tree ec863402f; base 0cd6dce22; SELF)
+- **Summary:** Review private common-point geometry, separate normal/tangential work, full-tensor body response and instantaneous normal shaft/ball coupling. Preserve old APIs and shared mechanics.
+- **Evidence:** All 323 Windows and 323 Linux coverage controls pass; five production files pass NumPy-aware mypy. Existing 99 golf-club and 228 swing API records are unchanged. Source/JUnit hashes and RED failures are retained in SPATIAL_CONTACT_RESULTS.json.
+- **Next step:** Publish the numerical foundation for protected review; continue trajectory, modes, convergence and physical/acoustic requirements under parent #5073.
+
+### DL-#5073 · Spatial Flexible Contact Dynamics
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5073
+- **PR:** not created
+- **Branch:** feat/5073-spatial-contact
+- **Paths:** src/shared/python/swing_sim/impact, docs/development/impact-acoustics, tests/api_baselines/swing_sim_api_baseline.json
+- **Started:** 2026-09-09
+- **Last verified:** 2026-09-09 (provider base 0cd6dce22; coupled-response staged tree ec863402f; changes SELF)
+- **Summary:** Private common-point sphere/plane kinematics reuses canonical pose, force/moment and work ports. Point migration is kept distinct from material velocity. Normal and objective tangential work ports plus full-tensor free-body response are private; no qualified impact trajectory is inferred.
+- **Evidence:** Geometry 18, normal work 20 and tangent work 28 controls. Normal/legacy: 148 Windows/Linux pass after retained timeout. Tangential full impact: 150 Windows and 150 Linux coverage pass; NumPy typing passes. Integrated 176 tests pass on Windows/Linux. New body and moving-shaft controls pass 75 tests; relative-inertia adversarial RED then all 24 body tests pass. Five production files pass NumPy-aware mypy. All 323 coupled-response/impact/shaft controls pass on Windows and Linux coverage; existing 99 golf-club and 228 swing API records are unchanged. Exact artifacts are recorded.
+- **Next step:** Couple the ball/head/shaft trajectory; finish canonical inventory/handoff and qualified provider integration.
+
 ### DL-#5101 · Scientific Import Inventory Detection
 
 - **State:** in_review

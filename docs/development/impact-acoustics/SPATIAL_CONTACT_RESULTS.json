@@ -1,0 +1,276 @@
+{
+  "tree": "fa8e9e1c37ecb0f7e578c688d8d89421240972c5",
+  "bytes": 90408960,
+  "sha256": "a3b03fed21a21c711fbfa93e9b38695273aa4da322c100baa00a6bbcfd6ddff8",
+  "provider_base": "608e85b249e6f61238ac96abbe7dc37428629b9e",
+  "windows": {
+    "passed": 102,
+    "seconds": 8.02,
+    "warnings": 0,
+    "junit_sha256": "e605682c9016c91fb225a279e975b35ed903ea3f9cf8bd4e45683587569f1b09"
+  },
+  "linux_coverage": {
+    "passed": 102,
+    "seconds": 3.21,
+    "warnings": 0,
+    "junit_sha256": "e7e5dc3b11da895165373095a398e09b7dd03a76eacd71be3a207898c66e0d56"
+  },
+  "api": {
+    "existing_modules_unchanged": 228,
+    "new_module": "impact/_spatial_contact_kinematics.py",
+    "new_public_symbols": 0,
+    "selected_baseline_check": "pass"
+  },
+  "numpy_aware_mypy": {
+    "version": "1.13.0",
+    "numpy": "2.3.5",
+    "files": 1,
+    "passed": true
+  },
+  "qualification": "private geometric/work port only; contact constitutive law, coupled trajectory and physical/acoustic evidence remain open",
+  "normal_work_port": {
+    "source": {
+      "tree": "e3ab881df0bd9fd5470b211f883aef690c027aca",
+      "bytes": 90408960,
+      "sha256": "3e014b2065d5f35651011f4a65a6fa18b65f453bc98d83791323a1eab6313b1e"
+    },
+    "tdd": "20 new tests: missing-module collection RED, then 20 passed",
+    "windows": {
+      "passed": 148,
+      "seconds": 56.15,
+      "warnings": 0,
+      "junit_sha256": "95f7460981db0aaf2e76a7574d27158c7e9197d64fe7b9b4bd96b12c51e3991f"
+    },
+    "linux_coverage": {
+      "status": "failed",
+      "reason": "60-second timeout in test_report_is_deterministic_versioned_and_monotone; process terminated before JUnit completion",
+      "log": "contact-normal-e3ab881df/contact.log",
+      "completed_dots_before_timeout": 146
+    },
+    "numpy_aware_mypy": {
+      "files": 2,
+      "passed": true
+    },
+    "qualification": "Private normal work and geometric ports only; coupled spatial trajectory, friction and physical/acoustic qualification remain.",
+    "repaired_source": {
+      "tree": "b8e857a9784ae88b85426d8944773db6d49476b0",
+      "bytes": 90408960,
+      "sha256": "6407777d31b8fea00598946ac0185cfd37e6eead020321886c83d13e4540ded0"
+    },
+    "repaired_windows": {
+      "passed": 148,
+      "seconds": 40.57,
+      "warnings": 0,
+      "junit_sha256": "a71356f73f0a643184c18037cd0814dc6dac7bba9a65631a2b0d2078ceb2c137"
+    },
+    "repaired_linux_coverage": {
+      "passed": 148,
+      "seconds": 57.8,
+      "warnings": 0,
+      "junit_sha256": "51e1af461c2e8b9b6feca49c9ebfc48be4cd2363a7598015bfdc0a91e8da930a"
+    },
+    "performance_repair": "Convert six float64 ODE coordinates once to Python float before scalar force/work algebra; equations, force ceilings, events, steps, tolerances and 60-second per-test deadline unchanged."
+  },
+  "tangential_work_port": {
+    "source": {
+      "tree": "5ee91c02408804d26eece885e2978ef4443ef923",
+      "bytes": 90439680,
+      "sha256": "ce1087bba2dfa05dd194cb4a569c38b1471784ec1f65dbf6068fcb83e0997653"
+    },
+    "tdd": "Missing module RED, then 18 initial and 10 further work/adverse/refinement controls pass",
+    "windows_full_impact": {
+      "passed": 150,
+      "seconds": 6.86,
+      "warnings": 0,
+      "junit_sha256": "f2ad85821ff48fc968164fdfc284cb5962a55c8c2f142d8421e2a316ece39b65"
+    },
+    "linux_full_impact_coverage": {
+      "passed": 150,
+      "seconds": 4.68,
+      "warnings": 0,
+      "junit_sha256": "791e48cd1d12b71b4c0d68e73383f9fec7107c5935534c49d1f96227de9e8cd6"
+    },
+    "api": {
+      "existing_records_unchanged": 228,
+      "private_new_modules_total": 3,
+      "public_symbols_added": 0
+    },
+    "numpy_aware_mypy": {
+      "files": 2,
+      "passed": true
+    },
+    "qualification": "Private end-step isotropic Coulomb/elastic port. Algorithmic loss and normal-cap reset storage are not measured friction or acoustic energy. Coupled spatial trajectory and physical calibration remain open."
+  },
+  "integrated_ports": {
+    "provider_base": "0cd6dce22f5762ee0c6342000fb035eaa76579d5",
+    "source": {
+      "tree": "218006534be32bc0fc3cc0b5d11f1a0be5440e14",
+      "bytes": 90480640,
+      "sha256": "5ac269b70ac8dd4b8bb227fae5b74253ec612d1450d6dff44f0b353638ad9876"
+    },
+    "windows": {
+      "passed": 176,
+      "seconds": 51.01,
+      "warnings": 0,
+      "junit_sha256": "03f38f2ce9539246c6acb6a1a03437474b925c8fea17e3aeb4f71ffbc481042f"
+    },
+    "linux_coverage": {
+      "passed": 176,
+      "seconds": 62.71,
+      "warnings": 0,
+      "junit_sha256": "f7f51eca2543ea55222d7848f38409d8caa96c00882fbafe5f39654fae0f1d25"
+    },
+    "qualification": "Private geometry and constitutive work ports only; coupled trajectory, physical and acoustic qualification remain open."
+  },
+  "rigid_body_response": {
+    "source": {
+      "tree": "45ccf77268f3a519dc9fbee769423b5c239bc729",
+      "bytes": 90501120,
+      "sha256": "a7ddb1aedfc61f879d575d20fc823fe50e4934b723564088b24a1e3fed1e6650"
+    },
+    "initial_missing_module_red": {
+      "tests": 1,
+      "failures": 0,
+      "errors": 1,
+      "skipped": 0,
+      "seconds": 5.14,
+      "sha256": "afd6ec6034b7d9b41a368a28f4ce07d216ebf03102ee00deab1e84477faf6bbb"
+    },
+    "initial_body_and_moving_shaft_green": {
+      "tests": 75,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 45.361,
+      "sha256": "a0cd5105acde2a923ce4fe2042479c7147171ff557cfaa9f537d8c7d95c2eb61"
+    },
+    "relative_inertia_domain_red": {
+      "tests": 6,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 2.64,
+      "sha256": "0446111d596dbb437955311a4d71fa6d1093f7d7e9131b63af65552ce4c760b0"
+    },
+    "rigid_body_green": {
+      "tests": 24,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 2.536,
+      "sha256": "9f2e02eed7dcdb20d66e249b35bd818bd7fde99e70e2a9b1050c546d58da6727"
+    },
+    "numpy_aware_mypy": {
+      "files": 4,
+      "passed": true,
+      "version": "1.13.0",
+      "invocation": "Outside checkout, module selection with absolute MYPYPATH, --no-explicit-package-bases --follow-imports=silent; avoids the repository config namespace/root collision."
+    },
+    "linux_coverage": {
+      "tests": 311,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 86.571,
+      "sha256": "49ff3849cf6c30dab35b4a873686958b12a2e7f4784cb50aa918c6230d9383af"
+    },
+    "scope": "Private instantaneous free-body response only. Reuses the shaft spatial inertia and extracts its unchanged scaled mass solve. No rigid head mass is attached again, no trajectory or physical/acoustic qualification."
+  },
+  "normal_shaft_contact": {
+    "initial_missing_module_red": {
+      "tests": 1,
+      "failures": 0,
+      "errors": 1,
+      "skipped": 0,
+      "seconds": 0.906,
+      "sha256": "e98cbb23119f7bf06bc2de54ee1879ff14ede9fc56b56c29298a7591167df226"
+    },
+    "test_fixture_import_correction": "Moved composition tests beside existing shaft fixtures; initial cross-root tests.shared import failed collection. No production import workaround.",
+    "initial_axial_green": {
+      "tests": 9,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 4.359,
+      "sha256": "234b3aadfeea45739ca85317fe61de9e55ea9571394c8ae70e17576b598a9905"
+    },
+    "spatial_domain_red": {
+      "tests": 12,
+      "failures": 1,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 4.674,
+      "sha256": "5c86b670537134030f0cd212147a52c428d10d119ab8fe628d3b98c2e26a32f6"
+    },
+    "body_and_spatial_green": {
+      "tests": 36,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 10.208,
+      "sha256": "cb0c858457ed9b2863bd468661441a25f6e4679b11682c2b5db26d07668f66fa"
+    },
+    "api_red": {
+      "tests": 2,
+      "failures": 2,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 3.315,
+      "sha256": "7b94a88e297dffc24ba60a39cab0f3f1d806ab30ad032f187bfba75704157092"
+    },
+    "api_green": {
+      "tests": 2,
+      "failures": 0,
+      "errors": 0,
+      "skipped": 0,
+      "seconds": 2.631,
+      "sha256": "825611eef31e90e3a43b251992eca146f86a8b857e32bb3da5fcdc4822b3fa8b"
+    },
+    "api_preservation": {
+      "golf_club": {
+        "existing_records_unchanged": 99,
+        "private_modules_added": ["_shaft_mass_solve.py"],
+        "new_public_symbols": 0
+      },
+      "swing_sim": {
+        "existing_records_unchanged": 228,
+        "private_modules_added": [
+          "impact/_normal_contact_work.py",
+          "impact/_normal_shaft_contact.py",
+          "impact/_rigid_body_response.py",
+          "impact/_spatial_contact_kinematics.py",
+          "impact/_tangential_contact_work.py"
+        ],
+        "new_public_symbols": 0
+      }
+    },
+    "numpy_aware_mypy": {
+      "passed": true,
+      "files": 5
+    },
+    "scope": "Instantaneous normal contact only; three-mass axial acceleration and energy, moving-grip nonplanar energy derivative, observer invariance, no spurious central-force ball spin, repeated stage evaluation and strict topology/force-cap domains. Shaft inertia already includes head; no additional head or gear effect. Full trajectory, tangential integration, face modes, convergence and physical/acoustic evidence remain.",
+    "integrated_qualification": {
+      "source": {
+        "tree": "ec863402f8c51a0c474b7eaf467c9f1154bd837e",
+        "bytes": 90542080,
+        "sha256": "054a5226f9ccf7cdd8bfb0e83dd04729e556e9c14649b7dd04f2ded0681518e7"
+      },
+      "windows": {
+        "tests": 323,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 43.211,
+        "junit_sha256": "6605d7a91a754e240e60b61125f0508e949e48c9e400a1a8037ce0851f92c827"
+      },
+      "linux_coverage": {
+        "tests": 323,
+        "failures": 0,
+        "errors": 0,
+        "skipped": 0,
+        "seconds": 60.282,
+        "junit_sha256": "cc1916603ae21b447d33ea44746081fe9e14cb95c3358840ab102bbe33142309"
+      }
+    }
+  }
+}

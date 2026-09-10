@@ -2,19 +2,23 @@
 
 ## Impact Dynamics and Acoustics: #5068
 
-Current #5133 publication: 00d17e7f9. A second local CI repair resolves nested
-momentum-oracle roundoff and an unsupported optimizer residual ordering claim.
-Windows: 17 momentum + 19 optimizer tests pass; Linux: 17 Python 3.11 and
-36 combined Python 3.12 coverage tests pass. Original tolerances and negative
-controls remain; see PROGRESS.md and CI_REPAIR_RESULTS.json. Normal publication,
-private-consumer access and physical qualification remain open.
+Numerical shaft #5133 is merged from 0cd6dce22 as 2c9a8d6c. Its later launcher
+correction is isolated in #5143 / PR #5144. Physical parent #5072 remains open.
+T4 #5073 has private geometry, normal/tangential work, full-tensor body response
+and instantaneous shaft/ball coupling. All 323 Windows/Linux controls pass at
+ec863402f; five production files pass mypy. Existing 99 golf-club and 228 swing
+API records are unchanged. Numerical review child #5145 bounds this foundation;
+its first commit/PR is pending. The parent retains trajectory and physical work.
+See SPATIAL_CONTACT_RESULTS.json and PROGRESS.md. Private-consumer access,
+physical/acoustic measurements and final qualification remain outstanding.
 
 - Full program active; all three parent epics remain open. AffineDrift theory #4258/#4282/#4298 and UpstreamDrift integration #9706 are merged; final synthesis awaits downstream evidence.
 - T1 #5069/#5077 and T2 #5071/#5082 are merged at f72544613 and 80d580d57. Signal repair #5106 and initial study wire #5083 are merged; acoustic/report qualification remains.
-- T3 #5072 / review #5130: PR #5133 publishes 00d17e7f9; main 421889407 is integrated. The second local CI repair qualifies momentum and optimizer test oracles while preserving numerical equations and physical feasibility limits. Nine manual gates and root Ruff pass; source/JUnit evidence is in CI_REPAIR_RESULTS.json. Protected review and physical/FRF qualification remain open.
+- T3 numerical review #5130 is closed by merged #5133. Parent #5072 still requires physical/FRF qualification; source/JUnit evidence is in CI_REPAIR_RESULTS.json. UD #9916 qualifies interim 4dabe900c and must advance to the reviewed #5144 descendant.
 - Classifier #5103 and main 0f2dfe3fd (mocap #5118) are integrated. Both task scopes are preserved; 145 merge tests, actual mypy, root Ruff and all nine gates passed. Camera/mocap ownership remains separate.
 - #5114 remains open: full Qt candidate loses three workers after 2,880 passes; 14 serial profiled controls pass without explaining the losses. Partial cleanup is separate on fix/5114-qt-deferred-cleanup; issuecomment-5599216206 records the evidence. No deadline or physical calculation changes.
-- T3 lease: codex/session impact-acoustics-01a07d8a-shaft5072 and review #5130/session impact-acoustics-01a07d8a-review5130 renewed through 2026-09-10T01:05Z. UpstreamDrift #9916 qualifies the pinned provider through source and clean installed-wheel checks; final reviewed revision remains pending.
+- T4 #5073 lease/presence is renewed through 2026-09-10T02:57Z; numerical review #5145 lease runs through 03:05Z. UpstreamDrift #9916 final reviewed-pin qualification remains pending.
+- T4 source remains on provider 0cd6dce22, with all 323 combined controls passing. Review #5145 and current-main integration precede full trajectory development; no physical/acoustic qualification is inferred.
 - T5 retains calibration identity, complex FRF, radiation and physical/blinded requirements. T6 retains strict evidence/report contracts; private-consumer lookup is an independent unresolved delivery gate.
 - UpstreamDrift #9826 preserves all 328 claim outcomes; #9841 supplies adaptive reference diagnostics and 21 real Bioptim/Casadi 3.6.7 controls. The unsuccessful 3.8 OCP case and physical-data gates remain explicit.
 - Camera task owns UpstreamDrift #9860–#9863; preserve its scopes. Resume the complete requirement matrix in docs/development/impact-acoustics/PROGRESS.md; exact-pin consumers and physical/blinded final synthesis remain required.
