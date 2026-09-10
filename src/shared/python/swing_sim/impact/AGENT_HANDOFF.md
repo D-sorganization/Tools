@@ -2,7 +2,7 @@
 
 ## Active Work
 
-- Prescribed force/couple history child#5153 reuses canonical additional-load assembly and external work. All406 Windows/Linux controls pass. Exact evidence: LOAD_HISTORY_RESULTS.json; no physical/acoustic approval.
+- Prescribed force/couple history child#5153 / PR#5154 reuses canonical additional-load assembly and external work. All406 Windows/Linux controls pass. Exact evidence: LOAD_HISTORY_RESULTS.json; no physical/acoustic approval.
 
 - Event child #5151 is PR#5152 and passes386 Windows/Linux controls at tree4e1b19810; shared chart/geometry ports, independent piecewise event/work reference and strict SI/budget/history guards are retained. See NORMAL_EVENT_RESULTS.json; protected review, friction/modes and physical/acoustic qualification remain.
 - Parent #5073 remains active. Numerical foundation child #5145 is under protected review in PR #5146 at published 1be394e90, based on merged shaft main 2c9a8d6c.

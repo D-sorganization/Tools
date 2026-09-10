@@ -140,7 +140,7 @@
     "blinded perception"
   ],
   "review_issue": 5153,
-  "review_pr": null,
+  "review_pr": 5154,
   "event_ci_annotation_adoption": {
     "source_commit": "839ebe083",
     "changes": "two ndarray local annotations; no numerical expression changes",
@@ -156,5 +156,6 @@
     "seconds": 4.845,
     "junit_sha256": "7a24c205b6bae218687b8153e1d50ba68116c44f02248fd8437e29bb4cb47cc9",
     "assertion_gate": "passed unchanged"
-  }
+  },
+  "publication": "Implementationc4e6d584d and reference-integrity170fca54d pass normal commit/push hooks; protected CI/review remains."
 }
