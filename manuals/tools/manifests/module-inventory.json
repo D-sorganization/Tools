@@ -471,7 +471,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-ui.json"
     },
     {
-      "content_sha256_lf": "e640ecb7ac4f174877eeb4c7c968e9006e0bde7839139e2d9edcfcb504dd1d6e",
+      "content_sha256_lf": "20304b7228b9803c791023c9a42c94f2ba8c08a4dcc7c5126a2786dc52013183",
       "entry_count": 54,
       "package": "src/rate_of_closure/variation",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-variation.json"
@@ -741,7 +741,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-signal-toolkit.json"
     },
     {
-      "content_sha256_lf": "0a8fe76f97721eb10f83b394e6b60997974755a9a440a054c260d783ada6597c",
+      "content_sha256_lf": "7452dff2b4d8fea339f7acd15a48a95ab1f94f2c03ad6739baeaf326105e5e20",
       "entry_count": 18,
       "package": "src/shared/python/swing_sim",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim.json"
@@ -771,7 +771,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-flight-interchange.json"
     },
     {
-      "content_sha256_lf": "948934e6b34f8ade611b94bf5dc0b7a4bd8114227536ad61a9a0e394d4a01c33",
+      "content_sha256_lf": "224bea0f5f224ce4b89a97abea7a734a7265d4462d2dfc95cf7b8f1d78b4baee",
       "entry_count": 60,
       "package": "src/shared/python/swing_sim/ground",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-ground.json"
