@@ -1,11 +1,11 @@
 # Waveform Calibration Review #5157 / Parent #5074
 
-- Worktree Tools-impact-calibration; branch feat/5074-waveform-calibration; base 73704cf64673050bb90341bc126e38e4eef087f1; calibration PR pending.
+- Worktree Tools-impact-calibration; branch feat/5074-waveform-calibration; base 73704cf64673050bb90341bc126e38e4eef087f1; PR #5159 https://github.com/D-sorganization/Tools/pull/5159; implementation d5f842278787fa4188102fb41c812612ec941162.
 - Explicit immutable affine conversion, exact acquisition/calibration identity and shared uncertainty with first-order and exact independent-block modes. Missing components remain unknown; synthetic evidence cannot become measured.
 - TDD RED receipts retained. All 168 Windows waveform/study-report/API controls pass in 8.33 s, coverage 97.09%. Seven production files pass NumPy-aware mypy; eleven files pass the established isolated hook. Root Ruff check/format passes (3872 files).
 - Coverage package-name pre-import failed NumPy collection; file-path coverage passes unchanged source. An alternate Python 3.13 mypy environment crashes internally; the established Python 3.12 hook passes. Both limitations are retained in CALIBRATION_RESULTS.json.
 - Previous phase PR #5156 has verified hosted Python 3.11/3.12 results on an exactly matching merge tree; see COMPLEX_FRF_RESULTS.json. This does not qualify calibration on Linux. WSL remains unavailable.
-- Next: final inventory/nine gates, normal publication and protected CI/review. Calibration authority, correlated/timing/phase uncertainty, physical radiation and blinded perception remain open. Preserve peer camera/provider ownership.
+- All nine final gates and normal commit/push hooks pass; next: protected CI/review on #5159. Calibration authority, correlated/timing/phase uncertainty, physical radiation and blinded perception remain open. Preserve peer camera/provider ownership.
 
 ## Earlier Complex FRF Turnover
 

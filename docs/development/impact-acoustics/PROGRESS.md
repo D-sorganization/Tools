@@ -1267,3 +1267,32 @@ Next: finish this operating-model checkpoint, integrate classifier #5103, and
 continue transient/bandwidth/modal/mesh/time qualification, nonlinear/moving
 boundary work, flexible contact and acoustic/physical/blinded gates. The full
 program remains open; no physical validation follows from these synthetic tests.
+
+### Calibration and current delivery checkpoint (2026-09-10)
+
+Tools PR #5159 publishes explicit affine waveform calibration, exact acquisition/
+calibration identity and first-order or exact independent-block second moments
+at d5f842278787fa4188102fb41c812612ec941162. All 168 Windows waveform/study-report/
+API controls pass (97.09% coverage); seven production files pass NumPy-aware mypy,
+eleven production/test files pass the established isolated hook, and root Ruff,
+all nine governance checks and normal commit/push hooks pass. All 231 existing
+API module records remain unchanged. See CALIBRATION_DEVELOPMENT.md and
+CALIBRATION_RESULTS.json for equations, assumptions, RED evidence and source hashes.
+
+The preceding complex-FRF PR #5156 at 73704cf64 has source-matched hosted Linux
+Python 3.11/3.12 evidence; both full seven-shard suites now pass. Its exact-tree
+record is in COMPLEX_FRF_RESULTS.json. This does not qualify the newer calibration
+source on Linux. Local WSL remains unavailable; protected CI/review is pending.
+
+Contact foundation #5146 remains at 1286c9f49. The targeted dependency-index
+retry succeeded in job 102758477186: 26 UpstreamDrift consumer controls pass in
+7.17 s on merge 4520045b3. Earlier index-response and runner-loss evidence is
+retained in the live PR. The private consumer checkout remains inaccessible.
+Do not recreate the user-closed launcher PR #5144; combined provider #5141 and
+its final consumer pin belong to the coordinating task.
+
+The three parent epics stay open. Full coupled friction/contact refinement,
+face/hosel and shaft mode convergence, final installed-provider adapters,
+authenticated calibration, correlated/timing/phase uncertainty, radiation,
+held-out physical experiments and blinded sweetness studies remain required.
+No synthetic covariance result establishes an acoustic or player effect size.

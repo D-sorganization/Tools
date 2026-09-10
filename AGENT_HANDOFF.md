@@ -12,7 +12,7 @@ Calibration review #5157 (parent #5074) follows complex-FRF PR #5156.
 Tools-impact-calibration / feat/5074-waveform-calibration adds explicit affine
 conversion, exact identity and first-order/exact independent-block covariance.
 All 168 Windows controls pass (97.09% coverage); typing and root Ruff pass.
-All nine final gates pass; next: normal publication. Prior phase hosted
+PR #5159 publishes d5f842278 through all normal hooks and nine gates. Phase hosted
 Linux evidence is source-specific; calibration/physical/perception gates remain.
 
 - Full program active; all three parent epics remain open. AffineDrift theory #4258/#4282/#4298 and UpstreamDrift integration #9706 are merged; final synthesis awaits downstream evidence.

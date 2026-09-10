@@ -1,6 +1,6 @@
 {
   "review_issue": 5157,
-  "review_pr": null,
+  "review_pr": 5159,
   "base_commit": "73704cf64673050bb90341bc126e38e4eef087f1",
   "source_hash_convention": "SHA256 over LF-normalized Python source bytes",
   "source_files": {
@@ -109,5 +109,7 @@
   "coverage_invocation": "File-path --cov=src/shared/python/swing_sim/vibroacoustics; package-name coverage invocation failed during NumPy collection before tests. No code or assertions changed to resolve invocation.",
   "linux": "No Linux result for this calibration source yet. Prior complex FRF hosted evidence applies only to its recorded tree.",
   "qualification": "Declared affine numerical model with first-order or exact independent-block second moments; no authenticated calibration, measured golf effect, radiation or perceptual qualification.",
-  "governance": "All nine final manual/inventory/handoff gates pass; two existing publication blockers remain."
+  "governance": "All nine final manual/inventory/handoff gates pass; two existing publication blockers remain.",
+  "implementation_commit": "d5f842278787fa4188102fb41c812612ec941162",
+  "publication": "Normal commit and pre-push hooks pass; protected CI/review remains."
 }
