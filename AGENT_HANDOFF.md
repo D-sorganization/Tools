@@ -1,23 +1,24 @@
 # AGENT_HANDOFF — Tools (Monorepo Root)
 
+## Calibration and Moving Reference Placements: #5132 / #5137
+
+- #5132 repair is PR #5136 at45f3bd8b9, integrating main2c9a8d6c9 in Worktrees/Tools-calibration-opencv5;19 calibration checks and12 OpenCV5 tests pass. That merged baseline is now being qualified in this #5140 branch; private checkout remains unverified and no protections are bypassed.
+- #5137 owns feat/5137-reference-placements in Worktrees/Tools-calibration-numerics: immutable labelled paper/ruler observations, profile identities and joint camera/target pose estimation with an explicit world anchor. Held-out views remain independent; ruler-only/full-lens calibration is refused.
+- Twenty-four numerical/reference tests pass on both actual OpenCV versions. Common-reference UX, physical accuracy and consumer qualification remain open in UpstreamDrift#9897/#9899. Preserve impact/CLI scopes; see docs/development/HANDOFF.md.
+
 ## Impact Dynamics and Acoustics: #5068
 
-Numerical shaft review #5133 / child #5130 is merged: source 0cd6dce22,
-squash commit 2c9a8d6c, merged by dieterolson at 2026-09-09T23:27:57Z.
-All Python scientific/version lanes and UD consumer checks pass on that
-source; private Gasification checkout remains an access limitation.
-The later canonical launcher correction was outside that merged PR.
-It is isolated on fix/5143-function-launcher from merged main, with unchanged
-TDD control and 16 passing GUI/engine tests. Follow-up #5143 is PR #5144.
-UD #9916 has 271 passing source controls for candidate 4dabe900c; its pin must
-advance to this follow-up's reviewed descendant. Physical epics remain open.
+Numerical shaft review #5133 / child #5130 is merged: source 0cd6dce22, squash commit 2c9a8d6c, merged by dieterolson at 2026-09-09T23:27:57Z. All Python scientific/version lanes and UD consumer checks pass on that
+source; private Gasification checkout remains an access limitation. The later canonical launcher correction was outside that merged PR. It is isolated on fix/5143-function-launcher from merged main, with unchanged TDD
+control and 16 passing GUI/engine tests. Follow-up #5143 is PR #5144. UD #9916 has 271 passing source controls for candidate 4dabe900c; its pin must advance to this follow-up's reviewed descendant. Physical epics remain
+open. Launcher #5144 now integrates camera/CLI/fleet main92283cf3f; repeated GUI CI timeout and final provider sequencing are recorded in docs/development/HANDOFF.md and docs/ci-failures/impact5143-20260910.md.
 
 - Full program active; all three parent epics remain open. AffineDrift theory #4258/#4282/#4298 and UpstreamDrift integration #9706 are merged; final synthesis awaits downstream evidence.
 - T1 #5069/#5077 and T2 #5071/#5082 are merged at f72544613 and 80d580d57. Signal repair #5106 and initial study wire #5083 are merged; acoustic/report qualification remains.
 - T3 #5072 / review #5130: PR #5133 is merged as 2c9a8d6c from source 0cd6dce22. The second published CI repair qualifies momentum and optimizer test oracles while preserving numerical equations and physical feasibility limits. Nine manual gates and root Ruff pass; source/JUnit evidence is in CI_REPAIR_RESULTS.json. Protected review and physical/FRF qualification remain open.
 - Classifier #5103 and main 0f2dfe3fd (mocap #5118) are integrated. Both task scopes are preserved; 145 merge tests, actual mypy, root Ruff and all nine gates passed. Camera/mocap ownership remains separate.
 - #5114 remains open: full Qt candidate loses three workers after 2,880 passes; 14 serial profiled controls pass without explaining the losses. Partial cleanup is separate on fix/5114-qt-deferred-cleanup; issuecomment-5599216206 records the evidence. No deadline or physical calculation changes.
-- T3 lease: codex/session impact-acoustics-01a07d8a-shaft5072 and review #5130/session impact-acoustics-01a07d8a-review5130 renewed through 2026-09-10T01:05Z. UpstreamDrift #9916 qualifies the pinned provider through source and clean installed-wheel checks; final reviewed revision remains pending.
+- Launcher#5143 remains leased with current presence on the fleet board. UD#9916 merged with interim4dabe900c; final combined reviewed provider and exact wheel qualification remain pending.
 - T5 retains calibration identity, complex FRF, radiation and physical/blinded requirements. T6 retains strict evidence/report contracts; private-consumer lookup is an independent unresolved delivery gate.
 - UpstreamDrift #9826 preserves all 328 claim outcomes; #9841 supplies adaptive reference diagnostics and 21 real Bioptim/Casadi 3.6.7 controls. The unsuccessful 3.8 OCP case and physical-data gates remain explicit.
 - Camera task owns UpstreamDrift #9860–#9863; preserve its scopes. Resume the complete requirement matrix in docs/development/impact-acoustics/PROGRESS.md; exact-pin consumers and physical/blinded final synthesis remain required.

@@ -27,10 +27,38 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** fix/5143-function-launcher
 - **Paths:** src/shared/python/gui_launcher/tool_manifest.yaml, src/function_generator/tests/test_function_generator_gui.py
 - **Started:** 2026-09-09
-- **Last verified:** 2026-09-09 (merged main 2c9a8d6c; source-equivalent 4dabe900c; SELF)
+- **Last verified:** 2026-09-10 (SELF integrates main92283cf3f; launcher source/tests unchanged fromfc453bf8e; repeated GUI timeout retained in docs/ci-failures/impact5143-20260910.md)
 - **Summary:** The post-#5133 launcher correction points at the widget moved in #5110. No source is copied.
-- **Evidence:** New resolution control fails before correction; all 16 Function Generator tests pass. Canonical gates and normal hooks pass on the identical source.
-- **Next step:** Complete PR #5144 checks, then qualify the reviewed downstream pin and wheel.
+- **Evidence:** New resolution control fails before correction; all16 Function Generator tests pass. Main92283cf3f integration passes29 GUI/engine/CLI/API controls in26.57s. Prior publication gates pass; repeated GUI CI timeouts remain documented separately.
+- **Next step:** Publish the verified combined launcher/camera main revision for protected review.
+
+### DL-#5137 · Identified Moving Reference Placements
+
+- **State:** in_review
+- **Owner:** codex
+- **Issue:** #5137; consumer UpstreamDrift#9899
+- **Branch:** feat/5137-reference-placements
+- **PR:** #5140 (open)
+- **Paths:** src/shared/python/sidekick/lab/mocap/reference_placements.py, placement_solver.py, calibration_numerics.py; reference tests and manual inventory
+- **Started:** 2026-09-09
+- **Last verified:** 2026-09-09 (`d129737273800c8cb3c31e28c38c421f05993a95`; 24 numerical/reference tests pass on OpenCV 4.13 and 5.0; all101 mocap/authority/API tests pass in17.03s; scoped lint/format/mypy and governance gates pass)
+- **Summary:** Labelled target geometry, immutable per-camera/profile observations, connected pose initialization and joint camera/target fitting with a fixed anchor and independent held-out views; explicit unsupported/ambiguous geometry and cancellation outcomes.
+- **Next step:** Qualify protected CI/review and merge #5140 after numerical recovery.
+
+- **Main integration:** repair45f3bd8b9/main2c9a8d6c9 retains impact work.101 mocap/authority/API tests and24 OpenCV5 numerical/placement checks pass; inventory/handoff gates pass. Normal publication checks pending.
+
+### DL-#5132 · Calibration Numerical Recovery
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** #5132; consumer UpstreamDrift#9897/#9899
+- **Branch:** fix/5132-calibration-numerics
+- **PR:** https://github.com/D-sorganization/Tools/pull/5136
+- **Paths:** src/shared/python/sidekick/lab/mocap/calibration.py, extrinsics.py, calibration_numerics.py; numerical tests and inventory
+- **Started:** 2026-09-09
+- **Last verified:** 2026-09-09T21:06Z (SELF: reproduced3 OpenCV5 failures; all12 numerical tests now pass on actual OpenCV4.13 and5.0)
+- **Summary:** Real distortion-aware pose recovery replaces silent fabricated poses and unchanged refinement results.
+- **Next step:** Integrate main2c9a8d6c9 without changing numerical gates;19 merged calibration tests pass. Regenerate inventory, run hooks and qualify fresh exact-head CI on PR#5136.
 
 ### DL-#5101 · Scientific Import Inventory Detection
 

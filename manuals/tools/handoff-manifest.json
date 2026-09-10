@@ -11,9 +11,9 @@
   "issue_url": "https://github.com/D-sorganization/Tools/issues/4730",
   "pr_url": "https://github.com/D-sorganization/Tools/pull/5144",
   "commit_evidence": {
-    "local_head_sha": "c10baa1d86bd5a0dfe1f4e7d0f2c0c8f126b0030",
+    "local_head_sha": "fc453bf8e90f4b9d4bb1c3d522086cc3540b3e3a",
     "remote_head_sha": null,
-    "reviewed_tree_sha": "42e6d2adf893a1a2f36b587e7566d30f4875d7af",
+    "reviewed_tree_sha": "57d1460941648074b1ff3c7f34dc1acd351de585",
     "merge_sha": null
   },
   "branch_and_worktree": {
@@ -25,47 +25,47 @@
     "check_design_manual_governance": {
       "command": "python -m scripts.check_design_manual_governance",
       "status": "passed",
-      "timestamp": "2026-09-10T00:37:09Z"
+      "timestamp": "2026-09-10T03:56:13Z"
     },
     "build_tools_module_inventory": {
       "command": "python -m scripts.build_tools_module_inventory --check",
       "status": "passed",
-      "timestamp": "2026-09-10T00:37:09Z"
+      "timestamp": "2026-09-10T03:56:13Z"
     },
     "lint_tools_textbook_chapters": {
       "command": "python -m scripts.lint_tools_textbook_chapters",
       "status": "passed",
-      "timestamp": "2026-09-10T00:37:09Z"
+      "timestamp": "2026-09-10T03:56:13Z"
     },
     "check_tools_exemplars": {
       "command": "python -m scripts.check_tools_exemplars",
       "status": "passed",
-      "timestamp": "2026-09-10T00:37:09Z"
+      "timestamp": "2026-09-10T03:56:13Z"
     },
     "check_tools_calculation_freshness": {
       "command": "python -m scripts.check_tools_calculation_freshness --check",
       "status": "passed",
-      "timestamp": "2026-09-10T00:37:09Z"
+      "timestamp": "2026-09-10T03:56:13Z"
     },
     "check_tools_manual_qa": {
       "command": "python -m scripts.check_tools_manual_qa --check",
       "status": "passed",
-      "timestamp": "2026-09-10T00:37:09Z"
+      "timestamp": "2026-09-10T03:56:13Z"
     },
     "check_tools_publication_projection": {
       "command": "python -m scripts.check_tools_publication_projection --check",
       "status": "passed",
-      "timestamp": "2026-09-10T00:37:09Z"
+      "timestamp": "2026-09-10T03:56:13Z"
     },
     "render_tools_design_manual": {
       "command": "python -m scripts.render_tools_design_manual --check",
       "status": "passed",
-      "timestamp": "2026-09-10T00:37:09Z"
+      "timestamp": "2026-09-10T03:56:13Z"
     },
     "check_tools_handoff": {
       "command": "python -m scripts.check_tools_handoff --check",
       "status": "passed",
-      "timestamp": "2026-09-10T00:37:09Z"
+      "timestamp": "2026-09-10T03:56:13Z"
     }
   },
   "artifact_and_test_digests": {
@@ -112,7 +112,7 @@
       "TOOLS-HUMAN-APPROVAL-PENDING",
       "TOOLS-MARKERLESS-EXEMPLAR-BLOCKED"
     ],
-    "expiry_timestamp": "2026-12-09T00:37:09Z"
+    "expiry_timestamp": "2026-12-09T03:56:13Z"
   },
   "blockers": [
     {
@@ -127,14 +127,15 @@
     }
   ],
   "next_dependency": "TOOLS-M0 (#4708 / #4734) and parent epic DOC-TOOLS (#4707) closure",
-  "freshness_timestamp": "2026-09-10T00:37:09Z",
+  "freshness_timestamp": "2026-09-10T03:56:13Z",
   "governed_handoff_files": {
     "AGENT_HANDOFF.md": {
       "path": "AGENT_HANDOFF.md",
-      "sha256_lf": "6033f641ae1d9f156264d16efc26afc6972e2a95b0325e05c15d592a4c6649dc",
-      "line_count": 146,
+      "sha256_lf": "2039d3286846ccb995eb233e6df8ecb465cf9623ecfb96136d9c139053ef8654",
+      "line_count": 147,
       "max_line_budget": 150,
       "required_sections": [
+        "## Calibration and Moving Reference Placements: #5132 / #5137",
         "## Impact Dynamics and Acoustics: #5068",
         "## Merge Governance",
         "## Where This Repo Is Headed",
@@ -206,7 +207,7 @@
     },
     "src/shared/python/sidekick/lab/mocap/AGENT_HANDOFF.md": {
       "path": "src/shared/python/sidekick/lab/mocap/AGENT_HANDOFF.md",
-      "sha256_lf": "80f2c040724a21ccfbf68e6f9f7f88381ac59d9a81e984c051361e2d0c407800",
+      "sha256_lf": "940b9fc5189c0bf15c1dd9c1cbc04ef317d30783519897251bc99612cf10decf",
       "line_count": 64,
       "max_line_budget": 150,
       "required_sections": [
