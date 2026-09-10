@@ -20677,31 +20677,6 @@
       }
     }
   },
-  "impact/_friction_contact_response.py": {
-    "__all__": [],
-    "explicit_all": true,
-    "symbols": {}
-  },
-  "impact/_friction_contact_step.py": {
-    "__all__": [],
-    "explicit_all": true,
-    "symbols": {}
-  },
-  "impact/_friction_contact_trajectory.py": {
-    "__all__": [],
-    "explicit_all": true,
-    "symbols": {}
-  },
-  "impact/_friction_trajectory_contracts.py": {
-    "__all__": [],
-    "explicit_all": true,
-    "symbols": {}
-  },
-  "impact/_friction_transport.py": {
-    "__all__": [],
-    "explicit_all": true,
-    "symbols": {}
-  },
   "impact/_normal_contact_events.py": {
     "__all__": [],
     "explicit_all": true,
@@ -37019,6 +36994,9 @@
     "__all__": [
       "BandwidthReport",
       "ClippingReport",
+      "H1Bin",
+      "H1Estimate",
+      "H1Settings",
       "SourceKind",
       "SynthesizedSourceError",
       "WaveformRecording",
@@ -37026,6 +37004,7 @@
       "as_measured",
       "bandwidth_report",
       "clipping_fraction",
+      "estimate_complex_frf_h1",
       "estimate_frf_h1",
       "estimate_modal_decay",
       "psd_welch",
@@ -37037,6 +37016,15 @@
         "type": "reexport"
       },
       "ClippingReport": {
+        "type": "reexport"
+      },
+      "H1Bin": {
+        "type": "reexport"
+      },
+      "H1Estimate": {
+        "type": "reexport"
+      },
+      "H1Settings": {
         "type": "reexport"
       },
       "SourceKind": {
@@ -37060,6 +37048,9 @@
       "clipping_fraction": {
         "type": "reexport"
       },
+      "estimate_complex_frf_h1": {
+        "type": "reexport"
+      },
       "estimate_frf_h1": {
         "type": "reexport"
       },
@@ -37074,7 +37065,37 @@
       }
     }
   },
+  "vibroacoustics/_acquisition_records.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "vibroacoustics/_affine_calibration_records.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "vibroacoustics/_calibration_identity.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "vibroacoustics/_calibration_primitives.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "vibroacoustics/_frf_contracts.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
   "vibroacoustics/_spectral_frames.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "vibroacoustics/_spectral_pair.py": {
     "__all__": [],
     "explicit_all": true,
     "symbols": {}
@@ -37083,6 +37104,59 @@
     "__all__": [],
     "explicit_all": true,
     "symbols": {}
+  },
+  "vibroacoustics/frf_estimation.py": {
+    "__all__": ["H1Settings", "H1Bin", "H1Estimate", "estimate_complex_frf_h1"],
+    "explicit_all": true,
+    "symbols": {
+      "H1Bin": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "H1Estimate": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "H1Settings": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "estimate_complex_frf_h1": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WaveformRecording",
+              "default": null,
+              "kind": "arg",
+              "name": "force_recording"
+            },
+            {
+              "annotation": "WaveformRecording",
+              "default": null,
+              "kind": "arg",
+              "name": "response_recording"
+            },
+            {
+              "annotation": "H1Settings",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "settings"
+            }
+          ],
+          "returns": "H1Estimate"
+        },
+        "type": "function"
+      }
+    }
   },
   "vibroacoustics/measurement.py": {
     "__all__": [
@@ -37305,5 +37379,311 @@
         "type": "function"
       }
     }
+  },
+  "vibroacoustics/waveform_calibration.py": {
+    "__all__": [
+      "AcquisitionChannel",
+      "AcquisitionClock",
+      "WaveformProvenance",
+      "RawWaveform",
+      "IndependentSampleUncertainty",
+      "GainOffsetUncertainty",
+      "AffineCalibration",
+      "CalibrationDomain",
+      "CalibrationEvidence",
+      "CalibrationRecord",
+      "CalibratedWaveform",
+      "UncertaintyPropagation"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "AcquisitionChannel": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "AcquisitionClock": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "last_sample_time_s": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "int",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "count"
+                }
+              ],
+              "returns": "float"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "AffineCalibration": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "CalibratedWaveform": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "calibration_covariance": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "int",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "first"
+                },
+                {
+                  "annotation": "int",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "second"
+                }
+              ],
+              "returns": "float | None"
+            },
+            "covariance": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "int",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "first"
+                },
+                {
+                  "annotation": "int",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "second"
+                }
+              ],
+              "returns": "float | None"
+            },
+            "linear_standard_uncertainty": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "np.ndarray",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "weights"
+                }
+              ],
+              "returns": "float | None"
+            },
+            "marginal_standard_uncertainty": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "np.ndarray | None"
+            },
+            "source_kind": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "SourceKind"
+            },
+            "unit": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "CalibrationDomain": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "CalibrationEvidence": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "CalibrationRecord": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "validate_raw": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "RawWaveform",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "raw"
+                }
+              ],
+              "returns": "tuple[float, float]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "GainOffsetUncertainty": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "IndependentSampleUncertainty": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "RawWaveform": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "size": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "int"
+            },
+            "source_kind": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "SourceKind"
+            },
+            "time_extent_s": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "tuple[float, float]"
+            },
+            "unit": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "UncertaintyPropagation": {
+        "info": {
+          "bases": ["Enum"],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WaveformProvenance": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      }
+    }
+  },
+  "impact/_friction_contact_response.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "impact/_friction_contact_step.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "impact/_friction_contact_trajectory.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "impact/_friction_trajectory_contracts.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
+  },
+  "impact/_friction_transport.py": {
+    "__all__": [],
+    "explicit_all": true,
+    "symbols": {}
   }
 }

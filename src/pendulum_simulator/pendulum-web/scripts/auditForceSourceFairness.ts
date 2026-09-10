@@ -37,9 +37,17 @@ const fullyFair = inSpeedBand.filter(item => inEffortCaps.includes(item));
 const speed = (item: typeof scenarios[number]) => item.series.clubhead_speed_m_s[
     item.series.clubhead_speed_m_s.length - 1
 ] ?? 0;
-const extrema = <T>(values: T[], value: (item: T) => number) => values.length === 0 ? null : {
-    min: Math.min(...values.map(value)),
-    max: Math.max(...values.map(value)),
+const extrema = <T>(values: T[], value: (item: T) => number) => {
+    if (values.length === 0) return null;
+    // ⚡ Bolt Optimization: Use single-pass loop instead of Math.min(...)/Math.max(...) combined with .map() to avoid GC pressure and call stack limits
+    let min = Infinity;
+    let max = -Infinity;
+    for (let i = 0; i < values.length; i++) {
+        const val = value(values[i]);
+        if (val < min) min = val;
+        if (val > max) max = val;
+    }
+    return { min, max };
 };
 
 process.stdout.write(`${JSON.stringify({

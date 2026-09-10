@@ -2274,7 +2274,8 @@
           "src/shared/python/sidekick/tests/calculators/conversion/test_conversion_accuracy_3384_3388_3389.py",
           "src/shared/python/sidekick/tests/calculators/conversion/test_conversion_service.py",
           "src/shared/python/sidekick/tests/test_unit_converter_widget.py",
-          "tests/shared/python/calculators/conversion/test_service.py"
+          "tests/shared/python/calculators/conversion/test_service.py",
+          "tests/unit/agent_context/test_service.py"
         ],
         "unit_mentions": [
           "N",
@@ -5502,7 +5503,8 @@
           "tests/shared/python/sidekick/lab/mocap/test_calibration_numerics.py",
           "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
-          "tests/shared/python/sidekick/lab/mocap/test_reference_placements.py"
+          "tests/shared/python/sidekick/lab/mocap/test_reference_placements.py",
+          "tests/shared/python/sidekick/lab/mocap/test_reference_scale.py"
         ],
         "unit_mentions": [
           "g"
@@ -5778,7 +5780,8 @@
         "test_paths": [
           "tests/shared/python/sidekick/lab/mocap/test_calibration_numerics.py",
           "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py",
-          "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py"
+          "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_reference_scale.py"
         ],
         "unit_mentions": [],
         "validation_paths": [
@@ -5836,7 +5839,8 @@
           "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py",
-          "tests/shared/python/sidekick/lab/mocap/test_reference_placements.py"
+          "tests/shared/python/sidekick/lab/mocap/test_reference_placements.py",
+          "tests/shared/python/sidekick/lab/mocap/test_reference_scale.py"
         ],
         "unit_mentions": [],
         "validation_paths": [
@@ -6181,11 +6185,211 @@
           }
         ],
         "test_paths": [
-          "tests/shared/python/sidekick/lab/mocap/test_reference_placements.py"
+          "tests/shared/python/sidekick/lab/mocap/test_reference_placements.py",
+          "tests/shared/python/sidekick/lab/mocap/test_reference_scale.py"
         ],
         "unit_mentions": [
           "s"
         ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 5150,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "04f607253958bafded74e964a6387f70bcd723965ea82fa52568cead13e22063",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-REFERENCE-SCALE-PY-610436B45716",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/reference_scale.py",
+      "purpose": "Metric-scale evidence for an established camera layout, never pose initialization.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ReferenceScaleOptions",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ReferenceScaleProblem",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ReferenceScaleResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ScaleResidual",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "estimate_reference_scale",
+            "signature": "problem: ReferenceScaleProblem, options: ReferenceScaleOptions | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_reference_scale.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 4586,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "0619a63d297aa03363ceebdd7d6fdc436f2adeb6610e9109dc573faa1fca58c4",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-REFERENCE-SCALE-FIT-PY-ABC1A693C65B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/reference_scale_fit.py",
+      "purpose": "One-parameter length fit and immutable anchored camera-layout rescaling.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "fit_scale",
+            "signature": "problem: ReferenceScaleProblem, measurements: tuple[ScaleResidual, ...], options: ReferenceScaleOptions"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 9682,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "6342fd962a455d9348ad93cb8c3e000aedee5584ee5d2b6039c319433c7c8553",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-REFERENCE-SCALE-TRIANGULATION-PY-95162981B9AB",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/reference_scale_triangulation.py",
+      "purpose": "Lens-corrected ruler measurements through the canonical triangulation API.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_MAX_CAMERAS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_MAX_PLACEMENTS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "measure_placements",
+            "signature": "problem: ReferenceScaleProblem, options: ReferenceScaleOptions"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
         "validation_paths": []
       }
     },
@@ -6312,7 +6516,8 @@
         ],
         "test_paths": [
           "tests/shared/python/calculators/conversion/test_service.py",
-          "tests/shared/python/sidekick/lab/mocap/test_cli_service_contracts.py"
+          "tests/shared/python/sidekick/lab/mocap/test_cli_service_contracts.py",
+          "tests/unit/agent_context/test_service.py"
         ],
         "unit_mentions": [
           "mm",

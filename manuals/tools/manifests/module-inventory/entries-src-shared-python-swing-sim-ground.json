@@ -4233,7 +4233,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "not-applicable",
         "validation": "not-applicable"
       },
@@ -4254,7 +4254,9 @@
             "signature": "text: str"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/rate_of_closure/test_regional_ground_scalar_ensemble_parity.py"
+        ],
         "unit_mentions": [],
         "validation_paths": []
       }

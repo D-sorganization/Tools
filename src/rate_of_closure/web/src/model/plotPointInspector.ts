@@ -36,8 +36,14 @@ function snapshotValues(value: unknown, field: string): readonly number[] {
 
 function histogramBins(x: readonly number[]): readonly HistogramBin[] {
   const count = Math.min(40, Math.max(10, Math.floor(x.length / 10)));
-  let low = Math.min(...x);
-  let high = Math.max(...x);
+  // ⚡ Bolt Optimization: Use single-pass loop instead of Math.min(...)/Math.max(...)
+  // Avoids spreading up to MAX_PLOT_SAMPLES elements on the call stack
+  let low = x[0];
+  let high = x[0];
+  for (let i = 1; i < x.length; i++) {
+    if (x[i] < low) low = x[i];
+    if (x[i] > high) high = x[i];
+  }
   if (low === high) { low -= 0.5; high += 0.5; }
   const width = (high - low) / count;
   const counts = new Array<number>(count).fill(0);

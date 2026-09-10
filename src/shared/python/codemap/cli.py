@@ -21,8 +21,8 @@ from pathlib import Path
 from typing import Any
 
 from . import api as api_mod
-from . import db as db_mod
 from . import indexer as indexer_mod
+from .freshness import StaleIndexError
 
 
 def _echo(msg: str = "", *, file: Any = None) -> None:
@@ -41,6 +41,7 @@ def _cmd_rebuild(args: argparse.Namespace) -> int:
         _echo(
             f"  {len(stats.errors)} errors (first: {stats.errors[0]})", file=sys.stderr
         )
+        return 2
     return 0
 
 
@@ -70,7 +71,7 @@ def _cmd_who_calls(args: argparse.Namespace) -> int:
 
 def _cmd_export(args: argparse.Namespace) -> int:
     repo = Path(args.repo) if args.repo else api_mod.discover_repo_root()
-    conn = db_mod.open_db(repo)
+    conn = api_mod._open_current(repo)
     out_path = (
         Path(args.jsonl)
         if args.jsonl
@@ -154,7 +155,11 @@ def main(argv: list[str] | None = None) -> int:
         level=logging.DEBUG if getattr(args, "verbose", False) else logging.INFO,
         format="%(levelname)s %(name)s: %(message)s",
     )
-    return int(args.func(args))
+    try:
+        return int(args.func(args))
+    except StaleIndexError as exc:
+        _echo(str(exc), file=sys.stderr)
+        return 2
 
 
 if __name__ == "__main__":

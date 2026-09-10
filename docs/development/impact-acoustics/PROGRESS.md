@@ -1,3 +1,17 @@
+# Current Checkpoint — 2026-09-10
+
+Canonical continuation: [HANDOFF.md](../HANDOFF.md). Contact foundation #5146,
+trajectory #5149, adaptive events #5152, prescribed loads #5154, complex FRF
+#5156 and calibration #5159 are merged. Friction #5162 is integrated locally
+with main;1657 tests pass, two optional CAD skips,93.80% coverage. Exact hosted
+qualification/merge is pending at this checkpoint. CHECKPOINT_INTEGRATION_RESULTS.json
+preserves this source separately from historical receipts below. Affine #4356
+is merged; turnover reviews are Affine #4361 and UpstreamDrift #9962. All full
+program and physical/perceptual requirements remain open. Historical "next"
+statements below describe their dated source; use the canonical handoff first.
+
+## Historical Progress and Requirement Matrix
+
 Prescribed load review child#5153 / PR#5154 continues in Tools-impact-load-history from
 event PR#5152. Explicit additional spatial forces/free couples use canonical
 point-load work and retain baseline loads once. Archived976d7ff43 passes406 Linux
@@ -40,7 +54,7 @@ pin; exact impact-consumer and installed-wheel qualification remains.
 
 ## Contact Trajectory Development (2026-09-10)
 
-Temporal review child #5147 is published in [PR #5149](https://github.com/D-sorganization/Tools/pull/5149) at 0d6b99430.
+Temporal review child #5147 is published in [PR #5149](https://github.com/D-sorganization/Tools/pull/5149) at 22fd7ffc9.
 Normal commit/push hooks pass; fresh protected CI/review remains required.
 Parent #5073 continues in `Tools-impact-trajectory` on
 `feat/5073-contact-trajectory`, based on published foundation PR #5146 at

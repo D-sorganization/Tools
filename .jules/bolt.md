@@ -164,3 +164,11 @@
 ## 2026-09-09 - Eliminate Array Spread in Zoomed Chart Bounds
 **Learning:** Using `Math.min(...spread)` and `Math.max(...spread)` to calculate bounds on zoomable ensemble scatter plots maps the array to the call stack. This creates call stack pressure, garbage collection hits, and scales poorly on zooming.
 **Action:** Replace `Math.min/max(...spread)` bounds calculations with a standard single-pass `for` loop in charting hot paths.
+
+## 2026-09-09 - Eliminate Math.max(...map) chains
+**Learning:** Calling Math.max(...array.map()) creates intermediate arrays and pushes them all to the call stack via the spread operator, leading to GC pressure and potential stack overflow for large arrays.
+**Action:** Replace Math.max(...array.map()) and Math.min(...array.map()) with a standard single-pass for loop, allocating no intermediate memory and eliminating spread overhead.
+
+## 2026-09-10 - Avoid spread operator for large array bounds
+**Learning:** Spreading large arrays (like histogram plotting inputs which scale up to MAX_PLOT_SAMPLES) into Math.min/max causes severe GC pressure and risks exceeding the call stack.
+**Action:** Always use a single-pass loop to calculate extents dynamically for plot arrays instead of spreading elements onto the stack.

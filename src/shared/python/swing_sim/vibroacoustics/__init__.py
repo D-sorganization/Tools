@@ -9,6 +9,12 @@ in a later, independently qualified tier.
 
 from __future__ import annotations
 
+from shared.python.swing_sim.vibroacoustics.frf_estimation import (
+    H1Bin,
+    H1Estimate,
+    H1Settings,
+    estimate_complex_frf_h1,
+)
 from shared.python.swing_sim.vibroacoustics.measurement import (
     BandwidthReport,
     ClippingReport,
@@ -31,6 +37,9 @@ from shared.python.swing_sim.vibroacoustics.spectral import (
 __all__ = [
     "BandwidthReport",
     "ClippingReport",
+    "H1Bin",
+    "H1Estimate",
+    "H1Settings",
     "SourceKind",
     "SynthesizedSourceError",
     "WaveformRecording",
@@ -38,6 +47,7 @@ __all__ = [
     "as_measured",
     "bandwidth_report",
     "clipping_fraction",
+    "estimate_complex_frf_h1",
     "estimate_frf_h1",
     "estimate_modal_decay",
     "psd_welch",

@@ -27,9 +27,48 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** feat/5073-friction-trajectory
 - **Paths:** src/shared/python/swing_sim/impact, src/shared/python/golf_club, tests/shared/python/golf_club, docs/development/impact-acoustics/FRICTION_TRAJECTORY.md, SPEC.md and turnover/inventory
 - **Started:** 2026-09-10
-- **Last verified:** 2026-09-10 (SELF; published baseline 279926e95e8a17cc42702a53c30ea03bf4638bec): bounded SE(3) matrix evaluation passes1517 full coverage controls with2 optional CAD skips in698.82s,93.53% coverage and unchanged60s limit. Direct-import cleanup then passes63 affected controls, NumPy-aware typing, Ruff and structural checks. JACOBIAN_POLYNOMIAL_RESULTS.json distinguishes both source identities and retains RED, rejected series, failed first full run and original motion/work comparisons. Published279 Standard34471450139 fails both shared shards in entry240; fresh hosted qualification remains. Affine theory PR4356 merged963867d7 after all15 checks; physical/acoustic and event-work acceptance remain open.
+- **Last verified:** 2026-09-10 (ef796bf327386f2f4db0105c42fd039ef2869feb; integrated checkpoint SELF): main d4ab52a926cbd74d10b881a700c0c4f12f89728f integration passes1657 tests with2 optional CAD skips in716.72s,93.80% coverage and unchanged60s limit. CHECKPOINT_INTEGRATION_RESULTS.json binds source/JUnit/coverage; historical polynomial RED/proof remains separate. Hosted qualification and merge remain pending.
 - **Summary:** Parent #5073. Coupled endpoint mechanics and objective elastic/Coulomb history with explicit transport, nonlinear solve criteria and disjoint energy accounting.
-- **Next step:** Publish the bounded SE(3) evaluator through normal hooks and qualify fresh hosted CI.
+- **Next step:** Complete hosted qualification and merge #5162; hand off the open numerical/physical/acoustic program in canonical HANDOFF. Preserve peer pin/runtime ownership.
+
+### DL-#5168 · Established-layout linear reference scale
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5168
+- **Branch:** feat/5168-linear-reference-scale
+- **PR:** https://github.com/D-sorganization/Tools/pull/5169
+- **Paths:** src/shared/python/sidekick/lab/mocap/reference_scale\*.py, tests/shared/python/sidekick/lab/mocap/test_reference_scale.py, docs/development/REFERENCE_SCALE.md and generated module inventory
+- **Started:** 2026-09-10
+- **Last verified:** 2026-09-10 (27 scale/placement tests passed; three implementation modules pass mypy and Ruff)
+- **Summary:** Immutable scale candidates from known ruler lengths and established camera geometry; independent held-out evidence and explicit lens/zoom association. No pose initialization or physical-accuracy approval.
+- **Next step:** Complete provider governance and protected publication, then integrate explicit review and downstream revision invalidation in UpstreamDrift #9899.
+
+### DL-#5157 · Applied Waveform Calibration and Shared Uncertainty
+
+- **State:** in_review
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5157; parent #5074
+- **Branch:** feat/5074-waveform-calibration
+- **PR:** https://github.com/D-sorganization/Tools/pull/5159
+- **Paths:** src/shared/python/swing_sim/vibroacoustics, tests/api_baselines/swing_sim_api_baseline.json, docs/development/impact-acoustics/CALIBRATION_DEVELOPMENT.md, SPEC.md and turnover/inventory
+- **Started:** 2026-09-10
+- **Last verified:** 2026-09-10 (base 73704cf64; 168 Windows ingestion/report/API tests pass in 8.33 s, coverage 97.09%; seven NumPy-aware production and eleven isolated-hook files pass; root Ruff passes)
+- **Summary:** Explicit affine sample conversion, complete declared acquisition/calibration identity and shared first-order or exact independent-block gain/offset covariance; no source-kind promotion or fabricated unknown uncertainty.
+- **Next step:** All nine final gates and normal commit/push hooks pass at d5f842278787fa4188102fb41c812612ec941162; resolve protected review/CI on #5159. Both Linux aggregates and all 61 new calibration cases pass at a76d02d88. The synthetic SHA oracle scanner finding is reproduced and narrowly annotated; nine identity and 208 combined-provider controls pass. Publish the e83bd2e4 integration/repair through normal hooks; authentication and physical/acoustic evidence remain separate.
+
+### DL-#5155 · Complex H1 Phase and Supported Spectral Bins
+
+- **State:** shipped
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5155; parent #5074
+- **Branch:** feat/5074-complex-frf
+- **PR:** https://github.com/D-sorganization/Tools/pull/5156
+- **Paths:** src/shared/python/swing_sim/vibroacoustics, tests/api_baselines/swing_sim_api_baseline.json, docs/development/impact-acoustics/COMPLEX_FRF.md, SPEC.md and turnover/inventory
+- **Started:** 2026-09-10
+- **Last verified:** 2026-09-10 (SELF; 107 Windows ingestion/report/API controls pass in 7.67 s; four changed-file and actual isolated-hook mypy pass; merged onto main via auto-merge)
+- **Summary:** Explicit complex phase, caller-declared PSD support and coherence with immutable absent bins; shared spectral pair/cross laws preserve every existing public symbol and signature. No acoustic prediction or calibration authentication.
+- **Next step:** Merged as PR #5156 onto remote main.
 
 ### DL-#5153 · Prescribed Force and Couple History Review
 
@@ -47,17 +86,17 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5151 · Adaptive Normal Contact Event Review
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5151; parent #5073
 - **PR:** https://github.com/D-sorganization/Tools/pull/5152
 - **Branch:** feat/5073-contact-events
 - **Paths:** src/shared/python/swing_sim/impact, src/shared/python/golf_club, tests/shared/python/golf_club
 - **Started:** 2026-09-10
-- **Last verified:** 2026-09-10 (SELF repairs three isolated publication typing errors; all15 affected controls and isolated mypy pass; fleet-policy92283cf3f retained; 15 integration controls and nine governance gates pass; source tree4e1b19810 passes386 Windows/Linux controls)
+- **Last verified:** 2026-09-10 (SELF; production839ebe083; oracle root-residual tripwire RED then16 event controls pass69.91s; unchanged assertion gate passes; merged onto main via auto-merge)
 - **Summary:** Adaptive local-chart normal contact with independent event/work reference, strict SI controls and unchanged canonical mechanics/APIs.
 - **Evidence:** NORMAL_EVENT_RESULTS.json records all RED/GREEN/source/JUnit identities; four production modules pass NumPy-aware mypy; Linux coverage58.64% exceeds unchanged20% floor; root Ruff/format3870 pass.
-- **Next step:** Resolve protected CI and review on #5152.
+- **Next step:** Merged as PR #5152 onto remote main.
 
 ### DL-#5145 · Contact Numerical Foundation Review
 
@@ -103,18 +142,31 @@ reachable from any live state and `abandoned` from `parked`.
 
 - **Trajectory update (2026-09-10):** Shared Lie RK4 kernel: missing-module RED, eight GREEN, two deliberate-corruption delegation REDs, then all 36 kernel/shaft/geometry/disturbance controls GREEN. Two production modules pass NumPy-aware mypy. Kernel source tree 334822bb7. Normal-only contact trajectory now passes 12 controls, including independent motion/work refinement and free-ball clearance; all 371 Windows and Linux coverage controls pass at tree0433376b0. Evidence: CONTACT_TRAJECTORY_RESULTS.json.
 
+### DL-#5138 · Verified Agent Context
+
+- **State:** shipped
+- **Owner:** codex
+- **Issue:** https://github.com/D-sorganization/Tools/issues/5138
+- **PR:** https://github.com/D-sorganization/Tools/pull/5141
+- **Branch:** feat/issue-5138-agent-context
+- **Paths:** `src/agent_context`, `src/shared/python/codemap`, `packages/agent-context`
+- **Started:** 2026-09-09
+- **Last verified:** 2026-09-10; Linux quality at0f84e2a9a passes36 context and109 CodeMap tests. Launcher#5143/#5144 integration is coordinated with its owner; its exact regression fails against the old manifest before applying the reviewed canonical widget path. All40 combined launcher/CLI/calibration controls pass. Published rate-isolation25367070f is integrated. Combined validation passes56 shard/launcher/CLI/calibration controls,35 context tests (one Windows skip),109 CodeMap tests with real parsers, the1,692-file partition and all nine governance checks; protected combined CI remains pending.
+- **Summary:** Dependency-free source context package, real MCP transport, semantic boundary reviews, deterministic views and CodeMap freshness guards. Parent epic Repository_Management#1629 remains active; no subscription infrastructure is required.
+- **Next step:** Qualify and publish the combined context, calibration and launcher provider through protected CI.
+
 ### DL-#5114 · Rate Shard Scientific Test Isolation
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** #5114
-- **PR:** #5158 (draft)
+- **PR:** #5158 (merged as 25367070f)
 - **Branch:** fix/issue-5114-rate-isolation
 - **Paths:** `scripts/ci_test_shards.py`, `tests/ops/test_ci_test_shards.py`
 - **Started:** 2026-09-10
-- **Last verified:** 2026-09-10; four new regression cases fail before isolation; all 16 shard contracts and the 1,684-file partition pass afterward. All three unchanged Club Tester tests pass serially with coverage and the existing deadline (45.04 seconds total). All nine manual governance checks and normal commit/push hooks pass after script-inventory regeneration.
+- **Last verified:** 2026-09-10; four new regression cases fail before isolation; all 16 shard contracts and the 1,684-file partition pass afterward. All three unchanged Club Tester tests pass serially with coverage and the existing deadline (45.04 seconds total). Both Linux rate shards and aggregate gates pass at a7d025264; all nine manual governance checks and normal hooks pass. Windows retains two independently reproduced, unchanged-source GUI limitations recorded in PR #5158.
 - **Summary:** Reuse serial scientific invocation support for the entire Club Tester file while retaining parallel execution elsewhere, separate coverage outputs and failure propagation. Full-suite worker exit is reproduced; exact root cause remains unproven.
-- **Next step:** Qualify the isolated invocation through protected Linux CI.
+- **Next step:** Qualify the combined context provider in PR #5141.
 
 ### DL-#5137 · Identified Moving Reference Placements
 
@@ -159,7 +211,7 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5074 · Waveform and Spectral Numerical Contracts
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5074
 - **PR:** https://github.com/D-sorganization/Tools/pull/5106
@@ -168,7 +220,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-08
 - **Last verified:** 2026-09-08 (16 RED failures; 41 focused tests, nine API tests, scoped hook mypy and 69 Linux ingestion/report/API tests pass; three optional-plugin warnings)
 - **Summary:** Shared strict real samples, immutable recording storage, signed linear lag and segment preparation refuse undefined/nonfinite estimates while preserving public signatures. Independent SciPy odd/even PSD and gain controls pass. No physical calibration is inferred.
-- **Next step:** All normal push hooks pass; PR #5106 is open; complete protected CI/delivery, then qualify versioned calibration identity, supported-bin complex FRF, uncertainty and physical/blinded measurements separately.
+- **Next step:** PR #5106 merged as 287767dfa60567de136fbadc0da28c7e1ca7edf3. Complex FRF continues in DL-#5155; calibration identity, uncertainty and physical/blinded requirements stay under #5074.
 
 ### DL-#5095 · Deterministic Rust Watcher Debounce
 

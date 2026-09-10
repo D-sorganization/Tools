@@ -175,6 +175,7 @@ def test_walk_skips_incomplete_items_and_missing_bodies() -> None:
 
 @dataclass
 class FakeNode:
+    has_error: bool = field(default=False, init=False)
     type: str
     start_byte: int = 0
     end_byte: int = 0
