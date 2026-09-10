@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import importlib.metadata
 import os
 import subprocess
 import sys
@@ -14,10 +13,20 @@ import pytest
 def test_real_mcp_lists_only_retrieval_tools_and_observes_edits(
     repository: Path,
 ) -> None:
-    try:
-        importlib.metadata.version("mcp")
-    except importlib.metadata.PackageNotFoundError:
-        pytest.skip("Optional MCP SDK is not installed")
+    probe_import = subprocess.run(
+        [
+            sys.executable,
+            "-c",
+            (
+                "from mcp.server.fastmcp import FastMCP; "
+                "from mcp.client.stdio import stdio_client"
+            ),
+        ],
+        capture_output=True,
+        check=False,
+    )
+    if probe_import.returncode != 0:
+        pytest.skip("Optional MCP SDK with FastMCP is not installed or incompatible")
     source = Path(__file__).resolve().parents[3] / "src"
     probe = Path(__file__).with_name("mcp_probe.py")
     result = subprocess.run(
