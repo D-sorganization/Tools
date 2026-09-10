@@ -162,7 +162,7 @@ and push hooks remain before updating PR#5140.
 ## Agent context delivery — #5138
 
 - Repository/worktree: Tools, `.context-implementation/Tools`; branch `feat/issue-5138-agent-context`; current commit `SELF`; PR #5141 open; epic Repository_Management#1629; DL-#5138.
-- Published fleet policy 92283cf3f is integrated verbatim, preserving the context navigation policy. Remote c78c99975 contributes the optional FastMCP availability probe; no peer implementation was discarded.
+- Published fleet policy 92283cf3f is integrated verbatim, preserving the context navigation policy. Remote c78c99975 contributes the optional FastMCP availability probe; no peer implementation was discarded. The required context qualification step explicitly imports FastMCP and its stdio client before pytest; ordinary broad-suite runs retain optional SDK detection.
 - CI at2696d31d6: quality gate passed with36 context and109 CodeMap tests; required Python3.11 rate shard still running. UpstreamDrift298a0f3f1 passes source checks,5 context tests and12 navigation tasks; provider publication guard intentionally fails. Gasificationff35c8a0b adds tracked-checkout recovery before context validation, locally verified by7 context,3 Linux recovery and34 manual tests.
 - Current provider candidates remain unpublished. Preserve Function Generator correction from Tools#5144 when selecting the final provider; peer coordination is pending. Scientific/manual approval remains separate.
 - Next: finish provider qualification and publish, align both consumers to its published revision, rerun navigation/contracts and reconcile fleet delivery audit #1634. No user-owned changes in this worktree.
