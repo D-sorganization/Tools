@@ -9,8 +9,8 @@
 ## Impact Dynamics and Acoustics: #5068
 
 Friction #5160 / draft PR #5162 remains on feat/5073-friction-trajectory.
-1481 tests pass with2 optional CAD skips and93.51% coverage after exact kinematics reuse.
-Hosted72 shared shards failed; fresh source CI, events and physical validation remain open.
+1517 tests pass with2 optional CAD skips and93.53% coverage;63 controls pass after import cleanup.
+Hosted279 shared shards failed; bounded SE(3) source CI, events and physical validation remain open.
 Calibration #5159 has both Python gates passing. Provider e83bd2e4/UD #9920
 are merged; installation evidence retains its source identity. See HANDOFF.md.
 

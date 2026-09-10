@@ -22,14 +22,14 @@ reachable from any live state and `abandoned` from `parked`.
 
 - **State:** in_progress
 - **Owner:** codex
-- **Issue:** https://github.com/D-sorganization/Tools/issues/5160; parent #5073
+- **Issue:** [#5160](https://github.com/D-sorganization/Tools/issues/5160)
 - **PR:** https://github.com/D-sorganization/Tools/pull/5162 (draft)
 - **Branch:** feat/5073-friction-trajectory
 - **Paths:** src/shared/python/swing_sim/impact, src/shared/python/golf_club, tests/shared/python/golf_club, docs/development/impact-acoustics/FRICTION_TRAJECTORY.md, SPEC.md and turnover/inventory
 - **Started:** 2026-09-10
-- **Last verified:** 2026-09-10 (SELF): full directory-path coverage1481PASS/2 optional build123d skips in743.31s, coverage93.51%; unchanged60s timeout/floor/budgets. Exact within-evaluation kinematics reuse and inverse-Jacobian identity pass55 focused checks after separate RED records; both production files/new test pass NumPy-aware typing/Ruff/format. KINEMATICS_REUSE_RESULTS.json retains exact source/JUnit/coverage/timings, prior collection failure and narrow57.363s entry runtime. Earlier36ad1cc52 entry282 receipt remains distinct. Published72 Standard34464371054 has both shared shards failed despite queued aggregate; PR/issue corrected, fresh hosted qualification pending. CONTACT_FORCE_REGULARITY.md gives cited follow-up requirements without changing the law or claiming acoustics.
-- **Summary:** Coupled endpoint mechanics and objective elastic/Coulomb history with explicit transport, nonlinear solve criteria and disjoint energy accounting.
-- **Next step:** Publish the qualified kinematics source through normal hooks and obtain fresh hosted CI.
+- **Last verified:** 2026-09-10 (SELF; published baseline 279926e95e8a17cc42702a53c30ea03bf4638bec): bounded SE(3) matrix evaluation passes1517 full coverage controls with2 optional CAD skips in698.82s,93.53% coverage and unchanged60s limit. Direct-import cleanup then passes63 affected controls, NumPy-aware typing, Ruff and structural checks. JACOBIAN_POLYNOMIAL_RESULTS.json distinguishes both source identities and retains RED, rejected series, failed first full run and original motion/work comparisons. Published279 Standard34471450139 fails both shared shards in entry240; fresh hosted qualification remains. Affine theory PR4356 merged963867d7 after all15 checks; physical/acoustic and event-work acceptance remain open.
+- **Summary:** Parent #5073. Coupled endpoint mechanics and objective elastic/Coulomb history with explicit transport, nonlinear solve criteria and disjoint energy accounting.
+- **Next step:** Publish the bounded SE(3) evaluator through normal hooks and qualify fresh hosted CI.
 
 ### DL-#5153 · Prescribed Force and Couple History Review
 

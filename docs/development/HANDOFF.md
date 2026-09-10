@@ -1,20 +1,87 @@
 # Coupled Friction Review #5160 / Parent #5073
 
-- Identity: Tools, C:/Users/diete/Repositories/Tools-impact-friction; feat/5073-friction-trajectory; base ea8142965 (load-history04a482c96 plus main25367070). Current residual-stop implementation 4dcf1938ee49268ad3f756ea53084238eb56e2f3; predecessor75f8328bb058fec2a13adbac5e9fccc5b58630e2; draft PR#5162 https://github.com/D-sorganization/Tools/pull/5162; publication binding SELF. Governing issue https://github.com/D-sorganization/Tools/issues/5160; development log DL-#5160. Peer sections below are preserved.
-- Implemented five private friction modules; shared canonical normal body response and prescribed-history resolution. Objective elastic/Coulomb history is solved with endpoint mechanics, immutable trials, explicit face/mean-spin transport, actual budgets and separate mechanical/constitutive loss records. All previous API entries remain identical; five private module entries are added.
-- RED records include missing modules, slip cancellation, observer residual4.52e-6, two predictor-coordinate failures, uncached-Jacobian test timeout, and reversal/spatial stagnation. Corrections use cross-product slip, physically scaled finite differences, exact-point Jacobian reuse and the documented MINPACK iterate criterion. The earlier implementation required backend success. The current explicit near-roundoff application stop is distinguished from backend success; every accepted candidate retains the fresh residual check, physical domains and original test deadlines. Initial isolated typing failure is repaired with a builtin scalar conversion; NumPy-aware typing required an explicit cache-point null guard.
-- Validation: 239 intermediate controls pass in51.22s; positive-gap release passes in30.65s; ten mode/momentum/invariance controls pass in11.32s. Expanded253 pass in97.71s before the final explicit null guard and independent force/work controls. Final253 controls pass in97.32s, including independent force/work references; both seven-file typing modes pass. FRICTION_RESULTS.json retains exact production hashes. Positive-gap y-spin1.423818/1.418119/1.441712 is not yet componentwise asymptotic despite a decreasing aggregate norm; #5160 stays open. Source inventory and all nine governance checks pass; all normal commit/push hooks pass; draft5162 is published, hosted CI and protected review remain. The first normal commit correctly rejected our SPEC row outside its canonical table; moved that row into section12 without changing any peer row.
-- Scientific controls include independent matrix-exponential motion/force/work, material Newton/Euler, whole-system spatial momentum, elastic reversal, monotone sliding, first-touch/positive-gap compression-release, observer transforms, relative twirl, source/history integrity and refusal. Fixed-grid friction remains physically unqualified; no general event/mesh/mode/peak-force or acoustic approval is implied.
-- Calibration PR#5159 is published at c07cd94147 with208 combined Windows controls, all normal hooks, and both hosted Python3.11/3.12 aggregate test gates passing. Earlier a76 Linux61-case records keep their own identities. The scanner's synthetic-hash annotation leaves the oracle and baseline unchanged; required scanner/Rust/private-consumer/review remain delivery gates.
-- Final shared provider e83bd2e4 is published. UD PR#9920 merged as08c8529ef78b9d7c336e0598721fb01bf814934d; its tree779d95a59b1a5ddbba0bc553033c733263a2d4b6 equals reviewed d9e3d1add. The frontend-inclusive wheel from6dab98fce retains its exact identity; wheel/JUnit hashes and31 unchanged installed tests were independently inspected. This is installation evidence, not physical calibration. Consumer pin ownership remains with the coordinating task; do not recreate user-closed#5144.
-- Current residual-stop qualification: exact captured-state RED and separate contract RED precede the repair. Five convergence controls refuse misleading backend reports, false residual callbacks and invalid convergence records. Immutable records distinguish initial data, application residual stop and successful backend return; actual backend failures remain refused. All258 affected tests pass in94.25s; seven final new/convergence tests pass in10.60s (five overlap, two independent continuous sticking references). Both production typing modes pass; source inventory and all nine governance gates pass. The first repair commit was correctly refused because SPEC was not staged; the existing#5162 row now describes this repair, with no duplicate or peer-row edit. The 240/480/960/1920 standalone grids complete within declared budgets; latest spin-difference ratio1.96924 and decreasing energy defect support this synthetic case only. Source hashes, exact JUnit and all grid outputs are in FRICTION_CONVERGENCE_RESULTS.json; earlier75 receipts remain unchanged.
-- Current sliding-reference continuation: test-only independent saturated planar ODE covers rising and shrinking normal caps, full rotating-plane gap acceleration, separate force/speed/spin/impulse/plastic-work refinement and continuous energy closure. Seven controls pass after two RED records; eight typing findings are repaired without equation or tolerance changes, and both new files pass NumPy-aware mypy. Production remains byte-identical to4dcf1938e. All267 affected tests pass in104.24s at3a46d6d0, with no failures/skips; all nine regenerated governance gates pass. A later direct-component access refactor preserves equations and passes nine sliding/sticking controls in21.17s, the same typing check and explicit file/function/attribute-depth contracts; FRICTION_SLIDING_RESULTS.json retains exact production/reference/JUnit identities.
-- Release-reference continuation at SELF: the test-only saturated planar oracle now covers raw-force cutoff, geometric separation, independent free-ball motion and full continuous work. Missing unloading/event/history contracts were recorded RED; five reference and two production comparison cases passed before fixture consolidation. All274 affected Windows controls pass in195.17s after sharing owned read-only reference traces. Separate velocity/spin/impulse/work refinement passes preset bounds at30/60/120 steps. Both modified files pass NumPy-aware mypy, Ruff and structural contracts; production remains byte-identical to4dcf1938e. FRICTION_RELEASE_RESULTS.json records exact source/JUnit identities and historical RED/PASS records. No solver budget, accuracy bound or deadline changed.
-- Entry-reference continuation at SELF: independent free/elastic/sliding phases match the existing matrix-exponential first-touch oracle, preserve history/force at first sliding and close full continuous work. First touch0.367303647791ms is followed by about2.9874 microseconds of elastic loading. Eight focused controls pass in65.22s; all282 affected Windows controls pass in252.01s. Three modified/new helper/test files pass NumPy-aware mypy, Ruff and structural contracts. Production remains byte-identical to4dcf1938e. FRICTION_ENTRY_RESULTS.json and FRICTION_ENTRY.md preserve exact source/JUnit records, both coarse/refined failures and the combined-test60s timeout (no completed JUnit). Adjacent pairs share a live read-only120-step solve; all60/120/240 grids and original deadlines/budgets remain.
-- Scientific correction: cutoff-error monotonicity was a newly authored, invalid quadrature assumption, disproved by an exact triangular-pulse counterexample. Four other work ports retain monotonic checks; cutoff retains its original absolute bound and reported errors. That bound exceeds this case's cutoff energy, so no useful relative cutoff accuracy or full event-work convergence is claimed. All six velocity/spin/impulse/plastic-work bounds and first-order ratios pass at240 steps. Production steps still exceed the short elastic interval; endpoint accuracy does not resolve its event history.
-- Kinematics continuation at SELF: private within-evaluation full Frechet-pair reuse and the exact Jr^-1-Jl^-1=ad identity remove repeated section calculations. Separate RED receipts precede each optimization;55 focused checks pass. Full directory-path coverage passes1481 tests with2 optional build123d CAD/export collection skips in743.31s, coverage93.51% above unchanged20%; original60s deadline remains. Zero-gap release takes50.354s and entry240 takes57.363s, so hosted success is not inferred. Both production files/new test pass NumPy-aware typing and scoped Ruff/format. KINEMATICS_REUSE_RESULTS.json binds source/JUnit/coverage/command identities; KINEMATICS_REUSE.md gives the proof and limits. Earlier36ad1cc52 entry282 receipts retain their original source identity. Regenerated inventory and all nine governance gates pass; the existing two publication approval blockers remain.
-- CONTACT_FORCE_REGULARITY.md connects the finite Kelvin-Voigt first-touch force jump to an analytically derived spectral-tail requirement. Directly read Simbody documentation and Carvalho/Martins institutional abstract support candidate-law limits; the full1975/2019 papers were not retrieved. No law is replaced, and no force spectrum is relabelled as pressure or sweetness. Integrate these requirements into existing Tools5073/5074 and Affine4255 after publication.
-- Next: publish SELF through normal hooks and qualify fresh hosted CI. Last published72b2efd47b63d219c0460acb042b06dd47a02835 failed both shared shards in Standard34464371054 at the unchanged60s zero-gap test (jobs102829404145/102829404209); the run-level queued state hid those failures behind pending Rust. PR5162/issue5160 now explicitly correct that status. Do not retry unchanged72 as a repair. Local36ad1cc52 and this source require publication. Event-resolved work/useful relative cutoff accuracy, general reversal/nonplanar/recontact, mesh/mode, protected review and final main/consumer qualification remain open. Keep5160/5073/5074/5068, UD9700 and Affine4253 open; no physical/acoustic approval is implied.
+- Repository/worktree: Tools, C:/Users/diete/Repositories/Tools-impact-friction.
+  Branch feat/5073-friction-trajectory; published HEAD
+  279926e95e8a17cc42702a53c30ea03bf4638bec; numerical continuation SELF.
+  Draft PR https://github.com/D-sorganization/Tools/pull/5162; governing issue
+  https://github.com/D-sorganization/Tools/issues/5160; development log DL-#5160.
+  Parent stack includes load-history04a482c96 and main25367070 viaea8142965.
+- Scope: five private friction modules couple objective elastic/Coulomb history
+  to shaft-ball endpoint mechanics, immutable trial states and disjoint work.
+  Canonical normal mechanics and prescribed loads remain shared. No public API,
+  consumer pin, mocap, workflow, runner or material parameter is changed here.
+  Preserve all peer sections below and the capture/provider-pin ownership.
+- Existing scientific evidence: FRICTION_TRAJECTORY.md and its linked reference
+  artifacts preserve sticking, saturated sliding, release and first-contact
+  controls. Entry36ad1cc52 passes282 controls; the resolved elastic entry lasts
+  about2.99 microseconds, shorter than the production steps. Cutoff-work errors
+  are not monotonically refined, and the current absolute bound does not give
+  useful relative cutoff accuracy. Endpoint accuracy is not event-history or
+  physical validation. Separate residual-stop and release receipts keep their
+  original source identity; do not relabel them as current hosted evidence.
+- Published279926e95 reuses the full Jacobian/Frechet pair once per section
+  evaluation and uses Jr^-1-Jl^-1=ad. Its Windows directory-path coverage run
+  passes1481 tests with2 optional build123d CAD skips in743.31s,93.51% coverage.
+  KINEMATICS_REUSE.md / KINEMATICS_REUSE_RESULTS.json bind proof, source, commands
+  and receipts. Its entry240 takes57.363s locally, with the unchanged60s limit.
+- Current hosted failure: Standard34471450139 at279926e95 fails both shared
+  shards at60s in entry240 (3.11 job102852084531;3.12 job102852084546). Both Python
+  aggregate gates now fail. No later zero-gap result is inferred. Earlier72
+  Standard34464371054 failed the zero-gap test; this is a separate source/run.
+  Terminal logs remain in TEMP and the PR/epics state these failures. Do not
+  retry either unchanged source as a repair or infer success from queued Rust.
+- Numerical continuation: JACOBIAN_POLYNOMIAL.md derives the degree-four SE(3)
+  Hermite matrix form and stable degree18 scalar coefficients and derivatives.
+  Numerical domain ||ad(q)||\_infinity<=4 and theta<=pi; original general routine
+  remains fallback. Real-arithmetic truncation bounds are1.10e-27 forJ and
+  1.49e-26 per direction norm forDJ; independent exponential controls qualify
+  roundoff separately. No angle dead zone or changed physical law is introduced.
+- TDD:31 polynomial controls fail before implementation, then58 focused pass.
+  A first full run still times out in compression/release while reaching the
+  separate public derivative path (impact-polynomial-first-full-timeout.log).
+  Two further RED controls require shared public derivative evaluation and the
+  exact zero-direction identity after validation; three invalid-input controls
+  already pass. Current63 focused controls and all four touched Python files
+  pass NumPy-aware mypy/Ruff. The original zero-gap coverage test passes in51.07s
+  (impact-polynomial-public-release.xml). Full coverage passes 1517 tests with two optional build123d CAD skips in
+  698.82s, coverage 93.53%. Entry240 takes54.473s and zero-gap48.987s. Exact
+  receipts/source hashes and motion/work comparisons are retained in
+  JACOBIAN_POLYNOMIAL_RESULTS.json. A subsequent direct-import/docstring-only
+  cleanup passes all63 affected controls, typing/Ruff and structural checks;
+  the artifact distinguishes its source from the full-run source. Fresh hosted
+  qualification remains required. All grids, budgets, tolerances, the20%
+  coverage floor and60s deadline remain unchanged.
+- Rejected experiments: two generic series variants pass the entry checks but
+  take115.04s and137.16s under coverage; they are not production code. TEMP keeps
+  rejected source/tests, RED/green receipts and kernel timing measurements.
+  The first fixed-degree kernel benchmark gives60-68% of baseline median time
+  across six rotations; this is diagnostic, not a hosted runtime guarantee.
+- AffineDrift force-regularity theory PR4356 merged at
+  963867d7c78e544799ef4b6070eb1779e64c0452 after all15 checks passed. Parent4255
+  remains open. CONTACT_FORCE_REGULARITY.md links the finite first-touch force
+  jump to a spectral-tail requirement; source access is explicitly limited to
+  official implementation documentation and the institutional abstract where
+  full papers were unavailable. Force spectra are not pressure or sweetness.
+- Dirty scope: only the owned kinematics source/tests and impact documentation,
+  inventory/SPEC/turnover are intended. Update DL-#5160, the single SPEC#5162
+  row and root AGENT_HANDOFF's existing impact lines in the implementation
+  commit. Generate tracked-file inventory and handoff manifest after final docs.
+  All nine manual governance checks pass; the existing two publication-approval
+  blockers remain. The standalone central development-log checker reports
+  pre-existing duplicate/metadata defects outside DL-#5160; the current entry
+  now uses an explicit numbered issue link and whitespace-delimited verified SHA.
+  No peer or earlier entry is changed, and no gate bypass is allowed.
+
+Next actions:
+
+1. Stage the refreshed inventory/handoff and publish through normal hooks;
+   all nine governance gates and the full/post-cleanup receipts pass.
+2. Publish through PR5162 and qualify a fresh hosted source. Preserve the failed
+   runs and do not merge a draft or bypass required review/checks.
+3. Continue event-resolved work, general reversal/nonplanar/recontact and mesh/
+   mode qualification. Physical force/FRF identification, calibrated radiation
+   and blinded perception remain open. Keep5160/5073/5074/5068, UD9700 and
+   Affine4253/4255 open; this numerical work supplies no measured-effect approval.
 
 ## Earlier retained turnover
 

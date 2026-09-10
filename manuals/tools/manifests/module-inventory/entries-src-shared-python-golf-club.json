@@ -3341,10 +3341,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 10488,
+      "bytes_lf": 13443,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "631f7a820b987daf2e885c2277420a568d9e22edc6c7dcbc92523f012add69c6",
+      "content_sha256_lf": "e9b94bc7d5f841978d3d8c755e3be0e01177f89fc9438e6031d9d868ecc6c599",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-SHAFT-SE3-PY-D35A40EBEAC8",
       "language": "python",

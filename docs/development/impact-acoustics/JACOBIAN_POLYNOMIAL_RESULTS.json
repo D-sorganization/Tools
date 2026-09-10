@@ -1,0 +1,378 @@
+{
+  "schema_version": 1,
+  "governing_issue": "D-sorganization/Tools#5160",
+  "pr": 5162,
+  "baseline_commit": "279926e95e8a17cc42702a53c30ea03bf4638bec",
+  "implementation_binding": "SELF; exact LF-normalized source hashes below",
+  "current_sources": {
+    "src/shared/python/golf_club/_shaft_se3.py": "e9b94bc7d5f841978d3d8c755e3be0e01177f89fc9438e6031d9d868ecc6c599",
+    "tests/shared/python/golf_club/test_shaft_jacobian_polynomial.py": "0e9c6a9e68737bbe3913836ebbc0855e58ecd55a85a1a96bc737e2d0ee34bbcd",
+    "tests/shared/python/golf_club/test_shaft_velocity_kinematics.py": "6b2c731128fb632c322b05246e5b401ec8fda9a3d1f264b6acc32de38b826ac2",
+    "tests/shared/python/golf_club/test_section_kinematics_reuse.py": "6338a31ed8c38ed37066d92808f054529b41c73df9f698e86844cd707bff1b75"
+  },
+  "full_regression_source": {
+    "src/shared/python/golf_club/_shaft_se3.py": "5380049e513d5aaf0d61ecdadaaced344c3b27f2b9bb8e7bf15e62bac99d0f40",
+    "tests/shared/python/golf_club/test_shaft_jacobian_polynomial.py": "0e9c6a9e68737bbe3913836ebbc0855e58ecd55a85a1a96bc737e2d0ee34bbcd",
+    "tests/shared/python/golf_club/test_shaft_velocity_kinematics.py": "6b2c731128fb632c322b05246e5b401ec8fda9a3d1f264b6acc32de38b826ac2",
+    "tests/shared/python/golf_club/test_section_kinematics_reuse.py": "6338a31ed8c38ed37066d92808f054529b41c73df9f698e86844cd707bff1b75"
+  },
+  "post_full_change": "Direct imports of the same NumPy polyder/polyval callables replace two deep namespace accesses; focused controls repeated after that structural refactor.",
+  "environment": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "python": "3.12.10",
+    "numpy": "2.4.1",
+    "scipy": "1.17.0",
+    "blas_threads": 1
+  },
+  "hosted_baseline_failure": {
+    "run": 34471450139,
+    "python311_shared_job": 102852084531,
+    "python312_shared_job": 102852084546,
+    "test": "test_production_entry_refines_separate_velocity_spin_impulse_and_work[240]",
+    "timeout_s": 60
+  },
+  "tdd_receipts": [
+    {
+      "filename": "impact-polynomial-red.xml",
+      "sha256": "73e5f87f598894d1228e25d54156dc31824acbc611daf9a795f63c003ec3812e",
+      "suite": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "31",
+        "skipped": "0",
+        "tests": "31",
+        "time": "4.119",
+        "timestamp": "2026-09-10T05:09:44.610107-07:00",
+        "hostname": "OGLaptop"
+      }
+    },
+    {
+      "filename": "impact-polynomial-first.xml",
+      "sha256": "8eb767358ae444efe658028927a0dc3987eb669e9264993e53740d559b75704a",
+      "suite": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "58",
+        "time": "3.469",
+        "timestamp": "2026-09-10T05:10:47.342105-07:00",
+        "hostname": "OGLaptop"
+      }
+    },
+    {
+      "filename": "impact-polynomial-public-red.xml",
+      "sha256": "9a52599df6a6dee4b0b27eb606f467bdf87b4cdd10378ee338a76bfd783a77ac",
+      "suite": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "2",
+        "skipped": "0",
+        "tests": "5",
+        "time": "2.483",
+        "timestamp": "2026-09-10T05:19:10.155573-07:00",
+        "hostname": "OGLaptop"
+      }
+    },
+    {
+      "filename": "impact-polynomial-public-green.xml",
+      "sha256": "3514d7fe2535a1de032e9a46a10fd7a2eef64c7da03bbc4de94aabc7b0d2ac15",
+      "suite": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "63",
+        "time": "2.682",
+        "timestamp": "2026-09-10T05:20:00.205913-07:00",
+        "hostname": "OGLaptop"
+      }
+    }
+  ],
+  "first_full_failure": {
+    "filename": "impact-polynomial-first-full-timeout.log",
+    "sha256": "5187cd8343ace4c50b11a636de8451766a5d10261e7ea0afccc6b499854382ec",
+    "source_sha256": "7cff37b8bc402137f3baf0ab01bf6a8e6e1bc69d57a64ac15f599679c2d6cf50",
+    "result": "thread timeout in compression/release; no completed JUnit or coverage qualification"
+  },
+  "rejected_series": [
+    {
+      "filename": "impact-shaft-series-red.xml",
+      "sha256": "822c6e55d39c0037e707cc12d49212debc1fd4555f527771e4e50ec48ea76132",
+      "suite": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "22",
+        "skipped": "0",
+        "tests": "23",
+        "time": "2.574",
+        "timestamp": "2026-09-10T04:54:02.569266-07:00",
+        "hostname": "OGLaptop"
+      }
+    },
+    {
+      "filename": "impact-series-actual-tail-red.xml",
+      "sha256": "91a0937c600b2b502d870fa27a91a9d1d14350a73b6c9db3fffb092078fe2e91",
+      "suite": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "1",
+        "skipped": "0",
+        "tests": "1",
+        "time": "2.530",
+        "timestamp": "2026-09-10T05:04:51.467578-07:00",
+        "hostname": "OGLaptop"
+      }
+    },
+    {
+      "filename": "impact-series-entry.xml",
+      "sha256": "4cf7c1e80309f57be4102659605a1085984ff1fb3259c05809b1f52ca496738e",
+      "suite": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "8",
+        "time": "114.850",
+        "timestamp": "2026-09-10T05:01:35.201383-07:00",
+        "hostname": "OGLaptop"
+      }
+    },
+    {
+      "filename": "impact-series-adaptive-entry.xml",
+      "sha256": "1d1d42b86b8c53cf22aa656b32e4783879c0f34e2761927ed0a2f5ea17592c78",
+      "suite": {
+        "name": "pytest",
+        "errors": "0",
+        "failures": "0",
+        "skipped": "0",
+        "tests": "8",
+        "time": "136.975",
+        "timestamp": "2026-09-10T05:05:28.859485-07:00",
+        "hostname": "OGLaptop"
+      }
+    }
+  ],
+  "truncation": {
+    "theta_squared_upper_bound": 10,
+    "matrix_infinity_norm_upper_bound": 4,
+    "first_omitted_coefficient_order": 19,
+    "arithmetic": "exact Python Fraction, displayed floats only",
+    "coefficient_and_derivative_tail_bounds": [
+      [2.466273129043623e-28, 4.68743248489386e-28],
+      [6.0135843540174684e-30, 1.1429328071362449e-29],
+      [1.4314253027481693e-31, 2.7205071388174093e-31],
+      [3.3280705946987015e-33, 6.325108922987256e-33]
+    ],
+    "jacobian_truncation_bound": 1.09273970929156e-27,
+    "directional_truncation_bound_per_direction_norm": 1.484056783196635e-26,
+    "roundoff_bound": null
+  },
+  "full_regression": {
+    "filename": "impact-polynomial-final-full.xml",
+    "sha256": "66e47f0717a51a46e9e582825c322bf831e7633c29a8233cc347b3ddac7d147e",
+    "suite": {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "2",
+      "tests": "1519",
+      "time": "698.556",
+      "timestamp": "2026-09-10T05:22:00.690946-07:00",
+      "hostname": "OGLaptop"
+    }
+  },
+  "full_command": [
+    "C:\\Users\\diete\\Repositories\\Tools-impact-shaft\\.venv\\Scripts\\python.exe",
+    "-m",
+    "pytest",
+    "tests/shared/python/golf_club",
+    "src/shared/python/swing_sim/impact/tests",
+    "tests/test_shared_package_api_stability.py",
+    "-o",
+    "addopts=",
+    "-o",
+    "junit_family=legacy",
+    "--cov=src/shared/python/golf_club",
+    "--cov=src/shared/python/swing_sim/impact",
+    "--cov-report=term",
+    "--cov-report=json:C:\\Users\\diete\\AppData\\Local\\Temp/impact-polynomial-final-full-coverage.json",
+    "--timeout=60",
+    "-q",
+    "--junitxml=C:\\Users\\diete\\AppData\\Local\\Temp/impact-polynomial-final-full.xml"
+  ],
+  "coverage": {
+    "receipt": {
+      "filename": "impact-polynomial-final-full-coverage.json",
+      "sha256": "5876132b67883c742d61f6ac8b47feb648b8bd9ac9eb80716041b17837f785a2"
+    },
+    "percent": 93.53071453549364,
+    "floor_percent": 20
+  },
+  "longest_tests": [
+    {
+      "classname": "tests.shared.python.golf_club.test_friction_entry_reference",
+      "name": "test_production_entry_refines_separate_velocity_spin_impulse_and_work[240]",
+      "file": "tests\\shared\\python\\golf_club\\test_friction_entry_reference.py",
+      "line": "129",
+      "time": "54.473"
+    },
+    {
+      "classname": "tests.shared.python.golf_club.test_friction_refinement",
+      "name": "test_complete_frictional_compression_release_refines_motion_and_work[0.0]",
+      "file": "tests\\shared\\python\\golf_club\\test_friction_refinement.py",
+      "line": "96",
+      "time": "48.987"
+    },
+    {
+      "classname": "tests.shared.python.golf_club.test_friction_refinement",
+      "name": "test_complete_frictional_compression_release_refines_motion_and_work[0.0001]",
+      "file": "tests\\shared\\python\\golf_club\\test_friction_refinement.py",
+      "line": "96",
+      "time": "47.848"
+    },
+    {
+      "classname": "tests.shared.python.golf_club.test_friction_separation_reference",
+      "name": "test_full_sliding_release_refines_each_impulse_spin_velocity_and_work_channel[0.4]",
+      "file": "tests\\shared\\python\\golf_club\\test_friction_separation_reference.py",
+      "line": "183",
+      "time": "45.310"
+    },
+    {
+      "classname": "tests.shared.python.golf_club.test_friction_separation_reference",
+      "name": "test_full_sliding_release_refines_each_impulse_spin_velocity_and_work_channel[-0.4]",
+      "file": "tests\\shared\\python\\golf_club\\test_friction_separation_reference.py",
+      "line": "183",
+      "time": "42.988"
+    },
+    {
+      "classname": "tests.shared.python.golf_club.test_friction_entry_reference",
+      "name": "test_production_entry_refines_separate_velocity_spin_impulse_and_work[60]",
+      "file": "tests\\shared\\python\\golf_club\\test_friction_entry_reference.py",
+      "line": "129",
+      "time": "42.599"
+    },
+    {
+      "classname": "tests.shared.python.golf_club.test_normal_contact_events",
+      "name": "test_transversal_events_and_work_match_independent_piecewise_solution",
+      "file": "tests\\shared\\python\\golf_club\\test_normal_contact_events.py",
+      "line": "68",
+      "time": "26.888"
+    },
+    {
+      "classname": "tests.shared.python.golf_club.test_shaft_rotating_disturbance",
+      "name": "test_midpoint_converges_but_256_steps_miss_disturbance_accuracy_target[4]",
+      "file": "tests\\shared\\python\\golf_club\\test_shaft_rotating_disturbance.py",
+      "line": "140",
+      "time": "24.873"
+    }
+  ],
+  "skip_reasons": [
+    "('C:\\\\Users\\\\diete\\\\Repositories\\\\Tools-impact-friction\\\\tests\\\\shared\\\\python\\\\golf_club\\\\test_wedge_cad.py', 7, \"Skipped: could not import 'build123d': No module named 'build123d'\")",
+    "('C:\\\\Users\\\\diete\\\\Repositories\\\\Tools-impact-friction\\\\tests\\\\shared\\\\python\\\\golf_club\\\\test_wedge_export.py', 10, \"Skipped: could not import 'build123d': No module named 'build123d'\")"
+  ],
+  "baseline_motion_work_property_comparison": {
+    "test_production_entry_refines_separate_velocity_spin_impulse_and_work[60]": {
+      "entry_production_channel_errors": {
+        "max_absolute_change": 1.951076204149472e-12,
+        "shape": [2, 11]
+      },
+      "entry_production_energy_defects_j": {
+        "max_absolute_change": 2.2033698650336664e-16,
+        "shape": [2]
+      },
+      "entry_production_algorithmic_losses_j": {
+        "max_absolute_change": 0.0,
+        "shape": [2]
+      },
+      "entry_production_reference_outputs": {
+        "max_absolute_change": 1.951076190596945e-12,
+        "shape": [11]
+      },
+      "entry_production_state_errors": {
+        "max_absolute_change": 3.0596185307540935e-15,
+        "shape": [2]
+      }
+    },
+    "test_production_entry_refines_separate_velocity_spin_impulse_and_work[240]": {
+      "entry_production_channel_errors": {
+        "max_absolute_change": 1.951076222784197e-12,
+        "shape": [2, 11]
+      },
+      "entry_production_energy_defects_j": {
+        "max_absolute_change": 2.2033698650336664e-16,
+        "shape": [2]
+      },
+      "entry_production_algorithmic_losses_j": {
+        "max_absolute_change": 1.0587911840678754e-22,
+        "shape": [2]
+      },
+      "entry_production_reference_outputs": {
+        "max_absolute_change": 1.951076190596945e-12,
+        "shape": [11]
+      },
+      "entry_production_state_errors": {
+        "max_absolute_change": 3.0596185307540935e-15,
+        "shape": [2]
+      }
+    },
+    "test_complete_frictional_compression_release_refines_motion_and_work[0.0]": {
+      "outputs": {
+        "max_absolute_change": 4.884981308350689e-15,
+        "shape": [3, 10]
+      },
+      "scaled_differences": {
+        "max_absolute_change": 3.469446951953614e-17,
+        "shape": [2]
+      },
+      "mechanical_defect_j": {
+        "max_absolute_change": 5.843849709696869e-17,
+        "shape": [3]
+      },
+      "tangential_algorithmic_loss_j": {
+        "max_absolute_change": 3.3881317890172014e-20,
+        "shape": [3]
+      }
+    },
+    "test_complete_frictional_compression_release_refines_motion_and_work[0.0001]": {
+      "outputs": {
+        "max_absolute_change": 8.659739592076221e-15,
+        "shape": [3, 10]
+      },
+      "scaled_differences": {
+        "max_absolute_change": 6.938893903907228e-17,
+        "shape": [2]
+      },
+      "mechanical_defect_j": {
+        "max_absolute_change": 1.1446464436015713e-16,
+        "shape": [3]
+      },
+      "tangential_algorithmic_loss_j": {
+        "max_absolute_change": 2.371692252312041e-20,
+        "shape": [3]
+      }
+    }
+  },
+  "remaining": [
+    "fresh hosted qualification",
+    "event-resolved work and useful relative cutoff accuracy",
+    "general reversal/nonplanar/recontact",
+    "mesh/mode and physical force/FRF identification",
+    "calibrated radiation and blinded perception"
+  ],
+  "post_import_receipt": {
+    "filename": "impact-polynomial-post-import.xml",
+    "sha256": "8e020ce6465ea465465569d64a4d34ccb2756b5fcc29ac8e4400fac33d0b2404",
+    "suite": {
+      "name": "pytest",
+      "errors": "0",
+      "failures": "0",
+      "skipped": "0",
+      "tests": "63",
+      "time": "2.796",
+      "timestamp": "2026-09-10T05:34:19.164713-07:00",
+      "hostname": "OGLaptop"
+    }
+  },
+  "final_kernel_benchmark": "JACOBIAN_POLYNOMIAL_BENCHMARK.json"
+}

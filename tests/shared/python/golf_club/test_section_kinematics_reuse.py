@@ -14,13 +14,13 @@ def test_inertia_computes_one_full_frechet_pair_per_evaluation(
     order: int, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     calls = []
-    original = se3.expm_frechet
+    original = se3._jacobian_pair
 
-    def counted(*args: object, **kwargs: object) -> object:
-        calls.append(kwargs.get("compute_expm"))
-        return original(*args, **kwargs)
+    def counted(twist: np.ndarray, direction: np.ndarray) -> object:
+        calls.append(True)
+        return original(twist, direction)
 
-    monkeypatch.setattr(se3, "expm_frechet", counted)
+    monkeypatch.setattr(se3, "_jacobian_pair", counted)
     model = SectionInertia(_samples(order))
     velocity = np.linspace(-0.3, 0.4, 12)
     first = model.evaluate(_poses(), velocity)

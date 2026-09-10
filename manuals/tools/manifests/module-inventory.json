@@ -639,7 +639,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-file-watcher.json"
     },
     {
-      "content_sha256_lf": "5c27ca669f618861d507133988fd7b18c8ef0f56640dafa2eaa0ee44de486bea",
+      "content_sha256_lf": "ed8e028237b791bd0d1567483140631e41fa947b7e67ae83ef99b18a281efcd1",
       "entry_count": 102,
       "package": "src/shared/python/golf_club",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-golf-club.json"
