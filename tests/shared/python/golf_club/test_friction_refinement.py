@@ -21,6 +21,7 @@ from .test_friction_contact_trajectory import _friction_case, _motion
 from .test_normal_contact_trajectory import _generator, _powers
 
 
+@pytest.mark.timeout(180)
 def test_first_order_motion_refines_against_independent_matrix_exponential(
     record_property: Callable[[str, object], None],
 ) -> None:
@@ -94,6 +95,7 @@ def _check_release(result: FrictionTrajectory, initial: ContactBodyState) -> Non
         assert sample.tangential_algorithmic_loss_j >= 0
 
 
+@pytest.mark.timeout(180)
 @pytest.mark.parametrize("initial_gap_m", [0.0, 0.0001])
 def test_complete_frictional_compression_release_refines_motion_and_work(
     initial_gap_m: float,
