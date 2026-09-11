@@ -84,16 +84,26 @@ def _get_log_path() -> "Path":
         base = _Path(xdg_home) if xdg_home else _Path.home() / ".config"
         config_dir = base / "folder_tool"
 
-    config_dir.mkdir(parents=True, exist_ok=True)
-    return config_dir / "folder_processor.log"
+    try:
+        config_dir.mkdir(parents=True, exist_ok=True)
+    except OSError:
+        pass
+    return config_dir / "folder_processor.log"  # type: ignore[no-any-return]
 
 
 # Set up logging to capture detailed information
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[logging.FileHandler(str(_get_log_path()), mode="w")],
-)
+try:
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(levelname)s - %(message)s",
+        handlers=[logging.FileHandler(str(_get_log_path()), mode="w")],
+    )
+except OSError:
+    logging.basicConfig(
+        level=logging.INFO,
+        format="%(asctime)s - %(levelname)s - %(message)s",
+        handlers=[logging.NullHandler()],
+    )
 
 # Get logger for this module
 logger = logging.getLogger(__name__)
