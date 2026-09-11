@@ -21,11 +21,13 @@ from rate_of_closure.variation._simulation_config_identity import (
 from rate_of_closure.variation.ensemble_source import SimulationEnsembleSource
 from rate_of_closure.variation.request_builder import (
     apply_global_simulation_values,
+    build_simulation_ensemble_request_from_samples,
 )
 from rate_of_closure.variation.simulation_adapter import (
     build_ensemble_stream_header,
     build_simulation_ensemble_request,
 )
+from rate_of_closure.variation.simulation_types import SimulationEnsembleRequest
 from shared.python.contracts import ContractViolationError
 from shared.python.swing_sim.types import PendulumParameters
 from shared.python.swing_sim.variation import (
@@ -35,6 +37,7 @@ from shared.python.swing_sim.variation import (
     CATEGORY_SWING,
     NoiseSpec,
     VariationPlan,
+    sample_inputs,
 )
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
@@ -217,7 +220,7 @@ def test_global_value_seam_applies_every_fixed_contact_morris_variable() -> None
 @pytest.mark.parametrize("value", [True, "1.0", float("inf")])
 def test_global_value_seam_rejects_coercive_or_nonfinite_values(value: object) -> None:
     with pytest.raises(ContractViolationError, match="real scalars|finite"):
-        apply_global_simulation_values(_base_config(), {_YAW: value})  # type: ignore[dict-item]
+        apply_global_simulation_values(_base_config(), {_YAW: value})
 
 
 def test_builder_rejects_unsupported_localized_or_unmapped_variables() -> None:
@@ -257,4 +260,112 @@ def test_builder_requires_swing_mode_and_double_pendulum_source() -> None:
         build_simulation_ensemble_request(
             VariationPlan(mode="swing", noise=(_spec(_YAW, 0.1),), n_runs=2),
             manual,
+        )
+
+
+def test_explicit_seam_returns_the_caller_supplied_rows_unchanged() -> None:
+    plan = VariationPlan(
+        mode="swing",
+        noise=(_spec(_YAW, 1.0),),
+        n_runs=4,
+        seed=17,
+    )
+    planted = np.array([[0.0], [0.5], [0.0], [-0.5]], dtype=float)
+    rng_draws = np.asarray(sample_inputs(plan), dtype=float)
+    assert not np.array_equal(planted, rng_draws)
+
+    request = build_simulation_ensemble_request_from_samples(
+        plan, _base_config(), planted
+    )
+
+    assert isinstance(request, SimulationEnsembleRequest)
+    assert np.array_equal(request.sampled_inputs, planted)
+    assert not np.array_equal(request.sampled_inputs, rng_draws)
+    assert len(request.configs) == 4
+    for row, config in zip(planted, request.configs, strict=True):
+        assert config.plane.yaw_deg == pytest.approx(float(row[0]))
+
+    with pytest.raises(AssertionError):
+        assert np.array_equal(rng_draws, planted)
+
+
+def test_explicit_seam_detects_silent_substitution_with_pseudorandom_draws() -> None:
+    plan = VariationPlan(
+        mode="swing",
+        noise=(_spec(_YAW, 1.0),),
+        n_runs=4,
+        seed=42,
+    )
+    planted = np.array([[0.1], [0.2], [0.3], [0.4]], dtype=float)
+    request = build_simulation_ensemble_request_from_samples(
+        plan, _base_config(), planted
+    )
+
+    rng_draws = np.asarray(sample_inputs(plan), dtype=float)
+    assert np.array_equal(request.sampled_inputs, planted)
+    with pytest.raises(AssertionError):
+        assert np.array_equal(rng_draws, planted)
+
+
+def test_planted_baseline_and_perturbed_design_matrices_detect_substitution() -> None:
+    plan = VariationPlan(
+        mode="swing",
+        noise=(_spec(_YAW, 1.0), _spec(_HEAD_MASS, 0.002)),
+        n_runs=4,
+        seed=99,
+    )
+    planted_baseline = np.array(
+        [[0.0, 0.200], [0.0, 0.200], [0.0, 0.200], [0.0, 0.200]],
+        dtype=float,
+    )
+    planted_perturbed = np.array(
+        [[1.5, 0.200], [-1.5, 0.200], [0.0, 0.205], [0.0, 0.195]],
+        dtype=float,
+    )
+    expected_deltas = planted_perturbed - planted_baseline
+
+    base_req = build_simulation_ensemble_request_from_samples(
+        plan, _base_config(), planted_baseline
+    )
+    pert_req = build_simulation_ensemble_request_from_samples(
+        plan, _base_config(), planted_perturbed
+    )
+
+    assert np.array_equal(base_req.sampled_inputs, planted_baseline)
+    assert np.array_equal(pert_req.sampled_inputs, planted_perturbed)
+
+    recovered_deltas = pert_req.sampled_inputs - base_req.sampled_inputs
+    assert np.array_equal(recovered_deltas, expected_deltas)
+
+    rng_draws = np.asarray(sample_inputs(plan), dtype=float)
+    assert not np.array_equal(base_req.sampled_inputs, rng_draws)
+    assert not np.array_equal(pert_req.sampled_inputs, rng_draws)
+
+    substituted_deltas = pert_req.sampled_inputs - rng_draws
+    assert not np.array_equal(substituted_deltas, expected_deltas)
+
+
+@pytest.mark.parametrize(
+    "invalid_samples",
+    [
+        np.array([[True], [False]]),
+        np.array([[0.0], [np.inf]]),
+        np.array([[0.0], [np.nan]]),
+        np.array([0.0, 1.0]),
+        np.array([[0.0]]),
+        np.array([[0.0, 1.0], [2.0, 3.0]]),
+    ],
+)
+def test_explicit_sample_builder_rejects_invalid_matrices(
+    invalid_samples: np.ndarray,
+) -> None:
+    plan = VariationPlan(
+        mode="swing",
+        noise=(_spec(_YAW, 0.1),),
+        n_runs=2,
+        seed=1,
+    )
+    with pytest.raises(ContractViolationError):
+        build_simulation_ensemble_request_from_samples(
+            plan, _base_config(), invalid_samples
         )

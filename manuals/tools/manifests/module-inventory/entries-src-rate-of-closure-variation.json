@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4518,
+      "bytes_lf": 4633,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6a1e10c63180a0e7220c849c316026e30ba5214553bc0c2d25865d07fec0a09d",
+      "content_sha256_lf": "fdc83ce6b9e086055f838fe4dbd09f5eb33fdc5e95d61b484e08cf6a86cd4120",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-VARIATION-INIT-PY-5F9607A6AC35",
       "language": "python",
@@ -294,6 +294,11 @@
           {
             "kind": "re-export",
             "name": "build_simulation_ensemble_request",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_simulation_ensemble_request_from_samples",
             "signature": null
           },
           {
@@ -3649,10 +3654,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 11505,
+      "bytes_lf": 13417,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "ae3e5df4a3a73fc1f9b1919cb746f10c66a7479cf68454b72d963f7ff9ab7bc4",
+      "content_sha256_lf": "897ee17048c636dfe86050015d0134e4dfe61287a07ab20de457b845cb17a931",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-VARIATION-REQUEST-BUILDER-PY-FB276191BCF3",
       "language": "python",
@@ -3714,6 +3719,11 @@
             "kind": "function",
             "name": "build_simulation_ensemble_request",
             "signature": "plan: VariationPlan, base_config: SimulationConfig"
+          },
+          {
+            "kind": "function",
+            "name": "build_simulation_ensemble_request_from_samples",
+            "signature": "plan: VariationPlan, base_config: SimulationConfig, sampled_inputs: np.ndarray"
           }
         ],
         "test_paths": [
@@ -3970,10 +3980,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 16024,
+      "bytes_lf": 16130,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "e62b29beaec60b7c7c738af50dccd55dafa8e03cfd9659eb949ad39d587671ce",
+      "content_sha256_lf": "a36f4408490dadd0c5d6544a861db546cdb1837fb50badbc43026d0c0f906916",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-VARIATION-SIMULATION-ADAPTER-PY-A2C9EC3993FA",
       "language": "python",
@@ -4104,6 +4114,11 @@
           {
             "kind": "re-export",
             "name": "build_simulation_ensemble_request",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_simulation_ensemble_request_from_samples",
             "signature": null
           }
         ],
@@ -4244,6 +4259,7 @@
           "tests/rate_of_closure/test_variation_durable_ensemble_evidence.py",
           "tests/rate_of_closure/test_variation_ensemble_io_reader.py",
           "tests/rate_of_closure/test_variation_plot_data.py",
+          "tests/rate_of_closure/test_variation_simulation_request.py",
           "tests/rate_of_closure/test_variation_streaming_ensemble_analysis.py"
         ],
         "unit_mentions": [],
