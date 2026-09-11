@@ -385,10 +385,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 2590,
+      "bytes_lf": 2611,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "637327e02f268356f30c755890be28629e074faa1558801927c71843fe9d784f",
+      "content_sha256_lf": "c53d1384be4b958d30d2735509237d1375ce4dbdf6ee755e5eef504b6e5012cb",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-BUILD-EXECUTABLE-PY-EF66DD4CA82F",
       "language": "python",
