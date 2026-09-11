@@ -56,23 +56,29 @@ _EXCLUDED_DIRS = {
     "htmlcov",
 }
 
+# Fixtures whose cross-runtime contract is between a non-standard runtime pair
+# (e.g. Python + Rust rather than Python + TypeScript). Both declared runtimes
+# are strictly asserted by test_every_shared_fixture_has_a_consumer_in_both_runtimes.
+CROSS_RUNTIME_PAIRING: dict[str, tuple[str, str]] = {
+    "ground_reference_conformance_v1.json": ("python", "rust"),
+}
+
 # Explicit allowlist of fixtures that currently have fewer than two consuming
 # runtimes, each documented with a reason and tracking issue link.
 # Stale entries must be cleaned up as companion issues land (e.g. #4558, #4560).
 SINGLE_RUNTIME_ALLOWLIST: dict[str, str] = {
-    # Python-only fixtures (tracked in #4560, #4558)
+    # Deliberately single-runtime Python reference solver fixtures (resolved in #4560)
     "ground_impact_bounce_golden_v1.json": (
-        "Python-only ground impact/bounce golden fixture; "
-        "TypeScript consumer tracked in #4560"
-    ),
-    "ground_reference_conformance_v1.json": (
-        "Consumed by Python and Rust core parity suites; "
-        "TypeScript consumer tracked in #4560"
+        "Python reference solver golden for 3D sphere-plane impact and bounce; "
+        "browser runtime consumes downstream wire results only "
+        "(GROUND_IMPACT_BOUNCE.md, #4560)"
     ),
     "ground_skid_roll_golden_v1.json": (
-        "Landed as standalone Python slice from #4517; "
-        "TypeScript consumer tracked in #4560"
+        "Python reference solver golden for skid/roll dynamics from #4517; "
+        "browser runtime consumes downstream wire results only "
+        "(GROUND_SKID_ROLL.md, #4560)"
     ),
+    # Python-only fixtures (tracked in #4558)
     "variation_execution_document_edge_floats_v1.json": (
         "Python-only execution metadata fixture ported in #4529; "
         "TypeScript consumer on #4447 tracked in #4558 and #4560"
@@ -158,11 +164,32 @@ def test_allowlist_is_not_vacuous() -> None:
         )
 
 
+def test_pairing_registry_is_not_vacuous() -> None:
+    """Assert every paired fixture exists on disk and declares valid runtimes."""
+    assert FIXTURES_DIR.is_dir(), f"Fixtures directory not found: {FIXTURES_DIR}"
+    existing_names = {p.name for p in FIXTURES_DIR.glob("*.json")}
+
+    for fixture_name, runtimes in CROSS_RUNTIME_PAIRING.items():
+        assert fixture_name in existing_names, (
+            f"Paired fixture {fixture_name!r} does not exist in {FIXTURES_DIR}. "
+            "Remove stale entries from CROSS_RUNTIME_PAIRING."
+        )
+        assert len(runtimes) >= 2, (
+            f"Pairing for {fixture_name!r} must declare at least two runtimes"
+        )
+        for runtime in runtimes:
+            assert runtime in {"python", "typescript", "rust"}, (
+                f"Pairing for {fixture_name!r} specifies unknown runtime {runtime!r}"
+            )
+
+
 def test_every_shared_fixture_has_a_consumer_in_both_runtimes(
     corpus: CodeCorpus,
 ) -> None:
-    """Assert shared fixtures are consumed by Python and TypeScript runtimes.
+    """Assert shared fixtures are consumed by their designated runtime pair.
 
+    Defaults to checking Python and TypeScript consumers, unless a non-standard
+    pair is explicitly registered in CROSS_RUNTIME_PAIRING (e.g. Python + Rust).
     Excludes fixtures explicitly allowlisted with a documented reason.
     """
     fixtures = sorted(FIXTURES_DIR.glob("*.json"))
@@ -173,14 +200,19 @@ def test_every_shared_fixture_has_a_consumer_in_both_runtimes(
         if fixture.name in SINGLE_RUNTIME_ALLOWLIST:
             continue
 
-        has_py = _has_reference(fixture, corpus.py_files)
-        has_ts = _has_reference(fixture, corpus.ts_files)
+        target_runtimes = CROSS_RUNTIME_PAIRING.get(
+            fixture.name, ("python", "typescript")
+        )
 
         missing: list[str] = []
-        if not has_py:
+        if "python" in target_runtimes and not _has_reference(fixture, corpus.py_files):
             missing.append("Python")
-        if not has_ts:
+        if "typescript" in target_runtimes and not _has_reference(
+            fixture, corpus.ts_files
+        ):
             missing.append("TypeScript")
+        if "rust" in target_runtimes and not _has_reference(fixture, corpus.rs_files):
+            missing.append("Rust")
 
         if missing:
             failures.append(
