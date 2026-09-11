@@ -80,7 +80,11 @@ export function ForceSourceLab({ params, initialState, onUsePose }: ForceSourceL
     }, [bundledStudy]);
 
     const visible = useMemo(() => artifact?.scenarios.filter(item => selected.has(item.objective)) ?? [], [artifact, selected]);
-    const maxTime = visible.length ? Math.max(...visible.map(item => item.impact_time_s)) : 0;
+    // ⚡ Bolt Optimization: Replace Math.max(...map()) with single-pass loop to avoid GC pressure
+    let maxTime = 0;
+    for (let i = 0; i < visible.length; i++) {
+        if (visible[i].impact_time_s > maxTime) maxTime = visible[i].impact_time_s;
+    }
 
     useEffect(() => {
         if (!playing || maxTime <= 0) return;

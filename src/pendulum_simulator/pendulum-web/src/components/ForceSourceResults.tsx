@@ -104,7 +104,11 @@ function ComparisonPlot({ spec, scenarios, constraints }: {
     spec: PlotSpec; scenarios: ForceSourceScenario[]; constraints: ForceSourceConstraints;
 }) {
     const data = useMemo(() => {
-        const maxTime = Math.max(...scenarios.map(item => item.impact_time_s));
+        // ⚡ Bolt Optimization: Replace Math.max(...map()) with single-pass loop to avoid GC pressure
+        let maxTime = 0;
+        for (let i = 0; i < scenarios.length; i++) {
+            if (scenarios[i].impact_time_s > maxTime) maxTime = scenarios[i].impact_time_s;
+        }
         return Array.from({ length: 321 }, (_, index) => {
             const time = maxTime * index / 320;
             const row: Record<string, number | null> = { time: +time.toFixed(5) };

@@ -172,3 +172,7 @@
 ## 2026-09-10 - Avoid spread operator for large array bounds
 **Learning:** Spreading large arrays (like histogram plotting inputs which scale up to MAX_PLOT_SAMPLES) into Math.min/max causes severe GC pressure and risks exceeding the call stack.
 **Action:** Always use a single-pass loop to calculate extents dynamically for plot arrays instead of spreading elements onto the stack.
+
+## 2026-09-11 - Eliminate Array Mapping and Spreading in Render Hot Paths
+**Learning:** In React components that render frequently or handle large arrays, combining `.map()` with spread syntax like `Math.max(...arr.map(x => x.value))` creates significant garbage collection overhead and can trigger call stack limits.
+**Action:** Replace `Math.max(...map())` with a single-pass `for` loop for computing aggregates across objects in React render or memoized blocks to minimize intermediate allocations and GC pressure.
