@@ -27,6 +27,7 @@ from rate_of_closure.ui.course import CourseLayout
 from rate_of_closure.ui.pyqt6.figure_canvas import (
     LifecycleSafeFigureCanvas as FigureCanvas,
 )
+from rate_of_closure.ui.pyqt6.flight_camera_adapter import FlightCameraAdapter
 from rate_of_closure.ui.pyqt6.flight_playback_rendering import FlightPlaybackArtists
 from rate_of_closure.ui.pyqt6.flight_view_axes import distance_axis
 from rate_of_closure.ui.pyqt6.flight_view_bundle import FlightViewBundleMixin
@@ -59,7 +60,11 @@ _DISPLAY_PARAMS: tuple[tuple[str, str, str, bool], ...] = (
 
 
 class FlightView(
-    FlightViewBundleMixin, FlightViewInspectorMixin, FlightViewPanelsMixin, QWidget
+    FlightCameraAdapter,
+    FlightViewBundleMixin,
+    FlightViewInspectorMixin,
+    FlightViewPanelsMixin,
+    QWidget,
 ):
     """Flight-scale trajectory viewer: side + top-down 2D panels + 3D."""
 
@@ -85,12 +90,16 @@ class FlightView(
         self._spatial_target: SpatialTarget | None = None
         # (carry, lateral) landing scatter [m] from the Variation engine.
         self._scatter: tuple[np.ndarray, np.ndarray] | None = None
+        self._axes_3d = None
+        self._manual_orientation = (25.0, -60.0)
         self._initialize_sample_inspector()
 
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.addLayout(self._build_param_bar())
+        layout.addWidget(self._initialize_camera("Ball Flight"))
         layout.addWidget(self._canvas)
+        self._canvas.mpl_connect("button_release_event", self._manual_camera_released)
         self._draw()
 
     def _emit_sample_selected(self, raw_index: int) -> None:
@@ -196,10 +205,10 @@ class FlightView(
         if self._timed_trajectory is None:
             return
         frame = self._timed_trajectory.frame_at(time_s)
-        if frame.time_s == self._playback_time_s:
-            return
         self._playback_time_s = frame.time_s
         self._playback_artists.update(frame.position_m)
+        self._advance_camera_tracking()
+        self._apply_camera_to_axes()
         self._canvas.draw_idle()
 
     def playback_duration_s(self) -> float:
@@ -309,9 +318,11 @@ class FlightView(
 
     # ── drawing ─────────────────────────────────────────────────────
     def _draw(self, *, sync: bool = False) -> None:
+        self._advance_camera_tracking()
         if sync:
             self._canvas.cancel_pending_draw()
         self._figure.clear()
+        self._axes_3d = None
         self._inspector_axes: dict[str, Axes] = {}
         pos = self._positions
         frame = (
@@ -358,7 +369,9 @@ class FlightView(
         if want_3d:
             spec = grid[:, 1] if left else grid[:, 0]
             axes_3d = self._figure.add_subplot(spec, projection="3d")
+            self._axes_3d = axes_3d
             self._draw_3d(axes_3d, pos, extents)
+            self._apply_camera_to_axes()
         self._publish_canvas(sync)
 
     def _publish_canvas(self, sync: bool) -> None:

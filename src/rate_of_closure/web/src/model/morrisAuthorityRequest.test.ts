@@ -15,7 +15,9 @@ import { getClub } from "./club";
 import { DEFAULT_SCENARIO } from "./impact";
 import pythonSuggestedDrafts from "./__fixtures__/morris_suggested_factor_drafts_v1.json";
 
-const draft = (overrides: Partial<MorrisFactorDraft> = {}): MorrisFactorDraft => ({
+const draft = (
+  overrides: Partial<MorrisFactorDraft> = {},
+): MorrisFactorDraft => ({
   variableKey: "swing_sim.swing.yaw_deg",
   enabled: true,
   lower: -2,
@@ -24,34 +26,57 @@ const draft = (overrides: Partial<MorrisFactorDraft> = {}): MorrisFactorDraft =>
 });
 
 const base = (): MorrisAuthorityRequest["base"] => ({
-  clubName: "Driver 10.5°", supportMode: "tee", teeHeightM: 0.0381,
-  planeYawDeg: 0, planeSideTiltDeg: -45, planeForwardTiltDeg: 0,
-  pendulumM1Kg: 4, pendulumL1M: 0.65, pendulumLc1M: 0.3, pendulumI1KgM2: 0.4,
-  pendulumM2Kg: 0.5, pendulumL2M: 1.05, pendulumLc2M: 0.55, pendulumI2KgM2: 0.08,
-  dampingShoulder: 0.4, dampingWrist: 0.25, swingDurationS: 1.0,
-  flightModel: "waterloo_penner", impactOffsetToeMm: 0, impactOffsetHighMm: 0,
+  clubName: "Driver 10.5°",
+  supportMode: "tee",
+  teeHeightM: 0.0381,
+  planeYawDeg: 0,
+  planeSideTiltDeg: -45,
+  planeForwardTiltDeg: 0,
+  pendulumM1Kg: 4,
+  pendulumL1M: 0.65,
+  pendulumLc1M: 0.3,
+  pendulumI1KgM2: 0.4,
+  pendulumM2Kg: 0.5,
+  pendulumL2M: 1.05,
+  pendulumLc2M: 0.55,
+  pendulumI2KgM2: 0.08,
+  dampingShoulder: 0.4,
+  dampingWrist: 0.25,
+  swingDurationS: 1.0,
+  flightModel: "waterloo_penner",
+  impactOffsetToeMm: 0,
+  impactOffsetHighMm: 0,
 });
 
 describe("Morris factor rows", () => {
   it("fails closed when the current scenario cannot round-trip through the pinned authority", () => {
-    expect(() => defaultMorrisAuthorityBase(getClub("Driver 10.5°"), DEFAULT_SCENARIO)).toThrow(
-      /clubheadSpeedMph=113.*current value is unsupported/,
-    );
-    expect(() => defaultMorrisAuthorityBase(getClub("Driver 10.5°"), {
-      ...DEFAULT_SCENARIO, clubheadSpeedMph: 113,
-    })).not.toThrow();
+    expect(() =>
+      defaultMorrisAuthorityBase(getClub("Driver 10.5°"), DEFAULT_SCENARIO),
+    ).toThrow(/clubheadSpeedMph=113.*current value is unsupported/);
+    expect(() =>
+      defaultMorrisAuthorityBase(getClub("Driver 10.5°"), {
+        ...DEFAULT_SCENARIO,
+        clubheadSpeedMph: 113,
+      }),
+    ).not.toThrow();
   });
 
   it("fails closed instead of discarding custom club geometry", () => {
     const canonical = getClub("Driver 10.5°");
-    expect(() => defaultMorrisAuthorityBase(
-      { ...canonical, loftDeg: 11.25 },
-      { ...DEFAULT_SCENARIO, clubheadSpeedMph: 113 },
-    )).toThrow(/cannot represent custom club field loftDeg.*canonical Driver 10\.5°/);
-    expect(() => defaultMorrisAuthorityBase(
-      { ...canonical, headStyle: undefined },
-      { ...DEFAULT_SCENARIO, clubheadSpeedMph: 113 },
-    )).not.toThrow();
+    expect(() =>
+      defaultMorrisAuthorityBase(
+        { ...canonical, loftDeg: 11.25 },
+        { ...DEFAULT_SCENARIO, clubheadSpeedMph: 113 },
+      ),
+    ).toThrow(
+      /cannot represent custom club field loftDeg.*canonical Driver 10\.5°/,
+    );
+    expect(() =>
+      defaultMorrisAuthorityBase(
+        { ...canonical, headStyle: undefined },
+        { ...DEFAULT_SCENARIO, clubheadSpeedMph: 113 },
+      ),
+    ).not.toThrow();
   });
 
   it("matches the Python registry's R13.6 base-centered suggestions and ground applicability", () => {
@@ -62,7 +87,9 @@ describe("Morris factor rows", () => {
     // (#4458).
     const fixture = pythonSuggestedDrafts;
     const suggested = suggestedMorrisFactorDrafts(base());
-    expect(suggested.map(({ variableKey, enabled }) => ({ variableKey, enabled }))).toEqual(
+    expect(
+      suggested.map(({ variableKey, enabled }) => ({ variableKey, enabled })),
+    ).toEqual(
       fixture.drafts.map(({ variable_key: variableKey, enabled }) => ({
         variableKey,
         enabled,
@@ -73,20 +100,32 @@ describe("Morris factor rows", () => {
       expect(suggested[index].upper).toBeCloseTo(expected.upper, 12);
     });
     const ground = suggestedMorrisFactorDrafts({
-      ...base(), supportMode: "ground", teeHeightM: 0, clubName: "Pitching Wedge",
+      ...base(),
+      supportMode: "ground",
+      teeHeightM: 0,
+      clubName: "Pitching Wedge",
     });
     expect(ground).toHaveLength(9);
+    expect(ground.map((item) => item.variableKey)).toEqual(
+      fixture.drafts.slice(0, 9).map(({ variable_key }) => variable_key),
+    );
     expect(ground.map((item) => item.variableKey)).toEqual(
       expect.not.arrayContaining(["swing_sim.ball_setup.tee_height_m"]),
     );
   });
 
   it("uses registry metadata and makes tee height inapplicable on ground", () => {
-    const rows = buildMorrisFactorRows([draft(), draft({
-      variableKey: "swing_sim.ball_setup.tee_height_m",
-      lower: 0.02,
-      upper: 0.05,
-    })], "ground");
+    const rows = buildMorrisFactorRows(
+      [
+        draft(),
+        draft({
+          variableKey: "swing_sim.ball_setup.tee_height_m",
+          lower: 0.02,
+          upper: 0.05,
+        }),
+      ],
+      "ground",
+    );
 
     expect(rows[0]).toMatchObject({
       specId: "swing_sim.swing.yaw_deg",
@@ -129,9 +168,12 @@ describe("Morris factor rows", () => {
     ["coercive variable key", { variableKey: 7 }],
     ["coercive lower bound", { lower: "-2" }],
   ])("rejects %s primitives", (_name, override) => {
-    expect(() => buildMorrisFactorRows([
-      { ...draft(), ...override } as unknown as MorrisFactorDraft,
-    ], "tee")).toThrow();
+    expect(() =>
+      buildMorrisFactorRows(
+        [{ ...draft(), ...override } as unknown as MorrisFactorDraft],
+        "tee",
+      ),
+    ).toThrow();
   });
 
   it.each([
@@ -142,9 +184,10 @@ describe("Morris factor rows", () => {
     ["swing_sim.club.head_moi_kg_m2", 5e-5, 2.1e-3],
     ["swing_sim.ball_setup.tee_height_m", -0.001, 0.03],
   ])("rejects out-of-range %s endpoints", (variableKey, lower, upper) => {
-    const result = validateMorrisFactorDrafts([
-      draft({ variableKey, lower, upper }),
-    ], "tee");
+    const result = validateMorrisFactorDrafts(
+      [draft({ variableKey, lower, upper })],
+      "tee",
+    );
     expect(result.valid).toBe(false);
     expect(result.errors[0]).toMatch(/endpoint limits/);
   });
@@ -155,8 +198,14 @@ describe("Morris authority request serialization", () => {
     baseOverrides: Partial<MorrisAuthorityRequest["base"]> = {},
     requestOverrides: Partial<MorrisAuthorityRequest> = {},
   ): MorrisAuthorityRequest => ({
-    requestId: "study-1", base: { ...base(), ...baseOverrides }, factors: [draft()],
-    trajectories: 12, levels: 4, seed: 73, minimumEffects: 2, workerCount: 2,
+    requestId: "study-1",
+    base: { ...base(), ...baseOverrides },
+    factors: [draft()],
+    trajectories: 12,
+    levels: 4,
+    seed: 73,
+    minimumEffects: 2,
+    workerCount: 2,
     ...requestOverrides,
   });
 
@@ -164,8 +213,12 @@ describe("Morris authority request serialization", () => {
     const request: MorrisAuthorityRequest = {
       requestId: "study-1",
       base: base(),
-      factors: [draft()], trajectories: 12, levels: 4, seed: 73,
-      minimumEffects: 2, workerCount: 2,
+      factors: [draft()],
+      trajectories: 12,
+      levels: 4,
+      seed: 73,
+      minimumEffects: 2,
+      workerCount: 2,
     };
 
     const document = serializeMorrisAuthorityRequest(request);
@@ -174,36 +227,62 @@ describe("Morris authority request serialization", () => {
       schema_id: "rate-of-closure/morris-request",
       schema_version: 1,
       request_id: "study-1",
-      factors: [{
-        spec_id: "swing_sim.swing.yaw_deg", variable_key: "swing_sim.swing.yaw_deg",
-        lower: -2, upper: 2, unit: "deg",
-      }],
-      trajectories: 12, levels: 4, seed: 73, minimum_effects: 2, worker_count: 2,
+      factors: [
+        {
+          spec_id: "swing_sim.swing.yaw_deg",
+          variable_key: "swing_sim.swing.yaw_deg",
+          lower: -2,
+          upper: 2,
+          unit: "deg",
+        },
+      ],
+      trajectories: 12,
+      levels: 4,
+      seed: 73,
+      minimum_effects: 2,
+      worker_count: 2,
     });
     expect(document.base).toMatchObject({
-      club_name: "Driver 10.5°", support_mode: "tee", tee_height_m: 0.0381,
-      damping_shoulder: 0.4, impact_offset_toe_mm: 0,
+      club_name: "Driver 10.5°",
+      support_mode: "tee",
+      tee_height_m: 0.0381,
+      damping_shoulder: 0.4,
+      impact_offset_toe_mm: 0,
     });
   });
 
   it("fails closed before serializing an invalid or disabled factor", () => {
     const request = {
-      requestId: "study-1", base: base(), factors: [draft({ enabled: false })],
-      trajectories: 12, levels: 4, seed: 73, minimumEffects: 2, workerCount: 2,
+      requestId: "study-1",
+      base: base(),
+      factors: [draft({ enabled: false })],
+      trajectories: 12,
+      levels: 4,
+      seed: 73,
+      minimumEffects: 2,
+      workerCount: 2,
     } as unknown as MorrisAuthorityRequest;
 
-    expect(() => serializeMorrisAuthorityRequest(request)).toThrow(/enabled factor/);
+    expect(() => serializeMorrisAuthorityRequest(request)).toThrow(
+      /enabled factor/,
+    );
   });
 
   it("rejects coercive base numeric fields at the serializer boundary", () => {
     const request = {
       requestId: "study-1",
       base: { ...base(), teeHeightM: "0.0381" },
-      factors: [draft()], trajectories: 12, levels: 4, seed: 73,
-      minimumEffects: 2, workerCount: 2,
+      factors: [draft()],
+      trajectories: 12,
+      levels: 4,
+      seed: 73,
+      minimumEffects: 2,
+      workerCount: 2,
     } as unknown as MorrisAuthorityRequest;
 
-    expect(() => serializeMorrisAuthorityRequest(request)).toThrow(/teeHeightM/);
+    expect(() => serializeMorrisAuthorityRequest(request)).toThrow(
+      /teeHeightM/,
+    );
   });
 
   it.each([
@@ -226,32 +305,59 @@ describe("Morris authority request serialization", () => {
     ["zero duration", { swingDurationS: 0 }, /positive/],
     ["toe offset", { impactOffsetToeMm: 81 }, /ToeMm/],
     ["high offset", { impactOffsetHighMm: -41 }, /HighMm/],
-  ] as const satisfies ReadonlyArray<readonly [
-    string, Partial<MorrisAuthorityRequest["base"]>, RegExp,
-  ]>)("rejects authority-incompatible base semantics: %s", (_name, overrides, message) => {
-    expect(() => serializeMorrisAuthorityRequest(requestWith(overrides))).toThrow(message);
-  });
+  ] as const satisfies ReadonlyArray<
+    readonly [string, Partial<MorrisAuthorityRequest["base"]>, RegExp]
+  >)(
+    "rejects authority-incompatible base semantics: %s",
+    (_name, overrides, message) => {
+      expect(() =>
+        serializeMorrisAuthorityRequest(requestWith(overrides)),
+      ).toThrow(message);
+    },
+  );
 
   it("enforces the authority sample and observation-cell resource formula", () => {
-    expect(() => serializeMorrisAuthorityRequest(requestWith({}, {
-      trajectories: 29_411,
-      minimumEffects: 2,
-    }))).not.toThrow();
-    expect(() => serializeMorrisAuthorityRequest(requestWith({}, {
-      trajectories: 29_412,
-      minimumEffects: 2,
-    }))).toThrow(/resource limits/);
+    expect(() =>
+      serializeMorrisAuthorityRequest(
+        requestWith(
+          {},
+          {
+            trajectories: 29_411,
+            minimumEffects: 2,
+          },
+        ),
+      ),
+    ).not.toThrow();
+    expect(() =>
+      serializeMorrisAuthorityRequest(
+        requestWith(
+          {},
+          {
+            trajectories: 29_412,
+            minimumEffects: 2,
+          },
+        ),
+      ),
+    ).toThrow(/resource limits/);
   });
 
   it("serializes reversed drafts in canonical factor order", () => {
     const side = draft({
-      variableKey: "swing_sim.swing.side_tilt_deg", lower: -3, upper: 3,
+      variableKey: "swing_sim.swing.side_tilt_deg",
+      lower: -3,
+      upper: 3,
     });
-    const document = serializeMorrisAuthorityRequest(requestWith({}, {
-      factors: [side, draft()],
-    }));
+    const document = serializeMorrisAuthorityRequest(
+      requestWith(
+        {},
+        {
+          factors: [side, draft()],
+        },
+      ),
+    );
     expect(document.factors.map((factor) => factor.variable_key)).toEqual([
-      "swing_sim.swing.yaw_deg", "swing_sim.swing.side_tilt_deg",
+      "swing_sim.swing.yaw_deg",
+      "swing_sim.swing.side_tilt_deg",
     ]);
   });
 });

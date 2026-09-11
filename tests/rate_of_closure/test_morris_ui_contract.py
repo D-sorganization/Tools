@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import math
 from copy import deepcopy
 from dataclasses import asdict, replace
 from pathlib import Path
@@ -284,6 +285,163 @@ def test_python_generated_ui_fixture_is_exact_and_shared() -> None:
     assert fixture["expected_tables"]["clubhead_x_m"] == json.loads(
         json.dumps(asdict(present_morris_report(job.report, "clubhead_x_m")))
     )
+
+
+def _morris_linear_oracle(
+    coefficient: float, lower: float, upper: float
+) -> tuple[float, float, float, float]:
+    """Analytical closed-form oracle for Morris elementary effects of a linear term.
+
+    For f(x) = beta * x with factor bounds [lower, upper] and span S = upper - lower:
+    - Elementary effect EE = beta * S across all trajectories and grid steps.
+    - mu = beta * S
+    - mu* = |beta| * S
+    - sigma = 0.0
+    - SE(mu*) = 0.0
+    """
+    assert lower < upper
+    span = upper - lower
+    return coefficient * span, abs(coefficient) * span, 0.0, 0.0
+
+
+def _morris_polynomial_quadratic_oracle(
+    coefficient: float, valid_pairs: int = 12
+) -> tuple[float, float, float, float]:
+    """Analytical closed-form oracle for Morris elementary effects of f(w) = c * w^2.
+
+    On a 4-level balanced grid design with normalized step Delta = 2/3:
+    Elementary effects evaluate to 2/3 * c and 4/3 * c in equal proportions
+    across trajectories.
+    - mu = c
+    - mu* = |c|
+    - sigma = sqrt((valid_pairs / (valid_pairs - 1)) * (c / 3)^2)
+    - SE = sigma / sqrt(valid_pairs)
+    """
+    assert valid_pairs >= 2
+    variance = (valid_pairs / (valid_pairs - 1)) * (coefficient / 3.0) ** 2
+    sigma = math.sqrt(variance)
+    standard_error = sigma / math.sqrt(valid_pairs)
+    return coefficient, abs(coefficient), sigma, standard_error
+
+
+def test_morris_analytical_oracle_ground_truth_matches_closed_form() -> None:
+    fixture_path = (
+        _REPO_ROOT
+        / "src"
+        / "rate_of_closure"
+        / "web"
+        / "src"
+        / "model"
+        / "__fixtures__"
+        / "morris_analytical_ground_truth_v1.json"
+    )
+    fixture = json.loads(fixture_path.read_text(encoding="utf-8"))
+    assert fixture["schema_id"] == "rate-of-closure/morris-analytical-ground-truth"
+    assert fixture["schema_version"] == 1
+
+    # Verify linear oracle matches expected closed form exactly:
+    mu, mu_star, sigma, se = _morris_linear_oracle(-3.5, -15.0, 5.0)
+    assert mu == -70.0
+    assert mu_star == 70.0
+    assert sigma == 0.0
+    assert se == 0.0
+
+    mu, mu_star, sigma, se = _morris_linear_oracle(2.5, -2.0, 8.0)
+    assert mu == 25.0
+    assert mu_star == 25.0
+    assert sigma == 0.0
+    assert se == 0.0
+
+    # Verify quadratic oracle matches expected closed form exactly:
+    mu, mu_star, sigma, se = _morris_polynomial_quadratic_oracle(15.0, 12)
+    assert mu == 15.0
+    assert mu_star == 15.0
+    assert sigma == pytest.approx(5.222329678670935, rel=1e-12)
+    assert se == pytest.approx(1.5075567228888122, rel=1e-12)
+
+    for factor in fixture["analytical_factors"]:
+        if factor["model_type"] == "linear":
+            d_mu, d_mu_star, d_sigma, d_se = _morris_linear_oracle(
+                factor["coefficient"], factor["lower"], factor["upper"]
+            )
+            assert d_mu == pytest.approx(factor["expected_mu"], rel=1e-12)
+            assert d_mu_star == pytest.approx(factor["expected_mu_star"], rel=1e-12)
+            assert d_sigma == pytest.approx(factor["expected_sigma"], abs=1e-12)
+            assert d_se == pytest.approx(factor["expected_standard_error"], abs=1e-12)
+        elif factor["model_type"] == "polynomial_quadratic":
+            d_mu, d_mu_star, d_sigma, d_se = _morris_polynomial_quadratic_oracle(
+                factor["coefficient"], 12
+            )
+            assert d_mu == pytest.approx(factor["expected_mu"], rel=1e-12)
+            assert d_mu_star == pytest.approx(factor["expected_mu_star"], rel=1e-12)
+            assert d_sigma == pytest.approx(factor["expected_sigma"], rel=1e-12)
+            assert d_se == pytest.approx(factor["expected_standard_error"], rel=1e-12)
+        else:
+            assert factor["expected_mu"] == 0.0
+            assert factor["expected_mu_star"] == 0.0
+            assert factor["expected_sigma"] == 0.0
+            assert factor["expected_standard_error"] == 0.0
+
+
+def test_morris_analytical_oracle_presentation_and_scale_awareness() -> None:
+    from rate_of_closure.application.morris._metric_validation import (
+        validate_finite_metrics,
+    )
+
+    fixture_path = (
+        _REPO_ROOT
+        / "src"
+        / "rate_of_closure"
+        / "web"
+        / "src"
+        / "model"
+        / "__fixtures__"
+        / "morris_analytical_ground_truth_v1.json"
+    )
+    fixture = json.loads(fixture_path.read_text(encoding="utf-8"))
+    job = parse_morris_job(fixture["completed_job"])
+    assert job.report is not None
+
+    presentation = present_morris_report(job.report, "clubhead_x_m")
+    assert (
+        json.loads(json.dumps(asdict(presentation)))
+        == fixture["expected_presentation_table"]
+    )
+
+    # Assert ranking strictly follows closed-form mu*:
+    # Rank 1: side_tilt (mu* = 70.0)
+    # Rank 2: yaw (mu* = 25.0)
+    # Rank 3: shoulder_damping (mu* = 15.0)
+    # Rank 4: wrist_damping (mu* = 0.0)
+    assert [(row.rank, row.spec_id, row.mu_star) for row in presentation.rows] == [
+        (1, "swing-side-tilt", 70.0),
+        (2, "swing-yaw", 25.0),
+        (3, "shoulder-damping", 15.0),
+        (4, "wrist-damping", 0.0),
+    ]
+
+    # Reject scale-blindness / per-physical-unit convention:
+    # Bare coefficients without span scaling would be 3.5, 2.5, which would
+    # incorrectly promote shoulder-damping (15.0) to rank 1.
+    assert presentation.rows[0].mu_star != 3.5
+    assert presentation.rows[1].mu_star != 2.5
+
+    # Reject missing step divisor (1/Delta) bug:
+    unnormalized = [70.0 * (2 / 3), 25.0 * (2 / 3)]
+    assert presentation.rows[0].mu_star != pytest.approx(unnormalized[0], rel=1e-6)
+    assert presentation.rows[1].mu_star != pytest.approx(unnormalized[1], rel=1e-6)
+
+    # Negative signed mu correctly preserved alongside positive mu*:
+    assert presentation.rows[0].mu == -70.0
+    assert presentation.rows[0].mu_star == 70.0
+
+    # Metric invariant holds across all estimates:
+    for estimate in job.report.estimates:
+        validate_finite_metrics(
+            estimate.effects,
+            estimate.availability,
+            estimate.denominator.valid_pairs,
+        )
 
 
 def test_request_builder_rejects_unrepresented_config_semantics_and_bad_drafts() -> (

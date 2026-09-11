@@ -5881,6 +5881,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 <!-- prettier-ignore-start -->
 
 | Date       | PR         | Changes    |
+| ---------- | ---------- | ---------- |
 | 2026-09-11 | #4462 | test(variation): add explicit sample request builder seam and verify planted design matrices and paired attribution response recovery (#4462) |
 | 2026-09-11 | #4961 | feat(camera): re-land camera controls and preference persistence from closed #4218/#4284 stacks (#4921 audit). Shared `src/shared/python/ui/camera_controls` package with models, preferences, and controls, wired into SimulationView and FlightView with full GUI and persistence test coverage. |
 | 2026-09-11 | #4919 | docs(rate-of-closure, #4919): remove phantom Tauri desktop build instructions from README and build_executable.py docstring, clarifying pure web static bundle distribution. |
@@ -6037,6 +6038,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | 2026-08-28 | #4832 | feat(rate, #4832 / #4433 / #4142): add the fail-closed `rate-of-closure/visualization-acceptance` v1 authority for all 20 React/PyQt tabs, lifecycle states, desktop/narrow/high-DPI reference cases, frame/unit/provenance/limitation declarations, keyboard paths, and nonvisual alternatives. Registration is explicitly not rendered approval; assistive-technology and user-rendered-review actions remain human-only. Also restore immediate variation-cancellation UI release while retaining the generation guard against late results, align test execution metadata with production requests, and remove obsolete closed-world flight-model assertions. (spec 1.18.75) |
 | 2026-08-28 | #4825 | refactor(golf_club, #4825): extract putter head JSON wire serialization/deserialization to `putter_head_serde.py` (105 LOC), reducing `putter_head.py` from 502 LOC to 432 LOC to satisfy the 500-line per-file LOC budget while preserving full public API backward compatibility through re-exports. (spec 1.18.74) |
 | 2026-08-28 | #4696 | test(variation, #4696 / #4558): add HDF5/JSON/CSV dataset IO roundtrip coverage (`test_variation_dataset_io.py`) for the schema constants and `write_hdf5`/`read_hdf5` pair already published via #4674; the PR's own HDF5 implementation was superseded by #4674/#4701 while queued, so only the test file and export list carried a net diff after rebase onto main. (spec 1.18.73) |
+| 2026-09-11 | #4458 | test(morris): anchor Morris elementary effects to closed-form analytical test oracle and ground truth fixture across Python and TypeScript runtimes, fix mislabeled authority request ground factor assertions (#4458) |
 | 2026-09-11 | #5181 | ⚡ Bolt: Optimize traces length bounds calculation in VariationArcDrawing with a single-pass loop instead of array spread (spec 1.18.135) |
 | 2026-09-02 | #4895 | perf(pendulum-web): ⚡ Bolt Optimization: Replace `Math.max(...spread)` and chained `.map(Math.abs)` array methods with single-pass `for` loops in `actuatorEffortMetrics` and `profileDiagnostics` hot paths to eliminate O(N) intermediate array allocations and prevent massive garbage collection pressure / call-stack capacity issues on large evaluation datasets. | #4895 (spec 1.18.73) |
 | 2026-08-27 | #4827 | fix(#4827): dedupe the duplicate `**Spec Version**` row that two concurrently merged PRs left in the §1 Identity table (one stale at 1.18.70, one current at 1.18.71), and add `tests/architecture/test_spec_version_freshness.py` so the Identity header version and the newest §12 Change Log row are asserted equal on every PR — previously that equality was only prose in the spec-check failure message, not a gate. | #4827 (spec 1.18.73) |
@@ -7525,3 +7527,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-07: Camera Acquisition Protocol (#4706 / TOOLS-M2 (#4713))
 
 - **2026-09-07**: feat(mocap, #4713) — Establish vendor-neutral camera acquisition protocol in `sidekick.lab.mocap.acquisition`, providing `FrameSource`, `CaptureGroup`, `FramePacket`, `SourceState`, and reference synthetic/prerecorded drivers with bounded queues and fail-closed backpressure.
+
+## 2026-09-11: Re-land Camera Controls + Preference Persistence (#4961)
+
+- **2026-09-11**: feat(camera, #4961) — Re-land camera controls and preference persistence from closed #4218/#4284 stacks (#4921 audit). Establish shared package `src/shared/python/ui/camera_controls` with models, preferences, and accessible Qt widgets, wire camera viewport mixins into `SimulationView` and `FlightView`, and add persistence/GUI regression test suites.

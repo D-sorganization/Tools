@@ -333,10 +333,23 @@ class SimulationSceneRenderer:
         run = view._run
         assert run is not None
         axes = view._axes
-        axes.set_xlim(-extent, extent)
-        axes.set_ylim(-extent, extent)
+        center = np.asarray(view._camera_state.target_m, dtype=float)[[2, 0, 1]]
+        half = extent / view._camera_state.zoom
+        x_limits, y_limits = (
+            (float(value - half), float(value + half)) for value in center[:2]
+        )
+        axes.set_xlim(*x_limits)
+        axes.set_ylim(*y_limits)
         flight_scale = in_flight and show_flight
-        axes.set_zlim(0.0 if flight_scale else -extent * 0.4, extent)
+        if view._camera_state.tracking_enabled:
+            vertical_half = half * (0.5 if flight_scale else 0.7)
+            z_limits = (
+                float(center[2] - vertical_half),
+                float(center[2] + vertical_half),
+            )
+        else:
+            z_limits = (0.0, half) if flight_scale else (-0.4 * half, half)
+        axes.set_zlim(*z_limits)
         axes.set_box_aspect((2.0, 2.0, 1.0 if flight_scale else 1.4))
         axes.view_init(elev=elev, azim=azim)
         axes.set_xlabel("z — right of target [m]")
