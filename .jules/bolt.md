@@ -172,3 +172,6 @@
 ## 2026-09-10 - Avoid spread operator for large array bounds
 **Learning:** Spreading large arrays (like histogram plotting inputs which scale up to MAX_PLOT_SAMPLES) into Math.min/max causes severe GC pressure and risks exceeding the call stack.
 **Action:** Always use a single-pass loop to calculate extents dynamically for plot arrays instead of spreading elements onto the stack.
+## $(date +%Y-%m-%d) - Prevent stack overflow when mapping nested lengths
+**Learning:** Using `Math.min(...traces.map(trace => trace.length))` creates an intermediate array containing lengths and spreads them all into the call stack, which creates a huge garbage collection spike and risks a stack overflow error when `traces` is very large.
+**Action:** Replace `Math.min(...spread)` operations with a simple single-pass `for` loop that avoids allocating any arrays entirely, achieving O(1) space complexity and completely avoiding call stack depth limits.
