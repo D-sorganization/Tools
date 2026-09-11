@@ -104,7 +104,10 @@ function ComparisonPlot({ spec, scenarios, constraints }: {
     spec: PlotSpec; scenarios: ForceSourceScenario[]; constraints: ForceSourceConstraints;
 }) {
     const data = useMemo(() => {
-        const maxTime = Math.max(...scenarios.map(item => item.impact_time_s));
+        let maxTime = -Infinity;
+        for (const item of scenarios) {
+            if (item.impact_time_s > maxTime) maxTime = item.impact_time_s;
+        }
         return Array.from({ length: 321 }, (_, index) => {
             const time = maxTime * index / 320;
             const row: Record<string, number | null> = { time: +time.toFixed(5) };

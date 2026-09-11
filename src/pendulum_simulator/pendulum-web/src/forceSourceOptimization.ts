@@ -181,8 +181,13 @@ export function candidateProfileId(candidate: ForceSourceCandidate): string {
 }
 
 function derivativeBound(coefficients: TorquePolynomialCoefficients, duration: number): number {
-    return 6 * Math.max(...coefficients.slice(1).map((value, index) =>
-        Math.abs(value - coefficients[index]))) / duration;
+    // ⚡ Bolt Optimization: Single-pass loop instead of Math.max(...map()) to avoid intermediate arrays
+    let maxDiff = -Infinity;
+    for (let index = 0; index < coefficients.length - 1; index++) {
+        const diff = Math.abs(coefficients[index + 1] - coefficients[index]);
+        if (diff > maxDiff) maxDiff = diff;
+    }
+    return 6 * (maxDiff === -Infinity ? 0 : maxDiff) / duration;
 }
 
 /** Summarize shape, continuity, slew, and wrist-transition properties. */
@@ -655,7 +660,11 @@ function normalizedConstraintHeadroom(
                 / constraints.speedToleranceMps,
         );
     }
-    return Math.min(...margins);
+    let minMargin = Infinity;
+    for (let i = 0; i < margins.length; i++) {
+        if (margins[i] < minMargin) minMargin = margins[i];
+    }
+    return minMargin === Infinity ? 0 : minMargin;
 }
 
 export function summarizeRobustness(scores: Array<number | null>): RobustnessSummary {
