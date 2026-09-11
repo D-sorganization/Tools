@@ -17,6 +17,7 @@ from rate_of_closure.variation.simulation_types import (
     NUMERICAL_FAILURE,
     SimulationTrialOutcome,
 )
+from shared.python.swing_sim.variation import sample_inputs
 from shared.python.swing_sim.variation.paired_attribution import (
     AVAILABILITY_AVAILABLE,
     AVAILABILITY_MISSING,
@@ -49,7 +50,7 @@ def _values(status: object, offset: float) -> dict[str, float | None]:
 def _outcome(index: int, status: object, offset: float) -> SimulationTrialOutcome:
     return SimulationTrialOutcome(
         index,
-        status,  # type: ignore[arg-type]
+        status,
         _values(status, offset),
         failure_type="solver" if status is NUMERICAL_FAILURE else None,
         failure_message="bounded failure" if status is NUMERICAL_FAILURE else None,
@@ -232,3 +233,74 @@ def test_adapter_rejects_non_estimable_source_designs(design: str) -> None:
         build_rate_paired_attribution_input(
             response_input, _targets(), outcomes, outcomes
         )
+
+
+def test_planted_intervention_pairs_recover_response_structure() -> None:
+    config = default_fixture_config()
+    planted_deltas = config.deltas[0]
+    response_input = build_response_inputs(config)[0]
+
+    speed_gain = 1.5
+    carry_gain = 2.5
+    baseline_speed = 45.0
+    baseline_carry = 200.0
+
+    baseline_outcomes = tuple(
+        SimulationTrialOutcome(
+            index,
+            EVALUATED_HIT,
+            {
+                **_values(EVALUATED_HIT, 0.0),
+                "clubhead_speed_mps": baseline_speed,
+                "carry_m": baseline_carry,
+            },
+        )
+        for index in range(4)
+    )
+    perturbed_outcomes = tuple(
+        SimulationTrialOutcome(
+            index,
+            EVALUATED_HIT,
+            {
+                **_values(EVALUATED_HIT, 0.0),
+                "clubhead_speed_mps": (
+                    baseline_speed + speed_gain * planted_deltas[index]
+                ),
+                "carry_m": baseline_carry + carry_gain * planted_deltas[index],
+            },
+        )
+        for index in range(4)
+    )
+
+    targets = _targets()
+    field_input = build_rate_paired_attribution_input(
+        response_input, targets, baseline_outcomes, perturbed_outcomes
+    )
+    record = compute_paired_attribution(field_input)
+
+    # Recovered intervention delta matches planted deltas exactly
+    recovered_deltas = record.perturbed_source_values - record.baseline_source_values
+    assert np.array_equal(recovered_deltas, planted_deltas)
+
+    # Recovered signed response matches planted scalar deltas
+    expected_speed_delta = speed_gain * planted_deltas
+    expected_carry_delta = carry_gain * planted_deltas
+    assert np.allclose(record.signed_response[:, 1], expected_speed_delta)
+    assert np.allclose(record.signed_response[:, 2], expected_carry_delta)
+
+    # Recovered local response matches planted sensitivity / intervention structure
+    assert np.allclose(record.local_response_per_source_unit[:, 1], speed_gain)
+    assert np.allclose(record.local_response_per_source_unit[:, 2], carry_gain)
+
+    # State target: coefficients[0][1][1][0] = 0.50, scale = 2.0 -> gain = 0.25
+    expected_state_gain = 0.25
+    expected_state_delta = expected_state_gain * planted_deltas
+    assert np.allclose(record.signed_response[:, 0], expected_state_delta)
+    assert np.allclose(record.local_response_per_source_unit[:, 0], expected_state_gain)
+
+    # Detection: pseudorandom draws differ from planted intervention deltas
+    plan = response_input.baseline.traces.variation.plan
+    rng_draws = np.asarray(sample_inputs(plan), dtype=float)[:, 0]
+    assert not np.array_equal(recovered_deltas, rng_draws)
+    with pytest.raises(AssertionError):
+        assert np.array_equal(rng_draws, planted_deltas)

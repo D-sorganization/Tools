@@ -67,6 +67,7 @@ from .ensemble_source import (
 from .request_builder import (
     apply_global_simulation_values,
     build_simulation_ensemble_request,
+    build_simulation_ensemble_request_from_samples,
 )
 from .trial_projection import (
     SimulationExecutor,
@@ -466,6 +467,7 @@ __all__ = [
     "TEE_HEIGHT_VARIABLE_KEY",
     "apply_ball_setup_sample",
     "build_simulation_ensemble_request",
+    "build_simulation_ensemble_request_from_samples",
     "build_ensemble_stream_header",
     "run_simulation_ensemble",
     "run_simulation_ensemble_chunks",

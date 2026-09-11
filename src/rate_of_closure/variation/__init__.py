@@ -50,7 +50,10 @@ from .paired_attribution_adapter import (
     RATE_PAIRED_ATTRIBUTION_ADAPTER_ID,
     build_rate_paired_attribution_input,
 )
-from .request_builder import apply_global_simulation_values
+from .request_builder import (
+    apply_global_simulation_values,
+    build_simulation_ensemble_request_from_samples,
+)
 from .simulation_adapter import (
     APP_FRAME_ID,
     CONTACT_OUTPUT_NAMES,
@@ -136,6 +139,7 @@ __all__ = [
     "apply_global_simulation_values",
     "analyze_durable_ensemble",
     "build_simulation_ensemble_request",
+    "build_simulation_ensemble_request_from_samples",
     "build_ensemble_stream_header",
     "build_rate_paired_attribution_input",
     "capture_simulation",
