@@ -328,6 +328,7 @@ class SimulationView(CameraViewportMixin, SimulationViewControlsMixin, QWidget):
     def _apply_impact_view(self, index: int) -> None:
         """Apply a named camera without preventing subsequent free orbit."""
         elevation, azimuth = self._impact_view.itemData(index)
+        self.suspend_camera_tracking()
         self._axes.view_init(elev=float(elevation), azim=float(azimuth))
         self._draw()
 
