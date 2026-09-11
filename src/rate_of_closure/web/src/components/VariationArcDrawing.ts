@@ -194,7 +194,12 @@ const isRenderedSample = (index: number, count: number, stride: number): boolean
 );
 
 function medianTrace(traces: Vec3[][]): Vec3[] {
-  const count = Math.min(...traces.map((trace) => trace.length));
+  // ⚡ Bolt Optimization: Use single-pass loop instead of Math.min(...traces.map(...))
+  // Impact: Eliminates O(N) array allocation from .map() and prevents "Maximum call stack size exceeded" errors on large traces arrays.
+  let count = traces.length > 0 ? traces[0].length : 0;
+  for (let i = 1; i < traces.length; i++) {
+    if (traces[i].length < count) count = traces[i].length;
+  }
   return Array.from({ length: count }, (_, sampleIndex) => [0, 1, 2].map((axis) => {
     const values = traces.map((trace) => trace[sampleIndex][axis]).sort((a, b) => a - b);
     const middle = Math.floor(values.length / 2);
