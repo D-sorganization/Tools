@@ -393,7 +393,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
     {
-      "content_sha256_lf": "9f0c666384438e9d8b82c9d9e410a2de1bc8086ef783047232c02e28f84af1ee",
+      "content_sha256_lf": "a4adbbb45e2e4dc8a4f0450e44af77790f2359cbf292e34940853e7bb8631a25",
       "entry_count": 167,
       "package": "src/pendulum_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pendulum-simulator.json"
@@ -513,7 +513,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src.json"
     },
     {
-      "content_sha256_lf": "fc2816803ed772ae096791bfb73ce063ae4375d6ae4ffdb9646db23a54cc479a",
+      "content_sha256_lf": "be46f9dac4624bf25f41625a16f51e31c0ff6788e328897bb88f3a97f7224482",
       "entry_count": 180,
       "package": "src/rate_of_closure/web/src/components",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-components.json"

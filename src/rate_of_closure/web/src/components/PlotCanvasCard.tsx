@@ -13,13 +13,6 @@ import type { PlotData } from "../model/plotspec";
 
 const PALETTE = ["#38bdf8", "#fbbf24", "#34d399", "#f472b6", "#a78bfa"];
 const ZOOM_STEP = 1.25;
-const PLOT_CANVAS_SIZE = { width: 860, height: 420 } as const;
-
-const responsivePlotCanvasStyle = {
-  width: "100%",
-  height: "auto",
-  aspectRatio: `${PLOT_CANVAS_SIZE.width} / ${PLOT_CANVAS_SIZE.height}`,
-};
 
 export type LegendPosition = "hidden" | "outside_right" | "inside_top_left" | "inside_top_right";
 
@@ -374,9 +367,8 @@ export function PlotCanvasCard({ data, label, selected, onSelect, onCanvas, noti
       </div>
       <canvas
         ref={canvasRef}
-        width={PLOT_CANVAS_SIZE.width}
-        height={PLOT_CANVAS_SIZE.height}
-        style={responsivePlotCanvasStyle}
+        width={860}
+        height={420}
         role="img"
         tabIndex={0}
         aria-label={`${label} plot`}
@@ -389,7 +381,7 @@ export function PlotCanvasCard({ data, label, selected, onSelect, onCanvas, noti
           event.preventDefault();
           changeZoom(event.deltaY < 0 ? ZOOM_STEP : 1 / ZOOM_STEP);
         }}
-        className="min-h-[180px] w-full rounded-lg bg-slate-950/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-300 sm:min-h-0"
+        className="h-auto min-h-[180px] w-full rounded-lg bg-slate-950/60 focus-visible:outline focus-visible:outline-2 focus-visible:outline-sky-300 sm:min-h-0"
       />
       <p ref={statusRef} id={statusId} role="status" aria-live="polite"
         className="mt-2 text-xs text-sky-200">
