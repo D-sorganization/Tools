@@ -1,0 +1,343 @@
+{
+  "schema_id": "rate-of-closure/morris-analytical-ground-truth",
+  "schema_version": 1,
+  "description": "Analytical closed-form test oracle ground truth for Morris screening metrics over non-unit bounds, signed linear coefficients, polynomial response with exact non-zero sigma, and zero-effect constants.",
+  "design": {
+    "trajectories": 12,
+    "levels": 4,
+    "seed": 73,
+    "total_samples": 60,
+    "normalized_step": 0.6666666666666666
+  },
+  "analytical_factors": [
+    {
+      "spec_id": "swing-side-tilt",
+      "variable_key": "swing_sim.swing.side_tilt_deg",
+      "model_type": "linear",
+      "coefficient": -3.5,
+      "lower": -15.0,
+      "upper": 5.0,
+      "span": 20.0,
+      "expected_mu": -70.0,
+      "expected_mu_star": 70.0,
+      "expected_sigma": 0.0,
+      "expected_standard_error": 0.0,
+      "expected_rank": 1,
+      "expected_availability": "available",
+      "formula": "mu = beta * (upper - lower) = -3.5 * 20.0 = -70.0; mu_star = |beta| * span = 70.0; sigma = 0.0"
+    },
+    {
+      "spec_id": "swing-yaw",
+      "variable_key": "swing_sim.swing.yaw_deg",
+      "model_type": "linear",
+      "coefficient": 2.5,
+      "lower": -2.0,
+      "upper": 8.0,
+      "span": 10.0,
+      "expected_mu": 25.0,
+      "expected_mu_star": 25.0,
+      "expected_sigma": 0.0,
+      "expected_standard_error": 0.0,
+      "expected_rank": 2,
+      "expected_availability": "available",
+      "formula": "mu = beta * (upper - lower) = 2.5 * 10.0 = 25.0; mu_star = |beta| * span = 25.0; sigma = 0.0"
+    },
+    {
+      "spec_id": "shoulder-damping",
+      "variable_key": "swing_sim.swing.damping_shoulder",
+      "model_type": "polynomial_quadratic",
+      "coefficient": 15.0,
+      "lower": 0.1,
+      "upper": 0.5,
+      "span": 0.4,
+      "expected_mu": 15.0,
+      "expected_mu_star": 15.0,
+      "expected_sigma": 5.222329678670935,
+      "expected_standard_error": 1.5075567228888122,
+      "expected_rank": 3,
+      "expected_availability": "available",
+      "formula": "EE in {10.0, 20.0} equally; mu = 15.0; mu_star = 15.0; sigma = 10*sqrt(3/11); SE = 5/sqrt(11)"
+    },
+    {
+      "spec_id": "wrist-damping",
+      "variable_key": "swing_sim.swing.damping_wrist",
+      "model_type": "constant_null",
+      "coefficient": 0.0,
+      "lower": 0.15,
+      "upper": 0.35,
+      "span": 0.2,
+      "expected_mu": 0.0,
+      "expected_mu_star": 0.0,
+      "expected_sigma": 0.0,
+      "expected_standard_error": 0.0,
+      "expected_rank": 4,
+      "expected_availability": "constant-output",
+      "formula": "constant zero effect: mu = 0.0; mu_star = 0.0; sigma = 0.0; SE = 0.0"
+    }
+  ],
+  "completed_job": {
+    "schema_id": "rate-of-closure/morris-job",
+    "schema_version": 1,
+    "job_id": "oracle-job",
+    "request_id": "oracle-request",
+    "status": "completed",
+    "completed_samples": 60,
+    "total_samples": 60,
+    "cancel_requested": false,
+    "report": {
+      "schema_id": "swing-sim/morris-global-sensitivity-report",
+      "schema_version": 1,
+      "method": "morris-elementary-effects",
+      "design": {
+        "trajectories": 12,
+        "levels": 4,
+        "seed": 73,
+        "total_samples": 60,
+        "normalized_step": 0.6666666666666666
+      },
+      "assumptions": [
+        "Factors are independently screened over declared finite bounds.",
+        "The evaluator is deterministic or its stochastic stream is controlled.",
+        "Elementary effects are scaled to a full normalized factor range.",
+        "Only paired finite outputs from non-failed endpoints are estimable."
+      ],
+      "interaction_caveat": "Morris sigma is a screening indicator that conflates nonlinearity and interaction; it does not isolate either effect or establish causality.",
+      "estimates": [
+        {
+          "source": {
+            "spec_id": "swing-side-tilt",
+            "variable_key": "swing_sim.swing.side_tilt_deg",
+            "unit": "deg",
+            "bounds": [-15.0, 5.0],
+            "time_window_s": null,
+            "point_ids": []
+          },
+          "target": {
+            "name": "clubhead_x_m",
+            "unit": "m",
+            "kind": "state-point",
+            "time_s": 0.03,
+            "point_id": "clubhead",
+            "coordinate_frame": "app_frame:x_target,y_up,z_right"
+          },
+          "effects": {
+            "mu": -70.0,
+            "mu_star": 70.0,
+            "mu_star_standard_error": 0.0,
+            "sigma": 0.0
+          },
+          "availability": "available",
+          "sample_adequacy": "adequate",
+          "denominator": {
+            "total_pairs": 12,
+            "valid_pairs": 12,
+            "typed_no_impact_pairs": 0,
+            "no_impact_unavailable_pairs": 0,
+            "failed_pairs": 0,
+            "nonfinite_pairs": 0
+          }
+        },
+        {
+          "source": {
+            "spec_id": "swing-yaw",
+            "variable_key": "swing_sim.swing.yaw_deg",
+            "unit": "deg",
+            "bounds": [-2.0, 8.0],
+            "time_window_s": null,
+            "point_ids": []
+          },
+          "target": {
+            "name": "clubhead_x_m",
+            "unit": "m",
+            "kind": "state-point",
+            "time_s": 0.03,
+            "point_id": "clubhead",
+            "coordinate_frame": "app_frame:x_target,y_up,z_right"
+          },
+          "effects": {
+            "mu": 25.0,
+            "mu_star": 25.0,
+            "mu_star_standard_error": 0.0,
+            "sigma": 0.0
+          },
+          "availability": "available",
+          "sample_adequacy": "adequate",
+          "denominator": {
+            "total_pairs": 12,
+            "valid_pairs": 12,
+            "typed_no_impact_pairs": 0,
+            "no_impact_unavailable_pairs": 0,
+            "failed_pairs": 0,
+            "nonfinite_pairs": 0
+          }
+        },
+        {
+          "source": {
+            "spec_id": "shoulder-damping",
+            "variable_key": "swing_sim.swing.damping_shoulder",
+            "unit": "N·m·s",
+            "bounds": [0.1, 0.5],
+            "time_window_s": null,
+            "point_ids": []
+          },
+          "target": {
+            "name": "clubhead_x_m",
+            "unit": "m",
+            "kind": "state-point",
+            "time_s": 0.03,
+            "point_id": "clubhead",
+            "coordinate_frame": "app_frame:x_target,y_up,z_right"
+          },
+          "effects": {
+            "mu": 15.0,
+            "mu_star": 15.0,
+            "mu_star_standard_error": 1.5075567228888122,
+            "sigma": 5.222329678670935
+          },
+          "availability": "available",
+          "sample_adequacy": "adequate",
+          "denominator": {
+            "total_pairs": 12,
+            "valid_pairs": 12,
+            "typed_no_impact_pairs": 0,
+            "no_impact_unavailable_pairs": 0,
+            "failed_pairs": 0,
+            "nonfinite_pairs": 0
+          }
+        },
+        {
+          "source": {
+            "spec_id": "wrist-damping",
+            "variable_key": "swing_sim.swing.damping_wrist",
+            "unit": "N·m·s",
+            "bounds": [0.15, 0.35],
+            "time_window_s": null,
+            "point_ids": []
+          },
+          "target": {
+            "name": "clubhead_x_m",
+            "unit": "m",
+            "kind": "state-point",
+            "time_s": 0.03,
+            "point_id": "clubhead",
+            "coordinate_frame": "app_frame:x_target,y_up,z_right"
+          },
+          "effects": {
+            "mu": 0.0,
+            "mu_star": 0.0,
+            "mu_star_standard_error": 0.0,
+            "sigma": 0.0
+          },
+          "availability": "constant-output",
+          "sample_adequacy": "adequate",
+          "denominator": {
+            "total_pairs": 12,
+            "valid_pairs": 12,
+            "typed_no_impact_pairs": 0,
+            "no_impact_unavailable_pairs": 0,
+            "failed_pairs": 0,
+            "nonfinite_pairs": 0
+          }
+        }
+      ]
+    },
+    "error": null
+  },
+  "expected_presentation_table": {
+    "target": {
+      "name": "clubhead_x_m",
+      "label": "Clubhead X M",
+      "unit": "m",
+      "kind": "state-point",
+      "time_s": 0.03,
+      "point_id": "clubhead",
+      "coordinate_frame": "app_frame:x_target,y_up,z_right"
+    },
+    "rows": [
+      {
+        "rank": 1,
+        "spec_id": "swing-side-tilt",
+        "variable_key": "swing_sim.swing.side_tilt_deg",
+        "label": "Swing-Plane Side Tilt",
+        "source_unit": "deg",
+        "source_lower": -15.0,
+        "source_upper": 5.0,
+        "mu": -70.0,
+        "mu_star": 70.0,
+        "mu_star_standard_error": 0.0,
+        "sigma": 0.0,
+        "availability": "available",
+        "sample_adequacy": "adequate",
+        "total_pairs": 12,
+        "valid_pairs": 12,
+        "typed_no_impact_pairs": 0,
+        "no_impact_unavailable_pairs": 0,
+        "failed_pairs": 0,
+        "nonfinite_pairs": 0
+      },
+      {
+        "rank": 2,
+        "spec_id": "swing-yaw",
+        "variable_key": "swing_sim.swing.yaw_deg",
+        "label": "Swing-Plane Yaw",
+        "source_unit": "deg",
+        "source_lower": -2.0,
+        "source_upper": 8.0,
+        "mu": 25.0,
+        "mu_star": 25.0,
+        "mu_star_standard_error": 0.0,
+        "sigma": 0.0,
+        "availability": "available",
+        "sample_adequacy": "adequate",
+        "total_pairs": 12,
+        "valid_pairs": 12,
+        "typed_no_impact_pairs": 0,
+        "no_impact_unavailable_pairs": 0,
+        "failed_pairs": 0,
+        "nonfinite_pairs": 0
+      },
+      {
+        "rank": 3,
+        "spec_id": "shoulder-damping",
+        "variable_key": "swing_sim.swing.damping_shoulder",
+        "label": "Shoulder Damping",
+        "source_unit": "N·m·s",
+        "source_lower": 0.1,
+        "source_upper": 0.5,
+        "mu": 15.0,
+        "mu_star": 15.0,
+        "mu_star_standard_error": 1.5075567228888122,
+        "sigma": 5.222329678670935,
+        "availability": "available",
+        "sample_adequacy": "adequate",
+        "total_pairs": 12,
+        "valid_pairs": 12,
+        "typed_no_impact_pairs": 0,
+        "no_impact_unavailable_pairs": 0,
+        "failed_pairs": 0,
+        "nonfinite_pairs": 0
+      },
+      {
+        "rank": 4,
+        "spec_id": "wrist-damping",
+        "variable_key": "swing_sim.swing.damping_wrist",
+        "label": "Wrist Damping",
+        "source_unit": "N·m·s",
+        "source_lower": 0.15,
+        "source_upper": 0.35,
+        "mu": 0.0,
+        "mu_star": 0.0,
+        "mu_star_standard_error": 0.0,
+        "sigma": 0.0,
+        "availability": "constant-output",
+        "sample_adequacy": "adequate",
+        "total_pairs": 12,
+        "valid_pairs": 12,
+        "typed_no_impact_pairs": 0,
+        "no_impact_unavailable_pairs": 0,
+        "failed_pairs": 0,
+        "nonfinite_pairs": 0
+      }
+    ]
+  }
+}
