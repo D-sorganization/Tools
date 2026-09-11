@@ -5882,6 +5882,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-11 | #4961 | feat(camera): re-land camera controls and preference persistence from closed #4218/#4284 stacks (#4921 audit). Shared `src/shared/python/ui/camera_controls` package with models, preferences, and controls, wired into SimulationView and FlightView with full GUI and persistence test coverage. |
 | 2026-09-10 | #5176 | Register missing validates_physics marker in pyproject.toml and add OSError guard to folder_tool log path mkdir and basicConfig to protect test collection in restricted environments. |
 | 2026-09-10 | #5162 | Couple objective friction history to shaft-ball mechanics with independent references and bounded SE(3) Jacobian evaluation. Main integration passes1657 tests with2 optional CAD skips,93.80% coverage and unchanged60s deadline; record exact-source takeover and open event-work, physical and acoustic requirements. Manual hosted matrices pass; PR3.12 entry60 timeout remains explicitly held for takeover. |
 | 2026-09-10 | #5154 | Add private, explicit observer/time-covered additional shaft force and free-couple histories to moving-grip and normal-contact trajectories. Reuse canonical point-load work and one append helper; retain baseline loads and all existing APIs. Verify independent polynomial motion/work, strict history domains and SI event-root residuals with a deliberately corrupted-root tripwire; preserve the Windows timeout and exact Linux/Windows source evidence. No physical/acoustic qualification. |
@@ -7523,3 +7524,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-07: Camera Acquisition Protocol (#4706 / TOOLS-M2 (#4713))
 
 - **2026-09-07**: feat(mocap, #4713) — Establish vendor-neutral camera acquisition protocol in `sidekick.lab.mocap.acquisition`, providing `FrameSource`, `CaptureGroup`, `FramePacket`, `SourceState`, and reference synthetic/prerecorded drivers with bounded queues and fail-closed backpressure.
+
+## 2026-09-11: Re-land Camera Controls + Preference Persistence (#4961)
+
+- **2026-09-11**: feat(camera, #4961) — Re-land camera controls and preference persistence from closed #4218/#4284 stacks (#4921 audit). Establish shared package `src/shared/python/ui/camera_controls` with models, preferences, and accessible Qt widgets, wire camera viewport mixins into `SimulationView` and `FlightView`, and add persistence/GUI regression test suites.
