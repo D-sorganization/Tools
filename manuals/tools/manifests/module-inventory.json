@@ -285,7 +285,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-folder-packer-pro.json"
     },
     {
-      "content_sha256_lf": "e5517a217a7d8e37971ca3ca02d984604ec98929a143aa0659057de5cb2156f7",
+      "content_sha256_lf": "a17af10cccd44fa7fbac5b24077ce2732fbe94eed695c50c778cde7c60dab60b",
       "entry_count": 15,
       "package": "src/folder_tool",
       "path": "manuals/tools/manifests/module-inventory/entries-src-folder-tool.json"

@@ -375,6 +375,7 @@ markers = [
     "flaky: tests that are known to fail intermittently",
     "tools_contracts: tests verifying shared tools libraries interfaces",
     "vcr: tests that replay recorded HTTP interactions with vcrpy/pytest-vcr",
+    "validates_physics: asserts physical correctness against hand-computed reference values (not parity/smoke)",
     # ---- fleet testing standards §2 additions ----
     "serial: must run with -n 0 (xdist parallel breaks this test)",
     "requires_mujoco: skip when import mujoco fails",
