@@ -175,3 +175,8 @@
 ## 2026-09-11 - [Optimize max bounds mapping]
 **Learning:** In JavaScript/TypeScript, when calculating min/max bounds across large datasets (e.g., dynamically establishing charting scales), avoid using `Math.min(...spread)` and `Math.max(...spread)`. It causes high garbage collection pressure and can result in 'Maximum call stack size exceeded' errors.
 **Action:** Use a single-pass `for` loop to compute the bounds dynamically instead.
+
+## 2026-09-11 - Prevent stack overflow when mapping nested lengths
+**Learning:** Using `Math.min(...traces.map(trace => trace.length))` creates an intermediate array containing lengths and spreads them all into the call stack, which creates a huge garbage collection spike and risks a stack overflow error when `traces` is very large.
+**Action:** Replace `Math.min(...spread)` operations with a simple single-pass `for` loop that avoids allocating any arrays entirely, achieving O(1) space complexity and completely avoiding call stack depth limits.
+
