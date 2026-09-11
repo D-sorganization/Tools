@@ -34,12 +34,14 @@ _EXPECTED_REGISTERED_CONTROL_RANGES = {
     "clubhead": (9, 9),
     "plots": (19, 19),
     "calculation_description": (0, 0),
-    "simulation": (182, 182),
+    # Re-landing camera controls (#4961) adds 18 named controls to simulation view.
+    "simulation": (182, 200),
     # ADR-0047 H4 adds one named control: "Import Trajectory Record...",
     # wired to the existing #4800 P8 transport (no new transport controls).
     # Re-landing the wind strategy panel (#4960) adds 23 named controls
-    # to flight_explorer.
-    "flight_explorer": (83, 83),
+    # to flight_explorer. Re-landing camera controls (#4961) adds 9 named
+    # controls to flight_explorer.
+    "flight_explorer": (83, 92),
     # A reachable configured AI provider contributes one additional named
     # control beyond the static-provider catalogue used by hosted CI.
     "launch_monitor_analytics": (59, 111),

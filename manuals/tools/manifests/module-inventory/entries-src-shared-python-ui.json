@@ -119,6 +119,450 @@
       }
     },
     {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1418,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "82a7b583b405d6760b7555ace9e8b48448841a5f86a15bf694ed101cdadf76c6",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-UI-CAMERA-CONTROLS-INIT-PY-AD3175BC937B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ui/camera_controls/__init__.py",
+      "purpose": "Shared 3D camera controls, preferences, and viewport integration.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "CAMERA_PREFERENCES_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CAMERA_VIEWPORT_IDS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CameraCommandId",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CameraControls",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CameraPreference",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CameraPreferences",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CameraPreset",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CameraState",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CameraViewport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CameraViewportMixin",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FaceOnSide",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Vector3",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "apply_camera_preference",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "apply_camera_preset",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "apply_manual_override",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "camera_preset",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "canvas_angles",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "default_camera_preferences",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "matplotlib_angles",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "moving_subject_camera_state",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "preference_from_camera_state",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "recenter_camera",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "safe_tracking_zoom",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "set_tracking_enabled",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "update_tracking_target",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 15499,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9d10e2947cfd6345ec72d411c9a74953fd5e8d6e948f08bba8d733d92a810223",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-UI-CAMERA-CONTROLS-CONTROLS-PY-29DCBB0342B0",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ui/camera_controls/controls.py",
+      "purpose": "Accessible Qt camera controls and viewport mixin for 3D canvases.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CameraViewport",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CameraViewportMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/programmatic_pid/test_controls.py"
+        ],
+        "unit_mentions": [
+          "bar",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 8483,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "630732acb3573b95d651d1c07bf1a1c9c6ae62b9f8f84373a3de3912a25551ee",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-UI-CAMERA-CONTROLS-MODELS-PY-E137BC2F2219",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ui/camera_controls/models.py",
+      "purpose": "UI-neutral camera commands and mathematical models for 3D viewports.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CameraCommandId",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CameraPreset",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CameraState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FaceOnSide",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "apply_camera_preset",
+            "signature": "state: CameraState, command_id: CameraCommandId"
+          },
+          {
+            "kind": "function",
+            "name": "apply_manual_override",
+            "signature": "state: CameraState"
+          },
+          {
+            "kind": "function",
+            "name": "camera_preset",
+            "signature": "command_id: CameraCommandId, side: FaceOnSide"
+          },
+          {
+            "kind": "function",
+            "name": "canvas_angles",
+            "signature": "preset: CameraPreset"
+          },
+          {
+            "kind": "function",
+            "name": "matplotlib_angles",
+            "signature": "preset: CameraPreset"
+          },
+          {
+            "kind": "function",
+            "name": "moving_subject_camera_state",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "recenter_camera",
+            "signature": "state: CameraState, subject_m: Vector3"
+          },
+          {
+            "kind": "function",
+            "name": "safe_tracking_zoom",
+            "signature": "requested_zoom: float, subject_radius_m: float, base_half_extent_m: float"
+          },
+          {
+            "kind": "function",
+            "name": "set_tracking_enabled",
+            "signature": "state: CameraState, enabled: bool, subject_m: Vector3"
+          },
+          {
+            "kind": "function",
+            "name": "update_tracking_target",
+            "signature": "state: CameraState, subject_m: Vector3, max_step_m: float"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "deg",
+          "rad"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 8223,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "bc03c3f2340e286bac91be4de48d8c9f1fb2e9513804e8eb3591a6811da81d96",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-UI-CAMERA-CONTROLS-PREFERENCES-PY-50EC967D0BF8",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ui/camera_controls/preferences.py",
+      "purpose": "Strict durable camera preferences shared by 3D viewports.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CameraPreference",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CameraPreferences",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CAMERA_PREFERENCES_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CAMERA_VIEWPORT_IDS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "apply_camera_preference",
+            "signature": "state: CameraState, preference: CameraPreference"
+          },
+          {
+            "kind": "function",
+            "name": "default_camera_preferences",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "preference_from_camera_state",
+            "signature": "state: CameraState, fallback: CameraPreference"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "provisional",
       "bytes_lf": 22810,
       "classification": "calculation",

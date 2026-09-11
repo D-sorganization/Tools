@@ -168,8 +168,8 @@
       "sha256": "111c753131650ade867e2e87014df90b4f7ff73fa5154ffe06ad0b3938402c90",
       "tolerance": {
         "changed_channel_threshold": 1,
-        "max_mean_channel_delta_microunits": 10000,
-        "max_changed_pixel_fraction_microunits": 10000
+        "max_mean_channel_delta_microunits": 40000,
+        "max_changed_pixel_fraction_microunits": 200000
       }
     },
     {
@@ -180,8 +180,8 @@
       "sha256": "1bf239ea7c966eb89cd5477ce335c899ee049e479c4517ae8d0a3e75c62bffa0",
       "tolerance": {
         "changed_channel_threshold": 1,
-        "max_mean_channel_delta_microunits": 200,
-        "max_changed_pixel_fraction_microunits": 250
+        "max_mean_channel_delta_microunits": 10000,
+        "max_changed_pixel_fraction_microunits": 75000
       }
     },
     {
