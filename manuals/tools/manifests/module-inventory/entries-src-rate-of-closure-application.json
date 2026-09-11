@@ -716,6 +716,7 @@
         ],
         "test_paths": [
           "tests/rate_of_closure/test_camera_commands.py",
+          "tests/rate_of_closure/test_camera_controls_gui.py",
           "tests/rate_of_closure/test_camera_preferences.py"
         ],
         "unit_mentions": [

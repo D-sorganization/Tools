@@ -2277,10 +2277,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 15239,
+      "bytes_lf": 15740,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "b98318a08d5ddc5a14d329b99c9b598c7232d23a00f0123a30020d950d0f2c56",
+      "content_sha256_lf": "d297d0052077f0753e32892ecf69ff994c27ff7f92d9867cbe89fe4877c12d2c",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-FLIGHT-VIEW-PY-71E5E200D4DF",
       "language": "python",
@@ -2330,6 +2330,7 @@
           }
         ],
         "test_paths": [
+          "tests/rate_of_closure/test_camera_controls_gui.py",
           "tests/rate_of_closure/test_spatial_target_gui.py",
           "tests/rate_of_closure/test_viewers_gui.py"
         ],
@@ -7383,10 +7384,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 14787,
+      "bytes_lf": 15330,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "934059189d212f4126e5e37073077bf234cb4f5e6ceef0e41b3781f89cbbe346",
+      "content_sha256_lf": "1a9a8045fc5def7217b122e09eb18398b95a017afb80a61270da728f13aa6b1e",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SIMULATION-SCENE-RENDERER-PY-9D6DB83FAFC1",
       "language": "python",
@@ -7899,10 +7900,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 13311,
+      "bytes_lf": 15734,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "a7ae2ea87ce149c78bdf662e406649bf030756a1aca418c5697e70663a5a7334",
+      "content_sha256_lf": "610a2c74159c1988ff1d1df8719eb58042d8001ca38858b75169c89a42afc7c7",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SIMULATION-VIEW-PY-ABCB4D110119",
       "language": "python",
@@ -7952,6 +7953,7 @@
           }
         ],
         "test_paths": [
+          "tests/rate_of_closure/test_camera_controls_gui.py",
           "tests/rate_of_closure/test_simulation_gui.py",
           "tests/rate_of_closure/test_wedge_ground_clearance_gui.py"
         ],
