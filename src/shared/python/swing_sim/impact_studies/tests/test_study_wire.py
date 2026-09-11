@@ -189,3 +189,235 @@ def test_illustrative_tier_has_no_extra_requirements() -> None:
         v1_coupling_report=None,
     )
     assert parse_study_wire(serialize_study_wire(study)) == study
+
+
+def test_empty_acoustic_tuple_is_refused_in_study_construction() -> None:
+    with pytest.raises(
+        ValueError, match="acoustic_metrics must be None or a non-empty tuple"
+    ):
+        ImpactStudyV1(
+            study_id="study-0007",
+            model_tier=EvidenceTier.ILLUSTRATIVE,
+            provenance=Provenance(code_id="engine@1", data_ids=()),
+            launch_metrics=(),
+            contact_metrics=(),
+            vibration_metrics=(),
+            acoustic_metrics=(),  # empty tuple must be refused; use None for absence
+            completeness=CompletenessChecks(
+                energy_closure_residual_fraction=None,
+                convergence_demonstrated=False,
+            ),
+            invalid_cases=(),
+            v1_coupling_report=None,
+        )
+
+
+def test_wire_with_empty_acoustic_metrics_is_refused() -> None:
+    base = json.loads(serialize_study_wire(_study(with_acoustics=False)))
+    base["acoustic_metrics"] = []
+    with pytest.raises(ValueError, match="acoustic_metrics"):
+        parse_study_wire(json.dumps(base))
+
+
+def test_wire_with_unknown_top_level_field_is_refused() -> None:
+    base = json.loads(serialize_study_wire(_study()))
+    base["unexpected_field"] = "malicious_or_unknown"
+    with pytest.raises(ValueError, match="unknown field.*unexpected_field"):
+        parse_study_wire(json.dumps(base))
+
+
+def test_wire_with_unknown_provenance_field_is_refused() -> None:
+    base = json.loads(serialize_study_wire(_study()))
+    base["provenance"]["unexpected_subfield"] = 42
+    with pytest.raises(ValueError, match="unknown field.*unexpected_subfield"):
+        parse_study_wire(json.dumps(base))
+
+
+def test_wire_with_unknown_completeness_field_is_refused() -> None:
+    base = json.loads(serialize_study_wire(_study()))
+    base["completeness"]["unexpected_subfield"] = 42
+    with pytest.raises(ValueError, match="unknown field.*unexpected_subfield"):
+        parse_study_wire(json.dumps(base))
+
+
+def test_wire_with_unknown_metric_field_is_refused() -> None:
+    base = json.loads(serialize_study_wire(_study()))
+    base["launch_metrics"][0]["extra_metric_field"] = "bad"
+    with pytest.raises(ValueError, match="unknown field.*extra_metric_field"):
+        parse_study_wire(json.dumps(base))
+
+
+def test_wire_with_unknown_invalid_case_field_is_refused() -> None:
+    base = json.loads(serialize_study_wire(_study()))
+    base["invalid_cases"][0]["extra_case_field"] = "bad"
+    with pytest.raises(ValueError, match="unknown field.*extra_case_field"):
+        parse_study_wire(json.dumps(base))
+
+
+def test_non_string_v1_coupling_report_is_refused() -> None:
+    with pytest.raises((TypeError, ValueError), match="v1_coupling_report"):
+        ImpactStudyV1(
+            study_id="study-0008",
+            model_tier=EvidenceTier.ILLUSTRATIVE,
+            provenance=Provenance(code_id="engine@1", data_ids=()),
+            launch_metrics=(),
+            contact_metrics=(),
+            vibration_metrics=(),
+            acoustic_metrics=None,
+            completeness=CompletenessChecks(),
+            invalid_cases=(),
+            v1_coupling_report={"report_format": "golf_club.impact_coupling_report/1"},  # type: ignore[arg-type]
+        )
+
+
+def test_wire_with_dict_v1_coupling_report_is_refused() -> None:
+    base = json.loads(serialize_study_wire(_study()))
+    base["v1_coupling_report"] = {"report_format": "golf_club.impact_coupling_report/1"}
+    with pytest.raises(ValueError, match="v1_coupling_report"):
+        parse_study_wire(json.dumps(base))
+
+
+def test_invalid_json_v1_coupling_report_is_refused() -> None:
+    with pytest.raises(ValueError, match="v1_coupling_report.*JSON"):
+        ImpactStudyV1(
+            study_id="study-0009",
+            model_tier=EvidenceTier.ILLUSTRATIVE,
+            provenance=Provenance(code_id="engine@1", data_ids=()),
+            launch_metrics=(),
+            contact_metrics=(),
+            vibration_metrics=(),
+            acoustic_metrics=None,
+            completeness=CompletenessChecks(),
+            invalid_cases=(),
+            v1_coupling_report="not-valid-json",
+        )
+
+
+def test_unrecognized_format_v1_coupling_report_is_refused() -> None:
+    with pytest.raises(ValueError, match="v1_coupling_report format"):
+        ImpactStudyV1(
+            study_id="study-0010",
+            model_tier=EvidenceTier.ILLUSTRATIVE,
+            provenance=Provenance(code_id="engine@1", data_ids=()),
+            launch_metrics=(),
+            contact_metrics=(),
+            vibration_metrics=(),
+            acoustic_metrics=None,
+            completeness=CompletenessChecks(),
+            invalid_cases=(),
+            v1_coupling_report='{"format":"unrecognized/v99"}',
+        )
+
+
+def test_uncertainty_convention_and_confidence_level_validation() -> None:
+    # Convention without uncertainty is rejected
+    with pytest.raises(ValueError, match="uncertainty_convention requires uncertainty"):
+        MetricRecord(
+            name="v",
+            value=10.0,
+            unit="m/s",
+            uncertainty=None,
+            uncertainty_convention="coverage_interval",
+        )
+
+    # Confidence level without uncertainty is rejected
+    with pytest.raises(ValueError, match="confidence_level requires uncertainty"):
+        MetricRecord(
+            name="v", value=10.0, unit="m/s", uncertainty=None, confidence_level=0.95
+        )
+
+    # Invalid confidence level bounds
+    with pytest.raises(ValueError, match="confidence_level must be in \\(0, 1\\)"):
+        MetricRecord(
+            name="v", value=10.0, unit="m/s", uncertainty=0.5, confidence_level=1.5
+        )
+    with pytest.raises(ValueError, match="confidence_level must be in \\(0, 1\\)"):
+        MetricRecord(
+            name="v", value=10.0, unit="m/s", uncertainty=0.5, confidence_level=0.0
+        )
+
+    # Default convention is one_sigma
+    m_default = MetricRecord(name="v", value=10.0, unit="m/s", uncertainty=0.5)
+    assert m_default.uncertainty_convention == "one_sigma"
+    assert m_default.confidence_level is None
+
+    # Explicit convention and confidence level
+    m_ci = MetricRecord(
+        name="v",
+        value=10.0,
+        unit="m/s",
+        uncertainty=0.5,
+        uncertainty_convention="coverage_interval",
+        confidence_level=0.95,
+    )
+    assert m_ci.uncertainty_convention == "coverage_interval"
+    assert m_ci.confidence_level == 0.95
+
+
+def test_uncertainty_convention_round_trip() -> None:
+    metric = MetricRecord(
+        name="ball_speed_mps",
+        value=52.1,
+        unit="m/s",
+        uncertainty=0.3,
+        uncertainty_convention="coverage_interval",
+        confidence_level=0.95,
+    )
+    study = ImpactStudyV1(
+        study_id="study-ci-001",
+        model_tier=EvidenceTier.ILLUSTRATIVE,
+        provenance=Provenance(code_id="engine@1", data_ids=()),
+        launch_metrics=(metric,),
+        contact_metrics=(),
+        vibration_metrics=(),
+        acoustic_metrics=None,
+        completeness=CompletenessChecks(),
+        invalid_cases=(),
+        v1_coupling_report=None,
+    )
+    wire = serialize_study_wire(study)
+    parsed = parse_study_wire(wire)
+    assert parsed.launch_metrics[0].uncertainty_convention == "coverage_interval"
+    assert parsed.launch_metrics[0].confidence_level == 0.95
+
+
+def test_paired_control_cannot_be_self() -> None:
+    with pytest.raises(ValueError, match="paired_control_id cannot equal study_id"):
+        ImpactStudyV1(
+            study_id="study-self-control",
+            model_tier=EvidenceTier.ILLUSTRATIVE,
+            provenance=Provenance(
+                code_id="engine@1",
+                data_ids=(),
+                paired_control_id="study-self-control",
+            ),
+            launch_metrics=(),
+            contact_metrics=(),
+            vibration_metrics=(),
+            acoustic_metrics=None,
+            completeness=CompletenessChecks(),
+            invalid_cases=(),
+            v1_coupling_report=None,
+        )
+
+
+def test_qualification_evidence_verification_for_measured_validated_tier() -> None:
+    from shared.python.swing_sim.impact_studies import verify_study_qualification
+
+    study = _study(EvidenceTier.MEASURED_VALIDATED)
+    # Without a resolver, MEASURED_VALIDATED refuses validation because
+    # metadata labels are not evidence authentication.
+    with pytest.raises(ValueError, match="requires an evidence resolver"):
+        verify_study_qualification(study)
+
+    # With a resolver that confirms calibration_id and data_ids
+    valid_ids = {"cal-2026-09-01", "sha256:abc123"}
+    verify_study_qualification(study, resolver=lambda i: i in valid_ids)
+
+    # With an unresolvable calibration_id
+    with pytest.raises(ValueError, match="unresolvable calibration_id"):
+        verify_study_qualification(study, resolver=lambda i: i == "sha256:abc123")
+
+    # With an unresolvable data_id
+    with pytest.raises(ValueError, match="unresolvable data_id"):
+        verify_study_qualification(study, resolver=lambda i: i == "cal-2026-09-01")

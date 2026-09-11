@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "provisional",
-      "bytes_lf": 1588,
+      "bytes_lf": 1700,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "f3b35ea77c6d78cca56b549a07b75506b07f7ee6bd4c4f984f3ae480fe95985d",
+      "content_sha256_lf": "e4b118e3354860addfd73d7d5e9de153232d560524e9ea7ff353d5e725be26b4",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-STUDIES-INIT-PY-3474E3CC24E2",
       "language": "python",
@@ -54,6 +54,11 @@
           {
             "kind": "re-export",
             "name": "CompletenessChecks",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "EvidenceResolver",
             "signature": null
           },
           {
@@ -110,6 +115,11 @@
             "kind": "re-export",
             "name": "study_statement",
             "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "verify_study_qualification",
+            "signature": null
           }
         ],
         "test_paths": [],
@@ -119,10 +129,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 3309,
+      "bytes_lf": 3771,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "7d6ab8cf11ea8f0f50971fc66a8308494a7387009afc85b6bda20132d915fb2a",
+      "content_sha256_lf": "ae1a56005baebe4f7aa5ddaa5b31de4f42aaf0f63ee5abefaee20f7c4fd5e098",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-STUDIES-SURFACE-PY-35A215AFD5B4",
       "language": "python",
@@ -199,10 +209,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 12293,
+      "bytes_lf": 23172,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "8d69ed454c19713467024dcad32c1b9b1607de9f32c68bf9d713630d20ac5dfe",
+      "content_sha256_lf": "a627c7069885e833bc66aa419fd5545f2e1b01b855882925217f7310a1c28b91",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-STUDIES-WIRE-PY-2C55F2B8E72C",
       "language": "python",
@@ -249,6 +259,11 @@
           },
           {
             "kind": "class",
+            "name": "EvidenceResolver",
+            "signature": null
+          },
+          {
+            "kind": "class",
             "name": "EvidenceTier",
             "signature": null
           },
@@ -283,6 +298,31 @@
             "signature": null
           },
           {
+            "kind": "constant",
+            "name": "_ALLOWED_COMPLETENESS_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ALLOWED_INVALID_CASE_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ALLOWED_METRIC_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ALLOWED_PROVENANCE_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ALLOWED_STUDY_KEYS",
+            "signature": null
+          },
+          {
             "kind": "function",
             "name": "parse_study_wire",
             "signature": "document: str"
@@ -291,6 +331,11 @@
             "kind": "function",
             "name": "serialize_study_wire",
             "signature": "study: ImpactStudyV1"
+          },
+          {
+            "kind": "function",
+            "name": "verify_study_qualification",
+            "signature": "study: ImpactStudyV1, *, resolver: EvidenceResolver | Callable[[str], bool] | Mapping[str, Any] | None=None"
           }
         ],
         "test_paths": [],

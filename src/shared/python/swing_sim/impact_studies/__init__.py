@@ -26,6 +26,7 @@ from shared.python.swing_sim.impact_studies.surface import (
 from shared.python.swing_sim.impact_studies.wire import (
     STUDY_WIRE_FORMAT,
     CompletenessChecks,
+    EvidenceResolver,
     EvidenceTier,
     ImpactStudyV1,
     InvalidCase,
@@ -33,12 +34,14 @@ from shared.python.swing_sim.impact_studies.wire import (
     Provenance,
     parse_study_wire,
     serialize_study_wire,
+    verify_study_qualification,
 )
 
 __all__ = [
     "STUDY_WIRE_FORMAT",
     "AcousticsUnavailableError",
     "CompletenessChecks",
+    "EvidenceResolver",
     "EvidenceTier",
     "ImpactStudyV1",
     "InvalidCase",
@@ -49,4 +52,5 @@ __all__ = [
     "parse_study_wire",
     "serialize_study_wire",
     "study_statement",
+    "verify_study_qualification",
 ]
