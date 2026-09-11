@@ -172,3 +172,6 @@
 ## 2026-09-10 - Avoid spread operator for large array bounds
 **Learning:** Spreading large arrays (like histogram plotting inputs which scale up to MAX_PLOT_SAMPLES) into Math.min/max causes severe GC pressure and risks exceeding the call stack.
 **Action:** Always use a single-pass loop to calculate extents dynamically for plot arrays instead of spreading elements onto the stack.
+## 2026-09-11 - [Optimize max bounds mapping]
+**Learning:** In JavaScript/TypeScript, when calculating min/max bounds across large datasets (e.g., dynamically establishing charting scales), avoid using `Math.min(...spread)` and `Math.max(...spread)`. It causes high garbage collection pressure and can result in 'Maximum call stack size exceeded' errors.
+**Action:** Use a single-pass `for` loop to compute the bounds dynamically instead.
