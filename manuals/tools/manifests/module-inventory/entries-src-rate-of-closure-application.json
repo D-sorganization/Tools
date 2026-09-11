@@ -1808,11 +1808,13 @@
           }
         ],
         "test_paths": [
-          "tests/rate_of_closure/test_morris_metric_validation.py"
+          "tests/rate_of_closure/test_morris_metric_validation.py",
+          "tests/rate_of_closure/test_morris_ui_contract.py"
         ],
         "unit_mentions": [],
         "validation_paths": [
-          "tests/rate_of_closure/test_morris_metric_validation.py"
+          "tests/rate_of_closure/test_morris_metric_validation.py",
+          "tests/rate_of_closure/test_morris_ui_contract.py"
         ]
       }
     },
