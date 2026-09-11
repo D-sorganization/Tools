@@ -216,6 +216,43 @@ def test_interacting_fixture_reports_nonzero_sigma_without_claiming_causality() 
     assert "interaction" in report.interaction_caveat
 
 
+def test_polynomial_quadratic_fixture_recovers_exact_analytical_sigma() -> None:
+    """Polynomial response functions produce exact closed-form elementary effects
+    and non-zero sigma directly derivable from the grid lattice geometry (#4458).
+
+    For f(x) = 2 * x0^2 + 3 * x1 with levels=4 (Delta = 2/3):
+    - Factor 0 step difference quotient delta_f / delta_w = 2 * (2 * x + delta).
+      On the 4-level grid {0, 1/3, 2/3, 1}, stepping by +/- 2/3 yields:
+      * from 0 to 2/3: 2 * (0 + 2/3) = 4/3
+      * from 1/3 to 1: 2 * (2/3 + 2/3) = 8/3
+      * from 2/3 to 0: 2 * (4/3 - 2/3) = 4/3
+      * from 1 to 1/3: 2 * (2 - 2/3) = 8/3
+      Every single trajectory elementary effect is algebraically exactly 4/3 or 8/3.
+    - Factor 1 is linear: EE = 3.0 across all trajectories (sigma = 0).
+    """
+    observations = _observations(
+        lambda point: 2.0 * point[0] ** 2 + 3.0 * point[1], trajectories=12, seed=73
+    )
+    report = analyze_morris(observations)
+    face = report.estimate("face-window", "clubhead_x_m")
+    speed = report.estimate("speed-global", "clubhead_x_m")
+
+    expected_mu = 19.0 / 9.0
+    expected_var = 140.0 / 297.0
+    expected_sigma = float(np.sqrt(expected_var))
+    expected_se = float(expected_sigma / np.sqrt(12))
+
+    assert face.mu == pytest.approx(expected_mu, rel=1e-12)
+    assert face.mu_star == pytest.approx(expected_mu, rel=1e-12)
+    assert face.sigma == pytest.approx(expected_sigma, rel=1e-12)
+    assert face.mu_star_standard_error == pytest.approx(expected_se, rel=1e-12)
+
+    assert speed.mu == pytest.approx(3.0)
+    assert speed.mu_star == pytest.approx(3.0)
+    assert speed.sigma == pytest.approx(0.0, abs=1e-12)
+    assert speed.mu_star_standard_error == pytest.approx(0.0, abs=1e-12)
+
+
 def test_constant_output_is_explicit_and_not_reported_as_unavailable() -> None:
     report = analyze_morris(_observations(lambda _point: 7.0))
     estimate = report.estimate("face-window", "clubhead_x_m")
