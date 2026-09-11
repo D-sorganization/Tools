@@ -107,3 +107,36 @@ def test_statement_shows_launch_separately_from_sound() -> None:
 def test_statement_reports_absent_acoustics_explicitly() -> None:
     statement = study_statement(_study(EvidenceTier.VERIFIED))
     assert "unavailable" in statement.lower()
+
+
+def test_acoustics_available_false_when_empty_tuple() -> None:
+    # If a study object has acoustic_metrics as None or empty,
+    # acoustics_available must be False.
+    study = _study(EvidenceTier.VERIFIED, with_acoustics=False)
+    assert acoustics_available(study) is False
+
+
+def test_surface_renders_uncertainty_convention_and_confidence_interval() -> None:
+    study = ImpactStudyV1(
+        study_id="study-ci-render",
+        model_tier=EvidenceTier.ILLUSTRATIVE,
+        provenance=Provenance(code_id="engine@1", data_ids=()),
+        launch_metrics=(
+            MetricRecord(
+                name="ball_speed_mps",
+                value=52.1,
+                unit="m/s",
+                uncertainty=0.5,
+                uncertainty_convention="coverage_interval",
+                confidence_level=0.95,
+            ),
+        ),
+        contact_metrics=(),
+        vibration_metrics=(),
+        acoustic_metrics=None,
+        completeness=CompletenessChecks(),
+        invalid_cases=(),
+        v1_coupling_report=None,
+    )
+    statement = study_statement(study)
+    assert "ball_speed_mps=52.1 m/s ±0.5 (95% coverage_interval)" in statement

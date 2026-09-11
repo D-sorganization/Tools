@@ -795,7 +795,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-impact-interval.json"
     },
     {
-      "content_sha256_lf": "d810159e1d2d5c5e9d8812e4ea57c6ee4c7f9f11b8b818cae2d77c3ad87dc056",
+      "content_sha256_lf": "50a56fc6cefb28756830c073f5cd20e8b0fa20593fdc1a2eb50abd6f298b0ed1",
       "entry_count": 3,
       "package": "src/shared/python/swing_sim/impact_studies",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-impact-studies.json"

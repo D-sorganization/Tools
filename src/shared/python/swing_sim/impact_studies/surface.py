@@ -32,10 +32,10 @@ class AcousticsUnavailableError(LookupError):
 
 
 def acoustics_available(study: ImpactStudyV1) -> bool:
-    """Return ``True`` only when the study carries an acoustic section."""
+    """Return ``True`` only when the study carries a non-empty acoustic section."""
     if not isinstance(study, ImpactStudyV1):
         raise TypeError("study must be ImpactStudyV1")
-    return study.acoustic_metrics is not None
+    return bool(study.acoustic_metrics)
 
 
 def acoustic_metrics_or_raise(study: ImpactStudyV1) -> tuple[MetricRecord, ...]:
@@ -46,7 +46,7 @@ def acoustic_metrics_or_raise(study: ImpactStudyV1) -> tuple[MetricRecord, ...]:
             Callers must surface the refusal, never substitute zeros.
     """
     metrics: tuple[MetricRecord, ...] | None = study.acoustic_metrics
-    if metrics is None:
+    if not metrics:
         raise AcousticsUnavailableError(study.study_id)
     return metrics
 
@@ -54,12 +54,24 @@ def acoustic_metrics_or_raise(study: ImpactStudyV1) -> tuple[MetricRecord, ...]:
 def _format_metrics(title: str, records: tuple[MetricRecord, ...] | None) -> str:
     if not records:
         return f"{title}: unavailable"
-    rendered = ", ".join(
-        f"{record.name}={record.value:g} {record.unit}"
-        + (f" ±{record.uncertainty:g}" if record.uncertainty is not None else "")
-        for record in records
-    )
-    return f"{title}: {rendered}"
+    items: list[str] = []
+    for record in records:
+        item = f"{record.name}={record.value:g} {record.unit}"
+        if record.uncertainty is not None:
+            item += f" ±{record.uncertainty:g}"
+            if record.confidence_level is not None:
+                item += (
+                    f" ({record.confidence_level * 100:g}% "
+                    f"{record.uncertainty_convention})"
+                )
+            elif (
+                record.uncertainty_convention
+                and record.uncertainty_convention != "one_sigma"
+            ):
+                item += f" ({record.uncertainty_convention})"
+        items.append(item)
+
+    return f"{title}: {', '.join(items)}"
 
 
 def study_statement(study: ImpactStudyV1) -> str:

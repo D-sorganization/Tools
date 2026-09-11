@@ -9,6 +9,7 @@ import shared.python.swing_sim.impact_studies as studies
 EXPECTED_PUBLIC_API = {
     "AcousticsUnavailableError",
     "CompletenessChecks",
+    "EvidenceResolver",
     "EvidenceTier",
     "ImpactStudyV1",
     "InvalidCase",
@@ -20,6 +21,7 @@ EXPECTED_PUBLIC_API = {
     "parse_study_wire",
     "serialize_study_wire",
     "study_statement",
+    "verify_study_qualification",
 }
 
 
