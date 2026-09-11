@@ -19,6 +19,7 @@ from rate_of_closure.variation.locus_execution_capabilities import (
     LocusExecutionCapability,
     load_locus_execution_contract,
 )
+from rate_of_closure.variation.simulation_types import SimulationEnsembleRequest
 from shared.python.contracts import require
 from shared.python.swing_sim.integration_grid import effective_rk4_duration
 from shared.python.swing_sim.run_config import (
@@ -90,6 +91,18 @@ def build_simulation_ensemble_request(
     is not modeled. This prevents an arc plot from implying that a scalar-only
     delivery perturbation changed the swing geometry.
     """
+    _validate_request_context(plan, base_config)
+    return LazySimulationEnsembleSource(
+        plan,
+        lambda row: _apply_row(base_config, plan, row),
+    )
+
+
+def _validate_request_context(
+    plan: VariationPlan,
+    base_config: SimulationConfig,
+) -> None:
+    """Validate that plan and base_config satisfy trace and locus capabilities."""
     require(isinstance(plan, VariationPlan), "plan must be a VariationPlan")
     require(
         isinstance(base_config, SimulationConfig),
@@ -116,10 +129,47 @@ def build_simulation_ensemble_request(
         unsupported_details,
     )
     _validate_noise_loci(plan, base_config)
-    return LazySimulationEnsembleSource(
-        plan,
-        lambda row: _apply_row(base_config, plan, row),
+
+
+def _normalize_explicit_samples(
+    sampled_inputs: np.ndarray,
+    plan: VariationPlan,
+) -> np.ndarray:
+    """Validate and copy explicit caller-supplied design rows."""
+    require(
+        isinstance(sampled_inputs, np.ndarray),
+        "sampled_inputs must be a numpy ndarray",
     )
+    require(
+        not np.issubdtype(sampled_inputs.dtype, np.bool_),
+        "boolean sample arrays are rejected to avoid silent numerical conversion",
+    )
+    samples = np.array(sampled_inputs, dtype=float, copy=True)
+    require(samples.ndim == 2, "sampled_inputs must be a 2D matrix", samples.shape)
+    require(
+        samples.shape == (plan.n_runs, len(plan.noise)),
+        "sampled_inputs has invalid shape",
+        samples.shape,
+    )
+    require(bool(np.all(np.isfinite(samples))), "sampled_inputs must be finite")
+    return samples
+
+
+def build_simulation_ensemble_request_from_samples(
+    plan: VariationPlan,
+    base_config: SimulationConfig,
+    sampled_inputs: np.ndarray,
+) -> SimulationEnsembleRequest:
+    """Build a request from an explicit finite sample matrix.
+
+    This seam is for deterministic experimental designs whose rows are the
+    scientific authority (for example, planted baseline/perturbation pairs),
+    rather than pseudorandom Monte Carlo draws.
+    """
+    _validate_request_context(plan, base_config)
+    samples = _normalize_explicit_samples(sampled_inputs, plan)
+    configs = tuple(_apply_row(base_config, plan, row) for row in samples)
+    return SimulationEnsembleRequest(plan, samples, configs)
 
 
 def _apply_row(
@@ -338,4 +388,5 @@ __all__ = [
     "LOCALIZED_TORQUE_VARIABLE_JOINTS",
     "apply_global_simulation_values",
     "build_simulation_ensemble_request",
+    "build_simulation_ensemble_request_from_samples",
 ]
