@@ -71,8 +71,7 @@ cd src/rate_of_closure/web && npm install && npm run dev
 ```
 
 The web app builds to a static bundle (`npm run build`) that can be hosted
-anywhere as a link, and carries the same Tauri scripts as the other web
-tools for desktop packaging.
+anywhere as a link or static distribution.
 
 Both interfaces open with a generated driver head and its engineering CG
 target visible. The Simulation view runs immediately and supports manual,
@@ -92,11 +91,11 @@ environment:
 python src/rate_of_closure/build_executable.py            # one-folder app
 python src/rate_of_closure/build_executable.py --onefile  # single file
 
-# Web shell (Tauri) — from src/rate_of_closure/web
-npm run tauri build
+# Web distribution — from src/rate_of_closure/web
+npm run build
 ```
 
-The PyInstaller output lands in `dist/RateOfClosureExplorer`.
+The PyInstaller output lands in `dist/RateOfClosureExplorer`. Web static bundle lands in `dist/`.
 
 ## Structure
 
