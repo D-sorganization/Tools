@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "1bba751c693577c474ac9f2724c392eb9d4f31e3481056f060316d2af7537ae2",
+      "content_sha256_lf": "9f5be67cc211a8440ce01018a39e678763ca1ce4db93180c692ab71ccf5e6902",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "2afcd7c7dece594452ad2fdbe2b134dfd9a7db05d26716e5659e47b23b2060d2",
+      "content_sha256_lf": "b69cc1bd6e4458deb1fabb1f6e6766ec957880367b29efcedbff1993df2cae05",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -441,7 +441,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure.json"
     },
     {
-      "content_sha256_lf": "c8e5ca69549545fca88ab7b623a041ed0192a1c674e978c4174f4b291a411f33",
+      "content_sha256_lf": "f28693509eebd43b3973f7def8c31d83c5a5a1f467f32871002a08a022a19377",
       "entry_count": 66,
       "package": "src/rate_of_closure/application",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-application.json"
@@ -525,7 +525,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-hooks.json"
     },
     {
-      "content_sha256_lf": "ccd6dedc3b8d078fd40ad593fc03d8ea1211aad48779c22cbe21675113de2cf0",
+      "content_sha256_lf": "e829075124a0b1d5e689497ee5524a6a93b833d43f426236f111580ddcf819f2",
       "entry_count": 400,
       "package": "src/rate_of_closure/web/src/model",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-model.json"
