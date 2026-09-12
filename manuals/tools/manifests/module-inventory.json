@@ -111,19 +111,19 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "b9cace85f26b0f47c1f9ce5054279e8d2070857608feb0d85c2cd6d64e51138d",
-      "entry_count": 16,
+      "content_sha256_lf": "5cbc57e32727413645d6b9977a3c7f563cf59fb964cfea6f61afdbeadccbf68b",
+      "entry_count": 17,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "e11dd8c20ede27df0ad429753bcc5b3fa028f973044e4d96dfc10a7a702ad240",
+      "content_sha256_lf": "68544a77f8c540ac16ca21cf7325f826ba882a2e35f7cc8978a61a97da89d5cf",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
     },
     {
-      "content_sha256_lf": "e3b1b5e4285420cb20da1ccd657570ead6dc0664dc6fd38c1daed58c411e3167",
+      "content_sha256_lf": "b9314784edc0555f64124fd12d4f68a59fdeb454b211c2dc0d4f3ac97d2f6fb2",
       "entry_count": 5,
       "package": "rust_core/data-processor-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "d4ea29e63fd1b605561f17fddf23691da2f970ff51ece9d0a410536ef920ea90",
+      "content_sha256_lf": "9f5be67cc211a8440ce01018a39e678763ca1ce4db93180c692ab71ccf5e6902",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -159,7 +159,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "bf114df85944eba3dbf47b4fab4fe8dbbe28c09856c46c9b2a12bb10d3e0a561",
+      "content_sha256_lf": "d06943f6deb6b2e42b6092d476183992de6ec8ebd78d6140e41d19a084d72b1b",
       "entry_count": 105,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
@@ -513,7 +513,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src.json"
     },
     {
-      "content_sha256_lf": "ec2c55b2f8ed2809d91c3649966d05f294cf5404293c6197a39947f96fb00a03",
+      "content_sha256_lf": "dafdd534d69e032806560b8f3fc017bd7ee9ddfe4ea4bce2f6f5b74dcb99101a",
       "entry_count": 180,
       "package": "src/rate_of_closure/web/src/components",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-components.json"

@@ -119,6 +119,8 @@ ROOT_ALLOWLIST: frozenset[str] = frozenset(
         "tools.json",  # generated tool registry (scripts/generate_tools_json.py)
         "uv.lock",
         "verify_launcher.py",
+        "visual-baseline-candidates",  # only a .gitkeep; CI evidence upload dir
+        "wave_solver.py",
     }
 )
 

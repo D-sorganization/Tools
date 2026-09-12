@@ -1115,6 +1115,84 @@
         "unit_mentions": [],
         "validation_paths": []
       }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 8932,
+      "classification": "calculation",
+      "classification_basis": "path-marker:solver",
+      "content_sha256_lf": "10eea4dbf2198959c07b3ab34260af5b71f0a3c5391ed2ac176f0e012760a543",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-WAVE-SOLVER-PY-8A1D594A91B7",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "wave_solver.py",
+      "purpose": "Autonomous issue-solving wave runner (hardened).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "WaveConfig",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_claude_argv",
+            "signature": "prompt: str, *, skip_permissions: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "build_pr_create_argv",
+            "signature": "num: int, title: str"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "config: WaveConfig | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "run_cmd",
+            "signature": "argv: Sequence[str], cwd: Path | None=None, ignore_err: bool=False, *, mutating: bool=False, config: WaveConfig | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/test_wave_solver.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
     }
   ],
   "package": "root",

@@ -20,13 +20,7 @@ async function fileSha256(file: File): Promise<string> {
 }
 
 function CapabilityPlot({ vendors }: { readonly vendors: typeof defaultCapabilities.vendors }) {
-  // ⚡ Bolt Optimization: Use single-pass loop instead of Math.max(...array.map(...))
-  let maximum = 1;
-  for (let i = 0; i < vendors.length; i++) {
-    if (vendors[i].strictRowCount > maximum) {
-      maximum = vendors[i].strictRowCount;
-    }
-  }
+  const maximum = Math.max(1, ...vendors.map((vendor) => vendor.strictRowCount));
   return <svg viewBox="0 0 640 190" role="img" aria-label="Vendor strict eligible input rows chart" className="mb-3 h-64 w-full rounded bg-slate-950">
     <title>Strict five-input rows by vendor; availability remains policy governed</title>
     <text x="12" y="18" fill="#94a3b8">Strict eligible input rows (count)</text>
