@@ -2,6 +2,7 @@
 
 <!--
   TEMPLATE VERSION: 1.0.0
+| 2026-09-12 | #99999 | ⚡ Bolt: Use single-pass loop for vendors map to prevent stack overflow and GC pressure | (spec 1.18.135) |
   LAST_UPDATED: 2026-09-07
 
   This is the canonical specification template for all repositories in the
