@@ -40,7 +40,7 @@ export function GroundPlaybackToolbar({
 }: GroundPlaybackToolbarProps) {
   return (
     <div className="flex flex-wrap gap-2">
-      <label className="inline-flex cursor-pointer rounded border border-sky-500/60 bg-sky-500/10 px-3 py-2 text-sm font-semibold text-sky-200">
+      <label className="inline-flex cursor-pointer rounded border border-sky-500/60 bg-sky-500/10 px-3 py-2 text-sm font-semibold text-sky-200 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500">
         Import Ground Result JSON…
         <input
           type="file"
@@ -53,7 +53,7 @@ export function GroundPlaybackToolbar({
           }}
         />
       </label>
-      <label className="inline-flex cursor-pointer rounded border border-slate-700 px-3 py-2 text-sm font-semibold text-slate-200">
+      <label className="inline-flex cursor-pointer rounded border border-slate-700 px-3 py-2 text-sm font-semibold text-slate-200 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500">
         Import Workspace JSON…
         <input
           type="file"
@@ -68,7 +68,7 @@ export function GroundPlaybackToolbar({
       </label>
       {result !== null && (
         <>
-          <label className="inline-flex cursor-pointer rounded border border-cyan-500/60 bg-cyan-500/10 px-3 py-2 text-sm font-semibold text-cyan-200">
+          <label className="inline-flex cursor-pointer rounded border border-cyan-500/60 bg-cyan-500/10 px-3 py-2 text-sm font-semibold text-cyan-200 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500">
             Import Comparison JSON…
             <input
               type="file"
