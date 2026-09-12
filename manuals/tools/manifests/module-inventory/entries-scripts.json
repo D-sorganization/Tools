@@ -2872,10 +2872,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6830,
+      "bytes_lf": 6723,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "cf6ac7b40974c7c60acdb2851feea9a87b0b866401950d99f49b966f016ff4f8",
+      "content_sha256_lf": "6927d7e87e921874c00892a0849fced79d80b03d06e0b248876d0d6f36457e15",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-ROOT-ALLOWLIST-PY-94782E1774B7",
       "language": "python",

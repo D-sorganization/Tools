@@ -419,7 +419,6 @@
           "tests/test_dry_compliance.py",
           "tests/test_mypy_exclusion_cleanup.py",
           "tests/test_pendulum_provider_manifest.py",
-          "tests/test_wave_solver.py",
           "tests/tools/test_mypy_autofix_agent.py",
           "tests/unit/agent_context/test_cli.py",
           "tests/unit/agent_context/test_integrity.py",
