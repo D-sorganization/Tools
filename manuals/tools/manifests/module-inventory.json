@@ -111,8 +111,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "5cbc57e32727413645d6b9977a3c7f563cf59fb964cfea6f61afdbeadccbf68b",
-      "entry_count": 17,
+      "content_sha256_lf": "b9cace85f26b0f47c1f9ce5054279e8d2070857608feb0d85c2cd6d64e51138d",
+      "entry_count": 16,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
