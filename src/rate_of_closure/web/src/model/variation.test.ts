@@ -15,6 +15,7 @@ import {
   CATEGORY_DELIVERY,
   CATEGORY_LAUNCH,
   MAX_RUNS,
+  evaluateRun,
   keysForMode,
   mulberry32,
   planFromJson,
@@ -211,8 +212,13 @@ describe("sensitivity", () => {
   });
 });
 
-describe("statistical parity with the Python engine", () => {
-  it("matches the fixture dispersion within the loose band", () => {
+describe("statistical sanity band with independent PRNGs", () => {
+  it("matches the fixture dispersion within the statistical sanity band", () => {
+    // Tests that unconstrained Monte Carlo draws using Mulberry32 produce
+    // physically plausible dispersion stats consistent with the Python reference
+    // distribution within a broad statistical sanity band. Exact RNG parity is
+    // deliberately not required; tight cross-runtime agreement is tested by
+    // the explicit_design gate below (#4456).
     const plan = planFromJson(JSON.stringify(parityFixture.plan));
     const dataset = runVariation(plan);
     expect(dataset.success.every(Boolean)).toBe(true);
@@ -226,6 +232,74 @@ describe("statistical parity with the Python engine", () => {
         band.std_rel_tolerance,
       );
     }
+  });
+});
+
+describe("deterministic cross-runtime parity on explicit sample matrix", () => {
+  it("matches the Python reference outputs to millimeter precision for every row", () => {
+    const explicit = parityFixture.explicit_design;
+    const inputKeys = explicit.input_keys;
+    const tol = explicit.tolerances.row_abs_tolerance;
+
+    const tsOutputs: Record<string, number>[] = [];
+    for (const row of explicit.rows) {
+      const variables: Record<string, number> = {};
+      inputKeys.forEach((key: string, idx: number) => {
+        variables[key] = row.inputs[idx];
+      });
+      const actual = evaluateRun(variables, explicit.mode as "launch" | "delivery");
+      tsOutputs.push(actual);
+
+      expect(Math.abs(actual.carry_m - row.expected.carry_m)).toBeLessThan(tol.carry_m);
+      expect(Math.abs(actual.lateral_m - row.expected.lateral_m)).toBeLessThan(tol.lateral_m);
+      expect(Math.abs(actual.apex_m - row.expected.apex_m)).toBeLessThan(tol.apex_m);
+      expect(Math.abs(actual.landing_angle_deg - row.expected.landing_angle_deg)).toBeLessThan(
+        tol.landing_angle_deg,
+      );
+      expect(Math.abs(actual.flight_time_s - row.expected.flight_time_s)).toBeLessThan(
+        tol.flight_time_s,
+      );
+    }
+
+    // Verify aggregate statistics across the explicit sample matrix
+    const n = tsOutputs.length;
+    const mean = (arr: number[]) => arr.reduce((a, b) => a + b, 0) / n;
+    const std = (arr: number[], m: number) =>
+      Math.sqrt(arr.reduce((a, b) => a + (b - m) ** 2, 0) / (n - 1));
+
+    const statsMeanTol = explicit.tolerances.stats_mean_abs_tolerance;
+    const statsStdRelTol = explicit.tolerances.stats_std_rel_tolerance;
+
+    for (const metric of ["carry_m", "lateral_m", "apex_m"] as const) {
+      const values = tsOutputs.map((o) => o[metric]);
+      const actualMean = mean(values);
+      const actualStd = std(values, actualMean);
+      const expected = (explicit.python_stats as Record<string, { mean: number; std: number }>)[
+        metric
+      ];
+
+      expect(Math.abs(actualMean - expected.mean)).toBeLessThan(
+        (statsMeanTol as Record<string, number>)[metric],
+      );
+      expect(Math.abs(actualStd - expected.std) / expected.std).toBeLessThan(statsStdRelTol);
+    }
+  });
+
+  it("detects and rejects even small numerical divergences (gate is not vacuous)", () => {
+    const explicit = parityFixture.explicit_design;
+    const firstRow = explicit.rows[0];
+    const tol = explicit.tolerances.row_abs_tolerance;
+
+    // A small 0.05 m perturbation exceeds the tight 0.005 m tolerance
+    const perturbedCarry = firstRow.expected.carry_m + 0.05;
+    expect(Math.abs(perturbedCarry - firstRow.expected.carry_m)).toBeGreaterThan(tol.carry_m);
+
+    // A 0.5% shift in std exceeds the tight 0.1% std relative tolerance
+    const expectedStd = explicit.python_stats.carry_m.std;
+    const perturbedStd = expectedStd * 1.005;
+    expect(Math.abs(perturbedStd - expectedStd) / expectedStd).toBeGreaterThan(
+      explicit.tolerances.stats_std_rel_tolerance,
+    );
   });
 });
 
