@@ -213,12 +213,12 @@ describe("variation plan schema v2", () => {
         ],
         n_runs: 8,
         seed: 4,
-        flight_model: "custom-flight-model",
+        flight_model: "waterloo_penner",
       }),
     );
 
     expect(migrated.baseVariables).toEqual({ [BALL]: 161.5 });
-    expect(migrated.flightModel).toBe("custom-flight-model");
+    expect(migrated.flightModel).toBe("waterloo_penner");
     expect(migrated.noise[0]).toMatchObject({
       specId: BALL,
       timeWindowS: null,
@@ -228,8 +228,17 @@ describe("variation plan schema v2", () => {
     expect(JSON.parse(planToJson(migrated))).toMatchObject({
       schema_version: 2,
       base_variables: { [BALL]: 161.5 },
-      flight_model: "custom-flight-model",
+      flight_model: "waterloo_penner",
     });
+  });
+
+  it("rejects persisted plans that name an unsupported browser flight model", () => {
+    const payload = JSON.parse(JSON.stringify(localizedTorqueFixture)) as VariationWireFixture;
+    payload.flight_model = "custom-flight-model";
+
+    expect(() => planFromJson(JSON.stringify(payload))).toThrow(
+      /flight model.*custom-flight-model.*waterloo_penner/i,
+    );
   });
 
   it("rejects locus metadata for variables declared whole-run only", () => {

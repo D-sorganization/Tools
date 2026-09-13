@@ -30,6 +30,8 @@ export const AUTHORITY_FLIGHT_MODELS = Object.freeze([
   "charry_l3",
 ] as const);
 
+export type AuthorityFlightModel = (typeof AUTHORITY_FLIGHT_MODELS)[number];
+
 export interface MorrisFactorDraft {
   readonly variableKey: string;
   readonly enabled: boolean;
