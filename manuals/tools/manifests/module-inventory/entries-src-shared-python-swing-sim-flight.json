@@ -2859,6 +2859,7 @@
         "test_paths": [
           "src/shared/python/swing_sim/conventions/tests/test_registry.py",
           "src/shared/python/swing_sim/flight/tests/test_registry.py",
+          "src/shared/python/swing_sim/variation/tests/test_flight_model_policy.py",
           "tests/rate_of_closure/test_derivation_models.py",
           "tests/rate_of_closure/test_flight_explorer.py",
           "tests/rate_of_closure/test_morris_ui_contract.py",
