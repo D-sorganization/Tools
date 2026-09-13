@@ -180,3 +180,6 @@
 **Learning:** Using `Math.min(...traces.map(trace => trace.length))` creates an intermediate array containing lengths and spreads them all into the call stack, which creates a huge garbage collection spike and risks a stack overflow error when `traces` is very large.
 **Action:** Replace `Math.min(...spread)` operations with a simple single-pass `for` loop that avoids allocating any arrays entirely, achieving O(1) space complexity and completely avoiding call stack depth limits.
 
+## 2026-09-13 - Prevent array copies during hot-path concatenation
+**Learning:** Inside tight optimization loops like SLSQP, using `np.concatenate([a.flatten(), b.flatten()])` creates unnecessary intermediate array allocations for 2D inputs.
+**Action:** Always use `.ravel()` instead of `.flatten()` when passing arrays to `np.concatenate()` to utilize memory views and reduce garbage collection pressure.

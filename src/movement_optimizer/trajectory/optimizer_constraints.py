@@ -120,7 +120,11 @@ def joint_limit_constraint_values(
     q = splines(t_eval)  # type: ignore[operator]  # CubicSpline is callable but typed as object
     lower = q - q_bounds[:, 0]
     upper = q_bounds[:, 1] - q
-    return np.concatenate([lower.flatten(), upper.flatten()])
+
+    # Performance optimization: Use .ravel() instead of .flatten() to return a
+    # memory view rather than a copy. This avoids allocating intermediate arrays
+    # before concatenation, which is critical in the SLSQP hot path.
+    return np.concatenate([lower.ravel(), upper.ravel()])
 
 
 def build_constraints(
