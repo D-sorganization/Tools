@@ -1,14 +1,16 @@
 # Helm / Kubernetes Deployment Notes
 
-## Tools is a Pure Python Library — No Server Process to Deploy
+## Tools Architectural Scope and Deployment Model
 
-`Tools` (distributed as the `ud-tools` pip package) is a **shared
-engineering library**, not a server or API process. It has no HTTP
-endpoints, no listening sockets, and no long-running daemon to containerise
-or schedule.
+`Tools` is primarily distributed as the `ud-tools` Python package (a shared
+engineering library) alongside standalone desktop and local web frontends
+(such as the Flask CAS calculator, FastAPI URDF viewer, and steam engine API).
+It does not run as a centralized multi-tier cloud service managed by this
+repository.
 
-Kubernetes manifests and Helm charts are therefore **not applicable** to
-this repository itself.
+Kubernetes manifests and Helm charts are therefore **not maintained in
+this repository**; production cloud deployments and Helm charts live in the
+downstream consuming repositories that containerize and operate services.
 
 ---
 
@@ -60,11 +62,12 @@ setting hard resource limits in production manifests.
 
 ## Health-Check Considerations
 
-`ud-tools` provides no HTTP health endpoint. Downstream containers that
-expose an HTTP API (e.g. via FastAPI + `calc_backend`) should wire their
-own `/health` route. The `calc_backend` module in this repo includes a
-`HealthChecker` class (`src/shared/python/calc_backend/health.py`) that
-downstream API servers can reuse.
+`ud-tools` provides no centralized cluster HTTP health endpoint. Local web
+applications and downstream containers that expose HTTP APIs (e.g. via
+FastAPI + `calc_backend` or Flask) wire their own `/health` or `/api/health`
+routes. The `calc_backend` module in this repo includes a `HealthChecker` class
+(`src/shared/python/calc_backend/health.py`) that downstream API servers and
+embedded backends can reuse.
 
 ---
 

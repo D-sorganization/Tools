@@ -32,6 +32,13 @@
 
 ## 2. Purpose & Mission
 
+### 2026-09-13 Product Artifact Hygiene: Compose, Helm, and Rate of Closure Package Lock Cleanup (#4919)
+
+Part of readiness program issue #4919:
+1. **Rate of Closure Web Dependency Cleanliness**: Synchronizes `src/rate_of_closure/web/package-lock.json` following the removal of unused `@tauri-apps/cli` packages and phantom Tauri build scripts.
+2. **Docker Compose Service Pruning**: Removes phantom and unused `postgres` and `redis` service blocks and local volume definitions from `docker-compose.yml`, eliminating unnecessary container pulls and dependencies for the local Flask developer stack.
+3. **Helm Architectural Documentation Truthfulness**: Updates `helm/README.md` to accurately state that `Tools` is primarily distributed as the `ud-tools` Python library with demonstration frontends (Flask CAS calculator, FastAPI URDF viewer, steam engine calculator API), and documents why production Kubernetes manifests and Helm charts are maintained in downstream consumer repos rather than this repository.
+
 ### 2026-09-13 Variation: Cross-Runtime Flight-Model Policy Alignment (#4457)
 
 Issue #4457 resolves the policy divergence across flight-model evaluation surfaces:
