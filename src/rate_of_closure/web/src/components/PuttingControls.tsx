@@ -233,7 +233,7 @@ export function PuttingControls({
                 min-width:auto refuses to shrink below it, so without min-w-0
                 on the label and w-full on the input this row overflows the
                 390x844 document by a few px on Linux (RM #1507). */}
-            <label className="min-w-0 flex-1 text-slate-300">
+            <label className="min-w-0 flex-1 text-slate-300 focus-within:outline-none focus-within:ring-2 focus-within:ring-sky-500 rounded">
               <span className="sr-only">Import Green Document</span>
               <input
                 aria-label="Import Green Document File"

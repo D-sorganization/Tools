@@ -80,3 +80,6 @@
 ## 2026-09-10 - File Input Focus Visibility
 **Learning:** For file inputs that are visually hidden (`sr-only`) and wrapped in a `<label>` element acting as a button, keyboard focus states are often lost. Users tabbing through the interface cannot tell when the upload button is focused.
 **Action:** Always apply `focus-within:outline` and related focus styles to the wrapping `<label>` element so that when the hidden input receives focus, the parent container visually indicates it.
+## 2026-09-13 - Focus Visibility on Label-Wrapped File Inputs
+**Learning:** When styling file upload buttons that use a visually hidden `sr-only` or `hidden` input wrapped inside a `<label>`, the browser focus ring is lost. Keyboard users cannot see which control has focus.
+**Action:** Always apply `focus-within:outline` and related focus styles to the `<label>` itself to ensure keyboard focus visibility is maintained while hiding the native input.

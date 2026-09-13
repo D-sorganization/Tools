@@ -5881,7 +5881,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 <!-- prettier-ignore-start -->
 
 | Date       | PR         | Changes    |
-| ---------- | ---------- | ---------- |
+| 2026-09-13 | #5200 | 🎨 Palette: Add keyboard focus indicator to `<label>`-wrapped file inputs in VariationActions and PuttingControls to fix accessibility issue where focus rings are lost. (spec 1.18.136) |
 | 2026-09-13 | #5202 | ⚡ Bolt: Optimize telemetry array allocation to reduce GC pressure (spec 1.18.136) |
 | 2026-09-12 | #5193 | ⚡ Bolt: Use single-pass loop for vendors map to prevent stack overflow and GC pressure |
 | 2026-09-11 | #5189 | Register cross-runtime pairing for ground_reference_conformance_v1.json (Python + Rust) and document single-runtime allowlist decisions for ground_impact_bounce_golden_v1.json and ground_skid_roll_golden_v1.json in the fixture parity contract. |
