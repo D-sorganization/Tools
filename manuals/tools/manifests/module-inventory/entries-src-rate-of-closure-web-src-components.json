@@ -6194,10 +6194,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 15356,
+      "bytes_lf": 16109,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "31fffe56515f882420a04b84b273467874994a30dca30563352632b088ffe3f8",
+      "content_sha256_lf": "8d0180741df204b55433ee37086f327607727c3a466beb2201559aec7d3accba",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-VARIATIONPANEL-TEST-TSX-41D94FF244C1",
       "language": "typescript-react",

@@ -707,6 +707,7 @@
           "src/shared/python/swing_sim/variation/tests/test_engine.py",
           "src/shared/python/swing_sim/variation/tests/test_ensemble_geometry.py",
           "src/shared/python/swing_sim/variation/tests/test_execution_metadata.py",
+          "src/shared/python/swing_sim/variation/tests/test_flight_model_policy.py",
           "src/shared/python/swing_sim/variation/tests/test_propagation.py",
           "src/shared/python/swing_sim/variation/tests/test_spec.py",
           "src/shared/python/swing_sim/variation/tests/test_trace_resampling.py",

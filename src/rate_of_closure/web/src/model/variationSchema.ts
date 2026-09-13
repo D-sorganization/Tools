@@ -17,9 +17,14 @@ import {
   wireStableIdArray,
   wireString,
 } from "./wireValues";
+import type { AuthorityFlightModel } from "./morrisAuthorityRequest";
 
 export const SCHEMA_VERSION = 2;
 export const MAX_RUNS = 500;
+export const SUPPORTED_VARIATION_FLIGHT_MODEL: AuthorityFlightModel = "waterloo_penner";
+export const BROWSER_VARIATION_FLIGHT_MODELS: readonly AuthorityFlightModel[] = Object.freeze([
+  SUPPORTED_VARIATION_FLIGHT_MODEL,
+]);
 
 export type Distribution = "normal" | "uniform" | "triangular";
 
@@ -172,6 +177,12 @@ const validateGroups = (
 export function validatePlan(plan: VariationPlanTs): void {
   if (plan.mode !== "delivery" && plan.mode !== "swing" && plan.mode !== "launch") {
     throw new Error(`mode ${plan.mode} is not supported in the browser`);
+  }
+  if (plan.flightModel !== SUPPORTED_VARIATION_FLIGHT_MODEL) {
+    throw new Error(
+      `Flight model ${JSON.stringify(plan.flightModel)} is unsupported for browser variation; ` +
+      `supported model: ${SUPPORTED_VARIATION_FLIGHT_MODEL}. Recreate or edit the stored plan.`,
+    );
   }
   if (!Number.isInteger(plan.nRuns) || plan.nRuns < 2 || plan.nRuns > MAX_RUNS) {
     throw new Error(`nRuns must be an integer in [2, ${MAX_RUNS}]`);

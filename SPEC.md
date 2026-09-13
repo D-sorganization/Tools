@@ -27,10 +27,17 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.137                                   |
+| **Spec Version**        | 1.18.138                                   |
 | **Last Spec Update**    | 2026-09-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-09-13 Variation: Cross-Runtime Flight-Model Policy Alignment (#4457)
+
+Issue #4457 resolves the policy divergence across flight-model evaluation surfaces:
+1. **Explicit Surface Scoping**: Clarifies and documents why the three flight-model surfaces differ: Python accepts all 7 `FlightModelType` members, browser Morris authority requests accept all 7 authority models because Morris runs against the Python backend, while browser variation is deliberately narrowed to `SUPPORTED_VARIATION_FLIGHT_MODEL = "waterloo_penner"` because the in-browser trajectory solver currently implements Waterloo/Penner aerodynamics.
+2. **Schema & Runtime Validation**: Enforces `plan.flightModel === SUPPORTED_VARIATION_FLIGHT_MODEL` in browser `validatePlan` so stored or imported plans specifying unsupported models fail fast with actionable guidance instead of silently evaluating under Waterloo/Penner aerodynamics.
+3. **Bidirectional Policy Pins**: Adds TypeScript (`variationFlightModelPolicy.test.ts`) and Python (`test_flight_model_policy.py`) contract test suites asserting the membership and alignment of authority models against `morris_ui_parity_v1.json`, verifying that Python accepts all 7 authority models and rejects unregistered ones, while the browser explicitly accepts `waterloo_penner` and rejects the remaining 6 with informative errors.
 
 ### 2026-09-13 Morris/Variation: Explicit Sample Matrix Parity Gate (#4456)
 
@@ -7549,3 +7556,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-13: Optimizer Constraints Concatenation View Optimization (#5201)
 
 - **2026-09-13**: perf(movement_optimizer, #5201) - Use single-pass memory views (`.ravel()`) instead of copies (`.flatten()`) in `joint_limit_constraint_values` within `optimizer_constraints.py` to prevent intermediate array allocations during the high-frequency SLSQP cost loop.
+
+## 2026-09-13: Cross-Runtime Flight-Model Policy Alignment (#4457)
+
+- **2026-09-13**: fix(variation, #4457) — Align and pin flight-model policies across Python, web variation, and Morris authority surfaces. Enforce `SUPPORTED_VARIATION_FLIGHT_MODEL = "waterloo_penner"` in browser `validatePlan`, export `AuthorityFlightModel` type union, and add bidirectional pinning test suites in TypeScript and Python asserting authority model consistency against `morris_ui_parity_v1.json`.

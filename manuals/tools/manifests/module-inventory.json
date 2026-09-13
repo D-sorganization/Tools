@@ -111,7 +111,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "ac914b150b3ffe35da9890adacb38b38be1a840a3d4c2c7a0406aedfdec778dc",
+      "content_sha256_lf": "72a92161c3179c52b924d9886d0083b31d0ce770d528295687dcbfaf17731de5",
       "entry_count": 17,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
@@ -513,7 +513,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src.json"
     },
     {
-      "content_sha256_lf": "56f01d96fd877eb8ccedde26785259f77dd12773338fc343459920421711a3a9",
+      "content_sha256_lf": "959f65b99762fea3f004d314a398ba875a9938361f2fdf2b4a010f8f5d817e2e",
       "entry_count": 180,
       "package": "src/rate_of_closure/web/src/components",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-components.json"
@@ -525,8 +525,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-hooks.json"
     },
     {
-      "content_sha256_lf": "e159c87c9a85b0bbcefb70a3e5519d3d77a50b6820e6999b2512eb076adc7fd1",
-      "entry_count": 400,
+      "content_sha256_lf": "73e77290eb590c11501e09a55c5be0cd1d9e9be29bf725a9a31bedf5b306c98a",
+      "entry_count": 401,
       "package": "src/rate_of_closure/web/src/model",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-model.json"
     },
@@ -585,7 +585,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "325873f7a7b87e9faadd3546576987ee3195dc046c97e01554f40c7cbc2304d4",
+      "content_sha256_lf": "b389154a436b72707f30b8ecf9abd6ece2fb2aef218c749a78b05ba33c70ce6d",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
@@ -765,7 +765,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-delivery-interchange.json"
     },
     {
-      "content_sha256_lf": "4bd5a70cc18ad76575e9378e7874c4427207faf2c249ec675786023e97a8c6a7",
+      "content_sha256_lf": "ba7f9d30a64955562145d7a1a8d6cf6a3f86f7c4765e0dc2e1105806e65ffc41",
       "entry_count": 44,
       "package": "src/shared/python/swing_sim/flight",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-flight.json"

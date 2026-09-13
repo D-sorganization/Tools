@@ -13151,10 +13151,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 16872,
+      "bytes_lf": 16950,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6c6d5adaaa4d39d31ceca5c1a67d4e10d91d6746793776a29e7d9786f2eb3608",
+      "content_sha256_lf": "25a00498f3ce014066f5d7323ee193957647b659528ba1dae97e5d2355bd0850",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-MORRISAUTHORITYREQUEST-TS-9C5483F5FEFE",
       "language": "typescript",
@@ -13192,6 +13192,11 @@
           {
             "kind": "export",
             "name": "AUTHORITY_FLIGHT_MODELS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "AuthorityFlightModel",
             "signature": null
           },
           {
@@ -22944,10 +22949,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10148,
+      "bytes_lf": 11099,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4c467b1ca28ef2046c18cbebee4c47e69ac419687be9cc0ccd7c628acb983965",
+      "content_sha256_lf": "3fbbd76b91fdf0551889aa216aa010af293fed1da339ab7d8cb6a67858b2f76e",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONEXECUTIONSERVICE-TEST-TS-2BACC2CD08C9",
       "language": "typescript",
@@ -23166,6 +23171,50 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2915,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6c2151662b98d7c94c6a8a8b9c8917c0384cdd88f136cabba39c4909126d303f",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONFLIGHTMODELPOLICY-TEST-TS-43BF7D253091",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variationFlightModelPolicy.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
         "validation_paths": []
       }
     },
@@ -23620,10 +23669,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5460,
+      "bytes_lf": 6165,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6a09648e372603a99bbd162601fb7f184222c4688ae4b3053666dcf89a12f373",
+      "content_sha256_lf": "f5657545bff4d1f8463ff93140ccacaa2c2b952b76041eaaed9c8686d457f910",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONPLANLIBRARY-TEST-TS-D6C83234DF18",
       "language": "typescript",
@@ -24260,10 +24309,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11634,
+      "bytes_lf": 12219,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "54adbf338fa4980841ccd43e2e7215d907d9a9a3120c1b9286b50683e7a7384f",
+      "content_sha256_lf": "820649eaaa168c9fd31ed62c8d46ca82b614ef589d80eb2c8bb5f708447de98c",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONSCHEMA-TS-AF4920A966E8",
       "language": "typescript",
@@ -24300,6 +24349,11 @@
         "public_surfaces": [
           {
             "kind": "export",
+            "name": "BROWSER_VARIATION_FLIGHT_MODELS",
+            "signature": null
+          },
+          {
+            "kind": "export",
             "name": "Distribution",
             "signature": null
           },
@@ -24326,6 +24380,11 @@
           {
             "kind": "export",
             "name": "SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "SUPPORTED_VARIATION_FLIGHT_MODEL",
             "signature": null
           },
           {
@@ -24691,10 +24750,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 14057,
+      "bytes_lf": 14418,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b3c255e41b785664bf9ff61c00e6219d3d5067df63b3faab3f9fa00697d286c9",
+      "content_sha256_lf": "94a7e2d35d92262e24b554eb50241bf0820628586400de5c0053294bdc71791b",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONV2-TEST-TS-39FF1D6DC078",
       "language": "typescript",

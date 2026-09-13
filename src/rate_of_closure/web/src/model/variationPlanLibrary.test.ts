@@ -62,7 +62,7 @@ const fullPlan = (): VariationPlanTs => ({
   ],
   nRuns: 24,
   seed: 17,
-  flightModel: "custom-flight-model",
+  flightModel: "waterloo_penner",
 });
 
 const entry = (id = "plan-1", name = "Impact Window"): NamedVariationPlan => ({
@@ -132,6 +132,26 @@ describe("variation plan library", () => {
     expect(loaded.plans[0].evidence?.metadata).toBeNull();
     expect(loaded.plans[0].evidence?.warning).toMatch(/historical reproducibility/i);
     expect(loaded.warnings).toHaveLength(3);
+  });
+
+  it("ignores an unsupported persisted model with an explicit migration warning", () => {
+    const storage = new MemoryStorage();
+    const unsupported = JSON.parse(planToJson(fullPlan())) as Record<string, unknown>;
+    unsupported.flight_model = "custom-flight-model";
+    storage.setItem(
+      VARIATION_PLAN_LIBRARY_KEY,
+      JSON.stringify({
+        schema_version: 1,
+        plans: [{ id: "legacy", name: "Legacy Plan", plan: unsupported }],
+      }),
+    );
+
+    const loaded = loadVariationPlanLibrary(storage);
+
+    expect(loaded.plans).toEqual([]);
+    expect(loaded.warnings).toEqual([
+      expect.stringMatching(/ignored.*flight model.*custom-flight-model.*waterloo_penner/i),
+    ]);
   });
 
   it("reports unreadable storage without crashing the workbench", () => {
