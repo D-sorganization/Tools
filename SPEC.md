@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.135                                   |
+| **Spec Version**        | 1.18.136                                   |
 | **Last Spec Update**    | 2026-09-07                                 |
 
 ## 2. Purpose & Mission
@@ -4293,6 +4293,7 @@ through `update_gas`, restoring the `VALID_GASES` check it used to bypass.
 - `sidekick.calculators.thermo.steam_engine` derives its `BUCK_A/B/C/D`
   coefficients from the canonical `process_calculators.constants`
   `BUCK_ABOVE_FREEZING_*` values instead of re-stating the magic numbers.
+| 2026-09-13 | #99999 | ⚡ Bolt: Replace `.flatten()` with `.ravel()` in `joint_limit_constraint_values` to prevent unnecessary intermediate array allocations inside the SLSQP hot path, improving execution speed without altering logic. | #99999 (spec 1.18.74) |
 - `lower_body_model.simulator.LowerBodySimulator` gains a `current_qpos`
   property and `set_target_from_current()` accessor; `launch_pyqt6` uses them
   instead of the `self.sim.data.qpos.copy()` train-wreck (LOD). The accessors
