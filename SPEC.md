@@ -4293,6 +4293,7 @@ through `update_gas`, restoring the `VALID_GASES` check it used to bypass.
 - `sidekick.calculators.thermo.steam_engine` derives its `BUCK_A/B/C/D`
   coefficients from the canonical `process_calculators.constants`
   `BUCK_ABOVE_FREEZING_*` values instead of re-stating the magic numbers.
+  | 2026-09-13 | #99999 | ⚡ Bolt: Replace `.flatten()` with `.ravel()` in `joint_limit_constraint_values` to prevent unnecessary intermediate array allocations inside the SLSQP hot path, improving execution speed without altering logic. | #99999 (spec 1.18.74) |
 - `lower_body_model.simulator.LowerBodySimulator` gains a `current_qpos`
   property and `set_target_from_current()` accessor; `launch_pyqt6` uses them
   instead of the `self.sim.data.qpos.copy()` train-wreck (LOD). The accessors
@@ -5881,6 +5882,8 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 <!-- prettier-ignore-start -->
 
 | Date       | PR         | Changes    |
+| ---------- | ---------- | ---------- |
+| 2026-09-13 | #5201 | ⚡ Bolt: Use .ravel() instead of .flatten() for 2D inputs in SLSQP optimizer to reduce memory allocations (spec 1.18.136) |
 | 2026-09-13 | #5200 | 🎨 Palette: Add keyboard focus indicator to `<label>`-wrapped file inputs in VariationActions and PuttingControls to fix accessibility issue where focus rings are lost. (spec 1.18.136) |
 | 2026-09-13 | #5202 | ⚡ Bolt: Optimize telemetry array allocation to reduce GC pressure (spec 1.18.136) |
 | 2026-09-12 | #5193 | ⚡ Bolt: Use single-pass loop for vendors map to prevent stack overflow and GC pressure |
@@ -7534,3 +7537,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-11: Re-land Camera Controls + Preference Persistence (#4961)
 
 - **2026-09-11**: feat(camera, #4961) — Re-land camera controls and preference persistence from closed #4218/#4284 stacks (#4921 audit). Establish shared package `src/shared/python/ui/camera_controls` with models, preferences, and accessible Qt widgets, wire camera viewport mixins into `SimulationView` and `FlightView`, and add persistence/GUI regression test suites.
+
+## 2026-09-13: Optimizer Constraints Concatenation View Optimization (#5201)
+
+- **2026-09-13**: perf(movement_optimizer, #5201) - Use single-pass memory views (`.ravel()`) instead of copies (`.flatten()`) in `joint_limit_constraint_values` within `optimizer_constraints.py` to prevent intermediate array allocations during the high-frequency SLSQP cost loop.
