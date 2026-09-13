@@ -91,7 +91,7 @@ function WorkflowActions({ state }: {
     <button className={BUTTON_CLASS} type="button" disabled={!state.running}
       onClick={state.cancel}>Cancel</button>
     <button className={BUTTON_CLASS} type="button" onClick={save}>Save workflow</button>
-    <label className={BUTTON_CLASS}>Load workflow<input className="sr-only" type="file"
+    <label className={`${BUTTON_CLASS} cursor-pointer focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500`}>Load workflow<input className="sr-only" type="file"
       accept="application/json,.json" onChange={(event) => {
         const file = event.target.files?.[0]; if (file) void state.load(file); }} /></label>
     <span role="status" className="text-xs text-slate-300">{state.status}{state.progress.total > 0

@@ -97,7 +97,7 @@ export function SimulationRunFileControls({
         title="Download trajectory rows and canonical spatial target metadata as CSV"
         className={BUTTON_CLASS}>Export CSV</button>
       <label
-        className={`${BUTTON_CLASS} cursor-pointer`}
+        className={`${BUTTON_CLASS} cursor-pointer focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500`}
         title="Import ball setup, spatial target, and manual delivery from Simulation Settings JSON"
       >
         Import Settings JSON
