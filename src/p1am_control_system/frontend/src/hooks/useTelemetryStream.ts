@@ -184,16 +184,22 @@ export function useTelemetryStream(
       // Bounded append: once at capacity, drop the single oldest frame with a
       // tail `slice` (O(MAX_HISTORY)) instead of `[...prev, v]` + `shift()`,
       // which reallocated and index-shifted the whole array every 100 ms.
-      setHistory((prev) =>
-        prev.length >= MAX_HISTORY
-          ? [...prev.slice(prev.length - MAX_HISTORY + 1), values]
-          : [...prev, values],
-      );
-      setHistoryTimes((prev) =>
-        prev.length >= MAX_HISTORY
-          ? [...prev.slice(prev.length - MAX_HISTORY + 1), stamp]
-          : [...prev, stamp],
-      );
+      setHistory((prev) => {
+        // ⚡ Bolt Optimization: Use slice + push instead of slice + spread to avoid
+        // allocating an intermediate array and reduce GC pressure on high-frequency stream.
+        const next = prev.length >= MAX_HISTORY
+          ? prev.slice(prev.length - MAX_HISTORY + 1)
+          : prev.slice();
+        next.push(values);
+        return next;
+      });
+      setHistoryTimes((prev) => {
+        const next = prev.length >= MAX_HISTORY
+          ? prev.slice(prev.length - MAX_HISTORY + 1)
+          : prev.slice();
+        next.push(stamp);
+        return next;
+      });
     };
 
     /** Stamp the data-age clock. Only a frame with real content may do this. */

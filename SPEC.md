@@ -5883,6 +5883,8 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-13 | #5201 | ⚡ Bolt: Use .ravel() instead of .flatten() for 2D inputs in SLSQP optimizer to reduce memory allocations (spec 1.18.136) |
+| 2026-09-13 | #5202 | ⚡ Bolt: Optimize telemetry array allocation to reduce GC pressure (spec 1.18.136) |
 | 2026-09-12 | #5193 | ⚡ Bolt: Use single-pass loop for vendors map to prevent stack overflow and GC pressure |
 | 2026-09-11 | #5189 | Register cross-runtime pairing for ground_reference_conformance_v1.json (Python + Rust) and document single-runtime allowlist decisions for ground_impact_bounce_golden_v1.json and ground_skid_roll_golden_v1.json in the fixture parity contract. |
 | 2026-09-11 | #4462 | test(variation): add explicit sample request builder seam and verify planted design matrices and paired attribution response recovery (#4462) |

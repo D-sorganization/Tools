@@ -183,3 +183,8 @@
 ## 2026-09-13 - Prevent array copies during hot-path concatenation
 **Learning:** Inside tight optimization loops like SLSQP, using `np.concatenate([a.flatten(), b.flatten()])` creates unnecessary intermediate array allocations for 2D inputs.
 **Action:** Always use `.ravel()` instead of `.flatten()` when passing arrays to `np.concatenate()` to utilize memory views and reduce garbage collection pressure.
+
+## 2026-09-13 - Optimize Telemetry Array Allocation
+**Learning:** In high-frequency React hooks (e.g., telemetry streaming at 10Hz), using the array spread operator with slice `[...prev.slice(N), item]` causes severe garbage collection pressure by allocating multiple intermediate arrays per frame.
+**Action:** Replace `[...prev.slice(N), item]` with a single-pass `const next = prev.slice(N); next.push(item); return next;` when updating bounded state arrays to reduce allocation churn by 50%.
+
