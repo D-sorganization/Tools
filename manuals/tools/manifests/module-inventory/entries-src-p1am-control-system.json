@@ -13501,10 +13501,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 15567,
+      "bytes_lf": 15839,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6d1223b27765093a1062eb9bf100bf766978138bcc15c75e2afcaffb92adb24b",
+      "content_sha256_lf": "4cbe66c9fc1be3e87051a59f51e36d8eae1c2691be0ac027ddf1e1c1bf58c644",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-HOOKS-USETELEMETRYSTREAM-TS-C55BD08AA063",
       "language": "typescript",
