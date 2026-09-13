@@ -449,7 +449,8 @@
           }
         ],
         "test_paths": [
-          "src/shared/python/swing_sim/solver/tests/test_objective.py"
+          "src/shared/python/swing_sim/solver/tests/test_objective.py",
+          "src/shared/python/swing_sim/variation/tests/test_web_parity_fixture.py"
         ],
         "unit_mentions": [
           "deg",

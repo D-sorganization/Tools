@@ -111,7 +111,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "5cbc57e32727413645d6b9977a3c7f563cf59fb964cfea6f61afdbeadccbf68b",
+      "content_sha256_lf": "ac914b150b3ffe35da9890adacb38b38be1a840a3d4c2c7a0406aedfdec778dc",
       "entry_count": 17,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
@@ -171,7 +171,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-shared-scripts.json"
     },
     {
-      "content_sha256_lf": "69b80fe27714da57d4abee35ce7abf848e333cacc7882e08555e6951c905553b",
+      "content_sha256_lf": "ca8c2b48fc030b0dd7d744294b2c03e11fb0b06a4fecc3c3b32d860e2d0652cd",
       "entry_count": 1,
       "package": "src",
       "path": "manuals/tools/manifests/module-inventory/entries-src.json"
@@ -525,7 +525,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-hooks.json"
     },
     {
-      "content_sha256_lf": "e829075124a0b1d5e689497ee5524a6a93b833d43f426236f111580ddcf819f2",
+      "content_sha256_lf": "e159c87c9a85b0bbcefb70a3e5519d3d77a50b6820e6999b2512eb076adc7fd1",
       "entry_count": 400,
       "package": "src/rate_of_closure/web/src/model",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-model.json"
@@ -585,7 +585,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "1000f9c389c7b1c092cfd3b17a6f98c5e7c23adf5a84e26c218869ea26c544d3",
+      "content_sha256_lf": "325873f7a7b87e9faadd3546576987ee3195dc046c97e01554f40c7cbc2304d4",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
@@ -819,7 +819,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-rotating-base.json"
     },
     {
-      "content_sha256_lf": "cb2ff9ab22a33498840b12971f05673f5c6bffff4066cc6cc5c50f4ab5ae80e5",
+      "content_sha256_lf": "16230bbc81ba250a2e5d06147e7553bfae83fa9d5e2987562826e9d87c518a45",
       "entry_count": 9,
       "package": "src/shared/python/swing_sim/solver",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-solver.json"
