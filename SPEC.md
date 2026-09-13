@@ -27,10 +27,16 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.136                                   |
-| **Last Spec Update**    | 2026-09-07                                 |
+| **Spec Version**        | 1.18.137                                   |
+| **Last Spec Update**    | 2026-09-13                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-09-13 Morris/Variation: Explicit Sample Matrix Parity Gate (#4456)
+
+Issue #4456 resolves the vacuous tolerance gap in `variation_parity.json` by establishing two distinct cross-runtime contracts:
+1. **Deterministic Explicit Parity Gate**: A 25-row explicit sample matrix (`explicit_design`) evaluated across both Python (`evaluate_run`) and TypeScript (`evaluateRun`) runtimes with tight physical bounds (<= 0.005 m carry/apex/lateral, <= 0.01 deg landing angle, <= 0.001 s flight time, <= 0.001 m mean difference, <= 0.001 relative std difference). Eliminates PRNG sampling variance and catches small numerical regressions.
+2. **Statistical Sanity / Smoke Band**: Clarifies and documents that unconstrained Monte Carlo draws using independent PRNG implementations (NumPy PCG64 in Python vs Mulberry32 in TypeScript) constitute a statistical sanity band (broad bounds due to sampling variance across 300 runs) rather than an exact mathematical parity gate.
 
 ### 2026-09-09 Reference CLI & Service (#4706 / TOOLS-M10 (#4727))
 
@@ -3178,10 +3184,12 @@ heads.test.ts`, `web/src/model/volumetrics.test.ts`, GUI smokes in
     launch modes over the existing TS physics (swing mode and the club
     category stay desktop-only until the P7 WASM kernels), worker-less
     bounded runs (≤ 500, UI-capped), summary + sensitivity heat tables,
-    landing canvas with 2σ ellipse, CSV/JSON downloads. Parity pin: a
-    Python-generated fixture (`model/__fixtures__/variation_parity.json`)
-    is re-checked tightly by pytest and loosely (statistical band) by
-    vitest for the same plan+seed.
+    landing canvas with 2σ ellipse, CSV/JSON downloads. Parity pins:
+    `model/__fixtures__/variation_parity.json` provides a deterministic explicit
+    design matrix gate (`explicit_design`) re-checked to millimeter precision
+    (<= 0.005 m per row, <= 0.001 m mean, <= 0.1% std) by both pytest and vitest,
+    alongside a documented statistical sanity band for unconstrained Monte Carlo
+    sampling with independent PRNGs (#4456).
 
 ### 2026-08-04 Rate of Closure investigative plotting suite (epic #4120, phase V1)
 
