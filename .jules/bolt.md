@@ -180,3 +180,6 @@
 **Learning:** Using `Math.min(...traces.map(trace => trace.length))` creates an intermediate array containing lengths and spreads them all into the call stack, which creates a huge garbage collection spike and risks a stack overflow error when `traces` is very large.
 **Action:** Replace `Math.min(...spread)` operations with a simple single-pass `for` loop that avoids allocating any arrays entirely, achieving O(1) space complexity and completely avoiding call stack depth limits.
 
+## $(date +%Y-%m-%d) - Optimize Telemetry Array Allocation
+**Learning:** In high-frequency React hooks (e.g., telemetry streaming at 10Hz), using the array spread operator with slice `[...prev.slice(N), item]` causes severe garbage collection pressure by allocating multiple intermediate arrays per frame.
+**Action:** Replace `[...prev.slice(N), item]` with a single-pass `const next = prev.slice(N); next.push(item); return next;` when updating bounded state arrays to reduce allocation churn by 50%.
