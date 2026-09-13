@@ -159,7 +159,7 @@ export function VariationActions({
         >
           Export Plan JSON
         </button>
-        <label className={`${BUTTON_CLASS} cursor-pointer`} title="Import a canonical or legacy plan JSON file.">
+        <label className={`${BUTTON_CLASS} cursor-pointer focus-within:outline-none focus-within:ring-2 focus-within:ring-sky-500`} title="Import a canonical or legacy plan JSON file.">
           Import Plan JSON
           <input
             aria-label="Import variation plan JSON"
