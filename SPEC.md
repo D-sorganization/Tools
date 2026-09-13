@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.135                                   |
+| **Spec Version**        | 1.18.136                                   |
 | **Last Spec Update**    | 2026-09-07                                 |
 
 ## 2. Purpose & Mission
@@ -5882,6 +5882,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-13 | #99999 | 🎨 Palette: Add keyboard focus indicator to `<label>`-wrapped file inputs in VariationActions and PuttingControls to fix accessibility issue where focus rings are lost. (spec 1.18.136) |
 | 2026-09-12 | #5193 | ⚡ Bolt: Use single-pass loop for vendors map to prevent stack overflow and GC pressure |
 | 2026-09-11 | #5189 | Register cross-runtime pairing for ground_reference_conformance_v1.json (Python + Rust) and document single-runtime allowlist decisions for ground_impact_bounce_golden_v1.json and ground_skid_roll_golden_v1.json in the fixture parity contract. |
 | 2026-09-11 | #4462 | test(variation): add explicit sample request builder seam and verify planted design matrices and paired attribution response recovery (#4462) |
