@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.138                                   |
+| **Spec Version**        | 1.18.139                                   |
 | **Last Spec Update**    | 2026-09-13                                 |
 
 ## 2. Purpose & Mission
@@ -5905,6 +5905,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-14 | #99999 | ⚡ Bolt: Replace Math.max spread with single-pass loop for apex height in ballFlightMetrics.ts to avoid GC pressure and call stack limits (spec 1.18.139) |
 | 2026-09-13 | #5201 | ⚡ Bolt: Use .ravel() instead of .flatten() for 2D inputs in SLSQP optimizer to reduce memory allocations (spec 1.18.136) |
 | 2026-09-13 | #5200 | 🎨 Palette: Add keyboard focus indicator to `<label>`-wrapped file inputs in VariationActions and PuttingControls to fix accessibility issue where focus rings are lost. (spec 1.18.136) |
 | 2026-09-13 | #5202 | ⚡ Bolt: Optimize telemetry array allocation to reduce GC pressure (spec 1.18.136) |
