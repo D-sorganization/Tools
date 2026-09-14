@@ -117,7 +117,10 @@ export function VariationDistributionMatrix({
 function MatrixCell({ dataset, xKey, yKey, diagonal, outcomes, selectedTrialIndex, onSelectedTrialChange }: { dataset: VariationDatasetTs; xKey: string; yKey: string; diagonal: boolean; outcomes?: string[]; selectedTrialIndex: number | null; onSelectedTrialChange: (trialIndex: number | null) => void }): JSX.Element {
   if (diagonal) {
     const marginal = buildScalarMarginal(dataset, xKey);
-    const maximum = Math.max(...marginal.counts, 1);
+    let maximum = 1;
+    for (let i = 0; i < marginal.counts.length; i++) {
+      if (marginal.counts[i] > maximum) maximum = marginal.counts[i];
+    }
     return <svg viewBox={`0 0 ${SIZE} ${SIZE}`} role="img" aria-label={`${marginal.variable.label} marginal histogram; ${marginal.nAvailable} available, ${marginal.nMissing} missing`} className="border border-slate-800 bg-slate-950/60">
       {marginal.counts.map((count, index) => <rect key={index} x={PAD + index * (SIZE - 2 * PAD) / marginal.counts.length} y={SIZE - PAD - count / maximum * (SIZE - 2 * PAD)} width={Math.max((SIZE - 2 * PAD) / marginal.counts.length - 1, 1)} height={count / maximum * (SIZE - 2 * PAD)} fill="#38bdf8" opacity="0.75" />)}
     </svg>;
