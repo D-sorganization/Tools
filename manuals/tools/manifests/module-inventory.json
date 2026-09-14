@@ -519,7 +519,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src.json"
     },
     {
-      "content_sha256_lf": "959f65b99762fea3f004d314a398ba875a9938361f2fdf2b4a010f8f5d817e2e",
+      "content_sha256_lf": "38dde859c1de0f74f0c948216af470aa3d6cffc0d71866e521c755bd1a372396",
       "entry_count": 180,
       "package": "src/rate_of_closure/web/src/components",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-components.json"
@@ -531,7 +531,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-hooks.json"
     },
     {
-      "content_sha256_lf": "099fcdd80ecce9fe72b4da9286a633fa5e62b63cc997ec244c5257e446b3e8e5",
+      "content_sha256_lf": "c1bab03a98d9d7c4e9d926479033b37828c6485e9e3ac533746c45b50afe6ca0",
       "entry_count": 401,
       "package": "src/rate_of_closure/web/src/model",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-model.json"
