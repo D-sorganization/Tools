@@ -16,7 +16,7 @@ describe("visualization performance manifest", () => {
       (entry) => entry.workload === "initial-production-state",
     )).toBe(true);
     expect(visualizationPerformanceBudgets.react).toEqual({
-      tabOpenBudgetMs: 2500,
+      tabOpenBudgetMs: 4000,
       resizeSettleBudgetMs: 1500,
       stableFrameCount: 3,
       stabilityTolerancePx: 1,

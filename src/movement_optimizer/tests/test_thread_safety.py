@@ -22,10 +22,10 @@ from typing import ClassVar
 # does not actually require Qt, but importing main_window does.
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
-from conftest import make_test_result
-
 from movement_optimizer.gui.exercise_state import ExerciseRuntimeState
 from movement_optimizer.gui.optimization_mixin import OptimizationMixin
+
+from .conftest import make_test_result
 
 
 class _ThreadSafetyHarness:
@@ -225,9 +225,9 @@ class TestReentrantLockNoDeadlock:
         t.start()
         t.join(timeout=2.0)
 
-        assert (
-            not t.is_alive()
-        ), "Re-entrant lock acquisition deadlocked -- _opt_lock must be an RLock"
+        assert not t.is_alive(), (
+            "Re-entrant lock acquisition deadlocked -- _opt_lock must be an RLock"
+        )
         assert not errors, f"Runner raised: {errors!r}"
         assert completed.is_set()
         assert harness.exercise_states[0].anim_frame == 7

@@ -165,7 +165,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
     },
     {
-      "content_sha256_lf": "e8708a55610c21731213aadea33f60ac887b68c78df7a61d170d935aebfaa929",
+      "content_sha256_lf": "22a4a9aea336b85195e975bc76bf0bb9a69c59668d3391f69af8f4897eff4ddd",
       "entry_count": 2,
       "package": "shared_scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-shared-scripts.json"
@@ -525,7 +525,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-hooks.json"
     },
     {
-      "content_sha256_lf": "73e77290eb590c11501e09a55c5be0cd1d9e9be29bf725a9a31bedf5b306c98a",
+      "content_sha256_lf": "c944804009961b10e03ab74f3818974b57113da01306b02db3831bbba3d9edcc",
       "entry_count": 401,
       "package": "src/rate_of_closure/web/src/model",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-model.json"

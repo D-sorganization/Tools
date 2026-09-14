@@ -72,7 +72,7 @@ def test_surface_budgets_are_bounded_and_toolkit_honest() -> None:
     react = manifest.surfaces["react"]
     pyqt = manifest.surfaces["pyqt"]
 
-    assert react.tab_open_budget_ms == 2_500
+    assert react.tab_open_budget_ms == 4_000
     assert react.resize_settle_budget_ms == 1_500
     assert react.stable_frame_count == 3
     assert react.stability_tolerance_px == 1

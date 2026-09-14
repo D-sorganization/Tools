@@ -8,9 +8,10 @@ import pytest
 pytest.importorskip("openpyxl")
 
 import openpyxl
-from conftest import make_test_result
 
 from movement_optimizer.export_excel import export_to_excel
+
+from .conftest import make_test_result
 
 
 class TestExportToExcel:
@@ -36,9 +37,7 @@ class TestExportToExcel:
         wb = openpyxl.load_workbook(str(path))
         ws = wb["Summary"]
         non_empty_rows = [
-            row
-            for row in ws.iter_rows(values_only=True)
-            if any(v is not None for v in row)
+            row for row in ws.iter_rows(values_only=True) if any(v is not None for v in row)
         ]
         assert len(non_empty_rows) > 0
 
@@ -117,9 +116,7 @@ class TestExportToExcel:
 
         wb = openpyxl.load_workbook(str(path))
         ws = wb["Statistics"]
-        values = [
-            cell for row in ws.iter_rows(values_only=True) for cell in row if cell
-        ]
+        values = [cell for row in ws.iter_rows(values_only=True) for cell in row if cell]
         assert "Mean (N*m)" in values
         assert "Std dev (N*m)" in values
         assert "Min (N*m)" in values
