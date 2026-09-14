@@ -205,7 +205,13 @@ const landingValues = (
   values.set("landing_velocity", available("landing_velocity", point.velocityMps, "derived.linear_ground_interpolation"));
   values.set("carry_distance", available("carry_distance", Math.hypot(deltaX, deltaZ), "derived.landing_position"));
   values.set("carry_offline", available("carry_offline", deltaZ, "derived.landing_position"));
-  values.set("apex_height", available("apex_height", Math.max(...airborne.map((sample) => sample.positionM[1])), "derived.trajectory_samples"));
+  // ⚡ Bolt Optimization: Use single-pass loop instead of Math.max(...array.map(...))
+  // to avoid intermediate arrays and maximum call stack size exceeded errors
+  let apex = -Infinity;
+  for (let i = 0; i < airborne.length; i++) {
+    if (airborne[i].positionM[1] > apex) apex = airborne[i].positionM[1];
+  }
+  values.set("apex_height", available("apex_height", apex, "derived.trajectory_samples"));
   values.set("flight_time", available("flight_time", point.timeS - first.timeS, "derived.landing_time"));
   values.set("terminal_speed", available("terminal_speed", norm(point.velocityMps), "derived.landing_velocity"));
   values.set("landing_angle", horizontal > MIN_SPEED

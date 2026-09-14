@@ -188,3 +188,6 @@
 **Learning:** In high-frequency React hooks (e.g., telemetry streaming at 10Hz), using the array spread operator with slice `[...prev.slice(N), item]` causes severe garbage collection pressure by allocating multiple intermediate arrays per frame.
 **Action:** Replace `[...prev.slice(N), item]` with a single-pass `const next = prev.slice(N); next.push(item); return next;` when updating bounded state arrays to reduce allocation churn by 50%.
 
+## 2026-09-14 - Prevent stack overflow on large trajectory paths
+**Learning:** Using `Math.max(...array.map(...))` on large trajectory paths (like `airborne` flight samples) creates significant garbage collection pressure and can trigger "Maximum call stack size exceeded" errors.
+**Action:** Replace `Math.max(...spread)` chained with `.map()` with a single-pass `for` loop to compute the maximum value, eliminating intermediate array allocations and call stack depth limits.
