@@ -90,13 +90,17 @@ python shared_scripts/fleet_hooks.py fast
 
 ## Ordered Next Steps (agents; each has an issue under #5218)
 
-1. **Accuracy validation on the rig** — measure the mat, re-calibrate, roll
-   putts of known speed (a known roll-out on a known Stimp gives launch
-   speed; a taped line gives HLA), state the tolerance, write an evidence
-   page. Exercise `--gspro` against the running GSPro and record the 201.
-2. **Replay corpus** — record putts from the overhead camera with the
-   UpstreamDrift rig, keep short clips plus expected results as regression
-   tests through `VideoFileSource`.
-3. **UpstreamDrift adoption** — the capture rig's `preview_source.py` and
-   `recorder.py` device-ref code becomes `shared.python.camera` via the
-   `vendor/ud-tools` pin (Tools is the source of truth).
+Full turnover with the landing recipe and the operator checklist:
+`docs/putting_launch_monitor/TURNOVER.md`.
+
+1. **#5227 lazy `FrameSource` import** in `shared/python/camera/__init__.py`
+   so the pure ffmpeg builders import where `sidekick.lab.mocap` is blocked.
+2. **#5221 accuracy validation** — build the `validate` harness (CSV +
+   running error), then the operator measures the mat, re-calibrates, rolls
+   known putts and runs GSPro for the 201; write the evidence page.
+3. **#5228 shared Open Connect v1 codec** — Tools leaf; `gspro.py` delegates,
+   UpstreamDrift `golf_simulator/adapters/gspro` (#10208) follows later.
+4. **#5222 replay corpus** — short clips from the validation session plus a
+   manifest as `slow` regression tests through `VideoFileSource`.
+
+Done: UpstreamDrift adoption of the shared camera layer (UD PR #10211).
