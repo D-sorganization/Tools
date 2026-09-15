@@ -2018,6 +2018,7 @@
           }
         ],
         "test_paths": [
+          "src/putting_launch_monitor/tests/test_pipeline.py",
           "src/shared/python/swing_sim/flight/tests/test_pipeline.py"
         ],
         "unit_mentions": [

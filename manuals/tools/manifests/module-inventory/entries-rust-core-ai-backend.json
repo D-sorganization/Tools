@@ -736,6 +736,7 @@
           "src/p1am_control_system/backend/tests/test_backend_p1am_safety.py",
           "src/p1am_control_system/backend/tests/test_data_explorer_router.py",
           "src/p1am_control_system/backend/tests/test_tag_force_nonfinite.py",
+          "src/putting_launch_monitor/tests/test_pipeline.py",
           "tests/p1am_control_system/test_backend_security.py",
           "tests/rate_of_closure/test_club_view_camera.py",
           "tests/rate_of_closure/test_variation_geometry_properties.py",

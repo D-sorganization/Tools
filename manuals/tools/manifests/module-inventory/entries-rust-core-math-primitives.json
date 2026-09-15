@@ -169,6 +169,8 @@
         ],
         "test_paths": [
           "src/pendulum_simulator/pendulum-web/tests/forceSourceStudy.test.ts",
+          "src/putting_launch_monitor/tests/test_geometry.py",
+          "src/putting_launch_monitor/tests/test_pipeline.py",
           "src/shared/python/humanoid_character_builder/tests/test_builder_assembly.py",
           "src/shared/python/humanoid_character_builder/tests/test_urdf_generator.py",
           "src/shared/python/model_generation/tests/test_physics_validation.py",

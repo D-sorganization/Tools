@@ -23,6 +23,7 @@ MAX_HANDOFF_LINE_BUDGET = 150
 TRACKED_HANDOFF_PATHS = (
     "AGENT_HANDOFF.md",
     "src/pendulum_simulator/AGENT_HANDOFF.md",
+    "src/putting_launch_monitor/AGENT_HANDOFF.md",
     "src/rate_of_closure/AGENT_HANDOFF.md",
     "src/rotation_converter/AGENT_HANDOFF.md",
     "src/shared/python/golf_club/AGENT_HANDOFF.md",
@@ -50,6 +51,13 @@ REQUIRED_HANDOFF_SECTIONS = {
         "## Must-Read Architecture Pointers",
         "## Gate Commands (This Tool)",
         "## Do-Not List",
+    ],
+    "src/putting_launch_monitor/AGENT_HANDOFF.md": [
+        "## What Is Done (and Measured)",
+        "## The Lab Setup, As Calibrated",
+        "## Gate Commands",
+        "## Do Not",
+        "## Ordered Next Steps (agents; each has an issue under #5218)",
     ],
     "src/rotation_converter/AGENT_HANDOFF.md": [
         "## Where This Tool Is Headed",

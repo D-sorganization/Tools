@@ -1,0 +1,325 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1338,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "43990974885a7a2828dac67bef74f444a7b514966709af423570cb813958b83d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CAMERA-INIT-PY-9525B216A16A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/camera/__init__.py",
+      "purpose": "Live USB camera sources for the fleet (the DRY leaf for camera capture).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "CaptureMode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DSHOW_DEVICE_PREFIX",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DSHOW_VIDEO_CATEGORY",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FfmpegDirectShowSource",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VideoFileSource",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "dshow_device_ref",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ffmpeg_raw_frame_args",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "output_frame_size",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4567,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "01ec87d269da251e489c54fcbca2963bd394f978b52199dcf56afef258c93918",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CAMERA-DSHOW-PY-3148ED56815C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/camera/dshow.py",
+      "purpose": "DirectShow device references and the ffmpeg command that reads them.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CaptureMode",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_RTBUFSIZE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DSHOW_DEVICE_PREFIX",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DSHOW_VIDEO_CATEGORY",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "dshow_device_ref",
+            "signature": "camera_instance_id: str"
+          },
+          {
+            "kind": "function",
+            "name": "ffmpeg_raw_frame_args",
+            "signature": "ffmpeg_exe: str, device_ref: str, mode: CaptureMode, *, width: int | None=None, fps: int | None=None, lowres: int=0"
+          },
+          {
+            "kind": "function",
+            "name": "output_frame_size",
+            "signature": "mode: CaptureMode, width: int | None"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "W",
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7450,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "99f13f00ac792ba702e23b10ec994e2d943ea8351665669d842ab4ff99a5082c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CAMERA-FFMPEG-SOURCE-PY-7548DA5720AE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/camera/ffmpeg_source.py",
+      "purpose": "A live DirectShow camera as a :class:`FrameSource`, decoded by ffmpeg.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FfmpegDirectShowSource",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_MODE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "NS_PER_S",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PIXEL_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "STOP_TIMEOUT_S",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "default_ffmpeg_exe",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4695,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c1b2834ba720fe96923cdc2b2379986ace58d1558861e55ab747a1d339d16492",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CAMERA-VIDEO-FILE-SOURCE-PY-85954E42E70A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/camera/video_file_source.py",
+      "purpose": "A recorded video as a :class:`FrameSource`.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "VideoFileSource",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "NS_PER_S",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PIXEL_FORMAT",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/shared/python/camera",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

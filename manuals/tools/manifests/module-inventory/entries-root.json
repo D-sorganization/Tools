@@ -679,6 +679,7 @@
           "src/p1am_control_system/backend/tests/test_database.py",
           "src/pendulum_simulator/tests/test_default_dark_theme_and_button_width.py",
           "src/pendulum_simulator/tests/test_ui_polish_fixes.py",
+          "src/putting_launch_monitor/tests/test_geometry.py",
           "src/python/tests/test_app_launch.py",
           "src/rrt_path_planner/python/tests/test_star_wars_rrt.py",
           "src/shared/python/sidekick/tests/process_calculators/test_psa_gui.py",
