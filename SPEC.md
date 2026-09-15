@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.138                                   |
+| **Spec Version**        | 1.18.141                                   |
 | **Last Spec Update**    | 2026-09-13                                 |
 
 ## 2. Purpose & Mission
@@ -5909,6 +5909,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
 | 2026-09-15 | #5218 | Camera putting launch monitor for GSPro (epic #5218; PR #5224). Shared `camera` package: DirectShow device references, the ffmpeg raw-frame command validated on the lab rig, `FfmpegDirectShowSource` and `VideoFileSource` as `sidekick.lab.mocap` FrameSources with index-derived timestamps. Tool `putting_launch_monitor`: mat-corner ground-plane homography with a player-frame corner convention, launch fitted over the opening 300 mm (speed within 2%, HLA within 0.5° on a synthetic 30° camera), HSV ball detection sized from the mat's scale and confined to the mat region, a rest-armed-rolling tracker that follows its own ball among several, Open Connect v1 codec and client with putting-mode gating, a fail-closed calibration document and a CLI (calibrate, run, replay, probe-gspro, snapshot). Live on the overhead ELP camera: 55 fps processed, ball in 240 of 240 frames, armed at frame 11, no false putts. |
+| 2026-09-15 | #99999 | Use single-pass loop for trajectory apex to prevent stack overflow (spec 1.18.141) |
 | 2026-09-13 | #5201 | ⚡ Bolt: Use .ravel() instead of .flatten() for 2D inputs in SLSQP optimizer to reduce memory allocations (spec 1.18.136) |
 | 2026-09-13 | #5200 | 🎨 Palette: Add keyboard focus indicator to `<label>`-wrapped file inputs in VariationActions and PuttingControls to fix accessibility issue where focus rings are lost. (spec 1.18.136) |
 | 2026-09-13 | #5202 | ⚡ Bolt: Optimize telemetry array allocation to reduce GC pressure (spec 1.18.136) |
