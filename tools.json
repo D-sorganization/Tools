@@ -30,6 +30,15 @@
             "maturity": "stable"
         },
         {
+            "name": "Putting Launch Monitor",
+            "path": "src/putting_launch_monitor/launch_pyqt6.py",
+            "type": "python",
+            "desc": "Measure putt launch speed and direction from an overhead camera and send them to GSPro",
+            "tool_id": "putting_launch_monitor",
+            "surface": "pyqt6",
+            "maturity": "beta"
+        },
+        {
             "name": "Rate of Closure Impact Explorer (PyQt6)",
             "path": "src/rate_of_closure/launch_pyqt6.py",
             "type": "python",

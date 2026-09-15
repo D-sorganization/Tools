@@ -1,0 +1,21 @@
+#!/usr/bin/env python3
+"""Standalone PyQt6 launcher for Putting Launch Monitor."""
+
+from __future__ import annotations
+
+import sys
+
+from _bootstrap import bootstrap
+
+bootstrap(__file__)
+
+from shared.python.gui_launcher import make_launcher  # noqa: E402
+
+
+def main() -> int:
+    """Launch the putting launch monitor GUI."""
+    return int(make_launcher("putting_launch_monitor.gui_registration") or 0)
+
+
+if __name__ == "__main__":
+    sys.exit(main())

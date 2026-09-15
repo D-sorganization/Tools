@@ -1,13 +1,14 @@
 # Agent Handoff: Putting Launch Monitor
 
-Updated: 2026-09-15 (session claude, epic #5218; GUI #5219)
+Updated: 2026-09-15 (session claude, epic #5218; GUI #5219; registration #5220)
 
 ## Repository and Working Directory
 
 - Repository: `D-sorganization/Tools`, tool at `src/putting_launch_monitor/`,
   shared camera layer at `src/shared/python/camera/`.
 - Branch `claude/putting-launch-monitor` (core, PR #5224); GUI on
-  `claude/5219-putting-gui`, stacked on it until #5224 merges.
+  `claude/5219-putting-gui` (PR #5225), stacked on it until #5224 merges;
+  launcher registration on `claude/5220-putting-register`, stacked on #5225.
 - Governing epic: #5218. Objective: a camera-based putting launch monitor
   that measures launch speed and HLA on the ground plane and feeds GSPro.
 
@@ -24,6 +25,7 @@ Updated: 2026-09-15 (session claude, epic #5218; GUI #5219)
 | Shared camera sources                                     | `shared/python/camera/` | `FfmpegDirectShowSource` streams the overhead ELP at 60 fps; `VideoFileSource` replays files                 |
 | CLI: calibrate / run / replay / probe-gspro / snapshot    | `cli.py`                | live run: 55 fps processed, ball in 240/240 frames, armed at frame 11, 0 false putts                         |
 | PyQt6 window (#5219): live view, wizard, HSV tuner, GSPro | `ui/pyqt6/`             | 22 offscreen tests: wizard equals a hand-built calibration; rendered putt reaches the readout via the worker |
+| Launcher tile (#5220): Biomechanics, beta                 | `gui_registration.py`   | `PuttingMonitorWindow` constructs through `make_launcher` offscreen; `generate_tools_json.py --check` fresh  |
 
 Tests: `src/putting_launch_monitor/tests` (55) and `tests/camera` (8), all
 passing; ruff, ruff-format and mypy clean; every file under Tools' 500-line
@@ -38,7 +40,9 @@ using `cli.scaled_calibration`), `live_view` (`ImageCanvas`, `LiveView`,
 corners with `MatDiagram` / mat / review), `hsv_tuner`, `gspro_panel`,
 `painting` (theme pens via `shared.python.theme.Colors`, image conversion).
 Camera selection is a text field seeded from the calibration; a picker is a
-follow-up. Not yet launcher-registered (next step 1).
+follow-up. Launcher-registered (#5220): `gui_registration.py` + thin
+`launch_pyqt6.py`; no `[project.scripts]` entry because the package imports
+OpenCV at module level.
 
 ## The Lab Setup, As Calibrated
 
@@ -64,6 +68,8 @@ python -m ruff check src/putting_launch_monitor src/shared/python/camera
 python -m ruff format --check src/putting_launch_monitor src/shared/python/camera
 python -m mypy src/putting_launch_monitor src/shared/python/camera
 python -m scripts.build_tools_module_inventory --check
+python scripts/generate_tools_json.py --check
+python scripts/check_tools_manifest_layout.py
 python shared_scripts/fleet_hooks.py fast
 ```
 
@@ -84,16 +90,13 @@ python shared_scripts/fleet_hooks.py fast
 
 ## Ordered Next Steps (agents; each has an issue under #5218)
 
-1. **Launcher registration** — `gui_registration.py` (category Biomechanics)
-   and the thin `launch_pyqt6.py`; `python scripts/generate_tools_json.py`;
-   commit `tools.json`, `tool_surface_contract.json`, README table.
-2. **Accuracy validation on the rig** — measure the mat, re-calibrate, roll
+1. **Accuracy validation on the rig** — measure the mat, re-calibrate, roll
    putts of known speed (a known roll-out on a known Stimp gives launch
    speed; a taped line gives HLA), state the tolerance, write an evidence
    page. Exercise `--gspro` against the running GSPro and record the 201.
-3. **Replay corpus** — record putts from the overhead camera with the
+2. **Replay corpus** — record putts from the overhead camera with the
    UpstreamDrift rig, keep short clips plus expected results as regression
    tests through `VideoFileSource`.
-4. **UpstreamDrift adoption** — the capture rig's `preview_source.py` and
+3. **UpstreamDrift adoption** — the capture rig's `preview_source.py` and
    `recorder.py` device-ref code becomes `shared.python.camera` via the
    `vendor/ud-tools` pin (Tools is the source of truth).

@@ -34,6 +34,20 @@ Epic: D-sorganization/Tools#5218.
    Shots are held unless GSPro reports a putter in hand (`Player.Club`),
    so a stray roll during a full-swing hole never reaches the simulator.
 
+## Launching
+
+The tool is a launcher tile, **Putting Launch Monitor**, in the Biomechanics
+category of the Tools launcher (registered in `gui_registration.py`). To open
+the window on its own, from the repository root:
+
+```bash
+python src/putting_launch_monitor/launch_pyqt6.py
+```
+
+There is no `[project.scripts]` console entry: the package imports OpenCV at
+module level, so the window is reached through the launcher or the command
+above with the `putting-monitor` extra installed.
+
 ## Command Line
 
 ```bash
