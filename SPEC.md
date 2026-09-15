@@ -35,6 +35,7 @@
 ### 2026-09-13 Product Artifact Hygiene: Compose, Helm, and Rate of Closure Package Lock Cleanup (#4919)
 
 Part of readiness program issue #4919:
+
 1. **Rate of Closure Web Dependency Cleanliness**: Synchronizes `src/rate_of_closure/web/package-lock.json` following the removal of unused `@tauri-apps/cli` packages and phantom Tauri build scripts.
 2. **Docker Compose Service Pruning**: Removes phantom and unused `postgres` and `redis` service blocks and local volume definitions from `docker-compose.yml`, eliminating unnecessary container pulls and dependencies for the local Flask developer stack.
 3. **Helm Architectural Documentation Truthfulness**: Updates `helm/README.md` to accurately state that `Tools` is primarily distributed as the `ud-tools` Python library with demonstration frontends (Flask CAS calculator, FastAPI URDF viewer, steam engine calculator API), and documents why production Kubernetes manifests and Helm charts are maintained in downstream consumer repos rather than this repository.
@@ -42,6 +43,7 @@ Part of readiness program issue #4919:
 ### 2026-09-13 Variation: Cross-Runtime Flight-Model Policy Alignment (#4457)
 
 Issue #4457 resolves the policy divergence across flight-model evaluation surfaces:
+
 1. **Explicit Surface Scoping**: Clarifies and documents why the three flight-model surfaces differ: Python accepts all 7 `FlightModelType` members, browser Morris authority requests accept all 7 authority models because Morris runs against the Python backend, while browser variation is deliberately narrowed to `SUPPORTED_VARIATION_FLIGHT_MODEL = "waterloo_penner"` because the in-browser trajectory solver currently implements Waterloo/Penner aerodynamics.
 2. **Schema & Runtime Validation**: Enforces `plan.flightModel === SUPPORTED_VARIATION_FLIGHT_MODEL` in browser `validatePlan` so stored or imported plans specifying unsupported models fail fast with actionable guidance instead of silently evaluating under Waterloo/Penner aerodynamics.
 3. **Bidirectional Policy Pins**: Adds TypeScript (`variationFlightModelPolicy.test.ts`) and Python (`test_flight_model_policy.py`) contract test suites asserting the membership and alignment of authority models against `morris_ui_parity_v1.json`, verifying that Python accepts all 7 authority models and rejects unregistered ones, while the browser explicitly accepts `waterloo_penner` and rejects the remaining 6 with informative errors.
@@ -49,6 +51,7 @@ Issue #4457 resolves the policy divergence across flight-model evaluation surfac
 ### 2026-09-13 Morris/Variation: Explicit Sample Matrix Parity Gate (#4456)
 
 Issue #4456 resolves the vacuous tolerance gap in `variation_parity.json` by establishing two distinct cross-runtime contracts:
+
 1. **Deterministic Explicit Parity Gate**: A 25-row explicit sample matrix (`explicit_design`) evaluated across both Python (`evaluate_run`) and TypeScript (`evaluateRun`) runtimes with tight physical bounds (<= 0.005 m carry/apex/lateral, <= 0.01 deg landing angle, <= 0.001 s flight time, <= 0.001 m mean difference, <= 0.001 relative std difference). Eliminates PRNG sampling variance and catches small numerical regressions.
 2. **Statistical Sanity / Smoke Band**: Clarifies and documents that unconstrained Monte Carlo draws using independent PRNG implementations (NumPy PCG64 in Python vs Mulberry32 in TypeScript) constitute a statistical sanity band (broad bounds due to sampling variance across 300 runs) rather than an exact mathematical parity gate.
 
@@ -6943,6 +6946,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | 2026-09-05 | #5002 | Delete vendored folder_tools leftover and update dead tests (#3985). |
 | 2026-09-05 | #5003 | Remove blanket [0,100] tag clamp and enforce interlock limit domain at boundary (#4032). |
 | 2026-09-10 | #1614 | Adopt maintainable Mermaid C4 architecture-map contract (C4Context, C4Container, Feature Map, Change Log, validator and workflow) (#1614). |
+| 2026-09-14 | #5210 | fix(tests): resolve relative fixture imports and calibrate web open budget |
 ---
 
 <!--

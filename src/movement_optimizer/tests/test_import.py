@@ -8,7 +8,6 @@ import logging
 
 import numpy as np
 import pytest
-from conftest import make_test_result
 
 from movement_optimizer.export import export_result_json
 from movement_optimizer.import_results import (
@@ -17,6 +16,8 @@ from movement_optimizer.import_results import (
     import_results_from_json,
 )
 from movement_optimizer.persistence import save_solution
+
+from .conftest import make_test_result
 
 
 class TestImportResultFromJson:
@@ -62,9 +63,7 @@ class TestImportResultFromJson:
         path = tmp_path / "legacy.json"
         path.write_text(json.dumps(data), encoding="utf-8")
 
-        with caplog.at_level(
-            logging.WARNING, logger="movement_optimizer.import_results"
-        ):
+        with caplog.at_level(logging.WARNING, logger="movement_optimizer.import_results"):
             result = import_result_from_json(path)
 
         assert result["cost"] == 99.0

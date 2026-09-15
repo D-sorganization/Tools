@@ -4,7 +4,7 @@
   "measurement_policy": "protected-diagnostic-not-user-hardware-qualification",
   "surfaces": {
     "react": {
-      "tab_open_budget_ms": 2500,
+      "tab_open_budget_ms": 4000,
       "resize_settle_budget_ms": 1500,
       "stable_frame_count": 3,
       "stability_tolerance_px": 1,

@@ -4,10 +4,11 @@
 from __future__ import annotations
 
 import pytest
-from conftest import make_test_result
 
 from movement_optimizer.observability import InMemoryMetrics, MetricSample, metrics
 from movement_optimizer.trajectory import SolutionCache
+
+from .conftest import make_test_result
 
 
 @pytest.fixture(autouse=True)

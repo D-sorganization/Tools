@@ -5,9 +5,10 @@ from __future__ import annotations
 
 import numpy as np
 import pytest
-from conftest import make_test_result
 
 from movement_optimizer.result_analysis import ResultAnalyzer
+
+from .conftest import make_test_result
 
 
 def test_torque_statistics_include_mean_std_and_range() -> None:

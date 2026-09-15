@@ -178,9 +178,7 @@ class TestUnpackExerciseConfig:
         qe = np.array([0.4, 0.5, 0.6])
         qb = np.zeros((3, 2))
         dyn = object()
-        out_dyn, out_qs, out_qe, out_qb, out_via = _unpack_exercise_config(
-            (dyn, qs, qe, qb)
-        )
+        out_dyn, out_qs, out_qe, out_qb, out_via = _unpack_exercise_config((dyn, qs, qe, qb))
         assert out_dyn is dyn
         assert np.array_equal(out_qs, qs)
         assert np.array_equal(out_qe, qe)
@@ -491,9 +489,9 @@ class TestExerciseTabHelpers:
         assert xmax == pytest.approx(0.9)
 
     def test_render_analysis_plots_calls_renderers(self, tab) -> None:  # type: ignore[no-untyped-def]
-        from conftest import make_test_result
-
         from movement_optimizer.gui import exercise_tab
+
+        from .conftest import make_test_result
 
         result = make_test_result()
         body = BodyModel(75.0, 1.75)
