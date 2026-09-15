@@ -19822,10 +19822,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9200,
+      "bytes_lf": 9677,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "320c516d989c06e29b2167a58b3dfbb62d80ca89163219d55df5028856a71559",
+      "content_sha256_lf": "f2833ab58b1159f3ddaa48fa82042efb57570e66df7a7b5f80e24a82c4ef332c",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-SCREWANALYSIS-TS-65CB23318F7A",
       "language": "typescript",
