@@ -188,7 +188,11 @@
 **Learning:** In high-frequency React hooks (e.g., telemetry streaming at 10Hz), using the array spread operator with slice `[...prev.slice(N), item]` causes severe garbage collection pressure by allocating multiple intermediate arrays per frame.
 **Action:** Replace `[...prev.slice(N), item]` with a single-pass `const next = prev.slice(N); next.push(item); return next;` when updating bounded state arrays to reduce allocation churn by 50%.
 
-
 ## 2026-09-15 - Prevent stack overflow in flight trajectory apex calculation
 **Learning:** Computing `apex_height` using `Math.max(...airborne.map(...))` maps the entire flight trajectory array to the call stack via the spread operator. Since trajectories can contain thousands of samples, this causes massive GC pressure and risks throwing "Maximum call stack size exceeded".
 **Action:** Always replace spread-based max/min with single-pass `for` loops when computing bounds over unbounded trajectory arrays.
+
+## 2026-10-24 - Eliminate Array Spread in Charting Components
+**Learning:** In React charting components and visualization matrixes (e.g. `VariationDistributionMatrix`), using `Math.max(...counts, 1)` on dynamically sized arrays scales poorly due to call stack overhead and intermediate array generation, causing significant GC pressure on high-frequency rendering paths.
+**Action:** Always replace `Math.max(...array)` on hot rendering paths with simple single-pass `for` loops. This avoids array spread limits and improves overall memory efficiency.
+

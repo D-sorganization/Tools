@@ -272,7 +272,10 @@ export function distributionMatrixToSvg(
       let marks: string;
       if (rowIndex === columnIndex) {
         const marginal = buildScalarMarginal(dataset, row.key);
-        const maximum = Math.max(...marginal.counts, 1);
+        let maximum = 1;
+        for (let i = 0; i < marginal.counts.length; i++) {
+          if (marginal.counts[i] > maximum) maximum = marginal.counts[i];
+        }
         const width = (size - 2 * pad) / Math.max(marginal.counts.length, 1);
         marks = marginal.counts.map((count, index) => {
           const height = count / maximum * (size - 2 * pad);
