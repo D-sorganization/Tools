@@ -17,6 +17,7 @@ from pathlib import Path
 from typing import Any
 
 import numpy as np
+import numpy.typing as npt
 
 from shared.python.contracts import require
 
@@ -88,6 +89,17 @@ class Calibration:
             self.mat_width_mm,
             self.mat_length_mm,
         )
+
+    def mat_world_mm(self) -> npt.NDArray[np.float64]:
+        """The mat's corners in the world frame, in :data:`CORNER_ORDER`."""
+        w, length = self.mat_width_mm, self.mat_length_mm
+        return np.array([[0.0, 0.0], [w, 0.0], [w, length], [0.0, length]])
+
+    def reprojection_error_px(self) -> float:
+        """RMS pixel error of the homography over the four clicked corners."""
+        plane = self.ground_plane()
+        corners = np.asarray(self.mat_corners_px, dtype=np.float64)
+        return float(plane.reprojection_error_px(corners, self.mat_world_mm()))
 
     def target_vector(self) -> tuple[float, float]:
         """Unit target direction in the world frame (x right, y toward target)."""

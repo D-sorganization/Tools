@@ -96,19 +96,7 @@ def cmd_calibrate(args: argparse.Namespace) -> int:
         colour=args.colour,
         fps=args.fps,
     )
-    plane = cal.ground_plane()
-    import numpy as np
-
-    world = np.array(
-        [
-            [0, 0],
-            [cal.mat_width_mm, 0],
-            [cal.mat_width_mm, cal.mat_length_mm],
-            [0, cal.mat_length_mm],
-        ],
-        dtype=np.float64,
-    )
-    err = plane.reprojection_error_px(np.asarray(corners), world)
+    err = cal.reprojection_error_px()
     out = args.out or default_calibration_path()
     cal.save(out)
     logger.info("calibration written to %s (reprojection %.3f px)", out, err)
@@ -151,7 +139,7 @@ def cmd_run(args: argparse.Namespace) -> int:
     cal = Calibration.load(args.calibration or default_calibration_path())
     mode = CaptureMode(width=cal.capture_width, height=cal.capture_height, fps=cal.fps)
     source = FfmpegDirectShowSource(cal.camera_instance_id, mode, width=args.width)
-    scaled = _scaled_calibration(cal, args.width)
+    scaled = scaled_calibration(cal, args.width)
     monitor = PuttingMonitor(scaled, source, _sink(args))
     monitor.add_observer(_report)
     logger.info(
@@ -221,7 +209,7 @@ def cmd_snapshot(args: argparse.Namespace) -> int:
     return 0
 
 
-def _scaled_calibration(cal: Calibration, width: int) -> Calibration:
+def scaled_calibration(cal: Calibration, width: int) -> Calibration:
     """The same calibration expressed at the decode width."""
     scale = width / cal.capture_width
     if abs(scale - 1.0) < 1e-9:

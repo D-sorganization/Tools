@@ -1,31 +1,44 @@
 # Agent Handoff: Putting Launch Monitor
 
-Updated: 2026-09-15 (session claude, epic #5218)
+Updated: 2026-09-15 (session claude, epic #5218; GUI #5219)
 
 ## Repository and Working Directory
 
 - Repository: `D-sorganization/Tools`, tool at `src/putting_launch_monitor/`,
   shared camera layer at `src/shared/python/camera/`.
-- Branch `claude/putting-launch-monitor`; PR: see the epic's latest comment.
+- Branch `claude/putting-launch-monitor` (core, PR #5224); GUI on
+  `claude/5219-putting-gui`, stacked on it until #5224 merges.
 - Governing epic: #5218. Objective: a camera-based putting launch monitor
   that measures launch speed and HLA on the ground plane and feeds GSPro.
 
 ## What Is Done (and Measured)
 
-| piece                                                    | module                  | evidence                                                                                              |
-| -------------------------------------------------------- | ----------------------- | ----------------------------------------------------------------------------------------------------- |
-| Ground-plane homography, launch fit, HLA                 | `geometry.py`           | synthetic 30° camera, 0.3 px noise: speed within 2%, HLA within 0.5° over 12 speed/angle combinations |
-| GSPro Open Connect v1 codec + client                     | `gspro.py`              | every required field per the published spec; glued 200+201 replies framed; putting mode from the 201  |
-| Ball detection (HSV, circularity, size from mat scale)   | `detect.py`             | on the lab frame the three most circular blobs were the three balls nearest the mat                   |
-| Rest → armed → rolling state machine, own-ball following | `track.py`              | rendered putt recovered end to end; a stray resting ball cannot steal the roll                        |
-| Calibration document (`putting_monitor.calibration/1`)   | `calibration.py`        | round-trips; refuses unknown schema and fields; default search region = mat + 25%                     |
-| Orchestration and sinks                                  | `monitor.py`            | end-to-end on rendered frames; GSPro sink holds putts outside putting mode                            |
-| Shared camera sources                                    | `shared/python/camera/` | `FfmpegDirectShowSource` streams the overhead ELP at 60 fps; `VideoFileSource` replays files          |
-| CLI: calibrate / run / replay / probe-gspro / snapshot   | `cli.py`                | live run: 55 fps processed, ball in 240/240 frames, armed at frame 11, 0 false putts                  |
+| piece                                                     | module                  | evidence                                                                                                     |
+| --------------------------------------------------------- | ----------------------- | ------------------------------------------------------------------------------------------------------------ |
+| Ground-plane homography, launch fit, HLA                  | `geometry.py`           | synthetic 30° camera, 0.3 px noise: speed within 2%, HLA within 0.5° over 12 speed/angle combinations        |
+| GSPro Open Connect v1 codec + client                      | `gspro.py`              | every required field per the published spec; glued 200+201 replies framed; putting mode from the 201         |
+| Ball detection (HSV, circularity, size from mat scale)    | `detect.py`             | on the lab frame the three most circular blobs were the three balls nearest the mat                          |
+| Rest → armed → rolling state machine, own-ball following  | `track.py`              | rendered putt recovered end to end; a stray resting ball cannot steal the roll                               |
+| Calibration document (`putting_monitor.calibration/1`)    | `calibration.py`        | round-trips; refuses unknown schema and fields; default search region = mat + 25%                            |
+| Orchestration and sinks                                   | `monitor.py`            | end-to-end on rendered frames; GSPro sink holds putts outside putting mode                                   |
+| Shared camera sources                                     | `shared/python/camera/` | `FfmpegDirectShowSource` streams the overhead ELP at 60 fps; `VideoFileSource` replays files                 |
+| CLI: calibrate / run / replay / probe-gspro / snapshot    | `cli.py`                | live run: 55 fps processed, ball in 240/240 frames, armed at frame 11, 0 false putts                         |
+| PyQt6 window (#5219): live view, wizard, HSV tuner, GSPro | `ui/pyqt6/`             | 22 offscreen tests: wizard equals a hand-built calibration; rendered putt reaches the readout via the worker |
 
-Tests: `src/putting_launch_monitor/tests` (33) and `tests/camera` (8), all
+Tests: `src/putting_launch_monitor/tests` (55) and `tests/camera` (8), all
 passing; ruff, ruff-format and mypy clean; every file under Tools' 500-line
 budget.
+
+## GUI (`ui/pyqt6/`, entry `main_window.main`)
+
+`main_window` (window, start/stop, wizard and tuner launch), `worker`
+(`MonitorWorker` thread, `EventBridge`, `take_snapshot`, `build_monitor`
+using `cli.scaled_calibration`), `live_view` (`ImageCanvas`, `LiveView`,
+`CornerCanvas`), `readout`, `calibration_wizard` + `wizard_pages` (camera /
+corners with `MatDiagram` / mat / review), `hsv_tuner`, `gspro_panel`,
+`painting` (theme pens via `shared.python.theme.Colors`, image conversion).
+Camera selection is a text field seeded from the calibration; a picker is a
+follow-up. Not yet launcher-registered (next step 1).
 
 ## The Lab Setup, As Calibrated
 
@@ -62,24 +75,25 @@ python shared_scripts/fleet_hooks.py fast
 - Do not open the camera with `cv2.VideoCapture`; use the shared source.
 - Do not add colour literals to GUI code; use `shared/python/theme`.
 - Do not `git add -A` in this repo.
+- Do not detect, track or decide in `ui/`: the window consumes
+  `FrameEvent`s (now carrying `candidates` and the decoded `frame`) from
+  `PuttingMonitor.run` on a `QThread`; `worker.EventBridge` coalesces frames
+  and never drops a putt. Stop the monitor before a snapshot (single-open).
+- Do not run the GUI tests without `QT_QPA_PLATFORM=offscreen`; hold the
+  `QApplication` at module level (a dropped one aborts pytest silently).
 
 ## Ordered Next Steps (agents; each has an issue under #5218)
 
-1. **PyQt6 GUI** — live preview with the search region and detections
-   drawn, a calibration wizard (click four corners on a snapshot, enter mat
-   size and target angle), HSV tuning with the mask shown, a putt readout
-   and GSPro status. Reuse `monitor.PuttingMonitor` with an observer; never
-   duplicate pipeline logic. Follow `src/flow_rate_converter` for shape.
-2. **Launcher registration** — `gui_registration.py` (category Biomechanics)
+1. **Launcher registration** — `gui_registration.py` (category Biomechanics)
    and the thin `launch_pyqt6.py`; `python scripts/generate_tools_json.py`;
    commit `tools.json`, `tool_surface_contract.json`, README table.
-3. **Accuracy validation on the rig** — measure the mat, re-calibrate, roll
+2. **Accuracy validation on the rig** — measure the mat, re-calibrate, roll
    putts of known speed (a known roll-out on a known Stimp gives launch
    speed; a taped line gives HLA), state the tolerance, write an evidence
    page. Exercise `--gspro` against the running GSPro and record the 201.
-4. **Replay corpus** — record putts from the overhead camera with the
+3. **Replay corpus** — record putts from the overhead camera with the
    UpstreamDrift rig, keep short clips plus expected results as regression
    tests through `VideoFileSource`.
-5. **UpstreamDrift adoption** — the capture rig's `preview_source.py` and
+4. **UpstreamDrift adoption** — the capture rig's `preview_source.py` and
    `recorder.py` device-ref code becomes `shared.python.camera` via the
    `vendor/ud-tools` pin (Tools is the source of truth).

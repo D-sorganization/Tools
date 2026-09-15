@@ -23,13 +23,13 @@ reachable from any live state and `abandoned` from `parked`.
 - **State:** in_progress
 - **Owner:** claude
 - **Issue:** D-sorganization/Tools#5218
-- **PR:** not created
-- **Branch:** `claude/putting-launch-monitor`
+- **PR:** D-sorganization/Tools#5224 (core, open); GUI #5219 PR stacked on it
+- **Branch:** `claude/putting-launch-monitor` (core), `claude/5219-putting-gui` (GUI)
 - **Paths:** `src/putting_launch_monitor/`, `src/shared/python/camera/`, `tests/camera/`
 - **Started:** 2026-09-15
-- **Last verified:** 2026-09-15 (`SELF`; 41 tests pass; live run on the lab's overhead camera: 55 fps processed, ball in 240/240 frames, armed at frame 11, 0 false putts)
-- **Summary:** Overhead-camera putting monitor that measures launch speed and HLA on a mat-corner homography and sends putts to GSPro over Open Connect v1; the shared `camera` package carries the ffmpeg/DirectShow source for the fleet.
-- **Next step:** Open the PR, then file the GUI, launcher-registration, rig-validation, replay-corpus and UpstreamDrift-adoption children under #5218 with handoff docs for agents.
+- **Last verified:** 2026-09-15 (`SELF`; 63 tests pass incl. 22 offscreen GUI tests; live run on the lab's overhead camera: 55 fps processed, ball in 240/240 frames, armed at frame 11, 0 false putts)
+- **Summary:** Overhead-camera putting monitor that measures launch speed and HLA on a mat-corner homography and sends putts to GSPro over Open Connect v1, with a PyQt6 window (live view, calibration wizard, HSV tuner, GSPro panel); the shared `camera` package carries the ffmpeg/DirectShow source for the fleet.
+- **Next step:** Merge #5224 then the #5219 GUI PR, and register the tool in the launcher (`gui_registration.py`, `launch_pyqt6.py`, `tools.json`).
 
 ### DL-#1614 · Mermaid C4 Architecture Map Contract
 

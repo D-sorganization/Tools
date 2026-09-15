@@ -111,7 +111,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "bf520755df0120fa3b26e126e7d241e96676bcfd2cf4fb57db19154e95ca1eee",
+      "content_sha256_lf": "4c3b38581d080cf87b4b867c6655c45f71a2811dbc9353e446cf955c485f983f",
       "entry_count": 17,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
@@ -429,8 +429,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-project-packer.json"
     },
     {
-      "content_sha256_lf": "17c53bfee2bf25b5af933e4d15514d401aec1094cc4ca3f973a03f8e972abc41",
-      "entry_count": 9,
+      "content_sha256_lf": "b6915783ea894bd2e6e65ec37d605d93e52cebe393c0964f63bb207eeda39c54",
+      "entry_count": 20,
       "package": "src/putting_launch_monitor",
       "path": "manuals/tools/manifests/module-inventory/entries-src-putting-launch-monitor.json"
     },

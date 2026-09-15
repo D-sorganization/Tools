@@ -69,7 +69,13 @@ class GsproSink:
 
 @dataclass(frozen=True)
 class FrameEvent:
-    """What happened on one frame, for observers."""
+    """What happened on one frame, for observers.
+
+    ``candidates`` are every plausible ball the detector saw (best first;
+    ``seen`` is the first) and ``frame`` is the decoded BGR image the
+    detector ran on, shared without a copy so a display can draw over it.
+    Both default empty so older observers and hand-built events still work.
+    """
 
     sequence: int
     timestamp_ns: int
@@ -77,6 +83,8 @@ class FrameEvent:
     phase: Phase
     putt: Putt | None
     outcome: str
+    candidates: tuple[BallObservation, ...] = ()
+    frame: Frame | None = None
 
 
 Observer = Callable[[FrameEvent], None]
@@ -123,7 +131,8 @@ class PuttingMonitor:
 
     def step(self, packet: FramePacket) -> FrameEvent:
         """Process one frame. Postcondition: ``frames`` advanced by one."""
-        candidates = self.detector.detect_all(frame_to_bgr(packet))
+        frame = frame_to_bgr(packet)
+        candidates = self.detector.detect_all(frame)
         seen = candidates[0] if candidates else None
         putt = self.tracker.update(packet.timestamp_ns, candidates)
         outcome = ""
@@ -138,6 +147,8 @@ class PuttingMonitor:
             self.tracker.phase,
             putt,
             outcome,
+            tuple(candidates),
+            frame,
         )
         for observer in self._observers:
             observer(event)

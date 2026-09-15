@@ -66,9 +66,9 @@ Tools is the fleet's shared engineering-tools monorepo (45+ tools: PyQt6 GUIs, F
 
 ## Active Delivery Boundaries
 
-- **Putting launch monitor #5218** — camera putting for GSPro; core built and
-  measured on the rig, GUI/registration/validation are agent children. See
-  `src/putting_launch_monitor/AGENT_HANDOFF.md`.
+- **Putting launch monitor #5218** — camera putting for GSPro; core (PR #5224)
+  measured on the rig, PyQt6 window done (#5219, stacked on #5224);
+  registration/validation are children. See `src/putting_launch_monitor/AGENT_HANDOFF.md`.
 
 - #4844 renderer prerequisite: `fix/4844-consistent-pyqt-renderer`, worktree `C:/Users/diete/Repositories/Tools-impact-render`, PR #5090. Published `df4101f28` passes 73 browser and 23 PyQt tests in two Linux captures; all ten PyQt images repeat byte-identically. A reviewed 20-image reference set is proposed with unchanged tolerances; 60 local contracts and both candidate comparisons pass. Hooks/fresh CI remain. See `docs/development/rate-pyqt-renderer-4844-reference-review.md`; #5087 is closed unmerged.
 - Rust watcher #5095 / PR #5097: deterministic quiet-period batching replaces the scheduler-dependent flush-count test; four filesystem tests remain. Validation and CI prerequisite evidence: `docs/development/file-watcher-debounce-5095.md`.

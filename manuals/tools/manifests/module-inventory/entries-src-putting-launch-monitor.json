@@ -89,10 +89,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 8127,
+      "bytes_lf": 8731,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "cd95856c73b769576c50cec20cd28c6a8d62cb8a73449a1ab161e1c2ecb4a641",
+      "content_sha256_lf": "244c31d6cbe32b4e5d9323aed4e466b3b9757f9e6d867206e17bf53279e42a30",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-CALIBRATION-PY-63C97D513A6E",
       "language": "python",
@@ -167,6 +167,7 @@
           }
         ],
         "test_paths": [
+          "src/putting_launch_monitor/tests/test_gui.py",
           "src/putting_launch_monitor/tests/test_pipeline.py"
         ],
         "unit_mentions": [
@@ -176,37 +177,33 @@
       }
     },
     {
-      "authority_status": "provisional",
-      "bytes_lf": 8989,
-      "classification": "calculation",
-      "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "be26943b3a0fb647d310077d25488b09a5fb7a7b7163eba1ffeb51a80abd3093",
-      "family": "shared-tools-calculation",
+      "authority_status": "not-applicable",
+      "bytes_lf": 8687,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e38dfbc5a4a0b02a30f247dfbec798ddc676502bbbf3678fc2ae257a5c95d844",
+      "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-CLI-PY-53BE554180B0",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/putting_launch_monitor/cli.py",
       "purpose": "Command line for the putting launch monitor.",
-      "review_status": "review-required",
+      "review_status": "inventory-baseline",
       "risk_tags": [
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "test-evidence-unmapped",
-        "unit-contract-review"
+        "public-api"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
+        "artifacts": "not-applicable",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "not-applicable",
         "units": "mapped",
-        "validation": "unavailable"
+        "validation": "not-applicable"
       },
       "traceability": {
         "adr_paths": [
@@ -268,6 +265,11 @@
             "kind": "function",
             "name": "parse_point",
             "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "scaled_calibration",
+            "signature": "cal: Calibration, width: int"
           }
         ],
         "test_paths": [],
@@ -370,6 +372,7 @@
           }
         ],
         "test_paths": [
+          "src/putting_launch_monitor/tests/test_gui.py",
           "src/putting_launch_monitor/tests/test_pipeline.py"
         ],
         "unit_mentions": [
@@ -459,6 +462,7 @@
         ],
         "test_paths": [
           "src/putting_launch_monitor/tests/test_geometry.py",
+          "src/putting_launch_monitor/tests/test_gui.py",
           "src/shared/python/programmatic_pid/tests/test_geometry.py",
           "tests/programmatic_pid/test_geometry.py"
         ],
@@ -586,6 +590,7 @@
         ],
         "test_paths": [
           "src/putting_launch_monitor/tests/test_gspro.py",
+          "src/putting_launch_monitor/tests/test_gui.py",
           "src/putting_launch_monitor/tests/test_pipeline.py"
         ],
         "unit_mentions": [
@@ -596,10 +601,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 5594,
+      "bytes_lf": 6046,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "bcf6a5cc804dfd07b1e1f2bfa30ec067709f49eabcf9f09aa68ab6cb784226b3",
+      "content_sha256_lf": "5fa661a05bd7f432d61242cda6df9b4844902deaa265d5ca5c93b9543432485e",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-MONITOR-PY-9B92A9257743",
       "language": "python",
@@ -669,6 +674,7 @@
           }
         ],
         "test_paths": [
+          "src/putting_launch_monitor/tests/test_gui.py",
           "src/putting_launch_monitor/tests/test_pipeline.py"
         ],
         "unit_mentions": [
@@ -747,10 +753,861 @@
           }
         ],
         "test_paths": [
+          "src/putting_launch_monitor/tests/test_gui.py",
           "src/putting_launch_monitor/tests/test_pipeline.py"
         ],
         "unit_mentions": [
           "deg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 78,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "46cd5cc93a78dd18582c4ac1f54ab601c9787ca0113efdde0a457dcf258e1981",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-UI-INIT-PY-5D0AE4212BAB",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/putting_launch_monitor/ui/__init__.py",
+      "purpose": "User interfaces for the putting launch monitor (PyQt6 under ``pyqt6``).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 259,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8c621e7f26b360c60ff120605f3e084a86b6978e1905ef3bf8abeea070aea8e4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-UI-PYQT6-INIT-PY-7C5C38AC6EC1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/putting_launch_monitor/ui/pyqt6/__init__.py",
+      "purpose": "PyQt6 window for the putting launch monitor.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10996,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "78db9a84046107e5067efc17d57ab974b1978e1960bae00846532962b28f466b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-UI-PYQT6-CALIBRATION-WIZARD-PY-6C8FAB6CA64F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/putting_launch_monitor/ui/pyqt6/calibration_wizard.py",
+      "purpose": "The calibration wizard: snapshot, corners, mat, review, save.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CalibrationWizard",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CameraPage",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ReviewPage",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_CAPTURE_PX",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_FPS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_STYLE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "calibration_from_state",
+            "signature": "state: WizardState"
+          },
+          {
+            "kind": "function",
+            "name": "load_image_file",
+            "signature": "path: Path"
+          }
+        ],
+        "test_paths": [
+          "src/putting_launch_monitor/tests/test_gui.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7744,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f1524c9e5ebb376bb404c0f29a8d4145d3e26afce7b3f7bd91c1d70fea673670",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-UI-PYQT6-GSPRO-PANEL-PY-AC91428B795B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/putting_launch_monitor/ui/pyqt6/gspro_panel.py",
+      "purpose": "GSPro connection panel: connect, last reply, club, putting mode, override.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GsproPanel",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEVICE_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HEARTBEAT_MS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "default_client",
+            "signature": "host: str, port: int"
+          }
+        ],
+        "test_paths": [
+          "src/putting_launch_monitor/tests/test_gui.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5965,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "def50d0e3052f04c9445a14a5cfb1dd3b2cb205e36990c4e9e45280fd967fa27",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-UI-PYQT6-HSV-TUNER-PY-8AE32D3B1B86",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/putting_launch_monitor/ui/pyqt6/hsv_tuner.py",
+      "purpose": "HSV tuning: six sliders bound to an :class:`HsvRange`, the mask beside the frame.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "HsvTuner",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HsvTunerDialog",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BOUNDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_HORIZONTAL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_OK_CANCEL",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/putting_launch_monitor/tests/test_gui.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6974,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9f9154651ba8eccea8ff47b146f69384e6e794f3bbe0ec1f27982a6b33e1c992",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-UI-PYQT6-LIVE-VIEW-PY-43353260625D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/putting_launch_monitor/ui/pyqt6/live_view.py",
+      "purpose": "The camera frame with the search region and detections drawn over it.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CornerCanvas",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ImageCanvas",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LiveView",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ANTIALIAS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_EXPANDING",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_LEFT_BUTTON",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_MIN_CANVAS_PX",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SMOOTH",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 12572,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e51f87b2356e4af393d39f6ce70881a098a8d22381ee2f65ff23751001338945",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-UI-PYQT6-MAIN-WINDOW-PY-B3D35C20353D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/putting_launch_monitor/ui/pyqt6/main_window.py",
+      "purpose": "The putting monitor's window: live view, readout, GSPro, calibration.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PuttingMonitorWindow",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SETTINGS_APP",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DIALOG_ACCEPTED",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_main_window.py",
+          "src/pendulum_simulator/tests/test_main_window.py",
+          "tests/ode_solver/test_main_window.py"
+        ],
+        "unit_mentions": [
+          "bar",
+          "mm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 4503,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "94496e7ae04c8803d14ab2a6b9d37918156a571c7972fea04b308f1a61964095",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-UI-PYQT6-PAINTING-PY-822007A46880",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/putting_launch_monitor/ui/pyqt6/painting.py",
+      "purpose": "Theme-sourced pens and image conversion for the live view and the wizard.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "OverlayPalette",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TOKENS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DASHED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_NO_BRUSH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_QIMAGE_BGR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_QIMAGE_GRAY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SOLID",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "draw_candidates",
+            "signature": "painter: QPainter, candidates: Sequence[BallObservation], tracked: BallObservation | None, palette: OverlayPalette"
+          },
+          {
+            "kind": "function",
+            "name": "draw_corners",
+            "signature": "painter: QPainter, corners: Sequence[tuple[float, float]], palette: OverlayPalette, radius: float=6.0"
+          },
+          {
+            "kind": "function",
+            "name": "draw_region",
+            "signature": "painter: QPainter, region: RegionOfInterest, colour: QColor"
+          },
+          {
+            "kind": "function",
+            "name": "fit_scale",
+            "signature": "image_w: int, image_h: int, box_w: int, box_h: int"
+          },
+          {
+            "kind": "function",
+            "name": "frame_to_qimage",
+            "signature": "frame: Frame"
+          },
+          {
+            "kind": "function",
+            "name": "mask_to_qimage",
+            "signature": "mask: np.ndarray"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3303,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0670f153ad4c5f70180e8d58277cd91ae4567ec6e436b2b381ee2e74547ef611",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-UI-PYQT6-READOUT-PY-1075317CCB8D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/putting_launch_monitor/ui/pyqt6/readout.py",
+      "purpose": "Tracker phase and the last putt, as labels.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PuttReadout",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EMPTY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PHASE_TEXT",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "deg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9822,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "75a4f0736126e9f159cd1a9b2f24e91cf19c26bb311ce01081ac544b85dba39f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-UI-PYQT6-WIZARD-PAGES-PY-C971A07822B0",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/putting_launch_monitor/ui/pyqt6/wizard_pages.py",
+      "purpose": "The calibration wizard's pages that gather input.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CornersPage",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MatDiagram",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MatPage",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WizardState",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_MAT_MM",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_MAT_MM",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_ROI_PX",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ALIGN_TOP",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ANTIALIAS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_NO_BRUSH",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "deg",
+          "mm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4973,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cb359a8634c5f030577b8b7f2836d2cbfaadce37f420150b02d0bb33c004bc27",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-UI-PYQT6-WORKER-PY-CB752F77D4AD",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/putting_launch_monitor/ui/pyqt6/worker.py",
+      "purpose": "Running the monitor off the GUI thread, and getting its events back on it.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "EventBridge",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MonitorWorker",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_DECODE_WIDTH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SNAPSHOT_SETTLE_FRAMES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_monitor",
+            "signature": "calibration: Calibration, decode_width: int, sink: Sink | None, observer: EventBridge, source_factory: SourceFactory=camera_source"
+          },
+          {
+            "kind": "function",
+            "name": "camera_source",
+            "signature": "calibration: Calibration, decode_width: int"
+          },
+          {
+            "kind": "function",
+            "name": "take_snapshot",
+            "signature": "camera_instance_id: str, mode: CaptureMode=DEFAULT_MODE, *, source: FrameSource | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/putting_launch_monitor/tests/test_gui.py"
+        ],
+        "unit_mentions": [
           "s"
         ],
         "validation_paths": []
