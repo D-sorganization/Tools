@@ -968,10 +968,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10996,
+      "bytes_lf": 11010,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "78db9a84046107e5067efc17d57ab974b1978e1960bae00846532962b28f466b",
+      "content_sha256_lf": "a7b7cf6e46fd3010ac1f90138316878f675375823d86ea6aedd0b55342331392",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-UI-PYQT6-CALIBRATION-WIZARD-PY-6C8FAB6CA64F",
       "language": "python",

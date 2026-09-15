@@ -429,7 +429,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-project-packer.json"
     },
     {
-      "content_sha256_lf": "c58f1cef8b6ffd90432ec2baeca2a79a2d00cd92d55a6ac2aa8129a09d7e7259",
+      "content_sha256_lf": "47e5436505f534d4ce36c0991b5ea6e12953a58e8de6c843f8d18192db2b146e",
       "entry_count": 22,
       "package": "src/putting_launch_monitor",
       "path": "manuals/tools/manifests/module-inventory/entries-src-putting-launch-monitor.json"

@@ -76,7 +76,7 @@ def load_image_file(path: Path) -> Frame:
     import cv2
 
     require(path.is_file(), "image file must exist", str(path))
-    image = cv2.imread(str(path), cv2.IMREAD_COLOR)
+    image: Frame | None = cv2.imread(str(path), cv2.IMREAD_COLOR)
     if image is None:
         raise StateError(f"could not decode {path}")
     return image
