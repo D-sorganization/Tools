@@ -6,9 +6,9 @@ Updated: 2026-09-15 (session claude, epic #5218; GUI #5219; registration #5220)
 
 - Repository: `D-sorganization/Tools`, tool at `src/putting_launch_monitor/`,
   shared camera layer at `src/shared/python/camera/`.
-- Branch `claude/putting-launch-monitor` (core, PR #5224); GUI on
-  `claude/5219-putting-gui` (PR #5225), stacked on it until #5224 merges;
-  launcher registration on `claude/5220-putting-register`, stacked on #5225.
+- Branch `claude/putting-launch-monitor` (core, PR #5224, merged); GUI on
+  `claude/5219-putting-gui` (PR #5225, merged); launcher registration on
+  `claude/5220-putting-register` (PR #5226).
 - Governing epic: #5218. Objective: a camera-based putting launch monitor
   that measures launch speed and HLA on the ground plane and feeds GSPro.
 
