@@ -7577,3 +7577,8 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-13: Cross-Runtime Flight-Model Policy Alignment (#4457)
 
 - **2026-09-13**: fix(variation, #4457) — Align and pin flight-model policies across Python, web variation, and Morris authority surfaces. Enforce `SUPPORTED_VARIATION_FLIGHT_MODEL = "waterloo_penner"` in browser `validatePlan`, export `AuthorityFlightModel` type union, and add bidirectional pinning test suites in TypeScript and Python asserting authority model consistency against `morris_ui_parity_v1.json`.
+
+## 2026-09-15: Rate of Closure Screw Analysis Loop Optimization (#5217)
+
+- **2026-09-15**: perf(rate_of_closure, #5217) — Use single-pass loops in `orthogonalBasis` and `dominantSign` in `src/rate_of_closure/web/src/model/screwAnalysis.ts` instead of `Math.min(...array.map(Math.abs))` and `Math.max(...array.map(Math.abs))` to prevent GC pressure. (spec-exempt: micro-optimization)
+
