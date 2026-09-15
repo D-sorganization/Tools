@@ -47,8 +47,8 @@ class GroundPlane:
 
     def __post_init__(self) -> None:
         require(self.h.shape == (3, 3), "homography must be 3x3", self.h.shape)
-        require(np.isfinite(self.h).all(), "homography must be finite")
-        require(abs(np.linalg.det(self.h)) > 1e-12, "homography is singular")
+        require(bool(np.isfinite(self.h).all()), "homography must be finite")
+        require(bool(abs(np.linalg.det(self.h)) > 1e-12), "homography is singular")
 
     @classmethod
     def from_correspondences(
@@ -138,7 +138,7 @@ def _dlt(src: FloatArray, dst: FloatArray) -> FloatArray:
     def normalise(p: FloatArray) -> tuple[FloatArray, FloatArray]:
         mean = p.mean(axis=0)
         d = np.sqrt(((p - mean) ** 2).sum(axis=1)).mean()
-        require(d > 1e-9, "degenerate (coincident) points")
+        require(bool(d > 1e-9), "degenerate (coincident) points")
         s = np.sqrt(2.0) / d
         t = np.array([[s, 0, -s * mean[0]], [0, s, -s * mean[1]], [0, 0, 1.0]])
         q = (np.hstack([p, np.ones((len(p), 1))]) @ t.T)[:, :2]
@@ -152,7 +152,7 @@ def _dlt(src: FloatArray, dst: FloatArray) -> FloatArray:
         rows.append([0, 0, 0, -x, -y, -1, v * x, v * y, v])
     a = np.asarray(rows, dtype=np.float64)
     _, sv, vt = np.linalg.svd(a)
-    require(sv[-2] > 1e-9 * sv[0], "correspondences are degenerate (collinear?)")
+    require(bool(sv[-2] > 1e-9 * sv[0]), "correspondences are degenerate (collinear?)")
     h_n = vt[-1].reshape(3, 3)
     h = np.linalg.inv(t_d) @ h_n @ t_s
     return np.asarray(h / h[2, 2], dtype=np.float64)
@@ -246,7 +246,7 @@ def hla_degrees(
     """
     d = np.asarray(direction, dtype=np.float64)
     g = np.asarray(target, dtype=np.float64)
-    require(np.linalg.norm(d) > 0 and np.linalg.norm(g) > 0, "zero-length vector")
+    require(bool(np.linalg.norm(d) > 0 and np.linalg.norm(g) > 0), "zero-length vector")
     # angle from target to direction; in an (x right, y forward) frame a
     # clockwise turn (toward +x) must read positive, hence the sign.
     cross = g[0] * d[1] - g[1] * d[0]

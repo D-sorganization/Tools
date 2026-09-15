@@ -380,10 +380,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 10137,
+      "bytes_lf": 10167,
       "classification": "calculation",
       "classification_basis": "path-marker:geometry",
-      "content_sha256_lf": "b207ef273c8a34c21fed9a5516649a4dae1b3a92210bc2958bb6544e936b94e0",
+      "content_sha256_lf": "55facce6a43b1708485f627a5d42cdf9db1e9da300fb2d8545963e9457282c74",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-GEOMETRY-PY-3C5A9A379BEA",
       "language": "python",
