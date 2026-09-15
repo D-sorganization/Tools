@@ -23,7 +23,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **State:** in_progress
 - **Owner:** claude
 - **Issue:** D-sorganization/Tools#5218
-- **PR:** D-sorganization/Tools#5224 (core, open); #5225 (GUI, stacked); #5220 registration PR stacked on #5225
+- **PR:** D-sorganization/Tools#5224 (core, open); #5225 (GUI, stacked); #5226 (registration, stacked on #5225)
 - **Branch:** `claude/putting-launch-monitor` (core), `claude/5219-putting-gui` (GUI), `claude/5220-putting-register` (launcher registration)
 - **Paths:** `src/putting_launch_monitor/`, `src/shared/python/camera/`, `tests/camera/`
 - **Started:** 2026-09-15
