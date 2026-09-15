@@ -436,6 +436,7 @@
           "src/web_applications/calculator/tests/test_security_validation.py",
           "tests/architecture/test_import_resolvability.py",
           "tests/architecture/test_sidekick_external_imports_3316.py",
+          "tests/camera/test_camera_sources.py",
           "tests/data_processing/data_processor/test_background_thread_errors.py",
           "tests/data_processing/data_processor/test_ui_thread_workers.py",
           "tests/document_processing/test_pdf_renamer_config_security.py",

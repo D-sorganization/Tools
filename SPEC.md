@@ -5908,6 +5908,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-15 | #5218 | Camera putting launch monitor for GSPro (epic #5218): shared `camera` package - DirectShow device references, the ffmpeg raw-frame command validated on the lab rig, `FfmpegDirectShowSource` and `VideoFileSource` as `sidekick.lab.mocap` FrameSources with index-derived timestamps; the putting tool's geometry (mat-corner homography, launch fit, HLA), detection, tracking, Open Connect v1 client and CLI follow in the same PR. |
 | 2026-09-13 | #5201 | ⚡ Bolt: Use .ravel() instead of .flatten() for 2D inputs in SLSQP optimizer to reduce memory allocations (spec 1.18.136) |
 | 2026-09-13 | #5200 | 🎨 Palette: Add keyboard focus indicator to `<label>`-wrapped file inputs in VariationActions and PuttingControls to fix accessibility issue where focus rings are lost. (spec 1.18.136) |
 | 2026-09-13 | #5202 | ⚡ Bolt: Optimize telemetry array allocation to reduce GC pressure (spec 1.18.136) |
