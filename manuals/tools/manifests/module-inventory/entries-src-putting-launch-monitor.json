@@ -1,0 +1,762 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 734,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "bdb6c0bc6c4a59cf72067458591a424e0da41d377f7cc341a39c954c3355afde",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-INIT-PY-55A3E443A883",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/putting_launch_monitor/__init__.py",
+      "purpose": "Camera-based putting launch monitor for GSPro (epic #5218).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 164,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b59832d199ba716d4f09776042f2b4371470bef173bcdc18595273e29e4674c2",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-MAIN-PY-401E5A3727D9",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/putting_launch_monitor/__main__.py",
+      "purpose": "``python -m putting_launch_monitor``.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 8127,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "cd95856c73b769576c50cec20cd28c6a8d62cb8a73449a1ab161e1c2ecb4a641",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-CALIBRATION-PY-63C97D513A6E",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/putting_launch_monitor/calibration.py",
+      "purpose": "The one file that makes a camera a putting monitor.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Calibration",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "APP_DIR_NAME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CORNER_ORDER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ORG_NAME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ROI_MARGIN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCHEMA",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "default_calibration_path",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/putting_launch_monitor/tests/test_pipeline.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 8989,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "be26943b3a0fb647d310077d25488b09a5fb7a7b7163eba1ffeb51a80abd3093",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-CLI-PY-53BE554180B0",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/putting_launch_monitor/cli.py",
+      "purpose": "Command line for the putting launch monitor.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "COMMANDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEVICE_ID",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_parser",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "cmd_calibrate",
+            "signature": "args: argparse.Namespace"
+          },
+          {
+            "kind": "function",
+            "name": "cmd_probe",
+            "signature": "args: argparse.Namespace"
+          },
+          {
+            "kind": "function",
+            "name": "cmd_replay",
+            "signature": "args: argparse.Namespace"
+          },
+          {
+            "kind": "function",
+            "name": "cmd_run",
+            "signature": "args: argparse.Namespace"
+          },
+          {
+            "kind": "function",
+            "name": "cmd_snapshot",
+            "signature": "args: argparse.Namespace"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: Sequence[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "parse_point",
+            "signature": "text: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "W",
+          "deg",
+          "mm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 7110,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "64d6614ee8c7fb7421b704bb93ed04190b0c3bad7a565a6c4d9568d9c3d97418",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-DETECT-PY-1A7B94D5781E",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/putting_launch_monitor/detect.py",
+      "purpose": "Finding the ball in a frame.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BallDetector",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "BallObservation",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HsvBallDetector",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HsvRange",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RegionOfInterest",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "COLOUR_PROFILES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ORANGE_BALL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WHITE_BALL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "YELLOW_BALL",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/putting_launch_monitor/tests/test_pipeline.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 10137,
+      "classification": "calculation",
+      "classification_basis": "path-marker:geometry",
+      "content_sha256_lf": "b207ef273c8a34c21fed9a5516649a4dae1b3a92210bc2958bb6544e936b94e0",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-GEOMETRY-PY-3C5A9A379BEA",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/putting_launch_monitor/geometry.py",
+      "purpose": "Ground-plane geometry for the camera putting monitor.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GroundPlane",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Launch",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GOLF_BALL_DIAMETER_MM",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MM_PER_M",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MPH_PER_MPS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "fit_launch",
+            "signature": "times_s: FloatArray, positions_mm: FloatArray, *, window_mm: float=300.0, min_points: int=4"
+          },
+          {
+            "kind": "function",
+            "name": "hla_degrees",
+            "signature": "direction: tuple[float, float], target: tuple[float, float]=(0.0, 1.0)"
+          }
+        ],
+        "test_paths": [
+          "src/putting_launch_monitor/tests/test_geometry.py",
+          "src/shared/python/programmatic_pid/tests/test_geometry.py",
+          "tests/programmatic_pid/test_geometry.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "g",
+          "mm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10393,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "fd4d3cfef9c38a9bc622bded93863def9ae0ca2261a0d92117110a7c5879b1d3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-GSPRO-PY-56E57F2D8575",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/putting_launch_monitor/gspro.py",
+      "purpose": "GSPro Open Connect v1 — the wire protocol, and a client that speaks it.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://gsprogolf.com/GSProConnectV1.html:"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GsproClient",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlayerInfo",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PuttShot",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Reply",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "API_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CODE_OK",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CODE_PLAYER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_HOST",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_PORT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_PUTTER_CODES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "encode_heartbeat",
+            "signature": "*, device_id: str, shot_number: int, ready: bool=True"
+          },
+          {
+            "kind": "function",
+            "name": "encode_shot",
+            "signature": "shot: PuttShot, *, device_id: str, shot_number: int, ready: bool=True"
+          },
+          {
+            "kind": "function",
+            "name": "parse_reply",
+            "signature": "raw: bytes | str"
+          },
+          {
+            "kind": "function",
+            "name": "split_objects",
+            "signature": "buffer: bytes"
+          }
+        ],
+        "test_paths": [
+          "src/putting_launch_monitor/tests/test_gspro.py",
+          "src/putting_launch_monitor/tests/test_pipeline.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 5594,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "bcf6a5cc804dfd07b1e1f2bfa30ec067709f49eabcf9f09aa68ab6cb784226b3",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-MONITOR-PY-9B92A9257743",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/putting_launch_monitor/monitor.py",
+      "purpose": "The running monitor: frames in, putts out, GSPro told.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FrameEvent",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GsproSink",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LogSink",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PuttingMonitor",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Sink",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "frame_to_bgr",
+            "signature": "packet: FramePacket"
+          }
+        ],
+        "test_paths": [
+          "src/putting_launch_monitor/tests/test_pipeline.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 9616,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "b11432a5066c4ef09476eb903769b1421f72664bca02a6b737b965bb9ec26a6c",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-TRACK-PY-B7C99A844E4D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/putting_launch_monitor/track.py",
+      "purpose": "From a stream of ball observations to a putt.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Phase",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Putt",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PuttTracker",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TrackerSettings",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "NS_PER_S",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/putting_launch_monitor/tests/test_pipeline.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/putting_launch_monitor",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

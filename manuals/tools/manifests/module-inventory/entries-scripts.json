@@ -7850,10 +7850,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 24197,
+      "bytes_lf": 24515,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a94a9355f80fb559782699ae0570323674490f64d85a5f3e785cd0564b068efe",
+      "content_sha256_lf": "741c0dd7d2cb80765905ce23889d0ff69cd99e8300af4b42132e98c920ebed28",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-TOOLS-HANDOFF-CONTRACT-PY-CCB22662BD24",
       "language": "python",

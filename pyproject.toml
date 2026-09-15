@@ -162,6 +162,12 @@ video-analyzer = [
     "opencv-python>=4.8.0",
     "mediapipe>=0.10.0",
 ]
+# Camera putting launch monitor (epic #5218): live DirectShow cameras through
+# the bundled ffmpeg, ball detection through OpenCV.
+putting-monitor = [
+    "opencv-python>=4.8.0",
+    "imageio-ffmpeg>=0.4.9",
+]
 # P1AM SCADA control-system backend runtime (issue #4014).
 #
 # THE single source of truth for what the FastAPI backend needs in order to
@@ -250,6 +256,7 @@ include = [
     "rate_of_closure*",
     "codemap*",
     "video_analyzer*",
+    "putting_launch_monitor*",
     "rotation_converter*",
 ]
 exclude = [
