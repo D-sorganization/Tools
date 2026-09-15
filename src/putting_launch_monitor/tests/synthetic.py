@@ -54,13 +54,13 @@ class SyntheticCamera:
         right = np.cross(down, forward)
         r = np.vstack([right, down, forward])
         tvec = -r @ cam_pos
-        return k @ np.hstack([r, tvec[:, None]])
+        return np.asarray(k @ np.hstack([r, tvec[:, None]]), dtype=np.float64)
 
     def project(self, xy_mm: npt.NDArray[np.float64]) -> npt.NDArray[np.float64]:
         xy = np.atleast_2d(np.asarray(xy_mm, dtype=np.float64))
         pts = np.hstack([xy, np.zeros((len(xy), 1)), np.ones((len(xy), 1))])
         uvw = pts @ self.projection().T
-        return uvw[:, :2] / uvw[:, 2:3]
+        return np.asarray(uvw[:, :2] / uvw[:, 2:3], dtype=np.float64)
 
     def mat_corners_px(self) -> npt.NDArray[np.float64]:
         world = np.array(
