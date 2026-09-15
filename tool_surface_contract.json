@@ -211,6 +211,17 @@
       }
     },
     {
+      "id": "putting_launch_monitor",
+      "name": "Putting Launch Monitor",
+      "description": "Measure putt launch speed and direction from an overhead camera and send them to GSPro",
+      "category": "Biomechanics",
+      "surfaces": {
+        "pyqt6": true,
+        "web": false,
+        "legacy_gui": false
+      }
+    },
+    {
       "id": "rate_of_closure",
       "name": "Rate of Closure Impact Explorer",
       "description": "Quantifies how a rotating clubhead's impact-point delivery differs from the tracked reference point (COM or geometric center): path deviation, attack-angle change, face rotation during contact, and the launch-monitor geometric-center question, with an animated 3D clubhead and rate sweeps.",

@@ -35,7 +35,7 @@ pytestmark = pytest.mark.skipif(not _QT_AVAILABLE, reason="Qt not available")
 
 def _make_result(seed: int = 0):
     """Return a minimal OptimizationResult for testing."""
-    from conftest import make_test_result
+    from .conftest import make_test_result
 
     return make_test_result(seed=seed, cost=99.0)
 
@@ -239,9 +239,7 @@ class TestExerciseTabDrawAnimFrame:
         assert "Deadlift" in call_args
 
     @patch("movement_optimizer.gui.exercise_tab.anim_renderer")
-    def test_draw_anim_frame_passes_correct_frame_index(
-        self, mock_anim_renderer
-    ) -> None:
+    def test_draw_anim_frame_passes_correct_frame_index(self, mock_anim_renderer) -> None:
         from movement_optimizer.gui.exercise_tab import ExerciseTab
 
         tab = ExerciseTab("Squat")

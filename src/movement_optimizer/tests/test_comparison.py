@@ -3,9 +3,9 @@
 
 from __future__ import annotations
 
-from conftest import make_test_result
-
 from movement_optimizer.comparison import ComparisonStore, comparison_metrics
+
+from .conftest import make_test_result
 
 
 class TestComparisonStore:

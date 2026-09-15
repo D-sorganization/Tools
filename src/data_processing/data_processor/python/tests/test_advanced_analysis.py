@@ -780,12 +780,15 @@ class TestDataAugmentation:
 
     def test_time_warp(self) -> None:
         """Test time warping augmentation."""
-        from data_processor.core.data_augmentation import DataAugmenter
+        from data_processor.core.data_augmentation import (
+            AugmentationConfig,
+            DataAugmenter,
+        )
 
         np.random.seed(42)
         data = np.sin(np.linspace(0, 4 * np.pi, 100))
 
-        augmenter = DataAugmenter()
+        augmenter = DataAugmenter(AugmentationConfig(random_seed=42))
         warped = augmenter.time_warp(data)
 
         assert warped.shape == data.shape

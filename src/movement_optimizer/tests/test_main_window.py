@@ -37,7 +37,7 @@ pytestmark = pytest.mark.skipif(not _QT_AVAILABLE, reason="Qt not available")
 
 def _make_result(cost: float = 42.0, success: bool = True) -> Any:
     """Create a minimal OptimizationResult for testing."""
-    from conftest import make_test_result
+    from .conftest import make_test_result
 
     r = make_test_result(cost=cost)
     r.success = success
@@ -205,9 +205,7 @@ class _FakeTab:
     ) -> None:
         self.draw_all_plots_calls.append((result, body, bar, exercise_type))
 
-    def draw_anim_frame(
-        self, fi: int, result: Any, dyn: Any, body: Any, etype: str
-    ) -> None:
+    def draw_anim_frame(self, fi: int, result: Any, dyn: Any, body: Any, etype: str) -> None:
         self.draw_anim_frame_calls.append((fi, result, dyn, body, etype))
 
 
@@ -225,9 +223,7 @@ class _FakeWindow:
         from movement_optimizer.gui.exercise_state import ExerciseRuntimeState
         from movement_optimizer.trajectory import SolutionCache
 
-        self.exercise_states = [
-            ExerciseRuntimeState() for _name, _etype in self.EXERCISE_CONFIGS
-        ]
+        self.exercise_states = [ExerciseRuntimeState() for _name, _etype in self.EXERCISE_CONFIGS]
         self.sidebar = _FakeSidebar()
         self.status_label = _FakeLabel()
         self.exercise_tabs = [_FakeTab() for _ in self.EXERCISE_CONFIGS]

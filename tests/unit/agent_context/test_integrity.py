@@ -4,12 +4,22 @@ from __future__ import annotations
 
 import json
 import subprocess
+from collections.abc import Callable
 from pathlib import Path
+from typing import Any
 
 import pytest
-from test_agent_context_catalog import rewrite
 
 from agent_context.catalog import CatalogError, load_catalog
+
+
+def rewrite(root: Path, change: Callable[[dict[str, Any]], None]) -> None:
+    path = root / "docs/agent_context/catalog.json"
+    data = json.loads(path.read_text(encoding="utf-8"))
+    change(data)
+    path.write_text(json.dumps(data), encoding="utf-8")
+
+
 from agent_context.cli import main
 from agent_context.service import ContextService
 from agent_context.workspace import git, snapshot

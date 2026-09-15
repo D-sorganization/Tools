@@ -732,6 +732,7 @@
           }
         ],
         "test_paths": [
+          "src/putting_launch_monitor/tests/test_geometry.py",
           "src/shared/python/programmatic_pid/tests/test_edge_cases.py",
           "src/shared/python/programmatic_pid/tests/test_geometry.py",
           "tests/programmatic_pid/test_geometry.py",
