@@ -62,3 +62,7 @@ tests/rate_of_closure/pyqt_visualization_tab_probe.py
 tests/rate_of_closure/pyqt_visual_layout_persistence_probe.py
 # Playwright companion harness; semantic assertions live in the browser specs.
 tests/rate_of_closure/browser_companion_harness.py
+# Putting launch monitor (epic #5218): the package marker and the synthetic
+# overhead camera + putt renderer the tests import; neither is a test.
+src/putting_launch_monitor/tests/__init__.py
+src/putting_launch_monitor/tests/synthetic.py
