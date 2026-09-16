@@ -196,3 +196,6 @@
 **Learning:** In React charting components and visualization matrixes (e.g. `VariationDistributionMatrix`), using `Math.max(...counts, 1)` on dynamically sized arrays scales poorly due to call stack overhead and intermediate array generation, causing significant GC pressure on high-frequency rendering paths.
 **Action:** Always replace `Math.max(...array)` on hot rendering paths with simple single-pass `for` loops. This avoids array spread limits and improves overall memory efficiency.
 
+## 2026-09-16 - Prevent multiple array allocations when calculating math bounds
+**Learning:** Using `Math.max(...array.flat().map(Math.abs))` causes severe performance degradation in hot paths due to repeated intermediate array creation and potential call stack overflows on large datasets.
+**Action:** Replace spreading and mapping of arrays with single-pass `for` loops when calculating bounding values like maximum/minimum across an array in numerical loops.

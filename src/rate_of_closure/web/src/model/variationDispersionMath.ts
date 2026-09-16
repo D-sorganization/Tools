@@ -98,7 +98,14 @@ function symmetricEigenpairs(matrix: number[][]): Eigenpairs {
   const vectors = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
   for (let iteration = 0; iteration < 48; iteration += 1) {
     const [row, column, magnitude] = largestOffDiagonal(values);
-    const scale = Math.max(...values.flat().map(Math.abs), Number.MIN_VALUE);
+    // ⚡ Bolt Optimization: Replace Math.max(...values.flat().map(Math.abs)) with a single-pass loop to avoid array allocations in loop
+    let scale = Number.MIN_VALUE;
+    for (let r = 0; r < 3; r++) {
+      for (let c = 0; c < 3; c++) {
+        const absVal = Math.abs(values[r][c]);
+        if (absVal > scale) scale = absVal;
+      }
+    }
     if (magnitude <= 1e-14 * scale) break;
     rotateJacobi(values, vectors, row, column);
   }
@@ -166,7 +173,12 @@ function canonicalAxis(axis: Vec3): Vec3 {
 function classifyAdequacy(count: number, eigenvalues: Vec3): DispersionAdequacyTs {
   if (count < 2) return "insufficient-samples";
   if (!eigenvalues.every(Number.isFinite)) return "invalid-covariance";
-  const scale = Math.max(...eigenvalues.map(Math.abs), Number.MIN_VALUE);
+  // ⚡ Bolt Optimization: Replace Math.max(...eigenvalues.map(Math.abs)) with a single-pass loop to avoid array allocations in loop
+  let scale = Number.MIN_VALUE;
+  for (let i = 0; i < eigenvalues.length; i++) {
+    const absVal = Math.abs(eigenvalues[i]);
+    if (absVal > scale) scale = absVal;
+  }
   const tolerance = EIGENVALUE_ROUNDOFF_FACTOR * Number.EPSILON * scale;
   if (Math.min(...eigenvalues) < -tolerance) return "invalid-covariance";
   const rank = eigenvalues.filter((value) => value > tolerance).length;
