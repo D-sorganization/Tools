@@ -98,11 +98,11 @@ function symmetricEigenpairs(matrix: number[][]): Eigenpairs {
   const vectors = [[1, 0, 0], [0, 1, 0], [0, 0, 1]];
   for (let iteration = 0; iteration < 48; iteration += 1) {
     const [row, column, magnitude] = largestOffDiagonal(values);
-    // ⚡ Bolt Optimization: Use single-pass loop instead of Math.max(...array.map(...))
+    // ⚡ Bolt Optimization: Replace Math.max(...values.flat().map(Math.abs)) with a single-pass loop to avoid array allocations in loop
     let scale = Number.MIN_VALUE;
-    for (let i = 0; i < values.length; i += 1) {
-      for (let j = 0; j < values[i].length; j += 1) {
-        const absVal = Math.abs(values[i][j]);
+    for (let r = 0; r < 3; r++) {
+      for (let c = 0; c < 3; c++) {
+        const absVal = Math.abs(values[r][c]);
         if (absVal > scale) scale = absVal;
       }
     }
@@ -173,9 +173,9 @@ function canonicalAxis(axis: Vec3): Vec3 {
 function classifyAdequacy(count: number, eigenvalues: Vec3): DispersionAdequacyTs {
   if (count < 2) return "insufficient-samples";
   if (!eigenvalues.every(Number.isFinite)) return "invalid-covariance";
-  // ⚡ Bolt Optimization: Use single-pass loop instead of Math.max(...array.map(...))
+  // ⚡ Bolt Optimization: Replace Math.max(...eigenvalues.map(Math.abs)) with a single-pass loop to avoid array allocations in loop
   let scale = Number.MIN_VALUE;
-  for (let i = 0; i < eigenvalues.length; i += 1) {
+  for (let i = 0; i < eigenvalues.length; i++) {
     const absVal = Math.abs(eigenvalues[i]);
     if (absVal > scale) scale = absVal;
   }
