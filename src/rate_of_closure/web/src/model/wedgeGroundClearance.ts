@@ -149,10 +149,18 @@ function firstContact(
 ): WedgeGroundContactEventTs | null {
   let timeS: number | null = null;
   let candidateIndex = -1;
-  const initialMinimum = Math.min(...clearanceRows[0]);
+  // ⚡ Bolt Optimization: Use single-pass loop instead of Math.min(...array) and .indexOf()
+  let initialMinimum = clearanceRows[0][0];
+  let initialCandidateIndex = 0;
+  for (let i = 1; i < clearanceRows[0].length; i++) {
+    if (clearanceRows[0][i] < initialMinimum) {
+      initialMinimum = clearanceRows[0][i];
+      initialCandidateIndex = i;
+    }
+  }
   if (initialMinimum <= 1e-10) {
     timeS = times[0];
-    candidateIndex = clearanceRows[0].indexOf(initialMinimum);
+    candidateIndex = initialCandidateIndex;
   } else {
     for (let row = 1; row < times.length; row += 1) {
       for (let index = 0; index < candidates.length; index += 1) {
@@ -205,12 +213,28 @@ function ballMetrics(
   };
   if (ballTime === null) return unavailable;
   const state = candidateState(samples, candidates, ballTime);
-  const leading = state.clearances.filter((_, index) => candidates[index].feature.startsWith("leading_edge"));
-  const sole = state.clearances.filter((_, index) => !candidates[index].feature.startsWith("leading_edge"));
-  const minimumPreBall = Math.min(
-    ...envelope.filter((entry) => entry.timeS <= ballTime).map((entry) => entry.minimumClearanceM),
-    ...state.clearances,
-  );
+  // ⚡ Bolt Optimization: Use single-pass loops instead of chained map/filter and array spreads
+  let leadingMin = Infinity;
+  let soleMin = Infinity;
+  for (let i = 0; i < state.clearances.length; i++) {
+    if (candidates[i].feature.startsWith("leading_edge")) {
+      if (state.clearances[i] < leadingMin) leadingMin = state.clearances[i];
+    } else {
+      if (state.clearances[i] < soleMin) soleMin = state.clearances[i];
+    }
+  }
+
+  let minimumPreBall = Infinity;
+  for (let i = 0; i < envelope.length; i++) {
+    if (envelope[i].timeS <= ballTime && envelope[i].minimumClearanceM < minimumPreBall) {
+      minimumPreBall = envelope[i].minimumClearanceM;
+    }
+  }
+  for (let i = 0; i < state.clearances.length; i++) {
+    if (state.clearances[i] < minimumPreBall) {
+      minimumPreBall = state.clearances[i];
+    }
+  }
   const bounce = wedge.bounceDeg * Math.PI / 180;
   const worldSole = applyRotation(state.sample.rotation, [
     -wedge.soleWidthM * Math.cos(bounce), wedge.soleWidthM * Math.sin(bounce), 0,
@@ -221,8 +245,8 @@ function ballMetrics(
   const horizontalSpeed = norm(horizontalVelocity);
   if (horizontalSpeed <= 1e-12) return {
     ...unavailable, deliveredBounceDegAtBall: delivered,
-    leadingEdgeClearanceAtBallM: Math.min(...leading), minimumPreBallClearanceM: minimumPreBall,
-    soleEntryMarginM: Math.min(...sole),
+    leadingEdgeClearanceAtBallM: leadingMin, minimumPreBallClearanceM: minimumPreBall,
+    soleEntryMarginM: soleMin,
   };
   const path = scale(horizontalVelocity, 1 / horizontalSpeed);
   const trailingAlongPath = dot([worldSole[0], 0, worldSole[2]], scale(path, -1));
@@ -231,11 +255,11 @@ function ballMetrics(
   return {
     bounceUtilizationMarginDeg: effective + aoa,
     deliveredBounceDegAtBall: delivered,
-    leadingEdgeClearanceAtBallM: Math.min(...leading),
+    leadingEdgeClearanceAtBallM: leadingMin,
     minimumPreBallClearanceM: minimumPreBall,
     pathProjectedEffectiveBounceDegAtBall: effective,
     referenceAoaDegAtBall: aoa,
-    soleEntryMarginM: Math.min(...sole),
+    soleEntryMarginM: soleMin,
   };
 }
 
@@ -251,8 +275,15 @@ export function wedgeGroundClearance(
   const times = sweepTimes(samples);
   const states = times.map((time) => candidateState(samples, candidates, time));
   const envelope = states.map((state, index) => {
-    const minimum = Math.min(...state.clearances);
-    const candidateIndex = state.clearances.indexOf(minimum);
+    // ⚡ Bolt Optimization: Replace Math.min(...spread) and indexOf with a single-pass loop
+    let minimum = state.clearances[0];
+    let candidateIndex = 0;
+    for (let i = 1; i < state.clearances.length; i++) {
+      if (state.clearances[i] < minimum) {
+        minimum = state.clearances[i];
+        candidateIndex = i;
+      }
+    }
     return {
       timeS: times[index], minimumClearanceM: minimum,
       feature: candidates[candidateIndex].feature, worldPointM: state.points[candidateIndex],
