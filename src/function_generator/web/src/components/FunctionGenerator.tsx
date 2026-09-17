@@ -621,7 +621,7 @@ export function FunctionGenerator() {
               value={polyCoeffsText}
               onChange={e => setPolyCoeffsText(e.target.value)}
               placeholder="e.g., 1, 2, 0.5"
-              className="w-full bg-slate-700 text-white rounded px-3 py-2 focus:ring-2 focus:ring-blue-500"
+              className="w-full bg-slate-700 text-white rounded px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
             />
             <p className="text-xs text-slate-500 mt-1">y = c₀ + c₁t + c₂t² + ...</p>
           </div>
@@ -664,7 +664,7 @@ export function FunctionGenerator() {
             <h3 className="text-lg font-semibold text-white">Signal Layers</h3>
             <button
               onClick={addLayer}
-              className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-500 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+              className="px-3 py-1 bg-green-600 text-white rounded text-sm hover:bg-green-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-green-500 transition-colors"
             >
               + Add Layer
             </button>
@@ -704,7 +704,7 @@ export function FunctionGenerator() {
                     {layers.length > 1 && (
                       <button
                         onClick={(e) => { e.stopPropagation(); removeLayer(layer.id); }}
-                        className="px-2 py-0.5 bg-red-600 text-white rounded text-xs hover:bg-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+                        className="px-2 py-0.5 bg-red-600 text-white rounded text-xs hover:bg-red-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-red-500"
                         aria-label="Remove layer"
                       >
                         ×
@@ -761,7 +761,7 @@ export function FunctionGenerator() {
           <select
             value={waveformType}
             onChange={e => updateLayerWaveform(e.target.value as WaveformType)}
-            className="w-full bg-slate-700 text-white rounded px-3 py-2 focus:ring-2 focus:ring-blue-500"
+            className="w-full bg-slate-700 text-white rounded px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
           >
             {WAVEFORM_OPTIONS.map(opt => (
               <option key={opt.value} value={opt.value}>{opt.label}</option>
@@ -833,7 +833,7 @@ export function FunctionGenerator() {
             aria-selected={activeTab === 'time'}
             aria-controls="panel-time"
             onClick={() => setActiveTab('time')}
-            className={`px-4 py-2 rounded font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+            className={`px-4 py-2 rounded font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-colors ${
               activeTab === 'time'
                 ? 'bg-blue-600 text-white'
                 : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
@@ -847,7 +847,7 @@ export function FunctionGenerator() {
             aria-selected={activeTab === 'frequency'}
             aria-controls="panel-frequency"
             onClick={() => setActiveTab('frequency')}
-            className={`px-4 py-2 rounded font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+            className={`px-4 py-2 rounded font-medium focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 transition-colors ${
               activeTab === 'frequency'
                 ? 'bg-blue-600 text-white'
                 : 'bg-slate-700 text-slate-300 hover:bg-slate-600'
@@ -1076,7 +1076,7 @@ function ParamInput({ label, value, onChange, min, max, step = 0.1 }: ParamInput
         min={min}
         max={max}
         step={step}
-        className="w-full bg-slate-700 text-white rounded px-3 py-2 focus:ring-2 focus:ring-blue-500"
+        className="w-full bg-slate-700 text-white rounded px-3 py-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
       />
     </div>
   );
@@ -1091,7 +1091,7 @@ function PresetButton({ label, onClick }: PresetButtonProps) {
   return (
     <button
       onClick={onClick}
-      className="px-3 py-1 bg-slate-700 text-slate-300 rounded hover:bg-slate-600 text-sm transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+      className="px-3 py-1 bg-slate-700 text-slate-300 rounded hover:bg-slate-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 text-sm transition-colors"
     >
       {label}
     </button>
