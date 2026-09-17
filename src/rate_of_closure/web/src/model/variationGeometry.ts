@@ -252,7 +252,15 @@ function rankedQuietIntervals(
     const duration = times[endIndex] - times[startIndex];
     if (nSamples < criteria.minSamples || duration < criteria.minDurationS) return [];
     const selected = values.slice(startIndex, endIndex + 1);
-    const meanValue = selected.reduce((sum, value) => sum + value, 0) / selected.length;
+    // ⚡ Bolt Optimization: Use single-pass loop to eliminate reduce callback overhead and array spread Math.max
+    let sum = 0;
+    let maxValue = Number.NEGATIVE_INFINITY;
+    for (let i = 0; i < selected.length; i++) {
+      const val = selected[i];
+      sum += val;
+      if (val > maxValue) maxValue = val;
+    }
+    const meanValue = sum / selected.length;
     return [{
       startIndex,
       endIndex,
@@ -260,7 +268,7 @@ function rankedQuietIntervals(
       endTimeS: times[endIndex],
       nSamples,
       meanValue,
-      maxValue: Math.max(...selected),
+      maxValue,
       score: meanValue / criteria.maxValue,
       rank: 1,
     }];
