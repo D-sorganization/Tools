@@ -609,7 +609,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-calc-backend.json"
     },
     {
-      "content_sha256_lf": "863fcaec045e33103a9b75795e29628065481660ab199a91740fff46897638a1",
+      "content_sha256_lf": "b8efcac9ab63bd44156ec2ecc56080bf2e1b385d279bfe7a49247ae5d5e17738",
       "entry_count": 4,
       "package": "src/shared/python/camera",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-camera.json"

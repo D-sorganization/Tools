@@ -181,3 +181,52 @@ def test_video_file_source_replays_a_clip(tmp_path: Path) -> None:
 def test_popen_default_is_subprocess() -> None:
     src = FfmpegDirectShowSource(INSTANCE, ffmpeg_exe="f")
     assert src._popen is subprocess.Popen
+
+
+def test_pure_builders_importable_without_sidekick(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    import sys
+
+    for mod in list(sys.modules):
+        if mod.startswith("shared.python.camera"):
+            monkeypatch.delitem(sys.modules, mod, raising=False)
+
+    acq_mod = "shared.python.sidekick.lab.mocap.acquisition"
+    monkeypatch.setitem(sys.modules, "shared.python.sidekick", None)
+    monkeypatch.setitem(sys.modules, "shared.python.sidekick.lab", None)
+    monkeypatch.setitem(sys.modules, "shared.python.sidekick.lab.mocap", None)
+    monkeypatch.setitem(sys.modules, acq_mod, None)
+    monkeypatch.setitem(sys.modules, "sidekick", None)
+
+    import shared.python.camera as cam
+    from shared.python.camera import (
+        CaptureMode as CM,
+    )
+    from shared.python.camera import (
+        dshow_device_ref as dref,
+    )
+    from shared.python.camera import (
+        ffmpeg_raw_frame_args as fargs,
+    )
+    from shared.python.camera import (
+        output_frame_size as osize,
+    )
+
+    assert cam.CaptureMode is CM
+    assert callable(dref)
+    assert callable(fargs)
+    assert callable(osize)
+    assert "FfmpegDirectShowSource" in dir(cam)
+    assert "VideoFileSource" in dir(cam)
+    with pytest.raises(ModuleNotFoundError):
+        _ = cam.FfmpegDirectShowSource
+    with pytest.raises(ModuleNotFoundError):
+        _ = cam.VideoFileSource
+
+
+def test_source_classes_subclass_frame_source() -> None:
+    import shared.python.camera as cam
+
+    assert issubclass(cam.FfmpegDirectShowSource, FrameSource)
+    assert issubclass(cam.VideoFileSource, FrameSource)

@@ -16,6 +16,8 @@ pipeline is tested on a file exactly as it runs on a camera.
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING, Any
+
 from .dshow import (
     DSHOW_DEVICE_PREFIX,
     DSHOW_VIDEO_CATEGORY,
@@ -24,8 +26,10 @@ from .dshow import (
     ffmpeg_raw_frame_args,
     output_frame_size,
 )
-from .ffmpeg_source import FfmpegDirectShowSource
-from .video_file_source import VideoFileSource
+
+if TYPE_CHECKING:
+    from .ffmpeg_source import FfmpegDirectShowSource
+    from .video_file_source import VideoFileSource
 
 __all__ = [
     "DSHOW_DEVICE_PREFIX",
@@ -37,3 +41,19 @@ __all__ = [
     "ffmpeg_raw_frame_args",
     "output_frame_size",
 ]
+
+
+def __getattr__(name: str) -> Any:
+    if name == "FfmpegDirectShowSource":
+        from .ffmpeg_source import FfmpegDirectShowSource
+
+        return FfmpegDirectShowSource
+    if name == "VideoFileSource":
+        from .video_file_source import VideoFileSource
+
+        return VideoFileSource
+    raise AttributeError(f"module {__name__!r} has no attribute {name!r}")
+
+
+def __dir__() -> list[str]:
+    return list(__all__)

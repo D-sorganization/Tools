@@ -188,7 +188,10 @@ def test_monitor_runs_on_the_worker_and_the_putt_reaches_the_window(
     window.decode_width.setValue(cam.width)
     window.start()
     assert window.running and window.start_button.text() == "Stop"
-    qtbot.waitUntil(lambda: not window.running, timeout=30_000)
+    qtbot.waitUntil(
+        lambda: not window.running and window.start_button.text() == "Start",
+        timeout=30_000,
+    )
     qtbot.waitUntil(lambda: window.readout.speed.text() != "—", timeout=5_000)
     assert sources[0].closed
     assert float(window.readout.speed.text()) == pytest.approx(1.8 * 2.2369, rel=0.03)
