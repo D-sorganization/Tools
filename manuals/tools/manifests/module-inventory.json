@@ -297,7 +297,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-folder-tool-pro.json"
     },
     {
-      "content_sha256_lf": "1a9608f23b06e5c1cc5a4ce14c95a3d25fa311b2d7222f9173720f89177c590b",
+      "content_sha256_lf": "5ae007b51fa13e2f130c1ab75fa7d5c4899a470a4045dba2fd8ad31941f16054",
       "entry_count": 17,
       "package": "src/function_generator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-function-generator.json"
@@ -531,7 +531,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-hooks.json"
     },
     {
-      "content_sha256_lf": "02ea3fdce8bff7c85b5f85dc7c83bbc33ca07089f9cd98aa65b2c41426f3666a",
+      "content_sha256_lf": "f11405e25e855ead08d982f35f529b66d32169020906edcedf0860bc69b01088",
       "entry_count": 401,
       "package": "src/rate_of_closure/web/src/model",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-model.json"
