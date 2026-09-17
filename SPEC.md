@@ -5908,6 +5908,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-17 | #5231 | ⚡ Bolt: Use single-pass loops for calculating scale from eigenvalues in variationDispersionMath in rate_of_closure to eliminate intermediate array allocations in performance-critical numerical kernels. (spec 1.18.74) |
 | 2026-09-17 | #5235 | ⚡ Bolt: Replace Math.min(...array) and .indexOf() with single-pass loops (spec 1.18.142) |
 | 2026-09-17 | #5233 | Use single-pass loops for array bounds to prevent GC pressure and stack overflows (spec 1.18.142) |
 | 2026-09-17 | #5234 | Palette: Add focus-visible states for keyboard accessibility in FunctionGenerator.tsx (spec 1.18.127) |
