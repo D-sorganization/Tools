@@ -23,13 +23,13 @@ reachable from any live state and `abandoned` from `parked`.
 - **State:** in_progress
 - **Owner:** claude
 - **Issue:** D-sorganization/Tools#5218
-- **PR:** D-sorganization/Tools#5224 (core, merged); #5225 (GUI, merged); #5226 (launcher registration, open)
-- **Branch:** `claude/5220-putting-register` (launcher registration)
+- **PR:** D-sorganization/Tools#5224 (core, merged); #5225 (GUI, merged); #5226 (launcher registration, merged); #5239 (lazy FrameSource import, open)
+- **Branch:** `feat/5227-lazy-framesource`
 - **Paths:** `src/putting_launch_monitor/`, `src/shared/python/camera/`, `tests/camera/`
 - **Started:** 2026-09-15
-- **Last verified:** 2026-09-15 (`SELF`; #5224/#5225/#5226 merged to main, UD PR #10211 merged; 77 tests pass incl. 22 offscreen GUI tests; launcher tile constructs offscreen via `make_launcher`; `generate_tools_json.py --check` and `check_tools_manifest_layout.py` pass; live run on the lab's overhead camera: 55 fps processed, ball in 240/240 frames, armed at frame 11, 0 false putts)
-- **Summary:** Overhead-camera putting monitor that measures launch speed and HLA on a mat-corner homography and sends putts to GSPro over Open Connect v1, with a PyQt6 window (live view, calibration wizard, HSV tuner, GSPro panel); the shared `camera` package carries the ffmpeg/DirectShow source for the fleet.
-- **Next step:** Land #5227 (lazy `FrameSource` import), then build the `validate` harness for #5221 per `docs/putting_launch_monitor/TURNOVER.md`.
+- **Last verified:** 2026-09-17 (`SELF`; lazy `FrameSource` import in `src/shared/python/camera/__init__.py` verified without sidekick dependency; test_gui race condition fixed; 22 GUI tests pass; 10 camera tests pass)
+- **Summary:** Overhead-camera putting monitor that measures launch speed and HLA on a mat-corner homography and sends putts to GSPro over Open Connect v1, with a PyQt6 window (live view, calibration wizard, HSV tuner, GSPro panel); the shared `camera` package carries the ffmpeg/DirectShow source for the fleet with lazy FrameSource export.
+- **Next step:** Land #5227 / PR, then build the `validate` harness for #5221 per `docs/putting_launch_monitor/TURNOVER.md`.
 
 ### DL-#1614 · Mermaid C4 Architecture Map Contract
 

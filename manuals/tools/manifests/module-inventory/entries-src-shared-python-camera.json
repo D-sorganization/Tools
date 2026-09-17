@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1338,
+      "bytes_lf": 1830,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "43990974885a7a2828dac67bef74f444a7b514966709af423570cb813958b83d",
+      "content_sha256_lf": "f98224abafce85b234c9ad5ac93ca46b3c1eb2828e2421c54ea8e22047448430",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CAMERA-INIT-PY-9525B216A16A",
       "language": "python",
@@ -55,16 +55,6 @@
           {
             "kind": "re-export",
             "name": "DSHOW_VIDEO_CATEGORY",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "FfmpegDirectShowSource",
-            "signature": null
-          },
-          {
-            "kind": "re-export",
-            "name": "VideoFileSource",
             "signature": null
           },
           {
