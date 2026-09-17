@@ -26208,10 +26208,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11761,
+      "bytes_lf": 12680,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "109c0b58f676d32605f35e3ce0e0d5a193eb199c3e48a312b51f54dd4b16dcac",
+      "content_sha256_lf": "da35c9bee502cbc429e4fc1dde41f47097a640de2fc6c7dcbab48321ae71c5cd",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-WEDGEGROUNDCLEARANCE-TS-6FA3BF901F81",
       "language": "typescript",
