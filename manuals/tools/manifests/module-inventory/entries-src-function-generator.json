@@ -800,10 +800,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 43126,
+      "bytes_lf": 43506,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "71cda9687f98dd3e373eaae8d20939109cb299fd0faab8e438447202a5f7925b",
+      "content_sha256_lf": "8035d405033e93ed226735bcf94201ecad7093bc4cdebba4911b1877731e9da5",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-FUNCTION-GENERATOR-WEB-SRC-COMPONENTS-FUNCTIONGENERATOR-TSX-4223A57D9847",
       "language": "typescript-react",
