@@ -173,14 +173,17 @@ function canonicalAxis(axis: Vec3): Vec3 {
 function classifyAdequacy(count: number, eigenvalues: Vec3): DispersionAdequacyTs {
   if (count < 2) return "insufficient-samples";
   if (!eigenvalues.every(Number.isFinite)) return "invalid-covariance";
-  // ⚡ Bolt Optimization: Use single-pass loop instead of Math.max(...array.map(...))
+  // ⚡ Bolt Optimization: Use single-pass loop instead of Math.max(...map) and Math.min(...spread)
   let scale = Number.MIN_VALUE;
+  let minEigenvalue = Number.POSITIVE_INFINITY;
   for (let i = 0; i < eigenvalues.length; i += 1) {
-    const absVal = Math.abs(eigenvalues[i]);
+    const val = eigenvalues[i];
+    const absVal = Math.abs(val);
     if (absVal > scale) scale = absVal;
+    if (val < minEigenvalue) minEigenvalue = val;
   }
   const tolerance = EIGENVALUE_ROUNDOFF_FACTOR * Number.EPSILON * scale;
-  if (Math.min(...eigenvalues) < -tolerance) return "invalid-covariance";
+  if (minEigenvalue < -tolerance) return "invalid-covariance";
   const rank = eigenvalues.filter((value) => value > tolerance).length;
   return count < MIN_FULL_RANK_SAMPLES || eigenvalues[0] === 0 || rank < 3
     ? "rank-deficient" : "estimable";

@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.141                                   |
+| **Spec Version**        | 1.18.142                                   |
 | **Last Spec Update**    | 2026-09-13                                 |
 
 ## 2. Purpose & Mission
@@ -5908,6 +5908,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-17 | #5233 | Use single-pass loops for array bounds to prevent GC pressure and stack overflows (spec 1.18.142) |
 | 2026-09-17 | #5234 | Palette: Add focus-visible states for keyboard accessibility in FunctionGenerator.tsx (spec 1.18.127) |
 | 2026-09-15 | #5229 | Putting launch monitor turnover (epic #5218): `docs/putting_launch_monitor/TURNOVER.md` records the landed state, the ordered remaining children (#5227, #5221, #5228, #5222), the landing recipe with every CI and hook trap met while merging the stack, the operator checklist and the definition of done; the tool handoff next-steps refreshed to match (UpstreamDrift adoption done in UD PR #10211). |
 | 2026-09-15 | #5226 | Putting launch monitor launcher registration (epic #5218): `putting_launch_monitor/gui_registration.py` (`GUI_INFO` category Biomechanics, maturity beta, `PuttingMonitorWindow` with the `cv2`/`imageio_ffmpeg`/`numpy` dependency list) and the thin `launch_pyqt6.py` in the shared `make_launcher` shape; `tools.json`, `tool_surface_contract.json` and the README catalogue regenerated (36 tools, 28 in the contract). No `[project.scripts]` entry: the package imports OpenCV at module level. |
