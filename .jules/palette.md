@@ -83,7 +83,3 @@
 ## 2026-09-13 - Focus Visibility on Label-Wrapped File Inputs
 **Learning:** When styling file upload buttons that use a visually hidden `sr-only` or `hidden` input wrapped inside a `<label>`, the browser focus ring is lost. Keyboard users cannot see which control has focus.
 **Action:** Always apply `focus-within:outline` and related focus styles to the `<label>` itself to ensure keyboard focus visibility is maintained while hiding the native input.
-
-## 2026-09-17 - Consistent Keyboard Focus Indicators
-**Learning:** Found inconsistent and missing focus states for keyboard users across form elements and custom buttons in `FunctionGenerator.tsx`.
-**Action:** Used `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color]` utilities across inputs, selects, and buttons to provide clear, consistent focus rings for keyboard navigation while avoiding them for mouse clicks.
