@@ -7587,3 +7587,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 
 - **2026-09-15**: perf(rate_of_closure, #5217) — Use single-pass loops in `orthogonalBasis` and `dominantSign` in `src/rate_of_closure/web/src/model/screwAnalysis.ts` instead of `Math.min(...array.map(Math.abs))` and `Math.max(...array.map(Math.abs))` to prevent GC pressure. (spec-exempt: micro-optimization)
 
+## 2026-09-17: Release v1.19.0 (#5241)
+
+- **2026-09-17**: chore(release, #5241) — Bump release version to v1.19.0 across pyproject.toml, package.json, and VERSION; refresh CHANGELOG.md.
+
