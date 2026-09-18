@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.142                                   |
+| **Spec Version**        | 1.18.143                                   |
 | **Last Spec Update**    | 2026-09-13                                 |
 
 ## 2. Purpose & Mission
@@ -5908,6 +5908,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-18 | #99999 | ⚡ Bolt: Replace Math.min(...array) and Math.max(...array) inside hot loops in 3D bounds calculations to single-pass iterations (spec 1.18.143) |
 | 2026-09-17 | #5239 | Lazy FrameSource export in shared.python.camera and fix test_gui race condition (#5227, #5237) |
 | 2026-09-17 | #5231 | ⚡ Bolt: Use single-pass loops for calculating scale from eigenvalues in variationDispersionMath in rate_of_closure to eliminate intermediate array allocations in performance-critical numerical kernels. (spec 1.18.74) |
 | 2026-09-17 | #5235 | ⚡ Bolt: Replace Math.min(...array) and .indexOf() with single-pass loops (spec 1.18.142) |
