@@ -204,3 +204,6 @@
 **Learning:** Using chained `.map()` calls combined with `Math.min(...array)` or `Math.max(...array)` and `flat()` creates significant garbage collection pressure and CPU overhead when computing bounds. Array creation and spreads degrade to O(N) memory allocations, scaling poorly and risking stack overflows.
 **Action:** When computing bounds over numerical arrays (e.g. eigenvalue scaling, covariance matrices), replace chained map and spread-based aggregations with a single-pass `for` loop to accumulate bounds dynamically without allocating intermediate arrays, leading to significantly higher throughput.
 
+## 2024-05-23 - Avoid Chained Array Spreads in 3D Math Bounds Calculation
+**Learning:** In the `rate_of_closure` app, calculating bounding boxes on complex 3D meshes (e.g. `flat.map(v => v[k])` combined with `Math.max(...spread)`) can hit V8's call stack limits and cause significant GC churn on frequent operations or tests. Using standard `for` loops explicitly tracking the scalar min/max values without allocating intermediate arrays improves performance and avoids runtime exceptions.
+**Action:** Replace `Math.max(...array.map(f))` combinations with single-pass bounds calculation loops across all 3D mesh boundary operations.

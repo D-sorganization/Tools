@@ -31,8 +31,16 @@ import { isWatertight, meshVolumeCentroid } from "./volumetrics";
 
 function extents(club: ClubSpec): [number, number, number] {
   const flat = buildParametricHead(club).flat();
-  const span = (k: number) =>
-    Math.max(...flat.map((v) => v[k])) - Math.min(...flat.map((v) => v[k]));
+  const span = (k: number) => {
+    let min = Infinity;
+    let max = -Infinity;
+    for (let i = 0; i < flat.length; i++) {
+      const v = flat[i][k];
+      if (v < min) min = v;
+      if (v > max) max = v;
+    }
+    return max - min;
+  };
   return [span(0), span(1), span(2)];
 }
 
@@ -69,8 +77,14 @@ function soleDepthReferenceMm(club: ClubSpec): number {
   const flat = flatVertices(club);
   const yMin = axisMin(flat, 1);
   const band = flat.filter((v) => v[1] <= yMin + 1.0e-3 * scale);
-  const xs = band.map((v) => v[0]);
-  return ((Math.max(...xs) - Math.min(...xs)) / scale) * 1000;
+  let minX = Infinity;
+  let maxX = -Infinity;
+  for (let i = 0; i < band.length; i++) {
+    const x = band[i][0];
+    if (x < minX) minX = x;
+    if (x > maxX) maxX = x;
+  }
+  return ((maxX - minX) / scale) * 1000;
 }
 
 /** The generator's refined (mass-scaled) stations — same subdivision. */
@@ -104,12 +118,23 @@ function soleSlabAreasM2(club: ClubSpec): [number, number] {
     leanPoint(club, [x, yc - hh, 0]),
   );
   const tops = refined.map(([x, hh, , yc]) => leanPoint(club, [x, yc + hh, 0]));
-  const yMin = Math.min(...bottoms.map((p) => p[1]));
-  const yMax = Math.max(...tops.map((p) => p[1]));
+  let yMin = Infinity;
+  for (let i = 0; i < bottoms.length; i++) {
+    const y = bottoms[i][1];
+    if (y < yMin) yMin = y;
+  }
+  let yMax = -Infinity;
+  for (let i = 0; i < tops.length; i++) {
+    const y = tops[i][1];
+    if (y > yMax) yMax = y;
+  }
   const line = yMin + 0.25 * (yMax - yMin);
-  const pts = bottoms
-    .map((p) => [p[0], Math.max(0, line - p[1])] as const)
-    .sort((a, b) => a[0] - b[0]);
+  const ptsArr = new Array(bottoms.length);
+  for (let i = 0; i < bottoms.length; i++) {
+    const p = bottoms[i];
+    ptsArr[i] = [p[0], Math.max(0, line - p[1])];
+  }
+  const pts = ptsArr.sort((a, b) => a[0] - b[0]);
   const xs = pts.map((p) => p[0]);
   const cs = pts.map((p) => p[1]);
   const xMid = 0.5 * (xs[0] + xs[xs.length - 1]);
