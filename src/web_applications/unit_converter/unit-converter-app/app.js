@@ -45,7 +45,6 @@ const customUnitInput = document.getElementById('customUnit');
 const referenceUnitSelect = document.getElementById('referenceUnit');
 const conversionFactorInput = document.getElementById('conversionFactor');
 const customAliasesInput = document.getElementById('customAliases');
-const addCustomUnitButton = document.getElementById('addCustomUnit');
 const customUnitsList = document.getElementById('customUnitsList');
 const modalMessage = document.getElementById('modalMessage');
 
@@ -1043,8 +1042,12 @@ function setupEventListeners() {
     clearInputButton.addEventListener('click', clearInput);
   }
 
+  const customUnitForm = document.getElementById('customUnitForm');
   customCategorySelect.addEventListener('change', populateReferenceUnits);
-  addCustomUnitButton.addEventListener('click', addCustomUnit);
+  customUnitForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    addCustomUnit();
+  });
 
   // Clear error states on input
   [customUnitInput, conversionFactorInput].forEach(input => {

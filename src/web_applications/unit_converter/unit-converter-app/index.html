@@ -436,7 +436,7 @@
           <div id="modalMessage" class="error-message" role="alert" style="display: none"></div>
 
           <!-- Add Custom Unit -->
-          <div class="custom-unit-form">
+          <form class="custom-unit-form" id="customUnitForm">
             <h3 class="form-title">Add Custom Unit</h3>
 
             <div class="input-group">
@@ -505,8 +505,8 @@
               <div class="input-hint" id="customAliasesHint">Comma-separated alternative names</div>
             </div>
 
-            <button id="addCustomUnit" class="button button-primary">Add Custom Unit</button>
-          </div>
+            <button type="submit" id="addCustomUnit" class="button button-primary">Add Custom Unit</button>
+          </form>
 
           <!-- List of Custom Units -->
           <div class="custom-units-list" aria-live="polite">
