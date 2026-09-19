@@ -5908,6 +5908,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-19 | #5247 | Use single-pass loop in clubProfileAcceptance.test.ts for calculating forward mesh bounds to prevent Maximum call stack size exceeded errors. |
 | 2026-09-18 | #5244 | Shared GSPro Open Connect v1 codec (Tools #5228): protocol-level codec in shared.python.launch_monitor.gspro_connect, delegated from putting_launch_monitor.gspro with byte-level parity contract tests. |
 | 2026-09-17 | #5239 | Lazy FrameSource export in shared.python.camera and fix test_gui race condition (#5227, #5237) |
 | 2026-09-17 | #5231 | ⚡ Bolt: Use single-pass loops for calculating scale from eigenvalues in variationDispersionMath in rate_of_closure to eliminate intermediate array allocations in performance-critical numerical kernels. (spec 1.18.74) |

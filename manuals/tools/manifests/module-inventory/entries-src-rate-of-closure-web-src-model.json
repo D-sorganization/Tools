@@ -4254,10 +4254,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 23094,
+      "bytes_lf": 23335,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ca84da8c217f22a0cf237a7ca4172262fb82606bb25f66ba6f95a008301e41d5",
+      "content_sha256_lf": "d19ab85c670cb613cb4c804dba2b6f68517d36ce0522ecebc0a11f5ac987ded9",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-CLUBPROFILEACCEPTANCE-TEST-TS-EE3797036F9B",
       "language": "typescript",
