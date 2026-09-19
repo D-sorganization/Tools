@@ -19035,10 +19035,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 16868,
+      "bytes_lf": 17118,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "82800d3865e41edef567ddba1b086021b62c60fe2d943f364f1fabe1eb473798",
+      "content_sha256_lf": "62cc63f0ca3211849c28c1f3bdf5e67ef6bd04faf2049b97fe91a62f2f43e703",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-REPEATEDBOUNCEWIRE-TS-A3F548366980",
       "language": "typescript",
