@@ -18,6 +18,7 @@ import logging
 import sys
 from collections.abc import Sequence
 from pathlib import Path
+from typing import Any
 
 from shared.python.camera import CaptureMode, FfmpegDirectShowSource, VideoFileSource
 from shared.python.contracts import require
@@ -78,6 +79,37 @@ def build_parser() -> argparse.ArgumentParser:
     rep.add_argument("--gspro", action="store_true")
 
     sub.add_parser("probe-gspro", help="connect to GSPro and print the player state")
+
+    val = sub.add_parser(
+        "validate",
+        help="accuracy validation harness (records putts to CSV with running stats)",
+    )
+    val.add_argument("--calibration", type=Path, default=None)
+    val.add_argument("--camera", default=None, help="PnP instance id of camera")
+    val.add_argument("--video", type=Path, default=None, help="replay a video file")
+    val.add_argument(
+        "--out",
+        type=Path,
+        default=Path("validation.csv"),
+        help="output CSV file path",
+    )
+    val.add_argument("--fps", type=float, default=None)
+    val.add_argument(
+        "--width", type=int, default=960, help="decode width (speed vs. precision)"
+    )
+    val.add_argument(
+        "--ref-speed", type=float, default=None, help="fixed reference speed (mph)"
+    )
+    val.add_argument(
+        "--ref-hla", type=float, default=None, help="fixed reference HLA (deg)"
+    )
+    val.add_argument("--max-putts", type=int, default=None, help="stop after N putts")
+    val.add_argument(
+        "--non-interactive",
+        action="store_true",
+        help="do not prompt for reference on stdin",
+    )
+    val.add_argument("--gspro", action="store_true", help="forward putts to GSPro")
 
     snap = sub.add_parser("snapshot", help="grab one frame for calibration")
     snap.add_argument("--camera", required=True)
@@ -232,10 +264,37 @@ def scaled_calibration(cal: Calibration, width: int) -> Calibration:
     return Calibration(**{**scaled.__dict__, "roi": roi})
 
 
+def cmd_validate(args: argparse.Namespace) -> int:
+    from .validate import ValidationHarness
+
+    cal = Calibration.load(args.calibration or default_calibration_path())
+    if args.video is not None:
+        source: Any = VideoFileSource(args.video, fps=args.fps)
+    else:
+        cam_id = args.camera or cal.camera_instance_id
+        fps = int(args.fps or cal.fps)
+        mode = CaptureMode(width=cal.capture_width, height=cal.capture_height, fps=fps)
+        source = FfmpegDirectShowSource(cam_id, mode, width=args.width)
+        cal = scaled_calibration(cal, args.width)
+
+    monitor = PuttingMonitor(cal, source, _sink(args))
+    harness = ValidationHarness(
+        monitor,
+        csv_path=args.out,
+        fixed_ref_speed=args.ref_speed,
+        fixed_ref_hla=args.ref_hla,
+        interactive=not args.non_interactive,
+        max_putts=args.max_putts,
+    )
+    harness.run()
+    return 0 if harness.stats.accepted_putts > 0 else 1
+
+
 COMMANDS = {
     "calibrate": cmd_calibrate,
     "run": cmd_run,
     "replay": cmd_replay,
+    "validate": cmd_validate,
     "probe-gspro": cmd_probe,
     "snapshot": cmd_snapshot,
 }

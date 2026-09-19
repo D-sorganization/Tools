@@ -66,6 +66,9 @@ python -m putting_launch_monitor run --gspro
 
 # Regression: run the pipeline over a recorded putt
 python -m putting_launch_monitor replay --video putt.mkv
+
+# Accuracy validation: record putts against reference to CSV with running stats
+python -m putting_launch_monitor validate --camera "USB\VID_...&0000" --out validation.csv
 ```
 
 The calibration lives in the per-user config directory

@@ -178,10 +178,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8687,
+      "bytes_lf": 10898,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e38dfbc5a4a0b02a30f247dfbec798ddc676502bbbf3678fc2ae257a5c95d844",
+      "content_sha256_lf": "eb1fd2fde6e6218f5f65c226969c336a103fc803ff56b791de146dd1aa2386b3",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-CLI-PY-53BE554180B0",
       "language": "python",
@@ -258,6 +258,11 @@
           },
           {
             "kind": "function",
+            "name": "cmd_validate",
+            "signature": "args: argparse.Namespace"
+          },
+          {
+            "kind": "function",
             "name": "main",
             "signature": "argv: Sequence[str] | None=None"
           },
@@ -274,6 +279,7 @@
         ],
         "test_paths": [],
         "unit_mentions": [
+          "N",
           "W",
           "deg",
           "mm",

@@ -5908,6 +5908,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-19 | #5257 | Putting launch monitor accuracy validation harness and evidence (Tools #5221): validate subcommand in cli.py and validate.py logging putts and running error stats to CSV; test_validate.py; evidence page docs/putting_launch_monitor/validation.md documenting ramp and Stimp speed methods, HLA guides, acceptance bounds, and rejection diagnostics. |
 | 2026-09-19 | #5247 | Use single-pass loop in clubProfileAcceptance.test.ts for calculating forward mesh bounds to prevent Maximum call stack size exceeded errors. |
 | 2026-09-18 | #5244 | Shared GSPro Open Connect v1 codec (Tools #5228): protocol-level codec in shared.python.launch_monitor.gspro_connect, delegated from putting_launch_monitor.gspro with byte-level parity contract tests. |
 | 2026-09-17 | #5239 | Lazy FrameSource export in shared.python.camera and fix test_gui race condition (#5227, #5237) |

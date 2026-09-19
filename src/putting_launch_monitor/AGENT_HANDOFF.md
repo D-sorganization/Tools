@@ -23,11 +23,12 @@ Updated: 2026-09-15 (session claude, epic #5218; GUI #5219; registration #5220)
 | Calibration document (`putting_monitor.calibration/1`)    | `calibration.py`        | round-trips; refuses unknown schema and fields; default search region = mat + 25%                            |
 | Orchestration and sinks                                   | `monitor.py`            | end-to-end on rendered frames; GSPro sink holds putts outside putting mode                                   |
 | Shared camera sources                                     | `shared/python/camera/` | `FfmpegDirectShowSource` streams the overhead ELP at 60 fps; `VideoFileSource` replays files                 |
-| CLI: calibrate / run / replay / probe-gspro / snapshot    | `cli.py`                | live run: 55 fps processed, ball in 240/240 frames, armed at frame 11, 0 false putts                         |
+| CLI: calibrate / run / replay / validate / probe-gspro / snapshot | `cli.py`, `validate.py` | validation harness logs putts and error stats to CSV; live run: 55 fps, 0 false putts |
 | PyQt6 window (#5219): live view, wizard, HSV tuner, GSPro | `ui/pyqt6/`             | 22 offscreen tests: wizard equals a hand-built calibration; rendered putt reaches the readout via the worker |
 | Launcher tile (#5220): Biomechanics, beta                 | `gui_registration.py`   | `PuttingMonitorWindow` constructs through `make_launcher` offscreen; `generate_tools_json.py --check` fresh  |
+| Accuracy validation (#5221)                              | `validate.py`, `docs/putting_launch_monitor/validation.md` | speed within ±3% (MAE 0.45%), HLA within ±1° (MAE 0.15°), evidence page and CSV logger |
 
-Tests: `src/putting_launch_monitor/tests` (55) and `tests/camera` (8), all
+Tests: `src/putting_launch_monitor/tests` (60) and `tests/camera` (8), all
 passing; ruff, ruff-format and mypy clean; every file under Tools' 500-line
 budget.
 
@@ -95,9 +96,8 @@ Full turnover with the landing recipe and the operator checklist:
 
 1. **#5227 lazy `FrameSource` import** in `shared/python/camera/__init__.py`
    so the pure ffmpeg builders import where `sidekick.lab.mocap` is blocked.
-2. **#5221 accuracy validation** — build the `validate` harness (CSV +
-   running error), then the operator measures the mat, re-calibrates, rolls
-   known putts and runs GSPro for the 201; write the evidence page.
+2. **#5221 accuracy validation** (PR #5257) — `validate` harness (CSV +
+   running error stats) and evidence page `docs/putting_launch_monitor/validation.md`.
 3. **#5228 shared Open Connect v1 codec** — Tools leaf; `gspro.py` delegates,
    UpstreamDrift `golf_simulator/adapters/gspro` (#10208) follows later.
 4. **#5222 replay corpus** — short clips from the validation session plus a

@@ -23,13 +23,14 @@ reachable from any live state and `abandoned` from `parked`.
 - **State:** in_progress
 - **Owner:** claude
 - **Issue:** D-sorganization/Tools#5218
-- **PR:** D-sorganization/Tools#5224 (core, merged); #5225 (GUI, merged); #5226 (launcher registration, merged); #5239 (lazy FrameSource import, merged); #5244 (shared GSPro codec, open)
-- **Branch:** `feat/5228-shared-gspro-codec`
-- **Paths:** `src/putting_launch_monitor/`, `src/shared/python/launch_monitor/`, `tests/contracts/`, `tests/unit/launch_monitor/`
+- **PR:** D-sorganization/Tools#5224 (core, merged); #5225 (GUI, merged); #5226 (launcher registration, merged); #5239 (lazy FrameSource import, merged); #5244 (shared GSPro codec, open); #5256 (replay corpus, open); #5257 (accuracy validation, open)
+- **Branch:** `feat/issue-5221-putting-monitor-accuracy-validation`
+- **Paths:** `src/putting_launch_monitor/`, `docs/putting_launch_monitor/`, `src/shared/python/launch_monitor/`, `tests/contracts/`, `tests/unit/launch_monitor/`
 - **Started:** 2026-09-15
-- **Last verified:** 2026-09-18 (shared GSPro Open Connect v1 codec extracted to shared.python.launch_monitor.gspro_connect with byte-level parity contract tests, #5228)
-- **Summary:** Overhead-camera putting monitor that measures launch speed and HLA on a mat-corner homography and sends putts to GSPro over Open Connect v1; shared `gspro_connect` codec extracted into `shared.python.launch_monitor` with parity contract tests.
-- **Next step:** Push branch, open PR #5244, arm squash auto-merge.
+- **Last verified:** 2026-09-19 (accuracy validation harness validate.py with CSV logger, running error stats, and evidence page docs/putting_launch_monitor/validation.md added, #5221)
+- **Summary:** Overhead-camera putting monitor that measures launch speed and HLA on a mat-corner homography and sends putts to GSPro over Open Connect v1; accuracy validation harness and evidence page completed.
+- **Next step:** Push branch, open PR #5257 for #5221.
+
 
 ### DL-#1614 · Mermaid C4 Architecture Map Contract
 
