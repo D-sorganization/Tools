@@ -31,7 +31,7 @@ interface Props {
 
 const BUTTON_CLASS =
   "rounded-lg border border-slate-700 bg-slate-800 px-3 py-2 text-sm " +
-  "text-slate-300 hover:border-slate-500 disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500";
+  "text-slate-300 hover:border-slate-500 disabled:opacity-40";
 
 const readFileText = (file: File): Promise<string> => {
   if (typeof file.text === "function") return file.text();

@@ -52,7 +52,7 @@ interface Props {
 }
 
 const BUTTON_CLASS =
-  "rounded border border-slate-700 px-2 py-1 text-slate-200 disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500";
+  "rounded border border-slate-700 px-2 py-1 text-slate-200 disabled:opacity-40";
 
 function sentenceCase(phrase: string): string {
   return phrase.charAt(0).toUpperCase() + phrase.slice(1);
