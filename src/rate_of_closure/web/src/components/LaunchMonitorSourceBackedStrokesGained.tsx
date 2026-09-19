@@ -12,7 +12,7 @@ import {
 import { createLaunchMonitorStrokesGainedClient } from "../model/launchMonitorV2Client";
 
 const field = "rounded border border-slate-700 bg-slate-950 px-2 py-1 text-sm";
-const button = "rounded border border-slate-700 px-3 py-2 text-sm disabled:opacity-40";
+const button = "rounded border border-slate-700 px-3 py-2 text-sm disabled:opacity-40 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500";
 type Unit = "yd" | "m";
 interface DisplayResult { mean: number; count: number; formula: string; sourceUrl: string; payload: unknown; canonical: boolean;
   status: string; excluded: number; exclusionReasons: string }
