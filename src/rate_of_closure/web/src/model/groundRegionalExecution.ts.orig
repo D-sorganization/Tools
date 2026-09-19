@@ -175,14 +175,8 @@ const boundarySides = (
   const bounds = [...new Set([
     plan.lower_coordinate_m, plan.upper_coordinate_m, ...regionBounds,
   ])].sort((left, right) => left - right);
-  let lower = -Infinity;
-  let upper = Infinity;
-  for (let i = 0; i < bounds.length; i++) {
-    const bound = bounds[i];
-    if (bound < boundary && bound > lower) lower = bound;
-    if (bound > boundary && bound < upper) upper = bound;
-  }
-
+  const lower = Math.max(...bounds.filter((bound) => bound < boundary));
+  const upper = Math.min(...bounds.filter((bound) => bound > boundary));
   return [
     selectionAt(plan, lower + (boundary - lower) / 2),
     selectionAt(plan, boundary + (upper - boundary) / 2),
