@@ -271,7 +271,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "not-applicable"
       },
@@ -302,7 +302,9 @@
             "signature": null
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "src/putting_launch_monitor/tests/test_replay_corpus.py"
+        ],
         "unit_mentions": [
           "s"
         ],
