@@ -1,3 +1,21 @@
+# Handoff Checkpoint — Pre-push Mypy Hook NumPy Compatibility (#5223) — 2026-09-19
+
+- **Repository/worktree**: `Tools`, `c:\Users\diete\Repositories\Tools-repo`
+- **Branch**: `fix/issue-5223-bump-mypy-precommit-hook`; commit `SELF`; PR: https://github.com/D-sorganization/Tools/pull/5254
+- **Governing issue**: `D-sorganization/Tools#5223` (P1)
+- **Completed work**:
+  - Bumped `mirrors-mypy` from `v1.13.0` to `v1.15.0` in `.pre-commit-config.yaml`.
+  - Under Python 3.13 / newer environments carrying NumPy >= 2.2, `mypy 1.13.0`'s cache serializer crashed with `AssertionError: Internal error: unresolved placeholder type None` when encountering modern type syntax in bundled NumPy type stubs. `mypy >= 1.14` (and `v1.15.0`) resolves this incompatibility.
+  - Added unit test in `tests/ops/test_pre_push_mypy_scope.py` with Design-by-Contract documentation asserting `mirrors-mypy` is at least `v1.15.0`.
+  - Updated `SPEC.md` changelog row for `#5223`.
+  - Updated `docs/development/DEVELOPMENT_LOG.md` with active entry `DL-#5223`.
+- **Validation**:
+  - `pytest tests/ops/test_pre_push_mypy_scope.py -n 0` -> PASS (2 passed)
+  - `pre-commit run mypy --files src/shared/python/launch_monitor/dispersion.py --hook-stage pre-push` -> PASS
+  - `python shared_scripts/spec_changelog.py validate --spec SPEC.md` -> PASS (1053 rows)
+- **Next steps**:
+  - Verify CI passes on PR #5254 and auto-merge.
+
 # Impact Program Handoff Checkpoint — 2026-09-19 (IA-T4 #5073)
 
 - Repository/worktree: Tools, C:/Users/diete/Repositories/Tools-repo.
