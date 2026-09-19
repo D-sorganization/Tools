@@ -434,9 +434,14 @@ describe("leading-edge station (#4799 G5)", () => {
   it.each(CLUB_LIBRARY)(
     "$name: the leading edge is the head's forward-most point",
     (club) => {
-      const forward = Math.max(
-        ...parametricHeadMesh(club).triangles.flat().map((v) => v[0]),
-      );
+      // ⚡ Bolt Optimization: Use single-pass loop instead of Math.max(...array.map(...))
+      let forward = -Infinity;
+      const flatTriangles = parametricHeadMesh(club).triangles.flat();
+      for (let i = 0; i < flatTriangles.length; i++) {
+        if (flatTriangles[i][0] > forward) {
+          forward = flatTriangles[i][0];
+        }
+      }
       expect(metrics(club).leadingEdgeX).toBeCloseTo(forward * 1e3, 9);
     },
   );
