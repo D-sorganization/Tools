@@ -4982,6 +4982,7 @@
         ],
         "test_paths": [
           "src/putting_launch_monitor/tests/test_pipeline.py",
+          "src/putting_launch_monitor/tests/test_validate.py",
           "tests/camera/test_camera_sources.py",
           "tests/shared/python/sidekick/lab/mocap/test_acquisition_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_adapter_contracts.py",
@@ -4993,6 +4994,7 @@
           "s"
         ],
         "validation_paths": [
+          "src/putting_launch_monitor/tests/test_validate.py",
           "tests/shared/python/sidekick/lab/mocap/test_acquisition_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_adapter_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py",
@@ -5674,11 +5676,13 @@
         "public_surfaces": [],
         "test_paths": [
           "src/putting_launch_monitor/tests/test_pipeline.py",
+          "src/putting_launch_monitor/tests/test_validate.py",
           "tests/shared/python/sidekick/lab/mocap/test_calibration_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
         ],
         "unit_mentions": [],
         "validation_paths": [
+          "src/putting_launch_monitor/tests/test_validate.py",
           "tests/shared/python/sidekick/lab/mocap/test_calibration_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
         ]
@@ -5725,6 +5729,7 @@
         "public_surfaces": [],
         "test_paths": [
           "src/putting_launch_monitor/tests/test_pipeline.py",
+          "src/putting_launch_monitor/tests/test_validate.py",
           "tests/shared/python/sidekick/lab/mocap/test_adapter_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py",
@@ -5732,6 +5737,7 @@
         ],
         "unit_mentions": [],
         "validation_paths": [
+          "src/putting_launch_monitor/tests/test_validate.py",
           "tests/shared/python/sidekick/lab/mocap/test_adapter_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
           "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py",

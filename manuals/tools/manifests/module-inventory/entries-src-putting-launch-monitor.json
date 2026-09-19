@@ -117,7 +117,7 @@
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "unavailable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -168,12 +168,15 @@
         ],
         "test_paths": [
           "src/putting_launch_monitor/tests/test_gui.py",
-          "src/putting_launch_monitor/tests/test_pipeline.py"
+          "src/putting_launch_monitor/tests/test_pipeline.py",
+          "src/putting_launch_monitor/tests/test_validate.py"
         ],
         "unit_mentions": [
           "s"
         ],
-        "validation_paths": []
+        "validation_paths": [
+          "src/putting_launch_monitor/tests/test_validate.py"
+        ]
       }
     },
     {
@@ -201,9 +204,9 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -277,7 +280,9 @@
             "signature": "cal: Calibration, width: int"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "src/putting_launch_monitor/tests/test_validate.py"
+        ],
         "unit_mentions": [
           "N",
           "W",
@@ -285,7 +290,9 @@
           "mm",
           "s"
         ],
-        "validation_paths": []
+        "validation_paths": [
+          "src/putting_launch_monitor/tests/test_validate.py"
+        ]
       }
     },
     {
@@ -755,7 +762,7 @@
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "unavailable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -801,12 +808,15 @@
         ],
         "test_paths": [
           "src/putting_launch_monitor/tests/test_gui.py",
-          "src/putting_launch_monitor/tests/test_pipeline.py"
+          "src/putting_launch_monitor/tests/test_pipeline.py",
+          "src/putting_launch_monitor/tests/test_validate.py"
         ],
         "unit_mentions": [
           "s"
         ],
-        "validation_paths": []
+        "validation_paths": [
+          "src/putting_launch_monitor/tests/test_validate.py"
+        ]
       }
     },
     {
@@ -1737,6 +1747,79 @@
           "s"
         ],
         "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11177,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2452f4c38b3a15cfbf2325eb5cc519766014e3401855fb2bd07b9bbe97b7a1f5",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-VALIDATE-PY-21DCFAC5F346",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/putting_launch_monitor/validate.py",
+      "purpose": "Accuracy validation harness for the putting launch monitor.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "RunningStats",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ValidationHarness",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ValidationRecord",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CSV_HEADER",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/putting_launch_monitor/tests/test_validate.py"
+        ],
+        "unit_mentions": [
+          "deg",
+          "s"
+        ],
+        "validation_paths": [
+          "src/putting_launch_monitor/tests/test_validate.py"
+        ]
       }
     }
   ],
