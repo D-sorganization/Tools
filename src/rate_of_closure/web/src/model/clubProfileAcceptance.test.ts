@@ -127,22 +127,34 @@ function metrics(club: ClubSpec): ProfileMetrics {
   const mesh = parametricHeadMesh(club);
   const flat = mesh.triangles.flat();
   const profile = profileSlice(club);
-  const axis = (points: Vec3[], k: number) => points.map((p) => p[k]);
 
-  const leadingEdgeX = Math.max(...axis(profile, 0));
+  // ⚡ Bolt Optimization: Use single-pass loops instead of spreading large arrays and using chained maps.
+  let leadingEdgeX = -Infinity;
+  let yMax = -Infinity;
+  let yMin = Infinity;
+  for (let i = 0; i < profile.length; i++) {
+    const pX = profile[i][0];
+    const pY = profile[i][1];
+    if (pX > leadingEdgeX) leadingEdgeX = pX;
+    if (pY > yMax) yMax = pY;
+    if (pY < yMin) yMin = pY;
+  }
+
   const lead = profile.find((p) => p[0] === leadingEdgeX) as Vec3;
   const leadingEdgeY = lead[1];
-  const yMax = Math.max(...axis(profile, 1));
-  const yMin = Math.min(...axis(profile, 1));
-  const toplineX = Math.max(
-    ...profile.filter((p) => Math.abs(p[1] - yMax) <= 1e-9).map((p) => p[0]),
-  );
+
+  let toplineX = -Infinity;
+  for (let i = 0; i < profile.length; i++) {
+    if (Math.abs(profile[i][1] - yMax) <= 1e-9) {
+      if (profile[i][0] > toplineX) toplineX = profile[i][0];
+    }
+  }
 
   const sole = profile
     .filter((p) => p[1] <= leadingEdgeY + SOLE_BAND_FRACTION * (yMax - yMin))
     .sort((a, b) => a[0] - b[0]);
-  const soleXs = axis(sole, 0);
-  const soleYs = axis(sole, 1);
+  const soleXs = sole.map((p) => p[0]);
+  const soleYs = sole.map((p) => p[1]);
   let soleGap = 0;
   for (let i = 1; i < soleXs.length; i += 1) {
     soleGap = Math.max(soleGap, soleXs[i] - soleXs[i - 1]);
@@ -151,8 +163,13 @@ function metrics(club: ClubSpec): ProfileMetrics {
   const frontEdge: number[] = [];
   for (let step = 0; step <= FRONT_EDGE_STEPS; step += 1) {
     const cut = leadingEdgeY + ((yMax - leadingEdgeY) * step) / FRONT_EDGE_STEPS;
-    const above = profile.filter((p) => p[1] >= cut - 1e-12);
-    frontEdge.push(Math.max(...above.map((p) => p[0])) * 1e3);
+    let maxAboveX = -Infinity;
+    for (let i = 0; i < profile.length; i++) {
+      if (profile[i][1] >= cut - 1e-12) {
+        if (profile[i][0] > maxAboveX) maxAboveX = profile[i][0];
+      }
+    }
+    frontEdge.push(maxAboveX * 1e3);
   }
 
   const lam = (club.loftDeg * Math.PI) / 180;
@@ -172,17 +189,19 @@ function metrics(club: ClubSpec): ProfileMetrics {
   // A mesh that no longer realizes its own published face center — the
   // pre-#4799 center-pivot generator, for one — reports an infinite
   // deviation rather than throwing, so the gates fail on geometry.
-  const faceNormalDeviation = onCap.length
-    ? Math.max(
-        ...onCap.map(({ index }) =>
-          Math.hypot(
-            mesh.normals[index][0] - want[0],
-            mesh.normals[index][1] - want[1],
-            mesh.normals[index][2] - want[2],
-          ),
-        ),
-      )
-    : Number.POSITIVE_INFINITY;
+  let faceNormalDeviation = Number.POSITIVE_INFINITY;
+  if (onCap.length > 0) {
+    faceNormalDeviation = -Infinity;
+    for (let i = 0; i < onCap.length; i++) {
+      const index = onCap[i].index;
+      const dev = Math.hypot(
+        mesh.normals[index][0] - want[0],
+        mesh.normals[index][1] - want[1],
+        mesh.normals[index][2] - want[2],
+      );
+      if (dev > faceNormalDeviation) faceNormalDeviation = dev;
+    }
+  }
 
   const [authoredX, authoredY] = authoredLeadingEdgeM(club);
   const unloftedCenter = faceCenterPoint(unlofted(club));
@@ -191,7 +210,23 @@ function metrics(club: ClubSpec): ProfileMetrics {
     Math.cos(lam) * (authoredX - unloftedCenter[0]) -
     Math.sin(lam) * (authoredY - unloftedCenter[1]);
 
-  const zs = flat.map((v) => v[2]);
+  let minSoleX = Infinity, maxSoleX = -Infinity;
+  for (let i = 0; i < soleXs.length; i++) {
+    if (soleXs[i] < minSoleX) minSoleX = soleXs[i];
+    if (soleXs[i] > maxSoleX) maxSoleX = soleXs[i];
+  }
+  let minSoleY = Infinity, maxSoleY = -Infinity;
+  for (let i = 0; i < soleYs.length; i++) {
+    if (soleYs[i] < minSoleY) minSoleY = soleYs[i];
+    if (soleYs[i] > maxSoleY) maxSoleY = soleYs[i];
+  }
+  let minZ = Infinity, maxZ = -Infinity;
+  for (let i = 0; i < flat.length; i++) {
+    const z = flat[i][2];
+    if (z < minZ) minZ = z;
+    if (z > maxZ) maxZ = z;
+  }
+
   const measured: ProfileMetrics = {
     name: club.name,
     loftDeg: club.loftDeg,
@@ -204,15 +239,15 @@ function metrics(club: ClubSpec): ProfileMetrics {
     expectedSetback: authoredFaceHeightM(club) * Math.sin(lam) * 1e3,
     toplineHeight: (yMax - leadingEdgeY) * 1e3,
     expectedFaceHeight: authoredFaceHeightM(club) * Math.cos(lam) * 1e3,
-    soleDepth: (Math.max(...soleXs) - Math.min(...soleXs)) * 1e3,
-    soleFlatness: (Math.max(...soleYs) - Math.min(...soleYs)) * 1e3,
+    soleDepth: (maxSoleX - minSoleX) * 1e3,
+    soleFlatness: (maxSoleY - minSoleY) * 1e3,
     soleGap: soleGap * 1e3,
-    soleFrontX: Math.max(...soleXs) * 1e3,
+    soleFrontX: maxSoleX * 1e3,
     solePoints: sole.length,
     profilePoints: profile.length,
     frontEdge,
-    width: (Math.max(...zs) - Math.min(...zs)) * 1e3,
-    zSymmetry: (Math.max(...zs) + Math.min(...zs)) * 1e3,
+    width: (maxZ - minZ) * 1e3,
+    zSymmetry: (maxZ + minZ) * 1e3,
     volumeCm3: meshVolumeCentroid(mesh.triangles).volumeM3 * 1e6,
     watertight: isWatertight(mesh.triangles),
     faceNormalDeviation,
@@ -418,7 +453,11 @@ describe("leading-edge station (#4799 G5)", () => {
   it.each(BLADES)(
     "$name: loft never leads the authored blade station",
     (club) => {
-      const bare = Math.max(...profileSlice(unlofted(club)).map((p) => p[0]));
+      const slice = profileSlice(unlofted(club));
+      let bare = -Infinity;
+      for (let i = 0; i < slice.length; i++) {
+        if (slice[i][0] > bare) bare = slice[i][0];
+      }
       expect(metrics(club).leadingEdgeX).toBeLessThanOrEqual(bare * 1e3 + 1e-9);
     },
   );
@@ -498,8 +537,16 @@ describe("sole (#4799 G5)", () => {
   });
 
   it("every wedge sole is deeper than every iron sole", () => {
-    const widestIron = Math.max(...IRONS.map((c) => metrics(c).soleDepth));
-    const narrowestWedge = Math.min(...WEDGES.map((c) => metrics(c).soleDepth));
+    let widestIron = -Infinity;
+    for (let i = 0; i < IRONS.length; i++) {
+      const d = metrics(IRONS[i]).soleDepth;
+      if (d > widestIron) widestIron = d;
+    }
+    let narrowestWedge = Infinity;
+    for (let i = 0; i < WEDGES.length; i++) {
+      const d = metrics(WEDGES[i]).soleDepth;
+      if (d < narrowestWedge) narrowestWedge = d;
+    }
     expect(narrowestWedge - widestIron).toBeGreaterThanOrEqual(5);
   });
 
