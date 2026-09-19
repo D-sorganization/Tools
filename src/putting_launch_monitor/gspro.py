@@ -9,26 +9,56 @@ official document never names the code, and connectors in the wild key
 putting mode off ``"PT"``, so that string is a setting here, not a constant
 carved into the protocol.
 
-The codec functions are pure so they are unit-tested without a socket; the
-client wraps them with a socket, a heartbeat and reconnection.
+The protocol-level codec is delegated to ``shared.python.launch_monitor.gspro_connect``;
+the client here wraps it with a socket, a heartbeat and reconnection.
 """
 
 from __future__ import annotations
 
-import json
 import socket
 import time
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import Any
 
 from shared.python.contracts import require
+from shared.python.launch_monitor.gspro_connect import (
+    API_VERSION,
+    CODE_OK,
+    CODE_PLAYER,
+    DEFAULT_HOST,
+    DEFAULT_PORT,
+    DEFAULT_PUTTER_CODES,
+    GSProBallData,
+    encode_heartbeat,
+    parse_reply,
+    split_objects,
+)
+from shared.python.launch_monitor.gspro_connect import (
+    GSProPlayerInfo as PlayerInfo,
+)
+from shared.python.launch_monitor.gspro_connect import (
+    GSProReply as Reply,
+)
+from shared.python.launch_monitor.gspro_connect import (
+    encode_shot as _shared_encode_shot,
+)
 
-DEFAULT_HOST = "127.0.0.1"
-DEFAULT_PORT = 921
-API_VERSION = "1"
-DEFAULT_PUTTER_CODES: frozenset[str] = frozenset({"PT"})
-CODE_OK = 200
-CODE_PLAYER = 201
+__all__ = [
+    "API_VERSION",
+    "CODE_OK",
+    "CODE_PLAYER",
+    "DEFAULT_HOST",
+    "DEFAULT_PORT",
+    "DEFAULT_PUTTER_CODES",
+    "GsproClient",
+    "PlayerInfo",
+    "PuttShot",
+    "Reply",
+    "encode_heartbeat",
+    "encode_shot",
+    "parse_reply",
+    "split_objects",
+]
 
 
 @dataclass(frozen=True)
@@ -47,30 +77,6 @@ class PuttShot:
         require(abs(self.hla_deg) < 90, "HLA out of range", self.hla_deg)
 
 
-@dataclass(frozen=True)
-class PlayerInfo:
-    """The 201 message: who is up and what they are holding."""
-
-    handed: str
-    club: str
-    distance_to_target: float | None = None
-    raw: dict[str, Any] = field(default_factory=dict)
-
-    def is_putting(self, putter_codes: frozenset[str] = DEFAULT_PUTTER_CODES) -> bool:
-        return self.club.upper() in putter_codes
-
-
-@dataclass(frozen=True)
-class Reply:
-    code: int
-    message: str
-    player: PlayerInfo | None = None
-
-    @property
-    def ok(self) -> bool:
-        return self.code in (CODE_OK, CODE_PLAYER)
-
-
 def encode_shot(
     shot: PuttShot, *, device_id: str, shot_number: int, ready: bool = True
 ) -> bytes:
@@ -80,115 +86,21 @@ def encode_shot(
     Postcondition: a single JSON object, no trailing newline (the spec
     frames messages by JSON object, not by line).
     """
-    require(bool(device_id), "device id must be non-empty")
-    require(shot_number >= 1, "shot number starts at 1", shot_number)
-    payload = {
-        "DeviceID": device_id,
-        "Units": "Yards",
-        "ShotNumber": int(shot_number),
-        "APIversion": API_VERSION,
-        "BallData": {
-            "Speed": round(float(shot.speed_mph), 2),
-            "SpinAxis": 0.0,
-            "TotalSpin": 0.0,
-            "BackSpin": 0.0,
-            "SideSpin": 0.0,
-            "HLA": round(float(shot.hla_deg), 2),
-            "VLA": 0.0,
-        },
-        "ShotDataOptions": {
-            "ContainsBallData": True,
-            "ContainsClubData": False,
-            "LaunchMonitorIsReady": bool(ready),
-            "LaunchMonitorBallDetected": True,
-            "IsHeartBeat": False,
-        },
-    }
-    return json.dumps(payload, separators=(",", ":")).encode("utf-8")
-
-
-def encode_heartbeat(*, device_id: str, shot_number: int, ready: bool = True) -> bytes:
-    """A heartbeat: keeps the connection alive and GSPro's status green.
-
-    Precondition: non-empty ``device_id``; ``shot_number >= 0`` (the count so
-    far — a heartbeat does not consume a number).
-    """
-    require(bool(device_id), "device id must be non-empty")
-    require(shot_number >= 0, "shot number", shot_number)
-    payload = {
-        "DeviceID": device_id,
-        "Units": "Yards",
-        "ShotNumber": int(shot_number),
-        "APIversion": API_VERSION,
-        "BallData": {},
-        "ShotDataOptions": {
-            "ContainsBallData": False,
-            "ContainsClubData": False,
-            "LaunchMonitorIsReady": bool(ready),
-            "LaunchMonitorBallDetected": False,
-            "IsHeartBeat": True,
-        },
-    }
-    return json.dumps(payload, separators=(",", ":")).encode("utf-8")
-
-
-def parse_reply(raw: bytes | str) -> Reply:
-    """Decode one GSPro reply. Raises ``ValueError`` on malformed input."""
-    text = raw.decode("utf-8", "replace") if isinstance(raw, bytes) else raw
-    try:
-        data = json.loads(text)
-    except json.JSONDecodeError as exc:
-        raise ValueError(f"GSPro reply is not JSON: {text[:120]!r}") from exc
-    require(isinstance(data, dict), "GSPro reply must be an object")
-    require("Code" in data, "GSPro reply lacks Code", data)
-    code = int(data["Code"])
-    message = str(data.get("Message", ""))
-    player = None
-    if code == CODE_PLAYER and isinstance(data.get("Player"), dict):
-        p = data["Player"]
-        dist = p.get("DistanceToTarget")
-        player = PlayerInfo(
-            handed=str(p.get("Handed", "")),
-            club=str(p.get("Club", "")),
-            distance_to_target=float(dist) if dist is not None else None,
-            raw=dict(p),
-        )
-    return Reply(code=code, message=message, player=player)
-
-
-def split_objects(buffer: bytes) -> tuple[list[bytes], bytes]:
-    """Split a byte stream into complete top-level JSON objects.
-
-    GSPro can send several objects back to back (a 200 followed by a 201)
-    with no separator, so framing is by brace depth, string-aware.
-    Postcondition: every returned object parses; the remainder is an
-    incomplete prefix (possibly empty).
-    """
-    objects: list[bytes] = []
-    depth, start, in_str, esc = 0, -1, False, False
-    for i, ch in enumerate(buffer):
-        c = chr(ch)
-        if in_str:
-            if esc:
-                esc = False
-            elif c == "\\":
-                esc = True
-            elif c == '"':
-                in_str = False
-            continue
-        if c == '"':
-            in_str = True
-        elif c == "{":
-            if depth == 0:
-                start = i
-            depth += 1
-        elif c == "}":
-            depth -= 1
-            if depth == 0 and start >= 0:
-                objects.append(buffer[start : i + 1])
-                start = -1
-    rest = buffer[start:] if start >= 0 else b""
-    return objects, rest
+    ball = GSProBallData(
+        speed_mph=shot.speed_mph,
+        hla_deg=shot.hla_deg,
+        vla_deg=0.0,
+        total_spin_rpm=0.0,
+        spin_axis_deg=0.0,
+    )
+    raw = _shared_encode_shot(
+        ball,
+        device_id=device_id,
+        shot_number=shot_number,
+        ready=ready,
+    )
+    assert isinstance(raw, bytes)
+    return raw
 
 
 class GsproClient:

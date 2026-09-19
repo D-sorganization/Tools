@@ -477,10 +477,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10393,
+      "bytes_lf": 6920,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "fd4d3cfef9c38a9bc622bded93863def9ae0ca2261a0d92117110a7c5879b1d3",
+      "content_sha256_lf": "dd021b315726a003ac391409272e1aaf93c1866357143e1af92645b6c27d3e3f",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-GSPRO-PY-56E57F2D8575",
       "language": "python",
@@ -524,53 +524,8 @@
           },
           {
             "kind": "class",
-            "name": "PlayerInfo",
-            "signature": null
-          },
-          {
-            "kind": "class",
             "name": "PuttShot",
             "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "Reply",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "API_VERSION",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CODE_OK",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "CODE_PLAYER",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_HOST",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_PORT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "DEFAULT_PUTTER_CODES",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "encode_heartbeat",
-            "signature": "*, device_id: str, shot_number: int, ready: bool=True"
           },
           {
             "kind": "function",
@@ -578,14 +533,59 @@
             "signature": "shot: PuttShot, *, device_id: str, shot_number: int, ready: bool=True"
           },
           {
-            "kind": "function",
-            "name": "parse_reply",
-            "signature": "raw: bytes | str"
+            "kind": "re-export",
+            "name": "API_VERSION",
+            "signature": null
           },
           {
-            "kind": "function",
+            "kind": "re-export",
+            "name": "CODE_OK",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CODE_PLAYER",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_HOST",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_PORT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_PUTTER_CODES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PlayerInfo",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Reply",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "encode_heartbeat",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "parse_reply",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "split_objects",
-            "signature": "buffer: bytes"
+            "signature": null
           }
         ],
         "test_paths": [
