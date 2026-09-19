@@ -117,8 +117,16 @@ const energyBalanceClose = (
   actual: number,
   expected: number,
   inputs: readonly number[],
-): boolean => Math.abs(actual - expected) <= ENERGY_ABSOLUTE_TOLERANCE_J +
-  ENERGY_RELATIVE_TOLERANCE * Math.max(...inputs.map(Math.abs), Math.abs(actual));
+): boolean => {
+  // ⚡ Bolt Optimization: Use single-pass loop instead of Math.max(...inputs.map(Math.abs)) to prevent GC pressure
+  let maxInput = Math.abs(actual);
+  for (let i = 0; i < inputs.length; i++) {
+    const val = Math.abs(inputs[i]);
+    if (val > maxInput) maxInput = val;
+  }
+  return Math.abs(actual - expected) <= ENERGY_ABSOLUTE_TOLERANCE_J +
+    ENERGY_RELATIVE_TOLERANCE * maxInput;
+};
 
 const parseEnergy = (value: unknown): ImpactEnergyLedger => {
   const item = record(value, "impact energy");
