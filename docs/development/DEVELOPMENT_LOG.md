@@ -23,13 +23,13 @@ reachable from any live state and `abandoned` from `parked`.
 - **State:** in_progress
 - **Owner:** claude
 - **Issue:** D-sorganization/Tools#5218
-- **PR:** D-sorganization/Tools#5224 (core, merged); #5225 (GUI, merged); #5226 (launcher registration, merged); #5239 (lazy FrameSource import, open)
-- **Branch:** `feat/5227-lazy-framesource`
-- **Paths:** `src/putting_launch_monitor/`, `src/shared/python/camera/`, `tests/camera/`
+- **PR:** D-sorganization/Tools#5224 (core, merged); #5225 (GUI, merged); #5226 (launcher registration, merged); #5239 (lazy FrameSource import, merged); #5244 (shared GSPro codec, open)
+- **Branch:** `feat/5228-shared-gspro-codec`
+- **Paths:** `src/putting_launch_monitor/`, `src/shared/python/launch_monitor/`, `tests/contracts/`, `tests/unit/launch_monitor/`
 - **Started:** 2026-09-15
-- **Last verified:** 2026-09-17 (`SELF`; lazy `FrameSource` import in `src/shared/python/camera/__init__.py` verified without sidekick dependency; test_gui race condition fixed; 22 GUI tests pass; 10 camera tests pass)
-- **Summary:** Overhead-camera putting monitor that measures launch speed and HLA on a mat-corner homography and sends putts to GSPro over Open Connect v1, with a PyQt6 window (live view, calibration wizard, HSV tuner, GSPro panel); the shared `camera` package carries the ffmpeg/DirectShow source for the fleet with lazy FrameSource export.
-- **Next step:** Land #5227 / PR, then build the `validate` harness for #5221 per `docs/putting_launch_monitor/TURNOVER.md`.
+- **Last verified:** 2026-09-18 (shared GSPro Open Connect v1 codec extracted to shared.python.launch_monitor.gspro_connect with byte-level parity contract tests, #5228)
+- **Summary:** Overhead-camera putting monitor that measures launch speed and HLA on a mat-corner homography and sends putts to GSPro over Open Connect v1; shared `gspro_connect` codec extracted into `shared.python.launch_monitor` with parity contract tests.
+- **Next step:** Push branch, open PR #5244, arm squash auto-merge.
 
 ### DL-#1614 · Mermaid C4 Architecture Map Contract
 

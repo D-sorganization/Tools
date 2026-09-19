@@ -3644,6 +3644,331 @@
       }
     }
   },
+  "gspro_connect.py": {
+    "__all__": [
+      "API_VERSION",
+      "CODE_OK",
+      "CODE_PLAYER",
+      "DEFAULT_HOST",
+      "DEFAULT_PORT",
+      "DEFAULT_PUTTER_CODES",
+      "GSProBallData",
+      "GSProClubData",
+      "GSProPlayerInfo",
+      "GSProReply",
+      "GSProShot",
+      "ResponseCategory",
+      "categorize_code",
+      "encode_heartbeat",
+      "encode_heartbeat_payload",
+      "encode_shot",
+      "encode_shot_payload",
+      "parse_reply",
+      "split_objects"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "API_VERSION": {
+        "type": "variable"
+      },
+      "CODE_OK": {
+        "type": "variable"
+      },
+      "CODE_PLAYER": {
+        "type": "variable"
+      },
+      "DEFAULT_HOST": {
+        "type": "variable"
+      },
+      "DEFAULT_PORT": {
+        "type": "variable"
+      },
+      "DEFAULT_PUTTER_CODES": {
+        "type": "variable"
+      },
+      "GSProBallData": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "to_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "GSProClubData": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "to_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "GSProPlayerInfo": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "is_putting": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "frozenset[str]",
+                  "default": "DEFAULT_PUTTER_CODES",
+                  "kind": "arg",
+                  "name": "putter_codes"
+                }
+              ],
+              "returns": "bool"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "GSProReply": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "ok": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "bool"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "GSProShot": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ResponseCategory": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "categorize_code": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "int",
+              "default": null,
+              "kind": "arg",
+              "name": "code"
+            }
+          ],
+          "returns": "ResponseCategory"
+        },
+        "type": "function"
+      },
+      "encode_heartbeat": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "device_id"
+            },
+            {
+              "annotation": "int",
+              "default": "0",
+              "kind": "kwonlyarg",
+              "name": "shot_number"
+            },
+            {
+              "annotation": "str",
+              "default": "'Yards'",
+              "kind": "kwonlyarg",
+              "name": "units"
+            },
+            {
+              "annotation": "bool",
+              "default": "True",
+              "kind": "kwonlyarg",
+              "name": "ready"
+            }
+          ],
+          "returns": "bytes"
+        },
+        "type": "function"
+      },
+      "encode_heartbeat_payload": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "device_id"
+            },
+            {
+              "annotation": "int",
+              "default": "0",
+              "kind": "kwonlyarg",
+              "name": "shot_number"
+            },
+            {
+              "annotation": "str",
+              "default": "'Yards'",
+              "kind": "kwonlyarg",
+              "name": "units"
+            },
+            {
+              "annotation": "bool",
+              "default": "True",
+              "kind": "kwonlyarg",
+              "name": "ready"
+            }
+          ],
+          "returns": "dict[str, Any]"
+        },
+        "type": "function"
+      },
+      "encode_shot": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "GSProShot | GSProBallData",
+              "default": null,
+              "kind": "arg",
+              "name": "shot"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "device_id"
+            },
+            {
+              "annotation": "int",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "shot_number"
+            },
+            {
+              "annotation": "str",
+              "default": "'Yards'",
+              "kind": "kwonlyarg",
+              "name": "units"
+            },
+            {
+              "annotation": "bool",
+              "default": "True",
+              "kind": "kwonlyarg",
+              "name": "ready"
+            }
+          ],
+          "returns": "bytes"
+        },
+        "type": "function"
+      },
+      "encode_shot_payload": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "GSProShot | GSProBallData",
+              "default": null,
+              "kind": "arg",
+              "name": "shot"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "device_id"
+            },
+            {
+              "annotation": "int",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "shot_number"
+            },
+            {
+              "annotation": "str",
+              "default": "'Yards'",
+              "kind": "kwonlyarg",
+              "name": "units"
+            },
+            {
+              "annotation": "bool",
+              "default": "True",
+              "kind": "kwonlyarg",
+              "name": "ready"
+            }
+          ],
+          "returns": "dict[str, Any]"
+        },
+        "type": "function"
+      },
+      "parse_reply": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "bytes | str | dict[str, Any]",
+              "default": null,
+              "kind": "arg",
+              "name": "raw"
+            }
+          ],
+          "returns": "GSProReply"
+        },
+        "type": "function"
+      },
+      "split_objects": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "bytes",
+              "default": null,
+              "kind": "arg",
+              "name": "buffer"
+            }
+          ],
+          "returns": "tuple[list[bytes], bytes]"
+        },
+        "type": "function"
+      }
+    }
+  },
   "importer.py": {
     "__all__": [
       "import_session"

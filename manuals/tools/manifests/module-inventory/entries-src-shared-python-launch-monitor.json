@@ -1989,6 +1989,160 @@
     },
     {
       "authority_status": "provisional",
+      "bytes_lf": 11714,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "adc3ccbccc0a3f3aad4071388bc902f5f97b4a39a63c9837638444a4e26f137f",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LAUNCH-MONITOR-GSPRO-CONNECT-PY-AAD18F15B7E1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/launch_monitor/gspro_connect.py",
+      "purpose": "Shared GSPro Open Connect v1 codec (Tools #5228).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://gsprogolf.com/GSProConnectV1.html."
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GSProBallData",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GSProClubData",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GSProPlayerInfo",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GSProReply",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GSProShot",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ResponseCategory",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "API_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CODE_OK",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CODE_PLAYER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_HOST",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_PORT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_PUTTER_CODES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "categorize_code",
+            "signature": "code: int"
+          },
+          {
+            "kind": "function",
+            "name": "encode_heartbeat",
+            "signature": "*, device_id: str, shot_number: int=0, units: str='Yards', ready: bool=True"
+          },
+          {
+            "kind": "function",
+            "name": "encode_heartbeat_payload",
+            "signature": "*, device_id: str, shot_number: int=0, units: str='Yards', ready: bool=True"
+          },
+          {
+            "kind": "function",
+            "name": "encode_shot",
+            "signature": "shot: GSProShot | GSProBallData, *, device_id: str, shot_number: int, units: str='Yards', ready: bool=True"
+          },
+          {
+            "kind": "function",
+            "name": "encode_shot_payload",
+            "signature": "shot: GSProShot | GSProBallData, *, device_id: str, shot_number: int, units: str='Yards', ready: bool=True"
+          },
+          {
+            "kind": "function",
+            "name": "parse_reply",
+            "signature": "raw: bytes | str | dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "split_objects",
+            "signature": "buffer: bytes"
+          }
+        ],
+        "test_paths": [
+          "tests/contracts/test_gspro_connect_contract.py",
+          "tests/unit/launch_monitor/test_gspro_connect.py"
+        ],
+        "unit_mentions": [
+          "rpm",
+          "s"
+        ],
+        "validation_paths": [
+          "tests/contracts/test_gspro_connect_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 11507,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",

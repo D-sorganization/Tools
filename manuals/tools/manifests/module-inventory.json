@@ -429,7 +429,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-project-packer.json"
     },
     {
-      "content_sha256_lf": "47e5436505f534d4ce36c0991b5ea6e12953a58e8de6c843f8d18192db2b146e",
+      "content_sha256_lf": "21f0bdfe97cc8154cfd12e0d40a12e6e3cb89576214be3af560fbcf4f5db5c22",
       "entry_count": 22,
       "package": "src/putting_launch_monitor",
       "path": "manuals/tools/manifests/module-inventory/entries-src-putting-launch-monitor.json"
@@ -675,8 +675,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-humanoid-character-builder.json"
     },
     {
-      "content_sha256_lf": "b4e02dad3ca88f94c5ffd37d3d1720910c0c135f1f23badd87bae6a7dc5982aa",
-      "entry_count": 29,
+      "content_sha256_lf": "c6e5654fb2bf7e7cba756c45a4212e596d74b3ad2fe1c3863ed22abb8a8da721",
+      "entry_count": 30,
       "package": "src/shared/python/launch_monitor",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-launch-monitor.json"
     },
