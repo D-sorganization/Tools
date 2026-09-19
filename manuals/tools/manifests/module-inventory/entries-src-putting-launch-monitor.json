@@ -502,7 +502,7 @@
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -591,12 +591,15 @@
         "test_paths": [
           "src/putting_launch_monitor/tests/test_gspro.py",
           "src/putting_launch_monitor/tests/test_gui.py",
-          "src/putting_launch_monitor/tests/test_pipeline.py"
+          "src/putting_launch_monitor/tests/test_pipeline.py",
+          "tests/contracts/test_gspro_connect_contract.py"
         ],
         "unit_mentions": [
           "s"
         ],
-        "validation_paths": []
+        "validation_paths": [
+          "tests/contracts/test_gspro_connect_contract.py"
+        ]
       }
     },
     {
