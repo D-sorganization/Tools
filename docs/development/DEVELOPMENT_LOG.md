@@ -46,16 +46,29 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5073 · Non-Spherical Oblique Contact Mechanics and Moving Center of Pressure
 
-- **State:** in_progress
+- **State:** in_review
 - **Owner:** local
 - **Issue:** D-sorganization/Tools#5073 (IA-T4, parent #5068)
-- **PR:** not created
+- **PR:** D-sorganization/Tools#5260
 - **Branch:** `feat/5073-oblique-contact-mechanics`
 - **Paths:** `src/shared/python/swing_sim/impact/`, `tests/shared/python/golf_club/`, `SPEC.md`
 - **Started:** 2026-09-19
 - **Last verified:** 2026-09-19 (all 9 oblique contact, moving COP, and face/hosel modal tests passing; strict energy balance and observer invariance verified)
 - **Summary:** Implements non-spherical curved face geometry with bulge and roll, moving Center of Pressure (COP) kinematics, dynamic lever arm/gear-effect torque, high-frequency face trampoline and hosel bending/torsion modes, and multi-channel energy balance conservation.
-- **Next step:** Push branch `feat/5073-oblique-contact-mechanics`, create PR, and arm auto-merge.
+- **Next step:** Qualify CI on PR #5260 and merge.
+
+### DL-#5074 · Transient Vibroacoustic Radiation and Acoustic Field Solver
+
+- **State:** in_progress
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#5074 (IA-T5, parent #5068)
+- **PR:** not created
+- **Branch:** `feat/5074-transient-vibroacoustic-solver`
+- **Paths:** `src/shared/python/swing_sim/vibroacoustics/`, `tests/shared/python/golf_club/`, `SPEC.md`, `docs/development/impact-acoustics/`
+- **Started:** 2026-09-19
+- **Last verified:** 2026-09-19 (all 157 vibroacoustic radiation, observer array, ball dipole, psychoacoustic, and integration tests passing; 0 ruff/black/mypy issues)
+- **Summary:** Implements transient vibroacoustic radiation solver with retarded-time Rayleigh surface integral, modal radiation transfer, observer location directivity and microphone arrays, ball impact acoustic dipole radiation, standardized psychoacoustic metrics (ISO 532-1 loudness, DIN 45692 sharpness, Leq, SEL), and calibrated pressure recordings.
+- **Next step:** Push branch `feat/5074-transient-vibroacoustic-solver`, open PR, and arm auto-merge.
 
 ### DL-#5218 · Camera Putting Launch Monitor for GSPro
 

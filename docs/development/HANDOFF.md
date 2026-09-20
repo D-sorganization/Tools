@@ -1,3 +1,20 @@
+# Impact Program Handoff Checkpoint — 2026-09-19 (IA-T5 #5074)
+
+- Repository/worktree: Tools, C:/Users/diete/Repositories/Tools-repo.
+  Branch `feat/5074-transient-vibroacoustic-solver`. Governing issue Tools #5074 (IA-T5)
+  and parent program #5068.
+- Implemented transient vibroacoustic radiation solver with retarded-time Rayleigh surface
+  integral, boundary radiating surface mesh with element resolution convergence checks,
+  modal radiation transfer and superposition, multi-microphone arrays, held-out receiver comparison,
+  ball impact acoustic dipole radiation, standardized psychoacoustics (ISO 532-1 stationary loudness,
+  DIN 45692 spectral sharpness, reference calibration fixtures, SPL, Leq, SEL), and calibrated
+  pressure recordings with SHA-256 provenance binding and phase-sensitive timebase synchronization.
+- All 157 targeted unit & integration tests pass cleanly in ~3.7s.
+- Pre-commit checks (ruff check, ruff format, black, mypy) pass with 0 errors across all touched files.
+- Module inventory refreshed and validated (`python -m scripts.build_tools_module_inventory --check`).
+- SPEC.md change log updated and validated (`python shared_scripts/spec_changelog.py validate --spec SPEC.md`).
+- Documentation: `docs/development/impact-acoustics/TRANSIENT_VIBROACOUSTICS.md`.
+
 # Handoff Checkpoint — Rate UI Top-Toolstrip Popover Viewport Clamping (#4300) — 2026-09-19
 
 - **Repository/worktree**: `Tools`, `c:\Users\diete\Repositories\Tools-repo`
