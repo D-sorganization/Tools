@@ -3526,6 +3526,112 @@
     },
     {
       "authority_status": "provisional",
+      "bytes_lf": 9579,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "81df4c0919d72194be50048280836f81489500b0784e2e4e431d94919f73f38e",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-VALIDATION-PY-ED86BE73BEC0",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/validation.py",
+      "purpose": "Open-data validation package and benchmark carry references (#4252).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BenchmarkLaunchSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ConditionModelEvaluation",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FlightValidationReport",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ModelAggregateMetrics",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RuntimeParityCheck",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BENCHMARK_LAUNCHES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "VALIDATION_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "evaluate_flight_benchmarks",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/programmatic_pid/tests/test_validation.py",
+          "src/shared/python/swing_sim/flight/tests/test_flight_validation.py",
+          "tests/programmatic_pid/test_validation.py",
+          "tests/python/utils/test_validation.py",
+          "tests/shared/python/model_generation/test_validation.py",
+          "tests/test_validation.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "src/shared/python/programmatic_pid/tests/test_validation.py",
+          "src/shared/python/swing_sim/flight/tests/test_flight_validation.py",
+          "tests/programmatic_pid/test_validation.py",
+          "tests/python/utils/test_validation.py",
+          "tests/shared/python/model_generation/test_validation.py",
+          "tests/test_validation.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 6592,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",

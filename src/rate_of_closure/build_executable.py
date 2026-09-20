@@ -15,11 +15,11 @@ tool. The shareable web equivalent is ``npm run build`` inside
 
 from __future__ import annotations
 
-import importlib.util
 import shutil
-import subprocess  # noqa: S404 - fixed argument list, no user input
 import sys
 from pathlib import Path
+
+from rate_of_closure.packaging.build_artifact import build_frozen_artifact
 
 APP_NAME = "RateOfClosureExplorer"
 _HERE = Path(__file__).resolve().parent
@@ -29,8 +29,8 @@ def build(one_file: bool = False) -> Path:
     """Run PyInstaller and return the path to the built executable.
 
     Args:
-        one_file: Bundle into a single self-extracting executable
-            instead of the default one-folder layout.
+        one_file: Retained for backward compatibility. Note: production
+            qualification standardizes on one-folder (onedir) mode.
 
     Returns:
         Path to the produced executable.
@@ -38,37 +38,8 @@ def build(one_file: bool = False) -> Path:
     Raises:
         RuntimeError: If PyInstaller is not installed or the build fails.
     """
-    if importlib.util.find_spec("PyInstaller") is None:
-        raise RuntimeError(
-            "PyInstaller is not installed - run: pip install pyinstaller"
-        )
     dist = _HERE.parent.parent / "dist"
-    command = [
-        sys.executable,
-        "-m",
-        "PyInstaller",
-        "--noconfirm",
-        "--windowed",
-        "--name",
-        APP_NAME,
-        "--onefile" if one_file else "--onedir",
-        "--distpath",
-        str(dist),
-        str(_HERE / "launch_pyqt6.py"),
-    ]
-    completed = subprocess.run(command, check=False)  # noqa: S603
-    if completed.returncode != 0:
-        raise RuntimeError(f"PyInstaller failed with code {completed.returncode}")
-
-    suffix = ".exe" if sys.platform == "win32" else ""
-    built = (
-        dist / f"{APP_NAME}{suffix}"
-        if one_file
-        else dist / APP_NAME / f"{APP_NAME}{suffix}"
-    )
-    if not built.exists():
-        raise RuntimeError(f"expected executable missing: {built}")
-    return built
+    return Path(build_frozen_artifact(dist_path=dist))
 
 
 def main() -> int:
