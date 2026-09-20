@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4620,
+      "bytes_lf": 5433,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "47710f28f2f670c9a79ac03bec2a299aa1c08dbf3bf26fe1fab1ce1a537db026",
+      "content_sha256_lf": "e8289943b8a112dd6938f4b4fef9acb30e21b884e734a9c10b482ab06bdbf555",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-APPTOOLSTRIP-TEST-TSX-149106B810A3",
       "language": "typescript-react",
@@ -45,10 +45,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12601,
+      "bytes_lf": 13582,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7221f62d9f83b367969b348122f063a2ee47d80ba1ec321f06e36a252da296e3",
+      "content_sha256_lf": "7c680ac81f69c8c5133f41026d4563ce37765257d6af9dc6e2faffb3fe6fd771",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-APPTOOLSTRIP-TSX-534FD79E8602",
       "language": "typescript-react",

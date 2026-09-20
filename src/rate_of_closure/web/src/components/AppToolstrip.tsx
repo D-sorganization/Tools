@@ -13,6 +13,7 @@ import {
   shiftPrimaryView,
   type PrimaryViewState,
 } from "../model/viewPreferences";
+import type { ViewLayout } from "../model/viewWorkspace";
 
 interface AppToolstripProps {
   readonly moduleState: PrimaryViewState;
@@ -21,6 +22,7 @@ interface AppToolstripProps {
   readonly onModuleStateChange: (state: PrimaryViewState) => void;
   readonly onCommand: (command: AppCommandId) => void;
   readonly onShortcutHelpOpenChange: (open: boolean) => void;
+  readonly onLayoutPreset?: (layout: ViewLayout) => void;
 }
 
 const MENU_CLASS =
@@ -219,6 +221,7 @@ export function AppToolstrip({
   onModuleStateChange,
   onCommand,
   onShortcutHelpOpenChange,
+  onLayoutPreset,
 }: AppToolstripProps) {
   const shortcutTrigger = useRef<HTMLButtonElement>(null);
   const run = (id: AppCommandId) => {
@@ -252,6 +255,23 @@ export function AppToolstrip({
                 title={`Show the ${label.toLowerCase()} view in the main workspace.`}
                 onClick={() => run(id)}
                 className="rounded-md px-3 py-1.5 text-sm font-medium text-slate-300 hover:bg-slate-800 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-2 focus-visible:ring-sky-400"
+              >
+                {label}
+              </button>
+            ))}
+            <span className="mx-1 my-auto h-4 w-px bg-slate-700" aria-hidden="true" />
+            {([
+              ["single", "Single"],
+              ["split_horizontal", "Split"],
+              ["grid", "Grid"],
+            ] as const).map(([layout, label]) => (
+              <button
+                key={layout}
+                type="button"
+                data-layout-preset={layout}
+                title={`Apply ${label.toLowerCase()} layout preset.`}
+                onClick={() => onLayoutPreset?.(layout)}
+                className="rounded-md px-2.5 py-1.5 text-xs font-medium text-slate-400 hover:bg-slate-800 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 focus-visible:ring-2 focus-visible:ring-sky-400"
               >
                 {label}
               </button>

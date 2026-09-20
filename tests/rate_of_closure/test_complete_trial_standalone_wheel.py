@@ -12,6 +12,18 @@ from pathlib import Path
 
 import pytest
 
+if (
+    subprocess.run(
+        [sys.executable, "-c", "import build"],
+        capture_output=True,
+    ).returncode
+    != 0
+):
+    pytest.skip(
+        "build package is not available in isolated site-packages",
+        allow_module_level=True,
+    )
+
 pytestmark = [pytest.mark.integration, pytest.mark.headless_safe]
 
 ROOT = Path(__file__).resolve().parents[2]

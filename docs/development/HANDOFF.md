@@ -1,3 +1,16 @@
+# Rate of Closure Workspace View Compositor Handoff — 2026-09-19 (#4225)
+
+- Repository: `Tools`, Branch `feat/4225-workspace-view-compositor`.
+- Governing issue: #4225 (Workspace view compositor: Impact, Swing, Flight, and synchronized multi-view).
+- Completed:
+  - Wired `MainWindowViewCommandsMixin` into `src/rate_of_closure/ui/pyqt6/main_window.py`.
+  - Enabled `view.show_impact`, `view.show_swing`, `view.show_flight`, and layout-preset commands in PyQt toolstrip and React `AppToolstrip`.
+  - Multi-viewport synchronization for playback time, impact event offset, run selection, and shared model state.
+  - Implemented 7 GUI contract tests in `tests/rate_of_closure/test_view_compositor_gui.py`.
+  - All test suites passing (`pytest -n 0 tests/rate_of_closure/`, `npm test` in web).
+  - Pre-commit gates verified (`ruff check`, `ruff format --check`, `black --check`, `mypy`).
+  - Module inventory and `SPEC.md` changelog verified and updated.
+
 # Impact Program Handoff Checkpoint — 2026-09-10
 
 - Repository/worktree: Tools, C:/Users/diete/Repositories/Tools-impact-friction.

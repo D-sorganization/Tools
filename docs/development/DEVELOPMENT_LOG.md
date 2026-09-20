@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#4225 · Workspace View Compositor: Impact, Swing, Flight
+
+- **State:** in_progress
+- **Owner:** antigravity
+- **Issue:** D-sorganization/Tools#4225
+- **PR:** not created
+- **Branch:** `feat/4225-workspace-view-compositor`
+- **Paths:** `src/rate_of_closure/ui/pyqt6/`, `src/rate_of_closure/web/`, `tests/rate_of_closure/`
+- **Started:** 2026-09-19
+- **Last verified:** 2026-09-19 (all unit/headless tests pass including test_app_toolstrip.py, test_view_compositor_gui.py, test_tooltips.py, and vitest web test suite; pre-commit ruff/black/mypy pass; inventory check clean)
+- **Summary:** Multi-view workspace compositor integrating Impact, Swing, and Flight viewports with synchronized playback, run selection, and layout presets across PyQt and React toolstrips.
+- **Next step:** Push branch, open PR, arm squash auto-merge, and release lease.
+
 ### DL-#5218 · Camera Putting Launch Monitor for GSPro
 
 - **State:** in_progress

@@ -27,10 +27,18 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.142                                   |
-| **Last Spec Update**    | 2026-09-13                                 |
+| **Spec Version**        | 1.18.143                                   |
+| **Last Spec Update**    | 2026-09-19                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-09-19 Rate of Closure: Workspace View Compositor for Impact, Swing, and Flight (#4225)
+
+Delivers the synchronized multi-viewport workspace compositor across desktop and web:
+
+1. **MainWindow View Commands Wiring**: Wires `MainWindowViewCommandsMixin` into `RateOfClosureMainWindow`, providing `show_compositor_view(view_id)` and `show_compositor_layout(layout)` routing into `_simulation_tab`.
+2. **PyQt & React Toolstrip Multi-View Commands**: Replaces disabled placeholders with enabled `view.show_impact`, `view.show_swing`, `view.show_flight` actions and layout presets (Single, Split Horizontal, Split Vertical, Grid in PyQt; Single, Split, Grid in React `AppToolstrip`).
+3. **Synchronized Playback & Viewport Multi-View**: Synchronizes playback timeline position, run selection, and impact event offsets across `SynchronizedSimulationView`, `StrikeView`, and `FlightView`, while preserving task-appropriate camera state, projection, and overlays per viewport.
 
 ### 2026-09-13 Product Artifact Hygiene: Compose, Helm, and Rate of Closure Package Lock Cleanup (#4919)
 

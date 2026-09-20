@@ -118,6 +118,23 @@ class ViewCompositor(QWidget):
             )
         )
 
+    def show_layout(self, layout: ViewLayout | str) -> None:
+        """Apply a layout preset (single, split_horizontal, split_vertical, grid)."""
+        if not isinstance(layout, ViewLayout):
+            try:
+                layout = ViewLayout(layout)
+            except ValueError as exc:
+                raise ValueError(f"unsupported layout preset: {layout!r}") from exc
+        if layout is ViewLayout.SINGLE:
+            self.show_single_view(ViewKind(self._workspace.active_slot_id))
+            return
+        count = 3 if layout is ViewLayout.GRID else 2
+        current = [slot.kind for slot in self._workspace.slots]
+        kinds = (
+            current + [kind for kind in SUPPORTED_VIEW_KINDS if kind not in current]
+        )[:count]
+        self._set_kinds(layout, kinds)
+
     def update_playback(self, playback: PlaybackState) -> None:
         """Update the owned transport snapshot and debounce durable writes."""
         playback.validate()
@@ -244,17 +261,8 @@ class ViewCompositor(QWidget):
 
     def _on_layout_changed(self) -> None:
         layout = self._layout_combo.currentData()
-        if not isinstance(layout, ViewLayout):
-            return
-        if layout is ViewLayout.SINGLE:
-            self.show_single_view(ViewKind(self._workspace.active_slot_id))
-            return
-        count = 3 if layout is ViewLayout.GRID else 2
-        current = [slot.kind for slot in self._workspace.slots]
-        kinds = (
-            current + [kind for kind in SUPPORTED_VIEW_KINDS if kind not in current]
-        )[:count]
-        self._set_kinds(layout, kinds)
+        if isinstance(layout, ViewLayout):
+            self.show_layout(layout)
 
     def _toggle(self, kind: ViewKind, checked: bool) -> None:
         current = [slot.kind for slot in self._workspace.slots]

@@ -47,6 +47,9 @@ from rate_of_closure.ui.pyqt6.main_window_layout import (
     ResultsSidebar,
     create_primary_tabs,
 )
+from rate_of_closure.ui.pyqt6.main_window_view_commands import (
+    MainWindowViewCommandsMixin,
+)
 from rate_of_closure.ui.pyqt6.morris_tab import MorrisScreeningTab
 from rate_of_closure.ui.pyqt6.morris_worker import MorrisAuthorityPort
 from rate_of_closure.ui.pyqt6.neural_model_lab_tab import NeuralModelLabTab
@@ -104,6 +107,7 @@ except ImportError:  # standalone / vendored use
 
 class RateOfClosureMainWindow(
     MainWindowClubMixin,
+    MainWindowViewCommandsMixin,
     WorkspaceLayoutMixin,
     WorkspaceNavigationMixin,
     ThemedWindowMixin,
@@ -351,18 +355,9 @@ class RateOfClosureMainWindow(
         self._module_manager_dialog = dialog
         dialog.show()
 
-    def module_manager_dialog(self) -> ModuleManagerDialog | None:
-        """Return the current workspace module manager, if one was opened."""
-        return self._module_manager_dialog
-
     def bind_theme_menu(self, menu) -> None:  # type: ignore[no-untyped-def]
         """Expose the launcher-owned theme choices in the top toolstrip."""
         self._app_toolstrip.bind_theme_menu(menu)
-
-    def shortcut_help_dialog(self) -> QDialog | None:
-        """Return the current keyboard-shortcut help dialog."""
-        dialog = self._app_toolstrip.shortcut_dialog()
-        return dialog if isinstance(dialog, QDialog) else None
 
     def _bind_launcher_theme_menu(self) -> None:
         """Move the launcher-provided Theme surface into the top toolstrip."""
