@@ -31984,16 +31984,36 @@
       "sample_inputs",
       "sample_input_block",
       "sample_input_chunks",
+      "SpearmanResult",
+      "spearman_analysis",
       "spearman_matrix",
       "summary_stats",
       "snapshot_from_json",
       "snapshot_to_json",
       "to_json_dict",
+      "SOBOL_REPORT_SCHEMA_ID",
+      "SOBOL_REPORT_SCHEMA_VERSION",
+      "SaltelliDesign",
+      "SobolEstimate",
+      "SobolFactor",
+      "SobolObservations",
+      "SobolOutput",
+      "SobolReport",
+      "SobolRunCountGuidance",
+      "analyze_sobol",
+      "generate_saltelli_design",
+      "run_sobol_sensitivity",
+      "sobol_run_count_guidance",
       "variable_registry",
       "variables_in_category",
       "write_csv",
       "write_hdf5",
-      "write_json"
+      "write_json",
+      "NormalityDiagnostic",
+      "TruncationShiftNote",
+      "convex_hull_2d",
+      "detect_truncation_mean_shifts",
+      "mardia_bivariate_normality"
     ],
     "explicit_all": true,
     "symbols": {
@@ -32473,6 +32493,13 @@
               "returns": "dict[str, Any]"
             }
           }
+        },
+        "type": "class"
+      },
+      "NormalityDiagnostic": {
+        "info": {
+          "bases": [],
+          "methods": {}
         },
         "type": "class"
       },
@@ -33009,8 +33036,33 @@
       "SCHEMA_VERSION": {
         "type": "variable"
       },
+      "SOBOL_REPORT_SCHEMA_ID": {
+        "type": "variable"
+      },
+      "SOBOL_REPORT_SCHEMA_VERSION": {
+        "type": "variable"
+      },
       "SWING_DERIVED_KEYS": {
         "type": "variable"
+      },
+      "SaltelliDesign": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "total_samples": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "int"
+            }
+          }
+        },
+        "type": "class"
       },
       "SensitivityResult": {
         "info": {
@@ -33034,6 +33086,120 @@
               "returns": "str"
             }
           }
+        },
+        "type": "class"
+      },
+      "SobolEstimate": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "SobolFactor": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "from_noise_spec": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "NoiseSpec",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "spec"
+                },
+                {
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "lower"
+                },
+                {
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "upper"
+                }
+              ],
+              "returns": "SobolFactor"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "SobolObservations": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "SobolOutput": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "SobolReport": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "estimate": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "spec_id"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "output_name"
+                }
+              ],
+              "returns": "SobolEstimate"
+            },
+            "to_json_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "SobolRunCountGuidance": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "SpearmanResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
         },
         "type": "class"
       },
@@ -33122,6 +33288,13 @@
               "returns": "str"
             }
           }
+        },
+        "type": "class"
+      },
+      "TruncationShiftNote": {
+        "info": {
+          "bases": [],
+          "methods": {}
         },
         "type": "class"
       },
@@ -33325,6 +33498,44 @@
             }
           ],
           "returns": "PropagationResult"
+        },
+        "type": "function"
+      },
+      "analyze_sobol": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "SobolObservations",
+              "default": null,
+              "kind": "arg",
+              "name": "observations"
+            },
+            {
+              "annotation": "int",
+              "default": "100",
+              "kind": "arg",
+              "name": "n_bootstrap"
+            },
+            {
+              "annotation": "float",
+              "default": "0.05",
+              "kind": "arg",
+              "name": "alpha"
+            },
+            {
+              "annotation": "int",
+              "default": "42",
+              "kind": "arg",
+              "name": "seed"
+            },
+            {
+              "annotation": "int",
+              "default": "4",
+              "kind": "arg",
+              "name": "min_base_samples"
+            }
+          ],
+          "returns": "SobolReport"
         },
         "type": "function"
       },
@@ -33552,6 +33763,40 @@
         },
         "type": "function"
       },
+      "convex_hull_2d": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "points"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "detect_truncation_mean_shifts": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "VariationDataset",
+              "default": null,
+              "kind": "arg",
+              "name": "dataset"
+            },
+            {
+              "annotation": "float",
+              "default": "0.05",
+              "kind": "arg",
+              "name": "shift_threshold_fraction"
+            }
+          ],
+          "returns": "tuple[TruncationShiftNote, ...]"
+        },
+        "type": "function"
+      },
       "dispersion_ellipse": {
         "signature": {
           "args": [
@@ -33730,6 +33975,32 @@
         },
         "type": "function"
       },
+      "generate_saltelli_design": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "tuple[SobolFactor, ...]",
+              "default": null,
+              "kind": "arg",
+              "name": "factors"
+            },
+            {
+              "annotation": "int",
+              "default": "_MIN_ADEQUATE_BASE_SAMPLES",
+              "kind": "arg",
+              "name": "base_samples"
+            },
+            {
+              "annotation": "int",
+              "default": "0",
+              "kind": "arg",
+              "name": "seed"
+            }
+          ],
+          "returns": "SaltelliDesign"
+        },
+        "type": "function"
+      },
       "iter_position_noise_response_plot_rows": {
         "signature": {
           "args": [
@@ -33781,6 +34052,26 @@
             }
           ],
           "returns": "MorrisObservationArchive"
+        },
+        "type": "function"
+      },
+      "mardia_bivariate_normality": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "points"
+            },
+            {
+              "annotation": "float",
+              "default": "0.05",
+              "kind": "arg",
+              "name": "alpha"
+            }
+          ],
+          "returns": "NormalityDiagnostic"
         },
         "type": "function"
       },
@@ -33986,6 +34277,56 @@
         },
         "type": "function"
       },
+      "run_sobol_sensitivity": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "VariationPlan",
+              "default": null,
+              "kind": "arg",
+              "name": "plan"
+            },
+            {
+              "annotation": "tuple[SobolFactor, ...] | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "factors"
+            },
+            {
+              "annotation": "int",
+              "default": "_MIN_ADEQUATE_BASE_SAMPLES",
+              "kind": "arg",
+              "name": "base_samples"
+            },
+            {
+              "annotation": "tuple[str, ...] | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "output_names"
+            },
+            {
+              "annotation": "int",
+              "default": "100",
+              "kind": "arg",
+              "name": "n_bootstrap"
+            },
+            {
+              "annotation": "float",
+              "default": "0.05",
+              "kind": "arg",
+              "name": "alpha"
+            },
+            {
+              "annotation": "int",
+              "default": "1",
+              "kind": "arg",
+              "name": "n_workers"
+            }
+          ],
+          "returns": "SobolReport"
+        },
+        "type": "function"
+      },
       "run_variation": {
         "signature": {
           "args": [
@@ -34141,6 +34482,58 @@
             }
           ],
           "returns": "str"
+        },
+        "type": "function"
+      },
+      "sobol_run_count_guidance": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "int",
+              "default": null,
+              "kind": "arg",
+              "name": "factor_count"
+            },
+            {
+              "annotation": "int",
+              "default": "_MIN_ADEQUATE_BASE_SAMPLES",
+              "kind": "arg",
+              "name": "base_samples"
+            }
+          ],
+          "returns": "SobolRunCountGuidance"
+        },
+        "type": "function"
+      },
+      "spearman_analysis": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "VariationDataset",
+              "default": null,
+              "kind": "arg",
+              "name": "dataset"
+            },
+            {
+              "annotation": "int",
+              "default": "500",
+              "kind": "arg",
+              "name": "n_permutations"
+            },
+            {
+              "annotation": "float",
+              "default": "0.05",
+              "kind": "arg",
+              "name": "alpha"
+            },
+            {
+              "annotation": "int",
+              "default": "0",
+              "kind": "arg",
+              "name": "seed"
+            }
+          ],
+          "returns": "SpearmanResult"
         },
         "type": "function"
       },
@@ -34593,18 +34986,32 @@
   "variation/analysis.py": {
     "__all__": [
       "DispersionEllipse",
+      "NormalityDiagnostic",
       "OutputStats",
       "SensitivityResult",
+      "SpearmanResult",
+      "TruncationShiftNote",
+      "convex_hull_2d",
+      "detect_truncation_mean_shifts",
       "dispersion_ellipse",
       "finite_sample_standard_deviation",
+      "mardia_bivariate_normality",
       "one_at_a_time_sensitivity",
       "sensitivity_from_standard_deviations",
+      "spearman_analysis",
       "spearman_matrix",
       "summary_stats"
     ],
     "explicit_all": true,
     "symbols": {
       "DispersionEllipse": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "NormalityDiagnostic": {
         "info": {
           "bases": [],
           "methods": {}
@@ -34643,6 +35050,54 @@
         },
         "type": "class"
       },
+      "SpearmanResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "TruncationShiftNote": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "convex_hull_2d": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "points"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "detect_truncation_mean_shifts": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "VariationDataset",
+              "default": null,
+              "kind": "arg",
+              "name": "dataset"
+            },
+            {
+              "annotation": "float",
+              "default": "0.05",
+              "kind": "arg",
+              "name": "shift_threshold_fraction"
+            }
+          ],
+          "returns": "tuple[TruncationShiftNote, ...]"
+        },
+        "type": "function"
+      },
       "dispersion_ellipse": {
         "signature": {
           "args": [
@@ -34674,6 +35129,26 @@
             }
           ],
           "returns": "float"
+        },
+        "type": "function"
+      },
+      "mardia_bivariate_normality": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "points"
+            },
+            {
+              "annotation": "float",
+              "default": "0.05",
+              "kind": "arg",
+              "name": "alpha"
+            }
+          ],
+          "returns": "NormalityDiagnostic"
         },
         "type": "function"
       },
@@ -34738,6 +35213,38 @@
             }
           ],
           "returns": "SensitivityResult"
+        },
+        "type": "function"
+      },
+      "spearman_analysis": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "VariationDataset",
+              "default": null,
+              "kind": "arg",
+              "name": "dataset"
+            },
+            {
+              "annotation": "int",
+              "default": "500",
+              "kind": "arg",
+              "name": "n_permutations"
+            },
+            {
+              "annotation": "float",
+              "default": "0.05",
+              "kind": "arg",
+              "name": "alpha"
+            },
+            {
+              "annotation": "int",
+              "default": "0",
+              "kind": "arg",
+              "name": "seed"
+            }
+          ],
+          "returns": "SpearmanResult"
         },
         "type": "function"
       },
@@ -37212,6 +37719,57 @@
       }
     }
   },
+  "variation/normality.py": {
+    "__all__": [
+      "NormalityDiagnostic",
+      "convex_hull_2d",
+      "mardia_bivariate_normality"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "NormalityDiagnostic": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "convex_hull_2d": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "points"
+            }
+          ],
+          "returns": "np.ndarray"
+        },
+        "type": "function"
+      },
+      "mardia_bivariate_normality": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "points"
+            },
+            {
+              "annotation": "float",
+              "default": "0.05",
+              "kind": "arg",
+              "name": "alpha"
+            }
+          ],
+          "returns": "NormalityDiagnostic"
+        },
+        "type": "function"
+      }
+    }
+  },
   "variation/paired_attribution.py": {
     "__all__": [
       "attribution_contract_fingerprint",
@@ -38199,6 +38757,461 @@
       }
     }
   },
+  "variation/sobol_sensitivity.py": {
+    "__all__": [
+      "SOBOL_REPORT_SCHEMA_ID",
+      "SOBOL_REPORT_SCHEMA_VERSION",
+      "SaltelliDesign",
+      "SobolEstimate",
+      "SobolFactor",
+      "SobolObservations",
+      "SobolOutput",
+      "SobolReport",
+      "SobolRunCountGuidance",
+      "analyze_sobol",
+      "generate_saltelli_design",
+      "run_sobol_sensitivity",
+      "sobol_run_count_guidance"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "SOBOL_REPORT_SCHEMA_ID": {
+        "type": "variable"
+      },
+      "SOBOL_REPORT_SCHEMA_VERSION": {
+        "type": "variable"
+      },
+      "SaltelliDesign": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "total_samples": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "int"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "SobolEstimate": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "SobolFactor": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "from_noise_spec": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "NoiseSpec",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "spec"
+                },
+                {
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "lower"
+                },
+                {
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "upper"
+                }
+              ],
+              "returns": "SobolFactor"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "SobolObservations": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "SobolOutput": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "SobolReport": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "estimate": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "spec_id"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "output_name"
+                }
+              ],
+              "returns": "SobolEstimate"
+            },
+            "to_json_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "SobolRunCountGuidance": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "analyze_sobol": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "SobolObservations",
+              "default": null,
+              "kind": "arg",
+              "name": "observations"
+            },
+            {
+              "annotation": "int",
+              "default": "100",
+              "kind": "arg",
+              "name": "n_bootstrap"
+            },
+            {
+              "annotation": "float",
+              "default": "0.05",
+              "kind": "arg",
+              "name": "alpha"
+            },
+            {
+              "annotation": "int",
+              "default": "42",
+              "kind": "arg",
+              "name": "seed"
+            },
+            {
+              "annotation": "int",
+              "default": "4",
+              "kind": "arg",
+              "name": "min_base_samples"
+            }
+          ],
+          "returns": "SobolReport"
+        },
+        "type": "function"
+      },
+      "generate_saltelli_design": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "tuple[SobolFactor, ...]",
+              "default": null,
+              "kind": "arg",
+              "name": "factors"
+            },
+            {
+              "annotation": "int",
+              "default": "_MIN_ADEQUATE_BASE_SAMPLES",
+              "kind": "arg",
+              "name": "base_samples"
+            },
+            {
+              "annotation": "int",
+              "default": "0",
+              "kind": "arg",
+              "name": "seed"
+            }
+          ],
+          "returns": "SaltelliDesign"
+        },
+        "type": "function"
+      },
+      "run_sobol_sensitivity": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "VariationPlan",
+              "default": null,
+              "kind": "arg",
+              "name": "plan"
+            },
+            {
+              "annotation": "tuple[SobolFactor, ...] | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "factors"
+            },
+            {
+              "annotation": "int",
+              "default": "_MIN_ADEQUATE_BASE_SAMPLES",
+              "kind": "arg",
+              "name": "base_samples"
+            },
+            {
+              "annotation": "tuple[str, ...] | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "output_names"
+            },
+            {
+              "annotation": "int",
+              "default": "100",
+              "kind": "arg",
+              "name": "n_bootstrap"
+            },
+            {
+              "annotation": "float",
+              "default": "0.05",
+              "kind": "arg",
+              "name": "alpha"
+            },
+            {
+              "annotation": "int",
+              "default": "1",
+              "kind": "arg",
+              "name": "n_workers"
+            }
+          ],
+          "returns": "SobolReport"
+        },
+        "type": "function"
+      },
+      "sobol_run_count_guidance": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "int",
+              "default": null,
+              "kind": "arg",
+              "name": "factor_count"
+            },
+            {
+              "annotation": "int",
+              "default": "_MIN_ADEQUATE_BASE_SAMPLES",
+              "kind": "arg",
+              "name": "base_samples"
+            }
+          ],
+          "returns": "SobolRunCountGuidance"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "variation/sobol_types.py": {
+    "__all__": [
+      "SOBOL_REPORT_SCHEMA_ID",
+      "SOBOL_REPORT_SCHEMA_VERSION",
+      "SaltelliDesign",
+      "SobolEstimate",
+      "SobolFactor",
+      "SobolObservations",
+      "SobolOutput",
+      "SobolReport",
+      "SobolRunCountGuidance",
+      "sobol_run_count_guidance"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "SOBOL_REPORT_SCHEMA_ID": {
+        "type": "variable"
+      },
+      "SOBOL_REPORT_SCHEMA_VERSION": {
+        "type": "variable"
+      },
+      "SaltelliDesign": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "total_samples": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "int"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "SobolEstimate": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "SobolFactor": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "from_noise_spec": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "NoiseSpec",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "spec"
+                },
+                {
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "lower"
+                },
+                {
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "upper"
+                }
+              ],
+              "returns": "SobolFactor"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "SobolObservations": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "SobolOutput": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "SobolReport": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "estimate": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "spec_id"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "output_name"
+                }
+              ],
+              "returns": "SobolEstimate"
+            },
+            "to_json_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "SobolRunCountGuidance": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "sobol_run_count_guidance": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "int",
+              "default": null,
+              "kind": "arg",
+              "name": "factor_count"
+            },
+            {
+              "annotation": "int",
+              "default": "_MIN_ADEQUATE_BASE_SAMPLES",
+              "kind": "arg",
+              "name": "base_samples"
+            }
+          ],
+          "returns": "SobolRunCountGuidance"
+        },
+        "type": "function"
+      }
+    }
+  },
   "variation/spec.py": {
     "__all__": [
       "CATEGORY_BALL_SETUP",
@@ -38640,6 +39653,42 @@
             }
           ],
           "returns": "TraceResamplingResult"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "variation/truncation_analysis.py": {
+    "__all__": [
+      "TruncationShiftNote",
+      "detect_truncation_mean_shifts"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "TruncationShiftNote": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "detect_truncation_mean_shifts": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "VariationDataset",
+              "default": null,
+              "kind": "arg",
+              "name": "dataset"
+            },
+            {
+              "annotation": "float",
+              "default": "0.05",
+              "kind": "arg",
+              "name": "shift_threshold_fraction"
+            }
+          ],
+          "returns": "tuple[TruncationShiftNote, ...]"
         },
         "type": "function"
       }

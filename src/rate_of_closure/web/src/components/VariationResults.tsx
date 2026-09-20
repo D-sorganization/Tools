@@ -4,7 +4,8 @@ import type { TargetRegionTs } from "../model/targets";
 import { DISTANCE_UNITS } from "../model/units";
 import { variableLabel, type VariationDatasetTs } from "../model/variation";
 import {
-  spearmanMatrix,
+  detectTruncationMeanShifts,
+  spearmanAnalysis,
   summaryStats,
   type SensitivityResultTs,
 } from "../model/variationAnalysis";
@@ -70,7 +71,11 @@ export function VariationResults({
     setSelection({ dataset, ensemble, trialIndex });
   };
   const stats = useMemo(() => dataset ? summaryStats(dataset) : [], [dataset]);
-  const spearman = useMemo(() => dataset ? spearmanMatrix(dataset) : null, [dataset]);
+  const spearman = useMemo(() => (dataset ? spearmanAnalysis(dataset) : null), [dataset]);
+  const truncationNotes = useMemo(
+    () => (dataset ? detectTruncationMeanShifts(dataset) : []),
+    [dataset],
+  );
   const returnControl = visualState.visualOrigin !== "empty-preview" && onReturnToControls
     ? <button type="button" onClick={(event) => onReturnToControls(event.detail === 0)}
       className="mb-3 rounded-lg border border-sky-500/50 bg-slate-950 px-3 py-2 text-xs text-sky-200">
@@ -156,6 +161,18 @@ export function VariationResults({
               </tbody>
             </table>
           </div>
+          {truncationNotes.length > 0 && (
+            <div className="mt-3 rounded-lg border border-amber-500/30 bg-amber-950/20 p-2.5 text-xs text-amber-300">
+              <span className="font-semibold uppercase tracking-wider text-amber-400">
+                Distribution Truncation Note:
+              </span>
+              <ul className="mt-1 list-disc pl-4 space-y-0.5 text-slate-300">
+                {truncationNotes.map((note) => (
+                  <li key={note.variableKey}>{note.note}</li>
+                ))}
+              </ul>
+            </div>
+          )}
         </div>
       )}
 
@@ -190,7 +207,7 @@ export function VariationResults({
                             sensitivity.normalized[inputIndex][outputIndex],
                           ),
                         }}
-                        title={`${variableLabel(key)} → ${name}: std ${sensitivity.matrix[inputIndex][outputIndex].toPrecision(3)}; Spearman ρ ${spearman?.[inputIndex]?.[outputIndex]?.toFixed(2) ?? "not requested"}`}
+                        title={`${variableLabel(key)} → ${name}: std ${sensitivity.matrix[inputIndex][outputIndex].toPrecision(3)}; Spearman ρ ${spearman?.matrix?.[inputIndex]?.[outputIndex]?.toFixed(2) ?? "not requested"}${spearman ? ` (p=${spearman.pValues[inputIndex]?.[outputIndex]?.toFixed(3) ?? "–"})` : ""}`}
                       >
                         {sensitivity.matrix[inputIndex][outputIndex].toPrecision(3)}
                       </td>
@@ -203,6 +220,65 @@ export function VariationResults({
           <p className="mt-2 text-xs text-slate-500">
             Each row runs independently with paired seeded draws. Spearman correlation is
             displayed only when the jointly enabled analysis was also requested.
+          </p>
+        </div>
+      )}
+
+      {dataset && spearman && (
+        <div className={PANEL_CLASS}>
+          <h2 className="mb-3 text-sm font-semibold uppercase tracking-wide text-slate-400">
+            Spearman Rank Correlation — Input/Output Monotonicity
+          </h2>
+          <div
+            role="group"
+            aria-label="Spearman rank correlation matrix"
+            className="min-h-[180px] overflow-x-auto xl:min-h-[240px]"
+          >
+            <table className="w-full text-left text-xs">
+              <thead>
+                <tr className="text-slate-500">
+                  <th className="px-2 py-1 font-medium">Input \ Output</th>
+                  {dataset.outputNames.map((name) => (
+                    <th key={name} className="px-2 py-1 font-medium">{name}</th>
+                  ))}
+                </tr>
+              </thead>
+              <tbody>
+                {dataset.inputNames.map((inputName, inputIndex) => (
+                  <tr key={inputName} className="border-t border-slate-800/60">
+                    <td className="px-2 py-1 text-slate-200">{variableLabel(inputName)}</td>
+                    {dataset.outputNames.map((outputName, outputIndex) => {
+                      const rho = spearman.matrix[inputIndex]?.[outputIndex];
+                      const pval = spearman.pValues[inputIndex]?.[outputIndex];
+                      const isSig = spearman.significant[inputIndex]?.[outputIndex];
+                      const ciLo = spearman.ciLower[inputIndex]?.[outputIndex];
+                      const ciHi = spearman.ciUpper[inputIndex]?.[outputIndex];
+                      const absRho = Math.abs(rho || 0);
+                      return (
+                        <td
+                          key={outputName}
+                          className={`px-2 py-1 tabular-nums ${
+                            isSig ? "text-white" : "bg-slate-900/80 text-slate-500"
+                          }`}
+                          style={
+                            isSig
+                              ? { backgroundColor: sensitivityHeat(absRho) }
+                              : undefined
+                          }
+                          title={`${variableLabel(inputName)} → ${outputName}: ρ=${Number.isNaN(rho) ? "—" : rho?.toFixed(2)}, p=${pval !== undefined && !Number.isNaN(pval) ? pval.toFixed(3) : "–"} (${isSig ? "significant" : "insignificant"}), 95% CI [${ciLo !== undefined && !Number.isNaN(ciLo) ? ciLo.toFixed(2) : "–"}, ${ciHi !== undefined && !Number.isNaN(ciHi) ? ciHi.toFixed(2) : "–"}]`}
+                        >
+                          {rho === undefined || Number.isNaN(rho) ? "—" : rho.toFixed(2)}
+                        </td>
+                      );
+                    })}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+          <p className="mt-2 text-xs text-slate-500">
+            Permutation p-values (two-sided, α=0.05) and 95% bootstrap confidence intervals.
+            Insignificant cells (p &gt; 0.05) are suppressed and greyed out.
           </p>
         </div>
       )}

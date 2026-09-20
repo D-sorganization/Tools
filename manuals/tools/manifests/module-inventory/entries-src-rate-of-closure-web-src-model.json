@@ -7394,10 +7394,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13058,
+      "bytes_lf": 13987,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b862fc9a35bf87bdf846e3ed9188825bcc895ee3659b7e97378a41f48c9d4b41",
+      "content_sha256_lf": "151d4a9312f8500696aa80262b916ecb3e76ec7322c21efc79333630317426c3",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-GLOSSARYENTRIESAL-TS-10843C5DFDF4",
       "language": "typescript",
@@ -7452,10 +7452,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12560,
+      "bytes_lf": 15277,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "66dd7cabe5247dcad1a52841cc65bff364db758161fedf5fcedb5ff374338c18",
+      "content_sha256_lf": "74d63d4bea0c5fc0761a6026c032d9f2561b787fc958b14a5199c22621f25540",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-GLOSSARYENTRIESLZ-TS-DCE17768913E",
       "language": "typescript",
@@ -7498,6 +7498,7 @@
         ],
         "test_paths": [],
         "unit_mentions": [
+          "N",
           "N·m",
           "W",
           "g",
@@ -22570,10 +22571,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9798,
+      "bytes_lf": 14138,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b544db7dbfd81a9ff4ac3563b2b6df1c7589e3fe36b6857950f6d3f9182cf5fb",
+      "content_sha256_lf": "08343e72e0a5eb42f4712785aceaa3c58ffb096239122dac332ed8a92bfb3a2c",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONANALYSIS-TS-43E8526ACE16",
       "language": "typescript",
@@ -22630,6 +22631,11 @@
           },
           {
             "kind": "export",
+            "name": "SpearmanResultTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
             "name": "datasetToCsv",
             "signature": null
           },
@@ -22656,6 +22662,11 @@
           {
             "kind": "export",
             "name": "pairedLandingPoints",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "spearmanAnalysis",
             "signature": null
           },
           {
@@ -23835,6 +23846,67 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 3413,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d1475d268186e9eb741f07a41c8da7b6d1ceb421be0086ac22e68a768a466d7a",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONNORMALITY-TS-CF1D24FAD63C",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variationNormality.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "NormalityDiagnosticTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "convexHull2d",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "mardiaBivariateNormality",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 3020,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -24714,6 +24786,48 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 7523,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4853c86d4856560beda79fd823c8412c50390ec23729cbfcf47eb6ce17597f61",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONSIGNIFICANCENORMALITY-TEST-TS-046B6F15FF71",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variationSignificanceNormality.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 6554,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -25029,6 +25143,62 @@
           {
             "kind": "export",
             "name": "validateSwingTrialPayload",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2431,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "44ea410189b394b637f1bcb9395095ad5b014bd0d9887308b097279f093f00f2",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-VARIATIONTRUNCATION-TS-EC0A9FCD3337",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/variationTruncation.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "TruncationShiftNoteTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "detectTruncationMeanShifts",
             "signature": null
           }
         ],

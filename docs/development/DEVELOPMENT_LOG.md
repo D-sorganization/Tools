@@ -18,9 +18,22 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
-### DL-#4225 · Workspace View Compositor: Impact, Swing, Flight
+### DL-#4253 · Review R4: Counterfactual Methodology - Sobol, Spearman Significance, Ellipse Normality
 
 - **State:** in_progress
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#4253 (parent epic #4249)
+- **PR:** D-sorganization/Tools#5266
+- **Branch:** `feat/4253-counterfactual-sobol-significance`
+- **Paths:** `src/shared/python/swing_sim/variation/`, `src/rate_of_closure/`, `tests/rate_of_closure/`
+- **Started:** 2026-09-20
+- **Last verified:** 2026-09-20 (all 389 variation Python tests, 2,328 web tests, and 16 glossary tests passing; line budget <= 500 lines enforced; test_auto_complete migrated to qtbot fixture to eliminate xdist crash)
+- **Summary:** Implements Sobol first-order and total sensitivity indices via Saltelli sampling with run count guidance, permutation p-values and bootstrap CIs on Spearman correlation matrix with cell suppression/greying, Mardia bivariate normality diagnostic and convex hull fallback for 2D landing dispersion, and input truncation mean-shift analysis with UI notes.
+- **Next step:** CI verification and auto-merge.
+
+### DL-#4225 · Workspace View Compositor: Impact, Swing, Flight
+
+- **State:** shipped
 - **Owner:** antigravity
 - **Issue:** D-sorganization/Tools#4225
 - **PR:** #5264
@@ -29,7 +42,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-19
 - **Last verified:** 2026-09-19 (all unit/headless tests pass including test_app_toolstrip.py, test_view_compositor_gui.py, test_tooltips.py, and vitest web test suite; pre-commit ruff/black/mypy pass; inventory check clean)
 - **Summary:** Multi-view workspace compositor integrating Impact, Swing, and Flight viewports with synchronized playback, run selection, and layout presets across PyQt and React toolstrips.
-- **Next step:** Push branch, open PR, arm squash auto-merge, and release lease.
+- **Next step:** Merged into main.
 
 ### DL-#4252 · Literature Flight Models Reconciliation, Carry Benchmark, and Wind Documentation
 

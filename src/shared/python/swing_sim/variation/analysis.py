@@ -1,34 +1,8 @@
-"""Dispersion and sensitivity analysis over variation datasets (#4120 V3).
+"""Dispersion and sensitivity analysis over variation datasets (#4120 V3, #4253).
 
-Answers the user's core question — *which output is most affected by which
-input's variation* — plus the dispersion summaries that feed the Variation
-tab and the plotting suite.
-
-Prior art (surveyed, credited)
-------------------------------
-- UpstreamDrift ``perturbation/statistics.py`` ``MetricStatistics`` /
-  ``compute_metric_statistics``: the mean/std/percentile summary shape,
-  reimplemented here per output column (that package aggregates one
-  metric dict per trial; we aggregate matrix columns).
-- The surveyed UpstreamDrift perturbation packages contain **no**
-  sensitivity analysis (their "sensitivity" is dispersion CV only); the
-  one-at-a-time matrix and the Spearman rank-correlation check here are
-  new, enabled by the subset-stable per-variable RNG streams in
-  :mod:`.engine`.
-
-Methods
--------
-- :func:`summary_stats` — per-output mean/std/percentiles over runs.
-- :func:`one_at_a_time_sensitivity` — re-runs the plan once per noise
-  spec with only that spec active (identical draws for it, thanks to the
-  per-variable streams) and reports the induced std of every output;
-  the ``normalized`` matrix scales each output column by its column max
-  so 1.0 marks the dominant input for that output.
-- :func:`spearman_matrix` — rank correlation input → output over the
-  full dataset: a cheap global-sensitivity cross-check that needs no
-  extra simulation runs.
-- :func:`dispersion_ellipse` — 2-sigma landing ellipse (carry vs
-  lateral) from the sample covariance eigen-decomposition.
+Provides per-output dispersion summaries, one-at-a-time sensitivity matrices,
+Spearman rank correlation with permutation significance, bivariate normality
+diagnostics for landing ellipses, and truncation mean-shift analysis.
 """
 
 from __future__ import annotations
@@ -47,7 +21,9 @@ from shared.python.contracts import require
 from ..solver.objective import EvaluationConfig
 from ..solver.solve import ProgressCallback, ProgressReport
 from .engine import VariationDataset, run_variation
+from .normality import NormalityDiagnostic, convex_hull_2d, mardia_bivariate_normality
 from .spec import VariationPlan
+from .truncation_analysis import TruncationShiftNote, detect_truncation_mean_shifts
 
 _MIN_RUNS_FOR_STATS = 2
 
@@ -291,6 +267,99 @@ def _ranks(values: np.ndarray) -> np.ndarray:
     return ranks
 
 
+@dataclass(frozen=True)
+class SpearmanResult:
+    """Spearman correlation matrix with permutation p-values and bootstrap CIs."""
+
+    input_keys: tuple[str, ...]
+    output_names: tuple[str, ...]
+    matrix: np.ndarray
+    p_values: np.ndarray
+    ci_lower: np.ndarray
+    ci_upper: np.ndarray
+    significant: np.ndarray
+    alpha: float = 0.05
+
+
+def _spearman_rho(r_x: np.ndarray, r_y: np.ndarray) -> float:
+    sx = float(np.std(r_x))
+    sy = float(np.std(r_y))
+    if sx <= 0.0 or sy <= 0.0:
+        return math.nan
+    cov = float(np.mean((r_x - np.mean(r_x)) * (r_y - np.mean(r_y))))
+    return cov / (sx * sy)
+
+
+def spearman_analysis(
+    dataset: VariationDataset,
+    n_permutations: int = 500,
+    alpha: float = 0.05,
+    seed: int = 0,
+) -> SpearmanResult:
+    """Spearman rank correlation matrix with permutation p-values and CIs."""
+    shape = (len(dataset.input_names), len(dataset.output_names))
+    matrix = np.full(shape, np.nan, dtype=float)
+    p_values = np.full(shape, np.nan, dtype=float)
+    ci_lower = np.full(shape, np.nan, dtype=float)
+    ci_upper = np.full(shape, np.nan, dtype=float)
+    significant = np.zeros(shape, dtype=bool)
+
+    for i in range(shape[0]):
+        for j in range(shape[1]):
+            available = (
+                dataset.success
+                & np.isfinite(dataset.inputs[:, i])
+                & np.isfinite(dataset.outputs[:, j])
+            )
+            if np.count_nonzero(available) < 3:
+                continue
+            rx = _ranks(dataset.inputs[available, i])
+            ry = _ranks(dataset.outputs[available, j])
+            rho = _spearman_rho(rx, ry)
+            if math.isnan(rho):
+                continue
+            matrix[i, j] = rho
+
+            rng = np.random.default_rng(seed + i * 1000 + j)
+            abs_rho = abs(rho)
+            exceed = 0
+            for _ in range(n_permutations):
+                shuffled_ry = rng.permutation(ry)
+                if abs(_spearman_rho(rx, shuffled_ry)) >= abs_rho - 1e-12:
+                    exceed += 1
+            pval = (exceed + 1) / (n_permutations + 1)
+            p_values[i, j] = pval
+
+            n_boot = 200
+            n_pts = len(rx)
+            boot_rhos = np.empty(n_boot, dtype=float)
+            for b in range(n_boot):
+                idx = rng.integers(0, n_pts, size=n_pts)
+                boot_rhos[b] = _spearman_rho(rx[idx], ry[idx])
+            finite_boots = boot_rhos[np.isfinite(boot_rhos)]
+            if finite_boots.size > 0:
+                ci_lower[i, j] = float(
+                    np.percentile(finite_boots, 100.0 * (alpha / 2.0))
+                )
+                ci_upper[i, j] = float(
+                    np.percentile(finite_boots, 100.0 * (1.0 - alpha / 2.0))
+                )
+
+            if pval <= alpha:
+                significant[i, j] = True
+
+    return SpearmanResult(
+        input_keys=dataset.input_names,
+        output_names=dataset.output_names,
+        matrix=matrix,
+        p_values=p_values,
+        ci_lower=ci_lower,
+        ci_upper=ci_upper,
+        significant=significant,
+        alpha=alpha,
+    )
+
+
 def spearman_matrix(dataset: VariationDataset) -> np.ndarray:
     """Spearman rank correlation, inputs (rows) x outputs (columns).
 
@@ -313,17 +382,7 @@ def spearman_matrix(dataset: VariationDataset) -> np.ndarray:
                 continue
             input_ranks = _ranks(dataset.inputs[available, input_index])
             output_ranks = _ranks(dataset.outputs[available, output_index])
-            input_std = float(np.std(input_ranks))
-            output_std = float(np.std(output_ranks))
-            if input_std <= 0.0 or output_std <= 0.0:
-                continue
-            covariance = float(
-                np.mean(
-                    (input_ranks - np.mean(input_ranks))
-                    * (output_ranks - np.mean(output_ranks))
-                )
-            )
-            matrix[input_index, output_index] = covariance / (input_std * output_std)
+            matrix[input_index, output_index] = _spearman_rho(input_ranks, output_ranks)
     return matrix
 
 
@@ -347,20 +406,14 @@ class DispersionEllipse:
     semi_minor_m: float
     angle_deg: float
     n: int
+    diagnostic: NormalityDiagnostic | None = None
+    convex_hull: np.ndarray | None = None
 
 
 def dispersion_ellipse(
     dataset: VariationDataset, n_sigma: float = 2.0
 ) -> DispersionEllipse:
-    """Fit the n-sigma landing ellipse from ``carry_m`` / ``lateral_m``.
-
-    Eigen-decomposition of the 2x2 sample covariance: semi-axes are
-    ``n_sigma * sqrt(eigenvalue)``. Requires at least two successful runs.
-
-    Raises:
-        ContractViolationError: If fewer than two successful runs exist
-            or the dataset lacks flight outputs.
-    """
+    """Fit n-sigma landing ellipse from carry/lateral with normality check."""
     require(
         math.isfinite(n_sigma) and n_sigma > 0.0,
         "n_sigma must be finite and > 0",
@@ -377,11 +430,15 @@ def dispersion_ellipse(
     lateral = points[:, 1]
     cov = np.cov(points, rowvar=False, ddof=1)
     eigenvalues, eigenvectors = np.linalg.eigh(cov)
-    # eigh sorts ascending; the last eigenpair is the principal axis.
     major = n_sigma * math.sqrt(max(float(eigenvalues[1]), 0.0))
     minor = n_sigma * math.sqrt(max(float(eigenvalues[0]), 0.0))
     principal = eigenvectors[:, 1]
     angle = math.degrees(math.atan2(float(principal[1]), float(principal[0])))
+    # Bivariate normality test (carry vs lateral) and convex hull fallback
+    landing_2d = np.column_stack([lateral, carry])
+    diagnostic = mardia_bivariate_normality(landing_2d)
+    convex_hull = convex_hull_2d(landing_2d) if not diagnostic.is_normal else None
+
     return DispersionEllipse(
         center_carry_m=float(np.mean(carry)),
         center_lateral_m=float(np.mean(lateral)),
@@ -389,17 +446,26 @@ def dispersion_ellipse(
         semi_minor_m=minor,
         angle_deg=angle,
         n=n,
+        diagnostic=diagnostic,
+        convex_hull=convex_hull,
     )
 
 
 __all__ = [
     "DispersionEllipse",
+    "NormalityDiagnostic",
     "OutputStats",
     "SensitivityResult",
+    "SpearmanResult",
+    "TruncationShiftNote",
+    "convex_hull_2d",
+    "detect_truncation_mean_shifts",
     "dispersion_ellipse",
     "finite_sample_standard_deviation",
+    "mardia_bivariate_normality",
     "one_at_a_time_sensitivity",
     "sensitivity_from_standard_deviations",
+    "spearman_analysis",
     "spearman_matrix",
     "summary_stats",
 ]

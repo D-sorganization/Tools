@@ -30,6 +30,15 @@ export const ENTRIES: Record<string, GlossaryEntry> = {
       "(swing_sim.impact). Divided by clubhead speed it gives the smash " +
       "factor.",
   },
+  bivariate_normality: {
+    term: "Bivariate Normality (Mardia Test)",
+    definition:
+      "Statistical hypothesis test assessing whether 2D landing coordinates " +
+      "(lateral and carry) follow a joint Gaussian distribution. Evaluates " +
+      "Mardia multivariate skewness and kurtosis against chi-square and " +
+      "standard normal distributions to validate dispersion ellipse fits " +
+      "(Mardia 1970; swing_sim.variation.normality).",
+  },
   blade_putter: {
     term: "Blade Putter",
     definition:
@@ -109,6 +118,15 @@ export const ENTRIES: Record<string, GlossaryEntry> = {
       "microseconds for a driver. The face keeps rotating the whole time, " +
       "so the face the ball leaves is not the face it met (impact " +
       "literature; Cheetham dossier).",
+  },
+  convex_hull_dispersion: {
+    term: "Convex Hull Dispersion Fallback",
+    definition:
+      "The minimal convex polygon bounding evaluated landing points. " +
+      "When the Mardia diagnostic rejects bivariate normality (p < 0.05), " +
+      "the convex hull provides a non-parametric envelope of the shot " +
+      "scatter in place of a potentially misleading Gaussian ellipse " +
+      "(computational geometry literature; swing_sim.variation.normality).",
   },
   cor: {
     term: "Coefficient of Restitution (COR)",
