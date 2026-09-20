@@ -9,6 +9,7 @@ that is the citation trail.
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from enum import Enum
 
 from .models import (
@@ -77,6 +78,91 @@ _CONSTANT_COEFFICIENT_SPECS: dict[FlightModelType, ConstantCoefficientSpec] = {
 }
 
 
+CANONICAL_FLIGHT_MODEL = FlightModelType.WATERLOO_PENNER
+"""The designated canonical literature flight model baseline (Penner 2003)."""
+
+
+@dataclass(frozen=True)
+class FlightModelMetadata:
+    """Documented physics parameters and citation metadata for a flight model.
+
+    Attributes:
+        model_type: Registry key enum.
+        name: Display name.
+        reference: Scholarly citation.
+        spin_decay_s_inv: Exponential spin decay rate lambda [1/s].
+        lift_family: Aerodynamic lift formulation family.
+        is_canonical: Whether this model is the canonical baseline.
+    """
+
+    model_type: FlightModelType
+    name: str
+    reference: str
+    spin_decay_s_inv: float
+    lift_family: str
+    is_canonical: bool = False
+
+
+FLIGHT_MODEL_METADATA: dict[FlightModelType, FlightModelMetadata] = {
+    FlightModelType.WATERLOO_PENNER: FlightModelMetadata(
+        model_type=FlightModelType.WATERLOO_PENNER,
+        name="Waterloo/Penner",
+        reference="Penner (2003); McPhee et al. (Waterloo)",
+        spin_decay_s_inv=0.0,
+        lift_family="power_fit",
+        is_canonical=True,
+    ),
+    FlightModelType.MACDONALD_HANZELY: FlightModelMetadata(
+        model_type=FlightModelType.MACDONALD_HANZELY,
+        name="MacDonald-Hanzely",
+        reference="MacDonald & Hanzely (1991)",
+        spin_decay_s_inv=0.05,
+        lift_family="linear_ode",
+        is_canonical=False,
+    ),
+    FlightModelType.NATHAN: FlightModelMetadata(
+        model_type=FlightModelType.NATHAN,
+        name="Nathan",
+        reference="Nathan et al. (2018)",
+        spin_decay_s_inv=0.03,
+        lift_family="constant_ratio",
+        is_canonical=False,
+    ),
+    FlightModelType.BALLANTYNE: FlightModelMetadata(
+        model_type=FlightModelType.BALLANTYNE,
+        name="Ballantyne",
+        reference="Ballantyne et al. (2012)",
+        spin_decay_s_inv=0.02,
+        lift_family="constant_ratio",
+        is_canonical=False,
+    ),
+    FlightModelType.JCOLE: FlightModelMetadata(
+        model_type=FlightModelType.JCOLE,
+        name="J. Cole",
+        reference="Cole (2016)",
+        spin_decay_s_inv=0.04,
+        lift_family="constant_ratio",
+        is_canonical=False,
+    ),
+    FlightModelType.ROSPIE_DL: FlightModelMetadata(
+        model_type=FlightModelType.ROSPIE_DL,
+        name="Rospie DL",
+        reference="Rospie & Layton (2014)",
+        spin_decay_s_inv=0.03,
+        lift_family="constant_ratio",
+        is_canonical=False,
+    ),
+    FlightModelType.CHARRY_L3: FlightModelMetadata(
+        model_type=FlightModelType.CHARRY_L3,
+        name="Charry L3",
+        reference="Charry et al. (2017)",
+        spin_decay_s_inv=0.05,
+        lift_family="constant_ratio",
+        is_canonical=False,
+    ),
+}
+
+
 class FlightModelRegistry:
     """Registry for managing flight models."""
 
@@ -90,6 +176,18 @@ class FlightModelRegistry:
         if not cls._models:
             cls._initialize()
         return cls._models[model_type]
+
+    @classmethod
+    def get_canonical_model(cls) -> BallFlightModel:
+        """Return the designated canonical baseline model instance (Waterloo/Penner)."""
+        return cls.get_model(CANONICAL_FLIGHT_MODEL)
+
+    @classmethod
+    def get_metadata(cls, model_type: FlightModelType) -> FlightModelMetadata:
+        """Return documented physics metadata and spin decay rate for a model."""
+        if model_type not in FLIGHT_MODEL_METADATA:
+            raise ValueError(f"Unknown model_type: {model_type}")
+        return FLIGHT_MODEL_METADATA[model_type]
 
     @classmethod
     def get_all_models(cls) -> list[BallFlightModel]:
@@ -128,6 +226,9 @@ def compare_models(
 
 
 __all__ = [
+    "CANONICAL_FLIGHT_MODEL",
+    "FLIGHT_MODEL_METADATA",
+    "FlightModelMetadata",
     "FlightModelRegistry",
     "FlightModelType",
     "compare_models",

@@ -4268,10 +4268,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 10510,
+      "bytes_lf": 10408,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "da34f0028c48010e8042efe5ecd6dbe31b6d6748b565218ec0a5af023459a398",
+      "content_sha256_lf": "700e223cc6eb721dc481e2a9dcc5030bbc7684c78bc26c189b3f40cf4ed16a02",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-SOBOL-SENSITIVITY-PY-08F10C4BBD47",
       "language": "python",
@@ -4313,7 +4313,7 @@
           {
             "kind": "function",
             "name": "analyze_sobol",
-            "signature": "observations: SobolObservations, n_bootstrap: int=100, alpha: float=0.05, seed: int=42"
+            "signature": "observations: SobolObservations, n_bootstrap: int=100, alpha: float=0.05, seed: int=42, min_base_samples: int=4"
           },
           {
             "kind": "function",
@@ -4323,7 +4323,7 @@
           {
             "kind": "function",
             "name": "run_sobol_sensitivity",
-            "signature": "plan: VariationPlan, factors: tuple[SobolFactor, ...] | None=None, base_samples: int=_MIN_ADEQUATE_BASE_SAMPLES, output_names: tuple[str, ...] | None=None, n_bootstrap: int=100, alpha: float=0.05"
+            "signature": "plan: VariationPlan, factors: tuple[SobolFactor, ...] | None=None, base_samples: int=_MIN_ADEQUATE_BASE_SAMPLES, output_names: tuple[str, ...] | None=None, n_bootstrap: int=100, alpha: float=0.05, n_workers: int=1"
           },
           {
             "kind": "re-export",

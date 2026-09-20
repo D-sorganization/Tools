@@ -5147,10 +5147,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 17177,
+      "bytes_lf": 18225,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "dda1ab8af0cd5dbb54c7133544c4c4542d0a281df2640677b25455794f02b944",
+      "content_sha256_lf": "34769e36f3ae4aa5ae49aa5e57c6ad99a8871849e887eb2565c33ff0d74599a8",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-DERIVATIONMODELS-TS-104D352C6FE3",
       "language": "typescript",
@@ -5214,6 +5214,7 @@
         "test_paths": [],
         "unit_mentions": [
           "J",
+          "bar",
           "cm",
           "g",
           "kg",

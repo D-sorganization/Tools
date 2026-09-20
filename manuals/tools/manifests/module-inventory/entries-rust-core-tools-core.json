@@ -159,10 +159,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 37865,
+      "bytes_lf": 38741,
       "classification": "calculation",
       "classification_basis": "path-marker:ball_flight",
-      "content_sha256_lf": "ac7900cb5b8dc135028648487449d7f8bf4920ff95ddb55e2bbf09e22baf5af9",
+      "content_sha256_lf": "b0082c3f76f0f80ecb882670bfc576100d9bdf00f99d2f87292f9ebb5a00fc06",
       "family": "native-kernels-calculation",
       "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-BALL-FLIGHT-RS-F35328F88448",
       "language": "rust",

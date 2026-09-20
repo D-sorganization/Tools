@@ -31,6 +31,19 @@ reachable from any live state and `abandoned` from `parked`.
 - **Summary:** Implements Sobol first-order and total sensitivity indices via Saltelli sampling with run count guidance, permutation p-values and bootstrap CIs on Spearman correlation matrix with cell suppression/greying, Mardia bivariate normality diagnostic and convex hull fallback for 2D landing dispersion, and input truncation mean-shift analysis with UI notes.
 - **Next step:** Auto-merge armed with squash; release lease and notify caller agent.
 
+### DL-#4252 · Literature Flight Models Reconciliation, Carry Benchmark, and Wind Documentation
+
+- **State:** shipped
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#4252
+- **PR:** #5265
+- **Branch:** `feat/4252-reconcile-flight-models`
+- **Paths:** `rust_core/tools-core/src/ball_flight.rs`, `src/shared/python/swing_sim/flight/`, `src/rate_of_closure/derivation_flight.py`, `src/rate_of_closure/web/src/model/derivationModels.ts`, `docs/development/flight_model_validation.json`
+- **Started:** 2026-09-19
+- **Last verified:** 2026-09-19 (all 230 flight and derivation unit/parity tests pass; Rust fast path and WaterlooPenner carry parity within 0.07% across all 5 benchmark conditions; lint/format/mypy pass)
+- **Summary:** Reconciled Rust core kernel with canonical Waterloo/Penner lift model (power law $C_L = cl_1 \cdot s^{cl_2}$, $s_{decay} = 0.05$, $C_{L,\max} = 0.155$); tightened multi-condition carry parity to < 1.0%; documented spin decay rates across all 7 registered models; added calculation description Step 4 literature comparison & wind boundaries; published open-data validation package with pinned manifest.
+- **Next step:** Shipped via PR #5265.
+
 ### DL-#4162 · Wedge Delivery Metrics & Linear Waterfall Visualization
 
 - **State:** in_progress
