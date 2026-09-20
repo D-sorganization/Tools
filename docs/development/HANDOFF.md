@@ -1,3 +1,22 @@
+# Handoff Checkpoint — Content-Based Visual Baseline Gate & Main Re-Baseline (#4918) — 2026-09-20
+
+- **Repository/worktree**: `Tools`, `c:\Users\diete\Repositories\Tools-repo`
+- **Branch**: `feat/4918-content-based-visual-gate`
+- **Governing issue**: `D-sorganization/Tools#4918` (P2)
+- **Completed work**:
+  - Re-baselined `source_artifact_commit` in `src/rate_of_closure/visual_baselines.v1.json` and `test_visual_baseline_compare.py` to `b64a70f394cf9cf77266512e094239237c87d3b0`, an ancestor commit on `main`.
+  - Refactored lockstep gate (`scripts/check_rate_visual_evidence_changes.py`) to verify substantive canonical content hash changes in required evidence files, preventing whitespace/newline-only bypass.
+  - Made lockstep gate skip when changed files touch no `.tsx`, `.css`, `.ui`, or paint code (removed non-visual files `plot_workspace_limits.py` and `visual_layout_preferences.py`).
+  - Added regression tests verifying deliberate 2px layout shift fails PR compare, content-identical evidence fails gate, and non-visual diffs skip.
+  - Formatted and linted cleanly with ruff, black, and mypy; refreshed module inventory.
+- **Validation**:
+  - `pytest -n 0 tests/scripts/test_check_rate_visual_evidence_changes.py tests/rate_of_closure/test_visual_baseline_compare.py` -> PASS (35 passed)
+  - `ruff check`, `ruff format --check`, `black --check`, `mypy --follow-imports=skip` -> PASS
+  - `python shared_scripts/spec_changelog.py validate --spec SPEC.md` -> PASS (1056 rows)
+  - `python -m scripts.build_tools_module_inventory --check` -> PASS
+- **Next steps**:
+  - Push branch, create PR with `Fixes #4918` and `rate-visual-exemption: lockstep visual evidence gate content-based refactoring` trailer, arm auto-merge, and release lease.
+
 # Impact Program Handoff Checkpoint — 2026-09-19 (IA-T3 #5072)
 
 - Repository/worktree: Tools, C:/Users/diete/Repositories/Tools-repo.

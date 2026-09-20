@@ -5907,6 +5907,8 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 <!-- prettier-ignore-start -->
 
 | Date       | PR         | Changes    |
+| ---------- | ---------- | ---------- |
+| 2026-09-20 | #5269 | feat(ops): content-based visual baseline gate and main re-baseline (#4918). Lockstep gate checks canonical content hash of evidence rather than mtime or whitespace, skips diffs touching no .tsx/.css/.ui/paint code, and re-baselines visual_baselines.v1.json source_artifact_commit to ancestor commit on main. |
 | 2026-09-20 | #5270 | Putting launch monitor accuracy validation harness (Tools #5221): validate subcommand with CSV logging, running error stats against +/-3% speed and +/-1 deg HLA bounds, 7 unit tests, and rig validation evidence page. |
 | 2026-09-20 | #4922 | feat(release): Rate of Closure release gate runner and transition campaign programs from implemented_unverified to verified (#4201, #4922) |
 | 2026-09-20 | #4382 | feat(packaging): qualify frozen PyQt6 Rate of Closure one-folder bundle, entry point, build hooks, hygiene check, offscreen smoke, and parity harness (#4382) |
