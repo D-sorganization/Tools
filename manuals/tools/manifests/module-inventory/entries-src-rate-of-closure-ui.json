@@ -116,10 +116,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 7437,
+      "bytes_lf": 11774,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "875c46e506579a3701f1ce91dd8df66a0a3499f57f0fd9dc594b70caf5ec7795",
+      "content_sha256_lf": "5d790a8ade7d6140e3909763f8ded708a110786798ea34bd114026052340dfdf",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-IMPACT-KINEMATICS-PRESENTATION-PY-2E740F21B626",
       "language": "python",
@@ -175,12 +175,22 @@
           },
           {
             "kind": "function",
+            "name": "format_wedge_delivery_metrics",
+            "signature": "metrics: WedgeDeliveryMetrics"
+          },
+          {
+            "kind": "function",
             "name": "ground_clearance_snapshot_for_scene",
             "signature": "run: SimulationRun | None"
           },
           {
             "kind": "function",
             "name": "simulation_ground_clearance_snapshot",
+            "signature": "run: SimulationRun"
+          },
+          {
+            "kind": "function",
+            "name": "simulation_wedge_delivery_metrics",
             "signature": "run: SimulationRun"
           }
         ],
@@ -3563,10 +3573,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 19105,
+      "bytes_lf": 19884,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d5a5493572b19abeba9c34ac7c087b9b407fab7ec3c0a8167356d103ce771306",
+      "content_sha256_lf": "43980630b960bffe0ce172750fe94360acfc95985fc9e1db1692a49413c5df6e",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-LAUNCH-MONITOR-ANALYTICS-TAB-PY-CFEFD90B47D4",
       "language": "python",
@@ -3610,6 +3620,7 @@
         "test_paths": [
           "tests/rate_of_closure/pyqt_visualization_tab_probe.py",
           "tests/rate_of_closure/test_launch_monitor_analytics_tab.py",
+          "tests/rate_of_closure/test_launch_monitor_comparison_workspace.py",
           "tests/rate_of_closure/test_launch_monitor_linked_scatter_layout.py"
         ],
         "unit_mentions": [
@@ -3667,6 +3678,69 @@
           }
         ],
         "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 15163,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f1a8fcf72b42cad4f22ec3dc57f13d5429233e011331a0aee2c4d1265803dd89",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-LAUNCH-MONITOR-COMPARISON-WORKSPACE-PY-6D527387AD6B",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_comparison_workspace.py",
+      "purpose": "Side-by-side launch-monitor convention comparison workspace (PyQt6).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ComparisonRow",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LaunchMonitorComparisonWorkspace",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_comparison_rows",
+            "signature": "trackman_values: dict[str, float] | None=None, foresight_values: dict[str, float] | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_launch_monitor_comparison_workspace.py"
+        ],
         "unit_mentions": [],
         "validation_paths": []
       }
@@ -4230,7 +4304,6 @@
         "public-api",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -4242,7 +4315,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "unavailable"
       },
@@ -4268,7 +4341,9 @@
             "signature": ""
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/rate_of_closure/test_launch_monitor_comparison_workspace.py"
+        ],
         "unit_mentions": [
           "s"
         ],
