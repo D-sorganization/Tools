@@ -111,7 +111,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "4c3b38581d080cf87b4b867c6655c45f71a2811dbc9353e446cf955c485f983f",
+      "content_sha256_lf": "20d8e98c112729c8ec69405ee89953982dfc1a094e54ca639d21113eb4d10674",
       "entry_count": 17,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
@@ -267,7 +267,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-file-watcher.json"
     },
     {
-      "content_sha256_lf": "c4b3cc4a6712deb3ffeb8c624a658d1b7417fa37b1e7c7c54a1f424381dce71d",
+      "content_sha256_lf": "517cc10380233194271dd898880c1c74a992095e329bd2c4be4c9cfa43ec64e9",
       "entry_count": 18,
       "package": "src/financial_calculator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-financial-calculator.json"
@@ -297,7 +297,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-folder-tool-pro.json"
     },
     {
-      "content_sha256_lf": "5ae007b51fa13e2f130c1ab75fa7d5c4899a470a4045dba2fd8ad31941f16054",
+      "content_sha256_lf": "da8edd0d3f6cf0ff3136bf6268c1a59f0ec5c9f8c20587f12cfef823a6f07b5a",
       "entry_count": 17,
       "package": "src/function_generator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-function-generator.json"
@@ -393,7 +393,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
     {
-      "content_sha256_lf": "41e0fbf02a1d9149a7d072b34398b973eb0667a49e73f06127456afeff49370c",
+      "content_sha256_lf": "f5988ad8058ae31bb3ceedb7daf1d1be99991343970017574bafb5859be45754",
       "entry_count": 167,
       "package": "src/pendulum_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pendulum-simulator.json"
@@ -411,7 +411,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-plant-simulator.json"
     },
     {
-      "content_sha256_lf": "e69501c9e4a7091dac49797d6f3eb4604d34e96429ce6759d0576e3f7b2a3c8f",
+      "content_sha256_lf": "ef6f65c7f56640ed9d8f5bda43af853d431a647a26ff85e561af98fc6e1cb84b",
       "entry_count": 18,
       "package": "src/pressure_drop_calculator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pressure-drop-calculator.json"
@@ -429,8 +429,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-project-packer.json"
     },
     {
-      "content_sha256_lf": "26048e732fbdbd531d32a935a1fb218d670a1c11903371677713c3b6dc52e9ab",
-      "entry_count": 22,
+      "content_sha256_lf": "dbdd7836f2156fa45ebc4176d62198deb1fe5ef1d774800846a2f29aa932c3a4",
+      "entry_count": 23,
       "package": "src/putting_launch_monitor",
       "path": "manuals/tools/manifests/module-inventory/entries-src-putting-launch-monitor.json"
     },
@@ -579,7 +579,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rotation-transforms.json"
     },
     {
-      "content_sha256_lf": "5f4057eb8f01141c4f763ee6b1fd787d98eb1b722b2d7f031243b10de5beee63",
+      "content_sha256_lf": "1dedda3536a0002bcd1af597ba8e085e68fa6fcdc76f30d5ab6af760774f3ed8",
       "entry_count": 26,
       "package": "src/rrt_path_planner",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rrt-path-planner.json"
@@ -591,7 +591,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "188b77fbf3f812f54dd0cb6807980f73377a38a8519db4ddcf646aeac1611a23",
+      "content_sha256_lf": "cc44858403a7b6a1b42b6a6291e22c4005c960e25906c715fa65d8b4eba21f7e",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"

@@ -307,12 +307,14 @@ def cmd_validate(
         FfmpegDirectShowSource,
         VideoFileSource,
     )
+    from shared.python.sidekick.lab.mocap.acquisition import FrameSource
 
     from .cli import scaled_calibration
 
     cal_path = args.calibration or default_calibration_path()
     cal = Calibration.load(cal_path)
 
+    source: FrameSource
     if args.video is not None:
         source = VideoFileSource(args.video, fps=args.fps)
         active_cal = cal
