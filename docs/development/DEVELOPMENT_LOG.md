@@ -31,6 +31,136 @@ reachable from any live state and `abandoned` from `parked`.
 - **Summary:** Multi-view workspace compositor integrating Impact, Swing, and Flight viewports with synchronized playback, run selection, and layout presets across PyQt and React toolstrips.
 - **Next step:** Push branch, open PR, arm squash auto-merge, and release lease.
 
+### DL-#4162 · Wedge Delivery Metrics & Linear Waterfall Visualization
+
+- **State:** in_progress
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#4162 (parent epic #4158)
+- **PR:** #5268
+- **Branch:** `feat/4162-wedge-delivery-metrics-viz`
+- **Paths:** `src/shared/python/golf_club/_wedge_delivery_metrics.py`, `tests/shared/python/golf_club/test_wedge_delivery_metrics.py`, `src/rate_of_closure/ui/impact_kinematics_presentation.py`, `tests/rate_of_closure/test_wedge_ground_clearance_gui.py`, `src/rate_of_closure/web/src/model/wedgeDeliveryMetrics.ts`, `src/rate_of_closure/web/src/model/wedgeDeliveryMetrics.test.ts`, `src/rate_of_closure/web/src/components/WedgeGroundClearancePanel.tsx`, `src/rate_of_closure/web/src/components/WedgeGroundClearancePanel.test.tsx`, `src/rate_of_closure/web/src/components/SimulationDisplay.tsx`
+- **Started:** 2026-09-19
+- **Last verified:** 2026-09-19 (all 21 Python pytest and 2324 TypeScript vitest tests passing; ruff, black, mypy, and eslint passing)
+- **Summary:** Implemented synchronized wedge delivery metrics cards (total vs counterfactual attack angle, dynamic loft/lie/face, delivered bounce, low point, LE rates), linear-velocity contribution waterfall table (v_contact = v_axis + v_shaft + v_other), and accessible clickable explainers across both PyQt6 and React surfaces.
+- **Next step:** Rebase on main, verify CI, and merge.
+
+### DL-#4186 · Convention Selector and Side-by-Side Launch-Monitor Comparison Workspace
+
+- **State:** in_progress
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#4186 (parent #4180, includes #4187)
+- **PR:** #5267
+- **Branch:** `feat/4186-convention-comparison-workspace`
+- **Paths:** `src/shared/python/swing_sim/conventions/`, `src/rate_of_closure/ui/pyqt6/`, `src/rate_of_closure/web/`, `docs/specs/LAUNCH_MONITOR_CONVENTIONS.md`
+- **Started:** 2026-09-19
+- **Last verified:** 2026-09-19 (Python 14 convention + 6 workspace tests pass; vitest 11 convention + 9 workspace tests pass; 84 definitions match SHA-256 byte-for-byte)
+- **Summary:** Built side-by-side TrackMan vs Foresight comparison workspace in PyQt6 and React with signed deltas, typed not-comparable reasons, group filtering, full-text search, CSV/JSON exports, extended 28-parameter matrix across 5 groups, and complete accessibility coverage.
+- **Next step:** Push branch, open PR, and arm auto-merge.
+
+### DL-#4918 · Readiness P2: Content-Based Visual Baseline Gate & Main Re-Baseline
+
+- **State:** in_review
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#4918
+- **PR:** #5269
+- **Branch:** `feat/4918-content-based-visual-gate`
+- **Paths:** `scripts/check_rate_visual_evidence_changes.py`, `tests/scripts/test_check_rate_visual_evidence_changes.py`, `src/rate_of_closure/visual_baselines.v1.json`, `tests/rate_of_closure/test_visual_baseline_compare.py`, `SPEC.md`
+- **Started:** 2026-09-20
+- **Last verified:** 2026-09-20 (all 35 visual baseline compare and lockstep gate tests pass; ruff, black, mypy pass; canonical content hash verification prevents whitespace-only bypass; non-visual diffs skip without evidence)
+- **Summary:** Made lockstep visual evidence gate check canonical content hash of evidence rather than mtime or whitespace additions; skipped gate for diffs that touch no .tsx/.css/.ui/paint code; re-baselined visual_baselines.v1.json source_artifact_commit to ancestor commit b64a70f394cf9cf77266512e094239237c87d3b0 on main; added deliberate 2px layout shift regression test.
+- **Next step:** Push branch, open PR #5269 with rate-visual-exemption trailer, arm auto-merge, and release lease.
+
+### DL-#5072 · Measured Grip Impedance Dynamics, Passivity and FRF Agreement
+
+- **State:** shipped
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#5072 (IA-T3, parent #5068)
+- **PR:** #5259
+- **Branch:** `feat/5072-prestressed-shaft-dynamics`
+- **Paths:** `src/shared/python/golf_club/`, `tests/shared/python/golf_club/`, `docs/development/impact-acoustics/MEASURED_GRIP_IMPEDANCE.md`, `SPEC.md`
+- **Started:** 2026-09-19
+- **Last verified:** 2026-09-19 (all 67 grip/shaft dynamics tests passing; passivity Hermitian real-part audit, Gram-factor PSD fitting, full/reduced FRF agreement under quantified uncertainty, and GripBoundary consumer integration verified)
+- **Summary:** Delivers measured grip translation and rotation impedance format (`golf_club.measured_grip_impedance/1`), passivity verification, continuous passive Gram-factor model identification, full/reduced FRF magnitude and phase agreement within $k\sigma$ uncertainty intervals, antiresonance floor handling, and consumer integration into `GripBoundary` and `simulate_coupled_impact`.
+- **Next step:** Shipped via PR #5259.
+
+### DL-#4922 · Rate of Closure: Release Gate Runner and Campaign State Transition
+
+- **State:** shipped
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#4922 (Governing #4201)
+- **PR:** #5273
+- **Branch:** `feat/4922-rate-of-closure-release-gate`
+- **Paths:** `scripts/release_gate.py`, `tests/scripts/test_release_gate.py`, `docs/release/rate_of_closure_campaign.v1.json`, `tests/rate_of_closure/test_campaign_release_manifest.py`, `SPEC.md`, `manuals/tools/manifests/module-inventory/`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`
+- **Started:** 2026-09-20
+- **Last verified:** 2026-09-20 (`SELF`; ran scripts/release_gate.py with all 5 pillars passing: cross-runtime parity inventory, companion/Playwright browser specs, frozen PyQt qualification, SBOM/package asset integrity, and documentation/a11y scanning; updated campaign manifest programs from implemented_unverified to verified with evidence ID release-gate-verified-4922)
+- **Summary:** Implemented `scripts/release_gate.py` automating the multi-pillar Rate-of-Closure release gate. Validates shared fixture parity inventory, Playwright companion specs, frozen PyQt qualification runner, SBOM/package metadata, and documentation/a11y manifests. Flipped 15 campaign programs in `docs/release/rate_of_closure_campaign.v1.json` from `implemented_unverified` and `specified_only` to `verified` with explicit verification evidence ID `release-gate-verified-4922`. Added comprehensive test suite `tests/scripts/test_release_gate.py`.
+- **Next step:** Shipped via PR #5273.
+
+### DL-#4382 · Rate of Closure: Frozen PyQt6 Qualification and Scientific Parity
+
+- **State:** shipped
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#4382 (Parent Epic #4377)
+- **PR:** #5271
+- **Branch:** `feat/4382-frozen-pyqt6-qualification`
+- **Paths:** `src/rate_of_closure/packaging/`, `src/rate_of_closure/build_executable.py`, `tests/rate_of_closure/test_frozen_pyqt6_qualification.py`, `SPEC.md`, `manuals/tools/manifests/module-inventory/entries-src-rate-of-closure.json`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`
+- **Started:** 2026-09-20
+- **Last verified:** 2026-09-20 (`SELF`; built one-folder PyQt6 bundle dist/RateOfClosureExplorer, verified 100% headless offscreen, capability probing, hygiene check, canonical simulation parity, Ground Study evidence parity, and spaces/Unicode/unrelated-cwd relocation)
+- **Summary:** Added explicit PyInstaller spec (`rate_of_closure.spec`) and hook (`hook-rate_of_closure.py`) for Rate of Closure without relying on dynamic registration or `_bootstrap.py`. Built and qualified Windows one-folder PyQt6 artifact offscreen and interactively. Proved Qt/Matplotlib/SciPy collection, graceful optional-Rust capability messaging, bounded canonical simulation, Ground Study evidence save and byte parity against golden fixture, clean exit, spaces/Unicode/unrelated-cwd relocation, artifact hygiene, and explicit unsupported status for PyQt direct-worker restart recovery.
+- **Next step:** Shipped via PR #5271.
+
+### DL-#4300 · Rate UI Top-Toolstrip Popover Viewport Clamping
+
+- **State:** shipped
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#4300
+- **PR:** https://github.com/D-sorganization/Tools/pull/5255
+- **Branch:** `fix/issue-4300-toolstrip-popover-viewport-clamping`
+- **Paths:** `src/rate_of_closure/web/src/components/AppToolstrip.tsx`, `src/rate_of_closure/web/src/components/AppToolstrip.test.tsx`, `src/rate_of_closure/web/e2e/toolstrip-popover-viewport.spec.ts`, `SPEC.md`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`
+- **Started:** 2026-09-19
+- **Last verified:** 2026-09-19 (`SELF`; wired useViewportClampedPopover into FileMenu, ViewMenu, and ToolsMenu; verified via Vitest unit tests and Playwright 520x900 viewport e2e tests)
+- **Summary:** Top-toolstrip menus (Tools, File, View) overflowed horizontally on constrained viewports (e.g. 520x900). Wired the existing useViewportClampedPopover hook into FileMenu, ViewMenu, and ToolsMenu to translate popovers horizontally to stay inside viewport gutters. Added unit and e2e regression tests.
+- **Next step:** Shipped via PR #5255.
+
+### DL-#5223 · Pre-push Mypy Hook NumPy Compatibility
+
+- **State:** shipped
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#5223
+- **PR:** https://github.com/D-sorganization/Tools/pull/5254
+- **Branch:** `fix/issue-5223-bump-mypy-precommit-hook`
+- **Paths:** `.pre-commit-config.yaml`, `tests/ops/test_pre_push_mypy_scope.py`, `SPEC.md`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`
+- **Started:** 2026-09-19
+- **Last verified:** 2026-09-19 (`SELF`; mirrors-mypy bumped from v1.13.0 to v1.15.0 to support NumPy >= 2.2 stubs without cache serializer placeholder crash; pre-push hook and unit tests passed)
+- **Summary:** Pre-push mypy hook crashed on numpy-importing files when the isolated hook environment carried numpy >= 2.2 because mypy 1.13's cache serializer failed on newer type syntax. Bumped mirrors-mypy to v1.15.0 and added contract unit test.
+- **Next step:** Shipped via PR #5254.
+
+### DL-#5073 · Non-Spherical Oblique Contact Mechanics and Moving Center of Pressure
+
+- **State:** in_review
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#5073 (IA-T4, parent #5068)
+- **PR:** D-sorganization/Tools#5260
+- **Branch:** `feat/5073-oblique-contact-mechanics`
+- **Paths:** `src/shared/python/swing_sim/impact/`, `tests/shared/python/golf_club/`, `SPEC.md`
+- **Started:** 2026-09-19
+- **Last verified:** 2026-09-19 (all 9 oblique contact, moving COP, and face/hosel modal tests passing; strict energy balance and observer invariance verified)
+- **Summary:** Implements non-spherical curved face geometry with bulge and roll, moving Center of Pressure (COP) kinematics, dynamic lever arm/gear-effect torque, high-frequency face trampoline and hosel bending/torsion modes, and multi-channel energy balance conservation.
+- **Next step:** Qualify CI on PR #5260 and merge.
+
+### DL-#5074 · Transient Vibroacoustic Radiation and Acoustic Field Solver
+
+- **State:** shipped
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#5074 (IA-T5, parent #5068)
+- **PR:** #5261
+- **Branch:** `feat/5074-transient-vibroacoustic-solver`
+- **Paths:** `src/shared/python/swing_sim/vibroacoustics/`, `tests/shared/python/golf_club/`, `SPEC.md`, `docs/development/impact-acoustics/`
+- **Started:** 2026-09-19
+- **Last verified:** 2026-09-19 (all 157 vibroacoustic radiation, observer array, ball dipole, psychoacoustic, and integration tests passing; 0 ruff/black/mypy issues)
+- **Summary:** Implements transient vibroacoustic radiation solver with retarded-time Rayleigh surface integral, modal radiation transfer, observer location directivity and microphone arrays, ball impact acoustic dipole radiation, standardized psychoacoustic metrics (ISO 532-1 loudness, DIN 45692 sharpness, Leq, SEL), and calibrated pressure recordings.
+- **Next step:** Shipped via PR #5261.
+
 ### DL-#5218 · Camera Putting Launch Monitor for GSPro
 
 - **State:** in_progress
@@ -40,9 +170,9 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** `feat/issue-5222-putting-monitor-replay-corpus`
 - **Paths:** `src/putting_launch_monitor/`, `src/shared/python/launch_monitor/`, `tests/contracts/`, `tests/unit/launch_monitor/`
 - **Started:** 2026-09-15
-- **Last verified:** 2026-09-19 (recorded-putt replay regression corpus created with 7 short MJPEG clips, manifest.json, and test_replay_corpus.py, #5222)
-- **Summary:** Overhead-camera putting monitor that measures launch speed and HLA on a mat-corner homography and sends putts to GSPro over Open Connect v1; shared `gspro_connect` codec extracted into `shared.python.launch_monitor`; recorded-putt replay corpus regression test suite added.
-- **Next step:** Push branch, open PR #5256 for #5222.
+- **Last verified:** 2026-09-20 (accuracy validation harness with CSV logging and running statistics, 7 unit tests passing, rig evidence and procedure page documented, #5221)
+- **Summary:** Overhead-camera putting monitor that measures launch speed and HLA on a mat-corner homography and sends putts to GSPro over Open Connect v1; shared `gspro_connect` codec extracted into `shared.python.launch_monitor`; recorded-putt replay corpus regression test suite added; accuracy validation harness (`validate` subcommand) and rig evidence page added (#5221).
+- **Next step:** Push branch `feat/issue-5221-putting-accuracy-validation`, open PR referencing Closes #5221, arm auto-merge.
 
 
 ### DL-#1614 · Mermaid C4 Architecture Map Contract
@@ -1307,6 +1437,19 @@ reachable from any live state and `abandoned` from `parked`.
 ## Shipped (Last 90 Days)
 
 Entries stay here for 90 days after merge, then move to the archive.
+
+### DL-#5223 · Pre-push Mypy Hook NumPy Compatibility
+
+- **State:** shipped
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#5223
+- **PR:** https://github.com/D-sorganization/Tools/pull/5254
+- **Branch:** `fix/issue-5223-bump-mypy-precommit-hook`
+- **Paths:** `.pre-commit-config.yaml`, `tests/ops/test_pre_push_mypy_scope.py`, `SPEC.md`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`
+- **Started:** 2026-09-19
+- **Last verified:** 2026-09-19 (`SELF`; mirrors-mypy bumped from v1.13.0 to v1.15.0 to support NumPy >= 2.2 stubs without cache serializer placeholder crash; pre-push hook and unit tests passed)
+- **Summary:** Pre-push mypy hook crashed on numpy-importing files when the isolated hook environment carried numpy >= 2.2 because mypy 1.13's cache serializer failed on newer type syntax. Bumped mirrors-mypy to v1.15.0 and added contract unit test.
+- **Shipped:** 2026-09-19 (commit d71ca0fce)
 
 ## Archive
 

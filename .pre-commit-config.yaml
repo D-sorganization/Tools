@@ -198,7 +198,7 @@ repos:
 
   # MyPy - Type checking (pre-push only, Python only)
   - repo: https://github.com/pre-commit/mirrors-mypy
-    rev: v1.13.0
+    rev: v1.15.0
     hooks:
       - id: mypy
         name: "mypy (type check)"

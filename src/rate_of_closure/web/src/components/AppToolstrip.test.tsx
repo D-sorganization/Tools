@@ -126,4 +126,80 @@ describe("AppToolstrip", () => {
     fireEvent.click(screen.getByRole("button", { name: "Grid" }));
     expect(onLayoutPreset).toHaveBeenCalledWith("grid");
   });
+
+  it("clamps File, View, and Tools popovers within constrained viewports on toggle", () => {
+    renderToolstrip();
+
+    Object.defineProperty(document.documentElement, "clientWidth", {
+      value: 520,
+      configurable: true,
+      writable: true,
+    });
+
+    const toolsSummary = screen.getByText("Tools");
+    const toolsDetails = toolsSummary.closest("details")!;
+    const toolsPopover = toolsDetails.querySelector('[aria-label="Global tools"]') as HTMLDivElement;
+
+    vi.spyOn(toolsPopover, "getBoundingClientRect").mockReturnValue({
+      left: 380,
+      right: 610,
+      top: 50,
+      bottom: 200,
+      width: 230,
+      height: 150,
+      x: 380,
+      y: 50,
+      toJSON: () => {},
+    });
+
+    toolsDetails.open = true;
+    fireEvent(toolsDetails, new Event("toggle"));
+
+    // 520 viewport with 16px gutter: maxLeft = 520 - 16 - 230 = 274.
+    // 274 - 380 = -106px translation.
+    expect(toolsPopover.style.transform).toBe("translateX(-106px)");
+
+    const fileSummary = screen.getByText("File");
+    const fileDetails = fileSummary.closest("details")!;
+    const filePopover = fileDetails.querySelector('[aria-label="File commands"]') as HTMLDivElement;
+
+    vi.spyOn(filePopover, "getBoundingClientRect").mockReturnValue({
+      left: 320,
+      right: 580,
+      top: 50,
+      bottom: 200,
+      width: 260,
+      height: 150,
+      x: 320,
+      y: 50,
+      toJSON: () => {},
+    });
+
+    fileDetails.open = true;
+    fireEvent(fileDetails, new Event("toggle"));
+    // 520 - 16 - 260 = 244. 244 - 320 = -76px translation.
+    expect(filePopover.style.transform).toBe("translateX(-76px)");
+
+    const viewSummary = screen.getByText("View");
+    const viewDetails = viewSummary.closest("details")!;
+    const viewPopover = viewDetails.querySelector('[aria-label="Workspace modules"]') as HTMLDivElement;
+
+    vi.spyOn(viewPopover, "getBoundingClientRect").mockReturnValue({
+      left: 200,
+      right: 584,
+      top: 50,
+      bottom: 300,
+      width: 384,
+      height: 250,
+      x: 200,
+      y: 50,
+      toJSON: () => {},
+    });
+
+    viewDetails.open = true;
+    fireEvent(viewDetails, new Event("toggle"));
+    // 520 - 16 - 384 = 120. 120 - 200 = -80px translation.
+    expect(viewPopover.style.transform).toBe("translateX(-80px)");
+  });
+  });
 });

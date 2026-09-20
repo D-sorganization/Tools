@@ -92,4 +92,35 @@ describe("launch-monitor convention registry", () => {
     expect(stableConventionJson(migrateConventionRegistry(legacy)))
       .toBe(stableConventionJson(registry));
   });
+
+  it("assigns valid groups and user labels to every parameter", () => {
+    const registry = conventionRegistry();
+    for (const definition of registry.definitions) {
+      expect(["club_delivery", "face_orientation", "ball_launch", "ball_spin", "ball_flight"])
+        .toContain(definition.group);
+      expect(definition.definition).toBeTruthy();
+    }
+  });
+
+  it("confirms ball speed, launch angle, and total spin are directly comparable", () => {
+    const registry = conventionRegistry();
+    for (const param of ["ball_speed", "launch_angle", "total_spin"] as const) {
+      const tm = registry.definition("trackman_comparable", param);
+      const fs = registry.definition("foresight_comparable", param);
+      const result = compareDefinitions(tm, fs);
+      expect(result.comparable).toBe(true);
+      expect(result.reasons).toHaveLength(0);
+    }
+  });
+
+  it("reports availability incompatibility for Foresight unavailable parameters", () => {
+    const registry = conventionRegistry();
+    for (const param of ["swing_direction", "low_point", "curve"] as const) {
+      const tm = registry.definition("trackman_comparable", param);
+      const fs = registry.definition("foresight_comparable", param);
+      const result = compareDefinitions(tm, fs);
+      expect(result.comparable).toBe(false);
+      expect(result.reasons).toContain(COMPARABILITY_REASON.availability);
+    }
+  });
 });

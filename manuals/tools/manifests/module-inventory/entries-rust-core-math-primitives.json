@@ -207,6 +207,7 @@
           "tests/rotation_converter/test_screw_visualization.py",
           "tests/shared/python/golf_club/_friction_entry_reference.py",
           "tests/shared/python/golf_club/_friction_sliding_reference.py",
+          "tests/shared/python/golf_club/test_oblique_contact_mechanics.py",
           "tests/shared/python/model_generation/inertia/test_calculator.py",
           "tests/shared/python/model_generation/test_urdf_parser.py",
           "tests/test_asteroid_jumper/test_physics.py"
@@ -725,6 +726,7 @@
           "tests/shared/python/golf_club/test_shaft_siso_rod.py",
           "tests/shared/python/golf_club/test_shaft_trajectory_geometry.py",
           "tests/shared/python/golf_club/test_turf_contact.py",
+          "tests/shared/python/golf_club/test_wedge_delivery_metrics.py",
           "tests/shared/python/golf_club/test_wedge_ground_contact.py",
           "tests/shared/python/golf_club/test_wedge_sweep.py",
           "tests/shared/python/model_generation/inertia/test_spatial.py",
@@ -943,6 +945,7 @@
           "src/shared/python/sidekick/tests/test_exceptions.py",
           "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
           "src/shared/python/swing_sim/impact/tests/test_spatial_contact_kinematics.py",
+          "src/shared/python/swing_sim/vibroacoustics/tests/test_calibrated_sound.py",
           "src/shared/python/swing_sim/vibroacoustics/tests/test_calibration_domains.py",
           "src/shared/python/swing_sim/vibroacoustics/tests/test_calibration_exact_moments.py",
           "src/shared/python/swing_sim/vibroacoustics/tests/test_calibration_identity.py",

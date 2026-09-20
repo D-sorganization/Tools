@@ -6,12 +6,14 @@ import hashlib
 import json
 from importlib.resources import files
 from pathlib import Path
+from typing import cast
 from unittest.mock import patch
 
 import pytest
 from PIL import Image
 
 from rate_of_closure.visual_baseline_compare import (
+    VisualBaselineComparison,
     VisualBaselineComparisonError,
     compare_visual_baselines,
 )
@@ -29,7 +31,7 @@ def test_packaged_manifest_binds_exact_reviewed_bytes() -> None:
     manifest = load_visual_baseline_manifest()
 
     assert manifest.source_artifact_commit == (
-        "df4101f2825b3b2d255dad1d6f8746818fc82812"  # pragma: allowlist secret
+        "c599484502bc4bbf35732d887a520b7d8749b57f"  # pragma: allowlist secret
     )
     assert len(manifest.baselines) == 20
     package = files("rate_of_closure")
@@ -40,6 +42,7 @@ def test_packaged_manifest_binds_exact_reviewed_bytes() -> None:
     calibrated_tolerances = {
         ("pyqt", "simulation"): VisualBaselineTolerance(1, 40_000, 200_000),
         ("pyqt", "flight_explorer"): VisualBaselineTolerance(1, 10_000, 75_000),
+        ("pyqt", "putting"): VisualBaselineTolerance(1, 4_000, 20_000),
     }
     for entry in manifest.baselines:
         data = package.joinpath(
@@ -166,7 +169,7 @@ def _candidates(root: Path, changed: int = 0) -> None:
         (directory / "manifest.json").write_text(json.dumps(document), encoding="utf-8")
 
 
-def _compare(tmp_path: Path, changed: int = 0) -> tuple[object, ...]:
+def _compare(tmp_path: Path, changed: int = 0) -> tuple[VisualBaselineComparison, ...]:
     package_root = tmp_path / "package"
     reference_root = package_root / "visual_baselines" / "v1"
     candidate_root = tmp_path / "candidates"
@@ -182,7 +185,10 @@ def _compare(tmp_path: Path, changed: int = 0) -> tuple[object, ...]:
             return_value=package_root,
         ),
     ):
-        return compare_visual_baselines(candidate_root, "2" * 40)
+        return cast(
+            tuple[VisualBaselineComparison, ...],
+            compare_visual_baselines(candidate_root, "2" * 40),
+        )
 
 
 def test_exact_and_bounded_small_drift_pass(tmp_path: Path) -> None:
@@ -320,3 +326,13 @@ def test_candidate_identity_tampering_fails_closed(
         pytest.raises(VisualBaselineComparisonError),
     ):
         compare_visual_baselines(candidate_root, "2" * 40)
+
+
+def test_deliberate_two_pixel_layout_shift_fails_compare(
+    tmp_path: Path,
+) -> None:
+    """Deliberate 2px layout shift violates tolerance envelope and fails closed."""
+    # Shifting 2 columns in a 20x20 image shifts 40 pixels out of 400 (10% of pixels)
+    # with maximum channel delta (255 - 24 = 231), triggering rejection.
+    with pytest.raises(VisualBaselineComparisonError, match="exceeds limits"):
+        _compare(tmp_path, changed=45)

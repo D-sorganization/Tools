@@ -44,7 +44,9 @@ _EXPECTED_REGISTERED_CONTROL_RANGES = {
     "flight_explorer": (83, 92),
     # A reachable configured AI provider contributes one additional named
     # control beyond the static-provider catalogue used by hosted CI.
-    "launch_monitor_analytics": (59, 111),
+    # The comparison workspace adds 5 named controls (group combo, search edit,
+    # export json button, export csv button, comparison table).
+    "launch_monitor_analytics": (59, 116),
     "neural_model_lab": (14, 14),
     # The provenance-qualified Morris result view contributes two named
     # selectors. The durable authority and asynchronous availability probes can
