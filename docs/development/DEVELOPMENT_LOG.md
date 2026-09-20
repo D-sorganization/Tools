@@ -162,6 +162,19 @@ reachable from any live state and `abandoned` from `parked`.
 - **Summary:** Implements transient vibroacoustic radiation solver with retarded-time Rayleigh surface integral, modal radiation transfer, observer location directivity and microphone arrays, ball impact acoustic dipole radiation, standardized psychoacoustic metrics (ISO 532-1 loudness, DIN 45692 sharpness, Leq, SEL), and calibrated pressure recordings.
 - **Next step:** Shipped via PR #5261.
 
+### DL-#4220 · Versioned Native File Commands and Workspace Persistence
+
+- **State:** in_review
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#4220
+- **PR:** https://github.com/D-sorganization/Tools/pull/5258
+- **Branch:** `feat/issue-4220-rate-of-closure-file-commands`
+- **Paths:** `src/rate_of_closure/ui/pyqt6/main_window_file_commands.py`, `src/rate_of_closure/ui/pyqt6/app_toolstrip.py`, `src/rate_of_closure/ui/pyqt6/main_window.py`, `src/rate_of_closure/ui/pyqt6/workspace_navigation.py`, `tests/rate_of_closure/test_main_window_file_commands.py`, `tests/rate_of_closure/pyqt_probe_lifecycle.py`, `tests/rate_of_closure/pyqt_variation_visual_state_probe.py`
+- **Started:** 2026-09-19
+- **Last verified:** 2026-09-20 (`SELF`; restored tuple idempotency in _freeze_json; all 10 test_main_window_file_commands.py, all 18 test_app_toolstrip.py, and all 6 test_workspace_files.py passing)
+- **Summary:** Native File commands (New, Open, Open Recent, Save, Save As, Import, Export, Close) wired into RateOfClosureMainWindow and ApplicationToolstrip with live dirty tracking, destructive action confirmation prompts, and idempotent tuple support in _freeze_json.
+- **Next step:** Push branch update, await CI completion and auto-merge.
+
 ### DL-#5218 · Camera Putting Launch Monitor for GSPro
 
 - **State:** in_progress

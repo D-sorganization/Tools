@@ -1219,7 +1219,8 @@
         "test_paths": [
           "src/movement_optimizer/tests/test_commands.py",
           "tests/rate_of_closure/test_app_toolstrip.py",
-          "tests/rate_of_closure/test_application_commands.py"
+          "tests/rate_of_closure/test_application_commands.py",
+          "tests/rate_of_closure/test_main_window_file_commands.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -4608,10 +4609,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 16053,
+      "bytes_lf": 16022,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8512db4a4ff3c2debf3a58cea5260784b759b70cda1a371996c5b2b2db47669f",
+      "content_sha256_lf": "b07426f137efcd733e05f8db7cde375f293726eaabcebf5513e01e040ec4f6cc",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-APPLICATION-WORKSPACE-DOCUMENT-PY-F85542E0FD7C",
       "language": "python",
