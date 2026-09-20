@@ -7,12 +7,16 @@ from typing import cast
 from unittest.mock import patch
 
 import pytest
-from PyQt6.QtCore import QSettings
-from PyQt6.QtGui import QAction, QCloseEvent
-from PyQt6.QtWidgets import QMessageBox
 
-from rate_of_closure.application.commands import AppCommandId
-from rate_of_closure.ui.pyqt6.main_window import RateOfClosureMainWindow
+pytest.importorskip("PyQt6")
+pytest.importorskip("pytestqt")
+
+from PyQt6.QtCore import QSettings  # noqa: E402
+from PyQt6.QtGui import QAction, QCloseEvent  # noqa: E402
+from PyQt6.QtWidgets import QMessageBox  # noqa: E402
+
+from rate_of_closure.application.commands import AppCommandId  # noqa: E402
+from rate_of_closure.ui.pyqt6.main_window import RateOfClosureMainWindow  # noqa: E402
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
 
