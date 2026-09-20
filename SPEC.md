@@ -27,7 +27,7 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.142                                   |
+| **Spec Version**        | 1.18.143                                   |
 | **Last Spec Update**    | 2026-09-13                                 |
 
 ## 2. Purpose & Mission
@@ -5908,6 +5908,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-20 | n/a | ⚡ Bolt Optimization: Replace chained array mapping and `Math.min(...spread)` in `bestCosts` with a single-pass loop over outcomes to prevent stack overflows and reduce GC pressure. (spec 1.18.143) |
 | 2026-09-20 | #5270 | Putting launch monitor accuracy validation harness (Tools #5221): validate subcommand with CSV logging, running error stats against +/-3% speed and +/-1 deg HLA bounds, 7 unit tests, and rig validation evidence page. |
 | 2026-09-20 | #4922 | feat(release): Rate of Closure release gate runner and transition campaign programs from implemented_unverified to verified (#4201, #4922) |
 | 2026-09-20 | #4382 | feat(packaging): qualify frozen PyQt6 Rate of Closure one-folder bundle, entry point, build hooks, hygiene check, offscreen smoke, and parity harness (#4382) |
