@@ -37,6 +37,7 @@ from shared.python.golf_club.measured_grip_impedance import (
     measured_grip_from_json,
     measured_grip_to_boundary,
     measured_grip_to_json,
+    passive_impedance_to_boundary,
     verify_measured_grip_source_bytes,
 )
 
@@ -277,12 +278,12 @@ def test_consumer_integration_with_impact_coupling(
     assert result.contact_time_s > 0.0
     assert result.peak_contact_force_n > 5000.0
 
-    # Classmethod tests on GripBoundary
-    b1 = GripBoundary.from_measured_grip(dataset)
+    # Boundary conversion helpers
+    b1 = measured_grip_to_boundary(dataset)
     assert b1.effective_mass_kg == boundary.effective_mass_kg
 
     fitted_grip = fit_passive_grip_impedance(dataset)
-    b2 = GripBoundary.from_passive_impedance(fitted_grip, axis=0)
+    b2 = passive_impedance_to_boundary(fitted_grip, axis=0)
     assert b2.effective_mass_kg == boundary.effective_mass_kg
 
 

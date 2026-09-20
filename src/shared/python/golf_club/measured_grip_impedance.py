@@ -339,6 +339,26 @@ def measured_grip_to_boundary(
     )
 
 
+def passive_impedance_to_boundary(
+    grip: PassiveGripImpedance,
+    axis: int = 0,
+) -> GripBoundary:
+    """Bridge a passive grip impedance along a single axis into a GripBoundary."""
+    inert = grip.inertance_factor
+    damp = grip.damping_factor
+    stiff = grip.stiffness_factor
+    source_id = grip.source_id
+    mass_mat = np.asarray(inert).T @ np.asarray(inert)
+    damp_mat = np.asarray(damp).T @ np.asarray(damp)
+    stiff_mat = np.asarray(stiff).T @ np.asarray(stiff)
+    return GripBoundary(
+        effective_mass_kg=max(0.1, float(mass_mat[axis, axis])),
+        stiffness_n_m=max(0.0, float(stiff_mat[axis, axis])),
+        damping_n_s_m=max(0.0, float(damp_mat[axis, axis])),
+        provenance=str(source_id),
+    )
+
+
 __all__ = [
     "MEASURED_GRIP_FORMAT",
     "measured_grip_from_json",
@@ -351,4 +371,5 @@ __all__ = [
     "check_operating_strain_limits",
     "assess_coupled_shaft_measured_frf",
     "measured_grip_to_boundary",
+    "passive_impedance_to_boundary",
 ]

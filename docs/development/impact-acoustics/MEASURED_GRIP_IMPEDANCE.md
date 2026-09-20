@@ -87,5 +87,5 @@ Given measured impedance $Z_{\text{meas}}(\omega)$ with standard deviation $\sig
 
 ## Consumer Integration
 
-- `GripBoundary.from_measured_grip(dataset)` and `measured_grip_to_boundary(dataset)` convert the identified passive parameters ($m_{\text{eff}}, c_g, k_g$) into `shared.python.golf_club.impact_coupling.GripBoundary`.
+- `measured_grip_to_boundary(dataset)` and `passive_impedance_to_boundary(grip, axis=0)` convert the identified passive parameters ($m_{\text{eff}}, c_g, k_g$) into `shared.python.golf_club.impact_coupling.GripBoundary`.
 - This seamlessly drives `simulate_coupled_impact` and Club Tester heavy-hit workflows directly from measured boundary datasets.
