@@ -150,7 +150,6 @@
         "downstream-consumer-risk",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -162,7 +161,7 @@
         "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "unavailable"
       },
@@ -176,7 +175,9 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [],
-        "test_paths": [],
+        "test_paths": [
+          "src/shared/python/swing_sim/vibroacoustics/tests/test_calibrated_sound.py"
+        ],
         "unit_mentions": [
           "s"
         ],
@@ -200,7 +201,6 @@
         "downstream-consumer-risk",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -212,7 +212,7 @@
         "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "unavailable"
       },
@@ -226,9 +226,88 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [],
-        "test_paths": [],
+        "test_paths": [
+          "src/shared/python/swing_sim/vibroacoustics/tests/test_calibrated_sound.py"
+        ],
         "unit_mentions": [
           "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 6905,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "a65d2fac6b12a6b9ad7fe8ba646060b81e867e861f90fa098c6eae069e6d8f39",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VIBROACOUSTICS-BOUNDARY-RADIATION-RECORDS-PY-100C995037A8",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/vibroacoustics/_boundary_radiation_records.py",
+      "purpose": "Discretized boundary surface mesh and acoustic medium records (IA-T5, #5074).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AcousticMedium",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RadiatingElement",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RadiatingSurfaceMesh",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/vibroacoustics/tests/test_ball_radiation.py",
+          "src/shared/python/swing_sim/vibroacoustics/tests/test_boundary_radiation.py",
+          "src/shared/python/swing_sim/vibroacoustics/tests/test_radiation_solver.py",
+          "tests/shared/python/golf_club/test_transient_vibroacoustics.py"
+        ],
+        "unit_mentions": [
+          "Hz",
+          "Pa",
+          "kg",
+          "m/s",
+          "mm",
+          "s"
         ],
         "validation_paths": []
       }
@@ -521,6 +600,130 @@
     },
     {
       "authority_status": "provisional",
+      "bytes_lf": 4689,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "17b5e354babd051183084ec8a11aa74c48486bc813585f184fdf567aafdae841",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VIBROACOUSTICS-BALL-RADIATION-PY-8FF30326EFB3",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/vibroacoustics/ball_radiation.py",
+      "purpose": "Ball impact dipole acoustic radiation solver (IA-T5, #5074).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BallAcousticRadiation",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/vibroacoustics/tests/test_ball_radiation.py",
+          "tests/shared/python/golf_club/test_transient_vibroacoustics.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 4612,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "e002554d84c6007f763f96d1981add50448965768ed26917d3dad7f92c9f9aba",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VIBROACOUSTICS-CALIBRATED-SOUND-PY-43B53F5F6B04",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/vibroacoustics/calibrated_sound.py",
+      "purpose": "Calibrated acoustic pressure recordings and timebase synchronization (IA-T5, #5074).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CalibratedSoundRecording",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "synchronize_timebases",
+            "signature": "reference: CalibratedSoundRecording, observed: CalibratedSoundRecording, distance_m: float, sound_speed_mps: float=343.2"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/vibroacoustics/tests/test_calibrated_sound.py"
+        ],
+        "unit_mentions": [
+          "Hz",
+          "Pa",
+          "m/s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 3526,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
@@ -689,6 +892,7 @@
           }
         ],
         "test_paths": [
+          "src/shared/python/swing_sim/vibroacoustics/tests/test_calibrated_sound.py",
           "src/shared/python/swing_sim/vibroacoustics/tests/test_measurement.py"
         ],
         "unit_mentions": [
@@ -696,6 +900,233 @@
           "Pa",
           "g"
         ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 6700,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "d9c586bc72696c8213e75bf11d3016941b6498dc585e2e6276052895f63d62b7",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VIBROACOUSTICS-OBSERVER-PY-7236D3408D90",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/vibroacoustics/observer.py",
+      "purpose": "Observer locations, microphone arrays, and held-out comparison (IA-T5, #5074).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "HeldOutObserverComparison",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MicrophoneArray",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ObserverLocation",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/vibroacoustics/tests/test_ball_radiation.py",
+          "src/shared/python/swing_sim/vibroacoustics/tests/test_calibrated_sound.py",
+          "src/shared/python/swing_sim/vibroacoustics/tests/test_radiation_solver.py",
+          "tests/shared/python/golf_club/test_transient_vibroacoustics.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 7849,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "5df351648c561d7522b79476e4c1888b8984620584f6a20a268eb495161e55ce",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VIBROACOUSTICS-PSYCHOACOUSTICS-PY-35A9D702B8E4",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/vibroacoustics/psychoacoustics.py",
+      "purpose": "Psychoacoustic metrics, loudness, and sharpness (IA-T5, #5074).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AcousticReferenceAlgorithm",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "calculate_sharpness",
+            "signature": "pressure_samples: np.ndarray, sample_rate_hz: float, algorithm: AcousticReferenceAlgorithm=AcousticReferenceAlgorithm.DIN_45692"
+          },
+          {
+            "kind": "function",
+            "name": "calculate_specific_loudness",
+            "signature": "pressure_samples: np.ndarray, sample_rate_hz: float, algorithm: AcousticReferenceAlgorithm=AcousticReferenceAlgorithm.ISO_532_1"
+          },
+          {
+            "kind": "function",
+            "name": "compute_equivalent_sound_level",
+            "signature": "pressure_samples: np.ndarray, sample_rate_hz: float, p0: float=P0_DEFAULT"
+          },
+          {
+            "kind": "function",
+            "name": "compute_peak_spl",
+            "signature": "pressure_samples: np.ndarray, p0: float=P0_DEFAULT"
+          },
+          {
+            "kind": "function",
+            "name": "compute_sound_exposure_level",
+            "signature": "pressure_samples: np.ndarray, sample_rate_hz: float, p0: float=P0_DEFAULT"
+          },
+          {
+            "kind": "function",
+            "name": "compute_spl",
+            "signature": "pressure_samples: np.ndarray, p0: float=P0_DEFAULT"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/vibroacoustics/tests/test_psychoacoustics.py",
+          "tests/shared/python/golf_club/test_transient_vibroacoustics.py"
+        ],
+        "unit_mentions": [
+          "Hz",
+          "N",
+          "Pa",
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 8302,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "3ef07ddc6534d9e3a9fdd818a3940246dccc7062eca210f868d9491418c23c65",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VIBROACOUSTICS-RADIATION-PY-ABBE9D9C5F1F",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/vibroacoustics/radiation.py",
+      "purpose": "Transient vibroacoustic radiation solver and modal transfer (IA-T5, #5074).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ModalRadiationTransfer",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TransientRadiationSolver",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/vibroacoustics/tests/test_radiation_solver.py",
+          "tests/shared/python/golf_club/test_transient_vibroacoustics.py"
+        ],
+        "unit_mentions": [],
         "validation_paths": []
       }
     },
@@ -882,6 +1313,7 @@
           }
         ],
         "test_paths": [
+          "src/shared/python/swing_sim/vibroacoustics/tests/test_calibrated_sound.py",
           "src/shared/python/swing_sim/vibroacoustics/tests/test_calibration_domains.py",
           "src/shared/python/swing_sim/vibroacoustics/tests/test_calibration_exact_moments.py",
           "src/shared/python/swing_sim/vibroacoustics/tests/test_calibration_identity.py",
