@@ -79,8 +79,8 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** `feat/issue-4220-rate-of-closure-file-commands`
 - **Paths:** `src/rate_of_closure/ui/pyqt6/main_window_file_commands.py`, `src/rate_of_closure/ui/pyqt6/app_toolstrip.py`, `src/rate_of_closure/ui/pyqt6/main_window.py`, `src/rate_of_closure/ui/pyqt6/workspace_navigation.py`, `tests/rate_of_closure/test_main_window_file_commands.py`, `tests/rate_of_closure/pyqt_probe_lifecycle.py`, `tests/rate_of_closure/pyqt_variation_visual_state_probe.py`
 - **Started:** 2026-09-19
-- **Last verified:** 2026-09-20 (`SELF`; wired confirm_on_close lifecycle flag and verified test_main_window_file_commands.py and test_pyqt_variation_visual_state_rendered.py at 1.0 and 1.5 DPI scale)
-- **Summary:** Native File commands (New, Open, Open Recent, Save, Save As, Import, Export, Close) wired into RateOfClosureMainWindow and ApplicationToolstrip with dirty tracking and destructive action confirmation prompts, with clean headless probe shutdown support.
+- **Last verified:** 2026-09-20 (`SELF`; restored tuple idempotency in _freeze_json; all 10 test_main_window_file_commands.py, all 18 test_app_toolstrip.py, and all 6 test_workspace_files.py passing)
+- **Summary:** Native File commands (New, Open, Open Recent, Save, Save As, Import, Export, Close) wired into RateOfClosureMainWindow and ApplicationToolstrip with live dirty tracking, destructive action confirmation prompts, and idempotent tuple support in _freeze_json.
 - **Next step:** Push branch update, await CI completion and auto-merge.
 
 ### DL-#5218 · Camera Putting Launch Monitor for GSPro
