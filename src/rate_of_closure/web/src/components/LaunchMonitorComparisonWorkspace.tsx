@@ -148,7 +148,12 @@ export function LaunchMonitorComparisonWorkspace({ rows, sourceName }: Props) {
         </div>
       </div>
 
-      <div className="overflow-x-auto rounded-lg border border-slate-800">
+      <div
+        tabIndex={0}
+        role="region"
+        aria-label="Launch Monitor Comparison Table Scroll Region"
+        className="overflow-x-auto rounded-lg border border-slate-800 focus:outline-none focus:ring-1 focus:ring-sky-500"
+      >
         <table
           className="w-full text-left text-xs text-slate-200"
           aria-label="Launch Monitor Side-by-Side Comparison Table"
