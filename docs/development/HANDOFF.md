@@ -1,4 +1,19 @@
-# Impact Program Handoff Checkpoint — 2026-09-10
+# Impact Program Handoff Checkpoint — 2026-09-19
+
+- Repository/worktree: Tools, C:/Users/diete/Repositories/Tools-repo.
+  Branch `feat/5072-prestressed-shaft-dynamics`. Governing issue Tools #5072 (IA-T3)
+  and parent program #5068.
+- Implemented versioned explicit measured grip translation/rotation impedance
+  (`golf_club.measured_grip_impedance/1`), strict passivity auditing (Hermitian
+  real part >= 0), passive Gram-factor model identification ($M, C, K \succeq 0$),
+  full/reduced FRF magnitude and phase agreement under quantified uncertainty,
+  antiresonance floor handling, and consumer integration into `GripBoundary` and
+  `simulate_coupled_impact`.
+- All 67 targeted grip/shaft dynamics tests pass (including 11 new tests in
+  `test_measured_grip_impedance.py`).
+- Technical reference: `docs/development/impact-acoustics/MEASURED_GRIP_IMPEDANCE.md`.
+
+# Historical Impact Program Handoff Checkpoint — 2026-09-10
 
 - Repository/worktree: Tools, C:/Users/diete/Repositories/Tools-impact-friction.
   Branch feat/5073-friction-trajectory; checkpoint SELF; PR #5162 targets main

@@ -41,6 +41,7 @@ from __future__ import annotations
 import json
 import math
 from dataclasses import dataclass, replace
+from typing import Any
 
 from shared.python.contracts import require
 from shared.python.swing_sim.impact.constants import GOLF_BALL_MASS_KG
@@ -92,6 +93,32 @@ class GripBoundary:
         object.__setattr__(
             self, "provenance", require_identifier(self.provenance, "provenance")
         )
+
+    @classmethod
+    def from_passive_impedance(cls, grip: Any, axis: int = 0) -> GripBoundary:
+        """Construct a GripBoundary from a PassiveGripImpedance along a single axis."""
+        import numpy as np
+
+        inert = grip.inertance_factor
+        damp = grip.damping_factor
+        stiff = grip.stiffness_factor
+        source_id = grip.source_id
+        mass_mat = np.asarray(inert).T @ np.asarray(inert)
+        damp_mat = np.asarray(damp).T @ np.asarray(damp)
+        stiff_mat = np.asarray(stiff).T @ np.asarray(stiff)
+        return cls(
+            effective_mass_kg=max(0.1, float(mass_mat[axis, axis])),
+            stiffness_n_m=max(0.0, float(stiff_mat[axis, axis])),
+            damping_n_s_m=max(0.0, float(damp_mat[axis, axis])),
+            provenance=str(source_id),
+        )
+
+    @classmethod
+    def from_measured_grip(cls, dataset: Any) -> GripBoundary:
+        """Construct a GripBoundary from a MeasuredGripDataset."""
+        from .measured_grip_impedance import measured_grip_to_boundary
+
+        return measured_grip_to_boundary(dataset)
 
 
 @dataclass(frozen=True)

@@ -5908,6 +5908,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-19 | #5259 | feat(golf-club, #5072): add measured grip impedance dynamics, passivity verification, continuous Gram-factor identification, full/reduced FRF agreement under quantified uncertainty, and GripBoundary consumer integration. |
 | 2026-09-19 | #5247 | Use single-pass loop in clubProfileAcceptance.test.ts for calculating forward mesh bounds to prevent Maximum call stack size exceeded errors. |
 | 2026-09-18 | #5244 | Shared GSPro Open Connect v1 codec (Tools #5228): protocol-level codec in shared.python.launch_monitor.gspro_connect, delegated from putting_launch_monitor.gspro with byte-level parity contract tests. |
 | 2026-09-17 | #5239 | Lazy FrameSource export in shared.python.camera and fix test_gui race condition (#5227, #5237) |
@@ -7592,4 +7593,9 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-17: Release v1.19.0 (#5241)
 
 - **2026-09-17**: chore(release, #5241) — Bump release version to v1.19.0 across pyproject.toml, package.json, and VERSION; refresh CHANGELOG.md.
+
+## 2026-09-19: Measured Grip Impedance Dynamics and Passivity (#5072 / #5259)
+
+- **2026-09-19**: feat(golf-club, #5072) — Add measured grip impedance dynamics (`golf_club.measured_grip_impedance/1`), strict passivity auditing, continuous passive Gram-factor model identification, full/reduced FRF agreement under quantified uncertainty, and consumer integration to `GripBoundary` and `impact_coupling`.
+
 

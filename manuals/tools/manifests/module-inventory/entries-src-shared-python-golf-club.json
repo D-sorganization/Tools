@@ -4552,10 +4552,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 11810,
+      "bytes_lf": 12907,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "7b63d9ff6eb3eadef5ab1e21df8ce3686c551d82d65f3705966f7a40f00f8187",
+      "content_sha256_lf": "1a4fe9dbf90c0e6d03f2782b1d0d5fb7c59f28d201d3f2345aedf95fd14840a3",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-IMPACT-COUPLING-PY-08CD71D1C49A",
       "language": "python",
