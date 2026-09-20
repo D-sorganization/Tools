@@ -15,6 +15,11 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from rate_of_closure.application.workspace_variation_session import (
+    VariationAnalysisExecution,
+    VariationWorkspaceState,
+    available_output_metrics,
+)
 from rate_of_closure.ui.pyqt6.variation_rows import NoiseRow
 from rate_of_closure.variation.ensemble_io import (
     write_json as write_ensemble_json,
@@ -50,6 +55,7 @@ class VariationTabIoMixin:
     _seed_spin: QSpinBox
     _flight_combo: QComboBox
     _base_combo: QComboBox
+    _analysis_combo: QComboBox
     _loaded_base: dict[str, float]
     _loaded_groups: tuple[PerturbationGroup, ...] = ()
     _rows: list[NoiseRow]
@@ -273,6 +279,33 @@ class VariationTabIoMixin:
                 raise ValueError(
                     f"noise values exceed the editor range: {spec.spec_id}"
                 )
+
+    def variation_workspace_state(self) -> VariationWorkspaceState:
+        """Capture the current variation plan, analysis execution, and metrics."""
+        plan = self.build_plan()
+        exec_raw = self._analysis_combo.currentData()
+        execution = VariationAnalysisExecution(
+            exec_raw.value if hasattr(exec_raw, "value") else str(exec_raw)
+        )
+        metrics = available_output_metrics(plan.mode)
+        return VariationWorkspaceState(
+            plan=plan,
+            analysis_execution=execution,
+            selected_output_metrics=metrics,
+        )
+
+    def apply_variation_workspace_state(self, state: VariationWorkspaceState) -> None:
+        """Apply one validated variation workspace state to the tab."""
+        if not isinstance(state, VariationWorkspaceState):
+            raise TypeError("state must be a VariationWorkspaceState")
+        self.load_plan(state.plan)
+        idx = self._analysis_combo.findData(state.analysis_execution.value)
+        if idx >= 0:
+            self._analysis_combo.setCurrentIndex(idx)
+        else:
+            idx = self._analysis_combo.findText(state.analysis_execution.value)
+            if idx >= 0:
+                self._analysis_combo.setCurrentIndex(idx)
 
 
 __all__ = ["VariationTabIoMixin"]
