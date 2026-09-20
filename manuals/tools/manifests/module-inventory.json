@@ -117,13 +117,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "f2be28a9f036e829dc289f4ffa6446164344a6357e9d13a729821b40335187f5",
+      "content_sha256_lf": "044aa31421b1059b3aeed8847e8d83d4fc807a2c89d221b864f6dda49abc7cf1",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
     },
     {
-      "content_sha256_lf": "b9314784edc0555f64124fd12d4f68a59fdeb454b211c2dc0d4f3ac97d2f6fb2",
+      "content_sha256_lf": "dd319af467be29106663b20bc4e6d829e0e75fb9235f17c71d687dd7fdf18f66",
       "entry_count": 5,
       "package": "rust_core/data-processor-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "2a37a8d58132c7ff805d6033897984557abc018ea9857426331a2fe218f7f049",
+      "content_sha256_lf": "261547ba989f038a5755f4f0377268740fd3b583177cab552de722484ebecc19",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "b69cc1bd6e4458deb1fabb1f6e6766ec957880367b29efcedbff1993df2cae05",
+      "content_sha256_lf": "5766c6f6ca4ab63d151d3d1f275334de3e67b5ce4cedf97b77c2285c0f06cf19",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -159,8 +159,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "05f93c3ce9f982f4848da8b68e70adb87b8373c71dce16581ac451a2935b984d",
-      "entry_count": 106,
+      "content_sha256_lf": "119c842f704133851bb8809588270ded0c2b9acd9d588bb2f8ef86665df57ea0",
+      "entry_count": 107,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
     },
@@ -441,7 +441,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-python.json"
     },
     {
-      "content_sha256_lf": "9417446c35555c266149f905caa3aaf1cb380bd6b7eac5ca1bfee4b2602a73d5",
+      "content_sha256_lf": "f1a1c6ae58b5607ea56c3479ff8e8e38f550a55c1ba182750815644a2fbcfc38",
       "entry_count": 59,
       "package": "src/rate_of_closure",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure.json"
@@ -457,6 +457,12 @@
       "entry_count": 14,
       "package": "src/rate_of_closure/club",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-club.json"
+    },
+    {
+      "content_sha256_lf": "99c8ad3409e2f78310aaea06bdbe4d5c8d4162aea9bbb653f3245449c0beadc1",
+      "entry_count": 5,
+      "package": "src/rate_of_closure/packaging",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-packaging.json"
     },
     {
       "content_sha256_lf": "b90c5805e800769a0547958423bf7a9f7acc7e2f331c7c42de7413b1aa43f2c3",
@@ -477,8 +483,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-simulation.json"
     },
     {
-      "content_sha256_lf": "629309b4efb5aa774dfc1562f099862f7a0380fab786275a871701d600e30ea4",
-      "entry_count": 189,
+      "content_sha256_lf": "2842df0f9fa25b828d0c13547d81d50b080575a2a8fa5cbcbfbe2fe5298173b6",
+      "entry_count": 190,
       "package": "src/rate_of_closure/ui",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-ui.json"
     },
@@ -519,8 +525,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src.json"
     },
     {
-      "content_sha256_lf": "9d561461a74aee9d3d09ef745e5f192478f7f4b4a1492c03c39e75eeb6fb8162",
-      "entry_count": 180,
+      "content_sha256_lf": "b11d36d834801912bab5723232ee4ed58d6969eb1cd0e2dce9331515b0ffec7d",
+      "entry_count": 182,
       "package": "src/rate_of_closure/web/src/components",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-components.json"
     },
@@ -531,8 +537,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-hooks.json"
     },
     {
-      "content_sha256_lf": "9aa62f136c9588d1423e81da4ca5f7cb25524405988f1e5c899f6cb7e1b47956",
-      "entry_count": 401,
+      "content_sha256_lf": "e2c0f2e44a2340f911fc0ed2061bc6f0103c4532533d7772135818424129f3a1",
+      "entry_count": 406,
       "package": "src/rate_of_closure/web/src/model",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-model.json"
     },
@@ -657,8 +663,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-file-watcher.json"
     },
     {
-      "content_sha256_lf": "ed8e028237b791bd0d1567483140631e41fa947b7e67ae83ef99b18a281efcd1",
-      "entry_count": 102,
+      "content_sha256_lf": "73fe1df695ad1289e3507e6b288de143c753301619bdaee886b77a2c8fb2ce03",
+      "entry_count": 104,
       "package": "src/shared/python/golf_club",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-golf-club.json"
     },
@@ -765,8 +771,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim.json"
     },
     {
-      "content_sha256_lf": "486dfbcd8da1589ff8b5838d53ae212a88bb2b9b86f340fb65b95f7a61065f49",
-      "entry_count": 4,
+      "content_sha256_lf": "af4996f4f16449a6d1296a409b0a489689bc896ee51cf00f10aac88b840fd2a7",
+      "entry_count": 7,
       "package": "src/shared/python/swing_sim/conventions",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-conventions.json"
     },

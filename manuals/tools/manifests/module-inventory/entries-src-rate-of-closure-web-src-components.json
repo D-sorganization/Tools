@@ -2139,10 +2139,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 19024,
+      "bytes_lf": 19931,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f27f15b5302cad01f901b47c9e9900d841f2366f60fe8d1f436e2db5047f8dbf",
+      "content_sha256_lf": "ef0c06730263190d82666d00727bb68f0cf7384b7294da0d954acffe1775af29",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-LAUNCHMONITORANALYTICSPANEL-TSX-1946A419D5BD",
       "language": "typescript-react",
@@ -2188,6 +2188,99 @@
           "N",
           "g"
         ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3502,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f438bbcac64ef3660f4aeaeacf453f959c15e211ea3152d226a89ddaf43a658e",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-LAUNCHMONITORCOMPARISONWORKSPACE-TEST-TSX-4F42C51D5111",
+      "language": "typescript-react",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/components/LaunchMonitorComparisonWorkspace.test.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9360,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3bba76e2eff69a7dda057e7094a004a1902195b9b938b4781ee7112be5766f30",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-LAUNCHMONITORCOMPARISONWORKSPACE-TSX-287C62688187",
+      "language": "typescript-react",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/components/LaunchMonitorComparisonWorkspace.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "LaunchMonitorComparisonWorkspace",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
         "validation_paths": []
       }
     },
@@ -4489,10 +4582,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 10117,
+      "bytes_lf": 10163,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "1c401c7ca07563d96e834f70beeb82846f3961d306fc8374a494031e504b857c",
+      "content_sha256_lf": "80d95352d0f19e9a87e27a799e6a913df3533a2b3f73b63ff5533d3995c51945",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-SIMULATIONDISPLAY-TSX-F5B003865F95",
       "language": "typescript-react",
@@ -6828,10 +6921,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1900,
+      "bytes_lf": 3895,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c6e3fcfd4679ca2eb74c0fcfdc191ac3a6421f7a3a237d58e3a76c274b864688",
+      "content_sha256_lf": "4055b4655573131d5c34d2fd7b66864ea5e02e58ff3bd1c1307cd0b3b4c98a02",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-WEDGEGROUNDCLEARANCEPANEL-TEST-TSX-529B4FAC8DC2",
       "language": "typescript-react",
@@ -6872,10 +6965,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4233,
+      "bytes_lf": 15509,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "cc00c2eeaaf6ee8af44c7d2b0b1c926a3619e1f8ab18e6386f617309fd24e8a8",
+      "content_sha256_lf": "2f70a7ce0c82d430396e81c4c8cbb346cfd6008c7369eadf37680d66d964e000",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-WEDGEGROUNDCLEARANCEPANEL-TSX-427D444C4082",
       "language": "typescript-react",
@@ -6918,6 +7011,8 @@
         ],
         "test_paths": [],
         "unit_mentions": [
+          "N",
+          "m/s",
           "mm",
           "ms",
           "s"

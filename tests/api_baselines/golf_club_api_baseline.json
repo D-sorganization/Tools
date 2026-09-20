@@ -274,7 +274,10 @@
       },
       "ClubLengthConvention": {
         "info": {
-          "bases": ["str", "Enum"],
+          "bases": [
+            "str",
+            "Enum"
+          ],
           "methods": {}
         },
         "type": "class"
@@ -302,14 +305,20 @@
       },
       "ComponentRole": {
         "info": {
-          "bases": ["str", "Enum"],
+          "bases": [
+            "str",
+            "Enum"
+          ],
           "methods": {}
         },
         "type": "class"
       },
       "ContactSequence": {
         "info": {
-          "bases": ["str", "Enum"],
+          "bases": [
+            "str",
+            "Enum"
+          ],
           "methods": {}
         },
         "type": "class"
@@ -337,7 +346,10 @@
       },
       "ExtrapolationPolicy": {
         "info": {
-          "bases": ["str", "Enum"],
+          "bases": [
+            "str",
+            "Enum"
+          ],
           "methods": {}
         },
         "type": "class"
@@ -392,7 +404,10 @@
       },
       "Handedness": {
         "info": {
-          "bases": ["str", "Enum"],
+          "bases": [
+            "str",
+            "Enum"
+          ],
           "methods": {}
         },
         "type": "class"
@@ -722,7 +737,10 @@
       },
       "TurfCalibrationStatus": {
         "info": {
-          "bases": ["str", "Enum"],
+          "bases": [
+            "str",
+            "Enum"
+          ],
           "methods": {}
         },
         "type": "class"
@@ -762,7 +780,10 @@
       },
       "TurfContactStatus": {
         "info": {
-          "bases": ["str", "Enum"],
+          "bases": [
+            "str",
+            "Enum"
+          ],
           "methods": {}
         },
         "type": "class"
@@ -776,7 +797,10 @@
       },
       "TurfPreset": {
         "info": {
-          "bases": ["str", "Enum"],
+          "bases": [
+            "str",
+            "Enum"
+          ],
           "methods": {}
         },
         "type": "class"
@@ -832,7 +856,10 @@
       },
       "WedgeContactFeature": {
         "info": {
-          "bases": ["str", "Enum"],
+          "bases": [
+            "str",
+            "Enum"
+          ],
           "methods": {}
         },
         "type": "class"
@@ -846,7 +873,10 @@
       },
       "WedgeExportFormat": {
         "info": {
-          "bases": ["str", "Enum"],
+          "bases": [
+            "str",
+            "Enum"
+          ],
           "methods": {}
         },
         "type": "class"
@@ -916,7 +946,10 @@
       },
       "WedgePreset": {
         "info": {
-          "bases": ["str", "Enum"],
+          "bases": [
+            "str",
+            "Enum"
+          ],
           "methods": {}
         },
         "type": "class"
@@ -2676,13 +2709,150 @@
     "explicit_all": true,
     "symbols": {}
   },
+  "_measured_grip_contracts.py": {
+    "__all__": [
+      "GripAxis",
+      "MeasuredGripSource",
+      "GripFrequencySample",
+      "MeasuredGripDataset",
+      "GripPassivityAudit",
+      "GripFRFAgreement",
+      "FRFAgreementSummary"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "FRFAgreementSummary": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "GripAxis": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {
+            "is_rotation": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "bool"
+            },
+            "is_translation": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "bool"
+            },
+            "spatial_index": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "int"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "GripFRFAgreement": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "GripFrequencySample": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "complex_impedance": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "complex"
+            },
+            "magnitude": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "float"
+            },
+            "phase_rad": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "float"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "GripPassivityAudit": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "MeasuredGripDataset": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "MeasuredGripSource": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      }
+    }
+  },
   "_rkmk_step.py": {
     "__all__": [],
     "explicit_all": true,
     "symbols": {}
   },
   "_rotating_body_contracts.py": {
-    "__all__": ["RotatingFrameState", "strict_vector3"],
+    "__all__": [
+      "RotatingFrameState",
+      "strict_vector3"
+    ],
     "explicit_all": false,
     "symbols": {
       "RotatingFrameState": {
@@ -2955,7 +3125,10 @@
     "symbols": {}
   },
   "_shaft_linear_contracts.py": {
-    "__all__": ["ShaftAttachments", "ShaftRodProperties"],
+    "__all__": [
+      "ShaftAttachments",
+      "ShaftRodProperties"
+    ],
     "explicit_all": false,
     "symbols": {
       "ShaftAttachments": {
@@ -3060,7 +3233,10 @@
     "symbols": {}
   },
   "_shaft_spatial_element.py": {
-    "__all__": ["spatial_element", "tip_spatial_inertia"],
+    "__all__": [
+      "spatial_element",
+      "tip_spatial_inertia"
+    ],
     "explicit_all": false,
     "symbols": {
       "spatial_element": {
@@ -3126,7 +3302,10 @@
     "symbols": {}
   },
   "_shaft_transport_contracts.py": {
-    "__all__": ["ShaftRotaryInertia", "ShaftRotatingModel"],
+    "__all__": [
+      "ShaftRotaryInertia",
+      "ShaftRotatingModel"
+    ],
     "explicit_all": false,
     "symbols": {
       "ShaftRotaryInertia": {
@@ -3146,7 +3325,11 @@
     }
   },
   "_shaft_transport_quadrature.py": {
-    "__all__": ["element_quadrature", "quadrature_body", "section_motion_map"],
+    "__all__": [
+      "element_quadrature",
+      "quadrature_body",
+      "section_motion_map"
+    ],
     "explicit_all": false,
     "symbols": {
       "element_quadrature": {
@@ -3401,9 +3584,126 @@
     }
   },
   "_wedge_delivery_metrics.py": {
-    "__all__": ["delivered_bounce_deg", "path_projected_metrics"],
-    "explicit_all": false,
+    "__all__": [
+      "LinearVelocityWaterfall",
+      "LinearWaterfallStep",
+      "MetricExplainer",
+      "WedgeDeliveryMetrics",
+      "compute_wedge_delivery_metrics",
+      "delivered_bounce_deg",
+      "linear_velocity_waterfall",
+      "path_projected_metrics"
+    ],
+    "explicit_all": true,
     "symbols": {
+      "LinearVelocityWaterfall": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "LinearWaterfallStep": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "MetricExplainer": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeDeliveryMetrics": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "explainers": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "tuple[MetricExplainer, ...]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "compute_wedge_delivery_metrics": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WedgeHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "pose"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "twist"
+            },
+            {
+              "annotation": "np.ndarray | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "ground_normal"
+            },
+            {
+              "annotation": "np.ndarray | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "target_unit"
+            },
+            {
+              "annotation": "np.ndarray | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "right_unit"
+            },
+            {
+              "annotation": "np.ndarray | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "shaft_axis_point_m"
+            },
+            {
+              "annotation": "np.ndarray | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "shaft_axis_unit"
+            },
+            {
+              "annotation": "np.ndarray | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "contact_point_m"
+            },
+            {
+              "annotation": "tuple[float, float, float] | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "low_point_world_m"
+            }
+          ],
+          "returns": "WedgeDeliveryMetrics"
+        },
+        "type": "function"
+      },
       "delivered_bounce_deg": {
         "signature": {
           "args": [
@@ -3427,6 +3727,62 @@
             }
           ],
           "returns": "float"
+        },
+        "type": "function"
+      },
+      "linear_velocity_waterfall": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "reference_velocity_mps"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "angular_velocity_rad_s"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "shaft_axis_point_m"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "shaft_axis_unit"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "contact_point_m"
+            },
+            {
+              "annotation": "np.ndarray | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "ground_up_unit"
+            },
+            {
+              "annotation": "np.ndarray | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "target_unit"
+            },
+            {
+              "annotation": "np.ndarray | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "right_unit"
+            }
+          ],
+          "returns": "LinearVelocityWaterfall"
         },
         "type": "function"
       },
@@ -3574,7 +3930,10 @@
     }
   },
   "assembly.py": {
-    "__all__": ["ClubAssembly", "assemble_mass_properties"],
+    "__all__": [
+      "ClubAssembly",
+      "assemble_mass_properties"
+    ],
     "explicit_all": true,
     "symbols": {
       "ClubAssembly": {
@@ -4354,6 +4713,266 @@
       }
     }
   },
+  "measured_grip_impedance.py": {
+    "__all__": [
+      "MEASURED_GRIP_FORMAT",
+      "measured_grip_from_json",
+      "measured_grip_to_json",
+      "measured_grip_digest",
+      "verify_measured_grip_source_bytes",
+      "audit_grip_passivity",
+      "fit_passive_grip_impedance",
+      "assess_measured_frf_agreement",
+      "check_operating_strain_limits",
+      "assess_coupled_shaft_measured_frf",
+      "measured_grip_to_boundary",
+      "passive_impedance_to_boundary"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "MEASURED_GRIP_FORMAT": {
+        "type": "variable"
+      },
+      "assess_coupled_shaft_measured_frf": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "MeasuredGripDataset",
+              "default": null,
+              "kind": "arg",
+              "name": "measured"
+            },
+            {
+              "annotation": "Callable[[float], complex]",
+              "default": null,
+              "kind": "arg",
+              "name": "full_compliance_fn"
+            },
+            {
+              "annotation": "Callable[[float], complex]",
+              "default": null,
+              "kind": "arg",
+              "name": "reduced_compliance_fn"
+            },
+            {
+              "annotation": "float",
+              "default": "0.05",
+              "kind": "arg",
+              "name": "max_reduction_relative_error"
+            }
+          ],
+          "returns": "bool"
+        },
+        "type": "function"
+      },
+      "assess_measured_frf_agreement": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "MeasuredGripDataset",
+              "default": null,
+              "kind": "arg",
+              "name": "measured"
+            },
+            {
+              "annotation": "Callable[[float], complex]",
+              "default": null,
+              "kind": "arg",
+              "name": "model_impedance_fn"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "max_relative_magnitude_error"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "max_phase_error_rad"
+            },
+            {
+              "annotation": "float",
+              "default": "2.0",
+              "kind": "arg",
+              "name": "coverage_k"
+            }
+          ],
+          "returns": "FRFAgreementSummary"
+        },
+        "type": "function"
+      },
+      "audit_grip_passivity": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "MeasuredGripDataset",
+              "default": null,
+              "kind": "arg",
+              "name": "dataset"
+            }
+          ],
+          "returns": "tuple[GripPassivityAudit, ...]"
+        },
+        "type": "function"
+      },
+      "check_operating_strain_limits": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "curvature_1_m"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "outer_radius_m"
+            },
+            {
+              "annotation": "float",
+              "default": "0.0",
+              "kind": "arg",
+              "name": "axial_strain"
+            },
+            {
+              "annotation": "float",
+              "default": "0.005",
+              "kind": "arg",
+              "name": "limit"
+            }
+          ],
+          "returns": "tuple[bool, float]"
+        },
+        "type": "function"
+      },
+      "fit_passive_grip_impedance": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "MeasuredGripDataset",
+              "default": null,
+              "kind": "arg",
+              "name": "dataset"
+            },
+            {
+              "annotation": "str | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "frame_id"
+            }
+          ],
+          "returns": "PassiveGripImpedance"
+        },
+        "type": "function"
+      },
+      "measured_grip_digest": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "MeasuredGripDataset",
+              "default": null,
+              "kind": "arg",
+              "name": "dataset"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "measured_grip_from_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "document"
+            }
+          ],
+          "returns": "MeasuredGripDataset"
+        },
+        "type": "function"
+      },
+      "measured_grip_to_boundary": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "MeasuredGripDataset",
+              "default": null,
+              "kind": "arg",
+              "name": "dataset"
+            },
+            {
+              "annotation": "PassiveGripImpedance | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "fitted"
+            }
+          ],
+          "returns": "GripBoundary"
+        },
+        "type": "function"
+      },
+      "measured_grip_to_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "MeasuredGripDataset",
+              "default": null,
+              "kind": "arg",
+              "name": "dataset"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "passive_impedance_to_boundary": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PassiveGripImpedance",
+              "default": null,
+              "kind": "arg",
+              "name": "grip"
+            },
+            {
+              "annotation": "int",
+              "default": "0",
+              "kind": "arg",
+              "name": "axis"
+            }
+          ],
+          "returns": "GripBoundary"
+        },
+        "type": "function"
+      },
+      "verify_measured_grip_source_bytes": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "MeasuredGripDataset",
+              "default": null,
+              "kind": "arg",
+              "name": "dataset"
+            },
+            {
+              "annotation": "Mapping[str, bytes]",
+              "default": null,
+              "kind": "arg",
+              "name": "blobs"
+            }
+          ],
+          "returns": "tuple[str, ...]"
+        },
+        "type": "function"
+      }
+    }
+  },
   "mesh_mass_properties.py": {
     "__all__": [
       "MeshInertiaReport",
@@ -4940,7 +5559,10 @@
     }
   },
   "rotating_body.py": {
-    "__all__": ["RotatingFrameState", "rotating_body_tangent"],
+    "__all__": [
+      "RotatingFrameState",
+      "rotating_body_tangent"
+    ],
     "explicit_all": true,
     "symbols": {
       "RotatingFrameState": {
@@ -5054,7 +5676,9 @@
     }
   },
   "shaft_assembly.py": {
-    "__all__": ["shaft_component_mass_properties"],
+    "__all__": [
+      "shaft_component_mass_properties"
+    ],
     "explicit_all": true,
     "symbols": {
       "shaft_component_mass_properties": {
@@ -5445,7 +6069,10 @@
     "symbols": {
       "ExtrapolationPolicy": {
         "info": {
-          "bases": ["str", "Enum"],
+          "bases": [
+            "str",
+            "Enum"
+          ],
           "methods": {}
         },
         "type": "class"
@@ -5603,7 +6230,10 @@
     }
   },
   "shaft_scaling.py": {
-    "__all__": ["ShaftProfileScaling", "scale_shaft_profile"],
+    "__all__": [
+      "ShaftProfileScaling",
+      "scale_shaft_profile"
+    ],
     "explicit_all": true,
     "symbols": {
       "ShaftProfileScaling": {
@@ -5787,7 +6417,11 @@
     }
   },
   "stl_validation.py": {
-    "__all__": ["StlMeshValidation", "read_binary_stl", "validate_binary_stl"],
+    "__all__": [
+      "StlMeshValidation",
+      "read_binary_stl",
+      "validate_binary_stl"
+    ],
     "explicit_all": true,
     "symbols": {
       "StlMeshValidation": {
@@ -5855,7 +6489,10 @@
     "symbols": {
       "TurfCalibrationStatus": {
         "info": {
-          "bases": ["str", "Enum"],
+          "bases": [
+            "str",
+            "Enum"
+          ],
           "methods": {}
         },
         "type": "class"
@@ -5895,14 +6532,20 @@
       },
       "TurfContactStatus": {
         "info": {
-          "bases": ["str", "Enum"],
+          "bases": [
+            "str",
+            "Enum"
+          ],
           "methods": {}
         },
         "type": "class"
       },
       "TurfPreset": {
         "info": {
-          "bases": ["str", "Enum"],
+          "bases": [
+            "str",
+            "Enum"
+          ],
           "methods": {}
         },
         "type": "class"
@@ -5951,7 +6594,10 @@
     }
   },
   "turf_convergence.py": {
-    "__all__": ["TurfConvergenceStudy", "run_turf_convergence_study"],
+    "__all__": [
+      "TurfConvergenceStudy",
+      "run_turf_convergence_study"
+    ],
     "explicit_all": true,
     "symbols": {
       "TurfConvergenceStudy": {
@@ -6020,7 +6666,10 @@
     }
   },
   "turf_dynamics.py": {
-    "__all__": ["ReducedTurfContactResult", "simulate_reduced_turf_contact"],
+    "__all__": [
+      "ReducedTurfContactResult",
+      "simulate_reduced_turf_contact"
+    ],
     "explicit_all": true,
     "symbols": {
       "ReducedTurfContactResult": {
@@ -6265,7 +6914,10 @@
       },
       "ClubLengthConvention": {
         "info": {
-          "bases": ["str", "Enum"],
+          "bases": [
+            "str",
+            "Enum"
+          ],
           "methods": {}
         },
         "type": "class"
@@ -6286,7 +6938,10 @@
       },
       "ComponentRole": {
         "info": {
-          "bases": ["str", "Enum"],
+          "bases": [
+            "str",
+            "Enum"
+          ],
           "methods": {}
         },
         "type": "class"
@@ -6396,7 +7051,10 @@
       },
       "WedgeExportFormat": {
         "info": {
-          "bases": ["str", "Enum"],
+          "bases": [
+            "str",
+            "Enum"
+          ],
           "methods": {}
         },
         "type": "class"
@@ -6456,7 +7114,10 @@
       },
       "WedgeContactFeature": {
         "info": {
-          "bases": ["str", "Enum"],
+          "bases": [
+            "str",
+            "Enum"
+          ],
           "methods": {}
         },
         "type": "class"
@@ -6530,7 +7191,10 @@
     "symbols": {
       "ContactSequence": {
         "info": {
-          "bases": ["str", "Enum"],
+          "bases": [
+            "str",
+            "Enum"
+          ],
           "methods": {}
         },
         "type": "class"
@@ -6714,7 +7378,10 @@
     "symbols": {
       "Handedness": {
         "info": {
-          "bases": ["str", "Enum"],
+          "bases": [
+            "str",
+            "Enum"
+          ],
           "methods": {}
         },
         "type": "class"
@@ -6735,7 +7402,10 @@
       },
       "WedgePreset": {
         "info": {
-          "bases": ["str", "Enum"],
+          "bases": [
+            "str",
+            "Enum"
+          ],
           "methods": {}
         },
         "type": "class"
