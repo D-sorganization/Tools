@@ -447,7 +447,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure.json"
     },
     {
-      "content_sha256_lf": "31816477dfe46c5393e5609c30932bf314364f2d4e2ee876f78fe818ae352cd6",
+      "content_sha256_lf": "c36df3ca27f0188d0285033240c3f3c08544ed627a88f16e7ee4547cb040886b",
       "entry_count": 66,
       "package": "src/rate_of_closure/application",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-application.json"

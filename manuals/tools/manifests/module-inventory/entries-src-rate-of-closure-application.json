@@ -410,10 +410,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 4967,
+      "bytes_lf": 4954,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "199cdb88de09e149d7f6642b479566400fdae281d60dfa8ff261cc286e51bc7c",
+      "content_sha256_lf": "b57c1be310c3ec26ea63e3b24c534d2f1d6ab7aa3f56e71ac0853e216bfe9644",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-APPLICATION-WORKSPACE-VALIDATION-PY-53B8E7042CD7",
       "language": "python",
