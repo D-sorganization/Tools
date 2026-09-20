@@ -164,12 +164,12 @@ export function LaunchMonitorAnalyticsPanel() {
             </details>
           </div>
           <div className="flex flex-wrap gap-2">
-            <input ref={input} type="file" accept=".csv,.json,text/csv,application/json"
-              className="hidden" aria-label="Launch monitor CSV or JSON file"
-              onChange={(event) => { const file = event.target.files?.[0]; if (file) void loadFile(file); }} />
-            <button type="button" title="Import a local CSV or JSON launch-monitor export"
-              onClick={() => input.current?.click()}
-              className="rounded-lg bg-sky-700 px-4 py-2 text-sm font-semibold hover:bg-sky-600 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">Import Data</button>
+            <label className="cursor-pointer rounded-lg bg-sky-700 px-4 py-2 text-sm font-semibold hover:bg-sky-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-blue-500" title="Import a local CSV or JSON launch-monitor export">
+              Import Data
+              <input ref={input} type="file" accept=".csv,.json,text/csv,application/json"
+                className="sr-only" aria-label="Launch monitor CSV or JSON file"
+                onChange={(event) => { const file = event.target.files?.[0]; if (file) void loadFile(file); }} />
+            </label>
             <button type="button" title="Restore the built-in non-vendor demonstration dataset"
               onClick={() => { importEpoch.current += 1; setRows(DEMO_ROWS); setSourceName("Built-In Demonstration Data"); setOutcome("ball_speed"); setPredictors(["club_speed", "attack_angle"]); setGroupBy("monitor_vendor"); setResult(null); setSelectedRawIndex(null); setError(null); }}
               className="rounded-lg border border-slate-700 px-4 py-2 text-sm hover:bg-slate-800 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-500">Load Demo</button>

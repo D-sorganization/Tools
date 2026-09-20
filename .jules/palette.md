@@ -87,3 +87,6 @@
 ## 2026-09-17 - Consistent Keyboard Focus Indicators
 **Learning:** Found inconsistent and missing focus states for keyboard users across form elements and custom buttons in `FunctionGenerator.tsx`.
 **Action:** Used `focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[color]` utilities across inputs, selects, and buttons to provide clear, consistent focus rings for keyboard navigation while avoiding them for mouse clicks.
+## 2026-09-20 - File Input Accessibility
+**Learning:** When styling file inputs, using `className="hidden"` with a proxy button breaks keyboard accessibility because the input is removed from the accessibility tree and focus order.
+**Action:** Always wrap file inputs in a `<label>` with `focus-within` styles and use `className="sr-only"` on the input itself to maintain keyboard focus visibility while allowing custom visual styling.
