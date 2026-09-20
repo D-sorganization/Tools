@@ -9,14 +9,11 @@ from .registry import (
     ConventionRegistry,
     EventTime,
     ParameterDefinition,
-    ParameterGroup,
     ParameterId,
     QuantityStatus,
     ReferencePoint,
     SignRule,
     compare_definitions,
-    parameter_group,
-    parameter_group_label,
 )
 from .transforms import Matrix3, Vector3, shift_point_velocity, transform_vector
 
@@ -29,7 +26,6 @@ __all__ = [
     "EventTime",
     "Matrix3",
     "ParameterDefinition",
-    "ParameterGroup",
     "ParameterId",
     "QuantityStatus",
     "ReferencePoint",
@@ -37,8 +33,6 @@ __all__ = [
     "Vector3",
     "compare_definitions",
     "convention_registry",
-    "parameter_group",
-    "parameter_group_label",
     "shift_point_velocity",
     "transform_vector",
 ]

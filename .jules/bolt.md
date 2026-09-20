@@ -207,10 +207,3 @@
 ## 2026-09-19 - Prevent stack overflow in test meshes
 **Learning:** `parametricHeadMesh(club).triangles.flat()` can produce a large number of arrays, which when combined with `Math.max(...array.map())` causes call stack limitations and memory churn.
 **Action:** Always replace `Math.max(...array.map())` with single-pass loops, especially when flattening mesh geometry or matrices in testing.
-## 2026-09-20 - Array Spread vs Slice for Sorting
-**Learning:** Using array spread `[...arr].sort()` allocates a new array through iteration, increasing garbage collection overhead, especially when sorting large arrays or during frequent operations (like bootstrapping).
-**Action:** Use `.slice().sort()` instead, which uses a highly optimized native memory copy, reducing allocation pressure and improving performance.
-
-## 2026-09-20 - Eliminate Math.min(...spread) chained with map
-**Learning:** Using `Math.min(...outcomes.filter(...).map(...))` to calculate the minimum cost per trial dynamically generates huge intermediate arrays and puts them on the call stack, leading to high garbage collection churn and risking stack overflows on large outcomes arrays.
-**Action:** Always replace spread-based min/max combined with mapping functions with a single-pass `for` loop that iterates over the source array once and calculates minimums in place.

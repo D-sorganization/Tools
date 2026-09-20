@@ -726,7 +726,6 @@
           "tests/shared/python/golf_club/test_shaft_siso_rod.py",
           "tests/shared/python/golf_club/test_shaft_trajectory_geometry.py",
           "tests/shared/python/golf_club/test_turf_contact.py",
-          "tests/shared/python/golf_club/test_wedge_delivery_metrics.py",
           "tests/shared/python/golf_club/test_wedge_ground_contact.py",
           "tests/shared/python/golf_club/test_wedge_sweep.py",
           "tests/shared/python/model_generation/inertia/test_spatial.py",

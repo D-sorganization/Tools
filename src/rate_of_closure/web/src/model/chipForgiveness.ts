@@ -78,8 +78,7 @@ const mean = (values: number[]): number =>
   values.reduce((total, value) => total + value, 0) / values.length;
 
 function percentile(values: number[], fraction: number): number {
-  // ⚡ Bolt Optimization: Use slice() instead of array spread to avoid allocation overhead on large arrays
-  const sorted = values.slice().sort((first, second) => first - second);
+  const sorted = [...values].sort((first, second) => first - second);
   const position = (sorted.length - 1) * fraction;
   const lower = Math.floor(position);
   const upper = Math.ceil(position);
@@ -200,8 +199,7 @@ export function summarizeChipTrials(
   }
   const losses = records.map((record) => record.loss);
   const tailCount = Math.max(1, Math.ceil(tailFraction * losses.length));
-  // ⚡ Bolt Optimization: Use slice() instead of array spread to avoid GC pressure
-  const worst = losses.slice().sort((first, second) => second - first).slice(0, tailCount);
+  const worst = [...losses].sort((first, second) => second - first).slice(0, tailCount);
   const status = options.turfCalibrationStatus ?? "uncalibrated";
   const cohorts = Object.fromEntries(CHIP_COHORTS.map((cohort) => [
     cohort,

@@ -1,21 +1,14 @@
 """PyQt wedge ground-clearance presentation contracts."""
 
-import pytest
+from __future__ import annotations
 
-pytest.importorskip("PyQt6")
-pytest.importorskip("pytestqt")
-
-from rate_of_closure.club import get_club  # noqa: E402
-from rate_of_closure.model import ImpactScenario  # noqa: E402
-from rate_of_closure.simulation import (  # noqa: E402
-    SimulationConfig,
-    SimulationRun,
-    run_simulation,
-)
-from rate_of_closure.ui.pyqt6.simulation_view import SimulationView  # noqa: E402
+from rate_of_closure.club import get_club
+from rate_of_closure.model import ImpactScenario
+from rate_of_closure.simulation import SimulationConfig, run_simulation
+from rate_of_closure.ui.pyqt6.simulation_view import SimulationView
 
 
-def _run(club_name: str) -> SimulationRun:
+def _run(club_name: str):
     return run_simulation(
         SimulationConfig(
             scenario=ImpactScenario(clubhead_speed_mph=30.0),
@@ -37,17 +30,6 @@ def test_wedge_run_adds_ground_clearance_to_engineering_readout(qtbot) -> None: 
     assert "Sole-Entry Margin" in text
     assert "Bounce-Utilization Angle Margin" in text
     assert "Illustrative 10-degree mid-bounce sole" in text
-    assert "Wedge Delivery Metrics" in text
-    assert "LE Downrange Rate" in text
-    assert "LE Vertical Rate" in text
-    assert "Dynamic Loft" in text
-    assert "Linear-Velocity Contribution Waterfall" in text
-    assert "Axis Translation:" in text
-    assert "Shaft Rotation:" in text
-    assert "Other Rotation:" in text
-    assert "Total Contact:" in text
-    assert "Attack Angle Attribution" in text
-    assert "Linear velocity components are strictly additive" in text
     labels = [artist.get_label() for artist in view._axes.lines]
     labels.extend(artist.get_label() for artist in view._axes.collections)
     assert "Wedge Sole Envelope" in labels
