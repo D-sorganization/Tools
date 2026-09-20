@@ -4642,10 +4642,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 12907,
+      "bytes_lf": 11810,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "1a4fe9dbf90c0e6d03f2782b1d0d5fb7c59f28d201d3f2345aedf95fd14840a3",
+      "content_sha256_lf": "7b63d9ff6eb3eadef5ab1e21df8ce3686c551d82d65f3705966f7a40f00f8187",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-IMPACT-COUPLING-PY-08CD71D1C49A",
       "language": "python",
@@ -4881,10 +4881,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 12514,
+      "bytes_lf": 13289,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "d713c947198386560a1c537491d23725788d5244bac1f65764a145c9ee21fe0f",
+      "content_sha256_lf": "e84ad77cef56a1c67c1041d1b258555db45fc3580f7317832446bb48df219e1a",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-MEASURED-GRIP-IMPEDANCE-PY-36DBCCD17447",
       "language": "python",
@@ -4972,6 +4972,11 @@
             "kind": "function",
             "name": "measured_grip_to_json",
             "signature": "dataset: MeasuredGripDataset"
+          },
+          {
+            "kind": "function",
+            "name": "passive_impedance_to_boundary",
+            "signature": "grip: PassiveGripImpedance, axis: int=0"
           },
           {
             "kind": "function",
