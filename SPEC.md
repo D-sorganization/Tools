@@ -5912,6 +5912,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | 2026-09-20 | #5270 | Putting launch monitor accuracy validation harness (Tools #5221): validate subcommand with CSV logging, running error stats against +/-3% speed and +/-1 deg HLA bounds, 7 unit tests, and rig validation evidence page. |
 | 2026-09-20 | #4922 | feat(release): Rate of Closure release gate runner and transition campaign programs from implemented_unverified to verified (#4201, #4922) |
 | 2026-09-20 | #4382 | feat(packaging): qualify frozen PyQt6 Rate of Closure one-folder bundle, entry point, build hooks, hygiene check, offscreen smoke, and parity harness (#4382) |
+| 2026-09-19 | #5268 | feat(wedge-ui): advanced delivery metrics cards, linear waterfall, and 3D visualization (#4162) |
 | 2026-09-19 | #5259 | feat(golf-club, #5072): add measured grip impedance dynamics, passivity verification, continuous Gram-factor identification, full/reduced FRF agreement under quantified uncertainty, and GripBoundary consumer integration. |
 | 2026-09-19 | #5261 | feat(vibroacoustics, #5074): add transient vibroacoustic radiation, Rayleigh surface integral solver, observer directivity/microphone array, ball impact dipole radiation, psychoacoustic metrics, and calibrated sound recordings. |
 | 2026-09-19 | #4186 | feat(conventions): add side-by-side TrackMan/Foresight comparison workspace, expand parameter catalog to 28 quantities, and publish convention matrix and ambiguity register (#4186) |

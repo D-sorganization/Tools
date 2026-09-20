@@ -116,10 +116,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 7437,
+      "bytes_lf": 11774,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "875c46e506579a3701f1ce91dd8df66a0a3499f57f0fd9dc594b70caf5ec7795",
+      "content_sha256_lf": "5d790a8ade7d6140e3909763f8ded708a110786798ea34bd114026052340dfdf",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-IMPACT-KINEMATICS-PRESENTATION-PY-2E740F21B626",
       "language": "python",
@@ -175,12 +175,22 @@
           },
           {
             "kind": "function",
+            "name": "format_wedge_delivery_metrics",
+            "signature": "metrics: WedgeDeliveryMetrics"
+          },
+          {
+            "kind": "function",
             "name": "ground_clearance_snapshot_for_scene",
             "signature": "run: SimulationRun | None"
           },
           {
             "kind": "function",
             "name": "simulation_ground_clearance_snapshot",
+            "signature": "run: SimulationRun"
+          },
+          {
+            "kind": "function",
+            "name": "simulation_wedge_delivery_metrics",
             "signature": "run: SimulationRun"
           }
         ],

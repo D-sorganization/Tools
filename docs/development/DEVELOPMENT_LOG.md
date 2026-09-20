@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#4162 · Wedge Delivery Metrics & Linear Waterfall Visualization
+
+- **State:** in_progress
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#4162 (parent epic #4158)
+- **PR:** #5268
+- **Branch:** `feat/4162-wedge-delivery-metrics-viz`
+- **Paths:** `src/shared/python/golf_club/_wedge_delivery_metrics.py`, `tests/shared/python/golf_club/test_wedge_delivery_metrics.py`, `src/rate_of_closure/ui/impact_kinematics_presentation.py`, `tests/rate_of_closure/test_wedge_ground_clearance_gui.py`, `src/rate_of_closure/web/src/model/wedgeDeliveryMetrics.ts`, `src/rate_of_closure/web/src/model/wedgeDeliveryMetrics.test.ts`, `src/rate_of_closure/web/src/components/WedgeGroundClearancePanel.tsx`, `src/rate_of_closure/web/src/components/WedgeGroundClearancePanel.test.tsx`, `src/rate_of_closure/web/src/components/SimulationDisplay.tsx`
+- **Started:** 2026-09-19
+- **Last verified:** 2026-09-19 (all 21 Python pytest and 2324 TypeScript vitest tests passing; ruff, black, mypy, and eslint passing)
+- **Summary:** Implemented synchronized wedge delivery metrics cards (total vs counterfactual attack angle, dynamic loft/lie/face, delivered bounce, low point, LE rates), linear-velocity contribution waterfall table (v_contact = v_axis + v_shaft + v_other), and accessible clickable explainers across both PyQt6 and React surfaces.
+- **Next step:** Rebase on main, verify CI, and merge.
+
 ### DL-#4186 · Convention Selector and Side-by-Side Launch-Monitor Comparison Workspace
 
 - **State:** in_progress
