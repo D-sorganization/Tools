@@ -3585,11 +3585,125 @@
   },
   "_wedge_delivery_metrics.py": {
     "__all__": [
+      "LinearVelocityWaterfall",
+      "LinearWaterfallStep",
+      "MetricExplainer",
+      "WedgeDeliveryMetrics",
+      "compute_wedge_delivery_metrics",
       "delivered_bounce_deg",
+      "linear_velocity_waterfall",
       "path_projected_metrics"
     ],
-    "explicit_all": false,
+    "explicit_all": true,
     "symbols": {
+      "LinearVelocityWaterfall": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "LinearWaterfallStep": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "MetricExplainer": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WedgeDeliveryMetrics": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "explainers": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "tuple[MetricExplainer, ...]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "compute_wedge_delivery_metrics": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "WedgeHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "pose"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "twist"
+            },
+            {
+              "annotation": "np.ndarray | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "ground_normal"
+            },
+            {
+              "annotation": "np.ndarray | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "target_unit"
+            },
+            {
+              "annotation": "np.ndarray | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "right_unit"
+            },
+            {
+              "annotation": "np.ndarray | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "shaft_axis_point_m"
+            },
+            {
+              "annotation": "np.ndarray | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "shaft_axis_unit"
+            },
+            {
+              "annotation": "np.ndarray | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "contact_point_m"
+            },
+            {
+              "annotation": "tuple[float, float, float] | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "low_point_world_m"
+            }
+          ],
+          "returns": "WedgeDeliveryMetrics"
+        },
+        "type": "function"
+      },
       "delivered_bounce_deg": {
         "signature": {
           "args": [
@@ -3613,6 +3727,62 @@
             }
           ],
           "returns": "float"
+        },
+        "type": "function"
+      },
+      "linear_velocity_waterfall": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "reference_velocity_mps"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "angular_velocity_rad_s"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "shaft_axis_point_m"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "shaft_axis_unit"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "contact_point_m"
+            },
+            {
+              "annotation": "np.ndarray | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "ground_up_unit"
+            },
+            {
+              "annotation": "np.ndarray | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "target_unit"
+            },
+            {
+              "annotation": "np.ndarray | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "right_unit"
+            }
+          ],
+          "returns": "LinearVelocityWaterfall"
         },
         "type": "function"
       },

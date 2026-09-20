@@ -4113,22 +4113,22 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 2211,
+      "bytes_lf": 17978,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "c08317073352f2f1677fea42188770a1f4584f00ae0de5b9b6a700cd8e5f006f",
+      "content_sha256_lf": "07d87045bb6016a1a26db3c6b755ad8eb7616c555aca94f7e1e372a0f9b602a6",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-WEDGE-DELIVERY-METRICS-PY-B9C91BFAFC12",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/shared/python/golf_club/_wedge_delivery_metrics.py",
-      "purpose": "Private ground-relative wedge metrics evaluated at ball contact.",
+      "purpose": "Private ground-relative wedge metrics and linear velocity waterfall at delivery.",
       "review_status": "review-required",
       "risk_tags": [
         "downstream-consumer-risk",
+        "public-api",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -4137,25 +4137,72 @@
         "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "unavailable",
         "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "unavailable",
+        "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
-        "units": "unavailable",
+        "tests": "mapped",
+        "units": "mapped",
         "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md"
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
         "citation_refs": [],
         "equation_refs": [],
         "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "LinearVelocityWaterfall",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LinearWaterfallStep",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MetricExplainer",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WedgeDeliveryMetrics",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compute_wedge_delivery_metrics",
+            "signature": "parameters: WedgeHeadParameters, pose: np.ndarray, twist: np.ndarray, ground_normal: np.ndarray | None=None, target_unit: np.ndarray | None=None, right_unit: np.ndarray | None=None, shaft_axis_point_m: np.ndarray | None=None, shaft_axis_unit: np.ndarray | None=None, contact_point_m: np.ndarray | None=None, low_point_world_m: tuple[float, float, float] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "delivered_bounce_deg",
+            "signature": "parameters: WedgeHeadParameters, pose: np.ndarray, ground_normal: np.ndarray"
+          },
+          {
+            "kind": "function",
+            "name": "linear_velocity_waterfall",
+            "signature": "reference_velocity_mps: np.ndarray, angular_velocity_rad_s: np.ndarray, shaft_axis_point_m: np.ndarray, shaft_axis_unit: np.ndarray, contact_point_m: np.ndarray, ground_up_unit: np.ndarray | None=None, target_unit: np.ndarray | None=None, right_unit: np.ndarray | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "path_projected_metrics",
+            "signature": "parameters: WedgeHeadParameters, pose: np.ndarray, twist: np.ndarray, ground_normal: np.ndarray"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_wedge_delivery_metrics.py"
+        ],
+        "unit_mentions": [
+          "m/s",
+          "s"
+        ],
         "validation_paths": []
       }
     },

@@ -26454,6 +26454,132 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 4637,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6d7b690e9ebb4d83e0577f545cabc647b01db9bff8df33db2545001702b418f8",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-WEDGEDELIVERYMETRICS-TEST-TS-4E70F5DFB9C1",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/wedgeDeliveryMetrics.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 16640,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e692a4b2181aca9bbdcbeb334dc6c8ebcd487af7afc5148627dd79439daa1c56",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-WEDGEDELIVERYMETRICS-TS-074026A0CEC0",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/wedgeDeliveryMetrics.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "LinearVelocityWaterfallTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "LinearWaterfallStepTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "MetricExplainerTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "WedgeDeliveryMetricsTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "computeLinearVelocityWaterfall",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "computeWedgeDeliveryMetrics",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "wedgeDeliveryMetricsForRun",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2280,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -26577,10 +26703,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 4335,
+      "bytes_lf": 4342,
       "classification": "calculation",
       "classification_basis": "path-marker:geometry",
-      "content_sha256_lf": "3054a73f20213375ea542f6859be9617998020c17e0c03c6d1c7a8069791b396",
+      "content_sha256_lf": "ba172e7b578536c2a5c789971c6b14708721027e13a907430e3162fb5a9ab8be",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-WEDGEGROUNDGEOMETRY-TS-9AB30E53FF92",
       "language": "typescript",
@@ -26632,6 +26758,11 @@
           {
             "kind": "export",
             "name": "WedgeContactFeature",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "bodyProfile",
             "signature": null
           },
           {

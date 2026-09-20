@@ -4582,10 +4582,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 10117,
+      "bytes_lf": 10163,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "1c401c7ca07563d96e834f70beeb82846f3961d306fc8374a494031e504b857c",
+      "content_sha256_lf": "80d95352d0f19e9a87e27a799e6a913df3533a2b3f73b63ff5533d3995c51945",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-SIMULATIONDISPLAY-TSX-F5B003865F95",
       "language": "typescript-react",
@@ -6921,10 +6921,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1900,
+      "bytes_lf": 3895,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c6e3fcfd4679ca2eb74c0fcfdc191ac3a6421f7a3a237d58e3a76c274b864688",
+      "content_sha256_lf": "4055b4655573131d5c34d2fd7b66864ea5e02e58ff3bd1c1307cd0b3b4c98a02",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-WEDGEGROUNDCLEARANCEPANEL-TEST-TSX-529B4FAC8DC2",
       "language": "typescript-react",
@@ -6965,10 +6965,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4233,
+      "bytes_lf": 15509,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "cc00c2eeaaf6ee8af44c7d2b0b1c926a3619e1f8ab18e6386f617309fd24e8a8",
+      "content_sha256_lf": "2f70a7ce0c82d430396e81c4c8cbb346cfd6008c7369eadf37680d66d964e000",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-WEDGEGROUNDCLEARANCEPANEL-TSX-427D444C4082",
       "language": "typescript-react",
@@ -7011,6 +7011,8 @@
         ],
         "test_paths": [],
         "unit_mentions": [
+          "N",
+          "m/s",
           "mm",
           "ms",
           "s"

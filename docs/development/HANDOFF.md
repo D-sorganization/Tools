@@ -1,3 +1,31 @@
+# Handoff Checkpoint — Wedge Delivery Metrics & Linear Waterfall Visualization (#4162) — 2026-09-19
+
+- **Repository/worktree**: `Tools`, `c:\Users\diete\Repositories\Tools-repo`
+- **Branch**: `feat/4162-wedge-delivery-metrics-viz`; Governing issue: `D-sorganization/Tools#4162` (parent epic `#4158`)
+- **Completed work**:
+  - Implemented `golf_club/_wedge_delivery_metrics.py` driving synchronized metric cards for:
+    - total vs counterfactual attack angle
+    - LE vertical, downrange, lateral linear rates and 3D angular rate
+    - dynamic loft, dynamic lie, dynamic face angle
+    - delivered bounce angle and low point height/distance
+  - Implemented linear-velocity contribution waterfall ($v_{contact} = v_{axis} + v_{shaft} + v_{other}$) strictly on linear Euclidean velocity components, with counterfactual angle deltas and order-independent two-factor Shapley attribution (never implying additive Euler angles).
+  - Built interactive, accessible explainers detailing coordinate frame definitions, equations, units, and assumptions with keyboard focus rings (`focus-visible:outline-emerald-400`).
+  - Implemented twin TypeScript modules in `rate_of_closure/web`: `wedgeDeliveryMetrics.ts`, test suite `wedgeDeliveryMetrics.test.ts`, and updated `WedgeGroundClearancePanel.tsx` / `WedgeGroundClearancePanel.test.tsx` / `SimulationDisplay.tsx`.
+  - Integrated readout into PyQt6 `impact_kinematics_presentation.py` and updated GUI test suite `test_wedge_ground_clearance_gui.py`.
+  - Regenerated shared API stability baseline `tests/api_baselines/golf_club_api_baseline.json`.
+- **Validation**:
+  - Python tests: `pytest -n 0 tests/shared/python/golf_club/test_wedge_delivery_metrics.py tests/rate_of_closure/test_wedge_ground_clearance_gui.py tests/rate_of_closure/test_wedge_ground_clearance.py tests/test_shared_package_api_stability.py` -> 21 passed.
+  - TypeScript/Web tests: 234 test files, 2324 tests passed via `npm test -- --run`.
+  - Type check: `npm run type-check` -> 0 errors.
+  - Web lint: `npm run lint` -> 0 errors, 0 warnings.
+  - Pre-commit gates: `ruff check`, `ruff format --check`, `black --check`, `mypy --follow-imports=skip` passed.
+  - SPEC.md changelog: `python shared_scripts/spec_changelog.py validate --spec SPEC.md` -> OK.
+  - Module inventory: `python -m scripts.build_tools_module_inventory --check` -> OK.
+  - Line count audit: all created and modified files <= 500 lines.
+- **Next steps**:
+  - Open PR with title `feat(wedge-ui): advanced delivery metrics cards, linear waterfall, and 3D visualization (#4162)` and rate visual exemption flag.
+  - Enable auto-merge squash and release lease.
+
 # Launch Monitor Conventions & Side-by-Side Comparison Workspace Checkpoint — 2026-09-19 (#4186)
 
 - Repository/worktree: Tools, C:/Users/diete/Repositories/Tools-repo.

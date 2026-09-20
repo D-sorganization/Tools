@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "2a37a8d58132c7ff805d6033897984557abc018ea9857426331a2fe218f7f049",
+      "content_sha256_lf": "261547ba989f038a5755f4f0377268740fd3b583177cab552de722484ebecc19",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "d371a135b30f5c95f2b6d8ecf6662dc8ae9b570f2c30bd9969d5e7866a14d513",
+      "content_sha256_lf": "5766c6f6ca4ab63d151d3d1f275334de3e67b5ce4cedf97b77c2285c0f06cf19",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -483,7 +483,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-simulation.json"
     },
     {
-      "content_sha256_lf": "f3f1f5a20198f59779aec503fe326a2d77cf151825b300829d6b127e73809dce",
+      "content_sha256_lf": "070c37ae7ba83c020db39f11bacff73d6ebb67dbf7c7a5d5b253d3f62bbe9e31",
       "entry_count": 190,
       "package": "src/rate_of_closure/ui",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-ui.json"
@@ -525,7 +525,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src.json"
     },
     {
-      "content_sha256_lf": "a1f70d469a23aa6003fd7d48523fe8cde648cc38339923a2aca831a96f55618b",
+      "content_sha256_lf": "b11d36d834801912bab5723232ee4ed58d6969eb1cd0e2dce9331515b0ffec7d",
       "entry_count": 182,
       "package": "src/rate_of_closure/web/src/components",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-components.json"
@@ -537,8 +537,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-hooks.json"
     },
     {
-      "content_sha256_lf": "70e122dbf83afc5acc0b21c63eb0966f5bbd5603930aa0133993495cefb08517",
-      "entry_count": 404,
+      "content_sha256_lf": "e2c0f2e44a2340f911fc0ed2061bc6f0103c4532533d7772135818424129f3a1",
+      "entry_count": 406,
       "package": "src/rate_of_closure/web/src/model",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-model.json"
     },
@@ -663,7 +663,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-file-watcher.json"
     },
     {
-      "content_sha256_lf": "581b7ecad39676b1bb1de0e0584292f47b6a66bc2ce918a8a0e2937782145ba5",
+      "content_sha256_lf": "73fe1df695ad1289e3507e6b288de143c753301619bdaee886b77a2c8fb2ce03",
       "entry_count": 104,
       "package": "src/shared/python/golf_club",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-golf-club.json"
