@@ -201,5 +201,5 @@ describe("AppToolstrip", () => {
     // 520 - 16 - 384 = 120. 120 - 200 = -80px translation.
     expect(viewPopover.style.transform).toBe("translateX(-80px)");
   });
-  });
 });
+
