@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import sys
 from pathlib import Path
 from typing import Any
 
@@ -20,6 +21,17 @@ from scripts.release_gate import (
 )
 
 _REPO_ROOT = Path(__file__).parents[2].resolve()
+_SRC_DIR = str((_REPO_ROOT / "src").resolve())
+if _SRC_DIR in sys.path:
+    sys.path.remove(_SRC_DIR)
+sys.path.insert(0, _SRC_DIR)
+
+_ROC_DIR = str((_REPO_ROOT / "src" / "rate_of_closure").resolve())
+_roc = sys.modules.get("rate_of_closure")
+if _roc is not None:
+    _paths = list(getattr(_roc, "__path__", []))
+    if _ROC_DIR not in _paths:
+        _roc.__path__ = [_ROC_DIR] + _paths
 
 
 def test_parity_inventory_check() -> None:

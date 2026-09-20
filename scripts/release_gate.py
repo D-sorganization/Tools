@@ -27,8 +27,16 @@ _FORBIDDEN_PATTERNS = ("C:\\Users\\", "C:/Users/")
 
 def _ensure_repo_path(repo_root: Path) -> None:
     src_dir = str((repo_root / "src").resolve())
-    if src_dir not in sys.path:
-        sys.path.insert(0, src_dir)
+    if src_dir in sys.path:
+        sys.path.remove(src_dir)
+    sys.path.insert(0, src_dir)
+
+    roc_pkg_dir = str((repo_root / "src" / "rate_of_closure").resolve())
+    mod = sys.modules.get("rate_of_closure")
+    if mod is not None:
+        existing = list(getattr(mod, "__path__", []))
+        if roc_pkg_dir not in existing:
+            mod.__path__ = [roc_pkg_dir] + existing
 
 
 def check_parity_inventory(repo_root: Path) -> dict[str, Any]:
@@ -263,9 +271,7 @@ def run_release_gate(
 ) -> dict[str, Any]:
     """Execute all release gate verification pillars."""
     root = (repo_root or Path(__file__).parents[1]).resolve()
-    src_dir = str(root / "src")
-    if src_dir not in sys.path:
-        sys.path.insert(0, src_dir)
+    _ensure_repo_path(root)
 
     parity_res = check_parity_inventory(root)
     companion_res = check_companion_and_playwright(root)
