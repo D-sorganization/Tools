@@ -3610,6 +3610,7 @@
         "test_paths": [
           "tests/rate_of_closure/pyqt_visualization_tab_probe.py",
           "tests/rate_of_closure/test_launch_monitor_analytics_tab.py",
+          "tests/rate_of_closure/test_launch_monitor_comparison_workspace.py",
           "tests/rate_of_closure/test_launch_monitor_linked_scatter_layout.py"
         ],
         "unit_mentions": [
@@ -3667,6 +3668,69 @@
           }
         ],
         "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 15163,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f1a8fcf72b42cad4f22ec3dc57f13d5429233e011331a0aee2c4d1265803dd89",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-LAUNCH-MONITOR-COMPARISON-WORKSPACE-PY-6D527387AD6B",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/ui/pyqt6/launch_monitor_comparison_workspace.py",
+      "purpose": "Side-by-side launch-monitor convention comparison workspace (PyQt6).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ComparisonRow",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LaunchMonitorComparisonWorkspace",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_comparison_rows",
+            "signature": "trackman_values: dict[str, float] | None=None, foresight_values: dict[str, float] | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_launch_monitor_comparison_workspace.py"
+        ],
         "unit_mentions": [],
         "validation_paths": []
       }
@@ -4230,7 +4294,6 @@
         "public-api",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -4242,7 +4305,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "unavailable"
       },
@@ -4268,7 +4331,9 @@
             "signature": ""
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/rate_of_closure/test_launch_monitor_comparison_workspace.py"
+        ],
         "unit_mentions": [
           "s"
         ],

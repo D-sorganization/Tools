@@ -10119,6 +10119,121 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 3726,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3db2b21ab7bb4bee216a896a9c4b5b1991f7afd88b612733a167e84242e44f85",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-LAUNCHMONITORCOMPARISONWORKSPACE-TEST-TS-463315E96C38",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/launchMonitorComparisonWorkspace.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5280,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "591470d3945fe6265f43d74e6022e8a4e1117ef00f0684bf55513e2928c7cc5e",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-LAUNCHMONITORCOMPARISONWORKSPACE-TS-DE113DA3D34B",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/launchMonitorComparisonWorkspace.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "ComparisonRowTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "buildComparisonRows",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "exportComparisonCsv",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "exportComparisonJson",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "filterComparisonRows",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 4663,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -10371,6 +10486,138 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 16647,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cd63c5ab7b8181523715aba30860d2cbcf948e793c2c949a98bb4083f825fdad",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-LAUNCHMONITORCONVENTIONSCATALOG-TS-C232E58546B1",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/launchMonitorConventionsCatalog.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://github.com/D-sorganization/Tools/blob/main/docs/specs/D_PLANE_GEOMETRY.md",
+          "https://help.foresightsports.com/hc/en-us/articles/47144162581523-Ball-Launch-Data-Measurements-Ball-Flight-Results",
+          "https://help.foresightsports.com/hc/en-us/articles/47214673873811-Club-Head-Data-Measurements-Definitions",
+          "https://www.trackman.com/blog/golf/40-trackman-parameters",
+          "https://www.trackman.com/blog/golf/club-data-definitions"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "APP_POLICIES",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "APP_SOURCE",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "FORESIGHT_BALL",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "FORESIGHT_CLUB",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "FORESIGHT_POLICIES",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "FRAME_ID",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "GROUP_LABELS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "IDENTITIES",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "IdentityTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "PARAMETER_GROUP_MAP",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "PolicyTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "RETRIEVED_ON",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "TRACKMAN_CLUB",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "TRACKMAN_PARAMETERS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "TRACKMAN_POLICIES",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "deg",
+          "m/s",
+          "rpm",
+          "s"
+        ],
         "validation_paths": []
       }
     },

@@ -191,6 +191,7 @@ class LaunchMonitorComparisonWorkspace(QWidget):
         self.search_edit.setAccessibleName("Search Comparison Parameters")
         self.search_edit.setToolTip("Search parameters by name, ID, or definition text")
         self.search_edit.setPlaceholderText("Search parameters...")
+        self.search_edit.setMinimumWidth(80)
         self.search_edit.textChanged.connect(self._apply_filter)
         toolbar.addWidget(QLabel("Search:"))
         toolbar.addWidget(self.search_edit, 1)

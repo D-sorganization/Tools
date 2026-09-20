@@ -150,6 +150,297 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 761,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1c33df17b383a2e6b981e1161293f4d7cb4c6f0d77b3c728b0e8e258b90ee409",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-CONVENTIONS-CATALOG-DATA-PY-F259D0B2BA0C",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/conventions/_catalog_data.py",
+      "purpose": "Catalog data and policies for all audited launch-monitor parameters.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "APP_POLICIES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "APP_SOURCE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FORESIGHT_BALL_SOURCE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FORESIGHT_CLUB_SOURCE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FORESIGHT_POLICIES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FRAME",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IDENTITIES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Identity",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "POLICIES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Policy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RETRIEVED",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TRACKMAN_CLUB_SOURCE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TRACKMAN_PARAMETERS_SOURCE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TRACKMAN_POLICIES",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7101,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b9743057d059f6c38c415fc6c8838c929257327c1a2ef291ad5d0ee72d8a1fd4",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-CONVENTIONS-IDENTITIES-PY-DC4BA6C6E7A6",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/conventions/_identities.py",
+      "purpose": "Intrinsic parameter identities for all audited launch-monitor parameters.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Identity",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "IDENTITIES",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "deg",
+          "m/s",
+          "rpm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 12830,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "fbef19aea81fc5da6619383695f14ff9e2b73fb755b4aebbdd05c20760b71a1a",
+      "family": "swing-simulation-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-CONVENTIONS-POLICIES-PY-E9683B4D5A62",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/conventions/_policies.py",
+      "purpose": "Measurement policies and provenance for all audited launch-monitor parameters.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://github.com/D-sorganization/Tools/blob/main/docs/specs/D_PLANE_GEOMETRY.md",
+          "https://help.foresightsports.com/hc/en-us/articles/",
+          "https://www.trackman.com/blog/golf/40-trackman-parameters",
+          "https://www.trackman.com/blog/golf/club-data-definitions"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Policy",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "APP_POLICIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "APP_SOURCE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FORESIGHT_BALL_SOURCE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FORESIGHT_CLUB_SOURCE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FORESIGHT_POLICIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FRAME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "POLICIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RETRIEVED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TRACKMAN_CLUB_SOURCE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TRACKMAN_PARAMETERS_SOURCE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TRACKMAN_POLICIES",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1386,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
