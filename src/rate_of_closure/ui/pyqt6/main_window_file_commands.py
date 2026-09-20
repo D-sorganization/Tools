@@ -11,12 +11,17 @@ from uuid import uuid4
 
 from PyQt6.QtWidgets import QFileDialog, QMessageBox, QWidget
 
+from rate_of_closure.application.capability_workflow import (
+    CapabilityWorkflowInputs,
+    build_capability_workflow,
+)
 from rate_of_closure.application.workspace_files import (
     read_workspace,
     write_text_atomic,
     write_workspace_atomic,
 )
 from rate_of_closure.application.workspace_session import (
+    CANONICAL_MODULE_IDS,
     ExplorerWorkspaceState,
     WorkspaceSessionMetadata,
     document_from_state,
@@ -59,16 +64,20 @@ _CANONICAL_TO_PYQT = {value: key for key, value in _PYQT_TO_CANONICAL.items()}
 #: PyQt6-only tabs with no React counterpart. They keep their own navigation
 #: state (QSettings) but are excluded from the cross-client workspace document,
 #: whose module list must match the React client's view set exactly.
-_UNSHARED_PYQT_TAB_IDS = frozenset({"regional_ground_execution"})
+_UNSHARED_PYQT_TAB_IDS = frozenset({"regional_ground_execution", "neural_model_lab"})
 
 
 def _canonical_module_ids(tab_ids: Iterable[str]) -> tuple[str, ...]:
-    """Map PyQt6 tab ids onto cross-client ids, dropping unshared tabs."""
-    return tuple(
+    """Map PyQt6 tab ids onto cross-client ids, ensuring all canonical ids exist."""
+    mapped: list[str] = [
         _PYQT_TO_CANONICAL[item]
         for item in tab_ids
-        if item not in _UNSHARED_PYQT_TAB_IDS
-    )
+        if item in _PYQT_TO_CANONICAL and item not in _UNSHARED_PYQT_TAB_IDS
+    ]
+    for cid in CANONICAL_MODULE_IDS:
+        if cid not in mapped:
+            mapped.append(cid)
+    return tuple(mapped)
 
 
 class MainWindowFileCommandsMixin:
@@ -293,16 +302,24 @@ class MainWindowFileCommandsMixin:
 
     def _capture_workspace_state(self) -> ExplorerWorkspaceState:
         module_order = _canonical_module_ids(self.primary_tab_ids())
-        visible = _canonical_module_ids(self.visible_primary_tab_ids())
+        visible = tuple(
+            _PYQT_TO_CANONICAL[item]
+            for item in self.visible_primary_tab_ids()
+            if item in _PYQT_TO_CANONICAL and item not in _UNSHARED_PYQT_TAB_IDS
+        )
         active_tab = self.current_primary_module_id()
-        if active_tab in _UNSHARED_PYQT_TAB_IDS:
-            # An unshared tab cannot be the document's active module; fall back
-            # to the first visible shared module so the document stays valid.
+        if active_tab in _UNSHARED_PYQT_TAB_IDS or active_tab not in _PYQT_TO_CANONICAL:
             active_tab = next(
                 item
                 for item in self.visible_primary_tab_ids()
-                if item not in _UNSHARED_PYQT_TAB_IDS
+                if item in _PYQT_TO_CANONICAL and item not in _UNSHARED_PYQT_TAB_IDS
             )
+        capability_doc = (
+            self._capability_optimization_tab.capability_workspace_document()
+            if hasattr(self, "_capability_optimization_tab")
+            and self._capability_optimization_tab is not None
+            else build_capability_workflow(CapabilityWorkflowInputs())
+        )
         return ExplorerWorkspaceState(
             scenario=self._controls.scenario(),
             club=self._controls.club_spec(),
@@ -310,9 +327,7 @@ class MainWindowFileCommandsMixin:
             simulation=self._simulation_tab.simulation_workspace_state(),
             torque=self._simulation_tab.torque_workspace_state(),
             variation=self._variation_tab.variation_workspace_state(),
-            capability=(
-                self._capability_optimization_tab.capability_workspace_document()
-            ),
+            capability=capability_doc,
             module_order=module_order,
             visible_module_ids=visible,
             active_module_id=_PYQT_TO_CANONICAL[active_tab],
@@ -328,9 +343,16 @@ class MainWindowFileCommandsMixin:
             raise
 
     def _apply_workspace_state_unchecked(self, state: ExplorerWorkspaceState) -> None:
-        shared_order = tuple(_CANONICAL_TO_PYQT[item] for item in state.module_order)
+        primary_ids = set(self.primary_tab_ids())
+        shared_order = tuple(
+            _CANONICAL_TO_PYQT[item]
+            for item in state.module_order
+            if item in _CANONICAL_TO_PYQT and _CANONICAL_TO_PYQT[item] in primary_ids
+        )
         shared_visible = tuple(
-            _CANONICAL_TO_PYQT[item] for item in state.visible_module_ids
+            _CANONICAL_TO_PYQT[item]
+            for item in state.visible_module_ids
+            if item in _CANONICAL_TO_PYQT and _CANONICAL_TO_PYQT[item] in primary_ids
         )
         # The document carries only cross-client modules, while native
         # navigation requires every tab. Keep unshared PyQt6-only tabs where
@@ -345,7 +367,12 @@ class MainWindowFileCommandsMixin:
         )
         order = shared_order + unshared_order
         visible = shared_visible + unshared_visible
-        active = _CANONICAL_TO_PYQT[state.active_module_id]
+        active_candidate = _CANONICAL_TO_PYQT.get(state.active_module_id, "")
+        active = (
+            active_candidate
+            if active_candidate in primary_ids
+            else self.visible_primary_tab_ids()[0]
+        )
         self._controls.apply_workspace_state(
             state.scenario, state.club, dict(state.units)
         )
@@ -353,9 +380,13 @@ class MainWindowFileCommandsMixin:
         self._simulation_tab.apply_simulation_workspace_state(state.simulation)
         self._simulation_tab.apply_torque_workspace_state(state.torque)
         self._variation_tab.apply_variation_workspace_state(state.variation)
-        self._capability_optimization_tab.apply_capability_workspace_document(
-            state.capability
-        )
+        if (
+            hasattr(self, "_capability_optimization_tab")
+            and self._capability_optimization_tab is not None
+        ):
+            self._capability_optimization_tab.apply_capability_workspace_document(
+                state.capability
+            )
         self._simulation_tab.compositor().import_workspace_document(
             workspace_to_document(state.view_workspace)
         )
@@ -379,6 +410,9 @@ class MainWindowFileCommandsMixin:
     def _mark_saved(self, message: str) -> None:
         self._workspace_baseline = self._fingerprint(self._capture_workspace_state())
         self._show_status(message)
+        if hasattr(self, "setWindowTitle"):
+            title = self._workspace_metadata.title
+            self.setWindowTitle(f"Rate of Closure Impact Explorer — {title}")
 
     def _show_status(self, message: str) -> None:
         bar = self.statusBar()
@@ -440,6 +474,11 @@ class MainWindowFileCommandsMixin:
     def _fingerprint(self, state: ExplorerWorkspaceState) -> str:
         document = document_from_state(state, self._workspace_metadata).to_json_dict()
         document.pop("metadata")
+        layout = document.get("layout")
+        if isinstance(layout, dict):
+            layout.pop("active_module_id", None)
+            layout.pop("module_order", None)
+            layout.pop("visible_module_ids", None)
         return json.dumps(document, sort_keys=True, separators=(",", ":"))
 
 

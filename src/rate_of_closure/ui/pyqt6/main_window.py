@@ -24,6 +24,7 @@ from rate_of_closure.ui.pyqt6.app_toolstrip import (
     ApplicationToolstrip,
     ModuleManagerDialog,
 )
+from rate_of_closure.ui.pyqt6.capability_tab import CapabilityOptimizationTab
 from rate_of_closure.ui.pyqt6.club_view import Club3DView
 from rate_of_closure.ui.pyqt6.controls_panel import ControlsPanel
 from rate_of_closure.ui.pyqt6.derivation_view import DerivationView
@@ -41,6 +42,9 @@ from rate_of_closure.ui.pyqt6.main_window_contracts import (
     _METRIC_ROWS,
     _RESULT_ROWS,
     _TAB_HELP_KEYS,
+)
+from rate_of_closure.ui.pyqt6.main_window_file_commands import (
+    MainWindowFileCommandsMixin,
 )
 from rate_of_closure.ui.pyqt6.main_window_layout import (
     PrimaryTabSpec,
@@ -78,13 +82,17 @@ __all__ = ["RateOfClosureMainWindow"]
 
 # Compatibility exports retained for existing shell and help-contract tests.
 __all__ += [
+    "_METRIC_ROWS",
+    "_RESULT_ROWS",
+    "_TAB_HELP_KEYS",
     "_DEFAULT_TAB_IDS",
-    "_NAVIGATION_SETTINGS_APP",
-    "_NAVIGATION_SETTINGS_ORG",
+    "_REQUIRED_TAB_IDS",
     "_NAVIGATION_STATE_KEY",
     "_NAVIGATION_STATE_VERSION",
-    "_REQUIRED_TAB_IDS",
-    "_TAB_HELP_KEYS",
+    "_NAVIGATION_SETTINGS_ORG",
+    "_NAVIGATION_SETTINGS_APP",
+    "NavigationSettings",
+    "explanation_html",
 ]
 
 # ── Theme integration (optional — graceful fallback) ───────────────
@@ -106,6 +114,7 @@ class RateOfClosureMainWindow(
     MainWindowClubMixin,
     WorkspaceLayoutMixin,
     WorkspaceNavigationMixin,
+    MainWindowFileCommandsMixin,
     ThemedWindowMixin,
     QMainWindow,
 ):
@@ -127,6 +136,7 @@ class RateOfClosureMainWindow(
         self._build_application_shell(navigation_settings)
         self._connect_view_signals()
         self._initialize_view_content()
+        self.initialize_workspace_files()
 
     def _create_views(
         self,
@@ -146,6 +156,7 @@ class RateOfClosureMainWindow(
         self._launch_monitor_analytics_tab = LaunchMonitorAnalyticsTab()
         self._neural_model_lab_tab = NeuralModelLabTab()
         self._variation_tab = VariationTab()
+        self._capability_optimization_tab = CapabilityOptimizationTab()
         self._durable_ensemble_tab = DurableEnsembleTab(
             durable_client, self._variation_tab.build_plan
         )
@@ -386,7 +397,10 @@ class RateOfClosureMainWindow(
         super().showEvent(event)
 
     def closeEvent(self, event) -> None:  # type: ignore[no-untyped-def]  # noqa: N802
-        """Stop the animation timers before the window goes away."""
+        """Prompt if unsaved and stop animation timers before closing."""
+        if not self._confirm_destructive_action("quit"):
+            event.ignore()
+            return
         self._persist_primary_navigation()
         self._club_view.stop()
         self._simulation_tab.stop()
@@ -437,3 +451,7 @@ class RateOfClosureMainWindow(
             dock = self._sidekick_status.dock
             if hasattr(dock, "isVisible") and hasattr(dock, "setVisible"):
                 dock.setVisible(not dock.isVisible())
+
+    def set_open_recent_available(self, available: bool, path: str = "") -> None:
+        """Forward recency state to the top application toolstrip."""
+        self._app_toolstrip.set_open_recent_available(available, path)

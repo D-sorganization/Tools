@@ -447,7 +447,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure.json"
     },
     {
-      "content_sha256_lf": "b2ac090ebedd3264ace9f353beae021923b0c44b21d9f0186f28a73bdca59d25",
+      "content_sha256_lf": "31816477dfe46c5393e5609c30932bf314364f2d4e2ee876f78fe818ae352cd6",
       "entry_count": 66,
       "package": "src/rate_of_closure/application",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-application.json"
@@ -477,7 +477,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-simulation.json"
     },
     {
-      "content_sha256_lf": "f93734ec91304a0bf376fd862aa80f3b18b35555223c7cd0b5bf5fe78f75dd5c",
+      "content_sha256_lf": "9fe4d0a800819174e21328b997285d1fef326fb85368caab8ac2cc7c78f2d013",
       "entry_count": 189,
       "package": "src/rate_of_closure/ui",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-ui.json"

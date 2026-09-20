@@ -57,6 +57,19 @@ reachable from any live state and `abandoned` from `parked`.
 - **Summary:** Implements non-spherical curved face geometry with bulge and roll, moving Center of Pressure (COP) kinematics, dynamic lever arm/gear-effect torque, high-frequency face trampoline and hosel bending/torsion modes, and multi-channel energy balance conservation.
 - **Next step:** Push branch `feat/5073-oblique-contact-mechanics`, create PR, and arm auto-merge.
 
+### DL-#4220 · Versioned Native File Commands and Workspace Persistence
+
+- **State:** in_review
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#4220
+- **PR:** not created
+- **Branch:** `feat/issue-4220-rate-of-closure-file-commands`
+- **Paths:** `src/rate_of_closure/ui/pyqt6/main_window_file_commands.py`, `src/rate_of_closure/ui/pyqt6/app_toolstrip.py`, `src/rate_of_closure/ui/pyqt6/main_window.py`, `src/rate_of_closure/ui/pyqt6/workspace_navigation.py`, `tests/rate_of_closure/test_main_window_file_commands.py`
+- **Started:** 2026-09-19
+- **Last verified:** 2026-09-19 (`SELF`; all 27 tests in test_main_window_file_commands.py and test_app_toolstrip.py pass)
+- **Summary:** Native File commands (New, Open, Open Recent, Save, Save As, Import, Export, Close) wired into RateOfClosureMainWindow and ApplicationToolstrip with dirty tracking and destructive action confirmation prompts.
+- **Next step:** Push branch, open PR referencing Fixes #4220, arm auto-merge.
+
 ### DL-#5218 · Camera Putting Launch Monitor for GSPro
 
 - **State:** in_progress

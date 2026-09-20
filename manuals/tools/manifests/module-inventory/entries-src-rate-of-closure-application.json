@@ -410,10 +410,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 4958,
+      "bytes_lf": 4967,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "5b4d83b950b99cf3d8d8317b7725968698c5ff0c0c4a38f46ce1d411cd6087fe",
+      "content_sha256_lf": "199cdb88de09e149d7f6642b479566400fdae281d60dfa8ff261cc286e51bc7c",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-APPLICATION-WORKSPACE-VALIDATION-PY-53B8E7042CD7",
       "language": "python",
@@ -1219,7 +1219,8 @@
         "test_paths": [
           "src/movement_optimizer/tests/test_commands.py",
           "tests/rate_of_closure/test_app_toolstrip.py",
-          "tests/rate_of_closure/test_application_commands.py"
+          "tests/rate_of_closure/test_application_commands.py",
+          "tests/rate_of_closure/test_main_window_file_commands.py"
         ],
         "unit_mentions": [],
         "validation_paths": []

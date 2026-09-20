@@ -6965,6 +6965,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | 2026-09-14 | #5210 | fix(tests): resolve relative fixture imports and calibrate web open budget |
 | 2026-09-19 | #5223 | Bump mirrors-mypy pre-push hook to v1.15.0 for NumPy >= 2.2 stub compatibility (#5223). |
 | 2026-09-19 | #4300 | Clamp File, View, and Tools popovers within constrained viewports using useViewportClampedPopover (#4300). |
+| 2026-09-19 | #4220 | feat(rate-ui): enable versioned file commands and dirty tracking in Rate of Closure |
 ---
 
 <!--
@@ -7600,3 +7601,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-19: Non-Spherical Oblique Contact and Moving Center of Pressure (#5073 / #5260)
 
 - **2026-09-19**: feat(impact, #5073) — Implement curved face geometry (bulge/roll), moving Center of Pressure (COP) kinematics, dynamic lever arm/gear-effect torque, high-frequency face trampoline and hosel bending/torsion modes, and multi-channel energy balance conservation.
+
+## 2026-09-19: Native File Commands and Workspace Persistence (#4220)
+
+- **2026-09-19**: feat(rate-ui, #4220) — Wire native File commands (New, Open, Open Recent, Save, Save As, Import, Export, Close) into RateOfClosureMainWindow and ApplicationToolstrip with dirty tracking and destructive action confirmation prompts.
