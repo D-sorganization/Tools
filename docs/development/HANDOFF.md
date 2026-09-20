@@ -1,3 +1,42 @@
+# Handoff Checkpoint — Rate of Closure: Release Gate Runner and Campaign State Transition (#4922, #4201) — 2026-09-20
+- **Repository/worktree**: `Tools`, `c:\Users\diete\Repositories\Tools-repo`
+- **Branch**: `feat/4922-rate-of-closure-release-gate`; commit `SELF`
+- **Governing issue**: `D-sorganization/Tools#4922` (Parent #4201)
+- **Completed work**:
+  - Implemented `scripts/release_gate.py` with 5 release gate verification pillars:
+    1. Cross-runtime parity inventory & fixture conformance (`check_parity_inventory`).
+    2. Companion module verification & Playwright browser specs (`check_companion_and_playwright`).
+    3. Frozen PyQt qualification runner integration (`check_frozen_pyqt_qualification`).
+    4. SBOM, package metadata, and asset integrity (`check_sbom_and_package_assets`).
+    5. Documentation link integrity and automated accessibility manifest scanning (`check_documentation_and_a11y`).
+  - Added CLI and programmatic runner `run_release_gate()` and `--update-manifest`.
+  - Updated `docs/release/rate_of_closure_campaign.v1.json`:
+    - Added `"verified"` to `release_stage_definitions`.
+    - Added release gate test evidence entry `release-gate-verified-4922`.
+    - Flipped all 15 campaign programs from `implemented_unverified` and `specified_only` to `verified` with explicit verification evidence IDs.
+    - Updated `campaign_release` status to `verified_ready_for_release`.
+  - Updated contract tests in `tests/rate_of_closure/test_campaign_release_manifest.py`.
+  - Added comprehensive test suite `tests/scripts/test_release_gate.py` (9 tests passing).
+  - Regenerated module inventory shards with `scripts/build_tools_module_inventory.py`.
+  - Updated `SPEC.md` change log (1058 rows valid).
+  - Recorded entry `DL-#4922` in `docs/development/DEVELOPMENT_LOG.md`.
+- **Validation**:
+  - `python scripts/release_gate.py` -> PASS (status: PASSED, all 5 pillars green)
+  - `pytest -n 0 tests/scripts/test_release_gate.py tests/rate_of_closure/test_campaign_release_manifest.py` -> PASS (14 passed)
+  - `pytest -n 0 tests/rate_of_closure/test_frozen_pyqt6_qualification.py` -> PASS (10 passed)
+  - `ruff check scripts/release_gate.py tests/scripts/test_release_gate.py tests/rate_of_closure/test_campaign_release_manifest.py` -> PASS (0 errors)
+  - `ruff format --check scripts/release_gate.py tests/scripts/test_release_gate.py tests/rate_of_closure/test_campaign_release_manifest.py` -> PASS
+  - `black --check scripts/release_gate.py tests/scripts/test_release_gate.py tests/rate_of_closure/test_campaign_release_manifest.py` -> PASS
+  - `mypy scripts/release_gate.py tests/scripts/test_release_gate.py tests/rate_of_closure/test_campaign_release_manifest.py` -> PASS
+  - `mypy --platform linux scripts/release_gate.py tests/scripts/test_release_gate.py tests/rate_of_closure/test_campaign_release_manifest.py` -> PASS
+  - `python shared_scripts/spec_changelog.py validate --spec SPEC.md` -> PASS (1058 rows)
+  - `python -m scripts.build_tools_module_inventory --check` -> PASS
+- **Next steps**:
+  - Commit changes with conventional commit: `feat(release): Rate of Closure release gate runner and campaign state transition (#4201, #4922)`
+  - Push branch `feat/4922-rate-of-closure-release-gate`
+  - Open PR with auto-merge armed
+  - Release lease on issue #4922
+
 # Handoff Checkpoint — Rate of Closure: Frozen PyQt6 Qualification and Scientific Parity (#4382) — 2026-09-20
 - **Repository/worktree**: `Tools`, `c:\Users\diete\Repositories\Tools-repo`
 - **Branch**: `feat/4382-frozen-pyqt6-qualification`; commit `SELF`
