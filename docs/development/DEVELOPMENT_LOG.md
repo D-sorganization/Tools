@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#4186 · Convention Selector and Side-by-Side Launch-Monitor Comparison Workspace
+
+- **State:** in_progress
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#4186 (parent #4180, includes #4187)
+- **PR:** #5267
+- **Branch:** `feat/4186-convention-comparison-workspace`
+- **Paths:** `src/shared/python/swing_sim/conventions/`, `src/rate_of_closure/ui/pyqt6/`, `src/rate_of_closure/web/`, `docs/specs/LAUNCH_MONITOR_CONVENTIONS.md`
+- **Started:** 2026-09-19
+- **Last verified:** 2026-09-19 (Python 14 convention + 6 workspace tests pass; vitest 11 convention + 9 workspace tests pass; 84 definitions match SHA-256 byte-for-byte)
+- **Summary:** Built side-by-side TrackMan vs Foresight comparison workspace in PyQt6 and React with signed deltas, typed not-comparable reasons, group filtering, full-text search, CSV/JSON exports, extended 28-parameter matrix across 5 groups, and complete accessibility coverage.
+- **Next step:** Push branch, open PR, and arm auto-merge.
+
 ### DL-#4918 · Readiness P2: Content-Based Visual Baseline Gate & Main Re-Baseline
 
 - **State:** in_review
@@ -95,6 +108,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Last verified:** 2026-09-19 (`SELF`; mirrors-mypy bumped from v1.13.0 to v1.15.0 to support NumPy >= 2.2 stubs without cache serializer placeholder crash; pre-push hook and unit tests passed)
 - **Summary:** Pre-push mypy hook crashed on numpy-importing files when the isolated hook environment carried numpy >= 2.2 because mypy 1.13's cache serializer failed on newer type syntax. Bumped mirrors-mypy to v1.15.0 and added contract unit test.
 - **Next step:** Shipped via PR #5254.
+>>>>>>> origin/main
 
 ### DL-#5073 · Non-Spherical Oblique Contact Mechanics and Moving Center of Pressure
 

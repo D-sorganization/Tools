@@ -483,8 +483,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-simulation.json"
     },
     {
-      "content_sha256_lf": "f93734ec91304a0bf376fd862aa80f3b18b35555223c7cd0b5bf5fe78f75dd5c",
-      "entry_count": 189,
+      "content_sha256_lf": "f3f1f5a20198f59779aec503fe326a2d77cf151825b300829d6b127e73809dce",
+      "entry_count": 190,
       "package": "src/rate_of_closure/ui",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-ui.json"
     },
@@ -525,8 +525,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src.json"
     },
     {
-      "content_sha256_lf": "9d561461a74aee9d3d09ef745e5f192478f7f4b4a1492c03c39e75eeb6fb8162",
-      "entry_count": 180,
+      "content_sha256_lf": "a1f70d469a23aa6003fd7d48523fe8cde648cc38339923a2aca831a96f55618b",
+      "entry_count": 182,
       "package": "src/rate_of_closure/web/src/components",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-components.json"
     },
@@ -537,8 +537,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-hooks.json"
     },
     {
-      "content_sha256_lf": "9aa62f136c9588d1423e81da4ca5f7cb25524405988f1e5c899f6cb7e1b47956",
-      "entry_count": 401,
+      "content_sha256_lf": "70e122dbf83afc5acc0b21c63eb0966f5bbd5603930aa0133993495cefb08517",
+      "entry_count": 404,
       "package": "src/rate_of_closure/web/src/model",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-model.json"
     },
@@ -771,8 +771,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim.json"
     },
     {
-      "content_sha256_lf": "486dfbcd8da1589ff8b5838d53ae212a88bb2b9b86f340fb65b95f7a61065f49",
-      "entry_count": 4,
+      "content_sha256_lf": "af4996f4f16449a6d1296a409b0a489689bc896ee51cf00f10aac88b840fd2a7",
+      "entry_count": 7,
       "package": "src/shared/python/swing_sim/conventions",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-conventions.json"
     },
