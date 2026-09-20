@@ -116,10 +116,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 11421,
+      "bytes_lf": 11559,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "2131b1ab8e0e26ae036d5852ef59d0268a6b2c21cec95932349b28dd51db1b5a",
+      "content_sha256_lf": "f85cebb034666465ee63c233b3d1c09e040e9c01b336e4278d46d01fc4e80f44",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-PACKAGING-ENTRYPOINT-PY-9B0EE598C43C",
       "language": "python",

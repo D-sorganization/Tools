@@ -123,7 +123,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
     },
     {
-      "content_sha256_lf": "b9314784edc0555f64124fd12d4f68a59fdeb454b211c2dc0d4f3ac97d2f6fb2",
+      "content_sha256_lf": "dd319af467be29106663b20bc4e6d829e0e75fb9235f17c71d687dd7fdf18f66",
       "entry_count": 5,
       "package": "rust_core/data-processor-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
@@ -159,8 +159,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "05f93c3ce9f982f4848da8b68e70adb87b8373c71dce16581ac451a2935b984d",
-      "entry_count": 106,
+      "content_sha256_lf": "5a07e558985c2a70211faec6cfc90806af79ac5c1b5cbbf289e7727ce6796b55",
+      "entry_count": 107,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
     },
@@ -459,7 +459,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-club.json"
     },
     {
-      "content_sha256_lf": "a1ebbef714f26a32cf40ff230accc8bdbe238ca6c38ca93fbd1668198bdf605a",
+      "content_sha256_lf": "99c8ad3409e2f78310aaea06bdbe4d5c8d4162aea9bbb653f3245449c0beadc1",
       "entry_count": 5,
       "package": "src/rate_of_closure/packaging",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-packaging.json"

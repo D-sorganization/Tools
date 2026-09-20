@@ -139,10 +139,14 @@ def run_canonical_simulation(
         else 0.0
     )
     attack_angle = (
-        float(run.delivery.dplane.attack_angle_deg) if run.delivery is not None else 0.0
+        float(run.delivery.dplane.attack_angle_deg)
+        if run.delivery is not None and run.delivery.dplane.attack_angle_deg is not None
+        else 0.0
     )
     dynamic_loft = (
-        float(run.delivery.dplane.dynamic_loft_deg) if run.delivery is not None else 0.0
+        float(run.delivery.dplane.dynamic_loft_deg)
+        if run.delivery is not None and run.delivery.dplane.dynamic_loft_deg is not None
+        else 0.0
     )
 
     result: dict[str, Any] = {
