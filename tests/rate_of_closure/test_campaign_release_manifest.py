@@ -30,6 +30,7 @@ EXPECTED_STAGES = {
     "implemented_on_feature_stack",
     "protected_merged_to_parent",
     "implemented_unverified",
+    "verified",
     "released_to_main",
 }
 
@@ -76,11 +77,15 @@ def test_zero_programs_remain_on_feature_stack() -> None:
 
     for p in programs:
         stage = p.get("delivery_stage")
-        assert stage in EXPECTED_STAGES, (
-            f"Issue #{p['issue']} has invalid stage {stage}"
-        )
-        # All active programs must be implemented_unverified or specified_only
-        assert stage in {"implemented_unverified", "specified_only", "released_to_main"}
+        err_msg = f"Issue #{p['issue']} has invalid stage {stage}"
+        assert stage in EXPECTED_STAGES, err_msg
+        # Active programs must be verified, implemented_unverified, or specified_only
+        assert stage in {
+            "implemented_unverified",
+            "verified",
+            "specified_only",
+            "released_to_main",
+        }
 
 
 def test_every_program_has_main_reconciliation() -> None:
@@ -90,22 +95,20 @@ def test_every_program_has_main_reconciliation() -> None:
     for p in programs:
         rec = p.get("main_reconciliation")
         assert isinstance(rec, dict), f"Issue #{p['issue']} missing main_reconciliation"
-        assert DATE_PATTERN.match(rec["as_of"]), (
-            f"Issue #{p['issue']} invalid as_of date"
-        )
+        date_msg = f"Issue #{p['issue']} invalid as_of date"
+        assert DATE_PATTERN.match(rec["as_of"]), date_msg
         assert rec.get("source"), f"Issue #{p['issue']} missing reconciliation source"
 
         if "main_sha" in rec and rec["main_sha"] is not None:
-            assert HEX_SHA_PATTERN.match(rec["main_sha"]), (
-                f"Issue #{p['issue']} invalid main_sha"
-            )
+            sha_msg = f"Issue #{p['issue']} invalid main_sha"
+            assert HEX_SHA_PATTERN.match(rec["main_sha"]), sha_msg
 
 
 def test_program_4130_re_landed_via_pr_4945() -> None:
     manifest = _load_campaign()
     p4130 = next((p for p in manifest.get("programs", []) if p["issue"] == 4130), None)
     assert p4130 is not None
-    assert p4130["delivery_stage"] == "implemented_unverified"
+    assert p4130["delivery_stage"] in {"implemented_unverified", "verified"}
 
     rec = p4130["main_reconciliation"]
     assert rec["reference"] == "https://github.com/D-sorganization/Tools/pull/4945"

@@ -1,7 +1,7 @@
 {
   "schema_version": "launch-monitor-conventions/v1",
-  "definition_count": 24,
-  "canonical_json_sha256": "39be5a0d904116afe4791bb497ec168ecd9cd064317a616e3290bce1c5bea01b",
+  "definition_count": 84,
+  "canonical_json_sha256": "5fbcd0ce28e574feaf0455abaa512d9f88a122faf8847722744b148e2fc68759",
   "cases": [
     {
       "convention_id": "app_native",

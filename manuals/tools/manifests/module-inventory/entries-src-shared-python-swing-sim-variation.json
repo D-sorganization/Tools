@@ -3252,6 +3252,77 @@
     },
     {
       "authority_status": "provisional",
+      "bytes_lf": 5235,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "38885c125c428ba6f877430506eeb278ef5bc6096b5eb4a8a64910d71fcc95e9",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-NORMALITY-PY-A7CBEA00FAAD",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/normality.py",
+      "purpose": "Bivariate normality diagnostic and convex hull fallback display (#4253 item c).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "NormalityDiagnostic",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "convex_hull_2d",
+            "signature": "points: np.ndarray"
+          },
+          {
+            "kind": "function",
+            "name": "mardia_bivariate_normality",
+            "signature": "points: np.ndarray, alpha: float=0.05"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_normality.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 11345,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
@@ -4197,6 +4268,244 @@
     },
     {
       "authority_status": "provisional",
+      "bytes_lf": 10510,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "da34f0028c48010e8042efe5ecd6dbe31b6d6748b565218ec0a5af023459a398",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-SOBOL-SENSITIVITY-PY-08F10C4BBD47",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/sobol_sensitivity.py",
+      "purpose": "Sobol first-order and total-order sensitivity indices via Saltelli sampling (#4253).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "analyze_sobol",
+            "signature": "observations: SobolObservations, n_bootstrap: int=100, alpha: float=0.05, seed: int=42"
+          },
+          {
+            "kind": "function",
+            "name": "generate_saltelli_design",
+            "signature": "factors: tuple[SobolFactor, ...], base_samples: int=_MIN_ADEQUATE_BASE_SAMPLES, seed: int=0"
+          },
+          {
+            "kind": "function",
+            "name": "run_sobol_sensitivity",
+            "signature": "plan: VariationPlan, factors: tuple[SobolFactor, ...] | None=None, base_samples: int=_MIN_ADEQUATE_BASE_SAMPLES, output_names: tuple[str, ...] | None=None, n_bootstrap: int=100, alpha: float=0.05"
+          },
+          {
+            "kind": "re-export",
+            "name": "SOBOL_REPORT_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SOBOL_REPORT_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SaltelliDesign",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SobolEstimate",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SobolFactor",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SobolObservations",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SobolOutput",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SobolReport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SobolRunCountGuidance",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "sobol_run_count_guidance",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_sobol_sensitivity.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 6503,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "710c16a126e4119d6ed3113206a3b85feb9c16b8126c1c4c5f70ffba06eaa99f",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-SOBOL-TYPES-PY-66A29CD15A69",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/sobol_types.py",
+      "purpose": "Data structures and types for Sobol sensitivity and Saltelli sampling (#4253).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SaltelliDesign",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SobolEstimate",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SobolFactor",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SobolObservations",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SobolOutput",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SobolReport",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SobolRunCountGuidance",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SOBOL_REPORT_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SOBOL_REPORT_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_CONSTANT_TOLERANCE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_MIN_ADEQUATE_BASE_SAMPLES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_MIN_MARGINAL_BASE_SAMPLES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "sobol_run_count_guidance",
+            "signature": "factor_count: int, base_samples: int=_MIN_ADEQUATE_BASE_SAMPLES"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 15988,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
@@ -4426,6 +4735,68 @@
         "unit_mentions": [
           "s"
         ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3851,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "c8cb5302df3de59a03a431036c66eb7d6e91093e15ad63d39407023fa6140251",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-TRUNCATION-ANALYSIS-PY-72E2910319D1",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/variation/truncation_analysis.py",
+      "purpose": "Truncation-induced mean shift and skewness analysis (#4253 item d).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "TruncationShiftNote",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "detect_truncation_mean_shifts",
+            "signature": "dataset: VariationDataset, shift_threshold_fraction: float=0.05"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_truncation_analysis.py"
+        ],
+        "unit_mentions": [],
         "validation_paths": []
       }
     }
