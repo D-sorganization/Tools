@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5072 · Measured Grip Impedance Dynamics, Passivity and FRF Agreement
+
+- **State:** in_review
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#5072 (IA-T3, parent #5068)
+- **PR:** #5259
+- **Branch:** `feat/5072-prestressed-shaft-dynamics`
+- **Paths:** `src/shared/python/golf_club/`, `tests/shared/python/golf_club/`, `docs/development/impact-acoustics/MEASURED_GRIP_IMPEDANCE.md`, `SPEC.md`
+- **Started:** 2026-09-19
+- **Last verified:** 2026-09-19 (all 67 grip/shaft dynamics tests passing; passivity Hermitian real-part audit, Gram-factor PSD fitting, full/reduced FRF agreement under quantified uncertainty, and GripBoundary consumer integration verified)
+- **Summary:** Delivers measured grip translation and rotation impedance format (`golf_club.measured_grip_impedance/1`), passivity verification, continuous passive Gram-factor model identification, full/reduced FRF magnitude and phase agreement within $k\sigma$ uncertainty intervals, antiresonance floor handling, and consumer integration into `GripBoundary` and `simulate_coupled_impact`.
+- **Next step:** Push branch `feat/5072-prestressed-shaft-dynamics`, qualify CI on PR #5259, and auto-merge.
+
 ### DL-#4922 · Rate of Closure: Release Gate Runner and Campaign State Transition
 
 - **State:** in_progress
@@ -95,6 +108,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Last verified:** 2026-09-19 (all 157 vibroacoustic radiation, observer array, ball dipole, psychoacoustic, and integration tests passing; 0 ruff/black/mypy issues)
 - **Summary:** Implements transient vibroacoustic radiation solver with retarded-time Rayleigh surface integral, modal radiation transfer, observer location directivity and microphone arrays, ball impact acoustic dipole radiation, standardized psychoacoustic metrics (ISO 532-1 loudness, DIN 45692 sharpness, Leq, SEL), and calibrated pressure recordings.
 - **Next step:** Push branch `feat/5074-transient-vibroacoustic-solver`, open PR, and arm auto-merge.
+>>>>>>> origin/main
 
 ### DL-#5218 · Camera Putting Launch Monitor for GSPro
 
