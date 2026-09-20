@@ -1,4 +1,18 @@
-# Impact Program Handoff Checkpoint — 2026-09-10
+# Impact Program Handoff Checkpoint — 2026-09-19 (IA-T4 #5073)
+
+- Repository/worktree: Tools, C:/Users/diete/Repositories/Tools-repo.
+  Branch `feat/5073-oblique-contact-mechanics`. Governing issue Tools #5073 (IA-T4)
+  and parent program #5068.
+- Implemented non-spherical oblique contact mechanics with 3D curved face geometry
+  (bulge and roll curvature), moving Center of Pressure (COP) kinematics, dynamic
+  lever arm to club head COM and gear-effect torque generation, high-frequency
+  face trampoline and hosel bending/torsion modes with generalized force coupling,
+  and multi-channel energy balance conservation.
+- All 9 targeted unit tests in `test_oblique_contact_mechanics.py` pass cleanly in 2.53s.
+- Linters, formatters, and mypy pass with 0 errors across all touched files.
+- Module inventory refreshed and SPEC.md change log updated and validated.
+
+# Historical Impact Program Handoff Checkpoint — 2026-09-10
 
 - Repository/worktree: Tools, C:/Users/diete/Repositories/Tools-impact-friction.
   Branch feat/5073-friction-trajectory; checkpoint SELF; PR #5162 targets main

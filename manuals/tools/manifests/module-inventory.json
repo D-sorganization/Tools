@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "e6d9aff27ff099c4444367010f9b88d52834244c0300c21e6cedb46eb6f4dfd9",
+      "content_sha256_lf": "c8194c68f41d0dbd404b914c032e3df684fb5f1f0b8c17d332e8589f20f472dd",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -795,8 +795,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-ground.json"
     },
     {
-      "content_sha256_lf": "cbe544a92c2fa2460385b2ce99e9152faed6759d5e858660b991062958abdc15",
-      "entry_count": 23,
+      "content_sha256_lf": "072018983d218b03bcb4dcb401c5df84f0455f33a75c4840cba271e08e5471a2",
+      "entry_count": 27,
       "package": "src/shared/python/swing_sim/impact",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-impact.json"
     },

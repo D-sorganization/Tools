@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5073 · Non-Spherical Oblique Contact Mechanics and Moving Center of Pressure
+
+- **State:** in_progress
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#5073 (IA-T4, parent #5068)
+- **PR:** not created
+- **Branch:** `feat/5073-oblique-contact-mechanics`
+- **Paths:** `src/shared/python/swing_sim/impact/`, `tests/shared/python/golf_club/`, `SPEC.md`
+- **Started:** 2026-09-19
+- **Last verified:** 2026-09-19 (all 9 oblique contact, moving COP, and face/hosel modal tests passing; strict energy balance and observer invariance verified)
+- **Summary:** Implements non-spherical curved face geometry with bulge and roll, moving Center of Pressure (COP) kinematics, dynamic lever arm/gear-effect torque, high-frequency face trampoline and hosel bending/torsion modes, and multi-channel energy balance conservation.
+- **Next step:** Push branch `feat/5073-oblique-contact-mechanics`, create PR, and arm auto-merge.
+
 ### DL-#5218 · Camera Putting Launch Monitor for GSPro
 
 - **State:** in_progress
