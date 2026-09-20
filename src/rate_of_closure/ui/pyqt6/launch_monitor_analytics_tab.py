@@ -48,6 +48,9 @@ from rate_of_closure.launch_monitor_private_corpus import (
 from rate_of_closure.ui.pyqt6.launch_monitor_analysis_results import (
     render_analysis_result,
 )
+from rate_of_closure.ui.pyqt6.launch_monitor_comparison_workspace import (
+    LaunchMonitorComparisonWorkspace,
+)
 from rate_of_closure.ui.pyqt6.launch_monitor_linked_scatter_panel import (
     LaunchMonitorLinkedScatterPanel,
 )
@@ -122,6 +125,9 @@ class LaunchMonitorAnalyticsTab(QWidget):
         self.convention_combo.addItem(
             "Foresight-Comparable", ConventionId.FORESIGHT_COMPARABLE
         )
+        self.convention_combo.addItem(
+            "Compare TrackMan / Foresight", "compare_trackman_foresight"
+        )
         self.convention_evidence = QLabel()
         self.convention_evidence.setWordWrap(True)
         self.convention_evidence.setOpenExternalLinks(True)
@@ -195,6 +201,7 @@ class LaunchMonitorAnalyticsTab(QWidget):
         self.details.setAccessibleName("Launch Monitor Analysis Traceability")
         self.player_workspace = LaunchMonitorPlayerWorkspace()
         self.performance_workspace = LaunchMonitorPerformanceWorkspace()
+        self.comparison_workspace = LaunchMonitorComparisonWorkspace()
         output_widget = QWidget()
         output_layout = QVBoxLayout(output_widget)
         output_layout.setContentsMargins(0, 0, 0, 0)
@@ -203,6 +210,7 @@ class LaunchMonitorAnalyticsTab(QWidget):
         output_layout.addWidget(self.details)
         output_layout.addWidget(self.player_workspace)
         output_layout.addWidget(self.performance_workspace)
+        output_layout.addWidget(self.comparison_workspace)
         self.output_scroll = QScrollArea()
         self.output_scroll.setWidgetResizable(True)
         self.output_scroll.setFrameShape(QFrame.Shape.NoFrame)
@@ -309,6 +317,7 @@ class LaunchMonitorAnalyticsTab(QWidget):
         self.details.clear()
         self.player_workspace.set_dataset(self.frame, self.source_name, numeric)
         self.performance_workspace.set_dataset(self.frame, self.source_name, numeric)
+        self.comparison_workspace.set_dataset(self.frame, self.source_name, numeric)
         self._refresh_preview()
         self._refresh_convention_evidence()
 
@@ -337,6 +346,13 @@ class LaunchMonitorAnalyticsTab(QWidget):
 
     def _refresh_convention_evidence(self) -> None:
         convention = self.convention_combo.currentData()
+        if convention == "compare_trackman_foresight":
+            self.convention_evidence.setText(
+                "<b>Compare TrackMan / Foresight</b>: "
+                "Side-by-side comparison active below. "
+                "Non-equivalent quantities report typed comparability reasons."
+            )
+            return
         parameter_text = self.outcome_combo.currentText()
         try:
             parameter = ParameterId(parameter_text)
