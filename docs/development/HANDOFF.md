@@ -17,23 +17,151 @@
 - **Next steps**:
   - Push branch, create PR with `Fixes #4918` and `rate-visual-exemption: lockstep visual evidence gate content-based refactoring` trailer, arm auto-merge, and release lease.
 
+# Impact Program Handoff Checkpoint — 2026-09-19 (IA-T3 #5072)
+
+- Repository/worktree: Tools, C:/Users/diete/Repositories/Tools-repo.
+  Branch `feat/5072-prestressed-shaft-dynamics`. Governing issue Tools #5072 (IA-T3)
+  and parent program #5068.
+- Implemented versioned explicit measured grip translation/rotation impedance
+  (`golf_club.measured_grip_impedance/1`), strict passivity auditing (Hermitian
+  real part >= 0), passive Gram-factor model identification ($M, C, K \succeq 0$),
+  full/reduced FRF magnitude and phase agreement under quantified uncertainty,
+  antiresonance floor handling, and consumer integration into `GripBoundary` and
+  `simulate_coupled_impact`.
+- All 67 targeted grip/shaft dynamics tests pass (including 11 new tests in
+  `test_measured_grip_impedance.py`).
+- Technical reference: `docs/development/impact-acoustics/MEASURED_GRIP_IMPEDANCE.md`.
+
+# Handoff Checkpoint — Rate of Closure: Release Gate Runner and Campaign State Transition (#4922, #4201) — 2026-09-20
+- **Repository/worktree**: `Tools`, `c:\Users\diete\Repositories\Tools-repo`
+- **Branch**: `feat/4922-rate-of-closure-release-gate`; commit `SELF`
+- **Governing issue**: `D-sorganization/Tools#4922` (Parent #4201)
+- **Completed work**:
+  - Implemented `scripts/release_gate.py` with 5 release gate verification pillars:
+    1. Cross-runtime parity inventory & fixture conformance (`check_parity_inventory`).
+    2. Companion module verification & Playwright browser specs (`check_companion_and_playwright`).
+    3. Frozen PyQt qualification runner integration (`check_frozen_pyqt_qualification`).
+    4. SBOM, package metadata, and asset integrity (`check_sbom_and_package_assets`).
+    5. Documentation link integrity and automated accessibility manifest scanning (`check_documentation_and_a11y`).
+  - Added CLI and programmatic runner `run_release_gate()` and `--update-manifest`.
+  - Updated `docs/release/rate_of_closure_campaign.v1.json`:
+    - Added `"verified"` to `release_stage_definitions`.
+    - Added release gate test evidence entry `release-gate-verified-4922`.
+    - Flipped all 15 campaign programs from `implemented_unverified` and `specified_only` to `verified` with explicit verification evidence IDs.
+    - Updated `campaign_release` status to `verified_ready_for_release`.
+  - Updated contract tests in `tests/rate_of_closure/test_campaign_release_manifest.py`.
+  - Added comprehensive test suite `tests/scripts/test_release_gate.py` (9 tests passing).
+  - Regenerated module inventory shards with `scripts/build_tools_module_inventory.py`.
+  - Updated `SPEC.md` change log (1058 rows valid).
+  - Recorded entry `DL-#4922` in `docs/development/DEVELOPMENT_LOG.md`.
+- **Validation**:
+  - `python scripts/release_gate.py` -> PASS (status: PASSED, all 5 pillars green)
+  - `pytest -n 0 tests/scripts/test_release_gate.py tests/rate_of_closure/test_campaign_release_manifest.py` -> PASS (14 passed)
+  - `pytest -n 0 tests/rate_of_closure/test_frozen_pyqt6_qualification.py` -> PASS (10 passed)
+  - `ruff check scripts/release_gate.py tests/scripts/test_release_gate.py tests/rate_of_closure/test_campaign_release_manifest.py` -> PASS (0 errors)
+  - `ruff format --check scripts/release_gate.py tests/scripts/test_release_gate.py tests/rate_of_closure/test_campaign_release_manifest.py` -> PASS
+  - `black --check scripts/release_gate.py tests/scripts/test_release_gate.py tests/rate_of_closure/test_campaign_release_manifest.py` -> PASS
+  - `mypy scripts/release_gate.py tests/scripts/test_release_gate.py tests/rate_of_closure/test_campaign_release_manifest.py` -> PASS
+  - `mypy --platform linux scripts/release_gate.py tests/scripts/test_release_gate.py tests/rate_of_closure/test_campaign_release_manifest.py` -> PASS
+  - `python shared_scripts/spec_changelog.py validate --spec SPEC.md` -> PASS (1058 rows)
+  - `python -m scripts.build_tools_module_inventory --check` -> PASS
+- **Next steps**:
+  - Commit changes with conventional commit: `feat(release): Rate of Closure release gate runner and campaign state transition (#4201, #4922)`
+  - Push branch `feat/4922-rate-of-closure-release-gate`
+  - Open PR with auto-merge armed
+  - Release lease on issue #4922
+
+# Handoff Checkpoint — Rate of Closure: Frozen PyQt6 Qualification and Scientific Parity (#4382) — 2026-09-20
+- **Repository/worktree**: `Tools`, `c:\Users\diete\Repositories\Tools-repo`
+- **Branch**: `feat/4382-frozen-pyqt6-qualification`; commit `SELF`
+- **Governing issue**: `D-sorganization/Tools#4382` (Parent Epic #4377)
+- **Completed work**:
+  - Implemented explicit PyInstaller specification `rate_of_closure.spec` and hook `hook-rate_of_closure.py` under `src/rate_of_closure/packaging/` without reliance on repo root `_bootstrap.py` or dynamic registration.
+  - Implemented standalone entry point `src/rate_of_closure/packaging/entrypoint.py` supporting CLI probes and headless executions: `--probe-capabilities`, `--smoke-test`, `--run-canonical-simulation`, `--execute-ground-study`, `--offscreen`, and interactive GUI launch.
+  - Implemented build wrapper `src/rate_of_closure/packaging/build_artifact.py` and updated `src/rate_of_closure/build_executable.py` to target the frozen packaging pipeline.
+  - Built production Windows one-folder PyQt6 bundle `RateOfClosureExplorer` in `dist/RateOfClosureExplorer`.
+  - Implemented qualification harness `src/rate_of_closure/packaging/qualify_frozen.py` checking:
+    1. Artifact hygiene (no `.git`, `.pyc`, build leftovers).
+    2. Explicit capability probe (reporting Matplotlib/SciPy, graceful optional-Rust messaging, and explicitly unsupported PyQt direct-worker restart recovery).
+    3. Headless offscreen smoke test (`--smoke-test`).
+    4. Deterministic canonical simulation parity (`--run-canonical-simulation`).
+    5. Headless Ground Study execution (`--execute-ground-study`) verifying byte-for-byte parity against golden fixture `regional_ground_execution_result_golden_v1.json`.
+    6. Relocated directory handling (testing execution in paths containing spaces and Unicode, executed from an unrelated temporary CWD).
+  - Added comprehensive test suite `tests/rate_of_closure/test_frozen_pyqt6_qualification.py` (10 passed in 29s).
+  - Updated `SPEC.md` change log (validated via `shared_scripts/spec_changelog.py`).
+  - Regenerated module inventory shard `manuals/tools/manifests/module-inventory/entries-src-rate-of-closure.json`.
+  - Added `DL-#4382` in `docs/development/DEVELOPMENT_LOG.md`.
+- **Validation**:
+  - `pytest -n 0 tests/rate_of_closure/test_frozen_pyqt6_qualification.py` -> PASS (10 passed)
+  - `python src/rate_of_closure/packaging/qualify_frozen.py` -> PASS (status: qualified)
+  - `ruff check src/rate_of_closure/packaging/ tests/rate_of_closure/test_frozen_pyqt6_qualification.py src/rate_of_closure/build_executable.py` -> PASS (0 errors)
+  - `ruff format --check src/rate_of_closure/packaging/ tests/rate_of_closure/test_frozen_pyqt6_qualification.py src/rate_of_closure/build_executable.py` -> PASS
+  - `black --check src/rate_of_closure/packaging/ tests/rate_of_closure/test_frozen_pyqt6_qualification.py src/rate_of_closure/build_executable.py` -> PASS
+  - `mypy src/rate_of_closure/packaging/ src/rate_of_closure/build_executable.py tests/rate_of_closure/test_frozen_pyqt6_qualification.py` -> PASS
+  - `python shared_scripts/spec_changelog.py validate --spec SPEC.md` -> PASS (1057 rows)
+  - `python -m scripts.build_tools_module_inventory --check` -> PASS
+- **Next steps**:
+  - Commit changes with conventional commit: `feat(packaging): frozen PyQt6 qualification and scientific parity (#4382)`
+  - Push branch `feat/4382-frozen-pyqt6-qualification`
+  - Open PR with visual exemption reason: `rate-visual-exemption: non-visual frozen packaging and headless qualification harness`
+  - Enable auto-merge squash
+  - Release lease on issue #4382
+
+# Impact Program Handoff Checkpoint — 2026-09-19 (IA-T5 #5074)
+
+- Repository/worktree: Tools, C:/Users/diete/Repositories/Tools-repo.
+  Branch `feat/5074-transient-vibroacoustic-solver`. Governing issue Tools #5074 (IA-T5)
+  and parent program #5068.
+- Implemented transient vibroacoustic radiation solver with retarded-time Rayleigh surface
+  integral, boundary radiating surface mesh with element resolution convergence checks,
+  modal radiation transfer and superposition, multi-microphone arrays, held-out receiver comparison,
+  ball impact acoustic dipole radiation, standardized psychoacoustics (ISO 532-1 stationary loudness,
+  DIN 45692 spectral sharpness, reference calibration fixtures, SPL, Leq, SEL), and calibrated
+  pressure recordings with SHA-256 provenance binding and phase-sensitive timebase synchronization.
+- All 157 targeted unit & integration tests pass cleanly in ~3.7s.
+- Pre-commit checks (ruff check, ruff format, black, mypy) pass with 0 errors across all touched files.
+- Module inventory refreshed and validated (`python -m scripts.build_tools_module_inventory --check`).
+- SPEC.md change log updated and validated (`python shared_scripts/spec_changelog.py validate --spec SPEC.md`).
+- Documentation: `docs/development/impact-acoustics/TRANSIENT_VIBROACOUSTICS.md`.
+
+# Handoff Checkpoint — Rate UI Top-Toolstrip Popover Viewport Clamping (#4300) — 2026-09-19
+
+- **Repository/worktree**: `Tools`, `c:\Users\diete\Repositories\Tools-repo`
+- **Branch**: `fix/issue-4300-toolstrip-popover-viewport-clamping`; commit `SELF`; PR: https://github.com/D-sorganization/Tools/pull/5255
+- **Governing issue**: `D-sorganization/Tools#4300` (P2)
+- **Completed work**:
+  - Wired existing `useViewportClampedPopover` hook into `FileMenu`, `ViewMenu`, and `ToolsMenu` in `src/rate_of_closure/web/src/components/AppToolstrip.tsx`.
+  - Extracted `ToolsMenu` component to cleanly isolate popover state and keep functions under 50 lines.
+  - Added unit test in `src/rate_of_closure/web/src/components/AppToolstrip.test.tsx` verifying popover translation under constrained (520 px) viewports.
+  - Added deterministic Playwright E2E test in `src/rate_of_closure/web/e2e/toolstrip-popover-viewport.spec.ts` verifying File, View, and Tools popovers remain completely inside the 520x900 viewport without horizontal document overflow.
+  - Regenerated module inventory shard `entries-src-rate-of-closure-web-src-components.json`.
+  - Updated `SPEC.md` changelog row for `#4300`.
+  - Updated `docs/development/DEVELOPMENT_LOG.md` with active entry `DL-#4300`.
+- **Validation**:
+  - `npx vitest run src/components/AppToolstrip.test.tsx` -> PASS (6 passed)
+  - `npx playwright test e2e/toolstrip-popover-viewport.spec.ts --project=chromium-desktop` -> PASS (2 passed)
+  - `npm run lint` -> PASS (0 errors, 0 warnings)
+  - `python -m scripts.build_tools_module_inventory --check` -> PASS
+  - `python shared_scripts/spec_changelog.py validate --spec SPEC.md` -> PASS (1053 rows)
+- **Next steps**:
+  - Verify CI passes on PR #5255 and auto-merge.
+
 # Handoff Checkpoint — Pre-push Mypy Hook NumPy Compatibility (#5223) — 2026-09-19
 
 - **Repository/worktree**: `Tools`, `c:\Users\diete\Repositories\Tools-repo`
-- **Branch**: `fix/issue-5223-bump-mypy-precommit-hook`; commit `SELF`; PR: https://github.com/D-sorganization/Tools/pull/5254
+- **Branch**: `fix/issue-5223-bump-mypy-precommit-hook`; commit `SELF`; PR: https://github.com/D-sorganization/Tools/pull/5254 (merged)
 - **Governing issue**: `D-sorganization/Tools#5223` (P1)
 - **Completed work**:
   - Bumped `mirrors-mypy` from `v1.13.0` to `v1.15.0` in `.pre-commit-config.yaml`.
   - Under Python 3.13 / newer environments carrying NumPy >= 2.2, `mypy 1.13.0`'s cache serializer crashed with `AssertionError: Internal error: unresolved placeholder type None` when encountering modern type syntax in bundled NumPy type stubs. `mypy >= 1.14` (and `v1.15.0`) resolves this incompatibility.
   - Added unit test in `tests/ops/test_pre_push_mypy_scope.py` with Design-by-Contract documentation asserting `mirrors-mypy` is at least `v1.15.0`.
   - Updated `SPEC.md` changelog row for `#5223`.
-  - Updated `docs/development/DEVELOPMENT_LOG.md` with active entry `DL-#5223`.
+  - Updated `docs/development/DEVELOPMENT_LOG.md` with entry `DL-#5223`.
 - **Validation**:
   - `pytest tests/ops/test_pre_push_mypy_scope.py -n 0` -> PASS (2 passed)
   - `pre-commit run mypy --files src/shared/python/launch_monitor/dispersion.py --hook-stage pre-push` -> PASS
   - `python shared_scripts/spec_changelog.py validate --spec SPEC.md` -> PASS (1053 rows)
-- **Next steps**:
-  - Verify CI passes on PR #5254 and auto-merge.
+- **Status**: Merged into main.
 
 # Impact Program Handoff Checkpoint — 2026-09-19 (IA-T4 #5073)
 
@@ -48,6 +176,7 @@
 - All 9 targeted unit tests in `test_oblique_contact_mechanics.py` pass cleanly in 2.53s.
 - Linters, formatters, and mypy pass with 0 errors across all touched files.
 - Module inventory refreshed and SPEC.md change log updated and validated.
+>>>>>>> origin/main
 
 # Historical Impact Program Handoff Checkpoint — 2026-09-10
 

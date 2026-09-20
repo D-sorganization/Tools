@@ -362,7 +362,8 @@
           }
         ],
         "test_paths": [
-          "tests/shared/python/golf_club/test_oblique_contact_mechanics.py"
+          "tests/shared/python/golf_club/test_oblique_contact_mechanics.py",
+          "tests/shared/python/golf_club/test_transient_vibroacoustics.py"
         ],
         "unit_mentions": [
           "Hz",

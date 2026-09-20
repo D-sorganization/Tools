@@ -344,6 +344,10 @@ def test_cli_base_ref_with_unchanged_evidence_content_fails() -> None:
             "scripts.check_rate_visual_evidence_changes._file_content",
             return_value='{"key": 1}\n\n',
         ),
+        patch(
+            "scripts.check_rate_visual_evidence_changes._git_commit_messages",
+            return_value="",
+        ),
     ):
         assert main(["--base-ref", "origin/main"]) == 1
 
@@ -373,6 +377,10 @@ def test_cli_base_ref_with_substantive_evidence_content_passes() -> None:
         patch(
             "scripts.check_rate_visual_evidence_changes._file_content",
             side_effect=fake_file,
+        ),
+        patch(
+            "scripts.check_rate_visual_evidence_changes._git_commit_messages",
+            return_value="",
         ),
     ):
         assert main(["--base-ref", "origin/main"]) == 0
