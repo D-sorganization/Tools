@@ -10056,10 +10056,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 12365,
+      "bytes_lf": 12335,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "2893213bd973d2282d1127951bab5b8b2a201a81e485c82fb77fea9e5b7b128b",
+      "content_sha256_lf": "00f7a5235b87d2df02db7336172a5cf01debb68e6912a7bd4b9fc3c65a556d5c",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VARIATION-RESULTS-PY-B58CA206AC9C",
       "language": "python",
