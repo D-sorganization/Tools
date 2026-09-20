@@ -6,7 +6,6 @@ import json
 from collections.abc import Mapping
 from dataclasses import replace
 from functools import partial
-from typing import cast
 
 from PyQt6.QtCore import QSignalBlocker, QTimer
 from PyQt6.QtWidgets import (
@@ -94,7 +93,7 @@ class ViewCompositor(QWidget):
 
     def export_workspace_document(self) -> dict[str, object]:
         """Return a detached, strict version-1 compositor document."""
-        return cast("dict[str, object]", workspace_to_document(self._workspace))
+        return workspace_to_document(self._workspace)
 
     def import_workspace_document(self, document: Mapping[str, object]) -> None:
         """Atomically apply one strict version-1 compositor document."""

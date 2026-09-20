@@ -77,10 +77,11 @@ class SimulationTab(
     SimulationTabRuntimeMixin,
     SimulationTargetWorkflowMixin,
     SimulationWorkspaceBridgeMixin,
-    SimulationTabCompositorMixin,
     QWidget,
 ):
     """Simulation session tab (controls left, scene/inspector right)."""
+
+    _ball_setup_control: BallSetupControl
 
     #: Emitted with the SimulationRun after every successful run.
     runCompleted = pyqtSignal(object)  # noqa: N815 - Qt signal convention
@@ -418,7 +419,7 @@ class SimulationTab(
         self._scenario = dataclasses.replace(self._scenario, **updates)
         self._invalidate_source()
         self._tau = None  # auto: impact at maximum clubhead speed
-        run = self.run_now()
+        run: SimulationRun | None = self.run_now()
         offset = variables.get("swing_impact_time_offset_s", 0.0)
         if (
             run is not None
