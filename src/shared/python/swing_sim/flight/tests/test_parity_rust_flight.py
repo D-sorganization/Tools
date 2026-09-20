@@ -57,12 +57,11 @@ def test_zero_spin_trajectory_matches_penner_within_tolerance() -> None:
 
 @pytest.mark.parity
 @pytest.mark.physics
-def test_spinning_driver_shot_agrees_coarsely() -> None:
-    """Different lift laws: expect the same plausible band, not tight parity.
+def test_spinning_driver_shot_matches_penner_calibrated_parity() -> None:
+    """Calibrated parity: Rust kernel and Python Waterloo/Penner match tightly.
 
-    The Rust kernel uses a quadratic-polynomial Cl (cl1=0.38) with 0.08 1/s
-    spin decay; Penner uses a capped power-law fit — the Rust carry is
-    systematically shorter for a spinning driver shot.
+    Both implement the canonical Penner power-law lift fit (cl0=0.0, cl1=0.70,
+    cl2=0.645, cl_max=0.155) and 0.05 1/s spin decay rate.
     """
     launch = LaunchConditions(
         ball_speed=74.0, launch_angle=math.radians(12.0), spin_rate=2600.0
@@ -70,14 +69,45 @@ def test_spinning_driver_shot_agrees_coarsely() -> None:
     rust = simulate_trajectory_rust(launch, max_time=20.0, dt=0.005)
     python = WaterlooPennerModel().simulate(launch, max_time=20.0, dt=0.005)
 
-    assert 150.0 <= rust.carry_distance <= 320.0
-    assert 150.0 <= python.carry_distance <= 320.0
-    assert rust.carry_distance < python.carry_distance  # weaker lift law
+    assert rust.carry_distance == pytest.approx(python.carry_distance, rel=0.01)
+    assert rust.max_height == pytest.approx(python.max_height, rel=0.02)
+    assert rust.flight_time == pytest.approx(python.flight_time, rel=0.02)
+    assert 240.0 <= rust.carry_distance <= 255.0
+    assert 240.0 <= python.carry_distance <= 255.0
     # Backspin lifts both above the no-spin trajectory of the same launch.
     no_spin = LaunchConditions(
         ball_speed=74.0, launch_angle=math.radians(12.0), spin_rate=0.0
     )
     assert rust.max_height > simulate_trajectory_rust(no_spin).max_height
+
+
+@pytest.mark.parity
+@pytest.mark.physics
+@pytest.mark.parametrize(
+    ("speed", "angle_deg", "spin_rpm"),
+    [
+        (74.0, 12.0, 2600.0),
+        (60.0, 14.0, 2800.0),
+        (55.0, 16.0, 5000.0),
+        (40.0, 28.0, 9000.0),
+        (80.0, 11.0, 2400.0),
+    ],
+)
+def test_multi_condition_calibrated_parity(
+    speed: float, angle_deg: float, spin_rpm: float
+) -> None:
+    """Rust kernel and Python canonical baseline match within 1% across conditions."""
+    launch = LaunchConditions(
+        ball_speed=speed,
+        launch_angle=math.radians(angle_deg),
+        spin_rate=spin_rpm,
+    )
+    rust = simulate_trajectory_rust(launch, max_time=20.0, dt=0.005)
+    python = WaterlooPennerModel().simulate(launch, max_time=20.0, dt=0.005)
+
+    assert rust.carry_distance == pytest.approx(python.carry_distance, rel=0.01)
+    assert rust.max_height == pytest.approx(python.max_height, rel=0.02)
+    assert rust.flight_time == pytest.approx(python.flight_time, rel=0.02)
 
 
 @pytest.mark.parity

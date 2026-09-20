@@ -9,7 +9,11 @@ from typing import TypeAlias, cast
 import numpy as np
 from numpy.typing import NDArray
 
-from ._constants import MIN_SPEED_THRESHOLD_M_S, NUMERICAL_EPSILON, RPM_TO_RAD_S
+from ._constants import (
+    MIN_SPEED_THRESHOLD_M_S,
+    NUMERICAL_EPSILON,
+    RPM_TO_RAD_S,
+)
 from .aerodynamics import capped_lift_coefficient, spin_ratio_lift_coefficient
 from .types import LaunchConditions
 
@@ -39,6 +43,7 @@ class WaterlooDynamics:
 
     launch: LaunchConditions
     parameters: tuple[float, ...]
+    spin_decay: float = 0.0
 
     def __call__(self, time_s: float, state: FloatArray) -> FloatArray:
         if time_s is None:
@@ -51,7 +56,9 @@ class WaterlooDynamics:
             return _ballistic_derivative(velocity, self.launch.gravity)
         unit_velocity = relative / speed
         spin = self.launch.get_spin_vector()
-        spin_magnitude = math.hypot(spin[0], spin[1], spin[2])
+        decay = math.exp(-self.spin_decay * time_s) if self.spin_decay > 0.0 else 1.0
+        spin_decayed = spin * decay
+        spin_magnitude = math.hypot(spin_decayed[0], spin_decayed[1], spin_decayed[2])
         spin_ratio = spin_magnitude * self.launch.ball_radius / speed
         drag_coefficient = cd0 + cd1 * spin_ratio + cd2 * spin_ratio**2
         lift_value = cl0 + cl1 * spin_ratio**cl2 if spin_ratio > 0.0 else cl0
@@ -62,7 +69,7 @@ class WaterlooDynamics:
             -(scale * drag_coefficient / self.launch.ball_mass) * unit_velocity
         )
         if spin_magnitude > 0.0:
-            direction = np.cross(spin / spin_magnitude, unit_velocity)
+            direction = np.cross(spin_decayed / spin_magnitude, unit_velocity)
             direction_norm = math.hypot(direction[0], direction[1], direction[2])
             if direction_norm > NUMERICAL_EPSILON:
                 acceleration += (scale * lift_coefficient / self.launch.ball_mass) * (

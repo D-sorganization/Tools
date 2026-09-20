@@ -15,14 +15,25 @@ import pytest
 from ... import flight
 
 EXPECTED_PUBLIC_API = {
+    "BENCHMARK_LAUNCHES",
+    "BenchmarkLaunchSpec",
+    "CANONICAL_FLIGHT_MODEL",
+    "ConditionModelEvaluation",
     "DEFAULT_BACKSPIN_AXIS",
+    "DEFAULT_SPIN_DECAY_RATE",
+    "FLIGHT_MODEL_METADATA",
     "FLIGHT_REGIONAL_GROUND_PIPELINE_CONTRACT_VERSION",
+    "FlightModelMetadata",
+    "FlightValidationReport",
+    "ModelAggregateMetrics",
+    "RuntimeParityCheck",
+    "VALIDATION_SCHEMA_VERSION",
+    "evaluate_flight_benchmarks",
     "AvailabilityReason",
     "BallFlightModel",
-    "CAPABILITY_SAMPLE_OBSERVATION_SCHEMA_VERSION",
-    "CancellationCheck",
     "CapabilityEvaluator",
     "CapabilityFlightEvaluatorConfig",
+    "CapabilitySpinDefault",
     "CapabilityOptimizationCancelled",
     "CapabilityOptimizationHooks",
     "CapabilityObjective",
@@ -31,22 +42,23 @@ EXPECTED_PUBLIC_API = {
     "CapabilitySampleObservation",
     "CapabilitySampleParameter",
     "CapabilitySampleStatus",
-    "CapabilitySpinDefault",
+    "CAPABILITY_SAMPLE_OBSERVATION_SCHEMA_VERSION",
+    "CancellationCheck",
+    "CenteredClubDeliveryAdapter",
     "ClubCapability",
+    "ClubProfileId",
     "ConstantCoefficientModel",
     "ConstantCoefficientSpec",
-    "CenteredClubDeliveryAdapter",
-    "ClubProfileId",
     "DecisionVariable",
     "DirectionalRisk",
     "EvaluatedMetric",
     "EvaluationStatus",
-    "FlightObjective",
-    "FlightModelRegistry",
-    "FlightModelType",
     "FlightMetricCatalog",
     "FlightMetricDefinition",
     "FlightMetricId",
+    "FlightModelRegistry",
+    "FlightModelType",
+    "FlightObjective",
     "FlightMetricInputs",
     "FlightMetricResult",
     "FlightMetricValue",
@@ -230,9 +242,9 @@ def test_value_types_are_frozen_dataclasses() -> None:
     for cls in FROZEN_VALUE_TYPES:
         assert dataclasses.is_dataclass(cls), f"{cls.__name__} not a dataclass"
         value_type = cast(_FrozenDataclassType, cls)
-        assert value_type.__dataclass_params__.frozen, (
-            f"{value_type.__name__} must be frozen"
-        )
+        assert (
+            value_type.__dataclass_params__.frozen
+        ), f"{value_type.__name__} must be frozen"
 
 
 @pytest.mark.contract

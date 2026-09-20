@@ -15,6 +15,7 @@ import pytest
 
 from shared.python.swing_sim.flight import (
     FlightModelRegistry,
+    FlightModelType,
     LaunchConditions,
     WaterlooPennerModel,
 )
@@ -96,14 +97,20 @@ def test_backspin_increases_peak_height() -> None:
 @pytest.mark.physics
 @pytest.mark.unit
 def test_cross_model_carry_spread_for_driver_launch() -> None:
-    """All 7 models land a standard driver launch in a plausible carry band."""
+    """All 7 models land a standard driver launch within literature band."""
     carries: dict[str, float] = {}
     for model in FlightModelRegistry.get_all_models():
         result = model.simulate(DRIVER_LAUNCH, max_time=20.0)
         carries[model.name] = result.carry_distance
     assert len(carries) == 7
     for name, carry in carries.items():
-        assert 150.0 <= carry <= 320.0, f"{name} carry {carry:.1f} m out of band"
+        assert (
+            230.0 <= carry <= 265.0
+        ), f"{name} carry {carry:.1f} m out of literature band"
+    mean_carry = sum(carries.values()) / len(carries)
+    assert 240.0 <= mean_carry <= 250.0
+    canonical_carry = carries[WaterlooPennerModel().name]
+    assert abs(canonical_carry - mean_carry) / mean_carry < 0.03
 
 
 @pytest.mark.physics
@@ -138,11 +145,20 @@ def test_from_imperial_converts_units() -> None:
 
 def test_waterloo_constructor_preserves_explicit_coefficient_contract() -> None:
     signature = inspect.signature(WaterlooPennerModel)
-    expected = ["cd0", "cd1", "cd2", "cl0", "cl1", "cl2", "cl_max"]
+    expected = ["cd0", "cd1", "cd2", "cl0", "cl1", "cl2", "cl_max", "spin_decay"]
     assert list(signature.parameters) == expected
     assert signature.parameters["cd0"].default == pytest.approx(0.21)
     assert signature.parameters["cl_max"].default == pytest.approx(0.155)
+    assert signature.parameters["spin_decay"].default == pytest.approx(0.0)
 
-    model = WaterlooPennerModel(cd0=0.3, cl1=0.6, cl_max=0.25)
+    model = WaterlooPennerModel(cd0=0.3, cl1=0.6, cl_max=0.25, spin_decay=0.04)
 
     assert model.params == pytest.approx((0.3, 0.05, 0.02, 0.0, 0.6, 0.645, 0.25))
+    assert model.spin_decay == pytest.approx(0.04)
+
+
+def test_per_model_spin_decay_rates_are_documented() -> None:
+    for model_type in FlightModelType:
+        meta = FlightModelRegistry.get_metadata(model_type)
+        assert meta.spin_decay_s_inv in (0.0, 0.02, 0.03, 0.04, 0.05)
+        assert meta.reference != ""

@@ -1,3 +1,17 @@
+# Flight Model Reconciliation Handoff Checkpoint — 2026-09-19 (#4252)
+
+- Repository/worktree: Tools, C:/Users/diete/Repositories/Tools-repo.
+  Branch `feat/4252-reconcile-flight-models`. Governing issue Tools #4252.
+- Reconciled Rust core trajectory kernel with Waterloo/Penner lift model ($C_L = cl_1 \cdot s^{cl_2}$, $s_{decay} = 0.05$, $C_{L,\max} = 0.155$).
+- Tightened parity assertions between Rust fast path and WaterlooPenner model across 5 literature launch conditions (Tour Driver, Amateur Driver, 5-Iron, Wedge, High-Speed Driver) from broad bounds to calibrated physical tolerance (< 1.0%; observed <= 0.07%).
+- Documented per-model spin decay constants across all 7 registered models (`FLIGHT_MODEL_METADATA`).
+- Added Step 4 "Literature Model Comparison and Wind Boundaries" to Calculation Description in Python (`derivation_flight.py`) and TypeScript (`derivationModels.ts`).
+- Created open-data validation package (`src/shared/python/swing_sim/flight/validation.py`) and published manifest (`docs/development/flight_model_validation.json`, schema `flight-validation-manifest/v1`).
+- All 230 flight and derivation unit/parity tests pass cleanly in 33s.
+- Linters (`ruff check`, `ruff format`), `black`, and `mypy` pass with 0 errors across all touched files.
+- Module inventory refreshed (`python -m scripts.build_tools_module_inventory --check` passed).
+- Change log validated (`python shared_scripts/spec_changelog.py validate --spec SPEC.md` passed).
+
 # Impact Program Handoff Checkpoint — 2026-09-19 (IA-T4 #5073)
 
 - Repository/worktree: Tools, C:/Users/diete/Repositories/Tools-repo.
