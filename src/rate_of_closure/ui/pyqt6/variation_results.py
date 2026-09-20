@@ -205,7 +205,7 @@ class LandingCanvas(LifecycleSafeFigureCanvas):
         self._axes.tick_params(colors=text.name(), labelsize=8)
         self._axes.xaxis.label.set_color(text.name())
         self._axes.yaxis.label.set_color(text.name())
-        self._axes.title.set_color(text.name())  # type: ignore[attr-defined]
+        self._axes.title.set_color(text.name())
 
     def clear_view(self) -> None:
         """Empty state before the first run."""
