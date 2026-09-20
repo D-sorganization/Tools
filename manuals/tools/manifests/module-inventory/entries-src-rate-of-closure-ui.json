@@ -370,10 +370,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 15463,
+      "bytes_lf": 19945,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9f59ff1e677a9a071ea9cd3f888d958c3303ef94dc2e2f2f015ae4fa8cfc2d6d",
+      "content_sha256_lf": "597b547489e99a870d14d9ecbdb60c00f513b8a62107b06bd7ca40c3af140b4a",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-APP-TOOLSTRIP-PY-C7B78E8620F8",
       "language": "python",
@@ -453,10 +453,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9620,
+      "bytes_lf": 10070,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8de07eb6fa7f6c6cad236173a10f132d1124087632eea61472dde8440a383d93",
+      "content_sha256_lf": "ba3b8912f20610e61b4cb6bbcd21c832f1e092ec93abb9c0ce9776290415363d",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-BALL-SETUP-CONTROL-PY-C3756CD6B469",
       "language": "python",
@@ -1431,10 +1431,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 16402,
+      "bytes_lf": 18185,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "84bde15a034fd85ae986042e39eb6416ab7fa3418cb24823be1a3b9d4bf7399a",
+      "content_sha256_lf": "46f7569419be9906c581688bfa0e503ea461dd8dcdb68860cf535f4221161a31",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-CONTROLS-PANEL-PY-5DD78E198851",
       "language": "python",
@@ -1489,10 +1489,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 6365,
+      "bytes_lf": 6685,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "4df785c9c911f1e24e41610e8abc4bbd02f96e872d9d6db86d2ea7335d3ecb95",
+      "content_sha256_lf": "3f08b3f8bb0d46dd8f8f09f0b0e86bc1d728e152ea2490cede7422934dc60514",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-COURSE-SCENE-PY-EB7B4D080ECE",
       "language": "python",
@@ -2342,6 +2342,7 @@
         "test_paths": [
           "tests/rate_of_closure/test_camera_controls_gui.py",
           "tests/rate_of_closure/test_spatial_target_gui.py",
+          "tests/rate_of_closure/test_view_compositor_gui.py",
           "tests/rate_of_closure/test_viewers_gui.py"
         ],
         "unit_mentions": [
@@ -4461,10 +4462,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 19251,
+      "bytes_lf": 20046,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "665ebda8719e5bd185d0797acdf3103d63c06710290df46d3715b346727eeb43",
+      "content_sha256_lf": "ed23827b78bde0a2d821d6c8eead9d5abc5fd80d3ca2b18d8968e5972ecdebad",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-MAIN-WINDOW-PY-6C6A148D71CA",
       "language": "python",
@@ -4522,6 +4523,7 @@
           "tests/rate_of_closure/test_gui.py",
           "tests/rate_of_closure/test_help.py",
           "tests/rate_of_closure/test_layout_minsize.py",
+          "tests/rate_of_closure/test_main_window_file_commands.py",
           "tests/rate_of_closure/test_morris_pyqt_workflow.py",
           "tests/rate_of_closure/test_plots_gui.py",
           "tests/rate_of_closure/test_primary_navigation.py",
@@ -4672,10 +4674,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 18279,
+      "bytes_lf": 19892,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9d3bc55b916ace09f62e05f4b28e600614d184151e125636ab46bcfdcb902b90",
+      "content_sha256_lf": "ea4885aa5733713bde14b611bf2ed768c15381385d00b1f43466167ecb104cff",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-MAIN-WINDOW-FILE-COMMANDS-PY-7648D32F6080",
       "language": "python",
@@ -4695,7 +4697,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "not-applicable"
       },
@@ -4716,7 +4718,9 @@
             "signature": null
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/rate_of_closure/test_main_window_file_commands.py"
+        ],
         "unit_mentions": [
           "bar",
           "s"
@@ -4784,10 +4788,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1595,
+      "bytes_lf": 2316,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "73a7f4409825817a284e9aa77790a74143c475b069df2214b4e35f0a388528d9",
+      "content_sha256_lf": "59f22412068c4f5886e58b83dc0b51649a08a203f1cecf61496ded564e752083",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-MAIN-WINDOW-VIEW-COMMANDS-PY-9DA4719240C3",
       "language": "python",
@@ -7599,10 +7603,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 17101,
+      "bytes_lf": 18373,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "6a5c2b1cfc6f7dd08f582f5969307dee23a22bb02e6b743d0c3ce61f2ad9c685",
+      "content_sha256_lf": "783302532f19b9c3e82999cca5ae1c9dd8f97667126c02031ac90c5927caf641",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SIMULATION-TAB-PY-368C511EFE92",
       "language": "python",
@@ -7680,10 +7684,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 2388,
+      "bytes_lf": 2759,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "2b7fd610144cd569a72679596197ff1a4318a336228dd939aa96848a642db2c9",
+      "content_sha256_lf": "5f69e24bc0181e970a85374593262dc68d014b85fa8c334ea17df09dc0c00ca5",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SIMULATION-TAB-COMPOSITOR-PY-1ED3B94E1E6D",
       "language": "python",
@@ -7735,10 +7739,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 13832,
+      "bytes_lf": 13874,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "f61b8d383e1b0c1996ebc7f277d6395b3fd388b9215a24ce0d331a8b9d04f4ab",
+      "content_sha256_lf": "37bc28d2e1c537cc30356d381ef16873515f4688e513d9512d2938bc2086da81",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SIMULATION-TAB-CONTROLS-PY-3E379C41D894",
       "language": "python",
@@ -7802,10 +7806,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 4657,
+      "bytes_lf": 5089,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "6d401dfa0fc960ccd71817865a1a16831994c351a49e625a6357887052297eac",
+      "content_sha256_lf": "a95da410c7e569712c665c21ffc2ad949e5e03c8c15920bfe96e50fa45b5d8aa",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SIMULATION-TAB-PUBLICATION-PY-104FA28CB2E5",
       "language": "python",
@@ -7975,10 +7979,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 15734,
+      "bytes_lf": 15880,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "610a2c74159c1988ff1d1df8719eb58042d8001ca38858b75169c89a42afc7c7",
+      "content_sha256_lf": "ed1eed70eb1401dcb2b969390aa0c7b88ef5d090cdb86254f110a074079db803",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SIMULATION-VIEW-PY-ABCB4D110119",
       "language": "python",
@@ -8030,6 +8034,7 @@
         "test_paths": [
           "tests/rate_of_closure/test_camera_controls_gui.py",
           "tests/rate_of_closure/test_simulation_gui.py",
+          "tests/rate_of_closure/test_view_compositor_gui.py",
           "tests/rate_of_closure/test_wedge_ground_clearance_gui.py"
         ],
         "unit_mentions": [
@@ -8806,10 +8811,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 13275,
+      "bytes_lf": 13417,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "37dd94b35e14ae6565ad878a31fb36cae22e06eb5eb372a81fb0306e74a3ecd4",
+      "content_sha256_lf": "746d5d3dca2d5fa49d1489a4d0a9adaa6d379d075cc16d2e092d91b99bc65732",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-STRIKE-VIEW-PY-F3AE1FA8CAD0",
       "language": "python",
@@ -8984,10 +8989,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 9361,
+      "bytes_lf": 9745,
       "classification": "calculation",
       "classification_basis": "path-marker:torque",
-      "content_sha256_lf": "9b536b15790a3425d08cf210c5dfd0dcb49660fc094db928fc3cb95d6197e95e",
+      "content_sha256_lf": "5cebd215fc2a096b074b3448c0a3c4d7b3e61078b5b1210b2a35a15d92514274",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-TORQUE-PROFILE-CONTROLLER-PY-5D33BD5730FE",
       "language": "python",
@@ -9117,10 +9122,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 9782,
+      "bytes_lf": 9925,
       "classification": "calculation",
       "classification_basis": "path-marker:torque",
-      "content_sha256_lf": "758582e0c3af1edac802fe7b28854c36c684da71dae566ff61e73385bc2ffb8b",
+      "content_sha256_lf": "1ab471e549d50c7370c92f1eb4d785ab8313c88214de0b39367e0333bb33afb9",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-TORQUE-PROFILE-PANEL-PY-C0C2A5BBE45D",
       "language": "python",
@@ -10360,10 +10365,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10661,
+      "bytes_lf": 12095,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e2972d19fd3ed3755f4bb193ba18105c831e0b761db505996ce19b48fa11eb0c",
+      "content_sha256_lf": "44ec6255c7f04c0ee210a7adbd3df0a739eb0c5d4a3622d70735d003808edeae",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VARIATION-TAB-IO-PY-1D17F8E5AF73",
       "language": "python",
@@ -10795,10 +10800,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12318,
+      "bytes_lf": 12659,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "41dfbf10cfc7e4965e7a2ee915a646db70bf8bf7ce605da06092b6521e0663be",
+      "content_sha256_lf": "72f283b852cb5283ba7400124930121aed2fa72a8b5788cc36c50d9710dbb130",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VIEW-COMPOSITOR-PY-4F98398FFC32",
       "language": "python",
@@ -10818,7 +10823,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "not-applicable",
         "validation": "not-applicable"
       },
@@ -10839,7 +10844,9 @@
             "signature": null
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/rate_of_closure/test_view_compositor_gui.py"
+        ],
         "unit_mentions": [],
         "validation_paths": []
       }
@@ -11457,10 +11464,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8890,
+      "bytes_lf": 9823,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2bff8a102605ce06bd5261d7de59b5a6a27b66ada2dea66ff9154c0b3b1c9dab",
+      "content_sha256_lf": "32eb664f8b47ce89da7b4a4f81429047636daa569a753f5d5f6bf794840523b9",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-WORKSPACE-NAVIGATION-PY-13F9EC8D4A55",
       "language": "python",

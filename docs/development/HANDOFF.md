@@ -1,3 +1,31 @@
+# Rate of Closure Workspace View Compositor Handoff — 2026-09-19 (#4225)
+
+- Repository: `Tools`, Branch `feat/4225-workspace-view-compositor`.
+- Governing issue: #4225 (Workspace view compositor: Impact, Swing, Flight, and synchronized multi-view).
+- Completed:
+  - Wired `MainWindowViewCommandsMixin` into `src/rate_of_closure/ui/pyqt6/main_window.py`.
+  - Enabled `view.show_impact`, `view.show_swing`, `view.show_flight`, and layout-preset commands in PyQt toolstrip and React `AppToolstrip`.
+  - Multi-viewport synchronization for playback time, impact event offset, run selection, and shared model state.
+  - Implemented 7 GUI contract tests in `tests/rate_of_closure/test_view_compositor_gui.py`.
+  - All test suites passing (`pytest -n 0 tests/rate_of_closure/`, `npm test` in web).
+  - Pre-commit gates verified (`ruff check`, `ruff format --check`, `black --check`, `mypy`).
+  - Module inventory and `SPEC.md` changelog verified and updated.
+
+# Flight Model Reconciliation Handoff Checkpoint — 2026-09-19 (#4252)
+
+- Repository/worktree: Tools, C:/Users/diete/Repositories/Tools-repo.
+  Branch `feat/4252-reconcile-flight-models`. Governing issue Tools #4252.
+- Reconciled Rust core trajectory kernel with Waterloo/Penner lift model ($C_L = cl_1 \cdot s^{cl_2}$, $s_{decay} = 0.05$, $C_{L,\max} = 0.155$).
+- Tightened parity assertions between Rust fast path and WaterlooPenner model across 5 literature launch conditions (Tour Driver, Amateur Driver, 5-Iron, Wedge, High-Speed Driver) from broad bounds to calibrated physical tolerance (< 1.0%; observed <= 0.07%).
+- Documented per-model spin decay constants across all 7 registered models (`FLIGHT_MODEL_METADATA`).
+- Added Step 4 "Literature Model Comparison and Wind Boundaries" to Calculation Description in Python (`derivation_flight.py`) and TypeScript (`derivationModels.ts`).
+- Created open-data validation package (`src/shared/python/swing_sim/flight/validation.py`) and published manifest (`docs/development/flight_model_validation.json`, schema `flight-validation-manifest/v1`).
+- All 230 flight and derivation unit/parity tests pass cleanly in 33s.
+- Linters (`ruff check`, `ruff format`), `black`, and `mypy` pass with 0 errors across all touched files.
+- Module inventory refreshed (`python -m scripts.build_tools_module_inventory --check` passed).
+- Change log validated (`python shared_scripts/spec_changelog.py validate --spec SPEC.md` passed).
+
+
 # Handoff Checkpoint — Wedge Delivery Metrics & Linear Waterfall Visualization (#4162) — 2026-09-19
 
 - **Repository/worktree**: `Tools`, `c:\Users\diete\Repositories\Tools-repo`
@@ -202,7 +230,6 @@
   - `pre-commit run mypy --files src/shared/python/launch_monitor/dispersion.py --hook-stage pre-push` -> PASS
   - `python shared_scripts/spec_changelog.py validate --spec SPEC.md` -> PASS (1053 rows)
 - **Status**: Merged into main.
->>>>>>> origin/main
 
 # Impact Program Handoff Checkpoint — 2026-09-19 (IA-T4 #5073)
 
@@ -217,7 +244,6 @@
 - All 9 targeted unit tests in `test_oblique_contact_mechanics.py` pass cleanly in 2.53s.
 - Linters, formatters, and mypy pass with 0 errors across all touched files.
 - Module inventory refreshed and SPEC.md change log updated and validated.
->>>>>>> origin/main
 
 # Historical Impact Program Handoff Checkpoint — 2026-09-10
 

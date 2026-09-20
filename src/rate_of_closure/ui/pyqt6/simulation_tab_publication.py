@@ -77,6 +77,12 @@ class SimulationTabPublicationMixin:
         self._kinetics_panel.set_run(run)
         self._flight_view.set_run(run)
         self._inspector.set_run(run)
+        if hasattr(self, "_compositor_swing_view"):
+            self._compositor_swing_view.set_run(run)
+        if hasattr(self, "_compositor_strike_view"):
+            self._compositor_strike_view.set_run(run)
+        if hasattr(self, "_compositor_flight_view"):
+            self._compositor_flight_view.set_run(run)
         self._refresh_launch_rows()
         self._update_spatial_target_after_run(run)
         self._update_outcome_labels(run)
@@ -120,3 +126,5 @@ class SimulationTabPublicationMixin:
         self._refresh_launch_rows()
         self._solver_panel.target_panel().refresh_units()
         self._flight_view.set_run(self._run)
+        if hasattr(self, "_compositor_flight_view"):
+            self._compositor_flight_view.set_run(self._run)

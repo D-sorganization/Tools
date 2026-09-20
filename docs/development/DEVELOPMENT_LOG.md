@@ -18,6 +18,32 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#4225 · Workspace View Compositor: Impact, Swing, Flight
+
+- **State:** in_progress
+- **Owner:** antigravity
+- **Issue:** D-sorganization/Tools#4225
+- **PR:** #5264
+- **Branch:** `feat/4225-workspace-view-compositor`
+- **Paths:** `src/rate_of_closure/ui/pyqt6/`, `src/rate_of_closure/web/`, `tests/rate_of_closure/`
+- **Started:** 2026-09-19
+- **Last verified:** 2026-09-19 (all unit/headless tests pass including test_app_toolstrip.py, test_view_compositor_gui.py, test_tooltips.py, and vitest web test suite; pre-commit ruff/black/mypy pass; inventory check clean)
+- **Summary:** Multi-view workspace compositor integrating Impact, Swing, and Flight viewports with synchronized playback, run selection, and layout presets across PyQt and React toolstrips.
+- **Next step:** Push branch, open PR, arm squash auto-merge, and release lease.
+
+### DL-#4252 · Literature Flight Models Reconciliation, Carry Benchmark, and Wind Documentation
+
+- **State:** shipped
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#4252
+- **PR:** #5265
+- **Branch:** `feat/4252-reconcile-flight-models`
+- **Paths:** `rust_core/tools-core/src/ball_flight.rs`, `src/shared/python/swing_sim/flight/`, `src/rate_of_closure/derivation_flight.py`, `src/rate_of_closure/web/src/model/derivationModels.ts`, `docs/development/flight_model_validation.json`
+- **Started:** 2026-09-19
+- **Last verified:** 2026-09-19 (all 230 flight and derivation unit/parity tests pass; Rust fast path and WaterlooPenner carry parity within 0.07% across all 5 benchmark conditions; lint/format/mypy pass)
+- **Summary:** Reconciled Rust core kernel with canonical Waterloo/Penner lift model (power law $C_L = cl_1 \cdot s^{cl_2}$, $s_{decay} = 0.05$, $C_{L,\max} = 0.155$); tightened multi-condition carry parity to < 1.0%; documented spin decay rates across all 7 registered models; added calculation description Step 4 literature comparison & wind boundaries; published open-data validation package with pinned manifest.
+- **Next step:** Shipped via PR #5265.
+
 ### DL-#4162 · Wedge Delivery Metrics & Linear Waterfall Visualization
 
 - **State:** in_progress
@@ -121,7 +147,6 @@ reachable from any live state and `abandoned` from `parked`.
 - **Last verified:** 2026-09-19 (`SELF`; mirrors-mypy bumped from v1.13.0 to v1.15.0 to support NumPy >= 2.2 stubs without cache serializer placeholder crash; pre-push hook and unit tests passed)
 - **Summary:** Pre-push mypy hook crashed on numpy-importing files when the isolated hook environment carried numpy >= 2.2 because mypy 1.13's cache serializer failed on newer type syntax. Bumped mirrors-mypy to v1.15.0 and added contract unit test.
 - **Next step:** Shipped via PR #5254.
->>>>>>> origin/main
 
 ### DL-#5073 · Non-Spherical Oblique Contact Mechanics and Moving Center of Pressure
 
@@ -148,6 +173,19 @@ reachable from any live state and `abandoned` from `parked`.
 - **Last verified:** 2026-09-19 (all 157 vibroacoustic radiation, observer array, ball dipole, psychoacoustic, and integration tests passing; 0 ruff/black/mypy issues)
 - **Summary:** Implements transient vibroacoustic radiation solver with retarded-time Rayleigh surface integral, modal radiation transfer, observer location directivity and microphone arrays, ball impact acoustic dipole radiation, standardized psychoacoustic metrics (ISO 532-1 loudness, DIN 45692 sharpness, Leq, SEL), and calibrated pressure recordings.
 - **Next step:** Shipped via PR #5261.
+
+### DL-#4220 · Versioned Native File Commands and Workspace Persistence
+
+- **State:** in_review
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#4220
+- **PR:** https://github.com/D-sorganization/Tools/pull/5258
+- **Branch:** `feat/issue-4220-rate-of-closure-file-commands`
+- **Paths:** `src/rate_of_closure/ui/pyqt6/main_window_file_commands.py`, `src/rate_of_closure/ui/pyqt6/app_toolstrip.py`, `src/rate_of_closure/ui/pyqt6/main_window.py`, `src/rate_of_closure/ui/pyqt6/workspace_navigation.py`, `tests/rate_of_closure/test_main_window_file_commands.py`, `tests/rate_of_closure/pyqt_probe_lifecycle.py`, `tests/rate_of_closure/pyqt_variation_visual_state_probe.py`
+- **Started:** 2026-09-19
+- **Last verified:** 2026-09-20 (`SELF`; restored tuple idempotency in _freeze_json; all 10 test_main_window_file_commands.py, all 18 test_app_toolstrip.py, and all 6 test_workspace_files.py passing)
+- **Summary:** Native File commands (New, Open, Open Recent, Save, Save As, Import, Export, Close) wired into RateOfClosureMainWindow and ApplicationToolstrip with live dirty tracking, destructive action confirmation prompts, and idempotent tuple support in _freeze_json.
+- **Next step:** Push branch update, await CI completion and auto-merge.
 
 ### DL-#5218 · Camera Putting Launch Monitor for GSPro
 

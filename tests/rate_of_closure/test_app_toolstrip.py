@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+from typing import cast
+
 import pytest
 
 pytest.importorskip("PyQt6")
@@ -34,7 +36,7 @@ def window(qtbot, tmp_path):  # type: ignore[no-untyped-def]
 def _action(window: RateOfClosureMainWindow, command_id: str) -> QAction:
     action = window.findChild(QAction, command_id)
     assert action is not None, command_id
-    return action
+    return cast(QAction, action)
 
 
 def test_real_top_toolstrip_exposes_stable_file_view_and_tools_surfaces(window) -> None:  # type: ignore[no-untyped-def]
@@ -53,7 +55,6 @@ def test_real_top_toolstrip_exposes_stable_file_view_and_tools_surfaces(window) 
     (
         AppCommandId.FILE_NEW_WORKSPACE,
         AppCommandId.FILE_OPEN_WORKSPACE,
-        AppCommandId.FILE_OPEN_RECENT_WORKSPACE,
         AppCommandId.FILE_SAVE_WORKSPACE,
         AppCommandId.FILE_SAVE_WORKSPACE_AS,
         AppCommandId.FILE_IMPORT_WORKSPACE,
@@ -61,13 +62,22 @@ def test_real_top_toolstrip_exposes_stable_file_view_and_tools_surfaces(window) 
         AppCommandId.FILE_CLOSE_WORKSPACE,
     ),
 )
-def test_file_commands_are_truthfully_disabled_until_project_contract_exists(
-    window, command_id: AppCommandId
-) -> None:  # type: ignore[no-untyped-def]
-    action = _action(window, command_id)
+def test_file_commands_are_enabled_when_project_contract_exists(
+    window: RateOfClosureMainWindow, command_id: AppCommandId
+) -> None:
+    action = _action(window, command_id.value)
+    assert action.isEnabled()
+
+
+def test_open_recent_workspace_action_reflects_recency_state(window) -> None:  # type: ignore[no-untyped-def]
+    action = _action(window, AppCommandId.FILE_OPEN_RECENT_WORKSPACE.value)
     assert not action.isEnabled()
-    assert "project document contract" in action.toolTip().lower()
-    assert action.statusTip() == action.toolTip()
+    assert "no recent workspace" in action.toolTip().lower()
+
+    window.set_open_recent_available(True, "my_project.roc-workspace.json")
+    assert action.isEnabled()
+    assert "my_project.roc-workspace.json" in action.text()
+    assert "my_project.roc-workspace.json" in action.toolTip()
 
 
 def test_glossary_is_first_class_and_recovers_a_hidden_module(window) -> None:  # type: ignore[no-untyped-def]
@@ -140,20 +150,46 @@ def test_module_manager_applies_visibility_and_order_changes(window) -> None:  #
 
 
 @pytest.mark.parametrize(
-    "command_id",
+    ("command_id", "expected_view_id"),
     (
-        AppCommandId.VIEW_SHOW_IMPACT,
-        AppCommandId.VIEW_SHOW_SWING,
-        AppCommandId.VIEW_SHOW_FLIGHT,
+        (AppCommandId.VIEW_SHOW_IMPACT, "impact"),
+        (AppCommandId.VIEW_SHOW_SWING, "swing"),
+        (AppCommandId.VIEW_SHOW_FLIGHT, "flight"),
     ),
 )
-def test_multi_view_commands_explain_their_deliberate_unavailable_state(
-    window, command_id: AppCommandId
-) -> None:  # type: ignore[no-untyped-def]
+def test_multi_view_commands_switch_compositor_views(
+    window: RateOfClosureMainWindow,
+    command_id: AppCommandId,
+    expected_view_id: str,
+) -> None:
     action = _action(window, command_id.value)
-    assert not action.isEnabled()
-    assert "multi-view compositor contract" in action.toolTip().lower()
-    assert action.statusTip() == action.toolTip()
+    assert action.isEnabled()
+    action.trigger()
+    assert window.current_primary_module_id() == "simulation"
+    compositor = window._simulation_tab.compositor()
+    assert compositor.visible_view_ids() == (expected_view_id,)
+
+
+@pytest.mark.parametrize(
+    ("layout_name", "expected_count"),
+    (
+        ("single", 1),
+        ("split_horizontal", 2),
+        ("split_vertical", 2),
+        ("grid", 3),
+    ),
+)
+def test_layout_preset_actions_arrange_viewports(
+    window: RateOfClosureMainWindow,
+    layout_name: str,
+    expected_count: int,
+) -> None:
+    action = window.findChild(QAction, f"view.layout.{layout_name}")
+    assert action is not None
+    action.trigger()
+    assert window.current_primary_module_id() == "simulation"
+    compositor = window._simulation_tab.compositor()
+    assert len(compositor.visible_view_ids()) == expected_count
 
 
 def test_every_ui_neutral_command_id_is_registered_exactly_once(window) -> None:  # type: ignore[no-untyped-def]

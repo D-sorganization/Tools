@@ -5,6 +5,7 @@ from __future__ import annotations
 import json
 import os
 from pathlib import Path
+from typing import Any
 from unittest.mock import patch
 
 import pytest
@@ -35,7 +36,8 @@ _EXPECTED_REGISTERED_CONTROL_RANGES = {
     "plots": (19, 19),
     "calculation_description": (0, 0),
     # Re-landing camera controls (#4961) adds 18 named controls to simulation view.
-    "simulation": (182, 200),
+    # Workspace view compositor (#4225) adds workspace panels, bringing count to 265.
+    "simulation": (182, 270),
     # ADR-0047 H4 adds one named control: "Import Trajectory Record...",
     # wired to the existing #4800 P8 transport (no new transport controls).
     # Re-landing the wind strategy panel (#4960) adds 23 named controls
@@ -127,8 +129,8 @@ def test_accessibility_manifest_rejects_coverage_and_claim_drift() -> None:
 
 
 def test_every_visible_focusable_pyqt_control_has_a_bounded_name(
-    qtbot,
-    tmp_path: Path,  # type: ignore[no-untyped-def]
+    qtbot: Any,
+    tmp_path: Path,
 ) -> None:
     settings = QSettings(str(tmp_path / "navigation.ini"), QSettings.Format.IniFormat)
     window = RateOfClosureMainWindow(navigation_settings=settings)

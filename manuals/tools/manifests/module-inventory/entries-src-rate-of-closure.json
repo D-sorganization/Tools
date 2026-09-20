@@ -747,10 +747,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4984,
+      "bytes_lf": 6254,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "bb731c7e891ca342cfc802273a9f1d9b54674bf0e32d5605d0668a256d22b835",
+      "content_sha256_lf": "915c62e1795736dffb808cd98b8ecf72e5ddbfae0f963abdc8c968ce9e614ac7",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-DERIVATION-FLIGHT-PY-A88E5B97C69A",
       "language": "python",
@@ -793,8 +793,10 @@
         ],
         "test_paths": [],
         "unit_mentions": [
+          "bar",
           "g",
           "kg",
+          "m/s",
           "m/s^2",
           "s"
         ],
@@ -4193,6 +4195,7 @@
           }
         ],
         "test_paths": [
+          "tests/rate_of_closure/test_view_compositor_gui.py",
           "tests/rate_of_closure/test_view_workspace.py",
           "tests/rate_of_closure/test_workspace_document.py"
         ],

@@ -15,6 +15,7 @@ Import from this facade only; module layout underneath is private.
 from __future__ import annotations
 
 from ._cancellation import raise_if_flight_cancelled
+from ._constants import DEFAULT_SPIN_DECAY_RATE
 from ._rust_facade import is_rust_available, simulate_trajectory_rust
 from .capability_contract import (
     CapabilityObjective,
@@ -107,7 +108,14 @@ from .regional_ground_pipeline import (
     FlightRegionalGroundPipelineResult,
     execute_regional_ground_from_flight,
 )
-from .registry import FlightModelRegistry, FlightModelType, compare_models
+from .registry import (
+    CANONICAL_FLIGHT_MODEL,
+    FLIGHT_MODEL_METADATA,
+    FlightModelMetadata,
+    FlightModelRegistry,
+    FlightModelType,
+    compare_models,
+)
 from .result_contract import (
     AvailabilityReason,
     FlightMetricCatalog,
@@ -134,6 +142,16 @@ from .types import (
     TrajectoryPoint,
     compute_flight_metrics,
 )
+from .validation import (
+    BENCHMARK_LAUNCHES,
+    VALIDATION_SCHEMA_VERSION,
+    BenchmarkLaunchSpec,
+    ConditionModelEvaluation,
+    FlightValidationReport,
+    ModelAggregateMetrics,
+    RuntimeParityCheck,
+    evaluate_flight_benchmarks,
+)
 from .wind import WIND_SCHEMA_VERSION, WindGust, WindScenario
 from .wind_strategy import (
     WIND_STRATEGY_ANALYSIS_SCHEMA_VERSION,
@@ -158,8 +176,20 @@ from .wind_uncertainty import (
 )
 
 __all__ = [
+    "BENCHMARK_LAUNCHES",
+    "BenchmarkLaunchSpec",
+    "CANONICAL_FLIGHT_MODEL",
+    "ConditionModelEvaluation",
     "DEFAULT_BACKSPIN_AXIS",
+    "DEFAULT_SPIN_DECAY_RATE",
+    "FLIGHT_MODEL_METADATA",
     "FLIGHT_REGIONAL_GROUND_PIPELINE_CONTRACT_VERSION",
+    "FlightModelMetadata",
+    "FlightValidationReport",
+    "ModelAggregateMetrics",
+    "RuntimeParityCheck",
+    "VALIDATION_SCHEMA_VERSION",
+    "evaluate_flight_benchmarks",
     "AvailabilityReason",
     "BallFlightModel",
     "CapabilityEvaluator",

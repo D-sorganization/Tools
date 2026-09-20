@@ -106,6 +106,27 @@ describe("AppToolstrip", () => {
     ]);
   });
 
+  it("exposes layout preset buttons and fires onLayoutPreset callback", () => {
+    const onLayoutPreset = vi.fn();
+    render(
+      <AppToolstrip
+        moduleState={DEFAULT_PRIMARY_VIEW_STATE}
+        theme="dark"
+        shortcutHelpOpen={false}
+        onModuleStateChange={vi.fn()}
+        onCommand={vi.fn()}
+        onShortcutHelpOpenChange={vi.fn()}
+        onLayoutPreset={onLayoutPreset}
+      />,
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Single" }));
+    expect(onLayoutPreset).toHaveBeenCalledWith("single");
+    fireEvent.click(screen.getByRole("button", { name: "Split" }));
+    expect(onLayoutPreset).toHaveBeenCalledWith("split_horizontal");
+    fireEvent.click(screen.getByRole("button", { name: "Grid" }));
+    expect(onLayoutPreset).toHaveBeenCalledWith("grid");
+  });
+
   it("clamps File, View, and Tools popovers within constrained viewports on toggle", () => {
     renderToolstrip();
 
@@ -181,3 +202,4 @@ describe("AppToolstrip", () => {
     expect(viewPopover.style.transform).toBe("translateX(-80px)");
   });
 });
+

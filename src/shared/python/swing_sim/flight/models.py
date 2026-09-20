@@ -238,7 +238,7 @@ class BallFlightModel(ABC):
 
 
 class WaterlooPennerModel(BallFlightModel):
-    """Waterloo/Penner model implementation."""
+    """Waterloo/Penner model implementation (canonical baseline)."""
 
     def __init__(
         self,
@@ -249,8 +249,10 @@ class WaterlooPennerModel(BallFlightModel):
         cl1: float = 0.70,
         cl2: float = 0.645,
         cl_max: float = MAX_GOLF_BALL_LIFT_COEFFICIENT,
+        spin_decay: float = 0.0,
     ) -> None:
         self.params = (cd0, cd1, cd2, cl0, cl1, cl2, cl_max)
+        self.spin_decay = spin_decay
 
     @property
     def name(self) -> str:
@@ -260,15 +262,19 @@ class WaterlooPennerModel(BallFlightModel):
     @property
     def description(self) -> str:
         """Return the Waterloo/Penner model description."""
-        return "Waterloo quadratic Cd with Penner spin-ratio lift fit"
+        return "Waterloo quadratic Cd with Penner spin-ratio lift fit (canonical)"
 
     @property
     def reference(self) -> str:
         """Return the Waterloo/Penner model citation."""
         return "Penner (2003); McPhee et al. (Waterloo)"
 
+    def _spin_decay_rate(self) -> float:
+        """Return exponential spin-decay rate for trajectory state output."""
+        return self.spin_decay
+
     def _build_dynamics(self, launch: LaunchConditions) -> WaterlooDynamics:
-        return WaterlooDynamics(launch, self.params)
+        return WaterlooDynamics(launch, self.params, self.spin_decay)
 
 
 class MacDonaldHanzelyModel(BallFlightModel):

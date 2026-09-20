@@ -3392,8 +3392,20 @@
   },
   "flight/__init__.py": {
     "__all__": [
+      "BENCHMARK_LAUNCHES",
+      "BenchmarkLaunchSpec",
+      "CANONICAL_FLIGHT_MODEL",
+      "ConditionModelEvaluation",
       "DEFAULT_BACKSPIN_AXIS",
+      "DEFAULT_SPIN_DECAY_RATE",
+      "FLIGHT_MODEL_METADATA",
       "FLIGHT_REGIONAL_GROUND_PIPELINE_CONTRACT_VERSION",
+      "FlightModelMetadata",
+      "FlightValidationReport",
+      "ModelAggregateMetrics",
+      "RuntimeParityCheck",
+      "VALIDATION_SCHEMA_VERSION",
+      "evaluate_flight_benchmarks",
       "AvailabilityReason",
       "BallFlightModel",
       "CapabilityEvaluator",
@@ -3523,6 +3535,9 @@
         },
         "type": "class"
       },
+      "BENCHMARK_LAUNCHES": {
+        "type": "variable"
+      },
       "BallFlightModel": {
         "info": {
           "bases": [
@@ -3623,6 +3638,28 @@
           }
         },
         "type": "class"
+      },
+      "BenchmarkLaunchSpec": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "to_launch_conditions": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "LaunchConditions"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "CANONICAL_FLIGHT_MODEL": {
+        "type": "variable"
       },
       "CAPABILITY_SAMPLE_OBSERVATION_SCHEMA_VERSION": {
         "type": "variable"
@@ -3929,6 +3966,13 @@
         },
         "type": "class"
       },
+      "ConditionModelEvaluation": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
       "ConstantCoefficientModel": {
         "info": {
           "bases": [
@@ -3999,6 +4043,9 @@
       "DEFAULT_BACKSPIN_AXIS": {
         "type": "variable"
       },
+      "DEFAULT_SPIN_DECAY_RATE": {
+        "type": "variable"
+      },
       "DecisionVariable": {
         "info": {
           "bases": [],
@@ -4057,6 +4104,9 @@
           "methods": {}
         },
         "type": "class"
+      },
+      "FLIGHT_MODEL_METADATA": {
+        "type": "variable"
       },
       "FLIGHT_REGIONAL_GROUND_PIPELINE_CONTRACT_VERSION": {
         "type": "variable"
@@ -4328,6 +4378,13 @@
         },
         "type": "class"
       },
+      "FlightModelMetadata": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
       "FlightModelRegistry": {
         "info": {
           "bases": [],
@@ -4342,6 +4399,34 @@
                 }
               ],
               "returns": "list[BallFlightModel]"
+            },
+            "get_canonical_model": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                }
+              ],
+              "returns": "BallFlightModel"
+            },
+            "get_metadata": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "FlightModelType",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "model_type"
+                }
+              ],
+              "returns": "FlightModelMetadata"
             },
             "get_model": {
               "args": [
@@ -4519,6 +4604,25 @@
             "TrajectoryPoint"
           ],
           "methods": {}
+        },
+        "type": "class"
+      },
+      "FlightValidationReport": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "to_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
         },
         "type": "class"
       },
@@ -5047,6 +5151,13 @@
         },
         "type": "class"
       },
+      "ModelAggregateMetrics": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
       "ModelAvailability": {
         "info": {
           "bases": [
@@ -5332,6 +5443,13 @@
         },
         "type": "class"
       },
+      "RuntimeParityCheck": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
       "ScalarDistribution": {
         "info": {
           "bases": [],
@@ -5511,6 +5629,9 @@
         },
         "type": "class"
       },
+      "VALIDATION_SCHEMA_VERSION": {
+        "type": "variable"
+      },
       "ValueStatus": {
         "info": {
           "bases": [
@@ -5584,6 +5705,12 @@
                   "default": "MAX_GOLF_BALL_LIFT_COEFFICIENT",
                   "kind": "arg",
                   "name": "cl_max"
+                },
+                {
+                  "annotation": "float",
+                  "default": "0.0",
+                  "kind": "arg",
+                  "name": "spin_decay"
                 }
               ],
               "returns": "None"
@@ -5931,6 +6058,13 @@
             }
           ],
           "returns": "LaunchConditions"
+        },
+        "type": "function"
+      },
+      "evaluate_flight_benchmarks": {
+        "signature": {
+          "args": [],
+          "returns": "FlightValidationReport"
         },
         "type": "function"
       },
@@ -6381,6 +6515,7 @@
   "flight/_constants.py": {
     "__all__": [
       "AIR_DENSITY_SEA_LEVEL_KG_M3",
+      "DEFAULT_SPIN_DECAY_RATE",
       "GOLF_BALL_DIAMETER_M",
       "GOLF_BALL_MASS_KG",
       "GOLF_BALL_RADIUS_M",
@@ -6394,6 +6529,9 @@
     "explicit_all": true,
     "symbols": {
       "AIR_DENSITY_SEA_LEVEL_KG_M3": {
+        "type": "variable"
+      },
+      "DEFAULT_SPIN_DECAY_RATE": {
         "type": "variable"
       },
       "GOLF_BALL_DIAMETER_M": {
@@ -9167,6 +9305,12 @@
                   "default": "MAX_GOLF_BALL_LIFT_COEFFICIENT",
                   "kind": "arg",
                   "name": "cl_max"
+                },
+                {
+                  "annotation": "float",
+                  "default": "0.0",
+                  "kind": "arg",
+                  "name": "spin_decay"
                 }
               ],
               "returns": "None"
@@ -9368,12 +9512,28 @@
   },
   "flight/registry.py": {
     "__all__": [
+      "CANONICAL_FLIGHT_MODEL",
+      "FLIGHT_MODEL_METADATA",
+      "FlightModelMetadata",
       "FlightModelRegistry",
       "FlightModelType",
       "compare_models"
     ],
     "explicit_all": true,
     "symbols": {
+      "CANONICAL_FLIGHT_MODEL": {
+        "type": "variable"
+      },
+      "FLIGHT_MODEL_METADATA": {
+        "type": "variable"
+      },
+      "FlightModelMetadata": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
       "FlightModelRegistry": {
         "info": {
           "bases": [],
@@ -9388,6 +9548,34 @@
                 }
               ],
               "returns": "list[BallFlightModel]"
+            },
+            "get_canonical_model": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                }
+              ],
+              "returns": "BallFlightModel"
+            },
+            "get_metadata": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "FlightModelType",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "model_type"
+                }
+              ],
+              "returns": "FlightModelMetadata"
             },
             "get_model": {
               "args": [
@@ -10044,6 +10232,93 @@
             }
           ],
           "returns": "FlightResult"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "flight/validation.py": {
+    "__all__": [
+      "BENCHMARK_LAUNCHES",
+      "BenchmarkLaunchSpec",
+      "ConditionModelEvaluation",
+      "FlightValidationReport",
+      "ModelAggregateMetrics",
+      "RuntimeParityCheck",
+      "VALIDATION_SCHEMA_VERSION",
+      "evaluate_flight_benchmarks"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "BENCHMARK_LAUNCHES": {
+        "type": "variable"
+      },
+      "BenchmarkLaunchSpec": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "to_launch_conditions": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "LaunchConditions"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ConditionModelEvaluation": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "FlightValidationReport": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "to_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ModelAggregateMetrics": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "RuntimeParityCheck": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "VALIDATION_SCHEMA_VERSION": {
+        "type": "variable"
+      },
+      "evaluate_flight_benchmarks": {
+        "signature": {
+          "args": [],
+          "returns": "FlightValidationReport"
         },
         "type": "function"
       }

@@ -38,6 +38,9 @@ from rate_of_closure.ui.pyqt6.simulation_specs import (
     LAUNCH_ROWS,
     SOURCE_LABELS,
 )
+from rate_of_closure.ui.pyqt6.simulation_tab_compositor import (
+    SimulationTabCompositorMixin,
+)
 from rate_of_closure.ui.pyqt6.simulation_tab_controls import (
     SimulationTabControlsMixin,
 )
@@ -49,10 +52,18 @@ from rate_of_closure.ui.pyqt6.simulation_target_workflow import (
     SimulationTargetWorkflowMixin,
 )
 from rate_of_closure.ui.pyqt6.simulation_view import SimulationView
+from rate_of_closure.ui.pyqt6.simulation_workspace_bridge import (
+    SimulationWorkspaceBridgeMixin,
+)
 from rate_of_closure.ui.pyqt6.solver_panel import SolverPanel
 from rate_of_closure.ui.pyqt6.strike_view import StrikeView
+from rate_of_closure.ui.pyqt6.synchronized_simulation_view import (
+    SynchronizedSimulationView,
+)
 from rate_of_closure.ui.pyqt6.torque_profile_controller import RunMode
 from rate_of_closure.ui.pyqt6.torque_profile_panel import TorqueProfilePanel
+from rate_of_closure.ui.pyqt6.view_compositor import ViewCompositor
+from rate_of_closure.view_workspace import ViewKind
 from shared.python.swing_sim.run_config import DoublePendulumRunConfig
 from shared.python.swing_sim.types import PlaneOrientation
 
@@ -60,13 +71,17 @@ __all__ = ["LAUNCH_ROWS", "SOURCE_LABELS", "SimulationTab"]
 
 
 class SimulationTab(
+    SimulationTabCompositorMixin,
     SimulationTabPublicationMixin,
     SimulationTabControlsMixin,
     SimulationTabRuntimeMixin,
     SimulationTargetWorkflowMixin,
+    SimulationWorkspaceBridgeMixin,
     QWidget,
 ):
     """Simulation session tab (controls left, scene/inspector right)."""
+
+    _ball_setup_control: BallSetupControl
 
     #: Emitted with the SimulationRun after every successful run.
     runCompleted = pyqtSignal(object)  # noqa: N815 - Qt signal convention
@@ -91,6 +106,19 @@ class SimulationTab(
         self._strike_view = StrikeView()
         self._flight_view = FlightView()
         self._flight_panel = FlightPlaybackPanel(self._flight_view)
+        self._compositor_swing_view = SynchronizedSimulationView()
+        self._compositor_strike_view = StrikeView()
+        self._compositor_flight_view = FlightView()
+        self._compositor_swing_view.playbackTimeChanged.connect(
+            self._sync_compositor_playback
+        )
+        self._compositor = ViewCompositor(
+            {
+                ViewKind.IMPACT: self._compositor_strike_view,
+                ViewKind.SWING: self._compositor_swing_view,
+                ViewKind.FLIGHT: self._compositor_flight_view,
+            }
+        )
         self._kinetics_panel = KineticsPanel()
         self._kinetics_panel.glossaryRequested.connect(self.glossaryRequested)
         self._inspector = InspectorView()
@@ -141,6 +169,7 @@ class SimulationTab(
         right.addTab(self._view, "Swing")
         right.addTab(self._kinetics_panel, "Kinetics")
         right.addTab(self._flight_panel, "Flight")
+        right.addTab(self._compositor, "Compositor")
         right.addTab(self._inspector, "Inspector")
         right.addTab(self._solver_panel, "Solver")
         right.addTab(self._torque_profile_panel, "Torque Profiles")
@@ -381,7 +410,7 @@ class SimulationTab(
         self._scenario = dataclasses.replace(self._scenario, **updates)
         self._invalidate_source()
         self._tau = None  # auto: impact at maximum clubhead speed
-        run = self.run_now()
+        run: SimulationRun | None = self.run_now()
         offset = variables.get("swing_impact_time_offset_s", 0.0)
         if (
             run is not None
@@ -398,3 +427,5 @@ class SimulationTab(
         """Stop the playback timer and solver worker (close and tests)."""
         self._view.stop()
         self._solver_panel.stop()
+        if hasattr(self, "_compositor_swing_view"):
+            self._compositor_swing_view.stop()

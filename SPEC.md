@@ -27,10 +27,18 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.142                                   |
-| **Last Spec Update**    | 2026-09-13                                 |
+| **Spec Version**        | 1.18.143                                   |
+| **Last Spec Update**    | 2026-09-19                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-09-19 Rate of Closure: Workspace View Compositor for Impact, Swing, and Flight (#4225)
+
+Delivers the synchronized multi-viewport workspace compositor across desktop and web:
+
+1. **MainWindow View Commands Wiring**: Wires `MainWindowViewCommandsMixin` into `RateOfClosureMainWindow`, providing `show_compositor_view(view_id)` and `show_compositor_layout(layout)` routing into `_simulation_tab`.
+2. **PyQt & React Toolstrip Multi-View Commands**: Replaces disabled placeholders with enabled `view.show_impact`, `view.show_swing`, `view.show_flight` actions and layout presets (Single, Split Horizontal, Split Vertical, Grid in PyQt; Single, Split, Grid in React `AppToolstrip`).
+3. **Synchronized Playback & Viewport Multi-View**: Synchronizes playback timeline position, run selection, and impact event offsets across `SynchronizedSimulationView`, `StrikeView`, and `FlightView`, while preserving task-appropriate camera state, projection, and overlays per viewport.
 
 ### 2026-09-13 Product Artifact Hygiene: Compose, Helm, and Rate of Closure Package Lock Cleanup (#4919)
 
@@ -5908,6 +5916,10 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-20 | #5280 | 🎨 Palette: Improve keyboard accessibility for file import (spec 1.18.143) |
+| 2026-09-20 | #5284 | test(rate-of-closure): re-approve launch_monitor_analytics visual baseline from trusted run (#5284) |
+| 2026-09-20 | #5279 | ⚡ Bolt Optimization: Replace chained array mapping and `Math.min(...spread)` in `bestCosts` with a single-pass loop over outcomes to prevent stack overflows and reduce GC pressure. (spec 1.18.143) |
+| 2026-09-20 | #5278 | ⚡ Bolt: Replace array spread with native slice() for sorting large arrays in chipForgiveness.ts and windStrategyMetrics.ts to reduce GC pressure (spec 1.18.143). |
 | 2026-09-20 | #5269 | feat(ops): content-based visual baseline gate and main re-baseline (#4918). Lockstep gate checks canonical content hash of evidence rather than mtime or whitespace, skips diffs touching no .tsx/.css/.ui/paint code, and re-baselines visual_baselines.v1.json source_artifact_commit to ancestor commit on main. |
 | 2026-09-20 | #5270 | Putting launch monitor accuracy validation harness (Tools #5221): validate subcommand with CSV logging, running error stats against +/-3% speed and +/-1 deg HLA bounds, 7 unit tests, and rig validation evidence page. |
 | 2026-09-20 | #4922 | feat(release): Rate of Closure release gate runner and transition campaign programs from implemented_unverified to verified (#4201, #4922) |
@@ -6972,6 +6984,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | 2026-09-14 | #5210 | fix(tests): resolve relative fixture imports and calibrate web open budget |
 | 2026-09-19 | #5223 | Bump mirrors-mypy pre-push hook to v1.15.0 for NumPy >= 2.2 stub compatibility (#5223). |
 | 2026-09-19 | #4300 | Clamp File, View, and Tools popovers within constrained viewports using useViewportClampedPopover (#4300). |
+| 2026-09-19 | #4220 | feat(rate-ui): enable versioned file commands and dirty tracking in Rate of Closure |
 ---
 
 <!--
@@ -7604,9 +7617,11 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-17: Release v1.19.0 (#5241)
 
 - **2026-09-17**: chore(release, #5241) — Bump release version to v1.19.0 across pyproject.toml, package.json, and VERSION; refresh CHANGELOG.md.
+
 ## 2026-09-19: Non-Spherical Oblique Contact and Moving Center of Pressure (#5073 / #5260)
 
 - **2026-09-19**: feat(impact, #5073) — Implement curved face geometry (bulge/roll), moving Center of Pressure (COP) kinematics, dynamic lever arm/gear-effect torque, high-frequency face trampoline and hosel bending/torsion modes, and multi-channel energy balance conservation.
+
 ## 2026-09-19: Transient Vibroacoustic Radiation and Acoustic Field Solver (#5074 / #5261)
 
 - **2026-09-19**: feat(vibroacoustics, #5074) — Implement transient vibroacoustic radiation solver with retarded-time Rayleigh surface integral, modal radiation transfer, observer directivity and microphone arrays, ball impact acoustic dipole radiation, standardized psychoacoustic metrics (ISO 532-1 loudness, DIN 45692 sharpness, Leq, SEL), and calibrated pressure recordings.
@@ -7614,5 +7629,6 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-19: Measured Grip Impedance Dynamics and Passivity (#5072 / #5259)
 
 - **2026-09-19**: feat(golf-club, #5072) — Add measured grip impedance dynamics (`golf_club.measured_grip_impedance/1`), strict passivity auditing, continuous passive Gram-factor model identification, full/reduced FRF agreement under quantified uncertainty, and consumer integration to `GripBoundary` and `impact_coupling`.
+## 2026-09-19: Native File Commands and Workspace Persistence (#4220)
 
-
+- **2026-09-19**: feat(rate-ui, #4220) — Wire native File commands (New, Open, Open Recent, Save, Save As, Import, Export, Close) into RateOfClosureMainWindow and ApplicationToolstrip with dirty tracking and destructive action confirmation prompts.

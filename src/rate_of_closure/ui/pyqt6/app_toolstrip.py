@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Callable
+from pathlib import Path
 from typing import Protocol
 
 from PyQt6.QtCore import Qt
@@ -47,6 +48,36 @@ class ToolstripHost(Protocol):
 
     def restore_default_workspace(self) -> None:
         """Restore the declared workspace defaults."""
+
+    def show_compositor_view(self, view_id: str) -> None:
+        """Show a named real viewport through the shared simulation compositor."""
+
+    def show_compositor_layout(self, layout: str) -> None:
+        """Apply a multi-view layout preset in the simulation compositor."""
+
+    def new_workspace(self) -> None:
+        """Reset to first-run state after resolving unsaved changes."""
+
+    def open_workspace(self) -> None:
+        """Choose, validate, and atomically apply a whole workspace file."""
+
+    def open_recent_workspace(self) -> None:
+        """Open the newest locally persisted native workspace path."""
+
+    def save_workspace(self) -> bool:
+        """Atomically save to the current path, choosing one when necessary."""
+
+    def save_workspace_as(self) -> bool:
+        """Choose a new destination and atomically save the whole workspace."""
+
+    def import_workspace(self) -> None:
+        """Import a strict compositor document without partial mutation."""
+
+    def export_workspace(self) -> None:
+        """Export the strict cross-client compositor document atomically."""
+
+    def close_workspace(self) -> None:
+        """Close the named session and leave a clean untitled workspace."""
 
 
 class ModuleManagerHost(Protocol):
@@ -137,7 +168,7 @@ class ApplicationToolstrip(QToolBar):
     def _build(self) -> None:
         """Assemble the top-level command groups and direct actions."""
         file_menu = QMenu("File", self)
-        self._add_disabled_file_commands(file_menu)
+        self._add_file_commands(file_menu)
         self._add_menu_button("File", "fileMenuButton", file_menu)
         self._build_view_menu()
         glossary, shortcuts = self._build_tools_menu()
@@ -167,21 +198,56 @@ class ApplicationToolstrip(QToolBar):
         restore.setToolTip("Restore the default module order and visibility")
         view_menu.addAction(restore)
         view_menu.addSeparator()
-        self._add_disabled_view_commands(view_menu)
+        self._add_view_commands(view_menu)
         self._add_menu_button("View", "viewMenuButton", view_menu)
 
-    def _add_disabled_view_commands(self, menu: QMenu) -> None:
-        """Register compositor commands with truthful availability reasons."""
-        for command_id, label in (
-            (AppCommandId.VIEW_SHOW_IMPACT, "Show Impact View"),
-            (AppCommandId.VIEW_SHOW_SWING, "Show Swing View"),
-            (AppCommandId.VIEW_SHOW_FLIGHT, "Show Flight View"),
+    def _add_view_commands(self, menu: QMenu) -> None:
+        """Register enabled compositor view commands and layout presets."""
+
+        def _bind_view(view_key: str) -> Callable[[], None]:
+            def _handler() -> None:
+                self._host.show_compositor_view(view_key)
+
+            return _handler
+
+        for command_id, label, view_id in (
+            (AppCommandId.VIEW_SHOW_IMPACT, "Show Impact View", "impact"),
+            (AppCommandId.VIEW_SHOW_SWING, "Show Swing View", "swing"),
+            (AppCommandId.VIEW_SHOW_FLIGHT, "Show Flight View", "flight"),
         ):
-            action = self._make_action(command_id, label)
-            self._apply_availability(
-                action, CommandAvailability.disabled(_COMPOSITOR_DISABLED_REASON)
+            action = self._make_action(
+                command_id,
+                label,
+                callback=_bind_view(view_id),
             )
+            self._apply_availability(action, CommandAvailability.available())
+            action.setToolTip(
+                f"Switch the main workspace to the {label.lower().replace('show ', '')}"
+            )
+            action.setStatusTip(action.toolTip())
             menu.addAction(action)
+
+        menu.addSeparator()
+        layout_menu = menu.addMenu("Layout Presets")
+        if layout_menu is not None:
+            for layout, label in (
+                ("single", "Single View"),
+                ("split_horizontal", "Split Horizontal"),
+                ("split_vertical", "Split Vertical"),
+                ("grid", "Grid"),
+            ):
+                preset_action = QAction(label, self)
+                preset_action.setObjectName(f"view.layout.{layout}")
+                preset_action.setToolTip(
+                    f"Arrange synchronized viewports in {label.lower()} layout"
+                )
+                preset_action.setStatusTip(preset_action.toolTip())
+                preset_action.triggered.connect(
+                    lambda checked=False, lay=layout: self._host.show_compositor_layout(
+                        lay
+                    )
+                )
+                layout_menu.addAction(preset_action)
 
     def _build_tools_menu(self) -> tuple[QAction, QAction]:
         """Create global tools and return actions also shown directly."""
@@ -220,39 +286,96 @@ class ApplicationToolstrip(QToolBar):
         self._add_menu_button("Tools", "toolsMenuButton", self._tools_menu)
         return glossary, shortcuts
 
-    def _add_disabled_file_commands(self, menu: QMenu) -> None:
-        commands = (
-            (AppCommandId.FILE_NEW_WORKSPACE, "New", QKeySequence.StandardKey.New),
-            (AppCommandId.FILE_OPEN_WORKSPACE, "Open…", QKeySequence.StandardKey.Open),
-            (AppCommandId.FILE_OPEN_RECENT_WORKSPACE, "Open Recent", None),
-            (AppCommandId.FILE_SAVE_WORKSPACE, "Save", QKeySequence.StandardKey.Save),
+    def _add_file_commands(self, menu: QMenu) -> None:
+        commands: tuple[
+            tuple[AppCommandId, str, object, Callable[[], object] | None], ...
+        ] = (
+            (
+                AppCommandId.FILE_NEW_WORKSPACE,
+                "New",
+                QKeySequence.StandardKey.New,
+                self._host.new_workspace,
+            ),
+            (
+                AppCommandId.FILE_OPEN_WORKSPACE,
+                "Open…",
+                QKeySequence.StandardKey.Open,
+                self._host.open_workspace,
+            ),
+            (
+                AppCommandId.FILE_OPEN_RECENT_WORKSPACE,
+                "Open Recent",
+                None,
+                self._host.open_recent_workspace,
+            ),
+            (
+                AppCommandId.FILE_SAVE_WORKSPACE,
+                "Save",
+                QKeySequence.StandardKey.Save,
+                self._host.save_workspace,
+            ),
             (
                 AppCommandId.FILE_SAVE_WORKSPACE_AS,
                 "Save As…",
                 QKeySequence.StandardKey.SaveAs,
+                self._host.save_workspace_as,
             ),
-            (AppCommandId.FILE_IMPORT_WORKSPACE, "Import…", None),
-            (AppCommandId.FILE_EXPORT_WORKSPACE, "Export…", None),
+            (
+                AppCommandId.FILE_IMPORT_WORKSPACE,
+                "Import…",
+                None,
+                self._host.import_workspace,
+            ),
+            (
+                AppCommandId.FILE_EXPORT_WORKSPACE,
+                "Export…",
+                None,
+                self._host.export_workspace,
+            ),
             (
                 AppCommandId.FILE_CLOSE_WORKSPACE,
                 "Close",
                 QKeySequence.StandardKey.Close,
+                self._host.close_workspace,
             ),
         )
-        for command_id, label, shortcut in commands:
-            action = self._make_action(command_id, label)
+        for command_id, label, shortcut, callback in commands:
+            action = self._make_action(command_id, label, callback=callback)
             if shortcut is not None:
                 action.setShortcut(QKeySequence(shortcut))
-            self._apply_availability(
-                action, CommandAvailability.disabled(_PROJECT_DISABLED_REASON)
-            )
+            if command_id is AppCommandId.FILE_OPEN_RECENT_WORKSPACE:
+                self._apply_availability(
+                    action,
+                    CommandAvailability.disabled(
+                        "No recent workspace is available yet."
+                    ),
+                )
+            else:
+                self._apply_availability(action, CommandAvailability.available())
             menu.addAction(action)
+
+    def set_open_recent_available(self, available: bool, path: str = "") -> None:
+        """Update recent-workspace action availability and tooltip."""
+        action = self.command(AppCommandId.FILE_OPEN_RECENT_WORKSPACE)
+        if available and path:
+            self._apply_availability(action, CommandAvailability.available())
+            name = Path(path).name
+            action.setText(f"Open Recent ({name})")
+            tip = f"Open recent workspace: {path}"
+            action.setToolTip(tip)
+            action.setStatusTip(tip)
+        else:
+            self._apply_availability(
+                action,
+                CommandAvailability.disabled("No recent workspace is available yet."),
+            )
+            action.setText("Open Recent")
 
     def _make_action(
         self,
         command_id: AppCommandId,
         label: str,
-        callback: Callable[[], None] | None = None,
+        callback: Callable[[], object] | None = None,
         shortcut: str | None = None,
     ) -> QAction:
         action = QAction(label, self)
