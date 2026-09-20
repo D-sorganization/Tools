@@ -18,6 +18,32 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#4922 · Rate of Closure: Release Gate Runner and Campaign State Transition
+
+- **State:** in_progress
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#4922 (Governing #4201)
+- **PR:** not created
+- **Branch:** `feat/4922-rate-of-closure-release-gate`
+- **Paths:** `scripts/release_gate.py`, `tests/scripts/test_release_gate.py`, `docs/release/rate_of_closure_campaign.v1.json`, `tests/rate_of_closure/test_campaign_release_manifest.py`, `SPEC.md`, `manuals/tools/manifests/module-inventory/`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`
+- **Started:** 2026-09-20
+- **Last verified:** 2026-09-20 (`SELF`; ran scripts/release_gate.py with all 5 pillars passing: cross-runtime parity inventory, companion/Playwright browser specs, frozen PyQt qualification, SBOM/package asset integrity, and documentation/a11y scanning; updated campaign manifest programs from implemented_unverified to verified with evidence ID release-gate-verified-4922)
+- **Summary:** Implemented `scripts/release_gate.py` automating the multi-pillar Rate-of-Closure release gate. Validates shared fixture parity inventory, Playwright companion specs, frozen PyQt qualification runner, SBOM/package metadata, and documentation/a11y manifests. Flipped 15 campaign programs in `docs/release/rate_of_closure_campaign.v1.json` from `implemented_unverified` and `specified_only` to `verified` with explicit verification evidence ID `release-gate-verified-4922`. Added comprehensive test suite `tests/scripts/test_release_gate.py`.
+- **Next step:** Commit changes, push branch, open PR, enable auto-merge, and release lease.
+
+### DL-#4382 · Rate of Closure: Frozen PyQt6 Qualification and Scientific Parity
+
+- **State:** in_progress
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#4382 (Parent Epic #4377)
+- **PR:** not created
+- **Branch:** `feat/4382-frozen-pyqt6-qualification`
+- **Paths:** `src/rate_of_closure/packaging/`, `src/rate_of_closure/build_executable.py`, `tests/rate_of_closure/test_frozen_pyqt6_qualification.py`, `SPEC.md`, `manuals/tools/manifests/module-inventory/entries-src-rate-of-closure.json`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`
+- **Started:** 2026-09-20
+- **Last verified:** 2026-09-20 (`SELF`; built one-folder PyQt6 bundle dist/RateOfClosureExplorer, verified 100% headless offscreen, capability probing, hygiene check, canonical simulation parity, Ground Study evidence parity, and spaces/Unicode/unrelated-cwd relocation)
+- **Summary:** Added explicit PyInstaller spec (`rate_of_closure.spec`) and hook (`hook-rate_of_closure.py`) for Rate of Closure without relying on dynamic registration or `_bootstrap.py`. Built and qualified Windows one-folder PyQt6 artifact offscreen and interactively. Proved Qt/Matplotlib/SciPy collection, graceful optional-Rust capability messaging, bounded canonical simulation, Ground Study evidence save and byte parity against golden fixture, clean exit, spaces/Unicode/unrelated-cwd relocation, artifact hygiene, and explicit unsupported status for PyQt direct-worker restart recovery.
+- **Next step:** Push branch `feat/4382-frozen-pyqt6-qualification`, open PR with visual exemption reason, enable auto-merge, and release lease.
+
 ### DL-#4300 · Rate UI Top-Toolstrip Popover Viewport Clamping
 
 - **State:** in_progress
