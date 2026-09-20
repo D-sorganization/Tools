@@ -14,6 +14,7 @@ from scripts.check_rate_visual_evidence_changes import (
     SHARED_AUDIT,
     SHARED_MANIFEST,
     extract_exemption_reason,
+    is_substantive_evidence_change,
     main,
     validate_visual_evidence_changes,
 )
@@ -241,6 +242,145 @@ def test_cli_git_commit_trailer_exemption_passes() -> None:
             return_value=(
                 "feat: perf refactor\n\nRate-Visual-Exemption: linear min/max\n"
             ),
+        ),
+    ):
+        assert main(["--base-ref", "origin/main"]) == 0
+
+
+def test_diff_touching_no_visual_code_skips_gate() -> None:
+    assert (
+        validate_visual_evidence_changes(
+            ["src/rate_of_closure/plot_workspace_limits.py"]
+        )
+        == ()
+    )
+    assert (
+        validate_visual_evidence_changes(
+            ["src/rate_of_closure/visual_layout_preferences.py"]
+        )
+        == ()
+    )
+    assert validate_visual_evidence_changes(["src/rate_of_closure/model.py"]) == ()
+
+
+def test_is_substantive_evidence_change_json_detects_newline_only_edit() -> None:
+    base = '{\n  "version": 1,\n  "tabs": []\n}\n'
+    # Appending newlines or whitespace does not alter canonical JSON
+    touched = '{\n  "version": 1,\n  "tabs": []\n}\n\n\n'
+    assert not is_substantive_evidence_change("manifest.json", base, touched)
+
+    # Real change alters canonical JSON
+    changed = '{\n  "version": 2,\n  "tabs": []\n}\n'
+    assert is_substantive_evidence_change("manifest.json", base, changed)
+
+
+def test_is_substantive_evidence_change_text_detects_whitespace_only_edit() -> None:
+    base = "import test from 'playwright';\n\ntest('visibility', () => {});\n"
+    whitespace = "import test from 'playwright';\n\ntest('visibility', () => {});\n\n\n"
+    assert not is_substantive_evidence_change("test.spec.ts", base, whitespace)
+
+    changed = "import test from 'playwright';\n\ntest('new-visibility', () => {});\n"
+    assert is_substantive_evidence_change("test.spec.ts", base, changed)
+
+
+def test_evidence_file_with_identical_content_hash_fails_gate() -> None:
+    all_files = [
+        "src/rate_of_closure/web/src/components/SimulationDisplay.tsx",
+        SHARED_MANIFEST,
+        ACCEPTANCE_MANIFEST,
+        SHARED_AUDIT,
+        REACT_FIRST_VIEWPORT_TEST,
+    ]
+
+    def resolver(path: str) -> tuple[str, str]:
+        if path == SHARED_MANIFEST:
+            # Trailing newline only — content hash unchanged
+            return ('{"k": 1}\n', '{"k": 1}\n\n')
+        return ('{"k": 1}\n', '{"k": 2}\n')
+
+    errors = validate_visual_evidence_changes(
+        all_files, evidence_content_resolver=resolver
+    )
+    assert len(errors) == 1
+    assert "content hash unchanged from base" in errors[0]
+    assert SHARED_MANIFEST in errors[0]
+
+
+def test_evidence_file_with_substantive_content_passes_gate() -> None:
+    all_files = [
+        "src/rate_of_closure/web/src/components/SimulationDisplay.tsx",
+        SHARED_MANIFEST,
+        ACCEPTANCE_MANIFEST,
+        SHARED_AUDIT,
+        REACT_FIRST_VIEWPORT_TEST,
+    ]
+
+    def resolver(path: str) -> tuple[str, str]:
+        return ('{"k": 1}\n', '{"k": 2}\n')
+
+    assert (
+        validate_visual_evidence_changes(all_files, evidence_content_resolver=resolver)
+        == ()
+    )
+
+
+def test_cli_base_ref_with_unchanged_evidence_content_fails() -> None:
+    with (
+        patch(
+            "scripts.check_rate_visual_evidence_changes._git_changed_files",
+            return_value=(
+                "src/rate_of_closure/web/src/components/SimulationDisplay.tsx",
+                SHARED_MANIFEST,
+                ACCEPTANCE_MANIFEST,
+                SHARED_AUDIT,
+                REACT_FIRST_VIEWPORT_TEST,
+            ),
+        ),
+        patch(
+            "scripts.check_rate_visual_evidence_changes._git_show_blob",
+            return_value='{"key": 1}\n',
+        ),
+        patch(
+            "scripts.check_rate_visual_evidence_changes._file_content",
+            return_value='{"key": 1}\n\n',
+        ),
+        patch(
+            "scripts.check_rate_visual_evidence_changes._git_commit_messages",
+            return_value="",
+        ),
+    ):
+        assert main(["--base-ref", "origin/main"]) == 1
+
+
+def test_cli_base_ref_with_substantive_evidence_content_passes() -> None:
+    def fake_blob(base_ref: str, path: str) -> str:
+        return '{"version": 1}\n'
+
+    def fake_file(path: str) -> str:
+        return '{"version": 2}\n'
+
+    with (
+        patch(
+            "scripts.check_rate_visual_evidence_changes._git_changed_files",
+            return_value=(
+                "src/rate_of_closure/web/src/components/SimulationDisplay.tsx",
+                SHARED_MANIFEST,
+                ACCEPTANCE_MANIFEST,
+                SHARED_AUDIT,
+                REACT_FIRST_VIEWPORT_TEST,
+            ),
+        ),
+        patch(
+            "scripts.check_rate_visual_evidence_changes._git_show_blob",
+            side_effect=fake_blob,
+        ),
+        patch(
+            "scripts.check_rate_visual_evidence_changes._file_content",
+            side_effect=fake_file,
+        ),
+        patch(
+            "scripts.check_rate_visual_evidence_changes._git_commit_messages",
+            return_value="",
         ),
     ):
         assert main(["--base-ref", "origin/main"]) == 0

@@ -52,7 +52,7 @@ export function representativeWedgeForClub(club: ClubSpec): RepresentativeWedge 
   };
 }
 
-function bodyProfile(parameters: RepresentativeWedge): [number, number][] {
+export function bodyProfile(parameters: RepresentativeWedge): [number, number][] {
   const loft = parameters.loftDeg * Math.PI / 180;
   const bounce = parameters.bounceDeg * Math.PI / 180;
   const leading: [number, number] = [parameters.faceProgressionM, parameters.leadingEdgeRadiusM];

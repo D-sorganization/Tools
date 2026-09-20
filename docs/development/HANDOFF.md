@@ -1,3 +1,77 @@
+# Handoff Checkpoint — Wedge Delivery Metrics & Linear Waterfall Visualization (#4162) — 2026-09-19
+
+- **Repository/worktree**: `Tools`, `c:\Users\diete\Repositories\Tools-repo`
+- **Branch**: `feat/4162-wedge-delivery-metrics-viz`; Governing issue: `D-sorganization/Tools#4162` (parent epic `#4158`)
+- **Completed work**:
+  - Implemented `golf_club/_wedge_delivery_metrics.py` driving synchronized metric cards for:
+    - total vs counterfactual attack angle
+    - LE vertical, downrange, lateral linear rates and 3D angular rate
+    - dynamic loft, dynamic lie, dynamic face angle
+    - delivered bounce angle and low point height/distance
+  - Implemented linear-velocity contribution waterfall ($v_{contact} = v_{axis} + v_{shaft} + v_{other}$) strictly on linear Euclidean velocity components, with counterfactual angle deltas and order-independent two-factor Shapley attribution (never implying additive Euler angles).
+  - Built interactive, accessible explainers detailing coordinate frame definitions, equations, units, and assumptions with keyboard focus rings (`focus-visible:outline-emerald-400`).
+  - Implemented twin TypeScript modules in `rate_of_closure/web`: `wedgeDeliveryMetrics.ts`, test suite `wedgeDeliveryMetrics.test.ts`, and updated `WedgeGroundClearancePanel.tsx` / `WedgeGroundClearancePanel.test.tsx` / `SimulationDisplay.tsx`.
+  - Integrated readout into PyQt6 `impact_kinematics_presentation.py` and updated GUI test suite `test_wedge_ground_clearance_gui.py`.
+  - Regenerated shared API stability baseline `tests/api_baselines/golf_club_api_baseline.json`.
+- **Validation**:
+  - Python tests: `pytest -n 0 tests/shared/python/golf_club/test_wedge_delivery_metrics.py tests/rate_of_closure/test_wedge_ground_clearance_gui.py tests/rate_of_closure/test_wedge_ground_clearance.py tests/test_shared_package_api_stability.py` -> 21 passed.
+  - TypeScript/Web tests: 234 test files, 2324 tests passed via `npm test -- --run`.
+  - Type check: `npm run type-check` -> 0 errors.
+  - Web lint: `npm run lint` -> 0 errors, 0 warnings.
+  - Pre-commit gates: `ruff check`, `ruff format --check`, `black --check`, `mypy --follow-imports=skip` passed.
+  - SPEC.md changelog: `python shared_scripts/spec_changelog.py validate --spec SPEC.md` -> OK.
+  - Module inventory: `python -m scripts.build_tools_module_inventory --check` -> OK.
+  - Line count audit: all created and modified files <= 500 lines.
+- **Next steps**:
+  - Open PR with title `feat(wedge-ui): advanced delivery metrics cards, linear waterfall, and 3D visualization (#4162)` and rate visual exemption flag.
+  - Enable auto-merge squash and release lease.
+
+# Launch Monitor Conventions & Side-by-Side Comparison Workspace Checkpoint — 2026-09-19 (#4186)
+
+- Repository/worktree: Tools, C:/Users/diete/Repositories/Tools-repo.
+  Branch `feat/4186-convention-comparison-workspace`. Governing issue Tools #4186
+  and parent epic #4180.
+- Implemented `Compare TrackMan / Foresight` convention selector option and side-by-side comparison workspace across both PyQt6 (`LaunchMonitorComparisonWorkspace`) and React (`LaunchMonitorComparisonWorkspace.tsx`).
+- Expanded launch monitor parameter identity catalog from 8 foundation quantities to 28 parameters across 5 groups (`club_delivery`, `face_orientation`, `ball_launch`, `ball_spin`, `ball_flight`).
+- Published full parameter coverage matrix, definitions, units, event times, and ambiguity register in `docs/specs/LAUNCH_MONITOR_CONVENTIONS.md`.
+- Implemented search, group filtering, JSON/CSV exports, and accessible keyboard navigation in both desktop and web workspaces.
+- Strict cross-runtime parity verified: identical golden hash registry fixture test passing in Python and TypeScript.
+- All unit and accessibility tests passing cleanly.
+
+# Handoff Checkpoint — Content-Based Visual Baseline Gate & Main Re-Baseline (#4918) — 2026-09-20
+
+- **Repository/worktree**: `Tools`, `c:\Users\diete\Repositories\Tools-repo`
+- **Branch**: `feat/4918-content-based-visual-gate`
+- **Governing issue**: `D-sorganization/Tools#4918` (P2)
+- **Completed work**:
+  - Re-baselined `source_artifact_commit` in `src/rate_of_closure/visual_baselines.v1.json` and `test_visual_baseline_compare.py` to `b64a70f394cf9cf77266512e094239237c87d3b0`, an ancestor commit on `main`.
+  - Refactored lockstep gate (`scripts/check_rate_visual_evidence_changes.py`) to verify substantive canonical content hash changes in required evidence files, preventing whitespace/newline-only bypass.
+  - Made lockstep gate skip when changed files touch no `.tsx`, `.css`, `.ui`, or paint code (removed non-visual files `plot_workspace_limits.py` and `visual_layout_preferences.py`).
+  - Added regression tests verifying deliberate 2px layout shift fails PR compare, content-identical evidence fails gate, and non-visual diffs skip.
+  - Formatted and linted cleanly with ruff, black, and mypy; refreshed module inventory.
+- **Validation**:
+  - `pytest -n 0 tests/scripts/test_check_rate_visual_evidence_changes.py tests/rate_of_closure/test_visual_baseline_compare.py` -> PASS (35 passed)
+  - `ruff check`, `ruff format --check`, `black --check`, `mypy --follow-imports=skip` -> PASS
+  - `python shared_scripts/spec_changelog.py validate --spec SPEC.md` -> PASS (1056 rows)
+  - `python -m scripts.build_tools_module_inventory --check` -> PASS
+- **Next steps**:
+  - Push branch, create PR with `Fixes #4918` and `rate-visual-exemption: lockstep visual evidence gate content-based refactoring` trailer, arm auto-merge, and release lease.
+
+# Impact Program Handoff Checkpoint — 2026-09-19 (IA-T3 #5072)
+
+- Repository/worktree: Tools, C:/Users/diete/Repositories/Tools-repo.
+  Branch `feat/5072-prestressed-shaft-dynamics`. Governing issue Tools #5072 (IA-T3)
+  and parent program #5068.
+- Implemented versioned explicit measured grip translation/rotation impedance
+  (`golf_club.measured_grip_impedance/1`), strict passivity auditing (Hermitian
+  real part >= 0), passive Gram-factor model identification ($M, C, K \succeq 0$),
+  full/reduced FRF magnitude and phase agreement under quantified uncertainty,
+  antiresonance floor handling, and consumer integration into `GripBoundary` and
+  `simulate_coupled_impact`.
+- All 67 targeted grip/shaft dynamics tests pass (including 11 new tests in
+  `test_measured_grip_impedance.py`).
+- Technical reference: `docs/development/impact-acoustics/MEASURED_GRIP_IMPEDANCE.md`.
+
 # Handoff Checkpoint — Rate of Closure: Release Gate Runner and Campaign State Transition (#4922, #4201) — 2026-09-20
 - **Repository/worktree**: `Tools`, `c:\Users\diete\Repositories\Tools-repo`
 - **Branch**: `feat/4922-rate-of-closure-release-gate`; commit `SELF`
@@ -128,6 +202,7 @@
   - `pre-commit run mypy --files src/shared/python/launch_monitor/dispersion.py --hook-stage pre-push` -> PASS
   - `python shared_scripts/spec_changelog.py validate --spec SPEC.md` -> PASS (1053 rows)
 - **Status**: Merged into main.
+>>>>>>> origin/main
 
 # Impact Program Handoff Checkpoint — 2026-09-19 (IA-T4 #5073)
 
@@ -142,6 +217,7 @@
 - All 9 targeted unit tests in `test_oblique_contact_mechanics.py` pass cleanly in 2.53s.
 - Linters, formatters, and mypy pass with 0 errors across all touched files.
 - Module inventory refreshed and SPEC.md change log updated and validated.
+>>>>>>> origin/main
 
 # Historical Impact Program Handoff Checkpoint — 2026-09-10
 

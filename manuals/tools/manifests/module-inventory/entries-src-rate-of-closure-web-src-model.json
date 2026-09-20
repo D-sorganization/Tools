@@ -2495,10 +2495,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9137,
+      "bytes_lf": 9337,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ce2e3d75cfce8f88d51b6a6ba359c79d4aff91e43797fadd6319da72c12335fc",
+      "content_sha256_lf": "73d792fc7c1c2fa47e9de223dc973b9865766c4757e50729ed3c1590237fe210",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-CHIPFORGIVENESS-TS-1706BB7CB14D",
       "language": "typescript",
@@ -10119,6 +10119,121 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 3726,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3db2b21ab7bb4bee216a896a9c4b5b1991f7afd88b612733a167e84242e44f85",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-LAUNCHMONITORCOMPARISONWORKSPACE-TEST-TS-463315E96C38",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/launchMonitorComparisonWorkspace.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5280,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "591470d3945fe6265f43d74e6022e8a4e1117ef00f0684bf55513e2928c7cc5e",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-LAUNCHMONITORCOMPARISONWORKSPACE-TS-DE113DA3D34B",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/launchMonitorComparisonWorkspace.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "ComparisonRowTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "buildComparisonRows",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "exportComparisonCsv",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "exportComparisonJson",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "filterComparisonRows",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 4663,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -10163,10 +10278,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4181,
+      "bytes_lf": 5578,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "acc1cd882514cde75ed3bad26446af16c55da1cc811934ce1234917060dad4af",
+      "content_sha256_lf": "4eccd0327a19c8893beca04328dd8c4af5b9f3f51ec1c60549c518ca7c1ec532",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-LAUNCHMONITORCONVENTIONS-TEST-TS-BE37CB7F347B",
       "language": "typescript",
@@ -10205,15 +10320,186 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13185,
+      "bytes_lf": 9345,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "db0898da6f1df02097fcfec8e2b254108c26a931e9196946a2ffed198925112b",
+      "content_sha256_lf": "1e20567d069857d86c172e6639372f58032d29bfa3e19f070fb63ed978d7e3cc",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-LAUNCHMONITORCONVENTIONS-TS-5D194C5C9131",
       "language": "typescript",
       "maintainer": "Rate of Closure maintainers",
       "path": "src/rate_of_closure/web/src/model/launchMonitorConventions.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "AvailabilityRule",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "COMPARABILITY_REASON",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "CONVENTION_IDS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ComparabilityReason",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ConventionId",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ConventionRegistryTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "EVENT_TIMES",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "EventTime",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "PARAMETER_GROUPS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "PARAMETER_IDS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ParameterDefinitionTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ParameterGroup",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ParameterId",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "QuantityStatus",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "REFERENCE_POINTS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ReferencePoint",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "SignRule",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "compareDefinitions",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "conventionRegistry",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "migrateConventionRegistry",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "parameterGroup",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "parameterGroupLabel",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "shiftPointVelocity",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "stableConventionJson",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "transformVector",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 16647,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cd63c5ab7b8181523715aba30860d2cbcf948e793c2c949a98bb4083f825fdad",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-LAUNCHMONITORCONVENTIONSCATALOG-TS-C232E58546B1",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/launchMonitorConventionsCatalog.ts",
       "purpose": null,
       "review_status": "inventory-baseline",
       "risk_tags": [
@@ -10251,84 +10537,86 @@
         "public_surfaces": [
           {
             "kind": "export",
-            "name": "COMPARABILITY_REASON",
+            "name": "APP_POLICIES",
             "signature": null
           },
           {
             "kind": "export",
-            "name": "CONVENTION_IDS",
+            "name": "APP_SOURCE",
             "signature": null
           },
           {
             "kind": "export",
-            "name": "ConventionId",
+            "name": "FORESIGHT_BALL",
             "signature": null
           },
           {
             "kind": "export",
-            "name": "ConventionRegistryTs",
+            "name": "FORESIGHT_CLUB",
             "signature": null
           },
           {
             "kind": "export",
-            "name": "EVENT_TIMES",
+            "name": "FORESIGHT_POLICIES",
             "signature": null
           },
           {
             "kind": "export",
-            "name": "PARAMETER_IDS",
+            "name": "FRAME_ID",
             "signature": null
           },
           {
             "kind": "export",
-            "name": "ParameterDefinitionTs",
+            "name": "GROUP_LABELS",
             "signature": null
           },
           {
             "kind": "export",
-            "name": "ParameterId",
+            "name": "IDENTITIES",
             "signature": null
           },
           {
             "kind": "export",
-            "name": "REFERENCE_POINTS",
+            "name": "IdentityTs",
             "signature": null
           },
           {
             "kind": "export",
-            "name": "compareDefinitions",
+            "name": "PARAMETER_GROUP_MAP",
             "signature": null
           },
           {
             "kind": "export",
-            "name": "conventionRegistry",
+            "name": "PolicyTs",
             "signature": null
           },
           {
             "kind": "export",
-            "name": "migrateConventionRegistry",
+            "name": "RETRIEVED_ON",
             "signature": null
           },
           {
             "kind": "export",
-            "name": "shiftPointVelocity",
+            "name": "TRACKMAN_CLUB",
             "signature": null
           },
           {
             "kind": "export",
-            "name": "stableConventionJson",
+            "name": "TRACKMAN_PARAMETERS",
             "signature": null
           },
           {
             "kind": "export",
-            "name": "transformVector",
+            "name": "TRACKMAN_POLICIES",
             "signature": null
           }
         ],
         "test_paths": [],
         "unit_mentions": [
           "deg",
-          "m/s"
+          "m/s",
+          "rpm",
+          "s"
         ],
         "validation_paths": []
       }
@@ -26166,6 +26454,132 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 4637,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6d7b690e9ebb4d83e0577f545cabc647b01db9bff8df33db2545001702b418f8",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-WEDGEDELIVERYMETRICS-TEST-TS-4E70F5DFB9C1",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/wedgeDeliveryMetrics.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 16640,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e692a4b2181aca9bbdcbeb334dc6c8ebcd487af7afc5148627dd79439daa1c56",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-WEDGEDELIVERYMETRICS-TS-074026A0CEC0",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/wedgeDeliveryMetrics.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "LinearVelocityWaterfallTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "LinearWaterfallStepTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "MetricExplainerTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "WedgeDeliveryMetricsTs",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "computeLinearVelocityWaterfall",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "computeWedgeDeliveryMetrics",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "wedgeDeliveryMetricsForRun",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "m/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2280,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -26289,10 +26703,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 4335,
+      "bytes_lf": 4342,
       "classification": "calculation",
       "classification_basis": "path-marker:geometry",
-      "content_sha256_lf": "3054a73f20213375ea542f6859be9617998020c17e0c03c6d1c7a8069791b396",
+      "content_sha256_lf": "ba172e7b578536c2a5c789971c6b14708721027e13a907430e3162fb5a9ab8be",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-WEDGEGROUNDGEOMETRY-TS-9AB30E53FF92",
       "language": "typescript",
@@ -26344,6 +26758,11 @@
           {
             "kind": "export",
             "name": "WedgeContactFeature",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "bodyProfile",
             "signature": null
           },
           {
@@ -26491,10 +26910,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5453,
+      "bytes_lf": 5908,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "544c729cabc5f16e675a95c714b5d96b6f4268d9b34f611d26b76a7bfde9c680",
+      "content_sha256_lf": "416284abce2fe26408926f934b3ec9563070886b2c1dc8d3122131722c8b1416",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-WINDSTRATEGYMETRICS-TS-68F8D88FE2C6",
       "language": "typescript",
@@ -26515,7 +26934,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "not-applicable",
-        "units": "not-applicable",
+        "units": "mapped",
         "validation": "not-applicable"
       },
       "traceability": {
@@ -26536,7 +26955,9 @@
           }
         ],
         "test_paths": [],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "N"
+        ],
         "validation_paths": []
       }
     },
