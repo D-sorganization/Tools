@@ -5909,6 +5909,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
 | 2026-09-20 | #5279 | ⚡ Bolt Optimization: Replace chained array mapping and `Math.min(...spread)` in `bestCosts` with a single-pass loop over outcomes to prevent stack overflows and reduce GC pressure. (spec 1.18.143) |
+| 2026-09-20 | #5278 | ⚡ Bolt: Replace array spread with native slice() for sorting large arrays in chipForgiveness.ts and windStrategyMetrics.ts to reduce GC pressure (spec 1.18.143). |
 | 2026-09-20 | #5269 | feat(ops): content-based visual baseline gate and main re-baseline (#4918). Lockstep gate checks canonical content hash of evidence rather than mtime or whitespace, skips diffs touching no .tsx/.css/.ui/paint code, and re-baselines visual_baselines.v1.json source_artifact_commit to ancestor commit on main. |
 | 2026-09-20 | #5270 | Putting launch monitor accuracy validation harness (Tools #5221): validate subcommand with CSV logging, running error stats against +/-3% speed and +/-1 deg HLA bounds, 7 unit tests, and rig validation evidence page. |
 | 2026-09-20 | #4922 | feat(release): Rate of Closure release gate runner and transition campaign programs from implemented_unverified to verified (#4201, #4922) |

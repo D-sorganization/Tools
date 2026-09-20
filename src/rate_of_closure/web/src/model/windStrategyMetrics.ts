@@ -29,7 +29,8 @@ function directionalRisk(excesses: readonly number[]): DirectionalRisk {
 
 function cvar(values: readonly number[], alpha: number): number {
   const tailCount = Math.max(1, Math.ceil((1 - alpha) * values.length));
-  return mean([...values].sort((left, right) => right - left).slice(0, tailCount));
+  // ⚡ Bolt Optimization: Use slice() instead of array spread to reduce GC pressure
+  return mean(values.slice().sort((left, right) => right - left).slice(0, tailCount));
 }
 
 function effectiveMisses(
