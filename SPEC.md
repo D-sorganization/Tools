@@ -5909,6 +5909,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
 | 2026-09-20 | #5270 | Putting launch monitor accuracy validation harness (Tools #5221): validate subcommand with CSV logging, running error stats against +/-3% speed and +/-1 deg HLA bounds, 7 unit tests, and rig validation evidence page. |
+| 2026-09-19 | #5261 | feat(vibroacoustics, #5074): add transient vibroacoustic radiation, Rayleigh surface integral solver, observer directivity/microphone array, ball impact dipole radiation, psychoacoustic metrics, and calibrated sound recordings. |
 | 2026-09-19 | #5260 | feat(impact, #5073): add non-spherical oblique contact mechanics, moving center of pressure kinematics, face/hosel modes, and coupled energy balance. |
 | 2026-09-19 | #5256 | Putting launch monitor replay regression corpus (Tools #5222): 7 MJPEG clips in tests/data/ with manifest.json replayed through VideoFileSource into PuttingMonitor; 5 putts validated within speed/HLA tolerance and 2 negative controls assert no putt; suite marked slow. |
 | 2026-09-19 | #5247 | Use single-pass loop in clubProfileAcceptance.test.ts for calculating forward mesh bounds to prevent Maximum call stack size exceeded errors. |
@@ -7602,6 +7603,11 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 
 - **2026-09-19**: feat(impact, #5073) — Implement curved face geometry (bulge/roll), moving Center of Pressure (COP) kinematics, dynamic lever arm/gear-effect torque, high-frequency face trampoline and hosel bending/torsion modes, and multi-channel energy balance conservation.
 
+## 2026-09-19: Transient Vibroacoustic Radiation and Acoustic Field Solver (#5074 / #5261)
+
+- **2026-09-19**: feat(vibroacoustics, #5074) — Implement transient vibroacoustic radiation solver with retarded-time Rayleigh surface integral, modal radiation transfer, observer directivity and microphone arrays, ball impact acoustic dipole radiation, standardized psychoacoustic metrics (ISO 532-1 loudness, DIN 45692 sharpness, Leq, SEL), and calibrated pressure recordings.
+
 ## 2026-09-19: Native File Commands and Workspace Persistence (#4220)
 
 - **2026-09-19**: feat(rate-ui, #4220) — Wire native File commands (New, Open, Open Recent, Save, Save As, Import, Export, Close) into RateOfClosureMainWindow and ApplicationToolstrip with dirty tracking and destructive action confirmation prompts.
+
