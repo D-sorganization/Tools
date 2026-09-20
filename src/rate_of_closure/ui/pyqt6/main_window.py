@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import os
+
 from PyQt6.QtCore import QSettings, Qt, QTimer
 from PyQt6.QtWidgets import (
     QDialog,
@@ -127,11 +129,16 @@ class RateOfClosureMainWindow(
         navigation_settings: NavigationSettings | None = None,
         morris_client: MorrisAuthorityPort | None = None,
         durable_ensemble_client: DurableEnsembleAuthorityPort | None = None,
-        confirm_on_close: bool = True,
+        confirm_on_close: bool | None = None,
     ) -> None:
         super().__init__(parent)
         self.setWindowTitle("Rate of Closure Impact Explorer")
         self.setMinimumSize(1024, 700)
+        if confirm_on_close is None:
+            confirm_on_close = (
+                os.environ.get("QT_QPA_PLATFORM") != "offscreen"
+                and "PYTEST_CURRENT_TEST" not in os.environ
+            )
         self.confirm_on_close = confirm_on_close
 
         self._create_views(morris_client, durable_ensemble_client)

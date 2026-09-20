@@ -186,6 +186,7 @@ def test_close_workspace_prompts_and_resets(window) -> None:  # type: ignore[no-
 def test_close_event_prompt_cancellation(window) -> None:  # type: ignore[no-untyped-def]
     window._controls._spins["clubhead_speed_mph"].setValue(131.0)
     assert window.workspace_is_dirty()
+    window.confirm_on_close = True
 
     # Cancel close event
     event = QCloseEvent()
