@@ -5908,6 +5908,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-20 | #5284 | test(rate-of-closure): re-approve launch_monitor_analytics visual baseline from trusted run (#5284) |
 | 2026-09-20 | #5269 | feat(ops): content-based visual baseline gate and main re-baseline (#4918). Lockstep gate checks canonical content hash of evidence rather than mtime or whitespace, skips diffs touching no .tsx/.css/.ui/paint code, and re-baselines visual_baselines.v1.json source_artifact_commit to ancestor commit on main. |
 | 2026-09-20 | #5270 | Putting launch monitor accuracy validation harness (Tools #5221): validate subcommand with CSV logging, running error stats against +/-3% speed and +/-1 deg HLA bounds, 7 unit tests, and rig validation evidence page. |
 | 2026-09-20 | #4922 | feat(release): Rate of Closure release gate runner and transition campaign programs from implemented_unverified to verified (#4201, #4922) |
@@ -7604,9 +7605,11 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-17: Release v1.19.0 (#5241)
 
 - **2026-09-17**: chore(release, #5241) — Bump release version to v1.19.0 across pyproject.toml, package.json, and VERSION; refresh CHANGELOG.md.
+
 ## 2026-09-19: Non-Spherical Oblique Contact and Moving Center of Pressure (#5073 / #5260)
 
 - **2026-09-19**: feat(impact, #5073) — Implement curved face geometry (bulge/roll), moving Center of Pressure (COP) kinematics, dynamic lever arm/gear-effect torque, high-frequency face trampoline and hosel bending/torsion modes, and multi-channel energy balance conservation.
+
 ## 2026-09-19: Transient Vibroacoustic Radiation and Acoustic Field Solver (#5074 / #5261)
 
 - **2026-09-19**: feat(vibroacoustics, #5074) — Implement transient vibroacoustic radiation solver with retarded-time Rayleigh surface integral, modal radiation transfer, observer directivity and microphone arrays, ball impact acoustic dipole radiation, standardized psychoacoustic metrics (ISO 532-1 loudness, DIN 45692 sharpness, Leq, SEL), and calibrated pressure recordings.
@@ -7614,5 +7617,3 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-19: Measured Grip Impedance Dynamics and Passivity (#5072 / #5259)
 
 - **2026-09-19**: feat(golf-club, #5072) — Add measured grip impedance dynamics (`golf_club.measured_grip_impedance/1`), strict passivity auditing, continuous passive Gram-factor model identification, full/reduced FRF agreement under quantified uncertainty, and consumer integration to `GripBoundary` and `impact_coupling`.
-
-

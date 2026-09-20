@@ -2,7 +2,7 @@
   "schema_id": "rate-of-closure/visual-baselines",
   "schema_version": 1,
   "approval_policy": "proposed-off-default-branch-approved-after-protected-merge",
-  "source_artifact_commit": "b64a70f394cf9cf77266512e094239237c87d3b0",
+  "source_artifact_commit": "c599484502bc4bbf35732d887a520b7d8749b57f",
   "baselines": [
     {
       "surface": "react",
@@ -189,7 +189,7 @@
       "tab_id": "launch_monitor_analytics",
       "environment": "posix-offscreen-qt-6.11.0-pyqt-6.11.0-matplotlib-3.11.1-font-dejavu-sans-dpi-1.0-1440x900",
       "file": "initial-launch_monitor_analytics-dpi-1.0.png",
-      "sha256": "06d11bafdd03aff8ffea078c7f7f86d1c1caf7a6e6c08334c1d685862af4e8e4",
+      "sha256": "71a6ca4b5d98825795e23d24beb6d9c9b586d500f3fe354ab633c6f403a46ec3",
       "tolerance": {
         "changed_channel_threshold": 1,
         "max_mean_channel_delta_microunits": 200,
