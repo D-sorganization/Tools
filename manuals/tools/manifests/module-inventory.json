@@ -477,7 +477,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-simulation.json"
     },
     {
-      "content_sha256_lf": "f93734ec91304a0bf376fd862aa80f3b18b35555223c7cd0b5bf5fe78f75dd5c",
+      "content_sha256_lf": "47fdcce5b530bfb04096ff8a19bbb4d6247134fec385b4b2b504f4eeb25aa00a",
       "entry_count": 189,
       "package": "src/rate_of_closure/ui",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-ui.json"
@@ -519,7 +519,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src.json"
     },
     {
-      "content_sha256_lf": "38dde859c1de0f74f0c948216af470aa3d6cffc0d71866e521c755bd1a372396",
+      "content_sha256_lf": "6474ce61232536cb21c6b1c2c7bcdd9892394d3925da7622d636e3c8ae7dc005",
       "entry_count": 180,
       "package": "src/rate_of_closure/web/src/components",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-components.json"
@@ -531,7 +531,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-hooks.json"
     },
     {
-      "content_sha256_lf": "9aa62f136c9588d1423e81da4ca5f7cb25524405988f1e5c899f6cb7e1b47956",
+      "content_sha256_lf": "5d3f7e031a56a9e7e84ab3313edc714855c3fe329816119c43f2cec98ce36a60",
       "entry_count": 401,
       "package": "src/rate_of_closure/web/src/model",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-model.json"
@@ -765,7 +765,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim.json"
     },
     {
-      "content_sha256_lf": "486dfbcd8da1589ff8b5838d53ae212a88bb2b9b86f340fb65b95f7a61065f49",
+      "content_sha256_lf": "01f5b589facd128e18aec48d6fed39412a7a3674baf1819ef9a25820e3f3fdf2",
       "entry_count": 4,
       "package": "src/shared/python/swing_sim/conventions",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-conventions.json"

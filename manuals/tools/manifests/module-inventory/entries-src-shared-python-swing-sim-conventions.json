@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 867,
+      "bytes_lf": 1009,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "1901218ef37c990e2f833b2aefbda62cbf240b1890770c55c80fa6484b9f4a0e",
+      "content_sha256_lf": "fb8086447f94ea56c72a07bb4b27960a669c6aa8a384d0df474c8d3f65ef1b64",
       "family": "swing-simulation-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-CONVENTIONS-INIT-PY-4C27C3CF84AF",
       "language": "python",
@@ -84,6 +84,11 @@
           },
           {
             "kind": "re-export",
+            "name": "ParameterGroup",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "ParameterId",
             "signature": null
           },
@@ -119,6 +124,16 @@
           },
           {
             "kind": "re-export",
+            "name": "parameter_group",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "parameter_group_label",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "shift_point_velocity",
             "signature": null
           },
@@ -135,16 +150,16 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9044,
+      "bytes_lf": 1386,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b4ab440f9074ce9ada94c708bdbbec5588b840c150b0e77becaf79e9f6dfa384",
+      "content_sha256_lf": "28b202ae551953eacc7b9f99ff1522a2855cb4e2547838836f737576ea7a65fc",
       "family": "swing-simulation-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-CONVENTIONS-CATALOG-PY-4F32573503B4",
       "language": "python",
       "maintainer": "Swing simulation maintainers",
       "path": "src/shared/python/swing_sim/conventions/catalog.py",
-      "purpose": "Source-backed foundation catalog for convention-aware calculations.",
+      "purpose": "Source-backed catalog for convention-aware launch-monitor calculations.",
       "review_status": "inventory-baseline",
       "risk_tags": [
         "downstream-consumer-risk",
@@ -154,13 +169,13 @@
         "adrs": "mapped",
         "artifacts": "not-applicable",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
+        "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "not-applicable",
-        "units": "mapped",
+        "units": "not-applicable",
         "validation": "not-applicable"
       },
       "traceability": {
@@ -170,76 +185,10 @@
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
-        "citation_refs": [
-          "https://github.com/D-sorganization/Tools/blob/main/docs/specs/D_PLANE_GEOMETRY.md",
-          "https://help.foresightsports.com/hc/en-us/articles/47144162581523-Ball-Launch-Data-Measurements-Ball-Flight-Results",
-          "https://help.foresightsports.com/hc/en-us/articles/47214673873811-Club-Head-Data-Measurements-Definitions",
-          "https://www.trackman.com/blog/golf/40-trackman-parameters",
-          "https://www.trackman.com/blog/golf/club-data-definitions"
-        ],
+        "citation_refs": [],
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "_APP_POLICIES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_APP_SOURCE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_FORESIGHT_BALL_SOURCE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_FORESIGHT_CLUB_SOURCE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_FORESIGHT_POLICIES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_FRAME",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_IDENTITIES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_POLICIES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_RETRIEVED",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_TRACKMAN_CLUB_SOURCE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_TRACKMAN_PARAMETERS_SOURCE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_TRACKMAN_POLICIES",
-            "signature": null
-          },
           {
             "kind": "function",
             "name": "convention_registry",
@@ -247,19 +196,16 @@
           }
         ],
         "test_paths": [],
-        "unit_mentions": [
-          "deg",
-          "m/s"
-        ],
+        "unit_mentions": [],
         "validation_paths": []
       }
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9164,
+      "bytes_lf": 12817,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "95793f3bfe4b66b452cdb7d2f82f48f78fc94846537d96c94ef08a8edfa95a1d",
+      "content_sha256_lf": "3a63b5cee2daa7696a7186076a60fdc8c4f452e546134cf5823596e5b83cf528",
       "family": "swing-simulation-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-CONVENTIONS-REGISTRY-PY-A5B58BEFA058",
       "language": "python",
@@ -332,6 +278,11 @@
           },
           {
             "kind": "class",
+            "name": "ParameterGroup",
+            "signature": null
+          },
+          {
+            "kind": "class",
             "name": "ParameterId",
             "signature": null
           },
@@ -356,9 +307,29 @@
             "signature": null
           },
           {
+            "kind": "constant",
+            "name": "_GROUP_LABELS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_PARAMETER_GROUPS",
+            "signature": null
+          },
+          {
             "kind": "function",
             "name": "compare_definitions",
             "signature": "first: ParameterDefinition, second: ParameterDefinition"
+          },
+          {
+            "kind": "function",
+            "name": "parameter_group",
+            "signature": "parameter_id: ParameterId"
+          },
+          {
+            "kind": "function",
+            "name": "parameter_group_label",
+            "signature": "group: ParameterGroup"
           }
         ],
         "test_paths": [

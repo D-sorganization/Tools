@@ -3563,10 +3563,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 19105,
+      "bytes_lf": 19884,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d5a5493572b19abeba9c34ac7c087b9b407fab7ec3c0a8167356d103ce771306",
+      "content_sha256_lf": "43980630b960bffe0ce172750fe94360acfc95985fc9e1db1692a49413c5df6e",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-LAUNCH-MONITOR-ANALYTICS-TAB-PY-CFEFD90B47D4",
       "language": "python",

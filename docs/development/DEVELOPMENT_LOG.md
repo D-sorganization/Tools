@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#4186 · Convention Selector and Side-by-Side Launch-Monitor Comparison Workspace
+
+- **State:** in_progress
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#4186 (parent #4180, includes #4187)
+- **PR:** not created
+- **Branch:** `feat/4186-convention-comparison-workspace`
+- **Paths:** `src/shared/python/swing_sim/conventions/`, `src/rate_of_closure/ui/pyqt6/`, `src/rate_of_closure/web/`, `docs/specs/LAUNCH_MONITOR_CONVENTIONS.md`
+- **Started:** 2026-09-19
+- **Last verified:** 2026-09-19 (Python 14 convention + 6 workspace tests pass; vitest 11 convention + 9 workspace tests pass; 84 definitions match SHA-256 byte-for-byte)
+- **Summary:** Built side-by-side TrackMan vs Foresight comparison workspace in PyQt6 and React with signed deltas, typed not-comparable reasons, group filtering, full-text search, CSV/JSON exports, extended 28-parameter matrix across 5 groups, and complete accessibility coverage.
+- **Next step:** Push branch, open PR, and arm auto-merge.
+
 ### DL-#5073 · Non-Spherical Oblique Contact Mechanics and Moving Center of Pressure
 
 - **State:** in_progress

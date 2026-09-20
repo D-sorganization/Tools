@@ -10163,10 +10163,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4181,
+      "bytes_lf": 5578,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "acc1cd882514cde75ed3bad26446af16c55da1cc811934ce1234917060dad4af",
+      "content_sha256_lf": "4eccd0327a19c8893beca04328dd8c4af5b9f3f51ec1c60549c518ca7c1ec532",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-LAUNCHMONITORCONVENTIONS-TEST-TS-BE37CB7F347B",
       "language": "typescript",
@@ -10205,10 +10205,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13185,
+      "bytes_lf": 9345,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "db0898da6f1df02097fcfec8e2b254108c26a931e9196946a2ffed198925112b",
+      "content_sha256_lf": "1e20567d069857d86c172e6639372f58032d29bfa3e19f070fb63ed978d7e3cc",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-LAUNCHMONITORCONVENTIONS-TS-5D194C5C9131",
       "language": "typescript",
@@ -10223,13 +10223,13 @@
         "adrs": "mapped",
         "artifacts": "not-applicable",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "mapped",
+        "citations": "not-applicable",
         "equation_pathway": "not-applicable",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "not-applicable",
-        "units": "mapped",
+        "units": "not-applicable",
         "validation": "not-applicable"
       },
       "traceability": {
@@ -10239,16 +10239,15 @@
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
-        "citation_refs": [
-          "https://github.com/D-sorganization/Tools/blob/main/docs/specs/D_PLANE_GEOMETRY.md",
-          "https://help.foresightsports.com/hc/en-us/articles/47144162581523-Ball-Launch-Data-Measurements-Ball-Flight-Results",
-          "https://help.foresightsports.com/hc/en-us/articles/47214673873811-Club-Head-Data-Measurements-Definitions",
-          "https://www.trackman.com/blog/golf/40-trackman-parameters",
-          "https://www.trackman.com/blog/golf/club-data-definitions"
-        ],
+        "citation_refs": [],
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "AvailabilityRule",
+            "signature": null
+          },
           {
             "kind": "export",
             "name": "COMPARABILITY_REASON",
@@ -10257,6 +10256,11 @@
           {
             "kind": "export",
             "name": "CONVENTION_IDS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ComparabilityReason",
             "signature": null
           },
           {
@@ -10276,6 +10280,16 @@
           },
           {
             "kind": "export",
+            "name": "EventTime",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "PARAMETER_GROUPS",
+            "signature": null
+          },
+          {
+            "kind": "export",
             "name": "PARAMETER_IDS",
             "signature": null
           },
@@ -10286,12 +10300,32 @@
           },
           {
             "kind": "export",
+            "name": "ParameterGroup",
+            "signature": null
+          },
+          {
+            "kind": "export",
             "name": "ParameterId",
             "signature": null
           },
           {
             "kind": "export",
+            "name": "QuantityStatus",
+            "signature": null
+          },
+          {
+            "kind": "export",
             "name": "REFERENCE_POINTS",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "ReferencePoint",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "SignRule",
             "signature": null
           },
           {
@@ -10311,6 +10345,16 @@
           },
           {
             "kind": "export",
+            "name": "parameterGroup",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "parameterGroupLabel",
+            "signature": null
+          },
+          {
+            "kind": "export",
             "name": "shiftPointVelocity",
             "signature": null
           },
@@ -10326,10 +10370,7 @@
           }
         ],
         "test_paths": [],
-        "unit_mentions": [
-          "deg",
-          "m/s"
-        ],
+        "unit_mentions": [],
         "validation_paths": []
       }
     },

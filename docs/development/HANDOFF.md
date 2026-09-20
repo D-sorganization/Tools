@@ -1,3 +1,15 @@
+# Launch Monitor Conventions & Side-by-Side Comparison Workspace Checkpoint — 2026-09-19 (#4186)
+
+- Repository/worktree: Tools, C:/Users/diete/Repositories/Tools-repo.
+  Branch `feat/4186-convention-comparison-workspace`. Governing issue Tools #4186
+  and parent epic #4180.
+- Implemented `Compare TrackMan / Foresight` convention selector option and side-by-side comparison workspace across both PyQt6 (`LaunchMonitorComparisonWorkspace`) and React (`LaunchMonitorComparisonWorkspace.tsx`).
+- Expanded launch monitor parameter identity catalog from 8 foundation quantities to 28 parameters across 5 groups (`club_delivery`, `face_orientation`, `ball_launch`, `ball_spin`, `ball_flight`).
+- Published full parameter coverage matrix, definitions, units, event times, and ambiguity register in `docs/specs/LAUNCH_MONITOR_CONVENTIONS.md`.
+- Implemented search, group filtering, JSON/CSV exports, and accessible keyboard navigation in both desktop and web workspaces.
+- Strict cross-runtime parity verified: identical golden hash registry fixture test passing in Python and TypeScript.
+- All unit and accessibility tests passing cleanly.
+
 # Impact Program Handoff Checkpoint — 2026-09-19 (IA-T4 #5073)
 
 - Repository/worktree: Tools, C:/Users/diete/Repositories/Tools-repo.
