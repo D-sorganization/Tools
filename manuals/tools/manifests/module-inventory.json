@@ -459,6 +459,12 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-club.json"
     },
     {
+      "content_sha256_lf": "b2f2ba444fdde24013dfc720320a4918db44ceba0d8729f21c77ead25dbdca7d",
+      "entry_count": 5,
+      "package": "src/rate_of_closure/packaging",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-packaging.json"
+    },
+    {
       "content_sha256_lf": "b90c5805e800769a0547958423bf7a9f7acc7e2f331c7c42de7413b1aa43f2c3",
       "entry_count": 12,
       "package": "src/rate_of_closure/plotting",
