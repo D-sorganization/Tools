@@ -105,15 +105,6 @@ class SimulationTab(
         self._view = SimulationView()
         self._strike_view = StrikeView()
         self._flight_view = FlightView()
-        self._compositor_swing_view = SimulationView()
-        self._compositor_flight_view = FlightView()
-        self._compositor = ViewCompositor(
-            {
-                ViewKind.IMPACT: StrikeView(),
-                ViewKind.SWING: self._compositor_swing_view,
-                ViewKind.FLIGHT: self._compositor_flight_view,
-            }
-        )
         self._flight_panel = FlightPlaybackPanel(self._flight_view)
         self._compositor_swing_view = SynchronizedSimulationView()
         self._compositor_strike_view = StrikeView()

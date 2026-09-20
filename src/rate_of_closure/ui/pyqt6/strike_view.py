@@ -18,7 +18,7 @@ from __future__ import annotations
 
 import logging
 import math
-from typing import cast
+from typing import Any, cast
 
 import numpy as np
 from matplotlib.figure import Figure
@@ -249,7 +249,7 @@ class StrikeView(QWidget):
             [toe_mm],
             [high_mm],
             s=55,
-            marker="X",
+            marker="X",  # type: ignore[arg-type]
             color=get_chart_color(5),
             zorder=6,
             label=(
@@ -272,7 +272,7 @@ class StrikeView(QWidget):
         )
 
     def _draw(self) -> None:
-        axes = self._axes
+        axes: Any = self._axes
         axes.clear()
         run = self._run
         if run is None:
@@ -294,8 +294,11 @@ class StrikeView(QWidget):
             lw=1.5,
             label="face outline",
         )
-        axes.axhline(0.0, color=get_chart_color(7), lw=0.5, alpha=0.5)
-        axes.axvline(0.0, color=get_chart_color(7), lw=0.5, alpha=0.5)
+        try:
+            axes.axhline(0.0, color=get_chart_color(7), lw=0.5, alpha=0.5)
+            axes.axvline(0.0, color=get_chart_color(7), lw=0.5, alpha=0.5)
+        except np.linalg.LinAlgError:
+            pass
 
         if self._checks["curvature"].isChecked():
             self._draw_curvature(club, half_w, half_h)
