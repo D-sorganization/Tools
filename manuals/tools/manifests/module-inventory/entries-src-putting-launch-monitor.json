@@ -179,10 +179,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8687,
+      "bytes_lf": 8861,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e38dfbc5a4a0b02a30f247dfbec798ddc676502bbbf3678fc2ae257a5c95d844",
+      "content_sha256_lf": "907b4d98c01e8649b58eab8ff5424f81acaa0bf24a225ca3c41821c47905d290",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-CLI-PY-53BE554180B0",
       "language": "python",

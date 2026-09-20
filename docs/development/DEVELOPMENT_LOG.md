@@ -66,9 +66,9 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** `feat/issue-5222-putting-monitor-replay-corpus`
 - **Paths:** `src/putting_launch_monitor/`, `src/shared/python/launch_monitor/`, `tests/contracts/`, `tests/unit/launch_monitor/`
 - **Started:** 2026-09-15
-- **Last verified:** 2026-09-19 (recorded-putt replay regression corpus created with 7 short MJPEG clips, manifest.json, and test_replay_corpus.py, #5222)
-- **Summary:** Overhead-camera putting monitor that measures launch speed and HLA on a mat-corner homography and sends putts to GSPro over Open Connect v1; shared `gspro_connect` codec extracted into `shared.python.launch_monitor`; recorded-putt replay corpus regression test suite added.
-- **Next step:** Push branch, open PR #5256 for #5222.
+- **Last verified:** 2026-09-20 (accuracy validation harness with CSV logging and running statistics, 7 unit tests passing, rig evidence and procedure page documented, #5221)
+- **Summary:** Overhead-camera putting monitor that measures launch speed and HLA on a mat-corner homography and sends putts to GSPro over Open Connect v1; shared `gspro_connect` codec extracted into `shared.python.launch_monitor`; recorded-putt replay corpus regression test suite added; accuracy validation harness (`validate` subcommand) and rig evidence page added (#5221).
+- **Next step:** Push branch `feat/issue-5221-putting-accuracy-validation`, open PR referencing Closes #5221, arm auto-merge.
 
 
 ### DL-#1614 · Mermaid C4 Architecture Map Contract
