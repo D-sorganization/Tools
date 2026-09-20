@@ -90,3 +90,47 @@ the live loop processes 55 fps against the camera's 60 fps clock, sees a ball
 in every frame, arms on a resting ball after 11 frames and reports no false
 putts. See `AGENT_HANDOFF.md` for what is done, what is measured and what
 remains.
+
+## Replay Regression Corpus
+
+Recorded putts run through the pipeline as regression tests via `VideoFileSource`.
+The test corpus lives in `src/putting_launch_monitor/tests/data/` accompanied by `manifest.json`.
+
+To run the replay corpus regression tests:
+
+```bash
+python -m pytest -m slow src/putting_launch_monitor/tests/test_replay_corpus.py
+```
+
+### Adding a Recorded Clip to the Corpus
+
+1. **Record the putt**:
+   Capture the overhead camera (e.g. from the UpstreamDrift capture rig at 1920x1200@60):
+   ```bash
+   rig record --camera cam_b=<id> --duration 5 --out raw_putt.mkv
+   ```
+2. **Trim and downscale**:
+   Trim to ~2 s around the roll and scale down to 960 px decode width using ffmpeg (encoded as MJPEG `.avi` to keep file size well under 5 MB):
+   ```bash
+   ffmpeg -ss 00:01.000 -to 00:03.000 -i raw_putt.mkv -vf "scale=960:-1" -vcodec mjpeg -q:v 3 src/putting_launch_monitor/tests/data/putt_my_test.avi
+   ```
+3. **Register in `manifest.json`**:
+   Add an entry under `"clips"` in `src/putting_launch_monitor/tests/data/manifest.json`:
+   ```json
+   {
+     "file": "putt_my_test.avi",
+     "kind": "putt",
+     "expected_speed_mph": 4.5,
+     "expected_hla_deg": 1.0,
+     "tolerance_speed_mph": 0.25,
+     "tolerance_hla_deg": 0.8,
+     "description": "My test putt ~4.5 mph, HLA +1.0 deg"
+   }
+   ```
+   For negative test controls (e.g. a hand placing a ball, a ball rolling through unarmed), set `"kind": "no_putt"` and `"expected_putts": 0`.
+4. **Verify**:
+   ```bash
+   python -m putting_launch_monitor replay --video src/putting_launch_monitor/tests/data/putt_my_test.avi --calibration src/putting_launch_monitor/tests/data/calibration.json
+   python -m pytest -m slow src/putting_launch_monitor/tests/test_replay_corpus.py
+   ```
+

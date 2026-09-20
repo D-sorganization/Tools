@@ -117,7 +117,7 @@
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "unavailable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -168,20 +168,24 @@
         ],
         "test_paths": [
           "src/putting_launch_monitor/tests/test_gui.py",
-          "src/putting_launch_monitor/tests/test_pipeline.py"
+          "src/putting_launch_monitor/tests/test_pipeline.py",
+          "src/putting_launch_monitor/tests/test_replay_corpus.py",
+          "src/putting_launch_monitor/tests/test_validate.py"
         ],
         "unit_mentions": [
           "s"
         ],
-        "validation_paths": []
+        "validation_paths": [
+          "src/putting_launch_monitor/tests/test_validate.py"
+        ]
       }
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8687,
+      "bytes_lf": 8861,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e38dfbc5a4a0b02a30f247dfbec798ddc676502bbbf3678fc2ae257a5c95d844",
+      "content_sha256_lf": "907b4d98c01e8649b58eab8ff5424f81acaa0bf24a225ca3c41821c47905d290",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-CLI-PY-53BE554180B0",
       "language": "python",
@@ -411,7 +415,7 @@
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "unavailable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -463,6 +467,7 @@
         "test_paths": [
           "src/putting_launch_monitor/tests/test_geometry.py",
           "src/putting_launch_monitor/tests/test_gui.py",
+          "src/putting_launch_monitor/tests/test_validate.py",
           "src/shared/python/programmatic_pid/tests/test_geometry.py",
           "tests/programmatic_pid/test_geometry.py"
         ],
@@ -472,7 +477,9 @@
           "mm",
           "s"
         ],
-        "validation_paths": []
+        "validation_paths": [
+          "src/putting_launch_monitor/tests/test_validate.py"
+        ]
       }
     },
     {
@@ -749,7 +756,7 @@
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "unavailable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -795,12 +802,16 @@
         ],
         "test_paths": [
           "src/putting_launch_monitor/tests/test_gui.py",
-          "src/putting_launch_monitor/tests/test_pipeline.py"
+          "src/putting_launch_monitor/tests/test_pipeline.py",
+          "src/putting_launch_monitor/tests/test_replay_corpus.py",
+          "src/putting_launch_monitor/tests/test_validate.py"
         ],
         "unit_mentions": [
           "s"
         ],
-        "validation_paths": []
+        "validation_paths": [
+          "src/putting_launch_monitor/tests/test_validate.py"
+        ]
       }
     },
     {
@@ -833,7 +844,7 @@
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "unavailable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -874,13 +885,16 @@
         ],
         "test_paths": [
           "src/putting_launch_monitor/tests/test_gui.py",
-          "src/putting_launch_monitor/tests/test_pipeline.py"
+          "src/putting_launch_monitor/tests/test_pipeline.py",
+          "src/putting_launch_monitor/tests/test_validate.py"
         ],
         "unit_mentions": [
           "deg",
           "s"
         ],
-        "validation_paths": []
+        "validation_paths": [
+          "src/putting_launch_monitor/tests/test_validate.py"
+        ]
       }
     },
     {
@@ -1731,6 +1745,93 @@
           "s"
         ],
         "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 12171,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "218092bbede439786f0da9532aedcf4acfdc943bd65366b164ef64d445d0a32a",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-PUTTING-LAUNCH-MONITOR-VALIDATE-PY-21DCFAC5F346",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/putting_launch_monitor/validate.py",
+      "purpose": "Putting launch monitor accuracy validation harness.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "RunningStats",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ValidationHarness",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ValidationRecord",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CSV_HEADER",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "add_validate_parser",
+            "signature": "sub: Any"
+          },
+          {
+            "kind": "function",
+            "name": "cmd_validate",
+            "signature": "args: argparse.Namespace, *, input_fn: Callable[[str], str] | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/putting_launch_monitor/tests/test_validate.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "deg",
+          "s"
+        ],
+        "validation_paths": [
+          "src/putting_launch_monitor/tests/test_validate.py"
+        ]
       }
     }
   ],

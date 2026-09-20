@@ -236,6 +236,148 @@
     },
     {
       "authority_status": "provisional",
+      "bytes_lf": 5629,
+      "classification": "calculation",
+      "classification_basis": "path-marker:geometry",
+      "content_sha256_lf": "fa52d8f6af53857f79ef04ce9566d6bdee3d751b061d363ebda2cfac5b12fdb3",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-CURVED-CONTACT-GEOMETRY-PY-C2B381EFA906",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact/_curved_contact_geometry.py",
+      "purpose": "Curved face and non-spherical contact geometry.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CurvedFaceGeometry",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "NonSphericalContactGeometry",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_oblique_contact_mechanics.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 8731,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "f5c97e5dba68c76afb2bddb5cf4904b7880673f0949d4518d33ae1cb3ce0694d",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-FACE-HOSEL-MODES-PY-FD388F872564",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact/_face_hosel_modes.py",
+      "purpose": "Face and hosel structural modes for clubhead impact dynamics.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FaceHoselModalState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FaceHoselModalSystem",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FaceHoselMode",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "standard_driver_face_hosel_modes",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_oblique_contact_mechanics.py",
+          "tests/shared/python/golf_club/test_transient_vibroacoustics.py"
+        ],
+        "unit_mentions": [
+          "Hz",
+          "N",
+          "N/m",
+          "kg",
+          "rad/s",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 3295,
       "classification": "calculation",
       "classification_basis": "path-marker:friction",
@@ -501,6 +643,65 @@
     },
     {
       "authority_status": "provisional",
+      "bytes_lf": 6154,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "561298aa2f3f9e04719dc15fcb3a411b02cef4d8905291f49b45349917214352",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-MOVING-COP-KINEMATICS-PY-D3F125DB08E8",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact/_moving_cop_kinematics.py",
+      "purpose": "Kinematics of moving Center of Pressure (COP) on curved golf club face.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MovingCOPKinematics",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_oblique_contact_mechanics.py"
+        ],
+        "unit_mentions": [
+          "N"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 8994,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
@@ -761,6 +962,78 @@
     },
     {
       "authority_status": "provisional",
+      "bytes_lf": 7368,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "89740fbb17cc712fb7751984247337fbd1fe4af9cdd375fec95e7dc0f46d49ce",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-OBLIQUE-CONTACT-RESPONSE-PY-5B156457E1E6",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/impact/_oblique_contact_response.py",
+      "purpose": "Coupled oblique contact response with moving COP, friction, and face/hosel modes.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ObliqueContactModel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ObliqueContactResponse",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ObliqueContactState",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "evaluate_oblique_contact",
+            "signature": "model: ObliqueContactModel, state: ObliqueContactState"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_oblique_contact_mechanics.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 4143,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
@@ -863,7 +1136,8 @@
           "tests/shared/python/golf_club/test_friction_refinement.py",
           "tests/shared/python/golf_club/test_friction_sliding_reference.py",
           "tests/shared/python/golf_club/test_friction_transport.py",
-          "tests/shared/python/golf_club/test_normal_shaft_contact.py"
+          "tests/shared/python/golf_club/test_normal_shaft_contact.py",
+          "tests/shared/python/golf_club/test_oblique_contact_mechanics.py"
         ],
         "unit_mentions": [
           "N",
@@ -1088,7 +1362,8 @@
         ],
         "test_paths": [
           "src/shared/python/swing_sim/impact/tests/test_normal_contact_work.py",
-          "tests/shared/python/golf_club/test_normal_shaft_contact.py"
+          "tests/shared/python/golf_club/test_normal_shaft_contact.py",
+          "tests/shared/python/golf_club/test_oblique_contact_mechanics.py"
         ],
         "unit_mentions": [],
         "validation_paths": []

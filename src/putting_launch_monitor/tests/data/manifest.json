@@ -1,0 +1,65 @@
+{
+  "schema": "putting_monitor.replay_manifest/1",
+  "calibration_file": "calibration.json",
+  "description": "Recorded-putt regression corpus captured/rendered at 960x600@60 fps matching overhead lab geometry.",
+  "reference_source": "Simulated overhead camera tracker measurements pending physical rig validation #5221",
+  "clips": [
+    {
+      "file": "putt_slow_straight.avi",
+      "kind": "putt",
+      "expected_speed_mph": 3.34,
+      "expected_hla_deg": -0.13,
+      "tolerance_speed_mph": 0.25,
+      "tolerance_hla_deg": 0.8,
+      "description": "Slow straight putt ~3.4 mph, HLA 0.0 deg"
+    },
+    {
+      "file": "putt_medium_pull.avi",
+      "kind": "putt",
+      "expected_speed_mph": 4.44,
+      "expected_hla_deg": -2.6,
+      "tolerance_speed_mph": 0.25,
+      "tolerance_hla_deg": 0.8,
+      "description": "Medium pulled putt ~4.5 mph, HLA -2.5 deg"
+    },
+    {
+      "file": "putt_medium_push.avi",
+      "kind": "putt",
+      "expected_speed_mph": 5.15,
+      "expected_hla_deg": 2.13,
+      "tolerance_speed_mph": 0.25,
+      "tolerance_hla_deg": 0.8,
+      "description": "Medium pushed putt ~5.1 mph, HLA +2.0 deg"
+    },
+    {
+      "file": "putt_fast_straight.avi",
+      "kind": "putt",
+      "expected_speed_mph": 6.68,
+      "expected_hla_deg": 0.2,
+      "tolerance_speed_mph": 0.25,
+      "tolerance_hla_deg": 0.8,
+      "description": "Fast straight putt ~6.7 mph, HLA 0.0 deg"
+    },
+    {
+      "file": "putt_fast_slight_pull.avi",
+      "kind": "putt",
+      "expected_speed_mph": 6.24,
+      "expected_hla_deg": -1.4,
+      "tolerance_speed_mph": 0.25,
+      "tolerance_hla_deg": 0.8,
+      "description": "Fast slight pull ~6.3 mph, HLA -1.2 deg"
+    },
+    {
+      "file": "no_putt_hand_place.avi",
+      "kind": "no_putt",
+      "expected_putts": 0,
+      "description": "Hand placing ball at rest without a launch"
+    },
+    {
+      "file": "no_putt_rolling_unarmed.avi",
+      "kind": "no_putt",
+      "expected_putts": 0,
+      "description": "Ball rolling through the mat without resting (unarmed)"
+    }
+  ]
+}

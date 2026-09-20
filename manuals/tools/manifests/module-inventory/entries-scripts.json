@@ -4892,6 +4892,82 @@
       }
     },
     {
+      "authority_status": "provisional",
+      "bytes_lf": 9170,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "3f626b3e3fac07aeb96da54becd2f435436c2f1918becbbf68253e9e49716918",
+      "family": "repository-tooling-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-GENERATE-PUTTING-REPLAY-CORPUS-PY-5E0A2D0EC59C",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/generate_putting_replay_corpus.py",
+      "purpose": "Generate the synthetic replay corpus for the putting monitor regression suite.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "NoPuttClipSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PuttClipSpec",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DATA_DIR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FPS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "generate_all",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "deg"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "not-applicable",
       "bytes_lf": 1839,
       "classification": "non-calculation",
@@ -6652,6 +6728,105 @@
         "unit_mentions": [
           "N",
           "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 16254,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8abbdd9400e9e79f4cfcef2c09f6773de226b4c3ce370297f8ec67abaad2f8cb",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-RELEASE-GATE-PY-71AB8AE0D70E",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/release_gate.py",
+      "purpose": "Rate-of-Closure release gate (Tools #4201, #4922).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_DEFAULT_EVIDENCE_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_FORBIDDEN_PATTERNS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "check_companion_and_playwright",
+            "signature": "repo_root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "check_documentation_and_a11y",
+            "signature": "repo_root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "check_frozen_pyqt_qualification",
+            "signature": "repo_root: Path, artifact_dir: Path | None=None, *, skip_binary: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "check_parity_inventory",
+            "signature": "repo_root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "check_sbom_and_package_assets",
+            "signature": "repo_root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "run_release_gate",
+            "signature": "repo_root: Path | None=None, *, artifact_dir: Path | None=None, skip_frozen_binary: bool=False, update_manifest: bool=False, evidence_id: str=_DEFAULT_EVIDENCE_ID"
+          },
+          {
+            "kind": "function",
+            "name": "update_campaign_manifest",
+            "signature": "repo_root: Path, evidence_id: str=_DEFAULT_EVIDENCE_ID"
+          }
+        ],
+        "test_paths": [
+          "tests/scripts/test_release_gate.py"
+        ],
+        "unit_mentions": [
+          "g"
         ],
         "validation_paths": []
       }

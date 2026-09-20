@@ -1,0 +1,45 @@
+{
+  "camera_instance_id": "synthetic_lab_overhead_30deg",
+  "capture_height": 600,
+  "capture_width": 960,
+  "colour": "white",
+  "custom_colour": null,
+  "fps": 60,
+  "mat_corners_px": [
+    [
+      301.4346420018237,
+      492.6688910808777
+    ],
+    [
+      658.5653579981762,
+      492.6688910808777
+    ],
+    [
+      615.5004394780849,
+      153.79740108671663
+    ],
+    [
+      344.499560521915,
+      153.79740108671663
+    ]
+  ],
+  "mat_length_mm": 1520.0,
+  "mat_width_mm": 1220.0,
+  "notes": "Replay corpus calibration matching 30 deg overhead lab setup",
+  "roi": null,
+  "schema": "putting_monitor.calibration/1",
+  "target_deg": 0.0,
+  "tracker": {
+    "max_hla_deg": 45.0,
+    "max_jump_mm": 250.0,
+    "max_missing": 6,
+    "max_speed_mph": 25.0,
+    "min_points": 4,
+    "min_r2": 0.98,
+    "min_speed_mph": 0.3,
+    "settle_frames": 12,
+    "start_mm": 12.0,
+    "still_mm": 4.0,
+    "window_mm": 300.0
+  }
+}
