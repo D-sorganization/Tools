@@ -1285,95 +1285,6 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 8404,
-      "classification": "calculation",
-      "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "b3546885ce8df43b555211cec72beb7f1d78bb7d900a6b46546dafaf337f535b",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-MEASURED-GRIP-CONTRACTS-PY-76E493840069",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/golf_club/_measured_grip_contracts.py",
-      "purpose": "Immutable contracts for measured grip translation/rotation impedance.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "FRFAgreementSummary",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GripAxis",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GripFRFAgreement",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GripFrequencySample",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "GripPassivityAudit",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "MeasuredGripDataset",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "MeasuredGripSource",
-            "signature": null
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/golf_club/test_measured_grip_impedance.py"
-        ],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
       "bytes_lf": 5089,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
@@ -4113,22 +4024,22 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 17978,
+      "bytes_lf": 2211,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "07d87045bb6016a1a26db3c6b755ad8eb7616c555aca94f7e1e372a0f9b602a6",
+      "content_sha256_lf": "c08317073352f2f1677fea42188770a1f4584f00ae0de5b9b6a700cd8e5f006f",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-WEDGE-DELIVERY-METRICS-PY-B9C91BFAFC12",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/shared/python/golf_club/_wedge_delivery_metrics.py",
-      "purpose": "Private ground-relative wedge metrics and linear velocity waterfall at delivery.",
+      "purpose": "Private ground-relative wedge metrics evaluated at ball contact.",
       "review_status": "review-required",
       "risk_tags": [
         "downstream-consumer-risk",
-        "public-api",
         "scientific-review-required",
         "source-provenance-unmapped",
+        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -4137,72 +4048,25 @@
         "chapters": "unmapped-pending-TOOLS-D4",
         "citations": "unavailable",
         "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
+        "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
+        "tests": "unavailable",
+        "units": "unavailable",
         "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
+          "docs/adr/ADR-002-shared-library-module-structure.md"
         ],
         "artifact_sha256": [],
         "chapter_paths": [],
         "citation_refs": [],
         "equation_refs": [],
         "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "LinearVelocityWaterfall",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "LinearWaterfallStep",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "MetricExplainer",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "WedgeDeliveryMetrics",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "compute_wedge_delivery_metrics",
-            "signature": "parameters: WedgeHeadParameters, pose: np.ndarray, twist: np.ndarray, ground_normal: np.ndarray | None=None, target_unit: np.ndarray | None=None, right_unit: np.ndarray | None=None, shaft_axis_point_m: np.ndarray | None=None, shaft_axis_unit: np.ndarray | None=None, contact_point_m: np.ndarray | None=None, low_point_world_m: tuple[float, float, float] | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "delivered_bounce_deg",
-            "signature": "parameters: WedgeHeadParameters, pose: np.ndarray, ground_normal: np.ndarray"
-          },
-          {
-            "kind": "function",
-            "name": "linear_velocity_waterfall",
-            "signature": "reference_velocity_mps: np.ndarray, angular_velocity_rad_s: np.ndarray, shaft_axis_point_m: np.ndarray, shaft_axis_unit: np.ndarray, contact_point_m: np.ndarray, ground_up_unit: np.ndarray | None=None, target_unit: np.ndarray | None=None, right_unit: np.ndarray | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "path_projected_metrics",
-            "signature": "parameters: WedgeHeadParameters, pose: np.ndarray, twist: np.ndarray, ground_normal: np.ndarray"
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/golf_club/test_wedge_delivery_metrics.py"
-        ],
-        "unit_mentions": [
-          "m/s",
-          "s"
-        ],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
         "validation_paths": []
       }
     },
@@ -4679,7 +4543,6 @@
         ],
         "test_paths": [
           "tests/shared/python/golf_club/test_grip_impedance.py",
-          "tests/shared/python/golf_club/test_measured_grip_impedance.py",
           "tests/shared/python/golf_club/test_shaft_linear_system.py",
           "tests/shared/python/golf_club/test_shaft_rotating_transport.py"
         ],
@@ -4766,8 +4629,7 @@
           "src/shared/python/swing_sim/model_interchange/tests/test_model_interchange.py",
           "tests/shared/python/golf_club/test_coupled_impact_audit.py",
           "tests/shared/python/golf_club/test_fitting_fixtures_parity.py",
-          "tests/shared/python/golf_club/test_impact_coupling.py",
-          "tests/shared/python/golf_club/test_measured_grip_impedance.py"
+          "tests/shared/python/golf_club/test_impact_coupling.py"
         ],
         "unit_mentions": [
           "s",
@@ -4921,122 +4783,6 @@
           "W",
           "kg",
           "m/s",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "provisional",
-      "bytes_lf": 13289,
-      "classification": "calculation",
-      "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "e84ad77cef56a1c67c1041d1b258555db45fc3580f7317832446bb48df219e1a",
-      "family": "shared-tools-calculation",
-      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-MEASURED-GRIP-IMPEDANCE-PY-36DBCCD17447",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "src/shared/python/golf_club/measured_grip_impedance.py",
-      "purpose": "Versioned measured grip impedance, passivity analysis and FRF agreement.",
-      "review_status": "review-required",
-      "risk_tags": [
-        "downstream-consumer-risk",
-        "public-api",
-        "scientific-review-required",
-        "source-provenance-unmapped",
-        "unit-contract-review"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "unmapped-pending-TOOLS-D7",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "unavailable",
-        "equation_pathway": "unmapped-pending-TOOLS-D4",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "unavailable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-002-shared-library-module-structure.md",
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "MEASURED_GRIP_FORMAT",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "assess_coupled_shaft_measured_frf",
-            "signature": "measured: MeasuredGripDataset, full_compliance_fn: Callable[[float], complex], reduced_compliance_fn: Callable[[float], complex], max_reduction_relative_error: float=0.05"
-          },
-          {
-            "kind": "function",
-            "name": "assess_measured_frf_agreement",
-            "signature": "measured: MeasuredGripDataset, model_impedance_fn: Callable[[float], complex], max_relative_magnitude_error: float, max_phase_error_rad: float, coverage_k: float=2.0"
-          },
-          {
-            "kind": "function",
-            "name": "audit_grip_passivity",
-            "signature": "dataset: MeasuredGripDataset"
-          },
-          {
-            "kind": "function",
-            "name": "check_operating_strain_limits",
-            "signature": "curvature_1_m: object, outer_radius_m: float, axial_strain: float=0.0, limit: float=0.005"
-          },
-          {
-            "kind": "function",
-            "name": "fit_passive_grip_impedance",
-            "signature": "dataset: MeasuredGripDataset, frame_id: str | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "measured_grip_digest",
-            "signature": "dataset: MeasuredGripDataset"
-          },
-          {
-            "kind": "function",
-            "name": "measured_grip_from_json",
-            "signature": "document: str"
-          },
-          {
-            "kind": "function",
-            "name": "measured_grip_to_boundary",
-            "signature": "dataset: MeasuredGripDataset, fitted: PassiveGripImpedance | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "measured_grip_to_json",
-            "signature": "dataset: MeasuredGripDataset"
-          },
-          {
-            "kind": "function",
-            "name": "passive_impedance_to_boundary",
-            "signature": "grip: PassiveGripImpedance, axis: int=0"
-          },
-          {
-            "kind": "function",
-            "name": "verify_measured_grip_source_bytes",
-            "signature": "dataset: MeasuredGripDataset, blobs: Mapping[str, bytes]"
-          }
-        ],
-        "test_paths": [
-          "tests/shared/python/golf_club/test_measured_grip_impedance.py"
-        ],
-        "unit_mentions": [
-          "m/s",
-          "rad/s",
           "s"
         ],
         "validation_paths": []

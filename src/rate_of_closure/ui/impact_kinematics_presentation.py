@@ -14,23 +14,13 @@ from rate_of_closure.simulation import (
     representative_wedge_parameters_for_club,
 )
 from shared.python.golf_club import GroundPlane
-from shared.python.golf_club._wedge_delivery_metrics import (
-    WedgeDeliveryMetrics,
-    compute_wedge_delivery_metrics,
-)
-from shared.python.golf_club._wedge_sweep import (
-    interpolated_pose,
-    interpolated_twist,
-)
 
 __all__ = [
     "format_impact_kinematics",
     "format_simulation_engineering_readout",
     "format_simulation_key_metrics",
-    "format_wedge_delivery_metrics",
     "ground_clearance_snapshot_for_scene",
     "simulation_ground_clearance_snapshot",
-    "simulation_wedge_delivery_metrics",
 ]
 
 
@@ -176,99 +166,8 @@ def ground_clearance_snapshot_for_scene(
         return None
 
 
-def simulation_wedge_delivery_metrics(
-    run: SimulationRun,
-) -> WedgeDeliveryMetrics | None:
-    """Compute synchronized wedge delivery metrics and waterfall for a run."""
-    parameters = representative_wedge_parameters_for_club(run.config.club)
-    if parameters is None:
-        return None
-    event_time_s = run.inspection_time_s
-    pose = interpolated_pose(run.swing_times, run.swing_poses, event_time_s)
-    twist = interpolated_twist(run.swing_times, run.swing_twists, event_time_s)
-    ground_snapshot = simulation_ground_clearance_snapshot(run)
-    low_point = ground_snapshot.analysis.low_point_world_m if ground_snapshot else None
-    return compute_wedge_delivery_metrics(
-        parameters=parameters,
-        pose=pose,
-        twist=twist,
-        low_point_world_m=low_point,
-    )
-
-
-def format_wedge_delivery_metrics(metrics: WedgeDeliveryMetrics) -> str:
-    """Format delivery cards, LE rates, and linear velocity waterfall."""
-    wf = metrics.waterfall
-    le_items = (
-        ("LE Downrange Rate", _number(metrics.le_downrange_rate_mps, "m/s")),
-        ("LE Vertical Rate", _number(metrics.le_vertical_rate_mps, "m/s")),
-        ("LE Lateral Rate", _number(metrics.le_lateral_rate_mps, "m/s")),
-        ("LE Total Speed", _number(metrics.le_total_speed_mps, "m/s")),
-        ("LE 3D Rate", _number(metrics.le_3d_angular_rate_dps, "°/s", 1)),
-        ("Dynamic Loft", _number(metrics.dynamic_loft_deg, "°")),
-        ("Dynamic Lie", _number(metrics.dynamic_lie_deg, "°")),
-        ("Dynamic Face Angle", _number(metrics.dynamic_face_angle_deg, "°")),
-        ("Delivered Bounce", _number(metrics.delivered_bounce_deg, "°")),
-    )
-    le_html = " • ".join(f"<b>{k}:</b> {v}" for k, v in le_items)
-
-    w_axis = (
-        f"({wf.base_axis.downrange_mps:.2f}, "
-        f"{wf.base_axis.vertical_mps:.2f}, "
-        f"{wf.base_axis.lateral_mps:.2f}) m/s"
-    )
-    w_shaft = (
-        f"({wf.shaft_rotation.downrange_mps:.2f}, "
-        f"{wf.shaft_rotation.vertical_mps:.2f}, "
-        f"{wf.shaft_rotation.lateral_mps:.2f}) m/s"
-    )
-    w_other = (
-        f"({wf.other_rotation.downrange_mps:.2f}, "
-        f"{wf.other_rotation.vertical_mps:.2f}, "
-        f"{wf.other_rotation.lateral_mps:.2f}) m/s"
-    )
-    w_total = (
-        f"({wf.total_contact.downrange_mps:.2f}, "
-        f"{wf.total_contact.vertical_mps:.2f}, "
-        f"{wf.total_contact.lateral_mps:.2f}) m/s"
-    )
-    waterfall_html = (
-        f"<b>Axis Translation:</b> {w_axis} + "
-        f"<b>Shaft Rotation:</b> {w_shaft} + "
-        f"<b>Other Rotation:</b> {w_other} = "
-        f"<b>Total Contact:</b> {w_total}"
-    )
-
-    aoa_items = (
-        ("Total AoA", _number(wf.total_aoa_deg, "°")),
-        ("Without Shaft AoA", _number(wf.without_shaft_aoa_deg, "°")),
-        ("Shaft AoA Δ", _number(wf.shaft_counterfactual_aoa_delta_deg, "°")),
-        ("Shaft Shapley AoA", _number(wf.shaft_shapley_aoa_deg, "°")),
-        ("Other Shapley AoA", _number(wf.other_shapley_aoa_deg, "°")),
-    )
-    aoa_html = " • ".join(f"<b>{k}:</b> {v}" for k, v in aoa_items)
-
-    lp = metrics.low_point_world_m
-    lp_text = (
-        f"({lp[0]:.3f}, {lp[1]:.3f}, {lp[2]:.3f}) m"
-        if lp is not None
-        else "Unavailable"
-    )
-
-    return (
-        f"<br><b>Wedge Delivery Metrics:</b> {le_html}<br>"
-        f"<b>Low Point:</b> {lp_text}<br>"
-        f"<b>Linear-Velocity Contribution Waterfall:</b> {waterfall_html}<br>"
-        f"<b>Attack Angle Attribution:</b> {aoa_html}<br>"
-        "<i>Linear velocity components are strictly additive "
-        "(v_contact = v_axis + v_shaft + v_other). "
-        "Attack angles are nonlinear (atan2) and reported as "
-        "counterfactual deltas; never Euler-additive.</i>"
-    )
-
-
 def format_simulation_engineering_readout(run: SimulationRun) -> str:
-    """Format impact metrics, ground clearance, and wedge delivery metrics."""
+    """Format impact metrics and wedge-only swept ground-clearance metrics."""
     impact_html = format_impact_kinematics(impact_kinematics_for_run(run))
     try:
         ground_snapshot = simulation_ground_clearance_snapshot(run)
@@ -278,19 +177,11 @@ def format_simulation_engineering_readout(run: SimulationRun) -> str:
             + "<br><b>Wedge Ground-Clearance:</b> Unavailable — "
             + escape(str(error))
         )
-    ground_html = (
-        "" if ground_snapshot is None else _format_ground_clearance(ground_snapshot)
+    return (
+        impact_html
+        if ground_snapshot is None
+        else impact_html + _format_ground_clearance(ground_snapshot)
     )
-    try:
-        delivery_metrics = simulation_wedge_delivery_metrics(run)
-    except ValueError:
-        delivery_metrics = None
-    delivery_html = (
-        ""
-        if delivery_metrics is None
-        else format_wedge_delivery_metrics(delivery_metrics)
-    )
-    return impact_html + ground_html + delivery_html
 
 
 def format_simulation_key_metrics(run: SimulationRun | None) -> str:
