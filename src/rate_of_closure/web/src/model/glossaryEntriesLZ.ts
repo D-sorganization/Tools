@@ -277,6 +277,60 @@ export const ENTRIES: Record<string, GlossaryEntry> = {
       "probability — used in variation studies when only hard limits, not a " +
       "central tendency, are known (swing_sim.variation.spec).",
   },
+  mardia_normality: {
+    term: "Mardia Normality Diagnostics",
+    definition:
+      "Multivariate extensions of univariate skewness and kurtosis introduced " +
+      "by K. V. Mardia (1970). The skewness statistic asymptotically follows " +
+      "a chi-square distribution with p*(p+1)*(p+2)/6 degrees of freedom; " +
+      "the kurtosis statistic is asymptotically standard normal " +
+      "(Mardia 1970; swing_sim.variation.normality).",
+  },
+  morris_screening: {
+    term: "Morris Elementary-Effects Screening",
+    definition:
+      "A computationally efficient global sensitivity method evaluating " +
+      "one-at-a-time elementary effects along randomized trajectories across " +
+      "discretized parameter grids, ranking parameters by mean effect magnitude " +
+      "and interaction/non-linearity spread (Morris 1991; Campolongo 2007; " +
+      "swing_sim.variation.morris).",
+  },
+  saltelli_sampling: {
+    term: "Saltelli Sampling Scheme",
+    definition:
+      "A quasi-random sequence design (Saltelli 2002, 2010) constructing " +
+      "cross-matrices from two independent sample matrices of size N x k. " +
+      "Uses Sobol low-discrepancy sequences to compute first-order and total " +
+      "Sobol sensitivity indices in N*(k+2) total model evaluations " +
+      "(Saltelli et al. 2010; swing_sim.variation.sobol_sensitivity).",
+  },
+  sobol_sensitivity: {
+    term: "Sobol Sensitivity Indices",
+    definition:
+      "Variance-based global sensitivity decomposition quantifying the " +
+      "contribution of each input variable to output variance: first-order " +
+      "index S1 measures the main effect, while total index ST captures " +
+      "main plus all higher-order interaction effects (Sobol 1993; Jansen 1999; " +
+      "Saltelli 2010; swing_sim.variation.sobol_sensitivity).",
+  },
+  spearman_significance: {
+    term: "Spearman Correlation Significance",
+    definition:
+      "Two-sided permutation hypothesis tests and non-parametric bootstrap " +
+      "confidence intervals evaluating whether monotonic rank correlations " +
+      "between inputs and outputs differ significantly from zero, suppressing " +
+      "insignificant relationships (Efron & Tibshirani 1993; " +
+      "swing_sim.variation.analysis).",
+  },
+  truncation_mean_shift: {
+    term: "Truncation Mean Shift",
+    definition:
+      "The shift between the nominal base value and realized sample mean " +
+      "caused by bounded parameter sampling (such as physical limits on " +
+      "speed or angles). Highlights input skewness introduced by truncation " +
+      "before downstream impact and flight integration (statistical modeling " +
+      "norms; swing_sim.variation.truncation_analysis).",
+  },
   zero_torque_counterfactual: {
     term: "Zero-Torque Counterfactual (ZTCF)",
     definition:

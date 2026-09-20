@@ -31,10 +31,12 @@ from shared.python.swing_sim.variation import (
     DispersionEllipse,
     OutputStats,
     SensitivityResult,
+    TruncationShiftNote,
     VariationDataset,
     VariationPlan,
+    detect_truncation_mean_shifts,
     dispersion_ellipse,
-    spearman_matrix,
+    spearman_analysis,
     summary_stats,
 )
 
@@ -49,6 +51,9 @@ class PreparedResultViews:
     spearman_magnitude: np.ndarray
     sensitivity: SensitivityResult | None
     ellipse: DispersionEllipse | None
+    spearman_p_values: np.ndarray | None = None
+    spearman_significant: np.ndarray | None = None
+    truncation_notes: tuple[TruncationShiftNote, ...] = ()
 
 
 class VariationTabResultsMixin:
@@ -195,14 +200,20 @@ def prepare_result_views(
 ) -> PreparedResultViews:
     """Derive every fallible scalar view model before any widget mutation."""
     prepared_sensitivity = _prepare_sensitivity(dataset, sensitivity)
-    rho = np.array(spearman_matrix(dataset), copy=True)
+    spearman_res = spearman_analysis(dataset)
+    rho = np.array(spearman_res.matrix, copy=True)
     magnitude = np.abs(rho)
+    p_values = np.array(spearman_res.p_values, copy=True)
+    significant = np.array(spearman_res.significant, copy=True)
     rho.setflags(write=False)
     magnitude.setflags(write=False)
+    p_values.setflags(write=False)
+    significant.setflags(write=False)
     try:
         ellipse = dispersion_ellipse(dataset)
     except (ContractViolationError, ValueError):
         ellipse = None
+    truncation_notes = detect_truncation_mean_shifts(dataset)
     return PreparedResultViews(
         dataset=dataset,
         stats=summary_stats(dataset),
@@ -210,6 +221,9 @@ def prepare_result_views(
         spearman_magnitude=magnitude,
         sensitivity=prepared_sensitivity,
         ellipse=ellipse,
+        spearman_p_values=p_values,
+        spearman_significant=significant,
+        truncation_notes=truncation_notes,
     )
 
 
@@ -287,7 +301,7 @@ def populate_result_views(
 ) -> None:
     """Commit one already-derived presentation to the visible widgets."""
     dataset = prepared.dataset
-    summary.set_stats(prepared.stats)
+    summary.set_stats(prepared.stats, prepared.truncation_notes)
     if dataset is None:
         assert prepared.sensitivity is not None
         sensitivity = prepared.sensitivity
@@ -304,6 +318,8 @@ def populate_result_views(
         prepared.spearman,
         prepared.spearman_magnitude,
         value_format="{:+.2f}",
+        significant=prepared.spearman_significant,
+        p_values=prepared.spearman_p_values,
     )
     if prepared.sensitivity is not None:
         sensitivity = prepared.sensitivity
