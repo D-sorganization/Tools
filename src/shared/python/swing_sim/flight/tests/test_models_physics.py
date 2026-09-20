@@ -104,9 +104,9 @@ def test_cross_model_carry_spread_for_driver_launch() -> None:
         carries[model.name] = result.carry_distance
     assert len(carries) == 7
     for name, carry in carries.items():
-        assert (
-            230.0 <= carry <= 265.0
-        ), f"{name} carry {carry:.1f} m out of literature band"
+        assert 230.0 <= carry <= 265.0, (
+            f"{name} carry {carry:.1f} m out of literature band"
+        )
     mean_carry = sum(carries.values()) / len(carries)
     assert 240.0 <= mean_carry <= 250.0
     canonical_carry = carries[WaterlooPennerModel().name]

@@ -64,9 +64,9 @@ def test_runtime_parity_all_conditions_within_one_percent() -> None:
     assert len(report.runtime_parity_checks) == 5
     for check in report.runtime_parity_checks:
         assert check.passed is True
-        assert (
-            check.relative_diff_pct <= 1.0
-        ), f"Parity failure for {check.condition_id}: {check.relative_diff_pct}%"
+        assert check.relative_diff_pct <= 1.0, (
+            f"Parity failure for {check.condition_id}: {check.relative_diff_pct}%"
+        )
 
 
 @pytest.mark.unit
