@@ -4196,6 +4196,7 @@
           }
         ],
         "test_paths": [
+          "tests/rate_of_closure/test_view_compositor_gui.py",
           "tests/rate_of_closure/test_view_workspace.py",
           "tests/rate_of_closure/test_workspace_document.py"
         ],

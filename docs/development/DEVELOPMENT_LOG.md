@@ -31,6 +31,19 @@ reachable from any live state and `abandoned` from `parked`.
 - **Summary:** Implements Sobol first-order and total sensitivity indices via Saltelli sampling with run count guidance, permutation p-values and bootstrap CIs on Spearman correlation matrix with cell suppression/greying, Mardia bivariate normality diagnostic and convex hull fallback for 2D landing dispersion, and input truncation mean-shift analysis with UI notes.
 - **Next step:** Auto-merge armed with squash; release lease and notify caller agent.
 
+### DL-#4225 · Workspace View Compositor: Impact, Swing, Flight
+
+- **State:** shipped
+- **Owner:** antigravity
+- **Issue:** D-sorganization/Tools#4225
+- **PR:** #5264
+- **Branch:** `feat/4225-workspace-view-compositor`
+- **Paths:** `src/rate_of_closure/ui/pyqt6/`, `src/rate_of_closure/web/`, `tests/rate_of_closure/`
+- **Started:** 2026-09-19
+- **Last verified:** 2026-09-19 (all unit/headless tests pass including test_app_toolstrip.py, test_view_compositor_gui.py, test_tooltips.py, and vitest web test suite; pre-commit ruff/black/mypy pass; inventory check clean)
+- **Summary:** Multi-view workspace compositor integrating Impact, Swing, and Flight viewports with synchronized playback, run selection, and layout presets across PyQt and React toolstrips.
+- **Next step:** Merged into main.
+
 ### DL-#4252 · Literature Flight Models Reconciliation, Carry Benchmark, and Wind Documentation
 
 - **State:** shipped
@@ -147,7 +160,6 @@ reachable from any live state and `abandoned` from `parked`.
 - **Last verified:** 2026-09-19 (`SELF`; mirrors-mypy bumped from v1.13.0 to v1.15.0 to support NumPy >= 2.2 stubs without cache serializer placeholder crash; pre-push hook and unit tests passed)
 - **Summary:** Pre-push mypy hook crashed on numpy-importing files when the isolated hook environment carried numpy >= 2.2 because mypy 1.13's cache serializer failed on newer type syntax. Bumped mirrors-mypy to v1.15.0 and added contract unit test.
 - **Next step:** Shipped via PR #5254.
->>>>>>> origin/main
 
 ### DL-#5073 · Non-Spherical Oblique Contact Mechanics and Moving Center of Pressure
 

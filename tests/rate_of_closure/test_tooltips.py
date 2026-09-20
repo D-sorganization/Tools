@@ -19,6 +19,7 @@ from PyQt6.QtWidgets import (  # noqa: E402
     QComboBox,
     QLineEdit,
     QSlider,
+    QTableView,
     QTabWidget,
     QWidget,
 )
@@ -45,12 +46,19 @@ def _effective_tooltip(widget: QWidget) -> str:
 
 def _is_internal(widget: QWidget) -> bool:
     """Skip Qt-internal children of composite widgets (spin/combo/scroll)."""
-    if widget.objectName().startswith("qt_") or widget.objectName() in (
-        "ScrollLeftButton",
-        "ScrollRightButton",
+    if (
+        widget.objectName().startswith("qt_")
+        or widget.objectName() in ("ScrollLeftButton", "ScrollRightButton")
+        or type(widget).__name__ == "QTableCornerButton"
     ):
         return True  # Qt chrome (tab-bar scrollers, table corner button)
     parent = widget.parentWidget()
+    if (
+        isinstance(widget, QAbstractButton)
+        and not widget.text()
+        and isinstance(parent, QTableView)
+    ):
+        return True  # Corner button on QTableWidget/QTableView
     while parent is not None:
         if isinstance(parent, (QAbstractSpinBox, QComboBox, QSlider)):
             return True

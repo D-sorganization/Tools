@@ -192,6 +192,10 @@ class SimulationView(CameraViewportMixin, SimulationViewControlsMixin, QWidget):
         """Whether the playback timer is running."""
         return bool(self._timer.isActive())
 
+    def is_looping(self) -> bool:
+        """Whether playback loops when the timeline ends."""
+        return bool(self._loop_check.isChecked())
+
     def set_looping(self, looping: bool) -> None:
         """Set the loop toggle."""
         self._loop_check.setChecked(looping)

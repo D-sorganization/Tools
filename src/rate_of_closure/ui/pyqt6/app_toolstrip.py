@@ -49,6 +49,12 @@ class ToolstripHost(Protocol):
     def restore_default_workspace(self) -> None:
         """Restore the declared workspace defaults."""
 
+    def show_compositor_view(self, view_id: str) -> None:
+        """Show a named real viewport through the shared simulation compositor."""
+
+    def show_compositor_layout(self, layout: str) -> None:
+        """Apply a multi-view layout preset in the simulation compositor."""
+
     def new_workspace(self) -> None:
         """Reset to first-run state after resolving unsaved changes."""
 
@@ -192,21 +198,56 @@ class ApplicationToolstrip(QToolBar):
         restore.setToolTip("Restore the default module order and visibility")
         view_menu.addAction(restore)
         view_menu.addSeparator()
-        self._add_disabled_view_commands(view_menu)
+        self._add_view_commands(view_menu)
         self._add_menu_button("View", "viewMenuButton", view_menu)
 
-    def _add_disabled_view_commands(self, menu: QMenu) -> None:
-        """Register compositor commands with truthful availability reasons."""
-        for command_id, label in (
-            (AppCommandId.VIEW_SHOW_IMPACT, "Show Impact View"),
-            (AppCommandId.VIEW_SHOW_SWING, "Show Swing View"),
-            (AppCommandId.VIEW_SHOW_FLIGHT, "Show Flight View"),
+    def _add_view_commands(self, menu: QMenu) -> None:
+        """Register enabled compositor view commands and layout presets."""
+
+        def _bind_view(view_key: str) -> Callable[[], None]:
+            def _handler() -> None:
+                self._host.show_compositor_view(view_key)
+
+            return _handler
+
+        for command_id, label, view_id in (
+            (AppCommandId.VIEW_SHOW_IMPACT, "Show Impact View", "impact"),
+            (AppCommandId.VIEW_SHOW_SWING, "Show Swing View", "swing"),
+            (AppCommandId.VIEW_SHOW_FLIGHT, "Show Flight View", "flight"),
         ):
-            action = self._make_action(command_id, label)
-            self._apply_availability(
-                action, CommandAvailability.disabled(_COMPOSITOR_DISABLED_REASON)
+            action = self._make_action(
+                command_id,
+                label,
+                callback=_bind_view(view_id),
             )
+            self._apply_availability(action, CommandAvailability.available())
+            action.setToolTip(
+                f"Switch the main workspace to the {label.lower().replace('show ', '')}"
+            )
+            action.setStatusTip(action.toolTip())
             menu.addAction(action)
+
+        menu.addSeparator()
+        layout_menu = menu.addMenu("Layout Presets")
+        if layout_menu is not None:
+            for layout, label in (
+                ("single", "Single View"),
+                ("split_horizontal", "Split Horizontal"),
+                ("split_vertical", "Split Vertical"),
+                ("grid", "Grid"),
+            ):
+                preset_action = QAction(label, self)
+                preset_action.setObjectName(f"view.layout.{layout}")
+                preset_action.setToolTip(
+                    f"Arrange synchronized viewports in {label.lower()} layout"
+                )
+                preset_action.setStatusTip(preset_action.toolTip())
+                preset_action.triggered.connect(
+                    lambda checked=False, lay=layout: self._host.show_compositor_layout(
+                        lay
+                    )
+                )
+                layout_menu.addAction(preset_action)
 
     def _build_tools_menu(self) -> tuple[QAction, QAction]:
         """Create global tools and return actions also shown directly."""

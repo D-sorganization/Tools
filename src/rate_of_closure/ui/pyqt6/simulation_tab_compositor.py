@@ -9,7 +9,7 @@ from rate_of_closure.ui.pyqt6.flight_view import FlightView
 from rate_of_closure.ui.pyqt6.simulation_view import SimulationView
 from rate_of_closure.ui.pyqt6.strike_view import StrikeView
 from rate_of_closure.ui.pyqt6.view_compositor import ViewCompositor
-from rate_of_closure.view_workspace import PlaybackState, ViewKind
+from rate_of_closure.view_workspace import PlaybackState, ViewKind, ViewLayout
 
 
 class SimulationTabCompositorMixin:
@@ -17,6 +17,7 @@ class SimulationTabCompositorMixin:
 
     _compositor: ViewCompositor
     _compositor_flight_view: FlightView
+    _compositor_strike_view: StrikeView
     _compositor_swing_view: SimulationView
     _display_tabs: QTabWidget
     _flight_view: FlightView
@@ -43,6 +44,13 @@ class SimulationTabCompositorMixin:
     def show_compositor_view(self, kind: ViewKind) -> None:
         """Select the compositor and expose one stable real view host."""
         self._compositor.show_single_view(kind)
+        self._display_tabs.setCurrentWidget(self._compositor)
+
+    def show_compositor_layout(self, layout: ViewLayout | str) -> None:
+        """Select the compositor and apply a layout preset."""
+        if isinstance(layout, str):
+            layout = ViewLayout(layout)
+        self._compositor.show_layout(layout)
         self._display_tabs.setCurrentWidget(self._compositor)
 
     def _sync_compositor_playback(self, time_s: float) -> None:
