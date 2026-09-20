@@ -6,6 +6,7 @@ import argparse
 import json
 import time
 from pathlib import Path
+from typing import Any
 
 from PyQt6 import sip
 from PyQt6.QtCore import QEventLoop, QPoint, QRect, QTimer
@@ -127,10 +128,12 @@ def main() -> int:
     parser.add_argument("--scale", type=float, required=True)
     args = parser.parse_args()
     args.output.mkdir(parents=True, exist_ok=True)
-    application = QApplication.instance()
-    if application is None:
-        application = QApplication([])
-    window = RateOfClosureMainWindow(navigation_settings=MemorySettings())
+    raw_app = QApplication.instance()
+    application = raw_app if isinstance(raw_app, QApplication) else QApplication([])
+    window = RateOfClosureMainWindow(
+        navigation_settings=MemorySettings(),
+        confirm_on_close=False,
+    )
     window.resize(1440, 900)
     window.show()
     index = window.primary_tab_ids().index("variation")
@@ -141,7 +144,7 @@ def main() -> int:
 
     original_run = variation_worker.run_variation
 
-    def blocking_run(*_args: object, **kwargs: object) -> None:
+    def blocking_run(*_args: object, **kwargs: Any) -> None:
         cancel_event = kwargs["cancel_event"]
         deadline = time.monotonic() + 10.0
         while not cancel_event.is_set() and time.monotonic() < deadline:

@@ -38,6 +38,9 @@ from rate_of_closure.ui.pyqt6.simulation_specs import (
     LAUNCH_ROWS,
     SOURCE_LABELS,
 )
+from rate_of_closure.ui.pyqt6.simulation_tab_compositor import (
+    SimulationTabCompositorMixin,
+)
 from rate_of_closure.ui.pyqt6.simulation_tab_controls import (
     SimulationTabControlsMixin,
 )
@@ -49,10 +52,15 @@ from rate_of_closure.ui.pyqt6.simulation_target_workflow import (
     SimulationTargetWorkflowMixin,
 )
 from rate_of_closure.ui.pyqt6.simulation_view import SimulationView
+from rate_of_closure.ui.pyqt6.simulation_workspace_bridge import (
+    SimulationWorkspaceBridgeMixin,
+)
 from rate_of_closure.ui.pyqt6.solver_panel import SolverPanel
 from rate_of_closure.ui.pyqt6.strike_view import StrikeView
 from rate_of_closure.ui.pyqt6.torque_profile_controller import RunMode
 from rate_of_closure.ui.pyqt6.torque_profile_panel import TorqueProfilePanel
+from rate_of_closure.ui.pyqt6.view_compositor import ViewCompositor
+from rate_of_closure.view_workspace import ViewKind
 from shared.python.swing_sim.run_config import DoublePendulumRunConfig
 from shared.python.swing_sim.types import PlaneOrientation
 
@@ -64,6 +72,8 @@ class SimulationTab(
     SimulationTabControlsMixin,
     SimulationTabRuntimeMixin,
     SimulationTargetWorkflowMixin,
+    SimulationWorkspaceBridgeMixin,
+    SimulationTabCompositorMixin,
     QWidget,
 ):
     """Simulation session tab (controls left, scene/inspector right)."""
@@ -90,6 +100,15 @@ class SimulationTab(
         self._view = SimulationView()
         self._strike_view = StrikeView()
         self._flight_view = FlightView()
+        self._compositor_swing_view = SimulationView()
+        self._compositor_flight_view = FlightView()
+        self._compositor = ViewCompositor(
+            {
+                ViewKind.IMPACT: StrikeView(),
+                ViewKind.SWING: self._compositor_swing_view,
+                ViewKind.FLIGHT: self._compositor_flight_view,
+            }
+        )
         self._flight_panel = FlightPlaybackPanel(self._flight_view)
         self._kinetics_panel = KineticsPanel()
         self._kinetics_panel.glossaryRequested.connect(self.glossaryRequested)

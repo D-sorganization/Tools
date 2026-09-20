@@ -30,9 +30,16 @@ from rate_of_closure.ui.pyqt6.torque_profile_panel_behavior import (
     TorqueProfilePanelBehaviorMixin,
 )
 from rate_of_closure.ui.pyqt6.torque_profile_widgets import clickable_button
+from rate_of_closure.ui.pyqt6.torque_profile_workspace import (
+    TorqueProfileWorkspaceMixin,
+)
 
 
-class TorqueProfilePanel(TorqueProfilePanelBehaviorMixin, QWidget):
+class TorqueProfilePanel(
+    TorqueProfilePanelBehaviorMixin,
+    TorqueProfileWorkspaceMixin,
+    QWidget,
+):
     """Author canonical profiles while preserving the existing run path."""
 
     runModeChanged = pyqtSignal(object)  # noqa: N815
