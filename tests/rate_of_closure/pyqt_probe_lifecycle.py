@@ -23,6 +23,8 @@ def shutdown_probe(
 ) -> None:
     """Release worker and Qt ownership before the probe process returns."""
     worker_owner.stop()
+    if hasattr(window, "confirm_on_close"):
+        window.confirm_on_close = False
     window.close()
     application.processEvents()
     window.deleteLater()

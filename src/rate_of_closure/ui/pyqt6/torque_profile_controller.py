@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+from collections.abc import Iterable
 from dataclasses import dataclass
 from datetime import datetime
 from enum import Enum
@@ -95,6 +96,15 @@ class TorqueProfileLibraryAdapter:
         profile = self._library.get(profile_id)
         self._active_profile_id = profile_id
         return profile
+
+    def replace_library(
+        self,
+        profiles: Iterable[PrescribedTorqueProfile],
+        active_profile_id: str | None,
+    ) -> None:
+        """Replace the in-memory library and active selection atomically."""
+        self._library = CanonicalTorqueProfileLibrary(tuple(profiles))
+        self._active_profile_id = active_profile_id
 
     def assign(
         self, draft: ProfileDraft, joint_id: str, coefficients: list[float]
