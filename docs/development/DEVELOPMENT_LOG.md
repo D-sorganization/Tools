@@ -23,13 +23,26 @@ reachable from any live state and `abandoned` from `parked`.
 - **State:** in_progress
 - **Owner:** antigravity
 - **Issue:** D-sorganization/Tools#4225
-- **PR:** not created
+- **PR:** #5264
 - **Branch:** `feat/4225-workspace-view-compositor`
 - **Paths:** `src/rate_of_closure/ui/pyqt6/`, `src/rate_of_closure/web/`, `tests/rate_of_closure/`
 - **Started:** 2026-09-19
 - **Last verified:** 2026-09-19 (all unit/headless tests pass including test_app_toolstrip.py, test_view_compositor_gui.py, test_tooltips.py, and vitest web test suite; pre-commit ruff/black/mypy pass; inventory check clean)
 - **Summary:** Multi-view workspace compositor integrating Impact, Swing, and Flight viewports with synchronized playback, run selection, and layout presets across PyQt and React toolstrips.
 - **Next step:** Push branch, open PR, arm squash auto-merge, and release lease.
+
+### DL-#4252 · Literature Flight Models Reconciliation, Carry Benchmark, and Wind Documentation
+
+- **State:** shipped
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#4252
+- **PR:** #5265
+- **Branch:** `feat/4252-reconcile-flight-models`
+- **Paths:** `rust_core/tools-core/src/ball_flight.rs`, `src/shared/python/swing_sim/flight/`, `src/rate_of_closure/derivation_flight.py`, `src/rate_of_closure/web/src/model/derivationModels.ts`, `docs/development/flight_model_validation.json`
+- **Started:** 2026-09-19
+- **Last verified:** 2026-09-19 (all 230 flight and derivation unit/parity tests pass; Rust fast path and WaterlooPenner carry parity within 0.07% across all 5 benchmark conditions; lint/format/mypy pass)
+- **Summary:** Reconciled Rust core kernel with canonical Waterloo/Penner lift model (power law $C_L = cl_1 \cdot s^{cl_2}$, $s_{decay} = 0.05$, $C_{L,\max} = 0.155$); tightened multi-condition carry parity to < 1.0%; documented spin decay rates across all 7 registered models; added calculation description Step 4 literature comparison & wind boundaries; published open-data validation package with pinned manifest.
+- **Next step:** Shipped via PR #5265.
 
 ### DL-#4162 · Wedge Delivery Metrics & Linear Waterfall Visualization
 

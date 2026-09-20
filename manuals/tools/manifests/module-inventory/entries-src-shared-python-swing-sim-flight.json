@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8202,
+      "bytes_lf": 8950,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4f6783d6dada98765489de44fe14f83e94f97205f28fff30dbe556c447101fda",
+      "content_sha256_lf": "aa04a02661980bfd63165bdb6b85fea3bd778ff2fa136034c72150d8d62d730a",
       "family": "swing-simulation-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-INIT-PY-30F53368FD96",
       "language": "python",
@@ -49,7 +49,22 @@
           },
           {
             "kind": "re-export",
+            "name": "BENCHMARK_LAUNCHES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "BallFlightModel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BenchmarkLaunchSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CANONICAL_FLIGHT_MODEL",
             "signature": null
           },
           {
@@ -134,6 +149,11 @@
           },
           {
             "kind": "re-export",
+            "name": "ConditionModelEvaluation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "ConstantCoefficientModel",
             "signature": null
           },
@@ -145,6 +165,11 @@
           {
             "kind": "re-export",
             "name": "DEFAULT_BACKSPIN_AXIS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_SPIN_DECAY_RATE",
             "signature": null
           },
           {
@@ -165,6 +190,11 @@
           {
             "kind": "re-export",
             "name": "EvaluationStatus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FLIGHT_MODEL_METADATA",
             "signature": null
           },
           {
@@ -219,6 +249,11 @@
           },
           {
             "kind": "re-export",
+            "name": "FlightModelMetadata",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "FlightModelRegistry",
             "signature": null
           },
@@ -260,6 +295,11 @@
           {
             "kind": "re-export",
             "name": "FlightStatePoint",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FlightValidationReport",
             "signature": null
           },
           {
@@ -339,6 +379,11 @@
           },
           {
             "kind": "re-export",
+            "name": "ModelAggregateMetrics",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "ModelAvailability",
             "signature": null
           },
@@ -390,6 +435,11 @@
           {
             "kind": "re-export",
             "name": "PlayerCapabilityProfile",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RuntimeParityCheck",
             "signature": null
           },
           {
@@ -450,6 +500,11 @@
           {
             "kind": "re-export",
             "name": "TrajectoryPoint",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "VALIDATION_SCHEMA_VERSION",
             "signature": null
           },
           {
@@ -540,6 +595,11 @@
           {
             "kind": "re-export",
             "name": "derive_launch_conditions",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "evaluate_flight_benchmarks",
             "signature": null
           },
           {
@@ -805,10 +865,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 1950,
+      "bytes_lf": 2100,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "696a7bb2ae6a92d96a5ee2ec3b61174f708d5f90d4a5f1e7898923084569281d",
+      "content_sha256_lf": "d13dbaaa2edf53c461f738b9ef61fe9427e0726fbc62c160b94c957a24b31e34",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-CONSTANTS-PY-CE2CBA8C5D7E",
       "language": "python",
@@ -850,6 +910,11 @@
           {
             "kind": "constant",
             "name": "AIR_DENSITY_SEA_LEVEL_KG_M3",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_SPIN_DECAY_RATE",
             "signature": null
           },
           {
@@ -905,7 +970,8 @@
           "kg",
           "m/s",
           "m/s^2",
-          "rad/s"
+          "rad/s",
+          "s"
         ],
         "validation_paths": []
       }
@@ -1668,10 +1734,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 4793,
+      "bytes_lf": 4992,
       "classification": "calculation",
       "classification_basis": "path-marker:dynamics",
-      "content_sha256_lf": "b44b52e4dff58346dd8120cacba36cc9c963ab1b9aff62877ebee1de0b6af64c",
+      "content_sha256_lf": "0d8100eaf99c729d25ce572029e69f368a948cd204bad633bc4f844e334f5895",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-DYNAMICS-PY-A15D0012F919",
       "language": "python",
@@ -2584,10 +2650,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 11989,
+      "bytes_lf": 12260,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "5879c0bad4bedbe3b611729e17ed1b5a424603e5bb92b0f8ef5da306ab53adc5",
+      "content_sha256_lf": "39b214068d63aefe7f395e43d09dad8aac90a66de88e8a53cca36c478795f8b6",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-MODELS-PY-A63E947D43C0",
       "language": "python",
@@ -2802,10 +2868,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4118,
+      "bytes_lf": 7539,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d651b7594b0c211b333967528499566dbe22db0473b336c5f192757205a777de",
+      "content_sha256_lf": "d3db3859cf114c7d6206e5f4de2545988991e07b3c4e698d376b3abcfd63d083",
       "family": "swing-simulation-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-REGISTRY-PY-5BF40312109A",
       "language": "python",
@@ -2843,12 +2909,27 @@
         "public_surfaces": [
           {
             "kind": "class",
+            "name": "FlightModelMetadata",
+            "signature": null
+          },
+          {
+            "kind": "class",
             "name": "FlightModelRegistry",
             "signature": null
           },
           {
             "kind": "class",
             "name": "FlightModelType",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CANONICAL_FLIGHT_MODEL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FLIGHT_MODEL_METADATA",
             "signature": null
           },
           {
@@ -2869,7 +2950,8 @@
           "tests/unit/ai/skills/test_registry.py"
         ],
         "unit_mentions": [
-          "J"
+          "J",
+          "s"
         ],
         "validation_paths": [
           "tests/rate_of_closure/test_morris_ui_contract.py"
@@ -3440,6 +3522,112 @@
           "s"
         ],
         "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 9579,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "81df4c0919d72194be50048280836f81489500b0784e2e4e431d94919f73f38e",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-VALIDATION-PY-ED86BE73BEC0",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/flight/validation.py",
+      "purpose": "Open-data validation package and benchmark carry references (#4252).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BenchmarkLaunchSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ConditionModelEvaluation",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FlightValidationReport",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ModelAggregateMetrics",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RuntimeParityCheck",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BENCHMARK_LAUNCHES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "VALIDATION_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "evaluate_flight_benchmarks",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/programmatic_pid/tests/test_validation.py",
+          "src/shared/python/swing_sim/flight/tests/test_flight_validation.py",
+          "tests/programmatic_pid/test_validation.py",
+          "tests/python/utils/test_validation.py",
+          "tests/shared/python/model_generation/test_validation.py",
+          "tests/test_validation.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "src/shared/python/programmatic_pid/tests/test_validation.py",
+          "src/shared/python/swing_sim/flight/tests/test_flight_validation.py",
+          "tests/programmatic_pid/test_validation.py",
+          "tests/python/utils/test_validation.py",
+          "tests/shared/python/model_generation/test_validation.py",
+          "tests/test_validation.py"
+        ]
       }
     },
     {

@@ -122,6 +122,32 @@ def flight_steps(flight_model: str) -> tuple[DerivationStep, ...]:
                 "state (swing_sim.flight metrics)."
             ),
         ),
+        DerivationStep(
+            title="Literature Model Comparison and Wind Boundaries",
+            latex=(
+                r"$231\ \mathrm{m} \leq x_{\mathrm{carry}} \leq 261\ \mathrm{m},\qquad "
+                r"\bar{x}_{\mathrm{carry}} \approx 245\ \mathrm{m},\qquad "
+                r"\Delta_{\mathrm{parity}} < 0.01$"
+            ),
+            values=(
+                r"$\mathrm{canonical:\ Waterloo/Penner},\ "
+                r"\lambda = 0.05\ \mathrm{s^{-1}},\ "
+                r"C_{l,\mathrm{max}} = 0.155$"
+            ),
+            narrative=(
+                "Across a standard 74 m/s (165 mph) driver launch, all seven "
+                "registered literature models span 231 to 261 m carry (mean 245 m), "
+                "closely clustering around empirical TrackMan and USGA benchmarks. "
+                "Waterloo/Penner serves as the canonical baseline; the calibrated "
+                "tools-core Rust RK4 kernel matches it to within 1% parity. "
+                "Spin decay rates range from 0.02 to 0.05 1/s. Steady wind is "
+                "integrated in the Rust fast path, while atmospheric shear and "
+                "turbulent gusts require the full SciPy ODE solver."
+            ),
+        ),
     )
-    ensure(len(steps) == 3, "flight derivation must cover EOM + law + decay")
+    ensure(
+        len(steps) == 4,
+        "flight derivation must cover EOM + law + decay + comparison",
+    )
     return steps

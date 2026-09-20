@@ -45,8 +45,12 @@ MPH_TO_MPS = 0.44704
 RPM_TO_RAD_S = 2.0 * math.pi / 60.0
 """Revolutions per minute to radians per second [(rad/s)/RPM] — exact."""
 
+DEFAULT_SPIN_DECAY_RATE = 0.05
+"""Exponential spin decay rate [1/s] — MacDonald & Hanzely (1991), Penner (2003)."""
+
 __all__ = [
     "AIR_DENSITY_SEA_LEVEL_KG_M3",
+    "DEFAULT_SPIN_DECAY_RATE",
     "GOLF_BALL_DIAMETER_M",
     "GOLF_BALL_MASS_KG",
     "GOLF_BALL_RADIUS_M",
