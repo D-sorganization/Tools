@@ -44,6 +44,7 @@ def test_packaged_manifest_binds_exact_reviewed_bytes() -> None:
         ("pyqt", "flight_explorer"): VisualBaselineTolerance(1, 10_000, 75_000),
         ("pyqt", "launch_monitor_analytics"): VisualBaselineTolerance(1, 5_000, 10_000),
         ("pyqt", "putting"): VisualBaselineTolerance(1, 4_000, 20_000),
+        ("pyqt", "glossary"): VisualBaselineTolerance(1, 20_000, 50_000),
     }
     for entry in manifest.baselines:
         data = package.joinpath(
