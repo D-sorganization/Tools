@@ -18,18 +18,18 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
-### DL-#5223 · Pre-push Mypy Hook NumPy Compatibility
+### DL-#4918 · Readiness P2: Content-Based Visual Baseline Gate & Main Re-Baseline
 
 - **State:** in_progress
 - **Owner:** local
-- **Issue:** D-sorganization/Tools#5223
-- **PR:** https://github.com/D-sorganization/Tools/pull/5254
-- **Branch:** `fix/issue-5223-bump-mypy-precommit-hook`
-- **Paths:** `.pre-commit-config.yaml`, `tests/ops/test_pre_push_mypy_scope.py`, `SPEC.md`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`
-- **Started:** 2026-09-19
-- **Last verified:** 2026-09-19 (`SELF`; mirrors-mypy bumped from v1.13.0 to v1.15.0 to support NumPy >= 2.2 stubs without cache serializer placeholder crash; pre-push hook and unit tests passed)
-- **Summary:** Pre-push mypy hook crashed on numpy-importing files when the isolated hook environment carried numpy >= 2.2 because mypy 1.13's cache serializer failed on newer type syntax. Bumped mirrors-mypy to v1.15.0 and added contract unit test.
-- **Next step:** Push branch, verify CI passes on PR #5254.
+- **Issue:** D-sorganization/Tools#4918
+- **PR:** not created
+- **Branch:** `feat/4918-content-based-visual-gate`
+- **Paths:** `scripts/check_rate_visual_evidence_changes.py`, `tests/scripts/test_check_rate_visual_evidence_changes.py`, `src/rate_of_closure/visual_baselines.v1.json`, `tests/rate_of_closure/test_visual_baseline_compare.py`, `SPEC.md`
+- **Started:** 2026-09-20
+- **Last verified:** 2026-09-20 (all 35 visual baseline compare and lockstep gate tests pass; ruff, black, mypy pass; canonical content hash verification prevents whitespace-only bypass; non-visual diffs skip without evidence)
+- **Summary:** Made lockstep visual evidence gate check canonical content hash of evidence rather than mtime or whitespace additions; skipped gate for diffs that touch no .tsx/.css/.ui/paint code; re-baselined visual_baselines.v1.json source_artifact_commit to ancestor commit b64a70f394cf9cf77266512e094239237c87d3b0 on main; added deliberate 2px layout shift regression test.
+- **Next step:** Push branch, open PR with rate-visual-exemption trailer, arm auto-merge, and release lease.
 
 ### DL-#5073 · Non-Spherical Oblique Contact Mechanics and Moving Center of Pressure
 
@@ -1320,6 +1320,19 @@ reachable from any live state and `abandoned` from `parked`.
 ## Shipped (Last 90 Days)
 
 Entries stay here for 90 days after merge, then move to the archive.
+
+### DL-#5223 · Pre-push Mypy Hook NumPy Compatibility
+
+- **State:** shipped
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#5223
+- **PR:** https://github.com/D-sorganization/Tools/pull/5254
+- **Branch:** `fix/issue-5223-bump-mypy-precommit-hook`
+- **Paths:** `.pre-commit-config.yaml`, `tests/ops/test_pre_push_mypy_scope.py`, `SPEC.md`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`
+- **Started:** 2026-09-19
+- **Last verified:** 2026-09-19 (`SELF`; mirrors-mypy bumped from v1.13.0 to v1.15.0 to support NumPy >= 2.2 stubs without cache serializer placeholder crash; pre-push hook and unit tests passed)
+- **Summary:** Pre-push mypy hook crashed on numpy-importing files when the isolated hook environment carried numpy >= 2.2 because mypy 1.13's cache serializer failed on newer type syntax. Bumped mirrors-mypy to v1.15.0 and added contract unit test.
+- **Shipped:** 2026-09-19 (commit d71ca0fce)
 
 ## Archive
 

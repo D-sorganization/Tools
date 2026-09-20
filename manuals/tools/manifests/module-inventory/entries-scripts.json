@@ -2631,10 +2631,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8437,
+      "bytes_lf": 12877,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9bd527deb8781d4f03510c8365cdd58276dab4b6f800b5cd18049bc5cf0ee9df",
+      "content_sha256_lf": "22ceaa3571a0d62522347aa96fdbfd691b8f65832c94db3f7bcaab22ddc45987",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-RATE-VISUAL-EVIDENCE-CHANGES-PY-8242FB71D4B6",
       "language": "python",
@@ -2705,6 +2705,11 @@
           },
           {
             "kind": "constant",
+            "name": "_PAINT_SYMBOLS_PATTERN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
             "name": "_PYQT_PATTERNS",
             "signature": null
           },
@@ -2714,14 +2719,14 @@
             "signature": null
           },
           {
-            "kind": "constant",
-            "name": "_SHARED_VISUAL_PATHS",
-            "signature": null
-          },
-          {
             "kind": "function",
             "name": "extract_exemption_reason",
             "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "is_substantive_evidence_change",
+            "signature": "path: str, base_content: str, current_content: str"
           },
           {
             "kind": "function",
@@ -2731,7 +2736,7 @@
           {
             "kind": "function",
             "name": "validate_visual_evidence_changes",
-            "signature": "changed_files: Iterable[str], *, exemption_reason: str | None=None"
+            "signature": "changed_files: Iterable[str], *, exemption_reason: str | None=None, base_ref: str | None=None, evidence_content_resolver: Callable[[str], tuple[str, str] | None] | None=None"
           }
         ],
         "test_paths": [
