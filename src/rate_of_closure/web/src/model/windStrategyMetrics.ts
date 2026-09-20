@@ -71,9 +71,16 @@ function directionalExcesses(
 }
 
 function bestCosts(request: WindStrategyRequest, outcomes: readonly WindStrategyOutcome[]): number[] {
-  return Array.from({ length: request.uncertainty.trials }, (_, trialIndex) =>
-    Math.min(...outcomes.filter((item) => item.trial_index === trialIndex)
-      .map((item) => item.cost)));
+  // ⚡ Bolt Optimization: Use single-pass loop instead of chained filter/map and Math.min(...spread)
+  // Eliminates O(N) intermediate array allocations and prevents call stack exceeded errors on large outcomes datasets.
+  const best = new Array(request.uncertainty.trials).fill(Infinity);
+  for (let i = 0; i < outcomes.length; i++) {
+    const item = outcomes[i];
+    if (item.trial_index >= 0 && item.trial_index < request.uncertainty.trials && item.cost < best[item.trial_index]) {
+      best[item.trial_index] = item.cost;
+    }
+  }
+  return best;
 }
 
 function bestCredit(
