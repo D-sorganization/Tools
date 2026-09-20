@@ -37,14 +37,14 @@ pub use crate::math::GRAVITY;
 /// Air density at sea level, 15 °C [kg/m³].
 pub const AIR_DENSITY_SEA_LEVEL: f64 = 1.225;
 
-/// Spin decay rate [1/s] — exponential decay constant.
-pub const SPIN_DECAY_RATE: f64 = 0.08;
+/// Spin decay rate [1/s] — exponential decay constant (MacDonald-Hanzely / Penner literature).
+pub const SPIN_DECAY_RATE: f64 = 0.05;
 
 /// Minimum speed threshold below which simulation stops [m/s].
 pub const MIN_SPEED_THRESHOLD: f64 = 0.1;
 
-/// Maximum lift coefficient (physical cap).
-pub const MAX_LIFT_COEFFICIENT: f64 = 0.25;
+/// Maximum lift coefficient (physical cap; aligns with MAX_GOLF_BALL_LIFT_COEFFICIENT).
+pub const MAX_LIFT_COEFFICIENT: f64 = 0.155;
 
 /// Numerical epsilon for avoiding division by zero.
 pub const NUMERICAL_EPSILON: f64 = 1e-10;
@@ -64,7 +64,7 @@ pub struct BallProperties {
     pub cd0: f64,
     pub cd1: f64,
     pub cd2: f64,
-    /// Lift coefficients: cl = cl0 + s*(cl1 + s*cl2), clamped to MAX_LIFT_COEFFICIENT.
+    /// Lift coefficients: cl = cl0 + cl1*s^cl2 (when cl2 > 0) or cl0 + s*(cl1 + s*cl2).
     pub cl0: f64,
     pub cl1: f64,
     pub cl2: f64,
@@ -79,8 +79,8 @@ impl Default for BallProperties {
             cd1: 0.05,
             cd2: 0.02,
             cl0: 0.00,
-            cl1: 0.38,
-            cl2: 0.00,
+            cl1: 0.70,
+            cl2: 0.645,
         }
     }
 }
@@ -105,11 +105,25 @@ impl BallProperties {
     }
 
     /// Lift coefficient from spin parameter, clamped.
+    ///
+    /// Evaluates the canonical Penner-family power law (`cl0 + cl1 * s^cl2`)
+    /// when `cl2 > 0.0` and `cl2 != 1.0` (Penner 2003: cl0=0, cl1=0.70, cl2=0.645).
+    /// If `cl2 == 0.0` or `1.0`, falls back to polynomial `cl0 + s*(cl1 + s*cl2)`.
+    /// Bounded by `MAX_LIFT_COEFFICIENT` (0.155) per literature ceiling.
     #[must_use]
     pub fn calculate_cl(&self, s: f64) -> f64 {
-        let cl = self.cl0 + s * (self.cl1 + s * self.cl2);
+        if s <= 0.0 {
+            return self.cl0.clamp(0.0, MAX_LIFT_COEFFICIENT);
+        }
+        let cl = if self.cl2 > 0.0 && (self.cl2 - 1.0).abs() > 1e-6 {
+            self.cl0 + self.cl1 * s.powf(self.cl2)
+        } else {
+            self.cl0 + s * (self.cl1 + s * self.cl2)
+        };
         if cl > MAX_LIFT_COEFFICIENT {
             MAX_LIFT_COEFFICIENT
+        } else if cl < 0.0 {
+            0.0
         } else {
             cl
         }
@@ -258,9 +272,15 @@ pub fn calculate_accel_core(
 
     // Magnus lift
     if omega > 0.0 && spin_ratio > 0.0 {
-        let mut cl = cl0 + spin_ratio * (cl1 + spin_ratio * cl2);
+        let mut cl = if cl2 > 0.0 && (cl2 - 1.0).abs() > 1e-6 {
+            cl0 + cl1 * spin_ratio.powf(cl2)
+        } else {
+            cl0 + spin_ratio * (cl1 + spin_ratio * cl2)
+        };
         if cl > MAX_LIFT_COEFFICIENT {
             cl = MAX_LIFT_COEFFICIENT;
+        } else if cl < 0.0 {
+            cl = 0.0;
         }
 
         let magnus_mag = const_term * cl * speed * speed;

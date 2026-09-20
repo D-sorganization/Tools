@@ -1,0 +1,452 @@
+{
+  "schema_version": "flight-validation-manifest/v1",
+  "canonical_model": "Waterloo/Penner",
+  "model_evaluations": {
+    "Waterloo/Penner": {
+      "tour_driver": {
+        "carry_m": 247.987,
+        "max_height_m": 29.977,
+        "flight_time_s": 6.393,
+        "residual_m": -0.513,
+        "relative_error_pct": 0.206
+      },
+      "amateur_driver": {
+        "carry_m": 189.276,
+        "max_height_m": 20.725,
+        "flight_time_s": 5.192,
+        "residual_m": -0.224,
+        "relative_error_pct": 0.118
+      },
+      "mid_iron_5iron": {
+        "carry_m": 167.761,
+        "max_height_m": 19.311,
+        "flight_time_s": 4.873,
+        "residual_m": -0.239,
+        "relative_error_pct": 0.142
+      },
+      "wedge": {
+        "carry_m": 112.503,
+        "max_height_m": 20.079,
+        "flight_time_s": 4.484,
+        "residual_m": 0.003,
+        "relative_error_pct": 0.003
+      },
+      "high_speed_driver": {
+        "carry_m": 268.213,
+        "max_height_m": 31.673,
+        "flight_time_s": 6.672,
+        "residual_m": -11.787,
+        "relative_error_pct": 4.21
+      }
+    },
+    "MacDonald-Hanzely": {
+      "tour_driver": {
+        "carry_m": 241.323,
+        "max_height_m": 29.173,
+        "flight_time_s": 6.269,
+        "residual_m": -7.177,
+        "relative_error_pct": 2.888
+      },
+      "amateur_driver": {
+        "carry_m": 185.393,
+        "max_height_m": 20.288,
+        "flight_time_s": 5.115,
+        "residual_m": -4.107,
+        "relative_error_pct": 2.167
+      },
+      "mid_iron_5iron": {
+        "carry_m": 167.318,
+        "max_height_m": 19.217,
+        "flight_time_s": 4.859,
+        "residual_m": -0.682,
+        "relative_error_pct": 0.406
+      },
+      "wedge": {
+        "carry_m": 116.622,
+        "max_height_m": 20.506,
+        "flight_time_s": 4.554,
+        "residual_m": 4.122,
+        "relative_error_pct": 3.664
+      },
+      "high_speed_driver": {
+        "carry_m": 259.344,
+        "max_height_m": 30.023,
+        "flight_time_s": 6.475,
+        "residual_m": -20.656,
+        "relative_error_pct": 7.377
+      }
+    },
+    "Nathan": {
+      "tour_driver": {
+        "carry_m": 245.06,
+        "max_height_m": 29.743,
+        "flight_time_s": 6.347,
+        "residual_m": -3.44,
+        "relative_error_pct": 1.384
+      },
+      "amateur_driver": {
+        "carry_m": 187.768,
+        "max_height_m": 20.535,
+        "flight_time_s": 5.16,
+        "residual_m": -1.732,
+        "relative_error_pct": 0.914
+      },
+      "mid_iron_5iron": {
+        "carry_m": 169.259,
+        "max_height_m": 19.41,
+        "flight_time_s": 4.895,
+        "residual_m": 1.259,
+        "relative_error_pct": 0.75
+      },
+      "wedge": {
+        "carry_m": 117.539,
+        "max_height_m": 20.618,
+        "flight_time_s": 4.571,
+        "residual_m": 5.039,
+        "relative_error_pct": 4.479
+      },
+      "high_speed_driver": {
+        "carry_m": 263.761,
+        "max_height_m": 30.807,
+        "flight_time_s": 6.573,
+        "residual_m": -16.239,
+        "relative_error_pct": 5.8
+      }
+    },
+    "Ballantyne": {
+      "tour_driver": {
+        "carry_m": 261.151,
+        "max_height_m": 32.028,
+        "flight_time_s": 6.665,
+        "residual_m": 12.651,
+        "relative_error_pct": 5.091
+      },
+      "amateur_driver": {
+        "carry_m": 198.088,
+        "max_height_m": 21.604,
+        "flight_time_s": 5.354,
+        "residual_m": 8.588,
+        "relative_error_pct": 4.532
+      },
+      "mid_iron_5iron": {
+        "carry_m": 177.639,
+        "max_height_m": 20.237,
+        "flight_time_s": 5.05,
+        "residual_m": 9.639,
+        "relative_error_pct": 5.737
+      },
+      "wedge": {
+        "carry_m": 121.399,
+        "max_height_m": 21.083,
+        "flight_time_s": 4.644,
+        "residual_m": 8.899,
+        "relative_error_pct": 7.911
+      },
+      "high_speed_driver": {
+        "carry_m": 281.969,
+        "max_height_m": 33.395,
+        "flight_time_s": 6.93,
+        "residual_m": 1.969,
+        "relative_error_pct": 0.703
+      }
+    },
+    "J. Cole": {
+      "tour_driver": {
+        "carry_m": 237.833,
+        "max_height_m": 28.72,
+        "flight_time_s": 6.202,
+        "residual_m": -10.667,
+        "relative_error_pct": 4.293
+      },
+      "amateur_driver": {
+        "carry_m": 183.092,
+        "max_height_m": 20.05,
+        "flight_time_s": 5.071,
+        "residual_m": -6.408,
+        "relative_error_pct": 3.382
+      },
+      "mid_iron_5iron": {
+        "carry_m": 165.433,
+        "max_height_m": 19.029,
+        "flight_time_s": 4.824,
+        "residual_m": -2.567,
+        "relative_error_pct": 1.528
+      },
+      "wedge": {
+        "carry_m": 115.724,
+        "max_height_m": 20.396,
+        "flight_time_s": 4.537,
+        "residual_m": 3.224,
+        "relative_error_pct": 2.866
+      },
+      "high_speed_driver": {
+        "carry_m": 255.561,
+        "max_height_m": 29.621,
+        "flight_time_s": 6.41,
+        "residual_m": -24.439,
+        "relative_error_pct": 8.728
+      }
+    },
+    "Rospie DL": {
+      "tour_driver": {
+        "carry_m": 252.784,
+        "max_height_m": 30.819,
+        "flight_time_s": 6.498,
+        "residual_m": 4.284,
+        "relative_error_pct": 1.724
+      },
+      "amateur_driver": {
+        "carry_m": 192.755,
+        "max_height_m": 21.051,
+        "flight_time_s": 5.254,
+        "residual_m": 3.255,
+        "relative_error_pct": 1.718
+      },
+      "mid_iron_5iron": {
+        "carry_m": 173.32,
+        "max_height_m": 19.812,
+        "flight_time_s": 4.97,
+        "residual_m": 5.32,
+        "relative_error_pct": 3.167
+      },
+      "wedge": {
+        "carry_m": 119.429,
+        "max_height_m": 20.846,
+        "flight_time_s": 4.607,
+        "residual_m": 6.929,
+        "relative_error_pct": 6.159
+      },
+      "high_speed_driver": {
+        "carry_m": 272.429,
+        "max_height_m": 31.977,
+        "flight_time_s": 6.74,
+        "residual_m": -7.571,
+        "relative_error_pct": 2.704
+      }
+    },
+    "Charry L3": {
+      "tour_driver": {
+        "carry_m": 231.087,
+        "max_height_m": 27.775,
+        "flight_time_s": 6.068,
+        "residual_m": -17.413,
+        "relative_error_pct": 7.007
+      },
+      "amateur_driver": {
+        "carry_m": 178.696,
+        "max_height_m": 19.594,
+        "flight_time_s": 4.988,
+        "residual_m": -10.804,
+        "relative_error_pct": 5.701
+      },
+      "mid_iron_5iron": {
+        "carry_m": 161.818,
+        "max_height_m": 18.668,
+        "flight_time_s": 4.756,
+        "residual_m": -6.182,
+        "relative_error_pct": 3.68
+      },
+      "wedge": {
+        "carry_m": 113.978,
+        "max_height_m": 20.181,
+        "flight_time_s": 4.503,
+        "residual_m": 1.478,
+        "relative_error_pct": 1.314
+      },
+      "high_speed_driver": {
+        "carry_m": 247.926,
+        "max_height_m": 28.532,
+        "flight_time_s": 6.257,
+        "residual_m": -32.074,
+        "relative_error_pct": 11.455
+      }
+    },
+    "tools-core Rust RK4": {
+      "tour_driver": {
+        "carry_m": 247.99,
+        "max_height_m": 29.98,
+        "flight_time_s": 6.393,
+        "residual_m": -0.51,
+        "relative_error_pct": 0.205
+      },
+      "amateur_driver": {
+        "carry_m": 189.275,
+        "max_height_m": 20.725,
+        "flight_time_s": 5.192,
+        "residual_m": -0.225,
+        "relative_error_pct": 0.119
+      },
+      "mid_iron_5iron": {
+        "carry_m": 167.76,
+        "max_height_m": 19.311,
+        "flight_time_s": 4.873,
+        "residual_m": -0.24,
+        "relative_error_pct": 0.143
+      },
+      "wedge": {
+        "carry_m": 112.501,
+        "max_height_m": 20.079,
+        "flight_time_s": 4.484,
+        "residual_m": 0.001,
+        "relative_error_pct": 0.001
+      },
+      "high_speed_driver": {
+        "carry_m": 268.218,
+        "max_height_m": 31.678,
+        "flight_time_s": 6.672,
+        "residual_m": -11.782,
+        "relative_error_pct": 4.208
+      }
+    }
+  },
+  "aggregate_metrics": {
+    "Waterloo/Penner": {
+      "mae_m": 2.553,
+      "rmse_m": 5.278,
+      "max_abs_residual_m": 11.787,
+      "max_relative_error_pct": 4.21
+    },
+    "MacDonald-Hanzely": {
+      "mae_m": 7.349,
+      "rmse_m": 10.124,
+      "max_abs_residual_m": 20.656,
+      "max_relative_error_pct": 7.377
+    },
+    "Nathan": {
+      "mae_m": 5.542,
+      "rmse_m": 7.817,
+      "max_abs_residual_m": 16.239,
+      "max_relative_error_pct": 5.8
+    },
+    "Ballantyne": {
+      "mae_m": 8.349,
+      "rmse_m": 9.053,
+      "max_abs_residual_m": 12.651,
+      "max_relative_error_pct": 7.911
+    },
+    "J. Cole": {
+      "mae_m": 9.461,
+      "rmse_m": 12.402,
+      "max_abs_residual_m": 24.439,
+      "max_relative_error_pct": 8.728
+    },
+    "Rospie DL": {
+      "mae_m": 5.472,
+      "rmse_m": 5.702,
+      "max_abs_residual_m": 7.571,
+      "max_relative_error_pct": 6.159
+    },
+    "Charry L3": {
+      "mae_m": 13.59,
+      "rmse_m": 17.257,
+      "max_abs_residual_m": 32.074,
+      "max_relative_error_pct": 11.455
+    },
+    "tools-core Rust RK4": {
+      "mae_m": 2.552,
+      "rmse_m": 5.276,
+      "max_abs_residual_m": 11.782,
+      "max_relative_error_pct": 4.208
+    }
+  },
+  "runtime_parity_checks": [
+    {
+      "condition_id": "tour_driver",
+      "python_carry_m": 247.987,
+      "rust_carry_m": 247.99,
+      "absolute_diff_m": 0.003,
+      "relative_diff_pct": 0.001,
+      "passed": true
+    },
+    {
+      "condition_id": "amateur_driver",
+      "python_carry_m": 189.276,
+      "rust_carry_m": 189.275,
+      "absolute_diff_m": 0.001,
+      "relative_diff_pct": 0.001,
+      "passed": true
+    },
+    {
+      "condition_id": "mid_iron_5iron",
+      "python_carry_m": 167.761,
+      "rust_carry_m": 167.76,
+      "absolute_diff_m": 0.001,
+      "relative_diff_pct": 0.001,
+      "passed": true
+    },
+    {
+      "condition_id": "wedge",
+      "python_carry_m": 112.503,
+      "rust_carry_m": 112.501,
+      "absolute_diff_m": 0.002,
+      "relative_diff_pct": 0.002,
+      "passed": true
+    },
+    {
+      "condition_id": "high_speed_driver",
+      "python_carry_m": 268.213,
+      "rust_carry_m": 268.218,
+      "absolute_diff_m": 0.005,
+      "relative_diff_pct": 0.002,
+      "passed": true
+    }
+  ],
+  "limitations": [
+    "Terminal ground contact: ODE integration stops when the sphere center reaches terrain height + tee offset (z=0). Roll, bounce, and turf interaction require a dedicated ground-transfer model.",
+    "Wind capabilities: Steady meteorological wind is supported across both the Rust kernel fast path and Python models. Non-steady wind (vertical shear gradients, temporal gusts, turbulence) is supported in Python ODE integration and raises cleanly in the Rust facade.",
+    "Lift saturation ceiling: Golf ball lift coefficient is physically bounded by MAX_GOLF_BALL_LIFT_COEFFICIENT = 0.155 per Penner (2003) to prevent aerodynamic ballooning at extreme spin rates (>9000 RPM).",
+    "Spin decay: Decay rates range from 0.02 to 0.05 s^-1 across literature specifications; the canonical Waterloo/Penner baseline uses 0.05 s^-1 (MacDonald & Hanzely 1991, Penner 2003)."
+  ],
+  "benchmark_launches": [
+    {
+      "condition_id": "tour_driver",
+      "label": "Tour Driver (PGA Tour baseline)",
+      "ball_speed_mps": 74.0,
+      "launch_angle_deg": 12.0,
+      "spin_rate_rpm": 2600.0,
+      "reference_carry_m": 248.5,
+      "source_citation": "TrackMan Tour Averages (2022/2024); Penner (2003)",
+      "license_status": "Open published domain benchmark data"
+    },
+    {
+      "condition_id": "amateur_driver",
+      "label": "Amateur Driver (Moderate speed)",
+      "ball_speed_mps": 60.0,
+      "launch_angle_deg": 14.0,
+      "spin_rate_rpm": 2800.0,
+      "reference_carry_m": 189.5,
+      "source_citation": "TrackMan Amateur Benchmarks; USGA Technical Reports",
+      "license_status": "Open published domain benchmark data"
+    },
+    {
+      "condition_id": "mid_iron_5iron",
+      "label": "5-Iron (Mid iron)",
+      "ball_speed_mps": 55.0,
+      "launch_angle_deg": 16.0,
+      "spin_rate_rpm": 5000.0,
+      "reference_carry_m": 168.0,
+      "source_citation": "TrackMan Tour Averages; Penner (2003)",
+      "license_status": "Open published domain benchmark data"
+    },
+    {
+      "condition_id": "wedge",
+      "label": "Pitching Wedge (High spin)",
+      "ball_speed_mps": 40.0,
+      "launch_angle_deg": 28.0,
+      "spin_rate_rpm": 9000.0,
+      "reference_carry_m": 112.5,
+      "source_citation": "TrackMan Tour Averages; Penner (2003)",
+      "license_status": "Open published domain benchmark data"
+    },
+    {
+      "condition_id": "high_speed_driver",
+      "label": "High-Speed Driver (Long drive / elite)",
+      "ball_speed_mps": 80.0,
+      "launch_angle_deg": 11.0,
+      "spin_rate_rpm": 2400.0,
+      "reference_carry_m": 280.0,
+      "source_citation": "TrackMan Tour Elite Benchmarks",
+      "license_status": "Open published domain benchmark data"
+    }
+  ]
+}

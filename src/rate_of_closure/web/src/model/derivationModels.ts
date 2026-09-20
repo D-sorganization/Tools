@@ -250,6 +250,26 @@ function flightSteps(flightModel: string): DerivationStep[] {
         "carry, apex, flight time, landing angle, and lateral offset " +
         "are read off that terminal state (swing_sim.flight metrics).",
     },
+    {
+      title: "Literature Model Comparison and Wind Boundaries",
+      latex:
+        "231\\ \\text{m} \\leq x_{\\text{carry}} \\leq 261\\ \\text{m},\\qquad " +
+        "\\bar{x}_{\\text{carry}} \\approx 245\\ \\text{m},\\qquad " +
+        "\\Delta_{\\text{parity}} < 0.01",
+      values:
+        "\\text{canonical: Waterloo/Penner},\\ " +
+        "\\lambda = 0.05\\ \\text{s}^{-1},\\ " +
+        "C_{l,\\text{max}} = 0.155",
+      narrative:
+        "Across a standard 74 m/s (165 mph) driver launch, all seven " +
+        "registered literature models span 231 to 261 m carry (mean 245 m), " +
+        "closely clustering around empirical TrackMan and USGA benchmarks. " +
+        "Waterloo/Penner serves as the canonical baseline; the calibrated " +
+        "tools-core Rust RK4 kernel matches it to within 1% parity. " +
+        "Spin decay rates range from 0.02 to 0.05 1/s. Steady wind is " +
+        "integrated in the Rust fast path, while atmospheric shear and " +
+        "turbulent gusts require the full SciPy ODE solver.",
+    },
   ];
 }
 
