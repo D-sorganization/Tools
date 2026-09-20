@@ -220,12 +220,16 @@ def qualify_frozen_artifact(
         unicode_bundle = unicode_parent / "Explorer Bundle"
         created_link = False
         try:
-            if os.name == "nt":
+            if sys.platform == "win32":
                 import _winapi
 
-                unicode_parent.mkdir(parents=True, exist_ok=True)
-                _winapi.CreateJunction(str(bundle_dir.resolve()), str(unicode_bundle))
-                created_link = True
+                create_junction = getattr(_winapi, "CreateJunction", None)
+                if create_junction is not None:
+                    unicode_parent.mkdir(parents=True, exist_ok=True)
+                    create_junction(str(bundle_dir.resolve()), str(unicode_bundle))
+                    created_link = True
+                else:
+                    shutil.copytree(bundle_dir, unicode_bundle)
             else:
                 unicode_parent.mkdir(parents=True, exist_ok=True)
                 unicode_bundle.symlink_to(bundle_dir.resolve())
