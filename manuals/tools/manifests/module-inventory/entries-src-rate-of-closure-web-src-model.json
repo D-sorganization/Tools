@@ -26491,10 +26491,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5453,
+      "bytes_lf": 5745,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "544c729cabc5f16e675a95c714b5d96b6f4268d9b34f611d26b76a7bfde9c680",
+      "content_sha256_lf": "cc4a5b35c952cff4df2b093adda1396d151c7ceff548e42aae515a70bfa11dc3",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-WINDSTRATEGYMETRICS-TS-68F8D88FE2C6",
       "language": "typescript",
@@ -26515,7 +26515,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "not-applicable",
-        "units": "not-applicable",
+        "units": "mapped",
         "validation": "not-applicable"
       },
       "traceability": {
@@ -26536,7 +26536,9 @@
           }
         ],
         "test_paths": [],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "N"
+        ],
         "validation_paths": []
       }
     },
