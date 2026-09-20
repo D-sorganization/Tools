@@ -127,10 +127,12 @@ class RateOfClosureMainWindow(
         navigation_settings: NavigationSettings | None = None,
         morris_client: MorrisAuthorityPort | None = None,
         durable_ensemble_client: DurableEnsembleAuthorityPort | None = None,
+        confirm_on_close: bool = True,
     ) -> None:
         super().__init__(parent)
         self.setWindowTitle("Rate of Closure Impact Explorer")
         self.setMinimumSize(1024, 700)
+        self.confirm_on_close = confirm_on_close
 
         self._create_views(morris_client, durable_ensemble_client)
         self._build_application_shell(navigation_settings)
@@ -398,7 +400,7 @@ class RateOfClosureMainWindow(
 
     def closeEvent(self, event) -> None:  # type: ignore[no-untyped-def]  # noqa: N802
         """Prompt if unsaved and stop animation timers before closing."""
-        if not self._confirm_destructive_action("quit"):
+        if self.confirm_on_close and not self._confirm_destructive_action("quit"):
             event.ignore()
             return
         self._persist_primary_navigation()

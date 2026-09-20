@@ -62,13 +62,13 @@ reachable from any live state and `abandoned` from `parked`.
 - **State:** in_review
 - **Owner:** local
 - **Issue:** D-sorganization/Tools#4220
-- **PR:** not created
+- **PR:** https://github.com/D-sorganization/Tools/pull/5258
 - **Branch:** `feat/issue-4220-rate-of-closure-file-commands`
-- **Paths:** `src/rate_of_closure/ui/pyqt6/main_window_file_commands.py`, `src/rate_of_closure/ui/pyqt6/app_toolstrip.py`, `src/rate_of_closure/ui/pyqt6/main_window.py`, `src/rate_of_closure/ui/pyqt6/workspace_navigation.py`, `tests/rate_of_closure/test_main_window_file_commands.py`
+- **Paths:** `src/rate_of_closure/ui/pyqt6/main_window_file_commands.py`, `src/rate_of_closure/ui/pyqt6/app_toolstrip.py`, `src/rate_of_closure/ui/pyqt6/main_window.py`, `src/rate_of_closure/ui/pyqt6/workspace_navigation.py`, `tests/rate_of_closure/test_main_window_file_commands.py`, `tests/rate_of_closure/pyqt_probe_lifecycle.py`, `tests/rate_of_closure/pyqt_variation_visual_state_probe.py`
 - **Started:** 2026-09-19
-- **Last verified:** 2026-09-19 (`SELF`; all 27 tests in test_main_window_file_commands.py and test_app_toolstrip.py pass)
-- **Summary:** Native File commands (New, Open, Open Recent, Save, Save As, Import, Export, Close) wired into RateOfClosureMainWindow and ApplicationToolstrip with dirty tracking and destructive action confirmation prompts.
-- **Next step:** Push branch, open PR referencing Fixes #4220, arm auto-merge.
+- **Last verified:** 2026-09-20 (`SELF`; wired confirm_on_close lifecycle flag and verified test_main_window_file_commands.py and test_pyqt_variation_visual_state_rendered.py at 1.0 and 1.5 DPI scale)
+- **Summary:** Native File commands (New, Open, Open Recent, Save, Save As, Import, Export, Close) wired into RateOfClosureMainWindow and ApplicationToolstrip with dirty tracking and destructive action confirmation prompts, with clean headless probe shutdown support.
+- **Next step:** Push branch update, await CI completion and auto-merge.
 
 ### DL-#5218 · Camera Putting Launch Monitor for GSPro
 

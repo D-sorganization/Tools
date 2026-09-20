@@ -201,7 +201,21 @@ def test_close_event_prompt_cancellation(window) -> None:  # type: ignore[no-unt
         QMessageBox, "warning", return_value=QMessageBox.StandardButton.Discard
     ):
         window.closeEvent(event)
+    window._controls._spins["clubhead_speed_mph"].setValue(120.0)
+    window._workspace_baseline = window._fingerprint(window._capture_workspace_state())
+
+
+def test_close_event_unconfirmed_when_confirm_on_close_false(window) -> None:  # type: ignore[no-untyped-def]
+    window._controls._spins["clubhead_speed_mph"].setValue(131.0)
+    assert window.workspace_is_dirty()
+    window.confirm_on_close = False
+
+    event = QCloseEvent()
+    with patch.object(QMessageBox, "warning") as mock_warning:
+        window.closeEvent(event)
+        mock_warning.assert_not_called()
     assert event.isAccepted()
+    window.confirm_on_close = True
     window._controls._spins["clubhead_speed_mph"].setValue(120.0)
     window._workspace_baseline = window._fingerprint(window._capture_workspace_state())
 
