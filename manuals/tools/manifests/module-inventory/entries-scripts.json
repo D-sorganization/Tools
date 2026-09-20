@@ -4892,6 +4892,82 @@
       }
     },
     {
+      "authority_status": "provisional",
+      "bytes_lf": 9170,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "3f626b3e3fac07aeb96da54becd2f435436c2f1918becbbf68253e9e49716918",
+      "family": "repository-tooling-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-GENERATE-PUTTING-REPLAY-CORPUS-PY-5E0A2D0EC59C",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/generate_putting_replay_corpus.py",
+      "purpose": "Generate the synthetic replay corpus for the putting monitor regression suite.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "NoPuttClipSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PuttClipSpec",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DATA_DIR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FPS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "generate_all",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "deg"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "not-applicable",
       "bytes_lf": 1839,
       "classification": "non-calculation",

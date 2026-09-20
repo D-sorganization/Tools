@@ -610,6 +610,7 @@
           "src/pendulum_simulator/tests/test_rotating_base_panel.py",
           "src/pendulum_simulator/tests/test_transfer_strategy_panel.py",
           "src/putting_launch_monitor/tests/test_pipeline.py",
+          "src/putting_launch_monitor/tests/test_replay_corpus.py",
           "src/shared/python/calc_backend/tests/test_calc_backend.py",
           "src/shared/python/calc_backend/tests/test_calc_backend_gaps.py",
           "src/shared/python/data_processing/tests/test_processor.py",

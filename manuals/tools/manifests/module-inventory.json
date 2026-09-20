@@ -159,8 +159,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "4f4c537346a8d220471ccaa752492886b97495fe6c5f692a610089db01e142d7",
-      "entry_count": 105,
+      "content_sha256_lf": "05f93c3ce9f982f4848da8b68e70adb87b8373c71dce16581ac451a2935b984d",
+      "entry_count": 106,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
     },
@@ -429,7 +429,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-project-packer.json"
     },
     {
-      "content_sha256_lf": "21f0bdfe97cc8154cfd12e0d40a12e6e3cb89576214be3af560fbcf4f5db5c22",
+      "content_sha256_lf": "e5b376903b31655c311fab3a34635a6f9e73d4d008f47efe48bb09b85ae89081",
       "entry_count": 22,
       "package": "src/putting_launch_monitor",
       "path": "manuals/tools/manifests/module-inventory/entries-src-putting-launch-monitor.json"
@@ -591,7 +591,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "62767e3c8014a0e540922198589e017a8e49eb420a6c340bc9db79c8a5325ced",
+      "content_sha256_lf": "188b77fbf3f812f54dd0cb6807980f73377a38a8519db4ddcf646aeac1611a23",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
@@ -609,7 +609,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-calc-backend.json"
     },
     {
-      "content_sha256_lf": "b8efcac9ab63bd44156ec2ecc56080bf2e1b385d279bfe7a49247ae5d5e17738",
+      "content_sha256_lf": "ac6b4e71382b86533a4054ca488ff13fd7b830b076fd34542d9f28d33f68bb10",
       "entry_count": 4,
       "package": "src/shared/python/camera",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-camera.json"

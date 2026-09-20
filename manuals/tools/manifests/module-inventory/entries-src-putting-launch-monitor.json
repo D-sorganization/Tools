@@ -168,7 +168,8 @@
         ],
         "test_paths": [
           "src/putting_launch_monitor/tests/test_gui.py",
-          "src/putting_launch_monitor/tests/test_pipeline.py"
+          "src/putting_launch_monitor/tests/test_pipeline.py",
+          "src/putting_launch_monitor/tests/test_replay_corpus.py"
         ],
         "unit_mentions": [
           "s"
@@ -795,7 +796,8 @@
         ],
         "test_paths": [
           "src/putting_launch_monitor/tests/test_gui.py",
-          "src/putting_launch_monitor/tests/test_pipeline.py"
+          "src/putting_launch_monitor/tests/test_pipeline.py",
+          "src/putting_launch_monitor/tests/test_replay_corpus.py"
         ],
         "unit_mentions": [
           "s"
