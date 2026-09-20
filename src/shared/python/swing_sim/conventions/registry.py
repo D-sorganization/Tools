@@ -24,17 +24,106 @@ class ConventionId(StrEnum):
     FORESIGHT_COMPARABLE = "foresight_comparable"
 
 
-class ParameterId(StrEnum):
-    """Foundation quantities shared by every convention."""
+class ParameterGroup(StrEnum):
+    """Logical grouping for launch monitor parameters."""
 
+    CLUB_DELIVERY = "club_delivery"
+    FACE_ORIENTATION = "face_orientation"
+    BALL_LAUNCH = "ball_launch"
+    BALL_SPIN = "ball_spin"
+    BALL_FLIGHT = "ball_flight"
+
+
+class ParameterId(StrEnum):
+    """Complete launch-monitor parameter inventory across all groups."""
+
+    # Club Delivery
     CLUB_SPEED = "club_speed"
     CLUB_PATH = "club_path"
     ATTACK_ANGLE = "attack_angle"
+    DYNAMIC_LIE = "dynamic_lie"
+    CLOSURE_RATE = "closure_rate"
+    SWING_DIRECTION = "swing_direction"
+    LOW_POINT = "low_point"
+
+    # Face Orientation & Impact
     FACE_ANGLE = "face_angle"
     DYNAMIC_LOFT = "dynamic_loft"
     FACE_TO_PATH = "face_to_path"
     SPIN_LOFT = "spin_loft"
+    IMPACT_OFFSET = "impact_offset"
+    IMPACT_HEIGHT = "impact_height"
+
+    # Ball Launch
+    BALL_SPEED = "ball_speed"
+    LAUNCH_ANGLE = "launch_angle"
     LAUNCH_DIRECTION = "launch_direction"
+    SMASH_FACTOR = "smash_factor"
+
+    # Ball Spin
+    TOTAL_SPIN = "total_spin"
+    SPIN_AXIS = "spin_axis"
+    BACK_SPIN = "back_spin"
+    SIDE_SPIN = "side_spin"
+
+    # Ball Flight
+    APEX_HEIGHT = "apex_height"
+    CARRY_DISTANCE = "carry_distance"
+    TOTAL_DISTANCE = "total_distance"
+    CARRY_OFFLINE = "carry_offline"
+    CURVE = "curve"
+    FLIGHT_TIME = "flight_time"
+    LANDING_ANGLE = "landing_angle"
+
+
+_PARAMETER_GROUPS: dict[ParameterId, ParameterGroup] = {
+    ParameterId.CLUB_SPEED: ParameterGroup.CLUB_DELIVERY,
+    ParameterId.CLUB_PATH: ParameterGroup.CLUB_DELIVERY,
+    ParameterId.ATTACK_ANGLE: ParameterGroup.CLUB_DELIVERY,
+    ParameterId.DYNAMIC_LIE: ParameterGroup.CLUB_DELIVERY,
+    ParameterId.CLOSURE_RATE: ParameterGroup.CLUB_DELIVERY,
+    ParameterId.SWING_DIRECTION: ParameterGroup.CLUB_DELIVERY,
+    ParameterId.LOW_POINT: ParameterGroup.CLUB_DELIVERY,
+    ParameterId.FACE_ANGLE: ParameterGroup.FACE_ORIENTATION,
+    ParameterId.DYNAMIC_LOFT: ParameterGroup.FACE_ORIENTATION,
+    ParameterId.FACE_TO_PATH: ParameterGroup.FACE_ORIENTATION,
+    ParameterId.SPIN_LOFT: ParameterGroup.FACE_ORIENTATION,
+    ParameterId.IMPACT_OFFSET: ParameterGroup.FACE_ORIENTATION,
+    ParameterId.IMPACT_HEIGHT: ParameterGroup.FACE_ORIENTATION,
+    ParameterId.BALL_SPEED: ParameterGroup.BALL_LAUNCH,
+    ParameterId.LAUNCH_ANGLE: ParameterGroup.BALL_LAUNCH,
+    ParameterId.LAUNCH_DIRECTION: ParameterGroup.BALL_LAUNCH,
+    ParameterId.SMASH_FACTOR: ParameterGroup.BALL_LAUNCH,
+    ParameterId.TOTAL_SPIN: ParameterGroup.BALL_SPIN,
+    ParameterId.SPIN_AXIS: ParameterGroup.BALL_SPIN,
+    ParameterId.BACK_SPIN: ParameterGroup.BALL_SPIN,
+    ParameterId.SIDE_SPIN: ParameterGroup.BALL_SPIN,
+    ParameterId.APEX_HEIGHT: ParameterGroup.BALL_FLIGHT,
+    ParameterId.CARRY_DISTANCE: ParameterGroup.BALL_FLIGHT,
+    ParameterId.TOTAL_DISTANCE: ParameterGroup.BALL_FLIGHT,
+    ParameterId.CARRY_OFFLINE: ParameterGroup.BALL_FLIGHT,
+    ParameterId.CURVE: ParameterGroup.BALL_FLIGHT,
+    ParameterId.FLIGHT_TIME: ParameterGroup.BALL_FLIGHT,
+    ParameterId.LANDING_ANGLE: ParameterGroup.BALL_FLIGHT,
+}
+
+_GROUP_LABELS: dict[ParameterGroup, str] = {
+    ParameterGroup.CLUB_DELIVERY: "Club Delivery",
+    ParameterGroup.FACE_ORIENTATION: "Face Orientation",
+    ParameterGroup.BALL_LAUNCH: "Ball Launch",
+    ParameterGroup.BALL_SPIN: "Ball Spin",
+    ParameterGroup.BALL_FLIGHT: "Ball Flight",
+}
+
+
+def parameter_group(parameter_id: ParameterId) -> ParameterGroup:
+    """Return the parameter group for the given parameter identifier."""
+    return _PARAMETER_GROUPS[parameter_id]
+
+
+def parameter_group_label(group: ParameterGroup) -> str:
+    """Return the user-facing display label for a parameter group."""
+    return _GROUP_LABELS[group]
 
 
 class ReferencePoint(StrEnum):
@@ -56,6 +145,9 @@ class EventTime(StrEnum):
     IMPACT = "impact"
     MAXIMUM_COMPRESSION = "maximum_compression"
     JUST_AFTER_SEPARATION = "just_after_separation"
+    APEX = "apex"
+    LANDING = "landing"
+    FLIGHT_DURATION = "flight_duration"
 
 
 class SignRule(StrEnum):
@@ -73,6 +165,9 @@ class QuantityStatus(StrEnum):
     DERIVED = "derived"
     MODELED = "modeled"
     MEASURED_COMPARABLE = "measured_comparable"
+    APPROXIMATED = "approximated"
+    FLIGHT_MODEL_DEPENDENT = "flight_model_dependent"
+    UNAVAILABLE = "unavailable"
 
 
 class AvailabilityRule(StrEnum):
@@ -82,6 +177,8 @@ class AvailabilityRule(StrEnum):
     NONZERO_CLUB_TRAVEL = "nonzero_club_travel"
     FACE_GEOMETRY = "face_geometry"
     COLLISION_COMPLETE = "collision_complete"
+    TRAJECTORY_COMPLETE = "trajectory_complete"
+    UNAVAILABLE = "unavailable"
 
 
 class ComparabilityReason(StrEnum):
