@@ -843,7 +843,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-solver.json"
     },
     {
-      "content_sha256_lf": "bd545ba5708cd4073c5aeb544042266cce55ea59ad42665413ed940b655096c7",
+      "content_sha256_lf": "ed978aa57c2f9f6aaebe842518a72700461c48d9b26ffa847f6b028b409b52d3",
       "entry_count": 43,
       "package": "src/shared/python/swing_sim/variation",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-variation.json"

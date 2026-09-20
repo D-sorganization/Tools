@@ -8,7 +8,8 @@ from typing import Any, cast
 
 import numpy as np
 
-from ._contracts import require
+from shared.python.contracts import require
+
 from .registry import variable_registry
 from .spec import NoiseSpec
 
