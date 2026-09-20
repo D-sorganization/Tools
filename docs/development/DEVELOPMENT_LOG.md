@@ -23,13 +23,13 @@ reachable from any live state and `abandoned` from `parked`.
 - **State:** in_progress
 - **Owner:** local
 - **Issue:** D-sorganization/Tools#4253 (parent epic #4249)
-- **PR:** not created
+- **PR:** D-sorganization/Tools#5266
 - **Branch:** `feat/4253-counterfactual-sobol-significance`
 - **Paths:** `src/shared/python/swing_sim/variation/`, `src/rate_of_closure/`, `tests/rate_of_closure/`
 - **Started:** 2026-09-20
 - **Last verified:** 2026-09-20 (all 389 variation Python tests, 2,328 web tests, and 16 glossary tests passing; line budget <= 500 lines enforced)
 - **Summary:** Implements Sobol first-order and total sensitivity indices via Saltelli sampling with run count guidance, permutation p-values and bootstrap CIs on Spearman correlation matrix with cell suppression/greying, Mardia bivariate normality diagnostic and convex hull fallback for 2D landing dispersion, and input truncation mean-shift analysis with UI notes.
-- **Next step:** Push branch, open PR with rate-visual-exemption, arm auto-merge, and release lease.
+- **Next step:** Auto-merge armed with squash; release lease and notify caller agent.
 
 ### DL-#5073 · Non-Spherical Oblique Contact Mechanics and Moving Center of Pressure
 
