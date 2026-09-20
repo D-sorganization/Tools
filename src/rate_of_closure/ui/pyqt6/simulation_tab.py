@@ -52,6 +52,9 @@ from rate_of_closure.ui.pyqt6.simulation_target_workflow import (
     SimulationTargetWorkflowMixin,
 )
 from rate_of_closure.ui.pyqt6.simulation_view import SimulationView
+from rate_of_closure.ui.pyqt6.simulation_workspace_bridge import (
+    SimulationWorkspaceBridgeMixin,
+)
 from rate_of_closure.ui.pyqt6.solver_panel import SolverPanel
 from rate_of_closure.ui.pyqt6.strike_view import StrikeView
 from rate_of_closure.ui.pyqt6.synchronized_simulation_view import (
@@ -73,6 +76,8 @@ class SimulationTab(
     SimulationTabControlsMixin,
     SimulationTabRuntimeMixin,
     SimulationTargetWorkflowMixin,
+    SimulationWorkspaceBridgeMixin,
+    SimulationTabCompositorMixin,
     QWidget,
 ):
     """Simulation session tab (controls left, scene/inspector right)."""
@@ -99,6 +104,15 @@ class SimulationTab(
         self._view = SimulationView()
         self._strike_view = StrikeView()
         self._flight_view = FlightView()
+        self._compositor_swing_view = SimulationView()
+        self._compositor_flight_view = FlightView()
+        self._compositor = ViewCompositor(
+            {
+                ViewKind.IMPACT: StrikeView(),
+                ViewKind.SWING: self._compositor_swing_view,
+                ViewKind.FLIGHT: self._compositor_flight_view,
+            }
+        )
         self._flight_panel = FlightPlaybackPanel(self._flight_view)
         self._compositor_swing_view = SynchronizedSimulationView()
         self._compositor_strike_view = StrikeView()
