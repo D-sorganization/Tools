@@ -7,6 +7,7 @@ from pathlib import Path
 
 import pytest
 
+from shared.python.swing_sim.flight import is_rust_available
 from shared.python.swing_sim.flight.validation import (
     BENCHMARK_LAUNCHES,
     VALIDATION_SCHEMA_VERSION,
@@ -60,6 +61,8 @@ def test_evaluate_flight_benchmarks_generates_valid_report() -> None:
 @pytest.mark.parity
 @pytest.mark.physics
 def test_runtime_parity_all_conditions_within_one_percent() -> None:
+    if not is_rust_available():
+        pytest.skip("Rust tools_core wheel not available on this interpreter")
     report = evaluate_flight_benchmarks()
     assert len(report.runtime_parity_checks) == 5
     for check in report.runtime_parity_checks:
