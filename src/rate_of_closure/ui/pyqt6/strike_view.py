@@ -22,6 +22,7 @@ from typing import Any, cast
 
 import numpy as np
 from matplotlib.figure import Figure
+from matplotlib.markers import MarkerStyle
 from PyQt6.QtWidgets import QCheckBox, QHBoxLayout, QVBoxLayout, QWidget
 
 from rate_of_closure.club import ClubSpec, face_sagitta, head_cog
@@ -249,7 +250,7 @@ class StrikeView(QWidget):
             [toe_mm],
             [high_mm],
             s=55,
-            marker="X",  # type: ignore[arg-type]
+            marker=MarkerStyle("X"),
             color=get_chart_color(5),
             zorder=6,
             label=(
