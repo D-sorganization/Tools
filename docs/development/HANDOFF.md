@@ -1,3 +1,39 @@
+# Handoff Checkpoint — Rate of Closure: Frozen PyQt6 Qualification and Scientific Parity (#4382) — 2026-09-20
+- **Repository/worktree**: `Tools`, `c:\Users\diete\Repositories\Tools-repo`
+- **Branch**: `feat/4382-frozen-pyqt6-qualification`; commit `SELF`
+- **Governing issue**: `D-sorganization/Tools#4382` (Parent Epic #4377)
+- **Completed work**:
+  - Implemented explicit PyInstaller specification `rate_of_closure.spec` and hook `hook-rate_of_closure.py` under `src/rate_of_closure/packaging/` without reliance on repo root `_bootstrap.py` or dynamic registration.
+  - Implemented standalone entry point `src/rate_of_closure/packaging/entrypoint.py` supporting CLI probes and headless executions: `--probe-capabilities`, `--smoke-test`, `--run-canonical-simulation`, `--execute-ground-study`, `--offscreen`, and interactive GUI launch.
+  - Implemented build wrapper `src/rate_of_closure/packaging/build_artifact.py` and updated `src/rate_of_closure/build_executable.py` to target the frozen packaging pipeline.
+  - Built production Windows one-folder PyQt6 bundle `RateOfClosureExplorer` in `dist/RateOfClosureExplorer`.
+  - Implemented qualification harness `src/rate_of_closure/packaging/qualify_frozen.py` checking:
+    1. Artifact hygiene (no `.git`, `.pyc`, build leftovers).
+    2. Explicit capability probe (reporting Matplotlib/SciPy, graceful optional-Rust messaging, and explicitly unsupported PyQt direct-worker restart recovery).
+    3. Headless offscreen smoke test (`--smoke-test`).
+    4. Deterministic canonical simulation parity (`--run-canonical-simulation`).
+    5. Headless Ground Study execution (`--execute-ground-study`) verifying byte-for-byte parity against golden fixture `regional_ground_execution_result_golden_v1.json`.
+    6. Relocated directory handling (testing execution in paths containing spaces and Unicode, executed from an unrelated temporary CWD).
+  - Added comprehensive test suite `tests/rate_of_closure/test_frozen_pyqt6_qualification.py` (10 passed in 29s).
+  - Updated `SPEC.md` change log (validated via `shared_scripts/spec_changelog.py`).
+  - Regenerated module inventory shard `manuals/tools/manifests/module-inventory/entries-src-rate-of-closure.json`.
+  - Added `DL-#4382` in `docs/development/DEVELOPMENT_LOG.md`.
+- **Validation**:
+  - `pytest -n 0 tests/rate_of_closure/test_frozen_pyqt6_qualification.py` -> PASS (10 passed)
+  - `python src/rate_of_closure/packaging/qualify_frozen.py` -> PASS (status: qualified)
+  - `ruff check src/rate_of_closure/packaging/ tests/rate_of_closure/test_frozen_pyqt6_qualification.py src/rate_of_closure/build_executable.py` -> PASS (0 errors)
+  - `ruff format --check src/rate_of_closure/packaging/ tests/rate_of_closure/test_frozen_pyqt6_qualification.py src/rate_of_closure/build_executable.py` -> PASS
+  - `black --check src/rate_of_closure/packaging/ tests/rate_of_closure/test_frozen_pyqt6_qualification.py src/rate_of_closure/build_executable.py` -> PASS
+  - `mypy src/rate_of_closure/packaging/ src/rate_of_closure/build_executable.py tests/rate_of_closure/test_frozen_pyqt6_qualification.py` -> PASS
+  - `python shared_scripts/spec_changelog.py validate --spec SPEC.md` -> PASS (1057 rows)
+  - `python -m scripts.build_tools_module_inventory --check` -> PASS
+- **Next steps**:
+  - Commit changes with conventional commit: `feat(packaging): frozen PyQt6 qualification and scientific parity (#4382)`
+  - Push branch `feat/4382-frozen-pyqt6-qualification`
+  - Open PR with visual exemption reason: `rate-visual-exemption: non-visual frozen packaging and headless qualification harness`
+  - Enable auto-merge squash
+  - Release lease on issue #4382
+
 # Handoff Checkpoint — Rate UI Top-Toolstrip Popover Viewport Clamping (#4300) — 2026-09-19
 
 - **Repository/worktree**: `Tools`, `c:\Users\diete\Repositories\Tools-repo`
