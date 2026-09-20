@@ -370,10 +370,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 18296,
+      "bytes_lf": 19945,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "507ef9b61aaa420b411a31351bd129051416609e47baeebc5980e64fc735e501",
+      "content_sha256_lf": "597b547489e99a870d14d9ecbdb60c00f513b8a62107b06bd7ca40c3af140b4a",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-APP-TOOLSTRIP-PY-C7B78E8620F8",
       "language": "python",
@@ -1489,10 +1489,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 6365,
+      "bytes_lf": 6685,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "4df785c9c911f1e24e41610e8abc4bbd02f96e872d9d6db86d2ea7335d3ecb95",
+      "content_sha256_lf": "3f08b3f8bb0d46dd8f8f09f0b0e86bc1d728e152ea2490cede7422934dc60514",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-COURSE-SCENE-PY-EB7B4D080ECE",
       "language": "python",
@@ -2342,6 +2342,7 @@
         "test_paths": [
           "tests/rate_of_closure/test_camera_controls_gui.py",
           "tests/rate_of_closure/test_spatial_target_gui.py",
+          "tests/rate_of_closure/test_view_compositor_gui.py",
           "tests/rate_of_closure/test_viewers_gui.py"
         ],
         "unit_mentions": [
@@ -4461,10 +4462,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 20339,
+      "bytes_lf": 20046,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e6de9027e2aba46be4a9c39667f02c09764498dbd4777f7bf9b12d35798d2e2a",
+      "content_sha256_lf": "ed23827b78bde0a2d821d6c8eead9d5abc5fd80d3ca2b18d8968e5972ecdebad",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-MAIN-WINDOW-PY-6C6A148D71CA",
       "language": "python",
@@ -4787,10 +4788,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1595,
+      "bytes_lf": 2316,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "73a7f4409825817a284e9aa77790a74143c475b069df2214b4e35f0a388528d9",
+      "content_sha256_lf": "59f22412068c4f5886e58b83dc0b51649a08a203f1cecf61496ded564e752083",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-MAIN-WINDOW-VIEW-COMMANDS-PY-9DA4719240C3",
       "language": "python",
@@ -7602,10 +7603,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 17856,
+      "bytes_lf": 18373,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "a04ef86a6326e9c178e05e13d48e6d92b15e8dbd68ac6c3d851997b9854b3429",
+      "content_sha256_lf": "783302532f19b9c3e82999cca5ae1c9dd8f97667126c02031ac90c5927caf641",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SIMULATION-TAB-PY-368C511EFE92",
       "language": "python",
@@ -7683,10 +7684,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 2388,
+      "bytes_lf": 2759,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "2b7fd610144cd569a72679596197ff1a4318a336228dd939aa96848a642db2c9",
+      "content_sha256_lf": "5f69e24bc0181e970a85374593262dc68d014b85fa8c334ea17df09dc0c00ca5",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SIMULATION-TAB-COMPOSITOR-PY-1ED3B94E1E6D",
       "language": "python",
@@ -7738,10 +7739,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 13832,
+      "bytes_lf": 13874,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "f61b8d383e1b0c1996ebc7f277d6395b3fd388b9215a24ce0d331a8b9d04f4ab",
+      "content_sha256_lf": "37bc28d2e1c537cc30356d381ef16873515f4688e513d9512d2938bc2086da81",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SIMULATION-TAB-CONTROLS-PY-3E379C41D894",
       "language": "python",
@@ -7805,10 +7806,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 4657,
+      "bytes_lf": 5089,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "6d401dfa0fc960ccd71817865a1a16831994c351a49e625a6357887052297eac",
+      "content_sha256_lf": "a95da410c7e569712c665c21ffc2ad949e5e03c8c15920bfe96e50fa45b5d8aa",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SIMULATION-TAB-PUBLICATION-PY-104FA28CB2E5",
       "language": "python",
@@ -7978,10 +7979,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 15734,
+      "bytes_lf": 15880,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "610a2c74159c1988ff1d1df8719eb58042d8001ca38858b75169c89a42afc7c7",
+      "content_sha256_lf": "ed1eed70eb1401dcb2b969390aa0c7b88ef5d090cdb86254f110a074079db803",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SIMULATION-VIEW-PY-ABCB4D110119",
       "language": "python",
@@ -8033,6 +8034,7 @@
         "test_paths": [
           "tests/rate_of_closure/test_camera_controls_gui.py",
           "tests/rate_of_closure/test_simulation_gui.py",
+          "tests/rate_of_closure/test_view_compositor_gui.py",
           "tests/rate_of_closure/test_wedge_ground_clearance_gui.py"
         ],
         "unit_mentions": [
@@ -8809,10 +8811,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 13275,
+      "bytes_lf": 13417,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "37dd94b35e14ae6565ad878a31fb36cae22e06eb5eb372a81fb0306e74a3ecd4",
+      "content_sha256_lf": "746d5d3dca2d5fa49d1489a4d0a9adaa6d379d075cc16d2e092d91b99bc65732",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-STRIKE-VIEW-PY-F3AE1FA8CAD0",
       "language": "python",
@@ -10798,10 +10800,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12318,
+      "bytes_lf": 12659,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "41dfbf10cfc7e4965e7a2ee915a646db70bf8bf7ce605da06092b6521e0663be",
+      "content_sha256_lf": "72f283b852cb5283ba7400124930121aed2fa72a8b5788cc36c50d9710dbb130",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-VIEW-COMPOSITOR-PY-4F98398FFC32",
       "language": "python",
@@ -10821,7 +10823,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "not-applicable",
         "validation": "not-applicable"
       },
@@ -10842,7 +10844,9 @@
             "signature": null
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/rate_of_closure/test_view_compositor_gui.py"
+        ],
         "unit_mentions": [],
         "validation_paths": []
       }

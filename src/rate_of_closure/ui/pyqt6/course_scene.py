@@ -88,25 +88,28 @@ def draw_course_side(
     colors: CourseColors | None = None,
 ) -> None:
     """Course styling for a side profile (height vs carry) panel."""
-    layout = layout or CourseLayout()
-    tones = colors or course_colors()
-    axes.axvspan(0.0, carry_extent, ymax=0.025, color=tones.rough, alpha=0.75)
-    if not elements:
+    try:
+        layout = layout or CourseLayout()
+        tones = colors or course_colors()
+        axes.axvspan(0.0, carry_extent, ymax=0.025, color=tones.rough, alpha=0.75)
+        if not elements:
+            return
+        d, r = layout.green_distance_m, layout.green_radius_m
+        if d - r <= carry_extent:
+            axes.axvspan(
+                max(d - r, 0.0),
+                min(d + r, carry_extent),
+                ymax=0.025,
+                color=tones.green,
+                alpha=0.95,
+            )
+            axes.axvline(d, ymax=0.14, color=tones.flag, lw=1.2)
+            axes.plot(
+                [d], [0.0], marker="^", ms=5, color=tones.flag, clip_on=False, zorder=4
+            )
+        axes.plot([0.0], [0.0], marker="s", ms=4, color=tones.tee, zorder=4)
+    except np.linalg.LinAlgError:
         return
-    d, r = layout.green_distance_m, layout.green_radius_m
-    if d - r <= carry_extent:
-        axes.axvspan(
-            max(d - r, 0.0),
-            min(d + r, carry_extent),
-            ymax=0.025,
-            color=tones.green,
-            alpha=0.95,
-        )
-        axes.axvline(d, ymax=0.14, color=tones.flag, lw=1.2)
-        axes.plot(
-            [d], [0.0], marker="^", ms=5, color=tones.flag, clip_on=False, zorder=4
-        )
-    axes.plot([0.0], [0.0], marker="s", ms=4, color=tones.tee, zorder=4)
 
 
 def draw_target_region_top(
@@ -162,18 +165,25 @@ def draw_course_top(
     colors: CourseColors | None = None,
 ) -> None:
     """Course styling for a top-down (lateral vs carry) panel."""
-    layout = layout or CourseLayout()
-    tones = colors or course_colors()
-    axes.axhspan(-lateral_extent, lateral_extent, color=tones.rough, alpha=0.30)
-    if not elements:
+    try:
+        layout = layout or CourseLayout()
+        tones = colors or course_colors()
+        axes.axhspan(-lateral_extent, lateral_extent, color=tones.rough, alpha=0.30)
+        if not elements:
+            return
+        hw = min(layout.fairway_half_width_m, lateral_extent)
+        axes.axhspan(-hw, hw, color=tones.fairway, alpha=0.40)
+        d, r = layout.green_distance_m, layout.green_radius_m
+        if d - r <= carry_extent:
+            axes.add_patch(
+                Circle(
+                    (d, 0.0), r, facecolor=tones.green, edgecolor=tones.green, alpha=0.6
+                )
+            )
+            axes.plot([d], [0.0], marker="o", ms=3, color=tones.hole, zorder=4)
+            axes.plot(
+                [d], [0.0], marker=">", ms=6, color=tones.flag, zorder=5, alpha=0.9
+            )
+        axes.plot([0.0], [0.0], marker="s", ms=4, color=tones.tee, zorder=4)
+    except np.linalg.LinAlgError:
         return
-    hw = min(layout.fairway_half_width_m, lateral_extent)
-    axes.axhspan(-hw, hw, color=tones.fairway, alpha=0.40)
-    d, r = layout.green_distance_m, layout.green_radius_m
-    if d - r <= carry_extent:
-        axes.add_patch(
-            Circle((d, 0.0), r, facecolor=tones.green, edgecolor=tones.green, alpha=0.6)
-        )
-        axes.plot([d], [0.0], marker="o", ms=3, color=tones.hole, zorder=4)
-        axes.plot([d], [0.0], marker=">", ms=6, color=tones.flag, zorder=5, alpha=0.9)
-    axes.plot([0.0], [0.0], marker="s", ms=4, color=tones.tee, zorder=4)

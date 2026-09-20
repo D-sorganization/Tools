@@ -47,6 +47,7 @@ _SHAFT_DATUM_LABELS: tuple[tuple[str, ShaftAxisDatum], ...] = (
 class SimulationTabControlsMixin:
     """Build controls while leaving simulation orchestration to the host tab."""
 
+    _ball_setup_control: BallSetupControl
     _scenario: ImpactScenario
     _rows: dict[str, ResultRow]
     _scrub_box: QGroupBox

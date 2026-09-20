@@ -150,20 +150,46 @@ def test_module_manager_applies_visibility_and_order_changes(window) -> None:  #
 
 
 @pytest.mark.parametrize(
-    "command_id",
+    ("command_id", "expected_view_id"),
     (
-        AppCommandId.VIEW_SHOW_IMPACT,
-        AppCommandId.VIEW_SHOW_SWING,
-        AppCommandId.VIEW_SHOW_FLIGHT,
+        (AppCommandId.VIEW_SHOW_IMPACT, "impact"),
+        (AppCommandId.VIEW_SHOW_SWING, "swing"),
+        (AppCommandId.VIEW_SHOW_FLIGHT, "flight"),
     ),
 )
-def test_multi_view_commands_explain_their_deliberate_unavailable_state(
-    window: RateOfClosureMainWindow, command_id: AppCommandId
+def test_multi_view_commands_switch_compositor_views(
+    window: RateOfClosureMainWindow,
+    command_id: AppCommandId,
+    expected_view_id: str,
 ) -> None:
     action = _action(window, command_id.value)
-    assert not action.isEnabled()
-    assert "multi-view compositor contract" in action.toolTip().lower()
-    assert action.statusTip() == action.toolTip()
+    assert action.isEnabled()
+    action.trigger()
+    assert window.current_primary_module_id() == "simulation"
+    compositor = window._simulation_tab.compositor()
+    assert compositor.visible_view_ids() == (expected_view_id,)
+
+
+@pytest.mark.parametrize(
+    ("layout_name", "expected_count"),
+    (
+        ("single", 1),
+        ("split_horizontal", 2),
+        ("split_vertical", 2),
+        ("grid", 3),
+    ),
+)
+def test_layout_preset_actions_arrange_viewports(
+    window: RateOfClosureMainWindow,
+    layout_name: str,
+    expected_count: int,
+) -> None:
+    action = window.findChild(QAction, f"view.layout.{layout_name}")
+    assert action is not None
+    action.trigger()
+    assert window.current_primary_module_id() == "simulation"
+    compositor = window._simulation_tab.compositor()
+    assert len(compositor.visible_view_ids()) == expected_count
 
 
 def test_every_ui_neutral_command_id_is_registered_exactly_once(window) -> None:  # type: ignore[no-untyped-def]

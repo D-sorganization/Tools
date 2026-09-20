@@ -441,13 +441,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-python.json"
     },
     {
-      "content_sha256_lf": "50492e1cf038df6121e18a7b0a1ab4021ecf52ffe6923ddf9406c8be42ae3b92",
+      "content_sha256_lf": "fc057ef27733d5d4a7593504e0248dcd380ad61e98a0b069195cfffb16abfdb9",
       "entry_count": 59,
       "package": "src/rate_of_closure",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure.json"
     },
     {
-      "content_sha256_lf": "b969fcbba440474515100d3be1569bb3404e1ecc7e8e8e13b4d3991ba5116e14",
+      "content_sha256_lf": "36c80a9a97bd5e7c1ec46c3eb6b3e45753b9f236eda2596b980ca548f433323d",
       "entry_count": 66,
       "package": "src/rate_of_closure/application",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-application.json"
@@ -483,7 +483,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-simulation.json"
     },
     {
-      "content_sha256_lf": "2842df0f9fa25b828d0c13547d81d50b080575a2a8fa5cbcbfbe2fe5298173b6",
+      "content_sha256_lf": "7c9e32cb3bde4b062f5e05fdfc37dba34b42849d8187cdbfb3f1dbe05b720fbb",
       "entry_count": 190,
       "package": "src/rate_of_closure/ui",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-ui.json"
@@ -525,7 +525,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src.json"
     },
     {
-      "content_sha256_lf": "e930fabc97d505f7d77bdbe090d77319d1f4a583ab8087d298bbb84844846ecc",
+      "content_sha256_lf": "e191fe585cc034e3c841f76330ec8f7b2c3fac79e49685337615dfd07a1526e8",
       "entry_count": 182,
       "package": "src/rate_of_closure/web/src/components",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-components.json"
