@@ -2631,10 +2631,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8437,
+      "bytes_lf": 12877,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9bd527deb8781d4f03510c8365cdd58276dab4b6f800b5cd18049bc5cf0ee9df",
+      "content_sha256_lf": "22ceaa3571a0d62522347aa96fdbfd691b8f65832c94db3f7bcaab22ddc45987",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-RATE-VISUAL-EVIDENCE-CHANGES-PY-8242FB71D4B6",
       "language": "python",
@@ -2705,6 +2705,11 @@
           },
           {
             "kind": "constant",
+            "name": "_PAINT_SYMBOLS_PATTERN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
             "name": "_PYQT_PATTERNS",
             "signature": null
           },
@@ -2714,14 +2719,14 @@
             "signature": null
           },
           {
-            "kind": "constant",
-            "name": "_SHARED_VISUAL_PATHS",
-            "signature": null
-          },
-          {
             "kind": "function",
             "name": "extract_exemption_reason",
             "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "is_substantive_evidence_change",
+            "signature": "path: str, base_content: str, current_content: str"
           },
           {
             "kind": "function",
@@ -2731,7 +2736,7 @@
           {
             "kind": "function",
             "name": "validate_visual_evidence_changes",
-            "signature": "changed_files: Iterable[str], *, exemption_reason: str | None=None"
+            "signature": "changed_files: Iterable[str], *, exemption_reason: str | None=None, base_ref: str | None=None, evidence_content_resolver: Callable[[str], tuple[str, str] | None] | None=None"
           }
         ],
         "test_paths": [
@@ -6728,6 +6733,105 @@
         "unit_mentions": [
           "N",
           "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 16254,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8abbdd9400e9e79f4cfcef2c09f6773de226b4c3ce370297f8ec67abaad2f8cb",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-RELEASE-GATE-PY-71AB8AE0D70E",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/release_gate.py",
+      "purpose": "Rate-of-Closure release gate (Tools #4201, #4922).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_DEFAULT_EVIDENCE_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_FORBIDDEN_PATTERNS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "check_companion_and_playwright",
+            "signature": "repo_root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "check_documentation_and_a11y",
+            "signature": "repo_root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "check_frozen_pyqt_qualification",
+            "signature": "repo_root: Path, artifact_dir: Path | None=None, *, skip_binary: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "check_parity_inventory",
+            "signature": "repo_root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "check_sbom_and_package_assets",
+            "signature": "repo_root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "run_release_gate",
+            "signature": "repo_root: Path | None=None, *, artifact_dir: Path | None=None, skip_frozen_binary: bool=False, update_manifest: bool=False, evidence_id: str=_DEFAULT_EVIDENCE_ID"
+          },
+          {
+            "kind": "function",
+            "name": "update_campaign_manifest",
+            "signature": "repo_root: Path, evidence_id: str=_DEFAULT_EVIDENCE_ID"
+          }
+        ],
+        "test_paths": [
+          "tests/scripts/test_release_gate.py"
+        ],
+        "unit_mentions": [
+          "g"
         ],
         "validation_paths": []
       }

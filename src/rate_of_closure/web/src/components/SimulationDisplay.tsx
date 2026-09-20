@@ -192,7 +192,7 @@ export function SimulationDisplay({
             <>
               <ImpactKinematicsPanel run={run} scenario={scenario} club={clubSpec} />
               <ImpactSceneCanvas run={run} scenario={scenario} club={clubSpec} />
-              <WedgeGroundClearancePanel result={wedgeClearance} />
+              <WedgeGroundClearancePanel result={wedgeClearance} run={run} scenario={scenario} club={clubSpec} />
             </>
           )}
           {showScrew && (
