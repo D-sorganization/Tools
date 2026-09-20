@@ -6963,6 +6963,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | 2026-09-10 | #1614 | Adopt maintainable Mermaid C4 architecture-map contract (C4Context, C4Container, Feature Map, Change Log, validator and workflow) (#1614). |
 | 2026-09-14 | #5210 | fix(tests): resolve relative fixture imports and calibrate web open budget |
 | 2026-09-19 | #5223 | Bump mirrors-mypy pre-push hook to v1.15.0 for NumPy >= 2.2 stub compatibility (#5223). |
+| 2026-09-19 | #4300 | Clamp File, View, and Tools popovers within constrained viewports using useViewportClampedPopover (#4300). |
 ---
 
 <!--

@@ -18,9 +18,22 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
-### DL-#5223 · Pre-push Mypy Hook NumPy Compatibility
+### DL-#4300 · Rate UI Top-Toolstrip Popover Viewport Clamping
 
 - **State:** in_progress
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#4300
+- **PR:** https://github.com/D-sorganization/Tools/pull/5255
+- **Branch:** `fix/issue-4300-toolstrip-popover-viewport-clamping`
+- **Paths:** `src/rate_of_closure/web/src/components/AppToolstrip.tsx`, `src/rate_of_closure/web/src/components/AppToolstrip.test.tsx`, `src/rate_of_closure/web/e2e/toolstrip-popover-viewport.spec.ts`, `SPEC.md`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`
+- **Started:** 2026-09-19
+- **Last verified:** 2026-09-19 (`SELF`; wired useViewportClampedPopover into FileMenu, ViewMenu, and ToolsMenu; verified via Vitest unit tests and Playwright 520x900 viewport e2e tests)
+- **Summary:** Top-toolstrip menus (Tools, File, View) overflowed horizontally on constrained viewports (e.g. 520x900). Wired the existing useViewportClampedPopover hook into FileMenu, ViewMenu, and ToolsMenu to translate popovers horizontally to stay inside viewport gutters. Added unit and e2e regression tests.
+- **Next step:** Push branch, verify CI passes on PR #5255.
+
+### DL-#5223 · Pre-push Mypy Hook NumPy Compatibility
+
+- **State:** shipped
 - **Owner:** local
 - **Issue:** D-sorganization/Tools#5223
 - **PR:** https://github.com/D-sorganization/Tools/pull/5254
@@ -29,7 +42,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-19
 - **Last verified:** 2026-09-19 (`SELF`; mirrors-mypy bumped from v1.13.0 to v1.15.0 to support NumPy >= 2.2 stubs without cache serializer placeholder crash; pre-push hook and unit tests passed)
 - **Summary:** Pre-push mypy hook crashed on numpy-importing files when the isolated hook environment carried numpy >= 2.2 because mypy 1.13's cache serializer failed on newer type syntax. Bumped mirrors-mypy to v1.15.0 and added contract unit test.
-- **Next step:** Push branch, verify CI passes on PR #5254.
+- **Next step:** Shipped via PR #5254.
 
 ### DL-#5073 · Non-Spherical Oblique Contact Mechanics and Moving Center of Pressure
 
