@@ -210,6 +210,37 @@ class TestSensitivity:
 
         np.testing.assert_allclose(rho, expected, equal_nan=True)
 
+    def test_spearman_permutation_p_values_and_ci(self) -> None:
+        from shared.python.swing_sim.variation import spearman_analysis
+
+        # Perfectly correlated monotonic relationship
+        points = np.column_stack(
+            [np.linspace(200.0, 220.0, 30), np.linspace(-3.0, 3.0, 30)]
+        )
+        dataset = _synthetic_launch_dataset(points)
+        result = spearman_analysis(dataset, n_permutations=200, seed=42)
+
+        carry = dataset.output_names.index("carry_m")
+        # Strong monotonic signal -> p-value near 0, significant is True
+        assert result.matrix[0, carry] == pytest.approx(1.0)
+        assert result.p_values[0, carry] < 0.05
+        assert bool(result.significant[0, carry]) is True
+        assert result.ci_lower[0, carry] > 0.8
+
+        # Uncorrelated random input vs output
+        rng = np.random.default_rng(123)
+        uncorrelated_points = np.column_stack(
+            [rng.normal(200.0, 10.0, 30), rng.normal(0.0, 1.0, 30)]
+        )
+        uncorrelated_dataset = _synthetic_launch_dataset(uncorrelated_points)
+        uncorr_result = spearman_analysis(
+            uncorrelated_dataset, n_permutations=200, seed=42
+        )
+        # Random data should not be significant
+        assert bool(uncorr_result.significant[0, carry]) is False
+        assert uncorr_result.p_values[0, carry] > 0.05
+        assert uncorr_result.ci_lower[0, carry] < 0.0 < uncorr_result.ci_upper[0, carry]
+
     def test_oat_uses_each_outputs_finite_evaluated_rows(
         self, monkeypatch: pytest.MonkeyPatch
     ) -> None:

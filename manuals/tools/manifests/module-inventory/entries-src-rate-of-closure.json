@@ -1244,10 +1244,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13475,
+      "bytes_lf": 14396,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d5f2aea170d18511a950c7ffb2e0d67db2b7319853660e7474aa07ae370414cc",
+      "content_sha256_lf": "bda32d622fdeceee011abc770d67880c2fdab0f65f7e2c5d2f99da2a9536d266",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-GLOSSARY-ENTRIES-A-L-PY-280AD2B4E517",
       "language": "python",
@@ -1302,10 +1302,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13025,
+      "bytes_lf": 15718,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "39d591b4c2863aea4a85e75539d894b07851c6820a9f649593ac57e4144dd76e",
+      "content_sha256_lf": "a84a8f29f118c1d4652e3362e3a50c19d05909cfdc4d8c7e5983034c6a3079b5",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-GLOSSARY-ENTRIES-L-Z-PY-487EDBA8FF8B",
       "language": "python",
@@ -1348,6 +1348,7 @@
         ],
         "test_paths": [],
         "unit_mentions": [
+          "N",
           "N·m",
           "W",
           "g",

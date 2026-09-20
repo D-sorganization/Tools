@@ -91,6 +91,14 @@ ENTRIES: dict[str, GlossaryEntry] = {
         "time, so the face the ball leaves is not the face it met "
         "(impact literature; Cheetham dossier).",
     ),
+    "convex_hull_dispersion": _entry(
+        "Convex Hull Dispersion Fallback",
+        "The minimal convex polygon bounding evaluated landing points. "
+        "When the Mardia diagnostic rejects bivariate normality (p < 0.05), "
+        "the convex hull provides a non-parametric envelope of the shot "
+        "scatter in place of a potentially misleading Gaussian ellipse "
+        "(computational geometry literature; swing_sim.variation.normality).",
+    ),
     "cor": _entry(
         "Coefficient of Restitution (COR)",
         "The ratio of separation speed to approach speed along the impact "
@@ -251,6 +259,14 @@ ENTRIES: dict[str, GlossaryEntry] = {
         "to the target line (+ = right). Dominated by the delivered face "
         "angle with a smaller club-path contribution (D-plane "
         "literature).",
+    ),
+    "bivariate_normality": _entry(
+        "Bivariate Normality (Mardia Test)",
+        "Statistical hypothesis test assessing whether 2D landing coordinates "
+        "(lateral and carry) follow a joint Gaussian distribution. Evaluates "
+        "Mardia multivariate skewness and kurtosis against chi-square and "
+        "standard normal distributions to validate dispersion ellipse fits "
+        "(Mardia 1970; swing_sim.variation.normality).",
     ),
     "blade_putter": _entry(
         "Blade Putter",

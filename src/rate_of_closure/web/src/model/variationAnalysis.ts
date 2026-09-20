@@ -196,6 +196,130 @@ export function spearmanMatrix(dataset: VariationDatasetTs): number[][] {
   );
 }
 
+export interface SpearmanResultTs {
+  matrix: number[][];
+  pValues: number[][];
+  ciLower: number[][];
+  ciUpper: number[][];
+  significant: boolean[][];
+}
+
+/** Spearman rank correlation with permutation p-values and CIs. */
+export function spearmanAnalysis(
+  dataset: VariationDatasetTs,
+  nPermutations = 200,
+  alpha = 0.05,
+  seed = 42,
+): SpearmanResultTs {
+  const shapeRows = dataset.inputNames.length;
+  const shapeCols = dataset.outputNames.length;
+  const matrix: number[][] = [];
+  const pValues: number[][] = [];
+  const ciLower: number[][] = [];
+  const ciUpper: number[][] = [];
+  const significant: boolean[][] = [];
+
+  const calcStats = (r: number[]): { mean: number; std: number } => {
+    const mean = r.reduce((a, v) => a + v, 0) / r.length;
+    const std = Math.sqrt(r.reduce((a, v) => a + (v - mean) ** 2, 0) / r.length);
+    return { mean, std };
+  };
+
+  const calcRho = (rx: number[], ry: number[]): number => {
+    const sx = calcStats(rx);
+    const sy = calcStats(ry);
+    if (sx.std <= 0 || sy.std <= 0) return NaN;
+    let cov = 0;
+    for (let k = 0; k < rx.length; k += 1) {
+      cov += (rx[k] - sx.mean) * (ry[k] - sy.mean);
+    }
+    return (cov / rx.length) / (sx.std * sy.std);
+  };
+
+  let rngState = seed;
+  const nextRng = (): number => {
+    rngState = (rngState * 1664525 + 1013904223) >>> 0;
+    return rngState / 4294967296;
+  };
+
+  for (let i = 0; i < shapeRows; i += 1) {
+    const rowMatrix: number[] = [];
+    const rowPVal: number[] = [];
+    const rowCiLo: number[] = [];
+    const rowCiHi: number[] = [];
+    const rowSig: boolean[] = [];
+
+    for (let j = 0; j < shapeCols; j += 1) {
+      const pair = finitePair(dataset, i, j);
+      if (pair.length < 3) {
+        rowMatrix.push(NaN); rowPVal.push(NaN); rowCiLo.push(NaN); rowCiHi.push(NaN); rowSig.push(false);
+        continue;
+      }
+      const rx = ranks(pair.map(([inp]) => inp));
+      const ry = ranks(pair.map(([, out]) => out));
+      const rho = calcRho(rx, ry);
+      if (Number.isNaN(rho)) {
+        rowMatrix.push(NaN); rowPVal.push(NaN); rowCiLo.push(NaN); rowCiHi.push(NaN); rowSig.push(false);
+        continue;
+      }
+      rowMatrix.push(rho);
+      const absRho = Math.abs(rho);
+      let exceed = 0;
+      for (let p = 0; p < nPermutations; p += 1) {
+        const shuffled = [...ry];
+        for (let k = shuffled.length - 1; k > 0; k -= 1) {
+          const swapIdx = Math.floor(nextRng() * (k + 1));
+          const tmp = shuffled[k]; shuffled[k] = shuffled[swapIdx]; shuffled[swapIdx] = tmp;
+        }
+        if (Math.abs(calcRho(rx, shuffled)) >= absRho - 1e-12) exceed += 1;
+      }
+      const pval = (exceed + 1) / (nPermutations + 1);
+      rowPVal.push(pval);
+      rowSig.push(pval <= alpha);
+
+      // Bootstrap CI
+      const nBoot = 100;
+      const bootRhos: number[] = [];
+      for (let b = 0; b < nBoot; b += 1) {
+        const bRx: number[] = [];
+        const bRy: number[] = [];
+        for (let k = 0; k < rx.length; k += 1) {
+          const pick = Math.floor(nextRng() * rx.length);
+          bRx.push(rx[pick]); bRy.push(ry[pick]);
+        }
+        const bRho = calcRho(bRx, bRy);
+        if (!Number.isNaN(bRho)) bootRhos.push(bRho);
+      }
+      bootRhos.sort((a, b) => a - b);
+      if (bootRhos.length > 0) {
+        rowCiLo.push(percentile(bootRhos, alpha / 2));
+        rowCiHi.push(percentile(bootRhos, 1 - alpha / 2));
+      } else {
+        rowCiLo.push(NaN); rowCiHi.push(NaN);
+      }
+    }
+    matrix.push(rowMatrix); pValues.push(rowPVal); ciLower.push(rowCiLo); ciUpper.push(rowCiHi); significant.push(rowSig);
+  }
+
+  return { matrix, pValues, ciLower, ciUpper, significant };
+}
+
+export {
+  type NormalityDiagnosticTs,
+  mardiaBivariateNormality,
+  convexHull2d,
+} from "./variationNormality";
+import {
+  type NormalityDiagnosticTs,
+  mardiaBivariateNormality,
+  convexHull2d,
+} from "./variationNormality";
+
+export {
+  type TruncationShiftNoteTs,
+  detectTruncationMeanShifts,
+} from "./variationTruncation";
+
 export interface DispersionEllipseTs {
   centerCarryM: number;
   centerLateralM: number;
@@ -203,6 +327,8 @@ export interface DispersionEllipseTs {
   semiMinorM: number;
   angleDeg: number; // CCW from the carry axis toward + lateral
   n: number;
+  diagnostic?: NormalityDiagnosticTs;
+  convexHull?: Array<[number, number]>;
 }
 
 export interface LandingPointTs {
@@ -236,7 +362,7 @@ export function pairedLandingPoints(
   return points;
 }
 
-/** 2-sigma landing ellipse from the carry/lateral sample covariance. */
+/** 2-sigma landing ellipse from the carry/lateral sample covariance with normality check. */
 export function dispersionEllipse(
   dataset: VariationDatasetTs,
   nSigma = 2.0,
@@ -267,6 +393,11 @@ export function dispersionEllipse(
   const l2 = Math.max(trace / 2 - disc, 0); // minor
   const angleRad =
     Math.abs(sxy) < 1e-15 && sxx >= syy ? 0 : Math.atan2(l1 - sxx, sxy);
+
+  const landing2d: Array<[number, number]> = points.map((p) => [p.lateralM, p.carryM]);
+  const diagnostic = mardiaBivariateNormality(landing2d);
+  const convexHull = !diagnostic.isNormal ? convexHull2d(landing2d) : undefined;
+
   return {
     centerCarryM: mc,
     centerLateralM: ml,
@@ -274,6 +405,8 @@ export function dispersionEllipse(
     semiMinorM: nSigma * Math.sqrt(l2),
     angleDeg: (angleRad * 180.0) / Math.PI,
     n,
+    diagnostic,
+    convexHull,
   };
 }
 

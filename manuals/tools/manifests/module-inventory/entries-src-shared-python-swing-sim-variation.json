@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9237,
+      "bytes_lf": 10286,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "37f18a908ab6db90850070a6859f2f88682093a612b4bebd7f0ba408bcea04a1",
+      "content_sha256_lf": "8800b04bb21f28f099892686aed308880e4f777e96a2ea4fec5e1b730ad7f85b",
       "family": "swing-simulation-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-INIT-PY-5F95F06C7E85",
       "language": "python",
@@ -369,6 +369,11 @@
           },
           {
             "kind": "re-export",
+            "name": "NormalityDiagnostic",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "OutputStats",
             "signature": null
           },
@@ -484,12 +489,62 @@
           },
           {
             "kind": "re-export",
+            "name": "SOBOL_REPORT_SCHEMA_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SOBOL_REPORT_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "SWING_DERIVED_KEYS",
             "signature": null
           },
           {
             "kind": "re-export",
+            "name": "SaltelliDesign",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "SensitivityResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SobolEstimate",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SobolFactor",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SobolObservations",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SobolOutput",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SobolReport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SobolRunCountGuidance",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SpearmanResult",
             "signature": null
           },
           {
@@ -500,6 +555,11 @@
           {
             "kind": "re-export",
             "name": "TraceResamplingResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TruncationShiftNote",
             "signature": null
           },
           {
@@ -525,6 +585,11 @@
           {
             "kind": "re-export",
             "name": "analyze_paired_intervention",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "analyze_sobol",
             "signature": null
           },
           {
@@ -579,6 +644,16 @@
           },
           {
             "kind": "re-export",
+            "name": "convex_hull_2d",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "detect_truncation_mean_shifts",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "dispersion_ellipse",
             "signature": null
           },
@@ -619,6 +694,11 @@
           },
           {
             "kind": "re-export",
+            "name": "generate_saltelli_design",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "iter_position_noise_response_plot_rows",
             "signature": null
           },
@@ -630,6 +710,11 @@
           {
             "kind": "re-export",
             "name": "make_morris_observation_archive",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "mardia_bivariate_normality",
             "signature": null
           },
           {
@@ -689,6 +774,11 @@
           },
           {
             "kind": "re-export",
+            "name": "run_sobol_sensitivity",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "run_variation",
             "signature": null
           },
@@ -720,6 +810,16 @@
           {
             "kind": "re-export",
             "name": "snapshot_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "sobol_run_count_guidance",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "spearman_analysis",
             "signature": null
           },
           {
@@ -1184,16 +1284,16 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 14540,
+      "bytes_lf": 16398,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "25c6b70121df512cfb076a7b98d5c0e3e873c7b2d0b3956aa2f24c75735e2f8f",
+      "content_sha256_lf": "025527f2f0df89d920d8d247de91cda8ee772442d0c4cb0bcd66a02e4fe80c74",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-VARIATION-ANALYSIS-PY-8DEB08B53946",
       "language": "python",
       "maintainer": "Swing simulation maintainers",
       "path": "src/shared/python/swing_sim/variation/analysis.py",
-      "purpose": "Dispersion and sensitivity analysis over variation datasets (#4120 V3).",
+      "purpose": "Dispersion and sensitivity analysis over variation datasets (#4120 V3, #4253).",
       "review_status": "review-required",
       "risk_tags": [
         "downstream-consumer-risk",
@@ -1242,6 +1342,11 @@
             "signature": null
           },
           {
+            "kind": "class",
+            "name": "SpearmanResult",
+            "signature": null
+          },
+          {
             "kind": "function",
             "name": "dispersion_ellipse",
             "signature": "dataset: VariationDataset, n_sigma: float=2.0"
@@ -1263,6 +1368,11 @@
           },
           {
             "kind": "function",
+            "name": "spearman_analysis",
+            "signature": "dataset: VariationDataset, n_permutations: int=500, alpha: float=0.05, seed: int=0"
+          },
+          {
+            "kind": "function",
             "name": "spearman_matrix",
             "signature": "dataset: VariationDataset"
           },
@@ -1270,6 +1380,31 @@
             "kind": "function",
             "name": "summary_stats",
             "signature": "dataset: VariationDataset"
+          },
+          {
+            "kind": "re-export",
+            "name": "NormalityDiagnostic",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TruncationShiftNote",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "convex_hull_2d",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "detect_truncation_mean_shifts",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "mardia_bivariate_normality",
+            "signature": null
           }
         ],
         "test_paths": [

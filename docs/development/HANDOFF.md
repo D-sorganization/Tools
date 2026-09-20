@@ -1,3 +1,20 @@
+# Counterfactual Variation Methodology Handoff Checkpoint — 2026-09-20 (R4 #4253)
+
+- Repository/worktree: Tools, C:/Users/diete/Repositories/Tools-repo.
+  Branch `feat/4253-counterfactual-sobol-significance`. Governing issue Tools #4253 (Review R4)
+  and parent epic #4249.
+- Implemented Sobol first-order ($S_1$) and total-order ($S_T$) sensitivity indices via Saltelli sampling
+  with run count guidance and percentile bootstrap confidence intervals.
+- Implemented permutation $p$-values and bootstrap confidence intervals on Spearman rank correlation
+  matrix, suppressing/greying insignificant cells in PyQt and Web results tables.
+- Implemented Mardia bivariate normality diagnostic (skewness and kurtosis) with convex hull envelope
+  fallback for 2D landing dispersion scatter.
+- Implemented input truncation mean-shift analysis detecting clamp counts and parameter distribution skewness.
+- Added comprehensive technical glossary entries across Python and TypeScript with web fixture parity.
+- Strict <= 500 lines budget maintained across all touched files.
+- All tests pass: 389 variation Python tests, 2,328 web tests, and 16 glossary tests.
+- Linters, formatters, and mypy pass with 0 errors across all touched files.
+
 # Impact Program Handoff Checkpoint — 2026-09-19 (IA-T4 #5073)
 
 - Repository/worktree: Tools, C:/Users/diete/Repositories/Tools-repo.

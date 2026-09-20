@@ -28,6 +28,7 @@ from rate_of_closure.variation.simulation_types import TrialEvaluationStatus
 from shared.python.swing_sim.variation import (
     DispersionEllipse,
     OutputStats,
+    TruncationShiftNote,
     VariationDataset,
     variable_registry,
 )
@@ -68,7 +69,11 @@ class SummaryTable(QTableWidget):
             "percentiles."
         )
 
-    def set_stats(self, stats: tuple[OutputStats, ...]) -> None:
+    def set_stats(
+        self,
+        stats: tuple[OutputStats, ...],
+        truncation_notes: tuple[TruncationShiftNote, ...] | None = None,
+    ) -> None:
         """Populate from :func:`swing_sim.variation.summary_stats` output.
 
         Landing distances (carry/lateral) follow the session's distance
@@ -92,6 +97,12 @@ class SummaryTable(QTableWidget):
             )
             for col, text in enumerate(cells):
                 self.setItem(i, col, _read_only(text))
+        if truncation_notes:
+            notes_str = "\n".join(f"• {n.note}" for n in truncation_notes)
+            self.setToolTip(
+                "Dispersion of every pipeline output over successful runs.\n"
+                f"Truncation mean-shifts detected:\n{notes_str}"
+            )
         self.resizeColumnsToContents()
 
 
@@ -119,8 +130,10 @@ class SensitivityTable(QTableWidget):
         values: np.ndarray,
         normalized: np.ndarray,
         value_format: str = "{:.3g}",
+        significant: np.ndarray | None = None,
+        p_values: np.ndarray | None = None,
     ) -> None:
-        """Show ``values`` shaded by ``normalized`` (both inputs x outputs)."""
+        """Show ``values`` shaded by ``normalized`` with significance check."""
         self.setRowCount(len(input_keys))
         self.setColumnCount(len(output_names))
         self.setVerticalHeaderLabels([short_label(key) for key in input_keys])
@@ -131,13 +144,28 @@ class SensitivityTable(QTableWidget):
                 frac = float(normalized[i, j])
                 text = "—" if np.isnan(value) else value_format.format(value)
                 item = _read_only(text)
+                is_sig = True if significant is None else bool(significant[i, j])
+                pval = (
+                    float(p_values[i, j])
+                    if p_values is not None and not np.isnan(p_values[i, j])
+                    else None
+                )
                 if not np.isnan(frac):
-                    item.setBackground(self._heat(frac))
-                    item.setForeground(QColor(255, 255, 255))
+                    if is_sig:
+                        item.setBackground(self._heat(frac))
+                        item.setForeground(QColor(255, 255, 255))
+                    else:
+                        # Insignificant cell: grey/suppress heat shading
+                        item.setBackground(QColor(48, 54, 66))
+                        item.setForeground(QColor(140, 150, 165))
+                sig_note = ""
+                if pval is not None:
+                    status = "significant" if is_sig else "insignificant"
+                    sig_note = f"; p={pval:.3g} ({status})"
+                norm_str = f"{0.0 if np.isnan(frac) else frac:.2f}"
                 item.setToolTip(
                     f"{short_label(input_keys[i])} → {output_names[j]}: "
-                    f"{text} (column-normalized {0.0 if np.isnan(frac) else frac:.2f}; "
-                    "1.00 marks the input that dominates this output)"
+                    f"{text} (column-normalized {norm_str}{sig_note})"
                 )
                 self.setItem(i, j, item)
         self.resizeColumnsToContents()
@@ -177,7 +205,7 @@ class LandingCanvas(LifecycleSafeFigureCanvas):
         self._axes.tick_params(colors=text.name(), labelsize=8)
         self._axes.xaxis.label.set_color(text.name())
         self._axes.yaxis.label.set_color(text.name())
-        self._axes.title.set_color(text.name())
+        self._axes.title.set_color(text.name())  # type: ignore[attr-defined]
 
     def clear_view(self) -> None:
         """Empty state before the first run."""
@@ -191,7 +219,7 @@ class LandingCanvas(LifecycleSafeFigureCanvas):
     def set_dataset(
         self, dataset: VariationDataset, ellipse: DispersionEllipse | None
     ) -> None:
-        """Scatter the successful landings and overlay the fit ellipse."""
+        """Scatter the successful landings and overlay the fit ellipse / convex hull."""
         self._axes.clear()
         self._apply_theme()
         landing_points = dataset.finite_output_rows("carry_m", "lateral_m")
@@ -201,19 +229,47 @@ class LandingCanvas(LifecycleSafeFigureCanvas):
             lateral, carry, s=14, alpha=0.65, color="#2f8bd6", edgecolors="none"
         )
         if ellipse is not None:
-            # Engine angle is CCW from the carry axis toward +lateral; in
-            # plot coordinates (x = lateral, y = carry) that is 90° - angle.
-            patch = Ellipse(
-                (ellipse.center_lateral_m, ellipse.center_carry_m),
-                width=2.0 * ellipse.semi_major_m,
-                height=2.0 * ellipse.semi_minor_m,
-                angle=90.0 - ellipse.angle_deg,
-                fill=False,
-                linestyle="--",
-                linewidth=1.6,
-                edgecolor="#eb6a3c",
-            )
-            self._axes.add_patch(patch)
+            # Check bivariate normality and render convex hull fallback if non-normal
+            if (
+                ellipse.diagnostic is not None
+                and not ellipse.diagnostic.is_normal
+                and ellipse.convex_hull is not None
+                and len(ellipse.convex_hull) >= 3
+            ):
+                hull = ellipse.convex_hull
+                closed_hull = np.vstack([hull, hull[0]])
+                self._axes.plot(
+                    closed_hull[:, 0],
+                    closed_hull[:, 1],
+                    color="#f59e0b",
+                    linestyle="-",
+                    linewidth=1.8,
+                    label="Convex Hull",
+                )
+                patch = Ellipse(
+                    (ellipse.center_lateral_m, ellipse.center_carry_m),
+                    width=2.0 * ellipse.semi_major_m,
+                    height=2.0 * ellipse.semi_minor_m,
+                    angle=90.0 - ellipse.angle_deg,
+                    fill=False,
+                    linestyle=":",
+                    linewidth=1.2,
+                    edgecolor="#eb6a3c",
+                    alpha=0.45,
+                )
+                self._axes.add_patch(patch)
+            else:
+                patch = Ellipse(
+                    (ellipse.center_lateral_m, ellipse.center_carry_m),
+                    width=2.0 * ellipse.semi_major_m,
+                    height=2.0 * ellipse.semi_minor_m,
+                    angle=90.0 - ellipse.angle_deg,
+                    fill=False,
+                    linestyle="--",
+                    linewidth=1.6,
+                    edgecolor="#eb6a3c",
+                )
+                self._axes.add_patch(patch)
             self._axes.plot(
                 [ellipse.center_lateral_m],
                 [ellipse.center_carry_m],
@@ -232,7 +288,17 @@ class LandingCanvas(LifecycleSafeFigureCanvas):
                 f"{self._outcome_counts[TrialEvaluationStatus.NUMERICAL_FAILURE]} · "
                 f"Landings {carry.size}"
             )
-        self._axes.set_title(f"Landing dispersion — {summary} (2σ ellipse)")
+        if (
+            ellipse is not None
+            and ellipse.diagnostic is not None
+            and not ellipse.diagnostic.is_normal
+        ):
+            norm_tag = (
+                f"Non-normal (Mardia p={ellipse.diagnostic.p_value:.2g}): Convex Hull"
+            )
+        else:
+            norm_tag = "2σ ellipse"
+        self._axes.set_title(f"Landing dispersion — {summary} ({norm_tag})")
         self._axes.set_xlabel("Lateral [m] (+ right)")
         self._axes.set_ylabel("Carry [m]")
         self._axes.set_aspect("equal", adjustable="datalim")
