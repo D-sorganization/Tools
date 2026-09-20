@@ -1874,7 +1874,6 @@
       "EventTime",
       "Matrix3",
       "ParameterDefinition",
-      "ParameterGroup",
       "ParameterId",
       "QuantityStatus",
       "ReferencePoint",
@@ -1882,8 +1881,6 @@
       "Vector3",
       "compare_definitions",
       "convention_registry",
-      "parameter_group",
-      "parameter_group_label",
       "shift_point_velocity",
       "transform_vector"
     ],
@@ -2058,15 +2055,6 @@
         },
         "type": "class"
       },
-      "ParameterGroup": {
-        "info": {
-          "bases": [
-            "StrEnum"
-          ],
-          "methods": {}
-        },
-        "type": "class"
-      },
       "ParameterId": {
         "info": {
           "bases": [
@@ -2133,34 +2121,6 @@
         },
         "type": "function"
       },
-      "parameter_group": {
-        "signature": {
-          "args": [
-            {
-              "annotation": "ParameterId",
-              "default": null,
-              "kind": "arg",
-              "name": "parameter_id"
-            }
-          ],
-          "returns": "ParameterGroup"
-        },
-        "type": "function"
-      },
-      "parameter_group_label": {
-        "signature": {
-          "args": [
-            {
-              "annotation": "ParameterGroup",
-              "default": null,
-              "kind": "arg",
-              "name": "group"
-            }
-          ],
-          "returns": "str"
-        },
-        "type": "function"
-      },
       "shift_point_velocity": {
         "signature": {
           "args": [
@@ -2209,155 +2169,6 @@
       }
     }
   },
-  "conventions/_catalog_data.py": {
-    "__all__": [
-      "APP_POLICIES",
-      "APP_SOURCE",
-      "FORESIGHT_BALL_SOURCE",
-      "FORESIGHT_CLUB_SOURCE",
-      "FORESIGHT_POLICIES",
-      "FRAME",
-      "IDENTITIES",
-      "POLICIES",
-      "RETRIEVED",
-      "TRACKMAN_CLUB_SOURCE",
-      "TRACKMAN_PARAMETERS_SOURCE",
-      "TRACKMAN_POLICIES",
-      "Identity",
-      "Policy"
-    ],
-    "explicit_all": true,
-    "symbols": {
-      "APP_POLICIES": {
-        "type": "variable"
-      },
-      "APP_SOURCE": {
-        "type": "variable"
-      },
-      "FORESIGHT_BALL_SOURCE": {
-        "type": "variable"
-      },
-      "FORESIGHT_CLUB_SOURCE": {
-        "type": "variable"
-      },
-      "FORESIGHT_POLICIES": {
-        "type": "variable"
-      },
-      "FRAME": {
-        "type": "variable"
-      },
-      "IDENTITIES": {
-        "type": "variable"
-      },
-      "Identity": {
-        "info": {
-          "bases": [],
-          "methods": {}
-        },
-        "type": "class"
-      },
-      "POLICIES": {
-        "type": "variable"
-      },
-      "Policy": {
-        "info": {
-          "bases": [],
-          "methods": {}
-        },
-        "type": "class"
-      },
-      "RETRIEVED": {
-        "type": "variable"
-      },
-      "TRACKMAN_CLUB_SOURCE": {
-        "type": "variable"
-      },
-      "TRACKMAN_PARAMETERS_SOURCE": {
-        "type": "variable"
-      },
-      "TRACKMAN_POLICIES": {
-        "type": "variable"
-      }
-    }
-  },
-  "conventions/_identities.py": {
-    "__all__": [
-      "IDENTITIES",
-      "Identity"
-    ],
-    "explicit_all": false,
-    "symbols": {
-      "IDENTITIES": {
-        "type": "variable"
-      },
-      "Identity": {
-        "info": {
-          "bases": [],
-          "methods": {}
-        },
-        "type": "class"
-      }
-    }
-  },
-  "conventions/_policies.py": {
-    "__all__": [
-      "APP_POLICIES",
-      "APP_SOURCE",
-      "FORESIGHT_BALL_SOURCE",
-      "FORESIGHT_CLUB_SOURCE",
-      "FORESIGHT_POLICIES",
-      "FRAME",
-      "POLICIES",
-      "Policy",
-      "RETRIEVED",
-      "TRACKMAN_CLUB_SOURCE",
-      "TRACKMAN_PARAMETERS_SOURCE",
-      "TRACKMAN_POLICIES"
-    ],
-    "explicit_all": false,
-    "symbols": {
-      "APP_POLICIES": {
-        "type": "variable"
-      },
-      "APP_SOURCE": {
-        "type": "variable"
-      },
-      "FORESIGHT_BALL_SOURCE": {
-        "type": "variable"
-      },
-      "FORESIGHT_CLUB_SOURCE": {
-        "type": "variable"
-      },
-      "FORESIGHT_POLICIES": {
-        "type": "variable"
-      },
-      "FRAME": {
-        "type": "variable"
-      },
-      "POLICIES": {
-        "type": "variable"
-      },
-      "Policy": {
-        "info": {
-          "bases": [],
-          "methods": {}
-        },
-        "type": "class"
-      },
-      "RETRIEVED": {
-        "type": "variable"
-      },
-      "TRACKMAN_CLUB_SOURCE": {
-        "type": "variable"
-      },
-      "TRACKMAN_PARAMETERS_SOURCE": {
-        "type": "variable"
-      },
-      "TRACKMAN_POLICIES": {
-        "type": "variable"
-      }
-    }
-  },
   "conventions/catalog.py": {
     "__all__": [
       "convention_registry"
@@ -2382,15 +2193,12 @@
       "ConventionRegistry",
       "EventTime",
       "ParameterDefinition",
-      "ParameterGroup",
       "ParameterId",
       "QuantityStatus",
       "ReferencePoint",
       "SCHEMA_VERSION",
       "SignRule",
-      "compare_definitions",
-      "parameter_group",
-      "parameter_group_label"
+      "compare_definitions"
     ],
     "explicit_all": false,
     "symbols": {
@@ -2560,15 +2368,6 @@
         },
         "type": "class"
       },
-      "ParameterGroup": {
-        "info": {
-          "bases": [
-            "StrEnum"
-          ],
-          "methods": {}
-        },
-        "type": "class"
-      },
       "ParameterId": {
         "info": {
           "bases": [
@@ -2625,34 +2424,6 @@
             }
           ],
           "returns": "ComparisonCompatibility"
-        },
-        "type": "function"
-      },
-      "parameter_group": {
-        "signature": {
-          "args": [
-            {
-              "annotation": "ParameterId",
-              "default": null,
-              "kind": "arg",
-              "name": "parameter_id"
-            }
-          ],
-          "returns": "ParameterGroup"
-        },
-        "type": "function"
-      },
-      "parameter_group_label": {
-        "signature": {
-          "args": [
-            {
-              "annotation": "ParameterGroup",
-              "default": null,
-              "kind": "arg",
-              "name": "group"
-            }
-          ],
-          "returns": "str"
         },
         "type": "function"
       }

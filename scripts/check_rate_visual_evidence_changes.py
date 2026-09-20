@@ -4,13 +4,11 @@ from __future__ import annotations
 
 import argparse
 import fnmatch
-import hashlib
-import json
 import logging
 import os
 import re
 import subprocess
-from collections.abc import Callable, Iterable, Sequence
+from collections.abc import Iterable, Sequence
 from pathlib import Path
 from typing import Final
 
@@ -38,19 +36,16 @@ _REACT_PATTERNS: Final = (
     "src/rate_of_closure/web/src/**/*.css",
 )
 _PYQT_PATTERNS: Final = (
-    "src/rate_of_closure/ui/pyqt6/*.ui",
-    "src/rate_of_closure/ui/pyqt6/**/*.ui",
     "src/rate_of_closure/ui/pyqt6/*tab*.py",
     "src/rate_of_closure/ui/pyqt6/*visual*.py",
     "src/rate_of_closure/ui/pyqt6/main_window*.py",
     "src/rate_of_closure/ui/pyqt6/app_style.py",
-    "src/rate_of_closure/ui/pyqt6/*scene*.py",
-    "src/rate_of_closure/ui/pyqt6/*canvas*.py",
-    "src/rate_of_closure/ui/pyqt6/*paint*.py",
-    "src/rate_of_closure/ui/pyqt6/*render*.py",
 )
-_PAINT_SYMBOLS_PATTERN: Final = re.compile(
-    r"\b(paintEvent|QPainter|QPaintEvent|drawBackground|drawForeground|QPainterPath|drawPath|drawRect)\b"
+_SHARED_VISUAL_PATHS: Final = frozenset(
+    {
+        "src/rate_of_closure/plot_workspace_limits.py",
+        "src/rate_of_closure/visual_layout_preferences.py",
+    }
 )
 
 
@@ -75,25 +70,6 @@ def _is_react_surface_path(path: str) -> bool:
     )
 
 
-def _is_pyqt_surface_path(path: str) -> bool:
-    """Return whether path matches a shipped PyQt visual or paint surface."""
-
-    if not path.startswith("src/rate_of_closure/ui/pyqt6/"):
-        return False
-    if path.endswith((".test.py", "_test.py")):
-        return False
-    if _matches_any(path, _PYQT_PATTERNS):
-        return True
-    file_path = Path(path)
-    if file_path.is_file():
-        try:
-            content = file_path.read_text(encoding="utf-8", errors="ignore")
-            return _PAINT_SYMBOLS_PATTERN.search(content) is not None
-        except OSError:
-            pass
-    return False
-
-
 def _surface_requirements(surface: str) -> tuple[str, ...]:
     """Return the exact evidence co-change contract for one visual surface."""
 
@@ -114,69 +90,6 @@ def _surface_requirements(surface: str) -> tuple[str, ...]:
     raise ValueError(f"unknown visual surface: {surface}")
 
 
-def is_substantive_evidence_change(
-    path: str, base_content: str, current_content: str
-) -> bool:
-    """Return whether current_content has a changed substantive content hash.
-
-    For JSON evidence, canonicalizes structure so whitespace-only or trailing
-    newline edits do not satisfy the gate. For code/test fixtures, normalizes
-    by stripping empty lines and trailing whitespace per line.
-    """
-
-    if path.endswith(".json"):
-        try:
-            base_obj = json.loads(base_content)
-            curr_obj = json.loads(current_content)
-            base_canonical = json.dumps(base_obj, sort_keys=True, separators=(",", ":"))
-            curr_canonical = json.dumps(curr_obj, sort_keys=True, separators=(",", ":"))
-            return (
-                hashlib.sha256(base_canonical.encode("utf-8")).digest()
-                != hashlib.sha256(curr_canonical.encode("utf-8")).digest()
-            )
-        except (ValueError, TypeError):
-            pass
-    base_norm = "\n".join(
-        line.rstrip() for line in base_content.splitlines() if line.strip()
-    )
-    curr_norm = "\n".join(
-        line.rstrip() for line in current_content.splitlines() if line.strip()
-    )
-    return (
-        hashlib.sha256(base_norm.encode("utf-8")).digest()
-        != hashlib.sha256(curr_norm.encode("utf-8")).digest()
-    )
-
-
-def _git_show_blob(base_ref: str, path: str) -> str | None:
-    """Read a path at base_ref via git show, returning None if absent."""
-
-    try:
-        result = subprocess.run(
-            ["git", "show", f"{base_ref}:{path}"],
-            check=True,
-            capture_output=True,
-            text=True,
-            encoding="utf-8",
-            errors="replace",
-        )
-        return result.stdout
-    except (OSError, subprocess.CalledProcessError):
-        return None
-
-
-def _file_content(path: str) -> str | None:
-    """Read current content of a repository file, returning None if unreadable."""
-
-    file_path = Path(path)
-    if file_path.is_file():
-        try:
-            return file_path.read_text(encoding="utf-8", errors="replace")
-        except OSError:
-            return None
-    return None
-
-
 def extract_exemption_reason(text: str) -> str | None:
     """Extract an explicit visual-evidence exemption reason from text."""
 
@@ -195,8 +108,6 @@ def validate_visual_evidence_changes(
     changed_files: Iterable[str],
     *,
     exemption_reason: str | None = None,
-    base_ref: str | None = None,
-    evidence_content_resolver: Callable[[str], tuple[str, str] | None] | None = None,
 ) -> tuple[str, ...]:
     """Return deterministic errors for incomplete visual-evidence co-changes.
 
@@ -206,9 +117,7 @@ def validate_visual_evidence_changes(
     Postconditions:
         An empty result means every triggered surface includes its manifest,
         acceptance authority, audit, and first-viewport evidence update in the
-        same change set with a verified substantive content hash change, or an
-        explicit non-empty exemption reason was declared. If the change set
-        touches no .tsx, .css, .ui, or paint code, it skips unconditionally.
+        same change set, or an explicit non-empty exemption reason was declared.
     """
 
     if exemption_reason is not None and not exemption_reason.strip():
@@ -218,8 +127,10 @@ def validate_visual_evidence_changes(
     surfaces: list[str] = []
     if any(_is_react_surface_path(path) for path in changed):
         surfaces.append("react")
-    if any(_is_pyqt_surface_path(path) for path in changed):
+    if any(_matches_any(path, _PYQT_PATTERNS) for path in changed):
         surfaces.append("pyqt")
+    if changed.intersection(_SHARED_VISUAL_PATHS):
+        surfaces = ["react", "pyqt"]
 
     if not surfaces:
         return ()
@@ -236,28 +147,6 @@ def validate_visual_evidence_changes(
         for required in _surface_requirements(surface):
             if required not in changed:
                 errors.append(f"{surface} visual changes require {required}")
-            elif evidence_content_resolver is not None:
-                resolved = evidence_content_resolver(required)
-                if resolved is not None:
-                    base_text, curr_text = resolved
-                    if not is_substantive_evidence_change(
-                        required, base_text, curr_text
-                    ):
-                        errors.append(
-                            f"{surface} visual changes require substantive update to {required} "
-                            "(content hash unchanged from base)"
-                        )
-            elif base_ref is not None:
-                git_base = _git_show_blob(base_ref, required)
-                disk_curr = _file_content(required)
-                if git_base is not None and disk_curr is not None:
-                    if not is_substantive_evidence_change(
-                        required, git_base, disk_curr
-                    ):
-                        errors.append(
-                            f"{surface} visual changes require substantive update to {required} "
-                            "(content hash unchanged from base)"
-                        )
     return tuple(errors)
 
 
@@ -345,9 +234,7 @@ def main(argv: Sequence[str] | None = None) -> int:
                 pass
         if exemption is None:
             exemption = _env_exemption_reason()
-        errors = validate_visual_evidence_changes(
-            paths, exemption_reason=exemption, base_ref=args.base_ref
-        )
+        errors = validate_visual_evidence_changes(paths, exemption_reason=exemption)
     except (OSError, subprocess.CalledProcessError, ValueError) as exc:
         LOGGER.error("visual evidence governance could not evaluate changes: %s", exc)
         return 2

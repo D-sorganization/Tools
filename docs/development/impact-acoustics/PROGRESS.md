@@ -1,14 +1,4 @@
-# Current Checkpoint — 2026-09-19
-
-Measured grip impedance dynamics checkpoint: Tools #5072 (IA-T3) implements versioned
-measured translation/rotation impedance (`golf_club.measured_grip_impedance/1`),
-strict passivity auditing (Hermitian real part >= 0), passive Gram-factor model identification
-($M, C, K \succeq 0$), full/reduced FRF magnitude and phase agreement under quantified
-measurement uncertainty, antiresonance floor handling, physical band/strain qualification,
-and consumer integration into `GripBoundary` and `impact_coupling`. All 67 targeted grip/shaft
-tests pass. Technical reference: [MEASURED_GRIP_IMPEDANCE.md](MEASURED_GRIP_IMPEDANCE.md).
-
-## Historical Checkpoint — 2026-09-10
+# Current Checkpoint — 2026-09-10
 
 Final checkpoint: PR5162 is held OPEN after PR Standard34496053564 attempt2
 timed out in Python3.12 entry60 and Python3.11 entry240, despite successful manual matrices.
