@@ -122,6 +122,7 @@ def analyze_sobol(
     n_bootstrap: int = 100,
     alpha: float = 0.05,
     seed: int = 42,
+    min_base_samples: int = 4,
 ) -> SobolReport:
     """Compute first-order S1 and total ST Sobol indices with bootstrap CIs."""
     design = observations.design
@@ -158,28 +159,23 @@ def analyze_sobol(
             n_valid = int(np.count_nonzero(common))
             total_evals = 3 * n
 
-            if n_valid < 4 or total_var <= _CONSTANT_TOLERANCE:
+            if n < min_base_samples or n_valid < 4 or total_var <= _CONSTANT_TOLERANCE:
+                is_constant = total_var <= _CONSTANT_TOLERANCE and n >= min_base_samples
                 estimates.append(
                     SobolEstimate(
                         spec_id=factor.spec_id,
                         variable_key=factor.variable_key,
                         output_name=output.name,
-                        s1=0.0 if total_var <= _CONSTANT_TOLERANCE else float("nan"),
-                        st=0.0 if total_var <= _CONSTANT_TOLERANCE else float("nan"),
+                        s1=0.0 if is_constant else float("nan"),
+                        st=0.0 if is_constant else float("nan"),
                         s1_ci=(
-                            (0.0, 0.0)
-                            if total_var <= _CONSTANT_TOLERANCE
-                            else (float("nan"), float("nan"))
+                            (0.0, 0.0) if is_constant else (float("nan"), float("nan"))
                         ),
                         st_ci=(
-                            (0.0, 0.0)
-                            if total_var <= _CONSTANT_TOLERANCE
-                            else (float("nan"), float("nan"))
+                            (0.0, 0.0) if is_constant else (float("nan"), float("nan"))
                         ),
                         availability=(
-                            "constant"
-                            if total_var <= _CONSTANT_TOLERANCE
-                            else "insufficient_valid_runs"
+                            "constant-output" if is_constant else "insufficient-data"
                         ),
                         total_evaluations=total_evals,
                         valid_evaluations=n_valid,
@@ -247,12 +243,13 @@ def run_sobol_sensitivity(
     output_names: tuple[str, ...] | None = None,
     n_bootstrap: int = 100,
     alpha: float = 0.05,
+    n_workers: int = 1,
 ) -> SobolReport:
     """Run full Sobol global sensitivity study against the seeded engine."""
     require(isinstance(plan, VariationPlan), "plan must be a VariationPlan", plan)
     if factors is None:
         derived_factors = []
-        base = plan.base_variables
+        base = plan.resolved_base()
         for spec in plan.noise:
             lower = (
                 spec.lower
@@ -285,7 +282,7 @@ def run_sobol_sensitivity(
     success = np.empty(total_samples, dtype=bool)
 
     for row_idx in range(total_samples):
-        run_vars = dict(plan.base_variables)
+        run_vars = dict(plan.resolved_base())
         for col in range(k):
             run_vars[factors[col].variable_key] = float(
                 design.physical_points[row_idx, col]

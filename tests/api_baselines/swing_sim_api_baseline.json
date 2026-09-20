@@ -33252,6 +33252,12 @@
               "default": "42",
               "kind": "arg",
               "name": "seed"
+            },
+            {
+              "annotation": "int",
+              "default": "4",
+              "kind": "arg",
+              "name": "min_base_samples"
             }
           ],
           "returns": "SobolReport"
@@ -34034,6 +34040,12 @@
               "default": "0.05",
               "kind": "arg",
               "name": "alpha"
+            },
+            {
+              "annotation": "int",
+              "default": "1",
+              "kind": "arg",
+              "name": "n_workers"
             }
           ],
           "returns": "SobolReport"
@@ -38646,6 +38658,12 @@
               "default": "42",
               "kind": "arg",
               "name": "seed"
+            },
+            {
+              "annotation": "int",
+              "default": "4",
+              "kind": "arg",
+              "name": "min_base_samples"
             }
           ],
           "returns": "SobolReport"
@@ -38716,6 +38734,12 @@
               "default": "0.05",
               "kind": "arg",
               "name": "alpha"
+            },
+            {
+              "annotation": "int",
+              "default": "1",
+              "kind": "arg",
+              "name": "n_workers"
             }
           ],
           "returns": "SobolReport"
