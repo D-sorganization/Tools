@@ -4,6 +4,7 @@ import { MAX_LINKED_SCATTER_ROWS } from "../model/launchMonitorLinkedScatter";
 import { LaunchMonitorLinkedScatter } from "./LaunchMonitorLinkedScatter";
 import { LaunchMonitorPlayerWorkspace } from "./LaunchMonitorPlayerWorkspace";
 import { LaunchMonitorPerformanceWorkspace } from "./LaunchMonitorPerformanceWorkspace";
+import { LaunchMonitorComparisonWorkspace } from "./LaunchMonitorComparisonWorkspace";
 import {
   analyzeLaunchMonitorData,
   numericLaunchMonitorColumns,
@@ -49,10 +50,13 @@ const field = "w-full rounded border border-slate-700 bg-slate-950 px-2 py-2 tex
 const finiteText = (value: number | null | undefined, digits = 4) =>
   value === null || value === undefined || !Number.isFinite(value) ? "—" : value.toFixed(digits);
 
-const conventionLabel = (id: ConventionId) => ({
+type ActiveConvention = ConventionId | "compare_trackman_foresight";
+
+const conventionLabel = (id: ActiveConvention) => ({
   app_native: "App-Native",
   trackman_comparable: "TrackMan-Comparable",
   foresight_comparable: "Foresight-Comparable",
+  compare_trackman_foresight: "Compare TrackMan / Foresight",
 }[id]);
 
 function download(name: string, payload: unknown) {
@@ -76,7 +80,7 @@ export function LaunchMonitorAnalyticsPanel() {
   const [groupBy, setGroupBy] = useState("monitor_vendor");
   const [confidence, setConfidence] = useState(0.95);
   const [minSamples, setMinSamples] = useState(10);
-  const [convention, setConvention] = useState<ConventionId>("app_native");
+  const [convention, setConvention] = useState<ActiveConvention>("app_native");
   const [result, setResult] = useState<LaunchMonitorAnalysisResult | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [selectedRawIndex, setSelectedRawIndex] = useState<number | null>(null);
@@ -104,7 +108,8 @@ export function LaunchMonitorAnalyticsPanel() {
     return result.sort();
   }, [rows]);
   const parameter = PARAMETER_IDS.includes(outcome as ParameterId) ? outcome as ParameterId : "club_speed";
-  const definition = conventionRegistry().definition(convention, parameter);
+  const conventionLookup = convention === "compare_trackman_foresight" ? "trackman_comparable" : convention;
+  const definition = conventionRegistry().definition(conventionLookup, parameter);
   const invalidate = () => { setResult(null); setError(null); };
 
   const run = () => {
@@ -183,16 +188,23 @@ export function LaunchMonitorAnalyticsPanel() {
           <h3 className="font-semibold text-slate-200">Analysis Contract</h3>
           <label className="block text-sm text-slate-300">Interpretation Convention
             <select value={convention} title="Choose the documented parameter convention used to interpret canonical names"
-              onChange={(event) => { setConvention(event.target.value as ConventionId); invalidate(); }} className={`${field} mt-1`}>
-              {(["app_native", "trackman_comparable", "foresight_comparable"] as ConventionId[])
+              onChange={(event) => { setConvention(event.target.value as ActiveConvention); invalidate(); }} className={`${field} mt-1`}>
+              {(["app_native", "trackman_comparable", "foresight_comparable", "compare_trackman_foresight"] as ActiveConvention[])
                 .map((id) => <option key={id} value={id}>{conventionLabel(id)}</option>)}
             </select>
           </label>
-          <div className="rounded-lg border border-amber-500/30 bg-amber-950/20 p-3 text-xs text-amber-100">
-            <strong>{conventionLabel(convention)}</strong> is a documented comparability frame, not
-            device emulation or certification. {definition.label}: {definition.referencePoint.replace(/_/g, " ")}, {definition.eventTime.replace(/_/g, " ")}.
-            {" "}<a className="underline" href={definition.sourceUrl} target="_blank" rel="noreferrer">Source definition</a>
-          </div>
+          {convention === "compare_trackman_foresight" ? (
+            <div className="rounded-lg border border-amber-500/30 bg-amber-950/20 p-3 text-xs text-amber-100">
+              <strong>Compare TrackMan / Foresight</strong> activates the side-by-side comparison workspace below.
+              Non-equivalent parameters report typed comparability reasons instead of fabricated deltas.
+            </div>
+          ) : (
+            <div className="rounded-lg border border-amber-500/30 bg-amber-950/20 p-3 text-xs text-amber-100">
+              <strong>{conventionLabel(convention)}</strong> is a documented comparability frame, not
+              device emulation or certification. {definition.label}: {definition.referencePoint.replace(/_/g, " ")}, {definition.eventTime.replace(/_/g, " ")}.
+              {" "}<a className="underline" href={definition.sourceUrl} target="_blank" rel="noreferrer">Source definition</a>
+            </div>
+          )}
           <label className="block text-sm text-slate-300">Outcome
             <select value={outcome} title="Select the numeric outcome variable"
               onChange={(event) => { setOutcome(event.target.value); invalidate(); }} className={`${field} mt-1`}>
@@ -294,6 +306,7 @@ export function LaunchMonitorAnalyticsPanel() {
       </div>
       <LaunchMonitorPlayerWorkspace rows={rows} sourceName={sourceName} />
       <LaunchMonitorPerformanceWorkspace rows={rows} sourceName={sourceName} />
+      <LaunchMonitorComparisonWorkspace rows={rows} sourceName={sourceName} />
     </section>
   );
 }
