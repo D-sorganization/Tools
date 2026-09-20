@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 7720,
+      "bytes_lf": 7715,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d39567851e46429abaa2f2c22041aa875bce70ddfb22bd273b05b02a93135e3b",
+      "content_sha256_lf": "2511da3a0474193578677c865cf2befdc099d0b1ed3e0f48d9e8c9ba46af5f31",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-APPTOOLSTRIP-TEST-TSX-149106B810A3",
       "language": "typescript-react",
@@ -2139,10 +2139,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 19931,
+      "bytes_lf": 19895,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ef0c06730263190d82666d00727bb68f0cf7384b7294da0d954acffe1775af29",
+      "content_sha256_lf": "88cf89f9e03ee48c230cc8bd64151aaff51ae27fdbeff7c5ca0d768b5186904f",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-LAUNCHMONITORANALYTICSPANEL-TSX-1946A419D5BD",
       "language": "typescript-react",

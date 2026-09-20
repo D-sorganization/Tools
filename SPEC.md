@@ -5916,6 +5916,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-09-20 | #5280 | 🎨 Palette: Improve keyboard accessibility for file import (spec 1.18.143) |
 | 2026-09-20 | #5284 | test(rate-of-closure): re-approve launch_monitor_analytics visual baseline from trusted run (#5284) |
 | 2026-09-20 | #5279 | ⚡ Bolt Optimization: Replace chained array mapping and `Math.min(...spread)` in `bestCosts` with a single-pass loop over outcomes to prevent stack overflows and reduce GC pressure. (spec 1.18.143) |
 | 2026-09-20 | #5278 | ⚡ Bolt: Replace array spread with native slice() for sorting large arrays in chipForgiveness.ts and windStrategyMetrics.ts to reduce GC pressure (spec 1.18.143). |
