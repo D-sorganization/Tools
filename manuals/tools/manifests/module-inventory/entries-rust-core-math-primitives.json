@@ -207,6 +207,7 @@
           "tests/rotation_converter/test_screw_visualization.py",
           "tests/shared/python/golf_club/_friction_entry_reference.py",
           "tests/shared/python/golf_club/_friction_sliding_reference.py",
+          "tests/shared/python/golf_club/test_oblique_contact_mechanics.py",
           "tests/shared/python/model_generation/inertia/test_calculator.py",
           "tests/shared/python/model_generation/test_urdf_parser.py",
           "tests/test_asteroid_jumper/test_physics.py"
