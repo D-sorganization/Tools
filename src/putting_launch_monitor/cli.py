@@ -16,7 +16,7 @@ from __future__ import annotations
 import argparse
 import logging
 import sys
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from pathlib import Path
 
 from shared.python.camera import CaptureMode, FfmpegDirectShowSource, VideoFileSource
@@ -25,6 +25,7 @@ from shared.python.contracts import require
 from .calibration import Calibration, default_calibration_path
 from .gspro import GsproClient
 from .monitor import FrameEvent, GsproSink, LogSink, PuttingMonitor
+from .validate import add_validate_parser, cmd_validate
 
 logger = logging.getLogger("putting_launch_monitor")
 DEVICE_ID = "camera-putting-monitor"
@@ -82,6 +83,8 @@ def build_parser() -> argparse.ArgumentParser:
     snap = sub.add_parser("snapshot", help="grab one frame for calibration")
     snap.add_argument("--camera", required=True)
     snap.add_argument("--out", type=Path, required=True)
+
+    add_validate_parser(sub)
     return parser
 
 
@@ -232,12 +235,13 @@ def scaled_calibration(cal: Calibration, width: int) -> Calibration:
     return Calibration(**{**scaled.__dict__, "roi": roi})
 
 
-COMMANDS = {
+COMMANDS: dict[str, Callable[[argparse.Namespace], int]] = {
     "calibrate": cmd_calibrate,
     "run": cmd_run,
     "replay": cmd_replay,
     "probe-gspro": cmd_probe,
     "snapshot": cmd_snapshot,
+    "validate": cmd_validate,
 }
 
 
