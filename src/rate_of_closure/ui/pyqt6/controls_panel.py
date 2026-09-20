@@ -15,6 +15,7 @@ always stays canonical (mph, deg/s, mm, µs).
 from __future__ import annotations
 
 import logging
+from collections.abc import Mapping
 from dataclasses import fields, replace
 
 from PyQt6.QtCore import pyqtSignal
@@ -381,3 +382,45 @@ class ControlsPanel(QWidget):
 
     def _emit(self) -> None:
         self.scenarioChanged.emit(self.scenario())
+
+    def unit_selections(self) -> dict[str, str]:
+        """Return the current display unit selections by quantity."""
+        return dict(self._units)
+
+    def apply_workspace_state(
+        self,
+        scenario: ImpactScenario,
+        club: ClubSpec,
+        units: Mapping[str, str],
+    ) -> None:
+        """Apply a restored scenario, club spec, and unit preferences."""
+        for quantity, unit in units.items():
+            if quantity in self._units and unit != self._units[quantity]:
+                combo = self._unit_combos.get(quantity)
+                if combo is not None:
+                    combo.setCurrentText(unit)
+                else:
+                    self._on_unit_changed(quantity, unit)
+        self.set_club_name(club.name)
+        self._loft_spin.setValue(club.loft_deg)
+        if club.face_bulge_radius_m is not None:
+            self._bulge_spin.setValue(club.face_bulge_radius_m * 1000.0)
+        if club.face_roll_radius_m is not None:
+            self._roll_spin.setValue(club.face_roll_radius_m * 1000.0)
+        self._curvature_check.setChecked(club.has_curved_face)
+        self._on_curvature_toggled(club.has_curved_face)
+        self._updating = True
+        try:
+            for field in fields(ImpactScenario):
+                canonical = getattr(scenario, field.name)
+                qty = self._quantity_of(field.name)
+                displayed = (
+                    canonical
+                    if qty is None
+                    else convert_from_canonical(qty, self._units[qty], canonical)
+                )
+                if field.name in self._spins:
+                    self._spins[field.name].setValue(displayed)
+        finally:
+            self._updating = False
+        self._emit()
