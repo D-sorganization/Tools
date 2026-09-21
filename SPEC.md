@@ -27,10 +27,17 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.143                                   |
-| **Last Spec Update**    | 2026-09-19                                 |
+| **Spec Version**        | 1.18.144                                   |
+| **Last Spec Update**    | 2026-09-21                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-09-21 Architecture Rulings: Historian Licensing Scope & Impact-Interval Tab Disposition (#4951, #4946)
+
+Delivers formal architectural rulings ratifying the SCADA historian licensing boundary and impact-interval visualization strategy:
+
+1. **Historian Licensing Scope (Issue #4951)**: Formally ratifies Ruling Option 1 (Internal-Only Deployment). Designates the SCADA historian platform as an internal plant and engineering telemetry system operated exclusively on company-controlled hardware and private automation networks. Internal deployment avoids triggering external distribution copyleft obligations under Grafana AGPLv3 and unencumbers advanced TimescaleDB features under the Timescale License (TSL)—including columnar compression, hypertable retention policies, and continuous aggregates. Establishes the distribution-isolation invariant prohibiting bundling of historian or database services into consumer-facing distributable packages (e.g. Rate of Closure). Unblocks H3/H6 historian re-landing (Issues #4046, #4049, #4055); documented in `docs/development/HISTORIAN_LICENSING_RULING.md`.
+2. **Impact-Interval PyQt Tab Disposition (Issue #4946)**: Formally drops the proposed standalone `impact_interval_view` PyQt tab as superseded by the comprehensive visual-first tab family and multi-view workspace compositor delivered in #4473 and #4225. Retains the qualified calculation package `src/swing_sim/impact_interval/` as an authoritative headless computational engine for batch analysis, CLI studies, and future sub-model integration, avoiding UI fragmentation and preserving `ImpactModelType` enum stability; documented in `docs/development/IMPACT_INTERVAL_TAB_RULING.md`.
 
 ### 2026-09-19 Rate of Closure: Workspace View Compositor for Impact, Swing, and Flight (#4225)
 
