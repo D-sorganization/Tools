@@ -145,7 +145,8 @@ function objectiveRanks(scenarios: ForceSourceScenario[]) {
     const scores = new Map(scenarios.map(scenario => [scenario.objective, scoreForceSourceSeries(scenario.series)]));
     const ranks = new Map<string, number>();
     for (const objective of FORCE_SOURCE_OBJECTIVES) {
-        const sorted = [...scenarios].sort((left, right) => (scores.get(right.objective)?.[objective] ?? -Infinity)
+        // ⚡ Bolt Optimization: Use .slice().sort() instead of spread to avoid GC pressure
+        const sorted = scenarios.slice().sort((left, right) => (scores.get(right.objective)?.[objective] ?? -Infinity)
             - (scores.get(left.objective)?.[objective] ?? -Infinity));
         let priorValue: number | null = null;
         let priorRank = 0;
@@ -186,7 +187,8 @@ function scalarRanks(
     value: (scenario: ForceSourceScenario) => number,
     lowerIsBetter = false,
 ): Map<ForceSourceObjective, number> {
-    const sorted = [...scenarios].sort((left, right) =>
+    // ⚡ Bolt Optimization: Use .slice().sort() instead of spread to avoid GC pressure
+    const sorted = scenarios.slice().sort((left, right) =>
         (lowerIsBetter ? 1 : -1) * (value(left) - value(right)));
     const ranks = new Map<ForceSourceObjective, number>();
     let priorValue: number | null = null;

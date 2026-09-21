@@ -140,7 +140,8 @@ export function finiteSampleStandardDeviation(values: number[]): number {
 
 /** NumPy's linear-interpolation percentile over a finite cohort. */
 export function percentile(values: number[], fraction: number): number {
-  const sorted = [...values].sort((a, b) => a - b);
+  // ⚡ Bolt Optimization: Use .slice().sort() instead of spread to avoid GC pressure
+  const sorted = values.slice().sort((a, b) => a - b);
   const position = (fraction / 100) * (sorted.length - 1);
   const lower = Math.floor(position);
   const upper = Math.ceil(position);

@@ -55,7 +55,10 @@ export default function SwingAnalysisDashboard({
       if (prev.some((f) => f.frameNumber === frame.frameNumber)) {
         return prev;
       }
-      return [...prev, frame].sort((a, b) => a.frameNumber - b.frameNumber);
+      // ⚡ Bolt Optimization: Use slice/push instead of spread to avoid GC pressure and intermediate array allocations
+      const next = prev.slice();
+      next.push(frame);
+      return next.sort((a, b) => a.frameNumber - b.frameNumber);
     });
 
     setCurrentFrame(frame.frameNumber);
