@@ -1,3 +1,21 @@
+# Architecture Rulings Handoff Checkpoint — 2026-09-21 (#4951 & #4946)
+
+- Repository: `Tools`, `C:/Users/diete/Repositories/Tools-repo`.
+  Branch `docs/4946-4951-architecture-rulings`. Governing issues: #4951 & #4946 (under RM #1505).
+- Issue #4951 (Licensing Ruling):
+  - Formally ratified Ruling Option 1 (Internal-Only Deployment) for SCADA historian (`docs/development/HISTORIAN_LICENSING_RULING.md`).
+  - Authorizes TimescaleDB compression/retention/continuous aggregates under TSL and Grafana dashboards under AGPLv3 for internal company plant operations.
+  - Establishes invariant isolating historian assets from consumer/client distributions (Rate of Closure bundles).
+  - Unblocks H3/H6 re-landing (#4046, #4049, #4055).
+- Issue #4946 (Impact-Interval Tab Disposition):
+  - Formally dropped standalone `impact_interval_view` PyQt tab as superseded by #4473 visual-first tabs (`docs/development/IMPACT_INTERVAL_TAB_RULING.md`).
+  - Retains `src/swing_sim/impact_interval/` package as an authoritative headless computational engine.
+  - Prevents schema fragmentation and `ImpactModelType` enum churn.
+- Documentation & Bookkeeping:
+  - Created `docs/development/HISTORIAN_LICENSING_RULING.md` and `docs/development/IMPACT_INTERVAL_TAB_RULING.md`.
+  - Updated `SPEC.md` (Spec Version 1.18.144) and `docs/development/DEVELOPMENT_LOG.md` (DL-#4951, DL-#4946).
+- Next step: Submit PR closing #4946 and #4951, arm squash auto-merge.
+
 # Counterfactual Variation Methodology Handoff Checkpoint — 2026-09-20 (R4 #4253)
 
 - Repository/worktree: Tools, C:/Users/diete/Repositories/Tools-repo.

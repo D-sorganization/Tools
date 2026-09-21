@@ -18,6 +18,32 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#4951 · Historian Licensing Ruling: Grafana AGPLv3 and TimescaleDB TSL
+
+- **State:** in_review
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#4951
+- **PR:** pending
+- **Branch:** `docs/4946-4951-architecture-rulings`
+- **Paths:** `docs/development/HISTORIAN_LICENSING_RULING.md`, `SPEC.md`, `docs/development/DEVELOPMENT_LOG.md`
+- **Started:** 2026-09-21
+- **Last verified:** 2026-09-21 (local)
+- **Summary:** Formally ratify Ruling Option 1 (Internal-Only Deployment) for SCADA historian; classify as internal plant/engineering telemetry system on company infrastructure; unencumber TimescaleDB compression/continuous aggregates and Grafana dashboards; establish strict distribution-isolation invariant against packaging into external consumer bundles; unblock H3/H6 re-land.
+- **Next step:** Submit PR closing #4951 and arm auto-merge.
+
+### DL-#4946 · Impact-Interval PyQt Tab Ruling: Drop as Superseded by #4473 Visual-First Tabs
+
+- **State:** in_review
+- **Owner:** local
+- **Issue:** D-sorganization/Tools#4946
+- **PR:** pending
+- **Branch:** `docs/4946-4951-architecture-rulings`
+- **Paths:** `docs/development/IMPACT_INTERVAL_TAB_RULING.md`, `SPEC.md`, `docs/development/DEVELOPMENT_LOG.md`
+- **Started:** 2026-09-21
+- **Last verified:** 2026-09-21 (local)
+- **Summary:** Formally drop proposed standalone impact_interval_view PyQt tab as superseded by #4473 visual-first tab family while preserving headless calculation package src/swing_sim/impact_interval/ as an authoritative computational backend.
+- **Next step:** Submit PR closing #4946 and arm auto-merge.
+
 ### DL-#4253 · Review R4: Counterfactual Methodology - Sobol, Spearman Significance, Ellipse Normality
 
 - **State:** in_progress
