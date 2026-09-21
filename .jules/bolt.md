@@ -221,3 +221,6 @@
 ## 2026-09-22 - Eliminate Math.min(...spread) in variation validations
 **Learning:** Using `Math.min(...values)` on dynamically sized arrays for checking mathematical bounds of covariance or correlation matrices creates garbage collection pressure by pushing arrays to the call stack, with a high risk of stack overflows.
 **Action:** Replace `Math.min(...values)` and `Math.max(...values)` with single-pass `for` loops in numerical validation functions (e.g. eigenvalue scaling) to avoid intermediate array generations and prevent "Maximum call stack size exceeded" errors.
+## 2026-09-21 - Array Mapping in Performance Critical Path
+**Learning:** Found an instance in `curve` calculation inside `ballFlightMetrics.ts` where `.map()` and `.reduce()` were being chained to find the maximum lateral value. This caused intermediate array allocation and garbage collection pressure, particularly on long trajectory arrays.
+**Action:** Replaced chained array methods (`.map().reduce()`) with standard single-pass `for` loops in performance-critical numerical paths.
