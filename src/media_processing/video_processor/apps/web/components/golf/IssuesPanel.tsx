@@ -56,7 +56,8 @@ export default function IssuesPanel({ issues }: IssuesPanelProps) {
   };
 
   // Sort issues by severity
-  const sortedIssues = [...issues].sort((a, b) => {
+  // ⚡ Bolt Optimization: Use .slice().sort() instead of spread to avoid GC pressure
+  const sortedIssues = issues.slice().sort((a, b) => {
     const severityOrder = { major: 0, moderate: 1, minor: 2 };
     return severityOrder[a.severity] - severityOrder[b.severity];
   });

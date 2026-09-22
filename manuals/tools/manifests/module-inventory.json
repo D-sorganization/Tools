@@ -345,7 +345,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-matlab.json"
     },
     {
-      "content_sha256_lf": "e694cf6cda4223239404c8668bd2ffa1603239caa376e2880f5b83384a66d0bd",
+      "content_sha256_lf": "feef94ada7216c410aeb2fa026f4071aea936bf6d3a2929c32d29c8527b53093",
       "entry_count": 99,
       "package": "src/media_processing",
       "path": "manuals/tools/manifests/module-inventory/entries-src-media-processing.json"
@@ -393,7 +393,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
     {
-      "content_sha256_lf": "f5988ad8058ae31bb3ceedb7daf1d1be99991343970017574bafb5859be45754",
+      "content_sha256_lf": "dff3f672f97fdfc7c15da86f31d616591bd298cd54cea8c5e22abae535927c2e",
       "entry_count": 167,
       "package": "src/pendulum_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pendulum-simulator.json"
@@ -537,7 +537,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-hooks.json"
     },
     {
-      "content_sha256_lf": "c4e44f304f6c3fb315384e96160016cad8112b4c21408c072e80e641460ae132",
+      "content_sha256_lf": "d8251ec193dce0a357c91fc82d7e8287927570ba4e397681247742891f194898",
       "entry_count": 409,
       "package": "src/rate_of_closure/web/src/model",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-model.json"
