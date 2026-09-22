@@ -87,7 +87,6 @@
 - Module inventory refreshed (`python -m scripts.build_tools_module_inventory --check` passed).
 - Change log validated (`python shared_scripts/spec_changelog.py validate --spec SPEC.md` passed).
 
-
 # Handoff Checkpoint — Wedge Delivery Metrics & Linear Waterfall Visualization (#4162) — 2026-09-19
 
 - **Repository/worktree**: `Tools`, `c:\Users\diete\Repositories\Tools-repo`
@@ -163,6 +162,7 @@
 - Technical reference: `docs/development/impact-acoustics/MEASURED_GRIP_IMPEDANCE.md`.
 
 # Handoff Checkpoint — Rate of Closure: Release Gate Runner and Campaign State Transition (#4922, #4201) — 2026-09-20
+
 - **Repository/worktree**: `Tools`, `c:\Users\diete\Repositories\Tools-repo`
 - **Branch**: `feat/4922-rate-of-closure-release-gate`; commit `SELF`
 - **Governing issue**: `D-sorganization/Tools#4922` (Parent #4201)
@@ -202,6 +202,7 @@
   - Release lease on issue #4922
 
 # Handoff Checkpoint — Rate of Closure: Frozen PyQt6 Qualification and Scientific Parity (#4382) — 2026-09-20
+
 - **Repository/worktree**: `Tools`, `c:\Users\diete\Repositories\Tools-repo`
 - **Branch**: `feat/4382-frozen-pyqt6-qualification`; commit `SELF`
 - **Governing issue**: `D-sorganization/Tools#4382` (Parent Epic #4377)

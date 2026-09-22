@@ -1,9 +1,5 @@
 # AGENT_HANDOFF — Tools (Monorepo Root)
 
-Deferred validation: `docs/development/planning/` owns three Board proposals
-under #5068/#4729/#4267; software stays active. See
-`docs/development/HANDOFF.md` for publication and qualification boundaries.
-
 ## Verified Agent Context: #5138
 
 - PR #5141; issue #5138; session `context-01a0879e-tools`; branch `feat/issue-5138-agent-context`; worktree `.context-implementation/Tools`; implementation `SELF`; log DL-#5138. Source-verified context, read-only MCP and CodeMap freshness implement fleet epic#1629. At0f84e2a9a, Linux quality passes36 context and109 CodeMap tests. Combined provider preserves main calibration0a561daff, CLI9899c5a6a and the exact reviewed launcher manifest/test correction from fc453bf8e/c10baa1d8, coordinated with its owner under#5143/#5144. The launcher regression fails before correcting the canonical widget path. Published rate-isolation25367070f is integrated for combined qualification. Final protected provider publication and consumer pins remain pending; scientific/manual approval is separate. See docs/development/HANDOFF.md for current evidence and ordered continuation.
@@ -24,7 +20,7 @@ Calibration PR #5159 publishes a76d02d88: 168 Windows controls and both Linux ag
 The synthetic SHA oracle scanner finding is reproduced and narrowly annotated; nine identity tests pass. Main e83bd2e4 preserves the peer combined provider; final pins remain peer-owned.
 Complex FRF #5155 (PR #5156) is merged onto main. Numerical shaft #5133 is merged as 2c9a8d6c. T4 #5073 PR #5154 and PR #5152 are merged onto main.
 
-- Full program active; all three parent epics remain open. AffineDrift theory #4258/#4282/#4298 and UpstreamDrift integration #9706 are merged; final synthesis awaits downstream evidence.
+- Full program active; all three parent epics remain open. Deferred physical evidence for #5068/#4729/#4267 is preserved in `docs/development/planning/`; software stays active. See `docs/development/HANDOFF.md` for publication receipts and limits. AffineDrift theory #4258/#4282/#4298 and UpstreamDrift integration #9706 are merged; final synthesis awaits downstream evidence.
 - T1 #5069/#5077 and T2 #5071/#5082 are merged at f72544613 and 80d580d57. Signal repair #5106 and initial study wire #5083 are merged; acoustic/report qualification remains.
 - T3 numerical review #5130 is closed by merged #5133. Parent #5072 still requires physical/FRF qualification; source/JUnit evidence is in CI_REPAIR_RESULTS.json. UD #9916 merged as c487265f with interim 4dabe900c; the context integration task will align the final reviewed #5144 descendant before exact consumer/wheel qualification.
 - Classifier #5103 and main 0f2dfe3fd (mocap #5118) are integrated. Both task scopes are preserved; 145 merge tests, actual mypy, root Ruff and all nine gates passed. Camera/mocap ownership remains separate.

@@ -7642,6 +7642,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-19: Measured Grip Impedance Dynamics and Passivity (#5072 / #5259)
 
 - **2026-09-19**: feat(golf-club, #5072) — Add measured grip impedance dynamics (`golf_club.measured_grip_impedance/1`), strict passivity auditing, continuous passive Gram-factor model identification, full/reduced FRF agreement under quantified uncertainty, and consumer integration to `GripBoundary` and `impact_coupling`.
+
 ## 2026-09-19: Native File Commands and Workspace Persistence (#4220)
 
 - **2026-09-19**: feat(rate-ui, #4220) — Wire native File commands (New, Open, Open Recent, Save, Save As, Import, Export, Close) into RateOfClosureMainWindow and ApplicationToolstrip with dirty tracking and destructive action confirmation prompts.

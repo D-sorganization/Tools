@@ -31,7 +31,6 @@ reachable from any live state and `abandoned` from `parked`.
 - **Summary:** Preserve unavailable experiments for Board review without closing mixed software epics or supplying fabricated measurements.
 - **Next step:** Validate documentation/governance, publish, verify immutable plan bytes and keep software issues open.
 
-
 ### DL-#5303 · Reviewed Renderer Source Provenance
 
 - **State:** in_progress
@@ -249,8 +248,8 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** `feat/issue-4220-rate-of-closure-file-commands`
 - **Paths:** `src/rate_of_closure/ui/pyqt6/main_window_file_commands.py`, `src/rate_of_closure/ui/pyqt6/app_toolstrip.py`, `src/rate_of_closure/ui/pyqt6/main_window.py`, `src/rate_of_closure/ui/pyqt6/workspace_navigation.py`, `tests/rate_of_closure/test_main_window_file_commands.py`, `tests/rate_of_closure/pyqt_probe_lifecycle.py`, `tests/rate_of_closure/pyqt_variation_visual_state_probe.py`
 - **Started:** 2026-09-19
-- **Last verified:** 2026-09-20 (`SELF`; restored tuple idempotency in _freeze_json; all 10 test_main_window_file_commands.py, all 18 test_app_toolstrip.py, and all 6 test_workspace_files.py passing)
-- **Summary:** Native File commands (New, Open, Open Recent, Save, Save As, Import, Export, Close) wired into RateOfClosureMainWindow and ApplicationToolstrip with live dirty tracking, destructive action confirmation prompts, and idempotent tuple support in _freeze_json.
+- **Last verified:** 2026-09-20 (`SELF`; restored tuple idempotency in \_freeze_json; all 10 test_main_window_file_commands.py, all 18 test_app_toolstrip.py, and all 6 test_workspace_files.py passing)
+- **Summary:** Native File commands (New, Open, Open Recent, Save, Save As, Import, Export, Close) wired into RateOfClosureMainWindow and ApplicationToolstrip with live dirty tracking, destructive action confirmation prompts, and idempotent tuple support in \_freeze_json.
 - **Next step:** Push branch update, await CI completion and auto-merge.
 
 ### DL-#5218 · Camera Putting Launch Monitor for GSPro
@@ -265,7 +264,6 @@ reachable from any live state and `abandoned` from `parked`.
 - **Last verified:** 2026-09-20 (accuracy validation harness with CSV logging and running statistics, 7 unit tests passing, rig evidence and procedure page documented, #5221)
 - **Summary:** Overhead-camera putting monitor that measures launch speed and HLA on a mat-corner homography and sends putts to GSPro over Open Connect v1; shared `gspro_connect` codec extracted into `shared.python.launch_monitor`; recorded-putt replay corpus regression test suite added; accuracy validation harness (`validate` subcommand) and rig evidence page added (#5221).
 - **Next step:** Push branch `feat/issue-5221-putting-accuracy-validation`, open PR referencing Closes #5221, arm auto-merge.
-
 
 ### DL-#1614 · Mermaid C4 Architecture Map Contract
 
