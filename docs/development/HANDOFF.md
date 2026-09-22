@@ -16,7 +16,12 @@
   `check_operating_strain_limits` using actual curvature, outer radius, axial strain, and
   material limit. This guard does not make synthetic fixtures or unproven sources into
   physical validation evidence.
-- Next step: merge #5298 only after its checks pass. The parent program remains scientifically incomplete: measured grip/shaft
+- Hosted cross-repository CI is currently blocked before the private Gasification consumer suite
+  starts. Tools #5305 records the required organization-approved `RUNNER_CHECK_TOKEN` read
+  access and the exact rerun criterion; do not replace that credential boundary with an
+  unverified fallback or allow the consumer lane to skip.
+- Next step: merge #5298 only after its checks pass, including the restored private-consumer
+  contract lane. The parent program remains scientifically incomplete: measured grip/shaft
   identification, contact-mode validation, radiation calibration, and perceptual listening
   studies still require traceable physical evidence.
 
