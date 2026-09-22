@@ -224,3 +224,6 @@
 ## 2026-09-21 - Array Mapping in Performance Critical Path
 **Learning:** Found an instance in `curve` calculation inside `ballFlightMetrics.ts` where `.map()` and `.reduce()` were being chained to find the maximum lateral value. This caused intermediate array allocation and garbage collection pressure, particularly on long trajectory arrays.
 **Action:** Replaced chained array methods (`.map().reduce()`) with standard single-pass `for` loops in performance-critical numerical paths.
+## 2026-09-22 - Eliminate Array Allocation in High-Frequency Canvas Rendering
+**Learning:** Using chained `.map()` calls to extract arrays (e.g. `points.map((p) => p[1])`) inside a React canvas rendering loop creates significant garbage collection overhead and drops frames. This is especially true when delegating logic to helper functions that require array inputs rather than single elements or points.
+**Action:** When computing stats or bounds on hot rendering paths (like canvas drawing loops), inline the logic using a standard single-pass `for` loop to process coordinate arrays in-place and avoid allocating intermediate arrays completely.
