@@ -31,6 +31,19 @@ reachable from any live state and `abandoned` from `parked`.
 - **Summary:** Makes measured-grip FRF certification refuse by default until a caller explicitly declares that its operating-strain assessment passed. Magnitude, phase, and passivity agreement remain necessary but cannot independently establish linear-regime validity.
 - **Next step:** Monitor required PR checks, then merge. A physical study still needs traceable strain, geometry, calibration, and source evidence.
 
+### DL-#5301 · Measured-Grip Fixture Provenance and Qualification Boundary
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** D-sorganization/Tools#5301 (follow-up to #5072; parent #5068)
+- **PR:** pending
+- **Branch:** `fix/5301-grip-fixture-provenance`
+- **Paths:** `src/shared/python/golf_club/measured_grip_impedance.py`, `tests/shared/python/golf_club/test_measured_grip_impedance.py`, `docs/development/impact-acoustics/MEASURED_GRIP_IMPEDANCE.md`
+- **Started:** 2026-09-22
+- **Last verified:** 2026-09-22 (TDD RED showed a formula-generated fixture could receive physical FRF qualification; focused measured-grip tests pass after provenance gating.)
+- **Summary:** Reclassifies formula-generated fixtures as synthetic and makes source provenance a necessary condition for physical FRF qualification. Calibrated measurement declarations remain separately accepted.
+- **Next step:** Rebase against the explicit operating-strain gate, run combined qualification tests and repository checks, then submit the corrective PR.
+
 ### DL-#4951 · Historian Licensing Ruling: Grafana AGPLv3 and TimescaleDB TSL
 
 - **State:** in_review

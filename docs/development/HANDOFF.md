@@ -25,6 +25,23 @@
   identification, contact-mode validation, radiation calibration, and perceptual listening
   studies still require traceable physical evidence.
 
+# Impact Acoustics Provenance Checkpoint — 2026-09-22 (Tools #5301)
+
+- Repository/worktree: `Tools`, `C:/Users/diete/Repositories/Worktrees/Tools-grip-fixture-provenance`.
+  Branch `fix/5301-grip-fixture-provenance`; governing issue #5301, a qualification
+  follow-up to #5072 under parent program #5068.
+- Corrected a provenance mismatch in the measured-grip test fixture: values generated
+  from a closed-form mass/damping/stiffness model no longer declare participant-derived
+  measurement provenance. They are `synthetic` and carry no fictitious calibration identity.
+- FRF agreement continues to expose magnitude, phase, coverage, and passivity diagnostics
+  for numerical fixtures, but refuses `agreement_qualified` unless all declared sources are
+  `measurement-derived`. TDD covers synthetic refusal and calibrated measurement acceptance.
+- This is a truthful qualification boundary, not measurement collection. Traceable apparatus,
+  calibration quality, shaft geometry, operating strain, and independent held-out data remain
+  required before effect-size or acoustic claims.
+- Next step: combine this source-provenance gate with the pending #5298 operating-strain gate,
+  run full validation, and open review.
+
 # Architecture Rulings Handoff Checkpoint — 2026-09-21 (#4951 & #4946)
 
 - Repository: `Tools`, `C:/Users/diete/Repositories/Tools-repo`.
