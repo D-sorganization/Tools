@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5303 · Reviewed Renderer Source Provenance
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** D-sorganization/Tools#5303
+- **PR:** pending
+- **Branch:** `fix/5303-renderer-provenance`
+- **Paths:** `src/rate_of_closure/visual_baselines.v1.json`, `tests/rate_of_closure/test_visual_baseline_compare.py`, `AGENT_HANDOFF.md`, `src/rate_of_closure/AGENT_HANDOFF.md`
+- **Started:** 2026-09-22
+- **Last verified:** 2026-09-22 (the new exact-identity regression failed against `c599…`; after restoring `df410…`, all 10 visual baseline comparison tests pass)
+- **Summary:** Restores the reviewed source artifact commit for unchanged baseline images so UpstreamDrift's fail-closed provider contract accepts only the already reviewed source/hash pair. No image, tolerance, visual surface, or scientific model changes.
+- **Next step:** Run governed checks, open PR, and rerun the blocked downstream consumer lane.
+
 ### DL-#4951 · Historian Licensing Ruling: Grafana AGPLv3 and TimescaleDB TSL
 
 - **State:** in_review
