@@ -7,7 +7,6 @@
 import { useEffect, useMemo, useRef } from "react";
 
 import {
-  holdStats,
   signedDistance,
   type TargetRegionTs,
 } from "../model/targets";
@@ -126,11 +125,17 @@ export function LandingCanvas({
       ctx.stroke();
       ctx.setLineDash([]);
       // Hold-% headline: fraction of shots inside the target.
-      const { held, total } = holdStats(
-        points.map((p) => p[1]),
-        points.map((p) => p[0]),
-        target,
-      );
+      // ⚡ Bolt Optimization: Replace Math.max(...spread) and chained maps
+      // with a single-pass loop to eliminate array allocations on render
+      let held = 0;
+      let total = 0;
+      for (let i = 0; i < points.length; i++) {
+        const lateral = points[i][0];
+        const carry = points[i][1];
+        if (!Number.isFinite(carry) || !Number.isFinite(lateral)) continue;
+        total += 1;
+        if (signedDistance(target, carry, lateral) <= 0) held += 1;
+      }
       const pct = total ? ((100 * held) / total).toFixed(0) : "–";
       ctx.fillStyle = "#94a3b8";
       ctx.font = "12px sans-serif";
