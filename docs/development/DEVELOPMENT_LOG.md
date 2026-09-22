@@ -33,16 +33,16 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5301 · Measured-Grip Fixture Provenance and Qualification Boundary
 
-- **State:** in_progress
+- **State:** in_review
 - **Owner:** codex
 - **Issue:** D-sorganization/Tools#5301 (follow-up to #5072; parent #5068)
-- **PR:** pending
+- **PR:** D-sorganization/Tools#5302 (dependent on #5298)
 - **Branch:** `fix/5301-grip-fixture-provenance`
 - **Paths:** `src/shared/python/golf_club/measured_grip_impedance.py`, `tests/shared/python/golf_club/test_measured_grip_impedance.py`, `docs/development/impact-acoustics/MEASURED_GRIP_IMPEDANCE.md`
 - **Started:** 2026-09-22
 - **Last verified:** 2026-09-22 (TDD RED showed a formula-generated fixture could receive physical FRF qualification; combined source-provenance, operating-strain, and public-contract tests pass after the stacked qualification gate.)
 - **Summary:** Reclassifies formula-generated fixtures as synthetic and makes source provenance a necessary condition for physical FRF qualification. Calibrated measurement declarations remain separately accepted.
-- **Next step:** Run repository governance checks and submit the corrective PR. Physical data collection remains separate.
+- **Next step:** Monitor the dependent review and merge after parent #5298 checks pass. Physical data collection remains separate.
 
 ### DL-#4951 · Historian Licensing Ruling: Grafana AGPLv3 and TimescaleDB TSL
 

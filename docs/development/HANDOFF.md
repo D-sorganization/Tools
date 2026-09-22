@@ -29,7 +29,7 @@
 
 - Repository/worktree: `Tools`, `C:/Users/diete/Repositories/Worktrees/Tools-grip-fixture-provenance`.
   Branch `fix/5301-grip-fixture-provenance`; governing issue #5301, a qualification
-  follow-up to #5072 under parent program #5068.
+  follow-up to #5072 under parent program #5068. Review: https://github.com/D-sorganization/Tools/pull/5302.
 - Corrected a provenance mismatch in the measured-grip test fixture: values generated
   from a closed-form mass/damping/stiffness model no longer declare participant-derived
   measurement provenance. They are `synthetic` and carry no fictitious calibration identity.
@@ -39,8 +39,8 @@
 - This is a truthful qualification boundary, not measurement collection. Traceable apparatus,
   calibration quality, shaft geometry, operating strain, and independent held-out data remain
   required before effect-size or acoustic claims.
-- Next step: run full repository validation and open review. This branch is rebased on the
-  #5298 operating-strain gate; it requires provenance and operating strain together.
+- Next step: merge dependent review #5302 after parent #5298 checks pass. It requires
+  provenance and operating strain together.
 
 # Architecture Rulings Handoff Checkpoint — 2026-09-21 (#4951 & #4946)
 
