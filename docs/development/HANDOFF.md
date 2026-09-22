@@ -2,7 +2,7 @@
 
 - Repository/worktree: `Tools`, `C:/Users/diete/Repositories/Worktrees/Tools-constrained-grip-nnls`.
   Branch `fix/5299-constrained-grip-nnls`; governing issue #5299, a measured-grip
-  identification follow-up to #5072 under parent program #5068.
+  identification follow-up to #5072 under parent program #5068. Review: https://github.com/D-sorganization/Tools/pull/5300.
 - Replaced the claimed-but-not-implemented NNLS behavior in the scalar imaginary
   impedance fit. The former ordinary-least-squares estimate was coordinate-clipped;
   the current implementation enumerates the unconstrained point, both coordinate
@@ -15,7 +15,7 @@
 - This preserves numerical passivity but does not turn synthetic data into measured
   grip, shaft, or acoustic validation evidence. Physical identification remains an
   open parent-program requirement.
-- Next step: open a PR for #5299 and merge only after its checks pass.
+- Next step: merge #5300 only after its checks pass.
 
 # Architecture Rulings Handoff Checkpoint — 2026-09-21 (#4951 & #4946)
 
