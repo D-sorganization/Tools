@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5297 · Measured Grip FRF Qualification Requires Operating-Strain Evidence
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** D-sorganization/Tools#5297 (follow-up to #5072; parent #5068)
+- **PR:** pending
+- **Branch:** `fix/5297-measured-grip-strain`
+- **Paths:** `src/shared/python/golf_club/measured_grip_impedance.py`, `tests/shared/python/golf_club/test_measured_grip_impedance.py`, `docs/development/impact-acoustics/MEASURED_GRIP_IMPEDANCE.md`, `tests/api_baselines/golf_club_api_baseline.json`
+- **Started:** 2026-09-22
+- **Last verified:** 2026-09-22 (TDD RED reproduced the missing qualification input; 69 measured-grip, boundary, coupled-impact, and gripped-shaft tests pass; mypy, ruff, API stability, module inventory, and all nine manual-governance gates pass.)
+- **Summary:** Makes measured-grip FRF certification refuse by default until a caller explicitly declares that its operating-strain assessment passed. Magnitude, phase, and passivity agreement remain necessary but cannot independently establish linear-regime validity.
+- **Next step:** Submit the corrective PR. A physical study still needs traceable strain, geometry, calibration, and source evidence.
+
 ### DL-#4951 · Historian Licensing Ruling: Grafana AGPLv3 and TimescaleDB TSL
 
 - **State:** in_review

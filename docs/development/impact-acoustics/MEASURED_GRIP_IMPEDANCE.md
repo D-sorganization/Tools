@@ -84,6 +84,16 @@ Given measured impedance $Z_{\text{meas}}(\omega)$ with standard deviation $\sig
 - Operating beam strain:
   $$\epsilon_{\max} = \max_s |\kappa(s)| r_{\text{outer}} + |\epsilon_{\text{axial}}| \le \epsilon_{\text{limit}}$$
   refuses operating points exceeding declared linear elastic limits (default 0.005 / 0.5%).
+- `assess_measured_frf_agreement(..., strain_qualified=False)` refuses to certify FRF
+  agreement unless its caller explicitly supplies `strain_qualified=True`, derived from
+  `check_operating_strain_limits` for the applicable curvature, outer radius, axial
+  strain, and declared material limit.  The default is intentionally conservative:
+  a magnitude/phase/passivity match alone is numerical evidence, not proof that the
+  shaft stayed in its linear operating regime.
+- The Boolean is a boundary between the numerical FRF comparison and a separately
+  traceable operating-strain assessment.  It does not authenticate a measurement or
+  replace the required source, calibration, geometry, and strain evidence in a future
+  physical validation study.
 
 ## Consumer Integration
 

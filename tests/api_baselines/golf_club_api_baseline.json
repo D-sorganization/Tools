@@ -4797,6 +4797,12 @@
               "default": "2.0",
               "kind": "arg",
               "name": "coverage_k"
+            },
+            {
+              "annotation": "bool",
+              "default": "False",
+              "kind": "arg",
+              "name": "strain_qualified"
             }
           ],
           "returns": "FRFAgreementSummary"

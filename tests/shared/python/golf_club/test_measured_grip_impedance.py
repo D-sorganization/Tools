@@ -227,12 +227,65 @@ def test_assess_measured_frf_agreement(dataset: MeasuredGripDataset) -> None:
         max_relative_magnitude_error=0.10,
         max_phase_error_rad=0.15,
         coverage_k=2.0,
+        strain_qualified=True,
     )
     assert summary.agreement_qualified is True
     assert summary.passivity_satisfied is True
     assert summary.max_relative_magnitude_error < 0.10
     assert summary.max_phase_error_rad < 0.15
     assert summary.coverage_fraction == pytest.approx(1.0)
+
+
+def test_frf_agreement_requires_explicit_strain_qualification(
+    dataset: MeasuredGripDataset,
+) -> None:
+    """FRF agreement cannot certify operation without a strain assessment."""
+    grip = fit_passive_grip_impedance(dataset)
+
+    def model_fn(omega: float) -> complex:
+        return complex(grip_frequency_impedance(grip, omega)[0, 0])
+
+    omitted = assess_measured_frf_agreement(
+        dataset,
+        model_fn,
+        max_relative_magnitude_error=0.10,
+        max_phase_error_rad=0.15,
+    )
+    refused = assess_measured_frf_agreement(
+        dataset,
+        model_fn,
+        max_relative_magnitude_error=0.10,
+        max_phase_error_rad=0.15,
+        strain_qualified=False,
+    )
+    accepted = assess_measured_frf_agreement(
+        dataset,
+        model_fn,
+        max_relative_magnitude_error=0.10,
+        max_phase_error_rad=0.15,
+        strain_qualified=True,
+    )
+
+    assert omitted.strain_qualified is False
+    assert omitted.agreement_qualified is False
+    assert refused.strain_qualified is False
+    assert refused.agreement_qualified is False
+    assert accepted.strain_qualified is True
+    assert accepted.agreement_qualified is True
+
+
+def test_frf_agreement_rejects_non_boolean_strain_qualification(
+    dataset: MeasuredGripDataset,
+) -> None:
+    """Qualification evidence is a Boolean contract, not a truthy flag."""
+    with pytest.raises(TypeError, match="strain_qualified"):
+        assess_measured_frf_agreement(
+            dataset,
+            lambda _omega: 1.0 + 0.0j,
+            max_relative_magnitude_error=1.0,
+            max_phase_error_rad=1.0,
+            strain_qualified=1,  # type: ignore[arg-type]
+        )
 
 
 def test_check_operating_strain_limits() -> None:
