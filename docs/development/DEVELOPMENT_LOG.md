@@ -20,11 +20,11 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5068-planning · Deferred Physical Validation Plans
 
-- **State:** in_progress
+- **State:** in_review
 - **Owner:** codex (session `codex-validation-planning-20260922-tools`)
 - **Issue:** #5068; #4729; #4267
 - **Branch:** `docs/deferred-validation-planning`
-- **PR:** pending
+- **PR:** #5306
 - **Paths:** `docs/development/planning/`, `docs/development/HANDOFF.md`, `AGENT_HANDOFF.md`
 - **Started:** 2026-09-22
 - **Last verified:** 2026-09-22 (source issue bodies unchanged; strict three-plan catalog, design-manual governance and full commit hook stage pass; pre-push environment install failed with disk-full Errno 28)

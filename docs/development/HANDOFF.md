@@ -1,7 +1,7 @@
 # Deferred Physical Validation Planning — 2026-09-22
 
 - Worktree: `C:/Users/diete/Repositories/Worktrees/Tools-validation-planning`.
-  Branch `docs/deferred-validation-planning`; implementation `SELF`.
+  Branch `docs/deferred-validation-planning`; source `be7d0435d`; PR #5306.
   Governing issues #5068/#4729/#4267; central Repository_Management #1687.
 - Added repo-owned DV-5068 (impact/grip/radiation measurements), DV-4729
   (unavailable rig qualification), DV-4267 (surface calibration), original
@@ -18,8 +18,8 @@
 - Complete configured commit and pre-push stages now pass, including pip-audit
   and fleet guardrails. Earlier environment installation failed with Errno 28;
   the unchanged stage passed after capacity recovered. No hook was bypassed.
-  Branch is committed locally; publication and protected hosted checks remain.
-  Replace the provisional #5068 SPEC key with the actual PR number after creation.
+  Branch is pushed and PR #5306 is open; protected hosted checks and
+  verified default-branch publication remain.
 - Documentation only; no kernels, public APIs, model coefficients, vendor pins,
   manual sources or measured data changed. Use normal documentation/governance
   hooks; full hosted checks remain required. The local checkout is sparse because
