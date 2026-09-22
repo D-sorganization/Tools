@@ -39,8 +39,8 @@
 - This is a truthful qualification boundary, not measurement collection. Traceable apparatus,
   calibration quality, shaft geometry, operating strain, and independent held-out data remain
   required before effect-size or acoustic claims.
-- Next step: combine this source-provenance gate with the pending #5298 operating-strain gate,
-  run full validation, and open review.
+- Next step: run full repository validation and open review. This branch is rebased on the
+  #5298 operating-strain gate; it requires provenance and operating strain together.
 
 # Architecture Rulings Handoff Checkpoint — 2026-09-21 (#4951 & #4946)
 
