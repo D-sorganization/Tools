@@ -2,7 +2,7 @@
 
 - Repository/worktree: `Tools`, `C:/Users/diete/Repositories/Worktrees/Tools-measured-grip-qualification`.
   Branch `fix/5297-measured-grip-strain`; governing issue #5297, follow-up to measured-grip
-  milestone #5072 under parent program #5068.
+  milestone #5072 under parent program #5068. Review: https://github.com/D-sorganization/Tools/pull/5298.
 - Corrected a qualification defect in `assess_measured_frf_agreement`: it had reported
   `strain_qualified=True` without receiving operating-strain evidence. The API now accepts
   a source-compatible optional `strain_qualified: bool = False` and refuses
@@ -16,7 +16,7 @@
   `check_operating_strain_limits` using actual curvature, outer radius, axial strain, and
   material limit. This guard does not make synthetic fixtures or unproven sources into
   physical validation evidence.
-- Next step: open the #5297 PR and merge only after its checks pass. The parent program remains scientifically incomplete: measured grip/shaft
+- Next step: merge #5298 only after its checks pass. The parent program remains scientifically incomplete: measured grip/shaft
   identification, contact-mode validation, radiation calibration, and perceptual listening
   studies still require traceable physical evidence.
 

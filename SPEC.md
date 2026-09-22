@@ -5923,6 +5923,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | 2026-09-22 | #5295 | chore(rate-web): remove stale merge-leftover `groundRegionalExecution.ts.orig` (no behavior change). |
+| 2026-09-22 | #5298 | fix(impact): require explicit operating-strain evidence before measured-grip FRF agreement can certify a qualified response (#5297). |
 | 2026-09-22 | #5292 | ⚡ Bolt: Replace chained `.map()`/`.reduce()` curve calculation with a single-pass `for` loop in `ballFlightMetrics.ts` to reduce GC pressure on long trajectories (spec 1.18.146). |
 | 2026-09-22 | #5294 | ⚡ Bolt: Replace chained `.map()` landing-stats extraction with a single-pass `for` loop in `VariationLanding.tsx` to reduce GC pressure on canvas render paths (spec 1.18.146). |
 | 2026-09-22 | n/a | ⚡ Bolt: Replace `Math.min(...values)` with a single-pass `for` loop in `validateGroupMatrix` inside `src/rate_of_closure/web/src/model/variationGroups.ts` to avoid intermediate arrays and prevent call stack limits (spec 1.18.146). |
@@ -7640,6 +7641,10 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-19: Measured Grip Impedance Dynamics and Passivity (#5072 / #5259)
 
 - **2026-09-19**: feat(golf-club, #5072) — Add measured grip impedance dynamics (`golf_club.measured_grip_impedance/1`), strict passivity auditing, continuous passive Gram-factor model identification, full/reduced FRF agreement under quantified uncertainty, and consumer integration to `GripBoundary` and `impact_coupling`.
+
+## 2026-09-22: Measured Grip FRF Strain-Qualification Guard (#5297 / #5298)
+
+- **2026-09-22**: fix(impact, #5297) — Require explicit passed operating-strain assessment before FRF magnitude/phase/passivity agreement can report a qualified grip response; omitted evidence refuses qualification.
 ## 2026-09-19: Native File Commands and Workspace Persistence (#4220)
 
 - **2026-09-19**: feat(rate-ui, #4220) — Wire native File commands (New, Open, Open Recent, Save, Save As, Import, Export, Close) into RateOfClosureMainWindow and ApplicationToolstrip with dirty tracking and destructive action confirmation prompts.
