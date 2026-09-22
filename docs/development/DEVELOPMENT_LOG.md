@@ -18,6 +18,20 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5068-planning · Deferred Physical Validation Plans
+
+- **State:** in_progress
+- **Owner:** codex (session `codex-validation-planning-20260922-tools`)
+- **Issue:** #5068; #4729; #4267
+- **Branch:** `docs/deferred-validation-planning`
+- **PR:** pending
+- **Paths:** `docs/development/planning/`, `docs/development/HANDOFF.md`, `AGENT_HANDOFF.md`
+- **Started:** 2026-09-22
+- **Last verified:** 2026-09-22 (source issue bodies unchanged; strict three-plan catalog and existing design-manual governance pass)
+- **Summary:** Preserve unavailable experiments for Board review without closing mixed software epics or supplying fabricated measurements.
+- **Next step:** Validate documentation/governance, publish, verify immutable plan bytes and keep software issues open.
+
+
 ### DL-#5303 · Reviewed Renderer Source Provenance
 
 - **State:** in_progress

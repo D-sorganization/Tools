@@ -1,0 +1,65 @@
+{
+  "number": 4267,
+  "html_url": "https://github.com/D-sorganization/Tools/issues/4267",
+  "title": "EPIC: Qualified Ball Landing, Bounce, Roll, and Ground-Surface Modeling",
+  "body": "## Status as of 2026-09-19\n\nStatus as of 2026-09-19\n- Done: versioned ground contracts + strict JSON; 3D impulse/bounce; skid-to-roll with slopes/regions (#4271); sourced profiles, persistence, migration, Upstream terrain adapter (#4272); total-distance metrics, target projection, seeded regional variation (#4273); PyQt ground playback tab incl. GroundPlayback3DView + React playback/comparison/persistence (#4274); qualified execution job + loopback Python authority + browser client (#4369); Python/Rust conformance corpus (#4321, #5189).\n- Open: UpstreamDrift exact-pin adapters and clean-install smoke (#4276, cross-repo); calibration evidence for surface presets (defaults still illustrative); matched-client visual/a11y evidence for the ground surfaces.\n- Children #4268-#4270, #4275 already closed.\n\n---\n\n## Objective\r\n\r\nCreate a qualified, versioned post-landing physics system for golf-ball first contact, repeated bounce, skid, pure roll, slope and regional surface transitions so the flight workbench can report total distance without ever mislabeling carry. The reusable contracts/kernel live in Tools; UpstreamDrift consumes an exact reviewed Tools revision through thin adapters.\r\n\r\nParent campaign: #4135\r\nRelated flight epic: #4191\r\nRelated metric contract: #4194\r\nRelated variation: #4142 and #4144\r\nRelated 3D playback: #4200\r\nRelated release gate: #4201\r\nCross-application parity: #4260\r\n\r\n## Audited reuse map\r\n\r\n### Adopt from Tools\r\n\r\n- Preserve the existing explicit `GroundModelResult` boundary and stable total-distance, roll-distance, bounce-count, and final-offline metric IDs. These remain unavailable unless a qualified ground result is supplied.\r\n- Reuse validated putting-scale stimp, skid-transition, pure-roll stopping, slope, deterministic variation, strict serialization, provenance, cancellation, typed termination, and energy-accounting patterns where their assumptions apply.\r\n- Do not reuse the complete putting workflow as a high-speed landing solver.\r\n\r\n### Adapt from UpstreamDrift\r\n\r\n- Adapt the split terrain/material package through a narrow one-way adapter: friction, rolling resistance, restitution, hardness, grass height, compressibility/damping, moisture, elevation, regions, downhill direction, and surface normals.\r\n- Treat putting-green rolling and Rust contact code as reviewed reference algorithms/API shapes, not qualified implementations.\r\n- Do not extend the duplicate legacy terrain representation or import UpstreamDrift domain classes into the Tools kernel.\r\n\r\n## Scientific boundaries\r\n\r\n- Current airborne trajectories terminate at a relative launch plane and do not preserve terminal angular velocity; both must be corrected before ground physics is trustworthy.\r\n- Carry is first physical ground contact. Total distance is available only from this qualified model.\r\n- Tee height, launch elevation, ball radius, terrain elevation, and surface normal must affect physical contact once and must never be double-counted.\r\n- Default surface values are illustrative until calibration evidence, sources, uncertainty, and applicability are recorded.\r\n- The current Upstream scalar landing helper and Rust `(1-friction)` tangential law are not acceptable production laws.\r\n- The React client must consume the same qualified kernel/contract; do not create another independent TypeScript physics port.\r\n\r\n## Acceptance criteria\r\n\r\n### Contracts and transfer state\r\n\r\n- [ ] Versioned strict contracts define ground surface profiles, contact state, phases, trajectory points, request/result, event ledger, termination, warnings, calibration status, and provenance.\r\n- [ ] Canonical frame is explicit (`x` downrange, `y` up, `z` right); all Upstream terrain/frame adapters are versioned and tested.\r\n- [ ] Flight-to-ground transfer preserves physical time, center position, linear velocity, full angular-velocity vector, ball mass/radius/inertia, terrain elevation, and surface normal.\r\n- [ ] The richer result adapts backward-compatibly to the existing compact `GroundModelResult`.\r\n\r\n### Physics\r\n\r\n- [ ] A validated 3D normal/tangential impulse law supports restitution, Coulomb/sticking friction, sphere inertia, full spin coupling, arbitrary normals, passive energy checks, and outgoing/grazing-state rejection.\r\n- [ ] Deterministic repeated bounce transitions to skid, pure roll, regional surface changes, slopes, and final stop with typed cancellation/out-of-bounds/step-limit/numerical states.\r\n- [ ] Low-speed limiting cases agree with analytic skid/roll references and documented time-step convergence bounds.\r\n\r\n### Surfaces, results, and studies\r\n\r\n- [ ] Users can edit sourced, unit-explicit ground parameters with finite bounds, calibration status, provenance, and clear illustrative warnings.\r\n- [ ] Fairway, rough, green, fringe, bunker, tee, and hard-surface presets exist only where validated; unsupported combinations remain explicit.\r\n- [ ] Results include carry, bounce distance, skid distance, roll distance, total distance, final position/offline, bounce count, ground time, model ID/version, surface ID/version, warnings, and termination.\r\n- [ ] Ground variables participate in seeded variation, dispersion, target-hold, optimization, and wind/strategy workflows without fabricating results for misses or failures.\r\n\r\n### Matched clients and integration\r\n\r\n- [ ] PyQt6 and React expose the same applicable parameters/results and show distinct airborne, bounce, skid, and roll phases in synchronized 3D playback and exports.\r\n- [ ] Carry and total markers, active assumptions, comparison overlays, scrub/play/pause/restart/loop, camera interaction, and accessible tables are verified.\r\n- [ ] UpstreamDrift API/PyQt/React consumers use an exact Tools pin and thin adapters; feature-parity manifests and both handoffs are current.\r\n\r\n### Verification\r\n\r\n- [ ] RED-first analytic, property, golden, frame-invariance, persistence, failure-state, Python/Rust/WASM parity, UI interaction, visual, accessibility, performance, and scientific-validation tests pass.\r\n- [ ] Protected checks pass on exact reviewed commits; queued/skipped/zero-job contexts are not accepted as passing.\r\n\r\n## Planned child workstreams\r\n\r\n- [ ] Versioned surface/contact/trajectory/result/provenance contracts\r\n- [ ] Correct physical flight-to-ground geometry and terminal spin\r\n- [ ] Validated 3D contact impulse and repeated bounce\r\n- [ ] Skid-to-roll dynamics on slopes and regional surfaces\r\n- [ ] Sourced profiles, persistence, calibration, and Upstream terrain adapters\r\n- [ ] Total-distance metrics, target/solver/variation integration\r\n- [ ] Matched PyQt6/React controls and 3D playback\r\n- [ ] Python/Rust/WASM parity, validation, and performance\r\n- [ ] UpstreamDrift exact-pin integration and protected release\r\n\r\n## Engineering rules\r\n\r\nUse RED -> GREEN -> REFACTOR TDD, Design by Contract at every unit/frame/schema boundary, DRY canonical physics and transformations, and Law of Demeter facades. Reject NaN/Inf, invalid ranges, unsupported schemas, frame ambiguity, silent unit conversion, energy creation, and unqualified defaults. Preserve typed miss/no-ground/cancel/failure outcomes.\r\n\r\n## Definition of done\r\n\r\nClose only after every child is merged through protected review; carry and total distance remain scientifically distinct; exact cross-runtime fixtures, client UI evidence, persistence migrations, performance, surface provenance, clean-install integration, handoffs, and known limitations are linked in a final evidence comment.\r\n\r\n\r\n\r\n## Tracked child issues\n\n- #4268 — landing, surface, bounce, roll, and result contracts\n- #4269 — flight-to-ground geometry and terminal-spin continuity\n- #4270 — 3D impulse response and repeated bounce\n- #4271 — skid-to-roll transition, slope, and surface regions\n- #4272 — ground profiles, persistence, calibration, and terrain adapters\n- #4273 — total-distance metrics, targets, solver, and variation support\n- #4274 — matched PyQt/React controls and 3D playback\n- #4275 — Python/Rust/WASM conformance, validation, and performance\n- #4276 — UpstreamDrift exact-pin integration and release verification\n\nCross-surface parity is tracked in #4260.\n\n## Folded in from backlog triage 2026-09-19\n\n- [ ] UpstreamDrift: repin to the reviewed Tools revision, add thin API/PyQt/React ground adapters, update parity manifests and both handoffs (#4276) (from #4276)\n",
+  "updated_at": "2026-09-22T21:59:09Z",
+  "labels": [
+    {
+      "id": 10796035341,
+      "node_id": "LA_kwDOPQ5sz88AAAACg35tDQ",
+      "url": "https://api.github.com/repos/D-sorganization/Tools/labels/P2",
+      "name": "P2",
+      "color": "0e8a16",
+      "default": false,
+      "description": "Medium priority",
+      "archived_at": null,
+      "archived_by": null
+    },
+    {
+      "id": 11261329039,
+      "node_id": "LA_kwDOPQ5sz88AAAACnzo-jw",
+      "url": "https://api.github.com/repos/D-sorganization/Tools/labels/epic",
+      "name": "epic",
+      "color": "8B4FBE",
+      "default": false,
+      "description": "Large multi-issue effort",
+      "archived_at": null,
+      "archived_by": null
+    },
+    {
+      "id": 12045288190,
+      "node_id": "LA_kwDOPQ5sz88AAAACzfSC_g",
+      "url": "https://api.github.com/repos/D-sorganization/Tools/labels/readiness-program",
+      "name": "readiness-program",
+      "color": "8B0000",
+      "default": false,
+      "description": "Fleet Readiness Program 2026-Q4 (RM master epic)",
+      "archived_at": null,
+      "archived_by": null
+    },
+    {
+      "id": 12100766069,
+      "node_id": "LA_kwDOPQ5sz88AAAAC0UMJdQ",
+      "url": "https://api.github.com/repos/D-sorganization/Tools/labels/claim:codex",
+      "name": "claim:codex",
+      "color": "1D76DB",
+      "default": false,
+      "description": "Active Codex issue lease under fleet coordination policy",
+      "archived_at": null,
+      "archived_by": null
+    },
+    {
+      "id": 12266804280,
+      "node_id": "LA_kwDOPQ5sz88AAAAC2yiUOA",
+      "url": "https://api.github.com/repos/D-sorganization/Tools/labels/triaged-2026-09",
+      "name": "triaged-2026-09",
+      "color": "0e8a16",
+      "default": false,
+      "description": "Reviewed in the 2026-09-19 backlog triage",
+      "archived_at": null,
+      "archived_by": null
+    }
+  ],
+  "state": "open"
+}

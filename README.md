@@ -256,3 +256,7 @@ through public issues.
 
 Released under the MIT License. See [LICENSE](LICENSE). Individual tool
 directories may carry additional notices where third-party code is vendored.
+
+## Future Validation Planning
+
+Unavailable physical experiments are tracked in [repo-owned Board plans](docs/development/planning/README.md). Software issues stay active; these plans grant no scientific or release approval.

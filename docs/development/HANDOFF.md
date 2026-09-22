@@ -1,3 +1,22 @@
+# Deferred Physical Validation Planning — 2026-09-22
+
+- Worktree: `C:/Users/diete/Repositories/Worktrees/Tools-validation-planning`.
+  Branch `docs/deferred-validation-planning`; implementation `SELF`.
+  Governing issues #5068/#4729/#4267; central Repository_Management #1687.
+- Added repo-owned DV-5068 (impact/grip/radiation measurements), DV-4729
+  (unavailable rig qualification), DV-4267 (surface calibration), original
+  issue snapshots and a validated catalog. Parent #4706 reuses DV-4729.
+- All three issues stay open for numerical, source-research, contract,
+  integration, packaging and UI work. Available recordings are usable now.
+  Board/resource evidence is absent; no physical or perceptual claim is approved.
+- Follow the central deferred-validation rule. After a protected merge, verify
+  published bytes and unchanged source issues before posting immutable scope
+  links and recording central receipts. No source issue closes in this PR.
+- Documentation only; no kernels, public APIs, model coefficients, vendor pins,
+  manual sources or measured data changed. Use normal documentation/governance
+  hooks; full hosted checks remain required. The local checkout is sparse because
+  C: is nearly full; preserve peer worktrees and do not claim a full local test run.
+
 # Renderer Provenance Handoff Checkpoint — 2026-09-22 (#5303)
 
 - **Repository/worktree:** `Tools`, `C:/Users/diete/Repositories/Worktrees/Tools-renderer-provenance`; branch `fix/5303-renderer-provenance`.

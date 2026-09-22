@@ -1,0 +1,54 @@
+{
+  "number": 5068,
+  "html_url": "https://github.com/D-sorganization/Tools/issues/5068",
+  "title": "Epic: Shared Flexible Impact, Prestressed Shaft and Vibroacoustic Models",
+  "body": "## Status as of 2026-09-19\n\nStatus as of 2026-09-19\n- Closed: T1 #5069 (#5077), T2 #5071 (#5082), T6 #5075 (#5083 versioned impact study wire), T4 review children #5145/#5147/#5151/#5153/#5160 (PRs #5146/#5149/#5152/#5154/#5162), T5 children #5155/#5157 (#5156/#5159).\n- Open: T3 #5072 (measured coefficient/grip/FRF identification), T4 #5073 (face/hosel modes, general convergence, held-out force/spin maps, hosted 60 s timeout on the Frechet path), T5 #5074 (calibration identity, radiation, held-out observers).\n- Cross-repo: UpstreamDrift #9700/#9920 consumer, AffineDrift #4253 theory.\n\n---\n\n## Objective\nImplement reusable, scientifically qualified impact and vibroacoustic models in Tools, extending the existing golf_club, swing_sim.impact and signal/audio capabilities. AffineDrift supplies theory; UpstreamDrift consumes versioned provider contracts rather than copying kernels.\n\n## Native Sub-Issues and Dependencies\n- [x] #5069 (IA-T1): Full-tensor rigid-contact mobility and normal-impulse reference; PR #5077 merged as f7254461399ac18e5667a0215afd90a9ebff9d22. This completes the bounded rigid reference, not flexible/acoustic qualification.\n- [x] #5071 (IA-T2): PR #5082 merged as80d580d57ac7ebd2267340f5f605fd58bf016fbf, qualifying the bounded lumped coupling model, event termination and disjoint work semantics. Physical coefficient and higher-tier qualification remain separate.\n- [ ] #5072 (IA-T3): Distributed prestressed shaft and passive six-dimensional grip impedance; use T1/T2 limits.\n- [ ] #5073 (IA-T4): Finite-duration off-center ball/face contact coupled to head and shaft modes; depends on T1–T3.\n- [ ] #5074 (IA-T5): Calibrated vibroacoustic transfer and sound analysis; measurement ingestion can start early, predictive pressure depends on T3/T4 qualification.\n- [ ] #5075 (IA-T6): Versioned reports and truthful application surfaces; expose model level and evidence limitations, integrate qualified T1–T5 results.\n\n## Integration and Acceptance\nCompanions: D-sorganization/AffineDrift#4253 and D-sorganization/UpstreamDrift#9700. The governing provider design is docs/specs/IMPACT_DYNAMICS_ACOUSTICS.md in the implementation PR.\n\nRequire test-first analytic limits, full tensor/frame covariance, momentum and work/energy closure, passive dissipation, gyroscopic zero-work checks, contact event refinement and independent time/mesh/modal convergence. Enforce typed units/frames and explicit invalid-input contracts, LoD and DRY, additive API and provider-pin compatibility. Require calibrated and held-out physical measurements before effect-size claims; synthetic sonification is not predicted sound pressure. Preserve exact provenance and update root/package turnover documents with every implementation commit.\n\nFocused provider-import prerequisite: D-sorganization/UpstreamDrift#9735 (fresh contract failure reproduced). The rigid reference delivers only T1. Keep this epic and the flexible/acoustic milestones open until their independent acceptance gates pass.\n\n\n## Current implementation and qualification (2026-09-10)\n\nT3 numerical shaft PR#5133 is merged; #5072 remains open for its full qualification scope. T4 review sequence is organized in #5073: #5145/PR#5146 instantaneous coupling, #5147/PR#5149 temporal contact, #5151/PR#5152 adaptive normal events, and #5153 prescribed force/couple histories. The latest prescribed-load archive passes406 Windows/Linux controls; source and JUnit identities, retained failures and remaining obligations are recorded in Tools docs/development/impact-acoustics/LOAD_HISTORY_RESULTS.json. These tests do not qualify measured player effects, sound pressure or sweetness.\n\nFinal cross-repository dependency alignment remains with combined provider PR#5141 and its coordinated UpstreamDrift consumer. Standalone launcher PR#5144 is closed unmerged and its correction is incorporated there. Finite-duration objective friction, face/hosel modes, general convergence and matched interventions, calibrated radiation and blinded perceptual data remain open. Keep this epic open until each independent acceptance gate is met.\n\n## Tracked issues (2026-09-19 triage)\n\n- [ ] #5072 IA-T3: Distributed Prestressed Shaft and Passive Grip-Impedance Dynamics\n- [ ] #5073 IA-T4: Couple Finite-Duration Off-Center Contact to Shaft and Head Modes\n- [ ] #5074 IA-T5: Calibrated Vibroacoustic Transfer and Impact-Sound Analysis\n",
+  "updated_at": "2026-09-22T21:59:00Z",
+  "labels": [
+    {
+      "id": 10796035341,
+      "node_id": "LA_kwDOPQ5sz88AAAACg35tDQ",
+      "url": "https://api.github.com/repos/D-sorganization/Tools/labels/P2",
+      "name": "P2",
+      "color": "0e8a16",
+      "default": false,
+      "description": "Medium priority",
+      "archived_at": null,
+      "archived_by": null
+    },
+    {
+      "id": 11261329039,
+      "node_id": "LA_kwDOPQ5sz88AAAACnzo-jw",
+      "url": "https://api.github.com/repos/D-sorganization/Tools/labels/epic",
+      "name": "epic",
+      "color": "8B4FBE",
+      "default": false,
+      "description": "Large multi-issue effort",
+      "archived_at": null,
+      "archived_by": null
+    },
+    {
+      "id": 12100766069,
+      "node_id": "LA_kwDOPQ5sz88AAAAC0UMJdQ",
+      "url": "https://api.github.com/repos/D-sorganization/Tools/labels/claim:codex",
+      "name": "claim:codex",
+      "color": "1D76DB",
+      "default": false,
+      "description": "Active Codex issue lease under fleet coordination policy",
+      "archived_at": null,
+      "archived_by": null
+    },
+    {
+      "id": 12266804280,
+      "node_id": "LA_kwDOPQ5sz88AAAAC2yiUOA",
+      "url": "https://api.github.com/repos/D-sorganization/Tools/labels/triaged-2026-09",
+      "name": "triaged-2026-09",
+      "color": "0e8a16",
+      "default": false,
+      "description": "Reviewed in the 2026-09-19 backlog triage",
+      "archived_at": null,
+      "archived_by": null
+    }
+  ],
+  "state": "open"
+}
