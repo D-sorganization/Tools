@@ -5922,7 +5922,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 <!-- prettier-ignore-start -->
 
 | Date       | PR         | Changes    |
-| 2026-09-22 | #99999 | perf(ground_regional): replace `Math.max(...spread)` chained spread calls with single-pass `for` loops in `src/rate_of_closure/web/src/model/groundRegionalExecution.ts` to prevent call stack overflows and GC pressure. |
+| 2026-09-22 | #99998 | perf(ground_regional): replace `Math.max(...spread)` chained spread calls with single-pass `for` loops in `src/rate_of_closure/web/src/model/groundRegionalExecution.ts` to prevent call stack overflows and GC pressure.  #99998 (spec 1.18.146) |
 | 2026-09-20 | #5266 | feat(variation): Sobol indices via Saltelli sampling, Spearman significance & bootstrap CIs, landing ellipse bivariate normality & convex hull fallback, and truncation mean-shift analysis (#4253) |
 | 2026-09-20 | #5280 | 🎨 Palette: Improve keyboard accessibility for file import (spec 1.18.143) |
 | 2026-09-20 | #5284 | test(rate-of-closure): re-approve launch_monitor_analytics visual baseline from trusted run (#5284) |
