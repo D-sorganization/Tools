@@ -218,6 +218,9 @@
 **Learning:** Using chained `.map` arrays creates severe GC pressure in high-frequency React hooks, especially when generating large amounts of tabular data for export or snapshot.
 **Action:** Replace `Array.prototype.map` with single-pass loops pre-allocating the necessary array sizes directly in the hook body.
 
-## 2026-09-22 - Eliminate Math.max(...filter) chained spreads
-**Learning:** Using `Math.max(...array.filter(...))` and `Math.min(...array.filter(...))` to compute boundary bounds dynamically allocates intermediate arrays and spreads them onto the call stack, causing garbage collection pressure and risking stack overflow on large region sets.
-**Action:** Replace `Math.max(...spread)` and `Math.min(...spread)` in regional boundary calculation with a single-pass `for` loop to compute bounds without creating throwaway arrays.
+## 2026-09-22 - Eliminate Math.min(...spread) in variation validations
+**Learning:** Using `Math.min(...values)` on dynamically sized arrays for checking mathematical bounds of covariance or correlation matrices creates garbage collection pressure by pushing arrays to the call stack, with a high risk of stack overflows.
+**Action:** Replace `Math.min(...values)` and `Math.max(...values)` with single-pass `for` loops in numerical validation functions (e.g. eigenvalue scaling) to avoid intermediate array generations and prevent "Maximum call stack size exceeded" errors.
+## 2026-09-22 - Eliminate Array Allocation in High-Frequency Canvas Rendering
+**Learning:** Using chained `.map()` calls to extract arrays (e.g. `points.map((p) => p[1])`) inside a React canvas rendering loop creates significant garbage collection overhead and drops frames. This is especially true when delegating logic to helper functions that require array inputs rather than single elements or points.
+**Action:** When computing stats or bounds on hot rendering paths (like canvas drawing loops), inline the logic using a standard single-pass `for` loop to process coordinate arrays in-place and avoid allocating intermediate arrays completely.
