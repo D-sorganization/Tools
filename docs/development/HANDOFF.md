@@ -15,12 +15,11 @@
 - Commit checks pass, including design-manual, chapter/exemplar, artifact,
   handoff, LF normalization, SPEC and formatting gates. The sparse worktree
   carries only the existing authorities needed by those gates.
-- Pre-push is blocked before hook execution: pre-commit's configured mypy 1.15
-  environment installation failed with Errno 28 (C: out of space). Do not bypass
-  this gate or claim a full pre-push pass. Branch is committed locally, not pushed;
-  no PR exists. Restore capacity, rerun the unchanged full pre-push hook stage,
-  then push and open the prepared body in Temp/validation-tools-pr.md. Replace
-  the provisional #5068 SPEC key with the actual PR number and update this handoff.
+- Complete configured commit and pre-push stages now pass, including pip-audit
+  and fleet guardrails. Earlier environment installation failed with Errno 28;
+  the unchanged stage passed after capacity recovered. No hook was bypassed.
+  Branch is committed locally; publication and protected hosted checks remain.
+  Replace the provisional #5068 SPEC key with the actual PR number after creation.
 - Documentation only; no kernels, public APIs, model coefficients, vendor pins,
   manual sources or measured data changed. Use normal documentation/governance
   hooks; full hosted checks remain required. The local checkout is sparse because
