@@ -182,12 +182,18 @@ const launchValues = (inputs: FlightMetricInputs): Map<FlightMetricId, FlightMet
 
 const curve = (points: readonly MetricTrajectoryPoint[], heading: number): number => {
   const origin = points[0].positionM;
-  const lateral = points.map((sample) => {
+  // ⚡ Bolt Optimization: Use single-pass loop instead of array.map().reduce() to avoid GC pressure
+  let maxLateral = 0;
+  for (let i = 0; i < points.length; i++) {
+    const sample = points[i];
     const deltaX = sample.positionM[0] - origin[0];
     const deltaZ = sample.positionM[2] - origin[2];
-    return -Math.sin(heading) * deltaX + Math.cos(heading) * deltaZ;
-  });
-  return lateral.reduce((selected, value) => Math.abs(value) > Math.abs(selected) ? value : selected, 0);
+    const value = -Math.sin(heading) * deltaX + Math.cos(heading) * deltaZ;
+    if (Math.abs(value) > Math.abs(maxLateral)) {
+      maxLateral = value;
+    }
+  }
+  return maxLateral;
 };
 
 const landingValues = (
