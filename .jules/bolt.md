@@ -217,3 +217,7 @@
 ## 2024-05-18 - Single-Pass Loop for React UseMemo
 **Learning:** Using chained `.map` arrays creates severe GC pressure in high-frequency React hooks, especially when generating large amounts of tabular data for export or snapshot.
 **Action:** Replace `Array.prototype.map` with single-pass loops pre-allocating the necessary array sizes directly in the hook body.
+
+## 2026-09-22 - Eliminate Math.max(...filter) chained spreads
+**Learning:** Using `Math.max(...array.filter(...))` and `Math.min(...array.filter(...))` to compute boundary bounds dynamically allocates intermediate arrays and spreads them onto the call stack, causing garbage collection pressure and risking stack overflow on large region sets.
+**Action:** Replace `Math.max(...spread)` and `Math.min(...spread)` in regional boundary calculation with a single-pass `for` loop to compute bounds without creating throwaway arrays.
