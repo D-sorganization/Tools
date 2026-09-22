@@ -1,3 +1,11 @@
+# Renderer Provenance Handoff Checkpoint — 2026-09-22 (#5303)
+
+- **Repository/worktree:** `Tools`, `C:/Users/diete/Repositories/Worktrees/Tools-renderer-provenance`; branch `fix/5303-renderer-provenance`.
+- **Problem:** `visual_baselines.v1.json` paired the existing reviewed PyQt variation image digest with unreviewed source commit `c599…`; this correctly failed the downstream UpstreamDrift exact-pair contract.
+- **Repair:** Restore the published reviewed source identity `df4101f2825b3b2d255dad1d6f8746818fc82812`. No PNG bytes, tolerances, UI behavior, or scientific claim changes.
+- **TDD evidence:** the exact-identity test failed against `c599…`; after the manifest repair, `python -m pytest -q tests/rate_of_closure/test_visual_baseline_compare.py` passed 10 tests.
+- **Next steps:** complete local governance gates, open a non-draft PR for #5303, then rerun the Tools #5298 cross-repository lane. The independent Gasification checkout 404 remains an external blocker.
+
 # Architecture Rulings Handoff Checkpoint — 2026-09-21 (#4951 & #4946)
 
 - Repository: `Tools`, `C:/Users/diete/Repositories/Tools-repo`.

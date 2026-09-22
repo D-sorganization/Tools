@@ -29,12 +29,11 @@ Five packaged manifests in `src/rate_of_closure/` declare the tab set, cross-che
 - Visual baselines are captured on Linux fleet runners (`RATE_VISUAL_BASELINE_CANDIDATE_DIR`).
 - Gates: `tests/rate_of_closure/test_visualization_*_manifest`, `test_visual_baseline_compare.py`, `test_pyqt_visualization_tab_visibility.py`.
 
-## Renderer prerequisite #4844
+## Renderer provenance #5303
 
-- Worktree `C:/Users/diete/Repositories/Tools-impact-render`; branch `fix/4844-consistent-pyqt-renderer`; commit `SELF`; PR #5090 open.
-- PR and trusted PyQt capture use one digest-pinned Ubuntu 24.04 container; trusted remains on fleet runners. Exact font versions replace alternate-version acceptance; Qt runtime/SIP pins are checked.
-- Published `df4101f28`: two Linux captures pass 73 browser and 23 PyQt tests; all ten PyQt PNGs are byte-identical. The reviewed 20-image proposal preserves tolerances; its provenance test fails before and all 60 local contracts pass after refresh. Both captured sets pass the comparison CLI. Normal hooks and fresh CI remain; #5087 closed unmerged.
-- Continue from `docs/development/rate-pyqt-renderer-4844.md`. Do not accept another host stack under the same image identity.
+- Restore the manifest from unreviewed `c599…/22f664…` to reviewed `df4101…/22f664…`; the image data and tolerance envelopes are unchanged.
+- The regression pins the complete identity, so preserving pixels cannot silently mint a new source provenance. Do not extend the consumer allowlist without linked repeat-capture review.
+- This repair is the producer-side prerequisite for the UpstreamDrift downstream lane on Tools #5298. The separate Gasification checkout failure remains outside renderer scope.
 
 ## Must-Read Architecture Pointers
 

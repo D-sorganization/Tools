@@ -2,7 +2,7 @@
   "schema_id": "rate-of-closure/visual-baselines",
   "schema_version": 1,
   "approval_policy": "proposed-off-default-branch-approved-after-protected-merge",
-  "source_artifact_commit": "c599484502bc4bbf35732d887a520b7d8749b57f",
+  "source_artifact_commit": "df4101f2825b3b2d255dad1d6f8746818fc82812",
   "baselines": [
     {
       "surface": "react",
