@@ -4928,10 +4928,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 13289,
+      "bytes_lf": 14833,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "e84ad77cef56a1c67c1041d1b258555db45fc3580f7317832446bb48df219e1a",
+      "content_sha256_lf": "14f3250925080d66162634d79f0c809bd827e2a779b98583bd8e19b704f521ab",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-MEASURED-GRIP-IMPEDANCE-PY-36DBCCD17447",
       "language": "python",

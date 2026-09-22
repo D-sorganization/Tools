@@ -163,6 +163,45 @@ def audit_grip_passivity(
     return tuple(results)
 
 
+def _solve_nonnegative_two_parameter_least_squares(
+    design: np.ndarray, target: np.ndarray
+) -> tuple[float, float]:
+    """Minimize ``||design @ x - target||²`` over two non-negative parameters.
+
+    In two dimensions the feasible optimum is either the unconstrained solution,
+    one of the two coordinate boundaries, or the origin.  Enumerating those
+    candidates is exact for this convex quadratic and avoids an optional solver
+    dependency in the shared impact kernel.
+    """
+    if design.ndim != 2 or design.shape[1] != 2:
+        raise ValueError("design must have exactly two parameter columns")
+    if target.ndim != 1 or target.shape[0] != design.shape[0]:
+        raise ValueError("target must be a vector aligned with design rows")
+    if not np.all(np.isfinite(design)) or not np.all(np.isfinite(target)):
+        raise ValueError("design and target must be finite")
+
+    candidates = [np.zeros(2)]
+    for column_index in range(2):
+        column = design[:, column_index]
+        denominator = float(column @ column)
+        if denominator > 0.0:
+            parameter = max(0.0, float(column @ target) / denominator)
+            candidate = np.zeros(2)
+            candidate[column_index] = parameter
+            candidates.append(candidate)
+
+    unconstrained, _, _, _ = np.linalg.lstsq(design, target, rcond=None)
+    if np.all(unconstrained >= 0.0):
+        candidates.append(unconstrained)
+
+    def squared_residual(candidate: np.ndarray) -> float:
+        residual = design @ candidate - target
+        return float(residual @ residual)
+
+    best = min(candidates, key=squared_residual)
+    return float(best[0]), float(best[1])
+
+
 def fit_passive_grip_impedance(
     dataset: MeasuredGripDataset, frame_id: str | None = None
 ) -> PassiveGripImpedance:
@@ -176,18 +215,15 @@ def fit_passive_grip_impedance(
     reals = np.array([s.impedance_real for s in dataset.samples])
     imags = np.array([s.impedance_imag for s in dataset.samples])
 
-    # Real part fit: C >= 0 (weighted average of non-negative real parts)
-    c_val = float(np.mean(np.maximum(0.0, reals)))
+    # Real part fit: min_C>=0 ||C - Re(Z)||² has the closed-form NNLS solution.
+    c_val = max(0.0, float(np.mean(reals)))
 
     # Imaginary part: Im(Z) = omega*M - K/omega => omega*Im(Z) = omega^2*M - K
     # Linear model: y = design @ [M, K], where design = [omega^2, -1]
     y = omegas * imags
-    # Non-negative parameter fit for [M, K]: M >= 0, K >= 0
+    # Non-negative parameter fit for [M, K]: M >= 0, K >= 0.
     design = np.column_stack([omegas**2, -np.ones_like(omegas)])
-    # Ordinary least squares with projection to positive orthant
-    sol, _, _, _ = np.linalg.lstsq(design, y, rcond=None)
-    m_val = max(1e-6, float(sol[0]))
-    k_val = max(1e-6, float(sol[1]))
+    m_val, k_val = _solve_nonnegative_two_parameter_least_squares(design, y)
 
     m_diag = np.zeros(6)
     c_diag = np.zeros(6)

@@ -64,6 +64,20 @@ $$Z_{\text{model}}(\omega) = C + i\left(\omega M - \frac{K}{\omega}\right)$$
 
 has $\text{Re}(Z_{\text{model}}(\omega)) = C \succeq 0$ and is unconditionally passive for all $\omega > 0$.
 
+For the scalar measured axis, the damping estimator uses its closed-form
+non-negative least-squares solution $C=\max(0,\operatorname{mean}(\operatorname{Re}(Z)))$.
+The imaginary-part estimator solves
+
+$$\min_{M,K \geq 0}\left\|\omega\,\operatorname{Im}(Z_{\mathrm{meas}})-
+\left(\omega^2 M-K\right)\right\|_2^2.$$
+
+The implementation enumerates the unconstrained solution, each coordinate boundary,
+and the origin, selecting the least-residual feasible candidate.  This is the exact
+active-set solution for the two-parameter convex problem; it does not independently
+clip an unconstrained mass or stiffness estimate.  The estimator preserves passivity,
+but its synthetic tests are numerical checks rather than physical coefficient
+identification.
+
 ## FRF Magnitude and Phase Agreement with Quantified Uncertainty
 
 Given measured impedance $Z_{\text{meas}}(\omega)$ with standard deviation $\sigma_{|Z|}(\omega)$ and candidate model $Z_{\text{model}}(\omega)$:

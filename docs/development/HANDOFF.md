@@ -1,3 +1,22 @@
+# Impact Acoustics Estimator Checkpoint — 2026-09-22 (Tools #5299)
+
+- Repository/worktree: `Tools`, `C:/Users/diete/Repositories/Worktrees/Tools-constrained-grip-nnls`.
+  Branch `fix/5299-constrained-grip-nnls`; governing issue #5299, a measured-grip
+  identification follow-up to #5072 under parent program #5068.
+- Replaced the claimed-but-not-implemented NNLS behavior in the scalar imaginary
+  impedance fit. The former ordinary-least-squares estimate was coordinate-clipped;
+  the current implementation enumerates the unconstrained point, both coordinate
+  boundaries, and the origin to select the exact non-negative two-parameter optimum.
+- TDD evidence: the RED fixture has an unconstrained negative mass and demonstrates
+  that clipping leaves stiffness at 10 while the constrained boundary requires
+  stiffness $-\operatorname{mean}(y)$. A second RED fixture covers the scalar damping
+  boundary. 78 affected grip, impact, shaft, and API-contract tests pass after the fix;
+  ruff, mypy, module inventory, and all manual-governance gates are clean.
+- This preserves numerical passivity but does not turn synthetic data into measured
+  grip, shaft, or acoustic validation evidence. Physical identification remains an
+  open parent-program requirement.
+- Next step: open a PR for #5299 and merge only after its checks pass.
+
 # Architecture Rulings Handoff Checkpoint — 2026-09-21 (#4951 & #4946)
 
 - Repository: `Tools`, `C:/Users/diete/Repositories/Tools-repo`.
