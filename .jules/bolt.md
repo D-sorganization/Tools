@@ -214,3 +214,6 @@
 ## 2026-09-20 - Eliminate Math.min(...spread) chained with map
 **Learning:** Using `Math.min(...outcomes.filter(...).map(...))` to calculate the minimum cost per trial dynamically generates huge intermediate arrays and puts them on the call stack, leading to high garbage collection churn and risking stack overflows on large outcomes arrays.
 **Action:** Always replace spread-based min/max combined with mapping functions with a single-pass `for` loop that iterates over the source array once and calculates minimums in place.
+## 2024-05-18 - Single-Pass Loop for React UseMemo
+**Learning:** Using chained `.map` arrays creates severe GC pressure in high-frequency React hooks, especially when generating large amounts of tabular data for export or snapshot.
+**Action:** Replace `Array.prototype.map` with single-pass loops pre-allocating the necessary array sizes directly in the hook body.

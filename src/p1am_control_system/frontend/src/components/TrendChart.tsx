@@ -397,16 +397,29 @@ export const TrendChart: React.FC<TrendChartProps> = ({ history, tagValues }) =>
   // Snapshot/export data for the shared SnapshotButton: PNG + SVG come straight
   // from the <svg> ref; CSV is the full-resolution visible slice of the selected
   // tags. `undefined` (no tags / no data) hides the CSV button.
-  const snapshotCsv =
-    selectedTags.length > 0 && activeHistory.length > 0
-      ? {
-          headers: ["index", ...selectedTags.map((tagId) => `tag_${tagId}`)],
-          rows: activeHistory.map((sample, idx) => [
-            idx,
-            ...selectedTags.map((tagId) => sample[tagId] ?? 0),
-          ]),
-        }
-      : undefined;
+  // ⚡ Bolt Optimization: Replace chained array `.map` calls with a single-pass loop
+  // pre-allocating the rows array to eliminate intermediate array allocations and GC pressure.
+  const snapshotCsv = useMemo(() => {
+    if (selectedTags.length === 0 || activeHistory.length === 0) return undefined;
+
+    const headers = ["index"];
+    for (let i = 0; i < selectedTags.length; i++) {
+      headers.push(`tag_${selectedTags[i]}`);
+    }
+
+    const rows = new Array(activeHistory.length);
+    for (let i = 0; i < activeHistory.length; i++) {
+      const sample = activeHistory[i];
+      const row = new Array(selectedTags.length + 1);
+      row[0] = i;
+      for (let j = 0; j < selectedTags.length; j++) {
+        row[j + 1] = sample[selectedTags[j]] ?? 0;
+      }
+      rows[i] = row;
+    }
+
+    return { headers, rows };
+  }, [selectedTags, activeHistory]);
 
   const gridLinesY = [0, 0.25, 0.5, 0.75, 1];
 

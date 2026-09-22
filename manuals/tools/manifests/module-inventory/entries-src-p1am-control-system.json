@@ -10990,10 +10990,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 32386,
+      "bytes_lf": 32906,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c66857c2c05f437b794a10fa67102d691fc3d7f1cc9088b152d9379aeedd55b4",
+      "content_sha256_lf": "ee7cb4e00bec9c9445fd2b3e43ce3b7d523882266c061648f9b7c7e5c57e08f6",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-COMPONENTS-TRENDCHART-TSX-836AB6580988",
       "language": "typescript-react",
