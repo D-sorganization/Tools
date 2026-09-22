@@ -131,7 +131,7 @@
   "governed_handoff_files": {
     "AGENT_HANDOFF.md": {
       "path": "AGENT_HANDOFF.md",
-      "sha256_lf": "80f9677c3ac19df6bee8a1de213399717988d6cd505a5444b0577f9273672abc",
+      "sha256_lf": "75e785cfdff2c8c5fd8b535d1a5640e0a249cc018e15212ac48d25583f4b06d4",
       "line_count": 150,
       "max_line_budget": 150,
       "required_sections": [

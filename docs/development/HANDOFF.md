@@ -1,3 +1,30 @@
+# Deferred Physical Validation Planning — 2026-09-22
+
+- Worktree: `C:/Users/diete/Repositories/Worktrees/Tools-validation-planning`.
+  Branch `docs/deferred-validation-planning`; source `be7d0435d`; PR #5306.
+  Governing issues #5068/#4729/#4267; central Repository_Management #1687.
+- Added repo-owned DV-5068 (impact/grip/radiation measurements), DV-4729
+  (unavailable rig qualification), DV-4267 (surface calibration), original
+  issue snapshots and a validated catalog. Parent #4706 reuses DV-4729.
+- All three issues stay open for numerical, source-research, contract,
+  integration, packaging and UI work. Available recordings are usable now.
+  Board/resource evidence is absent; no physical or perceptual claim is approved.
+- Follow the central deferred-validation rule. After a protected merge, verify
+  published bytes and unchanged source issues before posting immutable scope
+  links and recording central receipts. No source issue closes in this PR.
+- Commit checks pass, including design-manual, chapter/exemplar, artifact,
+  handoff, LF normalization, SPEC and formatting gates. The sparse worktree
+  carries only the existing authorities needed by those gates.
+- Complete configured commit and pre-push stages now pass, including pip-audit
+  and fleet guardrails. Earlier environment installation failed with Errno 28;
+  the unchanged stage passed after capacity recovered. No hook was bypassed.
+  Branch is pushed and PR #5306 is open; protected hosted checks and
+  verified default-branch publication remain.
+- Documentation only; no kernels, public APIs, model coefficients, vendor pins,
+  manual sources or measured data changed. Use normal documentation/governance
+  hooks; full hosted checks remain required. The local checkout is sparse because
+  C: is nearly full; preserve peer worktrees and do not claim a full local test run.
+
 # Renderer Provenance Handoff Checkpoint — 2026-09-22 (#5303)
 
 - **Repository/worktree:** `Tools`, `C:/Users/diete/Repositories/Worktrees/Tools-renderer-provenance`; branch `fix/5303-renderer-provenance`.
@@ -67,7 +94,6 @@
 - Linters (`ruff check`, `ruff format`), `black`, and `mypy` pass with 0 errors across all touched files.
 - Module inventory refreshed (`python -m scripts.build_tools_module_inventory --check` passed).
 - Change log validated (`python shared_scripts/spec_changelog.py validate --spec SPEC.md` passed).
-
 
 # Handoff Checkpoint — Wedge Delivery Metrics & Linear Waterfall Visualization (#4162) — 2026-09-19
 
@@ -144,6 +170,7 @@
 - Technical reference: `docs/development/impact-acoustics/MEASURED_GRIP_IMPEDANCE.md`.
 
 # Handoff Checkpoint — Rate of Closure: Release Gate Runner and Campaign State Transition (#4922, #4201) — 2026-09-20
+
 - **Repository/worktree**: `Tools`, `c:\Users\diete\Repositories\Tools-repo`
 - **Branch**: `feat/4922-rate-of-closure-release-gate`; commit `SELF`
 - **Governing issue**: `D-sorganization/Tools#4922` (Parent #4201)
@@ -183,6 +210,7 @@
   - Release lease on issue #4922
 
 # Handoff Checkpoint — Rate of Closure: Frozen PyQt6 Qualification and Scientific Parity (#4382) — 2026-09-20
+
 - **Repository/worktree**: `Tools`, `c:\Users\diete\Repositories\Tools-repo`
 - **Branch**: `feat/4382-frozen-pyqt6-qualification`; commit `SELF`
 - **Governing issue**: `D-sorganization/Tools#4382` (Parent Epic #4377)
