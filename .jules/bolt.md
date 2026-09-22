@@ -217,3 +217,7 @@
 ## 2024-05-18 - Single-Pass Loop for React UseMemo
 **Learning:** Using chained `.map` arrays creates severe GC pressure in high-frequency React hooks, especially when generating large amounts of tabular data for export or snapshot.
 **Action:** Replace `Array.prototype.map` with single-pass loops pre-allocating the necessary array sizes directly in the hook body.
+
+## $(date +%Y-%m-%d) - Eliminate Math.min(...spread) chained with map in variation validations
+**Learning:** Using `Math.min(...values)` on dynamically sized arrays for checking mathematical bounds of covariance or correlation matrices creates garbage collection pressure by pushing arrays to the call stack, with a high risk of stack overflows.
+**Action:** Replace `Math.min(...values)` and `Math.max(...values)` with single-pass `for` loops in numerical validation functions (e.g. eigenvalue scaling) to avoid intermediate array generations and prevent "Maximum call stack size exceeded" errors.
