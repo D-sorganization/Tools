@@ -76,7 +76,13 @@ export function validateGroupMatrix(group: PerturbationGroupTs): void {
     }
   }
   const { values } = symmetricEigen(group.matrix);
-  if (Math.min(...values) < -MATRIX_TOLERANCE) {
+  // ⚡ Bolt Optimization: Replace Math.min(...values) with single-pass loop
+  // to avoid intermediate arrays and prevent call stack limits
+  let minVal = Infinity;
+  for (let i = 0; i < values.length; i++) {
+    if (values[i] < minVal) minVal = values[i];
+  }
+  if (minVal < -MATRIX_TOLERANCE) {
     throw new Error("matrix must be positive semidefinite");
   }
   if (group.matrixKind === "correlation") {
