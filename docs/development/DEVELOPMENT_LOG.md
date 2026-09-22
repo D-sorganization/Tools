@@ -27,9 +27,9 @@ reachable from any live state and `abandoned` from `parked`.
 - **PR:** pending
 - **Paths:** `docs/development/planning/`, `docs/development/HANDOFF.md`, `AGENT_HANDOFF.md`
 - **Started:** 2026-09-22
-- **Last verified:** 2026-09-22 (source issue bodies unchanged; strict three-plan catalog and existing design-manual governance pass)
+- **Last verified:** 2026-09-22 (source issue bodies unchanged; strict three-plan catalog, design-manual governance and full commit hook stage pass; pre-push environment install failed with disk-full Errno 28)
 - **Summary:** Preserve unavailable experiments for Board review without closing mixed software epics or supplying fabricated measurements.
-- **Next step:** Validate documentation/governance, publish, verify immutable plan bytes and keep software issues open.
+- **Next step:** Restore C: capacity, pass the unchanged pre-push stage, then publish and verify immutable plan bytes while keeping software issues open.
 
 ### DL-#5303 · Reviewed Renderer Source Provenance
 
