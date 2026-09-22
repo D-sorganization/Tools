@@ -410,10 +410,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 16578,
+      "bytes_lf": 16735,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a7543abdf573cbd110c391b11f1ed54b15da13f6e07f55aa96733fdc2ca3ed96",
+      "content_sha256_lf": "48cda76adc10d28447a7200a3455cd4b35cd5c185856a7905d782290a0da997a",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-BALLFLIGHTMETRICS-TS-9346CFA8FE4E",
       "language": "typescript",
