@@ -273,11 +273,15 @@ def assess_measured_frf_agreement(
 
     coverage_frac = within_count / len(measured.samples)
     passivity_ok = all(a.is_passive for a in audit_grip_passivity(measured))
+    provenance_ok = all(
+        source.kind == "measurement-derived" for source in measured.sources
+    )
     qualified = (
         max_mag_err <= max_relative_magnitude_error
         and max_phase_err <= max_phase_error_rad
         and passivity_ok
         and strain_qualified
+        and provenance_ok
     )
 
     return FRFAgreementSummary(

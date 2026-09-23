@@ -78,6 +78,14 @@ Given measured impedance $Z_{\text{meas}}(\omega)$ with standard deviation $\sig
    $$z(\omega) = \frac{|Z_{\text{model}}(\omega) - Z_{\text{meas}}(\omega)|}{\max(\sigma_{|Z|}(\omega), 10^{-9})}$$
    Assessing whether the model predictions fall within the declared $k\sigma$ confidence interval (default $k=2.0$).
 
+Numerical agreement is distinct from physical qualification. `synthetic` and
+`analytical` source declarations can exercise serialization, fitting, passivity, and
+FRF error calculations, but `assess_measured_frf_agreement` refuses to report an
+operationally qualified result unless every source is `measurement-derived`. A
+measurement-derived source must carry a calibration digest; the digest establishes
+an identity contract for a future traceable study and does not itself prove the
+quality of the calibration.
+
 ## Physical Band & Strain Qualification
 
 - Frequency evaluations are strictly bounded within `[f_min, f_max]` (e.g. 10–500 Hz for translation/rotation $x_h, z_h$, 10–100 Hz for rotation $y_h$). Uncalibrated extrapolation outside this band is refused.
