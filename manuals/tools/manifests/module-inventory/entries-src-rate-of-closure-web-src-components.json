@@ -6181,10 +6181,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8555,
+      "bytes_lf": 8759,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6c4544c0f03c1912fa8ae11ddde45d8b3c478b532bfab8905a790c4d7b8253c6",
+      "content_sha256_lf": "3fb1c94a59b9d8efa5de4fad184724aeb58d37493da01a73c196d94d9aeb79af",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-VARIATIONLANDING-TSX-68B456F6188B",
       "language": "typescript-react",
