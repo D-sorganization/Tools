@@ -18,9 +18,22 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
-### DL-#5297 · Measured Grip FRF Qualification Requires Operating-Strain Evidence
+### DL-#5299 · Constrained Passive Measured-Grip Identification
 
 - **State:** in_review
+- **Owner:** codex
+- **Issue:** D-sorganization/Tools#5299 (follow-up to #5072; parent #5068)
+- **PR:** D-sorganization/Tools#5300
+- **Branch:** `fix/5299-constrained-grip-nnls`
+- **Paths:** `src/shared/python/golf_club/measured_grip_impedance.py`, `tests/shared/python/golf_club/test_measured_grip_impedance.py`, `docs/development/impact-acoustics/MEASURED_GRIP_IMPEDANCE.md`
+- **Started:** 2026-09-22
+- **Last verified:** 2026-09-22 (TDD RED demonstrated clipped mass/stiffness and damping errors at active constraints; 78 affected grip, impact, shaft, and API-contract tests pass; ruff, mypy, module inventory, and all manual-governance gates pass.)
+- **Summary:** Replaces clipped ordinary least squares with the exact feasible solution of the two-parameter non-negative imaginary-impedance fit. The model remains passive by construction and does not make a physical identification claim from synthetic evidence.
+- **Next step:** Monitor required PR checks, then merge. Physical coefficient identification still requires traceable measurements.
+
+### DL-#5297 · Measured Grip FRF Qualification Requires Operating-Strain Evidence
+
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** D-sorganization/Tools#5297 (follow-up to #5072; parent #5068)
 - **PR:** D-sorganization/Tools#5298
@@ -33,7 +46,7 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5301 · Measured-Grip Fixture Provenance and Qualification Boundary
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** D-sorganization/Tools#5301 (follow-up to #5072; parent #5068)
 - **PR:** D-sorganization/Tools#5302 (dependent on #5298)

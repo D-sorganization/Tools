@@ -225,6 +225,52 @@ def test_fit_passive_grip_impedance(dataset: MeasuredGripDataset) -> None:
         assert z_model[0, 0].real >= 0.0
 
 
+def test_passive_fit_uses_constrained_optimum_when_mass_is_active(
+    dataset_payload: dict[str, Any],
+) -> None:
+    """A zero-mass boundary must re-fit stiffness instead of clipping OLS."""
+    corrupted = copy.deepcopy(dataset_payload)
+    target_values = []
+    for sample in corrupted["samples"]:
+        omega = float(sample["angular_frequency_rad_s"])
+        # y = omega * Im(Z) = -2 * omega**2 - 10 gives an unconstrained
+        # fit M=-2, K=10.  With M constrained to zero, least squares instead
+        # requires K=-mean(y), which differs substantially from clipping K=10.
+        target = -2.0 * omega**2 - 10.0
+        sample["impedance_imag"] = target / omega
+        target_values.append(target)
+    constrained = fit_passive_grip_impedance(
+        measured_grip_from_json(json.dumps(corrupted))
+    )
+    stiffness = np.asarray(constrained.stiffness_factor).T @ np.asarray(
+        constrained.stiffness_factor
+    )
+    mass = np.asarray(constrained.inertance_factor).T @ np.asarray(
+        constrained.inertance_factor
+    )
+
+    assert mass[0, 0] == pytest.approx(0.0, abs=1e-12)
+    assert stiffness[0, 0] == pytest.approx(-float(np.mean(target_values)))
+
+
+def test_passive_fit_uses_constrained_optimum_when_damping_is_active(
+    dataset_payload: dict[str, Any],
+) -> None:
+    """The scalar damping fit is the non-negative mean, not mean of positives."""
+    corrupted = copy.deepcopy(dataset_payload)
+    observed_damping = [-5.0, 1.0, 1.0, -2.0, 1.0, 1.0, 1.0]
+    for sample, damping in zip(corrupted["samples"], observed_damping, strict=True):
+        sample["impedance_real"] = damping
+    constrained = fit_passive_grip_impedance(
+        measured_grip_from_json(json.dumps(corrupted))
+    )
+    damping = np.asarray(constrained.damping_factor).T @ np.asarray(
+        constrained.damping_factor
+    )
+
+    assert damping[0, 0] == pytest.approx(0.0, abs=1e-12)
+
+
 def test_synthetic_frf_agreement_is_numerical_not_physical(
     dataset: MeasuredGripDataset,
 ) -> None:
