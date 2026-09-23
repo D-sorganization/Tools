@@ -23,7 +23,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **State:** in_review
 - **Owner:** claude
 - **Issue:** D-sorganization/Tools#5315
-- **PR:** pending
+- **PR:** D-sorganization/Tools#5316
 - **Branch:** `fix/thermal-profile-step-power-cutoff`
 - **Paths:** `src/shared/python/sidekick/process_calculators/thermal_profile_predictor.py`, `tests/shared/python/process_calculators/test_thermal_profile.py`
 - **Started:** 2026-09-23

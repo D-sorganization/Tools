@@ -1,7 +1,7 @@
 # Thermal Profile Step-Cutoff Checkpoint — 2026-09-23 (Tools #5315)
 
 - Repository/worktree: `Tools`, `C:/Users/diete/Repositories/Tools-worktrees/thermal-step-cutoff`.
-  Branch `fix/thermal-profile-step-power-cutoff`; governing issue #5315 (downstream reference Tools_Private#1417); implementation `SELF`; log DL-#5315.
+  Branch `fix/thermal-profile-step-power-cutoff`; governing issue #5315 (downstream reference Tools_Private#1417); implementation `SELF`; log DL-#5315; PR #5316.
 - `predict_temperature_profile` integrated with SciPy default RK45 tolerances (rtol 1e-3); an accepted step 439.3→558.0 s straddled a 500 s power cutoff, leaving 0.298 °C pointwise error (0.64–0.78 °C for off-grid cutoffs). The solver now uses rtol 1e-6 / atol 1e-8 and raises on integration failure; worst error drops to 0.001–0.01 °C. Signature unchanged.
 - TDD: `TestStepPowerCutoff` in `tests/shared/python/process_calculators/test_thermal_profile.py` compares every sample with the closed-form piecewise solution at 0.1 °C (4 RED before the fix); non-positive/non-finite `thermal_mass` now raises `ValueError`.
 - Next step: after merge, release `ud-tools` so downstream consumers pick up the fix, then drop the downstream strict xfail.
