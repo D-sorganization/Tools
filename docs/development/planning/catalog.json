@@ -1,0 +1,102 @@
+{
+  "schema_version": 1,
+  "repository": "D-sorganization/Tools",
+  "entries": [
+    {
+      "id": "DV-5068",
+      "title": "Epic: Shared Flexible Impact, Prestressed Shaft and Vibroacoustic Models",
+      "source_issue": "https://github.com/D-sorganization/Tools/issues/5068",
+      "source_snapshot": "source-5068.json",
+      "record": "DV-5068.md",
+      "disposition": "split",
+      "kind": "physical-measurement",
+      "status": "deferred",
+      "rationale": "Shared kernels and numerical qualification can progress, but measured shaft/grip/contact identification, held-out force/spin and radiation validation require unavailable calibrated observations.",
+      "prerequisites": [
+        {
+          "name": "Equipment-specific shaft/head/grip measurements with calibration and operating-strain evidence",
+          "evidence": null
+        },
+        {
+          "name": "Synchronized force, ball spin/launch and structural-motion measurements over held-out impact positions",
+          "evidence": null
+        },
+        {
+          "name": "Calibrated microphones, observer geometry and independent radiation reference data",
+          "evidence": null
+        }
+      ],
+      "acceptance": [
+        "Identify physical coefficients within a declared frequency/strain/domain band and retain calibration/source hashes and uncertainty.",
+        "Independently validate contact force/spin, face/hosel/shaft response and observer pressure; numerical convergence alone is insufficient.",
+        "Coordinate blinded sweetness work through UpstreamDrift; publish no physical/player effect size without traceable held-out evidence."
+      ],
+      "board": {
+        "decision": "pending",
+        "evidence": null
+      },
+      "activation_issue": null
+    },
+    {
+      "id": "DV-4729",
+      "title": "[SUBEPIC][TOOLS-M12] Qualification and open release",
+      "source_issue": "https://github.com/D-sorganization/Tools/issues/4729",
+      "source_snapshot": "source-4729.json",
+      "record": "DV-4729.md",
+      "disposition": "split",
+      "kind": "physical-measurement",
+      "status": "deferred",
+      "rationale": "Recorded-rig fixtures and hardware camera-count/disconnect evidence require access to real rigs; determinism, property tests and packaging remain executable.",
+      "prerequisites": [
+        {
+          "name": "Named camera rigs, operators and authorized sanitized recordings",
+          "evidence": null
+        },
+        {
+          "name": "Frozen camera/mode/topology matrix and measured timing/storage metadata",
+          "evidence": null
+        }
+      ],
+      "acceptance": [
+        "Capture known-rig fixtures and camera-count/disconnect behavior with provenance; coordinate with UpstreamDrift capture tooling.",
+        "Measure hardware performance/storage budgets and retain failures, unsupported modes and exact configuration.",
+        "Do not treat synthetic fixtures or skipped hardware lanes as rig qualification."
+      ],
+      "board": {
+        "decision": "pending",
+        "evidence": null
+      },
+      "activation_issue": null
+    },
+    {
+      "id": "DV-4267",
+      "title": "EPIC: Qualified Ball Landing, Bounce, Roll, and Ground-Surface Modeling",
+      "source_issue": "https://github.com/D-sorganization/Tools/issues/4267",
+      "source_snapshot": "source-4267.json",
+      "record": "DV-4267.md",
+      "disposition": "split",
+      "kind": "physical-measurement",
+      "status": "deferred",
+      "rationale": "Surface defaults remain illustrative until equipment/surface-specific calibration and independent measurements exist.",
+      "prerequisites": [
+        {
+          "name": "Named ground surfaces with controlled condition metadata",
+          "evidence": null
+        },
+        {
+          "name": "Calibrated ball position/velocity/spin observations and independent trials",
+          "evidence": null
+        }
+      ],
+      "acceptance": [
+        "Record sources, uncertainty and applicability for surface parameters and evaluate held-out bounce/roll trajectories.",
+        "Preserve first-contact geometry, terminal spin and carry/total-distance semantics; do not relabel illustrative presets as calibrated."
+      ],
+      "board": {
+        "decision": "pending",
+        "evidence": null
+      },
+      "activation_issue": null
+    }
+  ]
+}

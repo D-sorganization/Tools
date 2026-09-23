@@ -5922,6 +5922,8 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 <!-- prettier-ignore-start -->
 
 | Date       | PR         | Changes    |
+| 2026-09-22 | #5306 | Preserve unavailable impact, rig and surface measurements in Board planning while keeping mixed software scopes active. |
+| 2026-09-22 | #5303 | Restore the reviewed Rate of Closure visual-baseline source identity so unchanged reference bytes retain their approved provenance. |
 | 2026-09-22 | #5295 | chore(rate-web): remove stale merge-leftover `groundRegionalExecution.ts.orig` (no behavior change). |
 | 2026-09-22 | #5302 | fix(impact): distinguish synthetic fixtures from calibrated measurement provenance before measured-grip FRF qualification (#5301). |
 | 2026-09-22 | #5298 | fix(impact): require explicit operating-strain evidence before measured-grip FRF agreement can certify a qualified response (#5297). |
@@ -7650,6 +7652,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-22: Measured-Grip Provenance Qualification Guard (#5301 / #5302)
 
 - **2026-09-22**: fix(impact, #5301) — Keep formula-generated grip fixtures synthetic and require calibrated measurement-derived provenance alongside operating-strain acceptance before FRF agreement can qualify an operating response.
+
 ## 2026-09-19: Native File Commands and Workspace Persistence (#4220)
 
 - **2026-09-19**: feat(rate-ui, #4220) — Wire native File commands (New, Open, Open Recent, Save, Save As, Import, Export, Close) into RateOfClosureMainWindow and ApplicationToolstrip with dirty tracking and destructive action confirmation prompts.

@@ -9,63 +9,63 @@
   },
   "repository": "D-sorganization/Tools",
   "issue_url": "https://github.com/D-sorganization/Tools/issues/4730",
-  "pr_url": "https://github.com/D-sorganization/Tools/pull/5055",
+  "pr_url": "https://github.com/D-sorganization/Tools/pull/5304",
   "commit_evidence": {
-    "local_head_sha": "63c09da3c817fa0c6e89e7031cf94701e6609239",
+    "local_head_sha": "83601a5439b325b22aad22b640a8fae2bc51dd36",
     "remote_head_sha": null,
-    "reviewed_tree_sha": "e06ceae17f0866a949e469a508235814c38ab051",
+    "reviewed_tree_sha": "21abb19fd1cae7de2b459e06cb4f254f7581532e",
     "merge_sha": null
   },
   "branch_and_worktree": {
-    "branch": "feat/4922-rate-of-closure-release-gate",
-    "worktree": "C:\\Users\\diete\\Repositories\\Tools-repo",
-    "is_clean": false
+    "branch": "fix/5303-renderer-provenance",
+    "worktree": "C:\\Users\\diete\\Repositories\\Worktrees\\Tools-renderer-provenance",
+    "is_clean": true
   },
   "check_evidence": {
     "check_design_manual_governance": {
       "command": "python -m scripts.check_design_manual_governance",
       "status": "passed",
-      "timestamp": "2026-09-20T08:31:16Z"
+      "timestamp": "2026-09-22T19:00:07Z"
     },
     "build_tools_module_inventory": {
       "command": "python -m scripts.build_tools_module_inventory --check",
       "status": "passed",
-      "timestamp": "2026-09-20T08:31:16Z"
+      "timestamp": "2026-09-22T19:00:07Z"
     },
     "lint_tools_textbook_chapters": {
       "command": "python -m scripts.lint_tools_textbook_chapters",
       "status": "passed",
-      "timestamp": "2026-09-20T08:31:16Z"
+      "timestamp": "2026-09-22T19:00:07Z"
     },
     "check_tools_exemplars": {
       "command": "python -m scripts.check_tools_exemplars",
       "status": "passed",
-      "timestamp": "2026-09-20T08:31:16Z"
+      "timestamp": "2026-09-22T19:00:07Z"
     },
     "check_tools_calculation_freshness": {
       "command": "python -m scripts.check_tools_calculation_freshness --check",
       "status": "passed",
-      "timestamp": "2026-09-20T08:31:16Z"
+      "timestamp": "2026-09-22T19:00:07Z"
     },
     "check_tools_manual_qa": {
       "command": "python -m scripts.check_tools_manual_qa --check",
       "status": "passed",
-      "timestamp": "2026-09-20T08:31:16Z"
+      "timestamp": "2026-09-22T19:00:07Z"
     },
     "check_tools_publication_projection": {
       "command": "python -m scripts.check_tools_publication_projection --check",
       "status": "passed",
-      "timestamp": "2026-09-20T08:31:16Z"
+      "timestamp": "2026-09-22T19:00:07Z"
     },
     "render_tools_design_manual": {
       "command": "python -m scripts.render_tools_design_manual --check",
       "status": "passed",
-      "timestamp": "2026-09-20T08:31:16Z"
+      "timestamp": "2026-09-22T19:00:07Z"
     },
     "check_tools_handoff": {
       "command": "python -m scripts.check_tools_handoff --check",
       "status": "passed",
-      "timestamp": "2026-09-20T08:31:16Z"
+      "timestamp": "2026-09-22T19:00:07Z"
     }
   },
   "artifact_and_test_digests": {
@@ -112,7 +112,7 @@
       "TOOLS-HUMAN-APPROVAL-PENDING",
       "TOOLS-MARKERLESS-EXEMPLAR-BLOCKED"
     ],
-    "expiry_timestamp": "2026-12-19T08:31:16Z"
+    "expiry_timestamp": "2026-12-21T19:00:07Z"
   },
   "blockers": [
     {
@@ -127,11 +127,11 @@
     }
   ],
   "next_dependency": "TOOLS-M0 (#4708 / #4734) and parent epic DOC-TOOLS (#4707) closure",
-  "freshness_timestamp": "2026-09-20T08:31:16Z",
+  "freshness_timestamp": "2026-09-22T19:00:07Z",
   "governed_handoff_files": {
     "AGENT_HANDOFF.md": {
       "path": "AGENT_HANDOFF.md",
-      "sha256_lf": "cb805a5a8e32013002644b430c6e8165d4aa26c147ceb6785847ffecddcedff5",
+      "sha256_lf": "75e785cfdff2c8c5fd8b535d1a5640e0a249cc018e15212ac48d25583f4b06d4",
       "line_count": 150,
       "max_line_budget": 150,
       "required_sections": [
@@ -179,13 +179,13 @@
     },
     "src/rate_of_closure/AGENT_HANDOFF.md": {
       "path": "src/rate_of_closure/AGENT_HANDOFF.md",
-      "sha256_lf": "7311b23eecba4d643a2994e486972813fb7f0b54e636a5703d7dfa81a8f11e1d",
-      "line_count": 63,
+      "sha256_lf": "50fa4544cf64f07e1bd83ccfa3e68a497a936638c876702e58243be1d7eddcd1",
+      "line_count": 62,
       "max_line_budget": 150,
       "required_sections": [
         "## What This Tool Is Now",
         "## Active Epics \u2014 Golf Epics Merged",
-        "## Renderer prerequisite #4844",
+        "## Renderer provenance #5303",
         "## Must-Read Architecture Pointers",
         "## Gate Commands (This Tool)",
         "## Do-Not List"

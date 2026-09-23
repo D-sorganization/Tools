@@ -1,0 +1,76 @@
+{
+  "number": 4729,
+  "html_url": "https://github.com/D-sorganization/Tools/issues/4729",
+  "title": "[SUBEPIC][TOOLS-M12] Qualification and open release",
+  "body": "## Status as of 2026-09-19\n\nStatus as of 2026-09-19\n- Dependencies: M8 (#5118) and M10 (#5121) merged; M11 (#4719) partial.\n- Nothing delivered against this issue yet: recorded-rig fixtures, camera-count matrix, disconnect/determinism/perf budgets, packaging and release evidence all open.\n- Coordinate with UpstreamDrift #9069 for rig recordings rather than duplicating capture tooling.\n\n---\n\nParent epic: [MOCAP-TOOLS](https://github.com/D-sorganization/Tools/issues/4706)\n\n## Outcome\n\nQualification and open release\n\n## Scope\n\nKnown rigs, recorded fixtures, property/perturbation tests, camera-count matrix, disconnects, determinism, performance/storage budgets, documentation, packaging, and handoff.\n\n## Authority and boundary\n\n- Owning repository: `D-sorganization/Tools`\n- Parent authority: MIT vendor-neutral data contracts, reference algorithms, backend protocols, session interchange, and C3D read/write/round-trip compatibility.\n- Handoff: `AGENT_HANDOFF.md`\n- Do not duplicate contracts owned by another repository. Integrate through versioned public seams.\n- Unknown, unsupported, unapproved, private, or unavailable states must remain explicit and fail closed where authority is required.\n\n## Dependencies\n\n- [TOOLS-M8](https://github.com/D-sorganization/Tools/issues/4726)\n- [TOOLS-M10](https://github.com/D-sorganization/Tools/issues/4727)\n- [TOOLS-M11](https://github.com/D-sorganization/Tools/issues/4719)\n\n## Acceptance\n\n- Exact-HEAD export, protected checks, release artifacts, compatibility matrix, and post-merge verification pass.\n- Public APIs and schemas are versioned, deterministic, documented, and exercised through consumer-facing contract tests.\n- Error paths, missing data, limits, cancellation/recovery where relevant, provenance, and compatibility are tested.\n- Repository SPEC/rules, calculation/manual traceability, user help, and `AGENT_HANDOFF.md` are updated with implementation.\n\n## TDD and evidence contract\n\n1. Capture the existing behavior and intended contract with a failing test before implementation.\n2. Implement with DbC, DRY ownership, Law of Demeter boundaries, typed failures, and bounded resources.\n3. Run focused tests and lint/type/format gates, then the repository's full required local gate.\n4. Re-run from an exact-HEAD clean export/worktree to prove portability.\n5. Open a full non-draft PR and verify exact head SHA, protected checks, reviews, merge SHA, and post-merge behavior/artifacts.\n6. Record current limitations, blockers, test evidence, issue/PR links, and next dependency in the handoff.\n\n## Closing policy\n\nFeature work closes only through a merged implementation PR using a closing keyword, or a narrowly reviewed exemption that supplies equivalent evidence. Planning text or local green tests alone do not close this issue.\n",
+  "updated_at": "2026-09-22T21:59:05Z",
+  "labels": [
+    {
+      "id": 8985621568,
+      "node_id": "LA_kwDOPQ5sz88AAAACF5W0QA",
+      "url": "https://api.github.com/repos/D-sorganization/Tools/labels/enhancement",
+      "name": "enhancement",
+      "color": "a2eeef",
+      "default": true,
+      "description": "New feature or request",
+      "archived_at": null,
+      "archived_by": null
+    },
+    {
+      "id": 10796035341,
+      "node_id": "LA_kwDOPQ5sz88AAAACg35tDQ",
+      "url": "https://api.github.com/repos/D-sorganization/Tools/labels/P2",
+      "name": "P2",
+      "color": "0e8a16",
+      "default": false,
+      "description": "Medium priority",
+      "archived_at": null,
+      "archived_by": null
+    },
+    {
+      "id": 12045288190,
+      "node_id": "LA_kwDOPQ5sz88AAAACzfSC_g",
+      "url": "https://api.github.com/repos/D-sorganization/Tools/labels/readiness-program",
+      "name": "readiness-program",
+      "color": "8B0000",
+      "default": false,
+      "description": "Fleet Readiness Program 2026-Q4 (RM master epic)",
+      "archived_at": null,
+      "archived_by": null
+    },
+    {
+      "id": 12045603142,
+      "node_id": "LA_kwDOPQ5sz88AAAACzflRRg",
+      "url": "https://api.github.com/repos/D-sorganization/Tools/labels/research",
+      "name": "research",
+      "color": "5319e7",
+      "default": false,
+      "description": "P6 research lane — Friday batch merges only during stabilization windows, RM #1510",
+      "archived_at": null,
+      "archived_by": null
+    },
+    {
+      "id": 12100766069,
+      "node_id": "LA_kwDOPQ5sz88AAAAC0UMJdQ",
+      "url": "https://api.github.com/repos/D-sorganization/Tools/labels/claim:codex",
+      "name": "claim:codex",
+      "color": "1D76DB",
+      "default": false,
+      "description": "Active Codex issue lease under fleet coordination policy",
+      "archived_at": null,
+      "archived_by": null
+    },
+    {
+      "id": 12266804280,
+      "node_id": "LA_kwDOPQ5sz88AAAAC2yiUOA",
+      "url": "https://api.github.com/repos/D-sorganization/Tools/labels/triaged-2026-09",
+      "name": "triaged-2026-09",
+      "color": "0e8a16",
+      "default": false,
+      "description": "Reviewed in the 2026-09-19 backlog triage",
+      "archived_at": null,
+      "archived_by": null
+    }
+  ],
+  "state": "open"
+}
