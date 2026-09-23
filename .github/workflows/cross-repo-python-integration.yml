@@ -80,15 +80,17 @@ jobs:
       matrix:
         downstream:
           - repo: D-sorganization/Gasification_Model
+            name: Gasification_Model
             path: _downstream
             install: pip install -r requirements.txt
-            test_command: xvfb-run pytest tests/shared_contracts/ -v --tb=short
+            test_command: xvfb-run -a pytest -p no:xvfb tests/shared_contracts/ -v --tb=short
             env_name: REQUIRE_REAL_UPSTREAM_DRIFT_TOOLS
             sparse_checkout: |
               src
               tests/shared_contracts
             sparse_cone: true
           - repo: D-sorganization/UpstreamDrift
+            name: UpstreamDrift
             path: _downstream
             # The shared-contract lane injects this PR's Tools source through
             # TOOLS_REPO_ROOT/PYTHONPATH below. Keep UpstreamDrift's editable
@@ -119,6 +121,28 @@ jobs:
       - name: Checkout Tools
         uses: actions/checkout@v7
 
+      - name: Check Jules app credentials
+        id: app-creds
+        env:
+          JULES_APP_ID: ${{ secrets.JULES_APP_ID }}
+          JULES_APP_PRIVATE_KEY: ${{ secrets.JULES_APP_PRIVATE_KEY }}
+        run: |
+          if [ -n "$JULES_APP_ID" ] && [ -n "$JULES_APP_PRIVATE_KEY" ]; then
+            echo "configured=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "configured=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Generate consumer checkout token
+        id: consumer_token
+        if: steps.app-creds.outputs.configured == 'true'
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.JULES_APP_ID }}
+          private-key: ${{ secrets.JULES_APP_PRIVATE_KEY }}
+          owner: ${{ github.repository_owner }}
+          repositories: ${{ matrix.downstream.name }}
+
       - name: Checkout ${{ matrix.downstream.repo }}
         id: checkout_downstream
         # No continue-on-error (Tools #4920): a consumer this lane cannot
@@ -127,7 +151,7 @@ jobs:
         with:
           repository: ${{ matrix.downstream.repo }}
           path: ${{ matrix.downstream.path }}
-          token: ${{ secrets.RUNNER_CHECK_TOKEN || github.token }}
+          token: ${{ steps.app-creds.outputs.configured == 'true' && steps.consumer_token.outputs.token || secrets.RUNNER_CHECK_TOKEN || github.token }}
           fetch-depth: 1
           sparse-checkout: ${{ matrix.downstream.sparse_checkout }}
           sparse-checkout-cone-mode: ${{ matrix.downstream.sparse_cone }}
