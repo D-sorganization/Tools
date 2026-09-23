@@ -92,3 +92,6 @@
 **Learning:** Using a hidden `<input type="file">` and triggering it programmatically via a separate `<button>` breaks natural keyboard accessibility and screen reader interaction. Wrapping an `sr-only` file input with a styled `<label>` and adding `focus-within` styles allows maintaining custom button aesthetics while restoring full native keyboard focus and activation without extra event handlers.
 **Action:** Replace `hidden` inputs triggered by buttons with semantic `<label>` wrappers and `sr-only` inputs.
 
+## 2026-09-23 - Dynamic Result Announcement
+**Learning:** In single-page applications where form submissions update content dynamically via JavaScript without a page reload (like the unit converter), screen readers will silently ignore the new result. Using `aria-live="polite"` on the result container ensures the updated value is read to users as soon as it's injected.
+**Action:** Always wrap dynamic asynchronous result outputs in an `aria-live` region to ensure parity with visual feedback.
