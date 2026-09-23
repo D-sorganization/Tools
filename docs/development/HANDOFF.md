@@ -1,3 +1,17 @@
+# Project Steward Checkpoint — 2026-09-23
+
+- Repository: `Tools`. Worktree: `/home/dieterolson/staff-worktrees/Tools-run-abd90be50b00`.
+  Branch `staff/project-steward-task-4e514f`; PR: pending (draft, docs-only).
+- Added `docs/project/CHARTER.md` and `docs/project/STATUS.md` — first-time
+  project charter and status for this repo. Derived from README, SPEC.md, open
+  epics, AGENT_HANDOFF.md, and recent commit history.
+- No source files changed. Gate commands are unchanged; no test or lint run required.
+- Decisions surfaced to Board: (1) P0 security #4464 fork-PR policy; (2) physical
+  validation resource allocation (#5068/#4729/#4267); (3) TOOLS-D9 (#4730)
+  prioritization to close epic #4707.
+- Next step: after this PR merges, any delivery agent picking up TOOLS-D9 (#4730)
+  should consult `docs/project/STATUS.md` for ordered next steps.
+
 # Sanitation Pass — 2026-09-23 (staff/sanitation-task-b1e56d)
 
 - Repository/worktree: `Tools`, `/home/dieterolson/staff-worktrees/Tools-run-0f35c4c1dc34`.
