@@ -83,7 +83,7 @@ jobs:
             name: Gasification_Model
             path: _downstream
             install: pip install -r requirements.txt
-            test_command: xvfb-run pytest tests/shared_contracts/ -v --tb=short
+            test_command: xvfb-run -a pytest -p no:xvfb tests/shared_contracts/ -v --tb=short
             env_name: REQUIRE_REAL_UPSTREAM_DRIFT_TOOLS
             sparse_checkout: |
               src

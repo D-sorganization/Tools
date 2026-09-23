@@ -249,3 +249,18 @@ def test_downstream_checkout_authorizes_consumer_with_least_privilege() -> None:
         "github.token }}"
     )
     assert "continue-on-error" not in checkout_step
+
+
+def test_gasification_test_command_disables_nested_xvfb() -> None:
+    workflow = _workflow()
+    downstreams = workflow["jobs"]["downstream-consumer-contracts"]["strategy"][
+        "matrix"
+    ]["downstream"]
+    gasification = next(
+        item
+        for item in downstreams
+        if item["repo"] == "D-sorganization/Gasification_Model"
+    )
+    cmd = gasification["test_command"]
+    assert "-p no:xvfb" in cmd
+    assert cmd.startswith("xvfb-run")
