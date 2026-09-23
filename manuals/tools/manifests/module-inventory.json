@@ -117,7 +117,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "044aa31421b1059b3aeed8847e8d83d4fc807a2c89d221b864f6dda49abc7cf1",
+      "content_sha256_lf": "ff1af7d2a9efd7250f489af4ef4564d7fc54b7bd94dce844c807378aed8b6814",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
@@ -129,7 +129,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
     },
     {
-      "content_sha256_lf": "fef9240f5b2a4906d59fff82dacdefb97e1cb6e8920f8f2697077220c70f75b8",
+      "content_sha256_lf": "0e7dbf4fa667f81ea20ff3fc23b2acfbb175f32e71abeb35c66f90880ff7c8e8",
       "entry_count": 5,
       "package": "rust_core/file_watcher",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
@@ -165,8 +165,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
     },
     {
-      "content_sha256_lf": "22a4a9aea336b85195e975bc76bf0bb9a69c59668d3391f69af8f4897eff4ddd",
-      "entry_count": 2,
+      "content_sha256_lf": "d7b69630e88cc83513b7d29c921e672f9e8032d5e48dd1440e0819247f1e63cd",
+      "entry_count": 5,
       "package": "shared_scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-shared-scripts.json"
     },

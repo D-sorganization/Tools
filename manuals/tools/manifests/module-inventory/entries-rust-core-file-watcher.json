@@ -264,6 +264,7 @@
           "tests/shared/python/utils/test_bootstrap.py",
           "tests/test_bootstrap.py",
           "tests/test_bootstrap_path_contract_3335.py",
+          "tests/test_deferred_catalog_hook.py",
           "tests/test_gh1732_logging_consistency.py",
           "tests/test_health_checks.py",
           "tests/test_integration_test_helpers.py",

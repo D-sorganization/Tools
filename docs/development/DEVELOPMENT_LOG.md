@@ -18,18 +18,31 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5322 - Enforce the Deferred Validation Catalog
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** #5322; full rollout Repository_Management#1687
+- **Branch:** `chore/5322-deferred-catalog-guard`
+- **PR:** not created
+- **Paths:** `shared_scripts/`, `tests/test_deferred_catalog_hook.py`, `.pre-commit-config.yaml`, `docs/development/`, `AGENT_HANDOFF.md`, `README.md`, `SPEC.md`
+- **Started:** 2026-09-23
+- **Last verified:** 2026-09-23 (SELF; five RED then GREEN controls; 54 catalog/inventory/handoff/SPEC tests; pinned root Ruff, 4041-file format, strict new-test mypy and all nine manual gates pass; approved policy blocks already present)
+- **Summary:** Install the central validator unchanged and exercise the actual always-run hook without changing the original v1 plans or empirical acceptance gates.
+- **Next step:** Complete required checks, inventory and protected publication; verify default-branch identities in the central audit.
+
 ### DL-#5317 · Deferred Validation Project Projection
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** #5317; parents Repository_Management#1687 and Runner_Dashboard#1248
 - **Branch:** `docs/deferred-project-projection`
 - **PR:** https://github.com/D-sorganization/Tools/pull/5318
 - **Paths:** `docs/project/CHARTER.md`, `docs/project/STATUS.md`, `docs/development/HANDOFF.md`, `SPEC.md`
 - **Started:** 2026-09-23
-- **Last verified:** 2026-09-23 (ab5ec5674 plus documentation; central catalog valid, actual parsers agree on 18 features/13 decisions, all original features/decisions and planning bytes preserved; normal documentation commit/pre-push hooks pass)
+- **Last verified:** 2026-09-23 (c720785aeb3485e543022b23a90d2d29dedd59ec; merged #5318; central catalog valid, actual parsers agree on 18 features/13 decisions, all original features/decisions and planning bytes preserved; normal documentation commit/pre-push hooks pass)
 - **Summary:** Preserve the existing portfolio and Board questions while exposing all three owner plans through the shared Projects contract. Historical observations remain explicitly dated; missing evidence stays missing.
-- **Next step:** Validate, publish and verify actual deployed projection; full fleet rollout remains open.
+- **Next step:** Projection published and its three parked rows/owner links verified in the dashboard; Board decisions remain pending. Enforcement is DL-#5322.
 
 ### DL-#5315 · Thermal Profile Predictor Step Power Cutoff Accuracy
 
