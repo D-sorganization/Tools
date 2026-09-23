@@ -5922,6 +5922,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 <!-- prettier-ignore-start -->
 
 | Date       | PR         | Changes    |
+| 2026-09-23 | #5317 | docs(project): preserve existing feature and Board context while projecting the three published deferred-validation owner plans through the shared Projects charter/status contract. |
 | 2026-09-23 | #5315 | fix(thermal): tighten `predict_temperature_profile` RK45 tolerances so a step power cutoff no longer leaves 0.3 °C error against the closed-form solution; reject non-positive thermal mass and raise on integration failure (#5315). |
 | 2026-09-22 | #5306 | Preserve unavailable impact, rig and surface measurements in Board planning while keeping mixed software scopes active. |
 | 2026-09-22 | #5303 | Restore the reviewed Rate of Closure visual-baseline source identity so unchanged reference bytes retain their approved provenance. |
