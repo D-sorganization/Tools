@@ -205,3 +205,47 @@ def test_missing_downstream_suite_fails_instead_of_skipping() -> None:
     names = {step.get("name") for step in steps}
     assert "Summary (suite missing)" not in names
     assert "Summary (skipped)" not in names
+
+
+def test_downstream_checkout_authorizes_consumer_with_least_privilege() -> None:
+    """Tools #5305: downstream consumer checkout must use least-privilege token."""
+    workflow = _workflow()
+    job = workflow["jobs"]["downstream-consumer-contracts"]
+    downstreams = job["strategy"]["matrix"]["downstream"]
+    for item in downstreams:
+        assert item.get("name") == item["repo"].split("/")[-1]
+
+    steps = job["steps"]
+    creds_step = next(
+        step for step in steps if step.get("name") == "Check Jules app credentials"
+    )
+    assert creds_step["id"] == "app-creds"
+    assert creds_step["env"] == {
+        "JULES_APP_ID": "${{ secrets.JULES_APP_ID }}",
+        "JULES_APP_PRIVATE_KEY": "${{ secrets.JULES_APP_PRIVATE_KEY }}",
+    }
+    assert "configured=true" in creds_step["run"]
+
+    token_step = next(
+        step for step in steps if step.get("name") == "Generate consumer checkout token"
+    )
+    assert token_step["id"] == "consumer_token"
+    assert token_step["if"] == "steps.app-creds.outputs.configured == 'true'"
+    assert token_step["uses"] == "actions/create-github-app-token@v1"
+    assert token_step["with"]["app-id"] == "${{ secrets.JULES_APP_ID }}"
+    assert token_step["with"]["private-key"] == "${{ secrets.JULES_APP_PRIVATE_KEY }}"
+    assert token_step["with"]["owner"] == "${{ github.repository_owner }}"
+    assert token_step["with"]["repositories"] == "${{ matrix.downstream.name }}"
+
+    checkout_step = next(
+        step
+        for step in steps
+        if step.get("name") == "Checkout ${{ matrix.downstream.repo }}"
+    )
+    assert checkout_step["with"]["token"] == (
+        "${{ steps.app-creds.outputs.configured == 'true' && "
+        "steps.consumer_token.outputs.token || "
+        "secrets.RUNNER_CHECK_TOKEN || "
+        "github.token }}"
+    )
+    assert "continue-on-error" not in checkout_step
