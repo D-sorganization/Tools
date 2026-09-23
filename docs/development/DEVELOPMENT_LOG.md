@@ -29,7 +29,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-23
 - **Last verified:** 2026-09-23 (c451d0be7; complete actual pre-push hooks including unit suite, Bandit and dependency audit pass; five RED then GREEN controls; 54 catalog/inventory/handoff/SPEC tests; pinned root Ruff, 4041-file format, strict new-test mypy and all nine manual gates pass; approved policy blocks already present)
 - **Summary:** Install the central validator unchanged and exercise the actual always-run hook without changing the original v1 plans or empirical acceptance gates.
-- **Next step:** Local gates and hooks pass; await protected PR #5323 checks, then verify default-branch identities in the central audit.
+- **Next step:** Local gates and hooks pass; the original title-only phantom-guard failure is retained in HANDOFF.md. The PR now uses `chore(planning)`; this documentation checkpoint supplies a fresh event because the guard reads the event title. Await protected PR #5323 checks, then verify default-branch identities in the central audit.
 
 ### DL-#5317 · Deferred Validation Project Projection
 

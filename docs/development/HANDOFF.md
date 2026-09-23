@@ -51,10 +51,16 @@
 
 - Required protected CI and exact publication verification remain open. Catalog
   validity does not supply the unavailable physical evidence or Board decisions.
+- At reviewed head `c7cf8c0d`, phantom-guard job `107420940836` failed because
+  the original `feat(planning)` title claimed application implementation. The
+  title is corrected to `chore(planning): enforce published deferred validation
+plans`. The workflow reads the event's title, so a rerun of that old event
+  would retain the failure. This handoff update supplies a fresh synchronize
+  event; no override label, workflow edit or scientific change is involved.
 
 ## Next Steps
 
-- Complete actual pre-push configuration passes, including the unit suite,
+- The complete actual pre-push configuration passed, including the unit suite,
   Bandit, dependency audit and fleet guardrails; canonical handoff passes.
 - Next: merge #5323 through protected
   checks, then verify exact installed default-branch bytes in central #1687/#1724.
