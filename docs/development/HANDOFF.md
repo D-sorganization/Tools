@@ -12,6 +12,18 @@
 - Next step: after this PR merges, any delivery agent picking up TOOLS-D9 (#4730)
   should consult `docs/project/STATUS.md` for ordered next steps.
 
+# Sanitation Pass — 2026-09-23 (staff/sanitation-task-b1e56d)
+
+- Repository/worktree: `Tools`, `/home/dieterolson/staff-worktrees/Tools-run-0f35c4c1dc34`.
+  Branch `staff/sanitation-task-b1e56d`; no governing issue (scheduled fleet sanitation pass).
+- Archived two plain-text session artifacts from `docs/development/` to
+  `docs/archive/docs-development-cleanup-2026-09-23/`: `IMPLEMENTATION_COMPLETE.txt`
+  (Phase 2.1 agent checklist, issue #2408, commit `4eeae7b53`) and `workflow_runs_tools.txt`
+  (raw `gh run list` dump, commit `420c66dcf`). PROVENANCE.md documents each.
+- Created `docs/operations/sanitation/sanitation-2026-09-23.md` with full pass record.
+- No code changes; no spec, API, or manifest impact.
+- Next step: merge draft PR after CI passes (docs-only change, no test gate).
+
 # Impact Acoustics Estimator Checkpoint — 2026-09-22 (Tools #5299)
 
 - Repository/worktree: `Tools`, `C:/Users/diete/Repositories/Worktrees/Tools-constrained-grip-nnls`.
