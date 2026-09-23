@@ -1,7 +1,7 @@
 # Deferred Validation Project Projection — #5317
 
 - Repository/worktree: Tools, `C:/Users/diete/Repositories/Worktrees/Tools-deferred-project`.
-- Branch: `docs/deferred-project-projection`; base `ab5ec5674`; commit `SELF`; PR not created.
+- Branch: `docs/deferred-project-projection`; base `ab5ec5674`; commit `SELF`; PR [#5318](https://github.com/D-sorganization/Tools/pull/5318), open with protected auto-merge armed.
 - Governing issue #5317; fleet parents RM#1687 and Runner_Dashboard#1248; DL-#5317.
 - Adapts the existing charter to the shared Projects parser while preserving its
   fifteen feature descriptions/priorities and six goals. Adds the three published

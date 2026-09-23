@@ -20,11 +20,11 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5317 · Deferred Validation Project Projection
 
-- **State:** in_progress
+- **State:** in_review
 - **Owner:** codex
 - **Issue:** #5317; parents Repository_Management#1687 and Runner_Dashboard#1248
 - **Branch:** `docs/deferred-project-projection`
-- **PR:** not created
+- **PR:** https://github.com/D-sorganization/Tools/pull/5318
 - **Paths:** `docs/project/CHARTER.md`, `docs/project/STATUS.md`, `docs/development/HANDOFF.md`, `SPEC.md`
 - **Started:** 2026-09-23
 - **Last verified:** 2026-09-23 (ab5ec5674 plus documentation; central catalog valid, actual parsers agree on 18 features/13 decisions, all original features/decisions and planning bytes preserved; normal documentation commit/pre-push hooks pass)
