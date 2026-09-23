@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5315 · Thermal Profile Predictor Step Power Cutoff Accuracy
+
+- **State:** in_review
+- **Owner:** claude
+- **Issue:** D-sorganization/Tools#5315
+- **PR:** pending
+- **Branch:** `fix/thermal-profile-step-power-cutoff`
+- **Paths:** `src/shared/python/sidekick/process_calculators/thermal_profile_predictor.py`, `tests/shared/python/process_calculators/test_thermal_profile.py`
+- **Started:** 2026-09-23
+- **Last verified:** 2026-09-23 (4 closed-form step-cutoff tests RED at 0.30–0.78 °C, green at <=0.01 °C after tightening RK45 tolerances; existing thermal tests, sidekick API stability, ruff and mypy pass.)
+- **Summary:** Tighten `predict_temperature_profile` integrator tolerances so an opaque power step no longer leaks 0.3 °C of error past a 0.1 °C acceptance; add thermal-mass contract and integration-failure check. No API change.
+- **Next step:** Merge the PR once required checks pass.
+
 ### DL-#5299 · Constrained Passive Measured-Grip Identification
 
 - **State:** in_review
