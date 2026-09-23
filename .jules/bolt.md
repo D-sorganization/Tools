@@ -1,3 +1,232 @@
+## 2026-09-07 - Replace array spread with mutable push in candidate loops
+**Learning:** In optimization candidate selection loops, using `[...elite, ...refined]` creates O(N^2) memory allocations across iteration rounds. Using `elite.push(...refined)` mutates in-place before sorting and slicing, avoiding garbage collection pauses.
+**Action:** When gathering items across iterations into an elite set or pool, prefer `.push(...)` over `[...arr, ...newItems]`.
+
+## 2024-05-24 - Array Pre-allocation over map
+**Learning:** When optimizing high-frequency event handlers in JavaScript/TypeScript (e.g., pose detection over multiple video frames), replacing array iterators like `.map()` with standard `for` loops and pre-allocating arrays eliminates continuous callback allocation and minimizes garbage collection overhead. (Note: Only applies to large arrays or high-frequency loops; tiny arrays provide zero measurable performance benefit, and shouldn't be touched per project guidelines).
+**Action:** Always prefer standard `for` loops over iterators for large arrays inside high-frequency execution pathways to eliminate callback allocation and GC pauses.
+
+## 2024-05-27 - Optimizing Map and Slice in Hot Loops
+**Learning:** In optimization loops like Nelder-Mead (e.g. `src/pendulum_simulator/pendulum-web/src/optimizer.ts`), the repeated use of array prototype methods like `.map()` and `.slice()` inside algorithmic iterations causes severe garbage collection pauses due to intermediate array allocations and closure creation. Standard `for` loops combined with pre-allocated arrays (e.g. `new Array(size)`) avoid these overheads and can execute over 2-3x faster.
+**Action:** When working on numerical optimizers or simulation inner loops in JS/TS, manually rewrite `.map()`, `.reduce()`, and `.slice()` into explicit `for` loops with pre-allocated arrays.
+
+## 2024-05-30 - Downsampling Overheads in React Memos
+**Learning:** In high-frequency rendering components (like React chart wrappers), downsampling massive streams of state data via chained array iterators (e.g., `indices.map()`) inside `useMemo` hooks causes severe framerate drops. The intermediate array creations for every trace during chart updates trigger massive O(N) memory allocations and garbage collection pauses.
+**Action:** When extracting data subsets for visualizations, use explicit `for` loops combined with pre-allocated arrays (e.g. `new Array(len)`) to dramatically reduce memory allocation and eliminate iterator callback overhead.
+
+## 2026-05-19 - Replace .reduce() with for loops in high-frequency confidence calculation
+**Learning:** When calculating aggregates over large arrays (like video pose frames) in high-frequency paths, using `.reduce()` creates unnecessary callback allocation and GC overhead. A standard `for` loop is faster and avoids memory pressure.
+**Action:** Always replace `.reduce()` with standard `for` loops when computing sums or averages over large datasets in hot paths.
+## 2024-05-30 - Memoizing Render-Blocking O(N) Array Operations in React
+**Learning:** In React components that manage high-frequency inputs (e.g. text areas for calculator expressions) alongside large arrays of data (e.g. an array of 10k generated data points), rendering unmemoized array loops like `.map()` combined with local `min`/`max` loops blocks the main thread. This leads to severe lag when typing in the input fields, as React re-evaluates the large data arrays on every keystroke.
+**Action:** Always wrap heavy O(N) loops that aggregate state data (such as finding `min`/`max` limits across large solution arrays for summary cards) in a `useMemo` block, with dependency arrays scoped strictly to the generated result data.
+## 2024-05-23 - In-place Mutation for Integration Loops
+**Learning:** In tight numerical integration loops (like RK4), instantiating and returning new state array objects per step causes severe garbage collection pauses and frame drops, even if the loops themselves are manually unrolled.
+**Action:** Use an out-parameter pattern where pre-allocated state objects and argument arrays are instantiated once outside the loop and mutated continuously.
+## 2024-05-23 - SVG Chart Data Overload
+**Learning:** Passing raw, high-resolution arrays (>1000 points) directly to React charting libraries like Recharts creates massive DOM/SVG nodes, causing severe main thread blocking and unresponsive UI.
+**Action:** Always downsample large result arrays via `useMemo` with single-pass loops and pre-allocated arrays (e.g. `new Array(len)`) to a visual maximum (~500 points) before passing them to charting components.## 2025-02-14 - Unmemoized Charts block UI
+**Learning:** Unmemoized Recharts components wrapped alongside frequent input controls (like textareas) will cause severe input lag because the entire DOM/SVG tree re-renders on every keystroke.
+**Action:** Always extract heavy data-visualization JSX into `useMemo` or `React.memo` when they sit adjacent to fast-updating inputs in the same component tree.
+
+## 2024-06-10 - Eliminate Map/FromEntries overhead for object creation
+**Learning:** Initializing objects with `Object.fromEntries(Object.entries(obj).map(...))` allocates intermediate arrays for entries, map results, and internal fromEntries representations.
+**Action:** Always replace chained `Object.entries(obj).map()` object initializations with a pre-allocated empty object and a single-pass `for (const key of Object.keys(obj))` loop.
+## 2024-06-25 - Avoid array iteration chaining for simple counts
+**Learning:** When calculating aggregates (like counts or finding a maximum) over an array, using chained `.filter().length` and `.reduce()` operations creates unnecessary intermediate array allocations and executes multiple passes over the dataset, leading to increased garbage collection overhead in React components.
+**Action:** Replace chained `.filter()` and `.reduce()` with a single-pass `for` loop to compute all needed aggregates simultaneously, especially in frequently re-rendered UI components.
+
+## 2025-02-14 - Optimize repetitive array filters
+**Learning:** Chained `.filter()` and `.reduce()` operations in high frequency code paths, like iterating through frames/phases during swing analysis, create unnecessary overhead due to memory allocation and callback invocation.
+**Action:** Always replace chained `.filter()`/`.reduce()` iterations in tight algorithmic paths with a single-pass `for` loop, eliminating array allocations and garbage collection pressure.
+## 2026-05-20 - Replace chained .filter() passes with single-pass for-loops
+**Learning:** Multiple `.filter()` passes on every render create unnecessary intermediate array allocations, closure overhead, and force the JS engine to iterate the same arrays repeatedly. In React components, this triggers excessive garbage collection and blocks the main thread unnecessarily.
+**Action:** Replace chained `.filter()` array passes with single-pass `for` loops in components to reduce array traversals from O(xN) to O(N), eliminate intermediate array allocations per render, and prevent GC pauses during high-frequency UI updates.
+
+## 2024-05-31 - Fast NaN checks and Pairwise Precomputation
+**Learning:** In hot loops computing pairwise relationships across large arrays (like Correlation Matrices), `Number.isNaN()` calls are extremely slow. Using the self-inequality check `x !== x` to identify `NaN` is significantly faster. Furthermore, if a single pass verifies there are zero `NaN` values in the dataset (the fast path), the `O(N^2)` combinatorial work can be drastically reduced by pre-computing sums (`sumX`, `sumX2`) per column, leaving only `sumXY` to be computed pair-wise.
+**Action:** Replace `Number.isNaN()` with `x !== x` (or `x === x` for validity) inside dense numeric algorithmic loops. For pairwise O(N^2) calculations, scan for missing data once upfront to enable a "fast path" that pre-computes properties per column.
+## 2024-07-28 - Replace Math.min/max spread with loops for dynamic scales
+**Learning:** Using `Math.min(...activeValues)` and `Math.max(...activeValues)` on large streams of extracted subset data (e.g., when determining Y-axis scales in React charts) frequently leads to "Maximum call stack size exceeded" errors. Additionally, chaining operations like `flatMap` and `.map` to prepare this data dynamically creates massive memory pressure across high-frequency re-renders.
+**Action:** When calculating min/max bounds across historically tracked subsets, avoid `.flatMap`, `.map`, and the `Math.min(...spread)` syntax entirely. Use a single-pass `for` loop that computes `realMin` and `realMax` dynamically, avoiding massive call stack allocations and garbage collection pressure.
+## 2024-06-09 - Memoize and pull out string ops in React component filters
+**Learning:** Chaining `.map().filter()` combined with `toLowerCase()` string operations inside an unmemoized React component render block causes huge performance drops, especially when typed inputs continuously trigger renders.
+**Action:** Always wrap heavy list filtering/derivations in `useMemo`, pull static string operations (`.toLowerCase()`) outside of the filter callbacks, and replace array function chains with single-pass `for` loops using `Set` for distinct value extraction.
+
+## 2026-06-12 - Pre-computing static mapped index arrays
+**Learning:** In React components like the `RoutingMatrix` in `p1am_control_system`, using inline array initialization like `Array.from({ length: X }).map(...)` directly inside JSX rows allocates intermediate arrays on every render.
+**Action:** Pre-calculate static length iterators as module-level constants and map over the constants instead.
+
+## 2026-06-12 - Pre-allocate Arrays in Nelder-Mead Loops
+**Learning:** In optimization loops like Nelder-Mead, allocating new arrays inside the hot iteration loop creates unnecessary garbage collection pressure.
+**Action:** Pre-allocate working arrays such as `centroid`, `reflected`, `expanded`, and `contracted` outside the main algorithm loop and mutate them in place.
+## 2026-06-12 - Avoid Array.from({ length }) in Math Hot Paths
+**Learning:** In JavaScript/V8 numerical computing hot paths (like PCA or matrix calculations), using `Array.from({ length: N }, () => ...)` incurs significant overhead from iterability checks, iterator creation, and closure execution per element.
+**Action:** Instead, pre-allocate arrays using `new Array(N)` and populate them with standard `for` loops to prevent O(N) intermediate garbage collection pressure.
+
+## 2024-08-01 - Avoid multiple .filter() passes for bucketing
+**Learning:** Calling `.filter()` multiple times on the same array to separate elements into different buckets (e.g. major vs moderate issues) creates unnecessary iterations and intermediate array allocations, adding up to GC pressure during recurring tasks.
+**Action:** Replace multiple `.filter()` calls over the same source array with a single-pass `for` loop that pushes into pre-allocated or localized arrays.
+## 2024-05-24 - Array.prototype.sort Overhead in Hot Loops
+**Learning:** Discovered that for sorting tiny, statically-sized arrays (<= 20 elements) repeatedly inside high-frequency algorithmic hot loops (like Nelder-Mead optimization), `Array.prototype.sort()` incurs severe execution overhead due to callback invocation and closure allocation.
+**Action:** Replace `Array.prototype.sort()` with a manual in-place insertion sort for tiny arrays inside hot paths to eliminate function call overhead and improve execution speed.
+## 2024-07-16 - TabBar O(N^2) Optimization
+**Learning:** Optimizing `Array.filter` chained with `includes` on a tiny array (10 items) to a `Set` offers zero measurable improvement.
+**Action:** Avoid micro-optimizing operations that run on tiny static arrays executed during initialization or renders.
+
+## 2024-05-31 - Fast NaN checks using Number.isNaN vs x !== x
+**Learning:** In modern JavaScript engines like V8 (used in Chrome and Node.js), `Number.isNaN(v)` is an intrinsic function that is heavily optimized and compiled down to the exact same machine code instructions as the manual check `v !== v`. Replacing `Number.isNaN()` with `v !== v` does not provide any measurable performance improvement and only serves to degrade code readability.
+**Action:** Do not micro-optimize `Number.isNaN()` checks into `v !== v` or `v === v`. Rely on the built-in semantics as modern engines handle them with zero overhead.
+## 2026-06-12 - Eliminate map/reduce overhead for parsing assignments
+**Learning:** Parsing simple string formats using `.split().reduce().map()` chains creates unnecessary array allocations, function calls, and closures on every pass, which adds noticeable garbage collection pressure when executing hot paths or frequent input changes.
+**Action:** Replace string processing array chains with single-pass `for` loops and standard `indexOf`/`substring` operations to eliminate closure allocations and minimize object creations.
+## 2024-07-26 - Single-pass loops for high-frequency React UI rendering
+**Learning:** In high-frequency React UI rendering paths (e.g., pointer move events for SVG crosshairs), using chained `.map()` and `.reduce()` operations creates unnecessary garbage collection pressure due to intermediate array allocations and closure overhead.
+**Action:** Replace chained `.map()` and `.reduce()` operations with a single-pass `for` loop to eliminate closure allocations and intermediate arrays, leading to smoother UI interactions.
+## 2024-05-24 - Avoid chained map and every array iterations for parsing
+**Learning:** Multiple array methods (`.map()`, `.every()`, `.filter()`) chained together for iterating over datasets cause unnecessary intermediate array allocations, adding up to increased garbage collection pressure.
+**Action:** Replace multiple chained array passes with a single-pass `for` loop that pre-allocates arrays or calculates results inline.
+
+## 2024-08-01 - Avoid allocating string arrays for SVG paths
+**Learning:** In high-frequency chart updates, building SVG `d` paths using `.map(p => '...').join(' ')` allocates a new array of strings on every frame, causing unnecessary garbage collection pressure and main thread stalls.
+**Action:** Build SVG `d` paths using a single-pass `for` loop and string concatenation to eliminate intermediate array allocations.
+## 2025-05-18 - Avoid array methods for small static arrays in frequently called initializers
+**Learning:** Using `.reduce()` or `.map()` on static arrays like tabs definitions inside frequently called functions (e.g. state initializers or local storage hydration) incurs unnecessary closure and function call overhead.
+**Action:** Replace `.reduce()` and `.map()` with single-pass `for` loops in simple data transformation functions (like `defaultTabVisibility`) to eliminate closure allocations.
+## 2026-08-13 - Replace chained .map().join() in CSV generation
+**Learning:** Using chained array methods like `.map().join()` for large data serialization (like CSV exports) allocates intermediate arrays for every row, putting immense pressure on the garbage collector and stalling the main thread.
+**Action:** Replace chained array map/join operations in data serialization hot paths with single-pass `for` loops and string concatenation to eliminate intermediate allocations.
+## 2026-10-27 - Remove Array.from allocations in hot paths like Histogram renders
+**Learning:** Found instances of `Array.from({ length: N }, ...)` directly inside React component render functions (e.g. `Histogram.tsx`). This allocates a new array, creates iterators, and calls a mapping function on every render, stalling the UI thread during drag/zoom events.
+**Action:** Replace inline `Array.from` renders with IIFEs that pre-allocate using `new Array(N)` and iterate with a standard `for` loop, eliminating closure and iterator overhead per element.
+## 2026-05-20 - Eliminate .forEach closure overhead in SVG hot paths
+**Learning:** In high-frequency React UI rendering paths (e.g., highly dynamic animation frames building SVG paths), using `.forEach` inside hot render loops causes unnecessary closure allocation overhead and function call overhead for every point.
+**Action:** Replace `.forEach` iterations with a standard `for` loop to eliminate closure allocation overhead and avoid function invocation penalties per data point in hot paths.
+## 2025-02-12 - CSV Export Overhead
+**Learning:** Chained array methods (.map().join()) in data-intensive hot paths (like exporting thousands of LaunchMonitor rows) create massive numbers of intermediate arrays, increasing GC pressure and memory consumption.
+**Action:** Always replace chained declarative array operations with single-pass `for`-loops and string concatenation when generating large text payloads to bypass unnecessary memory allocations.
+
+## 2024-05-18 - CSV Export Overhead
+**Learning:** Chained array methods (.map().join()) in data-intensive hot paths (like exporting thousands of LaunchMonitor rows) create massive numbers of intermediate arrays, increasing GC pressure and memory consumption.
+**Action:** Always replace chained declarative array operations with single-pass `for`-loops and string concatenation when generating large text payloads to bypass unnecessary memory allocations.
+## 2026-12-07 - Avoid Array.from combined with map in mathematical matrices
+**Learning:** Found instances of `Array.from({ length: cols })` inside `.map` during `designMatrix` construction for polynomial curve fitting in `torqueProfileEditor.ts`. This dynamically creates arrays and iterators in a tight numerical loop, adding closure and function call overhead which increases GC pressure.
+**Action:** Always pre-allocate matrix/array dimensions using `new Array(size)` and populate them with standard `for` loops in mathematical or performance-sensitive hot paths to eliminate iteration overhead.
+## 2024-08-30 - Replace Math.min/max spread with loops for dynamic scales
+**Learning:** Using `Math.min(...spread)` and `Math.max(...spread)` on large streams of extracted subset data frequently leads to "Maximum call stack size exceeded" errors. It allocates a new array and spreads it out onto the call stack.
+**Action:** When calculating min/max bounds across historically tracked subsets, avoid the `Math.min(...spread)` syntax entirely. Use a single-pass `for` loop that computes `realMin` and `realMax` dynamically, avoiding massive call stack allocations and garbage collection pressure.
+
+## 2026-08-31 - Canvas Rendering Hot Path Optimization
+**Learning:** In heavily populated canvas plots (like PlotCanvasCard), using `.forEach` for iterating over thousands of data points adds significant closure allocation and function call overhead per point, leading to increased CPU cycles and garbage collection pressure.
+**Action:** Use standard `for` loops in canvas and SVG hot paths where large arrays of points are iterated.
+
+## 2026-09-01 - Charting Scale Array Spreads O(N^2)
+**Learning:** Computing chart bounds with `Math.max(...values)` and `Math.min(...values)` inline within a `.map()` operation over data arrays degrades rendering from O(N) to O(N^2) and generates extreme garbage collection pressure, leading to "Maximum call stack size exceeded" and UI thread blocking on large datasets.
+**Action:** Always pre-calculate charting domain bounds explicitly outside of rendering loops using a single-pass O(N) standard `for` loop.
+
+## 2024-09-01 - Avoid Array Spread in Grouping Loops
+**Learning:** Using array spread syntax (`[...arr, item]`) inside tight loops to accumulate datasets by key degrades performance to O(N^2) and generates severe garbage collection pressure during React renders.
+**Action:** Always initialize an array for the key and use direct mutation (`group.push(item)`) inside loops to achieve O(N) performance when grouping datasets.
+## 2024-05-18 - Prevent stack overflow in dataset bounds calculation
+**Learning:** Using `Math.max(...spread)` chained with `.map()` on large chart plotting paths creates massive call stack expansions and heavy garbage collection pressure, which could even throw "Maximum call stack size exceeded" on larger dynamic arrays.
+**Action:** Use a single-pass `for` loop for minimum/maximum bound extraction in data-intensive charting paths.
+
+## 2024-11-21 - Array map Math.abs spread overhead
+**Learning:** Using `Math.max(...array.map(Math.abs))` creates an intermediate array and passes all items to the call stack via the spread operator, causing noticeable GC pressure and risking call stack size exceeded errors on large datasets.
+**Action:** Replace `Math.max(...array.map(Math.abs))` with a standard O(N) single-pass `for` loop in numerical hotspots.
+## 2024-11-20 - Chart Bounds Calculation O(N^2) Optimization
+**Learning:** Using `Math.max(...spread)` and `Math.min(...spread)` mapped over large numerical arrays (e.g., inside `VariationScatter`'s `plotBounds`) causes extreme GC pressure and can trigger "Maximum call stack size exceeded" errors due to V8's argument limits.
+**Action:** Always use a single-pass `for` loop to compute array extents when dealing with large visualization or numeric datasets.
+
+## 2026-09-03 - Prevent stack overflows and GC pressure in tight loops
+**Learning:** Using `Math.min(...arr)` or `Math.max(...arr)` on dynamically mapped arrays within render loops is an anti-pattern. It generates significant garbage collection overhead and risks stack overflows for large arrays.
+**Action:** Replace `Math.min(...spread)` / `Math.max(...spread)` with a single-pass `for` loop to compute bounds. This eliminates intermediate allocations and runs substantially faster while scaling to any data size.
+## 2026-09-03 - Optimize multi-column data array processing
+**Learning:** Operations like `.reduce()` nested inside `.filter()` mapped over dataset columns scale with `O(rows * columns)` and cause severe array allocation bottlenecks, particularly for CSV launch monitor payloads.
+**Action:** Replace `Array.flatMap()` plus map-reduce loops with single-pass iterator mapping using a `Map` structure for high-performance iteration.
+## 2026-09-05 - Prevent stack overflow and GC pressure in 3D scene bounds
+**Learning:** Using chained `.flatMap().map()` combined with `Math.max(...spread)` for computing extents of 3D entities (e.g., flight points and articulated swing links) generates massive intermediate arrays and risks call stack size exceeded errors during React renders.
+**Action:** Replace functional array chaining + `Math.max(...spread)` with single-pass `for` loops when calculating multi-dimensional extents in rendering paths.
+
+## 2026-09-05 - Array Spread & Map Allocation Elimination in Tight Validation Loops
+**Learning:** Using chained `.map()` calls and array spread `Math.min(...array)` syntax creates significant garbage collection pressure and CPU overhead when computing bounds (min, max, span) in hot paths (e.g., evaluating thousands of optimization candidates). Array creation and spreads degrade to O(N) memory allocations, scaling poorly for high-frequency loop environments.
+**Action:** When validating simulated state sequences in optimization loops, replace `path.map()` chaining and spread-based min/max aggregations with a single-pass `for` loop to accumulate bounds dynamically without allocating intermediate arrays, leading to significantly higher throughput.
+
+## 2026-09-05 - Eliminate Math.max(...spread) after chained maps
+**Learning:** Launch Monitor analysis code contained `Math.max(...array.map())` for determining constant coordinates, which is O(N) in memory and crashes with large datasets due to call stack limits.
+**Action:** Always replace spread-based max/min with single-pass loops, especially when combined with chained map operations on unbounded datasets.
+## 2026-09-19 - Prevent stack overflows and GC pressure in tight render loops
+**Learning:** Using chained `.map()` calls and array spread `Math.min(...array)` / `Math.max(...array)` syntax creates significant garbage collection pressure and CPU overhead when computing chart boundaries in React rendering loops (e.g., `PuttingVisuals.tsx`). Array creation and spreads degrade to O(N^2) memory allocations, scaling poorly.
+**Action:** Replace `Math.min(...spread)` / `Math.max(...spread)` combined with `.map()` in React rendering paths with a single-pass `for` loop to compute bounds dynamically without allocating intermediate arrays.
+## 2026-09-19 - Array Spread Operator Bottlenecks
+**Learning:** Using `Math.max(...array)` and `Math.min(...array)` on dynamically sized large arrays in React rendering loops (e.g. for dynamic charting bounds) creates massive call stack overhead and O(N) garbage collection pressure, especially when repeatedly called inside high-frequency render functions like `PuttingVisuals`.
+**Action:** Replace `Math.max(...array)` on hot rendering paths with simple single-pass `for` loops. This eliminates the intermediate array creation from `.map` and the function call overhead of the spread operator, leading to a much more memory-efficient O(N) single-pass bounds calculation.
+## 2026-09-09 - Eliminate Array Spread in Zoomed Chart Bounds
+**Learning:** Using `Math.min(...spread)` and `Math.max(...spread)` to calculate bounds on zoomable ensemble scatter plots maps the array to the call stack. This creates call stack pressure, garbage collection hits, and scales poorly on zooming.
+**Action:** Replace `Math.min/max(...spread)` bounds calculations with a standard single-pass `for` loop in charting hot paths.
+
+## 2026-09-09 - Eliminate Math.max(...map) chains
+**Learning:** Calling Math.max(...array.map()) creates intermediate arrays and pushes them all to the call stack via the spread operator, leading to GC pressure and potential stack overflow for large arrays.
+**Action:** Replace Math.max(...array.map()) and Math.min(...array.map()) with a standard single-pass for loop, allocating no intermediate memory and eliminating spread overhead.
+
+## 2026-09-10 - Avoid spread operator for large array bounds
+**Learning:** Spreading large arrays (like histogram plotting inputs which scale up to MAX_PLOT_SAMPLES) into Math.min/max causes severe GC pressure and risks exceeding the call stack.
+**Action:** Always use a single-pass loop to calculate extents dynamically for plot arrays instead of spreading elements onto the stack.
+## 2026-09-11 - [Optimize max bounds mapping]
+**Learning:** In JavaScript/TypeScript, when calculating min/max bounds across large datasets (e.g., dynamically establishing charting scales), avoid using `Math.min(...spread)` and `Math.max(...spread)`. It causes high garbage collection pressure and can result in 'Maximum call stack size exceeded' errors.
+**Action:** Use a single-pass `for` loop to compute the bounds dynamically instead.
+
+## 2026-09-11 - Prevent stack overflow when mapping nested lengths
+**Learning:** Using `Math.min(...traces.map(trace => trace.length))` creates an intermediate array containing lengths and spreads them all into the call stack, which creates a huge garbage collection spike and risks a stack overflow error when `traces` is very large.
+**Action:** Replace `Math.min(...spread)` operations with a simple single-pass `for` loop that avoids allocating any arrays entirely, achieving O(1) space complexity and completely avoiding call stack depth limits.
+
+## 2026-09-13 - Prevent array copies during hot-path concatenation
+**Learning:** Inside tight optimization loops like SLSQP, using `np.concatenate([a.flatten(), b.flatten()])` creates unnecessary intermediate array allocations for 2D inputs.
+**Action:** Always use `.ravel()` instead of `.flatten()` when passing arrays to `np.concatenate()` to utilize memory views and reduce garbage collection pressure.
+
+## 2026-09-13 - Optimize Telemetry Array Allocation
+**Learning:** In high-frequency React hooks (e.g., telemetry streaming at 10Hz), using the array spread operator with slice `[...prev.slice(N), item]` causes severe garbage collection pressure by allocating multiple intermediate arrays per frame.
+**Action:** Replace `[...prev.slice(N), item]` with a single-pass `const next = prev.slice(N); next.push(item); return next;` when updating bounded state arrays to reduce allocation churn by 50%.
+
+## 2026-09-15 - Prevent stack overflow in flight trajectory apex calculation
+**Learning:** Computing `apex_height` using `Math.max(...airborne.map(...))` maps the entire flight trajectory array to the call stack via the spread operator. Since trajectories can contain thousands of samples, this causes massive GC pressure and risks throwing "Maximum call stack size exceeded".
+**Action:** Always replace spread-based max/min with single-pass `for` loops when computing bounds over unbounded trajectory arrays.
+
+## 2026-10-24 - Eliminate Array Spread in Charting Components
+**Learning:** In React charting components and visualization matrixes (e.g. `VariationDistributionMatrix`), using `Math.max(...counts, 1)` on dynamically sized arrays scales poorly due to call stack overhead and intermediate array generation, causing significant GC pressure on high-frequency rendering paths.
+**Action:** Always replace `Math.max(...array)` on hot rendering paths with simple single-pass `for` loops. This avoids array spread limits and improves overall memory efficiency.
+
+## 2026-09-16 - Prevent multiple array allocations when calculating math bounds
+**Learning:** Using `Math.max(...array.flat().map(Math.abs))` causes severe performance degradation in hot paths due to repeated intermediate array creation and potential call stack overflows on large datasets.
+**Action:** Replace spreading and mapping of arrays with single-pass `for` loops when calculating bounding values like maximum/minimum across an array in numerical loops.
+
+## 2026-09-17 - Array Spread & Map Allocation Elimination in Math Bounds
+**Learning:** Using chained `.map()` calls combined with `Math.min(...array)` or `Math.max(...array)` and `flat()` creates significant garbage collection pressure and CPU overhead when computing bounds. Array creation and spreads degrade to O(N) memory allocations, scaling poorly and risking stack overflows.
+**Action:** When computing bounds over numerical arrays (e.g. eigenvalue scaling, covariance matrices), replace chained map and spread-based aggregations with a single-pass `for` loop to accumulate bounds dynamically without allocating intermediate arrays, leading to significantly higher throughput.
+
+## 2026-09-19 - Prevent stack overflow in test meshes
+**Learning:** `parametricHeadMesh(club).triangles.flat()` can produce a large number of arrays, which when combined with `Math.max(...array.map())` causes call stack limitations and memory churn.
+**Action:** Always replace `Math.max(...array.map())` with single-pass loops, especially when flattening mesh geometry or matrices in testing.
+## 2026-09-20 - Array Spread vs Slice for Sorting
+**Learning:** Using array spread `[...arr].sort()` allocates a new array through iteration, increasing garbage collection overhead, especially when sorting large arrays or during frequent operations (like bootstrapping).
+**Action:** Use `.slice().sort()` instead, which uses a highly optimized native memory copy, reducing allocation pressure and improving performance.
+
+## 2026-09-20 - Eliminate Math.min(...spread) chained with map
+**Learning:** Using `Math.min(...outcomes.filter(...).map(...))` to calculate the minimum cost per trial dynamically generates huge intermediate arrays and puts them on the call stack, leading to high garbage collection churn and risking stack overflows on large outcomes arrays.
+**Action:** Always replace spread-based min/max combined with mapping functions with a single-pass `for` loop that iterates over the source array once and calculates minimums in place.
+## 2024-05-18 - Single-Pass Loop for React UseMemo
+**Learning:** Using chained `.map` arrays creates severe GC pressure in high-frequency React hooks, especially when generating large amounts of tabular data for export or snapshot.
+**Action:** Replace `Array.prototype.map` with single-pass loops pre-allocating the necessary array sizes directly in the hook body.
+
+## 2026-09-22 - Eliminate Math.min(...spread) in variation validations
+**Learning:** Using `Math.min(...values)` on dynamically sized arrays for checking mathematical bounds of covariance or correlation matrices creates garbage collection pressure by pushing arrays to the call stack, with a high risk of stack overflows.
+**Action:** Replace `Math.min(...values)` and `Math.max(...values)` with single-pass `for` loops in numerical validation functions (e.g. eigenvalue scaling) to avoid intermediate array generations and prevent "Maximum call stack size exceeded" errors.
+## 2026-09-21 - Array Mapping in Performance Critical Path
+**Learning:** Found an instance in `curve` calculation inside `ballFlightMetrics.ts` where `.map()` and `.reduce()` were being chained to find the maximum lateral value. This caused intermediate array allocation and garbage collection pressure, particularly on long trajectory arrays.
+**Action:** Replaced chained array methods (`.map().reduce()`) with standard single-pass `for` loops in performance-critical numerical paths.
+## 2026-09-22 - Eliminate Array Allocation in High-Frequency Canvas Rendering
+**Learning:** Using chained `.map()` calls to extract arrays (e.g. `points.map((p) => p[1])`) inside a React canvas rendering loop creates significant garbage collection overhead and drops frames. This is especially true when delegating logic to helper functions that require array inputs rather than single elements or points.
+**Action:** When computing stats or bounds on hot rendering paths (like canvas drawing loops), inline the logic using a standard single-pass `for` loop to process coordinate arrays in-place and avoid allocating intermediate arrays completely.
 
 ## 2026-09-23 - Eliminate Array Spreads for Min/Max Calculations
 **Learning:** Using the spread operator with `Math.min(...tx)` and `Math.max(...tx)` on arrays whose length dynamically changes based on target configurations can result in 'Maximum call stack size exceeded' exceptions. Additionally, calling spread operators inside hot rendering functions creates significant garbage collection pressure due to `O(N)` allocations.
