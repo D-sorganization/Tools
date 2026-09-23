@@ -10,6 +10,15 @@ __all__ = [
     "predict_temperature_profile",
 ]
 
+# Integrator tolerances (issue #5315). ``power_func`` is an opaque callable, so
+# power steps cannot be passed to the solver as breakpoints; with SciPy's
+# default ``rtol=1e-3`` RK45 accepts a step straddling a power cutoff and the
+# error (0.3-0.8 degC on a 100 degC rise) persists downstream. At these
+# tolerances the step controller rejects steps across the discontinuity until
+# the local error is below ~0.01 degC.
+_RTOL = 1e-6
+_ATOL = 1e-8
+
 
 def _heating_ode(
     t: float,
@@ -40,6 +49,10 @@ def predict_temperature_profile(
 
     if t_span is None:
         raise ValueError("t_span must be provided")
+    if not np.isfinite(thermal_mass) or thermal_mass <= 0:
+        raise ValueError(
+            f"thermal_mass must be positive and finite, got {thermal_mass}"
+        )
 
     def rhs(t: float, y: Any) -> Any:
         return _heating_ode(
@@ -48,7 +61,17 @@ def predict_temperature_profile(
 
     from scipy.integrate import solve_ivp  # lazy import
 
-    sol = solve_ivp(rhs, t_span, [initial_temp], t_eval=t_eval, vectorized=False)
+    sol = solve_ivp(
+        rhs,
+        t_span,
+        [initial_temp],
+        t_eval=t_eval,
+        vectorized=False,
+        rtol=_RTOL,
+        atol=_ATOL,
+    )
+    if not sol.success:
+        raise RuntimeError(f"temperature integration failed: {sol.message}")
     return sol.t, sol.y[0]
 
 

@@ -13099,10 +13099,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 2529,
+      "bytes_lf": 3336,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "eb8dd2b9c1ed0f49b9459c7263f3cbb5a56d52325cae38943bd758fc74d84eff",
+      "content_sha256_lf": "e95c1230cb3ef3c4fd2f2e2a0dea4a9de04d99407c7f2db9bc3f04211c11722d",
       "family": "process-calculators-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-THERMAL-PROFILE-PREDICTOR-PY-65B6FD179556",
       "language": "python",
@@ -13127,7 +13127,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "unavailable",
+        "units": "mapped",
         "validation": "unavailable"
       },
       "traceability": {
@@ -13157,7 +13157,9 @@
           "src/shared/python/sidekick/tests/test_thermal_profile_predictor.py",
           "tests/shared/python/sidekick/process_calculators/test_thermal_profile_predictor.py"
         ],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "s"
+        ],
         "validation_paths": []
       }
     },
