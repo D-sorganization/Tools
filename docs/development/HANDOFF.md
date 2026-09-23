@@ -7,14 +7,14 @@
 - Branch: `chore/5322-deferred-catalog-guard`
 - Baseline commit: `9c6e53a48`
 - Implementation commit: `c451d0be7` (this continuation update: `SELF`)
-- Pull request: not created
+- Pull request: #5323; guarded auto-merge armed
 - Governing issue/epic: #5322; central Repository_Management#1687/#1724
 - Session: `codex-deferred-tools-guard-20260923`
 
 ## Objective and Status
 
 - Enforce the published deferred-validation catalog through the shared checker.
-  Implementation and local qualification are complete; protected publication
+  Implementation and local qualification are complete; PR #5323 protected publication
   remains outstanding. No default-branch enforcement claim yet.
 
 ## Files and Decisions
@@ -56,7 +56,7 @@
 
 - Complete actual pre-push configuration passes, including the unit suite,
   Bandit, dependency audit and fleet guardrails; canonical handoff passes.
-- Next: publish and merge through protected
+- Next: merge #5323 through protected
   checks, then verify exact installed default-branch bytes in central #1687/#1724.
   Preserve all peer worktrees.
 

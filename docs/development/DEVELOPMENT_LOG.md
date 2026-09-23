@@ -20,16 +20,16 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5322 - Enforce the Deferred Validation Catalog
 
-- **State:** in_progress
+- **State:** in_review
 - **Owner:** codex
 - **Issue:** #5322; full rollout Repository_Management#1687
 - **Branch:** `chore/5322-deferred-catalog-guard`
-- **PR:** not created
+- **PR:** #5323
 - **Paths:** `shared_scripts/`, `tests/test_deferred_catalog_hook.py`, `.pre-commit-config.yaml`, `docs/development/`, `AGENT_HANDOFF.md`, `README.md`, `SPEC.md`
 - **Started:** 2026-09-23
 - **Last verified:** 2026-09-23 (c451d0be7; complete actual pre-push hooks including unit suite, Bandit and dependency audit pass; five RED then GREEN controls; 54 catalog/inventory/handoff/SPEC tests; pinned root Ruff, 4041-file format, strict new-test mypy and all nine manual gates pass; approved policy blocks already present)
 - **Summary:** Install the central validator unchanged and exercise the actual always-run hook without changing the original v1 plans or empirical acceptance gates.
-- **Next step:** Complete required checks, inventory and protected publication; verify default-branch identities in the central audit.
+- **Next step:** Local gates and hooks pass; await protected PR #5323 checks, then verify default-branch identities in the central audit.
 
 ### DL-#5317 · Deferred Validation Project Projection
 

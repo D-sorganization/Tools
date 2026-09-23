@@ -5922,7 +5922,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 <!-- prettier-ignore-start -->
 
 | Date       | PR         | Changes    |
-| 2026-09-23 | #5322 | Install the exact fleet deferred-validation checker, digest receipt and always-run hook with five test-first publication controls; preserve owner plans and scientific release gates. |
+| 2026-09-23 | #5323 | Install the exact fleet deferred-validation checker, digest receipt and always-run hook with five test-first publication controls; preserve owner plans and scientific release gates. |
 | 2026-09-23 | #5317 | docs(project): preserve existing feature and Board context while projecting the three published deferred-validation owner plans through the shared Projects charter/status contract. |
 | 2026-09-23 | #5315 | fix(thermal): tighten `predict_temperature_profile` RK45 tolerances so a step power cutoff no longer leaves 0.3 °C error against the closed-form solution; reject non-positive thermal mass and raise on integration failure (#5315). |
 | 2026-09-22 | #5306 | Preserve unavailable impact, rig and surface measurements in Board planning while keeping mixed software scopes active. |
