@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5317 · Deferred Validation Project Projection
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** #5317; parents Repository_Management#1687 and Runner_Dashboard#1248
+- **Branch:** `docs/deferred-project-projection`
+- **PR:** not created
+- **Paths:** `docs/project/CHARTER.md`, `docs/project/STATUS.md`, `docs/development/HANDOFF.md`, `SPEC.md`
+- **Started:** 2026-09-23
+- **Last verified:** 2026-09-23 (ab5ec5674 plus documentation; central catalog valid, actual parsers agree on 18 features/13 decisions, all original features/decisions and planning bytes preserved; normal documentation commit/pre-push hooks pass)
+- **Summary:** Preserve the existing portfolio and Board questions while exposing all three owner plans through the shared Projects contract. Historical observations remain explicitly dated; missing evidence stays missing.
+- **Next step:** Validate, publish and verify actual deployed projection; full fleet rollout remains open.
+
 ### DL-#5315 · Thermal Profile Predictor Step Power Cutoff Accuracy
 
 - **State:** in_review

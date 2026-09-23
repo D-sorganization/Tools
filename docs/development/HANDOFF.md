@@ -1,3 +1,28 @@
+# Deferred Validation Project Projection — #5317
+
+- Repository/worktree: Tools, `C:/Users/diete/Repositories/Worktrees/Tools-deferred-project`.
+- Branch: `docs/deferred-project-projection`; base `ab5ec5674`; commit `SELF`; PR not created.
+- Governing issue #5317; fleet parents RM#1687 and Runner_Dashboard#1248; DL-#5317.
+- Adapts the existing charter to the shared Projects parser while preserving its
+  fifteen feature descriptions/priorities and six goals. Adds the three published
+  owner plans as parked features with stable IDs/links and Tracking `-`.
+- STATUS retains the original three Board questions and historical portfolio
+  snapshot; it adds explicit pending Board/resource prerequisites. The inherited
+  PR/CI/blocker statements are clearly historical, not a new live assessment.
+- Original planning catalog, plans and source snapshots are unchanged. No source,
+  public API, measurement, approval or scientific acceptance changes.
+- Validation: central catalog valid; actual central/dashboard parsers agree on
+  18 features and 13 decisions. All 15 original features and three original Board
+  questions are preserved; owner planning files are unchanged. Initial verification
+  incorrectly expected the parser to retain trailing periods; correcting that
+  verifier expectation required no document/parser change. Normal documentation commit/pre-push hooks pass.
+  No new executable behavior to unit-test.
+- Next: publish through protected review, verify default-branch documents and the
+  deployed Projects API/UI after cache refresh. Keep full rollout parents open.
+- Isolated worktree preserves the root Tools checkout's unrelated staged deletions.
+
+---
+
 # Thermal Profile Step-Cutoff Checkpoint — 2026-09-23 (Tools #5315)
 
 - Repository/worktree: `Tools`, `C:/Users/diete/Repositories/Tools-worktrees/thermal-step-cutoff`.
