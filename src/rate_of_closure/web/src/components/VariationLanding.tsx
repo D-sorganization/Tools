@@ -62,10 +62,18 @@ export function LandingCanvas({
     // This avoids "Maximum call stack size exceeded" errors and O(N) garbage collection on hot renders
     const ellipseCenterLat = ellipse?.centerLateralM ?? 0;
     const ellipseCenterCarry = ellipse?.centerCarryM ?? 0;
-    let minXRaw = Math.min(...tx, ellipseCenterLat - reach);
-    let maxXRaw = Math.max(...tx, ellipseCenterLat + reach);
-    let minYRaw = Math.min(...ty, ellipseCenterCarry - reach);
-    let maxYRaw = Math.max(...ty, ellipseCenterCarry + reach);
+    let minXRaw = ellipseCenterLat - reach;
+    let maxXRaw = ellipseCenterLat + reach;
+    for (let i = 0; i < tx.length; i++) {
+      if (tx[i] < minXRaw) minXRaw = tx[i];
+      if (tx[i] > maxXRaw) maxXRaw = tx[i];
+    }
+    let minYRaw = ellipseCenterCarry - reach;
+    let maxYRaw = ellipseCenterCarry + reach;
+    for (let i = 0; i < ty.length; i++) {
+      if (ty[i] < minYRaw) minYRaw = ty[i];
+      if (ty[i] > maxYRaw) maxYRaw = ty[i];
+    }
     for (let i = 0; i < points.length; i++) {
       const pX = points[i][0];
       const pY = points[i][1];

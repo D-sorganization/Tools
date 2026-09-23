@@ -18,11 +18,12 @@ export function VariationVariabilityTimeline({ data, svgRef }: Props): JSX.Eleme
   const displayThreshold = data.criteria.maxValue
     * (data.authorityUnit === "m^3" ? 1e9 : 1e3);
   const finiteValues = data.displayValues.filter(Number.isFinite);
-  const maximum = Math.max(
-    ...finiteValues,
-    displayThreshold,
-    1e-6,
-  );
+  let maximum = Math.max(displayThreshold, 1e-6);
+  for (let i = 0; i < finiteValues.length; i++) {
+    if (finiteValues[i] > maximum) maximum = finiteValues[i];
+  }
+
+  // ⚡ Bolt Optimization: Use single-pass loop instead of Math.max(...spread) to avoid GC pressure
   const x = (index: number): number => MARGIN.left + index
     / Math.max(data.sampleTimesS.length - 1, 1)
     * (WIDTH - MARGIN.left - MARGIN.right);
