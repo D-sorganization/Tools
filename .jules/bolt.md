@@ -227,3 +227,7 @@
 ## 2026-09-22 - Eliminate Array Allocation in High-Frequency Canvas Rendering
 **Learning:** Using chained `.map()` calls to extract arrays (e.g. `points.map((p) => p[1])`) inside a React canvas rendering loop creates significant garbage collection overhead and drops frames. This is especially true when delegating logic to helper functions that require array inputs rather than single elements or points.
 **Action:** When computing stats or bounds on hot rendering paths (like canvas drawing loops), inline the logic using a standard single-pass `for` loop to process coordinate arrays in-place and avoid allocating intermediate arrays completely.
+
+## 2026-09-23 - Eliminate Array Spread in Visualization React Components
+**Learning:** Using `Math.max(...array)` on dynamically sized large arrays in React rendering loops (e.g. for dynamic charting bounds) creates massive call stack overhead and O(N) garbage collection pressure. This is especially true when rendering VariationLanding.tsx and VariationVariabilityTimeline.tsx.
+**Action:** Replace `Math.max(...array)` on hot rendering paths with simple single-pass `for` loops. This eliminates the intermediate array creation and the function call overhead of the spread operator, leading to a much more memory-efficient O(N) bounds calculation.
