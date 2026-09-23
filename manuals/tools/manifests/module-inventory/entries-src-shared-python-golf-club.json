@@ -4928,10 +4928,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 14833,
+      "bytes_lf": 15392,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "14f3250925080d66162634d79f0c809bd827e2a779b98583bd8e19b704f521ab",
+      "content_sha256_lf": "d5d7910422cb60b77d81d6c717a098810d1364f95faed07567cc23ebc2c73aa7",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-MEASURED-GRIP-IMPEDANCE-PY-36DBCCD17447",
       "language": "python",
@@ -4983,7 +4983,7 @@
           {
             "kind": "function",
             "name": "assess_measured_frf_agreement",
-            "signature": "measured: MeasuredGripDataset, model_impedance_fn: Callable[[float], complex], max_relative_magnitude_error: float, max_phase_error_rad: float, coverage_k: float=2.0"
+            "signature": "measured: MeasuredGripDataset, model_impedance_fn: Callable[[float], complex], max_relative_magnitude_error: float, max_phase_error_rad: float, coverage_k: float=2.0, strain_qualified: bool=False"
           },
           {
             "kind": "function",

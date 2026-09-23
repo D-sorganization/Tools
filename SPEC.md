@@ -5925,7 +5925,9 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | 2026-09-22 | #5306 | Preserve unavailable impact, rig and surface measurements in Board planning while keeping mixed software scopes active. |
 | 2026-09-22 | #5303 | Restore the reviewed Rate of Closure visual-baseline source identity so unchanged reference bytes retain their approved provenance. |
 | 2026-09-22 | #5295 | chore(rate-web): remove stale merge-leftover `groundRegionalExecution.ts.orig` (no behavior change). |
+| 2026-09-22 | #5302 | fix(impact): distinguish synthetic fixtures from calibrated measurement provenance before measured-grip FRF qualification (#5301). |
 | 2026-09-22 | #5300 | fix(impact): replace clipped ordinary least squares with constrained NNLS for measured-grip damping, mass, and stiffness identification (#5299). |
+| 2026-09-22 | #5298 | fix(impact): require explicit operating-strain evidence before measured-grip FRF agreement can certify a qualified response (#5297). |
 | 2026-09-22 | #5292 | ⚡ Bolt: Replace chained `.map()`/`.reduce()` curve calculation with a single-pass `for` loop in `ballFlightMetrics.ts` to reduce GC pressure on long trajectories (spec 1.18.146). |
 | 2026-09-22 | #5294 | ⚡ Bolt: Replace chained `.map()` landing-stats extraction with a single-pass `for` loop in `VariationLanding.tsx` to reduce GC pressure on canvas render paths (spec 1.18.146). |
 | 2026-09-22 | n/a | ⚡ Bolt: Replace `Math.min(...values)` with a single-pass `for` loop in `validateGroupMatrix` inside `src/rate_of_closure/web/src/model/variationGroups.ts` to avoid intermediate arrays and prevent call stack limits (spec 1.18.146). |
@@ -7647,6 +7649,14 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-22: Constrained Measured-Grip Fit (#5299 / #5300)
 
 - **2026-09-22**: fix(impact, #5299) — Solve the scalar damping and two-parameter mass/stiffness identification over the non-negative feasible set rather than coordinate-clipping unconstrained estimates.
+
+## 2026-09-22: Measured Grip FRF Strain-Qualification Guard (#5297 / #5298)
+
+- **2026-09-22**: fix(impact, #5297) — Require explicit passed operating-strain assessment before FRF magnitude/phase/passivity agreement can report a qualified grip response; omitted evidence refuses qualification.
+
+## 2026-09-22: Measured-Grip Provenance Qualification Guard (#5301 / #5302)
+
+- **2026-09-22**: fix(impact, #5301) — Keep formula-generated grip fixtures synthetic and require calibrated measurement-derived provenance alongside operating-strain acceptance before FRF agreement can qualify an operating response.
 
 ## 2026-09-19: Native File Commands and Workspace Persistence (#4220)
 

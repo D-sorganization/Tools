@@ -17,6 +17,50 @@
   open parent-program requirement.
 - Next step: merge #5300 only after its checks pass.
 
+# Impact Acoustics Qualification Checkpoint — 2026-09-22 (Tools #5297)
+
+- Repository/worktree: `Tools`, `C:/Users/diete/Repositories/Worktrees/Tools-measured-grip-qualification`.
+  Branch `fix/5297-measured-grip-strain`; governing issue #5297, follow-up to measured-grip
+  milestone #5072 under parent program #5068. Review: https://github.com/D-sorganization/Tools/pull/5298.
+- Corrected a qualification defect in `assess_measured_frf_agreement`: it had reported
+  `strain_qualified=True` without receiving operating-strain evidence. The API now accepts
+  a source-compatible optional `strain_qualified: bool = False` and refuses
+  `agreement_qualified` unless explicit strain qualification, FRF magnitude/phase tolerances,
+  and passivity all pass.
+- TDD evidence: a RED test showed the former API could not accept qualification evidence;
+  69 measured-grip, boundary, coupled-impact, and gripped-shaft tests pass after the
+  implementation. The source-compatible public API baseline, module inventory, mypy, ruff,
+  and all nine repository manual-governance gates are current and clean.
+- Documentation now specifies that production callers must derive the Boolean from
+  `check_operating_strain_limits` using actual curvature, outer radius, axial strain, and
+  material limit. This guard does not make synthetic fixtures or unproven sources into
+  physical validation evidence.
+- Hosted cross-repository CI is currently blocked before the private Gasification consumer suite
+  starts. Tools #5305 records the required organization-approved `RUNNER_CHECK_TOKEN` read
+  access and the exact rerun criterion; do not replace that credential boundary with an
+  unverified fallback or allow the consumer lane to skip.
+- Next step: merge #5298 only after its checks pass, including the restored private-consumer
+  contract lane. The parent program remains scientifically incomplete: measured grip/shaft
+  identification, contact-mode validation, radiation calibration, and perceptual listening
+  studies still require traceable physical evidence.
+
+# Impact Acoustics Provenance Checkpoint — 2026-09-22 (Tools #5301)
+
+- Repository/worktree: `Tools`, `C:/Users/diete/Repositories/Worktrees/Tools-grip-fixture-provenance`.
+  Branch `fix/5301-grip-fixture-provenance`; governing issue #5301, a qualification
+  follow-up to #5072 under parent program #5068. Review: https://github.com/D-sorganization/Tools/pull/5302.
+- Corrected a provenance mismatch in the measured-grip test fixture: values generated
+  from a closed-form mass/damping/stiffness model no longer declare participant-derived
+  measurement provenance. They are `synthetic` and carry no fictitious calibration identity.
+- FRF agreement continues to expose magnitude, phase, coverage, and passivity diagnostics
+  for numerical fixtures, but refuses `agreement_qualified` unless all declared sources are
+  `measurement-derived`. TDD covers synthetic refusal and calibrated measurement acceptance.
+- This is a truthful qualification boundary, not measurement collection. Traceable apparatus,
+  calibration quality, shaft geometry, operating strain, and independent held-out data remain
+  required before effect-size or acoustic claims.
+- Next step: merge dependent review #5302 after parent #5298 checks pass. It requires
+  provenance and operating strain together.
+
 # Deferred Physical Validation Planning — 2026-09-22
 
 - Worktree: `C:/Users/diete/Repositories/Worktrees/Tools-validation-planning`.

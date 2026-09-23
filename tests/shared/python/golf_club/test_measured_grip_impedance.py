@@ -44,18 +44,28 @@ from shared.python.golf_club.measured_grip_impedance import (
 pytestmark = [pytest.mark.unit, pytest.mark.contract, pytest.mark.scientific]
 
 
-def _sample_source() -> dict[str, Any]:
+def _synthetic_source() -> dict[str, Any]:
     raw = b"kit-1000194060-raw-data"
-    cal = b"kit-calibration-rig-data"
     return {
-        "source_id": "kit-1000194060",
-        "kind": "measurement-derived",
+        "source_id": "synthetic-passive-grip-fixture",
+        "kind": "synthetic",
         "artifact_sha256": hashlib.sha256(raw).hexdigest(),
-        "calibration_sha256": hashlib.sha256(cal).hexdigest(),
-        "method": "direct translational excitation xh, 13 participants",
-        "uncertainty_note": "standard deviation reported per bin",
-        "data_license": "CC-BY-4.0",
+        "calibration_sha256": None,
+        "method": "closed_form_mass_damping_stiffness_fixture",
+        "uncertainty_note": "deterministic numerical fixture uncertainty",
+        "data_license": "CC0-1.0",
     }
+
+
+def _measurement_source() -> dict[str, Any]:
+    source = _synthetic_source()
+    source["source_id"] = "measurement-contract-fixture"
+    source["kind"] = "measurement-derived"
+    source["calibration_sha256"] = hashlib.sha256(
+        b"kit-calibration-rig-data"
+    ).hexdigest()
+    source["method"] = "contract_fixture_with_calibration_identity"
+    return source
 
 
 def _synthetic_dataset_dict() -> dict[str, Any]:
@@ -87,7 +97,7 @@ def _synthetic_dataset_dict() -> dict[str, Any]:
         "grip_force_n": 50.0,
         "push_force_n": 20.0,
         "frequency_band_hz": [10.0, 200.0],
-        "sources": [_sample_source()],
+        "sources": [_synthetic_source()],
         "samples": samples,
     }
 
@@ -124,10 +134,9 @@ def test_schema_serialization_roundtrip_and_digest(
     # Source byte verification
     blobs = {
         dataset.sources[0].artifact_sha256: b"kit-1000194060-raw-data",
-        dataset.sources[0].calibration_sha256: b"kit-calibration-rig-data",
     }
     verified = verify_measured_grip_source_bytes(dataset, blobs)
-    assert len(verified) == 2
+    assert len(verified) == 1
 
 
 def test_schema_refusal_cases(dataset_payload: dict[str, Any]) -> None:
@@ -139,6 +148,7 @@ def test_schema_refusal_cases(dataset_payload: dict[str, Any]) -> None:
 
     # Missing calibration digest for measurement-derived source
     corrupt = copy.deepcopy(dataset_payload)
+    corrupt["sources"] = [_measurement_source()]
     corrupt["sources"][0]["calibration_sha256"] = None
     with pytest.raises(ValueError, match="calibration_sha256"):
         measured_grip_from_json(json.dumps(corrupt))
@@ -261,7 +271,9 @@ def test_passive_fit_uses_constrained_optimum_when_damping_is_active(
     assert damping[0, 0] == pytest.approx(0.0, abs=1e-12)
 
 
-def test_assess_measured_frf_agreement(dataset: MeasuredGripDataset) -> None:
+def test_synthetic_frf_agreement_is_numerical_not_physical(
+    dataset: MeasuredGripDataset,
+) -> None:
     grip = fit_passive_grip_impedance(dataset)
 
     def model_fn(omega: float) -> complex:
@@ -273,12 +285,89 @@ def test_assess_measured_frf_agreement(dataset: MeasuredGripDataset) -> None:
         max_relative_magnitude_error=0.10,
         max_phase_error_rad=0.15,
         coverage_k=2.0,
+        strain_qualified=True,
     )
-    assert summary.agreement_qualified is True
+    assert summary.agreement_qualified is False
     assert summary.passivity_satisfied is True
     assert summary.max_relative_magnitude_error < 0.10
     assert summary.max_phase_error_rad < 0.15
     assert summary.coverage_fraction == pytest.approx(1.0)
+
+
+def test_frf_agreement_requires_explicit_strain_qualification(
+    dataset_payload: dict[str, Any],
+) -> None:
+    """FRF agreement cannot certify operation without a strain assessment."""
+    measured_payload = copy.deepcopy(dataset_payload)
+    measured_payload["sources"] = [_measurement_source()]
+    dataset = measured_grip_from_json(json.dumps(measured_payload))
+    grip = fit_passive_grip_impedance(dataset)
+
+    def model_fn(omega: float) -> complex:
+        return complex(grip_frequency_impedance(grip, omega)[0, 0])
+
+    omitted = assess_measured_frf_agreement(
+        dataset,
+        model_fn,
+        max_relative_magnitude_error=0.10,
+        max_phase_error_rad=0.15,
+    )
+    refused = assess_measured_frf_agreement(
+        dataset,
+        model_fn,
+        max_relative_magnitude_error=0.10,
+        max_phase_error_rad=0.15,
+        strain_qualified=False,
+    )
+    accepted = assess_measured_frf_agreement(
+        dataset,
+        model_fn,
+        max_relative_magnitude_error=0.10,
+        max_phase_error_rad=0.15,
+        strain_qualified=True,
+    )
+
+    assert omitted.strain_qualified is False
+    assert omitted.agreement_qualified is False
+    assert refused.strain_qualified is False
+    assert refused.agreement_qualified is False
+    assert accepted.strain_qualified is True
+    assert accepted.agreement_qualified is True
+
+
+def test_frf_agreement_rejects_non_boolean_strain_qualification(
+    dataset: MeasuredGripDataset,
+) -> None:
+    """Qualification evidence is a Boolean contract, not a truthy flag."""
+    with pytest.raises(TypeError, match="strain_qualified"):
+        assess_measured_frf_agreement(
+            dataset,
+            lambda _omega: 1.0 + 0.0j,
+            max_relative_magnitude_error=1.0,
+            max_phase_error_rad=1.0,
+            strain_qualified=1,  # type: ignore[arg-type]
+        )
+
+
+def test_measurement_derived_frf_can_qualify(
+    dataset_payload: dict[str, Any],
+) -> None:
+    """Physical qualification requires a calibrated measurement declaration."""
+    measured_payload = copy.deepcopy(dataset_payload)
+    measured_payload["sources"] = [_measurement_source()]
+    measured = measured_grip_from_json(json.dumps(measured_payload))
+    grip = fit_passive_grip_impedance(measured)
+
+    summary = assess_measured_frf_agreement(
+        measured,
+        lambda omega: complex(grip_frequency_impedance(grip, omega)[0, 0]),
+        max_relative_magnitude_error=0.10,
+        max_phase_error_rad=0.15,
+        coverage_k=2.0,
+        strain_qualified=True,
+    )
+
+    assert summary.agreement_qualified is True
 
 
 def test_check_operating_strain_limits() -> None:
