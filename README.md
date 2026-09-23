@@ -18,6 +18,11 @@ are shared with other D-sorganization repositories.
 - **Status**: actively developed. Interfaces outside `src/shared/` may change
   between releases.
 
+Validate [future validation plans](docs/development/planning/README.md) with
+`python shared_scripts/deferred_validation.py --repo-root .`. Install the
+configured hooks with `python -m pre_commit install`; the always-run catalog
+check preserves one authority and rejects unsupported activation.
+
 ## Contents
 
 | Section                                                 | Purpose                                        |

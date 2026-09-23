@@ -297,6 +297,7 @@
           "tests/shared/python/utils/test_launcher_factory.py",
           "tests/test_anthropometry_parity.py",
           "tests/test_config_loader.py",
+          "tests/test_deferred_catalog_hook.py",
           "tests/test_dry_compliance.py",
           "tests/test_env_utils.py",
           "tests/test_folder_packer_pro.py",

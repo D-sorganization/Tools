@@ -47,6 +47,13 @@ repos:
 
   - repo: local
     hooks:
+      - id: deferred-validation
+        name: deferred validation catalog
+        entry: python shared_scripts/deferred_validation.py --repo-root .
+        language: python
+        pass_filenames: false
+        always_run: true
+
       # Prevent wildcard imports
       - id: no-wildcard-imports
         name: "no wildcard imports"

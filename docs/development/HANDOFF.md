@@ -1,3 +1,73 @@
+# Deferred Catalog Enforcement - #5322
+
+## Identity
+
+- Repository: D-sorganization/Tools
+- Working directory: `C:/Users/diete/Repositories/Worktrees/Tools-deferred-guard`
+- Branch: `chore/5322-deferred-catalog-guard`
+- Baseline commit: `9c6e53a48`
+- Implementation commit: `c451d0be7` (this continuation update: `SELF`)
+- Pull request: #5323; guarded auto-merge armed
+- Governing issue/epic: #5322; central Repository_Management#1687/#1724
+- Session: `codex-deferred-tools-guard-20260923`
+
+## Objective and Status
+
+- Enforce the published deferred-validation catalog through the shared checker.
+  Implementation and local qualification are complete; PR #5323 protected publication
+  remains outstanding. No default-branch enforcement claim yet.
+
+## Files and Decisions
+
+- Three exact checker files come from Repository_Management
+  `0a1041018e737173e49ff97ed4b82283e3cb672f` with a SHA-256 receipt. The explicit
+  always-run hook exercises the existing v1 catalog; existing hooks remain.
+  Both managed agent-rule blocks already match the approved central source.
+- Five configured-command/digest controls first failed for the missing
+  hook/receipt and then passed. New-test Ruff and strict mypy pass. Initial
+  policy-comparison command used Windows default decoding and failed; explicit
+  UTF-8 comparison succeeds without changing either policy block.
+- Original catalog/plans/snapshots and scientific code remain unchanged. No
+  physical validation or Board/release approval is supplied. The three mixed
+  epics retain their executable software scope.
+- Projection #5318 merged as `c720785aeb3485e543022b23a90d2d29dedd59ec`;
+  the previous preparation section below is historical. Its three deferred rows
+  and thirteen decisions preserve the existing portfolio.
+
+## Validation
+
+- Validation: 54 catalog/inventory/handoff/SPEC tests pass; pinned Ruff 0.14.10
+  root lint, 4,041-file root format and new-test strict mypy pass. Newer local
+  Ruff reports two UP042 findings in untouched enums; no unrelated source edits.
+  All nine manual gates pass, retaining provisional/unapproved release status.
+  Actual hooks found the changed root handoff digest; regenerated only that
+  governed record using the existing producer. Historical check timestamps,
+  approvals and expiry were preserved; the producer otherwise stamps all checks
+  passed without executing them. The inventory producer adds three shared-script
+  entries and lexical test-discovery links in two Rust shards; these links are
+  conservative discovery, not additional Rust test coverage.
+
+## Blockers and Risks
+
+- Required protected CI and exact publication verification remain open. Catalog
+  validity does not supply the unavailable physical evidence or Board decisions.
+- At reviewed head `c7cf8c0d`, phantom-guard job `107420940836` failed because
+  the original `feat(planning)` title claimed application implementation. The
+  title is corrected to `chore(planning): enforce published deferred validation
+plans`. The workflow reads the event's title, so a rerun of that old event
+  would retain the failure. This handoff update supplies a fresh synchronize
+  event; no override label, workflow edit or scientific change is involved.
+
+## Next Steps
+
+- The complete actual pre-push configuration passed, including the unit suite,
+  Bandit, dependency audit and fleet guardrails; canonical handoff passes.
+- Next: merge #5323 through protected
+  checks, then verify exact installed default-branch bytes in central #1687/#1724.
+  Preserve all peer worktrees.
+
+---
+
 # Deferred Validation Project Projection — #5317
 
 - Repository/worktree: Tools, `C:/Users/diete/Repositories/Worktrees/Tools-deferred-project`.

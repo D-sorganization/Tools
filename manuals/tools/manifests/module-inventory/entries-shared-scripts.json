@@ -3,6 +3,271 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 10709,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "521f1a98fecf36990f1f31696144163c85d023be34a465dfbde9aacf81f33f94",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SHARED-SCRIPTS-DEFERRED-PLANNING-PY-521E2D405CD5",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "shared_scripts/deferred_planning.py",
+      "purpose": "Validate repository-owned future plans; never infer completion from deferral.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://github.com/{repository",
+          "https://github\\.com/[\\w.-"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PlanningError",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ENTRY_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REPOSITORY",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "activation_ready",
+            "signature": "entry: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "closure_payload",
+            "signature": "root: Path, plan_id: str, live_issue: dict[str, Any], published: dict[str, bytes]"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "validate_catalog",
+            "signature": "root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "validate_migration_pr_body",
+            "signature": "body: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 23549,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "152ab473b23daf5b3a32618563ef0cddcdb957d71580cf09aeeb03c17f9d5ee5",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SHARED-SCRIPTS-DEFERRED-VALIDATION-PY-3067FA6FF5C2",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "shared_scripts/deferred_validation.py",
+      "purpose": "Validate a repository's deferred external-validation catalog.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://\\S+$",
+          "https://github\\.com/[A-Za-z0-9_.-"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CatalogFinding",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CANONICAL_RELATIVE_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DISCOVERY_MODES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DISPOSITIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXTERNAL_BLOCKERS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HTTPS_URL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ISO_DATE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ISSUE_URL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_JUSTIFICATION_CHARS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "NON_EMPTY_LIST_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OPTIONAL_RECORD_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ORIGIN_STATES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PUBLISHED_RELATIVE_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RECORD_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REPO_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REQUIRED_RECORD_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REQUIRED_TOP_LEVEL_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCHEMA_RELATIVE_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SECRET_PATTERNS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "VALIDATION_STATES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "format_findings",
+            "signature": "findings: list[CatalogFinding]"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "validate_catalog",
+            "signature": "data: Any, path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "validate_repository_catalog",
+            "signature": "repo_root: Path"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 19421,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -199,6 +464,148 @@
             "kind": "function",
             "name": "staged_files",
             "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 18444,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "eac9039b72c2a2d7f5708b0cb098f84d2a1e78568ed1ec6d17f6756ca6274cd5",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SHARED-SCRIPTS-HANDOFF-VALIDATOR-PY-7E35679D4B99",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "shared_scripts/handoff_validator.py",
+      "purpose": "Canonical handoff schema validation and enforcement for the repository fleet.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "HandoffFinding",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HEX_COMMIT_PATTERN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "IMPLEMENTATION_PREFIXES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "IMPLEMENTATION_SUFFIXES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OVERRIDE_PATTERN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PLACEHOLDER_PATTERN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REQUIRED_HEADINGS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REQUIRED_IDENTITY_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SAFE_EXEMPT_PATHS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SAFE_EXEMPT_SUFFIXES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SECRET_PATTERNS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "check_handoff_freshness",
+            "signature": "repo_root: Path, handoff_path: Path, content: str, head_commit: str | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "get_git_head",
+            "signature": "repo_root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "is_implementation_file",
+            "signature": "path_str: str"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: Sequence[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "requires_handoff_update",
+            "signature": "changed_paths: Iterable[str]"
+          },
+          {
+            "kind": "function",
+            "name": "resolve_canonical_handoff_path",
+            "signature": "repo_root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "validate_handoff_content",
+            "signature": "content: str, path: Path, is_template: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "validate_repository_handoff",
+            "signature": "repo_root: Path, changed_files: Sequence[str] | None=None, warn_only: bool=False"
           }
         ],
         "test_paths": [],
