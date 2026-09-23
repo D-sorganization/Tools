@@ -31,6 +31,32 @@ reachable from any live state and `abandoned` from `parked`.
 - **Summary:** Replaces clipped ordinary least squares with the exact feasible solution of the two-parameter non-negative imaginary-impedance fit. The model remains passive by construction and does not make a physical identification claim from synthetic evidence.
 - **Next step:** Monitor required PR checks, then merge. Physical coefficient identification still requires traceable measurements.
 
+### DL-#5068-planning · Deferred Physical Validation Plans
+
+- **State:** in_review
+- **Owner:** codex (session `codex-validation-planning-20260922-tools`)
+- **Issue:** #5068; #4729; #4267
+- **Branch:** `docs/deferred-validation-planning`
+- **PR:** #5306
+- **Paths:** `docs/development/planning/`, `docs/development/HANDOFF.md`, `AGENT_HANDOFF.md`
+- **Started:** 2026-09-22
+- **Last verified:** 2026-09-22 (source issue bodies unchanged; strict three-plan catalog, design-manual governance and full commit hook stage pass; pre-push environment install failed with disk-full Errno 28)
+- **Summary:** Preserve unavailable experiments for Board review without closing mixed software epics or supplying fabricated measurements.
+- **Next step:** Restore C: capacity, pass the unchanged pre-push stage, then publish and verify immutable plan bytes while keeping software issues open.
+
+### DL-#5303 · Reviewed Renderer Source Provenance
+
+- **State:** in_progress
+- **Owner:** codex
+- **Issue:** D-sorganization/Tools#5303
+- **PR:** pending
+- **Branch:** `fix/5303-renderer-provenance`
+- **Paths:** `src/rate_of_closure/visual_baselines.v1.json`, `tests/rate_of_closure/test_visual_baseline_compare.py`, `AGENT_HANDOFF.md`, `src/rate_of_closure/AGENT_HANDOFF.md`
+- **Started:** 2026-09-22
+- **Last verified:** 2026-09-22 (the new exact-identity regression failed against `c599…`; after restoring `df410…`, all 10 visual baseline comparison tests pass)
+- **Summary:** Restores the reviewed source artifact commit for unchanged baseline images so UpstreamDrift's fail-closed provider contract accepts only the already reviewed source/hash pair. No image, tolerance, visual surface, or scientific model changes.
+- **Next step:** Run governed checks, open PR, and rerun the blocked downstream consumer lane.
+
 ### DL-#4951 · Historian Licensing Ruling: Grafana AGPLv3 and TimescaleDB TSL
 
 - **State:** in_review
@@ -235,8 +261,8 @@ reachable from any live state and `abandoned` from `parked`.
 - **Branch:** `feat/issue-4220-rate-of-closure-file-commands`
 - **Paths:** `src/rate_of_closure/ui/pyqt6/main_window_file_commands.py`, `src/rate_of_closure/ui/pyqt6/app_toolstrip.py`, `src/rate_of_closure/ui/pyqt6/main_window.py`, `src/rate_of_closure/ui/pyqt6/workspace_navigation.py`, `tests/rate_of_closure/test_main_window_file_commands.py`, `tests/rate_of_closure/pyqt_probe_lifecycle.py`, `tests/rate_of_closure/pyqt_variation_visual_state_probe.py`
 - **Started:** 2026-09-19
-- **Last verified:** 2026-09-20 (`SELF`; restored tuple idempotency in _freeze_json; all 10 test_main_window_file_commands.py, all 18 test_app_toolstrip.py, and all 6 test_workspace_files.py passing)
-- **Summary:** Native File commands (New, Open, Open Recent, Save, Save As, Import, Export, Close) wired into RateOfClosureMainWindow and ApplicationToolstrip with live dirty tracking, destructive action confirmation prompts, and idempotent tuple support in _freeze_json.
+- **Last verified:** 2026-09-20 (`SELF`; restored tuple idempotency in \_freeze_json; all 10 test_main_window_file_commands.py, all 18 test_app_toolstrip.py, and all 6 test_workspace_files.py passing)
+- **Summary:** Native File commands (New, Open, Open Recent, Save, Save As, Import, Export, Close) wired into RateOfClosureMainWindow and ApplicationToolstrip with live dirty tracking, destructive action confirmation prompts, and idempotent tuple support in \_freeze_json.
 - **Next step:** Push branch update, await CI completion and auto-merge.
 
 ### DL-#5218 · Camera Putting Launch Monitor for GSPro
@@ -251,7 +277,6 @@ reachable from any live state and `abandoned` from `parked`.
 - **Last verified:** 2026-09-20 (accuracy validation harness with CSV logging and running statistics, 7 unit tests passing, rig evidence and procedure page documented, #5221)
 - **Summary:** Overhead-camera putting monitor that measures launch speed and HLA on a mat-corner homography and sends putts to GSPro over Open Connect v1; shared `gspro_connect` codec extracted into `shared.python.launch_monitor`; recorded-putt replay corpus regression test suite added; accuracy validation harness (`validate` subcommand) and rig evidence page added (#5221).
 - **Next step:** Push branch `feat/issue-5221-putting-accuracy-validation`, open PR referencing Closes #5221, arm auto-merge.
-
 
 ### DL-#1614 · Mermaid C4 Architecture Map Contract
 
