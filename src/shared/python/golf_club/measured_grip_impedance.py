@@ -212,12 +212,20 @@ def assess_measured_frf_agreement(
     max_relative_magnitude_error: float,
     max_phase_error_rad: float,
     coverage_k: float = 2.0,
+    strain_qualified: bool = False,
 ) -> FRFAgreementSummary:
-    """Evaluate magnitude and phase agreement between model and measured data."""
+    """Evaluate FRF agreement subject to explicit strain qualification.
+
+    The caller must pass the result of an operating-strain assessment before this
+    numerical comparison can certify an operating point.  Omitting evidence is a
+    deliberate refusal, rather than an inference that the shaft remained linear.
+    """
     if not isinstance(measured, MeasuredGripDataset):
         raise TypeError("measured must be MeasuredGripDataset")
     if max_relative_magnitude_error <= 0.0 or max_phase_error_rad <= 0.0:
         raise ValueError("tolerances must be positive")
+    if not isinstance(strain_qualified, bool):
+        raise TypeError("strain_qualified must be a bool")
 
     agreements = []
     within_count = 0
@@ -265,10 +273,15 @@ def assess_measured_frf_agreement(
 
     coverage_frac = within_count / len(measured.samples)
     passivity_ok = all(a.is_passive for a in audit_grip_passivity(measured))
+    provenance_ok = all(
+        source.kind == "measurement-derived" for source in measured.sources
+    )
     qualified = (
         max_mag_err <= max_relative_magnitude_error
         and max_phase_err <= max_phase_error_rad
         and passivity_ok
+        and strain_qualified
+        and provenance_ok
     )
 
     return FRFAgreementSummary(
@@ -277,7 +290,7 @@ def assess_measured_frf_agreement(
         max_phase_error_rad=max_phase_err,
         coverage_fraction=coverage_frac,
         passivity_satisfied=passivity_ok,
-        strain_qualified=True,
+        strain_qualified=strain_qualified,
         agreement_qualified=qualified,
     )
 

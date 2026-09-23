@@ -78,12 +78,30 @@ Given measured impedance $Z_{\text{meas}}(\omega)$ with standard deviation $\sig
    $$z(\omega) = \frac{|Z_{\text{model}}(\omega) - Z_{\text{meas}}(\omega)|}{\max(\sigma_{|Z|}(\omega), 10^{-9})}$$
    Assessing whether the model predictions fall within the declared $k\sigma$ confidence interval (default $k=2.0$).
 
+Numerical agreement is distinct from physical qualification. `synthetic` and
+`analytical` source declarations can exercise serialization, fitting, passivity, and
+FRF error calculations, but `assess_measured_frf_agreement` refuses to report an
+operationally qualified result unless every source is `measurement-derived`. A
+measurement-derived source must carry a calibration digest; the digest establishes
+an identity contract for a future traceable study and does not itself prove the
+quality of the calibration.
+
 ## Physical Band & Strain Qualification
 
 - Frequency evaluations are strictly bounded within `[f_min, f_max]` (e.g. 10–500 Hz for translation/rotation $x_h, z_h$, 10–100 Hz for rotation $y_h$). Uncalibrated extrapolation outside this band is refused.
 - Operating beam strain:
   $$\epsilon_{\max} = \max_s |\kappa(s)| r_{\text{outer}} + |\epsilon_{\text{axial}}| \le \epsilon_{\text{limit}}$$
   refuses operating points exceeding declared linear elastic limits (default 0.005 / 0.5%).
+- `assess_measured_frf_agreement(..., strain_qualified=False)` refuses to certify FRF
+  agreement unless its caller explicitly supplies `strain_qualified=True`, derived from
+  `check_operating_strain_limits` for the applicable curvature, outer radius, axial
+  strain, and declared material limit.  The default is intentionally conservative:
+  a magnitude/phase/passivity match alone is numerical evidence, not proof that the
+  shaft stayed in its linear operating regime.
+- The Boolean is a boundary between the numerical FRF comparison and a separately
+  traceable operating-strain assessment.  It does not authenticate a measurement or
+  replace the required source, calibration, geometry, and strain evidence in a future
+  physical validation study.
 
 ## Consumer Integration
 
