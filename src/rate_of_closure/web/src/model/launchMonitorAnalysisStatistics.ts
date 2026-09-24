@@ -19,13 +19,17 @@ interface RegressionWork {
   inverseInformation: number[][];
 }
 
-const mean = (values: number[]) =>
-  values.reduce((sum, value) => sum + value, 0) / values.length;
+const mean = (values: number[]) => {
+  let sum = 0;
+  for (let i = 0; i < values.length; i++) sum += values[i];
+  return sum / values.length;
+};
 
 const variance = (values: number[], degrees = 1): number => {
   const center = mean(values);
-  return values.reduce((sum, value) => sum + (value - center) ** 2, 0) /
-    Math.max(1, values.length - degrees);
+  let sum = 0;
+  for (let i = 0; i < values.length; i++) sum += (values[i] - center) ** 2;
+  return sum / Math.max(1, values.length - degrees);
 };
 
 const erf = (value: number): number => {
@@ -283,8 +287,11 @@ const inverse = (matrix: number[][]): number[][] => {
 };
 
 const multiply = (left: number[][], right: number[][]): number[][] =>
-  left.map((row) => right[0].map((_, column) =>
-    row.reduce((sum, value, index) => sum + value * right[index][column], 0)));
+  left.map((row) => right[0].map((_, column) => {
+    let sum = 0;
+    for (let index = 0; index < row.length; index++) sum += row[index] * right[index][column];
+    return sum;
+  }));
 
 const transpose = (matrix: number[][]): number[][] =>
   matrix[0].map((_, column) => matrix.map((row) => row[column]));
@@ -305,8 +312,12 @@ export const calculateRegression = (
   const beta = multiply(
     multiply(inverseInformation, transpose(design)), outcome.map((value) => [value]),
   ).map((row) => row[0]);
-  const residuals = outcome.map((value, index) => value - design[index]
-    .reduce((sum, item, betaIndex) => sum + item * beta[betaIndex], 0));
+  const residuals = outcome.map((value, index) => {
+    let sum = 0;
+    const designRow = design[index];
+    for (let betaIndex = 0; betaIndex < designRow.length; betaIndex++) sum += designRow[betaIndex] * beta[betaIndex];
+    return value - sum;
+  });
   return regressionResult({
     count: complete.length,
     parameterCount,
@@ -322,10 +333,13 @@ const regressionResult = (
   work: RegressionWork,
   request: LaunchMonitorAnalysisRequest,
 ): RegressionEstimate => {
-  const residualSum = work.residuals.reduce((sum, value) => sum + value ** 2, 0);
-  const totalSum = work.outcome.reduce(
-    (sum, value) => sum + (value - mean(work.outcome)) ** 2, 0,
-  );
+  let residualSum = 0;
+  for (let i = 0; i < work.residuals.length; i++) residualSum += work.residuals[i] ** 2;
+
+  const outcomeMean = mean(work.outcome);
+  let totalSum = 0;
+  for (let i = 0; i < work.outcome.length; i++) totalSum += (work.outcome[i] - outcomeMean) ** 2;
+
   const rSquared = 1 - residualSum / totalSum;
   const degrees = work.count - work.parameterCount;
   const sigmaSquared = residualSum / degrees;
@@ -342,20 +356,28 @@ const regressionResult = (
       ciLower: estimate - critical * standardError,
       ciUpper: estimate + critical * standardError }];
   }));
-  const leverage = work.design.map((row) => multiply([row], work.inverseInformation)[0]
-    .reduce((sum, value, index) => sum + value * row[index], 0));
+  const leverage = work.design.map((row) => {
+    const multRow = multiply([row], work.inverseInformation)[0];
+    let sum = 0;
+    for (let index = 0; index < multRow.length; index++) sum += multRow[index] * row[index];
+    return sum;
+  });
   const cooks = work.residuals.map((residual, index) =>
     (residual ** 2 / Math.max(Number.EPSILON, work.parameterCount * sigmaSquared)) *
     leverage[index] / Math.max(Number.EPSILON, (1 - leverage[index]) ** 2));
+
+  let durbinWatsonSum = 0;
+  for (let index = 1; index < work.residuals.length; index++) {
+    durbinWatsonSum += (work.residuals[index] - work.residuals[index - 1]) ** 2;
+  }
+
   return { sampleCount: work.count, rSquared,
     adjustedRSquared: 1 - (1 - rSquared) * (work.count - 1) / degrees, coefficients,
     residualDiagnostics: {
       rmse: Math.sqrt(residualSum / work.count), mae: mean(work.residuals.map(Math.abs)),
       residualMean: mean(work.residuals),
       residualStd: Math.sqrt(variance(work.residuals, work.parameterCount)),
-      durbinWatson: residualSum === 0 ? null : work.residuals.slice(1)
-        .reduce((sum, value, index) => sum + (value - work.residuals[index]) ** 2, 0) /
-        residualSum,
+      durbinWatson: residualSum === 0 ? null : durbinWatsonSum / residualSum,
       influentialCount: cooks.filter((value) => value > 4 / work.count).length,
     } };
 };

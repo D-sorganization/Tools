@@ -9930,10 +9930,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 14145,
+      "bytes_lf": 14633,
       "classification": "calculation",
       "classification_basis": "path-marker:statistics",
-      "content_sha256_lf": "4806ca497c9eabadd40b5b030a9f771b690d8cb88e60f37cd456645676b6be77",
+      "content_sha256_lf": "264d10a1c7b3d61463e7cbb428fa46d0ede390017d1fa4f3e36e33d60def0a2b",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-LAUNCHMONITORANALYSISSTATISTICS-TS-404C8C111ECE",
       "language": "typescript",
