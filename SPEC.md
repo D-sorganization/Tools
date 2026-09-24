@@ -7683,3 +7683,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-19: Native File Commands and Workspace Persistence (#4220)
 
 - **2026-09-19**: feat(rate-ui, #4220) — Wire native File commands (New, Open, Open Recent, Save, Save As, Import, Export, Close) into RateOfClosureMainWindow and ApplicationToolstrip with dirty tracking and destructive action confirmation prompts.
+
+## 2026-09-24: Release v1.21.1 (#5337)
+
+- **2026-09-24**: chore(release, #5337) — Bump release version to v1.21.1 across pyproject.toml, package.json, and VERSION; refresh CHANGELOG.md.
