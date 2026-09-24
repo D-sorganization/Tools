@@ -89,8 +89,20 @@ function extents(tris: Triangle[]): Vec3 {
   const pts = flatten(tris);
   const out: Vec3 = [0, 0, 0];
   for (let axis = 0; axis < 3; axis += 1) {
-    const values = pts.map((p) => p[axis]);
-    out[axis] = Math.max(...values) - Math.min(...values);
+    // ⚡ Bolt Optimization: Use single-pass loop instead of Math.max(...spread) and Math.min(...spread)
+    let minVal = Infinity;
+    let maxVal = -Infinity;
+    for (const p of pts) {
+      const val = p[axis];
+      if (!Number.isFinite(val)) {
+        minVal = NaN;
+        maxVal = NaN;
+        break;
+      }
+      if (val < minVal) minVal = val;
+      if (val > maxVal) maxVal = val;
+    }
+    out[axis] = maxVal - minVal;
   }
   return out;
 }
@@ -248,4 +260,17 @@ describe("head normalization — pinned numbers shared with pytest", () => {
       expect(Math.hypot(...n)).toBeCloseTo(1, 9);
     }
   });
+
+  it("propagates non-finite coordinates in extents calculation", () => {
+    const corrupted: Triangle = [
+      [NaN, 0, 0],
+      [1, 2, 3],
+      [4, 5, 6],
+    ];
+    const res = extents([corrupted]);
+    expect(Number.isNaN(res[0])).toBe(true);
+    expect(res[1]).toBe(5);
+    expect(res[2]).toBe(6);
+  });
 });
+
