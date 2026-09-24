@@ -78,8 +78,11 @@ def safe_exp(x: float) -> float:
     """
     if x is None:
         raise ValueError("x must be provided")
-    clamped = max(-_EXP_MAX_ARG, min(x, _EXP_MAX_ARG))
-    return float(math.exp(clamped))
+    if -_EXP_MAX_ARG <= x <= _EXP_MAX_ARG:
+        return float(math.exp(x))
+    if x > _EXP_MAX_ARG:
+        return float(math.exp(_EXP_MAX_ARG))
+    return float(math.exp(-_EXP_MAX_ARG))
 
 
 def antoine_pressure_pa(a: float, b: float, c: float, temperature_c: float) -> float:

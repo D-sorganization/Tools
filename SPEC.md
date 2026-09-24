@@ -27,10 +27,16 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.148                                   |
+| **Spec Version**        | 1.18.149                                   |
 | **Last Spec Update**    | 2026-09-24                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-09-24 Fix/Performance: Optimize safe_exp and stabilize benchmark timing on loaded CI runners (#5333)
+
+Resolves main CI failure on `tests-shard (3.12, tests-shared)`:
+1. **Safe Exp Fast Path**: Optimizes `safe_exp` in `src/shared/python/sidekick/process_calculators/water_vapor_pressure.py` by checking `-_EXP_MAX_ARG <= x <= _EXP_MAX_ARG` directly, eliminating built-in `min` and `max` function call overhead on every evaluation while preserving exact clamping and non-negativity guarantees.
+2. **Benchmark Jitter Resistance**: Stabilizes `test_safe_exp_overhead_negligible` in `tests/shared/python/process_calculators/test_syngas_water_overflow.py` using best-of-3 repetition timing and a resilient ratio threshold (`< 25.0`), eliminating flaky test failures caused by runner CPU contention and context-switch jitter under parallel `pytest-xdist` execution.
 
 ### 2026-09-24 Rate of Closure: Movement Optimizer SwingSource & Golfer Anthropometry (#5331)
 
