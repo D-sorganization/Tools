@@ -5922,6 +5922,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 <!-- prettier-ignore-start -->
 
 | Date       | PR         | Changes    |
+| 2026-09-24 | #5328 | ⚡ Bolt: Use single-pass loops for statistics calculation to prevent GC overhead. |
 | 2026-09-24 | #5329 | Optimize extent calculation in mesh testing |
 | 2026-09-24 | n/a | ⚡ Bolt: Use inline Math.sqrt for vector norm to prevent spread overhead |
 | 2026-09-23 | #5323 | Install the exact fleet deferred-validation checker, digest receipt and always-run hook with five test-first publication controls; preserve owner plans and scientific release gates. |

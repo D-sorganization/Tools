@@ -239,3 +239,8 @@
 **Learning:** Using `Math.max(...spread)` and `Math.min(...spread)` combined with `.map` to compute extents over mesh vertices creates intermediate arrays and risks call stack limits for high-resolution meshes. A single-pass loop over the source array is both safer and more memory-efficient.
 **Action:** Always replace spread-based min/max computations over dynamically sized arrays (especially coordinate lists or geometry) with explicit single-pass loops.
 
+## 2026-09-24 - Replaced chainable reduce with single-pass loops
+**Learning:** High-frequency functional iteration with chained `.reduce()` allocating arrays per iteration causes massive performance penalties and GC pressure in numerical hot loops in TypeScript, significantly lagging behind imperative `for` loops.
+**Action:** Replaced `.reduce()` functions with plain, single-pass `for` loops for performance-critical aggregation calculations like statistics (e.g. `mean`, `variance`, matrix combinations).
+
+
