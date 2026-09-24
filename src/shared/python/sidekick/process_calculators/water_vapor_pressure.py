@@ -57,6 +57,8 @@ PA_PER_HPA: float = 100.0
 # Maximum exponent for safe float64 exp() calls.  math.exp(709) is finite
 # but math.exp(710) overflows.  We use 700 as a conservative upper bound.
 _EXP_MAX_ARG: float = 700.0
+_EXP_MAX_VAL: float = math.exp(_EXP_MAX_ARG)
+_EXP_MIN_VAL: float = math.exp(-_EXP_MAX_ARG)
 
 # Natural log of 10, used to convert a base-10 Antoine exponent into the
 # argument of math.exp so the clamped safe_exp guard can be applied.
@@ -67,9 +69,10 @@ def safe_exp(x: float) -> float:
     """Compute ``exp(x)`` with clamping to prevent float64 overflow.
 
     For ``x > _EXP_MAX_ARG`` the result is clamped to ``exp(_EXP_MAX_ARG)``
-    (~1.01e+304).  For ``x < -_EXP_MAX_ARG`` the result is effectively 0.
-    This avoids ``RuntimeWarning: overflow encountered in exp`` when extreme
-    temperatures are pushed through the Buck / Magnus / IAPWS equations.
+    (~1.01e+304).  For ``x < -_EXP_MAX_ARG`` the result is effectively
+    ``exp(-_EXP_MAX_ARG)`` (~9.86e-305).  This avoids
+    ``RuntimeWarning: overflow encountered in exp`` when extreme temperatures
+    are pushed through the Buck / Magnus / IAPWS equations.
 
     Precondition:
         ``x`` must be a finite float (no NaN / inf).
@@ -78,8 +81,11 @@ def safe_exp(x: float) -> float:
     """
     if x is None:
         raise ValueError("x must be provided")
-    clamped = max(-_EXP_MAX_ARG, min(x, _EXP_MAX_ARG))
-    return float(math.exp(clamped))
+    if x > _EXP_MAX_ARG:
+        return _EXP_MAX_VAL
+    if x < -_EXP_MAX_ARG:
+        return _EXP_MIN_VAL
+    return float(math.exp(x))
 
 
 def antoine_pressure_pa(a: float, b: float, c: float, temperature_c: float) -> float:
