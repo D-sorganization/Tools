@@ -196,6 +196,8 @@ def build_result_object(
     n_joint_limit_violations: int,
     elapsed: float,
     n_evals: int,
+    clubhead_poses: NDArray[np.float64] | None = None,
+    clubhead_twists: NDArray[np.float64] | None = None,
 ) -> OptimizationResult:
     """Assemble the final OptimizationResult dataclass from solver outputs.
 
@@ -220,4 +222,6 @@ def build_result_object(
         elapsed_s=elapsed,
         n_evals=n_evals,
         n_joint_limit_violations=n_joint_limit_violations,
+        clubhead_poses=clubhead_poses,
+        clubhead_twists=clubhead_twists,
     )

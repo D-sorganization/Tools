@@ -7530,10 +7530,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 1300,
+      "bytes_lf": 1348,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "2db2364b772540a44b9bd2f7450415351a0bea04f05d2bb38a98ca78f00fb875",
+      "content_sha256_lf": "ecc4a7a31a97be99bb4df4df1833f2e6bfb19e17daba986e0f75870da4b33c41",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-SIMULATION-SPECS-PY-60B002F0BD45",
       "language": "python",

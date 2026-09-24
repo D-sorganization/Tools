@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, field
+from typing import Any
 
 import numpy as np
 
@@ -35,6 +36,9 @@ from shared.python.swing_sim.run_config import (
 )
 from shared.python.swing_sim.torque_library import TorqueProfileLibrary
 from shared.python.swing_sim.types import PendulumParameters, PlaneOrientation
+
+from .anthropometry import GolferAnthropometry
+from .optimized_swing import OptimizedSwingResult
 
 __all__ = ["BALL_POSITION_M", "SimulationConfig", "SimulationRun"]
 
@@ -75,6 +79,8 @@ class SimulationConfig:
     manual_club_path_deg: float = 0.0
     manual_forward_shaft_lean_deg: float = 0.0
     manual_shaft_axis_datum: ShaftAxisDatum = ShaftAxisDatum.TRACKED_REFERENCE
+    golfer_anthropometry: GolferAnthropometry | None = None
+    optimized_result: Any | None = None
 
     def __post_init__(self) -> None:
         """Validate and normalize the immutable request."""
@@ -117,6 +123,33 @@ class SimulationConfig:
             "pendulum_parameters must be PendulumParameters",
             self.pendulum_parameters,
         )
+        require(
+            self.golfer_anthropometry is None
+            or isinstance(self.golfer_anthropometry, GolferAnthropometry),
+            "golfer_anthropometry must be a GolferAnthropometry instance or None",
+            self.golfer_anthropometry,
+        )
+        if self.optimized_result is not None:
+            if not isinstance(self.optimized_result, OptimizedSwingResult):
+                require(
+                    hasattr(self.optimized_result, "clubhead_poses")
+                    and self.optimized_result.clubhead_poses is not None,
+                    "optimized_result must contain clubhead_poses",
+                )
+                require(
+                    hasattr(self.optimized_result, "clubhead_twists")
+                    and self.optimized_result.clubhead_twists is not None,
+                    "optimized_result must contain clubhead_twists",
+                )
+                raw_time = getattr(
+                    self.optimized_result,
+                    "t",
+                    getattr(self.optimized_result, "time_s", None),
+                )
+                require(
+                    raw_time is not None,
+                    "optimized_result must contain time_s or t",
+                )
         require(
             self.torque_library is None
             or isinstance(self.torque_library, TorqueProfileLibrary),
@@ -318,9 +351,13 @@ def _validate_torque_history(run: SimulationRun, sample_count: int) -> None:
         bool(np.all(np.isfinite(run.swing_applied_torques_nm))),
         "swing_applied_torques_nm must be finite",
     )
-    expected_joint_ids = (
-        DOUBLE_PENDULUM_JOINT_IDS if run.config.source_kind == "double_pendulum" else ()
-    )
+    expected_joint_ids: tuple[str, ...]
+    if run.config.source_kind == "double_pendulum":
+        expected_joint_ids = DOUBLE_PENDULUM_JOINT_IDS
+    elif run.config.source_kind == "movement_optimizer":
+        expected_joint_ids = run.swing_joint_ids
+    else:
+        expected_joint_ids = ()
     require(
         run.swing_joint_ids == expected_joint_ids,
         "applied torque joint IDs are incompatible with the swing source",

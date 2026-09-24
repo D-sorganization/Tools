@@ -3121,6 +3121,7 @@
           "tests/rate_of_closure/test_morris_pyqt_workspace.py",
           "tests/rate_of_closure/test_morris_rate_adapter.py",
           "tests/rate_of_closure/test_morris_ui_contract.py",
+          "tests/rate_of_closure/test_movement_optimizer_swing_source.py",
           "tests/rate_of_closure/test_plots_async_performance.py",
           "tests/rate_of_closure/test_plots_gui.py",
           "tests/rate_of_closure/test_plotting.py",

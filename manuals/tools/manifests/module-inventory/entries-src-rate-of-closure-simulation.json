@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "provisional",
-      "bytes_lf": 4679,
+      "bytes_lf": 5157,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "b71ca6b394d08516baebb8a0480cfb843fe5b409f08cfecc0c30f8b6e9e38928",
+      "content_sha256_lf": "7b94a4bdd6a41928653bfc545a6fefe408cdddf16578ec2c609be8b6a39f7286",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-INIT-PY-7BC8891DC6A1",
       "language": "python",
@@ -77,6 +77,16 @@
           },
           {
             "kind": "re-export",
+            "name": "DEFAULT_GOLFER_HEIGHT_M",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DEFAULT_GOLFER_MASS_KG",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "DEFAULT_SPEED",
             "signature": null
           },
@@ -88,6 +98,11 @@
           {
             "kind": "re-export",
             "name": "FlightExploration",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GolferAnthropometry",
             "signature": null
           },
           {
@@ -147,6 +162,16 @@
           },
           {
             "kind": "re-export",
+            "name": "OptimizedSwingResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "OptimizedSwingSource",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "PLAYBACK_SPEEDS",
             "signature": null
           },
@@ -183,6 +208,16 @@
           {
             "kind": "re-export",
             "name": "SOURCE_KINDS",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "STANDARD_ARM_LENGTH_FRACTION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "STANDARD_ARM_MASS_FRACTION",
             "signature": null
           },
           {
@@ -543,6 +578,88 @@
           "N",
           "kg",
           "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 8282,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "e34e6000828a42108ea79493bf0e7023df02c7a616f33204a1ce5733b0083eff",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-ANTHROPOMETRY-PY-1235B3A115A4",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/anthropometry.py",
+      "purpose": "Golfer anthropometry and swing delivery generation (Linear D-7520, epic #4103).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "GolferAnthropometry",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_GOLFER_HEIGHT_M",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_GOLFER_MASS_KG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "STANDARD_ARM_LENGTH_FRACTION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "STANDARD_ARM_MASS_FRACTION",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_golfer_anthropometry.py",
+          "tests/rate_of_closure/test_movement_optimizer_swing_source.py",
+          "tests/rate_of_closure/test_optimized_swing_source.py",
+          "tests/shared/python/humanoid/test_anthropometry.py"
+        ],
+        "unit_mentions": [
+          "kg",
+          "ms"
         ],
         "validation_paths": []
       }
@@ -1955,10 +2072,75 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 12953,
+      "bytes_lf": 9903,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "d9a03fe67b16a6da4e58b8c53c77839341d35428496caf128bfb4c76be6662b2",
+      "content_sha256_lf": "c900962d91ffea227a558b445fb1d88df93c530bb82fbdc3c1f361b5cfdef9a4",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-OPTIMIZED-SWING-PY-E6870A388AFA",
+      "language": "python",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/simulation/optimized_swing.py",
+      "purpose": "Optimized swing source adapting movement-optimizer motion results (epic #4103).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "OptimizedSwingResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "OptimizedSwingSource",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/rate_of_closure/test_optimized_swing_source.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 13061,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "f956bb652257aad8ab94a29034f34d4c4c2142f58f828258f89d63dba51b84e5",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-PIPELINE-PY-E6FB409F0AE0",
       "language": "python",
@@ -2178,10 +2360,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 13152,
+      "bytes_lf": 14789,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "00f7a20553148ddc7fd91eb8a670601800029701eec4bd6344fa651debc00f71",
+      "content_sha256_lf": "4364627b1042efdd4f62cb56b3493273111f9e39f8794243bfc9d44664dd457c",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-RECORDS-PY-21A54BC3EBDF",
       "language": "python",
@@ -2447,10 +2629,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 11268,
+      "bytes_lf": 12307,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "bee81e588bb8002381803c6b39f2e6c8dd0138299260be701a8ded104f49b49f",
+      "content_sha256_lf": "4bcf3d18fb878feb8fd30bbf8ae3ac2db2b75e3e8411111748be10bf12e9d98d",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-SOURCES-PY-9F053F3C6541",
       "language": "python",
@@ -2516,7 +2698,7 @@
           {
             "kind": "function",
             "name": "make_source",
-            "signature": "kind: str, scenario: ImpactScenario, plane: PlaneOrientation | None=None, duration: float=1.5, run_config: DoublePendulumRunConfig | None=None, torque_library: TorqueProfileLibrary | None=None, pendulum_parameters: PendulumParameters | None=None, manual_delivery: ManualDeliveryConfig | None=None"
+            "signature": "kind: str, scenario: ImpactScenario, plane: PlaneOrientation | None=None, duration: float=1.5, run_config: DoublePendulumRunConfig | None=None, torque_library: TorqueProfileLibrary | None=None, pendulum_parameters: PendulumParameters | None=None, manual_delivery: ManualDeliveryConfig | None=None, golfer_anthropometry: GolferAnthropometry | None=None, optimized_result: OptimizedSwingResult | None=None"
           },
           {
             "kind": "re-export",
@@ -2531,6 +2713,7 @@
         ],
         "test_paths": [
           "tests/rate_of_closure/test_kinetics.py",
+          "tests/rate_of_closure/test_movement_optimizer_swing_source.py",
           "tests/rate_of_closure/test_simulation.py",
           "tests/rate_of_closure/test_torque_run_history.py"
         ],

@@ -27,10 +27,19 @@
 | **Primary Language(s)** | Python 3.11+, Rust, JavaScript, TypeScript |
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
-| **Spec Version**        | 1.18.147                                   |
-| **Last Spec Update**    | 2026-09-21                                 |
+| **Spec Version**        | 1.18.148                                   |
+| **Last Spec Update**    | 2026-09-24                                 |
 
 ## 2. Purpose & Mission
+
+### 2026-09-24 Rate of Closure: Movement Optimizer SwingSource & Golfer Anthropometry (#5331)
+
+Delivers integration of movement-optimizer trajectory output as a qualified `SwingSource` with minimal golfer anthropometry inputs (Linear D-7520):
+
+1. **Movement Optimizer Forward Kinematics**: Extends `LagrangianKinematicsMixin` to derive spatial clubhead twist via the kinematic Jacobian alongside forward poses, packaging `clubhead_poses` and `clubhead_twists` in `OptimizationResult`.
+2. **Golfer Anthropometry**: Implements `GolferAnthropometry` with Dempster/Winter body segment parameter scaling (height, mass), swing-plane gravity projection, and 3D plane rotation alignment in `rate_of_closure.simulation`.
+3. **Optimized Swing Source**: Implements `OptimizedSwingSource` with quaternion SLERP interpolation and duck-typed result acceptance, preserving `shared.python.swing_sim` cross-repo API stability.
+4. **Cross-Runtime Parity & UI**: Adds `GolferAnthropometryControls` to the web mirror with positive finite override validation and sample-for-sample parity against golden fixture `movement_optimizer_golden_v1.json`.
 
 ### 2026-09-21 Architecture Rulings: Historian Licensing Scope & Impact-Interval Tab Disposition (#4951, #4946)
 

@@ -1649,6 +1649,59 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 4393,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "35d22821f27f60fa6b33d6bd9b54aad35b7956149cf33ba9ecb83d61d0b18750",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-GOLFERANTHROPOMETRYCONTROLS-TSX-0CEEED4857BE",
+      "language": "typescript-react",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/components/GolferAnthropometryControls.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "GolferAnthropometryControls",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "kg"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2262,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -4799,10 +4852,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 15519,
+      "bytes_lf": 17014,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "2990d7571dfb703e339af26ecfa30461c556b03ca4ec8205ec86bb06ada384e4",
+      "content_sha256_lf": "ed522786b3d99a89f7e13d16ad8a3a3921916253b9edcf5e1a8baca76ad62d48",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-SIMULATIONPANEL-TEST-TSX-6FF6EE1E329E",
       "language": "typescript-react",
@@ -4842,6 +4895,7 @@
         "test_paths": [],
         "unit_mentions": [
           "deg",
+          "kg",
           "mm",
           "s"
         ],
@@ -4850,10 +4904,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 14490,
+      "bytes_lf": 15171,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "a2629eeeb87fdca900905801a70c726b64eeb9e66b2ccc2a8d86e7ff44ffbb0b",
+      "content_sha256_lf": "dc29092a0fb20e7af83550fcaf33aa78316c55b1a4e477f14e6202b305824f97",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-SIMULATIONPANEL-TSX-DDB1BEFA1361",
       "language": "typescript-react",
@@ -5014,10 +5068,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 1809,
+      "bytes_lf": 2537,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "5e39ea8b89b6c6805c8c9d3517f623f8fb5f6d24e2322a0e0503e2d82e333678",
+      "content_sha256_lf": "4fb3114470a561e8b859eee44954e24551ab1d26acbdba4a6b5c18da933fa43b",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-SIMULATIONSTATUSHEADER-TEST-TSX-C34BB1EA8CFB",
       "language": "typescript-react",
@@ -5061,10 +5115,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 3938,
+      "bytes_lf": 4116,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "ebe8c6b9e617919ad3ca0bc764a1e77c9ab2d95c0be9e06684d9f6b54bf48b7b",
+      "content_sha256_lf": "c452305fef26735f0f3c2c78f60b94a8fb6dbca570a27bff8b016af3497758a1",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-SIMULATIONSTATUSHEADER-TSX-CC0759C5A2A6",
       "language": "typescript-react",

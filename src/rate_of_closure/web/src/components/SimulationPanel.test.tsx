@@ -356,4 +356,36 @@ describe("SimulationPanel impact club", () => {
     expect(screen.getByText(/Completed.*prescribed torque profile.*Wrist locked.*relative/i))
       .toBeInTheDocument();
   });
+
+  it("displays and updates golfer anthropometry when movement optimizer source is active", () => {
+    renderPanel(getClub("Driver 10.5°"));
+    const source = screen.getByLabelText("Swing Source");
+
+    expect(screen.queryByRole("group", { name: "Golfer Anthropometry" })).not.toBeInTheDocument();
+    fireEvent.change(source, { target: { value: "movement_optimizer" } });
+
+    expect(screen.getByRole("group", { name: "Golfer Anthropometry" })).toBeInTheDocument();
+    const heightInput = screen.getByRole("textbox", { name: "Golfer Height" });
+    const massInput = screen.getByRole("textbox", { name: "Golfer Body Mass" });
+
+    expect(heightInput).toHaveValue("1.75");
+    expect(massInput).toHaveValue("75");
+    expect(screen.getByText(/Lead Arm Length:/i)).toHaveTextContent("0.735 m");
+    expect(screen.getByText(/Mass:/i)).toHaveTextContent("7.50 kg");
+
+    fireEvent.focus(heightInput);
+    fireEvent.change(heightInput, { target: { value: "1.85" } });
+    fireEvent.blur(heightInput);
+
+    fireEvent.focus(massInput);
+    fireEvent.change(massInput, { target: { value: "85" } });
+    fireEvent.blur(massInput);
+
+    expect(screen.getByText(/Lead Arm Length:/i)).toHaveTextContent("0.777 m");
+    expect(screen.getByText(/Mass:/i)).toHaveTextContent("8.50 kg");
+
+    fireEvent.click(screen.getByRole("button", { name: "Run Simulation" }));
+    expect(screen.getByText(/Completed/i)).toBeInTheDocument();
+    expect(screen.queryByText(/Run failed/)).not.toBeInTheDocument();
+  });
 });

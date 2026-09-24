@@ -43,6 +43,9 @@ import {
   DEFAULT_MANUAL_DELIVERY,
   type ManualDelivery,
 } from "../model/manualDelivery";
+import { GolferAnthropometryControls } from "./GolferAnthropometryControls";
+import { DEFAULT_GOLFER_ANTHROPOMETRY } from "../model/movementOptimizerSimulation";
+import { type GolferAnthropometryTs } from "../model/simulationTypes";
 
 interface Props {
   scenario: ImpactScenario;
@@ -90,6 +93,8 @@ export function SimulationPanel({
   const [manualDelivery, setManualDelivery] = useState<ManualDelivery>(
     DEFAULT_MANUAL_DELIVERY,
   );
+  const [golferAnthropometry, setGolferAnthropometry] =
+    useState<GolferAnthropometryTs>(DEFAULT_GOLFER_ANTHROPOMETRY);
   const [contactMode, setContactMode] =
     useState<ContactMode>("delivery_inspection");
   const [doublePendulumRun, setDoublePendulumRun] =
@@ -129,6 +134,7 @@ export function SimulationPanel({
       doublePendulumRun,
       doublePendulumInitialState,
       ballSetup,
+      golferAnthropometry,
       ...manualDelivery,
     }),
     [
@@ -142,6 +148,7 @@ export function SimulationPanel({
       doublePendulumRun,
       doublePendulumInitialState,
       ballSetup,
+      golferAnthropometry,
       manualDelivery,
     ],
   );
@@ -279,6 +286,13 @@ export function SimulationPanel({
             value={manualDelivery}
             onChange={setManualDelivery}
           />
+          {sourceKind === "movement_optimizer" && (
+            <GolferAnthropometryControls
+              enabled={sourceKind === "movement_optimizer"}
+              value={golferAnthropometry}
+              onChange={setGolferAnthropometry}
+            />
+          )}
           {sourceKind === "double_pendulum" && (
             <JointLockControls
               initialState={doublePendulumInitialState}

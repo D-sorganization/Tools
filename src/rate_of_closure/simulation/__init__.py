@@ -16,6 +16,13 @@ Orchestrates a full swing -> impact -> flight run:
 
 from __future__ import annotations
 
+from .anthropometry import (
+    DEFAULT_GOLFER_HEIGHT_M,
+    DEFAULT_GOLFER_MASS_KG,
+    STANDARD_ARM_LENGTH_FRACTION,
+    STANDARD_ARM_MASS_FRACTION,
+    GolferAnthropometry,
+)
 from .contact import ContactMode, ImpactOutcome, ImpactStatus
 from .export import (
     SCREW_CSV_COLUMNS,
@@ -65,6 +72,10 @@ from .kinetics import (
     zero_torque_counterfactual,
 )
 from .manual_delivery import ManualDeliveryConfig, ShaftAxisDatum
+from .optimized_swing import (
+    OptimizedSwingResult,
+    OptimizedSwingSource,
+)
 from .playback_transport import (
     DEFAULT_SPEED,
     PLAYBACK_SPEEDS,
@@ -105,9 +116,16 @@ __all__ = [
     "ball_setup_from_json_dict",
     "manual_delivery_from_json_dict",
     "ContactMode",
+    "DEFAULT_GOLFER_HEIGHT_M",
+    "DEFAULT_GOLFER_MASS_KG",
     "EXPLORER_METRIC_KEYS",
+    "GolferAnthropometry",
     "KINETIC_JOINT_NAMES",
+    "OptimizedSwingResult",
+    "OptimizedSwingSource",
     "SOURCE_KINDS",
+    "STANDARD_ARM_LENGTH_FRACTION",
+    "STANDARD_ARM_MASS_FRACTION",
     "SCREW_CSV_COLUMNS",
     "TARGET_CSV_COLUMNS",
     "AppFrameSwing",

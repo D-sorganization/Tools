@@ -133,6 +133,8 @@ def _make_source(config: SimulationConfig) -> SwingSource:
         torque_library=config.torque_library,
         pendulum_parameters=config.pendulum_parameters,
         manual_delivery=config.manual_delivery,
+        golfer_anthropometry=config.golfer_anthropometry,
+        optimized_result=config.optimized_result,
     )
 
 

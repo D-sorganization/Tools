@@ -51,4 +51,25 @@ describe("SimulationStatusHeader", () => {
     );
     expect(status.className).toContain("red");
   });
+
+  it("supports selecting the movement optimizer swing source", () => {
+    const onSourceKindChange = vi.fn();
+    render(
+      <SimulationStatusHeader
+        sourceKind="movement_optimizer"
+        onSourceKindChange={onSourceKindChange}
+        status="Completed — impact and flight available"
+        warning={false}
+      />,
+    );
+
+    expect(screen.getByLabelText("Swing Source")).toHaveValue("movement_optimizer");
+    expect(screen.getByText(/reproducible swing delivery generated from golfer anthropometry/i))
+      .toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Swing Source"), {
+      target: { value: "manual" },
+    });
+    expect(onSourceKindChange).toHaveBeenCalledWith("manual");
+  });
 });

@@ -131,21 +131,14 @@ class LagrangianKinematicsMixin:
         c3x = hip_x + d[2] * sq[:, 2]
 
         total_mass = b.body_mass + bar_mass
-        numerator = (
-            b.m_feet * b.foot_com_x
-            + self.m[0] * c1x
-            + self.m[1] * c2x
-            + self.m[2] * c3x
-        )
+        numerator = b.m_feet * b.foot_com_x + self.m[0] * c1x + self.m[1] * c2x + self.m[2] * c3x
 
         if exercise_type in ("squat", "full_squat"):
             if hasattr(b, "squat_bar_depth") and (
                 b.squat_bar_depth != 0.0 or b.squat_bar_height != 0.0
             ):
                 bar_x = (
-                    shoulder_x
-                    - b.squat_bar_height * sq[:, 2]
-                    - b.squat_bar_depth * np.cos(q[:, 2])
+                    shoulder_x - b.squat_bar_height * sq[:, 2] - b.squat_bar_depth * np.cos(q[:, 2])
                 )
             else:
                 bar_x = shoulder_x
@@ -276,18 +269,8 @@ class LagrangianKinematicsMixin:
 
         total_mass = b.body_mass + bar_mass
 
-        num_x = (
-            b.m_feet * b.foot_com_x
-            + self.m[0] * c1_x
-            + self.m[1] * c2_x
-            + self.m[2] * c3_x
-        )
-        num_y = (
-            b.m_feet * b.foot_com_y
-            + self.m[0] * c1_y
-            + self.m[1] * c2_y
-            + self.m[2] * c3_y
-        )
+        num_x = b.m_feet * b.foot_com_x + self.m[0] * c1_x + self.m[1] * c2_x + self.m[2] * c3_x
+        num_y = b.m_feet * b.foot_com_y + self.m[0] * c1_y + self.m[1] * c2_y + self.m[2] * c3_y
 
         if exercise_type in ("squat", "full_squat"):
             bar_pos = self.bar_position(q, exercise_type)
@@ -304,3 +287,25 @@ class LagrangianKinematicsMixin:
             num_y += b.m_arms * arm_com_y + bar_mass * bar_pos[1]
 
         return np.array([num_x / total_mass, num_y / total_mass])
+
+    def clubhead_pose(self, q: NDArray) -> NDArray:
+        """Return 4x4 SE(3) pose of clubhead/distal segment in swing frame."""
+        pose = np.eye(4, dtype=float)
+        fk = self.forward_kinematics(q)
+        tip_pos = fk.get("shoulder", np.zeros(2))
+        q2 = float(q[2]) if len(q) >= 3 else 0.0
+        c2 = math.cos(q2)
+        s2 = math.sin(q2)
+        pose[:3, :3] = np.array([[c2, 0.0, s2], [0.0, 1.0, 0.0], [-s2, 0.0, c2]])
+        pose[0, 3] = float(tip_pos[0])
+        pose[2, 3] = float(tip_pos[1])
+        return pose
+
+    def clubhead_twist(self, q: NDArray, qd: NDArray) -> NDArray:
+        """Return 6-vector spatial twist [wx, wy, wz, vx, vy, vz]."""
+        L = self.L_eff
+        n_dof = min(len(q), len(qd), len(L))
+        vx = float(sum(L[i] * math.cos(float(q[i])) * float(qd[i]) for i in range(n_dof)))
+        vz = float(-sum(L[i] * math.sin(float(q[i])) * float(qd[i]) for i in range(n_dof)))
+        wy = float(qd[2]) if len(qd) >= 3 else 0.0
+        return np.array([0.0, wy, 0.0, vx, 0.0, vz], dtype=float)

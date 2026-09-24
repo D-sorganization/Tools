@@ -14445,6 +14445,138 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 5562,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "80f03723229064be13a166e4acaacc30490c4744445e140592e6ec86936ef7ed",
+      "family": "rate-of-closure-non-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-MOVEMENTOPTIMIZERPARITY-TEST-TS-550659DE7AEC",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/movementOptimizerParity.test.ts",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 6045,
+      "classification": "calculation",
+      "classification_basis": "path-marker:simulation",
+      "content_sha256_lf": "f538789a74f32b02ae2ebd1a3e2572e1ea26bac10de01529ddd8281e0b2fc60c",
+      "family": "rate-of-closure-calculation",
+      "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-MOVEMENTOPTIMIZERSIMULATION-TS-FEE6DF548509",
+      "language": "typescript",
+      "maintainer": "Rate of Closure maintainers",
+      "path": "src/rate_of_closure/web/src/model/movementOptimizerSimulation.ts",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "DEFAULT_GOLFER_ANTHROPOMETRY",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "DEFAULT_GOLFER_HEIGHT_M",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "DEFAULT_GOLFER_MASS_KG",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "STANDARD_ARM_LENGTH_FRACTION",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "STANDARD_ARM_MASS_FRACTION",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "golferAnthropometryToParams",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "simulateMovementOptimizerDelivery",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "deg",
+          "g",
+          "ms",
+          "rad"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 3063,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -20318,10 +20450,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 15176,
+      "bytes_lf": 15515,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "a4b08832dc365db50d9d2d74983d2d6097456be8cb08408344a91ffb7bf4111a",
+      "content_sha256_lf": "378c171cea0bc201f94a96bb71886380af6838d4b45631be5780b214169e3464",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-SIMULATION-TS-1714CC349F81",
       "language": "typescript",
@@ -20591,10 +20723,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 2568,
+      "bytes_lf": 2778,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "c264fa143ab45777d295d2f9e30458e2bb67b6309fa56d027c878478d62135ba",
+      "content_sha256_lf": "49d8eddea1320f82f344ab869d8c3aebde82f154eebd2ce2ea3e5f525df5ce2e",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-SIMULATIONTYPES-TS-20BD62628309",
       "language": "typescript",
@@ -20633,6 +20765,11 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [
+          {
+            "kind": "export",
+            "name": "GolferAnthropometryTs",
+            "signature": null
+          },
           {
             "kind": "export",
             "name": "SimulationInput",

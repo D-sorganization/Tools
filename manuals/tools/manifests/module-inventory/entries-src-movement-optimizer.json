@@ -101,10 +101,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 2482,
+      "bytes_lf": 2782,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "c72af6d33bbf490c1e642c00817e8386ede96c21d4d6d1416f8ba71819562f3e",
+      "content_sha256_lf": "e0b55a9fd61f2a2692ff99f9311281e114460b99587366c7d5004b41ef1f8a49",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-BACKEND-PY-707B030E5403",
       "language": "python",
@@ -4321,7 +4321,8 @@
         ],
         "test_paths": [
           "src/movement_optimizer/tests/test_dynamics_guards.py",
-          "src/movement_optimizer/tests/test_physics_ground_truth.py"
+          "src/movement_optimizer/tests/test_physics_ground_truth.py",
+          "tests/rate_of_closure/test_movement_optimizer_swing_source.py"
         ],
         "unit_mentions": [
           "bar",
@@ -4844,7 +4845,8 @@
           "src/movement_optimizer/tests/test_issue_217_decompose.py",
           "src/movement_optimizer/tests/test_issue_222_decompose.py",
           "src/movement_optimizer/tests/test_physics_ground_truth.py",
-          "src/movement_optimizer/tests/test_rust_parity_com_x.py"
+          "src/movement_optimizer/tests/test_rust_parity_com_x.py",
+          "tests/rate_of_closure/test_movement_optimizer_swing_source.py"
         ],
         "unit_mentions": [
           "N",
@@ -4858,10 +4860,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 10546,
+      "bytes_lf": 11372,
       "classification": "calculation",
       "classification_basis": "path-marker:kinematic",
-      "content_sha256_lf": "1e68e2c03d9d12f41c40e7b338c296807221e2961cbc8421cb8bd07b3ccb91f7",
+      "content_sha256_lf": "04df40d8a5f6f51adf98aa3199a7630f2ae668b494ee0e4b7075327f9a01e785",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-MODELS-LAGRANGIAN-KINEMATICS-PY-42F0471EC1F5",
       "language": "python",
@@ -6210,10 +6212,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 17662,
+      "bytes_lf": 18267,
       "classification": "calculation",
       "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "c7e2569c6b856f8213c06658e6d2c30636e31794eab21e7b5921c29645e26d51",
+      "content_sha256_lf": "ab1d6f66cad4e416e0f3f99e8825419e32e57fc08c0002d06bf2bc1ae2b1f3c2",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-TRAJECTORY-OPTIMIZER-PY-A585A29C490E",
       "language": "python",
@@ -6619,10 +6621,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 6716,
+      "bytes_lf": 6907,
       "classification": "calculation",
       "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "d753e92e9d49969a507111fe87e8c7af32762aadc0a3b7cb7dae5854272708ad",
+      "content_sha256_lf": "091cbaa61e1a2512114ec184ebe13032835e71dbab194332a9b7eab2469e8b48",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-TRAJECTORY-OPTIMIZER-PACKAGING-PY-85AA40DB8730",
       "language": "python",
@@ -6664,7 +6666,7 @@
           {
             "kind": "function",
             "name": "build_result_object",
-            "signature": "*, t_eval: NDArray[np.float64], res: _OptimizeResult, q: NDArray[np.float64], qd: NDArray[np.float64], qdd: NDArray[np.float64], torques: NDArray[np.float64], power: NDArray[np.float64], com_traj: NDArray[np.float64], bar_traj: NDArray[np.float64], com_x: NDArray[np.float64], success: bool, n_joint_limit_violations: int, elapsed: float, n_evals: int"
+            "signature": "*, t_eval: NDArray[np.float64], res: _OptimizeResult, q: NDArray[np.float64], qd: NDArray[np.float64], qdd: NDArray[np.float64], torques: NDArray[np.float64], power: NDArray[np.float64], com_traj: NDArray[np.float64], bar_traj: NDArray[np.float64], com_x: NDArray[np.float64], success: bool, n_joint_limit_violations: int, elapsed: float, n_evals: int, clubhead_poses: NDArray[np.float64] | None=None, clubhead_twists: NDArray[np.float64] | None=None"
           },
           {
             "kind": "function",
@@ -6879,10 +6881,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 2532,
+      "bytes_lf": 2747,
       "classification": "calculation",
       "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "9800c9c8c042c5ba304fe1f6197819b44800da62adb5dfca52eaadb21f569f99",
+      "content_sha256_lf": "084163e618515ab59c1cf87b9232448cd92aa69632d401ca47be90102cdb1c8d",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-TRAJECTORY-RESULT-PY-9405027640B1",
       "language": "python",
@@ -6938,7 +6940,8 @@
         ],
         "test_paths": [
           "src/movement_optimizer/tests/test_optimization_mixin.py",
-          "src/movement_optimizer/tests/test_parameter_sidebar.py"
+          "src/movement_optimizer/tests/test_parameter_sidebar.py",
+          "tests/rate_of_closure/test_movement_optimizer_swing_source.py"
         ],
         "unit_mentions": [
           "N",
