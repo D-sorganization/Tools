@@ -89,8 +89,15 @@ function extents(tris: Triangle[]): Vec3 {
   const pts = flatten(tris);
   const out: Vec3 = [0, 0, 0];
   for (let axis = 0; axis < 3; axis += 1) {
-    const values = pts.map((p) => p[axis]);
-    out[axis] = Math.max(...values) - Math.min(...values);
+    // ⚡ Bolt Optimization: Use single-pass loop instead of Math.max(...spread) and Math.min(...spread)
+    let minVal = Infinity;
+    let maxVal = -Infinity;
+    for (const p of pts) {
+      const val = p[axis];
+      if (val < minVal) minVal = val;
+      if (val > maxVal) maxVal = val;
+    }
+    out[axis] = maxVal - minVal;
   }
   return out;
 }

@@ -234,3 +234,8 @@
 ## 2026-09-24 - Eliminate Array Spread in Math.hypot
 **Learning:** In high-frequency 3D math functions (e.g., computing vector norms in `screwAnalysis`), using `Math.hypot(...vector)` with the array spread operator introduces intermediate array allocation and function call overhead that slows down hot paths significantly.
 **Action:** Replace `Math.hypot(...vector)` with an inline `Math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2])` calculation for small, fixed-size vectors (like `Vec3`) to significantly improve execution speed and reduce garbage collection pressure.
+
+## 2026-09-24 - Optimize extent calculation in mesh testing
+**Learning:** Using `Math.max(...spread)` and `Math.min(...spread)` combined with `.map` to compute extents over mesh vertices creates intermediate arrays and risks call stack limits for high-resolution meshes. A single-pass loop over the source array is both safer and more memory-efficient.
+**Action:** Always replace spread-based min/max computations over dynamically sized arrays (especially coordinate lists or geometry) with explicit single-pass loops.
+

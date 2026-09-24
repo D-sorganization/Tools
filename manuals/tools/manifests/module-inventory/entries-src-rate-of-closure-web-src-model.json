@@ -12723,10 +12723,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 7882,
+      "bytes_lf": 8109,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "98183862073d9275d18f6da0a74ca723471d4385bb8393e33241f64ab857cd36",
+      "content_sha256_lf": "6b1f43496041afc231c03ba9729efade82774dd5704ca4bb7464205ca7c48a59",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-MESH-TEST-TS-9696310F103A",
       "language": "typescript",
