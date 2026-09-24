@@ -231,3 +231,6 @@
 ## 2026-09-23 - Eliminate Array Spread in Visualization React Components
 **Learning:** Using `Math.max(...array)` on dynamically sized large arrays in React rendering loops (e.g. for dynamic charting bounds) creates massive call stack overhead and O(N) garbage collection pressure. This is especially true when rendering VariationLanding.tsx and VariationVariabilityTimeline.tsx.
 **Action:** Replace `Math.max(...array)` on hot rendering paths with simple single-pass `for` loops. This eliminates the intermediate array creation and the function call overhead of the spread operator, leading to a much more memory-efficient O(N) bounds calculation.
+## 2026-09-24 - Eliminate Array Spread in Math.hypot
+**Learning:** In high-frequency 3D math functions (e.g., computing vector norms in `screwAnalysis`), using `Math.hypot(...vector)` with the array spread operator introduces intermediate array allocation and function call overhead that slows down hot paths significantly.
+**Action:** Replace `Math.hypot(...vector)` with an inline `Math.sqrt(v[0]*v[0] + v[1]*v[1] + v[2]*v[2])` calculation for small, fixed-size vectors (like `Vec3`) to significantly improve execution speed and reduce garbage collection pressure.

@@ -62,7 +62,8 @@ const cross = (first: Vec3, second: Vec3): Vec3 => [
   first[2] * second[0] - first[0] * second[2],
   first[0] * second[1] - first[1] * second[0],
 ];
-const norm = (vector: Vec3): number => Math.hypot(...vector);
+// ⚡ Bolt Optimization: Use inline Math.sqrt instead of Math.hypot(...vector) to prevent spread overhead and function call GC pressure
+const norm = (vector: Vec3): number => Math.sqrt(vector[0] * vector[0] + vector[1] * vector[1] + vector[2] * vector[2]);
 
 function finiteVector(vector: Vec3, name: string): void {
   if (vector.length !== 3 || vector.some((value) => !Number.isFinite(value))) {
