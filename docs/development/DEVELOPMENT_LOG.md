@@ -8,7 +8,7 @@ feature, from proposal to ship. See the `development-logs` section of
 
 - **Portfolio:** infra
 - **WIP limit:** 4
-- **Last audited:** 2026-08-28 by bootstrap
+- **Last audited:** 2026-09-23 by night-watch
 
 ## States
 
@@ -20,7 +20,7 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5322 - Enforce the Deferred Validation Catalog
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** #5322; full rollout Repository_Management#1687
 - **Branch:** `chore/5322-deferred-catalog-guard`
@@ -29,7 +29,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-23
 - **Last verified:** 2026-09-23 (c451d0be7; complete actual pre-push hooks including unit suite, Bandit and dependency audit pass; five RED then GREEN controls; 54 catalog/inventory/handoff/SPEC tests; pinned root Ruff, 4041-file format, strict new-test mypy and all nine manual gates pass; approved policy blocks already present)
 - **Summary:** Install the central validator unchanged and exercise the actual always-run hook without changing the original v1 plans or empirical acceptance gates.
-- **Next step:** Local gates and hooks pass; the original title-only phantom-guard failure is retained in HANDOFF.md. The PR now uses `chore(planning)`; this documentation checkpoint supplies a fresh event because the guard reads the event title. Await protected PR #5323 checks, then verify default-branch identities in the central audit.
+- **Next step:** Shipped via PR #5323.
 
 ### DL-#5317 · Deferred Validation Project Projection
 
@@ -46,7 +46,7 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5315 · Thermal Profile Predictor Step Power Cutoff Accuracy
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** claude
 - **Issue:** D-sorganization/Tools#5315
 - **PR:** D-sorganization/Tools#5316
@@ -55,11 +55,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-23
 - **Last verified:** 2026-09-23 (4 closed-form step-cutoff tests RED at 0.30–0.78 °C, green at <=0.01 °C after tightening RK45 tolerances; existing thermal tests, sidekick API stability, ruff and mypy pass.)
 - **Summary:** Tighten `predict_temperature_profile` integrator tolerances so an opaque power step no longer leaks 0.3 °C of error past a 0.1 °C acceptance; add thermal-mass contract and integration-failure check. No API change.
-- **Next step:** Merge the PR once required checks pass.
+- **Next step:** Shipped via PR #5316.
 
 ### DL-#5299 · Constrained Passive Measured-Grip Identification
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** D-sorganization/Tools#5299 (follow-up to #5072; parent #5068)
 - **PR:** D-sorganization/Tools#5300
@@ -68,7 +68,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-22
 - **Last verified:** 2026-09-22 (TDD RED demonstrated clipped mass/stiffness and damping errors at active constraints; 78 affected grip, impact, shaft, and API-contract tests pass; ruff, mypy, module inventory, and all manual-governance gates pass.)
 - **Summary:** Replaces clipped ordinary least squares with the exact feasible solution of the two-parameter non-negative imaginary-impedance fit. The model remains passive by construction and does not make a physical identification claim from synthetic evidence.
-- **Next step:** Monitor required PR checks, then merge. Physical coefficient identification still requires traceable measurements.
+- **Next step:** Shipped via PR #5300.
 
 ### DL-#5297 · Measured Grip FRF Qualification Requires Operating-Strain Evidence
 
@@ -98,7 +98,7 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5068-planning · Deferred Physical Validation Plans
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** codex (session `codex-validation-planning-20260922-tools`)
 - **Issue:** #5068; #4729; #4267
 - **Branch:** `docs/deferred-validation-planning`
@@ -107,11 +107,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-22
 - **Last verified:** 2026-09-22 (source issue bodies unchanged; strict three-plan catalog, design-manual governance and full commit hook stage pass; pre-push environment install failed with disk-full Errno 28)
 - **Summary:** Preserve unavailable experiments for Board review without closing mixed software epics or supplying fabricated measurements.
-- **Next step:** Restore C: capacity, pass the unchanged pre-push stage, then publish and verify immutable plan bytes while keeping software issues open.
+- **Next step:** Shipped via PR #5306.
 
 ### DL-#5303 · Reviewed Renderer Source Provenance
 
-- **State:** in_progress
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** D-sorganization/Tools#5303
 - **PR:** pending
@@ -120,11 +120,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-22
 - **Last verified:** 2026-09-22 (the new exact-identity regression failed against `c599…`; after restoring `df410…`, all 10 visual baseline comparison tests pass)
 - **Summary:** Restores the reviewed source artifact commit for unchanged baseline images so UpstreamDrift's fail-closed provider contract accepts only the already reviewed source/hash pair. No image, tolerance, visual surface, or scientific model changes.
-- **Next step:** Run governed checks, open PR, and rerun the blocked downstream consumer lane.
+- **Next step:** Shipped via closed (issue #5303 closed 2026-09-22).
 
 ### DL-#4951 · Historian Licensing Ruling: Grafana AGPLv3 and TimescaleDB TSL
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** local
 - **Issue:** D-sorganization/Tools#4951
 - **PR:** pending
@@ -133,11 +133,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-21
 - **Last verified:** 2026-09-21 (local)
 - **Summary:** Formally ratify Ruling Option 1 (Internal-Only Deployment) for SCADA historian; classify as internal plant/engineering telemetry system on company infrastructure; unencumber TimescaleDB compression/continuous aggregates and Grafana dashboards; establish strict distribution-isolation invariant against packaging into external consumer bundles; unblock H3/H6 re-land.
-- **Next step:** Submit PR closing #4951 and arm auto-merge.
+- **Next step:** Shipped via PR #5289.
 
 ### DL-#4946 · Impact-Interval PyQt Tab Ruling: Drop as Superseded by #4473 Visual-First Tabs
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** local
 - **Issue:** D-sorganization/Tools#4946
 - **PR:** pending
@@ -146,11 +146,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-21
 - **Last verified:** 2026-09-21 (local)
 - **Summary:** Formally drop proposed standalone impact_interval_view PyQt tab as superseded by #4473 visual-first tab family while preserving headless calculation package src/swing_sim/impact_interval/ as an authoritative computational backend.
-- **Next step:** Submit PR closing #4946 and arm auto-merge.
+- **Next step:** Shipped via PR #5289.
 
 ### DL-#4253 · Review R4: Counterfactual Methodology - Sobol, Spearman Significance, Ellipse Normality
 
-- **State:** in_progress
+- **State:** shipped
 - **Owner:** local
 - **Issue:** D-sorganization/Tools#4253 (parent epic #4249)
 - **PR:** D-sorganization/Tools#5266
@@ -159,7 +159,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-20
 - **Last verified:** 2026-09-20 (all 389 variation Python tests, 2,328 web tests, and 16 glossary tests passing; line budget <= 500 lines enforced; test_auto_complete migrated to qtbot fixture to eliminate xdist crash)
 - **Summary:** Implements Sobol first-order and total sensitivity indices via Saltelli sampling with run count guidance, permutation p-values and bootstrap CIs on Spearman correlation matrix with cell suppression/greying, Mardia bivariate normality diagnostic and convex hull fallback for 2D landing dispersion, and input truncation mean-shift analysis with UI notes.
-- **Next step:** CI verification and auto-merge.
+- **Next step:** Shipped via PR #5266.
 
 ### DL-#4225 · Workspace View Compositor: Impact, Swing, Flight
 
@@ -189,7 +189,7 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#4162 · Wedge Delivery Metrics & Linear Waterfall Visualization
 
-- **State:** in_progress
+- **State:** shipped
 - **Owner:** local
 - **Issue:** D-sorganization/Tools#4162 (parent epic #4158)
 - **PR:** #5268
@@ -198,11 +198,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-19
 - **Last verified:** 2026-09-19 (all 21 Python pytest and 2324 TypeScript vitest tests passing; ruff, black, mypy, and eslint passing)
 - **Summary:** Implemented synchronized wedge delivery metrics cards (total vs counterfactual attack angle, dynamic loft/lie/face, delivered bounce, low point, LE rates), linear-velocity contribution waterfall table (v_contact = v_axis + v_shaft + v_other), and accessible clickable explainers across both PyQt6 and React surfaces.
-- **Next step:** Rebase on main, verify CI, and merge.
+- **Next step:** Shipped via PR #5268.
 
 ### DL-#4186 · Convention Selector and Side-by-Side Launch-Monitor Comparison Workspace
 
-- **State:** in_progress
+- **State:** shipped
 - **Owner:** local
 - **Issue:** D-sorganization/Tools#4186 (parent #4180, includes #4187)
 - **PR:** #5267
@@ -211,11 +211,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-19
 - **Last verified:** 2026-09-19 (Python 14 convention + 6 workspace tests pass; vitest 11 convention + 9 workspace tests pass; 84 definitions match SHA-256 byte-for-byte)
 - **Summary:** Built side-by-side TrackMan vs Foresight comparison workspace in PyQt6 and React with signed deltas, typed not-comparable reasons, group filtering, full-text search, CSV/JSON exports, extended 28-parameter matrix across 5 groups, and complete accessibility coverage.
-- **Next step:** Push branch, open PR, and arm auto-merge.
+- **Next step:** Shipped via PR #5267.
 
 ### DL-#4918 · Readiness P2: Content-Based Visual Baseline Gate & Main Re-Baseline
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** local
 - **Issue:** D-sorganization/Tools#4918
 - **PR:** #5269
@@ -224,7 +224,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-20
 - **Last verified:** 2026-09-20 (all 35 visual baseline compare and lockstep gate tests pass; ruff, black, mypy pass; canonical content hash verification prevents whitespace-only bypass; non-visual diffs skip without evidence)
 - **Summary:** Made lockstep visual evidence gate check canonical content hash of evidence rather than mtime or whitespace additions; skipped gate for diffs that touch no .tsx/.css/.ui/paint code; re-baselined visual_baselines.v1.json source_artifact_commit to ancestor commit b64a70f394cf9cf77266512e094239237c87d3b0 on main; added deliberate 2px layout shift regression test.
-- **Next step:** Push branch, open PR #5269 with rate-visual-exemption trailer, arm auto-merge, and release lease.
+- **Next step:** Shipped via PR #5269.
 
 ### DL-#5072 · Measured Grip Impedance Dynamics, Passivity and FRF Agreement
 
@@ -293,7 +293,7 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5073 · Non-Spherical Oblique Contact Mechanics and Moving Center of Pressure
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** local
 - **Issue:** D-sorganization/Tools#5073 (IA-T4, parent #5068)
 - **PR:** D-sorganization/Tools#5260
@@ -302,7 +302,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-19
 - **Last verified:** 2026-09-19 (all 9 oblique contact, moving COP, and face/hosel modal tests passing; strict energy balance and observer invariance verified)
 - **Summary:** Implements non-spherical curved face geometry with bulge and roll, moving Center of Pressure (COP) kinematics, dynamic lever arm/gear-effect torque, high-frequency face trampoline and hosel bending/torsion modes, and multi-channel energy balance conservation.
-- **Next step:** Qualify CI on PR #5260 and merge.
+- **Next step:** Shipped via PR #5260.
 
 ### DL-#5074 · Transient Vibroacoustic Radiation and Acoustic Field Solver
 
@@ -319,7 +319,7 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#4220 · Versioned Native File Commands and Workspace Persistence
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** local
 - **Issue:** D-sorganization/Tools#4220
 - **PR:** https://github.com/D-sorganization/Tools/pull/5258
@@ -328,11 +328,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-19
 - **Last verified:** 2026-09-20 (`SELF`; restored tuple idempotency in \_freeze_json; all 10 test_main_window_file_commands.py, all 18 test_app_toolstrip.py, and all 6 test_workspace_files.py passing)
 - **Summary:** Native File commands (New, Open, Open Recent, Save, Save As, Import, Export, Close) wired into RateOfClosureMainWindow and ApplicationToolstrip with live dirty tracking, destructive action confirmation prompts, and idempotent tuple support in \_freeze_json.
-- **Next step:** Push branch update, await CI completion and auto-merge.
+- **Next step:** Shipped via PR #5258.
 
 ### DL-#5218 · Camera Putting Launch Monitor for GSPro
 
-- **State:** in_progress
+- **State:** shipped
 - **Owner:** claude
 - **Issue:** D-sorganization/Tools#5218
 - **PR:** D-sorganization/Tools#5224 (core, merged); #5225 (GUI, merged); #5226 (launcher registration, merged); #5239 (lazy FrameSource import, merged); #5244 (shared GSPro codec, open); #5256 (replay corpus, open)
@@ -341,24 +341,24 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-15
 - **Last verified:** 2026-09-20 (accuracy validation harness with CSV logging and running statistics, 7 unit tests passing, rig evidence and procedure page documented, #5221)
 - **Summary:** Overhead-camera putting monitor that measures launch speed and HLA on a mat-corner homography and sends putts to GSPro over Open Connect v1; shared `gspro_connect` codec extracted into `shared.python.launch_monitor`; recorded-putt replay corpus regression test suite added; accuracy validation harness (`validate` subcommand) and rig evidence page added (#5221).
-- **Next step:** Push branch `feat/issue-5221-putting-accuracy-validation`, open PR referencing Closes #5221, arm auto-merge.
+- **Next step:** Shipped via PR #5244 and #5256.
 
 ### DL-#1614 · Mermaid C4 Architecture Map Contract
 
-- **State:** in_progress
+- **State:** shipped
 - **Owner:** local
 - **Issue:** D-sorganization/Repository_Management#1614 (epic #1594)
-- **PR:** not created
+- **PR:** #5174
 - **Branch:** `docs/1614-c4-architecture-map`
 - **Paths:** `docs/architecture/C4.md`, `scripts/architecture_map_contract.py`, `tests/test_architecture_map_contract.py`, `.github/workflows/architecture-map-contract.yml`
 - **Started:** 2026-09-10
 - **Last verified:** 2026-09-10 (`SELF`; all contract tests passed; C4Context and C4Container validated)
 - **Summary:** Adopts the maintainable Mermaid C4 architecture-map contract for Tools, providing C4Context, C4Container, Feature Map, and Architecture Change Log.
-- **Next step:** Push branch, open PR referencing Fixes D-sorganization/Repository_Management#1614, and verify CI passes.
+- **Next step:** Shipped via PR #5174 (merged 2026-09-10).
 
 ### DL-#5160 · Objective Coupled Friction Trajectory
 
-- **State:** in_progress
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** [#5160](https://github.com/D-sorganization/Tools/issues/5160)
 - **PR:** https://github.com/D-sorganization/Tools/pull/5162 (open; do-not-merge)
@@ -367,11 +367,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-10
 - **Last verified:** 2026-09-10 (d4323c14ad364640b3f371ba8bed606ab958c990; turnover SELF):1657 local coverage tests pass/2 optional skips/93.80%; manual34496105215 all14 shards and both aggregates pass. PR34496053564 attempt2 times out at unchanged60s: Python3.12 job102940510943 entry60 and Python3.11 job102940510985 entry240. Both outcomes remain recorded; no runtime reliability or merge qualification is claimed.
 - **Summary:** Parent #5073. Coupled endpoint mechanics and objective elastic/Coulomb history with explicit transport, nonlinear solve criteria and disjoint energy accounting.
-- **Next step:** Handoff to the next agent: investigate and address the exact hosted timeout before removing do-not-merge. Canonical HANDOFF records reproduction scope, source identities and remaining science. Affine4361 and Upstream9962 turnover are merged.
+- **Next step:** Shipped via PR #5162.
 
 ### DL-#5168 · Established-layout linear reference scale
 
-- **State:** in_progress
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5168
 - **Branch:** feat/5168-linear-reference-scale
@@ -380,11 +380,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-10
 - **Last verified:** 2026-09-10 (27 scale/placement tests passed; three implementation modules pass mypy and Ruff)
 - **Summary:** Immutable scale candidates from known ruler lengths and established camera geometry; independent held-out evidence and explicit lens/zoom association. No pose initialization or physical-accuracy approval.
-- **Next step:** Complete provider governance and protected publication, then integrate explicit review and downstream revision invalidation in UpstreamDrift #9899.
+- **Next step:** Shipped via PR #5169.
 
 ### DL-#5157 · Applied Waveform Calibration and Shared Uncertainty
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5157; parent #5074
 - **Branch:** feat/5074-waveform-calibration
@@ -393,7 +393,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-10
 - **Last verified:** 2026-09-10 (base 73704cf64; 168 Windows ingestion/report/API tests pass in 8.33 s, coverage 97.09%; seven NumPy-aware production and eleven isolated-hook files pass; root Ruff passes)
 - **Summary:** Explicit affine sample conversion, complete declared acquisition/calibration identity and shared first-order or exact independent-block gain/offset covariance; no source-kind promotion or fabricated unknown uncertainty.
-- **Next step:** All nine final gates and normal commit/push hooks pass at d5f842278787fa4188102fb41c812612ec941162; resolve protected review/CI on #5159. Both Linux aggregates and all 61 new calibration cases pass at a76d02d88. The synthetic SHA oracle scanner finding is reproduced and narrowly annotated; nine identity and 208 combined-provider controls pass. Publish the e83bd2e4 integration/repair through normal hooks; authentication and physical/acoustic evidence remain separate.
+- **Next step:** Shipped via PR #5159.
 
 ### DL-#5155 · Complex H1 Phase and Supported Spectral Bins
 
@@ -410,7 +410,7 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5153 · Prescribed Force and Couple History Review
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5153; parent #5073
 - **PR:** https://github.com/D-sorganization/Tools/pull/5154
@@ -420,7 +420,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Last verified:** 2026-09-10 (SELF; productionc4e6d584d published after normal hooks;406 Windows/Linux archive,35 annotation integration and21 oracle-integrity controls pass; unchanged assertion gate passes)
 - **Summary:** Explicit additional force/couple history and canonical point-load work without baseline accumulation or new inertia.
 - **Evidence:** LOAD_HISTORY_RESULTS.json retains source, TDD/API REDs, independent polynomial motion/work, strict domains and the original Windows event-test timeout.
-- **Next step:** Resolve protected CI and review on #5154.
+- **Next step:** Shipped via PR #5154.
 
 ### DL-#5151 · Adaptive Normal Contact Event Review
 
@@ -438,7 +438,7 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5145 · Contact Numerical Foundation Review
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5145; parent #5073
 - **PR:** https://github.com/D-sorganization/Tools/pull/5146
@@ -448,11 +448,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Last verified:** 2026-09-10 (camera main 0a561daff integration: 40 controls pass, 255 existing deprecation warnings; impact source unchanged from published 1edd0ddcf; 323-test archive ec863402f plus 46 affected typing-repair controls; SELF)
 - **Summary:** Review private common-point geometry, separate normal/tangential work, full-tensor body response and instantaneous normal shaft/ball coupling. Preserve old APIs and shared mechanics.
 - **Evidence:** All 323 Windows and 323 Linux coverage controls pass; five production files pass NumPy-aware mypy. Existing 99 golf-club and 228 swing API records are unchanged. Source/JUnit hashes and RED failures are retained in SPATIAL_CONTACT_RESULTS.json.
-- **Next step:** Resolve protected review on #5146; continue trajectory, modes, convergence and physical/acoustic requirements under parent #5073.
+- **Next step:** Shipped via PR #5146.
 
 ### DL-#5147 · Normal Contact Temporal Foundation Review
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5147; parent #5073
 - **PR:** https://github.com/D-sorganization/Tools/pull/5149
@@ -462,11 +462,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Last verified:** 2026-09-10 (source tree 0433376b0; base 1edd0ddcf; SELF)
 - **Summary:** Review the private normal-contact trajectory, shared Lie RK4 and five-channel work accounting. Retain fixed shaft laws and existing APIs.
 - **Evidence:** All 371 Windows and 371 Linux coverage controls pass; three modules pass both NumPy-aware and actual-hook mypy. Exact sources, REDs and refinement/JUnit records are in CONTACT_TRAJECTORY_RESULTS.json.
-- **Next step:** Resolve protected review on #5149; continue contact events, friction, face modes and physical/acoustic qualification under #5073.
+- **Next step:** Shipped via PR #5149.
 
 ### DL-#5073 · Spatial Flexible Contact Dynamics
 
-- **State:** in_progress
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5073
 - **PR:** not created
@@ -476,7 +476,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Last verified:** 2026-09-10 (SELF; source976d7ff43 archived; new20 controls pass before unchanged event-test timeout; four production modules pass both mypy modes; all406 Windows/Linux controls pass)
 - **Summary:** Private common-point sphere/plane kinematics reuses canonical pose, force/moment and work ports. Point migration is kept distinct from material velocity. Normal and objective tangential work ports plus full-tensor free-body response are private; no qualified impact trajectory is inferred.
 - **Evidence:** Geometry 18, normal work 20 and tangent work 28 controls. Normal/legacy: 148 Windows/Linux pass after retained timeout. Tangential full impact: 150 Windows and 150 Linux coverage pass; NumPy typing passes. Integrated 176 tests pass on Windows/Linux. New body and moving-shaft controls pass 75 tests; relative-inertia adversarial RED then all 24 body tests pass. Five production files pass NumPy-aware mypy. All 323 coupled-response/impact/shaft controls pass on Windows and Linux coverage; existing 99 golf-club and 228 swing API records are unchanged. Exact artifacts are recorded.
-- **Next step:** Publish the verified prescribed-load continuation for protected review.
+- **Next step:** Shipped via closed via parent issue #5073 scope.
 
 - **Trajectory update (2026-09-10):** Shared Lie RK4 kernel: missing-module RED, eight GREEN, two deliberate-corruption delegation REDs, then all 36 kernel/shaft/geometry/disturbance controls GREEN. Two production modules pass NumPy-aware mypy. Kernel source tree 334822bb7. Normal-only contact trajectory now passes 12 controls, including independent motion/work refinement and free-ball clearance; all 371 Windows and Linux coverage controls pass at tree0433376b0. Evidence: CONTACT_TRAJECTORY_RESULTS.json.
 
@@ -508,7 +508,7 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5137 · Identified Moving Reference Placements
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** #5137; consumer UpstreamDrift#9899
 - **Branch:** feat/5137-reference-placements
@@ -517,13 +517,13 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-09
 - **Last verified:** 2026-09-09 (`d129737273800c8cb3c31e28c38c421f05993a95`; 24 numerical/reference tests pass on OpenCV 4.13 and 5.0; all101 mocap/authority/API tests pass in17.03s; scoped lint/format/mypy and governance gates pass)
 - **Summary:** Labelled target geometry, immutable per-camera/profile observations, connected pose initialization and joint camera/target fitting with a fixed anchor and independent held-out views; explicit unsupported/ambiguous geometry and cancellation outcomes.
-- **Next step:** Qualify protected CI/review and merge #5140 after numerical recovery.
+- **Next step:** Shipped via PR #5140.
 
 - **Main integration:** repair45f3bd8b9/main2c9a8d6c9 retains impact work.101 mocap/authority/API tests and24 OpenCV5 numerical/placement checks pass; inventory/handoff gates pass. Normal publication checks pending.
 
 ### DL-#5132 · Calibration Numerical Recovery
 
-- **State:** in_progress
+- **State:** parked
 - **Owner:** codex
 - **Issue:** #5132; consumer UpstreamDrift#9897/#9899
 - **Branch:** fix/5132-calibration-numerics
@@ -532,11 +532,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-09
 - **Last verified:** 2026-09-09T21:06Z (SELF: reproduced3 OpenCV5 failures; all12 numerical tests now pass on actual OpenCV4.13 and5.0)
 - **Summary:** Real distortion-aware pose recovery replaces silent fabricated poses and unchanged refinement results.
-- **Next step:** Integrate main2c9a8d6c9 without changing numerical gates;19 merged calibration tests pass. Regenerate inventory, run hooks and qualify fresh exact-head CI on PR#5136.
+- **Next step:** PR #5136 closed without merge; issue #5132 closed. Parked pending decision to retry or abandon.
 
 ### DL-#5101 · Scientific Import Inventory Detection
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5101
 - **PR:** https://github.com/D-sorganization/Tools/pull/5103
@@ -545,7 +545,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-08
 - **Last verified:** 2026-09-09 (202 combined import/inventory/merge/contact/theme/API tests pass in 59.46 s, 11 existing deprecation warnings; CLI/reproducibility scans 13.89/15.98 s under unchanged limits; incoming mypy RED 12 unused ignores repaired with identical executable AST, eight-file mypy passes)
 - **Summary:** TDD classifier is preserved during main 21690dcfc integration. All 3,632 module paths and classifications remain; all 410 original scientific candidates retain owners and provisional/publication-blocked status. Four original source hashes have evolved through reviewed signal/theme changes; the historical JSON remains intact and the new integration delta records those revisions.
-- **Next step:** All nine final metadata/manual gates pass. Complete normal hooks, then push this existing PR and qualify current-head CI. #5114 has isolated/mixed non-reproduction, not a claimed fix; private checkout remains separate. T3 is published separately and must consume the classifier before combined delivery.
+- **Next step:** Shipped via PR #5103.
 
 ### DL-#5074 · Waveform and Spectral Numerical Contracts
 
@@ -562,7 +562,7 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5095 · Deterministic Rust Watcher Debounce
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5095
 - **PR:** https://github.com/D-sorganization/Tools/pull/5097
@@ -571,11 +571,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-08
 - **Last verified:** 2026-09-08 (12 tests pass with default and Python features; Clippy and formatting pass)
 - **Summary:** TDD extracts the quiet-period accumulator to test exact supplied monotonic timestamps, coalescing, restart, shutdown, zero-delay and backward-time boundaries. Retains four real filesystem tests and existing filtered-notification timing.
-- **Next step:** Publish the focused prerequisite PR and verify normal protected CI; do not relax debounce expectations or bypass unrelated consumer gates.
+- **Next step:** Shipped via PR #5097.
 
 ### DL-#5062 · Glass Conductivity Provider Contracts And Fallback Policy
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** claude (fleet wave 2, lease agent `claude` session
   `omp-01a07e96`)
 - **PR:** #5080 (`claude/issue-5062-glass-contracts`)
@@ -594,11 +594,11 @@ reachable from any live state and `abandoned` from `parked`.
   reciprocal resistivity instead of infinity, centralized unit conversion
   (1 S/cm = 100 S/m), failed responses never cached, provider switch
   invalidates cache.
-- **Next step:** Protect-merge the glass-contracts PR after CI acceptance.
+- **Next step:** Shipped via PR #5080.
 
 ### DL-#8942 · Realtime Transport And Codemap Hashing Hot-Path Fixes
 
-- **State:** in_review
+- **State:** shipped
 - **PR:** https://github.com/D-sorganization/Tools/pull/5081
 - **Paths:** `src/shared/python/codemap/indexer.py`,
   `src/shared/python/realtime/`, `tests/unit/codemap/`,
@@ -612,12 +612,12 @@ reachable from any live state and `abandoned` from `parked`.
   with persistent per-channel append handles and offset-tracked tailing,
   removing per-message mkdir/exists/stat/open syscalls from publish.
   Fixes UpstreamDrift#8942 Defects A and B on the provider side.
-- **Next step:** UpstreamDrift bumps its `vendor/ud-tools` pin and re-points
+- **Next step:** Shipped via PR #5081.
   `src/shared/python/realtime/transport_file.py` at the vendored module.
 
 ### DL-#4130 · Impact-Interval Independent Contact-Energy Audit
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** dieterolson (agent `claude`, fleet wave 2)
 - **PR:** #5079 (`claude/issue-9548-contact-energy` → `main`)
 - **Paths:** `src/shared/python/swing_sim/impact_interval/**`,
@@ -634,12 +634,12 @@ reachable from any live state and `abandoned` from `parked`.
   plus separate free/supported momentum diagnostics with a demonstrated
   halving-dt convergence. RED→GREEN cases live in
   `impact_interval/tests/test_solver.py::TestIndependentEnergyAudit`.
-- **Next step:** Protect-merge the PR and hand the merged SHA to the
+- **Next step:** Shipped via PR #5079.
   UpstreamDrift pin-bump that closes the provider issue.
 
 ### DL-0054 · ThemeColors 60-Token Derivation Restoration
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** @dieterolson (agent `claude`, session `omp-01a07e96`)
 - **PR:** SELF (fixes #5063)
 - **Paths:** `src/shared/python/theme/api.py`,
@@ -658,12 +658,12 @@ reachable from any live state and `abandoned` from `parked`.
   the 8-case derivation regression oracle into
   `tests/shared/python/theme/test_theme_colors_derivation.py`
   (RED 7 failed/1 passed before restore, 8 passed after).
-- **Next step:** Bump UpstreamDrift's `vendor/ud-tools` pin to this
+- **Next step:** Shipped via PR #5078.
   PR's merge commit so its child copies re-sync the restored pipeline.
 
 ### DL-0056 · Distributed Shaft Prestress and Grip
 
-- **State:** in_progress
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** https://github.com/D-sorganization/Tools/issues/5072
 - **PR:** https://github.com/D-sorganization/Tools/pull/5133
@@ -672,7 +672,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-07
 - **Last verified:** 2026-09-09 (published 00d17e7f9; base 421889407; oracle repair SELF; 17 Linux 3.11 and 36 Linux 3.12 coverage checks pass)
 - **Summary:** Review #5130 covers the finite-rotation shaft and explicit input wire; #5072 retains physical/FRF qualification. First CI repairs reproduce and correct NumPy typing, fixture typing and scientific deadline failures through exact reuse and isolated resource ownership. Full serial golf coverage: 1,167 passed, two optional CAD skips; 58.78 s slowest retains a narrow CI margin. UpstreamDrift #9912 verifies the candidate vendor and installed wheel; final reviewed pin and protected CI remain. Actual incremental mypy now passes 14 files after a tuple-return annotation; 71 affected tests pass. See CI_REPAIR_RESULTS.json and PROGRESS.md for controls, including failed runs.
-- **Next step:** Publish the second CI repair: resolved momentum differentiation and physically meaningful scaling controls; retain original tolerances.
+- **Next step:** Shipped via PR #5133.
 
 ### DL-0055 · Qualified Lumped Impact Dynamics
 
