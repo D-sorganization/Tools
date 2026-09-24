@@ -20,6 +20,11 @@ const MODEL_DETAILS: Record<
     description:
       "Three linked segments. Prescribed-torque and fixed-joint controls are unavailable for this model.",
   },
+  movement_optimizer: {
+    label: "Movement Optimizer",
+    description:
+      "Reproducible swing delivery generated from golfer anthropometry and optimized kinematics.",
+  },
 };
 
 function statusClasses(status: string, warning: boolean): string {

@@ -1270,7 +1270,8 @@
         "test_paths": [
           "src/shared/python/swing_sim/tests/test_localized_torque.py",
           "src/shared/python/swing_sim/tests/test_prescribed_run.py",
-          "src/shared/python/swing_sim/tests/test_swing_source.py"
+          "src/shared/python/swing_sim/tests/test_swing_source.py",
+          "tests/rate_of_closure/test_movement_optimizer_swing_source.py"
         ],
         "unit_mentions": [
           "s"
@@ -1692,6 +1693,7 @@
           "src/shared/python/swing_sim/tests/test_reference.py",
           "src/shared/python/swing_sim/tests/test_swing_source.py",
           "src/shared/python/swing_sim/tests/test_types.py",
+          "tests/rate_of_closure/test_golfer_anthropometry.py",
           "tests/rate_of_closure/test_kinetics.py",
           "tests/rate_of_closure/test_localized_torque_web_golden.py",
           "tests/rate_of_closure/test_morris_pyqt_workflow.py",

@@ -1525,6 +1525,7 @@
           "tests/rate_of_closure/test_morris_pyqt_workflow.py",
           "tests/rate_of_closure/test_morris_pyqt_workspace.py",
           "tests/rate_of_closure/test_morris_ui_client.py",
+          "tests/rate_of_closure/test_optimized_swing_source.py",
           "tests/rate_of_closure/test_pyqt_variation_probe_lifecycle.py",
           "tests/rate_of_closure/test_rate_launch_pyqt_authority.py",
           "tests/rate_of_closure/test_rate_launch_web_authority.py",

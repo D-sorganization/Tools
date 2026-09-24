@@ -60,6 +60,14 @@ class PhysicsBackend(ABC):
     def mass_matrix(self, q: NDArray) -> NDArray:
         """Return the n x n mass/inertia matrix M(q)."""
 
+    @abstractmethod
+    def clubhead_pose(self, q: NDArray) -> NDArray:
+        """Return 4x4 SE(3) pose of clubhead in world/swing frame."""
+
+    @abstractmethod
+    def clubhead_twist(self, q: NDArray, qd: NDArray) -> NDArray:
+        """Return 6-vector spatial twist [wx, wy, wz, vx, vy, vz]."""
+
     @property
     @abstractmethod
     def segment_lengths(self) -> NDArray:

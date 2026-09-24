@@ -149,9 +149,7 @@ class TrajectoryOptimizer:
         self.balance_center_weight = BALANCE_CENTER_WEIGHT
         self._setup_time_grids()
         self.dt = duration / (n_eval - 1)
-        self._n_damp = max(
-            ENDPOINT_DAMP_MIN_SAMPLES, int(n_eval * ENDPOINT_DAMP_SAMPLE_FRACTION)
-        )
+        self._n_damp = max(ENDPOINT_DAMP_MIN_SAMPLES, int(n_eval * ENDPOINT_DAMP_SAMPLE_FRACTION))
         self._damp_weights = 1.0 - np.arange(self._n_damp) / self._n_damp
         self._progress = ProgressTracker(progress_cb=progress_cb)
         self._progress_lock = self._progress.lock()
@@ -182,9 +180,7 @@ class TrajectoryOptimizer:
             self.n_dof,
         )
 
-    def eval_trajectory(
-        self, splines: CubicSpline
-    ) -> tuple[NDArray, NDArray, NDArray, NDArray]:
+    def eval_trajectory(self, splines: CubicSpline) -> tuple[NDArray, NDArray, NDArray, NDArray]:
         """Evaluate position, velocity, acceleration, jerk at eval grid.
 
         Delegates to :func:`optimizer_spline.eval_trajectory`.
@@ -354,9 +350,7 @@ class TrajectoryOptimizer:
         """Run single-start path and package its result."""
         self._progress.reset()
         wp0 = self._initial_guess()
-        out = self._minimize_single(
-            wp0.flatten(), self.cost, max_iter=MAX_ITER_PER_START * 2
-        )
+        out = self._minimize_single(wp0.flatten(), self.cost, max_iter=MAX_ITER_PER_START * 2)
         if self.cancel_event.is_set():
             metrics.increment(
                 "trajectory_optimization_cancelled_total",
@@ -368,9 +362,7 @@ class TrajectoryOptimizer:
         self._record_result_metrics(result, mode="single")
         return result
 
-    def _finalize_parallel_results(
-        self, results: list[tuple[Any, int]]
-    ) -> OptimizationResult:
+    def _finalize_parallel_results(self, results: list[tuple[Any, int]]) -> OptimizationResult:
         """Select the best result, log summary, and package output."""
         if not results:
             raise CancelledError("All optimization starts were cancelled")
@@ -398,15 +390,11 @@ class TrajectoryOptimizer:
             exercise_type=self.exercise_type,
             mode=mode,
         )
-        metrics.observe(
-            "trajectory_optimization_elapsed_seconds", result.elapsed_s, **labels
-        )
+        metrics.observe("trajectory_optimization_elapsed_seconds", result.elapsed_s, **labels)
         metrics.observe("trajectory_optimization_cost", result.cost, **labels)
         metrics.observe("trajectory_optimization_evaluations", result.n_evals, **labels)
 
-    def _check_solution_feasibility(
-        self, res: Any, q: NDArray, com_x: NDArray
-    ) -> tuple[bool, int]:
+    def _check_solution_feasibility(self, res: Any, q: NDArray, com_x: NDArray) -> tuple[bool, int]:
         """Assess cost finiteness, COM bounds, and joint-limit violations.
 
         SLSQP can report ``success`` while sitting on a point that the
@@ -451,6 +439,16 @@ class TrajectoryOptimizer:
             self.eval_trajectory,
         )
         success, n_viol = self._check_solution_feasibility(res, q, com_x)
+        clubhead_poses: NDArray[np.float64] | None = None
+        clubhead_twists: NDArray[np.float64] | None = None
+        if hasattr(self.dynamics, "clubhead_pose"):
+            clubhead_poses = np.empty((len(self.t_eval), 4, 4), dtype=np.float64)
+            for n in range(len(self.t_eval)):
+                clubhead_poses[n] = self.dynamics.clubhead_pose(q[n])
+        if hasattr(self.dynamics, "clubhead_twist"):
+            clubhead_twists = np.empty((len(self.t_eval), 6), dtype=np.float64)
+            for n in range(len(self.t_eval)):
+                clubhead_twists[n] = self.dynamics.clubhead_twist(q[n], qd[n])
         return build_result_object(
             t_eval=self.t_eval,
             res=res,
@@ -466,4 +464,6 @@ class TrajectoryOptimizer:
             n_joint_limit_violations=n_viol,
             elapsed=elapsed,
             n_evals=n_evals or self._progress.iteration_count,
+            clubhead_poses=clubhead_poses,
+            clubhead_twists=clubhead_twists,
         )

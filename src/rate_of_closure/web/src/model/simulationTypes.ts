@@ -16,10 +16,22 @@ import type { ImpactClubProperties, Vec3 } from "./impactPhysics";
 import type { ManualDelivery, ShaftAxisDatum } from "./manualDelivery";
 import type { Mat3 } from "./rotation";
 
-export type WebSourceKind = "manual" | "double_pendulum" | "triple_pendulum";
+export type WebSourceKind =
+  | "manual"
+  | "double_pendulum"
+  | "triple_pendulum"
+  | "movement_optimizer";
+
+export interface GolferAnthropometryTs {
+  heightM: number;
+  bodyMassKg: number;
+  armLengthM?: number;
+  armMassKg?: number;
+}
 
 export interface SimulationInput {
   sourceKind: WebSourceKind;
+  golferAnthropometry?: GolferAnthropometryTs;
   clubheadSpeedMph: number;
   omegaDps: Vec3;
   loftDeg: number;

@@ -8,6 +8,7 @@ SOURCE_LABELS: dict[str, str] = {
     "manual": "Manual Scenario (Constant Twist)",
     "double_pendulum": "Double Pendulum",
     "triple_pendulum": "Triple Pendulum",
+    "movement_optimizer": "Movement Optimizer",
 }
 
 # (launch field, Title Case label, unit suffix) in display order.

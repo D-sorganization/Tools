@@ -25,6 +25,7 @@ import {
   type FlightPoint,
 } from "./flight";
 import { golfTripleParameters, simulateTriplePendulum } from "./triplePendulum";
+import { simulateMovementOptimizerDelivery } from "./movementOptimizerSimulation";
 import {
   PASSIVE_DOUBLE_PENDULUM_RUN,
   golfDefaultParams,
@@ -41,6 +42,7 @@ import {
   type ContactMode,
   type ImpactOutcomeTs,
 } from "./contact";
+import { type GolferAnthropometryTs } from "./simulationTypes";
 import {
   GOLF_BALL_RADIUS_M,
   ballCenterPosition,
@@ -93,10 +95,15 @@ export { GOLF_BALL_RADIUS_M } from "./ballSetup";
 
 export const BALL_POSITION: Vec3 = [0.0, GOLF_BALL_RADIUS_M, 0.0];
 
-export type WebSourceKind = "manual" | "double_pendulum" | "triple_pendulum";
+export type WebSourceKind =
+  | "manual"
+  | "double_pendulum"
+  | "triple_pendulum"
+  | "movement_optimizer";
 
 export interface SimulationInput {
   sourceKind: WebSourceKind;
+  golferAnthropometry?: GolferAnthropometryTs;
   clubheadSpeedMph: number; // manual source
   /** Manual angular-velocity components in the zero-lean app basis [deg/s]. */
   omegaDps: Vec3;
@@ -178,6 +185,9 @@ function swingSamples(
     (runConfig.mode === "prescribed" || runConfig.jointLocks.lockedJointIds.length > 0)
   ) {
     throw new Error("prescribed torque and joint locks require the double-pendulum source");
+  }
+  if (input.sourceKind === "movement_optimizer") {
+    return simulateMovementOptimizerDelivery(input, dt);
   }
   if (input.sourceKind === "manual") {
     const duration = 0.06;

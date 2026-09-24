@@ -30,10 +30,15 @@ import numpy as np
 
 from rate_of_closure._contracts import require
 from rate_of_closure.model import ImpactScenario, solve
+from rate_of_closure.simulation.anthropometry import GolferAnthropometry
 from rate_of_closure.simulation.manual_delivery import (
     ManualDeliveryConfig,
     manual_head_rotation,
     manual_reference_velocity,
+)
+from rate_of_closure.simulation.optimized_swing import (
+    OptimizedSwingResult,
+    OptimizedSwingSource,
 )
 from rate_of_closure.simulation.triple_pendulum import (
     TriplePendulumParameters,
@@ -67,7 +72,12 @@ __all__ = [
 ]
 
 #: Swing-source kinds accepted by :func:`make_source`, in UI order.
-SOURCE_KINDS: tuple[str, ...] = ("manual", "double_pendulum", "triple_pendulum")
+SOURCE_KINDS: tuple[str, ...] = (
+    "manual",
+    "double_pendulum",
+    "triple_pendulum",
+    "movement_optimizer",
+)
 
 #: Canonical duration of the manual source's centered inspection window [s].
 MANUAL_SWING_DURATION_S = 0.06
@@ -239,6 +249,8 @@ def make_source(
     torque_library: TorqueProfileLibrary | None = None,
     pendulum_parameters: PendulumParameters | None = None,
     manual_delivery: ManualDeliveryConfig | None = None,
+    golfer_anthropometry: GolferAnthropometry | None = None,
+    optimized_result: OptimizedSwingResult | None = None,
 ) -> SwingSource:
     """Build an app-frame swing source by kind.
 
@@ -250,6 +262,10 @@ def make_source(
         duration: Pendulum integration length [s].
         run_config: Passive or prescribed double-pendulum execution policy.
         torque_library: Canonical profiles used by prescribed execution.
+        pendulum_parameters: Optional pendulum physical properties.
+        manual_delivery: Manual delivery orientation declaration.
+        golfer_anthropometry: Golfer anthropometric specifications.
+        optimized_result: Pre-computed or imported optimized swing result.
 
     Returns:
         A source whose samples are in the app frame.
@@ -283,6 +299,16 @@ def make_source(
     )
     if kind == "manual":
         return ManualSwingSource(scenario, delivery=manual_delivery)
+    if kind == "movement_optimizer":
+        if optimized_result is not None:
+            res = optimized_result
+        else:
+            anthro = golfer_anthropometry or GolferAnthropometry()
+            res = anthro.generate_delivery(duration_s=duration, plane=plane)
+        src = OptimizedSwingSource(res)
+        if src.frame_convention == "swing_frame":
+            return AppFrameSwing(src)
+        return src
     if kind == "double_pendulum":
         # Start on the target side (theta1 = -pi/2, arm horizontal) so
         # the gravity-driven downswing carries the clubhead TOWARD the

@@ -45,6 +45,11 @@ class OptimizationResult:
     elapsed_s: float = 0.0
     n_evals: int = 0
     n_joint_limit_violations: int = 0
+    clubhead_poses: NDArray | None = None
+    clubhead_twists: NDArray | None = None
+    frame_convention: str | None = None
+    joint_positions_m: NDArray | None = None
+    joint_ids: tuple[str, ...] | None = None
 
 
 @dataclass

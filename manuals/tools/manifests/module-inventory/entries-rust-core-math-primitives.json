@@ -688,6 +688,7 @@
           "tests/rate_of_closure/test_gui.py",
           "tests/rate_of_closure/test_manual_delivery.py",
           "tests/rate_of_closure/test_model.py",
+          "tests/rate_of_closure/test_movement_optimizer_swing_source.py",
           "tests/rate_of_closure/test_units.py",
           "tests/rate_of_closure/test_wedge_ground_clearance.py",
           "tests/rotation_converter/test_converter.py",
