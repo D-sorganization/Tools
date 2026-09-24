@@ -94,6 +94,11 @@ function extents(tris: Triangle[]): Vec3 {
     let maxVal = -Infinity;
     for (const p of pts) {
       const val = p[axis];
+      if (!Number.isFinite(val)) {
+        minVal = NaN;
+        maxVal = NaN;
+        break;
+      }
       if (val < minVal) minVal = val;
       if (val > maxVal) maxVal = val;
     }
@@ -255,4 +260,17 @@ describe("head normalization — pinned numbers shared with pytest", () => {
       expect(Math.hypot(...n)).toBeCloseTo(1, 9);
     }
   });
+
+  it("propagates non-finite coordinates in extents calculation", () => {
+    const corrupted: Triangle = [
+      [NaN, 0, 0],
+      [1, 2, 3],
+      [4, 5, 6],
+    ];
+    const res = extents([corrupted]);
+    expect(Number.isNaN(res[0])).toBe(true);
+    expect(res[1]).toBe(5);
+    expect(res[2]).toBe(6);
+  });
 });
+
