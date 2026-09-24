@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5333 · Optimize safe_exp and Resilient Benchmark
+
+- **State:** in_progress
+- **Owner:** antigravity
+- **Issue:** #5333
+- **Branch:** `fix/5333-safe-exp-benchmark`
+- **PR:** not created
+- **Paths:** `src/shared/python/sidekick/process_calculators/water_vapor_pressure.py`, `tests/shared/python/process_calculators/test_syngas_water_overflow.py`, `SPEC.md`, `docs/development/`
+- **Started:** 2026-09-24
+- **Last verified:** 2026-09-24 (safe_exp microbenchmark optimized from 4.9x to 2.2x native math.exp; 26 unit & benchmark tests pass cleanly; ruff and strict mypy pass)
+- **Summary:** Fix flaky CI Standard benchmark test `test_safe_exp_overhead_negligible` by eliminating min/max function call overhead in `safe_exp` and using best-of-3 runs to avoid transient runner scheduling pauses.
+- **Next step:** Create PR and verify passing CI on remote.
+
 ### DL-#5322 - Enforce the Deferred Validation Catalog
 
 - **State:** shipped
