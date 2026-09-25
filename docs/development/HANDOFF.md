@@ -1,4 +1,17 @@
-# Current handoff — Sidekick Wizards (Tools#5346)
+# Current handoff — Knowledge-pack golden Q&A evaluation + optional MiniLM hybrid ranking (Tools#5347)
+
+- Repository: D-sorganization/Tools
+- Worktree: `Tools-worktrees/agy-5347`
+- Branch: `agy/issue-5347`; commit SELF; PR: #5351 (draft)
+- Issue: #5347 (K4 of Repository_Management#1772: Q&A evaluation and optional MiniLM hybrid ranking)
+- Built: `src/shared/python/ai/knowledge/eval.py` (GoldenQACase, EvalSummary, evaluate_pack, load_golden_set, CLI) and optional dense MiniLM embeddings with hybrid BM25 + cosine Reciprocal Rank Fusion ranking in `src/shared/python/ai/knowledge/pack.py`. Off by default and gated by manifest's `embeddings: true`. Core remains stdlib + PyYAML only.
+- Rebase (2026-09-25): rebased the single feature commit onto `main` after #5350 (Sidekick Wizards) merged; hand-edited `tests/api_baselines/knowledge_api_baseline.json` to add only this PR's new symbols; regenerated the module inventory. Fixed `get_minilm_embedder` to log a warning and return `None` instead of silently swallowing the import failure, and made `_search_hybrid` fall back to plain BM25 with a one-time warning when no embedder is available.
+- Validation: see DL-#5347 for the latest command output.
+- Next: address review feedback; do not mark ready or arm auto-merge without owner sign-off.
+
+---
+
+# Past handoff — Sidekick Wizards (Tools#5346)
 
 - Repository: D-sorganization/Tools
 - Worktree: `Tools-worktrees/claude-5346`

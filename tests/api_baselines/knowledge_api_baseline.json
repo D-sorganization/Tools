@@ -5,7 +5,11 @@
       "FORMAT_VERSION",
       "HIDDEN_STATUSES",
       "STATUSES",
+      "CaseEvalResult",
       "Chunk",
+      "Embedder",
+      "EvalSummary",
+      "GoldenQACase",
       "KnowledgePack",
       "ManifestError",
       "PackFormatError",
@@ -13,15 +17,42 @@
       "PackManifest",
       "Passage",
       "SourceSpec",
+      "blob_to_embedding",
       "build_pack",
       "chunk_document",
+      "cosine_similarity",
+      "embedding_to_blob",
+      "evaluate_case",
+      "evaluate_pack",
+      "get_minilm_embedder",
+      "load_golden_set",
       "load_manifest",
-      "manifest_from_dict"
+      "manifest_from_dict",
+      "reciprocal_rank_fusion"
     ],
     "explicit_all": true,
     "symbols": {
       "AUTHORITIES": {
         "type": "variable"
+      },
+      "CaseEvalResult": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "to_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
+        },
+        "type": "class"
       },
       "Chunk": {
         "info": {
@@ -30,8 +61,107 @@
         },
         "type": "class"
       },
+      "Embedder": {
+        "info": {
+          "bases": [
+            "Protocol"
+          ],
+          "methods": {
+            "embed": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "text"
+                }
+              ],
+              "returns": "Sequence[float]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "EvalSummary": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "to_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
+            "to_markdown": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            }
+          }
+        },
+        "type": "class"
+      },
       "FORMAT_VERSION": {
         "type": "variable"
+      },
+      "GoldenQACase": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "from_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "data"
+                },
+                {
+                  "annotation": "str",
+                  "default": "''",
+                  "kind": "arg",
+                  "name": "default_id"
+                }
+              ],
+              "returns": "GoldenQACase"
+            },
+            "to_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
+        },
+        "type": "class"
       },
       "HIDDEN_STATUSES": {
         "type": "variable"
@@ -56,6 +186,17 @@
                 }
               ],
               "returns": "None"
+            },
+            "has_embeddings": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "bool"
             },
             "info": {
               "args": [
@@ -127,6 +268,18 @@
                   "default": "False",
                   "kind": "arg",
                   "name": "include_superseded"
+                },
+                {
+                  "annotation": "Embedder | Callable[[str], Sequence[float]] | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "embedder"
+                },
+                {
+                  "annotation": "bool",
+                  "default": "True",
+                  "kind": "arg",
+                  "name": "hybrid"
                 }
               ],
               "returns": "list[Passage]"
@@ -219,6 +372,20 @@
         },
         "type": "class"
       },
+      "blob_to_embedding": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "bytes",
+              "default": null,
+              "kind": "arg",
+              "name": "blob"
+            }
+          ],
+          "returns": "tuple[float, ...]"
+        },
+        "type": "function"
+      },
       "build_pack": {
         "signature": {
           "args": [
@@ -239,6 +406,12 @@
               "default": null,
               "kind": "arg",
               "name": "out"
+            },
+            {
+              "annotation": "Embedder | Callable[[str], Sequence[float]] | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "embedder"
             }
           ],
           "returns": "PackInfo"
@@ -271,6 +444,137 @@
         },
         "type": "function"
       },
+      "cosine_similarity": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Sequence[float]",
+              "default": null,
+              "kind": "arg",
+              "name": "a"
+            },
+            {
+              "annotation": "Sequence[float]",
+              "default": null,
+              "kind": "arg",
+              "name": "b"
+            }
+          ],
+          "returns": "float"
+        },
+        "type": "function"
+      },
+      "embedding_to_blob": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Sequence[float]",
+              "default": null,
+              "kind": "arg",
+              "name": "vec"
+            }
+          ],
+          "returns": "bytes"
+        },
+        "type": "function"
+      },
+      "evaluate_case": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "GoldenQACase",
+              "default": null,
+              "kind": "arg",
+              "name": "case"
+            },
+            {
+              "annotation": "KnowledgePack",
+              "default": null,
+              "kind": "arg",
+              "name": "pack"
+            },
+            {
+              "annotation": "int",
+              "default": "8",
+              "kind": "arg",
+              "name": "k"
+            },
+            {
+              "annotation": "bool",
+              "default": "False",
+              "kind": "arg",
+              "name": "include_superseded"
+            },
+            {
+              "annotation": "Any | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "embedder"
+            }
+          ],
+          "returns": "CaseEvalResult"
+        },
+        "type": "function"
+      },
+      "evaluate_pack": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "KnowledgePack",
+              "default": null,
+              "kind": "arg",
+              "name": "pack"
+            },
+            {
+              "annotation": "Sequence[GoldenQACase]",
+              "default": null,
+              "kind": "arg",
+              "name": "cases"
+            },
+            {
+              "annotation": "int",
+              "default": "8",
+              "kind": "arg",
+              "name": "k"
+            },
+            {
+              "annotation": "bool",
+              "default": "False",
+              "kind": "arg",
+              "name": "include_superseded"
+            },
+            {
+              "annotation": "Any | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "embedder"
+            }
+          ],
+          "returns": "EvalSummary"
+        },
+        "type": "function"
+      },
+      "get_minilm_embedder": {
+        "signature": {
+          "args": [],
+          "returns": "Embedder"
+        },
+        "type": "function"
+      },
+      "load_golden_set": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Path | str",
+              "default": null,
+              "kind": "arg",
+              "name": "path"
+            }
+          ],
+          "returns": "tuple[GoldenQACase, ...]"
+        },
+        "type": "function"
+      },
       "load_manifest": {
         "signature": {
           "args": [
@@ -296,6 +600,32 @@
             }
           ],
           "returns": "PackManifest"
+        },
+        "type": "function"
+      },
+      "reciprocal_rank_fusion": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Mapping[int, int]",
+              "default": null,
+              "kind": "arg",
+              "name": "bm25_ranks"
+            },
+            {
+              "annotation": "Mapping[int, int]",
+              "default": null,
+              "kind": "arg",
+              "name": "cosine_ranks"
+            },
+            {
+              "annotation": "int",
+              "default": "_DEFAULT_RRF_K",
+              "kind": "arg",
+              "name": "rrf_k"
+            }
+          ],
+          "returns": "dict[int, float]"
         },
         "type": "function"
       }
@@ -369,6 +699,215 @@
     ],
     "explicit_all": false,
     "symbols": {
+      "main": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Sequence[str] | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "argv"
+            }
+          ],
+          "returns": "int"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "eval.py": {
+    "__all__": [
+      "CaseEvalResult",
+      "EvalSummary",
+      "GoldenQACase",
+      "evaluate_case",
+      "evaluate_pack",
+      "load_golden_set",
+      "main"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "CaseEvalResult": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "to_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "EvalSummary": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "to_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
+            "to_markdown": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "GoldenQACase": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "from_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "Mapping[str, Any]",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "data"
+                },
+                {
+                  "annotation": "str",
+                  "default": "''",
+                  "kind": "arg",
+                  "name": "default_id"
+                }
+              ],
+              "returns": "GoldenQACase"
+            },
+            "to_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "evaluate_case": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "GoldenQACase",
+              "default": null,
+              "kind": "arg",
+              "name": "case"
+            },
+            {
+              "annotation": "KnowledgePack",
+              "default": null,
+              "kind": "arg",
+              "name": "pack"
+            },
+            {
+              "annotation": "int",
+              "default": "8",
+              "kind": "arg",
+              "name": "k"
+            },
+            {
+              "annotation": "bool",
+              "default": "False",
+              "kind": "arg",
+              "name": "include_superseded"
+            },
+            {
+              "annotation": "Any | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "embedder"
+            }
+          ],
+          "returns": "CaseEvalResult"
+        },
+        "type": "function"
+      },
+      "evaluate_pack": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "KnowledgePack",
+              "default": null,
+              "kind": "arg",
+              "name": "pack"
+            },
+            {
+              "annotation": "Sequence[GoldenQACase]",
+              "default": null,
+              "kind": "arg",
+              "name": "cases"
+            },
+            {
+              "annotation": "int",
+              "default": "8",
+              "kind": "arg",
+              "name": "k"
+            },
+            {
+              "annotation": "bool",
+              "default": "False",
+              "kind": "arg",
+              "name": "include_superseded"
+            },
+            {
+              "annotation": "Any | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "embedder"
+            }
+          ],
+          "returns": "EvalSummary"
+        },
+        "type": "function"
+      },
+      "load_golden_set": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Path | str",
+              "default": null,
+              "kind": "arg",
+              "name": "path"
+            }
+          ],
+          "returns": "tuple[GoldenQACase, ...]"
+        },
+        "type": "function"
+      },
       "main": {
         "signature": {
           "args": [
@@ -497,15 +1036,48 @@
   },
   "pack.py": {
     "__all__": [
+      "Embedder",
       "FORMAT_VERSION",
       "KnowledgePack",
       "PackFormatError",
       "PackInfo",
       "Passage",
-      "build_pack"
+      "blob_to_embedding",
+      "build_pack",
+      "cosine_similarity",
+      "embedding_to_blob",
+      "get_minilm_embedder",
+      "reciprocal_rank_fusion"
     ],
     "explicit_all": false,
     "symbols": {
+      "Embedder": {
+        "info": {
+          "bases": [
+            "Protocol"
+          ],
+          "methods": {
+            "embed": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "text"
+                }
+              ],
+              "returns": "Sequence[float]"
+            }
+          }
+        },
+        "type": "class"
+      },
       "FORMAT_VERSION": {
         "type": "variable"
       },
@@ -529,6 +1101,17 @@
                 }
               ],
               "returns": "None"
+            },
+            "has_embeddings": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "bool"
             },
             "info": {
               "args": [
@@ -600,6 +1183,18 @@
                   "default": "False",
                   "kind": "arg",
                   "name": "include_superseded"
+                },
+                {
+                  "annotation": "Embedder | Callable[[str], Sequence[float]] | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "embedder"
+                },
+                {
+                  "annotation": "bool",
+                  "default": "True",
+                  "kind": "arg",
+                  "name": "hybrid"
                 }
               ],
               "returns": "list[Passage]"
@@ -643,6 +1238,20 @@
         },
         "type": "class"
       },
+      "blob_to_embedding": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "bytes",
+              "default": null,
+              "kind": "arg",
+              "name": "blob"
+            }
+          ],
+          "returns": "tuple[float, ...]"
+        },
+        "type": "function"
+      },
       "build_pack": {
         "signature": {
           "args": [
@@ -663,9 +1272,82 @@
               "default": null,
               "kind": "arg",
               "name": "out"
+            },
+            {
+              "annotation": "Embedder | Callable[[str], Sequence[float]] | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "embedder"
             }
           ],
           "returns": "PackInfo"
+        },
+        "type": "function"
+      },
+      "cosine_similarity": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Sequence[float]",
+              "default": null,
+              "kind": "arg",
+              "name": "a"
+            },
+            {
+              "annotation": "Sequence[float]",
+              "default": null,
+              "kind": "arg",
+              "name": "b"
+            }
+          ],
+          "returns": "float"
+        },
+        "type": "function"
+      },
+      "embedding_to_blob": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Sequence[float]",
+              "default": null,
+              "kind": "arg",
+              "name": "vec"
+            }
+          ],
+          "returns": "bytes"
+        },
+        "type": "function"
+      },
+      "get_minilm_embedder": {
+        "signature": {
+          "args": [],
+          "returns": "Embedder"
+        },
+        "type": "function"
+      },
+      "reciprocal_rank_fusion": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Mapping[int, int]",
+              "default": null,
+              "kind": "arg",
+              "name": "bm25_ranks"
+            },
+            {
+              "annotation": "Mapping[int, int]",
+              "default": null,
+              "kind": "arg",
+              "name": "cosine_ranks"
+            },
+            {
+              "annotation": "int",
+              "default": "_DEFAULT_RRF_K",
+              "kind": "arg",
+              "name": "rrf_k"
+            }
+          ],
+          "returns": "dict[int, float]"
         },
         "type": "function"
       }
