@@ -428,10 +428,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 16163,
+      "bytes_lf": 16687,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ab9ac27110d2ae98e7c91f63f7b7e0ba11c943ee5f5022185631e3481e8c40da",
+      "content_sha256_lf": "e518ee00440f3c4c9acaf2073883a6c66ad9114f0af03217a44f0c216358288f",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-BASE-PY-6790C2CBD52B",
       "language": "python",
@@ -1248,6 +1248,7 @@
           }
         ],
         "test_paths": [
+          "tests/shared/python/ai/knowledge/test_wizard.py",
           "tests/shared/python/ai/test_adapter_contract.py",
           "tests/shared/python/ai/test_adapter_factory.py",
           "tests/shared/python/ai/test_ollama_adapter.py",
@@ -2560,10 +2561,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1885,
+      "bytes_lf": 2485,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ed7369fea13f85283bba5a53ca72121d440d4f3ecb4a8bb45018bd6f66b31996",
+      "content_sha256_lf": "6488f91d19fabf79d8179e5f5f5207ce8103920a6663c65ede741f46a9516c18",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-GUI-PANEL-TOOLS-PY-C41947468326",
       "language": "python",
@@ -2584,7 +2585,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "not-applicable"
       },
@@ -2602,10 +2603,12 @@
           {
             "kind": "function",
             "name": "register_panel_tools",
-            "signature": "tools_registry: Any, rag_store: Any"
+            "signature": "tools_registry: Any, rag_store: Any, project_root: Path | str | None=None"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/shared/python/ai/knowledge/test_wizard.py"
+        ],
         "unit_mentions": [
           "s"
         ],
@@ -2965,10 +2968,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 40114,
+      "bytes_lf": 40169,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d6352b3608b0abe4baa9844eec24782b3bb81bf49c928e18937d748a6c957e48",
+      "content_sha256_lf": "6550eeffd705aa14028478f6a56e91a98f0f9546101b56332f7bcb4c6123ed9e",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-GUI-ASSISTANT-PANEL-PY-410C1925A399",
       "language": "python",
@@ -5017,6 +5020,127 @@
         "test_paths": [],
         "unit_mentions": [
           "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7346,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "33295d190dbaee8c15470ccc8b195a1eafd6d5099bad2f48822ea3a1cc102147",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-KNOWLEDGE-WIZARD-PY-1EDDCDBBCC29",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/knowledge/wizard.py",
+      "purpose": "Wizards: a product's own knowledge pack, retrieved for each chat turn.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "KnowledgeContext",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WizardConfig",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WizardConfigError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WizardKnowledge",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_K",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_MANIFEST",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_PACK",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FRESHNESS_TTL_S",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_K",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "STALE_BANNER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WIZARD_FILE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_KEY_RE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "load_wizard_config",
+            "signature": "project_root: Path"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/ai/knowledge/test_wizard.py"
+        ],
+        "unit_mentions": [
           "s"
         ],
         "validation_paths": []
@@ -7467,10 +7591,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10249,
+      "bytes_lf": 10744,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a390c38a894c3bf07826266276a5c2cbe7ab056effcc17312c0610b2451bb68e",
+      "content_sha256_lf": "4e89a8d73eddd47f7d48e999d7067596a30e55f25ede7ba7d96529adb892ef1b",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-RAG-CONTEXT-PROVIDER-PY-9F04B774288F",
       "language": "python",
@@ -8444,6 +8568,7 @@
         ],
         "test_paths": [
           "src/shared/python/ai/tests/test_adapter_factory.py",
+          "tests/shared/python/ai/knowledge/test_wizard.py",
           "tests/shared/python/ai/test_sidekick_analytics_registration.py"
         ],
         "unit_mentions": [
@@ -9265,6 +9390,7 @@
           "src/shared/python/chat/tests/test_chat_ws_error_handling.py",
           "tests/architecture/test_ai_education_imports_3316.py",
           "tests/shared/python/ai/integrations/_bootstrap.py",
+          "tests/shared/python/ai/knowledge/test_wizard.py",
           "tests/shared/python/ai/test_adapter_contract.py",
           "tests/shared/python/ai/test_ai_hardening_3179.py",
           "tests/shared/python/ai/test_bitnet_adapter.py",
@@ -9297,6 +9423,72 @@
         "validation_paths": [
           "tests/shared/python/ai/test_adapter_contract.py"
         ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2594,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "465f6626a18788e6c4a1e349dea0071fc0be18ff054a897059ec2392c3ed2ead",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-WIZARDS-PY-AAFFC926F119",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/wizards.py",
+      "purpose": "Sidekick glue for product Wizards (Tools#5346).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "knowledge_for_context",
+            "signature": "context: ConversationContext | None"
+          },
+          {
+            "kind": "function",
+            "name": "reset_wizards",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "wizard_for",
+            "signature": "project_root: Path | str"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/ai/knowledge/test_wizard.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
       }
     }
   ],
