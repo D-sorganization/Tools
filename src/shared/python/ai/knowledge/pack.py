@@ -52,8 +52,7 @@ CREATE TABLE passages (
     id INTEGER PRIMARY KEY, repo TEXT NOT NULL, source TEXT NOT NULL,
     anchor TEXT NOT NULL, title TEXT NOT NULL, text TEXT NOT NULL,
     commit_sha TEXT NOT NULL, content_hash TEXT NOT NULL, status TEXT NOT NULL,
-    authority TEXT NOT NULL, authority_rank INTEGER NOT NULL,
-    embedding BLOB
+    authority TEXT NOT NULL, authority_rank INTEGER NOT NULL, embedding BLOB
 );
 CREATE VIRTUAL TABLE passages_fts USING fts5(
     title, text, content='', tokenize='porter unicode61'
@@ -74,9 +73,7 @@ def _as_embed_fn(
     embedder: Embedder | Callable[[str], Sequence[float]],
 ) -> Callable[[str], Sequence[float]]:
     """Normalize an ``Embedder`` or a bare callable to a callable."""
-    if isinstance(embedder, Embedder):
-        return embedder.embed
-    return embedder
+    return embedder.embed if isinstance(embedder, Embedder) else embedder
 
 
 def get_minilm_embedder() -> Embedder | None:
@@ -94,7 +91,7 @@ def get_minilm_embedder() -> Embedder | None:
 
             class _RustEmbedder:
                 def embed(self, text: str) -> Sequence[float]:
-                    return embedder.embed(text)
+                    return [float(x) for x in embedder.embed(text)]
 
             return _RustEmbedder()
     except Exception as exc:
@@ -107,8 +104,7 @@ def get_minilm_embedder() -> Embedder | None:
 
         class _STEmbedder:
             def embed(self, text: str) -> Sequence[float]:
-                vec = model.encode(text, convert_to_numpy=True)
-                return [float(x) for x in vec]
+                return [float(x) for x in model.encode(text, convert_to_numpy=True)]
 
         return _STEmbedder()
     except Exception as exc:
@@ -116,10 +112,7 @@ def get_minilm_embedder() -> Embedder | None:
             "MiniLM embedder backend 'sentence_transformers' unavailable: %s", exc
         )
 
-    _logger.warning(
-        "No MiniLM embedding backend available. Install sentence-transformers "
-        "or build ai_backend with local-embeddings."
-    )
+    _logger.warning("No MiniLM embedding backend available.")
     return None
 
 
@@ -130,8 +123,7 @@ def embedding_to_blob(vec: Sequence[float]) -> bytes:
 
 def blob_to_embedding(blob: bytes) -> tuple[float, ...]:
     """Unpack little-endian 32-bit float bytes into a tuple of floats."""
-    count = len(blob) // 4
-    return struct.unpack(f"<{count}f", blob)
+    return struct.unpack(f"<{len(blob) // 4}f", blob)
 
 
 def cosine_similarity(a: Sequence[float], b: Sequence[float]) -> float:
@@ -140,13 +132,9 @@ def cosine_similarity(a: Sequence[float], b: Sequence[float]) -> float:
         raise ValueError(f"vector length mismatch: {len(a)} vs {len(b)}")
     if not a:
         return 0.0
-    dot = 0.0
-    norm_a = 0.0
-    norm_b = 0.0
-    for x, y in zip(a, b, strict=True):
-        dot += x * y
-        norm_a += x * x
-        norm_b += y * y
+    dot = sum(x * y for x, y in zip(a, b, strict=True))
+    norm_a = sum(x * x for x in a)
+    norm_b = sum(y * y for y in b)
     if norm_a <= 0.0 or norm_b <= 0.0:
         return 0.0
     return dot / (math.sqrt(norm_a) * math.sqrt(norm_b))
@@ -159,10 +147,9 @@ def reciprocal_rank_fusion(
 ) -> dict[int, float]:
     """Fuse BM25 ranks and cosine ranks using reciprocal rank fusion."""
     scores: dict[int, float] = {}
-    for p_id, r in bm25_ranks.items():
-        scores[p_id] = scores.get(p_id, 0.0) + (1.0 / (rrf_k + r))
-    for p_id, r in cosine_ranks.items():
-        scores[p_id] = scores.get(p_id, 0.0) + (1.0 / (rrf_k + r))
+    for ranks in (bm25_ranks, cosine_ranks):
+        for p_id, r in ranks.items():
+            scores[p_id] = scores.get(p_id, 0.0) + (1.0 / (rrf_k + r))
     return scores
 
 
@@ -234,14 +221,8 @@ def build_pack(
             count = sum(
                 _index_file(conn, manifest, f, commits[f.repo], embedder) for f in files
             )
-            info = PackInfo(
-                pack_id=manifest.id,
-                title=manifest.title,
-                built_at=datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ"),
-                commits=commits,
-                files=len(files),
-                passages=count,
-            )
+            t = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
+            info = PackInfo(manifest.id, manifest.title, t, commits, len(files), count)
             _write_meta(conn, manifest, info)
             conn.execute(f"PRAGMA user_version = {FORMAT_VERSION}")
             conn.commit()
@@ -335,8 +316,7 @@ class KnowledgePack:
         path = Path(path)
         if not path.is_file():
             raise FileNotFoundError(f"knowledge pack not found: {path}")
-        pack = cls(path)
-        with closing(pack._connect()) as conn:
+        with closing(cls(path)._connect()) as conn:
             try:
                 version = conn.execute("PRAGMA user_version").fetchone()[0]
             except sqlite3.DatabaseError as exc:
@@ -345,7 +325,7 @@ class KnowledgePack:
             raise PackFormatError(
                 f"{path} has pack format {version}; this engine reads {FORMAT_VERSION}"
             )
-        return pack
+        return cls(path)
 
     def search(
         self,
@@ -355,16 +335,11 @@ class KnowledgePack:
         embedder: Embedder | Callable[[str], Sequence[float]] | None = None,
         hybrid: bool = True,
     ) -> list[Passage]:
-        """Top ``k`` passages.
-
-        Uses hybrid BM25 + cosine fused by reciprocal rank when the pack has
-        embeddings and hybrid is True; otherwise pure BM25.
-        """
+        """Top ``k`` passages using hybrid BM25+cosine or pure BM25."""
         if not isinstance(query, str):
             raise TypeError("query must be a string")
         if not isinstance(k, int) or isinstance(k, bool) or k < 1:
             raise ValueError("k must be a positive integer")
-
         if self.has_embeddings and hybrid:
             return self._search_hybrid(
                 query, k=k, include_superseded=include_superseded, embedder=embedder
@@ -418,11 +393,10 @@ class KnowledgePack:
             if tokens:
                 match = " OR ".join('"' + t.replace('"', "") + '"' for t in tokens)
                 bm25_sql = (
-                    "SELECT p.id"
-                    f" FROM passages_fts JOIN passages p ON p.id = passages_fts.rowid"
-                    f" WHERE passages_fts MATCH ?{hidden}"
+                    "SELECT p.id FROM passages_fts JOIN passages p"
+                    f" ON p.id = passages_fts.rowid WHERE passages_fts MATCH ?{hidden}"
                     f" ORDER BY bm25(passages_fts, {_TITLE_WEIGHT}, {_TEXT_WEIGHT}),"
-                    f" p.authority_rank, p.id LIMIT ?"
+                    " p.authority_rank, p.id LIMIT ?"
                 )
                 bm25_ids = [
                     row[0]
@@ -432,31 +406,28 @@ class KnowledgePack:
                 ]
 
             bm25_ranks = {p_id: rank for rank, p_id in enumerate(bm25_ids, start=1)}
-
             emb_sql = (
-                f"SELECT p.id, p.embedding FROM passages p"
+                "SELECT p.id, p.embedding FROM passages p"
                 f" WHERE p.embedding IS NOT NULL{hidden}"
             )
-            scored_candidates: list[tuple[float, int]] = []
-            for p_id, blob in conn.execute(emb_sql).fetchall():
-                p_vec = blob_to_embedding(blob)
-                sim = cosine_similarity(query_vec, p_vec)
-                scored_candidates.append((sim, p_id))
-
-            scored_candidates.sort(key=lambda item: -item[0])
-            cosine_top = scored_candidates[:candidate_pool_size]
+            scored_candidates = sorted(
+                [
+                    (cosine_similarity(query_vec, blob_to_embedding(blob)), p_id)
+                    for p_id, blob in conn.execute(emb_sql).fetchall()
+                ],
+                reverse=True,
+            )[:candidate_pool_size]
             cosine_ranks = {
-                p_id: rank for rank, (_, p_id) in enumerate(cosine_top, start=1)
+                p_id: rank for rank, (_, p_id) in enumerate(scored_candidates, start=1)
             }
 
             fused_scores = reciprocal_rank_fusion(bm25_ranks, cosine_ranks)
             if not fused_scores:
                 return []
 
-            sorted_p_ids = sorted(
+            target_ids = sorted(
                 fused_scores.keys(), key=lambda pid: -fused_scores[pid]
-            )
-            target_ids = sorted_p_ids[: k * 2]
+            )[: k * 2]
 
             placeholders = ",".join("?" for _ in target_ids)
             fetch_sql = (
@@ -466,54 +437,30 @@ class KnowledgePack:
             )
             rows = conn.execute(fetch_sql, target_ids).fetchall()
 
-        passages: list[tuple[float, int, int, Passage]] = []
-        for row in rows:
-            p_id = int(row[10])
-            auth_rank = int(row[9])
-            f_score = fused_scores.get(p_id, 0.0)
-            passages.append(
-                (
-                    f_score,
-                    auth_rank,
-                    p_id,
-                    Passage(
-                        repo=str(row[0]),
-                        source=str(row[1]),
-                        anchor=str(row[2]),
-                        title=str(row[3]),
-                        text=str(row[4]),
-                        commit=str(row[5]),
-                        content_hash=str(row[6]),
-                        status=str(row[7]),
-                        authority=str(row[8]),
-                        score=f_score,
-                    ),
-                )
+        passages: list[tuple[float, int, int, Passage]] = [
+            (
+                fused_scores.get(int(r[10]), 0.0),
+                int(r[9]),
+                int(r[10]),
+                _passage(r, fused_scores.get(int(r[10]), 0.0)),
             )
-
+            for r in rows
+        ]
         passages.sort(key=lambda item: (-item[0], item[1], item[2]))
         return [item[3] for item in passages[:k]]
 
     def info(self) -> PackInfo:
-        meta = self._meta()
-        return PackInfo(
-            pack_id=meta["pack_id"],
-            title=meta["title"],
-            built_at=meta["built_at"],
-            commits=json.loads(meta["commits"]),
-            files=int(meta["files"]),
-            passages=int(meta["passages"]),
-        )
+        m = self._meta()
+        c, f, p = json.loads(m["commits"]), int(m["files"]), int(m["passages"])
+        return PackInfo(m["pack_id"], m["title"], m["built_at"], c, f, p)
 
     def is_stale(self, roots: Mapping[str, Path]) -> bool:
         """True when the selected file set or any selected file's bytes changed."""
         manifest = manifest_from_dict(json.loads(self._meta()["manifest"]))
         current = {(f.repo, f.path): f.sha256() for f in select_files(manifest, roots)}
         with closing(self._connect()) as conn:
-            built = {
-                (r, p): h
-                for r, p, h in conn.execute("SELECT repo, path, sha256 FROM files")
-            }
+            q = "SELECT repo, path, sha256 FROM files"
+            built = {(r, p): h for r, p, h in conn.execute(q)}
         return current != built
 
     def _meta(self) -> dict[str, str]:
@@ -524,23 +471,11 @@ class KnowledgePack:
         return sqlite3.connect(f"{self._path.as_uri()}?mode=ro", uri=True)
 
 
-def _passage(row: tuple[object, ...]) -> Passage:
+def _passage(row: tuple[object, ...], score: float | None = None) -> Passage:
     """Map a search row; FTS5 bm25 is lower-is-better, so the score is negated."""
-    repo, source, anchor, title, text, commit, digest, status, authority = (
-        str(v) for v in row[:9]
-    )
-    return Passage(
-        repo=repo,
-        source=source,
-        anchor=anchor,
-        title=title,
-        text=text,
-        commit=commit,
-        content_hash=digest,
-        status=status,
-        authority=authority,
-        score=-float(str(row[9])),
-    )
+    r = [str(v) for v in row[:9]]
+    s = -float(str(row[9])) if score is None else score
+    return Passage(r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], s)
 
 
 def _hidden_clause() -> str:

@@ -4990,10 +4990,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 18944,
+      "bytes_lf": 17362,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "c762fa725e4d650f9f3be87f49e0ba9520564216914603cfbbce85f87e1a162f",
+      "content_sha256_lf": "280524acc320022c5a24c995300d07571bef7445f07023f0eea66cbd75b31850",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-KNOWLEDGE-PACK-PY-9610B38EFBC3",
       "language": "python",
