@@ -155,11 +155,7 @@ describe("parametric head", () => {
     // (minus the roll sagitta), and the pinned vertex is the leaned
     // outer face-ring toe vertex.
     const flat = buildParametricHead(getClub(DRIVER)).flat();
-    let xMax = -Infinity;
-    // ⚡ Bolt Optimization: Use single-pass loop instead of Math.max(...array.map(...))
-    for (let i = 0; i < flat.length; i++) {
-      if (flat[i][0] > xMax) xMax = flat[i][0];
-    }
+    const xMax = Math.max(...flat.map((v) => v[0]));
     expect(xMax).toBeCloseTo(0.053596482389853546, 12);
     const target = [0.044237344811932186, -0.00046886258820926993, 0.058];
     const hit = flat.some(
@@ -176,21 +172,14 @@ describe("parametric head", () => {
     const wood = getClub("3-Wood");
     const scale = (wood.headMassKg / REFERENCE_HEAD_MASS_KG) ** (1 / 3);
     const flat = buildParametricHead(wood).flat();
-    let minZ = Infinity;
-    let maxZ = -Infinity;
-    // ⚡ Bolt Optimization: Use single-pass loop instead of Math.max(...zs) - Math.min(...zs)
-    for (let i = 0; i < flat.length; i++) {
-      if (flat[i][2] < minZ) minZ = flat[i][2];
-      if (flat[i][2] > maxZ) maxZ = flat[i][2];
-    }
-    expect(maxZ - minZ).toBeCloseTo(0.124 * scale, 12);
+    const zs = flat.map((v) => v[2]);
+    expect(Math.max(...zs) - Math.min(...zs)).toBeCloseTo(0.124 * scale, 12);
   });
 
   it("produces unit normals in the renderable mesh", () => {
     const mesh = parametricHeadMesh(getClub("3-Wood"));
     for (const n of mesh.normals) {
-      // ⚡ Bolt Optimization: Use inline Math.sqrt instead of Math.hypot(...spread)
-      expect(Math.sqrt(n[0] * n[0] + n[1] * n[1] + n[2] * n[2])).toBeCloseTo(1, 9);
+      expect(Math.hypot(...n)).toBeCloseTo(1, 9);
     }
   });
 });

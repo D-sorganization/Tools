@@ -1364,10 +1364,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 23797,
+      "bytes_lf": 23765,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a831b089b3154e3a8c22e424bae355a577f4c9684e73bd3326a1d71c551db4d4",
+      "content_sha256_lf": "ad272a3ae8a06607d20eba97eebd4d48436ceed323a03f7459fb3340fdb0f145",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-UNIT-CONVERTER-UNIT-CONVERTER-APP-STYLES-CSS-2521BC7241EB",
       "language": "css",
