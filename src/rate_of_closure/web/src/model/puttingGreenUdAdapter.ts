@@ -90,11 +90,18 @@ function parseContourPoints(rows: unknown): ParsedContours {
     if (!isPlainObject(row)) {
       throw new Error(`each contour must be an object (index ${index})`);
     }
-    const keys = Object.keys(row).sort();
-    const matches =
-      keys.length === CONTOUR_FIELDS.length &&
-      keys.every((key, i) => key === CONTOUR_FIELDS[i]);
-    if (!matches) {
+    // ⚡ Bolt Optimization: Use direct property check to avoid Object.keys().sort() allocation
+    let count = 0;
+    for (const key in row as object) {
+      if (Object.prototype.hasOwnProperty.call(row, key)) {
+        if (key !== "x" && key !== "y" && key !== "elevation") {
+          count = -1;
+          break;
+        }
+        count++;
+      }
+    }
+    if (count !== 3) {
       throw new Error(
         `contour fields must be exactly ${CONTOUR_FIELDS.join(", ")} (index ${index})`,
       );
@@ -110,10 +117,11 @@ function parseContourPoints(rows: unknown): ParsedContours {
     xs.add(x);
     ys.add(y);
   });
+  // ⚡ Bolt Optimization: Use Array.from() with sort() instead of spread operator to avoid iterator allocation
   return {
     points,
-    xs: [...xs].sort((a, b) => a - b),
-    ys: [...ys].sort((a, b) => a - b),
+    xs: Array.from(xs).sort((a, b) => a - b),
+    ys: Array.from(ys).sort((a, b) => a - b),
   };
 }
 
@@ -179,15 +187,20 @@ export function greenSurfaceFromUdJson(text: string): UdGreenTopography {
   if (Math.abs(spacingX - spacingY) > GRID_REL_TOL * Math.max(spacingX, spacingY)) {
     throw new Error("the green_surface/1 wire carries one spacing: x and y must match");
   }
-  const heights = ys.map((y) =>
-    xs.map((x) => {
-      const elevation = points.get(`${x}|${y}`);
+  // ⚡ Bolt Optimization: Use single-pass for loops instead of nested map calls to avoid intermediate arrays
+  const heights: number[][] = [];
+  for (let i = 0; i < ys.length; i++) {
+    const row: number[] = [];
+    const y = ys[i];
+    for (let j = 0; j < xs.length; j++) {
+      const elevation = points.get(`${xs[j]}|${y}`);
       if (elevation === undefined) {
         throw new Error("internal: missing grid node");
       }
-      return elevation;
-    }),
-  );
+      row.push(elevation);
+    }
+    heights.push(row);
+  }
   const surface = gridSurface([xs[0], ys[0]], spacingX, heights);
   const holePositionM = "hole_position" in data ? parseHolePosition(data.hole_position) : null;
   return { surface, holePositionM };
