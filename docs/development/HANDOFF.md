@@ -1,3 +1,15 @@
+# Current handoff — Retire the review-comment-to-issue converter (RM#1755)
+
+- Repository: D-sorganization/Tools
+- Worktree: `Tools-worktrees/claude-retire-converter`
+- Branch: `chore/retire-comment-converter`
+- Issue: Repository_Management#1755
+- What was removed: `.github/workflows/Comment-to-Issue-Converter.yml` (already disabled 2026-09-25; no processor script, tests, or lingering references were present).
+- Validation: `py -3.12 <RM>/scripts/campaigns/review_comment_converter_retirement/retire_converter.py --repo . --check` -> exit 0 after `--apply`.
+- Next step: open the draft PR for review.
+
+---
+
 # Night Watch Development Log Maintenance — 2026-09-23
 
 ## Identity

@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#1755 · Retire the review-comment-to-issue converter
+
+- **State:** in_review
+- **Owner:** claude
+- **Issue:** Repository_Management#1755
+- **Branch:** `chore/retire-comment-converter`
+- **PR:** not created
+- **Paths:** `.github/workflows/Comment-to-Issue-Converter.yml`, `docs/development/`
+- **Started:** 2026-09-25
+- **Last verified:** 2026-09-25 (retire_converter.py --check exits 0 after --apply)
+- **Summary:** Remove the retired Convert-Review-Comments-to-Issues workflow from this repository per the fleet-wide Repository_Management#1755 campaign.
+- **Next step:** Open the draft removal PR for review.
+
 ### DL-#5333 · Optimize safe_exp and Resilient Benchmark
 
 - **State:** in_progress
