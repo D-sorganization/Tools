@@ -244,3 +244,6 @@
 **Action:** Replaced `.reduce()` functions with plain, single-pass `for` loops for performance-critical aggregation calculations like statistics (e.g. `mean`, `variance`, matrix combinations).
 
 
+## 2026-09-25 - Prevent GC pressure in json parsers
+**Learning:** Using \`Object.keys().sort()\`, chained \`.map()\`, and array spread syntax \`[...set].sort()\` inside high-frequency parser loops (like topography parsers handling thousands of nodes) causes severe intermediate array allocations and GC pressure.
+**Action:** Replace them with explicit property checks, native \`Array.from(set).sort()\`, and pre-allocated \`for\` loops.
