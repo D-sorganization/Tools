@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5345 · Knowledge-pack engine (shared.python.ai.knowledge)
+
+- **State:** in_review
+- **Owner:** claude
+- **Issue:** #5345 (epic Repository_Management#1772)
+- **Branch:** `feat/5345-knowledge-pack`
+- **PR:** not created
+- **Paths:** `src/shared/python/ai/knowledge/`, `tests/shared/python/ai/knowledge/`, `tests/api_baselines/knowledge_api_baseline.json`
+- **Started:** 2026-09-25
+- **Last verified:** 2026-09-25 (32 knowledge tests + API stability pass; real findings pack: 10,288 passages from 712 files in 2.8 s)
+- **Summary:** One stdlib + PyYAML retrieval engine, vendorable by Runner_Dashboard: YAML manifest, heading chunking for Markdown/Quarto/LaTeX, SQLite FTS5 BM25 pack with citation, status (superseded hidden) and authority tie-break, per-file-hash staleness, `python -m shared.python.ai.knowledge build|search|info`.
+- **Next step:** Merge the PR, then start K3a (#5346) Sidekick Wizards on top of this engine.
+
 ### DL-#1755 · Retire the review-comment-to-issue converter
 
 - **State:** in_review
