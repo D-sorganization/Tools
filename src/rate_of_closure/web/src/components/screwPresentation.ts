@@ -88,10 +88,11 @@ export function screwPresentation(
   };
 }
 
+// ⚡ Bolt Optimization: Replace Math.hypot(...vector) with inline Math.sqrt to prevent spread overhead and function call GC pressure
 function directionAngles(velocity: Vec3): { aoaDeg: number; pathDeg: number } | null {
-  if (Math.hypot(...velocity) < 1e-10) return null;
+  if (Math.sqrt(velocity[0] * velocity[0] + velocity[1] * velocity[1] + velocity[2] * velocity[2]) < 1e-10) return null;
   return {
-    aoaDeg: Math.atan2(velocity[1], Math.hypot(velocity[0], velocity[2])) * 180 / Math.PI,
+    aoaDeg: Math.atan2(velocity[1], Math.sqrt(velocity[0] * velocity[0] + velocity[2] * velocity[2])) * 180 / Math.PI,
     pathDeg: Math.atan2(velocity[2], velocity[0]) * 180 / Math.PI,
   };
 }

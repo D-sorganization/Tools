@@ -5938,6 +5938,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 <!-- prettier-ignore-start -->
 
 | Date       | PR         | Changes    |
+| 2026-09-25 | #5340 | feat(perf): replace Math.hypot with Math.sqrt to prevent spread overhead in screwAnalysis |
 | 2026-09-25 | #5341 | 🎨 Palette: Improve focus ring visibility and accessibility for inputs |
 | 2026-09-24 | #5328 | ⚡ Bolt: Use single-pass loops for statistics calculation to prevent GC overhead. |
 | 2026-09-24 | #5329 | Optimize extent calculation in mesh testing |
