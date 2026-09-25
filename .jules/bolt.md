@@ -244,3 +244,7 @@
 **Action:** Replaced `.reduce()` functions with plain, single-pass `for` loops for performance-critical aggregation calculations like statistics (e.g. `mean`, `variance`, matrix combinations).
 
 
+
+## 2026-09-25 - Prevent GC pressure from Math.hypot with array spread
+**Learning:** Using `Math.hypot(...vector)` with array spread allocates intermediate arrays on every call, creating significant GC pressure in high-frequency React paths or 3D math kernels.
+**Action:** Replace with explicit `Math.sqrt(x*x + y*y + z*z)` to avoid spread overhead and function call GC pressure entirely.
