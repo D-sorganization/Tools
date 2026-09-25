@@ -281,6 +281,7 @@
           "tests/scripts/test_release_changelog.py",
           "tests/scripts/test_start_gaai_daemon.py",
           "tests/shared/python/ai/integrations/test_credential_isolation.py",
+          "tests/shared/python/ai/knowledge/conftest.py",
           "tests/shared/python/ai/test_rust_adapter_extended.py",
           "tests/shared/python/chat/test_cli_provider_dropdown.py",
           "tests/shared/python/config/test_environment.py",

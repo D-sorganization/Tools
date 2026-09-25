@@ -5938,6 +5938,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 <!-- prettier-ignore-start -->
 
 | Date       | PR         | Changes    |
+| 2026-09-25 | #5345 | Add `shared.python.ai.knowledge`: stdlib-only knowledge-pack engine (manifest, heading chunking, SQLite FTS5/BM25 index with status and authority, freshness check, CLI) for Disciple, Vision Quest and Sidekick Wizards (RM#1772). |
 | 2026-09-25 | #1755 | Retire the review-comment-to-issue converter (RM#1755): workflow, processor and tests removed. |
 | 2026-09-25 | #5342 | chore(release): bump version to v1.21.2 |
 | 2026-09-25 | #5340 | feat(perf): replace Math.hypot with Math.sqrt to prevent spread overhead in screwAnalysis |

@@ -4394,6 +4394,636 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 1205,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "92c7166244dd21edd0af7ecaec319aa971ee1159ee4bdf6cdb01fcd613d36e5d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-KNOWLEDGE-INIT-PY-D0F77C83CA43",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/knowledge/__init__.py",
+      "purpose": "Knowledge packs: cited, freshness-checked retrieval over repository documents.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "AUTHORITIES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Chunk",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FORMAT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HIDDEN_STATUSES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "KnowledgePack",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ManifestError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PackFormatError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PackInfo",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PackManifest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Passage",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "STATUSES",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SourceSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_pack",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "chunk_document",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "load_manifest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "manifest_from_dict",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 153,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "28480c4985e4407a75a3493297831bd93375230c7d28838e9ffa5fe931b765dd",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-KNOWLEDGE-MAIN-PY-1B1A523EA1DA",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/knowledge/__main__.py",
+      "purpose": "Entry point for ``python -m shared.python.ai.knowledge``.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5721,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "959c5aa08e27fa0dc7dd8086fa4353678e946aed789867b3bf6c2a998c03fb5a",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-KNOWLEDGE-CHUNKING-PY-D9EE4A7A8638",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/knowledge/chunking.py",
+      "purpose": "Split Markdown, Quarto and LaTeX documents into heading-anchored chunks.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Chunk",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ATTR_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_FENCE_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_MD_HEADING_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_TEX_HEADING_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_TEX_LEVELS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_TEX_SUFFIXES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "chunk_document",
+            "signature": "text: str, *, suffix: str, max_chars: int"
+          },
+          {
+            "kind": "function",
+            "name": "slugify",
+            "signature": "title: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3177,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f66e69a38faf3fe505e0a0dc993605925b1e73e5fc5723b2303738dfe259b399",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-KNOWLEDGE-CLI-PY-4AEEA788B998",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/knowledge/cli.py",
+      "purpose": "``python -m shared.python.ai.knowledge build|search|info``.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: Sequence[str] | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/ai/knowledge/test_pack_build_and_search.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6335,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5304716739f136527d7489935b620c02d845d1973a7077401067441ea6d38c5f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-KNOWLEDGE-MANIFEST-PY-7C206F2096BA",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/knowledge/manifest.py",
+      "purpose": "Knowledge-pack manifest: what a pack indexes and how much each source is trusted.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ManifestError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PackManifest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SourceSpec",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "AUTHORITIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_CHUNK_CHARS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HIDDEN_STATUSES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_CHUNK_CHARS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIN_CHUNK_CHARS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "STATUSES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ID_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_REPO_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SOURCE_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_TOP_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "load_manifest",
+            "signature": "path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "manifest_from_dict",
+            "signature": "raw: Mapping[str, Any]"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9984,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "60e01c1dd7f0979f094f379d84430233aecf3e3bd6ff2086984ffb6d6fe4df0f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-KNOWLEDGE-PACK-PY-9610B38EFBC3",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/knowledge/pack.py",
+      "purpose": "Build and query a knowledge pack: one SQLite FTS5 (BM25) file per manifest.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "KnowledgePack",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PackFormatError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PackInfo",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Passage",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FORMAT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_MAX_QUERY_TOKENS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SCHEMA",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_TEXT_WEIGHT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_TITLE_WEIGHT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_TOKEN_RE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_pack",
+            "signature": "manifest: PackManifest, roots: Mapping[str, Path], out: Path"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3981,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "69d0087a4226dc7fb8baad86930f22eaff6fb673c15745a56ff5d7d3488c1280",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-KNOWLEDGE-SOURCES-PY-1087EEFC0708",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/knowledge/sources.py",
+      "purpose": "Resolve a manifest's globs against repository checkouts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SourceFile",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "head_commit",
+            "signature": "root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "list_repo_files",
+            "signature": "root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "matches",
+            "signature": "spec: SourceSpec, rel: str"
+          },
+          {
+            "kind": "function",
+            "name": "require_roots",
+            "signature": "manifest: PackManifest, roots: Mapping[str, Path]"
+          },
+          {
+            "kind": "function",
+            "name": "select_files",
+            "signature": "manifest: PackManifest, roots: Mapping[str, Path]"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1794,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",

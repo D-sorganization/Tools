@@ -56,6 +56,7 @@ VENDORED_PACKAGES: dict[str, str] = {
     "launch_monitor": "launch_monitor",
     "contracts": "contracts.py",
     "safe_eval": "safe_eval.py",
+    "knowledge": "ai/knowledge",
 }
 
 

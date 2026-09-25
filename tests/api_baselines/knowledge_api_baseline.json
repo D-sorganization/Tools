@@ -1,0 +1,794 @@
+{
+  "__init__.py": {
+    "__all__": [
+      "AUTHORITIES",
+      "FORMAT_VERSION",
+      "HIDDEN_STATUSES",
+      "STATUSES",
+      "Chunk",
+      "KnowledgePack",
+      "ManifestError",
+      "PackFormatError",
+      "PackInfo",
+      "PackManifest",
+      "Passage",
+      "SourceSpec",
+      "build_pack",
+      "chunk_document",
+      "load_manifest",
+      "manifest_from_dict"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "AUTHORITIES": {
+        "type": "variable"
+      },
+      "Chunk": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "FORMAT_VERSION": {
+        "type": "variable"
+      },
+      "HIDDEN_STATUSES": {
+        "type": "variable"
+      },
+      "KnowledgePack": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "Path",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "path"
+                }
+              ],
+              "returns": "None"
+            },
+            "info": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "PackInfo"
+            },
+            "is_stale": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "Mapping[str, Path]",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "roots"
+                }
+              ],
+              "returns": "bool"
+            },
+            "open": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "Path",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "path"
+                }
+              ],
+              "returns": "KnowledgePack"
+            },
+            "search": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "query"
+                },
+                {
+                  "annotation": "int",
+                  "default": "8",
+                  "kind": "arg",
+                  "name": "k"
+                },
+                {
+                  "annotation": "bool",
+                  "default": "False",
+                  "kind": "arg",
+                  "name": "include_superseded"
+                }
+              ],
+              "returns": "list[Passage]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ManifestError": {
+        "info": {
+          "bases": [
+            "ValueError"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PackFormatError": {
+        "info": {
+          "bases": [
+            "RuntimeError"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PackInfo": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PackManifest": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "repos": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "tuple[str, ...]"
+            },
+            "to_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "Passage": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "citation": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "STATUSES": {
+        "type": "variable"
+      },
+      "SourceSpec": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "build_pack": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PackManifest",
+              "default": null,
+              "kind": "arg",
+              "name": "manifest"
+            },
+            {
+              "annotation": "Mapping[str, Path]",
+              "default": null,
+              "kind": "arg",
+              "name": "roots"
+            },
+            {
+              "annotation": "Path",
+              "default": null,
+              "kind": "arg",
+              "name": "out"
+            }
+          ],
+          "returns": "PackInfo"
+        },
+        "type": "function"
+      },
+      "chunk_document": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "text"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "suffix"
+            },
+            {
+              "annotation": "int",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "max_chars"
+            }
+          ],
+          "returns": "list[Chunk]"
+        },
+        "type": "function"
+      },
+      "load_manifest": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Path",
+              "default": null,
+              "kind": "arg",
+              "name": "path"
+            }
+          ],
+          "returns": "PackManifest"
+        },
+        "type": "function"
+      },
+      "manifest_from_dict": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Mapping[str, Any]",
+              "default": null,
+              "kind": "arg",
+              "name": "raw"
+            }
+          ],
+          "returns": "PackManifest"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "__main__.py": {
+    "__all__": [],
+    "explicit_all": false,
+    "symbols": {}
+  },
+  "chunking.py": {
+    "__all__": [
+      "Chunk",
+      "chunk_document",
+      "slugify"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "Chunk": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "chunk_document": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "text"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "suffix"
+            },
+            {
+              "annotation": "int",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "max_chars"
+            }
+          ],
+          "returns": "list[Chunk]"
+        },
+        "type": "function"
+      },
+      "slugify": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "title"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "cli.py": {
+    "__all__": [
+      "main"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "main": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Sequence[str] | None",
+              "default": "None",
+              "kind": "arg",
+              "name": "argv"
+            }
+          ],
+          "returns": "int"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "manifest.py": {
+    "__all__": [
+      "AUTHORITIES",
+      "DEFAULT_CHUNK_CHARS",
+      "HIDDEN_STATUSES",
+      "MAX_CHUNK_CHARS",
+      "MIN_CHUNK_CHARS",
+      "ManifestError",
+      "PackManifest",
+      "STATUSES",
+      "SourceSpec",
+      "load_manifest",
+      "manifest_from_dict"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "AUTHORITIES": {
+        "type": "variable"
+      },
+      "DEFAULT_CHUNK_CHARS": {
+        "type": "variable"
+      },
+      "HIDDEN_STATUSES": {
+        "type": "variable"
+      },
+      "MAX_CHUNK_CHARS": {
+        "type": "variable"
+      },
+      "MIN_CHUNK_CHARS": {
+        "type": "variable"
+      },
+      "ManifestError": {
+        "info": {
+          "bases": [
+            "ValueError"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PackManifest": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "repos": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "tuple[str, ...]"
+            },
+            "to_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "STATUSES": {
+        "type": "variable"
+      },
+      "SourceSpec": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "load_manifest": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Path",
+              "default": null,
+              "kind": "arg",
+              "name": "path"
+            }
+          ],
+          "returns": "PackManifest"
+        },
+        "type": "function"
+      },
+      "manifest_from_dict": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Mapping[str, Any]",
+              "default": null,
+              "kind": "arg",
+              "name": "raw"
+            }
+          ],
+          "returns": "PackManifest"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "pack.py": {
+    "__all__": [
+      "FORMAT_VERSION",
+      "KnowledgePack",
+      "PackFormatError",
+      "PackInfo",
+      "Passage",
+      "build_pack"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "FORMAT_VERSION": {
+        "type": "variable"
+      },
+      "KnowledgePack": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "Path",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "path"
+                }
+              ],
+              "returns": "None"
+            },
+            "info": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "PackInfo"
+            },
+            "is_stale": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "Mapping[str, Path]",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "roots"
+                }
+              ],
+              "returns": "bool"
+            },
+            "open": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "Path",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "path"
+                }
+              ],
+              "returns": "KnowledgePack"
+            },
+            "search": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "query"
+                },
+                {
+                  "annotation": "int",
+                  "default": "8",
+                  "kind": "arg",
+                  "name": "k"
+                },
+                {
+                  "annotation": "bool",
+                  "default": "False",
+                  "kind": "arg",
+                  "name": "include_superseded"
+                }
+              ],
+              "returns": "list[Passage]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "PackFormatError": {
+        "info": {
+          "bases": [
+            "RuntimeError"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PackInfo": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "Passage": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "citation": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "build_pack": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PackManifest",
+              "default": null,
+              "kind": "arg",
+              "name": "manifest"
+            },
+            {
+              "annotation": "Mapping[str, Path]",
+              "default": null,
+              "kind": "arg",
+              "name": "roots"
+            },
+            {
+              "annotation": "Path",
+              "default": null,
+              "kind": "arg",
+              "name": "out"
+            }
+          ],
+          "returns": "PackInfo"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "sources.py": {
+    "__all__": [
+      "SourceFile",
+      "head_commit",
+      "list_repo_files",
+      "matches",
+      "require_roots",
+      "select_files"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "SourceFile": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "sha256": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "head_commit": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Path",
+              "default": null,
+              "kind": "arg",
+              "name": "root"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "list_repo_files": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Path",
+              "default": null,
+              "kind": "arg",
+              "name": "root"
+            }
+          ],
+          "returns": "list[str]"
+        },
+        "type": "function"
+      },
+      "matches": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "SourceSpec",
+              "default": null,
+              "kind": "arg",
+              "name": "spec"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "rel"
+            }
+          ],
+          "returns": "bool"
+        },
+        "type": "function"
+      },
+      "require_roots": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PackManifest",
+              "default": null,
+              "kind": "arg",
+              "name": "manifest"
+            },
+            {
+              "annotation": "Mapping[str, Path]",
+              "default": null,
+              "kind": "arg",
+              "name": "roots"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      },
+      "select_files": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PackManifest",
+              "default": null,
+              "kind": "arg",
+              "name": "manifest"
+            },
+            {
+              "annotation": "Mapping[str, Path]",
+              "default": null,
+              "kind": "arg",
+              "name": "roots"
+            }
+          ],
+          "returns": "list[SourceFile]"
+        },
+        "type": "function"
+      }
+    }
+  }
+}
