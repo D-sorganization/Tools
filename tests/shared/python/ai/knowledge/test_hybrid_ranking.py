@@ -2,8 +2,10 @@
 
 from __future__ import annotations
 
+import logging
 import math
 import sqlite3
+import sys
 from collections.abc import Sequence
 from pathlib import Path
 
@@ -230,5 +232,66 @@ def test_sentence_transformers_optional_import() -> None:
     from shared.python.ai.knowledge.pack import get_minilm_embedder
 
     embedder = get_minilm_embedder()
+    assert embedder is not None
     vec = embedder.embed("test sentence")
     assert len(vec) == 384
+
+
+def test_get_minilm_embedder_logs_warning_and_returns_none_when_unavailable(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Neither backend importable: log the reason and return None, not raise."""
+    monkeypatch.setitem(sys.modules, "ai_backend", None)
+    monkeypatch.setitem(sys.modules, "sentence_transformers", None)
+
+    from shared.python.ai.knowledge.pack import get_minilm_embedder
+
+    with caplog.at_level(logging.WARNING):
+        result = get_minilm_embedder()
+
+    assert result is None
+    warnings = [r for r in caplog.records if r.levelno == logging.WARNING]
+    assert warnings, "expected at least one warning to be logged"
+    assert any("embedder" in r.message.lower() for r in warnings)
+
+
+def test_search_hybrid_falls_back_to_bm25_when_no_embedder_available(
+    corpus: dict[str, Path],
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    """No embedder at search time: fall back to plain BM25 and warn once."""
+    embedder = DeterministicEmbedder()
+    manifest = manifest_from_dict(
+        {
+            "id": "fallback",
+            "title": "Fallback",
+            "embeddings": True,
+            "sources": [
+                {
+                    "repo": "AffineDrift",
+                    "authority": "published",
+                    "include": ["articles/**/*.qmd"],
+                    "exclude": ["**/*-bibliography.md"],
+                }
+            ],
+        }
+    )
+    pack_path = tmp_path / "fallback.pack"
+    build_pack(manifest, corpus, pack_path, embedder=embedder)
+    pack = KnowledgePack.open(pack_path)
+    assert pack.has_embeddings is True
+
+    import shared.python.ai.knowledge.pack as pack_module
+
+    monkeypatch.setattr(pack_module, "get_minilm_embedder", lambda: None)
+
+    with caplog.at_level(logging.WARNING):
+        hybrid_hits = pack.search("pelvis kinematic speed", k=5)
+    bm25_hits = pack.search("pelvis kinematic speed", k=5, hybrid=False)
+
+    assert [h.source for h in hybrid_hits] == [h.source for h in bm25_hits]
+    assert [h.anchor for h in hybrid_hits] == [h.anchor for h in bm25_hits]
+    warnings = [r for r in caplog.records if r.levelno == logging.WARNING]
+    assert any("bm25" in r.message.lower() for r in warnings)

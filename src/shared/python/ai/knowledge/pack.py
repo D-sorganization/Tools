@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import logging
 import math
 import os
 import re
@@ -30,6 +31,8 @@ from .manifest import (
     manifest_from_dict,
 )
 from .sources import SourceFile, head_commit, select_files
+
+_logger = logging.getLogger(__name__)
 
 #: Bumped on any incompatible schema change; readers refuse other versions.
 FORMAT_VERSION = 1
@@ -67,10 +70,21 @@ class Embedder(Protocol):
         ...
 
 
-def get_minilm_embedder() -> Embedder:
-    """Return a MiniLM embedder using sentence-transformers or ai_backend.
+def _as_embed_fn(
+    embedder: Embedder | Callable[[str], Sequence[float]],
+) -> Callable[[str], Sequence[float]]:
+    """Normalize an ``Embedder`` or a bare callable to a callable."""
+    if isinstance(embedder, Embedder):
+        return embedder.embed
+    return embedder
 
-    Raises RuntimeError if neither backend is available.
+
+def get_minilm_embedder() -> Embedder | None:
+    """Return a MiniLM embedder using ai_backend or sentence-transformers.
+
+    MiniLM embeddings are optional: neither backend is a mandatory dependency.
+    Returns None (after logging a warning with the reason) if neither backend
+    is available, instead of raising.
     """
     try:
         import ai_backend
@@ -83,8 +97,8 @@ def get_minilm_embedder() -> Embedder:
                     return embedder.embed(text)
 
             return _RustEmbedder()
-    except Exception:
-        pass
+    except Exception as exc:
+        _logger.warning("MiniLM embedder backend 'ai_backend' unavailable: %s", exc)
 
     try:
         from sentence_transformers import SentenceTransformer
@@ -97,13 +111,16 @@ def get_minilm_embedder() -> Embedder:
                 return [float(x) for x in vec]
 
         return _STEmbedder()
-    except Exception:
-        pass
+    except Exception as exc:
+        _logger.warning(
+            "MiniLM embedder backend 'sentence_transformers' unavailable: %s", exc
+        )
 
-    raise RuntimeError(
+    _logger.warning(
         "No MiniLM embedding backend available. Install sentence-transformers "
         "or build ai_backend with local-embeddings."
     )
+    return None
 
 
 def embedding_to_blob(vec: Sequence[float]) -> bytes:
@@ -257,7 +274,7 @@ def _index_file(
         status = override or (chunk.status if chunk.status in STATUSES else "current")
         emb_blob: bytes | None = None
         if manifest.embeddings and embedder is not None:
-            emb_fn = getattr(embedder, "embed", embedder)
+            emb_fn = _as_embed_fn(embedder)
             emb_blob = embedding_to_blob(emb_fn(chunk.text))
 
         cur = conn.execute(
@@ -383,7 +400,13 @@ class KnowledgePack:
     ) -> list[Passage]:
         if embedder is None:
             embedder = get_minilm_embedder()
-        emb_fn = getattr(embedder, "embed", embedder)
+        if embedder is None:
+            _logger.warning(
+                "Pack has embeddings but no MiniLM embedder is available;"
+                " falling back to plain BM25 ranking."
+            )
+            return self._search_bm25(query, k=k, include_superseded=include_superseded)
+        emb_fn = _as_embed_fn(embedder)
         query_vec = emb_fn(query)
 
         candidate_pool_size = max(k * 5, 50)

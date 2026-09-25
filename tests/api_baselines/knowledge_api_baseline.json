@@ -557,7 +557,7 @@
       "get_minilm_embedder": {
         "signature": {
           "args": [],
-          "returns": "Embedder"
+          "returns": "Embedder | None"
         },
         "type": "function"
       },
@@ -1321,7 +1321,7 @@
       "get_minilm_embedder": {
         "signature": {
           "args": [],
-          "returns": "Embedder"
+          "returns": "Embedder | None"
         },
         "type": "function"
       },

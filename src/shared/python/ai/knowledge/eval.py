@@ -52,6 +52,7 @@ class GoldenQACase:
         raw_expected = data.get("expected_source")
         if raw_expected is None:
             raise ValueError(f"case {question!r} missing 'expected_source'")
+        expected: tuple[str, ...]
         if isinstance(raw_expected, str):
             expected = (raw_expected.strip(),)
         elif isinstance(raw_expected, (list, tuple)):
@@ -62,6 +63,7 @@ class GoldenQACase:
             raise ValueError("expected_source must contain at least one non-empty glob")
 
         raw_must_not = data.get("must_not_source", ())
+        must_not: tuple[str, ...]
         if isinstance(raw_must_not, str):
             must_not = (raw_must_not.strip(),)
         elif isinstance(raw_must_not, (list, tuple)):
