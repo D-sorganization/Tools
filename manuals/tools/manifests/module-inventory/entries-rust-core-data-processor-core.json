@@ -413,6 +413,7 @@
           "tests/scripts/test_module_inventory_merge_driver.py",
           "tests/scripts/test_release_changelog.py",
           "tests/scripts/test_release_gate.py",
+          "tests/shared/python/ai/knowledge/test_pack_build_and_search.py",
           "tests/shared/python/ai/test_settings_dialog_provider_config.py",
           "tests/shared/python/model_generation/test_cli_main.py",
           "tests/shared/python/model_generation/test_repository.py",
