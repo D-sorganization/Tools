@@ -244,11 +244,10 @@
 **Action:** Replaced `.reduce()` functions with plain, single-pass `for` loops for performance-critical aggregation calculations like statistics (e.g. `mean`, `variance`, matrix combinations).
 
 
-## 2026-09-25 - Prevent GC pressure in json parsers
-**Learning:** Using `Object.keys().sort()`, chained `.map()`, and array spread syntax `[...set].sort()` inside high-frequency parser loops (like topography parsers handling thousands of nodes) causes severe intermediate array allocations and GC pressure.
-**Action:** Replace them with explicit property checks, native `Array.from(set).sort()`, and pre-allocated `for` loops.
 
 ## 2026-09-25 - Prevent GC pressure from Math.hypot with array spread
 **Learning:** Using `Math.hypot(...vector)` with array spread allocates intermediate arrays on every call, creating significant GC pressure in high-frequency React paths or 3D math kernels.
 **Action:** Replace with explicit `Math.sqrt(x*x + y*y + z*z)` to avoid spread overhead and function call GC pressure entirely.
-
+## 2026-09-25 - Prevent GC pressure in json parsers
+**Learning:** Using \`Object.keys().sort()\`, chained \`.map()\`, and array spread syntax \`[...set].sort()\` inside high-frequency parser loops (like topography parsers handling thousands of nodes) causes severe intermediate array allocations and GC pressure.
+**Action:** Replace them with explicit property checks, native \`Array.from(set).sort()\`, and pre-allocated \`for\` loops.

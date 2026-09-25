@@ -256,7 +256,7 @@ body {
   padding-right: 3rem;
 }
 
-.select:focus {
+.select:focus-visible {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
@@ -284,7 +284,7 @@ body {
   transition: all 0.2s;
 }
 
-.input-number:focus {
+.input-number:focus-visible {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
@@ -756,7 +756,7 @@ body {
   display: none;
 }
 
-.unit-search-input:focus {
+.unit-search-input:focus-visible {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
@@ -896,7 +896,7 @@ body {
   transition: all 0.2s;
 }
 
-.input-text:focus {
+.input-text:focus-visible {
   outline: none;
   border-color: var(--primary-color);
   box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);

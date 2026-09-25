@@ -95,3 +95,6 @@
 ## 2026-09-23 - Dynamic Result Announcement
 **Learning:** In single-page applications where form submissions update content dynamically via JavaScript without a page reload (like the unit converter), screen readers will silently ignore the new result. Using `aria-live="polite"` on the result container ensures the updated value is read to users as soon as it's injected.
 **Action:** Always wrap dynamic asynchronous result outputs in an `aria-live` region to ensure parity with visual feedback.
+## 2026-09-25 - Focus Rings on Unit Converter Inputs
+**Learning:** Found an accessibility issue pattern where inputs and selects in Unit Converter have `focus:` states with focus rings, causing mouse users to see focus rings when clicking elements. This degrades the visual experience while making it difficult for keyboard users if specific pseudo-classes aren't consistently targeted.
+**Action:** Replace `focus:` with `focus-visible:` on focus rings (`focus-visible:ring-2 focus-visible:ring-[color]` or similar) to preserve keyboard accessibility without polluting mouse interactions, ensuring a cleaner visual experience.
