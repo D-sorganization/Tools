@@ -30,6 +30,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Last verified:** 2026-09-25 (see validation commands in HANDOFF.md)
 - **Summary:** Added `ai/knowledge/eval.py` for golden Q&A evaluation (recall@k, MRR, must-not-source violation detection, markdown report, CLI) and optional dense MiniLM embeddings with hybrid BM25 + cosine Reciprocal Rank Fusion ranking gated by `embeddings: true`. Kept stdlib-only core importable without external ML dependencies. Rebased onto main after #5350 (Sidekick Wizards) merged; `get_minilm_embedder` now logs a warning and returns `None` on import failure instead of swallowing it, and `_search_hybrid` falls back to plain BM25 with a one-time warning when no embedder is available.
 - **Next step:** Await review; do not mark ready or arm auto-merge without owner sign-off.
+- No material development-log change — mechanical module inventory regeneration for the mypy fix commit.
 
 ### DL-#5346 · Sidekick Wizards (per-product knowledge in chat)
 

@@ -4397,10 +4397,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1205,
+      "bytes_lf": 1837,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "92c7166244dd21edd0af7ecaec319aa971ee1159ee4bdf6cdb01fcd613d36e5d",
+      "content_sha256_lf": "e58bdfa940c4582ca5fc0dceb82b2d0f1f5c91ba94c2b706f3faa50bc3acdf9b",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-KNOWLEDGE-INIT-PY-D0F77C83CA43",
       "language": "python",
@@ -4443,12 +4443,32 @@
           },
           {
             "kind": "re-export",
+            "name": "CaseEvalResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "Chunk",
             "signature": null
           },
           {
             "kind": "re-export",
+            "name": "Embedder",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "EvalSummary",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "FORMAT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GoldenQACase",
             "signature": null
           },
           {
@@ -4498,6 +4518,11 @@
           },
           {
             "kind": "re-export",
+            "name": "blob_to_embedding",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "build_pack",
             "signature": null
           },
@@ -4508,12 +4533,47 @@
           },
           {
             "kind": "re-export",
+            "name": "cosine_similarity",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "embedding_to_blob",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "evaluate_case",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "evaluate_pack",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_minilm_embedder",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "load_golden_set",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "load_manifest",
             "signature": null
           },
           {
             "kind": "re-export",
             "name": "manifest_from_dict",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "reciprocal_rank_fusion",
             "signature": null
           }
         ],
@@ -4662,10 +4722,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3177,
+      "bytes_lf": 4820,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f66e69a38faf3fe505e0a0dc993605925b1e73e5fc5723b2303738dfe259b399",
+      "content_sha256_lf": "a04aeaf0b2d370345d15c74710fa2dd62462e2991972daf3cb62174b91b864ca",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-KNOWLEDGE-CLI-PY-4AEEA788B998",
       "language": "python",
@@ -4718,10 +4778,97 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6335,
+      "bytes_lf": 15672,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "5304716739f136527d7489935b620c02d845d1973a7077401067441ea6d38c5f",
+      "content_sha256_lf": "a07f01c35fe84ff62582a1b289efeffded35a63ad881e9818b5c546fe6f5698d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-KNOWLEDGE-EVAL-PY-88D1E6C0AC11",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/knowledge/eval.py",
+      "purpose": "Golden Q&A evaluation for knowledge packs (#5347, RM#1772 K4).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CaseEvalResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "EvalSummary",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "GoldenQACase",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "evaluate_case",
+            "signature": "case: GoldenQACase, pack: KnowledgePack, k: int=8, include_superseded: bool=False, embedder: Any | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "evaluate_pack",
+            "signature": "pack: KnowledgePack, cases: Sequence[GoldenQACase], k: int=8, include_superseded: bool=False, embedder: Any | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "load_golden_set",
+            "signature": "path: Path | str"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: Sequence[str] | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/ai/knowledge/test_eval.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6605,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f482b985e411ac6b0b1edf14f4648ab3e5a63f8ca796d18c371b45ff2edc06fd",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-KNOWLEDGE-MANIFEST-PY-7C206F2096BA",
       "language": "python",
@@ -4842,34 +4989,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
-      "bytes_lf": 9984,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "60e01c1dd7f0979f094f379d84430233aecf3e3bd6ff2086984ffb6d6fe4df0f",
-      "family": "shared-tools-non-calculation",
+      "authority_status": "provisional",
+      "bytes_lf": 18944,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "c762fa725e4d650f9f3be87f49e0ba9520564216914603cfbbce85f87e1a162f",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-KNOWLEDGE-PACK-PY-9610B38EFBC3",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/shared/python/ai/knowledge/pack.py",
       "purpose": "Build and query a knowledge pack: one SQLite FTS5 (BM25) file per manifest.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
         "downstream-consumer-risk",
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -4882,6 +5032,11 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Embedder",
+            "signature": null
+          },
           {
             "kind": "class",
             "name": "KnowledgePack",
@@ -4905,6 +5060,11 @@
           {
             "kind": "constant",
             "name": "FORMAT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DEFAULT_RRF_K",
             "signature": null
           },
           {
@@ -4934,12 +5094,40 @@
           },
           {
             "kind": "function",
+            "name": "blob_to_embedding",
+            "signature": "blob: bytes"
+          },
+          {
+            "kind": "function",
             "name": "build_pack",
-            "signature": "manifest: PackManifest, roots: Mapping[str, Path], out: Path"
+            "signature": "manifest: PackManifest, roots: Mapping[str, Path], out: Path, embedder: Embedder | Callable[[str], Sequence[float]] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "cosine_similarity",
+            "signature": "a: Sequence[float], b: Sequence[float]"
+          },
+          {
+            "kind": "function",
+            "name": "embedding_to_blob",
+            "signature": "vec: Sequence[float]"
+          },
+          {
+            "kind": "function",
+            "name": "get_minilm_embedder",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "reciprocal_rank_fusion",
+            "signature": "bm25_ranks: Mapping[int, int], cosine_ranks: Mapping[int, int], rrf_k: int=_DEFAULT_RRF_K"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/shared/python/ai/knowledge/test_hybrid_ranking.py"
+        ],
         "unit_mentions": [
+          "g",
           "s"
         ],
         "validation_paths": []

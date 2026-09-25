@@ -398,7 +398,8 @@
           }
         ],
         "test_paths": [
-          "rust_core/ai_backend/tests/embeddings_http_integration.rs"
+          "rust_core/ai_backend/tests/embeddings_http_integration.rs",
+          "tests/shared/python/ai/knowledge/test_hybrid_ranking.py"
         ],
         "unit_mentions": [
           "g",

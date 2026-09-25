@@ -2695,6 +2695,7 @@
           "tests/rotation_converter/test_twist_screw.py",
           "tests/rust_bindings/test_math_primitives_bindings.py",
           "tests/rust_bindings/test_rust_bindings.py",
+          "tests/shared/python/ai/knowledge/test_hybrid_ranking.py",
           "tests/shared/python/calculators/conversion/test_core.py",
           "tests/shared/python/calculators/conversion/test_flow_rate_converter.py",
           "tests/shared/python/calculators/thermo/test_steam_engine.py",
