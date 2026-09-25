@@ -790,5 +790,193 @@
         "type": "function"
       }
     }
+  },
+  "wizard.py": {
+    "__all__": [
+      "DEFAULT_K",
+      "DEFAULT_MANIFEST",
+      "DEFAULT_PACK",
+      "FRESHNESS_TTL_S",
+      "KnowledgeContext",
+      "MAX_K",
+      "STALE_BANNER",
+      "WIZARD_FILE",
+      "WizardConfig",
+      "WizardConfigError",
+      "WizardKnowledge",
+      "load_wizard_config"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "DEFAULT_K": {
+        "type": "variable"
+      },
+      "DEFAULT_MANIFEST": {
+        "type": "variable"
+      },
+      "DEFAULT_PACK": {
+        "type": "variable"
+      },
+      "FRESHNESS_TTL_S": {
+        "type": "variable"
+      },
+      "KnowledgeContext": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "render": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "MAX_K": {
+        "type": "variable"
+      },
+      "STALE_BANNER": {
+        "type": "variable"
+      },
+      "WIZARD_FILE": {
+        "type": "variable"
+      },
+      "WizardConfig": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WizardConfigError": {
+        "info": {
+          "bases": [
+            "ValueError"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "WizardKnowledge": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "WizardConfig",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "config"
+                },
+                {
+                  "annotation": "Callable[[], float]",
+                  "default": "time.monotonic",
+                  "kind": "arg",
+                  "name": "clock"
+                },
+                {
+                  "annotation": "float",
+                  "default": "FRESHNESS_TTL_S",
+                  "kind": "arg",
+                  "name": "freshness_ttl"
+                }
+              ],
+              "returns": "None"
+            },
+            "available": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "bool"
+            },
+            "context_for": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "query"
+                }
+              ],
+              "returns": "KnowledgeContext | None"
+            },
+            "is_stale": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "bool | None"
+            },
+            "search": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "query"
+                },
+                {
+                  "annotation": "int | None",
+                  "default": "None",
+                  "kind": "arg",
+                  "name": "k"
+                }
+              ],
+              "returns": "list[Passage]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "load_wizard_config": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Path",
+              "default": null,
+              "kind": "arg",
+              "name": "project_root"
+            }
+          ],
+          "returns": "WizardConfig | None"
+        },
+        "type": "function"
+      }
+    }
   }
 }

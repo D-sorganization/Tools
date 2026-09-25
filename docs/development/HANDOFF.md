@@ -1,4 +1,22 @@
-# Current handoff — Knowledge-pack engine (Tools#5345)
+# Current handoff — Sidekick Wizards (Tools#5346)
+
+- Repository: D-sorganization/Tools
+- Worktree: `Tools-worktrees/claude-5346`
+- Branch: `feat/5346-sidekick-wizards`, stacked on `feat/5345-knowledge-pack` (PR #5348); commit SELF; PR not created until #5348 merges.
+- Issue: #5346 (K3a of Repository_Management#1772)
+- Built:
+  - `ai/knowledge/wizard.py`: `WizardConfig` + `load_wizard_config`, `KnowledgeContext.render()`, `WizardKnowledge` with TTL-cached freshness. It needs only the stdlib and PyYAML.
+  - `ai/wizards.py`: the Sidekick glue. It holds a per-root cache, calls `register_app_context` and provides `knowledge_for_context`.
+  - `BaseAgentAdapter.build_context_instruction_section` appends Wizard knowledge. Every adapter already uses this path.
+  - `search_knowledge_base` prefers the pack.
+  - `RAGContextProvider` emits a DeprecationWarning.
+- Host contract: `knowledge/wizard.yml` (key, name, description, capabilities, manifest=`knowledge/pack.yml`, pack=`.knowledge/pack.sqlite`, k, roots). Build with `python -m shared.python.ai.knowledge build knowledge/pack.yml --root <Repo>=. --out .knowledge/pack.sqlite`.
+- Validation: `py -3.12 -m pytest tests/shared/python/ai src/shared/python/ai/tests tests/test_shared_package_api_stability.py -o addopts="" -n 8` -> 570 passed; ruff and mypy clean. The knowledge API baseline gains wizard (the theme baseline rewrite was reverted).
+- Next: open the PR after #5348 merges; hosts UD#10943 and GM#5089 (tier:cli); refresh job Tools#5347.
+
+---
+
+# Past handoff — Knowledge-pack engine (Tools#5345)
 
 - Repository: D-sorganization/Tools
 - Worktree: `Tools-worktrees/claude-5345`

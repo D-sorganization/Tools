@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5346 · Sidekick Wizards (per-product knowledge in chat)
+
+- **State:** in_review
+- **Owner:** claude
+- **Issue:** #5346 (epic Repository_Management#1772)
+- **Branch:** `feat/5346-sidekick-wizards` (stacked on `feat/5345-knowledge-pack`)
+- **PR:** not created
+- **Paths:** `src/shared/python/ai/knowledge/wizard.py`, `src/shared/python/ai/wizards.py`, `src/shared/python/ai/adapters/base.py`, `src/shared/python/ai/gui/_panel_tools.py`, `src/shared/python/ai/rag/context_provider.py`
+- **Started:** 2026-09-25
+- **Last verified:** 2026-09-25 (tests/shared/python/ai + src/shared/python/ai/tests: 570 passed)
+- **Summary:** `knowledge/wizard.yml` in a host product names its Wizard and pack. `build_context_instruction_section` (used by every adapter) appends the cited passages for the latest user message plus a banner when the pack is stale (freshness checked at most every 300 s). Without a Wizard the prompt is unchanged.
+- **Next step:** Open the PR once #5348 (K0) merges, then dispatch UD#10943 and Gasification_Model#5089 to add their `wizard.yml` and pack manifests.
+
 ### DL-#5345 · Knowledge-pack engine (shared.python.ai.knowledge)
 
 - **State:** in_review
