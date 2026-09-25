@@ -5939,6 +5939,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | 2026-09-25 | #5339 | ⚡ Bolt: Prevent GC pressure in green topography parser |
+| 2026-09-25 | #5341 | 🎨 Palette: Improve focus ring visibility and accessibility for inputs |
 | 2026-09-24 | #5328 | ⚡ Bolt: Use single-pass loops for statistics calculation to prevent GC overhead. |
 | 2026-09-24 | #5329 | Optimize extent calculation in mesh testing |
 | 2026-09-24 | n/a | ⚡ Bolt: Use inline Math.sqrt for vector norm to prevent spread overhead |
