@@ -21,6 +21,7 @@ from shared.python.safe_eval import (
     MAX_AST_NODES,
     MAX_EXPRESSION_LENGTH,
     MAX_POW_EXPONENT,
+    MAX_POW_RESULT_BITS,
     safe_eval,
     safe_eval_math,
     validate_expression,
@@ -355,3 +356,57 @@ def test_disallowed_constructs_still_rejected() -> None:
         validate_expression("{1: 2}")
     with pytest.raises(ValueError, match="Unsafe operation detected"):
         validate_expression("(y := 5)")
+
+
+# ------------------- runtime power-result bound (#5360) --------------------
+
+
+@pytest.mark.parametrize(
+    "expression, namespace",
+    [
+        ("(10 ** 1000) ** 1000", {}),
+        ("((10 ** 1000) ** 1000) ** 1000", {}),
+        ("2 ** x", {"x": 10**6}),
+        ("x ** 1000", {"x": 10**1000}),
+    ],
+)
+def test_integer_power_results_above_bit_bound_rejected_fast(
+    expression: str, namespace: dict[str, int]
+) -> None:
+    """Nested or runtime integer powers cannot build unbounded bignums."""
+    import time
+
+    start = time.perf_counter()
+    with pytest.raises(ValueError, match="Power result too large"):
+        safe_eval(expression, namespace)
+    assert time.perf_counter() - start < 1.0
+
+
+def test_power_results_within_bit_bound_still_evaluate() -> None:
+    assert safe_eval("10 ** 1000", {}) == 10**1000
+    assert safe_eval("x ** 2", {"x": 3}) == 9
+    assert safe_eval("1.5 ** -3", {}) == pytest.approx(1.5**-3)
+    assert safe_eval("(-2) ** 3", {}) == -8
+    assert safe_eval("1 ** 10 ** 3", {}) == 1
+    assert safe_eval("0 ** 5", {}) == 0
+
+
+def test_power_bit_bound_is_exact_at_the_limit() -> None:
+    assert safe_eval("x ** y", {"x": 2, "y": MAX_POW_RESULT_BITS - 1}) == 2 ** (
+        MAX_POW_RESULT_BITS - 1
+    )
+    with pytest.raises(ValueError, match="Power result too large"):
+        safe_eval("x ** y", {"x": 2, "y": MAX_POW_RESULT_BITS + 1})
+
+
+def test_array_power_is_not_bignum_bounded() -> None:
+    """Fixed-width numpy powers cannot grow without bound, so they pass through."""
+    result = safe_eval("a ** 2", {"a": np.array([2, 3])})
+    assert result.tolist() == [4, 9]
+
+
+def test_scalar_pow_function_shares_the_result_bound() -> None:
+    with pytest.raises(ValueError, match="Power result too large"):
+        safe_eval_math("pow(pow(x, 1000), 1000)", {"x": 10**15}, use_numpy=False)
+    assert safe_eval_math("pow(x, 3)", {"x": 2}, use_numpy=False) == 8
+    assert safe_eval_math("pow(x, 3, 5)", {"x": 2}, use_numpy=False) == 3

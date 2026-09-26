@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5360 · safe_eval runtime bound on integer power results
+
+- **State:** in_review
+- **Owner:** claude
+- **Issue:** #5360 (security)
+- **Branch:** `claude/tools-5360-safe-eval-pow-bound`
+- **PR:** draft
+- **Paths:** `src/shared/python/safe_eval.py`, `tests/shared/python/test_safe_eval.py`
+- **Started:** 2026-09-26
+- **Last verified:** 2026-09-26 — 84 safe_eval, pandas-eval and API-stability tests pass; ruff, mypy, file-size (500/500) and module inventory clean.
+- **Summary:** Every `**` is rewritten to a runtime-checked `_bounded_pow`, and two-argument scalar `pow()` shares it, so integer results above `MAX_POW_RESULT_BITS` (10,000 bits) raise `ValueError`. Closes left-nested power chains and runtime exponents that bypassed the static guards.
+- **Next step:** get CI green on the PR and arm it through `automerge_guard.py`.
+
 ### DL-#5347 · Knowledge-pack golden Q&A evaluation and optional MiniLM hybrid ranking
 
 - **State:** in_review
