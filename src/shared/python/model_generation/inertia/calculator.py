@@ -117,7 +117,7 @@ class InertiaResult:
 
     def is_valid(self) -> bool:
         """Check if inertia values are physically valid."""
-        return self.to_inertia().is_positive_definite()
+        return bool(self.to_inertia().is_positive_definite())
 
     @precondition(lambda new_mass: new_mass > 0, "New mass must be positive")
     def scale_to_mass(self, new_mass: float) -> InertiaResult:
@@ -235,7 +235,12 @@ class InertiaCalculator:
 
         Returns:
             InertiaResult
+
+        Raises:
+            ValueError: If mass <= 0.
         """
+        if mass <= 0:
+            raise ValueError(f"mass must be positive, got {mass}")
         return self.compute(geometry, mass=mass, mode=InertiaMode.PRIMITIVE)
 
     def compute_from_mesh(
