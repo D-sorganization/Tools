@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 
-import { numericLaunchMonitorColumns } from "../model/launchMonitorAnalysis";
+import { launchMonitorColumns, numericLaunchMonitorColumns } from "../model/launchMonitorAnalysis";
 import type { LaunchMonitorRow } from "../model/launchMonitorAnalysisTypes";
 import {
   analyzeDispersion, analyzeSessionTrend, calculateStrokesGained, calculateTargetError,
@@ -36,7 +36,7 @@ const downloadPng = (element: SVGSVGElement) => {
 
 export function LaunchMonitorPerformanceWorkspace({ rows, sourceName }: Props) {
   const numeric = useMemo(() => numericLaunchMonitorColumns(rows), [rows]);
-  const columns = useMemo(() => [...new Set(rows.flatMap(Object.keys))].sort(), [rows]);
+  const columns = useMemo(() => launchMonitorColumns(rows), [rows]);
   const fingerprint = useMemo(() => fingerprintLaunchMonitorRows(rows), [rows]);
   const [carry, setCarry] = useState(""); const [lateral, setLateral] = useState("");
   const [carryUnit, setCarryUnit] = useState<DistanceUnit>("yd"); const [lateralUnit, setLateralUnit] = useState<DistanceUnit>("yd");

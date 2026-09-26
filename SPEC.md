@@ -5938,6 +5938,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 <!-- prettier-ignore-start -->
 
 | Date       | PR         | Changes    |
+| 2026-09-26 | #5354 | Rate of Closure web: column extraction for the launch-monitor player, performance and neural-lab views goes through one tested `launchMonitorColumns()` helper (single Set pass, no per-row flatMap arrays) instead of three copies. |
 | 2026-09-25 | #5351 | Add golden Q&A evaluation (eval.py, CLI) and optional MiniLM dense embeddings with hybrid BM25 + cosine RRF ranking to shared.python.ai.knowledge (RM#1772 K4). |
 | 2026-09-25 | #5346 | Sidekick Wizards: a product with `knowledge/wizard.yml` gets its knowledge-pack passages (cited, with a stale-pack banner) injected into every chat turn, registers its name and persona as the app context, and answers `search_knowledge_base` from the pack. `RAGContextProvider` is deprecated. |
 | 2026-09-25 | #5345 | Add `shared.python.ai.knowledge`: stdlib-only knowledge-pack engine (manifest, heading chunking, SQLite FTS5/BM25 index with status and authority, freshness check, CLI) for Disciple, Vision Quest and Sidekick Wizards (RM#1772). |

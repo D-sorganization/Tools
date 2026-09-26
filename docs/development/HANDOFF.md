@@ -1,4 +1,15 @@
-# Current handoff — Knowledge-pack golden Q&A evaluation + optional MiniLM hybrid ranking (Tools#5347)
+# Current handoff — Launch-monitor column helper (Tools#5354)
+
+- Repository: D-sorganization/Tools
+- Worktree: `Tools-worktrees/claude-pr-5354`
+- Branch: `bolt-optimize-column-extraction-13047720`; commit SELF; PR: #5354 (Bolt, reviewed by Claude)
+- Issue: none (Bolt performance PR); no DL entry — No material development-log change: a three-call-site helper extraction.
+- Built: `launchMonitorColumns(rows)` in `src/rate_of_closure/web/src/model/launchMonitorAnalysis.ts` (sorted union of row keys, one Set pass). The Bolt commit had pasted the same loop into `LaunchMonitorPerformanceWorkspace`, `LaunchMonitorPlayerWorkspace` and `NeuralModelLabPanel`; all three now call the helper.
+- Validation: `npx vitest run src/model/launchMonitorAnalysis.test.ts src/model/launchMonitorPerformanceWorkspace.test.ts` -> 15 passed (2 new helper tests); `npx tsc --noEmit` and `eslint` on the changed files clean; `python -m scripts.build_tools_module_inventory --check` passes after regeneration.
+- Next: CI green, then arm through `automerge_guard.py`.
+
+---
+# Past handoff — Knowledge-pack golden Q&A evaluation + optional MiniLM hybrid ranking (Tools#5347)
 
 - Repository: D-sorganization/Tools
 - Worktree: `Tools-worktrees/agy-5347`
