@@ -18,18 +18,31 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
-### DL-#5360 · safe_eval runtime bound on integer power results
+### DL-#5362 · Input contracts surfaced by the UpstreamDrift shadow burn-down
 
 - **State:** in_review
+- **Owner:** claude (agy executor)
+- **Issue:** #5362
+- **Branch:** `claude/tools-5362-shadow-contracts`
+- **PR:** #5364 (draft)
+- **Paths:** `src/shared/python/signal_toolkit/`, `src/shared/python/model_generation/`, `src/shared/python/ai/gui/session_manager.py`, `src/shared/python/humanoid_character_builder/__init__.py`, `tests/shared/python/signal_toolkit/`, `tests/shared/python/model_generation/`, `tests/unit/ai/gui/test_session_manager_2872.py`
+- **Started:** 2026-09-26
+- **Last verified:** 2026-09-26 — 327 signal_toolkit, model_generation, humanoid and session-manager tests pass; module inventory clean.
+- **Summary:** Preconditions on signal_toolkit smoothing/saturation/rate-limit/deadband/noise and primitive inertia mass, standard gravity from the shared constant, UTC-normalised chat session timestamps, and a corrected humanoid_character_builder docstring, so UpstreamDrift can retire its quarantined expectations by bumping the pin instead of editing its shadow copies.
+- **Next step:** get CI green on the PR and arm it through `automerge_guard.py`.
+
+### DL-#5360 · safe_eval runtime bound on integer power results
+
+- **State:** shipped
 - **Owner:** claude
 - **Issue:** #5360 (security)
 - **Branch:** `claude/tools-5360-safe-eval-pow-bound`
-- **PR:** draft
+- **PR:** #5361 (merged)
 - **Paths:** `src/shared/python/safe_eval.py`, `tests/shared/python/test_safe_eval.py`
 - **Started:** 2026-09-26
 - **Last verified:** 2026-09-26 — 84 safe_eval, pandas-eval and API-stability tests pass; ruff, mypy, file-size (500/500) and module inventory clean.
 - **Summary:** Every `**` is rewritten to a runtime-checked `_bounded_pow`, and two-argument scalar `pow()` shares it, so integer results above `MAX_POW_RESULT_BITS` (10,000 bits) raise `ValueError`. Closes left-nested power chains and runtime exponents that bypassed the static guards.
-- **Next step:** get CI green on the PR and arm it through `automerge_guard.py`.
+- **Next step:** bump the UpstreamDrift vendor pin and retire its `test_safe_eval` quarantine IDs (UD#9411).
 
 ### DL-#5347 · Knowledge-pack golden Q&A evaluation and optional MiniLM hybrid ranking
 

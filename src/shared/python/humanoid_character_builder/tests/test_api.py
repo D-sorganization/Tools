@@ -327,3 +327,15 @@ class TestExportOptions:
         assert options.urdf_filename == "robot.urdf"
         assert options.mesh_format == "obj"
         assert options.save_config is False
+
+
+class TestPackageDocstring:
+    """Tests for package docstring."""
+
+    def test_docstring_describes_anthropometric_domain_layer(self) -> None:
+        import humanoid_character_builder
+
+        doc = humanoid_character_builder.__doc__ or ""
+        first_lines = "\n".join(doc.strip().splitlines()[:5]).lower()
+        assert "anthropometric domain layer" in first_lines
+        assert "model_generation" in first_lines
