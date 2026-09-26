@@ -17,10 +17,14 @@ from shared.python.ai.knowledge import (
     build_pack,
     manifest_from_dict,
 )
+from shared.python.ai.knowledge import (
+    pack as pack_module,
+)
 from shared.python.ai.knowledge.pack import (
     blob_to_embedding,
     cosine_similarity,
     embedding_to_blob,
+    get_minilm_embedder,
 )
 
 
@@ -229,8 +233,6 @@ def test_sentence_transformers_optional_import() -> None:
     except (subprocess.TimeoutExpired, OSError):
         pytest.skip("sentence_transformers probe timed out or crashed")
 
-    from shared.python.ai.knowledge.pack import get_minilm_embedder
-
     embedder = get_minilm_embedder()
     assert embedder is not None
     vec = embedder.embed("test sentence")
@@ -243,8 +245,6 @@ def test_get_minilm_embedder_logs_warning_and_returns_none_when_unavailable(
     """Neither backend importable: log the reason and return None, not raise."""
     monkeypatch.setitem(sys.modules, "ai_backend", None)
     monkeypatch.setitem(sys.modules, "sentence_transformers", None)
-
-    from shared.python.ai.knowledge.pack import get_minilm_embedder
 
     with caplog.at_level(logging.WARNING):
         result = get_minilm_embedder()
@@ -282,8 +282,6 @@ def test_search_hybrid_falls_back_to_bm25_when_no_embedder_available(
     build_pack(manifest, corpus, pack_path, embedder=embedder)
     pack = KnowledgePack.open(pack_path)
     assert pack.has_embeddings is True
-
-    import shared.python.ai.knowledge.pack as pack_module
 
     monkeypatch.setattr(pack_module, "get_minilm_embedder", lambda: None)
 
