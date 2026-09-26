@@ -136,7 +136,7 @@ jobs:
       - name: Generate consumer checkout token
         id: consumer_token
         if: steps.app-creds.outputs.configured == 'true'
-        uses: actions/create-github-app-token@v1
+        uses: actions/create-github-app-token@v3
         with:
           app-id: ${{ secrets.JULES_APP_ID }}
           private-key: ${{ secrets.JULES_APP_PRIVATE_KEY }}
