@@ -27,7 +27,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **PR:** #5364 (draft)
 - **Paths:** `src/shared/python/signal_toolkit/`, `src/shared/python/model_generation/`, `src/shared/python/ai/gui/session_manager.py`, `src/shared/python/humanoid_character_builder/__init__.py`, `tests/shared/python/signal_toolkit/`, `tests/shared/python/model_generation/`, `tests/unit/ai/gui/test_session_manager_2872.py`
 - **Started:** 2026-09-26
-- **Last verified:** 2026-09-26 — 327 signal_toolkit, model_generation, humanoid and session-manager tests pass; module inventory clean.
+- **Last verified:** 2026-09-26 — 327 signal_toolkit, model_generation, humanoid and session-manager tests pass; mypy and ruff clean; module inventory clean.
 - **Summary:** Preconditions on signal_toolkit smoothing/saturation/rate-limit/deadband/noise and primitive inertia mass, standard gravity from the shared constant, UTC-normalised chat session timestamps, and a corrected humanoid_character_builder docstring, so UpstreamDrift can retire its quarantined expectations by bumping the pin instead of editing its shadow copies.
 - **Next step:** get CI green on the PR and arm it through `automerge_guard.py`.
 

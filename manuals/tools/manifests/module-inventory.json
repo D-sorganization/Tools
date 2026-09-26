@@ -693,7 +693,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-logging-pkg.json"
     },
     {
-      "content_sha256_lf": "3950daa0d40e08ea81e45b5e502a21051de042ae1fefb7c879efbfbad0b0ae79",
+      "content_sha256_lf": "153cb8c96172e8b4417619a7871e1f3cc15cda61ecf401f1211f694c21159f9c",
       "entry_count": 62,
       "package": "src/shared/python/model_generation",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-model-generation.json"
@@ -759,7 +759,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick.json"
     },
     {
-      "content_sha256_lf": "a0e853bbbb345c0093672bbba7322dd6cacfb64af454deab9efcde81e10b079f",
+      "content_sha256_lf": "6ee15764a598b18e0909ddf4df893ec04a6fd775792574a805db588614a6b1c1",
       "entry_count": 18,
       "package": "src/shared/python/signal_toolkit",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-signal-toolkit.json"

@@ -9,6 +9,7 @@ from __future__ import annotations  # noqa: E402, F404
 
 from collections.abc import Callable  # noqa: E402
 from enum import Enum  # noqa: E402
+from typing import cast  # noqa: E402
 
 import numpy as np  # noqa: E402
 
@@ -92,7 +93,7 @@ def _apply_saturation_values(
             f"lower limit ({lower}) cannot be greater than upper limit ({upper})"
         )
     if mode == SaturationMode.HARD:
-        return np.clip(values, lower, upper)
+        return cast(np.ndarray, np.clip(values, lower, upper))
 
     # Normalize to [-1, 1] range for smooth functions
     center = (upper + lower) / 2
@@ -132,7 +133,7 @@ def _apply_saturation_values(
 
     # Scale back to original range and clamp to guarantee bounds
     # Postcondition: output ∈ [lower, upper] for all modes
-    return np.clip(result * half_range + center, lower, upper)
+    return cast(np.ndarray, np.clip(result * half_range + center, lower, upper))
 
 
 def _soft_clip(x: np.ndarray, k: float = 1.0) -> np.ndarray:
@@ -220,7 +221,7 @@ def _exponential_clip(x: np.ndarray, k: float = 1.0) -> np.ndarray:
         normalizer = 1e-10
 
     result = np.sign(x) * (1 - np.exp(-k * x_abs)) / normalizer
-    return np.clip(result, -1, 1)
+    return cast(np.ndarray, np.clip(result, -1, 1))
 
 
 def apply_rate_limiter(
