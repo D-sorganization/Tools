@@ -8,7 +8,7 @@ feature, from proposal to ship. See the `development-logs` section of
 
 - **Portfolio:** infra
 - **WIP limit:** 4
-- **Last audited:** 2026-09-23 by night-watch
+- **Last audited:** 2026-09-26 by project-steward
 
 ## States
 
@@ -20,68 +20,68 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5347 · Knowledge-pack golden Q&A evaluation and optional MiniLM hybrid ranking
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** claude
 - **Issue:** #5347 (epic Repository_Management#1772 K4)
 - **Branch:** `agy/issue-5347`
-- **PR:** #5351 (draft)
+- **PR:** #5351
 - **Paths:** `src/shared/python/ai/knowledge/`, `tests/shared/python/ai/knowledge/`, `tests/api_baselines/knowledge_api_baseline.json`, `manuals/tools/manifests/module-inventory/`
 - **Started:** 2026-09-25
-- **Last verified:** 2026-09-25 (see validation commands in HANDOFF.md)
+- **Last verified:** 2026-09-26 (PR #5351 merged to main sha 1a8f012)
 - **Summary:** Added `ai/knowledge/eval.py` for golden Q&A evaluation (recall@k, MRR, must-not-source violation detection, markdown report, CLI) and optional dense MiniLM embeddings with hybrid BM25 + cosine Reciprocal Rank Fusion ranking gated by `embeddings: true`. Kept stdlib-only core importable without external ML dependencies. Rebased onto main after #5350 (Sidekick Wizards) merged; `get_minilm_embedder` now logs a warning and returns `None` on import failure instead of swallowing it, and `_search_hybrid` falls back to plain BM25 with a one-time warning when no embedder is available. Fixed mypy `no-any-return` on embedder resolution and compacted `pack.py` to 496 LOC to satisfy the file-size budget gate.
-- **Next step:** Run CI quality gates, mark PR ready, and squash-merge.
+- **Next step:** Shipped via PR #5351.
 
 ### DL-#5346 · Sidekick Wizards (per-product knowledge in chat)
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** claude
 - **Issue:** #5346 (epic Repository_Management#1772)
-- **Branch:** `feat/5346-sidekick-wizards` (stacked on `feat/5345-knowledge-pack`)
-- **PR:** not created
+- **Branch:** `feat/5346-sidekick-wizards`
+- **PR:** #5350
 - **Paths:** `src/shared/python/ai/knowledge/wizard.py`, `src/shared/python/ai/wizards.py`, `src/shared/python/ai/adapters/base.py`, `src/shared/python/ai/gui/_panel_tools.py`, `src/shared/python/ai/rag/context_provider.py`
 - **Started:** 2026-09-25
-- **Last verified:** 2026-09-25 (tests/shared/python/ai + src/shared/python/ai/tests: 570 passed)
+- **Last verified:** 2026-09-26 (PR #5350 merged to main)
 - **Summary:** `knowledge/wizard.yml` in a host product names its Wizard and pack. `build_context_instruction_section` (used by every adapter) appends the cited passages for the latest user message plus a banner when the pack is stale (freshness checked at most every 300 s). Without a Wizard the prompt is unchanged.
-- **Next step:** Open the PR once #5348 (K0) merges, then dispatch UD#10943 and Gasification_Model#5089 to add their `wizard.yml` and pack manifests.
+- **Next step:** Shipped via PR #5350.
 
 ### DL-#5345 · Knowledge-pack engine (shared.python.ai.knowledge)
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** claude
 - **Issue:** #5345 (epic Repository_Management#1772)
 - **Branch:** `feat/5345-knowledge-pack`
 - **PR:** #5348
 - **Paths:** `src/shared/python/ai/knowledge/`, `tests/shared/python/ai/knowledge/`, `tests/api_baselines/knowledge_api_baseline.json`, `manuals/tools/manifests/module-inventory/`
 - **Started:** 2026-09-25
-- **Last verified:** 2026-09-25 (32 knowledge tests + API stability pass; real findings pack: 10,288 passages from 712 files in 2.8 s)
+- **Last verified:** 2026-09-26 (PR #5348 merged to main)
 - **Summary:** One stdlib + PyYAML retrieval engine, vendorable by Runner_Dashboard: YAML manifest, heading chunking for Markdown/Quarto/LaTeX, SQLite FTS5 BM25 pack with citation, status (superseded hidden) and authority tie-break, per-file-hash staleness, `python -m shared.python.ai.knowledge build|search|info`.
-- **Next step:** Merge the PR, then start K3a (#5346) Sidekick Wizards on top of this engine.
+- **Next step:** Shipped via PR #5348.
 
 ### DL-#1755 · Retire the review-comment-to-issue converter
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** claude
 - **Issue:** Repository_Management#1755
 - **Branch:** `chore/retire-comment-converter`
-- **PR:** not created
+- **PR:** #5344
 - **Paths:** `.github/workflows/Comment-to-Issue-Converter.yml`, `docs/development/`
 - **Started:** 2026-09-25
-- **Last verified:** 2026-09-25 (retire_converter.py --check exits 0 after --apply)
+- **Last verified:** 2026-09-26 (PR #5344 merged to main)
 - **Summary:** Remove the retired Convert-Review-Comments-to-Issues workflow from this repository per the fleet-wide Repository_Management#1755 campaign.
-- **Next step:** Open the draft removal PR for review.
+- **Next step:** Shipped via PR #5344.
 
 ### DL-#5333 · Optimize safe_exp and Resilient Benchmark
 
-- **State:** in_progress
+- **State:** shipped
 - **Owner:** antigravity
 - **Issue:** #5333
 - **Branch:** `fix/5333-safe-exp-benchmark`
-- **PR:** not created
+- **PR:** #5334
 - **Paths:** `src/shared/python/sidekick/process_calculators/water_vapor_pressure.py`, `tests/shared/python/process_calculators/test_syngas_water_overflow.py`, `SPEC.md`, `docs/development/`
 - **Started:** 2026-09-24
-- **Last verified:** 2026-09-24 (safe_exp microbenchmark optimized from 4.9x to 2.2x native math.exp; 26 unit & benchmark tests pass cleanly; ruff and strict mypy pass)
+- **Last verified:** 2026-09-26 (PR #5334 merged to main)
 - **Summary:** Fix flaky CI Standard benchmark test `test_safe_exp_overhead_negligible` by eliminating min/max function call overhead in `safe_exp` and using best-of-3 runs to avoid transient runner scheduling pauses.
-- **Next step:** Create PR and verify passing CI on remote.
+- **Next step:** Shipped via PR #5334.
 
 ### DL-#5322 - Enforce the Deferred Validation Catalog
 
