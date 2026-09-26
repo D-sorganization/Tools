@@ -251,3 +251,7 @@
 ## 2026-09-25 - Prevent GC pressure in json parsers
 **Learning:** Using \`Object.keys().sort()\`, chained \`.map()\`, and array spread syntax \`[...set].sort()\` inside high-frequency parser loops (like topography parsers handling thousands of nodes) causes severe intermediate array allocations and GC pressure.
 **Action:** Replace them with explicit property checks, native \`Array.from(set).sort()\`, and pre-allocated \`for\` loops.
+
+## 2026-09-26 - Eliminate Chained flatMap and Array Spread in useMemo
+**Learning:** Using `[...new Set(rows.flatMap(Object.keys))].sort()` inside React `useMemo` hooks allocates thousands of intermediate arrays per render cycle on dynamically sized datasets (such as parsing large telemetry logs), generating severe garbage collection pressure and triggering dropped frames.
+**Action:** Replace `flatMap` and array spread combinations with highly efficient manual iterations: creating a `Set`, iterating rows to `add` explicit keys within a standard `for` loop, and wrapping it with `Array.from(set).sort()` to drastically reduce object churn and intermediate allocations on hot rendering paths.

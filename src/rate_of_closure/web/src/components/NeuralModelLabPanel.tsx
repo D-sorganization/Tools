@@ -68,7 +68,15 @@ export function NeuralModelLabPanel() {
   const [model, setModel] = useState<PortableModel | null>(null); const [inputs, setInputs] = useState<Record<string, number>>({});
   const [prediction, setPrediction] = useState<ReturnType<typeof inferPortableModel> | null>(null);
   const [message, setMessage] = useState("No private training request submitted.");
-  const columns = useMemo(() => [...new Set(rows.flatMap((row) => Object.keys(row)))].sort(), [rows]);
+  const columns = useMemo(() => {
+    // ⚡ Bolt Optimization: Replace flatMap and spread with manual set population to avoid GC churn
+    const set = new Set<string>();
+    for (let i = 0; i < rows.length; i++) {
+      const keys = Object.keys(rows[i]);
+      for (let j = 0; j < keys.length; j++) set.add(keys[j]);
+    }
+    return Array.from(set).sort();
+  }, [rows]);
 
   const manifest = () => buildTrainingManifest({ datasetId: datasetName, repository, commit,
     datasetPath: datasetName, sha256: datasetSha, rowCount: rows.length }, rows,

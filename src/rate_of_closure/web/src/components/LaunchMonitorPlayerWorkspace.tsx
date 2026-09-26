@@ -33,7 +33,15 @@ function download(name: string, content: string, type = "application/json") {
 }
 
 export function LaunchMonitorPlayerWorkspace({ rows, sourceName }: Props) {
-  const columns = useMemo(() => [...new Set(rows.flatMap((row) => Object.keys(row)))].sort(), [rows]);
+  const columns = useMemo(() => {
+    // ⚡ Bolt Optimization: Replace flatMap and spread with manual set population to avoid GC churn
+    const set = new Set<string>();
+    for (let i = 0; i < rows.length; i++) {
+      const keys = Object.keys(rows[i]);
+      for (let j = 0; j < keys.length; j++) set.add(keys[j]);
+    }
+    return Array.from(set).sort();
+  }, [rows]);
   const numeric = useMemo(() => numericLaunchMonitorColumns(rows), [rows]);
   const [identity, setIdentity] = useState("");
   const [attested, setAttested] = useState(false);
