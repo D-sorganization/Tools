@@ -5938,6 +5938,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 <!-- prettier-ignore-start -->
 
 | Date       | PR         | Changes    |
+| 2026-09-26 | #5360 | `safe_eval` rewrites every `**` into a runtime-checked call and routes two-argument scalar `pow()` through it, rejecting integer results above `MAX_POW_RESULT_BITS` (10,000 bits); closes left-nested `((a**b)**c)**d` chains and runtime exponents such as `2 ** x`, which bypassed the static exponent and chain-depth checks. |
 | 2026-09-26 | #5354 | Rate of Closure web: column extraction for the launch-monitor player, performance and neural-lab views goes through one tested `launchMonitorColumns()` helper (single Set pass, no per-row flatMap arrays) instead of three copies. |
 | 2026-09-25 | #5351 | Add golden Q&A evaluation (eval.py, CLI) and optional MiniLM dense embeddings with hybrid BM25 + cosine RRF ranking to shared.python.ai.knowledge (RM#1772 K4). |
 | 2026-09-25 | #5346 | Sidekick Wizards: a product with `knowledge/wizard.yml` gets its knowledge-pack passages (cited, with a stale-pack banner) injected into every chat turn, registers its name and persona as the app context, and answers `search_knowledge_base` from the pack. `RAGContextProvider` is deprecated. |

@@ -1058,10 +1058,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 15127,
+      "bytes_lf": 16639,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "69d053b9eef08342b57f611f4d4f2b4fdceb5a6a3487dbb6a8b0b63898aa6807",
+      "content_sha256_lf": "042208f865a03edbfe61e66c04e8cefc0063f350d3d240ace04666b0e0282c09",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SAFE-EVAL-PY-17BBC425A821",
       "language": "python",

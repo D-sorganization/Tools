@@ -1,4 +1,16 @@
-# Current handoff — Launch-monitor column helper (Tools#5354)
+# Current handoff — safe_eval power-result bound (Tools#5360)
+
+- Repository: D-sorganization/Tools
+- Worktree: `Tools-worktrees/claude-5360`
+- Branch: `claude/tools-5360-safe-eval-pow-bound`; commit SELF; PR: not created at commit time
+- Issue: #5360 (security): nested and runtime integer powers bypassed the static exponent and chain-depth guards. The chain-depth walk only follows `.right`, so `((a**b)**c)**d` passed at any depth; `2 ** x` with a large namespace `x` was never checked.
+- Built: `MAX_POW_RESULT_BITS = 10_000`; `_bounded_pow` (rejects integer results whose `exponent * log2(|base|)` exceeds the bound; floats and numpy values pass through); `_PowToBoundedCall` rewrites every `**` to call it, and `safe_eval` injects it as a global the validated expression cannot name. Two-argument scalar `pow()` uses the same helper; modular `pow(a, b, m)` is unchanged.
+- Validation: `PYTHONPATH=src python -m pytest tests/shared/python/test_safe_eval.py tests/shared/python/test_safe_pandas_eval.py tests/test_shared_package_api_stability.py -o addopts=""` -> 84 passed (6 new cases); ruff and mypy clean; module inventory `--check` passes.
+- Next: open the draft PR, get CI green, arm through `automerge_guard.py`; then bump the UD vendor pin and retire the five `tests/unit/test_safe_eval.py` quarantine IDs whose remaining expectations Tools satisfies (UD#9411).
+
+---
+
+# Past handoff — Launch-monitor column helper (Tools#5354)
 
 - Repository: D-sorganization/Tools
 - Worktree: `Tools-worktrees/claude-pr-5354`
