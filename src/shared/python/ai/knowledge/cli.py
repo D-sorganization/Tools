@@ -59,6 +59,21 @@ def _parser() -> argparse.ArgumentParser:
     info = sub.add_parser("info", help="print what a pack was built from")
     info.add_argument("pack", type=Path)
     info.set_defaults(handler=_info)
+
+    eval_cmd = sub.add_parser(
+        "eval", help="evaluate a pack against a golden Q&A dataset"
+    )
+    eval_cmd.add_argument("pack", type=Path)
+    eval_cmd.add_argument("golden", type=Path)
+    eval_cmd.add_argument("-k", type=int, default=8)
+    eval_cmd.add_argument("--min-recall", type=float, default=None)
+    eval_cmd.add_argument("--min-mrr", type=float, default=None)
+    eval_cmd.add_argument("--baseline", type=float, default=None)
+    eval_cmd.add_argument(
+        "--all", action="store_true", help="include superseded passages"
+    )
+    eval_cmd.add_argument("--json", action="store_true", help="output json format")
+    eval_cmd.set_defaults(handler=_eval)
     return parser
 
 
@@ -90,4 +105,29 @@ def _search(args: argparse.Namespace) -> int:
 def _info(args: argparse.Namespace) -> int:
     info = KnowledgePack.open(args.pack).info()
     sys.stdout.write(json.dumps(asdict(info), indent=2, sort_keys=True) + "\n")
+    return 0
+
+
+def _eval(args: argparse.Namespace) -> int:
+    from .eval import evaluate_pack, load_golden_set
+
+    min_recall = args.min_recall if args.min_recall is not None else args.baseline
+    pack = KnowledgePack.open(args.pack)
+    cases = load_golden_set(args.golden)
+    summary = evaluate_pack(pack, cases, k=args.k, include_superseded=args.all)
+    if args.json:
+        sys.stdout.write(json.dumps(summary.to_dict(), indent=2, sort_keys=True) + "\n")
+    else:
+        sys.stdout.write(summary.to_markdown() + "\n")
+    if min_recall is not None and summary.recall_at_k < min_recall:
+        sys.stderr.write(
+            f"FAIL: Recall@{args.k} ({summary.recall_at_k:.3f}) < "
+            f"threshold ({min_recall:.3f})\n"
+        )
+        return 1
+    if args.min_mrr is not None and summary.mrr < args.min_mrr:
+        sys.stderr.write(
+            f"FAIL: MRR ({summary.mrr:.3f}) < threshold ({args.min_mrr:.3f})\n"
+        )
+        return 1
     return 0

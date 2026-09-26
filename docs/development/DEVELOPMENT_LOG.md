@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5347 · Knowledge-pack golden Q&A evaluation and optional MiniLM hybrid ranking
+
+- **State:** in_review
+- **Owner:** claude
+- **Issue:** #5347 (epic Repository_Management#1772 K4)
+- **Branch:** `agy/issue-5347`
+- **PR:** #5351 (draft)
+- **Paths:** `src/shared/python/ai/knowledge/`, `tests/shared/python/ai/knowledge/`, `tests/api_baselines/knowledge_api_baseline.json`, `manuals/tools/manifests/module-inventory/`
+- **Started:** 2026-09-25
+- **Last verified:** 2026-09-25 (see validation commands in HANDOFF.md)
+- **Summary:** Added `ai/knowledge/eval.py` for golden Q&A evaluation (recall@k, MRR, must-not-source violation detection, markdown report, CLI) and optional dense MiniLM embeddings with hybrid BM25 + cosine Reciprocal Rank Fusion ranking gated by `embeddings: true`. Kept stdlib-only core importable without external ML dependencies. Rebased onto main after #5350 (Sidekick Wizards) merged; `get_minilm_embedder` now logs a warning and returns `None` on import failure instead of swallowing it, and `_search_hybrid` falls back to plain BM25 with a one-time warning when no embedder is available. Fixed mypy `no-any-return` on embedder resolution and compacted `pack.py` to 496 LOC to satisfy the file-size budget gate.
+- **Next step:** Run CI quality gates, mark PR ready, and squash-merge.
+
 ### DL-#5346 · Sidekick Wizards (per-product knowledge in chat)
 
 - **State:** in_review

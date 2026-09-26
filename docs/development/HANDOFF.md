@@ -1,4 +1,17 @@
-# Current handoff — Sidekick Wizards (Tools#5346)
+# Current handoff — Knowledge-pack golden Q&A evaluation + optional MiniLM hybrid ranking (Tools#5347)
+
+- Repository: D-sorganization/Tools
+- Worktree: `Tools-worktrees/agy-5347`
+- Branch: `agy/issue-5347`; commit SELF; PR: #5351 (draft)
+- Issue: #5347 (K4 of Repository_Management#1772: Q&A evaluation and optional MiniLM hybrid ranking)
+- Built: `src/shared/python/ai/knowledge/eval.py` (GoldenQACase, EvalSummary, evaluate_pack, load_golden_set, CLI) and optional dense MiniLM embeddings with hybrid BM25 + cosine Reciprocal Rank Fusion ranking in `src/shared/python/ai/knowledge/pack.py`. Off by default and gated by manifest's `embeddings: true`. Core remains stdlib + PyYAML only.
+- Rebase (2026-09-25): rebased onto `main` after #5350 (Sidekick Wizards) merged; preserved all public API symbols in `pack.py`; compacted `pack.py` to 496 LOC to satisfy the $\le 500$ LOC budget; fixed embedder mypy `no-any-return` typing; regenerated module inventory.
+- Validation: `py -3.12 -m pytest tests/shared/python/ai/knowledge` -> 67 passed, 1 skipped; `tests/test_shared_package_api_stability.py` -> 10 passed; `scripts/check_file_size_budget.py` -> 0 violations; `ruff check` clean on changed files; `py -3.12 -m mypy src/shared/python/ai/knowledge` clean (9 files checked); `scripts/build_tools_module_inventory.py --check` passes.
+- Next: push commits to `agy/issue-5347`, mark PR #5351 ready, monitor CI and squash-merge.
+
+---
+
+# Past handoff — Sidekick Wizards (Tools#5346)
 
 - Repository: D-sorganization/Tools
 - Worktree: `Tools-worktrees/claude-5346`

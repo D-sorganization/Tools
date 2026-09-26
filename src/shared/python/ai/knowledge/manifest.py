@@ -45,7 +45,9 @@ MAX_CHUNK_CHARS = 20_000
 
 _ID_RE = re.compile(r"^[a-z0-9][a-z0-9_-]{0,63}$")
 _REPO_RE = re.compile(r"^[A-Za-z0-9][A-Za-z0-9_.-]{0,99}$")
-_TOP_KEYS = frozenset({"id", "title", "chunk_chars", "sources", "status_overrides"})
+_TOP_KEYS = frozenset(
+    {"id", "title", "chunk_chars", "sources", "status_overrides", "embeddings"}
+)
 _SOURCE_KEYS = frozenset({"repo", "authority", "include", "exclude"})
 
 
@@ -72,6 +74,7 @@ class PackManifest:
     sources: tuple[SourceSpec, ...]
     chunk_chars: int = DEFAULT_CHUNK_CHARS
     status_overrides: Mapping[str, str] = field(default_factory=dict)
+    embeddings: bool = False
 
     @property
     def repos(self) -> tuple[str, ...]:
@@ -94,6 +97,7 @@ class PackManifest:
                 for s in self.sources
             ],
             "status_overrides": dict(self.status_overrides),
+            "embeddings": self.embeddings,
         }
 
 
@@ -125,6 +129,9 @@ def manifest_from_dict(raw: Mapping[str, Any]) -> PackManifest:
         raise ManifestError(
             f"chunk_chars must be an integer in [{MIN_CHUNK_CHARS}, {MAX_CHUNK_CHARS}]"
         )
+    embeddings = raw.get("embeddings", False)
+    if not isinstance(embeddings, bool):
+        raise ManifestError("embeddings must be a boolean")
     sources = raw.get("sources")
     if not isinstance(sources, list) or not sources:
         raise ManifestError("sources must be a non-empty list")
@@ -134,6 +141,7 @@ def manifest_from_dict(raw: Mapping[str, Any]) -> PackManifest:
         sources=tuple(_source(i, s) for i, s in enumerate(sources)),
         chunk_chars=chunk_chars,
         status_overrides=_overrides(raw.get("status_overrides") or {}),
+        embeddings=embeddings,
     )
 
 
