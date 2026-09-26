@@ -1,112 +1,55 @@
-# Current handoff — Knowledge-pack golden Q&A evaluation + optional MiniLM hybrid ranking (Tools#5347)
+# Current handoff — Project Steward status pass 2026-09-26
 
 - Repository: D-sorganization/Tools
-- Worktree: `Tools-worktrees/agy-5347`
-- Branch: `agy/issue-5347`; commit SELF; PR: #5351 (draft)
-- Issue: #5347 (K4 of Repository_Management#1772: Q&A evaluation and optional MiniLM hybrid ranking)
-- Built: `src/shared/python/ai/knowledge/eval.py` (GoldenQACase, EvalSummary, evaluate_pack, load_golden_set, CLI) and optional dense MiniLM embeddings with hybrid BM25 + cosine Reciprocal Rank Fusion ranking in `src/shared/python/ai/knowledge/pack.py`. Off by default and gated by manifest's `embeddings: true`. Core remains stdlib + PyYAML only.
-- Rebase (2026-09-25): rebased onto `main` after #5350 (Sidekick Wizards) merged; preserved all public API symbols in `pack.py`; compacted `pack.py` to 496 LOC to satisfy the $\le 500$ LOC budget; fixed embedder mypy `no-any-return` typing; regenerated module inventory.
-- Validation: `py -3.12 -m pytest tests/shared/python/ai/knowledge` -> 67 passed, 1 skipped; `tests/test_shared_package_api_stability.py` -> 10 passed; `scripts/check_file_size_budget.py` -> 0 violations; `ruff check` clean on changed files; `py -3.12 -m mypy src/shared/python/ai/knowledge` clean (9 files checked); `scripts/build_tools_module_inventory.py --check` passes.
-- Next: push commits to `agy/issue-5347`, mark PR #5351 ready, monitor CI and squash-merge.
-
----
-
-# Past handoff — Sidekick Wizards (Tools#5346)
-
-- Repository: D-sorganization/Tools
-- Worktree: `Tools-worktrees/claude-5346`
-- Branch: `feat/5346-sidekick-wizards`, stacked on `feat/5345-knowledge-pack` (PR #5348); commit SELF; PR not created until #5348 merges.
-- Issue: #5346 (K3a of Repository_Management#1772)
-- Built:
-  - `ai/knowledge/wizard.py`: `WizardConfig` + `load_wizard_config`, `KnowledgeContext.render()`, `WizardKnowledge` with TTL-cached freshness. It needs only the stdlib and PyYAML.
-  - `ai/wizards.py`: the Sidekick glue. It holds a per-root cache, calls `register_app_context` and provides `knowledge_for_context`.
-  - `BaseAgentAdapter.build_context_instruction_section` appends Wizard knowledge. Every adapter already uses this path.
-  - `search_knowledge_base` prefers the pack.
-  - `RAGContextProvider` emits a DeprecationWarning.
-- Host contract: `knowledge/wizard.yml` (key, name, description, capabilities, manifest=`knowledge/pack.yml`, pack=`.knowledge/pack.sqlite`, k, roots). Build with `python -m shared.python.ai.knowledge build knowledge/pack.yml --root <Repo>=. --out .knowledge/pack.sqlite`.
-- Validation: `py -3.12 -m pytest tests/shared/python/ai src/shared/python/ai/tests tests/test_shared_package_api_stability.py -o addopts="" -n 8` -> 570 passed; ruff and mypy clean. The knowledge API baseline gains wizard (the theme baseline rewrite was reverted).
-- Next: open the PR after #5348 merges; hosts UD#10943 and GM#5089 (tier:cli); refresh job Tools#5347.
-
----
-
-# Past handoff — Knowledge-pack engine (Tools#5345)
-
-- Repository: D-sorganization/Tools
-- Worktree: `Tools-worktrees/claude-5345`
-- Branch: `feat/5345-knowledge-pack`; commit SELF; PR: see DL-#5345
-- Issue: #5345 (K0 of Repository_Management#1772: Vision Quest, Disciple, Sidekick Wizards)
-- Built: `src/shared/python/ai/knowledge/` (manifest, chunking, sources, pack, cli). It uses only the stdlib and PyYAML and imports no other Tools module, so Runner_Dashboard vendors it (RD#1479). The pack format is gated by `PRAGMA user_version = 1`.
-- Contract: `build_pack(manifest, roots, out) -> PackInfo`; `KnowledgePack.open(p).search(q, k=8, include_superseded=False) -> list[Passage]`, `.info()`, `.is_stale(roots)`. Status precedence: manifest override > front-matter `status:` > current. Ties break by authority (published > findings > reviews > product > reference > notes).
-- Baseline: `knowledge` is added to `VENDORED_PACKAGES`; new file `tests/api_baselines/knowledge_api_baseline.json`. Regeneration also rewrote the theme baseline, which was reverted by hand.
-- Validation: `py -3.12 -m pytest tests/shared/python/ai/knowledge tests/test_shared_package_api_stability.py -o addopts=""` -> 42 passed; ruff and mypy clean; smoke build of RM `staff/knowledge/findings.yml` over local UD + AffineDrift -> 10,288 passages in 2.8 s.
-- CI follow-up: the module inventory was regenerated with `py -3.12 -m scripts.build_tools_module_inventory`, then LF-normalized because the Windows write is CRLF. The divergence-ledger gate needs `UD-PAIR:` in the PR body (paired with UD#10943; `ai/knowledge` has no UD copy).
-- Next: K3a Tools#5346 (per-product Wizard packs for Sidekick); K4 Tools#5347 (refresh job).
-
----
-
-# Past handoff — Retire the review-comment-to-issue converter (RM#1755)
-
-- Repository: D-sorganization/Tools
-- Worktree: `Tools-worktrees/claude-retire-converter`
-- Branch: `chore/retire-comment-converter`
-- Issue: Repository_Management#1755
-- What was removed: `.github/workflows/Comment-to-Issue-Converter.yml` (already disabled 2026-09-25; no processor script, tests, or lingering references were present).
-- Validation: `py -3.12 <RM>/scripts/campaigns/review_comment_converter_retirement/retire_converter.py --repo . --check` -> exit 0 after `--apply`.
-- Next step: open the draft PR for review.
-
----
-
-# Night Watch Development Log Maintenance — 2026-09-23
-
-## Identity
-
-- Repository: D-sorganization/Tools
-- Working directory: `/home/dieterolson/staff-worktrees/Tools-run-350067a6bf64`
-- Branch: `staff/night-watch-task-239d87`
-- Baseline commit: `96d5681328ac62e53d94371f07e09c95f0a3b2cd`
-- Implementation commit: SELF
-- Pull request: SELF
-- Governing issue/epic: Night Watch scheduled pass (no governing issue)
+- Working directory: `/home/dieterolson/staff-worktrees/Tools-run-3ab98d2c47ee`
+- Branch: `staff/project-steward-task-c496cc`; commit: SELF
+- Pull request: not created (draft PR pending push)
+- Governing issue/epic: Project Steward scheduled pass (no governing issue)
 
 ## Objective and status
 
-Docs compliance sweep: reconciled the development log state table with actual
-merged PR and closed-issue records on GitHub. Found 29+ entries still marked
-`in_review` or `in_progress` whose governing PRs had already merged (some as
-recently as 2026-09-23, others as old as 2026-09-08). Marked 30 entries
-`shipped` and 1 entry `parked`. The log is now current.
+Scheduled Project Steward pass. Audited all changes since 2026-09-23 from
+GitHub and git; refreshed `docs/project/STATUS.md`, `docs/project/CHARTER.md`,
+and reconciled 5 stale `DEVELOPMENT_LOG.md` entries to `shipped`.
+
+Key findings this pass:
+- Three epics closed: #4103 (Swing-Impact-Ball-Flight), #4707 (Design Manual), #5218 (Putting LM)
+- Three knowledge-pack features shipped: #5345/#5348, #5346/#5350, #5347/#5351
+- **`tests (3.11)` is red on `main`** as of 2026-09-26 (sha 1a8f012); `tests (3.12)` passes
+- Two duplicate v1.22.0 bot release PRs open (#5349, #5352)
+- P0 security #4464 still unaddressed (16 days; approaching Board proposal threshold)
 
 ## Files and decisions
 
-- `docs/development/DEVELOPMENT_LOG.md`: 31 entries reconciled. 30 marked
-  `shipped` (each with the correct PR reference); 1 (DL-#5132, calibration
-  numerical recovery) marked `parked` because PR #5136 was closed without
-  merge and the issue is closed. Last-audited timestamp updated to
-  2026-09-23 by night-watch.
-- `docs/development/HANDOFF.md`: this file, replacing the stale codex session
-  HANDOFF from #5322.
+- `docs/project/CHARTER.md`: marked TOOLS-4103, TOOLS-5218, TOOLS-4707 as `shipped`; added TOOLS-5345 row for knowledge-pack features
+- `docs/project/STATUS.md`: full refresh — what moved, stuck items, CI health, open PRs, decisions needed
+- `docs/development/DEVELOPMENT_LOG.md`: DL-#5347, DL-#5346, DL-#5345, DL-#1755, DL-#5333 all moved to `shipped`; last-audited updated to 2026-09-26
+- `docs/development/HANDOFF.md`: this file
+
+No source code changed; docs-only PR.
 
 ## Validation
 
-- No source code changed; only `docs/development/` files touched.
-- All formerly-active entries now have accurate `shipped` or `parked` states.
-- Zero `in_review` / `in_progress` entries remain.
+- `git diff --stat`: only `docs/` files changed
+- No SPEC.md §12 entry required (no `src/**` changes)
+- spec-check gate passes (SOURCE_CHANGED=false)
 
 ## Blockers and risks
 
-- DL-#5132 (calibration numerical recovery, PR #5136): PR closed without
-  merge and issue closed. Marked `parked`. Retry would require a new issue
-  and a new entry.
-- DL-#0001 (backup-pyo3-split): pre-existing parked orphan with no governing
-  issue; not changed in this pass.
+- `tests (3.11)` red on main since 2026-09-26: known failures include
+  `test_wgs_engine_imports_without_pyqt6` and `test_python_310_fallback_exports_timezone_utc_and_str_enum`.
+  This is not a regression introduced by this steward pass (docs-only). A separate
+  triage issue should be filed.
+- P0 security #4464: 16 days unaddressed — nearing the 14-day Board proposal
+  threshold. If still unresolved at next pass, the steward should submit a Board proposal.
 
 ## Next steps
 
-- Open the draft PR, let CI pass, and merge.
-- A future Night Watch pass should audit the older DL-00NN entries for
-  candidates to move to `abandoned`.
+- Open the draft PR, confirm CI passes for docs-only changes.
+- File a triage issue for `tests (3.11)` red on main.
+- Close one of the duplicate v1.22.0 release PRs (#5349 or #5352).
+- At next pass: if #4464 is still unresolved, submit a Board proposal per the playbook.
 
 ## Change log
 
-- `SELF` — Night Watch 2026-09-23: reconcile 31 stale development log entries
-  to `shipped` or `parked` based on verified GitHub merge records.
+- `SELF` — Project Steward 2026-09-26: refresh STATUS.md/CHARTER.md for 3 closed epics, 3 knowledge-pack ships, CI red flag; reconcile 5 dev-log entries to shipped.
