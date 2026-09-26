@@ -4110,6 +4110,62 @@
       }
     }
   },
+  "field_origin.py": {
+    "__all__": [
+      "FieldOrigin",
+      "OriginValue"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "FieldOrigin": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {
+            "parse": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "object",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "value"
+                }
+              ],
+              "returns": "FieldOrigin"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "OriginValue": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "number": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "float"
+            }
+          }
+        },
+        "type": "class"
+      }
+    }
+  },
   "fitting_document.py": {
     "__all__": [
       "FITTING_DOCUMENT_FORMAT",
@@ -6993,6 +7049,43 @@
           }
         },
         "type": "class"
+      }
+    }
+  },
+  "validation.py": {
+    "__all__": [
+      "require_inertia",
+      "require_rotation"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "require_inertia": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            }
+          ],
+          "returns": "Matrix3"
+        },
+        "type": "function"
+      },
+      "require_rotation": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            }
+          ],
+          "returns": "Matrix3"
+        },
+        "type": "function"
       }
     }
   },

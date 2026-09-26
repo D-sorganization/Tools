@@ -1,4 +1,17 @@
-# Current handoff — Shadow-surfaced input contracts (Tools#5362)
+# Current handoff — Public golf_club validators and per-field origin record (Tools#5353 items 3-4)
+
+- Repository: D-sorganization/Tools
+- Worktree: `Tools-worktrees/claude-5353` (agy Gemini 3.8 Flash slice from `agy-tools-5353-public-validators`, reviewed and re-applied on a fresh worktree)
+- Branch: `claude/tools-5353-public-validators`; commit SELF; PR: draft
+- Issue: #5353 items 3 and 4 only; the pre-impact bundle wire and modal-state record (items 1-2) and the quaternion tolerance decision remain open.
+- Built: `golf_club.validation` re-exports `require_rotation` and `require_inertia` from `_validation` (no copied bodies); `golf_club.field_origin` adds `FieldOrigin` (measured, identified, prescribed, synthetic, absent; exact-string `parse`) and frozen `OriginValue`, where ABSENT carries no number and `.number` raises instead of returning 0.
+- Review changes over the agy patch: exact-`str` check simplified; numeric check narrowed to `(int, float)` (mypy rejects `numbers.Real` against a `float | None` field).
+- Validation: `pytest tests/shared/python/golf_club/test_field_origin.py tests/shared/python/golf_club/test_public_validation.py tests/api_baselines` -> 43 passed; ruff and mypy clean; module inventory `--check` clean.
+- Next: CI green, arm through `automerge_guard.py`; UpstreamDrift can then drop its explicit-raise validator copies at the next pin.
+
+---
+
+# Past handoff — Shadow-surfaced input contracts (Tools#5362)
 
 - Repository: D-sorganization/Tools
 - Worktree: `Tools-worktrees/claude-5362` (agy Gemini 3.8 Flash slice from `agy-tools-5362-shadow-contracts`, reviewed and re-applied on a fresh `origin/main`)

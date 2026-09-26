@@ -713,6 +713,7 @@
           "tests/shared/python/golf_club/test_impact_mobility.py",
           "tests/shared/python/golf_club/test_normal_contact_events.py",
           "tests/shared/python/golf_club/test_normal_shaft_contact.py",
+          "tests/shared/python/golf_club/test_public_validation.py",
           "tests/shared/python/golf_club/test_rotating_body.py",
           "tests/shared/python/golf_club/test_shaft_body_assembly.py",
           "tests/shared/python/golf_club/test_shaft_equilibrium.py",
@@ -742,7 +743,8 @@
           "s"
         ],
         "validation_paths": [
-          "tests/shared/python/golf_club/test_contracts.py"
+          "tests/shared/python/golf_club/test_contracts.py",
+          "tests/shared/python/golf_club/test_public_validation.py"
         ]
       }
     },
