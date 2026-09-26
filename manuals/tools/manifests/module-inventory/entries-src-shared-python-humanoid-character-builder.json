@@ -3,16 +3,16 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 2924,
+      "bytes_lf": 2916,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "5c9f9d60bc031e25c47fda65c32218be24e663d54aa27b13c4147e6df0d9fefb",
+      "content_sha256_lf": "7cfe47fe4b0e13a4c30a73c2d5de524e3029d09b369ea19af615ce0f842b497c",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-INIT-PY-459142AE842F",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/shared/python/humanoid_character_builder/__init__.py",
-      "purpose": "Humanoid Character Builder - Standalone URDF Generation Module.",
+      "purpose": "Anthropometric domain layer built on model_generation.",
       "review_status": "inventory-baseline",
       "risk_tags": [
         "downstream-consumer-risk",

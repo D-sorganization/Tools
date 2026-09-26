@@ -45,6 +45,9 @@ def apply_saturation(
 
     Returns:
         Signal with saturation applied.
+
+    Raises:
+        ValueError: If signal is None or lower > upper.
     """
     if signal is None:
         raise ValueError("signal must be provided")
@@ -78,9 +81,16 @@ def _apply_saturation_values(
 
     Returns:
         Saturated values array.
+
+    Raises:
+        ValueError: If values is None or lower > upper.
     """
     if values is None:
         raise ValueError("values must be provided")
+    if lower > upper:
+        raise ValueError(
+            f"lower limit ({lower}) cannot be greater than upper limit ({upper})"
+        )
     if mode == SaturationMode.HARD:
         return np.clip(values, lower, upper)
 
@@ -229,9 +239,14 @@ def apply_rate_limiter(
 
     Returns:
         Rate-limited signal.
+
+    Raises:
+        ValueError: If signal is None or max_rate < 0.
     """
     if signal is None:
         raise ValueError("signal must be provided")
+    if max_rate < 0:
+        raise ValueError(f"max_rate must be non-negative, got {max_rate}")
     values = signal.values.copy()
     dt = signal.dt
 
@@ -290,9 +305,14 @@ def apply_deadband(
 
     Returns:
         Signal with deadband applied.
+
+    Raises:
+        ValueError: If signal is None or threshold < 0.
     """
     if signal is None:
         raise ValueError("signal must be provided")
+    if threshold < 0:
+        raise ValueError(f"threshold must be non-negative, got {threshold}")
     values = signal.values.copy()
     offset = values - center
 

@@ -58,6 +58,11 @@ class TestNoiseGenerator:
         with pytest.raises(ValueError, match="time array.*at least one sample"):
             gen.generate(np.array([]), noise_type)
 
+    def test_generate_rejects_negative_amplitude(self, time_array: np.ndarray) -> None:
+        gen = NoiseGenerator(seed=42)
+        with pytest.raises(ValueError, match=r"amplitude.*-0\.5"):
+            gen.generate(time_array, NoiseType.WHITE, amplitude=-0.5)
+
     def test_white_noise_shape(self, time_array: np.ndarray) -> None:
         gen = NoiseGenerator(seed=42)
         sig = gen.generate(time_array, NoiseType.WHITE, amplitude=1.0)

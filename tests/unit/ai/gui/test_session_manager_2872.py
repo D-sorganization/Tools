@@ -270,3 +270,77 @@ class TestLoadContextFrom:
         sid = _make_session(mgr, title="Ok")
         with pytest.raises(KeyError):
             mgr.load_context_from([sid, "no-such-id"])
+
+
+class TestListSessionsSorting:
+    def test_list_sessions_mixed_timezones_and_naive_sorting(
+        self, tmp_path: Path
+    ) -> None:
+        """Verify list_sessions normalises naive and missing timestamps to UTC-aware."""
+        mgr = ChatSessionManager(storage_dir=tmp_path)
+
+        # 1. Aware timestamp UTC
+        ctx1 = {
+            "session_id": "session_utc",
+            "metadata": {"title": "UTC Session"},
+            "messages": [
+                {
+                    "role": "user",
+                    "content": "hi",
+                    "timestamp": "2026-05-01T12:00:00+00:00",
+                }
+            ],
+        }
+        (tmp_path / "session_utc.json").write_text(json.dumps(ctx1), encoding="utf-8")
+
+        # 2. Naive timestamp (e.g. legacy/external)
+        ctx2 = {
+            "session_id": "session_naive",
+            "metadata": {"title": "Naive Session"},
+            "messages": [
+                {
+                    "role": "user",
+                    "content": "hello",
+                    "timestamp": "2026-06-01T12:00:00",
+                }
+            ],
+        }
+        (tmp_path / "session_naive.json").write_text(json.dumps(ctx2), encoding="utf-8")
+
+        # 3. Missing timestamp
+        ctx3 = {
+            "session_id": "session_missing",
+            "metadata": {"title": "Missing Timestamp"},
+            "messages": [{"role": "user", "content": "hey"}],
+        }
+        (tmp_path / "session_missing.json").write_text(
+            json.dumps(ctx3), encoding="utf-8"
+        )
+
+        # 4. Offset-aware timestamp (+05:00)
+        ctx4 = {
+            "session_id": "session_offset",
+            "metadata": {"title": "Offset Session"},
+            "messages": [
+                {
+                    "role": "user",
+                    "content": "greetings",
+                    "timestamp": "2026-07-01T10:00:00+05:00",
+                }
+            ],
+        }
+        (tmp_path / "session_offset.json").write_text(
+            json.dumps(ctx4), encoding="utf-8"
+        )
+
+        sessions = mgr.list_sessions()
+        assert len(sessions) == 4
+        for s in sessions:
+            assert s["timestamp"].tzinfo is not None
+        ids = [s["id"] for s in sessions]
+        assert ids == [
+            "session_offset",
+            "session_naive",
+            "session_utc",
+            "session_missing",
+        ]

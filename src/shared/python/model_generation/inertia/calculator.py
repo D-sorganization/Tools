@@ -235,7 +235,12 @@ class InertiaCalculator:
 
         Returns:
             InertiaResult
+
+        Raises:
+            ValueError: If mass <= 0.
         """
+        if mass <= 0:
+            raise ValueError(f"mass must be positive, got {mass}")
         return self.compute(geometry, mass=mass, mode=InertiaMode.PRIMITIVE)
 
     def compute_from_mesh(

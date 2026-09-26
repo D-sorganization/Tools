@@ -21,6 +21,7 @@ from signal_toolkit.filters import (
     FilterDesigner,
     FilterSpec,
     FilterType,
+    apply_exponential_smoothing,
     apply_filter,
     apply_moving_average,
     apply_savgol,
@@ -252,6 +253,31 @@ class TestSmoothingFilters:
         sig = Signal(time=t, values=np.sin(2 * np.pi * 2.0 * t))
         filtered = apply_savgol(sig, window_length=11, polyorder=3)
         assert len(filtered.values) == 500
+
+    def test_apply_exponential_smoothing_rejects_alpha_out_of_bounds(self) -> None:
+        fs = 100.0
+        t = np.arange(10) / fs
+        sig = Signal(time=t, values=np.ones(10))
+
+        with pytest.raises(ValueError, match=r"alpha.*0"):
+            apply_exponential_smoothing(sig, alpha=0.0)
+
+        with pytest.raises(ValueError, match=r"alpha.*-0\.1"):
+            apply_exponential_smoothing(sig, alpha=-0.1)
+
+        with pytest.raises(ValueError, match=r"alpha.*1\.1"):
+            apply_exponential_smoothing(sig, alpha=1.1)
+
+    def test_apply_exponential_smoothing_valid_alpha(self) -> None:
+        fs = 100.0
+        t = np.arange(10) / fs
+        sig = Signal(time=t, values=np.ones(10))
+
+        res1 = apply_exponential_smoothing(sig, alpha=1.0)
+        assert len(res1.values) == 10
+
+        res2 = apply_exponential_smoothing(sig, alpha=0.5)
+        assert len(res2.values) == 10
 
 
 # ── Convenience Functions ────────────────────────────────────────────────

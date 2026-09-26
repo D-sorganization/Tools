@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 
+import numpy as np
 import pytest
 from model_generation.core.physics_validation import (
     PhysicsValidator,
@@ -276,3 +277,8 @@ class TestCompletePhysicsValidation:
         )
 
         assert result.collision is None
+
+    def test_default_gravity_standard(self) -> None:
+        """Test default gravity vector uses standard gravity [0, 0, -9.80665]."""
+        validator = PhysicsValidator()
+        np.testing.assert_allclose(validator.gravity, [0.0, 0.0, -9.80665])
