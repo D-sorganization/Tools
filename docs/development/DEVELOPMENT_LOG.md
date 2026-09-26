@@ -18,6 +18,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5353 · Public golf_club validators and per-field origin record
+
+- **State:** in_review
+- **Owner:** claude (agy executor)
+- **Issue:** #5353
+- **Branch:** `claude/tools-5353-public-validators`
+- **PR:** draft
+- **Paths:** `src/shared/python/golf_club/validation.py`, `src/shared/python/golf_club/field_origin.py`, `tests/shared/python/golf_club/`, `tests/api_baselines/golf_club_api_baseline.json`, `manuals/tools/manifests/`
+- **Started:** 2026-09-26
+- **Last verified:** 2026-09-26 — 43 field-origin, public-validation and API-baseline tests pass; ruff, mypy and inventory check clean.
+- **Summary:** Items 3-4 of #5353: public re-export of the strict rotation and inertia validators and a fail-closed per-field origin enum and scalar record in which absent is never zero.
+- **Next step:** get CI green on the PR and arm it; items 1-2 (bundle wire, modal-state record) stay open on #5353.
+
 ### DL-#5362 · Input contracts surfaced by the UpstreamDrift shadow burn-down
 
 - **State:** in_review
