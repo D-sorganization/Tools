@@ -1,6 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 
-import { numericLaunchMonitorColumns } from "../model/launchMonitorAnalysis";
+import { launchMonitorColumns, numericLaunchMonitorColumns } from "../model/launchMonitorAnalysis";
 import type { LaunchMonitorRow } from "../model/launchMonitorAnalysisTypes";
 import {
   analyzeDispersion, analyzeSessionTrend, calculateStrokesGained, calculateTargetError,
@@ -36,15 +36,7 @@ const downloadPng = (element: SVGSVGElement) => {
 
 export function LaunchMonitorPerformanceWorkspace({ rows, sourceName }: Props) {
   const numeric = useMemo(() => numericLaunchMonitorColumns(rows), [rows]);
-  const columns = useMemo(() => {
-    // ⚡ Bolt Optimization: Replace flatMap and spread with manual set population to avoid GC churn
-    const set = new Set<string>();
-    for (let i = 0; i < rows.length; i++) {
-      const keys = Object.keys(rows[i]);
-      for (let j = 0; j < keys.length; j++) set.add(keys[j]);
-    }
-    return Array.from(set).sort();
-  }, [rows]);
+  const columns = useMemo(() => launchMonitorColumns(rows), [rows]);
   const fingerprint = useMemo(() => fingerprintLaunchMonitorRows(rows), [rows]);
   const [carry, setCarry] = useState(""); const [lateral, setLateral] = useState("");
   const [carryUnit, setCarryUnit] = useState<DistanceUnit>("yd"); const [lateralUnit, setLateralUnit] = useState<DistanceUnit>("yd");

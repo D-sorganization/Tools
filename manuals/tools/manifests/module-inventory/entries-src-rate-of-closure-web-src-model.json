@@ -9832,10 +9832,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8785,
+      "bytes_lf": 9229,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ac617518635eb4943386731933580cbf72d8520fd2d90cf7801231699a476a7a",
+      "content_sha256_lf": "8bf5ca35cd48a1973eac0fe750e7ad397aa669c6759f371933a715a684c6ea73",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-LAUNCHMONITORANALYSIS-TEST-TS-7715E6B09F87",
       "language": "typescript",
@@ -9874,10 +9874,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6628,
+      "bytes_lf": 7005,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a15bd9a2f38a95e908b6d408b69f619c92d597a8acbecce58a8620b6e60f2eca",
+      "content_sha256_lf": "1d1cdfb9f14b3a94a8e36a3adb27a09bd52a440f64c595d8c92e919ac593c269",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-LAUNCHMONITORANALYSIS-TS-44404647D624",
       "language": "typescript",
@@ -9915,6 +9915,11 @@
           {
             "kind": "export",
             "name": "analyzeLaunchMonitorData",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "launchMonitorColumns",
             "signature": null
           },
           {
