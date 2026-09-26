@@ -1,4 +1,15 @@
-# Current handoff — safe_eval power-result bound (Tools#5360)
+# Current handoff — Launch-monitor covariation sums (Tools#5355)
+
+- Repository: D-sorganization/Tools
+- Worktree: `Tools-worktrees/claude-pr-5355`
+- Branch: `bolt-covariation-reduce-15618261669777904218`; commit SELF; PR: #5355 (Bolt, reworked by Claude onto main after #5354)
+- Issue: none (Bolt performance PR); no DL entry — No material development-log change: a behaviour-preserving refactor of one model file.
+- Built: `launchMonitorCovariation.ts` gains private `sum` and `pairMean` helpers. `centeredPairs` and `meanPairs` share `pairMean` instead of the Bolt commit's two pasted loops; `metaAnalyze` sums the random weights once instead of inside the per-player `forEach` (O(N^2) -> O(N)).
+- Validation: `npx vitest run src/model/launchMonitorCovariation.test.ts` -> 5 passed; `npx tsc --noEmit` and `eslint` on the changed file clean; `python -m scripts.build_tools_module_inventory --check` passes after regeneration.
+- Next: CI green, then arm through `automerge_guard.py`.
+
+---
+# Past handoff — safe_eval power-result bound (Tools#5360)
 
 - Repository: D-sorganization/Tools
 - Worktree: `Tools-worktrees/claude-5360`
