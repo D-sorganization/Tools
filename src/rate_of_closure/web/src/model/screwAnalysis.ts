@@ -238,27 +238,44 @@ export function jointMotionAt(
     throw new Error("each joint row must contain one more point than joint IDs");
   }
   const index = Math.max(0, Math.min(Math.round(rawIndex), times.length - 1));
-  const segmentsByJoint = jointIds.map((_, jointIndex) =>
-    jointPositionsM.map((row) => subtract(row[jointIndex + 1], row[jointIndex])));
-  const absoluteOmega = segmentsByJoint.map((segments) => {
+  // ⚡ Bolt Optimization: Replace chained array maps and reduce with standard single-pass loops to prevent intermediate array allocation and GC pressure in this hot 3D math path
+  const absoluteOmega: Vec3[] = [];
+  const relativeOmega: Vec3[] = [];
+
+  for (let jointIndex = 0; jointIndex < jointIds.length; jointIndex++) {
+    const segments: Vec3[] = [];
+    for (let i = 0; i < jointPositionsM.length; i++) {
+      const row = jointPositionsM[i];
+      segments.push(subtract(row[jointIndex + 1], row[jointIndex]));
+    }
     const segment = segments[index];
     const rate = derivativeAt(segments, times, index);
     const lengthSquared = dot(segment, segment);
     if (lengthSquared <= EPSILON) throw new Error("joint segments must be nonzero");
-    return scale(cross(segment, rate), 1 / lengthSquared);
-  });
-  const relativeOmega = absoluteOmega.map((omega, jointIndex) =>
-    jointIndex === 0 ? omega : subtract(omega, absoluteOmega[jointIndex - 1]));
+    const omega = scale(cross(segment, rate), 1 / lengthSquared);
+    absoluteOmega.push(omega);
+    relativeOmega.push(jointIndex === 0 ? omega : subtract(omega, absoluteOmega[jointIndex - 1]));
+  }
+
   const points = jointPositionsM[index];
   const endpoint = points[points.length - 1];
-  const contributions = relativeOmega.map((omega, jointIndex) =>
-    cross(omega, subtract(endpoint, points[jointIndex])));
-  const endpointVelocity = derivativeAt(
-    jointPositionsM.map((row) => row[row.length - 1]),
-    times,
-    index,
-  );
-  const reconstructed = contributions.reduce(add, [0, 0, 0]);
+
+  const contributions: Vec3[] = [];
+  const reconstructed: Vec3 = [0, 0, 0];
+  for (let i = 0; i < relativeOmega.length; i++) {
+    const contribution = cross(relativeOmega[i], subtract(endpoint, points[i]));
+    contributions.push(contribution);
+    reconstructed[0] += contribution[0];
+    reconstructed[1] += contribution[1];
+    reconstructed[2] += contribution[2];
+  }
+
+  const endpoints: Vec3[] = [];
+  for (let i = 0; i < jointPositionsM.length; i++) {
+    const row = jointPositionsM[i];
+    endpoints.push(row[row.length - 1]);
+  }
+  const endpointVelocity = derivativeAt(endpoints, times, index);
   return {
     jointIds: [...jointIds],
     axisPointsM: points.slice(0, -1),
