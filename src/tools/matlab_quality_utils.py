@@ -92,6 +92,8 @@ class MATLABQualityChecker:
     def _run_matlab_script(self, script_path: Path) -> dict[str, Any]:
         """Attempt to run MATLAB script from command line."""
         require(isinstance(script_path, Path), "script_path must be a Path")
+        if "'" in str(script_path):
+            raise ValueError(f"Script path cannot contain single quotes: {script_path}")
         try:
             escaped_path = str(script_path).replace("'", "''")
             commands = [
