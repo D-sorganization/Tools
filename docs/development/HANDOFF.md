@@ -1,13 +1,16 @@
-# Current handoff — Public golf_club validators and per-field origin record (Tools#5353 items 3-4)
+# Current handoff — Pre-Impact Bundle Wire and Modal-State Record (Tools#5353)
 
 - Repository: D-sorganization/Tools
-- Worktree: `Tools-worktrees/claude-5353` (agy Gemini 3.8 Flash slice from `agy-tools-5353-public-validators`, reviewed and re-applied on a fresh worktree)
-- Branch: `claude/tools-5353-public-validators`; commit SELF; PR: draft
-- Issue: #5353 items 3 and 4 only; the pre-impact bundle wire and modal-state record (items 1-2) and the quaternion tolerance decision remain open.
-- Built: `golf_club.validation` re-exports `require_rotation` and `require_inertia` from `_validation` (no copied bodies); `golf_club.field_origin` adds `FieldOrigin` (measured, identified, prescribed, synthetic, absent; exact-string `parse`) and frozen `OriginValue`, where ABSENT carries no number and `.number` raises instead of returning 0.
-- Review changes over the agy patch: exact-`str` check simplified; numeric check narrowed to `(int, float)` (mypy rejects `numbers.Real` against a `float | None` field).
-- Validation: `pytest tests/shared/python/golf_club/test_field_origin.py tests/shared/python/golf_club/test_public_validation.py tests/api_baselines` -> 43 passed; ruff and mypy clean; module inventory `--check` clean.
-- Next: CI green, arm through `automerge_guard.py`; UpstreamDrift can then drop its explicit-raise validator copies at the next pin.
+- Branch: `feat/5353-pre-impact-bundle-modal-state`; commit SELF; PR: draft
+- Issue: #5353 — all items (1-4) now implemented. Items 3-4 (validation and field origin) landed in #5366; items 1-2 (pre-impact bundle wire and modal-state record) implemented here.
+- Built:
+  - `golf_club._pre_impact_contracts`: `PreImpactBundleError`, `AbsentFieldError`, `Quantity`, explicit-raise validators.
+  - `golf_club.pre_impact_frames`: `Pose`, `twist_to_parent`, `wrench_to_parent`, `shift_wrench_origin`, `shift_twist_reference`, Plücker spatial motion/force transforms with $10^{-12}$ wrench power invariance.
+  - `golf_club.modal_state`: `ModalBasis`, `ShaftState`, `ModalProjection`, `project_onto_basis` (M-orthogonal with residual reporting and $0.5 \dot{q}^T M_r \dot{q} + 0.5 q^T K_r q$ energy ledger).
+  - `golf_club.pre_impact_bundle`: `PreImpactBundle`, `Provenance`, `TimeBase`, `HeadState`, `BallState`, `HandWrench`, `grip_pose_from_delivery_sample`.
+  - `golf_club._pre_impact_serde`: dict/json serialization helpers keeping all files strictly $\le 500$ LOC.
+- Validation: `pytest tests/shared/python/golf_club/test_pre_impact_bundle.py tests/shared/python/golf_club/test_pre_impact_frames_modal.py tests/shared/python/golf_club/test_field_origin.py tests/shared/python/golf_club/test_public_validation.py tests/test_shared_package_api_stability.py` -> all 92 tests pass; `ruff check`, `ruff format --check`, module inventory check clean.
+- Next: open PR, verify CI passes, auto-merge squash; UpstreamDrift can consume canonical Tools bundle via thin adapter.
 
 ---
 
@@ -59,6 +62,7 @@
 - Next: CI green, then arm through `automerge_guard.py`.
 
 ---
+
 # Past handoff — Knowledge-pack golden Q&A evaluation + optional MiniLM hybrid ranking (Tools#5347)
 
 - Repository: D-sorganization/Tools

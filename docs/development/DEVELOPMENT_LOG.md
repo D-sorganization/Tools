@@ -18,18 +18,18 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
-### DL-#5353 · Public golf_club validators and per-field origin record
+### DL-#5353 · Pre-impact bundle wire, modal-state record and public validators
 
 - **State:** in_review
-- **Owner:** claude (agy executor)
+- **Owner:** local (agy executor)
 - **Issue:** #5353
-- **Branch:** `claude/tools-5353-public-validators`
+- **Branch:** `feat/5353-pre-impact-bundle-modal-state`
 - **PR:** draft
-- **Paths:** `src/shared/python/golf_club/validation.py`, `src/shared/python/golf_club/field_origin.py`, `tests/shared/python/golf_club/`, `tests/api_baselines/golf_club_api_baseline.json`, `manuals/tools/manifests/`
+- **Paths:** `src/shared/python/golf_club/_pre_impact_contracts.py`, `src/shared/python/golf_club/_pre_impact_serde.py`, `src/shared/python/golf_club/modal_state.py`, `src/shared/python/golf_club/pre_impact_bundle.py`, `src/shared/python/golf_club/pre_impact_frames.py`, `tests/shared/python/golf_club/`, `tests/api_baselines/golf_club_api_baseline.json`
 - **Started:** 2026-09-26
-- **Last verified:** 2026-09-26 — 43 field-origin, public-validation and API-baseline tests pass; ruff, mypy and inventory check clean.
-- **Summary:** Items 3-4 of #5353: public re-export of the strict rotation and inertia validators and a fail-closed per-field origin enum and scalar record in which absent is never zero.
-- **Next step:** get CI green on the PR and arm it; items 1-2 (bundle wire, modal-state record) stay open on #5353.
+- **Last verified:** 2026-09-27 — 91 total tests (43 items 3-4 + 48 items 1-2) pass; API stability baseline regenerated and passes; ruff, file-size (<=500 LOC) and inventory clean.
+- **Summary:** Complete implementation of #5353: items 1-2 add the versioned pre-impact bundle wire (`PreImpactBundle`, `Provenance`, `TimeBase`, `HeadState`, `BallState`, `HandWrench`, `Pose`, `Quantity`), Plücker frame transforms with $10^{-12}$ wrench power invariance, and modal-state records with M-orthogonal projection ($0.5 \dot{q}^T M_r \dot{q} + 0.5 q^T K_r q$). Follows items 3-4 (validation and field origin) landed in #5366.
+- **Next step:** get CI green on the PR and merge through auto-merge squash.
 
 ### DL-#5362 · Input contracts surfaced by the UpstreamDrift shadow burn-down
 
