@@ -2843,6 +2843,603 @@
       }
     }
   },
+  "_pre_impact_contracts.py": {
+    "__all__": [
+      "AbsentFieldError",
+      "FieldOrigin",
+      "FloatArray",
+      "PreImpactBundleError",
+      "Quantity",
+      "com_inertia",
+      "fail",
+      "finite_array",
+      "finite_scalar",
+      "identifier",
+      "nonnegative",
+      "parse_quantity",
+      "positive",
+      "positive_definite",
+      "positive_semidefinite",
+      "proper_rotation",
+      "reject_unknown",
+      "sha256_hex",
+      "strictly_increasing",
+      "symmetric",
+      "unit_quaternion",
+      "unit_vector"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "AbsentFieldError": {
+        "info": {
+          "bases": [
+            "PreImpactBundleError"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "message"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "FieldOrigin": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {
+            "parse": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "object",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "value"
+                }
+              ],
+              "returns": "FieldOrigin"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "FloatArray": {
+        "type": "variable"
+      },
+      "PreImpactBundleError": {
+        "info": {
+          "bases": [
+            "ValueError"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "code"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "message"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "Quantity": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "absent": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                }
+              ],
+              "returns": "Quantity"
+            },
+            "is_absent": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "bool"
+            },
+            "to_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
+            "value": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "FloatArray"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "com_inertia": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "FloatArray"
+        },
+        "type": "function"
+      },
+      "fail": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "code"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "message"
+            }
+          ],
+          "returns": "NoReturn"
+        },
+        "type": "function"
+      },
+      "finite_array": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "tuple[int, ...]",
+              "default": null,
+              "kind": "arg",
+              "name": "shape"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "FloatArray"
+        },
+        "type": "function"
+      },
+      "finite_scalar": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            },
+            {
+              "annotation": "bool",
+              "default": "False",
+              "kind": "kwonlyarg",
+              "name": "positive"
+            }
+          ],
+          "returns": "float"
+        },
+        "type": "function"
+      },
+      "identifier": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "nonnegative": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Quantity",
+              "default": null,
+              "kind": "arg",
+              "name": "quantity"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      },
+      "parse_quantity": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "raw"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            },
+            {
+              "annotation": "tuple[int, ...]",
+              "default": null,
+              "kind": "arg",
+              "name": "shape"
+            },
+            {
+              "annotation": "bool",
+              "default": "False",
+              "kind": "kwonlyarg",
+              "name": "required"
+            }
+          ],
+          "returns": "Quantity"
+        },
+        "type": "function"
+      },
+      "positive": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Quantity",
+              "default": null,
+              "kind": "arg",
+              "name": "quantity"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      },
+      "positive_definite": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "int",
+              "default": null,
+              "kind": "arg",
+              "name": "size"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "FloatArray"
+        },
+        "type": "function"
+      },
+      "positive_semidefinite": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "int",
+              "default": null,
+              "kind": "arg",
+              "name": "size"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "FloatArray"
+        },
+        "type": "function"
+      },
+      "proper_rotation": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "FloatArray"
+        },
+        "type": "function"
+      },
+      "reject_unknown": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "data"
+            },
+            {
+              "annotation": "frozenset[str]",
+              "default": null,
+              "kind": "arg",
+              "name": "allowed"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "Mapping[str, Any]"
+        },
+        "type": "function"
+      },
+      "sha256_hex": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "strictly_increasing": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "FloatArray",
+              "default": null,
+              "kind": "arg",
+              "name": "array"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      },
+      "symmetric": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "int",
+              "default": null,
+              "kind": "arg",
+              "name": "size"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "FloatArray"
+        },
+        "type": "function"
+      },
+      "unit_quaternion": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "FloatArray"
+        },
+        "type": "function"
+      },
+      "unit_vector": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "name"
+            }
+          ],
+          "returns": "FloatArray"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "_pre_impact_serde.py": {
+    "__all__": [
+      "bundle_from_dict",
+      "bundle_to_dict"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "bundle_from_dict": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "payload"
+            }
+          ],
+          "returns": "PreImpactBundle"
+        },
+        "type": "function"
+      },
+      "bundle_to_dict": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "PreImpactBundle",
+              "default": null,
+              "kind": "arg",
+              "name": "bundle"
+            }
+          ],
+          "returns": "dict[str, Any]"
+        },
+        "type": "function"
+      }
+    }
+  },
   "_rkmk_step.py": {
     "__all__": [],
     "explicit_all": true,
@@ -5114,6 +5711,1155 @@
             }
           ],
           "returns": "tuple[float, np.ndarray]"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "modal_state.py": {
+    "__all__": [
+      "ModalBasis",
+      "ModalProjection",
+      "ShaftState",
+      "project_onto_basis"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "ModalBasis": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "energy_j": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "FloatArray",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "amplitudes"
+                },
+                {
+                  "annotation": "FloatArray",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "velocities"
+                }
+              ],
+              "returns": "float"
+            },
+            "to_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ModalProjection": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ShaftState": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "modal_energy_j": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "float"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "project_onto_basis": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ModalBasis",
+              "default": null,
+              "kind": "arg",
+              "name": "basis"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "shapes"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "full_mass"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "full_stiffness"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "displacement"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "velocity"
+            }
+          ],
+          "returns": "ModalProjection"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "pre_impact_bundle.py": {
+    "__all__": [
+      "CONVENTIONS",
+      "GRIP_FRAME_ID",
+      "HEAD_FRAME_ID",
+      "PRE_IMPACT_BUNDLE_SCHEMA",
+      "PRE_IMPACT_BUNDLE_VERSION",
+      "UNIT_SYSTEM",
+      "WORLD_FRAME_ID",
+      "AbsentFieldError",
+      "BallState",
+      "FieldOrigin",
+      "HandWrench",
+      "HeadState",
+      "ModalBasis",
+      "ModalProjection",
+      "Pose",
+      "PreImpactBundle",
+      "PreImpactBundleError",
+      "Provenance",
+      "Quantity",
+      "ShaftState",
+      "TimeBase",
+      "grip_pose_from_delivery_sample",
+      "project_onto_basis",
+      "shift_twist_reference",
+      "shift_wrench_origin",
+      "twist_to_parent",
+      "wrench_to_parent"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "AbsentFieldError": {
+        "info": {
+          "bases": [
+            "PreImpactBundleError"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "message"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "BallState": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "CONVENTIONS": {
+        "type": "variable"
+      },
+      "FieldOrigin": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {
+            "parse": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "object",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "value"
+                }
+              ],
+              "returns": "FieldOrigin"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "GRIP_FRAME_ID": {
+        "type": "variable"
+      },
+      "HEAD_FRAME_ID": {
+        "type": "variable"
+      },
+      "HandWrench": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "HeadState": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "tools_contact_body_fields": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ModalBasis": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "energy_j": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "FloatArray",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "amplitudes"
+                },
+                {
+                  "annotation": "FloatArray",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "velocities"
+                }
+              ],
+              "returns": "float"
+            },
+            "to_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ModalProjection": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "PRE_IMPACT_BUNDLE_SCHEMA": {
+        "type": "variable"
+      },
+      "PRE_IMPACT_BUNDLE_VERSION": {
+        "type": "variable"
+      },
+      "Pose": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "compose": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "Pose",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "child"
+                }
+              ],
+              "returns": "Pose"
+            },
+            "from_quaternion": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "parent_frame_id"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "frame_id"
+                },
+                {
+                  "annotation": "object",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "quaternion_wxyz"
+                },
+                {
+                  "annotation": "object",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "translation_m"
+                }
+              ],
+              "returns": "Pose"
+            },
+            "identity": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "frame_id"
+                }
+              ],
+              "returns": "Pose"
+            },
+            "inverse": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "Pose"
+            },
+            "to_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "PreImpactBundle": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "field_origins": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, FieldOrigin]"
+            },
+            "from_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "object",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "payload"
+                }
+              ],
+              "returns": "PreImpactBundle"
+            },
+            "from_json": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "text"
+                }
+              ],
+              "returns": "PreImpactBundle"
+            },
+            "hand": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "name"
+                }
+              ],
+              "returns": "HandWrench"
+            },
+            "hand_wrench_in": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "name"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "frame_id"
+                }
+              ],
+              "returns": "tuple[FloatArray, FloatArray]"
+            },
+            "pose_between": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "target_frame_id"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "source_frame_id"
+                }
+              ],
+              "returns": "Pose"
+            },
+            "to_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
+            "to_json": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "str"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "PreImpactBundleError": {
+        "info": {
+          "bases": [
+            "ValueError"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "code"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "message"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "Provenance": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "Quantity": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "absent": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                }
+              ],
+              "returns": "Quantity"
+            },
+            "is_absent": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "bool"
+            },
+            "to_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            },
+            "value": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "FloatArray"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "ShaftState": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "modal_energy_j": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "float"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "TimeBase": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "UNIT_SYSTEM": {
+        "type": "variable"
+      },
+      "WORLD_FRAME_ID": {
+        "type": "variable"
+      },
+      "grip_pose_from_delivery_sample": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg",
+              "name": "sample"
+            },
+            {
+              "annotation": "str",
+              "default": "WORLD_FRAME_ID",
+              "kind": "kwonlyarg",
+              "name": "world_frame_id"
+            }
+          ],
+          "returns": "Pose"
+        },
+        "type": "function"
+      },
+      "project_onto_basis": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "ModalBasis",
+              "default": null,
+              "kind": "arg",
+              "name": "basis"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "shapes"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "full_mass"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "full_stiffness"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "displacement"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "velocity"
+            }
+          ],
+          "returns": "ModalProjection"
+        },
+        "type": "function"
+      },
+      "shift_twist_reference": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "linear"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "angular"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "from_point"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "to_point"
+            }
+          ],
+          "returns": "tuple[FloatArray, FloatArray]"
+        },
+        "type": "function"
+      },
+      "shift_wrench_origin": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "force"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "moment"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "from_point"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "to_point"
+            }
+          ],
+          "returns": "tuple[FloatArray, FloatArray]"
+        },
+        "type": "function"
+      },
+      "twist_to_parent": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Pose",
+              "default": null,
+              "kind": "arg",
+              "name": "pose"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "linear"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "angular"
+            }
+          ],
+          "returns": "tuple[FloatArray, FloatArray]"
+        },
+        "type": "function"
+      },
+      "wrench_to_parent": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Pose",
+              "default": null,
+              "kind": "arg",
+              "name": "pose"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "force"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "moment"
+            }
+          ],
+          "returns": "tuple[FloatArray, FloatArray]"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "pre_impact_frames.py": {
+    "__all__": [
+      "Pose",
+      "inv_xtrans",
+      "quaternion_to_rotation_matrix",
+      "shift_twist_reference",
+      "shift_wrench_origin",
+      "skew",
+      "twist_to_parent",
+      "wrench_to_parent",
+      "xtrans"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "Pose": {
+        "info": {
+          "bases": [],
+          "methods": {
+            "compose": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "Pose",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "child"
+                }
+              ],
+              "returns": "Pose"
+            },
+            "from_quaternion": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "parent_frame_id"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "frame_id"
+                },
+                {
+                  "annotation": "object",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "quaternion_wxyz"
+                },
+                {
+                  "annotation": "object",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "translation_m"
+                }
+              ],
+              "returns": "Pose"
+            },
+            "identity": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "cls"
+                },
+                {
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "frame_id"
+                }
+              ],
+              "returns": "Pose"
+            },
+            "inverse": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "Pose"
+            },
+            "to_dict": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "dict[str, Any]"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "inv_xtrans": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "FloatArray",
+              "default": null,
+              "kind": "arg",
+              "name": "e_rot"
+            },
+            {
+              "annotation": "FloatArray",
+              "default": null,
+              "kind": "arg",
+              "name": "r"
+            }
+          ],
+          "returns": "FloatArray"
+        },
+        "type": "function"
+      },
+      "quaternion_to_rotation_matrix": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "FloatArray | list[float]",
+              "default": null,
+              "kind": "arg",
+              "name": "quat"
+            }
+          ],
+          "returns": "FloatArray"
+        },
+        "type": "function"
+      },
+      "shift_twist_reference": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "linear"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "angular"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "from_point"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "to_point"
+            }
+          ],
+          "returns": "tuple[FloatArray, FloatArray]"
+        },
+        "type": "function"
+      },
+      "shift_wrench_origin": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "force"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "moment"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "from_point"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "to_point"
+            }
+          ],
+          "returns": "tuple[FloatArray, FloatArray]"
+        },
+        "type": "function"
+      },
+      "skew": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "FloatArray | list[float]",
+              "default": null,
+              "kind": "arg",
+              "name": "v"
+            }
+          ],
+          "returns": "FloatArray"
+        },
+        "type": "function"
+      },
+      "twist_to_parent": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Pose",
+              "default": null,
+              "kind": "arg",
+              "name": "pose"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "linear"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "angular"
+            }
+          ],
+          "returns": "tuple[FloatArray, FloatArray]"
+        },
+        "type": "function"
+      },
+      "wrench_to_parent": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Pose",
+              "default": null,
+              "kind": "arg",
+              "name": "pose"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "force"
+            },
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "moment"
+            }
+          ],
+          "returns": "tuple[FloatArray, FloatArray]"
+        },
+        "type": "function"
+      },
+      "xtrans": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "FloatArray",
+              "default": null,
+              "kind": "arg",
+              "name": "e_rot"
+            },
+            {
+              "annotation": "FloatArray",
+              "default": null,
+              "kind": "arg",
+              "name": "r"
+            }
+          ],
+          "returns": "FloatArray"
         },
         "type": "function"
       }
