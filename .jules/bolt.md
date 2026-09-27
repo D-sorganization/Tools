@@ -255,3 +255,6 @@
 ## 2026-09-26 - Eliminate Chained flatMap and Array Spread in useMemo
 **Learning:** Using `[...new Set(rows.flatMap(Object.keys))].sort()` inside React `useMemo` hooks allocates thousands of intermediate arrays per render cycle on dynamically sized datasets (such as parsing large telemetry logs), generating severe garbage collection pressure and triggering dropped frames.
 **Action:** Replace `flatMap` and array spread combinations with highly efficient manual iterations: creating a `Set`, iterating rows to `add` explicit keys within a standard `for` loop, and wrapping it with `Array.from(set).sort()` to drastically reduce object churn and intermediate allocations on hot rendering paths.
+## $(date +%Y-%m-%d) - Eliminate map and reduce chains in statistical calculations
+**Learning:** In statistical calculations operating on arrays of objects, chaining \`.map()\` to extract fields followed by \`.reduce()\` to aggregate them allocates multiple intermediate arrays. In functions executed repeatedly (e.g., longitudinal analysis of launch monitor data), this creates significant garbage collection overhead and degrades performance.
+**Action:** Replace chained \`.map()\` and \`.reduce()\` operations with a single-pass \`for\` loop to compute sums and metrics directly from the source array without creating intermediate arrays.
