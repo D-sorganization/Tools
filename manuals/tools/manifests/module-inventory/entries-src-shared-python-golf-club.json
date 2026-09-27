@@ -1374,6 +1374,223 @@
     },
     {
       "authority_status": "provisional",
+      "bytes_lf": 11231,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "e8279e8f00f829ffa7d3984155361b520a08098b706f74ed7761501b588650f5",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-PRE-IMPACT-CONTRACTS-PY-8FAF2BCFF904",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_pre_impact_contracts.py",
+      "purpose": "Classified errors, field origins and explicit-raise validators (Tools #5353).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AbsentFieldError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PreImpactBundleError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Quantity",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "com_inertia",
+            "signature": "value: object, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "fail",
+            "signature": "code: str, message: str"
+          },
+          {
+            "kind": "function",
+            "name": "finite_array",
+            "signature": "value: object, shape: tuple[int, ...], name: str"
+          },
+          {
+            "kind": "function",
+            "name": "finite_scalar",
+            "signature": "value: object, name: str, *, positive: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "identifier",
+            "signature": "value: object, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "nonnegative",
+            "signature": "quantity: Quantity, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "parse_quantity",
+            "signature": "raw: object, name: str, shape: tuple[int, ...], *, required: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "positive",
+            "signature": "quantity: Quantity, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "positive_definite",
+            "signature": "value: object, size: int, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "positive_semidefinite",
+            "signature": "value: object, size: int, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "proper_rotation",
+            "signature": "value: object, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "reject_unknown",
+            "signature": "data: object, allowed: frozenset[str], name: str"
+          },
+          {
+            "kind": "function",
+            "name": "sha256_hex",
+            "signature": "value: object, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "strictly_increasing",
+            "signature": "array: FloatArray, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "symmetric",
+            "signature": "value: object, size: int, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "unit_quaternion",
+            "signature": "value: object, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "unit_vector",
+            "signature": "value: object, name: str"
+          },
+          {
+            "kind": "re-export",
+            "name": "FieldOrigin",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 8922,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "e4e5187ab2328e6cb4e0b1263cc0f836abbdf4d00c4ff2d2929f031e246c858f",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-PRE-IMPACT-SERDE-PY-69BC59301C0B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_pre_impact_serde.py",
+      "purpose": "Serialization helpers for PreImpactBundle (Tools #5353).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "bundle_from_dict",
+            "signature": "payload: object"
+          },
+          {
+            "kind": "function",
+            "name": "bundle_to_dict",
+            "signature": "bundle: PreImpactBundle"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 5089,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
@@ -4080,7 +4297,6 @@
         "downstream-consumer-risk",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -4092,9 +4308,9 @@
         "public_surfaces": "unavailable",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "unavailable",
-        "validation": "unavailable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -4106,9 +4322,13 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [],
-        "test_paths": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_public_validation.py"
+        ],
         "unit_mentions": [],
-        "validation_paths": []
+        "validation_paths": [
+          "tests/shared/python/golf_club/test_public_validation.py"
+        ]
       }
     },
     {
@@ -4414,6 +4634,69 @@
       }
     },
     {
+      "authority_status": "provisional",
+      "bytes_lf": 3619,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "c1cfc505c1896eb0a2b3ca1465e29ac0d13e9b7d33d471cc2bde91847db5a1e2",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-FIELD-ORIGIN-PY-806E2B25484A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/field_origin.py",
+      "purpose": "Per-field origin enum and scalar origin value record.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FieldOrigin",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "OriginValue",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_field_origin.py",
+          "tests/shared/python/golf_club/test_pre_impact_bundle.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "not-applicable",
       "bytes_lf": 11109,
       "classification": "non-calculation",
@@ -4680,6 +4963,7 @@
         "test_paths": [
           "tests/shared/python/golf_club/test_grip_impedance.py",
           "tests/shared/python/golf_club/test_measured_grip_impedance.py",
+          "tests/shared/python/golf_club/test_pre_impact_frames_modal.py",
           "tests/shared/python/golf_club/test_shaft_linear_system.py",
           "tests/shared/python/golf_club/test_shaft_rotating_transport.py"
         ],
@@ -4914,7 +5198,8 @@
           }
         ],
         "test_paths": [
-          "tests/shared/python/golf_club/test_impact_mobility.py"
+          "tests/shared/python/golf_club/test_impact_mobility.py",
+          "tests/shared/python/golf_club/test_pre_impact_bundle.py"
         ],
         "unit_mentions": [
           "N",
@@ -5110,6 +5395,366 @@
         "test_paths": [
           "tests/rate_of_closure/test_club_mesh_inertia.py"
         ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 9928,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "1d48c60d7b4ff203cd849adfe4cd4209fd6716018d4c57ab3ef0c67621f5eef1",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-MODAL-STATE-PY-142ACD0D61D7",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/modal_state.py",
+      "purpose": "Modal basis, shaft modal state and M-orthogonal projection (Tools #5353).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ModalBasis",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ModalProjection",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ShaftState",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "project_onto_basis",
+            "signature": "basis: ModalBasis, shapes: object, full_mass: object, full_stiffness: object, displacement: object, velocity: object"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_pre_impact_frames_modal.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 12668,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "0c6e0ba3b2e5233f003141714bafe89b8f4f44bf072f7a3d7dccb2ecb89be0dc",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-PRE-IMPACT-BUNDLE-PY-9B9614645F04",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/pre_impact_bundle.py",
+      "purpose": "Versioned immutable pre-impact bundle for impact kernels (IA-U2, #9703 / #5353).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "BallState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HandWrench",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HeadState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PreImpactBundle",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Provenance",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TimeBase",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CONVENTIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GRIP_FRAME_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HEAD_FRAME_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PRE_IMPACT_BUNDLE_SCHEMA",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PRE_IMPACT_BUNDLE_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "UNIT_SYSTEM",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WORLD_FRAME_ID",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "grip_pose_from_delivery_sample",
+            "signature": "sample: Any, *, world_frame_id: str=WORLD_FRAME_ID"
+          },
+          {
+            "kind": "re-export",
+            "name": "AbsentFieldError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FieldOrigin",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ModalBasis",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ModalProjection",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Pose",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PreImpactBundleError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Quantity",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ShaftState",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "project_onto_basis",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "shift_twist_reference",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "shift_wrench_origin",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "twist_to_parent",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "wrench_to_parent",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_pre_impact_bundle.py",
+          "tests/shared/python/golf_club/test_pre_impact_frames_modal.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 7735,
+      "classification": "calculation",
+      "classification_basis": "path-marker:impact",
+      "content_sha256_lf": "d2f3c4e4dab69222962d27c6fadd92df023de63cff605980c1a02e479b9a12cd",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-PRE-IMPACT-FRAMES-PY-D896831E6F7A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/pre_impact_frames.py",
+      "purpose": "Rigid poses and power-consistent twist/wrench frame changes (IA-U2, #9703 / #5353).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Pose",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "inv_xtrans",
+            "signature": "e_rot: FloatArray, r: FloatArray"
+          },
+          {
+            "kind": "function",
+            "name": "quaternion_to_rotation_matrix",
+            "signature": "quat: FloatArray | list[float]"
+          },
+          {
+            "kind": "function",
+            "name": "shift_twist_reference",
+            "signature": "linear: object, angular: object, from_point: object, to_point: object"
+          },
+          {
+            "kind": "function",
+            "name": "shift_wrench_origin",
+            "signature": "force: object, moment: object, from_point: object, to_point: object"
+          },
+          {
+            "kind": "function",
+            "name": "skew",
+            "signature": "v: FloatArray | list[float]"
+          },
+          {
+            "kind": "function",
+            "name": "twist_to_parent",
+            "signature": "pose: Pose, linear: object, angular: object"
+          },
+          {
+            "kind": "function",
+            "name": "wrench_to_parent",
+            "signature": "pose: Pose, force: object, moment: object"
+          },
+          {
+            "kind": "function",
+            "name": "xtrans",
+            "signature": "e_rot: FloatArray, r: FloatArray"
+          }
+        ],
+        "test_paths": [],
         "unit_mentions": [
           "s"
         ],
@@ -6881,6 +7526,7 @@
         ],
         "test_paths": [
           "tests/shared/python/golf_club/test_grip_impedance.py",
+          "tests/shared/python/golf_club/test_pre_impact_frames_modal.py",
           "tests/shared/python/golf_club/test_rotating_body.py",
           "tests/shared/python/golf_club/test_shaft_body_assembly.py",
           "tests/shared/python/golf_club/test_shaft_inertia.py",
@@ -6892,6 +7538,77 @@
           "s"
         ],
         "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 528,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "91f42a41c52be955c8010f6023d0e5933b7535974c657e6c07e035884dd517e3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-VALIDATION-PY-1A270F54529E",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/validation.py",
+      "purpose": "Supported public strict validators for rotation matrices and inertia tensors.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "require_inertia",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "require_rotation",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/programmatic_pid/tests/test_validation.py",
+          "tests/programmatic_pid/test_validation.py",
+          "tests/python/utils/test_validation.py",
+          "tests/shared/python/golf_club/test_public_validation.py",
+          "tests/shared/python/model_generation/test_validation.py",
+          "tests/test_validation.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "src/shared/python/programmatic_pid/tests/test_validation.py",
+          "tests/programmatic_pid/test_validation.py",
+          "tests/python/utils/test_validation.py",
+          "tests/shared/python/golf_club/test_public_validation.py",
+          "tests/shared/python/model_generation/test_validation.py",
+          "tests/test_validation.py"
+        ]
       }
     },
     {

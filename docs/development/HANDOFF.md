@@ -1,4 +1,33 @@
-# Current handoff — Launch-monitor covariation sums (Tools#5355)
+# Current handoff — Pre-Impact Bundle Wire and Modal-State Record (Tools#5353)
+
+- Repository: D-sorganization/Tools
+- Branch: `feat/5353-pre-impact-bundle-modal-state`; commit SELF; PR: #5368
+- Issue: #5353 — all items (1-4) now implemented. Items 3-4 (validation and field origin) landed in #5366; items 1-2 (pre-impact bundle wire and modal-state record) implemented here.
+- Built:
+  - `golf_club._pre_impact_contracts`: `PreImpactBundleError`, `AbsentFieldError`, `Quantity`, explicit-raise validators.
+  - `golf_club.pre_impact_frames`: `Pose`, `twist_to_parent`, `wrench_to_parent`, `shift_wrench_origin`, `shift_twist_reference`, Plücker spatial motion/force transforms with $10^{-12}$ wrench power invariance.
+  - `golf_club.modal_state`: `ModalBasis`, `ShaftState`, `ModalProjection`, `project_onto_basis` (M-orthogonal with residual reporting and $0.5 \dot{q}^T M_r \dot{q} + 0.5 q^T K_r q$ energy ledger).
+  - `golf_club.pre_impact_bundle`: `PreImpactBundle`, `Provenance`, `TimeBase`, `HeadState`, `BallState`, `HandWrench`, `grip_pose_from_delivery_sample`.
+  - `golf_club._pre_impact_serde`: dict/json serialization helpers keeping all files strictly $\le 500$ LOC.
+- Validation: `pytest tests/shared/python/golf_club/test_pre_impact_bundle.py tests/shared/python/golf_club/test_pre_impact_frames_modal.py tests/shared/python/golf_club/test_field_origin.py tests/shared/python/golf_club/test_public_validation.py tests/test_shared_package_api_stability.py` -> all 92 tests pass; `ruff check`, `ruff format --check`, module inventory check clean.
+- Next: open PR, verify CI passes, auto-merge squash; UpstreamDrift can consume canonical Tools bundle via thin adapter.
+
+---
+
+# Past handoff — Shadow-surfaced input contracts (Tools#5362)
+
+- Repository: D-sorganization/Tools
+- Worktree: `Tools-worktrees/claude-5362` (agy Gemini 3.8 Flash slice from `agy-tools-5362-shadow-contracts`, reviewed and re-applied on a fresh `origin/main`)
+- Branch: `claude/tools-5362-shadow-contracts`; commit SELF; PR: #5364 (draft)
+- Issue: #5362 — UpstreamDrift's unit-gate quarantine burn-down (UD#9411) found expectations that only the canonical Tools packages can satisfy; UD may not grow its shadow copies, so they land here.
+- Built: signal_toolkit preconditions (`apply_exponential_smoothing` alpha in (0, 1]; saturation `lower <= upper` checked once in `_apply_saturation_values`; `apply_rate_limiter` `max_rate >= 0`; `apply_deadband` `threshold >= 0`; `NoiseGenerator` `amplitude >= 0`); `InertiaCalculator.compute_from_primitive` rejects `mass <= 0`; `PhysicsValidator` default gravity uses `GRAVITY_M_S2` (9.80665) instead of a literal 9.81; `ChatSessionManager` normalises session timestamps to UTC so naive and aware ISO strings sort together; humanoid_character_builder docstring states it is layered on model_generation. Item 7 (sidekick data_processing `@value`) was already resolved on main.
+- Review changes over the agy patch: dropped a duplicated `lower > upper` guard in `apply_saturation` (the helper it calls enforces it); replaced the docstring bullet that still claimed "no dependencies" with one naming model_generation.
+- Validation: `python -m pytest -o addopts="" tests/shared/python/signal_toolkit tests/shared/python/model_generation/inertia/test_calculator.py src/shared/python/model_generation/tests/test_physics_validation.py src/shared/python/humanoid_character_builder/tests/test_api.py tests/unit/ai/gui/test_session_manager_2872.py` -> 327 passed; module inventory regenerated and `--check` clean.
+- Next: open the draft PR, CI green, arm through `automerge_guard.py`; then one UD vendor-pin bump (covers #5361 and this) and retire the 11 re-quarantined IDs plus the `test_safe_eval` IDs (UD#9411).
+
+---
+
+# Past handoff — Launch-monitor covariation sums (Tools#5355)
 
 - Repository: D-sorganization/Tools
 - Worktree: `Tools-worktrees/claude-pr-5355`
@@ -9,6 +38,7 @@
 - Next: CI green, then arm through `automerge_guard.py`.
 
 ---
+
 # Past handoff — safe_eval power-result bound (Tools#5360)
 
 - Repository: D-sorganization/Tools
@@ -32,6 +62,7 @@
 - Next: CI green, then arm through `automerge_guard.py`.
 
 ---
+
 # Past handoff — Knowledge-pack golden Q&A evaluation + optional MiniLM hybrid ranking (Tools#5347)
 
 - Repository: D-sorganization/Tools

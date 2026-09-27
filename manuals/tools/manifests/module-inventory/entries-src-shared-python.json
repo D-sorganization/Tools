@@ -351,6 +351,7 @@
           "tests/rotation_converter/test_rigid_transform.py",
           "tests/scripts/test_generate_tools_json.py",
           "tests/shared/python/chat/test_terminal_runtime.py",
+          "tests/shared/python/golf_club/test_pre_impact_bundle.py",
           "tests/shared/python/test_compatibility.py",
           "tests/test_compatibility.py",
           "tests/test_cross_repo_import_compatibility.py",
