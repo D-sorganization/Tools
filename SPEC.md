@@ -5945,6 +5945,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 <!-- prettier-ignore-start -->
 
 | Date       | PR         | Changes    |
+| 2026-09-27 | n/a | feat(unit_converter): palette-ux-clear-btn-disabled |
 | 2026-09-26 | n/a | golf_club public strict validators (require_rotation, require_inertia) and FieldOrigin/OriginValue per-field origin record (#5353 items 3-4). |
 | 2026-09-26 | #5364 | signal_toolkit, primitive inertia mass and chat session timestamps gain input contracts surfaced by the UpstreamDrift shadow burn-down; PhysicsValidator uses standard gravity (#5362). |
 | 2026-09-26 | #5355 | Rate of Closure web: covariation means and weight sums use shared `sum` and `pairMean` helpers; the random-effect weight sum is computed once instead of once per player. |
