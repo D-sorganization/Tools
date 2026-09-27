@@ -98,3 +98,9 @@
 ## 2026-09-25 - Focus Rings on Unit Converter Inputs
 **Learning:** Found an accessibility issue pattern where inputs and selects in Unit Converter have `focus:` states with focus rings, causing mouse users to see focus rings when clicking elements. This degrades the visual experience while making it difficult for keyboard users if specific pseudo-classes aren't consistently targeted.
 **Action:** Replace `focus:` with `focus-visible:` on focus rings (`focus-visible:ring-2 focus-visible:ring-[color]` or similar) to preserve keyboard accessibility without polluting mouse interactions, ensuring a cleaner visual experience.
+## 2026-09-27 - Add disabled state to clear button
+**Learning:** Buttons that become inactive (like a "Clear History" button when history is empty) should have clear visual indicators of their disabled state.
+**Action:** Always verify if a button can become disabled and ensure appropriate styling (like reduced opacity and a not-allowed cursor) is applied to provide clear feedback.
+## 2026-09-27 - Ensure initial state matches logic for disabled buttons
+**Learning:** Adding a CSS `:disabled` pseudo-class is not enough; the HTML element must also initialize with the `disabled` attribute if the default state expects it to be inactive.
+**Action:** Always verify that both CSS and HTML correspond to the component's logical state on mount to ensure UX features actually function.
