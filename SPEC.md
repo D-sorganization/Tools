@@ -32,7 +32,14 @@
 
 ## 2. Purpose & Mission
 
-### 2026-09-24 Performance: Optimize safe_exp and Resilient Benchmark (#5333)
+### 2026-09-27 Golf Club: Pre-Impact Bundle Wire and Modal-State Record (#5353)
+
+Upstreams the versioned pre-impact state and modal dynamics records into `shared.python.golf_club` (items 1-2 of #5353):
+
+1. **Pre-Impact Bundle Wire**: Delivers `PreImpactBundle`, `Provenance`, `TimeBase`, `HeadState`, `BallState`, `HandWrench`, `Pose`, and `Quantity` under `src/shared/python/golf_club/pre_impact_bundle.py` and `_pre_impact_serde.py`. Enforces fail-closed parsing, explicit field origins, read-only finite arrays, bounded interpolation without extrapolation through contact, and full compatibility with `golf_club.impact_mobility.RigidContactBody`.
+2. **Plücker Spatial Transforms**: Implements `Pose`, `twist_to_parent`, `wrench_to_parent`, `shift_wrench_origin`, and `shift_twist_reference` in `src/shared/python/golf_club/pre_impact_frames.py`, preserving wrench power invariance $F \cdot v + M \cdot \omega$ across world, head, and grip frames within $10^{-12}$.
+3. **Modal-State Record & M-Orthogonal Projection**: Implements `ModalBasis`, `ShaftState`, `ModalProjection`, and `project_onto_basis` in `src/shared/python/golf_club/modal_state.py`. Evaluates represented modal energy via the declared quadratic form $0.5 \dot{q}^T M_r \dot{q} + 0.5 q^T K_r q$ and reports out-of-span displacement/velocity residuals without discarding unmodeled energy.
+4. **API Stability**: Extends the canonical API baseline in `tests/api_baselines/golf_club_api_baseline.json` and ensures all new modules adhere to the $\le 500$ LOC limit.
 
 Resolves flaky benchmark failure in CI Standard:
 
