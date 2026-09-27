@@ -7700,3 +7700,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-24: Release v1.21.1 (#5337)
 
 - **2026-09-24**: chore(release, #5337) — Bump release version to v1.21.1 across pyproject.toml, package.json, and VERSION; refresh CHANGELOG.md.
+
+## 2026-09-26: Release v1.22.0 (#5367)
+
+- **2026-09-26**: chore(release, #5367) — Bump release version to v1.22.0 across pyproject.toml, package.json, and VERSION; refresh CHANGELOG.md.
