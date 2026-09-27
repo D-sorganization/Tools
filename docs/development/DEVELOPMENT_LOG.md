@@ -24,7 +24,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** local (agy executor)
 - **Issue:** #5353
 - **Branch:** `feat/5353-pre-impact-bundle-modal-state`
-- **PR:** draft
+- **PR:** #5368
 - **Paths:** `src/shared/python/golf_club/_pre_impact_contracts.py`, `src/shared/python/golf_club/_pre_impact_serde.py`, `src/shared/python/golf_club/modal_state.py`, `src/shared/python/golf_club/pre_impact_bundle.py`, `src/shared/python/golf_club/pre_impact_frames.py`, `tests/shared/python/golf_club/`, `tests/api_baselines/golf_club_api_baseline.json`
 - **Started:** 2026-09-26
 - **Last verified:** 2026-09-27 — 91 total tests (43 items 3-4 + 48 items 1-2) pass; API stability baseline regenerated and passes; ruff, file-size (<=500 LOC) and inventory clean.

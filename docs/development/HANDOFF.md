@@ -1,7 +1,7 @@
 # Current handoff — Pre-Impact Bundle Wire and Modal-State Record (Tools#5353)
 
 - Repository: D-sorganization/Tools
-- Branch: `feat/5353-pre-impact-bundle-modal-state`; commit SELF; PR: draft
+- Branch: `feat/5353-pre-impact-bundle-modal-state`; commit SELF; PR: #5368
 - Issue: #5353 — all items (1-4) now implemented. Items 3-4 (validation and field origin) landed in #5366; items 1-2 (pre-impact bundle wire and modal-state record) implemented here.
 - Built:
   - `golf_club._pre_impact_contracts`: `PreImpactBundleError`, `AbsentFieldError`, `Quantity`, explicit-raise validators.
