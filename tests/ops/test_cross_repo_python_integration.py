@@ -231,7 +231,7 @@ def test_downstream_checkout_authorizes_consumer_with_least_privilege() -> None:
     )
     assert token_step["id"] == "consumer_token"
     assert token_step["if"] == "steps.app-creds.outputs.configured == 'true'"
-    assert token_step["uses"] == "actions/create-github-app-token@v1"
+    assert token_step["uses"] == "actions/create-github-app-token@v3"
     assert token_step["with"]["app-id"] == "${{ secrets.JULES_APP_ID }}"
     assert token_step["with"]["private-key"] == "${{ secrets.JULES_APP_PRIVATE_KEY }}"
     assert token_step["with"]["owner"] == "${{ github.repository_owner }}"
