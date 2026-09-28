@@ -10784,10 +10784,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 23965,
+      "bytes_lf": 24262,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e8d1d8ab6260a4c21dcd8e9c004da7a84703ff20777930dfa328a9c439bdd9ee",
+      "content_sha256_lf": "704cf95aee40e7c85af9e26288f504c6da2aec4bcab4af98dbbaddee8c89ecfa",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-COMPONENTS-TEMPERATURETREND-TSX-12FB5EB7B69A",
       "language": "typescript-react",
