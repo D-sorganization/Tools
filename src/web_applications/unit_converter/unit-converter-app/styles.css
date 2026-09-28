@@ -501,6 +501,11 @@ body {
   background-color: rgba(37, 99, 235, 0.1);
 }
 
+.clear-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .clear-button.confirming {
   color: var(--error-color);
   background-color: var(--error-bg);

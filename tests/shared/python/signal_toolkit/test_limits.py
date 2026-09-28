@@ -20,6 +20,7 @@ import numpy as np
 from signal_toolkit.core import Signal
 from signal_toolkit.limits import (
     SaturationMode,
+    _apply_saturation_values,
     apply_backlash,
     apply_deadband,
     apply_hysteresis,
@@ -102,6 +103,22 @@ class TestApplySaturation:
         result = apply_saturation(sig, lower=-1.0, upper=1.0, mode=SaturationMode.HARD)
         np.testing.assert_allclose(result.values, values, atol=1e-10)
 
+    def test_apply_saturation_rejects_lower_greater_than_upper(
+        self, ramp_signal: Signal
+    ) -> None:
+        with pytest.raises(ValueError, match=r"lower.*upper"):
+            apply_saturation(ramp_signal, lower=2.0, upper=1.0)
+
+    def test_apply_saturation_values_rejects_lower_greater_than_upper(self) -> None:
+        with pytest.raises(ValueError, match=r"lower.*upper"):
+            _apply_saturation_values(
+                np.array([0.0]),
+                lower=2.0,
+                upper=1.0,
+                mode=SaturationMode.HARD,
+                smoothness=1.0,
+            )
+
 
 # ── apply_rate_limiter ─────────────────────────────────────────────────
 
@@ -128,6 +145,12 @@ class TestApplyRateLimiter:
         result = apply_rate_limiter(sig, max_rate=100.0)
         np.testing.assert_allclose(result.values, values, atol=0.5)
 
+    def test_apply_rate_limiter_rejects_negative_max_rate(
+        self, ramp_signal: Signal
+    ) -> None:
+        with pytest.raises(ValueError, match=r"max_rate.*-1"):
+            apply_rate_limiter(ramp_signal, max_rate=-1.0)
+
 
 # ── apply_deadband ─────────────────────────────────────────────────────
 
@@ -148,6 +171,12 @@ class TestApplyDeadband:
         sig = Signal(time=t, values=values, name="large")
         result = apply_deadband(sig, threshold=0.1, smooth=False)
         assert np.all(result.values > 4.0)
+
+    def test_apply_deadband_rejects_negative_threshold(
+        self, ramp_signal: Signal
+    ) -> None:
+        with pytest.raises(ValueError, match=r"threshold.*-0\.5"):
+            apply_deadband(ramp_signal, threshold=-0.5)
 
 
 # ── apply_hysteresis ───────────────────────────────────────────────────

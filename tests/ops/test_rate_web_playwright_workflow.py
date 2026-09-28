@@ -110,7 +110,7 @@ PYQT_AUTHORITY_PATHS = {
     "pyproject.toml",
 }
 FULL_WINDOW_IMPORT_DEPENDENCIES = {
-    "pandas": "pandas>=2.0,<3",
+    "pandas": "pandas>=2.0,<4",
     "scipy": "scipy>=1.10.0,<1.18",
     "sympy": "sympy>=1.12",
 }

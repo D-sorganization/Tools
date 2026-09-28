@@ -80,6 +80,10 @@ MAX_AST_NODES = 500
 MAX_POW_EXPONENT = 1_000
 #: Reject ``Pow`` chains (``a ** b ** c ...``) deeper than this.
 MAX_POW_CHAIN_DEPTH = 2
+#: Runtime bound on integer ``**`` results, e.g. ``(10**1000)**1000`` (#5360).
+MAX_POW_RESULT_BITS = 10_000
+#: Global name the ``**`` rewrite calls; never visible to validated expressions.
+_POW_HELPER_NAME = "__safe_eval_pow__"
 #: Reject string/bytes constants longer than this (math has no use for them).
 MAX_STR_CONSTANT_LENGTH = 256
 
@@ -127,6 +131,38 @@ def _validate_runtime_exponent(exponent: Any) -> None:
         raise ValueError("Exponent must be numeric") from exc
 
 
+def _bounded_pow(base: Any, exponent: Any) -> Any:
+    """Return ``base ** exponent``; integer results fit in MAX_POW_RESULT_BITS.
+
+    Only Python ints grow without bound; floats and numpy values pass through.
+    Raises ValueError when an integer result would exceed the bound.
+    """
+    if (
+        isinstance(base, int)
+        and isinstance(exponent, int)
+        and exponent > 0
+        and abs(base) > 1
+        and exponent * math.log2(abs(base)) > MAX_POW_RESULT_BITS
+    ):
+        raise ValueError(
+            f"Power result too large (> {MAX_POW_RESULT_BITS} bits); "
+            "possible exponentiation bomb"
+        )
+    return operator.pow(base, exponent)
+
+
+class _PowToBoundedCall(ast.NodeTransformer):
+    """Rewrite every ``a ** b`` into a call to :func:`_bounded_pow`."""
+
+    def visit_BinOp(self, node: ast.BinOp) -> ast.AST:
+        self.generic_visit(node)
+        if not isinstance(node.op, ast.Pow):
+            return node
+        func = ast.Name(id=_POW_HELPER_NAME, ctx=ast.Load())
+        call = ast.Call(func=func, args=[node.left, node.right], keywords=[])
+        return ast.copy_location(call, node)
+
+
 def _numpy_power(base: Any, exponent: Any) -> Any:
     """Bounded numpy power wrapper exposed to safe-eval expressions."""
     _validate_runtime_exponent(exponent)
@@ -137,7 +173,7 @@ def _scalar_power(base: Any, exponent: Any, modulo: Any | None = None) -> Any:
     """Bounded scalar ``pow`` wrapper exposed to safe-eval expressions."""
     _validate_runtime_exponent(exponent)
     if modulo is None:
-        return pow(base, exponent)
+        return _bounded_pow(base, exponent)
     return pow(base, exponent, modulo)
 
 
@@ -434,8 +470,10 @@ def safe_eval(
         allowed_names = set(namespace.keys())
 
     tree = validate_expression(expression, allowed_names)
-    code = compile(tree, "<safe_eval>", "eval")
-    return eval(code, {"__builtins__": {}}, namespace)  # nosec B307
+    guarded = ast.fix_missing_locations(_PowToBoundedCall().visit(tree))
+    code = compile(guarded, "<safe_eval>", "eval")
+    globals_ = {"__builtins__": {}, _POW_HELPER_NAME: _bounded_pow}
+    return eval(code, globals_, namespace)  # nosec B307
 
 
 def safe_eval_math(

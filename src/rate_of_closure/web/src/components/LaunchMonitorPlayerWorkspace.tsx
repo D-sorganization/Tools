@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 
-import { analyzeLaunchMonitorData, numericLaunchMonitorColumns } from "../model/launchMonitorAnalysis";
+import { analyzeLaunchMonitorData, launchMonitorColumns, numericLaunchMonitorColumns } from "../model/launchMonitorAnalysis";
 import type { LaunchMonitorAnalysisResult, LaunchMonitorRow } from "../model/launchMonitorAnalysisTypes";
 import {
   createAnalysisExportBundle,
@@ -33,7 +33,7 @@ function download(name: string, content: string, type = "application/json") {
 }
 
 export function LaunchMonitorPlayerWorkspace({ rows, sourceName }: Props) {
-  const columns = useMemo(() => [...new Set(rows.flatMap((row) => Object.keys(row)))].sort(), [rows]);
+  const columns = useMemo(() => launchMonitorColumns(rows), [rows]);
   const numeric = useMemo(() => numericLaunchMonitorColumns(rows), [rows]);
   const [identity, setIdentity] = useState("");
   const [attested, setAttested] = useState(false);

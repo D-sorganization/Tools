@@ -18,6 +18,45 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5353 · Pre-impact bundle wire, modal-state record and public validators
+
+- **State:** in_review
+- **Owner:** local (agy executor)
+- **Issue:** #5353
+- **Branch:** `feat/5353-pre-impact-bundle-modal-state`
+- **PR:** #5368
+- **Paths:** `src/shared/python/golf_club/_pre_impact_contracts.py`, `src/shared/python/golf_club/_pre_impact_serde.py`, `src/shared/python/golf_club/modal_state.py`, `src/shared/python/golf_club/pre_impact_bundle.py`, `src/shared/python/golf_club/pre_impact_frames.py`, `tests/shared/python/golf_club/`, `tests/api_baselines/golf_club_api_baseline.json`
+- **Started:** 2026-09-26
+- **Last verified:** 2026-09-27 — 91 total tests (43 items 3-4 + 48 items 1-2) pass; API stability baseline regenerated and passes; ruff, file-size (<=500 LOC) and inventory clean.
+- **Summary:** Complete implementation of #5353: items 1-2 add the versioned pre-impact bundle wire (`PreImpactBundle`, `Provenance`, `TimeBase`, `HeadState`, `BallState`, `HandWrench`, `Pose`, `Quantity`), Plücker frame transforms with $10^{-12}$ wrench power invariance, and modal-state records with M-orthogonal projection ($0.5 \dot{q}^T M_r \dot{q} + 0.5 q^T K_r q$). Follows items 3-4 (validation and field origin) landed in #5366.
+- **Next step:** get CI green on the PR and merge through auto-merge squash.
+
+### DL-#5362 · Input contracts surfaced by the UpstreamDrift shadow burn-down
+
+- **State:** in_review
+- **Owner:** claude (agy executor)
+- **Issue:** #5362
+- **Branch:** `claude/tools-5362-shadow-contracts`
+- **PR:** #5364 (draft)
+- **Paths:** `src/shared/python/signal_toolkit/`, `src/shared/python/model_generation/`, `src/shared/python/ai/gui/session_manager.py`, `src/shared/python/humanoid_character_builder/__init__.py`, `tests/shared/python/signal_toolkit/`, `tests/shared/python/model_generation/`, `tests/unit/ai/gui/test_session_manager_2872.py`
+- **Started:** 2026-09-26
+- **Last verified:** 2026-09-26 — 327 signal_toolkit, model_generation, humanoid and session-manager tests pass; mypy and ruff clean; module inventory clean.
+- **Summary:** Preconditions on signal_toolkit smoothing/saturation/rate-limit/deadband/noise and primitive inertia mass, standard gravity from the shared constant, UTC-normalised chat session timestamps, and a corrected humanoid_character_builder docstring, so UpstreamDrift can retire its quarantined expectations by bumping the pin instead of editing its shadow copies.
+- **Next step:** get CI green on the PR and arm it through `automerge_guard.py`.
+
+### DL-#5360 · safe_eval runtime bound on integer power results
+
+- **State:** shipped
+- **Owner:** claude
+- **Issue:** #5360 (security)
+- **Branch:** `claude/tools-5360-safe-eval-pow-bound`
+- **PR:** #5361 (merged)
+- **Paths:** `src/shared/python/safe_eval.py`, `tests/shared/python/test_safe_eval.py`
+- **Started:** 2026-09-26
+- **Last verified:** 2026-09-26 — 84 safe_eval, pandas-eval and API-stability tests pass; ruff, mypy, file-size (500/500) and module inventory clean.
+- **Summary:** Every `**` is rewritten to a runtime-checked `_bounded_pow`, and two-argument scalar `pow()` shares it, so integer results above `MAX_POW_RESULT_BITS` (10,000 bits) raise `ValueError`. Closes left-nested power chains and runtime exponents that bypassed the static guards.
+- **Next step:** bump the UpstreamDrift vendor pin and retire its `test_safe_eval` quarantine IDs (UD#9411).
+
 ### DL-#5347 · Knowledge-pack golden Q&A evaluation and optional MiniLM hybrid ranking
 
 - **State:** shipped

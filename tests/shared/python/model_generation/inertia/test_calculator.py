@@ -86,6 +86,15 @@ class TestComputePrimitive:
         # Cylinder perpendicular moments are equal.
         assert result.ixx == pytest.approx(result.iyy)
 
+    def test_compute_from_geometry_rejects_nonpositive_mass(
+        self, calc: InertiaCalculator
+    ) -> None:
+        geom = Geometry.cylinder(0.05, 0.4)
+        with pytest.raises(ValueError, match=r"mass must be positive.*0"):
+            calc.compute_from_geometry(geom, mass=0.0)
+        with pytest.raises(ValueError, match=r"mass must be positive.*-1"):
+            calc.compute_from_geometry(geom, mass=-1.0)
+
     def test_default_mass_is_one(self, calc: InertiaCalculator) -> None:
         result = calc.compute(Geometry.sphere(1.0), mode=InertiaMode.PRIMITIVE)
         assert result.mass == 1.0

@@ -2,7 +2,7 @@
 
 import json
 import uuid
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 from typing import Any, Literal
 
@@ -121,13 +121,16 @@ class ChatSessionManager(QObject):
                     timestamp_str = messages[-1].get("timestamp", "")
 
                 try:
-                    dt = (
-                        datetime.fromisoformat(timestamp_str)
-                        if timestamp_str
-                        else datetime.min
-                    )
+                    if timestamp_str:
+                        dt = datetime.fromisoformat(timestamp_str)
+                        if dt.tzinfo is None or dt.tzinfo.utcoffset(dt) is None:
+                            dt = dt.replace(tzinfo=UTC)
+                        else:
+                            dt = dt.astimezone(UTC)
+                    else:
+                        dt = datetime.min.replace(tzinfo=UTC)
                 except ValueError:
-                    dt = datetime.min
+                    dt = datetime.min.replace(tzinfo=UTC)
 
                 sessions.append(
                     {

@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import importLimits from "./__fixtures__/launch_monitor_import_limits_golden_v1.json";
 import {
   analyzeLaunchMonitorData,
+  launchMonitorColumns,
   parseLaunchMonitorFile,
   readLaunchMonitorFile,
   sha256Text,
@@ -231,5 +232,16 @@ describe("launch monitor flexible analysis", () => {
     expect(() => parseLaunchMonitorFile(
       "shots.json", '[{"\\ud83d\\ude00":1,"😀":2}]',
     )).toThrow(/duplicate JSON field/);
+  });
+});
+
+describe("launchMonitorColumns", () => {
+  it("returns the sorted union of keys across heterogeneous rows", () => {
+    const rows: LaunchMonitorRow[] = [{ speed: 1, club: "7i" }, { spin: 2 }, { speed: 3, carry: 4 }];
+    expect(launchMonitorColumns(rows)).toEqual(["carry", "club", "speed", "spin"]);
+  });
+
+  it("returns an empty list for no rows", () => {
+    expect(launchMonitorColumns([])).toEqual([]);
   });
 });

@@ -28,6 +28,16 @@ export type {
   RegressionEstimate,
 } from "./launchMonitorAnalysisTypes";
 
+/** Sorted union of every column name that appears in any row. */
+export function launchMonitorColumns(rows: LaunchMonitorRow[]): string[] {
+  // Single pass into one Set: avoids the per-row key arrays of flatMap + spread.
+  const columns = new Set<string>();
+  for (const row of rows) {
+    for (const key in row) columns.add(key);
+  }
+  return Array.from(columns).sort();
+}
+
 export function numericLaunchMonitorColumns(rows: LaunchMonitorRow[]): string[] {
   // ⚡ Bolt Optimization: Single-pass column counting avoids O(rows * columns) iterations and large flatMap allocations
   const counts = new Map<string, number>();

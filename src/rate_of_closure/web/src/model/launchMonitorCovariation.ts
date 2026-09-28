@@ -155,10 +155,26 @@ const groupPairs = (pairs: Pair[]) => {
   return grouped;
 };
 
+const sum = (values: number[]): number => {
+  let total = 0;
+  for (const value of values) total += value;
+  return total;
+};
+
+// One pass over a player's pairs for both means; shared by centering and player means.
+const pairMean = (pairs: Pair[]): { x: number; y: number } => {
+  let sumX = 0;
+  let sumY = 0;
+  for (const pair of pairs) {
+    sumX += pair.x;
+    sumY += pair.y;
+  }
+  return { x: sumX / pairs.length, y: sumY / pairs.length };
+};
+
 const centeredPairs = (grouped: Map<string, Pair[]>): CenteredPair[] => [...grouped.entries()].flatMap(
   ([playerId, pairs]) => {
-    const xMean = pairs.reduce((sum, pair) => sum + pair.x, 0) / pairs.length;
-    const yMean = pairs.reduce((sum, pair) => sum + pair.y, 0) / pairs.length;
+    const { x: xMean, y: yMean } = pairMean(pairs);
     return pairs.map((pair) => ({
       playerId, sourceX: pair.x, sourceY: pair.y,
       sourceIndex: pair.sourceIndex, shotId: pair.shotId,
@@ -170,9 +186,7 @@ const centeredPairs = (grouped: Map<string, Pair[]>): CenteredPair[] => [...grou
 
 const meanPairs = (grouped: Map<string, Pair[]>): Pair[] => [...grouped.entries()].map(
   ([playerId, pairs]) => ({
-    playerId,
-    x: pairs.reduce((sum, pair) => sum + pair.x, 0) / pairs.length,
-    y: pairs.reduce((sum, pair) => sum + pair.y, 0) / pairs.length,
+    playerId, ...pairMean(pairs),
     sourceIndex: -1, shotId: "player-mean",
   }),
 );
@@ -180,8 +194,7 @@ const meanPairs = (grouped: Map<string, Pair[]>): Pair[] => [...grouped.entries(
 interface MetaWork { index: number; count: number; z: number; variance: number }
 
 const weightedMean = (work: MetaWork[], weights: number[]) =>
-  work.reduce((sum, item, index) => sum + weights[index] * item.z, 0) /
-  weights.reduce((sum, weight) => sum + weight, 0);
+  sum(work.map((item, index) => weights[index] * item.z)) / sum(weights);
 
 const pooledInterval = (center: number, weightSum: number, critical: number): [number, number] => {
   const margin = critical / Math.sqrt(weightSum);
@@ -204,20 +217,21 @@ const metaAnalyze = (players: PlayerAssociation[], confidence: number): MetaAsso
   const qStatistic = work.reduce(
     (sum, item, index) => sum + fixedWeights[index] * (item.z - fixedCenter) ** 2, 0,
   );
-  const weightSum = fixedWeights.reduce((sum, weight) => sum + weight, 0);
-  const squaredWeightSum = fixedWeights.reduce((sum, weight) => sum + weight ** 2, 0);
+  const weightSum = sum(fixedWeights);
+  const squaredWeightSum = sum(fixedWeights.map((weight) => weight ** 2));
   const degrees = work.length - 1;
   const cValue = weightSum - squaredWeightSum / weightSum;
   const tauSquared = cValue > 0 ? Math.max(0, (qStatistic - degrees) / cValue) : 0;
   const randomWeights = work.map((item) => 1 / (item.variance + tauSquared));
   const randomCenter = weightedMean(work, randomWeights);
+  // Summed once: summing inside the loop below made the weight assignment O(N^2).
+  const randomWeightSum = sum(randomWeights);
   work.forEach((item, index) => {
     players[item.index].fixedWeight = fixedWeights[index] / weightSum;
-    players[item.index].randomWeight = randomWeights[index] / randomWeights.reduce((sum, weight) => sum + weight, 0);
+    players[item.index].randomWeight = randomWeights[index] / randomWeightSum;
   });
   const critical = normalQuantile(0.5 + confidence / 2);
   const fixedInterval = pooledInterval(fixedCenter, weightSum, critical);
-  const randomWeightSum = randomWeights.reduce((sum, weight) => sum + weight, 0);
   const randomInterval = pooledInterval(randomCenter, randomWeightSum, critical);
   return {
     contributorCount: work.length,
