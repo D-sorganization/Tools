@@ -297,7 +297,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-folder-tool-pro.json"
     },
     {
-      "content_sha256_lf": "41a0d281aa760f953955c505f5d2f39ab960dd370b1967982aab7a472516ee5b",
+      "content_sha256_lf": "669022a5a2ff0fc44f5ff949a9c7fb8b5fd77fa6db7dbaea671c438f7e84704b",
       "entry_count": 17,
       "package": "src/function_generator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-function-generator.json"
@@ -753,7 +753,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-scripting.json"
     },
     {
-      "content_sha256_lf": "26c2370df402de9c8c0ec3d1438f99fe2af30e57050f0d947e9be39532a1df90",
+      "content_sha256_lf": "aa0a73a638a83f6b6184b4a612b436f53ea2138473e6bf506786e9515c2ac95e",
       "entry_count": 238,
       "package": "src/shared/python/sidekick",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick.json"
