@@ -7044,6 +7044,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | 2026-09-19 | #5223 | Bump mirrors-mypy pre-push hook to v1.15.0 for NumPy >= 2.2 stub compatibility (#5223). |
 | 2026-09-19 | #4300 | Clamp File, View, and Tools popovers within constrained viewports using useViewportClampedPopover (#4300). |
 | 2026-09-19 | #4220 | feat(rate-ui): enable versioned file commands and dirty tracking in Rate of Closure |
+| 2026-09-28 | #5379 | perf(sidekick): einsum row norms in three-phase electrical model — upstream canonical change for UpstreamDrift PR #11112's excluded site. |
 ---
 
 <!--
