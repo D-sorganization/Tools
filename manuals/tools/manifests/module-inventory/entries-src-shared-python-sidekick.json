@@ -2700,10 +2700,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 18532,
+      "bytes_lf": 19044,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "978e9642b4f96c5b5d3fcba846dd8598c855fb91c2b8feecaa1a263cbf33d1c8",
+      "content_sha256_lf": "ab9af4992280ad85f39bd913eb9e37e990b9d880d226d285a7f03ec903e791c8",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-CALCULATORS-ELECTRICAL-ELECTRICAL-MODEL-PY-13C84C76B8CC",
       "language": "python",

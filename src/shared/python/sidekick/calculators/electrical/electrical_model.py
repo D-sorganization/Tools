@@ -302,14 +302,21 @@ class ThreePhaseElectricalModelEnhanced:
 
         # Section widths: distance from wall to tip at each segment
         # Shape: (num_segments,)
-        section_widths = np.linalg.norm(tip_positions - wall_positions, axis=1)
+        # einsum row norms (sqrt of sum of squares) match np.linalg.norm
+        # semantics up to last-ulp reassociation with fewer temporaries.
+        segment_deltas = tip_positions - wall_positions
+        section_widths = np.sqrt(
+            np.einsum("...i,...i->...", segment_deltas, segment_deltas)
+        )
 
         # Cross-sectional areas in m²
         cross_section_areas_m2 = section_widths * effective_height * 0.00064516
 
         # Segment distances (uniform for trapezoidal approximation)
         # All interior segments use the same distance
-        base_segment_distance = np.linalg.norm(wall_diff) / num_segments
+        base_segment_distance = (
+            np.sqrt(np.einsum("...i,...i->...", wall_diff, wall_diff)) / num_segments
+        )
         segment_distance_m = base_segment_distance * 0.0254  # Convert to m
 
         # Calculate resistances for all segments at once
@@ -360,8 +367,10 @@ class ThreePhaseElectricalModelEnhanced:
         )
 
         # Get electrode dimensions within glass bath
-        e1_length = float(np.linalg.norm(electrode1_pos["tip"] - e1_wall))
-        e2_length = float(np.linalg.norm(electrode2_pos["tip"] - e2_wall))
+        e1_delta = electrode1_pos["tip"] - e1_wall
+        e2_delta = electrode2_pos["tip"] - e2_wall
+        e1_length = float(np.sqrt(np.einsum("...i,...i->...", e1_delta, e1_delta)))
+        e2_length = float(np.sqrt(np.einsum("...i,...i->...", e2_delta, e2_delta)))
 
         # Apply horizontal spreading factor for vertical segments
         effective_width = 2 * electrode_radius * self.config.horizontal_spreading_factor
@@ -435,7 +444,10 @@ class ThreePhaseElectricalModelEnhanced:
             raise ValueError("electrode1_pos must be provided")
         center1 = (electrode1_pos["tip"] + e1_wall) / 2
         center2 = (electrode2_pos["tip"] + e2_wall) / 2
-        horizontal_distance = np.linalg.norm(center2[:2] - center1[:2])
+        spacing_delta = center2[:2] - center1[:2]
+        horizontal_distance = np.sqrt(
+            np.einsum("...i,...i->...", spacing_delta, spacing_delta)
+        )
         distance_m = horizontal_distance * 0.0254
 
         avg_electrode_length = (e1_length + e2_length) / 2

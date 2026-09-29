@@ -7045,6 +7045,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | 2026-09-19 | #4300 | Clamp File, View, and Tools popovers within constrained viewports using useViewportClampedPopover (#4300). |
 | 2026-09-19 | #4220 | feat(rate-ui): enable versioned file commands and dirty tracking in Rate of Closure |
 | 2026-09-29 | #5384 | Self-hosted npm jobs (p1am HMI gate, Rate visual evidence) use a workspace-local `NPM_CONFIG_CACHE`; the shared `~/.npm` made a 2.4 GB setup-node cache that timed the HMI gate out. |
+| 2026-09-28 | #5379 | perf(sidekick): einsum row norms in three-phase electrical model — upstream canonical change for UpstreamDrift PR #11112's excluded site. |
 ---
 
 <!--
