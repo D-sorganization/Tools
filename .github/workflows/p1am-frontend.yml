@@ -50,6 +50,11 @@ jobs:
     name: HMI lint + typecheck/build + vitest
     runs-on: [d-sorg-fleet, Linux]
     timeout-minutes: 20
+    # Self-hosted runners share one ~/.npm across every job on the host, so
+    # setup-node's `cache: npm` saved all of it (2.4 GB) and the restore
+    # timed the job out. A workspace-local cache holds only this lockfile.
+    env:
+      NPM_CONFIG_CACHE: ${{ github.workspace }}/.npm-cache
 
     steps:
       - name: Checkout repository

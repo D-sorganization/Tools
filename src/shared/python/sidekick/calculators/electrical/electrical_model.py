@@ -305,7 +305,9 @@ class ThreePhaseElectricalModelEnhanced:
         # einsum row norms (sqrt of sum of squares) match np.linalg.norm
         # semantics up to last-ulp reassociation with fewer temporaries.
         segment_deltas = tip_positions - wall_positions
-        section_widths = np.sqrt(np.einsum("...i,...i->...", segment_deltas, segment_deltas))
+        section_widths = np.sqrt(
+            np.einsum("...i,...i->...", segment_deltas, segment_deltas)
+        )
 
         # Cross-sectional areas in m²
         cross_section_areas_m2 = section_widths * effective_height * 0.00064516
@@ -443,7 +445,9 @@ class ThreePhaseElectricalModelEnhanced:
         center1 = (electrode1_pos["tip"] + e1_wall) / 2
         center2 = (electrode2_pos["tip"] + e2_wall) / 2
         spacing_delta = center2[:2] - center1[:2]
-        horizontal_distance = np.sqrt(np.einsum("...i,...i->...", spacing_delta, spacing_delta))
+        horizontal_distance = np.sqrt(
+            np.einsum("...i,...i->...", spacing_delta, spacing_delta)
+        )
         distance_m = horizontal_distance * 0.0254
 
         avg_electrode_length = (e1_length + e2_length) / 2

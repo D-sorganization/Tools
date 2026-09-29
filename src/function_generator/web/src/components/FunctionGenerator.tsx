@@ -615,8 +615,9 @@ export function FunctionGenerator() {
       case 'polynomial':
         return (
           <div>
-            <label className="block text-sm text-slate-400 mb-1">Coefficients (c₀, c₁, c₂, ...)</label>
+            <label htmlFor="poly-coeffs" className="block text-sm text-slate-400 mb-1">Coefficients (c₀, c₁, c₂, ...)</label>
             <input
+              id="poly-coeffs"
               type="text"
               value={polyCoeffsText}
               onChange={e => setPolyCoeffsText(e.target.value)}
@@ -633,8 +634,9 @@ export function FunctionGenerator() {
             <ParamInput label="Start Freq (Hz)" value={params.chirpF0} onChange={v => updateParam('chirpF0', v)} min={0.01} />
             <ParamInput label="End Freq (Hz)" value={params.chirpF1} onChange={v => updateParam('chirpF1', v)} min={0.01} />
             <div>
-              <label className="block text-sm text-slate-400 mb-1">Sweep Method</label>
+              <label htmlFor="sweep-method" className="block text-sm text-slate-400 mb-1">Sweep Method</label>
               <select
+                id="sweep-method"
                 value={params.chirpMethod}
                 onChange={e => updateParam('chirpMethod', e.target.value as 'linear' | 'exponential')}
                 className="w-full bg-slate-700 text-white rounded px-3 py-2"

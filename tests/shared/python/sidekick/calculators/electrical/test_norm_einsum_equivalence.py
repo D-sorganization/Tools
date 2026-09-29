@@ -58,6 +58,7 @@ def test_full_vector_norm_sqrt_einsum_equivalence() -> None:
 
 def test_empty_last_axis_shapes_match() -> None:
     x = np.zeros((4, 0))
-    assert np.sqrt(np.einsum("...i,...i->...", x, x)).shape == np.linalg.norm(
-        x, axis=1
-    ).shape
+    assert (
+        np.sqrt(np.einsum("...i,...i->...", x, x)).shape
+        == np.linalg.norm(x, axis=1).shape
+    )

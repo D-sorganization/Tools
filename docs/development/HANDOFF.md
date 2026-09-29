@@ -1,3 +1,13 @@
+# Current handoff - self-hosted npm cache (2026-09-29)
+
+- Repository: D-sorganization/Tools; branch `claude/tools-npm-cache-per-job`; commit: SELF; PR: #5384.
+- Problem: on self-hosted runners `~/.npm` is shared by every job on the host, so `setup-node` `cache: npm` saved 2.4 GB. The HMI gate (`p1am-frontend.yml`) spent its 20-minute budget restoring it at ~1 MB/s. The signed URL expired after 10 minutes and the job was cancelled (PR #5380, two attempts on d-sorg-local-Oglaptop-3).
+- Change: job-level `NPM_CONFIG_CACHE: ${{ github.workspace }}/.npm-cache` in `p1am-frontend.yml` and `rate-of-closure-visual-evidence.yml`, the two self-hosted `cache: npm` jobs. This follows `tauri-build.yml`. Hosted `ubuntu-24.04` jobs already start clean and are unchanged.
+- The cache key is only the lockfile hash, so the four >1 GB cache entries were deleted to stop them being restored. They regenerate at about 35 MB.
+- Next: after merge, confirm the next HMI gate run saves a cache of tens of MB.
+
+---
+
 # Current handoff — Project Steward status pass 2026-09-26
 
 - Repository: D-sorganization/Tools
