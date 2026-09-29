@@ -1,4 +1,43 @@
-# Current handoff - self-hosted npm cache (2026-09-29)
+# Current handoff — v1.23.1 release preparation (Tools#5376)
+
+- Repository: D-sorganization/Tools
+- Working directory: `C:/Users/diete/Repositories/Worktrees/luna-pr5380-20260929`
+- Branch: `bot/luna-release5376-20260929`; commit: SELF; PR: #5376 (open, targets `main`)
+- Governing issue: none (release preparation)
+
+## Objective and status
+
+Prepare the v1.23.1 release branch. The latest `main` is `95800a5647603bf1211a98b0899674540cc16151` and still declares v1.23.0; the release branch declares v1.23.1. Merged current `main` into this branch without rebasing. The release notes include the merged PRs through #5384.
+
+## Files and decisions
+
+- Refreshed the v1.23.1 changelog date and added merged PRs #5377, #5378, #5379, #5380, #5381, and #5384.
+- Added the keyed #5376 release-preparation row to SPEC.md; retained the current main rows #5379 and #5384.
+- Refreshed the development-log audit date; no feature continuation state changed.
+- The merged main changes remain intact, including their workflow, documentation, manifest, source, and test updates.
+
+## Validation
+
+- `python -m pytest -n 1 -o addopts='' tests/scripts/test_release_changelog.py tests/ops/test_release_workflow.py tests/shared/python/sidekick/calculators/electrical/test_norm_einsum_equivalence.py` — 39 passed.
+- Ruff check and format check on the changed electrical model and test — passed; targeted mypy — passed.
+- Design-manual governance, module inventory, textbook lint, exemplars, calculation freshness, manual QA, publication projection, handoff, and render checks — passed. Manual QA and publication projection report the existing unapproved state with two release blockers.
+- P1AM frontend Vitest was unavailable because `vitest` is not installed in the checkout; no dependency installation was attempted.
+
+## Blockers and risks
+
+- Root review and CI are pending. This worker will not merge or trigger workflows.
+
+## Next step
+
+- Root reviews the final diff and CI before deciding whether to merge PR #5376.
+
+## Change log
+
+- `SELF` — 2026-09-29: merge current `main` and refresh v1.23.1 release metadata and handoff.
+
+---
+
+# Past handoff - self-hosted npm cache (2026-09-29)
 
 - Repository: D-sorganization/Tools; branch `claude/tools-npm-cache-per-job`; commit: SELF; PR: #5384.
 - Problem: on self-hosted runners `~/.npm` is shared by every job on the host, so `setup-node` `cache: npm` saved 2.4 GB. The HMI gate (`p1am-frontend.yml`) spent its 20-minute budget restoring it at ~1 MB/s. The signed URL expired after 10 minutes and the job was cancelled (PR #5380, two attempts on d-sorg-local-Oglaptop-3).

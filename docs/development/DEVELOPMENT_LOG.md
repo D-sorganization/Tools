@@ -8,7 +8,8 @@ feature, from proposal to ship. See the `development-logs` section of
 
 - **Portfolio:** infra
 - **WIP limit:** 4
-- **Last audited:** 2026-09-26 by project-steward
+- **Last audited:** 2026-09-29 by Luna (Tools#5376 release preparation)
+- **Release maintenance:** No material development-log change — release metadata and integration of already merged work do not change feature continuation state.
 
 ## States
 
