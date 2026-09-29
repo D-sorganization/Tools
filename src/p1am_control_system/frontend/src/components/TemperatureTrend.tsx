@@ -177,9 +177,14 @@ export const TempTrend: React.FC<TrendProps> = ({
   useNonPassiveWheel(svgRef, handleWheel);
 
   // Resolve the Y range against BOTH channels so neither trace clips.
-  const plottedC = plotted
-    .flatMap((s) => [s.k, s.r])
-    .filter((v): v is number => typeof v === "number" && Number.isFinite(v));
+  // ⚡ Bolt Optimization: Replace chained .flatMap() and .filter() with a single-pass loop
+  // to reduce intermediate array allocations and garbage collection pressure.
+  const plottedC: number[] = [];
+  for (let i = 0; i < plotted.length; i++) {
+    const s = plotted[i];
+    if (typeof s.k === "number" && Number.isFinite(s.k)) plottedC.push(s.k);
+    if (typeof s.r === "number" && Number.isFinite(s.r)) plottedC.push(s.r);
+  }
   const { min, max } = resolveRange(axis, plottedC, { min: 0, max: fullScale });
 
   // Latest reading of each channel (for the legend), and the active reading.
