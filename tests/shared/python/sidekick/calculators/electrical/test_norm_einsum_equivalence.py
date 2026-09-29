@@ -43,7 +43,8 @@ def test_sqrt_einsum_special_values_match_norm() -> None:
     actual = np.sqrt(np.einsum("...i,...i->...", row, row))
     assert np.array_equal(np.isnan(actual), np.isnan(expected))
     assert np.array_equal(np.isinf(actual), np.isinf(expected))
-    assert np.allclose(actual[~np.isnan(actual)], expected[~np.isnan(expected)], rtol=0.0)
+    finite = ~np.isnan(actual)
+    assert np.allclose(actual[finite], expected[finite], rtol=0.0)
 
 
 def test_full_vector_norm_sqrt_einsum_equivalence() -> None:
