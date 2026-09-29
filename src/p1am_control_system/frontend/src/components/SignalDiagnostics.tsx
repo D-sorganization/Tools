@@ -87,9 +87,20 @@ const SignalDiagnosticsImpl: React.FC<Props> = ({ history, historyTimes }) => {
       ? (windowRows[windowRows.length - 1][ch.tag] ?? 0)
       : null,
   }));
+  // ⚡ Bolt Optimization: Replace chained .flatMap() and .map() with a single-pass loop
+  // to prevent intermediate array allocations and reduce garbage collection pressure.
+  const plottedV: number[] = [];
+  for (let i = 0; i < series.length; i++) {
+    const pts = series[i].points;
+    for (let j = 0; j < pts.length; j++) {
+      if (typeof pts[j].v === "number" && Number.isFinite(pts[j].v)) {
+        plottedV.push(pts[j].v);
+      }
+    }
+  }
   const { min, max } = resolveRange(
     axis,
-    series.flatMap((s) => s.points.map((p) => p.v)),
+    plottedV,
     { min: 0, max: FULL_SCALE_V },
   );
   const latestMs = downTimes.length ? downTimes[downTimes.length - 1] : Date.now();
