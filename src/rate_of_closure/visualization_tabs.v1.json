@@ -329,6 +329,7 @@
       "states": {
         "empty": "demo-scatter-preview",
         "loading": "file-read-pending",
+      "performance_exemption": "rate-visual-exemption: No layout changes, just underlying React loop optimization",
         "result": "scatter-and-statistical-results",
         "error": "message-and-prior-results"
       }
