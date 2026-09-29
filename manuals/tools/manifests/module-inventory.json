@@ -297,7 +297,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-folder-tool-pro.json"
     },
     {
-      "content_sha256_lf": "41a0d281aa760f953955c505f5d2f39ab960dd370b1967982aab7a472516ee5b",
+      "content_sha256_lf": "669022a5a2ff0fc44f5ff949a9c7fb8b5fd77fa6db7dbaea671c438f7e84704b",
       "entry_count": 17,
       "package": "src/function_generator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-function-generator.json"
@@ -387,7 +387,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-optimizer-gui.json"
     },
     {
-      "content_sha256_lf": "7073970bb7f319479739aece40d7d4dd77c544aad59a210369985ab9e60619fe",
+      "content_sha256_lf": "652ba234895548255898434687cac3c77c769e22ecb915bb147baba68cc92810",
       "entry_count": 254,
       "package": "src/p1am_control_system",
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
@@ -753,7 +753,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-scripting.json"
     },
     {
-      "content_sha256_lf": "e36004da56ef206134bf67e2abc0a41fa54dd9b21373e3471dce572f7b6fe647",
+      "content_sha256_lf": "aa0a73a638a83f6b6184b4a612b436f53ea2138473e6bf506786e9515c2ac95e",
       "entry_count": 238,
       "package": "src/shared/python/sidekick",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick.json"
@@ -945,7 +945,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-video-analyzer.json"
     },
     {
-      "content_sha256_lf": "e5f6d7d55b53c0f2db2bdb0ab2c2b0aafb06ca9c3aecef6cd0926e2131ba18b0",
+      "content_sha256_lf": "d00f225c6e8af6944bad1680bcf18997a8035dd774894436d4fd828cf77bd6ea",
       "entry_count": 33,
       "package": "src/web_applications",
       "path": "manuals/tools/manifests/module-inventory/entries-src-web-applications.json"

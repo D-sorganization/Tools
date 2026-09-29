@@ -1073,7 +1073,7 @@ function setupEventListeners() {
     dismissInstall.addEventListener('click', dismissInstallPrompt);
   }
 
-  // Keyboard shortcuts
+  // Keyboard shortcuts (e.g. Ctrl+K)
   document.addEventListener('keydown', e => {
     // Ctrl/Cmd + K to focus from value
     if ((e.ctrlKey || e.metaKey) && (e.key === 'k' || e.key === 'K')) {

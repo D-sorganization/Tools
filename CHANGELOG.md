@@ -1,6 +1,6 @@
 # Changelog
 
-## [1.23.1] - 2026-09-27 (patch bump)
+## [1.23.1] - 2026-09-29 (patch bump)
 
 ### Changes
 
@@ -128,6 +128,9 @@
 
 #### Performance
 
+- ⚡ Bolt: Use single-pass loop in SignalDiagnostics to prevent GC pressure (#5380)
+- perf(sidekick): einsum row norms in three-phase electrical model (#5379)
+- ⚡ Bolt: Replace flatMap with single-pass loop in TemperatureTrend (#5377)
 - perf(rate-of-closure): Single-Pass Loops in jointMotionAt (supersedes #5372) (#5375)
 - perf(rate-of-closure): Share Covariation Sums and Hoist the Random Weight Sum (#5355) (#5355)
 - perf(calculators): optimize safe_exp and resilient benchmark (#5333) (#5334)
@@ -136,6 +139,9 @@
 
 #### Other
 
+- ci: workspace-local npm cache for self-hosted setup-node jobs (#5384)
+- 🎨 Palette: Add explicit label associations in FunctionGenerator (#5381)
+- 🎨 Palette: Add keyboard shortcut hint to input placeholder (#5378)
 - 🎨 Palette: Add disabled state styles to clear history button (#5373)
 - build(deps): bump pandas from 2.3.3 to 3.0.6 (#5358)
 - docs: sync fleet-managed agent sections from Repository_Management (#5370)

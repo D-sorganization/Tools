@@ -87,11 +87,16 @@ const SignalDiagnosticsImpl: React.FC<Props> = ({ history, historyTimes }) => {
       ? (windowRows[windowRows.length - 1][ch.tag] ?? 0)
       : null,
   }));
-  const { min, max } = resolveRange(
-    axis,
-    series.flatMap((s) => s.points.map((p) => p.v)),
-    { min: 0, max: FULL_SCALE_V },
-  );
+  // ⚡ Bolt Optimization: Use single-pass loop instead of chained .flatMap() and .map()
+  // to reduce intermediate array allocations and garbage collection pressure.
+  const flatValues: number[] = [];
+  for (let i = 0; i < series.length; i++) {
+    const pts = series[i].points;
+    for (let j = 0; j < pts.length; j++) {
+      flatValues.push(pts[j].v);
+    }
+  }
+  const { min, max } = resolveRange(axis, flatValues, { min: 0, max: FULL_SCALE_V });
   const latestMs = downTimes.length ? downTimes[downTimes.length - 1] : Date.now();
   const { t0, t1 } = fixedWindowRange(latestMs, windowSeconds);
   const geom = {
