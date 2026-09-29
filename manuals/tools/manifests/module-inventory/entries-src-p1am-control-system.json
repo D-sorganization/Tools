@@ -10217,10 +10217,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 6914,
+      "bytes_lf": 7228,
       "classification": "calculation",
       "classification_basis": "path-marker:signal",
-      "content_sha256_lf": "baa32bea5a76cf5318cb1e8ba3f8b4f1aa992ee4b86096ac5510991a485e6460",
+      "content_sha256_lf": "cc4b8e726220f88078eeec7dae303cf589cda93d314364a2ab380eefe1aec339",
       "family": "control-systems-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-COMPONENTS-SIGNALDIAGNOSTICS-TSX-4296965B1660",
       "language": "typescript-react",
