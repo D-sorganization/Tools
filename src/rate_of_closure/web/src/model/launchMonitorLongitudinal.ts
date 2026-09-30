@@ -70,18 +70,32 @@ const sessions = (rows: LaunchMonitorRow[], request: LongitudinalRequest): Sessi
 const playerEstimate = (playerId: string, points: SessionPoint[], request: LongitudinalRequest): PlayerEstimate => {
   if (points.length < request.minSessions) return { playerId, sessionCount: points.length, slopePerSession: null, standardError: null,
     ciLower: null, ciUpper: null, pValue: null, rSquared: null, firstToLastChange: null, status: "insufficient_sessions" };
-  const xMean = mean(points.map((point) => point.sessionOrder));
-  const yMean = mean(points.map((point) => point.mean));
-  const sxx = points.reduce((sum, point) => sum + (point.sessionOrder - xMean) ** 2, 0);
-  const sxy = points.reduce((sum, point) => sum + (point.sessionOrder - xMean) * (point.mean - yMean), 0);
+  // ⚡ Bolt Optimization: Use single-pass loops to compute statistics instead of mapping/reducing multiple times
+  let sumX = 0;
+  let sumY = 0;
+  for (let i = 0; i < points.length; i++) {
+    sumX += points[i].sessionOrder;
+    sumY += points[i].mean;
+  }
+  const xMean = sumX / points.length;
+  const yMean = sumY / points.length;
+  let sxx = 0;
+  let sxy = 0;
+  let syy = 0;
+  for (let i = 0; i < points.length; i++) {
+    const dx = points[i].sessionOrder - xMean;
+    const dy = points[i].mean - yMean;
+    sxx += dx * dx;
+    sxy += dx * dy;
+    syy += dy * dy;
+  }
   if (sxx === 0) return { playerId, sessionCount: points.length, slopePerSession: null, standardError: null,
     ciLower: null, ciUpper: null, pValue: null, rSquared: null,
     firstToLastChange: points[points.length - 1].mean - points[0].mean, status: "constant_order" };
   const slope = sxy / sxx; const intercept = yMean - slope * xMean;
-  const residualSum = points.reduce((sum, point) => sum + (point.mean - intercept - slope * point.sessionOrder) ** 2, 0);
+  const residualSum = Math.max(0, syy - slope * sxy); // algebraically equivalent and avoids a third loop
   const degrees = points.length - 2; const standardError = Math.sqrt(residualSum / degrees / sxx);
   const critical = studentQuantile(0.5 + request.confidenceLevel / 2, degrees);
-  const syy = points.reduce((sum, point) => sum + (point.mean - yMean) ** 2, 0);
   const statistic = standardError > 0 ? slope / standardError : Number.POSITIVE_INFINITY;
   return { playerId, sessionCount: points.length, slopePerSession: slope, standardError,
     ciLower: slope - critical * standardError, ciUpper: slope + critical * standardError,
@@ -97,15 +111,37 @@ const population = (players: PlayerEstimate[], request: LongitudinalRequest) => 
     randomEffectSlope: null, randomCiLower: null, randomCiUpper: null, tauSquared: null,
     qStatistic: null, iSquaredPct: null, improvementProbability: null };
   if (eligible.length < 2) return empty;
-  const variances = eligible.map((player) => player.standardError! ** 2);
-  const weights = variances.map((variance) => 1 / variance); const weightSum = weights.reduce((sum, value) => sum + value, 0);
-  const fixed = eligible.reduce((sum, player, index) => sum + player.slopePerSession! * weights[index], 0) / weightSum;
-  const q = eligible.reduce((sum, player, index) => sum + weights[index] * (player.slopePerSession! - fixed) ** 2, 0);
-  const cValue = weightSum - weights.reduce((sum, value) => sum + value ** 2, 0) / weightSum;
+  // ⚡ Bolt Optimization: Replace multiple array maps and reductions with single-pass loops to prevent GC pressure
+  let weightSum = 0;
+  let weightSquaredSum = 0;
+  let fixedSum = 0;
+  const variances: number[] = new Array(eligible.length);
+  const weights: number[] = new Array(eligible.length);
+  for (let i = 0; i < eligible.length; i++) {
+    const variance = eligible[i].standardError! ** 2;
+    const weight = 1 / variance;
+    variances[i] = variance;
+    weights[i] = weight;
+    weightSum += weight;
+    weightSquaredSum += weight * weight;
+    fixedSum += eligible[i].slopePerSession! * weight;
+  }
+  const fixed = fixedSum / weightSum;
+  let q = 0;
+  for (let i = 0; i < eligible.length; i++) {
+    const diff = eligible[i].slopePerSession! - fixed;
+    q += weights[i] * diff * diff;
+  }
+  const cValue = weightSum - weightSquaredSum / weightSum;
   const tauSquared = cValue > 0 ? Math.max(0, (q - (eligible.length - 1)) / cValue) : 0;
-  const randomWeights = variances.map((variance) => 1 / (variance + tauSquared));
-  const randomWeightSum = randomWeights.reduce((sum, value) => sum + value, 0);
-  const random = eligible.reduce((sum, player, index) => sum + player.slopePerSession! * randomWeights[index], 0) / randomWeightSum;
+  let randomWeightSum = 0;
+  let randomSum = 0;
+  for (let i = 0; i < eligible.length; i++) {
+    const randomWeight = 1 / (variances[i] + tauSquared);
+    randomWeightSum += randomWeight;
+    randomSum += eligible[i].slopePerSession! * randomWeight;
+  }
+  const random = randomSum / randomWeightSum;
   const critical = normalQuantile(0.5 + request.confidenceLevel / 2);
   const fixedMargin = critical / Math.sqrt(weightSum); const randomSe = 1 / Math.sqrt(randomWeightSum);
   const direction = request.higherIsBetter ? 1 : -1;
