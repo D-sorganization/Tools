@@ -75,18 +75,6 @@ def _make_manager(fake: _FakeModbusClient) -> AsyncModbusManager:
     return manager
 
 
-def _run(coro: Any) -> Any:
-    """Run an async coroutine, executing in a worker thread if a loop is active."""
-    try:
-        asyncio.get_running_loop()
-    except RuntimeError:
-        return asyncio.run(coro)
-    import concurrent.futures
-
-    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
-        return executor.submit(asyncio.run, coro).result()
-
-
 def _routing() -> RoutingConfig:
     return RoutingConfig(
         input_routing=[f"TAG_{i}" for i in range(6)],
@@ -134,7 +122,8 @@ def _unmapped_routing() -> RoutingConfig:
 
 
 class TestReadTags:
-    def test_decodes_32_floats(self) -> None:
+    @pytest.mark.asyncio
+    async def test_decodes_32_floats(self) -> None:
         fake = _FakeModbusClient()
         regs: list[int] = []
         for i in range(32):
@@ -142,7 +131,7 @@ class TestReadTags:
         fake.read_responses = [_FakeResponse(regs)]
         manager = _make_manager(fake)
 
-        tags = _run(manager.read_tags())
+        tags = await manager.read_tags()
 
         assert tags is not None
         assert len(tags) == 32
@@ -150,22 +139,25 @@ class TestReadTags:
         assert tags["TAG_5"] == pytest.approx(5.0)
         assert tags["TAG_31"] == pytest.approx(31.0)
 
-    def test_returns_none_when_disconnected(self) -> None:
+    @pytest.mark.asyncio
+    async def test_returns_none_when_disconnected(self) -> None:
         manager = _make_manager(_FakeModbusClient())
         manager._connected = False
-        assert _run(manager.read_tags()) is None
+        assert await manager.read_tags() is None
 
-    def test_marks_disconnected_on_read_error(self) -> None:
+    @pytest.mark.asyncio
+    async def test_marks_disconnected_on_read_error(self) -> None:
         fake = _FakeModbusClient()
         fake.force_read_error = True
         manager = _make_manager(fake)
 
-        assert _run(manager.read_tags()) is None
+        assert await manager.read_tags() is None
         assert manager.connected is False
 
 
 class TestReadRouting:
-    def test_reassembles_routing_from_chunks(self) -> None:
+    @pytest.mark.asyncio
+    async def test_reassembles_routing_from_chunks(self) -> None:
         fake = _FakeModbusClient()
         # input(6), output(2), pid(40), then four 64-reg interlock chunks.
         pid_regs: list[int] = []
@@ -189,7 +181,7 @@ class TestReadRouting:
         ]
         manager = _make_manager(fake)
 
-        config = _run(manager.read_routing())
+        config = await manager.read_routing()
 
         assert config is not None
         assert config.input_routing == [f"TAG_{i}" for i in range(10, 16)]
@@ -200,7 +192,8 @@ class TestReadRouting:
         assert len(config.interlocks) == 32
         assert config.interlocks["TAG_0"].hihi_limit == pytest.approx(100.0)
 
-    def test_returns_none_on_pid_read_error(self) -> None:
+    @pytest.mark.asyncio
+    async def test_returns_none_on_pid_read_error(self) -> None:
         fake = _FakeModbusClient()
         fake.read_responses = [
             _FakeResponse([10, 11, 12, 13, 14, 15]),
@@ -208,15 +201,16 @@ class TestReadRouting:
             _FakeResponse(error=True),  # PID read fails
         ]
         manager = _make_manager(fake)
-        assert _run(manager.read_routing()) is None
+        assert await manager.read_routing() is None
 
 
 class TestWriteRouting:
-    def test_writes_all_blocks_and_chunks_interlocks(self) -> None:
+    @pytest.mark.asyncio
+    async def test_writes_all_blocks_and_chunks_interlocks(self) -> None:
         fake = _FakeModbusClient()
         manager = _make_manager(fake)
 
-        ok = _run(manager.write_routing(_routing()))
+        ok = await manager.write_routing(_routing())
 
         assert ok is True
         # input + output + pid + 4 interlock chunks = 7 register writes.
@@ -225,35 +219,39 @@ class TestWriteRouting:
         interlock_writes = fake.write_calls[3:]
         assert all(len(call["values"]) == 64 for call in interlock_writes)
 
-    def test_writes_all_unmapped_routing_sentinel(self) -> None:
+    @pytest.mark.asyncio
+    async def test_writes_all_unmapped_routing_sentinel(self) -> None:
         fake = _FakeModbusClient()
         manager = _make_manager(fake)
 
-        ok = _run(manager.write_routing(_unmapped_routing()))
+        ok = await manager.write_routing(_unmapped_routing())
 
         assert ok is True
         assert fake.write_calls[0]["values"] == [255] * 6
         assert fake.write_calls[1]["values"] == [255] * 2
         assert fake.write_calls[2]["values"][:2] == [255, 255]
 
-    def test_returns_false_on_write_error(self) -> None:
+    @pytest.mark.asyncio
+    async def test_returns_false_on_write_error(self) -> None:
         fake = _FakeModbusClient()
         fake.force_write_error = True
         manager = _make_manager(fake)
-        assert _run(manager.write_routing(_routing())) is False
+        assert await manager.write_routing(_routing()) is False
 
-    def test_refuses_routing_with_malformed_tag(self) -> None:
+    @pytest.mark.asyncio
+    async def test_refuses_routing_with_malformed_tag(self) -> None:
         # A malformed routing tag must not be silently mapped to TAG_0; the
         # ValueError from the strict parser is caught and the write refused.
         fake = _FakeModbusClient()
         manager = _make_manager(fake)
         bad = _routing()
         bad.input_routing = ["TAG_0", "garbage", "TAG_2", "TAG_3", "TAG_4", "TAG_5"]
-        assert _run(manager.write_routing(bad)) is False
+        assert await manager.write_routing(bad) is False
 
 
 class TestWriteTagAndSetpoint:
-    def test_write_tag_refuses_the_republished_broker_block(self) -> None:
+    @pytest.mark.asyncio
+    async def test_write_tag_refuses_the_republished_broker_block(self) -> None:
         """``TAG_n`` resolves to n*2 — a register the firmware republishes.
 
         The firmware rewrites 0..63 from its broker every scan and never reads
@@ -264,29 +262,32 @@ class TestWriteTagAndSetpoint:
         manager = _make_manager(fake)
 
         with pytest.raises(NotImplementedError):
-            _run(manager.write_tag("TAG_5", 42.5))
+            await manager.write_tag("TAG_5", 42.5)
 
         assert fake.write_calls == []
 
-    def test_write_tag_rejects_unknown_tag(self) -> None:
+    @pytest.mark.asyncio
+    async def test_write_tag_rejects_unknown_tag(self) -> None:
         fake = _FakeModbusClient()
         manager = _make_manager(fake)
         # No write should be attempted for an unresolvable tag.
-        assert _run(manager.write_tag("TAG_999", 1.0)) is False
+        assert await manager.write_tag("TAG_999", 1.0) is False
         assert fake.write_calls == []
 
-    def test_write_pid_setpoint_targets_setpoint_register(self) -> None:
+    @pytest.mark.asyncio
+    async def test_write_pid_setpoint_targets_setpoint_register(self) -> None:
         fake = _FakeModbusClient()
         manager = _make_manager(fake)
 
-        ok = _run(manager.write_pid_setpoint(0, 12.5))
+        ok = await manager.write_pid_setpoint(0, 12.5)
 
         assert ok is True
         # PID0 setpoint pair lives at PID_CONFIG_BASE + 2 = 202.
         assert fake.write_calls[0]["address"] == 202
 
-    def test_write_pid_setpoint_rejects_bad_index(self) -> None:
+    @pytest.mark.asyncio
+    async def test_write_pid_setpoint_rejects_bad_index(self) -> None:
         fake = _FakeModbusClient()
         manager = _make_manager(fake)
-        assert _run(manager.write_pid_setpoint(99, 1.0)) is False
+        assert await manager.write_pid_setpoint(99, 1.0) is False
         assert fake.write_calls == []

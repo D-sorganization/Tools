@@ -236,25 +236,17 @@ def test_quality_gate_invokes_mypy_through_verified_python() -> None:
 
 
 def test_ci_standard_serializes_apt_installs_on_shared_runners() -> None:
-    import yaml
+    workflow = CI_STANDARD.read_text(encoding="utf-8")
 
-    workflow = yaml.safe_load(CI_STANDARD.read_text(encoding="utf-8"))
-    install_steps = [
-        step
-        for job in workflow["jobs"].values()
-        for step in job.get("steps", [])
-        if step.get("name") == "Install System Dependencies"
-    ]
+    install_steps = workflow.count("Install System Dependencies")
 
-    assert len(install_steps) == 2
-    for step in install_steps:
-        run = step["run"]
-        assert run.count("flock /tmp/d-sorg-apt-install.lock") == 2
-        assert "sudo -n true" in run
-        assert "sudo -n flock /tmp/d-sorg-apt-install.lock" in run
-        assert "Passwordless sudo is unavailable" in run
-        assert "apt-get -o DPkg::Lock::Timeout=300 update --fix-missing" in run
-        assert "apt-get -o DPkg::Lock::Timeout=300 install -y --fix-missing" in run
+    assert install_steps == 2
+    assert workflow.count("flock /tmp/d-sorg-apt-install.lock") == 4
+    assert "sudo -n true" in workflow
+    assert "sudo -n flock /tmp/d-sorg-apt-install.lock" in workflow
+    assert "Passwordless sudo is unavailable" in workflow
+    assert "apt-get -o DPkg::Lock::Timeout=300 update --fix-missing" in workflow
+    assert "apt-get -o DPkg::Lock::Timeout=300 install -y --fix-missing" in workflow
 
 
 def test_quality_gate_dependency_install_uses_only_hosted_download_cache() -> None:

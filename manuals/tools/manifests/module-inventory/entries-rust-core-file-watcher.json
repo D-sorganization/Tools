@@ -42,7 +42,6 @@
           "src/p1am_control_system/backend/tests/test_temperature_controller.py",
           "src/p1am_control_system/backend/tests/test_temperature_integration.py",
           "src/web_applications/unit_converter/tests/converter.test.js",
-          "src/web_applications/unit_converter/tests/test_keyboard_escape.py",
           "tests/p1am_control_system/test_desktop_alarm_state.py",
           "tests/unit/codemap/test_codemap_watcher.py"
         ],

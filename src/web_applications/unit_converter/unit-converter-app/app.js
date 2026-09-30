@@ -1088,14 +1088,6 @@ function setupEventListeners() {
       swapUnits();
     }
 
-    // Escape to clear inputs when focused
-    if (e.key === 'Escape') {
-      if (document.activeElement === fromValueInput || document.activeElement === toValueInput) {
-        e.preventDefault();
-        clearInput();
-      }
-    }
-
     // Escape to close modal
     if (e.key === 'Escape' && customUnitsModal.style.display === 'flex') {
       closeCustomUnitsModal();
