@@ -28,7 +28,7 @@
 | **License**             | MIT                                        |
 | **Current Version**     | 1.10.0                                     |
 | **Spec Version**        | 1.18.149                                   |
-| **Last Spec Update**    | 2026-09-24                                 |
+| **Last Spec Update**    | 2026-09-30                                 |
 
 ## 2. Purpose & Mission
 
@@ -5945,6 +5945,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 <!-- prettier-ignore-start -->
 
 | Date       | PR         | Changes    |
+| 2026-09-30 | #5387 | Rate of Closure dispersion preserves filtering, order, and statistics with loops; web lock patches clear high npm audit findings (2 moderate Vitest findings remain). |
 | 2026-09-27 | n/a | feat(unit_converter): palette-ux-clear-btn-disabled |
 | 2026-09-26 | n/a | golf_club public strict validators (require_rotation, require_inertia) and FieldOrigin/OriginValue per-field origin record (#5353 items 3-4). |
 | 2026-09-26 | #5364 | signal_toolkit, primitive inertia mass and chat session timestamps gain input contracts surfaced by the UpstreamDrift shadow burn-down; PhysicsValidator uses standard gravity (#5362). |

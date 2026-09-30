@@ -12,7 +12,6 @@ const toYards = (value: unknown, unit: DistanceUnit): number | null => {
 };
 
 const requireColumns = (rows: LaunchMonitorRow[], columns: string[]) => {
-  // ⚡ Bolt Optimization: Use single-pass loop instead of flatMap to prevent GC pressure and multiple array allocations
   const available = new Set<string>();
   for (let i = 0; i < rows.length; i++) {
     const keys = Object.keys(rows[i]);
@@ -31,7 +30,7 @@ export interface DispersionRequest {
 
 export function analyzeDispersion(rows: LaunchMonitorRow[], request: DispersionRequest) {
   requireColumns(rows, [request.lateralColumn, request.carryColumn]);
-  // ⚡ Bolt Optimization: Use single-pass loops instead of flatMap, map, reduce, and filter chains to prevent GC pressure
+  // Keep source indices while collecting valid points and their aggregate values.
   const points: { sourceIndex: number; lateralYards: number; carryYards: number }[] = [];
   let sum = 0;
   let sumSquares = 0;
