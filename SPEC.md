@@ -7048,6 +7048,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | 2026-09-29 | #5384 | Self-hosted npm jobs (p1am HMI gate, Rate visual evidence) use a workspace-local `NPM_CONFIG_CACHE`; the shared `~/.npm` made a 2.4 GB setup-node cache that timed the HMI gate out. |
 | 2026-09-28 | #5379 | perf(sidekick): einsum row norms in three-phase electrical model — upstream canonical change for UpstreamDrift PR #11112's excluded site. |
 | 2026-09-27 | #5376 | Prepare the v1.23.1 release by synchronizing version metadata and release notes. |
+| 2026-09-30 | #5385 | Propagate flight termination states (LANDED, TIME_LIMIT, SOLVER_FAILED, CANCELLED) before reporting landing metrics, gate carry/landing metrics to None on incomplete flights, and fail closed across inverse solver and execution profiles (Tools #5385 / UpstreamDrift #11145). |
 ---
 
 <!--

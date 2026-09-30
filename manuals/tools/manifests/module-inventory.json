@@ -447,7 +447,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure.json"
     },
     {
-      "content_sha256_lf": "36c80a9a97bd5e7c1ec46c3eb6b3e45753b9f236eda2596b980ca548f433323d",
+      "content_sha256_lf": "1bc5812a0b81f0046e3bd38e06fdf7650e964d8d9fe62a7e0eee0761c8dce4c7",
       "entry_count": 66,
       "package": "src/rate_of_closure/application",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-application.json"
@@ -783,7 +783,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-delivery-interchange.json"
     },
     {
-      "content_sha256_lf": "68bd2c34e033940a36818b8b4c3c13852ae33d9fe30e65f566ac19503eee695d",
+      "content_sha256_lf": "403fb34bc9145ab64715a5d47a1bb9e0274735f234bf9f6a87d6d7f23b322980",
       "entry_count": 45,
       "package": "src/shared/python/swing_sim/flight",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-flight.json"

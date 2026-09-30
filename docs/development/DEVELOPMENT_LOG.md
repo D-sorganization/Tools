@@ -19,6 +19,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5385 · Propagate flight termination states and gate landing metrics
+
+- **State:** in_progress
+- **Owner:** local (agy executor)
+- **Issue:** #5385
+- **Branch:** `fix/tools-flight-termination-5385`
+- **PR:** (pending)
+- **Paths:** `src/shared/python/swing_sim/flight/`, `src/rate_of_closure/application/`, `tests/api_baselines/swing_sim_api_baseline.json`
+- **Started:** 2026-09-30
+- **Last verified:** 2026-09-30 — 231 swing_sim/flight and API-stability tests pass; ruff, black, and mypy clean.
+- **Summary:** Propagate explicit FlightTermination enum states (LANDED, TIME_LIMIT, SOLVER_FAILED, CANCELLED) before reporting landing metrics. Gate carry_distance, landing_angle, and lateral_deviation to None on non-landed flights. Fail closed across CenteredClubDeliveryAdapter, ground simulation transfer, and flight execution profiles.
+- **Next step:** Push branch, open PR #5385, and link UpstreamDrift #11145.
+
 ### DL-#5353 · Pre-impact bundle wire, modal-state record and public validators
 
 - **State:** in_review

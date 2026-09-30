@@ -188,6 +188,16 @@ class CenteredClubDeliveryAdapter:
         except (ArithmeticError, RuntimeError, ValueError, np.linalg.LinAlgError):
             return self._incomplete(ForwardStatus.FAILED, "forward_pipeline_error")
 
+        if (
+            not flight.landed
+            or flight.carry_distance is None
+            or flight.lateral_deviation is None
+            or flight.landing_angle is None
+        ):
+            return self._incomplete(
+                ForwardStatus.FAILED, f"flight_incomplete:{flight.termination.value}"
+            )
+
         launch_metrics = (
             _metric(FlightMetricId.BALL_SPEED, launch.ball_speed, "launch"),
             _metric(

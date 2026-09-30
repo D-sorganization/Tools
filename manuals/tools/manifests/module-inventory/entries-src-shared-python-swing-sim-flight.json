@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8950,
+      "bytes_lf": 9054,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "aa04a02661980bfd63165bdb6b85fea3bd778ff2fa136034c72150d8d62d730a",
+      "content_sha256_lf": "b96a54da739e16343aea18641d10af6eed43a9351a2998089fd0f3498d25a007",
       "family": "swing-simulation-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-INIT-PY-30F53368FD96",
       "language": "python",
@@ -299,6 +299,11 @@
           },
           {
             "kind": "re-export",
+            "name": "FlightTermination",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "FlightValidationReport",
             "signature": null
           },
@@ -335,6 +340,11 @@
           {
             "kind": "re-export",
             "name": "ImpactSolutionResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IncompleteFlightError",
             "signature": null
           },
           {
@@ -707,10 +717,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1182,
+      "bytes_lf": 1491,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9b6eb432453e09a674413cde587c0bec44cd8258c6910063d8bfb6af0aae2a5d",
+      "content_sha256_lf": "5e8fc37de2e04060a89ec7733fbf7d76e2f6180daa92469a6ac36a37dd3c8674",
       "family": "swing-simulation-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-CANCELLATION-PY-668799B61249",
       "language": "python",
@@ -1914,10 +1924,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 7344,
+      "bytes_lf": 7565,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "4029e9a2e6ab263bf9834458919d039dd4f2e1ee87e4e21710aa7c04c6cd983c",
+      "content_sha256_lf": "d9223c0d853c0365e697336467e2b9ddcc44facd2647a270d54ed66a4d0bb352",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-GROUND-TRANSFER-PY-A8C7115969A9",
       "language": "python",
@@ -1986,10 +1996,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 8201,
+      "bytes_lf": 8530,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "0451e346db04429a1eef8fc541b9efaae7bbe343b1041cf1ffe69035ed828d73",
+      "content_sha256_lf": "b6cbc4236b2437353dc88eade6a5863ab25426f96564027c8afb8cf876b135a7",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-IMPACT-SOLUTION-ADAPTER-PY-A8DDC35AE3D0",
       "language": "python",
@@ -2650,10 +2660,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 12260,
+      "bytes_lf": 16610,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "39b214068d63aefe7f395e43d09dad8aac90a66de88e8a53cca36c478795f8b6",
+      "content_sha256_lf": "e7811a5802e9e6bad155274f3acb969c3f9e22e191f4f46561196c93824cc593",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-MODELS-PY-A63E947D43C0",
       "language": "python",
@@ -3445,10 +3455,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 10649,
+      "bytes_lf": 15570,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "d8a004ddbe6618c4067cb248956955f4f8b715acc6b08b40e350c9dc64e8d716",
+      "content_sha256_lf": "f193c914fad0e8d2657520a3066352254aae8af6b4c78b21d91790a7583319a8",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-TYPES-PY-25EE5456810A",
       "language": "python",
@@ -3495,6 +3505,16 @@
           },
           {
             "kind": "class",
+            "name": "FlightTermination",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "IncompleteFlightError",
+            "signature": null
+          },
+          {
+            "kind": "class",
             "name": "LaunchConditions",
             "signature": null
           },
@@ -3511,7 +3531,7 @@
           {
             "kind": "function",
             "name": "compute_flight_metrics",
-            "signature": "trajectory: list[TrajectoryPoint] | tuple[TrajectoryPoint, ...], model_name: str"
+            "signature": "trajectory: list[TrajectoryPoint] | tuple[TrajectoryPoint, ...], model_name: str, *, termination: FlightTermination=FlightTermination.LANDED, terminal_event: bool=True, actual_horizon: float | None=None"
           }
         ],
         "test_paths": [],
@@ -3526,10 +3546,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 9579,
+      "bytes_lf": 9864,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "81df4c0919d72194be50048280836f81489500b0784e2e4e431d94919f73f38e",
+      "content_sha256_lf": "05fdef1d9a0ee09b45ed5adf7d6538062f50b995391c9a840324b77768445ebf",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-FLIGHT-VALIDATION-PY-ED86BE73BEC0",
       "language": "python",

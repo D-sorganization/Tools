@@ -1,4 +1,36 @@
-# Current handoff — v1.23.1 release preparation (Tools#5376)
+# Current handoff — Flight Termination States & Metric Gating (Tools#5385)
+
+- Repository: D-sorganization/Tools
+- Working directory: `C:/Users/diete/Repositories/Tools`
+- Branch: `fix/tools-flight-termination-5385`; commit: SELF; PR: #5385 (pending)
+- Governing issue: Tools#5385 (paired consumer issue: UpstreamDrift#11145)
+
+## Objective and status
+
+Propagate explicit termination reasons (`FlightTermination`: `LANDED`, `TIME_LIMIT`, `SOLVER_FAILED`, `CANCELLED`) from flight integration before reporting landing metrics (`carry_distance`, `landing_angle`, `lateral_deviation`). Non-landed flights have landing metrics gated to `None` and fail closed across downstream consumers: `CenteredClubDeliveryAdapter` (returns `ForwardStatus.FAILED`), `build_ground_simulation_request` (raises `FlightGroundTransferError`), and `_recompute_registered` in `flight_execution_profiles` (returns `RECOMPUTATION_FAILED`).
+
+## Files and decisions
+
+- `src/shared/python/swing_sim/flight/types.py`: Added `FlightTermination` enum, `IncompleteFlightError(RuntimeError)`. Updated `FlightResult` dataclass to validate landing metrics are `None` when `termination != FlightTermination.LANDED`. Added `require_landing()`, `flight_completed`, `landed` properties.
+- `src/shared/python/swing_sim/flight/models.py`: Updated `BallFlightModel._run_ode_simulation` to inspect `sol.status`, `sol.success`, and `sol.t_events` safely and propagate `termination`, `terminal_event`, and `actual_horizon`. Attached partial `FlightResult` to `FlightSimulationCancelled`.
+- `src/shared/python/swing_sim/flight/impact_solution_adapter.py`: Added landing gate returning `ForwardStatus.FAILED` with `"flight_incomplete:<termination>"`.
+- `src/shared/python/swing_sim/flight/ground_transfer.py`: Added landing gate raising `FlightGroundTransferError` if `not result.landed`.
+- `src/rate_of_closure/application/flight_execution_profiles.py`: Added landing gate returning `RECOMPUTATION_FAILED` if `not result.landed`.
+- `src/shared/python/swing_sim/flight/tests/test_flight_termination.py`: Added 10 tests verifying the 5 canonical termination fixtures and downstream fail-closed gating.
+- `tests/api_baselines/swing_sim_api_baseline.json`: Regenerated to record breaking API changes (`FlightResult` methods, `compute_flight_metrics` kwargs, `FlightSimulationCancelled` optional result).
+
+## Validation
+
+- Full test suite: 231 tests in `flight` and `test_shared_package_api_stability.py` pass.
+- Linters: `ruff check` (0 errors), `ruff format --check` (clean), `black --check` (clean), `mypy` (clean).
+
+## Next step
+
+- Push branch and create PR #5385 with breaking API notice citing UpstreamDrift #11145.
+
+---
+
+# Past handoff — v1.23.1 release preparation (Tools#5376)
 
 - Repository: D-sorganization/Tools
 - Working directory: `C:/Users/diete/Repositories/Worktrees/luna-pr5380-20260929`

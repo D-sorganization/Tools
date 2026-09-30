@@ -3439,6 +3439,7 @@
       "FlightMetricResult",
       "FlightMetricValue",
       "FlightResult",
+      "FlightTermination",
       "FlightRegionalGroundPipelineResult",
       "FlightGroundTransferError",
       "FlightGroundTransferSettings",
@@ -3454,6 +3455,7 @@
       "ImpactForwardEvaluator",
       "ImpactSolutionRequest",
       "ImpactSolutionResult",
+      "IncompleteFlightError",
       "InverseFlightRequest",
       "InverseFlightResult",
       "LaunchConditions",
@@ -4528,6 +4530,39 @@
         "info": {
           "bases": [],
           "methods": {
+            "flight_completed": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "bool"
+            },
+            "landed": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "bool"
+            },
+            "require_landing": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "FlightResult"
+            },
             "to_position_array": {
               "args": [
                 {
@@ -4555,7 +4590,31 @@
           "bases": [
             "RuntimeError"
           ],
-          "methods": {}
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": "'flight simulation cancelled'",
+                  "kind": "arg",
+                  "name": "message"
+                },
+                {
+                  "annotation": "FlightResult | None",
+                  "default": "None",
+                  "kind": "kwonlyarg",
+                  "name": "result"
+                }
+              ],
+              "returns": "None"
+            }
+          }
         },
         "type": "class"
       },
@@ -4604,6 +4663,38 @@
             "TrajectoryPoint"
           ],
           "methods": {}
+        },
+        "type": "class"
+      },
+      "FlightTermination": {
+        "info": {
+          "bases": [
+            "Enum"
+          ],
+          "methods": {
+            "flight_completed": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "bool"
+            },
+            "landed": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "bool"
+            }
+          }
         },
         "type": "class"
       },
@@ -4825,6 +4916,33 @@
                 }
               ],
               "returns": "str"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "IncompleteFlightError": {
+        "info": {
+          "bases": [
+            "RuntimeError"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "FlightResult",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "result"
+                }
+              ],
+              "returns": "None"
             }
           }
         },
@@ -6015,6 +6133,24 @@
               "default": null,
               "kind": "arg",
               "name": "model_name"
+            },
+            {
+              "annotation": "FlightTermination",
+              "default": "FlightTermination.LANDED",
+              "kind": "kwonlyarg",
+              "name": "termination"
+            },
+            {
+              "annotation": "bool",
+              "default": "True",
+              "kind": "kwonlyarg",
+              "name": "terminal_event"
+            },
+            {
+              "annotation": "float | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "actual_horizon"
             }
           ],
           "returns": "FlightResult"
@@ -6482,7 +6618,31 @@
           "bases": [
             "RuntimeError"
           ],
-          "methods": {}
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": "'flight simulation cancelled'",
+                  "kind": "arg",
+                  "name": "message"
+                },
+                {
+                  "annotation": "FlightResult | None",
+                  "default": "None",
+                  "kind": "kwonlyarg",
+                  "name": "result"
+                }
+              ],
+              "returns": "None"
+            }
+          }
         },
         "type": "class"
       },
@@ -9174,7 +9334,31 @@
           "bases": [
             "RuntimeError"
           ],
-          "methods": {}
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "str",
+                  "default": "'flight simulation cancelled'",
+                  "kind": "arg",
+                  "name": "message"
+                },
+                {
+                  "annotation": "FlightResult | None",
+                  "default": "None",
+                  "kind": "kwonlyarg",
+                  "name": "result"
+                }
+              ],
+              "returns": "None"
+            }
+          }
         },
         "type": "class"
       },
@@ -10074,6 +10258,8 @@
     "__all__": [
       "DEFAULT_BACKSPIN_AXIS",
       "FlightResult",
+      "FlightTermination",
+      "IncompleteFlightError",
       "LaunchConditions",
       "TrajectoryPoint",
       "compute_flight_metrics"
@@ -10087,6 +10273,39 @@
         "info": {
           "bases": [],
           "methods": {
+            "flight_completed": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "bool"
+            },
+            "landed": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "bool"
+            },
+            "require_landing": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "FlightResult"
+            },
             "to_position_array": {
               "args": [
                 {
@@ -10097,6 +10316,65 @@
                 }
               ],
               "returns": "np.ndarray"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "FlightTermination": {
+        "info": {
+          "bases": [
+            "Enum"
+          ],
+          "methods": {
+            "flight_completed": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "bool"
+            },
+            "landed": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                }
+              ],
+              "returns": "bool"
+            }
+          }
+        },
+        "type": "class"
+      },
+      "IncompleteFlightError": {
+        "info": {
+          "bases": [
+            "RuntimeError"
+          ],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg",
+                  "name": "self"
+                },
+                {
+                  "annotation": "FlightResult",
+                  "default": null,
+                  "kind": "arg",
+                  "name": "result"
+                }
+              ],
+              "returns": "None"
             }
           }
         },
@@ -10229,6 +10507,24 @@
               "default": null,
               "kind": "arg",
               "name": "model_name"
+            },
+            {
+              "annotation": "FlightTermination",
+              "default": "FlightTermination.LANDED",
+              "kind": "kwonlyarg",
+              "name": "termination"
+            },
+            {
+              "annotation": "bool",
+              "default": "True",
+              "kind": "kwonlyarg",
+              "name": "terminal_event"
+            },
+            {
+              "annotation": "float | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "actual_horizon"
             }
           ],
           "returns": "FlightResult"

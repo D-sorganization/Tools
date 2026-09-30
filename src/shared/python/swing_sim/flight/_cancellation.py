@@ -2,11 +2,25 @@
 
 from __future__ import annotations
 
+from typing import TYPE_CHECKING
+
 from .capability_observation import CancellationCheck
+
+if TYPE_CHECKING:
+    from .types import FlightResult
 
 
 class FlightSimulationCancelled(RuntimeError):
     """Signal cooperative cancellation before a flight result is published."""
+
+    def __init__(
+        self,
+        message: str = "flight simulation cancelled",
+        *,
+        result: FlightResult | None = None,
+    ) -> None:
+        super().__init__(message)
+        self.result = result
 
 
 class FlightCancellationCallbackError(RuntimeError):

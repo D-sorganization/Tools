@@ -172,6 +172,10 @@ def evaluate_flight_benchmarks() -> FlightValidationReport:
         for model in all_models:
             result = model.simulate(launch)
             carry = result.carry_distance
+            if carry is None:
+                raise RuntimeError(
+                    f"Model {model.name} failed to land on {spec.condition_id}"
+                )
             residual = carry - ref_carry
             rel_err = abs(residual) / ref_carry * 100.0
             model_evals[model.name][spec.condition_id] = ConditionModelEvaluation(
@@ -185,6 +189,8 @@ def evaluate_flight_benchmarks() -> FlightValidationReport:
         if rust_available:
             rust_res = simulate_trajectory_rust(launch)
             r_carry = rust_res.carry_distance
+            if r_carry is None:
+                raise RuntimeError(f"Rust kernel failed to land on {spec.condition_id}")
             r_residual = r_carry - ref_carry
             r_rel_err = abs(r_residual) / ref_carry * 100.0
             model_evals["tools-core Rust RK4"][spec.condition_id] = (

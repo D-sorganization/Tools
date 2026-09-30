@@ -28,6 +28,7 @@ from .surface_simulation import (
 )
 from .types import (
     FlightResult,
+    FlightTermination,
     LaunchConditions,
     TrajectoryPoint,
     compute_flight_metrics,
@@ -50,6 +51,9 @@ class _OdeSolution(Protocol):
     t: np.ndarray
     y: np.ndarray
     sol: Callable[[float], np.ndarray]
+    status: int
+    success: bool
+    t_events: list[np.ndarray] | None
 
 
 class BallFlightModel(ABC):
@@ -126,9 +130,49 @@ class BallFlightModel(ABC):
         """Build this model's state derivative for one launch."""
         raise NotImplementedError("surface-aware simulation is unavailable")
 
-    def _compute_metrics(self, trajectory: list[TrajectoryPoint]) -> FlightResult:
+    def _compute_metrics(
+        self,
+        trajectory: list[TrajectoryPoint],
+        *,
+        termination: FlightTermination = FlightTermination.LANDED,
+        terminal_event: bool = True,
+        actual_horizon: float | None = None,
+    ) -> FlightResult:
         """Delegate to the shared module-level metrics computation."""
-        return compute_flight_metrics(trajectory, self.name)
+        return compute_flight_metrics(
+            trajectory,
+            self.name,
+            termination=termination,
+            terminal_event=terminal_event,
+            actual_horizon=actual_horizon,
+        )
+
+    def _safe_compute_metrics(
+        self,
+        trajectory: list[TrajectoryPoint],
+        *,
+        termination: FlightTermination = FlightTermination.LANDED,
+        terminal_event: bool = True,
+        actual_horizon: float | None = None,
+    ) -> FlightResult:
+        try:
+            return self._compute_metrics(
+                trajectory,
+                termination=termination,
+                terminal_event=terminal_event,
+                actual_horizon=actual_horizon,
+            )
+        except TypeError:
+            result = self._compute_metrics(trajectory)
+            if result.termination != termination:
+                return compute_flight_metrics(
+                    trajectory,
+                    result.model_name,
+                    termination=termination,
+                    terminal_event=terminal_event,
+                    actual_horizon=actual_horizon,
+                )
+            return result
 
     def _spin_decay_rate(self) -> float:
         """Return exponential spin-decay rate for trajectory state output."""
@@ -149,24 +193,82 @@ class BallFlightModel(ABC):
         self._validate_ode_run(run)
         v0 = run.launch.get_initial_velocity()
         y0 = np.array([0.0, 0.0, 0.0, v0[0], v0[1], v0[2]])
-        derivatives = self._controlled_derivatives(run)
+        last_state = [(0.0, y0.copy())]
+        derivatives = self._controlled_derivatives(run, last_state)
         ground_event = self._ground_event(run)
 
-        raise_if_flight_cancelled(run.cancellation_requested)
-        sol = solve_ivp(
-            derivatives,
-            (0, run.max_time),
-            y0,
-            method="RK45",
-            events=ground_event,
-            dense_output=True,
-            max_step=0.1,
-        )
-        raise_if_flight_cancelled(run.cancellation_requested)
-        points = self._sample_solution(run, sol)
-        result = self._compute_metrics(points)
-        raise_if_flight_cancelled(run.cancellation_requested)
-        return result
+        try:
+            raise_if_flight_cancelled(run.cancellation_requested)
+            sol = solve_ivp(
+                derivatives,
+                (0, run.max_time),
+                y0,
+                method="RK45",
+                events=ground_event,
+                dense_output=True,
+                max_step=0.1,
+            )
+            raise_if_flight_cancelled(run.cancellation_requested)
+        except FlightSimulationCancelled as exc:
+            last_t, last_y = last_state[0]
+            partial_points: list[TrajectoryPoint] = [
+                self._state_point(run.launch, last_t, last_y)
+            ]
+            partial_result = self._safe_compute_metrics(
+                partial_points,
+                termination=FlightTermination.CANCELLED,
+                terminal_event=False,
+                actual_horizon=last_t,
+            )
+            raise FlightSimulationCancelled(
+                str(exc) or "flight simulation cancelled",
+                result=partial_result,
+            ) from exc
+
+        success = getattr(sol, "success", True)
+        status = getattr(sol, "status", 0)
+        t_events = getattr(sol, "t_events", None)
+
+        if not success or status < 0:
+            termination = FlightTermination.SOLVER_FAILED
+            terminal_event = False
+            actual_horizon = float(sol.t[-1]) if len(sol.t) > 0 else 0.0
+        elif status == 1 and t_events and len(t_events[0]) > 0:
+            termination = FlightTermination.LANDED
+            terminal_event = True
+            actual_horizon = float(t_events[0][0])
+        elif status == 1:
+            termination = FlightTermination.LANDED
+            terminal_event = True
+            actual_horizon = float(sol.t[-1])
+        else:
+            termination = FlightTermination.TIME_LIMIT
+            terminal_event = False
+            actual_horizon = float(sol.t[-1])
+
+        try:
+            points = self._sample_solution(run, sol)
+            raise_if_flight_cancelled(run.cancellation_requested)
+            result = self._safe_compute_metrics(
+                points,
+                termination=termination,
+                terminal_event=terminal_event,
+                actual_horizon=actual_horizon,
+            )
+            raise_if_flight_cancelled(run.cancellation_requested)
+            return result
+        except FlightSimulationCancelled as exc:
+            partial_points = self._sample_solution(run, sol, ignore_cancellation=True)
+            partial_result = self._safe_compute_metrics(
+                partial_points,
+                termination=FlightTermination.CANCELLED,
+                terminal_event=False,
+                actual_horizon=float(sol.t[-1]),
+            )
+            raise FlightSimulationCancelled(
+                str(exc) or "flight simulation cancelled",
+                result=partial_result,
+            ) from exc
 
     @staticmethod
     def _validate_ode_run(run: _OdeRun) -> None:
@@ -180,12 +282,22 @@ class BallFlightModel(ABC):
     @staticmethod
     def _controlled_derivatives(
         run: _OdeRun,
+        last_state: list[tuple[float, np.ndarray]] | None = None,
     ) -> Callable[[float, np.ndarray], np.ndarray]:
         if run.cancellation_requested is None:
+            if last_state is not None:
+
+                def tracking(time_s: float, state: np.ndarray) -> np.ndarray:
+                    last_state[0] = (time_s, state.copy())
+                    return run.derivatives(time_s, state)
+
+                return tracking
             return run.derivatives
 
         def controlled(time_s: float, state: np.ndarray) -> np.ndarray:
             raise_if_flight_cancelled(run.cancellation_requested)
+            if last_state is not None:
+                last_state[0] = (time_s, state.copy())
             return run.derivatives(time_s, state)
 
         return controlled
@@ -211,11 +323,14 @@ class BallFlightModel(ABC):
         self,
         run: _OdeRun,
         solution: _OdeSolution,
+        *,
+        ignore_cancellation: bool = False,
     ) -> list[TrajectoryPoint]:
         def controlled_state_point(
             time_s: float, state: np.ndarray
         ) -> FlightStatePoint:
-            raise_if_flight_cancelled(run.cancellation_requested)
+            if not ignore_cancellation:
+                raise_if_flight_cancelled(run.cancellation_requested)
             return self._state_point(run.launch, time_s, state)
 
         t_eval = np.arange(0, solution.t[-1], run.dt)
@@ -233,7 +348,8 @@ class BallFlightModel(ABC):
                     solution.y[:, -1],
                 )
             )
-        raise_if_flight_cancelled(run.cancellation_requested)
+        if not ignore_cancellation:
+            raise_if_flight_cancelled(run.cancellation_requested)
         return points
 
 
