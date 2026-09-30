@@ -180,6 +180,56 @@ def test_shard_job_runs_the_partition_and_records_status() -> None:
     assert "steps.run_tests.outcome" in status["run"]
 
 
+def test_src_rest_provisions_job_local_bundled_chromium_after_dependencies() -> None:
+    """The real unit-converter browser tests use this shard's installed browser."""
+    shards = _load_shards_module()
+    regression = "src/web_applications/unit_converter/tests/test_keyboard_escape.py"
+    assert shards.shard_by_name("src-rest").claims(regression)
+
+    steps = _workflow()["jobs"]["tests"]["steps"]
+    matrix = _workflow()["jobs"]["tests"]["strategy"]["matrix"]
+    assert list(matrix["python-version"]) == ["3.11", "3.12"]
+    dependency_index = next(
+        index
+        for index, step in enumerate(steps)
+        if step.get("name") == "Install Dependencies"
+    )
+    browser_index = next(
+        index
+        for index, step in enumerate(steps)
+        if step.get("name")
+        == "Provision bundled Chromium for unit-converter regressions"
+    )
+    browser_step = steps[browser_index]
+    test_index = next(
+        index
+        for index, step in enumerate(steps)
+        if step.get("name")
+        == "Run Tests with Coverage (Python ${{ matrix.python-version }})"
+    )
+    assert browser_step["if"] == "${{ matrix.shard == 'src-rest' }}"
+    assert dependency_index < browser_index < test_index
+    assert browser_step["shell"] == "bash"
+    assert (
+        'PLAYWRIGHT_BROWSERS_PATH="$RUNNER_TEMP/playwright-browsers"'
+        in browser_step["run"]
+    )
+    assert '"$GITHUB_ENV"' in browser_step["run"]
+    assert "playwright install-deps chromium" in browser_step["run"]
+    assert "flock /tmp/d-sorg-apt-install.lock" in browser_step["run"]
+    assert 'if [ "$(id -u)" -eq 0 ]; then' in browser_step["run"]
+    assert "sudo -n true" in browser_step["run"]
+    assert "sudo -n flock /tmp/d-sorg-apt-install.lock" in browser_step["run"]
+    assert "playwright install chromium" in browser_step["run"]
+    assert "::error::" in browser_step["run"]
+    assert "exit 1" in browser_step["run"]
+    assert "continue-on-error" not in browser_step
+
+    regression_source = (REPO_ROOT / regression).read_text(encoding="utf-8")
+    assert "playwright.chromium.launch(headless=True)" in regression_source
+    assert 'channel="chrome"' not in regression_source
+
+
 def test_gate_job_keeps_the_required_tests_context() -> None:
     """Branch protection requires ``tests (3.11)``; the gate must own that name."""
     jobs = _workflow()["jobs"]
