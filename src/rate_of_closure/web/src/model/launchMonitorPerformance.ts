@@ -12,7 +12,13 @@ const toYards = (value: unknown, unit: DistanceUnit): number | null => {
 };
 
 const requireColumns = (rows: LaunchMonitorRow[], columns: string[]) => {
-  const available = new Set(rows.flatMap((row) => Object.keys(row)));
+  const available = new Set<string>();
+  for (let i = 0; i < rows.length; i++) {
+    const keys = Object.keys(rows[i]);
+    for (let j = 0; j < keys.length; j++) {
+      available.add(keys[j]);
+    }
+  }
   const missing = columns.filter((column) => !available.has(column));
   if (missing.length) throw new RangeError(`Columns are unavailable: ${missing.join(", ")}`);
 };
@@ -24,25 +30,47 @@ export interface DispersionRequest {
 
 export function analyzeDispersion(rows: LaunchMonitorRow[], request: DispersionRequest) {
   requireColumns(rows, [request.lateralColumn, request.carryColumn]);
-  const points = rows.flatMap((row, sourceIndex) => {
-    const lateralYards = toYards(row[request.lateralColumn], request.lateralUnit);
-    const carryYards = toYards(row[request.carryColumn], request.carryUnit);
-    return lateralYards === null || carryYards === null ? [] : [
-      { sourceIndex, lateralYards, carryYards },
-    ];
-  });
+  // Keep source indices while collecting valid points and their aggregate values.
+  const points: { sourceIndex: number; lateralYards: number; carryYards: number }[] = [];
+  let sum = 0;
+  let sumSquares = 0;
+  let leftCount = 0;
+  let centerCount = 0;
+  let rightCount = 0;
+
+  for (let i = 0; i < rows.length; i++) {
+    const lateralYards = toYards(rows[i][request.lateralColumn], request.lateralUnit);
+    const carryYards = toYards(rows[i][request.carryColumn], request.carryUnit);
+    if (lateralYards !== null && carryYards !== null) {
+      points.push({ sourceIndex: i, lateralYards, carryYards });
+      sum += lateralYards;
+      sumSquares += lateralYards * lateralYards;
+      if (lateralYards < 0) leftCount++;
+      else if (lateralYards === 0) centerCount++;
+      else rightCount++;
+    }
+  }
+
   if (!points.length) throw new RangeError("Dispersion requires finite lateral and carry values");
-  const values = points.map(({ lateralYards }) => lateralYards);
-  const mean = values.reduce((sum, value) => sum + value, 0) / values.length;
-  const variance = values.length > 1
-    ? values.reduce((sum, value) => sum + (value - mean) ** 2, 0) / (values.length - 1) : 0;
+
+  const mean = sum / points.length;
+  let variance = 0;
+  if (points.length > 1) {
+    let sumVar = 0;
+    for (let i = 0; i < points.length; i++) {
+      const diff = points[i].lateralYards - mean;
+      sumVar += diff * diff;
+    }
+    variance = sumVar / (points.length - 1);
+  }
+
   return {
     unit: "yd" as const, points, meanLateralYards: mean,
     standardDeviationYards: Math.sqrt(variance),
-    rmsYards: Math.sqrt(values.reduce((sum, value) => sum + value ** 2, 0) / values.length),
-    leftCount: values.filter((value) => value < 0).length,
-    centerCount: values.filter((value) => value === 0).length,
-    rightCount: values.filter((value) => value > 0).length,
+    rmsYards: Math.sqrt(sumSquares / points.length),
+    leftCount,
+    centerCount,
+    rightCount,
     formula: "Lateral sign: negative = yards left, positive = yards right. RMS = sqrt(mean(lateral_yards^2)).",
   };
 }
