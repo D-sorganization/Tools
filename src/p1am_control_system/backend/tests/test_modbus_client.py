@@ -75,6 +75,18 @@ def _make_manager(fake: _FakeModbusClient) -> AsyncModbusManager:
     return manager
 
 
+def _run(coro: Any) -> Any:
+    """Run an async coroutine, executing in a worker thread if a loop is active."""
+    try:
+        asyncio.get_running_loop()
+    except RuntimeError:
+        return asyncio.run(coro)
+    import concurrent.futures
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as executor:
+        return executor.submit(asyncio.run, coro).result()
+
+
 def _routing() -> RoutingConfig:
     return RoutingConfig(
         input_routing=[f"TAG_{i}" for i in range(6)],
@@ -130,7 +142,7 @@ class TestReadTags:
         fake.read_responses = [_FakeResponse(regs)]
         manager = _make_manager(fake)
 
-        tags = asyncio.run(manager.read_tags())
+        tags = _run(manager.read_tags())
 
         assert tags is not None
         assert len(tags) == 32
@@ -141,14 +153,14 @@ class TestReadTags:
     def test_returns_none_when_disconnected(self) -> None:
         manager = _make_manager(_FakeModbusClient())
         manager._connected = False
-        assert asyncio.run(manager.read_tags()) is None
+        assert _run(manager.read_tags()) is None
 
     def test_marks_disconnected_on_read_error(self) -> None:
         fake = _FakeModbusClient()
         fake.force_read_error = True
         manager = _make_manager(fake)
 
-        assert asyncio.run(manager.read_tags()) is None
+        assert _run(manager.read_tags()) is None
         assert manager.connected is False
 
 
@@ -177,7 +189,7 @@ class TestReadRouting:
         ]
         manager = _make_manager(fake)
 
-        config = asyncio.run(manager.read_routing())
+        config = _run(manager.read_routing())
 
         assert config is not None
         assert config.input_routing == [f"TAG_{i}" for i in range(10, 16)]
@@ -196,7 +208,7 @@ class TestReadRouting:
             _FakeResponse(error=True),  # PID read fails
         ]
         manager = _make_manager(fake)
-        assert asyncio.run(manager.read_routing()) is None
+        assert _run(manager.read_routing()) is None
 
 
 class TestWriteRouting:
@@ -204,7 +216,7 @@ class TestWriteRouting:
         fake = _FakeModbusClient()
         manager = _make_manager(fake)
 
-        ok = asyncio.run(manager.write_routing(_routing()))
+        ok = _run(manager.write_routing(_routing()))
 
         assert ok is True
         # input + output + pid + 4 interlock chunks = 7 register writes.
@@ -217,7 +229,7 @@ class TestWriteRouting:
         fake = _FakeModbusClient()
         manager = _make_manager(fake)
 
-        ok = asyncio.run(manager.write_routing(_unmapped_routing()))
+        ok = _run(manager.write_routing(_unmapped_routing()))
 
         assert ok is True
         assert fake.write_calls[0]["values"] == [255] * 6
@@ -228,7 +240,7 @@ class TestWriteRouting:
         fake = _FakeModbusClient()
         fake.force_write_error = True
         manager = _make_manager(fake)
-        assert asyncio.run(manager.write_routing(_routing())) is False
+        assert _run(manager.write_routing(_routing())) is False
 
     def test_refuses_routing_with_malformed_tag(self) -> None:
         # A malformed routing tag must not be silently mapped to TAG_0; the
@@ -237,7 +249,7 @@ class TestWriteRouting:
         manager = _make_manager(fake)
         bad = _routing()
         bad.input_routing = ["TAG_0", "garbage", "TAG_2", "TAG_3", "TAG_4", "TAG_5"]
-        assert asyncio.run(manager.write_routing(bad)) is False
+        assert _run(manager.write_routing(bad)) is False
 
 
 class TestWriteTagAndSetpoint:
@@ -252,7 +264,7 @@ class TestWriteTagAndSetpoint:
         manager = _make_manager(fake)
 
         with pytest.raises(NotImplementedError):
-            asyncio.run(manager.write_tag("TAG_5", 42.5))
+            _run(manager.write_tag("TAG_5", 42.5))
 
         assert fake.write_calls == []
 
@@ -260,14 +272,14 @@ class TestWriteTagAndSetpoint:
         fake = _FakeModbusClient()
         manager = _make_manager(fake)
         # No write should be attempted for an unresolvable tag.
-        assert asyncio.run(manager.write_tag("TAG_999", 1.0)) is False
+        assert _run(manager.write_tag("TAG_999", 1.0)) is False
         assert fake.write_calls == []
 
     def test_write_pid_setpoint_targets_setpoint_register(self) -> None:
         fake = _FakeModbusClient()
         manager = _make_manager(fake)
 
-        ok = asyncio.run(manager.write_pid_setpoint(0, 12.5))
+        ok = _run(manager.write_pid_setpoint(0, 12.5))
 
         assert ok is True
         # PID0 setpoint pair lives at PID_CONFIG_BASE + 2 = 202.
@@ -276,5 +288,5 @@ class TestWriteTagAndSetpoint:
     def test_write_pid_setpoint_rejects_bad_index(self) -> None:
         fake = _FakeModbusClient()
         manager = _make_manager(fake)
-        assert asyncio.run(manager.write_pid_setpoint(99, 1.0)) is False
+        assert _run(manager.write_pid_setpoint(99, 1.0)) is False
         assert fake.write_calls == []

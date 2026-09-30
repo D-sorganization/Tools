@@ -10,7 +10,7 @@ APP_DIRECTORY = Path(__file__).resolve().parents[1] / "unit-converter-app"
 ESCAPE_CLEAR_DELAY_MS = 400
 
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="module")
 def browser() -> Iterator[Browser]:
     """Launch Playwright's bundled Chromium for real keyboard and DOM interaction."""
     with sync_playwright() as playwright:
