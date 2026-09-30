@@ -2,7 +2,7 @@
 
 - Repository: D-sorganization/Tools
 - Working directory: `C:/Users/diete/Repositories/Worktrees/tools-longitudinal-residual-luna-20260930`
-- Branch: `fix/longitudinal-residual-variance-20260930`; commit: SELF; PR: draft follow-up pending
+- Branch: `fix/longitudinal-residual-variance-20260930`; commit: SELF; PR: [#5394](https://github.com/D-sorganization/Tools/pull/5394) (draft)
 - Governing issue: #5392; related merged optimization: #5389
 
 ## Objective and status

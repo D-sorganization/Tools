@@ -16,7 +16,7 @@ feature, from proposal to ship. See the `development-logs` section of
 - **Owner:** codex
 - **Issue:** #5392
 - **Branch:** `fix/longitudinal-residual-variance-20260930`
-- **PR:** draft follow-up pending
+- **PR:** #5394 (draft)
 - **Paths:** `src/rate_of_closure/web/src/model/launchMonitorLongitudinal.ts`, `src/rate_of_closure/web/src/model/launchMonitorLongitudinal.test.ts`, `manuals/tools/manifests/module-inventory/`, `SPEC.md`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`
 - **Started:** 2026-09-30
 - **Last verified:** 2026-09-30 — focused longitudinal tests pass; full web Vitest 2360/2361 (import-boundary scan passed alone after timing out under full-suite load); type-check, lint, build, and required design-manual checks run.
