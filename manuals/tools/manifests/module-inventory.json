@@ -537,7 +537,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-hooks.json"
     },
     {
-      "content_sha256_lf": "f7d3f572bbff9bcd856263b16127dd5b10e97946b846d785c03cb7d0fe4ae4b4",
+      "content_sha256_lf": "7ea62fe151959354f2ed2cadf8014aac5cebdf5f7766edfcd7609be5e360ca6f",
       "entry_count": 411,
       "package": "src/rate_of_closure/web/src/model",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-model.json"

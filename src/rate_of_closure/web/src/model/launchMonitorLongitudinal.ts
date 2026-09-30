@@ -92,7 +92,7 @@ const playerEstimate = (playerId: string, points: SessionPoint[], request: Longi
   if (sxx === 0) return { playerId, sessionCount: points.length, slopePerSession: null, standardError: null,
     ciLower: null, ciUpper: null, pValue: null, rSquared: null,
     firstToLastChange: points[points.length - 1].mean - points[0].mean, status: "constant_order" };
-  const slope = sxy / sxx; const intercept = yMean - slope * xMean;
+  const slope = sxy / sxx;
   const residualSum = Math.max(0, syy - slope * sxy); // algebraically equivalent and avoids a third loop
   const degrees = points.length - 2; const standardError = Math.sqrt(residualSum / degrees / sxx);
   const critical = studentQuantile(0.5 + request.confidenceLevel / 2, degrees);
