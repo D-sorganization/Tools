@@ -5945,6 +5945,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 <!-- prettier-ignore-start -->
 
 | Date       | PR         | Changes    |
+| 2026-09-30 | #5390 | chore(release): bump version to v1.23.2 |
 | 2026-09-30 | #5387 | Rate of Closure dispersion preserves filtering, order, and statistics with loops; web lock patches clear high npm audit findings (2 moderate Vitest findings remain). |
 | 2026-09-27 | n/a | feat(unit_converter): palette-ux-clear-btn-disabled |
 | 2026-09-30 | #5388 | feat(unit-converter, #5388): Escape from either value input clears both values, hides Clear, returns focus to From, and prevents default; Escape elsewhere preserves values, modal close remains intact, queued conversions cannot refill cleared fields, and later valid input converts. Pinned by real bundled Chromium keyboard/DOM tests. |
