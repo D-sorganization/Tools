@@ -14,15 +14,17 @@ The public analysis regression uses representable nonzero noise around a large l
 ## Files and decisions
 
 - Restored the intercept and ordered direct-residual loop in `launchMonitorLongitudinal.ts`; no formula, tolerance, threshold, identity, or other statistical contract changed.
-- Added the public analysis regression test first; it failed on current `main` because the shortcut returned zero, then passed with the source fix.
+- Historical RED/GREEN evidence: the earlier accepted #5389 repair report records the direct-residual oracle expecting `0.00020716016510533694` while the shortcut returned `0`, followed by passing focused tests. In this follow-up, source and test were ported before the initial focused GREEN, so that sequence is not claimed as test-first.
+- Controlled post-port baseline RED: copied the exact c096 main implementation and current regression test to temporary sibling files, changing only the test import to the baseline copy. The public regression failed with actual SE `0` versus expected `0.00020716016510533694` (1 failed, 2 passed). Removed both temporary files. The original candidate source remained unchanged; its working hash matches the committed candidate blob. The same focused command against the candidate passed (3/3).
 - Regenerated only the canonical web model inventory shard and its root digest.
-- Added only the #5392 SPEC row, after existing rows; existing rows retain their main order.
+- Added the #5394 SPEC row adjacent to #5389; no existing SPEC row moved or changed order.
 - No release/version change. #5389 remains a distinct merged optimization; this follow-up does not modify its closed PR.
 
 ## Validation
 
 - Focused longitudinal test: 3 passed.
-- Full web Vitest with max 2 workers: 2360 passed, 1 failed of 2361 because `src/vendored/importBoundary.test.ts` exceeded its existing 15-second timeout under full-suite load. The isolated test then passed (1 passed in 558 ms); timeout unchanged.
+- Initial full web Vitest with max 2 workers: 2360 passed, 1 failed of 2361 because `src/vendored/importBoundary.test.ts` exceeded its existing 15-second timeout under full-suite load. The isolated test then passed (1 passed in 558 ms); timeout unchanged.
+- One authorized full web Vitest rerun with `--pool=forks --maxWorkers=1 --minWorkers=1`: 2361 passed across 238 files in 264.94 s. The existing 15-second timeout, full selection, and assertions were unchanged.
 - Web type-check, lint, and production build passed. Build reports its existing >500 kB chunk warning.
 - Design-manual governance, textbook chapter lint, exemplar check, calculation freshness, handoff check, render check passed.
 - Module inventory initially detected the expected changed model shard; after canonical regeneration, `python -m scripts.build_tools_module_inventory --check` passed.
@@ -31,6 +33,7 @@ The public analysis regression uses representable nonzero noise around a large l
 ## Coordination and blockers
 
 - Issue #5392 lease: session `codex-luna-tools-residual-20260930`; lease and presence receipts are recorded in the worker report.
+- Acknowledged root coordination messages `916cf885-e290-40ce-9568-7670c024e4b5` and `825972e8-fb03-43df-929e-2673510fd518`; receipts are in the worker report.
 - Fleet coordination inbox remained incomplete, with historical warnings and a self-overlap record; old #5389 presence could not be released because Repository_Management rejected a new-identity release. Its prior session identity was left unchanged.
 - Root review and PR CI are pending. Do not mark ready or merge before root review.
 

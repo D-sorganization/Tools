@@ -19,7 +19,7 @@ feature, from proposal to ship. See the `development-logs` section of
 - **PR:** #5394 (draft)
 - **Paths:** `src/rate_of_closure/web/src/model/launchMonitorLongitudinal.ts`, `src/rate_of_closure/web/src/model/launchMonitorLongitudinal.test.ts`, `manuals/tools/manifests/module-inventory/`, `SPEC.md`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`
 - **Started:** 2026-09-30
-- **Last verified:** 2026-09-30 — focused longitudinal tests pass; full web Vitest 2360/2361 (import-boundary scan passed alone after timing out under full-suite load); type-check, lint, build, and required design-manual checks run.
+- **Last verified:** 2026-09-30 — controlled c096 baseline regression RED (0 vs 0.00020716016510533694), candidate focused GREEN (3/3), and one-worker full web Vitest rerun 2361/2361 across 238 files; type-check, lint, build, and required design-manual checks run. Initial two-worker full run retained its single import-boundary timeout; isolated test passed.
 - **Summary:** The merged #5389 optimization retained the covariance/sum-of-squares pass but derived residual variance by subtracting nearly equal aggregates, reporting zero standard error for a representable near-perfect regression with nonzero ordered residuals. Restored the intercept and ordered direct-residual sum of squares, with an independent public-analysis regression test. This is a focused follow-up to merged #5389.
 - **Next step:** root reviews the final diff and draft PR/CI before any merge decision.
 
