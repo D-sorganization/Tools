@@ -1,4 +1,46 @@
-# Current handoff — v1.23.1 release preparation (Tools#5376)
+# Current handoff — longitudinal regression residual variance (Tools#5392)
+
+- Repository: D-sorganization/Tools
+- Working directory: `C:/Users/diete/Repositories/Worktrees/tools-longitudinal-residual-luna-20260930`
+- Branch: `fix/longitudinal-residual-variance-20260930`; commit: SELF; PR: draft follow-up pending
+- Governing issue: #5392; related merged optimization: #5389
+
+## Objective and status
+
+Follow up on current `main` after merged #5389 left a cancellation-prone residual variance shortcut in the longitudinal regression. Preserve its allocation-saving aggregate pass, then compute the residual sum of squares using the ordered direct residuals `(mean - intercept - slope * sessionOrder) ** 2`.
+
+The public analysis regression uses representable nonzero noise around a large linear trend. An independent direct-residual oracle returns standard error `0.00020716016510533694` for player p1; current `main` returned zero. The regression also checks both players' standard errors against the oracle and retains confidence-interval and p-value expectations.
+
+## Files and decisions
+
+- Restored the intercept and ordered direct-residual loop in `launchMonitorLongitudinal.ts`; no formula, tolerance, threshold, identity, or other statistical contract changed.
+- Added the public analysis regression test first; it failed on current `main` because the shortcut returned zero, then passed with the source fix.
+- Regenerated only the canonical web model inventory shard and its root digest.
+- Added only the #5392 SPEC row, after existing rows; existing rows retain their main order.
+- No release/version change. #5389 remains a distinct merged optimization; this follow-up does not modify its closed PR.
+
+## Validation
+
+- Focused longitudinal test: 3 passed.
+- Full web Vitest with max 2 workers: 2360 passed, 1 failed of 2361 because `src/vendored/importBoundary.test.ts` exceeded its existing 15-second timeout under full-suite load. The isolated test then passed (1 passed in 558 ms); timeout unchanged.
+- Web type-check, lint, and production build passed. Build reports its existing >500 kB chunk warning.
+- Design-manual governance, textbook chapter lint, exemplar check, calculation freshness, handoff check, render check passed.
+- Module inventory initially detected the expected changed model shard; after canonical regeneration, `python -m scripts.build_tools_module_inventory --check` passed.
+- Manual QA and publication projection report their existing `unapproved` states with two release blockers; no approval status is claimed.
+
+## Coordination and blockers
+
+- Issue #5392 lease: session `codex-luna-tools-residual-20260930`; lease and presence receipts are recorded in the worker report.
+- Fleet coordination inbox remained incomplete, with historical warnings and a self-overlap record; old #5389 presence could not be released because Repository_Management rejected a new-identity release. Its prior session identity was left unchanged.
+- Root review and PR CI are pending. Do not mark ready or merge before root review.
+
+## Next step
+
+- Review actual final HEAD, diff, and CI status at the draft follow-up PR; root owns merge decisions.
+
+---
+
+# Past handoff — v1.23.1 release preparation (Tools#5376)
 
 - Repository: D-sorganization/Tools
 - Working directory: `C:/Users/diete/Repositories/Worktrees/luna-pr5380-20260929`

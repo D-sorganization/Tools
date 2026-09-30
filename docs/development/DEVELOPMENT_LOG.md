@@ -8,8 +8,20 @@ feature, from proposal to ship. See the `development-logs` section of
 
 - **Portfolio:** infra
 - **WIP limit:** 4
-- **Last audited:** 2026-09-29 by Luna (Tools#5376 release preparation)
-- **Release maintenance:** No material development-log change — release metadata and integration of already merged work do not change feature continuation state.
+- **Last audited:** 2026-09-30 by Luna (Tools#5392 longitudinal residual variance)
+
+### DL-#5392 · Longitudinal regression residual variance
+
+- **State:** in_review
+- **Owner:** codex
+- **Issue:** #5392
+- **Branch:** `fix/longitudinal-residual-variance-20260930`
+- **PR:** draft follow-up pending
+- **Paths:** `src/rate_of_closure/web/src/model/launchMonitorLongitudinal.ts`, `src/rate_of_closure/web/src/model/launchMonitorLongitudinal.test.ts`, `manuals/tools/manifests/module-inventory/`, `SPEC.md`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`
+- **Started:** 2026-09-30
+- **Last verified:** 2026-09-30 — focused longitudinal tests pass; full web Vitest 2360/2361 (import-boundary scan passed alone after timing out under full-suite load); type-check, lint, build, and required design-manual checks run.
+- **Summary:** The merged #5389 optimization retained the covariance/sum-of-squares pass but derived residual variance by subtracting nearly equal aggregates, reporting zero standard error for a representable near-perfect regression with nonzero ordered residuals. Restored the intercept and ordered direct-residual sum of squares, with an independent public-analysis regression test. This is a focused follow-up to merged #5389.
+- **Next step:** root reviews the final diff and draft PR/CI before any merge decision.
 
 ## States
 

@@ -5946,6 +5946,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | 2026-09-30 | #5389 | Optimize loop array allocations in launch stats |
+| 2026-09-30 | #5392 | Preserve ordered direct-residual variance in longitudinal regression so representable noise remains visible in uncertainty estimates. |
 | 2026-09-30 | #5390 | chore(release): bump version to v1.23.2 |
 | 2026-09-30 | #5387 | Rate of Closure dispersion preserves filtering, order, and statistics with loops; web lock patches clear high npm audit findings (2 moderate Vitest findings remain). |
 | 2026-09-27 | n/a | feat(unit_converter): palette-ux-clear-btn-disabled |
