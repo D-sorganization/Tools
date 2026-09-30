@@ -21,11 +21,11 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5385 · Propagate flight termination states and gate landing metrics
 
-- **State:** in_progress
+- **State:** in_review
 - **Owner:** local (agy executor)
 - **Issue:** #5385
 - **Branch:** `fix/tools-flight-termination-5385`
-- **PR:** (pending)
+- **PR:** #5391
 - **Paths:** `src/shared/python/swing_sim/flight/`, `src/rate_of_closure/application/`, `tests/api_baselines/swing_sim_api_baseline.json`
 - **Started:** 2026-09-30
 - **Last verified:** 2026-09-30 — 231 swing_sim/flight and API-stability tests pass; ruff, black, and mypy clean.

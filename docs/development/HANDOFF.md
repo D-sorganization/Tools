@@ -2,7 +2,7 @@
 
 - Repository: D-sorganization/Tools
 - Working directory: `C:/Users/diete/Repositories/Tools`
-- Branch: `fix/tools-flight-termination-5385`; commit: SELF; PR: #5385 (pending)
+- Branch: `fix/tools-flight-termination-5385`; commit: SELF; PR: #5391 (open, targets `main`)
 - Governing issue: Tools#5385 (paired consumer issue: UpstreamDrift#11145)
 
 ## Objective and status
