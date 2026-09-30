@@ -255,3 +255,5 @@
 ## 2026-09-26 - Eliminate Chained flatMap and Array Spread in useMemo
 **Learning:** Using `[...new Set(rows.flatMap(Object.keys))].sort()` inside React `useMemo` hooks allocates thousands of intermediate arrays per render cycle on dynamically sized datasets (such as parsing large telemetry logs), generating severe garbage collection pressure and triggering dropped frames.
 **Action:** Replace `flatMap` and array spread combinations with highly efficient manual iterations: creating a `Set`, iterating rows to `add` explicit keys within a standard `for` loop, and wrapping it with `Array.from(set).sort()` to drastically reduce object churn and intermediate allocations on hot rendering paths.
+## 2026-09-30 - Simplify dispersion aggregation
+**Action:** Replaced the dispersion path's `flatMap`, `map`, `reduce`, and `filter` chain with loops that collect points and accumulate the mean, RMS, and sign counts while preserving sample-deviation calculation. No performance measurements were taken.
