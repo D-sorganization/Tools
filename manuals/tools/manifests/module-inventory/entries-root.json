@@ -691,6 +691,7 @@
           "src/shared/python/sidekick/tests/process_calculators/test_psa_gui.py",
           "src/shared/python/swing_sim/flight/tests/_regional_ground_pipeline_support.py",
           "src/shared/python/swing_sim/flight/tests/test_capability_optimizer.py",
+          "src/shared/python/swing_sim/flight/tests/test_flight_termination.py",
           "src/shared/python/swing_sim/flight/tests/test_ground_bounce_execution.py",
           "src/shared/python/swing_sim/flight/tests/test_ground_transfer.py",
           "src/shared/python/swing_sim/flight/tests/test_launch_deriver.py",

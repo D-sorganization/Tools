@@ -1713,6 +1713,7 @@
           }
         ],
         "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_flight_termination.py",
           "tests/rate_of_closure/test_regional_ground_authority_api.py"
         ],
         "unit_mentions": [],

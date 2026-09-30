@@ -2045,6 +2045,7 @@
           }
         ],
         "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_flight_termination.py",
           "src/shared/python/swing_sim/flight/tests/test_impact_solution_families.py",
           "src/shared/python/swing_sim/flight/tests/test_result_metrics.py"
         ],
@@ -2133,6 +2134,7 @@
           }
         ],
         "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_flight_termination.py",
           "src/shared/python/swing_sim/flight/tests/test_impact_solution_families.py"
         ],
         "unit_mentions": [
@@ -2460,6 +2462,7 @@
           "src/shared/python/swing_sim/flight/tests/test_capability_observation.py",
           "src/shared/python/swing_sim/flight/tests/test_capability_observation_status_contract.py",
           "src/shared/python/swing_sim/flight/tests/test_capability_optimizer.py",
+          "src/shared/python/swing_sim/flight/tests/test_flight_termination.py",
           "src/shared/python/swing_sim/flight/tests/test_impact_solution_families.py",
           "src/shared/python/swing_sim/flight/tests/test_inverse_solver.py",
           "tests/rate_of_closure/test_capability_observation_adapter.py"
@@ -3125,6 +3128,7 @@
           "src/shared/python/swing_sim/flight/tests/test_capability_observation.py",
           "src/shared/python/swing_sim/flight/tests/test_capability_observation_status_contract.py",
           "src/shared/python/swing_sim/flight/tests/test_capability_optimizer.py",
+          "src/shared/python/swing_sim/flight/tests/test_flight_termination.py",
           "src/shared/python/swing_sim/flight/tests/test_impact_solution_families.py",
           "src/shared/python/swing_sim/flight/tests/test_inverse_solver.py",
           "src/shared/python/swing_sim/flight/tests/test_result_contract.py",
