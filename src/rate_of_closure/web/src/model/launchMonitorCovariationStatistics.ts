@@ -45,12 +45,17 @@ export const pearsonCorrelation = (left: number[], right: number[]): number | nu
 export const associationValues = (left: number[], right: number[]): AssociationValues => {
   const pearsonR = pearsonCorrelation(left, right);
   const spearmanR = pearsonCorrelation(ranks(left), ranks(right));
+  // ⚡ Bolt Optimization: Use single-pass loops to compute statistics instead of array reductions
   const leftMean = mean(left);
   const rightMean = mean(right);
-  const denominator = left.reduce((sum, value) => sum + (value - leftMean) ** 2, 0);
-  const slope = denominator > 0
-    ? left.reduce((sum, value, index) => sum + (value - leftMean) * (right[index] - rightMean), 0) / denominator
-    : null;
+  let denominator = 0;
+  let numerator = 0;
+  for (let i = 0; i < left.length; i++) {
+    const leftDiff = left[i] - leftMean;
+    denominator += leftDiff * leftDiff;
+    numerator += leftDiff * (right[i] - rightMean);
+  }
+  const slope = denominator > 0 ? numerator / denominator : null;
   return {
     pearsonR, spearmanR, slope,
     intercept: slope === null ? null : rightMean - slope * leftMean,

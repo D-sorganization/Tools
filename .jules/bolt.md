@@ -1,3 +1,7 @@
+## 2026-09-30 - Prevent GC pressure in longitudinal launch monitor statistics
+**Learning:** High-frequency statistical calculations in `launchMonitorLongitudinal.ts` and `launchMonitorCovariationStatistics.ts` used chained `.map()` and `.reduce()` operations to calculate sums of squares and cross products. This creates significant garbage collection pressure due to generating intermediate arrays and multiple closure allocations per loop.
+**Action:** Always replace chained `.map()` and `.reduce()` with standard single-pass `for` loops in performance-critical statistical kernels. This drastically reduces intermediate object allocation.
+
 ## 2026-09-07 - Replace array spread with mutable push in candidate loops
 **Learning:** In optimization candidate selection loops, using `[...elite, ...refined]` creates O(N^2) memory allocations across iteration rounds. Using `elite.push(...refined)` mutates in-place before sorting and slicing, avoiding garbage collection pauses.
 **Action:** When gathering items across iterations into an elite set or pool, prefer `.push(...)` over `[...arr, ...newItems]`.
@@ -257,3 +261,4 @@
 **Action:** Replace `flatMap` and array spread combinations with highly efficient manual iterations: creating a `Set`, iterating rows to `add` explicit keys within a standard `for` loop, and wrapping it with `Array.from(set).sort()` to drastically reduce object churn and intermediate allocations on hot rendering paths.
 ## 2026-09-30 - Simplify dispersion aggregation
 **Action:** Replaced the dispersion path's `flatMap`, `map`, `reduce`, and `filter` chain with loops that collect points and accumulate the mean, RMS, and sign counts while preserving sample-deviation calculation. No performance measurements were taken.
+>>>>>>> origin/main
