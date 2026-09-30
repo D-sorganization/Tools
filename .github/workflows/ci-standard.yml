@@ -765,6 +765,26 @@ jobs:
           python -m pip check
           python -c "import cv2, numpy, scipy; from scipy.signal import butter; assert cv2.__version__; assert numpy.__version__; assert scipy.__version__; butter(2, 0.2)"
 
+      - name: Provision bundled Chromium for unit-converter regressions
+        if: ${{ matrix.shard == 'src-rest' }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          export PLAYWRIGHT_BROWSERS_PATH="$RUNNER_TEMP/playwright-browsers"
+          echo "PLAYWRIGHT_BROWSERS_PATH=$PLAYWRIGHT_BROWSERS_PATH" >> "$GITHUB_ENV"
+          playwright_python="$RUNNER_TEMP/ci-venv/bin/python"
+          if [ "$(id -u)" -eq 0 ]; then
+            flock /tmp/d-sorg-apt-install.lock \
+              "$playwright_python" -m playwright install-deps chromium
+          elif command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
+            sudo -n flock /tmp/d-sorg-apt-install.lock \
+              "$playwright_python" -m playwright install-deps chromium
+          else
+            echo "::error::Cannot install Chromium system dependencies without root or passwordless sudo"
+            exit 1
+          fi
+          "$playwright_python" -m playwright install chromium
+
       - name: Build tools_core Rust wheel
         if: ${{ matrix.python-version == '3.11' && steps.toolscore_wheel_state.outputs.need_build == 'true' }}
         env:
