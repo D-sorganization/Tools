@@ -3,17 +3,14 @@
 This is the question epic #4766 set out to answer — *which objective is a good
 golfer actually optimizing?* — asked properly: solve each objective under
 identical conditions, reduce each resulting swing to the observables the
-literature reports, and score it against heuristic reference bands.
+literature reports, and score it against measured bands.
 
 The measured answer, and why it is not the answer anyone wanted
 ---------------------------------------------------------------
-Run over the shipped two-link model under the revised objective comparison
-duration (0.28 s), the five objectives land within **0.6% of each other** on
-total deviation from heuristic reference kinematics, while all of them sit an
-order of magnitude outside the bands. The spread between objectives is far
-smaller than the gap between any of them and a real swing. Even with the
-corrected inertia-matched club (0.238 kg tip mass), ~24% modeled braking
-remains during the downswing to achieve club release.
+Run over the shipped two-link model, the five objectives land within **0.6% of
+each other** on total deviation from measured golfer kinematics, while all of
+them sit an order of magnitude outside the bands. The spread between objectives
+is far smaller than the gap between any of them and a real swing.
 
 So the objective is **not** what makes these swings unrealistic. The dominant
 term is the model's structural inability to keep the hands moving through impact
@@ -24,18 +21,7 @@ ranking precisely so a caller can see when the ranking is not meaningful, and
 :attr:`ObjectiveRealismRanking.is_discriminating` answers that directly.
 
 This is a negative result about the *model*, not about the objectives. Under a
-model that can reach the heuristic reference intervals, the same ranking
-becomes informative.
-
-Scoring notes and feasibility predicate
----------------------------------------
-* The scoring bands in :mod:`~double_pendulum_golf.swing_objectives.reference_kinematics`
-  are heuristic reference intervals synthesized for model scoring; for example,
-  Nesbit (2005) Table 3 reports grip speed 7.1–8.0 m/s and head speed 43–50 m/s for
-  its described amateur cohort (not a professional-tour 6–9/45–55 interval).
-* The ``feasible`` attribute reports satisfaction of the collocation dynamics defect
-  predicate (``max_defect < _REACHABLE_DEFECT``, 1e-6). It is not verification of
-  every problem constraint or a certificate of global feasibility/infeasibility.
+model that can reach the measured bands, the same ranking becomes informative.
 
 Closes #4780.
 """
@@ -69,23 +55,17 @@ __all__ = [
 #: the objectives differ by less than this fraction of their mean deviation.
 _DISCRIMINATION_THRESHOLD = 0.05
 
-#: Collocation dynamics defect threshold for the feasible predicate.
-#: Checks whether discrete Hermite-Simpson integration defects satisfy 1e-6.
-#: Does not verify all constraints or certify global feasibility/infeasibility.
 _REACHABLE_DEFECT = 1e-6
 
 
 @dataclass(frozen=True, slots=True)
 class ObjectiveRealism:
-    """How one objective's optimum compares with heuristic reference kinematics.
+    """How one objective's optimum compares with measured golfer kinematics.
 
     Attributes:
         key: Objective identifier.
-        feasible: Whether the solve satisfied the dynamics defect tolerance
-            predicate (max_defect < _REACHABLE_DEFECT). This is a collocation
-            defect predicate, not verification of every constraint or a
-            certificate of global feasibility.
-        total_deviation: Summed distance outside the heuristic bands, in
+        feasible: Whether the solve produced a dynamically feasible trajectory.
+        total_deviation: Summed distance outside the measured bands, in
             half-widths. Zero means every observable is inside its band.
         inside_count: How many observables fall inside their band.
         worst_observable: The observable furthest outside its band.

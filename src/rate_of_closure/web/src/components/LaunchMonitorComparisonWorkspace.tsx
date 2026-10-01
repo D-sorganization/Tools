@@ -44,20 +44,55 @@ export function LaunchMonitorComparisonWorkspace({ rows, sourceName }: Props) {
     const tmRows = rows.filter((r) => String(r.monitor_vendor ?? "").toLowerCase().includes("trackman"));
     const fsRows = rows.filter((r) => String(r.monitor_vendor ?? "").toLowerCase().includes("foresight"));
 
-    const keys = [...new Set(rows.flatMap(Object.keys))];
-    for (const key of keys) {
+    // ⚡ Bolt Optimization: Replace chained flatMap, map, filter, and reduce with single-pass loops
+    // to eliminate intermediate array allocations inside this high-frequency useMemo hook.
+    const keySet = new Set<string>();
+    for (let i = 0; i < rows.length; i++) {
+      const rowKeys = Object.keys(rows[i]);
+      for (let j = 0; j < rowKeys.length; j++) {
+        keySet.add(rowKeys[j]);
+      }
+    }
+    const keys = Array.from(keySet);
+
+    for (let i = 0; i < keys.length; i++) {
+      const key = keys[i];
       if (tmRows.length > 0) {
-        const nums = tmRows.map((r) => Number(r[key])).filter((v) => Number.isFinite(v));
-        if (nums.length > 0) tm[key] = nums.reduce((a, b) => a + b, 0) / nums.length;
+        let sum = 0;
+        let count = 0;
+        for (let j = 0; j < tmRows.length; j++) {
+          const v = Number(tmRows[j][key]);
+          if (Number.isFinite(v)) {
+            sum += v;
+            count++;
+          }
+        }
+        if (count > 0) tm[key] = sum / count;
       }
       if (fsRows.length > 0) {
-        const nums = fsRows.map((r) => Number(r[key])).filter((v) => Number.isFinite(v));
-        if (nums.length > 0) fs[key] = nums.reduce((a, b) => a + b, 0) / nums.length;
+        let sum = 0;
+        let count = 0;
+        for (let j = 0; j < fsRows.length; j++) {
+          const v = Number(fsRows[j][key]);
+          if (Number.isFinite(v)) {
+            sum += v;
+            count++;
+          }
+        }
+        if (count > 0) fs[key] = sum / count;
       }
       if (tmRows.length === 0 && fsRows.length === 0) {
-        const nums = rows.map((r) => Number(r[key])).filter((v) => Number.isFinite(v));
-        if (nums.length > 0) {
-          const avg = nums.reduce((a, b) => a + b, 0) / nums.length;
+        let sum = 0;
+        let count = 0;
+        for (let j = 0; j < rows.length; j++) {
+          const v = Number(rows[j][key]);
+          if (Number.isFinite(v)) {
+            sum += v;
+            count++;
+          }
+        }
+        if (count > 0) {
+          const avg = sum / count;
           tm[key] = avg;
           fs[key] = avg;
         }

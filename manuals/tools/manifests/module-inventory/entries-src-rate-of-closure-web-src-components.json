@@ -2288,10 +2288,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9360,
+      "bytes_lf": 10121,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3bba76e2eff69a7dda057e7094a004a1902195b9b938b4781ee7112be5766f30",
+      "content_sha256_lf": "bdb621c31d25c1c0e89d43559b21eb4d7be175270eb1440aea620ca85be46353",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-COMPONENTS-LAUNCHMONITORCOMPARISONWORKSPACE-TSX-287C62688187",
       "language": "typescript-react",
