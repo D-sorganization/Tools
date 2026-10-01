@@ -279,7 +279,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-flow-rate-converter.json"
     },
     {
-      "content_sha256_lf": "7fe7e29014cce7e3bdf7d4603408c9ff7294811958b7dcf525cacc1cf487d6cc",
+      "content_sha256_lf": "dd2ccc92bfdbd176fb0e129626c307ec5d444c19fb6d726d614fe9a952e085b0",
       "entry_count": 14,
       "package": "src/folder_packer_pro",
       "path": "manuals/tools/manifests/module-inventory/entries-src-folder-packer-pro.json"
@@ -945,7 +945,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-video-analyzer.json"
     },
     {
-      "content_sha256_lf": "f92ad1885bbf46dec31252779e1413a2797924539470cef1fd2289b86c9d73e4",
+      "content_sha256_lf": "2e9a60f06119cd496fa18878de5ed3f9a49b70f98178130798e9402f723adb3f",
       "entry_count": 33,
       "package": "src/web_applications",
       "path": "manuals/tools/manifests/module-inventory/entries-src-web-applications.json"
