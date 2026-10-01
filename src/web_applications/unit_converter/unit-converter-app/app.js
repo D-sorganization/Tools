@@ -77,6 +77,14 @@ function loadTheme() {
   document.documentElement.setAttribute('data-theme', savedTheme);
   if (themeToggle) {
     themeToggle.setAttribute('aria-pressed', savedTheme === 'dark' ? 'true' : 'false');
+    themeToggle.setAttribute(
+      'aria-label',
+      savedTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+    );
+    themeToggle.setAttribute(
+      'title',
+      savedTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+    );
   }
 }
 
@@ -87,6 +95,14 @@ function toggleTheme() {
   localStorage.setItem('theme', newTheme);
   if (themeToggle) {
     themeToggle.setAttribute('aria-pressed', newTheme === 'dark' ? 'true' : 'false');
+    themeToggle.setAttribute(
+      'aria-label',
+      newTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+    );
+    themeToggle.setAttribute(
+      'title',
+      newTheme === 'dark' ? 'Switch to light mode' : 'Switch to dark mode'
+    );
   }
 }
 
@@ -479,6 +495,10 @@ function addToHistory(fromValue, fromUnit, toValue, toUnit, category) {
 }
 
 function clearHistory() {
+  if (clearHistoryButton.getAttribute('aria-disabled') === 'true') {
+    return;
+  }
+
   if (clearHistoryButton.classList.contains('confirming')) {
     conversionHistory = [];
     localStorage.removeItem('conversionHistory');
@@ -505,11 +525,13 @@ function resetClearButton() {
 function renderHistory() {
   if (conversionHistory.length === 0) {
     recentList.innerHTML = '<p class="empty-state">No recent conversions</p>';
-    clearHistoryButton.disabled = true;
+    clearHistoryButton.setAttribute('aria-disabled', 'true');
+    clearHistoryButton.setAttribute('title', 'No history to clear');
     return;
   }
 
-  clearHistoryButton.disabled = false;
+  clearHistoryButton.setAttribute('aria-disabled', 'false');
+  clearHistoryButton.removeAttribute('title');
   recentList.innerHTML = '';
   conversionHistory.forEach((item, index) => {
     const timeAgo = formatTimeAgo(item.timestamp);
@@ -1044,7 +1066,7 @@ function setupEventListeners() {
 
   const customUnitForm = document.getElementById('customUnitForm');
   customCategorySelect.addEventListener('change', populateReferenceUnits);
-  customUnitForm.addEventListener('submit', (e) => {
+  customUnitForm.addEventListener('submit', e => {
     e.preventDefault();
     addCustomUnit();
   });

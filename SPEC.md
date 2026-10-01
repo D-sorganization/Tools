@@ -5945,6 +5945,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 <!-- prettier-ignore-start -->
 
 | Date       | PR         | Changes    |
+| 2026-10-01 | n/a | Improved accessibility of clear history & theme toggle buttons |
 | 2026-10-01 | #99999 | ⚡ Bolt: Eliminate flatMap and array spread in LaunchMonitorComparisonWorkspace useMemo |
 | 2026-09-30 | #5389 | Optimize loop array allocations in launch stats |
 | 2026-09-30 | #5394 | Preserve ordered direct-residual variance in longitudinal regression so representable noise remains visible in uncertainty estimates. |
