@@ -262,3 +262,6 @@
 ## 2026-09-30 - Simplify dispersion aggregation
 **Action:** Replaced the dispersion path's `flatMap`, `map`, `reduce`, and `filter` chain with loops that collect points and accumulate the mean, RMS, and sign counts while preserving sample-deviation calculation. No performance measurements were taken.
 >>>>>>> origin/main
+## $(date +%Y-%m-%d) - Eliminate Chained flatMap and Array Spread in useMemo
+**Learning:** Using `[...new Set(rows.flatMap(Object.keys))]` inside React `useMemo` hooks allocates thousands of intermediate arrays per render cycle on dynamically sized datasets, generating severe garbage collection pressure and triggering dropped frames on hot rendering paths.
+**Action:** Replace `flatMap` and array spread combinations with highly efficient manual iterations: creating a `Set`, explicitly iterating rows and columns via standard `for` loops, and wrapping it with `Array.from(set)` to drastically reduce object churn and intermediate allocations.

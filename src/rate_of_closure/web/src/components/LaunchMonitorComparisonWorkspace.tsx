@@ -44,7 +44,15 @@ export function LaunchMonitorComparisonWorkspace({ rows, sourceName }: Props) {
     const tmRows = rows.filter((r) => String(r.monitor_vendor ?? "").toLowerCase().includes("trackman"));
     const fsRows = rows.filter((r) => String(r.monitor_vendor ?? "").toLowerCase().includes("foresight"));
 
-    const keys = [...new Set(rows.flatMap(Object.keys))];
+    // ⚡ Bolt Optimization: Replace flatMap and array spread with a single-pass loop to eliminate intermediate array allocations and GC pressure in useMemo.
+    const keysSet = new Set<string>();
+    for (let i = 0; i < rows.length; i++) {
+      const rowKeys = Object.keys(rows[i]);
+      for (let j = 0; j < rowKeys.length; j++) {
+        keysSet.add(rowKeys[j]);
+      }
+    }
+    const keys = Array.from(keysSet);
     for (const key of keys) {
       if (tmRows.length > 0) {
         const nums = tmRows.map((r) => Number(r[key])).filter((v) => Number.isFinite(v));
