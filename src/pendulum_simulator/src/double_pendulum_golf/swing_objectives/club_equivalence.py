@@ -1,7 +1,7 @@
 """Converting a real golf club into the point-mass-at-tip club this model uses.
 
 :func:`double_pendulum_golf.physics.mass_matrix` treats segment 2 as a point
-mass at the tip of the shaft. A real club is not that: a driver is about 0.31 kg
+mass at the tip of the shaft. A real club is not that: a driver is about 0.310 kg
 with its centre of mass roughly three quarters of the way down. Those two facts
 have to be reconciled, and reconciling them **wrongly** is what produced the
 incorrect conclusion recorded in #4785.
@@ -9,42 +9,74 @@ incorrect conclusion recorded in #4785.
 The mistake and the fix
 -----------------------
 The shipped preset lumped the real club's *mass* at the tip. That is the wrong
-invariant. What governs the swing is the club's inertia about the wrist,
+invariant. What governs the uncoupled wrist row is the club's inertia about the
+wrist,
 
 .. code-block:: text
 
     delta = I_com + m * r^2          (parallel axis)
 
-and the arm/club coupling ``mu = m * L1 * r`` that appears in every centrifugal
-and Coriolis term. Putting a driver's full 0.31 kg at the tip of a 1.10 m shaft
-gives ``delta = 0.605`` against the real ``0.288`` — **2.1x too much** — and
-doubles the coupling with it. Since the coupling is what drives the wrist *open*
-and fights the release, doubling it forces the optimizer into heavy hub-torque
-reversal, which stops the hands. That artifact was reported as a structural limit
-of the model.
+Putting a driver's full 0.310 kg at the tip of a 1.10 m modeled shaft gives
+``delta = 0.3751 kg m^2`` (0.310 * 1.10^2 = 0.3751) against the real ``0.288`` —
+about 1.30x too much. The previously stated 0.605 value belongs to the historical
+0.500 kg preset (0.500 * 1.10^2 = 0.605 kg m^2), which overstated wrist inertia by
+2.1x.
 
-Matching the inertia instead gives an equivalent tip mass
+Matching the wrist-row inertia gives an equivalent tip mass
 
 .. code-block:: text
 
     me = delta_real / L2_model^2
 
-which for a driver on a 1.10 m modelled shaft is **0.238 kg**, not 0.50. With
-that correction the same model, optimizer and objective produce 50.8 m/s of
+which for a driver on a 1.10 m modelled shaft is **0.238 kg**, not 0.50 or 0.310.
+With that correction the same model, optimizer and objective produce 50.8 m/s of
 clubhead speed with 7.95 m/s of hand speed and a club/arm rate ratio of 3.18 —
-all three inside the bands in
+inside the heuristic reference intervals in
 :mod:`double_pendulum_golf.swing_objectives.reference_kinematics`.
 
 The equivalent mass is a *modelling quantity*, not a claim about how much a club
-weighs. It is the mass that, placed at the tip, swings like the real club.
+weighs. It is the mass that, placed at the tip, reproduces the wrist-row inertia
+delta of the real club.
 
-Club measurements follow the clubfitting convention of reporting inertia about
-the butt of the grip; see `Jorgensen 1970
-<https://doi.org/10.1119/1.1976419>`_ and `Cochran & Stobbs 1968
-<https://archive.org/details/searchforperfect0000coch>`_ for the double-pendulum
-context, and `MacKenzie & Sprigings 2009
+Limits of wrist-row equivalence: coupling and mass matrix
+---------------------------------------------------------
+Matching the wrist-row inertia delta does **not** match the full mass matrix or
+coupling. For an axial centre of mass (COM) at distance ``r``, the real arm/club
+coupling is ``mu_real = m * L1 * r``. In the equivalent point-mass model with mass
+``me = delta / L2^2`` at tip distance ``L2``, the modeled coupling is:
+
+.. code-block:: text
+
+    mu_model = me * L1 * L2 = (L1 / L2) * delta = (L1 / L2) * (I_com + m * r^2)
+
+After matching delta, the residual coupling error is:
+
+.. code-block:: text
+
+    mu_model - mu_real = (L1 / L2) * [ I_com - m * r * (L2 - r) ]
+
+Notice that the bracket is identically the factor appearing in the
+impact-optimality theorem (:mod:`double_pendulum_golf.swing_objectives.impact_optimality`).
+Furthermore, the diagonal arm inertia term M11 differs because ``(m1 + me) * L1^2``
+does not equal ``(m1 + m) * L1^2``. Matching the single scalar delta reproduces the
+uncoupled wrist inertia M22, but does not match the full mass matrix or coupling.
+
+Distinction between butt properties, wrist origin, and head length
+------------------------------------------------------------------
+Club measurements (such as :data:`DRIVER_SPEC`) follow the clubfitting
+convention of reporting inertia and COM referenced to the physical butt of the
+grip; see `Jorgensen 1970 <https://doi.org/10.1119/1.1976419>`_ and `Cochran &
+Stobbs 1968 <https://archive.org/details/searchforperfect0000coch>`_ for the
+double-pendulum context, and `MacKenzie & Sprigings 2009
 <https://doi.org/10.1007/s12283-009-0020-9>`_ for club properties in a
 forward-dynamics golfer.
+
+In contrast:
+* The model's wrist origin is the joint pivot axis, which lies several centimeters
+  down the grip from the physical butt where the hands grasp the club.
+* The physical club length (e.g. 1.143 m / 45 in butt-to-sole) differs from the
+  modeled second-link length ``L2_model`` (e.g. 1.10 m), which is the distance from
+  the wrist pivot axis to the modeled head center of mass / impact point at the tip.
 
 Closes #4785.
 """
@@ -61,6 +93,7 @@ __all__ = [
     "SEVEN_IRON_SPEC",
     "wrist_inertia",
     "equivalent_tip_mass",
+    "coupling_error",
 ]
 
 
@@ -136,8 +169,9 @@ SEVEN_IRON_SPEC = RealClubSpec(
 def wrist_inertia(club: RealClubSpec) -> float:
     """Return the club's moment of inertia about the wrist, in kg*m^2.
 
-    This is the quantity a point-mass-at-tip model has to reproduce, because it
-    is what sets both the wrist-row mass-matrix term and the arm/club coupling.
+    This is the quantity a point-mass-at-tip model reproduces for the wrist-row
+    mass-matrix term M22. Note that matching this term does not match the full
+    mass matrix or arm/club coupling.
 
     Args:
         club: Measured club properties.
@@ -158,9 +192,9 @@ def equivalent_tip_mass(club: RealClubSpec, shaft_length_m: float) -> float:
     club's wrist inertia gives the equivalent mass.
 
     This is deliberately **not** the club's actual mass. For a driver on a 1.10 m
-    modelled shaft it is 0.238 kg against a real 0.310 kg; using the real mass
-    would overstate the wrist inertia and the arm/club coupling by roughly 2.1x
-    and drive the optimizer into the artifact described in #4785.
+    modelled shaft it is 0.238 kg against a real 0.310 kg; putting the real 0.310 kg
+    at the tip gives an inertia of 0.3751 kg m^2 (1.30x), whereas the historical
+    0.500 kg preset gave 0.605 kg m^2 (2.10x) and severely distorted coupling.
 
     Args:
         club: Measured club properties.
@@ -175,3 +209,37 @@ def equivalent_tip_mass(club: RealClubSpec, shaft_length_m: float) -> float:
     if not (shaft_length_m > 0.0 and np.isfinite(shaft_length_m)):
         raise ValueError(f"shaft_length_m must be positive, got {shaft_length_m}")
     return float(wrist_inertia(club) / shaft_length_m**2)
+
+
+def coupling_error(
+    club: RealClubSpec, arm_length_m: float, shaft_length_m: float
+) -> float:
+    """Return the coupling error between the equivalent point-mass model and real club.
+
+    For an axial COM, after matching the wrist-row inertia delta = I_com + m*r^2
+    via equivalent tip mass me = delta / L2^2, the modeled arm/club coupling is
+    mu_model = me * L1 * L2 = (L1 / L2) * delta.
+    The real arm/club coupling is mu_real = m * L1 * r.
+    The coupling error is:
+        mu_model - mu_real = (L1 / L2) * [ I_com - m * r * (L2 - r) ]
+
+    Args:
+        club: Measured real club specification.
+        arm_length_m: Modeled arm length L1 from hub to wrist in m.
+        shaft_length_m: Modeled shaft length L2 from wrist to tip in m.
+
+    Returns:
+        Coupling error (mu_model - mu_real) in kg*m^2.
+
+    Pre: arm_length_m and shaft_length_m are positive and finite.
+    Post: returned value is finite.
+    """
+    if not (arm_length_m > 0.0 and np.isfinite(arm_length_m)):
+        raise ValueError(f"arm_length_m must be positive, got {arm_length_m}")
+    if not (shaft_length_m > 0.0 and np.isfinite(shaft_length_m)):
+        raise ValueError(f"shaft_length_m must be positive, got {shaft_length_m}")
+    ratio = arm_length_m / shaft_length_m
+    bracket = club.inertia_about_com_kgm2 - club.mass_kg * club.com_m * (
+        shaft_length_m - club.com_m
+    )
+    return float(ratio * bracket)

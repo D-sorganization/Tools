@@ -16,7 +16,36 @@ independent choices the optimizer happens to combine.
 
 That coupling is structural, and :func:`hand_speed_frontier` measures its price:
 sweep a floor on hand speed at impact, and watch clubhead speed fall and then
-feasibility disappear entirely.
+the collocation dynamics defect exceed threshold.
+
+Experiment settings and modeled braking
+---------------------------------------
+Historical parameter sweep notes:
+* The original frontier exploration evaluated downswings at a duration of 0.36 s
+  with +/- 250 N*m hub torque limits.
+* The revised objective comparison uses a downswing duration of 0.28 s.
+* In the corrected clubhead mass sweep (0.238 kg equivalent tip mass), approximately
+  24% modeled braking remains: even with the corrected club coupling, the optimizer
+  still reverses hub torque for roughly a quarter of the downswing to achieve club
+  release at impact in this planar fixed-hub geometry.
+
+Dynamics-defect predicate meaning
+---------------------------------
+The ``reachable`` attribute evaluates the predicate ``result.max_defect < _REACHABLE_DEFECT``
+(where ``_REACHABLE_DEFECT = 1e-6``). This predicate strictly checks that the maximum
+discrete collocation defect along the trajectory satisfies the Hermite-Simpson
+integration tolerance.
+
+Importantly:
+* A dynamics-defect threshold is **not** verification of every problem constraint
+  (e.g., path inequality constraints, boundary state tolerances, or actuator rate bounds).
+* It is **not** a certificate of global reachability or global infeasibility of the
+  underlying continuous optimal control problem. When the numerical NLP solver
+  terminates with defects exceeding the threshold, it records solver failure under
+  the specific grid transcription and initial guess, not a mathematical proof that no
+  feasible trajectory exists.
+Legacy results remain defined by this defect predicate; any metric or solver behavior
+changes must be proposed and tested separately.
 
 Why the obvious fixes do not work
 ---------------------------------
@@ -26,9 +55,9 @@ Why the obvious fixes do not work
   club moves it forward.
 * **Hill-type actuation limits** — see
   :mod:`double_pendulum_golf.swing_objectives.actuation`. They stop the hub
-  torque from reversing, which is right, but then the club never releases and
-  the impact posture becomes unreachable. They fix the symptom and expose the
-  real constraint.
+  torque from reversing, which is right, but the resulting candidates carry
+  order-one dynamics defects (~1.0), preventing their presentation as feasible
+  or measured swings.
 
 What the literature says is missing is a *moving hub*: the torso keeps rotating
 through impact, and the hands pull inward along a shortening radius
@@ -66,7 +95,9 @@ __all__ = [
 
 FloatArray = npt.NDArray[np.float64]
 
-#: Largest dynamics defect at which a frontier point is still called reachable.
+#: Collocation dynamics defect threshold for the reachable predicate.
+#: Checks whether discrete Hermite-Simpson integration defects satisfy 1e-6.
+#: Does not verify all constraints or certify global reachability/infeasibility.
 _REACHABLE_DEFECT = 1e-6
 
 _RAD_TO_DEG = 180.0 / np.pi
@@ -126,7 +157,10 @@ class FrontierPoint:
 
     Attributes:
         hand_speed_floor_ms: The floor that was imposed.
-        reachable: Whether the solver found a dynamically feasible trajectory.
+        reachable: Whether the solution satisfied the dynamics defect tolerance
+            predicate (max_defect < _REACHABLE_DEFECT). This is a collocation
+            defect predicate, not verification of every constraint or a
+            certificate of global reachability/infeasibility.
         max_defect: Largest collocation defect at the returned point.
         clubhead_speed_ms: Clubhead speed achieved at impact.
         hand_speed_ms: Hand speed achieved at impact.
@@ -207,8 +241,9 @@ def hand_speed_frontier(
     """Measure clubhead speed against an imposed floor on hand speed at impact.
 
     Each floor is solved as its own clubhead-speed maximisation. Rising floors
-    buy realism and cost speed, until the impact posture stops being reachable
-    at all — which is the structural result this module exists to record.
+    buy realism and cost speed, until the collocation dynamics defect exceeds
+    the tolerance threshold (_REACHABLE_DEFECT) — which is the numerical price
+    under this collocation transcription that this module exists to record.
 
     Args:
         config: Base downswing configuration; its ``min_hand_speed_ms`` is
