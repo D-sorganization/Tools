@@ -350,10 +350,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 2273,
+      "bytes_lf": 3010,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d6cdaca98dbd92cd95b18fc8b37600c795b23035ac2ee600ced15bcd4c754fcc",
+      "content_sha256_lf": "cc8972c41b34ac61b9a55d4c9344100a1aa266ed63a6b9f59cf37bc22c4d8dee",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-FOLDER-PACKER-PRO-ENCRYPTION-PY-E6058F750ECA",
       "language": "python",
