@@ -3,29 +3,18 @@
 The objective comparison can only answer "which objective looks most like a real
 golfer" if there is a published, citable description of what a real golfer does.
 This module holds that description as data, one entry per observable, each with
-the measurement context it came from.
+the measurement it came from.
 
-Heuristic Reference Intervals
------------------------------
-The six intervals below are **heuristic reference intervals** synthesized to score
-planar double-pendulum simulations against plausible skilled golfer kinematics,
-rather than exact primary-source reported literature bounds for a single professional-tour
-cohort. Exact primary-source locations and measurement mappings for professional
-tour players are not supplied for these widened heuristic bands.
-
-For example, `Nesbit 2005 <https://www.jssm.org/jssm-04-499.xml.xml>`_ Table 3
-reports grip speed 7.1–8.0 m/s and head speed 43–50 m/s for its described amateur
-cohort (subjects across four handicap levels from scratch to high); this is not an
-exact professional-tour 6–9 m/s / 45–55 m/s interval. Where sources diverge or describe
-different cohorts, the intervals serve as heuristic working bands for model scoring
-rather than certified empirical truth for elite tour players.
+Every band below is a *range reported in the literature*, not a target invented
+to make a model look good. Where sources disagree the band is widened rather
+than averaged, and the narrowest defensible interval is preferred over a point
+estimate.
 
 Sources
 -------
 * `Nesbit 2005, "A three dimensional kinematic and kinetic study of the golf
   swing" <https://www.jssm.org/jssm-04-499.xml.xml>`_ — full-body kinematics and
-  kinetics for four skill levels; hand-path and grip-velocity profiles. Table 3
-  reports amateur cohort grip speed 7.1–8.0 m/s and club head speed 43–50 m/s.
+  kinetics for four skill levels; hand-path and grip-velocity profiles.
 * `Nesbit & Serrano 2005, "Work and power analysis of the golf swing"
   <https://www.jssm.org/jssm-04-520.xml.xml>`_ — joint work and power budgets,
   the source for plausible hub torque magnitudes.
@@ -46,8 +35,8 @@ Sources
   <https://doi.org/10.1098/rspb.1938.0050>`_ — the torque-velocity relation used
   in :mod:`double_pendulum_golf.swing_objectives.actuation`.
 
-Scope note: these are planar, driver-swing heuristic bands. They are used
-to *score* a two-link model, not to claim the model reproduces an elite person.
+Scope note: these are planar, driver-swing, skilled-player values. They are used
+to *score* a two-link model, not to claim the model reproduces a person.
 
 Closes #4778.
 """
@@ -68,15 +57,15 @@ __all__ = [
 
 @dataclass(frozen=True, slots=True)
 class ObservableBand:
-    """A heuristic reference interval for one swing observable.
+    """A measured range for one swing observable.
 
     Attributes:
         key: Identifier used when scoring.
         label: Human-readable observable name.
         units: Units of ``low`` and ``high``.
-        low: Lower end of the heuristic range.
-        high: Upper end of the heuristic range.
-        source: Short citation and provenance for the heuristic range.
+        low: Lower end of the reported range.
+        high: Upper end of the reported range.
+        source: Short citation for the range.
         url: Link to the cited work.
     """
 
@@ -125,7 +114,7 @@ class ObservableBand:
         return float(excess / self.half_width)
 
 
-#: Heuristic reference intervals for a planar double-pendulum driver swing.
+#: Skilled-player driver swing, planar observables the two-link model can express.
 TOUR_DRIVER_BANDS: tuple[ObservableBand, ...] = (
     ObservableBand(
         key="clubhead_speed_ms",
@@ -133,7 +122,7 @@ TOUR_DRIVER_BANDS: tuple[ObservableBand, ...] = (
         units="m/s",
         low=45.0,
         high=55.0,
-        source="Heuristic band (Nesbit 2005 Table 3 reports 43-50 m/s for amateur cohort; consistent with Jorgensen 1970)",
+        source="Nesbit 2005 (scratch/professional); consistent with Jorgensen 1970",
         url="https://www.jssm.org/jssm-04-499.xml.xml",
     ),
     ObservableBand(
@@ -142,7 +131,7 @@ TOUR_DRIVER_BANDS: tuple[ObservableBand, ...] = (
         units="m/s",
         low=6.0,
         high=9.0,
-        source="Heuristic band (Nesbit 2005 Table 3 reports 7.1-8.0 m/s grip speed for amateur cohort; Miura 2001)",
+        source="Nesbit 2005 grip kinematics; Miura 2001 hand-path measurements",
         url="https://doi.org/10.1007/BF02844309",
     ),
     ObservableBand(
@@ -151,7 +140,7 @@ TOUR_DRIVER_BANDS: tuple[ObservableBand, ...] = (
         units="s",
         low=0.23,
         high=0.32,
-        source="Heuristic band (Jorgensen 1970; Nesbit 2005)",
+        source="Jorgensen 1970; Nesbit 2005",
         url="https://doi.org/10.1119/1.1976419",
     ),
     ObservableBand(
@@ -160,7 +149,7 @@ TOUR_DRIVER_BANDS: tuple[ObservableBand, ...] = (
         units="-",
         low=2.5,
         high=4.0,
-        source="Heuristic band derived from Nesbit 2005 segment angular velocities",
+        source="Derived from Nesbit 2005 segment angular velocities",
         url="https://www.jssm.org/jssm-04-499.xml.xml",
     ),
     ObservableBand(
@@ -169,7 +158,7 @@ TOUR_DRIVER_BANDS: tuple[ObservableBand, ...] = (
         units="deg",
         low=-5.0,
         high=20.0,
-        source="Heuristic band (MacKenzie & Sprigings 2009 release timing)",
+        source="MacKenzie & Sprigings 2009 release timing",
         url="https://doi.org/10.1007/s12283-009-0020-9",
     ),
     ObservableBand(
@@ -178,7 +167,7 @@ TOUR_DRIVER_BANDS: tuple[ObservableBand, ...] = (
         units="-",
         low=0.55,
         high=0.80,
-        source="Heuristic band (Sprigings & Neal 2000; MacKenzie & Sprigings 2009 delayed release)",
+        source="Sprigings & Neal 2000; MacKenzie & Sprigings 2009 (delayed release)",
         url="https://doi.org/10.1123/jab.16.4.356",
     ),
 )

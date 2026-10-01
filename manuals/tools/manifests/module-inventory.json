@@ -279,7 +279,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-flow-rate-converter.json"
     },
     {
-      "content_sha256_lf": "dd2ccc92bfdbd176fb0e129626c307ec5d444c19fb6d726d614fe9a952e085b0",
+      "content_sha256_lf": "7fe7e29014cce7e3bdf7d4603408c9ff7294811958b7dcf525cacc1cf487d6cc",
       "entry_count": 14,
       "package": "src/folder_packer_pro",
       "path": "manuals/tools/manifests/module-inventory/entries-src-folder-packer-pro.json"
@@ -393,7 +393,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
     {
-      "content_sha256_lf": "3f92fccb85b2957d9beda8a0503ccbf2e80e45e7a38531458f9fb3fde5c25d8b",
+      "content_sha256_lf": "0f19faf5d1dc63715ab2bdb04e5ae85689d0586c415fe486598b44c04b5127fc",
       "entry_count": 167,
       "package": "src/pendulum_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pendulum-simulator.json"
@@ -525,7 +525,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src.json"
     },
     {
-      "content_sha256_lf": "f00dce01a52df2d8d81bef4b6559af13da1b22a3b67e0819d39bd294d4a7a7c1",
+      "content_sha256_lf": "bd94889bd75746d325324dacd63e8be075bb41b49cd459cad4913184488f8929",
       "entry_count": 183,
       "package": "src/rate_of_closure/web/src/components",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-components.json"
