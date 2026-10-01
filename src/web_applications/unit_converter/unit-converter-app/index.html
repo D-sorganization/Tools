@@ -400,7 +400,13 @@
         <div class="recent-section">
           <div class="recent-header" aria-live="polite">
             <h2 class="recent-title">Recent Conversions</h2>
-            <button id="clearHistory" class="clear-button" aria-label="Clear conversion history" disabled>
+            <button
+              id="clearHistory"
+              class="clear-button"
+              aria-label="Clear conversion history"
+              aria-disabled="true"
+              title="No history to clear"
+            >
               Clear
             </button>
           </div>
@@ -505,7 +511,9 @@
               <div class="input-hint" id="customAliasesHint">Comma-separated alternative names</div>
             </div>
 
-            <button type="submit" id="addCustomUnit" class="button button-primary">Add Custom Unit</button>
+            <button type="submit" id="addCustomUnit" class="button button-primary">
+              Add Custom Unit
+            </button>
           </form>
 
           <!-- List of Custom Units -->
