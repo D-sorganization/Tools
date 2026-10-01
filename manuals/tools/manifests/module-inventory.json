@@ -279,7 +279,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-flow-rate-converter.json"
     },
     {
-      "content_sha256_lf": "ec796589cbea8f28dd97effc7f3c9359499084ce58df6781ef2bb47c592e856c",
+      "content_sha256_lf": "fe56c72479e98c2dbe0fb41c96907682377c92eeeb5bbea0953c8b7446b7e15a",
       "entry_count": 14,
       "package": "src/folder_packer_pro",
       "path": "manuals/tools/manifests/module-inventory/entries-src-folder-packer-pro.json"
