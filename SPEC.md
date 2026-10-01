@@ -5945,7 +5945,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 <!-- prettier-ignore-start -->
 
 | Date       | PR         | Changes    |
-| 2026-10-01 | #n/a | Eliminate chained array methods in LaunchMonitorComparisonWorkspace |
+| 2026-10-01 | #5400 | Eliminate chained array methods in LaunchMonitorComparisonWorkspace |
 | 2026-09-30 | #5389 | Optimize loop array allocations in launch stats |
 | 2026-09-30 | #5394 | Preserve ordered direct-residual variance in longitudinal regression so representable noise remains visible in uncertainty estimates. |
 | 2026-09-30 | #5390 | chore(release): bump version to v1.23.2 |
