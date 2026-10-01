@@ -5945,8 +5945,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 <!-- prettier-ignore-start -->
 
 | Date       | PR         | Changes    |
-| 2026-10-01 | #5399 | Increase folder packer PBKDF2 iterations to 600000 |
-| 2026-10-01 | n/a | Improved accessibility of clear history & theme toggle buttons |
+| 2026-10-01 | #5401 | Increase folder packer PBKDF2 iterations to 600000 |
 | 2026-09-30 | #5389 | Optimize loop array allocations in launch stats |
 | 2026-09-30 | #5394 | Preserve ordered direct-residual variance in longitudinal regression so representable noise remains visible in uncertainty estimates. |
 | 2026-09-30 | #5390 | chore(release): bump version to v1.23.2 |

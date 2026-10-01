@@ -104,6 +104,3 @@
 ## 2026-09-27 - Ensure initial state matches logic for disabled buttons
 **Learning:** Adding a CSS `:disabled` pseudo-class is not enough; the HTML element must also initialize with the `disabled` attribute if the default state expects it to be inactive.
 **Action:** Always verify that both CSS and HTML correspond to the component's logical state on mount to ensure UX features actually function.
-## 2026-10-01 - Use aria-disabled over disabled attribute
-**Learning:** Using the native `disabled` attribute on buttons prevents them from receiving focus, meaning keyboard and screen reader users cannot access tooltips explaining *why* the button is disabled.
-**Action:** Use `aria-disabled="true"` paired with custom CSS and JS validation to visually and functionally disable the button while preserving keyboard accessibility and tooltip visibility.

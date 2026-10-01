@@ -945,7 +945,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-video-analyzer.json"
     },
     {
-      "content_sha256_lf": "f92ad1885bbf46dec31252779e1413a2797924539470cef1fd2289b86c9d73e4",
+      "content_sha256_lf": "2e9a60f06119cd496fa18878de5ed3f9a49b70f98178130798e9402f723adb3f",
       "entry_count": 33,
       "package": "src/web_applications",
       "path": "manuals/tools/manifests/module-inventory/entries-src-web-applications.json"

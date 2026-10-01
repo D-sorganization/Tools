@@ -501,8 +501,7 @@ body {
   background-color: rgba(37, 99, 235, 0.1);
 }
 
-.clear-button:disabled,
-.clear-button[aria-disabled='true'] {
+.clear-button:disabled {
   opacity: 0.5;
   cursor: not-allowed;
 }
