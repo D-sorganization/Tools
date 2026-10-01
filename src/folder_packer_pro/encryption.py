@@ -52,7 +52,8 @@ class EncryptionManager:
         if data is None:
             raise ValueError("data must be provided")
         salt = os.urandom(16)
-        # Security enhancement: Use 600,000 iterations for new encryptions (OWASP recommended)
+        # Security enhancement: Use 600,000 iterations for new encryptions
+        # (OWASP recommended).
         key = EncryptionManager.derive_key(password, salt, iterations=600000)
         cipher = Fernet(key)
         encrypted: bytes = cipher.encrypt(data)
