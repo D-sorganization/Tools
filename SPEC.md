@@ -5943,9 +5943,10 @@ Active development with stable core, continuous tool expansion, and web API in p
 Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<pr> | summary |`. Add exactly one row for your own pull request and do not renumber anybody else's; the `Spec Version` field in section 1 is bumped at release time by `scripts/bump_spec_version.py`, never by an individual pull request. See [Repository_Management#1520](https://github.com/D-sorganization/Repository_Management/issues/1520).
 
 <!-- prettier-ignore-start -->
-
 | Date       | PR         | Changes    |
+| ---------- | ---------- | ---------- |
 | 2026-10-01 | #5393 | fix(swing_objectives): correct inertia equivalence and evidence limits documentation (#5393) |
+| 2026-10-01 | #5401 | Increase folder packer PBKDF2 iterations to 600000 |
 | 2026-10-01 | n/a | Improved accessibility of clear history & theme toggle buttons |
 | 2026-09-30 | #5389 | Optimize loop array allocations in launch stats |
 | 2026-09-30 | #5394 | Preserve ordered direct-residual variance in longitudinal regression so representable noise remains visible in uncertainty estimates. |
