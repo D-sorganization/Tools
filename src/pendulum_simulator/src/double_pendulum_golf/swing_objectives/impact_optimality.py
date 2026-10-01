@@ -24,6 +24,19 @@ component of that solution and simplifying gives
 
 which is what :func:`impact_hand_speed_coefficient` returns.
 
+Assumptions and realizability
+-----------------------------
+The optimal-rate theorem is an instantaneous variational calculation evaluated
+under two strict assumptions:
+1. **Fixed posture**: the club is aligned with the arms (``phi = 0``, impact pose).
+2. **Fixed kinetic energy**: the total instantaneous kinetic energy budget is held constant.
+
+It does **not** declare or guarantee dynamic realizability — whether there exists a
+feasible, continuous, torque-bounded trajectory from the top of the backswing that
+actually reaches this state under physiological torque, torque-slew, or joint
+limits. Dynamic coupling throughout the downswing governs whether the system can
+arrive at impact with these rates without violating actuation bounds.
+
 Three regimes follow:
 
 * **Point-mass clubhead** (``r2 = L2``, ``I2 = 0``) — the model shipped in
@@ -32,19 +45,22 @@ Three regimes follow:
   club's kinetic energy *is* ``0.5 * me * v_head**2`` and any arm motion is
   energy that never reached the clubhead. The optimizer stops the hands because
   stopping them is optimal.
-* **A real driver** (``m2 = 0.31 kg``, ``r2 = 0.89 m``, ``L2 = 1.143 m``,
-  ``I2 = 0.043 kg m^2``) gives a **negative** bracket: the optimum wants the
-  hands moving *backward* through impact.
+* **A real driver** (``m2 = 0.310 kg``, ``r2 = 0.867 m``, ``L2 = 1.143 m``,
+  ``I2 = 0.0551 kg m^2``; or modelled ``L2 = 1.10 m``) gives a **negative** bracket:
+  the instantaneous optimum wants the hands moving *backward* through impact.
 * A **forward** optimum needs ``r2`` near 1.0 m or ``I2`` above 0.2 kg m^2 —
   roughly five times a real driver's. No club anyone swings lands there.
 
 The practical consequence is that **distributed club inertia is not the fix**.
-Real golfers keep 6-9 m/s of hand speed at impact
-(`Nesbit 2005 <https://www.jssm.org/jssm-04-499.xml.xml>`_) not because it is
-speed-optimal but because their actuation is limited: torque capacity falls with
-joint angular velocity (`Hill 1938 <https://doi.org/10.1098/rspb.1938.0050>`_),
-and the arms are attached to a torso that cannot be stopped on demand. The fix
-therefore belongs in :mod:`double_pendulum_golf.swing_objectives.actuation`.
+Heuristic reference intervals place skilled impact hand speed around 6–9 m/s.
+Note that Nesbit (2005) Table 3 reports grip speed 7.1–8.0 m/s and head speed
+43–50 m/s for its described amateur cohort (not a professional-tour 6–9/45–55
+interval). Real golfers keep forward hand speed at impact not because it is
+speed-optimal in a planar two-link chain, but because actuation is limited: torque
+capacity falls with joint angular velocity
+(`Hill 1938 <https://doi.org/10.1098/rspb.1938.0050>`_), and the arms are attached
+to a torso that cannot be stopped on demand. The fix therefore belongs in
+:mod:`double_pendulum_golf.swing_objectives.actuation`.
 
 Related reading: `Jorgensen 1970
 <https://doi.org/10.1119/1.1976419>`_ for the canonical double-pendulum golf
@@ -136,6 +152,11 @@ def impact_hand_speed_coefficient(
     impact; its zero is the reason a point-mass-clubhead optimizer stops the
     hands. See the module docstring for the derivation.
 
+    Notice that the bracket ``[ I2 - m2 * r2 * (L2 - r2) ]`` is the same factor
+    that governs the arm/club coupling error
+    ``(L1 / L2) * [ I2 - m2 * r2 * (L2 - r2) ]`` when matching wrist-row inertia in
+    :func:`~double_pendulum_golf.swing_objectives.club_equivalence.coupling_error`.
+
     Args:
         params: Double pendulum parameters. Supplies ``L1`` and ``L2``, and the
             default point-mass club properties.
@@ -188,7 +209,9 @@ def energy_optimal_rates(
 
     This is the theoretical ceiling the collocation optimizer converges toward:
     the fastest clubhead an impact posture can produce with a given amount of
-    kinetic energy in the system, ignoring how the golfer got there.
+    kinetic energy in the system, evaluated under fixed-pose (``phi = 0``) and
+    fixed-energy assumptions. It does not declare or guarantee dynamic
+    realizability over a full downswing trajectory under actuation limits.
 
     Args:
         params: Double pendulum parameters.

@@ -15,12 +15,17 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+from double_pendulum_golf.physics import PendulumParams
 from double_pendulum_golf.swing_objectives.club_equivalence import (
     DRIVER_SPEC,
     SEVEN_IRON_SPEC,
     RealClubSpec,
+    coupling_error,
     equivalent_tip_mass,
     wrist_inertia,
+)
+from double_pendulum_golf.swing_objectives.impact_optimality import (
+    impact_hand_speed_coefficient,
 )
 
 
@@ -146,3 +151,84 @@ def test_equivalence_is_finite_and_positive_across_realistic_clubs() -> None:
         for shaft in np.linspace(0.85, 1.25, 9):
             me = equivalent_tip_mass(spec, shaft_length_m=float(shaft))
             assert np.isfinite(me) and me > 0.0
+
+
+def test_inertia_arithmetic_distinguishes_masses() -> None:
+    """0.310 kg at 1.10 m has 0.3751 kg*m^2 inertia; 0.605 belongs to 0.500 kg.
+
+    0.310 * 1.10^2 = 0.3751 kg*m^2 (1.30x the real 0.288 kg*m^2).
+    0.500 * 1.10^2 = 0.6050 kg*m^2 (2.10x the real 0.288 kg*m^2).
+    """
+    length = 1.10
+    inertia_310 = 0.310 * length**2
+    assert inertia_310 == pytest.approx(0.3751, abs=1e-4)
+
+    inertia_500 = 0.500 * length**2
+    assert inertia_500 == pytest.approx(0.6050, abs=1e-4)
+
+
+def test_coupling_error_formula_and_contract() -> None:
+    """Coupling error after matching delta is (L1/L2) * [I_com - m*r*(L2 - r)]."""
+    l1, l2 = 0.65, 1.10
+    for spec in (DRIVER_SPEC, SEVEN_IRON_SPEC):
+        err = coupling_error(spec, arm_length_m=l1, shaft_length_m=l2)
+        expected_bracket = spec.inertia_about_com_kgm2 - spec.mass_kg * spec.com_m * (
+            l2 - spec.com_m
+        )
+        assert err == pytest.approx((l1 / l2) * expected_bracket)
+
+        # Also verify directly from definitions: mu_model - mu_real
+        me = equivalent_tip_mass(spec, shaft_length_m=l2)
+        mu_model = me * l1 * l2
+        mu_real = spec.mass_kg * l1 * spec.com_m
+        assert err == pytest.approx(mu_model - mu_real)
+
+
+def test_coupling_error_rejects_non_positive_inputs() -> None:
+    """Contract: arm_length_m and shaft_length_m must be positive and finite."""
+    with pytest.raises(ValueError, match="arm_length_m"):
+        coupling_error(DRIVER_SPEC, arm_length_m=0.0, shaft_length_m=1.10)
+    with pytest.raises(ValueError, match="arm_length_m"):
+        coupling_error(DRIVER_SPEC, arm_length_m=float("nan"), shaft_length_m=1.10)
+    with pytest.raises(ValueError, match="shaft_length_m"):
+        coupling_error(DRIVER_SPEC, arm_length_m=0.65, shaft_length_m=-1.0)
+    with pytest.raises(ValueError, match="shaft_length_m"):
+        coupling_error(DRIVER_SPEC, arm_length_m=0.65, shaft_length_m=float("inf"))
+
+
+def test_matching_wrist_inertia_does_not_match_full_mass_matrix() -> None:
+    """Matching delta reproduces M22, but leaves residual coupling and diagonal errors."""
+    l1, l2 = 0.65, 1.10
+    spec = DRIVER_SPEC
+    me = equivalent_tip_mass(spec, shaft_length_m=l2)
+    delta = wrist_inertia(spec)
+
+    # Point-mass M22 matches delta
+    m22_model = me * l2**2
+    assert m22_model == pytest.approx(delta)
+
+    # But coupling differs
+    err = coupling_error(spec, arm_length_m=l1, shaft_length_m=l2)
+    assert abs(err) > 1e-4
+
+    # And base diagonal arm inertia (at phi = pi/2 where cos(phi) = 0) differs by (me - m)*L1^2
+    m1 = 5.0
+    diag_model_unloaded = (m1 + me) * l1**2 + delta
+    diag_real_unloaded = (m1 + spec.mass_kg) * l1**2 + delta
+    assert diag_model_unloaded != pytest.approx(diag_real_unloaded)
+    assert diag_model_unloaded - diag_real_unloaded == pytest.approx((me - spec.mass_kg) * l1**2)
+
+
+def test_coupling_error_matches_impact_hand_speed_coefficient_bracket() -> None:
+    """The coupling error is identically impact_hand_speed_coefficient / L2."""
+    l1, l2 = 0.65, 1.10
+    params = PendulumParams(m1=5.0, m2=DRIVER_SPEC.mass_kg, L1=l1, L2=l2)
+    coeff = impact_hand_speed_coefficient(
+        params,
+        club_mass_kg=DRIVER_SPEC.mass_kg,
+        club_com_m=DRIVER_SPEC.com_m,
+        club_inertia_kgm2=DRIVER_SPEC.inertia_about_com_kgm2,
+    )
+    err = coupling_error(DRIVER_SPEC, arm_length_m=l1, shaft_length_m=l2)
+    assert err == pytest.approx(coeff / l2)
+
