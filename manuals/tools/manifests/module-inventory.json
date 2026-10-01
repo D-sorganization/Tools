@@ -111,7 +111,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "85df572a0ddd38cf0e31307bf99fc9edeafe391d6b1b4c0937572bb9b2195188",
+      "content_sha256_lf": "8095d69cd93f1293539b9fed8b35ba8bc5122c5e1e22d62dde2df8f656011d0a",
       "entry_count": 17,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "0852d770d647919045a4f2c06c221f360f5ab38e1db6f9073584d9249eac0e55",
+      "content_sha256_lf": "9b5adcf0ce5446ae0a35ec10f9357a1a9e9c7ebaa439a1978b0059715cfa9899",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -447,7 +447,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure.json"
     },
     {
-      "content_sha256_lf": "36c80a9a97bd5e7c1ec46c3eb6b3e45753b9f236eda2596b980ca548f433323d",
+      "content_sha256_lf": "5c0fba34d53e310a26ef401ad29f2994cb548e3e3d45e6b2ef2e44593adcd3bf",
       "entry_count": 66,
       "package": "src/rate_of_closure/application",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-application.json"
@@ -783,7 +783,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-delivery-interchange.json"
     },
     {
-      "content_sha256_lf": "68bd2c34e033940a36818b8b4c3c13852ae33d9fe30e65f566ac19503eee695d",
+      "content_sha256_lf": "450d1509c47eb603585615220ed1766577be86119698cab85648e43522cd2481",
       "entry_count": 45,
       "package": "src/shared/python/swing_sim/flight",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-flight.json"

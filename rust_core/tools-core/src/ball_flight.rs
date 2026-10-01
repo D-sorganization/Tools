@@ -120,13 +120,7 @@ impl BallProperties {
         } else {
             self.cl0 + s * (self.cl1 + s * self.cl2)
         };
-        if cl > MAX_LIFT_COEFFICIENT {
-            MAX_LIFT_COEFFICIENT
-        } else if cl < 0.0 {
-            0.0
-        } else {
-            cl
-        }
+        cl.clamp(0.0, MAX_LIFT_COEFFICIENT)
     }
 }
 
@@ -272,16 +266,12 @@ pub fn calculate_accel_core(
 
     // Magnus lift
     if omega > 0.0 && spin_ratio > 0.0 {
-        let mut cl = if cl2 > 0.0 && (cl2 - 1.0).abs() > 1e-6 {
+        let cl = if cl2 > 0.0 && (cl2 - 1.0).abs() > 1e-6 {
             cl0 + cl1 * spin_ratio.powf(cl2)
         } else {
             cl0 + spin_ratio * (cl1 + spin_ratio * cl2)
         };
-        if cl > MAX_LIFT_COEFFICIENT {
-            cl = MAX_LIFT_COEFFICIENT;
-        } else if cl < 0.0 {
-            cl = 0.0;
-        }
+        let cl = cl.clamp(0.0, MAX_LIFT_COEFFICIENT);
 
         let magnus_mag = const_term * cl * speed * speed;
 

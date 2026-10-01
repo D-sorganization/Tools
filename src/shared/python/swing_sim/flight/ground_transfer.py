@@ -182,6 +182,12 @@ def build_ground_simulation_request(
         raise ValueError("result and launch must be flight contract records")
     if not isinstance(settings, FlightGroundTransferSettings):
         raise ValueError("settings must be FlightGroundTransferSettings")
+    if not result.landed:
+        raise _failure(
+            f"flight trajectory did not land (termination={result.termination.value})",
+            _PHYSICAL_CONTACT_BRACKET,
+            _NO_PHYSICAL_CONTACT,
+        )
     points = result.trajectory
     _require_trajectory_qualification(points)
     angular_points = _require_angular_states(points)

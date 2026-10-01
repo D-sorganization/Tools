@@ -1,45 +1,32 @@
-# Current handoff — longitudinal regression residual variance (Tools#5392)
+# Current handoff — Flight Termination States & Metric Gating (Tools#5385)
 
 - Repository: D-sorganization/Tools
-- Working directory: `C:/Users/diete/Repositories/Worktrees/tools-longitudinal-residual-luna-20260930`
-- Branch: `fix/longitudinal-residual-variance-20260930`; commit: SELF; PR: [#5394](https://github.com/D-sorganization/Tools/pull/5394) (draft)
-- Governing issue: #5392; related merged optimization: #5389
+- Working directory: `C:/Users/diete/Repositories/Tools`
+- Branch: `fix/tools-flight-termination-5385`; commit: SELF; PR: #5391 (open, targets `main`)
+- Governing issue: Tools#5385 (paired consumer issue: UpstreamDrift#11145)
 
 ## Objective and status
 
-Follow up on current `main` after merged #5389 left a cancellation-prone residual variance shortcut in the longitudinal regression. Preserve its allocation-saving aggregate pass, then compute the residual sum of squares using the ordered direct residuals `(mean - intercept - slope * sessionOrder) ** 2`.
-
-The public analysis regression uses representable nonzero noise around a large linear trend. An independent direct-residual oracle returns standard error `0.00020716016510533694` for player p1; current `main` returned zero. The regression also checks both players' standard errors against the oracle and retains confidence-interval and p-value expectations.
+Propagate explicit termination reasons (`FlightTermination`: `LANDED`, `TIME_LIMIT`, `SOLVER_FAILED`, `CANCELLED`) from flight integration before reporting landing metrics (`carry_distance`, `landing_angle`, `lateral_deviation`). Non-landed flights have landing metrics gated to `None` and fail closed across downstream consumers: `CenteredClubDeliveryAdapter` (returns `ForwardStatus.FAILED`), `build_ground_simulation_request` (raises `FlightGroundTransferError`), and `_recompute_registered` in `flight_execution_profiles` (returns `RECOMPUTATION_FAILED`).
 
 ## Files and decisions
 
-- Restored the intercept and ordered direct-residual loop in `launchMonitorLongitudinal.ts`; no formula, tolerance, threshold, identity, or other statistical contract changed.
-- Historical RED/GREEN evidence: the earlier accepted #5389 repair report records the direct-residual oracle expecting `0.00020716016510533694` while the shortcut returned `0`, followed by passing focused tests. In this follow-up, source and test were ported before the initial focused GREEN, so that sequence is not claimed as test-first.
-- Controlled post-port baseline RED: copied the exact c096 main implementation and current regression test to temporary sibling files, changing only the test import to the baseline copy. The public regression failed with actual SE `0` versus expected `0.00020716016510533694` (1 failed, 2 passed). Removed both temporary files. The original candidate source remained unchanged; its working hash matches the committed candidate blob. The same focused command against the candidate passed (3/3).
-- Regenerated only the canonical web model inventory shard and its root digest.
-- Added the #5394 SPEC row adjacent to #5389; no existing SPEC row moved or changed order.
-- No release/version change. #5389 remains a distinct merged optimization; this follow-up does not modify its closed PR.
+- `src/shared/python/swing_sim/flight/types.py`: Added `FlightTermination` enum, `IncompleteFlightError(RuntimeError)`. Updated `FlightResult` dataclass to validate landing metrics are `None` when `termination != FlightTermination.LANDED`. Added `require_landing()`, `flight_completed`, `landed` properties.
+- `src/shared/python/swing_sim/flight/models.py`: Updated `BallFlightModel._run_ode_simulation` to inspect `sol.status`, `sol.success`, and `sol.t_events` safely and propagate `termination`, `terminal_event`, and `actual_horizon`. Attached partial `FlightResult` to `FlightSimulationCancelled`.
+- `src/shared/python/swing_sim/flight/impact_solution_adapter.py`: Added landing gate returning `ForwardStatus.FAILED` with `"flight_incomplete:<termination>"`.
+- `src/shared/python/swing_sim/flight/ground_transfer.py`: Added landing gate raising `FlightGroundTransferError` if `not result.landed`.
+- `src/rate_of_closure/application/flight_execution_profiles.py`: Added landing gate returning `RECOMPUTATION_FAILED` if `not result.landed`.
+- `src/shared/python/swing_sim/flight/tests/test_flight_termination.py`: Added 10 tests verifying the 5 canonical termination fixtures and downstream fail-closed gating.
+- `tests/api_baselines/swing_sim_api_baseline.json`: Regenerated to record breaking API changes (`FlightResult` methods, `compute_flight_metrics` kwargs, `FlightSimulationCancelled` optional result).
 
 ## Validation
 
-- Focused longitudinal test: 3 passed.
-- Initial full web Vitest with max 2 workers: 2360 passed, 1 failed of 2361 because `src/vendored/importBoundary.test.ts` exceeded its existing 15-second timeout under full-suite load. The isolated test then passed (1 passed in 558 ms); timeout unchanged.
-- One authorized full web Vitest rerun with `--pool=forks --maxWorkers=1 --minWorkers=1`: 2361 passed across 238 files in 264.94 s. The existing 15-second timeout, full selection, and assertions were unchanged.
-- Web type-check, lint, and production build passed. Build reports its existing >500 kB chunk warning.
-- Design-manual governance, textbook chapter lint, exemplar check, calculation freshness, handoff check, render check passed.
-- Module inventory initially detected the expected changed model shard; after canonical regeneration, `python -m scripts.build_tools_module_inventory --check` passed.
-- Manual QA and publication projection report their existing `unapproved` states with two release blockers; no approval status is claimed.
-
-## Coordination and blockers
-
-- Issue #5392 lease: session `codex-luna-tools-residual-20260930`; lease and presence receipts are recorded in the worker report.
-- Acknowledged root coordination messages `916cf885-e290-40ce-9568-7670c024e4b5` and `825972e8-fb03-43df-929e-2673510fd518`; receipts are in the worker report.
-- Fleet coordination inbox remained incomplete, with historical warnings and a self-overlap record; old #5389 presence could not be released because Repository_Management rejected a new-identity release. Its prior session identity was left unchanged.
-- Root review and PR CI are pending. Do not mark ready or merge before root review.
+- Full test suite: 231 tests in `flight` and `test_shared_package_api_stability.py` pass.
+- Linters: `ruff check` (0 errors), `ruff format --check` (clean), `black --check` (clean), `mypy` (clean).
 
 ## Next step
 
-- Review actual final HEAD, diff, and CI status at the draft follow-up PR; root owns merge decisions.
+- Push branch and create PR #5385 with breaking API notice citing UpstreamDrift #11145.
 
 ---
 

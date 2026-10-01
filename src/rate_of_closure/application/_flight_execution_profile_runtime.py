@@ -130,7 +130,13 @@ def recompute_waterloo(
         settings.sample_every,
         cancellation_requested,
     )
-    metrics = compute_flight_metrics(retained, raw.model_name)
+    metrics = compute_flight_metrics(
+        retained,
+        raw.model_name,
+        termination=raw.termination,
+        terminal_event=raw.terminal_event,
+        actual_horizon=raw.actual_horizon,
+    )
     raise_if_flight_cancelled(cancellation_requested)
     return metrics
 

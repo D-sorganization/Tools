@@ -159,10 +159,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 38741,
+      "bytes_lf": 38537,
       "classification": "calculation",
       "classification_basis": "path-marker:ball_flight",
-      "content_sha256_lf": "b0082c3f76f0f80ecb882670bfc576100d9bdf00f99d2f87292f9ebb5a00fc06",
+      "content_sha256_lf": "12c10e4246009129b40deabbe3a999e36d59d387feb0bf5b5320950a26930eaa",
       "family": "native-kernels-calculation",
       "id": "TOOLS-MODULE-RUST-CORE-TOOLS-CORE-SRC-BALL-FLIGHT-RS-F35328F88448",
       "language": "rust",
@@ -369,6 +369,7 @@
         "test_paths": [
           "rust_core/tools-core/tests/flight_ground_transfer.rs",
           "rust_core/tools-core/tests/flight_ground_wire.rs",
+          "src/shared/python/swing_sim/flight/tests/test_flight_termination.py",
           "src/shared/python/swing_sim/flight/tests/test_parity_rust_flight.py",
           "src/shared/python/swing_sim/flight/tests/test_result_contract.py",
           "tests/rate_of_closure/test_flight_playback.py",
@@ -2615,6 +2616,7 @@
           "src/shared/python/swing_sim/delivery_interchange/tests/test_delivery_interchange.py",
           "src/shared/python/swing_sim/flight/tests/_regional_ground_pipeline_support.py",
           "src/shared/python/swing_sim/flight/tests/test_capability_observation.py",
+          "src/shared/python/swing_sim/flight/tests/test_flight_termination.py",
           "src/shared/python/swing_sim/flight/tests/test_ground_bounce_execution.py",
           "src/shared/python/swing_sim/flight/tests/test_ground_transfer.py",
           "src/shared/python/swing_sim/flight/tests/test_launch_deriver.py",

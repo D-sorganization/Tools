@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, field
+from enum import Enum
 
 import numpy as np
 
@@ -208,26 +209,116 @@ class TrajectoryPoint:
         object.__setattr__(self, "velocity", velocity)
 
 
+class FlightTermination(Enum):
+    """Reason the flight simulation stopped.
+
+    Distinguishes physical ground landing from truncation at the time horizon,
+    numerical solver failure, or external cancellation. Landing-derived metrics
+    (carry, landing angle, lateral deviation at landing) are only well-defined
+    for LANDED trajectories.
+    """
+
+    LANDED = "landed"
+    TIME_LIMIT = "time_limit"
+    SOLVER_FAILED = "solver_failed"
+    CANCELLED = "cancelled"
+
+    @property
+    def flight_completed(self) -> bool:
+        """Whether the flight ran to a terminal ground landing event."""
+        return self is FlightTermination.LANDED
+
+    @property
+    def landed(self) -> bool:
+        """Alias for flight_completed."""
+        return self is FlightTermination.LANDED
+
+
+class IncompleteFlightError(RuntimeError):
+    """Raised when landing metrics or terminal state are requested prematurely.
+
+    Carries the partial result so a caller can still inspect the trace -- the
+    trace is evidence, and refusing to export a conclusion is not a reason to
+    discard it.
+    """
+
+    def __init__(self, result: FlightResult) -> None:
+        self.result = result
+        self.termination = result.termination
+        final_z = float(result.trajectory[-1].position[2]) if result.trajectory else 0.0
+        final_t = float(result.trajectory[-1].time) if result.trajectory else 0.0
+        super().__init__(
+            f"cannot export landing metrics from flight that did not land: "
+            f"termination={result.termination.value}, "
+            f"final time={final_t:.4f} s, "
+            f"final height={final_z:.4f} m. "
+            f"Inspect .result for the partial trace."
+        )
+
+
 @dataclass(frozen=True)
 class FlightResult:
     """Result of a ball-flight simulation.
 
-    ``trajectory`` is time-ordered; scalar metrics are derived from it
-    (carry [m], max height [m], flight time [s], landing angle [deg,
-    positive downward], lateral deviation [m, +left in the flight frame]).
+    ``trajectory`` is time-ordered; scalar metrics are derived from it.
+    Landing-derived metrics (carry [m], landing angle [deg, positive downward],
+    and lateral deviation [m, +left in the flight frame]) are only populated
+    when ``termination`` is ``FlightTermination.LANDED``; otherwise they are
+    ``None``.
     """
 
     trajectory: tuple[TrajectoryPoint, ...]
     model_name: str
-    carry_distance: float = 0.0
+    carry_distance: float | None = None
     max_height: float = 0.0
     flight_time: float = 0.0
-    landing_angle: float = 0.0
-    lateral_deviation: float = 0.0
+    landing_angle: float | None = None
+    lateral_deviation: float | None = None
+    termination: FlightTermination = FlightTermination.LANDED
+    terminal_event: bool = True
+    actual_horizon: float = 0.0
 
     def __post_init__(self) -> None:
-        """Normalise the trajectory container to a tuple."""
+        """Normalise trajectory to a tuple and validate landing metrics."""
         object.__setattr__(self, "trajectory", tuple(self.trajectory))
+        if not isinstance(self.termination, FlightTermination):
+            raise TypeError(
+                f"termination must be a FlightTermination; got {self.termination!r}"
+            )
+        if self.termination.landed:
+            if self.carry_distance is None:
+                object.__setattr__(self, "carry_distance", 0.0)
+            if self.landing_angle is None:
+                object.__setattr__(self, "landing_angle", 0.0)
+            if self.lateral_deviation is None:
+                object.__setattr__(self, "lateral_deviation", 0.0)
+        else:
+            if (
+                self.carry_distance is not None
+                or self.landing_angle is not None
+                or self.lateral_deviation is not None
+            ):
+                raise ValueError(
+                    "Landing metrics (carry_distance, landing_angle, "
+                    "lateral_deviation) must be None when flight did not land "
+                    f"(termination={self.termination.value})"
+                )
+
+    @property
+    def flight_completed(self) -> bool:
+        """Whether the flight ran to a terminal ground landing event."""
+        return self.termination.flight_completed
+
+    @property
+    def landed(self) -> bool:
+        """Whether the flight reached the ground."""
+        return self.termination.landed
+
+    def require_landing(self) -> FlightResult:
+        """Assert that the flight reached the ground, or raise IncompleteFlightError."""
+        if not self.landed:
+            raise IncompleteFlightError(self)
+        return self
 
     def to_position_array(self) -> np.ndarray:
         """Convert trajectory to an Nx3 position array."""
@@ -240,6 +331,10 @@ class FlightResult:
 def compute_flight_metrics(
     trajectory: list[TrajectoryPoint] | tuple[TrajectoryPoint, ...],
     model_name: str,
+    *,
+    termination: FlightTermination = FlightTermination.LANDED,
+    terminal_event: bool = True,
+    actual_horizon: float | None = None,
 ) -> FlightResult:
     """Standardised metrics computation shared by all backends.
 
@@ -250,17 +345,48 @@ def compute_flight_metrics(
     if trajectory is None:
         raise ValueError("trajectory must be provided")
     points = tuple(trajectory)
+    horizon = (
+        actual_horizon
+        if actual_horizon is not None
+        else (points[-1].time if points else 0.0)
+    )
     if not points:
-        return FlightResult((), model_name)
+        return FlightResult(
+            (),
+            model_name,
+            carry_distance=0.0 if termination.landed else None,
+            max_height=0.0,
+            flight_time=0.0,
+            landing_angle=0.0 if termination.landed else None,
+            lateral_deviation=0.0 if termination.landed else None,
+            termination=termination,
+            terminal_event=terminal_event,
+            actual_horizon=horizon,
+        )
 
     pos = np.array([p.position for p in points])
-    carry = math.hypot(float(pos[-1, 0]), float(pos[-1, 1]))
     max_h = float(np.max(pos[:, 2]))
     time = points[-1].time
+
+    if not termination.landed:
+        return FlightResult(
+            points,
+            model_name,
+            carry_distance=None,
+            max_height=max_h,
+            flight_time=time,
+            landing_angle=None,
+            lateral_deviation=None,
+            termination=termination,
+            terminal_event=terminal_event,
+            actual_horizon=horizon,
+        )
+
+    carry = math.hypot(float(pos[-1, 0]), float(pos[-1, 1]))
     lateral = float(pos[-1, 1])
 
     angle = 0.0
-    if len(points) >= 2:
+    if len(points) >= 1:
         v = points[-1].velocity
         v_horiz = math.hypot(float(v[0]), float(v[1]))
         angle = (
@@ -269,12 +395,25 @@ def compute_flight_metrics(
             else 90.0
         )
 
-    return FlightResult(points, model_name, carry, max_h, time, angle, lateral)
+    return FlightResult(
+        points,
+        model_name,
+        carry_distance=carry,
+        max_height=max_h,
+        flight_time=time,
+        landing_angle=angle,
+        lateral_deviation=lateral,
+        termination=termination,
+        terminal_event=terminal_event,
+        actual_horizon=horizon,
+    )
 
 
 __all__ = [
     "DEFAULT_BACKSPIN_AXIS",
     "FlightResult",
+    "FlightTermination",
+    "IncompleteFlightError",
     "LaunchConditions",
     "TrajectoryPoint",
     "compute_flight_metrics",

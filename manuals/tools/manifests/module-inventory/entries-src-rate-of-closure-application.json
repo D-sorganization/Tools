@@ -45,10 +45,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 4761,
+      "bytes_lf": 4907,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "f94b02a7090d00d9dbaa2467b659e865031f44882a6c2bbed7a75e13539a1362",
+      "content_sha256_lf": "d90d8e58383ec148bd3659abd9a0313b810ab10b5c894dbf22353304a9845570",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-APPLICATION-FLIGHT-EXECUTION-PROFILE-RUNTIME-PY-4D1AD56CE34C",
       "language": "python",
@@ -1628,10 +1628,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13129,
+      "bytes_lf": 13312,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "768de66ada41553e9a3e7bd3590af9f4e64675ff4e2ab0c116673a466632a45b",
+      "content_sha256_lf": "81c8123ee0193f88360bde484eb1176ab575fa8542047a319fdeacfb9f925230",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-APPLICATION-FLIGHT-EXECUTION-PROFILES-PY-2AB3B5E0194A",
       "language": "python",
@@ -1713,6 +1713,7 @@
           }
         ],
         "test_paths": [
+          "src/shared/python/swing_sim/flight/tests/test_flight_termination.py",
           "tests/rate_of_closure/test_regional_ground_authority_api.py"
         ],
         "unit_mentions": [],

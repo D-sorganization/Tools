@@ -235,6 +235,12 @@ def _recompute_registered(
             model_id,
             model_version,
         )
+    if not result.landed:
+        return _unqualified(
+            FlightExecutionQualificationReason.RECOMPUTATION_FAILED,
+            model_id,
+            model_version,
+        )
     return (
         _qualified_recomputation(
             model_id,
