@@ -262,3 +262,6 @@
 ## 2026-09-30 - Simplify dispersion aggregation
 **Action:** Replaced the dispersion path's `flatMap`, `map`, `reduce`, and `filter` chain with loops that collect points and accumulate the mean, RMS, and sign counts while preserving sample-deviation calculation. No performance measurements were taken.
 >>>>>>> origin/main
+## $(date +%Y-%m-%d) - Eliminate Chained Array Methods in Launch Monitor Comparison Workspace
+**Learning:** Using chained functional array methods like `.flatMap()`, `.map()`, `.filter()`, and `.reduce()` combined with array spread syntax inside high-frequency `useMemo` hooks allocates thousands of intermediate arrays per render cycle on dynamically sized telemetry datasets. This generates severe garbage collection pressure and increases the risk of dropping frames.
+**Action:** Replace chained array methods with standard single-pass `for` loops within `useMemo` computations to compute aggregates (sums, counts, averages) directly, significantly reducing object churn and intermediate allocations on hot rendering paths.
