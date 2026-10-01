@@ -26,42 +26,13 @@ torque-velocity limits of this kind since
 `MacKenzie & Sprigings 2009 <https://doi.org/10.1007/s12283-009-0020-9>`_;
 without one, a simulated golfer accelerates the arms far past what a person can.
 
-Braking and active lengthening
-------------------------------
+Braking is not free
+-------------------
 The muscles that decelerate the arms are not the ones that drive them. Modelling
 the brake as the same budget in the other direction is what lets the optimizer
-stop the hands. Active muscle lengthening occurs when an active muscle is stretched
-by an external torque (eccentric contraction). In this regime, the muscle performs
-negative mechanical work on the skeletal segment and absorbs mechanical energy.
-The implemented braking branch (:meth:`JointActuation.braking_limit`) already permits
-active lengthening and energy absorption: when torque opposes joint velocity,
-it scales antagonist capacity by ``eccentric_gain`` (> 1.0) because lengthening
-muscle can exert higher force than isometric muscle.
-
-Distinction between power, deceleration, and muscle activation
---------------------------------------------------------------
-Net actuator power, segment deceleration, and individual-muscle activation are
-three distinct biomechanical concepts:
-1. **Net actuator power** (``P_net = tau * omega``): The net rate of mechanical work
-   done across the joint. When joint torque opposes joint angular velocity (``P_net < 0``),
-   net actuator power is negative and mechanical energy is absorbed from the segment.
-2. **Segment deceleration** (``omega * omegadot < 0``): Deceleration of a limb segment
-   can be caused by interaction torques (such as centrifugal and Coriolis coupling
-   from club uncocking) even when net actuator torque is driving or zero.
-   Conversely, segment deceleration can also be produced by active braking torque.
-   Segment deceleration does *not* imply active muscular braking.
-3. **Individual-muscle activation**: The contractile state of individual anatomical
-   muscles. Agonist and antagonist muscle groups can co-contract, and individual
-   muscle units can actively lengthen while net joint torque remains positive.
-   The lumped joint torque model does not resolve individual-muscle activation states.
-
-Feasibility status of the Hill candidate
-----------------------------------------
-In the historical sweep, an optimization candidate with Hill torque-velocity bounds
-produced 6.8 m/s hand speed at impact with 0% hub braking. However, that candidate
-exhibited order-one dynamics defects (~1.0). Order-one dynamics defects prevent
-presenting this candidate's 6.8 m/s output as a feasible or measured swing; it is
-dynamically infeasible under this model formulation.
+stop the hands. Braking capacity is therefore a fraction ``brake_fraction`` of
+the driving peak, raised by ``eccentric_gain`` because lengthening muscle is
+stronger than isometric.
 
 Sign convention matches the rest of the package: a downswing runs with
 ``omega1 < 0``, so the driving limit applies to negative hub torque and the
@@ -177,11 +148,9 @@ class JointActuation:
     def braking_limit(self, joint_rate_rad_s: float) -> float:
         """Torque available *against* the direction of motion, in N*m.
 
-        Models active muscle lengthening under eccentric loading, permitting the
-        actuator to absorb mechanical energy from the limb segment. Modelled as
-        the antagonist capacity raised by the eccentric gain. It is deliberately
-        not velocity-faded: eccentric capacity is broadly flat with lengthening
-        speed, and the constraint that matters is that it is small.
+        Modelled as the antagonist capacity raised by the eccentric gain. It is
+        deliberately not velocity-faded: eccentric capacity is broadly flat with
+        lengthening speed, and the constraint that matters is that it is small.
 
         Args:
             joint_rate_rad_s: Joint angular speed; only its magnitude matters.

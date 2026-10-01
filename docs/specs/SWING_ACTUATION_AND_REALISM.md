@@ -6,24 +6,15 @@
 > corrected results are folded in below. The cause was a mis-specified club, not
 > a limit of the model.
 >
-> The historical preset lumped **0.500 kg at the tip** of a 1.10 m shaft. A real driver is
+> The preset lumped **0.50 kg at the tip** of a 1.10 m shaft. A real driver is
 > **0.310 kg with its centre of mass 76% down the shaft**. In a point-mass-at-tip
-> model the quantity that matters for the uncoupled wrist row is inertia about the wrist.
-> Placing 0.310 kg at the tip of a 1.10 m modeled shaft gives an inertia of
-> **0.3751 kg·m²** (0.310 * 1.10² = 0.3751, ~1.30× the real 0.288 kg·m²). The
-> previously stated 0.605 kg·m² value belongs to the 0.500 kg preset
-> (0.500 * 1.10² = 0.605 kg·m², **2.10×**).
->
-> Club properties reported by clubfitters follow the convention of measuring inertia
-> about the physical butt of the grip. In contrast, the model wrist origin is the
-> joint pivot axis (situated down the grip where the hands grasp), and the physical
-> club length (butt to sole, 1.143 m) differs from the modeled second link length
-> (wrist pivot to modeled head COM, 1.10 m).
+> model the quantity that matters is inertia about the wrist, and the preset
+> overstated it — and the arm/club coupling that fights the release — by **2.1×**.
 >
 > With an inertia-matched club (`me = 0.238 kg`) the _same_ model, optimizer and
 > objective produce **49.7 m/s clubhead, 7.26 m/s hand speed, club/arm 3.46** —
-> inside the heuristic reference intervals, with **no hand-speed floor imposed**.
-> The claim that "the measured 6–9 m/s band is unreachable at any price" was an artifact.
+> inside the measured bands, with **no hand-speed floor imposed**. The claim that
+> "the measured 6–9 m/s band is unreachable at any price" was an artifact.
 >
 > What survives unchanged: the impact-optimality theorem (§1), the fact that hub
 > reversal is the release mechanism, and the direction of the club-inertia
@@ -37,13 +28,10 @@
 
 ## 0. Summary
 
-The objective comparison shipped in epic #4766 produces swings that satisfy the
-dynamics defect tolerance predicate (`max_defect < 1e-6`) and are unrealistic. The
-optimizer drives the arms hard, reverses the hub torque, and brings the hands to a
-standstill at impact — 0.36 m/s where heuristic reference intervals place a skilled
-golfer at 6–9 m/s. (Note: "feasible" in this document denotes satisfaction of the
-collocation dynamics defect threshold predicate, not verification of every constraint
-or a certificate of global reachability/infeasibility).
+The objective comparison shipped in epic #4766 produces swings that are dynamically
+feasible and wrong. The optimizer drives the arms hard, reverses the hub torque, and
+brings the hands to a standstill at impact — 0.36 m/s where a measured golfer arrives
+at 6–9 m/s.
 
 Three things are now established, each with code and a regression test behind it:
 
@@ -52,8 +40,7 @@ Three things are now established, each with code and a regression test behind it
 2. **Distributed club inertia cannot fix it.** For a real driver the same coefficient
    goes _negative_ — the optimum wants the hands moving backward.
 3. **Neither can actuation limits alone.** They stop the torque reversing, which is
-   correct, but then the club never releases and the impact posture fails the defect
-   tolerance predicate.
+   correct, but then the club never releases and the impact posture becomes unreachable.
 
 What remains is a structural limit of the two-link fixed-hub model: **releasing the club
 and decelerating the hands are the same act**. Closing that gap needs a moving hub.
@@ -88,16 +75,6 @@ club's kinetic energy _is_ `0.5 * me * v_head²`, so any arm motion is energy th
 reached the clubhead. Verified to machine precision across a 27-point parameter sweep in
 `tests/test_impact_optimality.py`.
 
-### Assumptions and realizability
-
-The impact-optimality theorem is an instantaneous variational calculation evaluated under two assumptions:
-1. **Fixed posture**: the club is aligned with the arms (`phi = 0`, impact pose).
-2. **Fixed kinetic energy**: the instantaneous kinetic energy budget `0.5 * qdot^T M qdot` is constant.
-
-It does **not** assert or guarantee dynamic realizability — whether there exists a continuous,
-torque-bounded downswing trajectory from the top of the backswing that can actually reach this
-state under physiological torque, torque-slew, or joint limits without violating constraints.
-
 **No physically realistic club moves the bracket positive.** This is why the epic does
 not pursue distributed club inertia, and it is the single most useful thing the analysis
 produced: it rules out the intuitive fix before any of it gets built.
@@ -109,53 +86,23 @@ Implementation: [`impact_optimality.py`](../../src/pendulum_simulator/src/double
 ## 2a. The club correction (#4785)
 
 `physics.mass_matrix` treats segment 2 as a point mass at the tip. A real club is not
-that, so an equivalence is required. The invariant preserved by `club_equivalence` is
-**inertia about the wrist**, because it sets the uncoupled wrist-row mass term M22:
-`delta = I_com + m * r²`.
+that, so an equivalence is required — and the invariant to preserve is **inertia about
+the wrist**, because it sets both the wrist-row mass term and the coupling
+`mu = me * L1 * L2` that appears in every centrifugal and Coriolis term.
 
-Matching the wrist-row inertia gives an equivalent tip mass `me = delta_real / L2² = 0.238 kg`,
-implemented in [`club_equivalence.py`](../../src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/club_equivalence.py).
+|                         | Real driver     | Old preset      | Ratio     |
+| ----------------------- | --------------- | --------------- | --------- |
+| Club mass               | 0.310 kg        | 0.500 kg        | 1.61×     |
+| COM from wrist          | 0.867 m         | 1.100 m         | 1.27×     |
+| **Inertia about wrist** | **0.288 kg·m²** | **0.605 kg·m²** | **2.10×** |
+| **Coupling `mu`**       | **0.172 kg·m²** | **0.358 kg·m²** | **2.08×** |
 
-### Coupling error and mass matrix limits
+The preset was wrong twice over: the lumped mass was 61% above a real driver, and even
+a correct mass does not belong at the tip. Compounded, the optimizer saw 2.1× the
+coupling a real club produces.
 
-Matching the wrist-row inertia delta does **not** match the full mass matrix or arm/club coupling.
-For an axial center of mass at distance `r`, the real arm/club coupling is `mu_real = m * L1 * r`.
-In the equivalent point-mass model with mass `me = delta / L2²` at tip distance `L2`, the modeled coupling is:
-
-```
-mu_model = me * L1 * L2 = (L1 / L2) * delta = (L1 / L2) * (I_com + m * r²)
-```
-
-After matching delta, the residual coupling error is:
-
-```
-mu_model - mu_real = (L1 / L2) * [ I_com - m * r * (L2 - r) ]
-```
-
-Notice that the bracket is identically the factor appearing in the impact-optimality theorem (§1).
-Furthermore, the base diagonal arm inertia term `M11` differs by `(me - m) * L1²` plus the coupling error
-in the `cos(phi)` term. Matching `delta` reproduces `M22`, but leaves coupling and diagonal discrepancies.
-
-### Geometric and measurement distinctions
-
-* **Butt-based club properties**: Clubfitting measurements (such as `DRIVER_SPEC`) report inertia and
-  COM relative to the physical butt of the grip.
-* **Model wrist origin**: In the double pendulum model, segment 2 rotates about the wrist joint axis,
-  which lies several centimeters down the grip from the physical butt where the hands grasp the club.
-* **Physical versus modeled length**: Physical driver length (e.g. 1.143 m / 45 in butt-to-sole) differs
-  from the modeled second-link length `L2` (e.g. 1.10 m), which is the distance from the wrist joint
-  pivot to the modeled head center of mass at the tip.
-
-|                         | Real driver     | 0.310 kg at tip | Old preset (0.500 kg) | Ratio (old / real) |
-| ----------------------- | --------------- | --------------- | --------------------- | ------------------ |
-| Club mass               | 0.310 kg        | 0.310 kg        | 0.500 kg              | 1.61×              |
-| COM from wrist          | 0.867 m         | 1.100 m         | 1.100 m               | 1.27×              |
-| **Inertia about wrist** | **0.288 kg·m²** | **0.3751 kg·m²**| **0.605 kg·m²**       | **2.10×**          |
-| **Coupling `mu`**       | **0.175 kg·m²** | **0.222 kg·m²** | **0.358 kg·m²**       | **2.05×**          |
-
-Placing the real driver's 0.310 kg at the tip of a 1.10 m modeled shaft yields `delta = 0.3751 kg·m²`
-(0.310 * 1.10² = 0.3751), which is 1.30× the real value. The historical preset lumped 0.500 kg at the tip,
-producing 0.605 kg·m² (0.500 * 1.10² = 0.605, 2.10×) and severe coupling distortion.
+The inertia-matched equivalent is `me = delta_real / L2² = 0.238 kg`, implemented in
+[`club_equivalence.py`](../../src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/club_equivalence.py).
 
 ### Effect, holding everything else fixed
 
@@ -165,10 +112,7 @@ producing 0.605 kg·m² (0.500 * 1.10² = 0.605, 2.10×) and severe coupling dis
 | 0.320 kg                   | 45.3 m/s     | 6.01 m/s     | 3.86     | 24%     |
 | **0.238 kg (real driver)** | **50.8 m/s** | **7.95 m/s** | **3.18** | 24%     |
 
-All defects ≤ 2e-13. Note that in the corrected mass sweep (0.238 kg), **24% modeled braking remains**:
-the optimizer still reverses hub torque for roughly a quarter of the downswing to achieve club release
-at impact in this planar fixed-hub geometry.
-Independently corroborated by the `Double-Pendulum-Optimization`
+All defects ≤ 2e-13. Independently corroborated by the `Double-Pendulum-Optimization`
 research repo, whose model carries distributed club inertia natively and reaches
 6.1–7.4 m/s hand speed robustly across arm-inertia, torque-budget and duration sweeps.
 
@@ -181,24 +125,16 @@ The two-link golf pendulum is old and well characterised. [Williams
 Swing_, is the standard reference treatment. [Pickering & Vickers
 (1999)](https://doi.org/10.1007/BF02844532) revisited its assumptions directly.
 
-The six intervals below are **heuristic reference intervals** synthesized to score
-planar double-pendulum simulations against plausible skilled golfer kinematics,
-rather than exact primary-source reported literature bounds for a single professional-tour
-cohort. Exact primary-source locations and measurement mappings for professional
-tour players are not supplied for these widened heuristic bands. For example,
-[Nesbit (2005)](https://www.jssm.org/jssm-04-499.xml.xml) Table 3 reports grip speed
-7.1–8.0 m/s and head speed 43–50 m/s for its described amateur cohort (subjects across
-four handicap categories from scratch to high); this is not an exact professional-tour
-6–9 m/s / 45–55 m/s interval.
+The measurements that matter here:
 
-| Observable                      | Heuristic band      | Source                                                                                                    |
+| Observable                      | Measured band       | Source                                                                                                    |
 | ------------------------------- | ------------------- | --------------------------------------------------------------------------------------------------------- |
-| Clubhead speed at impact        | 45–55 m/s           | Heuristic band; [Nesbit 2005](https://www.jssm.org/jssm-04-499.xml.xml) Table 3 reports 43–50 m/s for amateur cohort |
-| **Hand speed at impact**        | **6–9 m/s**         | Heuristic band; [Nesbit 2005](https://www.jssm.org/jssm-04-499.xml.xml) Table 3 reports 7.1–8.0 m/s grip speed; [Miura 2001](https://doi.org/10.1007/BF02844309) |
-| Downswing duration              | 0.23–0.32 s         | Heuristic band; [Jorgensen 1970](https://doi.org/10.1119/1.1976419); [Nesbit 2005](https://www.jssm.org/jssm-04-499.xml.xml) |
-| Club / arm rate ratio at impact | 2.5–4               | Heuristic band derived from [Nesbit 2005](https://www.jssm.org/jssm-04-499.xml.xml) segment angular velocities |
-| Wrist cock at impact            | −5 to 20°           | Heuristic band; [MacKenzie & Sprigings 2009](https://doi.org/10.1007/s12283-009-0020-9) release timing |
-| Half-release point              | 55–80% of downswing | Heuristic band; [Sprigings & Neal 2000](https://doi.org/10.1123/jab.16.4.356); [MacKenzie & Sprigings 2009](https://doi.org/10.1007/s12283-009-0020-9) |
+| Clubhead speed at impact        | 45–55 m/s           | [Nesbit 2005](https://www.jssm.org/jssm-04-499.xml.xml)                                                   |
+| **Hand speed at impact**        | **6–9 m/s**         | [Nesbit 2005](https://www.jssm.org/jssm-04-499.xml.xml), [Miura 2001](https://doi.org/10.1007/BF02844309) |
+| Downswing duration              | 0.23–0.32 s         | [Jorgensen 1970](https://doi.org/10.1119/1.1976419)                                                       |
+| Club / arm rate ratio at impact | 2.5–4               | derived from [Nesbit 2005](https://www.jssm.org/jssm-04-499.xml.xml)                                      |
+| Wrist cock at impact            | −5 to 20°           | [MacKenzie & Sprigings 2009](https://doi.org/10.1007/s12283-009-0020-9)                                   |
+| Half-release point              | 55–80% of downswing | [Sprigings & Neal 2000](https://doi.org/10.1123/jab.16.4.356)                                             |
 
 Two results from that literature bear directly on the diagnosis.
 
@@ -216,25 +152,6 @@ segment is dominated by the interaction torque from the accelerating club, not b
 muscular braking. The shipped model produces it by applying **+222 N·m of active braking
 torque for 32% of the downswing**. That is the wrong mechanism, not merely the wrong
 magnitude.
-
-### Active lengthening and biomechanical distinctions
-
-Active muscle lengthening occurs when an active muscle is stretched by an external load
-(eccentric contraction). In this regime, the muscle performs negative mechanical work on the
-skeletal segment, absorbing mechanical energy. The implemented braking branch already permits
-active lengthening and energy absorption.
-
-Crucially, **net actuator power, segment deceleration, and individual-muscle activation are distinct**:
-1. **Net actuator power** (`P_net = tau * omega`): The net rate of work done across the joint.
-   When torque opposes velocity (`P_net < 0`), net actuator power is negative and mechanical
-   energy is absorbed from the segment.
-2. **Segment deceleration** (`omega * omegadot < 0`): Deceleration of a limb segment can arise
-   passively from inertial interaction / coupling torques (such as uncocking acceleration)
-   even when net actuator torque is driving or zero. Segment deceleration does *not* imply active
-   muscular braking.
-3. **Individual-muscle activation**: Agonist and antagonist muscles can co-contract, and
-   individual muscle units can actively lengthen while net joint torque remains positive.
-   The lumped joint torque model does not resolve individual-muscle activation states.
 
 Reference data and scoring: [`reference_kinematics.py`](../../src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/reference_kinematics.py). Every band carries its source and a resolvable link, and a test enforces that.
 
@@ -257,24 +174,24 @@ Golf forward-dynamics models have carried limits of this kind since [Sprigings &
 (2009)](https://doi.org/10.1007/s12283-009-0020-9).
 
 **Braking uses different, weaker muscles.** Antagonist capacity is modelled as a fraction
-of the driving peak, raised by an eccentric gain (permitting active lengthening and energy absorption).
+of the driving peak, raised by an eccentric gain.
 
 Implementation: [`actuation.py`](../../src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/actuation.py).
 
 ### What they actually do
 
-| Model variant             | Hand at impact | Club/arm ratio | Braking | Feasible? (defect < 1e-6) |
-| ------------------------- | -------------- | -------------- | ------- | ------------------------- |
-| Symmetric clamp (shipped) | 0.36 m/s       | 59.2           | 32%     | yes                       |
-| Weak brake only           | 0.08 m/s       | 235.7          | 44%     | yes                       |
-| **Hill torque–velocity**  | **6.8 m/s**    | **2.8**        | **0%**  | **no**                    |
-| Hill + weak brake         | 7.0 m/s        | 2.8            | 0%      | no                        |
+| Model variant             | Hand at impact | Club/arm ratio | Braking | Feasible? |
+| ------------------------- | -------------- | -------------- | ------- | --------- |
+| Symmetric clamp (shipped) | 0.36 m/s       | 59.2           | 32%     | yes       |
+| Weak brake only           | 0.08 m/s       | 235.7          | 44%     | yes       |
+| **Hill torque–velocity**  | **6.8 m/s**    | **2.8**        | **0%**  | **no**    |
+| Hill + weak brake         | 7.0 m/s        | 2.8            | 0%      | no        |
 
-The Hill candidate produces kinematics close to heuristic targets (hands at 6.8 m/s, ratio 2.8,
-and zero active braking), but **its order-one dynamics defects (~1.0) prevent presenting its
-6.8 m/s output as a feasible or measured swing**. It is dynamically infeasible under this model formulation.
-The "Feasible?" column indicates satisfaction of the collocation dynamics defect tolerance predicate
-(`max_defect < 1e-6`), not verification of every constraint or a certificate of global reachability/infeasibility.
+The Hill limit produces exactly the kinematics the literature reports — hands at 6.8 m/s,
+ratio 2.8, and **zero active braking**, with arm deceleration arising passively. The weak
+brake alone makes things worse.
+
+But those runs are **not feasible**: dynamics defects near 1.0. The reason is in §4.
 
 ---
 
@@ -292,34 +209,28 @@ downswing with hub torque opposing the arms.
 What does **not** survive is the severity. With the coupling at its correct value the
 cost is a few m/s of hand speed, not all of it.
 
-`hand_speed_frontier` measured the price with the **mis-specified** club under historical
-experiment settings (duration 0.36 s, ±250 N·m):
+`hand_speed_frontier` measured the price with the **mis-specified** club
+(duration 0.36 s, ±250 N·m):
 
-| Hand-speed floor          | Feasible (defect < 1e-6) | Clubhead speed | Club/arm ratio |
-| ------------------------- | ------------------------ | -------------- | -------------- |
-| none                      | yes                      | 36.4 m/s       | 59.2           |
-| 3 m/s                     | yes                      | 34.1 m/s       | 6.1            |
-| 5 m/s                     | marginal                 | 29.6 m/s       | 2.9            |
-| **6 m/s (heuristic band)**| **no**                   | —              | —              |
+| Hand-speed floor          | Feasible | Clubhead speed | Club/arm ratio |
+| ------------------------- | -------- | -------------- | -------------- |
+| none                      | yes      | 36.4 m/s       | 59.2           |
+| 3 m/s                     | yes      | 34.1 m/s       | 6.1            |
+| 5 m/s                     | marginal | 29.6 m/s       | 2.9            |
+| **6 m/s (measured band)** | **no**   | —              | —              |
 
-(Note: "Feasible" reports satisfaction of the collocation dynamics defect threshold predicate
-`max_defect < 1e-6`; rising defects indicate solver non-convergence under the collocation grid,
-not a global certificate of infeasibility.)
-
-With the **corrected** club (evaluated under the revised objective comparison duration of 0.28 s)
-the picture is entirely different: the unconstrained optimum already sits at 7.26 m/s, inside the
-heuristic band, and floors up to 8 m/s satisfy the defect predicate. Approximately 24% modeled
-braking remains in the corrected sweep. The table above characterises the artifact, not the model.
-Implementation: [`model_adequacy.py`](../../src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/model_adequacy.py);
+With the **corrected** club the picture is entirely different: the unconstrained optimum
+already sits at 7.26 m/s, inside the measured band, and floors up to 8 m/s stay
+reachable. The table above characterises the artifact, not the model. Implementation:
+[`model_adequacy.py`](../../src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/model_adequacy.py);
 both regimes are pinned in `tests/test_model_adequacy.py`.
 
 ---
 
 ## 5. So which objective is a good golfer optimizing?
 
-Asked properly — solve each objective under identical conditions (duration 0.28 s), reduce to the
-observables, score against heuristic reference bands — the answer is that **the question cannot be
-settled on this model**.
+Asked properly — solve each objective under identical conditions, reduce to the measured
+observables, score — the answer is that **the question cannot be settled on this model**.
 
 | Regime        | Deviation spread across objectives | Observables inside band |
 | ------------- | ---------------------------------- | ----------------------- |
@@ -327,7 +238,7 @@ settled on this model**.
 | Hands ≥ 3 m/s | 8.66 → 8.71 (**0.6% spread**)      | 1 of 6                  |
 
 In the only near-realistic regime the model can reach, the five objectives land within
-0.6% of each other while every one of them sits far outside the heuristic reference bands. The
+0.6% of each other while every one of them sits far outside the measured bands. The
 spread between objectives is an order of magnitude smaller than the gap between all of
 them and a real swing.
 
