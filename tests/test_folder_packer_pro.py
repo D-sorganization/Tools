@@ -8,10 +8,14 @@ from __future__ import annotations
 
 import base64
 import json
+import os
 import sys
 from pathlib import Path
 
 import pytest
+from cryptography.fernet import Fernet, InvalidToken
+
+from folder_packer_pro.encryption import EncryptionManager
 
 # ---------------------------------------------------------------------------
 # Constants
@@ -167,3 +171,30 @@ def test_unpack_rejects_absolute_paths(tmp_path: Path) -> None:
     assert result.success is True
     assert result.errors
     assert not (tmp_path / "dest" / "C:" / "temp" / "escaped.txt").exists()
+
+
+def test_encryption_uses_600000_iterations_and_supports_legacy_fallback() -> None:
+    """Encryption uses 600,000 PBKDF2 iterations and falls back to 100,000."""
+    # 1. Default iterations in derive_key is 600,000
+    salt = os.urandom(16)
+    key_default = EncryptionManager.derive_key("password", salt)
+    key_600k = EncryptionManager.derive_key("password", salt, iterations=600000)
+    assert key_default == key_600k
+
+    # 2. Modern encryption uses 600,000 iterations and round-trips
+    data = b"secret project files"
+    encrypted_modern = EncryptionManager.encrypt_data(data, "password")
+    decrypted_modern = EncryptionManager.decrypt_data(encrypted_modern, "password")
+    assert decrypted_modern == data
+
+    # 3. Legacy archive encrypted with 100,000 iterations falls back cleanly
+    key_100k = EncryptionManager.derive_key("password", salt, iterations=100000)
+    legacy_ciphertext = salt + Fernet(key_100k).encrypt(data)
+    decrypted_legacy = EncryptionManager.decrypt_data(legacy_ciphertext, "password")
+    assert decrypted_legacy == data
+
+    # 4. Wrong password fails on both
+    with pytest.raises(InvalidToken):
+        EncryptionManager.decrypt_data(encrypted_modern, "wrong-password")
+    with pytest.raises(InvalidToken):
+        EncryptionManager.decrypt_data(legacy_ciphertext, "wrong-password")
