@@ -350,10 +350,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 2273,
+      "bytes_lf": 3004,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d6cdaca98dbd92cd95b18fc8b37600c795b23035ac2ee600ced15bcd4c754fcc",
+      "content_sha256_lf": "c3ac2233cdfdd07733115fb8faaebb8e52dc51e2f0f4990ad179c0903b2e4ec5",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-FOLDER-PACKER-PRO-ENCRYPTION-PY-E6058F750ECA",
       "language": "python",
@@ -395,7 +395,8 @@
           }
         ],
         "test_paths": [
-          "src/python/tests/test_folder_packer_pro.py"
+          "src/python/tests/test_folder_packer_pro.py",
+          "tests/test_folder_packer_pro.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
