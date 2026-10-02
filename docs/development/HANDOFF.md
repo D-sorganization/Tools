@@ -1,34 +1,38 @@
-# Current handoff — Flight Termination States & Metric Gating (Tools#5385)
+# Current handoff — Restore Reverted PBKDF2 Hardening and Swing-Objectives Fix (Tools#5404)
 
 - Repository: D-sorganization/Tools
 - Working directory: `C:/Users/diete/Repositories/Tools`
-- Branch: `fix/tools-flight-termination-5385`; commit: SELF; PR: #5391 (open, targets `main`)
-- Governing issue: Tools#5385 (paired consumer issue: UpstreamDrift#11145)
+- Branch: `fix/restore-reverted-fixes-5404`; commit: SELF; PR: not created
+- Governing issue: Tools#5404
 
 ## Objective and status
 
-Propagate explicit termination reasons (`FlightTermination`: `LANDED`, `TIME_LIMIT`, `SOLVER_FAILED`, `CANCELLED`) from flight integration before reporting landing metrics (`carry_distance`, `landing_angle`, `lateral_deviation`). Non-landed flights have landing metrics gated to `None` and fail closed across downstream consumers: `CenteredClubDeliveryAdapter` (returns `ForwardStatus.FAILED`), `build_ground_simulation_request` (raises `FlightGroundTransferError`), and `_recompute_registered` in `flight_execution_profiles` (returns `RECOMPUTATION_FAILED`).
+Restore the PBKDF2 hardening from PR #5399 (600,000 iterations default with transparent legacy 100,000 fallback on InvalidToken) and the swing-objectives inertia equivalence and evidence limits corrections from PR #5401 (closing #5393) which were inadvertently reverted during the stale-branch squash merge of PR #5400.
 
 ## Files and decisions
 
-- `src/shared/python/swing_sim/flight/types.py`: Added `FlightTermination` enum, `IncompleteFlightError(RuntimeError)`. Updated `FlightResult` dataclass to validate landing metrics are `None` when `termination != FlightTermination.LANDED`. Added `require_landing()`, `flight_completed`, `landed` properties.
-- `src/shared/python/swing_sim/flight/models.py`: Updated `BallFlightModel._run_ode_simulation` to inspect `sol.status`, `sol.success`, and `sol.t_events` safely and propagate `termination`, `terminal_event`, and `actual_horizon`. Attached partial `FlightResult` to `FlightSimulationCancelled`.
-- `src/shared/python/swing_sim/flight/impact_solution_adapter.py`: Added landing gate returning `ForwardStatus.FAILED` with `"flight_incomplete:<termination>"`.
-- `src/shared/python/swing_sim/flight/ground_transfer.py`: Added landing gate raising `FlightGroundTransferError` if `not result.landed`.
-- `src/rate_of_closure/application/flight_execution_profiles.py`: Added landing gate returning `RECOMPUTATION_FAILED` if `not result.landed`.
-- `src/shared/python/swing_sim/flight/tests/test_flight_termination.py`: Added 10 tests verifying the 5 canonical termination fixtures and downstream fail-closed gating.
-- `tests/api_baselines/swing_sim_api_baseline.json`: Regenerated to record breaking API changes (`FlightResult` methods, `compute_flight_metrics` kwargs, `FlightSimulationCancelled` optional result).
+- `src/folder_packer_pro/encryption.py`: Restored 600,000 PBKDF2 iterations with legacy fallback.
+- `tests/test_folder_packer_pro.py`: Added explicit regression test verifying 600,000 iterations default and legacy 100,000 archive decryption fallback.
+- `docs/specs/SWING_ACTUATION_AND_REALISM.md`: Restored corrected heuristic reference interval wording and wrist-pivot measurement origin caveats.
+- `src/pendulum_simulator/src/double_pendulum_golf/swing_objectives/`: Restored actuation, club_equivalence, impact_optimality, model_adequacy, objective_realism, reference_kinematics.
+- `src/pendulum_simulator/tests/test_club_equivalence.py`: Restored regression test `test_inertia_arithmetic_distinguishes_masses`.
+- `manuals/tools/manifests/module-inventory/`: Regenerated module inventory shards via `python -m scripts.build_tools_module_inventory`.
+- `SPEC.md`: Restored change log rows for #5400, #5393, #5399, and added row for #5404.
 
 ## Validation
 
-- Full test suite: 231 tests in `flight` and `test_shared_package_api_stability.py` pass.
-- Linters: `ruff check` (0 errors), `ruff format --check` (clean), `black --check` (clean), `mypy` (clean).
+- Pytest: all 18 tests in `test_club_equivalence.py`, all 9 tests in `test_folder_packer_pro.py`, and all 16 tests in `test_spec_version_freshness.py` pass.
+- Ruff: `ruff check` passes (0 errors on changed files).
+- Formatter: `ruff format --check` passes.
+- Mypy: `mypy` passes cleanly (0 errors on changed files).
+- Module inventory: `python -m scripts.build_tools_module_inventory --check` passes cleanly.
 
 ## Next step
 
-- Push branch and create PR #5385 with breaking API notice citing UpstreamDrift #11145.
+- Commit, push branch, open PR referencing Closes #5404, and arm squash auto-merge.
 
 ---
+
 
 # Past handoff — v1.23.1 release preparation (Tools#5376)
 
