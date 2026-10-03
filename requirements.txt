@@ -5,7 +5,7 @@
 # Core Scientific Computing
 numpy>=2.0.1,<2.4.0  # Fundamental array processing and matrix operations; numpy 2.4+ ships PEP 695 syntax in its bundled __init__.pyi stub, which crashes mypy 1.13.0's incremental cache serializer (AssertionError: unresolved placeholder type) under this repo's python_version=3.11 mypy config
 pandas>=2.2.2  # Data analysis, manipulation, and time series
-pytz>=2026.2  # Timezone library required by pandas>=2.3.1
+pytz>=2026.4  # Timezone library required by pandas>=2.3.1
 scipy>=1.13.1,<1.18  # Scientific algorithms (integration, optimization)
 matplotlib>=3.9.0  # Data visualization and plotting library
 sympy>=1.12  # Symbolic mathematics and algebra
@@ -42,7 +42,7 @@ pydantic-settings>=2.0.0  # Settings management for Pydantic v2
 filelock>=3.12.0  # File locking mechanism for concurrent state security and authority jobs
 
 # Security & Encryption
-cryptography>=50.0.1  # Cryptographic recipes and primitives
+cryptography>=50.0.2  # Cryptographic recipes and primitives
 defusedxml>=0.7.0  # Safe XML parsing (mitigates XML bomb / XXE attacks)
 pygments>=2.21.0,<2.22.0  # Pinned: CVE-2026-4539 affects 2.19.x (transitive via rich/pip-audit)
 
