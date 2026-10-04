@@ -2155,6 +2155,109 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 7603,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a56c9e31ab0e45cecb020fd030e722013d87c48ba962651a3264580f3a92f85c",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CHECK-LICENSE-DENYLIST-PY-4E44B5F83611",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/check_license_denylist.py",
+      "purpose": "ADR-008 dependency and license deny-list check for the MIT core (#5417).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-008-markerless-mocap-authority-and-licensing.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Denylist",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DenylistConfigError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Violation",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "AGPL_CLASSIFIER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CONFIG_RELPATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REQUIREMENTS_FILES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "check_installed",
+            "signature": "root: Path, denylist: Denylist"
+          },
+          {
+            "kind": "function",
+            "name": "check_static",
+            "signature": "root: Path, denylist: Denylist"
+          },
+          {
+            "kind": "function",
+            "name": "load_denylist",
+            "signature": "root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: Sequence[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "normalize_name",
+            "signature": "name: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 3138,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",

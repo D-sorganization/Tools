@@ -99,8 +99,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-benchmarks.json"
     },
     {
-      "content_sha256_lf": "d8683f904580cd6aacdb29a5d26d46b53abd2445febfe203f278eeb34eb48628",
-      "entry_count": 4,
+      "content_sha256_lf": "ba94aa392d37912b2209d81d2de5a39d98214cf6813265057a2f84d67586bf00",
+      "entry_count": 5,
       "package": "config",
       "path": "manuals/tools/manifests/module-inventory/entries-config.json"
     },
@@ -117,7 +117,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "8d1f492621331e2522c874c8154c2f416158458bb0b2ee9631d304af0a527c43",
+      "content_sha256_lf": "3aa5a79994923b78e59d5ac4ec0435e9c85144c72ca888d2494cccd391a32efd",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
@@ -159,8 +159,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "119c842f704133851bb8809588270ded0c2b9acd9d588bb2f8ef86665df57ea0",
-      "entry_count": 107,
+      "content_sha256_lf": "fa94a387afdea2500be8ab1557f2e32c7fa4421859c637fd6135df4dc45c3d3c",
+      "entry_count": 108,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
     },
@@ -267,7 +267,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-file-watcher.json"
     },
     {
-      "content_sha256_lf": "b676f0b843c1f81e9e3d33105871c642695cfd9da95f9d45a8bf7cf4ff6397f2",
+      "content_sha256_lf": "42c16c4c54e8d1e07882828791d8ed933945c70a7086700b05af69aeb9eaee1d",
       "entry_count": 18,
       "package": "src/financial_calculator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-financial-calculator.json"
@@ -297,7 +297,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-folder-tool-pro.json"
     },
     {
-      "content_sha256_lf": "669022a5a2ff0fc44f5ff949a9c7fb8b5fd77fa6db7dbaea671c438f7e84704b",
+      "content_sha256_lf": "b89fcffbe97866ccd63ccc38d1a606b481b0abfb9ba380d5f37bc5c782dada0a",
       "entry_count": 17,
       "package": "src/function_generator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-function-generator.json"
@@ -393,7 +393,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
     {
-      "content_sha256_lf": "648f851376b1a8cd87e1591e4d35debfd9c48da202c61981c5e5437d8a250421",
+      "content_sha256_lf": "67c0411e203bd928d23893d45af3349f991e9e3e81d96e65a5939e91ce9cacf3",
       "entry_count": 167,
       "package": "src/pendulum_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pendulum-simulator.json"
@@ -411,7 +411,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-plant-simulator.json"
     },
     {
-      "content_sha256_lf": "75db3462e6441e54d86b355754304e9b1271b2c09ab1b7b18686c45f2794929e",
+      "content_sha256_lf": "b6549c3dd4b9e61802faf01ec5da49e0aa51054d9b3246af5eb5de3cf773ff30",
       "entry_count": 18,
       "package": "src/pressure_drop_calculator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pressure-drop-calculator.json"
@@ -585,7 +585,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rotation-transforms.json"
     },
     {
-      "content_sha256_lf": "3779fa9e8568a72473aeed2c85df2c0622652ad2bf92a33cce39fb38ebcc996a",
+      "content_sha256_lf": "b5eec3ba50b5fef602d65d59e015adb1e3357f382bf067d03998e85fc9a422f2",
       "entry_count": 26,
       "package": "src/rrt_path_planner",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rrt-path-planner.json"
@@ -597,7 +597,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "0bab2a1adb7d36f5480cee89d4cc1b8305e918e776c95291fb2b3460e3523eee",
+      "content_sha256_lf": "a6e98020c093864276c3a66df2dad887c7cd6eda677d4d6e658edb6637a7ddc4",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
