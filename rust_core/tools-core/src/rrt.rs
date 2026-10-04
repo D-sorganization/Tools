@@ -4,7 +4,6 @@ use numpy::{PyArray2, PyArrayMethods};
 use pyo3::prelude::*;
 use rand::rngs::StdRng;
 use rand::{Rng, SeedableRng};
-use std::f64;
 
 #[derive(Clone, Debug)]
 #[cfg_attr(feature = "python", pyclass)]
