@@ -10,6 +10,19 @@ feature, from proposal to ship. See the `development-logs` section of
 - **WIP limit:** 4
 - **Last audited:** 2026-09-30 by Luna (Tools#5392 longitudinal residual variance)
 
+### DL-#5416 · Python validator for calculation-runtime-manifest/v1
+
+- **State:** in_review
+- **Owner:** claude
+- **Issue:** #5416
+- **Branch:** `claude/issue-5416`
+- **PR:** draft (see issue)
+- **Paths:** `src/shared/python/swing_sim/runtime_manifest.py`, `tests/shared/python/test_runtime_manifest_parity_fixture.py`, `docs/specs/active/CALCULATION_RUNTIME_MANIFEST.md`
+- **Started:** 2026-10-04
+- **Last verified:** 2026-10-04 — parity test module 52 passed; ruff, ruff format and mypy clean.
+- **Summary:** One-for-one Python port of the TypeScript `parseRuntimeManifest`, pinned by the shared `runtime_manifest_parity_v1.json` fixture.
+- **Next step:** frontier agent reviews the draft PR before it is marked ready.
+
 ### DL-#5392 · Longitudinal regression residual variance
 
 - **State:** in_review

@@ -85,7 +85,9 @@ serializable manifest numbers are the same domain. The shared Python numeric
 encoder retains its broader established domain for existing non-manifest
 consumers. Duplicate JSON fields and unpaired surrogate code points are
 rejected. `runtime_manifest_parity_v1.json` pins the exact wire shape, numeric
-boundaries, reason grammar, and bytes used by both runtimes.
+boundaries, reason grammar, and bytes used by both runtimes. The Python validator is
+`shared.python.swing_sim.runtime_manifest` (`parse_runtime_manifest`,
+`runtime_manifest_from_json`, `stable_runtime_manifest_json`).
 
 ## Explicit creation
 
