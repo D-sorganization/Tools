@@ -1,4 +1,26 @@
-# Current handoff — ADR-008 license deny-list check (Tools#5417)
+# Current handoff — Fix clippy deprecated f64 constants in tools-core (Tools#5422)
+
+- Repository: D-sorganization/Tools
+- Working directory: `C:/Users/diete/Repositories/_worktrees/Tools-5422`
+- Branch: `fix/issue-5422-clippy-f64-deprecated`; commit: SELF; PR: see PR body
+- Governing issue: Tools#5422
+
+## Objective and status
+
+Fix clippy failures in `rust-quality-gate` where `use std::f64;` shadowed primitive `f64` associated constants (`f64::NEG_INFINITY` and `f64::MAX`). Removed shadowing import.
+
+## Validation
+
+- `cargo clippy --package tools-core --all-targets -- -D warnings`: passed cleanly (0 errors, 0 warnings).
+- `cargo test --package tools-core`: 184 passed, 0 failed.
+
+## Next step
+
+- Open ready PR, arm auto-merge via Repository_Management `scripts/automerge_guard.py`.
+
+---
+
+# Past handoff — ADR-008 license deny-list check (Tools#5417)
 
 - Repository: D-sorganization/Tools
 - Working directory: `C:/Users/diete/Repositories/Tools-worktrees/claude-5417`

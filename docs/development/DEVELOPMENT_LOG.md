@@ -10,6 +10,19 @@ feature, from proposal to ship. See the `development-logs` section of
 - **WIP limit:** 4
 - **Last audited:** 2026-09-30 by Luna (Tools#5392 longitudinal residual variance)
 
+### DL-#5422 · Fix Clippy Deprecated f64 Constants in tools-core
+
+- **State:** in_review
+- **Owner:** antigravity
+- **Issue:** #5422
+- **Branch:** `fix/issue-5422-clippy-f64-deprecated`
+- **PR:** not created
+- **Paths:** `rust_core/tools-core/src/rrt.rs`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`, `SPEC.md`
+- **Started:** 2026-10-04
+- **Last verified:** 2026-10-04 — `cargo clippy --package tools-core --all-targets -- -D warnings` 0 errors, 0 warnings; `cargo test --package tools-core` 184 passed.
+- **Summary:** Removed deprecated `use std::f64;` in `rust_core/tools-core/src/rrt.rs` that shadowed primitive `f64` associated constants (`f64::NEG_INFINITY` and `f64::MAX`) causing Clippy `-D warnings` failure in `rust-quality-gate` on CI Standard.
+- **Next step:** Open ready PR, arm auto-merge via Repository_Management `scripts/automerge_guard.py`.
+
 ### DL-#5417 · ADR-008 dependency and license deny-list check
 
 - **State:** in_review
