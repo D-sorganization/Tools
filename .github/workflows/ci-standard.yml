@@ -18,6 +18,8 @@ on:
     # nothing pending. That is why `**.md` was already left out of this filter;
     # `LICENSE` and `.gitignore` were dropped for exactly the same reason. `push`
     # below still ignores them: post-merge CI does not gate the required context.
+  # Merge queue (Repository_Management#1890): required checks must report on the queue's merge commit.
+  merge_group:
   workflow_dispatch:
 
 concurrency:
