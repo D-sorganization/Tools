@@ -1,3 +1,33 @@
+# Current handoff — Python runtime-manifest validator (Tools#5416)
+
+- Repository: D-sorganization/Tools
+- Working directory: `C:/Users/diete/Repositories/Tools-worktrees/claude-5416`
+- Branch: `claude/issue-5416`; commit: SELF; PR: draft, see PR body
+- Governing issue: Tools#5416 (parent #4260)
+
+## Objective and status
+
+Port the TypeScript `parseRuntimeManifest` (`calculation-runtime-manifest/v1`) to Python with shared-fixture parity. Implemented; awaiting review.
+
+## Files and decisions
+
+- `src/shared/python/swing_sim/runtime_manifest.py`: new validator (`parse_runtime_manifest`, `runtime_manifest_from_json`, `stable_runtime_manifest_json`); returns fresh plain dicts. TS `TypeError`/`RangeError` map to `TypeError`/`ValueError` with the same key phrases. Nonempty-text check uses the ECMAScript `trim()` whitespace set, not `str.strip()`.
+- `tests/shared/python/test_runtime_manifest_parity_fixture.py`: parser parity cases driven from the unchanged shared fixture.
+- `docs/specs/active/CALCULATION_RUNTIME_MANIFEST.md`, `SPEC.md`, module-inventory shard: bookkeeping.
+- Producer, fixture, TypeScript validator and `canonical_numeric_json` untouched (out of scope).
+
+## Validation
+
+- `python -m pytest -q tests/shared/python/test_runtime_manifest_parity_fixture.py`: 52 passed.
+- ruff check, ruff format --check, mypy clean on the new module and test.
+
+## Next step
+
+- Frontier review of the draft PR, then mark ready and arm auto-merge via Repository_Management `scripts/automerge_guard.py`.
+
+---
+
+
 # Current handoff — Restore Reverted PBKDF2 Hardening and Swing-Objectives Fix (Tools#5404)
 
 - Repository: D-sorganization/Tools

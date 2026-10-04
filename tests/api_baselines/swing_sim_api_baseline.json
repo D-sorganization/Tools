@@ -29431,6 +29431,62 @@
       }
     }
   },
+  "runtime_manifest.py": {
+    "__all__": [
+      "RUNTIME_MANIFEST_SCHEMA",
+      "parse_runtime_manifest",
+      "runtime_manifest_from_json",
+      "stable_runtime_manifest_json"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "RUNTIME_MANIFEST_SCHEMA": {
+        "type": "variable"
+      },
+      "parse_runtime_manifest": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "value"
+            }
+          ],
+          "returns": "dict[str, Any]"
+        },
+        "type": "function"
+      },
+      "runtime_manifest_from_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "text"
+            }
+          ],
+          "returns": "dict[str, Any]"
+        },
+        "type": "function"
+      },
+      "stable_runtime_manifest_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Mapping[str, Any]",
+              "default": null,
+              "kind": "arg",
+              "name": "manifest"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      }
+    }
+  },
   "solver/__init__.py": {
     "__all__": [
       "DELIVERY_VARIABLE_DEFAULTS",
