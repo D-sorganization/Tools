@@ -16,7 +16,7 @@ feature, from proposal to ship. See the `development-logs` section of
 - **Owner:** claude
 - **Issue:** #4433
 - **Branch:** `claude/issue-4433`
-- **PR:** not created
+- **PR:** #5424 (draft)
 - **Paths:** `tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py`, `tests/rate_of_closure/pyqt_launch_monitor_state_probe.py`, `src/rate_of_closure/web/e2e/visualization-tab-visibility.spec.ts`, `docs/audits/rate_of_closure_visual_first_epic_4433.v1.json`
 - **Started:** 2026-10-04
 - **Last verified:** 2026-10-04 — Launch Monitor Analytics pair: PyQt state geometry 2 passed (1.0 and 1.5 DPI); Playwright visibility spec 4 passed on chromium-desktop; both RED with a result-only spacer above the scatter.

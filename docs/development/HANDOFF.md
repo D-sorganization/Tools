@@ -2,7 +2,7 @@
 
 - Repository: D-sorganization/Tools
 - Working directory: `C:/Users/diete/Repositories/Tools-worktrees/claude-4433`
-- Branch: `claude/issue-4433`; commit: SELF; PR: draft, see PR body
+- Branch: `claude/issue-4433`; commit: SELF; PR: #5424 (draft)
 - Governing issue: Tools#4433 (sub-task; epic stays open). Development-log entry: DL-#4433.
 
 ## Objective and status
