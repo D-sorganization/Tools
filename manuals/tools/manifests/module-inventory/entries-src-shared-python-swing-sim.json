@@ -1214,6 +1214,78 @@
     },
     {
       "authority_status": "provisional",
+      "bytes_lf": 11297,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "834e9e67715d2e28a83997603a2a80977b64b3e715c86e89293a49a211c11523",
+      "family": "swing-simulation-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-RUNTIME-MANIFEST-PY-944B16ADC266",
+      "language": "python",
+      "maintainer": "Swing simulation maintainers",
+      "path": "src/shared/python/swing_sim/runtime_manifest.py",
+      "purpose": "Strict calculation-runtime manifest ``calculation-runtime-manifest/v1`` parser.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "RUNTIME_MANIFEST_SCHEMA",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "parse_runtime_manifest",
+            "signature": "value: object"
+          },
+          {
+            "kind": "function",
+            "name": "runtime_manifest_from_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "stable_runtime_manifest_json",
+            "signature": "manifest: Mapping[str, Any]"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/test_runtime_manifest_parity_fixture.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 14839,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
