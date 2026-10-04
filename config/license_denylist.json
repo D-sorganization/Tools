@@ -1,0 +1,5 @@
+{
+  "denied_packages": ["freemocap", "skellycam"],
+  "denied_license_ids": ["AGPL-3.0", "AGPL-3.0-only", "AGPL-3.0-or-later"],
+  "rationale": "docs/adr/ADR-008-markerless-mocap-authority-and-licensing.md (Licensing): the MIT distribution will not copy, vendor, import, dynamically link, bundle, or install FreeMoCap (AGPL-3.0) or SkellyCam (AGPL-3.0-or-later) as a dependency."
+}
