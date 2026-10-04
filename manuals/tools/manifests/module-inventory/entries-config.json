@@ -126,6 +126,50 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 380,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "289f716afad3bd09072a0c16568fab05af0163238e3a19cf0d2897bcb7d40531",
+      "family": "repository-governance-non-calculation",
+      "id": "TOOLS-MODULE-CONFIG-LICENSE-DENYLIST-JSON-0C09E264AB81",
+      "language": "json",
+      "maintainer": "Repository governance maintainers",
+      "path": "config/license_denylist.json",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-008-markerless-mocap-authority-and-licensing.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/architecture/test_license_denylist.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 949,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",

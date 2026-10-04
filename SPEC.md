@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
 | 2026-10-04 | #5416 | feat(runtime-manifest): Python validator `shared.python.swing_sim.runtime_manifest` for calculation-runtime-manifest/v1, one-for-one port of `parseRuntimeManifest` with shared-fixture parity tests (#5416) |
+| 2026-10-04 | #5417 | feat(licensing): ADR-008 dependency and license deny-list check script and config (#5417) |
 | 2026-10-02 | #5404 | fix(revert): restore PBKDF2 hardening and swing-objectives correction reverted by PR 5400 (#5404) |
 | 2026-10-01 | #5400 | Eliminate chained array methods in LaunchMonitorComparisonWorkspace |
 | 2026-10-01 | #5393 | fix(swing_objectives): correct inertia equivalence and evidence limits documentation (#5393) |

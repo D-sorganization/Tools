@@ -1,3 +1,28 @@
+# Current handoff — ADR-008 license deny-list check (Tools#5417)
+
+- Repository: D-sorganization/Tools
+- Working directory: `C:/Users/diete/Repositories/Tools-worktrees/claude-5417`
+- Branch: `claude/issue-5417`; commit: SELF; PR: draft, see PR body
+- Governing issue: Tools#5417 (refs #4719)
+
+## Objective and status
+
+Add `scripts/check_license_denylist.py` and `config/license_denylist.json` enforcing ADR-008 (no FreeMoCap/SkellyCam, no AGPL ids) statically and with `--installed`. Implemented and tested.
+
+## Files and decisions
+
+- `config/license_denylist.json`: only what ADR-008 names.
+- `tests/architecture/test_license_denylist.py`: 11 tests, incl. real-repo static pass.
+- Not wired into CI (out of scope; workflow PR for the workflow owner).
+
+## Validation
+
+- `python -m pytest -q tests/architecture/test_license_denylist.py`: 11 passed; ruff check/format and mypy clean.
+
+## Next step
+
+- Frontier review of the draft PR; separate workflow PR for CI wiring.
+
 # Current handoff — Python runtime-manifest validator (Tools#5416)
 
 - Repository: D-sorganization/Tools
@@ -27,6 +52,8 @@ Port the TypeScript `parseRuntimeManifest` (`calculation-runtime-manifest/v1`) t
 
 ---
 
+
+# Past handoff — Restore Reverted PBKDF2 Hardening and Swing-Objectives Fix (Tools#5404)
 
 # Current handoff — Restore Reverted PBKDF2 Hardening and Swing-Objectives Fix (Tools#5404)
 

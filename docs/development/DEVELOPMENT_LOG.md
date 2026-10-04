@@ -10,6 +10,19 @@ feature, from proposal to ship. See the `development-logs` section of
 - **WIP limit:** 4
 - **Last audited:** 2026-09-30 by Luna (Tools#5392 longitudinal residual variance)
 
+### DL-#5417 · ADR-008 dependency and license deny-list check
+
+- **State:** in_review
+- **Owner:** claude
+- **Issue:** #5417
+- **Branch:** `claude/issue-5417`
+- **PR:** not created
+- **Paths:** `scripts/check_license_denylist.py`, `config/license_denylist.json`, `tests/architecture/test_license_denylist.py`
+- **Started:** 2026-10-04
+- **Last verified:** 2026-10-04 — tests/architecture/test_license_denylist.py 11 passed; ruff and mypy clean; script exits 0 on the repository root, with and without --installed.
+- **Summary:** Enforces the ADR-008 licensing rule (no FreeMoCap or SkellyCam, AGPL ids) with a static scan of pyproject.toml and requirements files plus an optional installed-closure license walk. Lists contain only what ADR-008 names. CI wiring is out of scope.
+- **Next step:** workflow owner wires `python scripts/check_license_denylist.py` into CI as a separate workflow PR.
+
 ### DL-#5416 · Python validator for calculation-runtime-manifest/v1
 
 - **State:** in_review
