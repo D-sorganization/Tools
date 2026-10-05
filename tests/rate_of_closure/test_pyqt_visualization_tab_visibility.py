@@ -153,7 +153,10 @@ def test_initial_flight_explorer_import_control_is_visible_and_named(
 
 
 def _probe(
-    output_root: Path, scale: float, candidate_root: Path | None = None
+    output_root: Path,
+    scale: float,
+    candidate_root: Path | None = None,
+    probe_script: str = "pyqt_visualization_tab_probe.py",
 ) -> dict[str, Any]:
     output = output_root / f"scale-{scale:g}"
     stale_settings = output / "qsettings" / "stale.ini"
@@ -178,7 +181,7 @@ def _probe(
     subprocess.run(
         [
             sys.executable,
-            str(Path(__file__).with_name("pyqt_visualization_tab_probe.py")),
+            str(Path(__file__).with_name(probe_script)),
             "--output",
             str(output),
             "--scale",
@@ -281,3 +284,54 @@ def test_all_primary_tab_visuals_are_visible_and_nonoverlapping_at_both_dpis(
         image = candidate_path.parent / entry["file"]
         assert image.stat().st_size > 10_000
         assert hashlib.sha256(image.read_bytes()).hexdigest() == entry["sha256"]
+
+
+_LAUNCH_MONITOR_STATE_ORDER = ("result", "error", "loading", "empty")
+
+
+@pytest.mark.timeout(300)
+@pytest.mark.parametrize("scale", (1.0, 1.5))
+def test_launch_monitor_visual_stays_in_first_viewport_through_every_state(
+    tmp_path: Path, scale: float
+) -> None:
+    """#4433: the linked scatter is not pushed below the fold by any state.
+
+    The probe drives the production handlers in order: Run Analysis
+    (result), a fail-closed import (error, prior result retained), a valid
+    import measured while its synchronous read is pending (loading), then
+    Load Demo (empty demonstration preview, reached as a non-initial state).
+    """
+
+    manifest = _probe(
+        tmp_path / "launch-monitor-states",
+        scale,
+        probe_script="pyqt_launch_monitor_state_probe.py",
+    )
+    assert manifest["artifact_policy"] == "diagnostic-only-not-approved-golden"
+    assert manifest["tab_id"] == "launch_monitor_analytics"
+    assert manifest["requested_scale"] == scale
+    assert manifest["device_pixel_ratio"] == pytest.approx(scale)
+    assert manifest["logical_window_size"] == [1440, 900]
+    states = {record["state"]: record for record in manifest["states"]}
+    assert tuple(record["state"] for record in manifest["states"]) == (
+        _LAUNCH_MONITOR_STATE_ORDER
+    )
+    minimum_height = manifest["minimum_visible_height_px"]
+    assert minimum_height == 240
+    for state, record in states.items():
+        assert record["manifest_semantics"], state
+        assert record["visual_visible"] is True, state
+        assert record["visible_intersection"][2] >= 240, state
+        assert record["visible_intersection"][3] >= minimum_height, state
+        assert record["tab_bar_overlap"][2:] == [0, 0], state
+        assert record["interactive_overlaps"] == [], state
+
+    demo = "Built-In Demonstration Data"
+    assert states["result"]["has_result"] is True
+    assert states["result"]["result_rows"] > 0
+    assert states["error"]["messages"], "fail-closed import raised no message"
+    assert states["error"]["source_name"] == demo
+    assert states["error"]["has_result"] is True, "prior result was not retained"
+    assert states["loading"]["source_name"] == demo, "read was not pending"
+    assert states["empty"]["source_name"] == demo
+    assert states["empty"]["has_result"] is False

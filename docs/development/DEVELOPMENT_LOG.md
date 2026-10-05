@@ -23,6 +23,32 @@ feature, from proposal to ship. See the `development-logs` section of
 - **Summary:** Iron family following the wedge precedent: versioned `golf_club.iron_parameters/1` schema with boundary DbC, ruled-loft B-Rep with fused hollow hosel, mass properties recovered from the solid and checked against a closed-form prismatoid and the exported-mesh divergence theorem, STEP/BREP/STL export with `golf_club.iron_export/1` manifest. Shared datum-face, hosel-tube and file-export helpers extracted to `_head_cad.py`. Driver, hybrid and putter families and shape optimisation remain open under #4149.
 - **Next step:** owner reviews the iron schema ranges and topology in the draft PR body.
 
+### DL-#5422 · Fix Clippy Deprecated f64 Constants in tools-core
+
+- **State:** in_review
+- **Owner:** antigravity
+- **Issue:** #5422
+- **Branch:** `fix/issue-5422-clippy-f64-deprecated`
+- **PR:** not created
+- **Paths:** `rust_core/tools-core/src/rrt.rs`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`, `SPEC.md`
+- **Started:** 2026-10-04
+- **Last verified:** 2026-10-04 — `cargo clippy --package tools-core --all-targets -- -D warnings` 0 errors, 0 warnings; `cargo test --package tools-core` 184 passed.
+- **Summary:** Removed deprecated `use std::f64;` in `rust_core/tools-core/src/rrt.rs` that shadowed primitive `f64` associated constants (`f64::NEG_INFINITY` and `f64::MAX`) causing Clippy `-D warnings` failure in `rust-quality-gate` on CI Standard.
+- **Next step:** Open ready PR, arm auto-merge via Repository_Management `scripts/automerge_guard.py`.
+
+### DL-#4433 · Visual-first first-viewport geometry beyond the initial state
+
+- **State:** in_review
+- **Owner:** claude
+- **Issue:** #4433
+- **Branch:** `claude/issue-4433`
+- **PR:** #5424 (draft)
+- **Paths:** `tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py`, `tests/rate_of_closure/pyqt_launch_monitor_state_probe.py`, `src/rate_of_closure/web/e2e/visualization-tab-visibility.spec.ts`, `docs/audits/rate_of_closure_visual_first_epic_4433.v1.json`
+- **Started:** 2026-10-04
+- **Last verified:** 2026-10-04 — Launch Monitor Analytics pair: PyQt state geometry 2 passed (1.0 and 1.5 DPI); Playwright visibility spec 4 passed on chromium-desktop; both RED with a result-only spacer above the scatter.
+- **Summary:** First tab pair (Launch Monitor Analytics) of the epic's state-by-state geometry gap: the primary scatter stays in the first viewport through result, error, loading and empty on React (3 reference viewports) and PyQt (1.0/1.5 DPI). Other pairs, approved baselines and the AT protocol stay open under the epic.
+- **Next step:** frontier review of the draft PR, then file the next tab pair as its own CLI-tier sub-task.
+
 ### DL-#5417 · ADR-008 dependency and license deny-list check
 
 - **State:** in_review
