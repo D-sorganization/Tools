@@ -10,6 +10,19 @@ feature, from proposal to ship. See the `development-logs` section of
 - **WIP limit:** 4
 - **Last audited:** 2026-09-30 by Luna (Tools#5392 longitudinal residual variance)
 
+### DL-#5432 · Fail fast on stale module inventory test
+
+- **State:** in_review
+- **Owner:** claude
+- **Issue:** #5432
+- **Branch:** `fix/5432-inventory-fast-fail`
+- **PR:** #5433
+- **Paths:** `tests/architecture/_inventory_diff.py`, `tests/architecture/test_inventory_diff_5432.py`, `tests/architecture/test_tools_module_inventory_contract.py`
+- **Started:** 2026-10-05
+- **Last verified:** 2026-10-05 — helper tests 7 passed; stale inventory now fails with a one-line shard summary; inventory --check passes.
+- **Summary:** The inventory freshness test compared two huge dicts with `assert ==`, whose quadratic pytest diff stalled a CI shard for 90 minutes. It now fails with a bounded shard-level summary; strictness is unchanged.
+- **Next step:** Merge PR #5433 via auto-merge.
+
 ### DL-#5422 · Fix Clippy Deprecated f64 Constants in tools-core
 
 - **State:** in_review
