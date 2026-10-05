@@ -1,4 +1,57 @@
-# Current handoff — Fix clippy deprecated f64 constants in tools-core (Tools#5422)
+# Current handoff — Fork PRs never run on the self-hosted fleet (Tools#4464)
+
+- Repository: D-sorganization/Tools
+- Working directory: `/home/user/wt/tools-4464`
+- Branch: `fix/4464-fork-pr-self-hosted`; commit: SELF; PR: see PR body
+- Governing issue: Tools#4464 (development log entry DL-#4464)
+
+## Objective and status
+
+Make it impossible, through the workflows themselves, for fork PR code to run on
+`d-sorg-fleet`. Done in this branch: canonical job-level fork guard on 47 jobs,
+fork routing to `ubuntu-latest` for `ci-standard` `pick-runner`/`tests`/`tests-gate`,
+and `scripts/fork_pr_runner_guard.py` with `tests/ops/test_fork_pr_runner_guard.py`.
+On `pull_request` a fork can edit the workflow file, so this is defence in depth;
+the repository settings in the PR body are still required to close the issue.
+
+## Validation
+
+- `python -m pytest tests/ops/test_fork_pr_runner_guard.py`: RED on main (50 jobs), GREEN after.
+- `python -m pytest tests/ops tests/scripts tests/test_python_version_contract.py`: passed.
+- `actionlint -shellcheck= .github/workflows/*.yml`: no findings before or after.
+- Review fix: base-context head checkouts aliased through workflow- or job-level `env`
+  (`PR_SHA: ${{ github.event.pull_request.head.sha }}` then `ref: ${{ env.PR_SHA }}` /
+  `$PR_SHA`) are now detected; 8 new cases RED before, 34 tests GREEN after.
+- Re-vendored byte-identical from Repository_Management#1990 (canonical copy; adds
+  bracket-form head refs and privileged `workflow_call` callers); 34 tests GREEN.
+
+## Next step
+
+- Owner applies the admin-only settings in the PR body; new PR-triggered fleet jobs must carry the guard (the test enforces it).
+# Current handoff — Fix Rust 1.99 clippy errors in pendulum-core (Tools#5429)
+
+- Repository: D-sorganization/Tools
+- Working directory: `/home/user/wt/tools-clippy`
+- Branch: `fix/pendulum-core-clippy-f64`; commit: SELF; PR: see PR body
+- Governing issue: Tools#5429 (development log entry DL-#5429)
+
+## Objective and status
+
+Make `pendulum_core rust quality gate (fmt + clippy + test)` pass on the fleet's Rust 1.99. Done: removed `use std::f64;`
+from `cmaes.rs` and switched `dynamics.rs` to `as_chunks::<2>()`. Behaviour is unchanged.
+
+## Validation
+
+- `cargo +1.99 clippy --all-targets -- -D warnings` (in `src/pendulum_simulator/pendulum-core`): 5 errors before, clean after.
+- `cargo +1.99 test`: 42 passed. `cargo fmt --check`: clean.
+
+## Next step
+
+- Merge once CI is green; nothing else outstanding.
+
+---
+
+# Past handoff — Fix clippy deprecated f64 constants in tools-core (Tools#5422)
 
 - Repository: D-sorganization/Tools
 - Working directory: `C:/Users/diete/Repositories/_worktrees/Tools-5422`
@@ -183,6 +236,7 @@ Prepare the v1.23.1 release branch. The latest `main` is `95800a5647603bf1211a98
 ## Change log
 
 - `SELF` — 2026-09-29: merge current `main` and refresh v1.23.1 release metadata and handoff.
+- `SELF` — Regenerate the module inventory for `scripts/fork_pr_runner_guard.py`: the stale inventory failed `test_inventory_is_deterministic_and_fresh`, whose assertion diff stalled the `tests-unit` xdist shard until the 90-minute timeout.
 
 ---
 
