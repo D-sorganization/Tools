@@ -1,4 +1,28 @@
-# Current handoff — Iron-head exact CAD family (Tools#4149 sub-task)
+# Current handoff — Re-vendor fork PR runner guard (RM#1996)
+
+- Repository: D-sorganization/Tools
+- Working directory: `/home/user/wt/tools-guard-sync`
+- Branch: `chore/sync-fork-guard-1996`; commit: SELF; PR: #5439
+- Governing issue: Repository_Management#1996 (development log entry DL-#4464, paths refreshed)
+
+## Objective and status
+
+Re-vendor the updated guard (`scripts/fork_pr_runner_guard.py` plus new `scripts/fork_pr_guard_analysis.py`) byte-identical from Repository_Management, re-vendor its tests, regenerate the module inventory. Done.
+
+## Validation
+
+- RED: RM canonical tests vs old guard 10 failed; GREEN: `python -m pytest -q -o addopts="" tests/ops/test_fork_pr_runner_guard.py` 69 passed.
+- Re-vendored again to the fail-closed bytes of RM#2000 (guard sha256 `6374db15...`, analysis `3cdc4024...`) plus the matching canonical tests: 82 passed; guard reports no findings; inventory regenerated (`--check` clean). This resolves the review threads on delegated head-ref helpers and the stale inventory shard.
+- `python scripts/fork_pr_runner_guard.py` on Tools workflows: 0 violations before and after.
+- ruff, mypy 1.13.0 and `python -m scripts.build_tools_module_inventory --check` clean (`mypy.ini` gained a no-redef override for the vendored dual import).
+
+## Next step
+
+- Merge once CI is green; nothing else outstanding.
+
+---
+
+# Past handoff — Iron-head exact CAD family (Tools#4149 sub-task)
 
 - Repository: D-sorganization/Tools
 - Working directory: `C:/Users/diete/Repositories/Tools-worktrees/claude-4149`
@@ -24,7 +48,6 @@ Add the iron head family on the wedge precedent: versioned schema, B-Rep builder
 ## Next step
 
 - Owner reviews the iron schema ranges and topology in the draft PR; then the next family (hybrid or driver) follows the same pattern.
-
 
 ---
 
