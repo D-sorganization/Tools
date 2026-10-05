@@ -7,11 +7,11 @@
 
 ## Objective and status
 
-Stop the 3.10 workflow legs that collect 0 tests (pytest exit 5) because root conftest refuses code below `requires-python >=3.11`. Done: 3.10 removed from `maturin-file-watcher` and `maturin-swing-core`; new policy test `tests/ops/test_workflow_python_floor.py` enforces the floor per job (sub-packages with their own lower floor, e.g. ai-backend, movement-optimizer, pendulum-core, data-processor-core, keep 3.10).
+Stop the 3.10 workflow legs that collect 0 tests (pytest exit 5) because root conftest refuses code below `requires-python >=3.11`, without losing the proof of the crates' own `>=3.10` claim. Done: `maturin-file-watcher` and `maturin-swing-core` each split into `wheel-gate` (build + import, 3.10-3.12) and the old wrapper/parity job (ids `rust-backend-gate`, `parity-gate` unchanged, now 3.11-3.12). `tests/ops/test_workflow_python_floor.py` enforces both directions. Known gap: `rust_core/tools-core` declares `>=3.10` but is built only on 3.11/3.12 in `ci-standard.yml` (listed in `KNOWN_UNPROVEN`).
 
 ## Validation
 
-- RED then GREEN: `python -m pytest -q -o addopts="" tests/ops/test_workflow_python_floor.py tests/test_python_version_contract.py` (12 passed).
+- RED then GREEN: `python -m pytest -q -o addopts="" tests/ops/test_workflow_python_floor.py tests/test_python_version_contract.py` (16 passed incl. `tests/ops/test_maturin_swing_core_workflow.py`).
 - `python -m scripts.build_tools_module_inventory --check` clean after regeneration; ruff check/format clean; actionlint shows only pre-existing SC2012 info notes.
 
 ## Next step

@@ -5946,7 +5946,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
-| 2026-10-05 | #5435 | ci: align workflow Python matrices with requires-python >=3.11 (drop 3.10 from maturin-file-watcher and maturin-swing-core); add workflow Python-floor policy test (#5434) |
+| 2026-10-05 | #5435 | ci: align workflow Python matrices with requires-python >=3.11 (#5434): maturin-file-watcher and maturin-swing-core split into a 3.10-3.12 wheel-gate (proves the crates' >=3.10 claim) and a 3.11-3.12 wrapper/parity job; workflow Python-floor policy test, incl. every maturin crate built on its declared floor |
 | 2026-10-05 | #5430 | fix(pendulum-core): clear Rust 1.99 clippy errors (deprecated std::f64 import, as_chunks) (#5429) |
 | 2026-10-04 | #5424 | test(rate-of-closure): Launch Monitor Analytics scatter stays in the first viewport through result/error/loading/empty on React and PyQt 1.0/1.5 DPI (#4433) |
 | 2026-10-04 | #5422 | fix(rust): remove deprecated use std::f64 import in tools-core rrt.rs to fix clippy error under latest toolchains (#5422) |

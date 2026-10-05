@@ -17,6 +17,7 @@ floor.
 from __future__ import annotations
 
 import re
+import subprocess
 from collections.abc import Iterator
 from pathlib import Path
 
@@ -30,7 +31,9 @@ _FLOOR_RE = re.compile(
     r"""^\s*requires-python\s*=\s*["']\s*>=\s*(\d+)\.(\d+)\s*["']""", re.M
 )
 _REQUIRES_RE = re.compile(r"""^\s*requires-python\s*=""", re.M)
-_MANIFEST_RE = re.compile(r"(?:^|\s)-m\s+(\S+Cargo\.toml)")
+_MANIFEST_RE = re.compile(r"(?:^|\s)(?:-m|--manifest-path)[\s=]+(\S+Cargo\.toml)")
+# Crates whose requires-python floor no workflow proves yet (tracked follow-up).
+KNOWN_UNPROVEN = frozenset({"rust_core/tools-core"})
 
 
 def parse_floor(pyproject: Path) -> Version:
@@ -112,6 +115,59 @@ def exercised_paths(job: dict) -> Iterator[Path]:
             yield path
 
 
+def built_crates(job: dict) -> set[Path]:
+    """Crate directories a job builds with ``maturin build`` (``-m`` or cwd)."""
+    built: set[Path] = set()
+    for step in job.get("steps") or []:
+        script = str(step.get("run", "")).replace("\\\n", " ")
+        if "maturin build" not in script:
+            continue
+        if step.get("working-directory"):
+            built.add(REPO_ROOT / step["working-directory"])
+        for manifest in _MANIFEST_RE.findall(script):
+            built.add((REPO_ROOT / manifest.strip("'\"")).parent)
+    return built
+
+
+def maturin_crates() -> list[Path]:
+    """Tracked directories holding both a ``Cargo.toml`` and a ``pyproject.toml``."""
+    tracked = subprocess.run(
+        ["git", "-C", str(REPO_ROOT), "ls-files", "-z", "*Cargo.toml"],
+        check=True,
+        capture_output=True,
+        text=True,
+    ).stdout.split("\0")
+    crates = [
+        (REPO_ROOT / name).parent
+        for name in tracked
+        if name
+        and (REPO_ROOT / name).parent != REPO_ROOT
+        and (REPO_ROOT / name).parent.joinpath("pyproject.toml").is_file()
+    ]
+    assert crates, "no maturin crates found; the git/glob lookup is broken"
+    return crates
+
+
+def unproven_crates() -> list[str]:
+    """Crates whose declared floor no workflow job builds on that interpreter."""
+    proven: set[tuple[Path, Version]] = set()
+    for workflow in sorted(WORKFLOWS.glob("*.yml")):
+        data = yaml.safe_load(workflow.read_text(encoding="utf-8")) or {}
+        for name, job in (data.get("jobs") or {}).items():
+            if not isinstance(job, dict):
+                continue
+            versions = {v for _, v in job_versions(job, f"{workflow.name}:{name}")}
+            proven.update((crate, v) for crate in built_crates(job) for v in versions)
+    return [
+        f"{crate.relative_to(REPO_ROOT)} declares >={floor[0]}.{floor[1]} but no "
+        "workflow job builds it with maturin on that interpreter"
+        for crate in maturin_crates()
+        for floor in [parse_floor(crate / "pyproject.toml")]
+        if (crate, floor) not in proven
+        and str(crate.relative_to(REPO_ROOT)) not in KNOWN_UNPROVEN
+    ]
+
+
 def effective_floor(job: dict) -> Version:
     """Highest floor among the paths the job exercises (root floor by default)."""
     floors = [nearest_floor(path) for path in exercised_paths(job)]
@@ -161,3 +217,15 @@ def test_unquoted_matrix_version_is_rejected() -> None:
         assert "quoted string" in str(error)
     else:
         raise AssertionError("float version should have been rejected")
+
+
+def test_every_maturin_crate_is_built_on_its_declared_floor() -> None:
+    """A crate's ``requires-python`` claim must be proven by a wheel build."""
+    problems = unproven_crates()
+    assert not problems, "\n".join(problems)
+
+
+def test_known_unproven_crates_are_still_unproven() -> None:
+    """Drop a ``KNOWN_UNPROVEN`` entry as soon as a workflow proves its floor."""
+    listed = {str(path.relative_to(REPO_ROOT)) for path in maturin_crates()}
+    assert KNOWN_UNPROVEN <= listed, f"stale KNOWN_UNPROVEN: {KNOWN_UNPROVEN - listed}"

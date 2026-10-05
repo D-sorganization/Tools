@@ -15,9 +15,12 @@
 # swing_core` and so is silently skipped wherever the wheel is absent).
 #
 # Runner platforms: the d-sorg-fleet self-hosted pool spans linux, windows,
-# and macos hosts. Python versions 3.11 and 3.12 are hard-gated here (3.11 is the root
-# requires-python floor; the parity suite lives under root code);
-# Python 3.13 coverage is deferred until all fleet runners have a 3.13
+# and macos hosts. `wheel-gate` builds the wheel and asserts the extension
+# imports on Python 3.10, 3.11 and 3.12 (the crate's own pyproject declares
+# requires-python >=3.10, proven here). `parity-gate` runs the facade and parity
+# suite, which is root code under src/shared/python/swing_sim, so it is limited
+# to 3.11 and 3.12 (the root requires-python floor; conftest will not collect it
+# below). Python 3.13 coverage is deferred until all fleet runners have a 3.13
 # toolcache (same policy as maturin-pendulum-core.yml).
 
 name: Maturin — swing_core
@@ -43,6 +46,69 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  wheel-gate:
+    name: swing_core wheel gate (Python ${{ matrix.python-version }})
+    runs-on: d-sorg-fleet
+    timeout-minutes: 30
+    env:
+      CARGO_TERM_COLOR: always
+
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+      - name: Create Isolated Python Environment
+        shell: bash
+        run: |
+          python -m venv .ci-venv
+          python - <<'PY' >> "$GITHUB_PATH"
+          import os
+          from pathlib import Path
+
+          print((Path(".ci-venv") / ("Scripts" if os.name == "nt" else "bin")).resolve())
+          PY
+          python - <<'PY' >> "$GITHUB_ENV"
+          from pathlib import Path
+
+          print(f"VIRTUAL_ENV={Path('.ci-venv').resolve()}")
+          PY
+      - name: Install Rust toolchain
+        uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
+      - name: Install Build and Test Dependencies
+        run: |
+          python -c "import sys; assert sys.prefix != sys.base_prefix"
+          python -m pip install --upgrade pip maturin "numpy>=1.24" pytest
+      - name: Build swing_core wheel
+        run: python -m maturin build --release -m rust_core/swing-core/Cargo.toml --out dist
+      - name: Install the built wheel
+        shell: bash
+        run: |
+          WHEEL=$(ls dist/*.whl | head -1)
+          python -m pip install "$WHEEL"
+      - name: Assert the extension imports (hard fail — no silent fallback)
+        shell: bash
+        run: |
+          python - <<'PY'
+          # Runtime PyO3 submodule: attribute access, never `import swing_core.swing`.
+          from swing_core import swing
+          required = {
+              "PendulumParameters", "PendulumState",
+              "plane_rotation", "in_plane_gravity",
+              "mass_matrix", "step", "simulate", "total_energy",
+          }
+          missing = required - set(dir(swing))
+          assert not missing, f"swing_core.swing missing exports: {missing}"
+          print("swing_core OK:", sorted(required))
+          PY
+
   parity-gate:
     name: swing_core build + parity gate (Python ${{ matrix.python-version }})
     runs-on: d-sorg-fleet

@@ -19,8 +19,8 @@ feature, from proposal to ship. See the `development-logs` section of
 - **PR:** #5435
 - **Paths:** `.github/workflows/maturin-file-watcher.yml`, `.github/workflows/maturin-swing-core.yml`, `tests/ops/test_workflow_python_floor.py`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`, `SPEC.md`
 - **Started:** 2026-10-05
-- **Last verified:** 2026-10-05 — `tests/ops/test_workflow_python_floor.py` red before the workflow edits (file-watcher, swing-core), green after; `tests/test_python_version_contract.py` green; module inventory check clean.
-- **Summary:** Dropped the 3.10 matrix leg from `maturin-file-watcher` and `maturin-swing-core`, whose tests are root code that conftest will not collect below the root `requires-python` floor (exit 5). A policy test now fails any workflow leg below the floor of the code it exercises, while sub-packages with their own lower floor keep 3.10.
+- **Last verified:** 2026-10-05 — `tests/ops/test_workflow_python_floor.py` (incl. the maturin-crate-built-on-its-floor check) red before the split for file_watcher and swing-core, green after; `tests/test_python_version_contract.py` green; module inventory check clean.
+- **Summary:** Split `maturin-file-watcher` and `maturin-swing-core` into a `wheel-gate` (build + import, Python 3.10-3.12, proves the crates' >=3.10 claim) and the existing wrapper/parity job (root code, now 3.11-3.12 only, since conftest will not collect it below the root floor and a 3.10 leg exited 5). A policy test fails any workflow leg below the floor of the code it exercises, and any maturin crate not built on its declared floor (`rust_core/tools-core` is a listed known gap).
 - **Next step:** Merge the PR once the Maturin workflows are green.
 
 ### DL-#5429 · Fix Clippy Rust 1.99 Errors in pendulum-core
