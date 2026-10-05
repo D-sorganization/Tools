@@ -23,6 +23,19 @@ feature, from proposal to ship. See the `development-logs` section of
 - **Summary:** Iron family following the wedge precedent: versioned `golf_club.iron_parameters/1` schema with boundary DbC, ruled-loft B-Rep with fused hollow hosel, mass properties recovered from the solid and checked against a closed-form prismatoid and the exported-mesh divergence theorem, STEP/BREP/STL export with `golf_club.iron_export/1` manifest. Shared datum-face, hosel-tube and file-export helpers extracted to `_head_cad.py`. Driver, hybrid and putter families and shape optimisation remain open under #4149.
 - **Next step:** owner reviews the iron schema ranges and topology in the draft PR body.
 
+### DL-#5429 · Fix Clippy Rust 1.99 Errors in pendulum-core
+
+- **State:** in_review
+- **Owner:** claude
+- **Issue:** #5429
+- **Branch:** `fix/pendulum-core-clippy-f64`
+- **PR:** see PR body
+- **Paths:** `src/pendulum_simulator/pendulum-core/src/cmaes.rs`, `src/pendulum_simulator/pendulum-core/src/dynamics.rs`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`, `SPEC.md`
+- **Started:** 2026-10-05
+- **Last verified:** 2026-10-05 — `cargo +1.99 clippy --all-targets -- -D warnings` clean (was 5 errors); `cargo +1.99 test` 42 passed; `cargo fmt --check` clean.
+- **Summary:** Removed the deprecated `use std::f64;` in `cmaes.rs` (it made `f64::INFINITY`/`NEG_INFINITY` resolve to the deprecated module constants) and replaced constant-size `chunks_exact(2)` with `as_chunks::<2>()` in `dynamics.rs`, so the pendulum_core rust quality gate passes on the fleet's Rust 1.99.
+- **Next step:** Merge the PR once the pendulum_core rust quality gate is green.
+
 ### DL-#5422 · Fix Clippy Deprecated f64 Constants in tools-core
 
 - **State:** in_review
