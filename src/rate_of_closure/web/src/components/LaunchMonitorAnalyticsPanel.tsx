@@ -183,8 +183,8 @@ export function LaunchMonitorAnalyticsPanel() {
         <p className="mt-3 text-xs text-slate-500">Source: {sourceName} · {rows.length} retained rows · {Object.keys(rows[0] ?? {}).length} source columns</p>
       </div>
 
-      <div className="grid gap-5 xl:grid-cols-[340px_1fr]">
-        <section aria-label="Analysis contract" className={`${card} space-y-4`}>
+      <div className="grid grid-cols-[minmax(0,1fr)] gap-5 xl:grid-cols-[340px_minmax(0,1fr)]">
+        <section aria-label="Analysis contract" className={`${card} min-w-0 space-y-4`}>
           <h3 className="font-semibold text-slate-200">Analysis Contract</h3>
           <label className="block text-sm text-slate-300">Interpretation Convention
             <select value={convention} title="Choose the documented parameter convention used to interpret canonical names"
@@ -261,7 +261,7 @@ export function LaunchMonitorAnalyticsPanel() {
           {error && <p role="alert" className="rounded border border-red-500/40 bg-red-950/30 p-3 text-sm text-red-200">{error}</p>}
         </section>
 
-        <div className="order-first space-y-5 xl:order-none">
+        <div className="order-first min-w-0 space-y-5 xl:order-none">
           <div className={card}>
             <h3 className="mb-3 font-semibold text-slate-200">Selected Relationship</h3>
             <LaunchMonitorLinkedScatter rows={rows} yField={outcome}

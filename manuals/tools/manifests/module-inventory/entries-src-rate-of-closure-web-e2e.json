@@ -707,10 +707,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 20424,
+      "bytes_lf": 20412,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "58fda99c30b3a9ba9382392f18b3600e487774181792978ff1893c601f7090c7",
+      "content_sha256_lf": "f8543d605bda91219b23e8aabd9667eadc1f2eefbcc0a1c82480eaddca206afe",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-E2E-VISUALIZATION-TAB-VISIBILITY-SPEC-TS-9730C4E18FC5",
       "language": "typescript",
