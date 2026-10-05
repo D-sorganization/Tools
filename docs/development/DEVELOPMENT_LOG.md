@@ -16,7 +16,7 @@ feature, from proposal to ship. See the `development-logs` section of
 - **Owner:** claude
 - **Issue:** #4149
 - **Branch:** `claude/issue-4149-iron`
-- **PR:** not created
+- **PR:** #5425 (draft)
 - **Paths:** `src/shared/python/golf_club/iron_*.py`, `src/shared/python/golf_club/_head_cad.py`, `src/shared/python/golf_club/wedge_cad.py`, `src/shared/python/golf_club/wedge_export.py`, `tests/shared/python/golf_club/test_iron_*.py`
 - **Started:** 2026-10-04
 - **Last verified:** 2026-10-04 @ d7cef753e (base) — test_iron_parameters + test_iron_cad pass with build123d 0.13.0; wedge CAD/export tests unchanged and green; ruff and mypy clean.

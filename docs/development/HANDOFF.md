@@ -2,7 +2,7 @@
 
 - Repository: D-sorganization/Tools
 - Working directory: `C:/Users/diete/Repositories/Tools-worktrees/claude-4149`
-- Branch: `claude/issue-4149-iron`; commit: SELF; PR: draft, see PR body
+- Branch: `claude/issue-4149-iron`; commit: SELF; PR: #5425 (draft)
 - Governing issue: Tools#4149 (sub-task; `Refs #4149`); development-log entry `DL-#4149`
 
 ## Objective and status
