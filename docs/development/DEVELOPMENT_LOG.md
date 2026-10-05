@@ -10,6 +10,19 @@ feature, from proposal to ship. See the `development-logs` section of
 - **WIP limit:** 4
 - **Last audited:** 2026-09-30 by Luna (Tools#5392 longitudinal residual variance)
 
+### DL-#4149 · Exact golf-club head CAD families (iron family slice)
+
+- **State:** in_review
+- **Owner:** claude
+- **Issue:** #4149
+- **Branch:** `claude/issue-4149-iron`
+- **PR:** #5425 (draft)
+- **Paths:** `src/shared/python/golf_club/iron_*.py`, `src/shared/python/golf_club/_head_cad.py`, `src/shared/python/golf_club/wedge_cad.py`, `src/shared/python/golf_club/wedge_export.py`, `tests/shared/python/golf_club/test_iron_*.py`
+- **Started:** 2026-10-04
+- **Last verified:** 2026-10-05 @ 696b70a74 (base; golf_club API baseline realigned to `Any`) — test_iron_parameters + test_iron_cad pass with build123d 0.13.0; wedge CAD/export tests unchanged and green; ruff and mypy clean.
+- **Summary:** Iron family following the wedge precedent: versioned `golf_club.iron_parameters/1` schema with boundary DbC, ruled-loft B-Rep with fused hollow hosel, mass properties recovered from the solid and checked against a closed-form prismatoid and the exported-mesh divergence theorem, STEP/BREP/STL export with `golf_club.iron_export/1` manifest. Shared datum-face, hosel-tube and file-export helpers extracted to `_head_cad.py`. Driver, hybrid and putter families and shape optimisation remain open under #4149.
+- **Next step:** owner reviews the iron schema ranges and topology in the draft PR body.
+
 ### DL-#5434 · Align Workflow Python Matrices with requires-python
 
 - **State:** in_review

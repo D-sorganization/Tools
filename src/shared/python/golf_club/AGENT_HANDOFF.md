@@ -7,7 +7,7 @@ T2 #5071 adds event-resolved integration, preload states and all four passive lo
 Numerical shaft #5133 is merged as 2c9a8d6c; physical #5072 remains open. T4 foundation child #5145 is under review in PR #5146 at1286c9f49. Temporal PR #5149 (child #5147) shares the canonical Lie RK4 kernel (36 controls pass) and adds private normal shaft/ball trajectories with prescribed grips and five disjoint work channels (12 controls pass). Three modules pass NumPy-aware and actual-hook mypy; all existing 100 golf-club and 233 swing API records are unchanged. All 371 Windows (171.37 s) and 371 Linux coverage (245.76 s) controls pass at archived tree0433376b0. Full tangential/event/face-mode convergence and physical/acoustic evidence remain open. Prescribed additional force/couple histories now continue under#5153 / PR#5154, reusing canonical point-load work; all406 Windows/Linux controls pass (LOAD_HISTORY_RESULTS.json). Adaptive normal-contact child #5151 additionally passes386 Windows/Linux controls with shared chart rates and strict event/work limits (NORMAL_EVENT_RESULTS.json). See docs/development/impact-acoustics/CONTACT_TRAJECTORY_RESULTS.json and PROGRESS.md; private-consumer access and final reviewed downstream pin remain outstanding.
 
 > Update this file in every implementation commit that changes this package.
-> Last updated: 2026-09-09
+> Last updated: 2026-10-04
 
 ## Stack and Integration Position
 
@@ -15,8 +15,8 @@ Numerical shaft #5133 is merged as 2c9a8d6c; physical #5072 remains open. T4 fou
 - #4147 / `feat/4147-club-builder-core` is the assembly-property foundation.
 - #4148 / `feat/4148-shaft-profiles` adds measured shaft contracts and validated
   static/modal reference models.
-- #4149 / `feat/4149-cad-families` is PR #4171, stacked on #4148. Its current
-  exact head scope is a generic modern wedge, not the six-family completion.
+- #4149: exact wedge family on main; iron family (`iron_*.py`, helpers shared
+  via `_head_cad.py`) in `claude/issue-4149-iron`. Driver/hybrid/putter open.
 - Rate of Closure and UpstreamDrift must consume this public facade through
   thin adapters after the provider stack lands; do not copy the calculations.
 

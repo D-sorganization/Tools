@@ -8,6 +8,7 @@ from typing import Any
 
 import numpy as np
 
+from ._head_cad import hollow_tube, matching_planar_face
 from .wedge_geometry import wedge_body_profile_m
 from .wedge_parameters import Handedness, WedgeHeadParameters
 
@@ -101,8 +102,6 @@ def _leading_edge_score(edge: Any, leading_x: float, leading_y: float) -> float:
 
 
 def _build_hosel(parameters: WedgeHeadParameters) -> tuple[Any, np.ndarray]:
-    from build123d import Plane, Solid
-
     direction_z = -1.0 if parameters.handedness is Handedness.RIGHT else 1.0
     lie = math.radians(parameters.lie_deg)
     shaft_axis = np.array([0.0, math.sin(lie), direction_z * math.cos(lie)])
@@ -121,19 +120,12 @@ def _build_hosel(parameters: WedgeHeadParameters) -> tuple[Any, np.ndarray]:
         ]
     )
     origin = base - _HOSEL_BODY_OVERLAP_MM * shaft_axis
-    plane = Plane(origin=origin, x_dir=(1.0, 0.0, 0.0), z_dir=shaft_axis)
     total_length = parameters.hosel_length_m * _MM_PER_M + _HOSEL_BODY_OVERLAP_MM
-    outer = Solid.make_cylinder(
+    radii = (
         0.5 * parameters.hosel_outer_diameter_m * _MM_PER_M,
-        total_length,
-        plane=plane,
-    )
-    bore = Solid.make_cylinder(
         0.5 * parameters.hosel_bore_diameter_m * _MM_PER_M,
-        total_length + _HOSEL_BODY_OVERLAP_MM,
-        plane=plane,
     )
-    return outer.cut(bore), shaft_axis
+    return hollow_tube(origin, shaft_axis, radii, total_length), shaft_axis
 
 
 def _measure_solid(
@@ -155,9 +147,9 @@ def _measure_solid(
             0.0,
         ]
     )
-    face, measured_face_normal = _matching_planar_face(solid, loft_normal)
-    _, measured_sole_normal = _matching_planar_face(solid, bounce_normal)
-    _, measured_hosel_axis = _matching_planar_face(solid, shaft_axis)
+    face, measured_face_normal = matching_planar_face(solid, loft_normal)
+    _, measured_sole_normal = matching_planar_face(solid, bounce_normal)
+    _, measured_hosel_axis = matching_planar_face(solid, shaft_axis)
     loft = math.degrees(math.atan2(measured_face_normal[1], measured_face_normal[0]))
     bounce = math.degrees(
         math.atan2(-measured_sole_normal[0], -measured_sole_normal[1])
@@ -174,29 +166,6 @@ def _measure_solid(
         mass_kg=mass,
         target_mass_residual_kg=mass - parameters.target_mass_kg,
     )
-
-
-def _matching_planar_face(
-    solid: Any, expected_normal: np.ndarray
-) -> tuple[Any, np.ndarray]:
-    candidates: list[tuple[float, float, Any, np.ndarray]] = []
-    for face in solid.faces():
-        try:
-            normal = np.array(tuple(face.normal_at()), dtype=float)
-        except (AttributeError, ValueError):
-            continue
-        norm = float(np.linalg.norm(normal))
-        if norm == 0.0:
-            continue
-        unit = normal / norm
-        alignment = float(np.dot(unit, expected_normal))
-        candidates.append((alignment, float(face.area), face, unit))
-    if not candidates:
-        raise RuntimeError("solid has no measurable planar faces")
-    alignment, _, face, normal = max(candidates, key=lambda item: (item[0], item[1]))
-    if alignment < 1.0 - 1.0e-9:
-        raise RuntimeError("requested datum plane was not recovered from the solid")
-    return face, normal
 
 
 __all__ = [
