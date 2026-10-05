@@ -3357,6 +3357,7 @@
           "tests/rate_of_closure/test_capability_worker.py",
           "tests/rate_of_closure/test_putting_gui.py",
           "tests/rate_of_closure/test_solver_gui.py",
+          "tests/rate_of_closure/test_variation_gui_execution.py",
           "tests/shared/python/ai/test_adapter_contract.py",
           "tests/shared/python/ai/test_providers_tab_signal.py",
           "tests/shared/python/ai/test_rust_adapter.py",
