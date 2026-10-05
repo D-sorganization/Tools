@@ -14,8 +14,6 @@
 
 #![allow(clippy::needless_range_loop)]
 
-use std::f64;
-
 #[cfg(feature = "parallel")]
 use rayon::prelude::*;
 
