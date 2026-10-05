@@ -50,6 +50,10 @@ jobs:
   # mirrors the workspace gate's checks (rustfmt + clippy -D warnings + tests)
   # for the standalone crate.
   rust-quality-gate:
+    # Fork PRs never run on the self-hosted fleet (#4464).
+    if: >-
+      (!github.event.pull_request ||
+      github.event.pull_request.head.repo.full_name == github.repository)
     name: pendulum_core rust quality gate (fmt + clippy + test)
     runs-on: d-sorg-fleet
     timeout-minutes: 15
@@ -74,6 +78,10 @@ jobs:
         run: cargo test --manifest-path src/pendulum_simulator/pendulum-core/Cargo.toml
 
   parity-gate:
+    # Fork PRs never run on the self-hosted fleet (#4464).
+    if: >-
+      (!github.event.pull_request ||
+      github.event.pull_request.head.repo.full_name == github.repository)
     name: pendulum_core build + parity gate (Python ${{ matrix.python-version }})
     runs-on: d-sorg-fleet
     timeout-minutes: 30

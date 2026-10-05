@@ -24,6 +24,10 @@ concurrency:
 jobs:
   # ── Dispatcher: route to self-hosted if available ──────────────────────────
   pick-runner:
+    # Fork PRs never run on the self-hosted fleet (#4464).
+    if: >-
+      (!github.event.pull_request ||
+      github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: d-sorg-fleet
     timeout-minutes: 2
     outputs:
@@ -72,6 +76,10 @@ jobs:
               ;;
           esac
   downstream-consumer-contracts:
+    # Fork PRs never run on the self-hosted fleet (#4464).
+    if: >-
+      (!github.event.pull_request ||
+      github.event.pull_request.head.repo.full_name == github.repository)
     needs: pick-runner
     runs-on: [self-hosted, Linux, X64, d-sorg-fleet]
     timeout-minutes: 60

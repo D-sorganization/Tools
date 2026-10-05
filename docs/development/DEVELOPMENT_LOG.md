@@ -23,6 +23,18 @@ feature, from proposal to ship. See the `development-logs` section of
 - **Summary:** Split `maturin-file-watcher` and `maturin-swing-core` into a `wheel-gate` (build + import, Python 3.10-3.12, proves the crates' >=3.10 claim) and the existing wrapper/parity job (root code, now 3.11-3.12 only, since conftest will not collect it below the root floor and a 3.10 leg exited 5). A policy test fails any workflow leg below the floor of the code it exercises, and any maturin crate not built on its declared floor (`rust_core/tools-core` is a listed known gap).
 - **Next step:** Merge the PR once the Maturin workflows are green.
 
+### DL-#4464 · Fork PRs never run on the self-hosted fleet
+
+- **State:** in_review
+- **Owner:** claude
+- **Issue:** #4464
+- **Branch:** `fix/4464-fork-pr-self-hosted`
+- **PR:** not created
+- **Paths:** `.github/workflows/`, `scripts/fork_pr_runner_guard.py`, `tests/ops/test_fork_pr_runner_guard.py`
+- **Started:** 2026-10-05
+- **Last verified:** 2026-10-05 — `pytest tests/ops/test_fork_pr_runner_guard.py` 25 passed (RED on main: 50 unguarded fleet jobs); `actionlint -shellcheck=` clean.
+- **Summary:** Workflow-level defence in depth for #4464: every job in a PR-triggered workflow that can reach `d-sorg-fleet` skips fork PRs, the required `tests` lane routes fork PRs to a hosted runner, and a static checker enforces both. Admin settings (fork-PR approval, default token permissions, runner-group access) remain owner-only.
+- **Next step:** Owner applies the admin-only settings listed in the PR body, then closes #4464.
 ### DL-#5429 · Fix Clippy Rust 1.99 Errors in pendulum-core
 
 - **State:** in_review

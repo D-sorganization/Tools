@@ -46,6 +46,10 @@ concurrency:
 
 jobs:
   build-wheels:
+    # Fork PRs never run on the self-hosted fleet (#4464).
+    if: >-
+      (!github.event.pull_request ||
+      github.event.pull_request.head.repo.full_name == github.repository)
     name: Build wheel (${{ matrix.platform }}, Python ${{ matrix.python-version }})
     runs-on: d-sorg-fleet
     timeout-minutes: 30
@@ -119,6 +123,10 @@ jobs:
   # Without this, the wheel was only uploaded as an artifact and never installed,
   # so the RustAgentAdapter Rust path was never actually run in CI (issue #3521).
   adapter-rust-path:
+    # Fork PRs never run on the self-hosted fleet (#4464).
+    if: >-
+      (!github.event.pull_request ||
+      github.event.pull_request.head.repo.full_name == github.repository)
     name: ai_backend adapter Rust-path gate
     runs-on: d-sorg-fleet
     timeout-minutes: 30
@@ -182,7 +190,11 @@ jobs:
       CARGO_TERM_COLOR: always
       RUST_MIN_STACK: "268435456"
     # Only on workflow_dispatch to keep PR feedback fast
-    if: github.event_name == 'workflow_dispatch'
+    # Fork PRs never run on the self-hosted fleet (#4464).
+    if: >-
+      (!github.event.pull_request ||
+      github.event.pull_request.head.repo.full_name == github.repository) &&
+      (github.event_name == 'workflow_dispatch')
 
     strategy:
       matrix:
@@ -235,7 +247,11 @@ jobs:
     name: Wheel build summary
     needs: build-wheels
     runs-on: d-sorg-fleet
-    if: always()
+    # Fork PRs never run on the self-hosted fleet (#4464).
+    if: >-
+      (!github.event.pull_request ||
+      github.event.pull_request.head.repo.full_name == github.repository) &&
+      (always())
     steps:
       - name: Report results
         run: |

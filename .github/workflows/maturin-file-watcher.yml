@@ -88,6 +88,10 @@ jobs:
           PY
 
   rust-backend-gate:
+    # Fork PRs never run on the self-hosted fleet (#4464).
+    if: >-
+      (!github.event.pull_request ||
+      github.event.pull_request.head.repo.full_name == github.repository)
     name: file_watcher_rs (d-sorg-fleet, Python ${{ matrix.python-version }})
     runs-on: d-sorg-fleet
     timeout-minutes: 30

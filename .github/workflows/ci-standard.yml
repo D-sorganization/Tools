@@ -32,6 +32,10 @@ defaults:
 
 jobs:
   fix-brick-toolcache:
+    # Fork PRs never run on the self-hosted fleet (#4464).
+    if: >-
+      (!github.event.pull_request ||
+      github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: d-sorg-fleet
     timeout-minutes: 5
     steps:
@@ -81,9 +85,18 @@ jobs:
   #
   # Private repos still fall through to the fleet, so no Actions minutes are
   # billed. Reverting: set the repo variable CI_RUNNER_MODE=local.
+  #
+  # Fork PRs (#4464): this public repo must never run fork code on the fleet.
+  # A fork PR runs this job on a hosted runner and gets `runner=ubuntu-latest`,
+  # so the required `tests` lane still reports on hosted. Every consumer of the
+  # output repeats the fork route as the first `runs-on` alternative, which is
+  # what scripts/fork_pr_runner_guard.py verifies statically.
   pick-runner:
     runs-on:
-      ${{ !github.event.repository.private && vars.CI_RUNNER_MODE != 'local' && 'ubuntu-latest' ||
+      ${{ github.event.pull_request &&
+      github.event.pull_request.head.repo.full_name != github.repository &&
+      'ubuntu-latest' ||
+      !github.event.repository.private && vars.CI_RUNNER_MODE != 'local' && 'ubuntu-latest' ||
       'd-sorg-fleet' }}
     timeout-minutes: 3
     outputs:
@@ -100,7 +113,14 @@ jobs:
           # drop it once the variable is retired org-wide.
           LOCAL_MODE: ${{ vars.CI_RUNNER_MODE || vars.LOCAL_RUNNER_MODE }}
           REPOSITORY_PRIVATE: ${{ github.event.repository.private }}
+          FORK_PR: ${{ github.event.pull_request &&
+            github.event.pull_request.head.repo.full_name != github.repository }}
         run: |
+          if [ "$FORK_PR" = "true" ]; then
+            echo "runner=ubuntu-latest" >> $GITHUB_OUTPUT
+            echo "Fork PR - never routed to the self-hosted fleet (#4464)"
+            exit 0
+          fi
           MODE="${LOCAL_MODE:-local}"
           echo "Fleet mode: $MODE"
 
@@ -499,8 +519,12 @@ jobs:
     # idle runners, so PRs stayed BLOCKED on queue depth rather than on any
     # test result. `pick-runner` resolves to `ubuntu-latest` for public repos
     # (free and unmetered), to `d-sorg-fleet` when CI_RUNNER_MODE=local, and
-    # fails closed for private repos with no idle fleet capacity.
-    runs-on: ${{ needs.pick-runner.outputs.runner }}
+    # fails closed for private repos with no idle fleet capacity. A fork PR is
+    # routed to a hosted runner first, whatever the output says (#4464).
+    runs-on: >-
+      ${{ github.event.pull_request &&
+      github.event.pull_request.head.repo.full_name != github.repository &&
+      'ubuntu-latest' || needs.pick-runner.outputs.runner }}
     strategy:
       # Do NOT cancel sibling Python lanes when one fails. Only ``tests (3.11)``
       # is a required check; an infra crash in the non-required 3.12 lane
@@ -899,7 +923,11 @@ jobs:
     name: tests (${{ matrix.python-version }})
     needs: [pick-runner, tests]
     if: always()
-    runs-on: ${{ needs.pick-runner.outputs.runner }}
+    # A fork PR is routed to a hosted runner first (#4464).
+    runs-on: >-
+      ${{ github.event.pull_request &&
+      github.event.pull_request.head.repo.full_name != github.repository &&
+      'ubuntu-latest' || needs.pick-runner.outputs.runner }}
     timeout-minutes: 20
     strategy:
       fail-fast: false
@@ -985,6 +1013,10 @@ jobs:
   # Only runs when Rust source files or Cargo manifests change.
   # Enforces: format (rustfmt), lint (clippy), tests (cargo test).
   rust-quality-gate:
+    # Fork PRs never run on the self-hosted fleet (#4464).
+    if: >-
+      (!github.event.pull_request ||
+      github.event.pull_request.head.repo.full_name == github.repository)
     needs: pick-runner
     runs-on: d-sorg-fleet
     timeout-minutes: 45
