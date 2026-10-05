@@ -13,6 +13,7 @@ Prove the `>=3.10` floor declared by `rust_core/tools-core/pyproject.toml`. Done
 
 - RED: with the `KNOWN_UNPROVEN` entry removed and no workflow, `test_every_maturin_crate_is_built_on_its_declared_floor` failed for `rust_core/tools-core`. GREEN after adding the workflow: `tests/ops/test_workflow_python_floor.py`, `tests/test_python_version_contract.py`, `tests/ops/test_fork_pr_runner_guard.py` 47 passed.
 - `python scripts/fork_pr_runner_guard.py` clean; actionlint shows only the SC2012 info note (same as sibling workflows); module inventory check clean; ruff check/format clean.
+- CI `tests-unit` caught `tests/unit/rust/test_ai_backend_workspace.py::test_maturin_ci_covers_all_platforms`: every maturin workflow must record the platform scope. Added the same local-only-runner/platform note the sibling workflows carry; that test plus the floor and guard tests pass locally.
 - Not run locally: the wheel build itself (needs the fleet runners).
 
 ## Next step

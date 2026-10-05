@@ -9,6 +9,9 @@
 # rust_core/math-primitives, so changes to either trigger the gate.
 # Python 3.13 coverage is deferred until all fleet runners have a 3.13
 # toolcache (same policy as the other maturin workflows).
+# The repo's local-only runner guard forbids hosted ubuntu/windows/macos
+# runners; broad platform packaging remains covered by the existing allowlisted
+# maturin workflow.
 
 name: Maturin — tools_core
 
