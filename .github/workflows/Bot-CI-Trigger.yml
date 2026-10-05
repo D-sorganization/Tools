@@ -43,6 +43,10 @@ defaults:
 jobs:
   # ── Dispatcher: require a local self-hosted runner and fail closed ──────────────────
   pick-runner:
+    # Fork PRs never run on the self-hosted fleet (#4464).
+    if: >-
+      (!github.event.pull_request ||
+      github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: d-sorg-fleet
     timeout-minutes: 2
     outputs:
@@ -60,14 +64,17 @@ jobs:
     runs-on: ${{ needs.pick-runner.outputs.runner }}
     needs: pick-runner
     # Only run for bot-authored PRs or scheduled/manual runs
-    if: |
-      github.event_name == 'schedule' ||
+    # Fork PRs never run on the self-hosted fleet (#4464).
+    if: >-
+      (!github.event.pull_request ||
+      github.event.pull_request.head.repo.full_name == github.repository) &&
+      (github.event_name == 'schedule' ||
       github.event_name == 'workflow_dispatch' ||
       (github.event_name == 'pull_request' &&
-       (contains(github.event.pull_request.user.login, 'bot') ||
-        contains(github.event.pull_request.user.login, 'github-actions') ||
-        contains(github.event.pull_request.user.login, 'google-labs-jules') ||
-        github.event.pull_request.user.type == 'Bot'))
+      (contains(github.event.pull_request.user.login, 'bot') ||
+      contains(github.event.pull_request.user.login, 'github-actions') ||
+      contains(github.event.pull_request.user.login, 'google-labs-jules') ||
+      github.event.pull_request.user.type == 'Bot')))
 
     steps:
       - name: Check Loop Prevention

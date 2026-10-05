@@ -47,6 +47,10 @@ defaults:
 
 jobs:
   frontend-gate:
+    # Fork PRs never run on the self-hosted fleet (#4464).
+    if: >-
+      (!github.event.pull_request ||
+      github.event.pull_request.head.repo.full_name == github.repository)
     name: HMI lint + typecheck/build + vitest
     runs-on: [d-sorg-fleet, Linux]
     timeout-minutes: 20

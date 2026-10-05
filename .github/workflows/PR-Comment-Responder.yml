@@ -26,9 +26,12 @@ jobs:
     # Same pre-filter as collect-comment below, hoisted so a plain issue
     # comment never occupies a fleet runner just to be skipped one job later.
     # Evaluated by GitHub before scheduling, so a skip costs no capacity.
-    if: |
-      (github.event_name == 'pull_request_review_comment') ||
-      (github.event_name == 'issue_comment' && github.event.issue.pull_request != null)
+    # Fork PRs never run on the self-hosted fleet (#4464).
+    if: >-
+      (!github.event.pull_request ||
+      github.event.pull_request.head.repo.full_name == github.repository) &&
+      ((github.event_name == 'pull_request_review_comment') ||
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request != null))
     runs-on: d-sorg-fleet
     timeout-minutes: 2
     outputs:
@@ -80,9 +83,12 @@ jobs:
     timeout-minutes: 30
     needs: pick-runner
     # Only run on PR comments (not issue comments)
-    if: |
-      (github.event_name == 'pull_request_review_comment') ||
-      (github.event_name == 'issue_comment' && github.event.issue.pull_request != null)
+    # Fork PRs never run on the self-hosted fleet (#4464).
+    if: >-
+      (!github.event.pull_request ||
+      github.event.pull_request.head.repo.full_name == github.repository) &&
+      ((github.event_name == 'pull_request_review_comment') ||
+      (github.event_name == 'issue_comment' && github.event.issue.pull_request != null))
     runs-on: d-sorg-fleet
     steps:
       - name: Filter Bot Comments

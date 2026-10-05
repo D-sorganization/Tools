@@ -2919,7 +2919,7 @@
         "signature": {
           "args": [
             {
-              "annotation": "object",
+              "annotation": "Any",
               "default": null,
               "kind": "arg",
               "name": "solid"

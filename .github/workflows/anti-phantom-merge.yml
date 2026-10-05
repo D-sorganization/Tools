@@ -50,10 +50,13 @@ jobs:
     # Run on every pull_request event. For label events (pull_request_target) only
     # run when the override label itself is toggled — otherwise unrelated label churn
     # spawns guard runs that cancel each other and clobber the real passing status.
+    # Fork PRs never run on the self-hosted fleet (#4464).
     if: >-
+      (!github.event.pull_request ||
+      github.event.pull_request.head.repo.full_name == github.repository) &&
       github.event.pull_request.base.ref == 'main' &&
       (github.event_name == 'pull_request' ||
-       github.event.label.name == 'phantom-guard-override')
+      github.event.label.name == 'phantom-guard-override')
     steps:
       # SECURITY INVARIANT (issue #3296): the untrusted PR head is checked out
       # ONLY on the `pull_request` trigger, which runs in the fork/PR context
