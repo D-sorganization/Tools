@@ -4957,10 +4957,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9310,
+      "bytes_lf": 10435,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3cdc4024e703e61897941e370ea35bd714818483c153a0ace9ded2618cbf026a",
+      "content_sha256_lf": "0e1cb52d521b0e86fb1818a555ee685581dc61b8642652828e63207bf4fe32b6",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-FORK-PR-GUARD-ANALYSIS-PY-39AC628A2367",
       "language": "python",
@@ -5027,7 +5027,7 @@
           {
             "kind": "function",
             "name": "head_ref_aliases",
-            "signature": "*scopes: Any"
+            "signature": "*scopes: Any, known: Iterable[str]=()"
           },
           {
             "kind": "function",
