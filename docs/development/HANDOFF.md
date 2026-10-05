@@ -1,4 +1,27 @@
-# Current handoff — Fork PRs never run on the self-hosted fleet (Tools#4464)
+# Current handoff — Fast-fail stale inventory test (Tools#5432)
+
+- Repository: D-sorganization/Tools
+- Working directory: `/home/user/wt/tools-5432`
+- Branch: `fix/5432-inventory-fast-fail`; commit: SELF; PR: #5433 (ready, armed)
+- Governing issue: Tools#5432. Development-log entry: DL-#5432.
+
+## Objective and status
+
+`test_inventory_is_deterministic_and_fresh` no longer asserts on two huge dicts; it fails with a bounded summary naming stale shards (`tests/architecture/_inventory_diff.py`). Strictness unchanged. Module inventory regenerated for the new test files.
+
+## Validation
+
+- `python -m pytest -q -o addopts="" tests/architecture/test_inventory_diff_5432.py`: 7 passed (RED first: helper missing).
+- `python -m scripts.build_tools_module_inventory --check`: passes after regeneration.
+
+## Next step
+
+- None; auto-merge armed. If the inventory goes stale on rebase, regenerate it.
+
+
+---
+
+# Past handoff — Fork PRs never run on the self-hosted fleet (Tools#4464)
 
 - Repository: D-sorganization/Tools
 - Working directory: `/home/user/wt/tools-4464`
