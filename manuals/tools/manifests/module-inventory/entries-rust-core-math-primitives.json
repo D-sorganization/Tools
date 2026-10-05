@@ -1143,6 +1143,7 @@
           "tests/folder_tool/test_folders_tool_r0.py",
           "tests/integration/sidekick/test_sidekick_host_integration.py",
           "tests/integration/test_cross_repo_contracts.py",
+          "tests/ops/test_automerge_guard.py",
           "tests/ops/test_ci_standard_tools_core_wheel.py",
           "tests/p1am_control_system/test_calibrate_safe_shutdown.py",
           "tests/p1am_control_system/test_cors_config.py",
