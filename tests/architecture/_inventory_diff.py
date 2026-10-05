@@ -13,7 +13,7 @@ import json
 from collections.abc import Mapping
 from typing import Any
 
-from scripts.tools_module_inventory_storage import shard_package, shard_slug
+from scripts import tools_module_inventory_storage as storage
 
 DEFAULT_LIMIT = 20
 _ENTRIES_KEY = "entries"
@@ -25,14 +25,13 @@ def _digest(value: object) -> str:
 
 
 def _shard_digests(payload: Mapping[str, Any]) -> dict[str, str]:
-    groups: dict[str, list[Any]] = {}
-    for entry in payload.get(_ENTRIES_KEY, []):
-        groups.setdefault(shard_package(str(entry["path"])), []).append(entry)
+    # Use the production layout so size-split packages name their real shard.
+    groups = storage.partition_entries(list(payload.get(_ENTRIES_KEY, [])))
     return {package: _digest(rows) for package, rows in groups.items()}
 
 
 def _label(package: str) -> str:
-    return f"{package} (entries-{shard_slug(package)}.json)"
+    return f"{package} (entries-{storage.shard_slug(package)}.json)"
 
 
 def summarize_inventory_difference(
