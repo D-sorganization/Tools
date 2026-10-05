@@ -15,7 +15,8 @@
 # swing_core` and so is silently skipped wherever the wheel is absent).
 #
 # Runner platforms: the d-sorg-fleet self-hosted pool spans linux, windows,
-# and macos hosts. Python versions 3.10, 3.11, and 3.12 are hard-gated here;
+# and macos hosts. Python versions 3.11 and 3.12 are hard-gated here (3.11 is the root
+# requires-python floor; the parity suite lives under root code);
 # Python 3.13 coverage is deferred until all fleet runners have a 3.13
 # toolcache (same policy as maturin-pendulum-core.yml).
 
@@ -52,7 +53,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.11", "3.12"]
 
     steps:
       - name: Checkout repository
