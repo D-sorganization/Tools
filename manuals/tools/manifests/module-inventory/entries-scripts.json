@@ -716,6 +716,160 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 30029,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "02849ad36a1f36d93bc7ad096c6d893b5edc95842c13e86d8669450f4a7a322b",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-AUTOMERGE-GUARD-PY-589614C8BDE2",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/automerge_guard.py",
+      "purpose": "Refuse to arm GitHub auto-merge on a pull request a reviewer has held back.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ArmResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HoldVerdict",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "APP_TOKEN_PREFIXES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CLEAN_STATUS_MARKER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DELETIONS_ACK_BODY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DELETIONS_ACK_LABEL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ENQUEUE_MUTATION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXIT_ARM_MAY_BE_ON",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXIT_IDENTITY_REFUSED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GRAPHQL_BLOCKED_MARKER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HOLD_LABELS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TOKEN_ENV_VARS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "USER_TOKEN_PREFIXES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_IDENTITY_WARNINGS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "active_token_kind",
+            "signature": "env: Mapping[str, str] | None=None, *, runner: CommandRunner=_default_runner"
+          },
+          {
+            "kind": "function",
+            "name": "arm_auto_merge",
+            "signature": "repo: str, pr: int, *, strategy: str='squash', delete_branch: bool=False, runner: CommandRunner | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "check_token_identity",
+            "signature": "*, require_app_token: bool, env: Mapping[str, str] | None=None, runner: CommandRunner=_default_runner"
+          },
+          {
+            "kind": "function",
+            "name": "classify_token",
+            "signature": "token: str"
+          },
+          {
+            "kind": "function",
+            "name": "enqueue_stalled_pr",
+            "signature": "repo: str, pr: int, *, strategy: str='squash', runner: CommandRunner | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "evaluate_hold",
+            "signature": "repo: str, pr: int, *, runner: CommandRunner | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: Sequence[str] | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/ops/test_automerge_guard.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2333,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -7372,6 +7526,111 @@
           "tests/scripts/test_repo_metrics.py"
         ],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6625,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e9188d03b3c4154fc186ffd869ef71f4e2d5bc1a710a6a4bf29ae0e8e695af88",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-REQUEUE-STALLED-MERGES-PY-C0181CFB4098",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/requeue_stalled_merges.py",
+      "purpose": "Enqueue green, armed PRs that the merge queue never picked up (#2018).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "RequeueReport",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_LIMIT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ALREADY_QUEUED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_OPEN_ARMED_JQ",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_QUEUE_EVENTS_JQ",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_REPO_SLUG",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "exit_code",
+            "signature": "report: RequeueReport"
+          },
+          {
+            "kind": "function",
+            "name": "is_stalled",
+            "signature": "repo: str, pr: int, run: CommandRunner"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: Sequence[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "open_armed_prs",
+            "signature": "repo: str, run: CommandRunner"
+          },
+          {
+            "kind": "function",
+            "name": "requeue_stalled",
+            "signature": "repo: str, *, run: CommandRunner=_run, enqueue: Enqueue=_guard_enqueue, dry_run: bool=False, limit: int=DEFAULT_LIMIT"
+          }
+        ],
+        "test_paths": [
+          "tests/ops/test_requeue_stalled_merges.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "s"
+        ],
         "validation_paths": []
       }
     },
