@@ -2980,10 +2980,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6830,
+      "bytes_lf": 6908,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "cf6ac7b40974c7c60acdb2851feea9a87b0b866401950d99f49b966f016ff4f8",
+      "content_sha256_lf": "dd4204e8588e85604964c1148a965e4277e0ab477e58ce62e63f5dbc64ae1c10",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-ROOT-ALLOWLIST-PY-94782E1774B7",
       "language": "python",
@@ -4122,6 +4122,145 @@
         ],
         "unit_mentions": [
           "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 0,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CI-INIT-PY-883078418B3F",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/ci/__init__.py",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5414,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "920235827c5f12646d4bf9b167cfa32f4ae4fcd4a967b7a914d0962bfefb60d0",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CI-CHECK-SPEC-FRESHNESS-PY-26D2FAB54DBB",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/ci/check_spec_freshness.py",
+      "purpose": "Decide whether a pull request keeps SPEC.md fresh (spec-check.yml).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "FRAGMENT_MODULE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REPO_ROOT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SOURCE_FILES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SOURCE_PREFIXES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "changed_files",
+            "signature": "base: str, repo_root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "decide",
+            "signature": "files: Sequence[str], repo_root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "has_valid_fragment",
+            "signature": "files: Sequence[str], repo_root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "is_source",
+            "signature": "path: str"
+          },
+          {
+            "kind": "function",
+            "name": "load_changes_fragment",
+            "signature": "repo_root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: Sequence[str] | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/scripts/test_check_spec_freshness.py"
+        ],
+        "unit_mentions": [
           "s"
         ],
         "validation_paths": []

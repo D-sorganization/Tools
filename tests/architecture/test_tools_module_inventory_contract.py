@@ -25,6 +25,7 @@ from scripts.tools_module_inventory_storage import (
     derive_index_from_shards,
     read_inventory,
 )
+from tests.architecture._inventory_diff import summarize_inventory_difference
 
 ROOT = Path(__file__).resolve().parents[2]
 MANIFEST = ROOT / "manuals" / "tools" / "manifests" / "module-inventory.json"
@@ -64,7 +65,17 @@ def test_inventory_cli_checks_checked_in_freshness() -> None:
 
 def test_inventory_is_deterministic_and_fresh() -> None:
     """The checked-in registry must be exactly reproducible from tracked files."""
-    assert _payload() == build_inventory(ROOT)
+    expected = build_inventory(ROOT)
+    actual = _payload()
+    # Cheap equality first; on mismatch name the stale shards instead of letting
+    # pytest diff two huge nested dicts (quadratic; stalled a CI shard, #5432).
+    if actual != expected:
+        summary = summarize_inventory_difference(actual, expected)
+        pytest.fail(
+            f"{summary}\nRegenerate with "
+            "`python -m scripts.build_tools_module_inventory`.",
+            pytrace=False,
+        )
 
 
 def test_inventory_conforms_to_owned_strict_schema() -> None:

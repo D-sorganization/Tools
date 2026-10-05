@@ -23,6 +23,19 @@ feature, from proposal to ship. See the `development-logs` section of
 - **Summary:** Split `maturin-file-watcher` and `maturin-swing-core` into a `wheel-gate` (build + import, Python 3.10-3.12, proves the crates' >=3.10 claim) and the existing wrapper/parity job (root code, now 3.11-3.12 only, since conftest will not collect it below the root floor and a 3.10 leg exited 5). A policy test fails any workflow leg below the floor of the code it exercises, and any maturin crate not built on its declared floor (`rust_core/tools-core` is a listed known gap).
 - **Next step:** Merge the PR once the Maturin workflows are green.
 
+### DL-#5432 · Fail fast on stale module inventory test
+
+- **State:** in_review
+- **Owner:** claude
+- **Issue:** #5432
+- **Branch:** `fix/5432-inventory-fast-fail`
+- **PR:** #5433
+- **Paths:** `tests/architecture/_inventory_diff.py`, `tests/architecture/test_inventory_diff_5432.py`, `tests/architecture/test_tools_module_inventory_contract.py`
+- **Started:** 2026-10-05
+- **Last verified:** 2026-10-05 — helper tests 7 passed; stale inventory now fails with a one-line shard summary; inventory --check passes.
+- **Summary:** The inventory freshness test compared two huge dicts with `assert ==`, whose quadratic pytest diff stalled a CI shard for 90 minutes. It now fails with a bounded shard-level summary; strictness is unchanged.
+- **Next step:** Merge PR #5433 via auto-merge.
+
 ### DL-#4464 · Fork PRs never run on the self-hosted fleet
 
 - **State:** in_review
