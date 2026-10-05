@@ -1,4 +1,29 @@
-# Current handoff — Align workflow Python matrices with requires-python (Tools#5434)
+# Current handoff — tools-core wheel gate on its declared Python floor (Tools#5436)
+
+- Repository: D-sorganization/Tools
+- Working directory: `/home/user/wt/tools-5436`
+- Branch: `fix/5436-tools-core-wheel-gate`; commit: SELF; PR: see development log entry DL-#5436
+- Governing issue: Tools#5436 (development log entry DL-#5436)
+
+## Objective and status
+
+Prove the `>=3.10` floor declared by `rust_core/tools-core/pyproject.toml`. Done: new `.github/workflows/maturin-tools-core.yml` with a `wheel-gate` job (Python 3.10-3.12, fork-guarded, builds the wheel with maturin, installs it, asserts `tools_core` exports `Vector3`, `Quaternion`, `Matrix3`, `simulate_trajectory`, `lerp`, `clamp`, taken from the `#[pymodule]` in `rust_core/tools-core/src/lib.rs`). `KNOWN_UNPROVEN` and its guard test were removed from `tests/ops/test_workflow_python_floor.py`, so every maturin crate must now be built on its floor with no exemptions. `ci-standard.yml` is untouched.
+
+## Validation
+
+- RED: with the `KNOWN_UNPROVEN` entry removed and no workflow, `test_every_maturin_crate_is_built_on_its_declared_floor` failed for `rust_core/tools-core`. GREEN after adding the workflow: `tests/ops/test_workflow_python_floor.py`, `tests/test_python_version_contract.py`, `tests/ops/test_fork_pr_runner_guard.py` 47 passed.
+- `python scripts/fork_pr_runner_guard.py` clean; actionlint shows only the SC2012 info note (same as sibling workflows); module inventory check clean; ruff check/format clean.
+- Not run locally: the wheel build itself (needs the fleet runners).
+
+## Next step
+
+- Merge once the new Maturin tools_core workflow is green on 3.10, 3.11 and 3.12.
+
+
+
+---
+
+# Past handoff — Align workflow Python matrices with requires-python (Tools#5434)
 
 - Repository: D-sorganization/Tools
 - Working directory: `/home/user/wt/tools-5434`

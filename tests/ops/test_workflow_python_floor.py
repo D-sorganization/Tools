@@ -32,8 +32,6 @@ _FLOOR_RE = re.compile(
 )
 _REQUIRES_RE = re.compile(r"""^\s*requires-python\s*=""", re.M)
 _MANIFEST_RE = re.compile(r"(?:^|\s)(?:-m|--manifest-path)[\s=]+(\S+Cargo\.toml)")
-# Crates whose requires-python floor no workflow proves yet (tracked follow-up).
-KNOWN_UNPROVEN = frozenset({"rust_core/tools-core"})
 
 
 def parse_floor(pyproject: Path) -> Version:
@@ -164,7 +162,6 @@ def unproven_crates() -> list[str]:
         for crate in maturin_crates()
         for floor in [parse_floor(crate / "pyproject.toml")]
         if (crate, floor) not in proven
-        and str(crate.relative_to(REPO_ROOT)) not in KNOWN_UNPROVEN
     ]
 
 
@@ -223,9 +220,3 @@ def test_every_maturin_crate_is_built_on_its_declared_floor() -> None:
     """A crate's ``requires-python`` claim must be proven by a wheel build."""
     problems = unproven_crates()
     assert not problems, "\n".join(problems)
-
-
-def test_known_unproven_crates_are_still_unproven() -> None:
-    """Drop a ``KNOWN_UNPROVEN`` entry as soon as a workflow proves its floor."""
-    listed = {str(path.relative_to(REPO_ROOT)) for path in maturin_crates()}
-    assert KNOWN_UNPROVEN <= listed, f"stale KNOWN_UNPROVEN: {KNOWN_UNPROVEN - listed}"
