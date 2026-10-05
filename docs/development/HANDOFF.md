@@ -1,4 +1,27 @@
-# Current handoff — Align workflow Python matrices with requires-python (Tools#5434)
+# Current handoff — Re-vendor fork PR runner guard (RM#1996)
+
+- Repository: D-sorganization/Tools
+- Working directory: `/home/user/wt/tools-guard-sync`
+- Branch: `chore/sync-fork-guard-1996`; commit: SELF; PR: #5439
+- Governing issue: Repository_Management#1996 (development log entry DL-#4464, paths refreshed)
+
+## Objective and status
+
+Re-vendor the updated guard (`scripts/fork_pr_runner_guard.py` plus new `scripts/fork_pr_guard_analysis.py`) byte-identical from Repository_Management, re-vendor its tests, regenerate the module inventory. Done.
+
+## Validation
+
+- RED: RM canonical tests vs old guard 10 failed; GREEN: `python -m pytest -q -o addopts="" tests/ops/test_fork_pr_runner_guard.py` 69 passed.
+- `python scripts/fork_pr_runner_guard.py` on Tools workflows: 0 violations before and after.
+- ruff, mypy 1.13.0 and `python -m scripts.build_tools_module_inventory --check` clean (`mypy.ini` gained a no-redef override for the vendored dual import).
+
+## Next step
+
+- Merge once CI is green; nothing else outstanding.
+
+---
+
+# Past handoff — Align workflow Python matrices with requires-python (Tools#5434)
 
 - Repository: D-sorganization/Tools
 - Working directory: `/home/user/wt/tools-5434`
