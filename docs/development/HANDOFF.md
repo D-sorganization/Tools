@@ -19,6 +19,9 @@ the repository settings in the PR body are still required to close the issue.
 - `python -m pytest tests/ops/test_fork_pr_runner_guard.py`: RED on main (50 jobs), GREEN after.
 - `python -m pytest tests/ops tests/scripts tests/test_python_version_contract.py`: passed.
 - `actionlint -shellcheck= .github/workflows/*.yml`: no findings before or after.
+- Review fix: base-context head checkouts aliased through workflow- or job-level `env`
+  (`PR_SHA: ${{ github.event.pull_request.head.sha }}` then `ref: ${{ env.PR_SHA }}` /
+  `$PR_SHA`) are now detected; 8 new cases RED before, 34 tests GREEN after.
 
 ## Next step
 

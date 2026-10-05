@@ -220,8 +220,33 @@ def _strings(value: Any) -> Iterable[str]:
             yield from _strings(item)
 
 
-def _head_checkout_steps(job: dict[str, Any]) -> list[str]:
-    """Return the names of steps that check out PR head on any event."""
+def _head_ref_aliases(*scopes: Any) -> set[str]:
+    """Return env names, across ``scopes``, whose value reads the PR head."""
+    names: set[str] = set()
+    for scope in scopes:
+        env = scope.get("env") if isinstance(scope, dict) else None
+        for name, value in env.items() if isinstance(env, dict) else ():
+            if any(p.search("\n".join(_strings(value))) for p in HEAD_REF_PATTERNS):
+                names.add(str(name))
+    return names
+
+
+def _alias_reference(name: str) -> re.Pattern[str]:
+    """Match an expression or shell reference to env var ``name``."""
+    n = re.escape(name)
+    return re.compile(
+        rf"env\.{n}(?!\w)|env\[\s*['\"]{n}['\"]\s*\]"
+        rf"|\$\{{?{n}(?!\w)|\$env:{n}(?!\w)"
+    )
+
+
+def _head_checkout_steps(job: dict[str, Any], aliases: set[str]) -> list[str]:
+    """Return the names of steps that check out PR head on any event.
+
+    ``aliases`` are workflow- or job-level env names that hold a head ref; a
+    step that references one reads the head as surely as a literal does.
+    """
+    patterns = [*HEAD_REF_PATTERNS, *(_alias_reference(a) for a in aliases)]
     found: list[str] = []
     steps = job.get("steps")
     for index, step in enumerate(steps if isinstance(steps, list) else []):
@@ -230,15 +255,22 @@ def _head_checkout_steps(job: dict[str, Any]) -> list[str]:
         if requires_conjunct(step.get("if"), PULL_REQUEST_ONLY):
             continue
         text = "\n".join(_strings({k: v for k, v in step.items() if k != "if"}))
-        if any(pattern.search(text) for pattern in HEAD_REF_PATTERNS):
+        if any(pattern.search(text) for pattern in patterns):
             found.append(str(step.get("name") or step.get("uses") or f"#{index}"))
     return found
 
 
 def job_violations(
-    wf_name: str, events: set[str], job_id: str, job: dict[str, Any]
+    wf_name: str,
+    events: set[str],
+    job_id: str,
+    job: dict[str, Any],
+    workflow: dict[Any, Any] | None = None,
 ) -> list[str]:
-    """Return why one job can run fork PR code on a self-hosted runner."""
+    """Return why one job can run fork PR code on a self-hosted runner.
+
+    ``workflow`` supplies workflow-level ``env`` for alias resolution.
+    """
     if hosted_only(job):
         return []
     violations: list[str] = []
@@ -253,7 +285,8 @@ def job_violations(
             f"'{' && '.join(FORK_ROUTE_CONJUNCTS)} && <hosted label> || ...'"
         )
     if events & BASE_CONTEXT_TRIGGERS:
-        for step in _head_checkout_steps(job):
+        aliases = _head_ref_aliases(workflow, job)
+        for step in _head_checkout_steps(job, aliases):
             violations.append(
                 f"{wf_name}::{job_id}: step '{step}' checks out PR head code on a "
                 f"self-hosted runner under {', '.join(sorted(events & BASE_CONTEXT_TRIGGERS))}; "
@@ -276,7 +309,9 @@ def find_violations(workflow_dir: Path) -> list[str]:
         events = triggers(data)
         for job_id, job in data["jobs"].items():
             if isinstance(job, dict):
-                violations.extend(job_violations(path.name, events, str(job_id), job))
+                violations.extend(
+                    job_violations(path.name, events, str(job_id), job, data)
+                )
     return violations
 
 

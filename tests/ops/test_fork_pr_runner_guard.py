@@ -200,6 +200,47 @@ def test_head_checkout_limited_to_pull_request_event_is_allowed(
     assert _violations(tmp_path, text) == []
 
 
+@pytest.mark.parametrize("level", ["workflow", "job"])
+@pytest.mark.parametrize(
+    "step",
+    [
+        "uses: actions/checkout@v7\n        with:\n          ref: ${{ env.PR_SHA }}",
+        'run: git fetch origin "$PR_SHA"',
+        "run: git checkout ${PR_SHA}",
+        "run: git checkout ${{ env['PR_SHA'] }}",
+    ],
+)
+def test_head_ref_aliased_through_env_is_rejected(
+    tmp_path: Path, level: str, step: str
+) -> None:
+    env = "env:\n  PR_SHA: ${{ github.event.pull_request.head.sha }}\n"
+    workflow_env = env if level == "workflow" else ""
+    job_env = "    " + env.replace("\n  ", "\n      ") if level == "job" else ""
+    text = (
+        f"on: pull_request_target\n{workflow_env}jobs:\n  t:\n"
+        f"    runs-on: d-sorg-fleet\n{job_env}"
+        f"    steps:\n      - {step}\n"
+    )
+    violations = _violations(tmp_path, text)
+    assert len(violations) == 1
+    assert "checks out PR head" in violations[0]
+
+
+def test_unreferenced_or_prefix_named_env_alias_is_allowed(tmp_path: Path) -> None:
+    text = """\
+        on: pull_request_target
+        env:
+          PR_SHA: ${{ github.event.pull_request.head.sha }}
+        jobs:
+          t:
+            runs-on: d-sorg-fleet
+            steps:
+              - uses: actions/checkout@v7
+              - run: echo "$PR_SHA_LABEL ${{ env.PR_SHAPE }}"
+        """
+    assert _violations(tmp_path, text) == []
+
+
 def test_base_context_job_without_head_checkout_is_allowed(tmp_path: Path) -> None:
     text = """\
         on: pull_request_target
