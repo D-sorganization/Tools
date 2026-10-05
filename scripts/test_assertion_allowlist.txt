@@ -15,6 +15,10 @@ tests/shared/python/ai/integrations/_bootstrap.py
 # The skip lives here rather than in a conftest hook because a hook receives
 # the whole session's items and silenced the entire suite (issue #4497).
 tests/helpers/codemap_optional_deps.py
+# Support module, not a test: summarises inventory differences so the stale-
+# inventory contract fails fast with a short message (#5432). Its behaviour is
+# asserted in tests/architecture/test_inventory_diff_5432.py.
+tests/architecture/_inventory_diff.py
 # Vendored Movement Optimizer sub-app support files (migrated from D-sorganization/Movement_Optimizer; Tools#3407)
 src/movement_optimizer/tests/__init__.py
 src/movement_optimizer/tests/conftest.py
