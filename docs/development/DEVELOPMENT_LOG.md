@@ -16,12 +16,12 @@ feature, from proposal to ship. See the `development-logs` section of
 - **Owner:** claude
 - **Issue:** #5440
 - **Branch:** `fix/5440-qt-panel-run-hang`
-- **PR:** pending
+- **PR:** #5442
 - **Paths:** `tests/rate_of_closure/test_solver_gui.py`, `pyproject.toml`
 - **Started:** 2026-10-05
-- **Last verified:** 2026-10-05 — base 625c4e0; test_solver_gui 700 passed at -n 4 --count 50; RED/GREEN on the new wait tests.
+- **Last verified:** 2026-10-05 — commit 41d3986; test_solver_gui 700 passed at -n 4 --count 50; RED/GREEN on the new wait tests.
 - **Summary:** Panel-run tests waited on a signal connected after the worker started, so a lost emission blocked for the full pytest timeout and crashed the xdist worker. They now wait on state, join the worker, fail fast on a failed solve, and every hang dumps thread stacks via `faulthandler_timeout`.
-- **Next step:** Merge the PR via auto-merge.
+- **Next step:** Merge PR #5442 via auto-merge.
 
 ### DL-#4149 · Exact golf-club head CAD families (iron family slice)
 

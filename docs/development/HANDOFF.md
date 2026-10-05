@@ -2,7 +2,7 @@
 
 - Repository: D-sorganization/Tools
 - Working directory: `/home/user/wt/tools-5440`
-- Branch: `fix/5440-qt-panel-run-hang`; commit: SELF; PR: pending (opened after this commit)
+- Branch: `fix/5440-qt-panel-run-hang`; commit: SELF; PR: #5442 (ready, armed)
 - Governing issue: Tools#5440 (`Refs`, not `Closes`). Development-log entry: DL-#5440.
 
 ## Objective and status
