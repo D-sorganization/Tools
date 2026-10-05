@@ -4828,6 +4828,7 @@
           }
         ],
         "test_paths": [
+          "tests/rate_of_closure/pyqt_launch_monitor_state_probe.py",
           "tests/rate_of_closure/pyqt_visualization_tab_probe.py",
           "tests/rate_of_closure/test_visualization_acceptance_manifest.py",
           "tests/rate_of_closure/test_visualization_accessibility.py",

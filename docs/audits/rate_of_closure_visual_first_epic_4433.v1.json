@@ -110,7 +110,7 @@
       "requirement_id": "V1.4",
       "requirement": "Retain the landmark through loading, unavailable, no-impact, failure, and no-result states.",
       "status": "partial",
-      "rationale": "All states are declared and Variation has matched lifecycle renders. The Morris result state exposes provenance-qualified output-target and input-source selectors on both surfaces, while initial-state evidence asserts that no synthetic result selector is presented before a completed report. The PyQt execution-policy selector is visibly and accessibly pinned to the same three governed policies as React, and the R14.3 matrix binds progress, cancellation, durable resume, publication, and export parity. All-tab state geometry remains absent.",
+      "rationale": "All states are declared and Variation has matched lifecycle renders. The Morris result state exposes provenance-qualified output-target and input-source selectors on both surfaces, while initial-state evidence asserts that no synthetic result selector is presented before a completed report. The PyQt execution-policy selector is visibly and accessibly pinned to the same three governed policies as React, and the R14.3 matrix binds progress, cancellation, durable resume, publication, and export parity. The matched Launch Monitor Analytics pair now retains its registered scatter landmark in the first viewport through result, error (prior result retained), pending-import loading, and the non-initial demonstration (empty) preview on React 1440x900, 1280x720, and 390x844 and on PyQt at 1.0 and 1.5 DPI. State geometry for the remaining tab pairs remains absent.",
       "evidence_files": [
         "src/rate_of_closure/visualization_tabs.v1.json",
         "src/rate_of_closure/web/e2e/variation-visual-state.spec.ts",
@@ -118,10 +118,11 @@
         "src/rate_of_closure/web/src/components/MorrisResults.test.tsx",
         "docs/audits/rate_of_closure_r14_3_surface_parity.v1.json",
         "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py",
+        "tests/rate_of_closure/pyqt_launch_monitor_state_probe.py",
         "tests/rate_of_closure/test_morris_pyqt_workflow.py"
       ],
       "gaps": [
-        "Exercise every applicable state for every registered tab on both surfaces."
+        "Exercise every applicable state for every registered tab pair other than Launch Monitor Analytics on both surfaces."
       ]
     },
     {
@@ -273,22 +274,23 @@
       "requirement_id": "V4.2",
       "requirement": "Use Playwright to verify every React tab, geometry, overflow, overlap, and supported states.",
       "status": "partial",
-      "rationale": "Every initial tab and viewport is protected, including the React putting playback transport (#4800 P8), but all supported state transitions are not exercised for every tab.",
+      "rationale": "Every initial tab and viewport is protected, including the React putting playback transport (#4800 P8), and Launch Monitor Analytics re-measures its scatter landmark through result, error, pending-import loading, and demonstration (empty) states at all three reference viewports; all supported state transitions are not exercised for the other tabs.",
       "evidence_files": [
         "src/rate_of_closure/web/e2e/putting-sample-inspector.spec.ts",
         "src/rate_of_closure/web/e2e/visualization-tab-visibility.spec.ts"
       ],
       "gaps": [
-        "Expand the all-tab Playwright matrix across every applicable state."
+        "Expand the Playwright state matrix to every applicable state of the tabs other than Launch Monitor Analytics."
       ]
     },
     {
       "requirement_id": "V4.3",
       "requirement": "Use rendered PyQt tests for every tab at 100/150 percent scaling, overlap, keyboard, and resize.",
       "status": "partial",
-      "rationale": "All initial tabs render at both scales with visibility and overlap checks, and the widened PyQt Putting surface (#4800 P6) re-renders at both scales through its own inspector probe, with the shared playback transport bound to its 3-D view (#4800 P8) asserted visible and named in the first viewport; the Flight Explorer tab's new imported-trajectory-record control (ADR-0047 H4) is likewise asserted visible and named in the first viewport, reusing that same shared playback transport rather than a second one; all-state and keyboard-path coverage is separate and incomplete.",
+      "rationale": "All initial tabs render at both scales with visibility and overlap checks, and the widened PyQt Putting surface (#4800 P6) re-renders at both scales through its own inspector probe, with the shared playback transport bound to its 3-D view (#4800 P8) asserted visible and named in the first viewport; the Flight Explorer tab's new imported-trajectory-record control (ADR-0047 H4) is likewise asserted visible and named in the first viewport, reusing that same shared playback transport rather than a second one; Launch Monitor Analytics is driven through result, error, synchronous pending-import loading, and demonstration (empty) states at both scales with the scatter landmark held in the first viewport; all-state coverage for the other tabs and keyboard-path coverage remain incomplete.",
       "evidence_files": [
         "tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py",
+        "tests/rate_of_closure/pyqt_launch_monitor_state_probe.py",
         "tests/rate_of_closure/test_visualization_accessibility.py",
         "tests/rate_of_closure/test_pyqt_putting_sample_inspector_rendered.py",
         "tests/rate_of_closure/test_putting_gui.py"

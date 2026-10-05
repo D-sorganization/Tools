@@ -22,6 +22,40 @@ Fix clippy failures in `rust-quality-gate` where `use std::f64;` shadowed primit
 
 # Past handoff — ADR-008 license deny-list check (Tools#5417)
 
+# Current handoff — Launch Monitor state geometry, first tab pair (Tools#4433 sub-task)
+
+- Repository: D-sorganization/Tools
+- Working directory: `C:/Users/diete/Repositories/Tools-worktrees/claude-4433`
+- Branch: `claude/issue-4433`; commit: SELF; PR: #5424 (ready, armed)
+- CI fix: the new probe is allowlisted in `scripts/test_assertion_allowlist.txt` (subprocess entrypoint, like its siblings); module inventory regenerated (the new probe is listed as a related test in three shards); `origin/main` merged.
+- Governing issue: Tools#4433 (sub-task; epic stays open). Development-log entry: DL-#4433.
+
+## Objective and status
+
+Add first-viewport geometry assertions beyond the initial state for one reciprocal tab pair. Chosen pair: React `launch-monitor-analytics` / PyQt `launch_monitor_analytics`. Implemented; tests only, no production change.
+
+## Files and decisions
+
+- `tests/rate_of_closure/pyqt_launch_monitor_state_probe.py`: new subprocess probe (QT_SCALE_FACTOR is fixed per process). Drives result, error, loading (measured inside the synchronous read), and empty through the tab's own handlers; the file dialog and message box are replaced by recorders so no modal opens. Reuses the helpers of `pyqt_visualization_tab_probe.py`.
+- `tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py`: `_probe` takes a `probe_script` argument; new test parametrized at 1.0 and 1.5 DPI.
+- `src/rate_of_closure/web/e2e/visualization-tab-visibility.spec.ts`: new state test at all three reference viewports; read hold via a `Blob.arrayBuffer` gate; the threshold rule moved into `requiredVisibleSize`, shared with the initial-state test.
+- Ledger: V1.4, V4.2, V4.3 rationale, evidence and gaps updated; statuses unchanged (partial). The R14.6 blocking-gap text is mirrored in the #4142 ledger and left unchanged.
+- Found, not fixed: 58 px horizontal document overflow at 390x844 once results render (single-column grid track widened by the result tables).
+
+## Validation
+
+- `QT_QPA_PLATFORM=offscreen python -m pytest tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py tests/rate_of_closure/test_visual_first_epic_4433_evidence.py tests/scripts/test_check_rate_visual_evidence_changes.py tests/rate_of_closure/test_visualization_tab_manifest.py -q`: 63 passed.
+- RED: a result-only 1200 px (PyQt) / 2000 px (React) spacer above the scatter fails both new tests; not committed.
+- `npx playwright test e2e/visualization-tab-visibility.spec.ts --project chromium-desktop`: 4 passed.
+
+## Next step
+
+- Frontier review of the draft PR; then the next tab pair as a separate CLI-tier sub-task.
+
+---
+
+# Current handoff — ADR-008 license deny-list check (Tools#5417)
+
 - Repository: D-sorganization/Tools
 - Working directory: `C:/Users/diete/Repositories/Tools-worktrees/claude-5417`
 - Branch: `claude/issue-5417`; commit: SELF; PR: draft, see PR body
