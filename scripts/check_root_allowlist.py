@@ -74,6 +74,7 @@ ROOT_ALLOWLIST: frozenset[str] = frozenset(
         "assets",
         "benchmarks",
         "build_hooks.py",  # hatch build hooks referenced from pyproject.toml
+        "changes",  # RM-5 change fragments for monotonic changelog collation
         "commit_screensaver.py",  # root tool entry point
         "config",
         "conftest.py",
