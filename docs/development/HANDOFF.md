@@ -1,4 +1,26 @@
-# Current handoff — Fix Rust 1.99 clippy errors in pendulum-core (Tools#5429)
+# Current handoff — Align workflow Python matrices with requires-python (Tools#5434)
+
+- Repository: D-sorganization/Tools
+- Working directory: `/home/user/wt/tools-5434`
+- Branch: `fix/5434-matrix-python-floor`; commit: SELF; PR: #5435
+- Governing issue: Tools#5434 (development log entry DL-#5434)
+
+## Objective and status
+
+Stop the 3.10 workflow legs that collect 0 tests (pytest exit 5) because root conftest refuses code below `requires-python >=3.11`. Done: 3.10 removed from `maturin-file-watcher` and `maturin-swing-core`; new policy test `tests/ops/test_workflow_python_floor.py` enforces the floor per job (sub-packages with their own lower floor, e.g. ai-backend, movement-optimizer, pendulum-core, data-processor-core, keep 3.10).
+
+## Validation
+
+- RED then GREEN: `python -m pytest -q -o addopts="" tests/ops/test_workflow_python_floor.py tests/test_python_version_contract.py` (12 passed).
+- `python -m scripts.build_tools_module_inventory --check` clean after regeneration; ruff check/format clean; actionlint shows only pre-existing SC2012 info notes.
+
+## Next step
+
+- Merge once CI is green; nothing else outstanding.
+
+---
+
+# Past handoff — Fix Rust 1.99 clippy errors in pendulum-core (Tools#5429)
 
 - Repository: D-sorganization/Tools
 - Working directory: `/home/user/wt/tools-clippy`

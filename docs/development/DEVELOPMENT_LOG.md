@@ -10,6 +10,19 @@ feature, from proposal to ship. See the `development-logs` section of
 - **WIP limit:** 4
 - **Last audited:** 2026-09-30 by Luna (Tools#5392 longitudinal residual variance)
 
+### DL-#5434 · Align Workflow Python Matrices with requires-python
+
+- **State:** in_review
+- **Owner:** claude
+- **Issue:** #5434
+- **Branch:** `fix/5434-matrix-python-floor`
+- **PR:** #5435
+- **Paths:** `.github/workflows/maturin-file-watcher.yml`, `.github/workflows/maturin-swing-core.yml`, `tests/ops/test_workflow_python_floor.py`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`, `SPEC.md`
+- **Started:** 2026-10-05
+- **Last verified:** 2026-10-05 — `tests/ops/test_workflow_python_floor.py` red before the workflow edits (file-watcher, swing-core), green after; `tests/test_python_version_contract.py` green; module inventory check clean.
+- **Summary:** Dropped the 3.10 matrix leg from `maturin-file-watcher` and `maturin-swing-core`, whose tests are root code that conftest will not collect below the root `requires-python` floor (exit 5). A policy test now fails any workflow leg below the floor of the code it exercises, while sub-packages with their own lower floor keep 3.10.
+- **Next step:** Merge the PR once the Maturin workflows are green.
+
 ### DL-#5429 · Fix Clippy Rust 1.99 Errors in pendulum-core
 
 - **State:** in_review
