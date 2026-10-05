@@ -3,6 +3,284 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 8145,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "338ac47aca60949f34b83dffbf1295a42616d57a04aa51bdc6ad6bbd70077cbe",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SHARED-SCRIPTS-CHANGES-FRAGMENT-PY-32E5C19D5036",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "shared_scripts/changes_fragment.py",
+      "purpose": "Per-PR change fragments (RM-5 / Repository_Management#1894).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: Sequence[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "new_fragment",
+            "signature": "repo_root: Path, *, issue: int, summary: str, slug: str | None=None, handoff: str='', **optional: str | None"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 12170,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "82138320b982a68dded80364c2951b6e4787d5c7a0b16ec1c12c2775a0c4d299",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SHARED-SCRIPTS-CHANGES-FRAGMENT-COLLATE-PY-F17E078EF988",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "shared_scripts/changes_fragment_collate.py",
+      "purpose": "Change-fragment collation into SPEC.md and the development log (RM-5).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "CHANGES_DIR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EMPTY_PR_VALUES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PR_REF",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SHA",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "apply_devlog_entry",
+            "signature": "text: str, fragment: Fragment, *, pr: int, today: date, sha: str, source: str"
+          },
+          {
+            "kind": "function",
+            "name": "apply_spec_row",
+            "signature": "text: str, *, pr: int, summary: str, today: date"
+          },
+          {
+            "kind": "function",
+            "name": "collate",
+            "signature": "repo_root: Path, fragment_paths: Sequence[Path], *, pr: int, today: date, sha: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11103,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2c923c0140cd50767f5ee49f27a9451a022463265555ed6e1f0320b27bc11b78",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SHARED-SCRIPTS-CHANGES-FRAGMENT-SCHEMA-PY-3A534DEB076D",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "shared_scripts/changes_fragment_schema.py",
+      "purpose": "Change-fragment schema: parse, validate, render (RM-5 / #1894).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Fragment",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FragmentError",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ALLOWED_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CHANGES_DIR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FILE_NAME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FRONT_MATTER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "META_LINE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OPTIONAL_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REQUIRED_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "effective_title",
+            "signature": "title: str | None, summary: str"
+          },
+          {
+            "kind": "function",
+            "name": "find_fragments",
+            "signature": "repo_root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "is_fragment_path",
+            "signature": "rel_path: str"
+          },
+          {
+            "kind": "function",
+            "name": "load_fragment",
+            "signature": "path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "parse",
+            "signature": "text: str, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "render_fragment",
+            "signature": "issue: int, summary: str, *, handoff: str='', **optional: str | None"
+          },
+          {
+            "kind": "function",
+            "name": "sibling",
+            "signature": "name: str"
+          },
+          {
+            "kind": "function",
+            "name": "slugify",
+            "signature": "text: str, max_length: int=40"
+          },
+          {
+            "kind": "function",
+            "name": "validate_fragment_file",
+            "signature": "path: Path"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 10709,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -261,6 +539,723 @@
         ],
         "test_paths": [],
         "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9415,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "23f561d3d4dcc12e646675db771324c37692a746d24c3391b46983b8e0b99710",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SHARED-SCRIPTS-DEVELOPMENT-LOG-PY-F82A3204552D",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "shared_scripts/development_log.py",
+      "purpose": "Canonical development-log schema validator and archiver.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "ACTIVE_ONLY_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ACTIVE_STATES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ARCHIVE_AFTER_DAYS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BASE_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BRANCH_STATES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CANONICAL_RELATIVE_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ENTRY_HEADING",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ENTRY_LOOKUP_HEADING",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FIELD_LINE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ISO_DATE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ISSUE_KEYED_ENTRY_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LEADING_DATE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LEGACY_ENTRY_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_ACTIVE_ENTRIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OVERRIDE_MARKER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PAUSED_STATES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PLACEHOLDER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PORTFOLIO_HEADER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SECRET_PATTERNS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SENTINEL_ISSUE_VALUES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SHA_IN_TEXT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TERMINAL_STATES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "VALID_STATES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WARN_ACTIVE_ENTRIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WIP_LIMIT_HEADER",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "archive_repository_devlog",
+            "signature": "repo_root: Path, *, today: date, days: int=ARCHIVE_AFTER_DAYS"
+          },
+          {
+            "kind": "function",
+            "name": "archive_terminal_entries",
+            "signature": "content: str, *, today: date, days: int=ARCHIVE_AFTER_DAYS"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: Sequence[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "sibling",
+            "signature": "name: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7674,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4ad2c79060a9e15b092d9e361aea1f6f54f53cb222210438bb2568405328d64f",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SHARED-SCRIPTS-DEVELOPMENT-LOG-SCHEMA-PY-60BBFFEDE59F",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "shared_scripts/development_log_schema.py",
+      "purpose": "Canonical development-log schema definitions, models and parsing.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DevLogFinding",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Entry",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ACTIVE_ONLY_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ACTIVE_STATES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ARCHIVE_AFTER_DAYS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BASE_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BRANCH_STATES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CANONICAL_RELATIVE_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ENTRY_HEADING",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ENTRY_LOOKUP_HEADING",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FIELD_LINE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ISO_DATE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ISSUE_KEYED_ENTRY_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LEADING_DATE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LEGACY_ENTRY_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_ACTIVE_ENTRIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OVERRIDE_MARKER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PAUSED_STATES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PLACEHOLDER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PORTFOLIO_HEADER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SECRET_PATTERNS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SENTINEL_ISSUE_VALUES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SHA_IN_TEXT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TERMINAL_STATES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "VALID_STATES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WARN_ACTIVE_ENTRIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WIP_LIMIT_HEADER",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "parse_entries",
+            "signature": "content: str"
+          },
+          {
+            "kind": "function",
+            "name": "requires_devlog_update",
+            "signature": "changed_paths: Iterable[str]"
+          },
+          {
+            "kind": "function",
+            "name": "resolve_canonical_devlog_path",
+            "signature": "repo_root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "sibling",
+            "signature": "name: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14019,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "aee931c8ae1f584c3c36df49c013a4381acbcbd372621feb84fed2c5a07b5f5b",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SHARED-SCRIPTS-DEVELOPMENT-LOG-VALIDATOR-PY-D5B07039BD59",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "shared_scripts/development_log_validator.py",
+      "purpose": "Canonical development-log validation logic.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "ACTIVE_ONLY_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ACTIVE_STATES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BASE_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BRANCH_STATES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ISO_DATE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ISSUE_KEYED_ENTRY_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_ACTIVE_ENTRIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PLACEHOLDER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PORTFOLIO_HEADER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SECRET_PATTERNS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SENTINEL_ISSUE_VALUES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SHA_IN_TEXT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "VALID_STATES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WIP_LIMIT_HEADER",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "sibling",
+            "signature": "name: str"
+          },
+          {
+            "kind": "function",
+            "name": "validate_devlog_content",
+            "signature": "content: str, path: Path, is_template: bool=False, check_portfolio_wip: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "validate_repository_devlog",
+            "signature": "repo_root: Path, changed_files: Sequence[str], warn_only: bool=False"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13960,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "609cc9c61e0c3c9e76d853d489752b547757bdb5954dbe023a48d0b3c05e9a15",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SHARED-SCRIPTS-DOCUMENT-TITLE-CASE-PY-FEC11DD4D1B3",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "shared_scripts/document_title_case.py",
+      "purpose": "Enforce title capitalization in document sources and rendered artifacts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://schemas.openxmlformats.org/wordprocessingml/2006/main"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Finding",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CHART_CALL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DOCX_NS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DOCX_STYLE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DOCX_TITLE_STYLES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXCLUDED_PARTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HEADING",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LATEX_TITLE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LOWERCASE_PARTICLES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LOWERCASE_TERMS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MINOR_WORDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PROTECTED",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUPPORTED_SUFFIXES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TRAILING_ATTRIBUTES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WORD",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "YAML_VALUE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "apply_text_fixes",
+            "signature": "path: Path, findings: list[Finding]"
+          },
+          {
+            "kind": "function",
+            "name": "expected_title",
+            "signature": "value: str"
+          },
+          {
+            "kind": "function",
+            "name": "findings_for_docx",
+            "signature": "path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "findings_for_path",
+            "signature": "path: Path, display_path: Path | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "findings_for_pdf",
+            "signature": "path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "findings_for_text",
+            "signature": "path: Path, text: str"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "tracked_document_paths",
+            "signature": "root: Path"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "W",
+          "cm",
+          "kg",
+          "mm",
+          "ms",
+          "rad",
           "s"
         ],
         "validation_paths": []

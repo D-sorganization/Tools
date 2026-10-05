@@ -25,6 +25,55 @@ Add the iron head family on the wedge precedent: versioned schema, B-Rep builder
 
 - Owner reviews the iron schema ranges and topology in the draft PR; then the next family (hybrid or driver) follows the same pattern.
 
+
+---
+
+# Past handoff — Align workflow Python matrices with requires-python (Tools#5434)
+
+- Repository: D-sorganization/Tools
+- Working directory: `/home/user/wt/tools-5434`
+- Branch: `fix/5434-matrix-python-floor`; commit: SELF; PR: #5435
+- Governing issue: Tools#5434 (development log entry DL-#5434)
+
+## Objective and status
+
+Stop the 3.10 workflow legs that collect 0 tests (pytest exit 5) because root conftest refuses code below `requires-python >=3.11`, without losing the proof of the crates' own `>=3.10` claim. Done: `maturin-file-watcher` and `maturin-swing-core` each split into `wheel-gate` (build + import, 3.10-3.12) and the old wrapper/parity job (ids `rust-backend-gate`, `parity-gate` unchanged, now 3.11-3.12). `tests/ops/test_workflow_python_floor.py` enforces both directions. Known gap: `rust_core/tools-core` declares `>=3.10` but is built only on 3.11/3.12 in `ci-standard.yml` (listed in `KNOWN_UNPROVEN`).
+
+## Validation
+
+- RED then GREEN: `python -m pytest -q -o addopts="" tests/ops/test_workflow_python_floor.py tests/test_python_version_contract.py` (16 passed incl. `tests/ops/test_maturin_swing_core_workflow.py`).
+- `python -m scripts.build_tools_module_inventory --check` clean after regeneration; ruff check/format clean; actionlint shows only pre-existing SC2012 info notes.
+- After merging main (fork guard #4464 landed): both new `wheel-gate` jobs carry the same fork guard as the wrapper jobs; `python scripts/fork_pr_runner_guard.py` reports no violations; `tests/ops/test_fork_pr_runner_guard.py` + the floor tests: 50 passed.
+
+## Next step
+
+- Merge once CI is green; nothing else outstanding.
+
+
+
+---
+
+# Past handoff — Fast-fail stale inventory test (Tools#5432)
+
+- Repository: D-sorganization/Tools
+- Working directory: `/home/user/wt/tools-5432`
+- Branch: `fix/5432-inventory-fast-fail`; commit: SELF; PR: #5433 (ready, armed)
+- Governing issue: Tools#5432. Development-log entry: DL-#5432.
+
+## Objective and status
+
+`test_inventory_is_deterministic_and_fresh` no longer asserts on two huge dicts; it fails with a bounded summary naming stale shards (`tests/architecture/_inventory_diff.py`). Strictness unchanged. Module inventory regenerated for the new test files.
+
+## Validation
+
+- `python -m pytest -q -o addopts="" tests/architecture/test_inventory_diff_5432.py`: 7 passed (RED first: helper missing).
+- `python -m scripts.build_tools_module_inventory --check`: passes after regeneration.
+
+## Next step
+
+- None; auto-merge armed. If the inventory goes stale on rebase, regenerate it.
+
+
 ---
 
 # Past handoff — Fork PRs never run on the self-hosted fleet (Tools#4464)

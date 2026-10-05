@@ -1,5 +1,7 @@
 # CLAUDE.md — Tools
+
 @AGENTS.md
+
 <!-- Claude Code reads CLAUDE.md; the line above imports AGENTS.md, the single source of agent guidance. Edit AGENTS.md (or its fleet-rules sources), not this file. -->
 
 > **GAAI Fleet Member.** GAAI framework installed in `.gaai/`. Read `.gaai/core/GAAI.md` for full governance spec.

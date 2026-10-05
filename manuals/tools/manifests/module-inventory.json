@@ -111,7 +111,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "8095d69cd93f1293539b9fed8b35ba8bc5122c5e1e22d62dde2df8f656011d0a",
+      "content_sha256_lf": "441f7de7caf3c9e976391ab23d4e6599fb0c8aa4244e439525c015989ed3354b",
       "entry_count": 17,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
@@ -129,13 +129,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
     },
     {
-      "content_sha256_lf": "930bd995c95f6459d766e53ee52d54ef1cc69ee3338b4b6f05a0e5deaa832be4",
+      "content_sha256_lf": "2ee42c5ed9d0123dddbaf09746a308db6dfed23c929698d9ab877a5b04896233",
       "entry_count": 5,
       "package": "rust_core/file_watcher",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "11ff471f2a0c30e69323f293de38cde284efca0e0419bc785e22c3a1622b30b5",
+      "content_sha256_lf": "bbb574a5abbf296343649ae53357298d4ec9cc19de473fb8a4aae431b60f75a4",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -159,14 +159,14 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "aa198d690766ba8ac80b5646ca0ef65ae45525578eea6bc8a00f4910424be492",
-      "entry_count": 109,
+      "content_sha256_lf": "59da68c3fd72cdf15fcede2296a8df515f8378cac02a02458bd7493a7b2574df",
+      "entry_count": 111,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
     },
     {
-      "content_sha256_lf": "d7b69630e88cc83513b7d29c921e672f9e8032d5e48dd1440e0819247f1e63cd",
-      "entry_count": 5,
+      "content_sha256_lf": "e1ea35560dd256a872921d8258a01d1e381b5de88b0f88e8bdd74a56c9f4f152",
+      "entry_count": 12,
       "package": "shared_scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-shared-scripts.json"
     },

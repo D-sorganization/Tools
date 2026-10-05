@@ -23,6 +23,32 @@ feature, from proposal to ship. See the `development-logs` section of
 - **Summary:** Iron family following the wedge precedent: versioned `golf_club.iron_parameters/1` schema with boundary DbC, ruled-loft B-Rep with fused hollow hosel, mass properties recovered from the solid and checked against a closed-form prismatoid and the exported-mesh divergence theorem, STEP/BREP/STL export with `golf_club.iron_export/1` manifest. Shared datum-face, hosel-tube and file-export helpers extracted to `_head_cad.py`. Driver, hybrid and putter families and shape optimisation remain open under #4149.
 - **Next step:** owner reviews the iron schema ranges and topology in the draft PR body.
 
+### DL-#5434 · Align Workflow Python Matrices with requires-python
+
+- **State:** in_review
+- **Owner:** claude
+- **Issue:** #5434
+- **Branch:** `fix/5434-matrix-python-floor`
+- **PR:** #5435
+- **Paths:** `.github/workflows/maturin-file-watcher.yml`, `.github/workflows/maturin-swing-core.yml`, `tests/ops/test_workflow_python_floor.py`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`, `SPEC.md`
+- **Started:** 2026-10-05
+- **Last verified:** 2026-10-05 — `tests/ops/test_workflow_python_floor.py` (incl. the maturin-crate-built-on-its-floor check) red before the split for file_watcher and swing-core, green after; `tests/test_python_version_contract.py` green; module inventory check clean; after merging main, both `wheel-gate` jobs carry the #4464 fork guard and `fork_pr_runner_guard.py` is clean.
+- **Summary:** Split `maturin-file-watcher` and `maturin-swing-core` into a `wheel-gate` (build + import, Python 3.10-3.12, proves the crates' >=3.10 claim) and the existing wrapper/parity job (root code, now 3.11-3.12 only, since conftest will not collect it below the root floor and a 3.10 leg exited 5). A policy test fails any workflow leg below the floor of the code it exercises, and any maturin crate not built on its declared floor (`rust_core/tools-core` is a listed known gap).
+- **Next step:** Merge the PR once the Maturin workflows are green.
+
+### DL-#5432 · Fail fast on stale module inventory test
+
+- **State:** in_review
+- **Owner:** claude
+- **Issue:** #5432
+- **Branch:** `fix/5432-inventory-fast-fail`
+- **PR:** #5433
+- **Paths:** `tests/architecture/_inventory_diff.py`, `tests/architecture/test_inventory_diff_5432.py`, `tests/architecture/test_tools_module_inventory_contract.py`
+- **Started:** 2026-10-05
+- **Last verified:** 2026-10-05 — helper tests 7 passed; stale inventory now fails with a one-line shard summary; inventory --check passes.
+- **Summary:** The inventory freshness test compared two huge dicts with `assert ==`, whose quadratic pytest diff stalled a CI shard for 90 minutes. It now fails with a bounded shard-level summary; strictness is unchanged.
+- **Next step:** Merge PR #5433 via auto-merge.
+
 ### DL-#4464 · Fork PRs never run on the self-hosted fleet
 
 - **State:** in_review
