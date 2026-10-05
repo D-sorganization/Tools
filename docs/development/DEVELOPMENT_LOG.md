@@ -10,6 +10,19 @@ feature, from proposal to ship. See the `development-logs` section of
 - **WIP limit:** 4
 - **Last audited:** 2026-09-30 by Luna (Tools#5392 longitudinal residual variance)
 
+### DL-#4464 · Fork PRs never run on the self-hosted fleet
+
+- **State:** in_review
+- **Owner:** claude
+- **Issue:** #4464
+- **Branch:** `fix/4464-fork-pr-self-hosted`
+- **PR:** not created
+- **Paths:** `.github/workflows/`, `scripts/fork_pr_runner_guard.py`, `tests/ops/test_fork_pr_runner_guard.py`
+- **Started:** 2026-10-05
+- **Last verified:** 2026-10-05 — `pytest tests/ops/test_fork_pr_runner_guard.py` 25 passed (RED on main: 50 unguarded fleet jobs); `actionlint -shellcheck=` clean.
+- **Summary:** Workflow-level defence in depth for #4464: every job in a PR-triggered workflow that can reach `d-sorg-fleet` skips fork PRs, the required `tests` lane routes fork PRs to a hosted runner, and a static checker enforces both. Admin settings (fork-PR approval, default token permissions, runner-group access) remain owner-only.
+- **Next step:** Owner applies the admin-only settings listed in the PR body, then closes #4464.
+
 ### DL-#5422 · Fix Clippy Deprecated f64 Constants in tools-core
 
 - **State:** in_review

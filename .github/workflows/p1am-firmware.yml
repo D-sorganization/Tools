@@ -62,9 +62,10 @@ jobs:
     # policy weakness into a concrete path, so gate it even though the repo is
     # broadly exposed -- that is a reason not to add to the exposure, not to match
     # it. Same gate as firmware-compile below.
+    # Fork PRs never run on the self-hosted fleet (#4464).
     if: >-
-      github.event_name != 'pull_request' ||
-      github.event.pull_request.head.repo.full_name == github.repository
+      (!github.event.pull_request ||
+      github.event.pull_request.head.repo.full_name == github.repository)
     # The d-sorg-fleet pool spans Linux, Windows and macOS hosts; this job needs
     # a POSIX toolchain for the Makefile, so pin it to the Linux label.
     runs-on: [d-sorg-fleet, Linux]
@@ -101,9 +102,10 @@ jobs:
     # repository is public and set to the weakest fork-PR approval, so without
     # this gate any external contributor could run code on the fleet by opening
     # a PR that touches a firmware path.
+    # Fork PRs never run on the self-hosted fleet (#4464).
     if: >-
-      github.event_name != 'pull_request' ||
-      github.event.pull_request.head.repo.full_name == github.repository
+      (!github.event.pull_request ||
+      github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: [d-sorg-fleet, Linux]
     timeout-minutes: 25
     steps:

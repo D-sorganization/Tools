@@ -1,4 +1,32 @@
-# Current handoff — Fix clippy deprecated f64 constants in tools-core (Tools#5422)
+# Current handoff — Fork PRs never run on the self-hosted fleet (Tools#4464)
+
+- Repository: D-sorganization/Tools
+- Working directory: `/home/user/wt/tools-4464`
+- Branch: `fix/4464-fork-pr-self-hosted`; commit: SELF; PR: see PR body
+- Governing issue: Tools#4464 (development log entry DL-#4464)
+
+## Objective and status
+
+Make it impossible, through the workflows themselves, for fork PR code to run on
+`d-sorg-fleet`. Done in this branch: canonical job-level fork guard on 47 jobs,
+fork routing to `ubuntu-latest` for `ci-standard` `pick-runner`/`tests`/`tests-gate`,
+and `scripts/fork_pr_runner_guard.py` with `tests/ops/test_fork_pr_runner_guard.py`.
+On `pull_request` a fork can edit the workflow file, so this is defence in depth;
+the repository settings in the PR body are still required to close the issue.
+
+## Validation
+
+- `python -m pytest tests/ops/test_fork_pr_runner_guard.py`: RED on main (50 jobs), GREEN after.
+- `python -m pytest tests/ops tests/scripts tests/test_python_version_contract.py`: passed.
+- `actionlint -shellcheck= .github/workflows/*.yml`: no findings before or after.
+
+## Next step
+
+- Owner applies the admin-only settings in the PR body; new PR-triggered fleet jobs must carry the guard (the test enforces it).
+
+---
+
+# Past handoff — Fix clippy deprecated f64 constants in tools-core (Tools#5422)
 
 - Repository: D-sorganization/Tools
 - Working directory: `C:/Users/diete/Repositories/_worktrees/Tools-5422`
