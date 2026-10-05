@@ -329,10 +329,11 @@ test("launch monitor scatter stays in the first viewport through every registere
         .toBeGreaterThanOrEqual(required.width);
       expect.soft(visible.height, `${label} visible height`)
         .toBeGreaterThanOrEqual(required.height);
-      // Document overflow is deliberately not asserted here: this pass owns
-      // landmark visibility only.  At 390x844 the populated results widen the
-      // single-column grid track (measured 58 px), which is a separate layout
-      // defect rather than a visual pushed below the fold.
+      const overflow = await page.evaluate(() => {
+        const scroller = document.scrollingElement ?? document.documentElement;
+        return scroller.scrollWidth - scroller.clientWidth;
+      });
+      expect.soft(overflow, `${label} document overflow`).toBeLessThanOrEqual(0);
     };
     await page.setViewportSize(viewport);
     await page.goto("/");
