@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "8bd06ef7a16611bca5c8d179c87945d05ab7075de9785f1cd73aa683cf8b1c2d",
+      "content_sha256_lf": "5fcf42a84e785714bc142e9c87d4a0e91b417f51c1a402377be37b3d79367159",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -159,14 +159,14 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "fa94a387afdea2500be8ab1557f2e32c7fa4421859c637fd6135df4dc45c3d3c",
-      "entry_count": 108,
+      "content_sha256_lf": "2f7be28208684917ccc7e9402b8edebcaee14179516cec98224d1e5c7e93f446",
+      "entry_count": 110,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
     },
     {
-      "content_sha256_lf": "d7b69630e88cc83513b7d29c921e672f9e8032d5e48dd1440e0819247f1e63cd",
-      "entry_count": 5,
+      "content_sha256_lf": "e1ea35560dd256a872921d8258a01d1e381b5de88b0f88e8bdd74a56c9f4f152",
+      "entry_count": 12,
       "package": "shared_scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-shared-scripts.json"
     },

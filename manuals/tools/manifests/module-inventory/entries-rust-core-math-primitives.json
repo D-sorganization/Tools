@@ -1233,6 +1233,7 @@
           "tests/unit/codemap/test_codemap_ts_common.py",
           "tests/unit/codemap/test_codemap_watcher.py",
           "tests/unit/lower_body_model/test_public_api_contract.py",
+          "tests/unit/scripts/test_check_spec_freshness.py",
           "tests/unit/sidekick/agent/test_feature_catalog.py",
           "tests/unit/sidekick/jupyter_tab/test_availability.py",
           "tests/unit/sidekick/test_reporting_tab_context_gathering.py",
