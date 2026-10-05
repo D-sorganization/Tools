@@ -3354,6 +3354,7 @@
           "tests/ops/test_mirror_freshness.py",
           "tests/p1am_control_system/test_backend_security.py",
           "tests/p1am_control_system/test_desktop_tab_labels.py",
+          "tests/rate_of_closure/_qt_waits.py",
           "tests/rate_of_closure/test_capability_worker.py",
           "tests/rate_of_closure/test_putting_gui.py",
           "tests/rate_of_closure/test_solver_gui.py",
