@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
 | 2026-10-04 | #5424 | test(rate-of-closure): Launch Monitor Analytics scatter stays in the first viewport through result/error/loading/empty on React and PyQt 1.0/1.5 DPI (#4433) |
+| 2026-10-04 | #5422 | fix(rust): remove deprecated use std::f64 import in tools-core rrt.rs to fix clippy error under latest toolchains (#5422) |
 | 2026-10-04 | #5416 | feat(runtime-manifest): Python validator `shared.python.swing_sim.runtime_manifest` for calculation-runtime-manifest/v1, one-for-one port of `parseRuntimeManifest` with shared-fixture parity tests (#5416) |
 | 2026-10-04 | #5417 | feat(licensing): ADR-008 dependency and license deny-list check script and config (#5417) |
 | 2026-10-02 | #5404 | fix(revert): restore PBKDF2 hardening and swing-objectives correction reverted by PR 5400 (#5404) |
