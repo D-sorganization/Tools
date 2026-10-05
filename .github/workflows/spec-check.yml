@@ -111,50 +111,22 @@ jobs:
 
       - name: Check if source files changed without SPEC.md update
         id: check
+        shell: bash
         run: |
-          git fetch --depth=1 origin "${{ github.base_ref }}"
-
-          # Get the list of changed files in this PR
-          CHANGED_FILES=$(git diff --name-only origin/${{ github.base_ref }} HEAD)
+          BASE_SHA="${{ github.event.pull_request.base.sha }}"
+          if ! git cat-file -e "$BASE_SHA^{commit}" 2>/dev/null; then
+            git fetch --no-tags --depth=1 origin "$BASE_SHA"
+          fi
 
           echo "Changed files:"
-          echo "$CHANGED_FILES"
+          git diff --name-only "$BASE_SHA" HEAD
 
-          # Define source patterns that require spec updates
-          # Customize these per repo as needed
-          SOURCE_CHANGED=false
-          SPEC_CHANGED=false
-
-          while IFS= read -r file; do
-            # Check if SPEC.md was modified
-            if [[ "$file" == "SPEC.md" ]]; then
-              SPEC_CHANGED=true
-            fi
-
-            # Check if source files were modified
-            # Add or remove patterns as appropriate for your repo
-            # Note: .github/workflows/ is excluded — CI-only changes rarely
-            # affect documented behavior. Use spec-exempt if needed.
-            if [[ "$file" == src/* ]] || \
-               [[ "$file" == tests/* ]] || \
-               [[ "$file" == config/* ]] || \
-               [[ "$file" == pyproject.toml ]] || \
-               [[ "$file" == Cargo.toml ]] || \
-               [[ "$file" == CMakeLists.txt ]] || \
-               [[ "$file" == package.json ]] || \
-               [[ "$file" == requirements.txt ]]; then
-              SOURCE_CHANGED=true
-            fi
-          done <<< "$CHANGED_FILES"
-
-          echo "source_changed=$SOURCE_CHANGED" >> "$GITHUB_OUTPUT"
-          echo "spec_changed=$SPEC_CHANGED" >> "$GITHUB_OUTPUT"
-
-          if [[ "$SOURCE_CHANGED" == "true" ]] && [[ "$SPEC_CHANGED" == "false" ]]; then
-            echo "needs_update=true" >> "$GITHUB_OUTPUT"
-          else
-            echo "needs_update=false" >> "$GITHUB_OUTPUT"
-          fi
+          # Source patterns that require a spec update live in
+          # scripts/ci/check_spec_freshness.py. A PR that carries only valid
+          # change fragments (changes/<issue>-<slug>.md, RM-5 /
+          # Repository_Management#1976) passes without editing SPEC.md:
+          # collate-changes.yml writes the PR-keyed row after merge.
+          python3 scripts/ci/check_spec_freshness.py --base "$BASE_SHA" | tee -a "$GITHUB_OUTPUT"
 
       - name: Post warning comment
         if: steps.check.outputs.needs_update == 'true'
@@ -163,19 +135,12 @@ jobs:
           script: |
             const body = `## ⚠️ SPEC.md Update Required
 
-            Source files were modified in this PR but \`SPEC.md\` was not updated.
+            Source files were modified in this PR but \`SPEC.md\` was not updated and no valid change fragment was found.
 
             **Per the [Specification-Driven Development Policy](https://github.com/D-sorganization/Repository_Management/blob/main/docs/SPECIFICATION_DRIVEN_DEVELOPMENT_POLICY.md):**
-            - Any PR that adds, removes, or changes functionality must update SPEC.md
-            - Update the relevant sections (features, architecture, tests, dependencies, etc.)
-            - Add ONE \`§12 Change Log\` row keyed by your pull request:
-              \`| YYYY-MM-DD | #<pr> | one-line summary |\`. Do NOT bump the
-              \`Spec Version\` field — it is release-derived
-              ([Repository_Management#1520](https://github.com/D-sorganization/Repository_Management/issues/1520))
-
-            **To resolve:**
-            1. Update \`SPEC.md\` to reflect your changes, OR
-            2. Add the \`spec-exempt\` label if this PR genuinely doesn't affect the spec (e.g., pure refactor with no behavior change)
+            - Preferred: Create a change fragment with \`python shared_scripts/changes_fragment.py new --issue <issue_number> --summary "one-line summary"\`
+            - Alternatively: Update \`SPEC.md\` to reflect your changes and add a change log row
+            - Or add the \`spec-exempt\` label if this PR genuinely doesn't affect the spec
 
             *This check is enforced by the spec-check CI workflow.*`;
 
@@ -202,17 +167,21 @@ jobs:
 
       - name: Fail if spec is stale
         if: steps.check.outputs.needs_update == 'true'
+        shell: bash
         run: |
-          echo "::error::Source files changed but SPEC.md was not updated."
-          echo "Update SPEC.md or add the 'spec-exempt' label to bypass."
+          echo "::error::Source files changed but SPEC.md was not updated and no valid change fragment was found."
+          echo "Update SPEC.md, add a change fragment (changes/README.md), or add the 'spec-exempt' label to bypass."
           exit 1
 
       - name: Spec check passed
         if: steps.check.outputs.needs_update == 'false'
+        shell: bash
         run: |
           echo "✅ Spec check passed."
           if [[ "${{ steps.check.outputs.spec_changed }}" == "true" ]]; then
             echo "   SPEC.md was updated alongside source changes. Good."
+          elif [[ "${{ steps.check.outputs.fragment_valid }}" == "true" ]]; then
+            echo "   A valid change fragment stands in for the SPEC.md edit."
           elif [[ "${{ steps.check.outputs.source_changed }}" == "false" ]]; then
             echo "   No source files changed — spec update not required."
           fi
