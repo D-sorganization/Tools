@@ -159,8 +159,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "2f7be28208684917ccc7e9402b8edebcaee14179516cec98224d1e5c7e93f446",
-      "entry_count": 110,
+      "content_sha256_lf": "59da68c3fd72cdf15fcede2296a8df515f8378cac02a02458bd7493a7b2574df",
+      "entry_count": 111,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
     },
@@ -393,7 +393,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
     {
-      "content_sha256_lf": "67c0411e203bd928d23893d45af3349f991e9e3e81d96e65a5939e91ce9cacf3",
+      "content_sha256_lf": "0bfe68629914ce05ba72bc6e83ac3f7a711468e952e75b90e292ee2694ce9bba",
       "entry_count": 167,
       "package": "src/pendulum_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pendulum-simulator.json"

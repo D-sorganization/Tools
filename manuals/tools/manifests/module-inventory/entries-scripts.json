@@ -4957,6 +4957,160 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 15369,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "57caadf8c7f03ef1c873d356549a10c4f80865e4234d2e05b430854c834b1d64",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-FORK-PR-RUNNER-GUARD-PY-7FE99AE97E61",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/fork_pr_runner_guard.py",
+      "purpose": "Reject workflow jobs that can run fork pull-request code on self-hosted runners.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "BASE_CONTEXT_TRIGGERS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FORK_ROUTE_CONJUNCTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HEAD_REF_PATTERNS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HOSTED_LABEL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HOSTED_LITERAL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LOG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PR_CODE_TRIGGERS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PULL_REQUEST_ONLY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SAME_REPO_GUARD",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_BRACKET_PROPERTY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_HOSTED",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "dotted",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "find_violations",
+            "signature": "workflow_dir: Path"
+          },
+          {
+            "kind": "function",
+            "name": "fork_routed",
+            "signature": "job: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "hosted_only",
+            "signature": "job: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "job_violations",
+            "signature": "wf_name: str, events: set[str], job_id: str, job: dict[str, Any], workflow: dict[Any, Any] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: Sequence[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "normalize",
+            "signature": "expression: str"
+          },
+          {
+            "kind": "function",
+            "name": "requires_conjunct",
+            "signature": "condition: Any, conjunct: str"
+          },
+          {
+            "kind": "function",
+            "name": "split_top_level",
+            "signature": "expression: str, operator: str"
+          },
+          {
+            "kind": "function",
+            "name": "triggers",
+            "signature": "workflow: dict[Any, Any]"
+          }
+        ],
+        "test_paths": [
+          "tests/ops/test_fork_pr_runner_guard.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 10709,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
