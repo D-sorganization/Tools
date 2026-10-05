@@ -13,6 +13,7 @@ Stop the 3.10 workflow legs that collect 0 tests (pytest exit 5) because root co
 
 - RED then GREEN: `python -m pytest -q -o addopts="" tests/ops/test_workflow_python_floor.py tests/test_python_version_contract.py` (16 passed incl. `tests/ops/test_maturin_swing_core_workflow.py`).
 - `python -m scripts.build_tools_module_inventory --check` clean after regeneration; ruff check/format clean; actionlint shows only pre-existing SC2012 info notes.
+- After merging main (fork guard #4464 landed): both new `wheel-gate` jobs carry the same fork guard as the wrapper jobs; `python scripts/fork_pr_runner_guard.py` reports no violations; `tests/ops/test_fork_pr_runner_guard.py` + the floor tests: 50 passed.
 
 ## Next step
 
