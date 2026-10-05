@@ -23,6 +23,18 @@ feature, from proposal to ship. See the `development-logs` section of
 - **Summary:** The inventory freshness test compared two huge dicts with `assert ==`, whose quadratic pytest diff stalled a CI shard for 90 minutes. It now fails with a bounded shard-level summary; strictness is unchanged.
 - **Next step:** Merge PR #5433 via auto-merge.
 
+### DL-#4464 · Fork PRs never run on the self-hosted fleet
+
+- **State:** in_review
+- **Owner:** claude
+- **Issue:** #4464
+- **Branch:** `fix/4464-fork-pr-self-hosted`
+- **PR:** not created
+- **Paths:** `.github/workflows/`, `scripts/fork_pr_runner_guard.py`, `tests/ops/test_fork_pr_runner_guard.py`
+- **Started:** 2026-10-05
+- **Last verified:** 2026-10-05 — `pytest tests/ops/test_fork_pr_runner_guard.py` 25 passed (RED on main: 50 unguarded fleet jobs); `actionlint -shellcheck=` clean.
+- **Summary:** Workflow-level defence in depth for #4464: every job in a PR-triggered workflow that can reach `d-sorg-fleet` skips fork PRs, the required `tests` lane routes fork PRs to a hosted runner, and a static checker enforces both. Admin settings (fork-PR approval, default token permissions, runner-group access) remain owner-only.
+- **Next step:** Owner applies the admin-only settings listed in the PR body, then closes #4464.
 ### DL-#5429 · Fix Clippy Rust 1.99 Errors in pendulum-core
 
 - **State:** in_review

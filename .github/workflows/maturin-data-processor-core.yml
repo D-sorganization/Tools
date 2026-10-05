@@ -39,6 +39,10 @@ concurrency:
 
 jobs:
   import-gate:
+    # Fork PRs never run on the self-hosted fleet (#4464).
+    if: >-
+      (!github.event.pull_request ||
+      github.event.pull_request.head.repo.full_name == github.repository)
     name: data_processor_core import gate (Python ${{ matrix.python-version }})
     runs-on: d-sorg-fleet
     timeout-minutes: 30
