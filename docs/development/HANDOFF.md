@@ -216,6 +216,7 @@ Prepare the v1.23.1 release branch. The latest `main` is `95800a5647603bf1211a98
 ## Change log
 
 - `SELF` — 2026-09-29: merge current `main` and refresh v1.23.1 release metadata and handoff.
+- `SELF` — Regenerate the module inventory for `scripts/fork_pr_runner_guard.py`: the stale inventory failed `test_inventory_is_deterministic_and_fresh`, whose assertion diff stalled the `tests-unit` xdist shard until the 90-minute timeout.
 
 ---
 
