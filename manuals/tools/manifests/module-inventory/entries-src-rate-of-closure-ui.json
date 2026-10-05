@@ -3619,6 +3619,7 @@
           }
         ],
         "test_paths": [
+          "tests/rate_of_closure/pyqt_launch_monitor_state_probe.py",
           "tests/rate_of_closure/pyqt_visualization_tab_probe.py",
           "tests/rate_of_closure/test_launch_monitor_analytics_tab.py",
           "tests/rate_of_closure/test_launch_monitor_comparison_workspace.py",
@@ -4512,6 +4513,7 @@
           "tests/ode_solver/test_main_window.py",
           "tests/rate_of_closure/pyqt_club_camera_probe.py",
           "tests/rate_of_closure/pyqt_flight_sample_inspector_probe.py",
+          "tests/rate_of_closure/pyqt_launch_monitor_state_probe.py",
           "tests/rate_of_closure/pyqt_plot_point_inspector_probe.py",
           "tests/rate_of_closure/pyqt_putting_sample_inspector_probe.py",
           "tests/rate_of_closure/pyqt_simulation_scrub_probe.py",
@@ -10965,6 +10967,7 @@
         ],
         "test_paths": [
           "tests/rate_of_closure/pyqt_flight_sample_inspector_probe.py",
+          "tests/rate_of_closure/pyqt_launch_monitor_state_probe.py",
           "tests/rate_of_closure/pyqt_plot_point_inspector_probe.py",
           "tests/rate_of_closure/pyqt_putting_sample_inspector_probe.py",
           "tests/rate_of_closure/pyqt_simulation_scrub_probe.py",

@@ -27,7 +27,7 @@ Fix clippy failures in `rust-quality-gate` where `use std::f64;` shadowed primit
 - Repository: D-sorganization/Tools
 - Working directory: `C:/Users/diete/Repositories/Tools-worktrees/claude-4433`
 - Branch: `claude/issue-4433`; commit: SELF; PR: #5424 (ready, armed)
-- CI fix: the new probe is allowlisted in `scripts/test_assertion_allowlist.txt` (subprocess entrypoint, like its siblings); `origin/main` merged to pick up the regenerated rust-core inventory shard that was stale at the PR base.
+- CI fix: the new probe is allowlisted in `scripts/test_assertion_allowlist.txt` (subprocess entrypoint, like its siblings); module inventory regenerated (the new probe is listed as a related test in three shards); `origin/main` merged.
 - Governing issue: Tools#4433 (sub-task; epic stays open). Development-log entry: DL-#4433.
 
 ## Objective and status

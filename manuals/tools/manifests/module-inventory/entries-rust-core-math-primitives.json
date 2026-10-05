@@ -190,6 +190,7 @@
           "tests/architecture/test_tools_manual_qa_contract.py",
           "tests/heavy_integration/test_tools_contracts.py",
           "tests/programmatic_pid/test_geometry.py",
+          "tests/rate_of_closure/pyqt_launch_monitor_state_probe.py",
           "tests/rate_of_closure/pyqt_variation_visual_state_probe.py",
           "tests/rate_of_closure/pyqt_visualization_tab_probe.py",
           "tests/rate_of_closure/test_club_heads.py",
