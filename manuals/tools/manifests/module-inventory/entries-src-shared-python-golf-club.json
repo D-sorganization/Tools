@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9515,
+      "bytes_lf": 10508,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2c150cdeb94c088810ffe746dd619d8db42a24abbf90067da445ac8f38d5ffc7",
+      "content_sha256_lf": "8d1033c328b242dd77a958ab355f33a177bb19309653be23422c901b0bd4793c",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-INIT-PY-7496BE48C45A",
       "language": "python",
@@ -174,7 +174,52 @@
           },
           {
             "kind": "re-export",
+            "name": "IRON_EXPORT_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IRON_PARAMETERS_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "InstantaneousScrewAxis",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IronBodySections",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IronExportRequest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IronExportResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IronHeadParameters",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IronMeasuredMetrics",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IronPreset",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IronSolidResult",
             "signature": null
           },
           {
@@ -310,6 +355,11 @@
           {
             "kind": "re-export",
             "name": "ShaftTipResponse",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SolidMassProperties",
             "signature": null
           },
           {
@@ -534,6 +584,11 @@
           },
           {
             "kind": "re-export",
+            "name": "build_iron_solid",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "build_wedge_solid",
             "signature": null
           },
@@ -569,6 +624,11 @@
           },
           {
             "kind": "re-export",
+            "name": "export_iron_artifacts",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "export_wedge_artifacts",
             "signature": null
           },
@@ -595,6 +655,26 @@
           {
             "kind": "re-export",
             "name": "impact_coupling_report",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "iron_body_sections_m",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "iron_parameters_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "iron_parameters_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "iron_preset",
             "signature": null
           },
           {
@@ -650,6 +730,11 @@
           {
             "kind": "re-export",
             "name": "radial_shaft_tension",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "recover_solid_mass_properties",
             "signature": null
           },
           {
@@ -1280,6 +1365,92 @@
         "unit_mentions": [
           "g"
         ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3906,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "cfae1d88ada57ae0827021a7452541c9d4837ed01997740e57a11f504140104f",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-HEAD-CAD-PY-007416F8BA62",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/_head_cad.py",
+      "purpose": "Private build123d helpers shared by every exact head family (wedge, iron).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "MM_PER_M",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_BORE_OVERRUN_FACTOR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_FIXED_STEP_TIMESTAMP",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_PLANAR_ALIGNMENT_TOLERANCE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "export_solid_file",
+            "signature": "solid: Any, path: Path, format_name: str, tolerances: tuple[float, float]"
+          },
+          {
+            "kind": "function",
+            "name": "hollow_tube",
+            "signature": "origin_mm: np.ndarray, axis: np.ndarray, radii_mm: tuple[float, float], length_mm: float"
+          },
+          {
+            "kind": "function",
+            "name": "matching_planar_face",
+            "signature": "solid: Any, expected_normal: np.ndarray"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
         "validation_paths": []
       }
     },
@@ -5213,6 +5384,349 @@
     },
     {
       "authority_status": "provisional",
+      "bytes_lf": 6956,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "41b9f80f3ca8711154526c69d44e5e3e377f2639808adc9e649279e13dbc6b3f",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-IRON-CAD-PY-A382CC10E7EE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/iron_cad.py",
+      "purpose": "Exact OpenCascade solid generation for the generic iron family (Tools #4149).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "IronMeasuredMetrics",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "IronSolidResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SolidMassProperties",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_iron_solid",
+            "signature": "parameters: IronHeadParameters"
+          },
+          {
+            "kind": "function",
+            "name": "recover_solid_mass_properties",
+            "signature": "solid: object, density_kg_m3: float"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_iron_cad.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 4239,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "06b797b85ac53ef89cb6a7f5360a3d70d902343dbf936444b3eda400d2f2dcf1",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-IRON-EXPORT-PY-FAAAB1F739E1",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/iron_export.py",
+      "purpose": "Controlled deterministic CAD and mesh export for iron solids.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "IronExportRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "IronExportResult",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "IRON_EXPORT_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "export_iron_artifacts",
+            "signature": "parameters: IronHeadParameters, request: IronExportRequest"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3116,
+      "classification": "calculation",
+      "classification_basis": "path-marker:geometry",
+      "content_sha256_lf": "a01fff419b52c35cec3e5dbf184d6ace97dac42e17899a597788166cb65cb733",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-IRON-GEOMETRY-PY-AAC24ECDC17B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/iron_geometry.py",
+      "purpose": "Kernel-independent heel and toe body sections for the iron family.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "IronBodySections",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "iron_body_sections_m",
+            "signature": "parameters: IronHeadParameters"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 9750,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "65df86dc722f995dc2c1fd68c0ed913607e43d2d619659b4469b361f15e5c3e9",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-IRON-PARAMETERS-PY-096BCF481193",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/iron_parameters.py",
+      "purpose": "Immutable SI schema for a generic single-piece iron head (Tools #4149).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "IronHeadParameters",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "IronPreset",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "iron_preset",
+            "signature": "preset: IronPreset"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_iron_parameters.py"
+        ],
+        "unit_mentions": [
+          "mm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3157,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "84b31db9997bf05ad0276b8a64cd0b0a3fa2ca9c25d57020514ed32ad3d8d25b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-IRON-SERIALIZATION-PY-01CF86C093BA",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/golf_club/iron_serialization.py",
+      "purpose": "Strict versioned JSON persistence for iron-family parameters.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "IRON_PARAMETERS_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "iron_parameters_from_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "iron_parameters_to_json",
+            "signature": "parameters: IronHeadParameters"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 15392,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
@@ -7006,7 +7520,6 @@
         "public-api",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -7018,7 +7531,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "unavailable",
         "validation": "unavailable"
       },
@@ -7049,7 +7562,9 @@
             "signature": "path: Path | str, reference: CadGeometryReference, *, linear_tolerance_m: float"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_iron_cad.py"
+        ],
         "unit_mentions": [],
         "validation_paths": []
       }
@@ -7613,10 +8128,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 6961,
+      "bytes_lf": 5863,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "c2dd9351597c6f3b48a0b0401e0d861a5b6e70ec30fd90cefc372eb8ae97a6fb",
+      "content_sha256_lf": "a2d91cc6fd7ef6c8893adad9162816f5c1053bed155aadaf322dc0c0374c1567",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-WEDGE-CAD-PY-78EED525AD5C",
       "language": "python",
@@ -7680,10 +8195,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 7022,
+      "bytes_lf": 6456,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "4b0e1196f90f802c7434110121975a74087157d4ddab82d9f6bdc889016d4cb5",
+      "content_sha256_lf": "62b12a2054a5f4276fd5b24e3f9e33c4328fb38278e6b1f6f82e245f5f567f51",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-WEDGE-EXPORT-PY-CDB876B575C1",
       "language": "python",

@@ -100,6 +100,23 @@
       "GripBoundary",
       "impact_coupling_report",
       "simulate_coupled_impact",
+      "IRON_EXPORT_FORMAT",
+      "IRON_PARAMETERS_FORMAT",
+      "IronBodySections",
+      "IronExportRequest",
+      "IronExportResult",
+      "IronHeadParameters",
+      "IronMeasuredMetrics",
+      "IronPreset",
+      "IronSolidResult",
+      "SolidMassProperties",
+      "build_iron_solid",
+      "export_iron_artifacts",
+      "iron_body_sections_m",
+      "iron_parameters_from_json",
+      "iron_parameters_to_json",
+      "iron_preset",
+      "recover_solid_mass_properties",
       "MeshInertiaReport",
       "is_watertight",
       "mesh_inertia",
@@ -415,7 +432,67 @@
       "IMPACT_COUPLING_REPORT_FORMAT": {
         "type": "variable"
       },
+      "IRON_EXPORT_FORMAT": {
+        "type": "variable"
+      },
+      "IRON_PARAMETERS_FORMAT": {
+        "type": "variable"
+      },
       "InstantaneousScrewAxis": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "IronBodySections": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "IronExportRequest": {
+        "info": {
+          "bases": [
+            "WedgeExportRequest"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "IronExportResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "IronHeadParameters": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "IronMeasuredMetrics": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "IronPreset": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "IronSolidResult": {
         "info": {
           "bases": [],
           "methods": {}
@@ -711,6 +788,13 @@
         "type": "class"
       },
       "ShaftTipResponse": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "SolidMassProperties": {
         "info": {
           "bases": [],
           "methods": {}
@@ -1129,6 +1213,20 @@
         },
         "type": "function"
       },
+      "build_iron_solid": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "IronHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            }
+          ],
+          "returns": "IronSolidResult"
+        },
+        "type": "function"
+      },
       "build_wedge_solid": {
         "signature": {
           "args": [
@@ -1341,6 +1439,26 @@
         },
         "type": "function"
       },
+      "export_iron_artifacts": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "IronHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            },
+            {
+              "annotation": "IronExportRequest",
+              "default": null,
+              "kind": "arg",
+              "name": "request"
+            }
+          ],
+          "returns": "IronExportResult"
+        },
+        "type": "function"
+      },
       "export_wedge_artifacts": {
         "signature": {
           "args": [
@@ -1458,6 +1576,62 @@
             }
           ],
           "returns": "str"
+        },
+        "type": "function"
+      },
+      "iron_body_sections_m": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "IronHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            }
+          ],
+          "returns": "IronBodySections"
+        },
+        "type": "function"
+      },
+      "iron_parameters_from_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "text"
+            }
+          ],
+          "returns": "IronHeadParameters"
+        },
+        "type": "function"
+      },
+      "iron_parameters_to_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "IronHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            }
+          ],
+          "returns": "str"
+        },
+        "type": "function"
+      },
+      "iron_preset": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "IronPreset",
+              "default": null,
+              "kind": "arg",
+              "name": "preset"
+            }
+          ],
+          "returns": "IronHeadParameters"
         },
         "type": "function"
       },
@@ -1720,6 +1894,26 @@
             }
           ],
           "returns": "float"
+        },
+        "type": "function"
+      },
+      "recover_solid_mass_properties": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "solid"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "density_kg_m3"
+            }
+          ],
+          "returns": "SolidMassProperties"
         },
         "type": "function"
       },
@@ -2708,6 +2902,104 @@
     "__all__": [],
     "explicit_all": true,
     "symbols": {}
+  },
+  "_head_cad.py": {
+    "__all__": [
+      "MM_PER_M",
+      "export_solid_file",
+      "hollow_tube",
+      "matching_planar_face"
+    ],
+    "explicit_all": false,
+    "symbols": {
+      "MM_PER_M": {
+        "type": "variable"
+      },
+      "export_solid_file": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg",
+              "name": "solid"
+            },
+            {
+              "annotation": "Path",
+              "default": null,
+              "kind": "arg",
+              "name": "path"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "format_name"
+            },
+            {
+              "annotation": "tuple[float, float]",
+              "default": null,
+              "kind": "arg",
+              "name": "tolerances"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      },
+      "hollow_tube": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "origin_mm"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "axis"
+            },
+            {
+              "annotation": "tuple[float, float]",
+              "default": null,
+              "kind": "arg",
+              "name": "radii_mm"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "length_mm"
+            }
+          ],
+          "returns": "Any"
+        },
+        "type": "function"
+      },
+      "matching_planar_face": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Any",
+              "default": null,
+              "kind": "arg",
+              "name": "solid"
+            },
+            {
+              "annotation": "np.ndarray",
+              "default": null,
+              "kind": "arg",
+              "name": "expected_normal"
+            }
+          ],
+          "returns": "tuple[Any, np.ndarray]"
+        },
+        "type": "function"
+      }
+    }
   },
   "_measured_grip_contracts.py": {
     "__all__": [
@@ -5361,6 +5653,235 @@
             }
           ],
           "returns": "float"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "iron_cad.py": {
+    "__all__": [
+      "IronMeasuredMetrics",
+      "IronSolidResult",
+      "SolidMassProperties",
+      "build_iron_solid",
+      "recover_solid_mass_properties"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "IronMeasuredMetrics": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "IronSolidResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "SolidMassProperties": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "build_iron_solid": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "IronHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            }
+          ],
+          "returns": "IronSolidResult"
+        },
+        "type": "function"
+      },
+      "recover_solid_mass_properties": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "object",
+              "default": null,
+              "kind": "arg",
+              "name": "solid"
+            },
+            {
+              "annotation": "float",
+              "default": null,
+              "kind": "arg",
+              "name": "density_kg_m3"
+            }
+          ],
+          "returns": "SolidMassProperties"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "iron_export.py": {
+    "__all__": [
+      "IRON_EXPORT_FORMAT",
+      "IronExportRequest",
+      "IronExportResult",
+      "export_iron_artifacts"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "IRON_EXPORT_FORMAT": {
+        "type": "variable"
+      },
+      "IronExportRequest": {
+        "info": {
+          "bases": [
+            "WedgeExportRequest"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "IronExportResult": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "export_iron_artifacts": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "IronHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            },
+            {
+              "annotation": "IronExportRequest",
+              "default": null,
+              "kind": "arg",
+              "name": "request"
+            }
+          ],
+          "returns": "IronExportResult"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "iron_geometry.py": {
+    "__all__": [
+      "IronBodySections",
+      "iron_body_sections_m"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "IronBodySections": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "iron_body_sections_m": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "IronHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            }
+          ],
+          "returns": "IronBodySections"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "iron_parameters.py": {
+    "__all__": [
+      "IronHeadParameters",
+      "IronPreset",
+      "iron_preset"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "IronHeadParameters": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "IronPreset": {
+        "info": {
+          "bases": [
+            "str",
+            "Enum"
+          ],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "iron_preset": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "IronPreset",
+              "default": null,
+              "kind": "arg",
+              "name": "preset"
+            }
+          ],
+          "returns": "IronHeadParameters"
+        },
+        "type": "function"
+      }
+    }
+  },
+  "iron_serialization.py": {
+    "__all__": [
+      "IRON_PARAMETERS_FORMAT",
+      "iron_parameters_from_json",
+      "iron_parameters_to_json"
+    ],
+    "explicit_all": true,
+    "symbols": {
+      "IRON_PARAMETERS_FORMAT": {
+        "type": "variable"
+      },
+      "iron_parameters_from_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "text"
+            }
+          ],
+          "returns": "IronHeadParameters"
+        },
+        "type": "function"
+      },
+      "iron_parameters_to_json": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "IronHeadParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "parameters"
+            }
+          ],
+          "returns": "str"
         },
         "type": "function"
       }

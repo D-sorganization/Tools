@@ -33,6 +33,26 @@ from .impact_coupling import (
     impact_coupling_report,
     simulate_coupled_impact,
 )
+from .iron_cad import (
+    IronMeasuredMetrics,
+    IronSolidResult,
+    SolidMassProperties,
+    build_iron_solid,
+    recover_solid_mass_properties,
+)
+from .iron_export import (
+    IRON_EXPORT_FORMAT,
+    IronExportRequest,
+    IronExportResult,
+    export_iron_artifacts,
+)
+from .iron_geometry import IronBodySections, iron_body_sections_m
+from .iron_parameters import IronHeadParameters, IronPreset, iron_preset
+from .iron_serialization import (
+    IRON_PARAMETERS_FORMAT,
+    iron_parameters_from_json,
+    iron_parameters_to_json,
+)
 from .mesh_mass_properties import (
     MeshInertiaReport,
     is_watertight,
@@ -306,6 +326,23 @@ __all__ = [
     "GripBoundary",
     "impact_coupling_report",
     "simulate_coupled_impact",
+    "IRON_EXPORT_FORMAT",
+    "IRON_PARAMETERS_FORMAT",
+    "IronBodySections",
+    "IronExportRequest",
+    "IronExportResult",
+    "IronHeadParameters",
+    "IronMeasuredMetrics",
+    "IronPreset",
+    "IronSolidResult",
+    "SolidMassProperties",
+    "build_iron_solid",
+    "export_iron_artifacts",
+    "iron_body_sections_m",
+    "iron_parameters_from_json",
+    "iron_parameters_to_json",
+    "iron_preset",
+    "recover_solid_mass_properties",
     "MeshInertiaReport",
     "is_watertight",
     "mesh_inertia",
