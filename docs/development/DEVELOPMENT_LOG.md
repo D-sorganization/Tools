@@ -10,19 +10,6 @@ feature, from proposal to ship. See the `development-logs` section of
 - **WIP limit:** 4
 - **Last audited:** 2026-09-30 by Luna (Tools#5392 longitudinal residual variance)
 
-### DL-#5436 · tools-core wheel gate on its declared Python floor
-
-- **State:** in_review
-- **Owner:** claude
-- **Issue:** #5436
-- **Branch:** `fix/5436-tools-core-wheel-gate`
-- **PR:** #5438
-- **Paths:** `.github/workflows/maturin-tools-core.yml`, `tests/ops/test_workflow_python_floor.py`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`, `SPEC.md`
-- **Started:** 2026-10-05
-- **Last verified:** 2026-10-05 — at 753b90a: floor test red for `rust_core/tools-core` with `KNOWN_UNPROVEN` removed, green once the workflow exists; version-contract and fork-guard tests green; `fork_pr_runner_guard.py` clean.
-- **Summary:** Add `maturin-tools-core.yml` (`wheel-gate`, Python 3.10-3.12, build + import) to prove tools-core's `>=3.10` claim, and delete `KNOWN_UNPROVEN` and its guard test so no maturin crate is exempt from the floor check.
-- **Next step:** Merge the PR once the Maturin tools_core workflow is green.
-
 ### DL-#5434 · Align Workflow Python Matrices with requires-python
 
 - **State:** in_review

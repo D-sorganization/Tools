@@ -71,7 +71,7 @@ jobs:
         shell: bash
         run: |
           WHEEL=$(ls dist/*.whl | head -1)
-          python -m pip install "$WHEEL"
+          python -m pip install --force-reinstall --no-deps "$WHEEL"
       - name: Assert the compiled module imports (hard fail — no silent skip)
         shell: bash
         run: |
