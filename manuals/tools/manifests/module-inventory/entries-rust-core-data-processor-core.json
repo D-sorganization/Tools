@@ -365,6 +365,7 @@
           "src/shared/python/sidekick/tests/test_data_processor_engine_errors.py",
           "src/steam_engine_calculator/tests/test_steam_engine_calculator_gui.py",
           "tests/_import_contract_bootstrap.py",
+          "tests/architecture/test_faulthandler_timeout_contract.py",
           "tests/architecture/test_gh1696_god_modules.py",
           "tests/architecture/test_no_frameless_windows_3322.py",
           "tests/architecture/test_tools_manual_renderer_contract.py",
@@ -439,6 +440,7 @@
         "validation_paths": [
           "src/p1am_control_system/backend/tests/test_validation_guards_3745.py",
           "tests/_import_contract_bootstrap.py",
+          "tests/architecture/test_faulthandler_timeout_contract.py",
           "tests/architecture/test_tools_manual_renderer_contract.py",
           "tests/architecture/test_tools_module_inventory_contract.py",
           "tests/unit/test_project_metadata_contracts.py",
