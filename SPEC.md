@@ -5946,6 +5946,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-05 | #5438 | ci(tools-core): new maturin-tools-core.yml wheel-gate builds and imports tools_core on Python 3.10-3.12 to prove its declared >=3.10 floor; KNOWN_UNPROVEN removed from the workflow Python-floor policy test (#5436) |
 | 2026-10-05 | #5435 | ci: align workflow Python matrices with requires-python >=3.11 (#5434): maturin-file-watcher and maturin-swing-core split into a 3.10-3.12 wheel-gate (proves the crates' >=3.10 claim) and a 3.11-3.12 wrapper/parity job; workflow Python-floor policy test, incl. every maturin crate built on its declared floor |
 | 2026-10-05 | #5433 | test(architecture): stale module inventory fails fast with a bounded shard-level summary instead of a quadratic pytest dict diff (#5432) |
 | 2026-10-05 | #4464 | ci(security): fork PRs never run on the self-hosted fleet; job-level fork guard on every PR-triggered fleet job, fork routing to hosted for the required tests lane, static checker `scripts/fork_pr_runner_guard.py` (#4464) |

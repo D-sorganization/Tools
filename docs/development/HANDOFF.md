@@ -2,7 +2,7 @@
 
 - Repository: D-sorganization/Tools
 - Working directory: `/home/user/wt/tools-5436`
-- Branch: `fix/5436-tools-core-wheel-gate`; commit: SELF; PR: see development log entry DL-#5436
+- Branch: `fix/5436-tools-core-wheel-gate`; commit: SELF; PR: #5438 (https://github.com/D-sorganization/Tools/pull/5438, ready, armed)
 - Governing issue: Tools#5436 (development log entry DL-#5436)
 
 ## Objective and status
