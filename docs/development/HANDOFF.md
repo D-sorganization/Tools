@@ -12,6 +12,7 @@ Re-vendor the updated guard (`scripts/fork_pr_runner_guard.py` plus new `scripts
 ## Validation
 
 - RED: RM canonical tests vs old guard 10 failed; GREEN: `python -m pytest -q -o addopts="" tests/ops/test_fork_pr_runner_guard.py` 69 passed.
+- Re-vendored again to the fail-closed bytes of RM#2000 (guard sha256 `6374db15...`, analysis `3cdc4024...`) plus the matching canonical tests: 82 passed; guard reports no findings; inventory regenerated (`--check` clean). This resolves the review threads on delegated head-ref helpers and the stale inventory shard.
 - `python scripts/fork_pr_runner_guard.py` on Tools workflows: 0 violations before and after.
 - ruff, mypy 1.13.0 and `python -m scripts.build_tools_module_inventory --check` clean (`mypy.ini` gained a no-redef override for the vendored dual import).
 

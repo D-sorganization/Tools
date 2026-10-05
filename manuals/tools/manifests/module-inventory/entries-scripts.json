@@ -4957,10 +4957,117 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10328,
+      "bytes_lf": 9310,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6d90b531f62bbfa3a6aab9f3a55b4dfc22a055baf0229fa38dfee00f255608e9",
+      "content_sha256_lf": "3cdc4024e703e61897941e370ea35bd714818483c153a0ace9ded2618cbf026a",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-FORK-PR-GUARD-ANALYSIS-PY-39AC628A2367",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/fork_pr_guard_analysis.py",
+      "purpose": "Condition and head-checkout analysis for ``fork_pr_runner_guard`` (RM#1996).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "HEAD_REF_PATTERNS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PULL_REQUEST_ONLY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SAME_REPO_CONDITIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_BRACKET_PROPERTY",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "dotted",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "head_checkout_steps",
+            "signature": "job: dict[str, Any], aliases: set[str]"
+          },
+          {
+            "kind": "function",
+            "name": "head_ref_aliases",
+            "signature": "*scopes: Any"
+          },
+          {
+            "kind": "function",
+            "name": "normalize",
+            "signature": "expression: str"
+          },
+          {
+            "kind": "function",
+            "name": "passes_head_ref",
+            "signature": "job: dict[str, Any], aliases: set[str]"
+          },
+          {
+            "kind": "function",
+            "name": "requires_conjunct",
+            "signature": "condition: Any, conjunct: str"
+          },
+          {
+            "kind": "function",
+            "name": "same_repo_conditioned",
+            "signature": "condition: Any"
+          },
+          {
+            "kind": "function",
+            "name": "split_top_level",
+            "signature": "expression: str, operator: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10249,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6374db1511a8b20e4794f958702b2d88a0b30d3c26113bfb89dced48a63076e5",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-FORK-PR-RUNNER-GUARD-PY-7FE99AE97E61",
       "language": "python",
