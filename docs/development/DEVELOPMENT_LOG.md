@@ -147,6 +147,45 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5440 · Drop Faulthandler Timeout That Crashed Tests-Shared
+
+- **State:** in_review
+- **Owner:** unassigned
+- **Issue:** #5440
+- **Branch:** fix/5440-drop-faulthandler-timeout
+- **PR:** #5443, #5442
+- **Paths:** pyproject.toml,tests/architecture/test_faulthandler_timeout_contract.py
+- **Started:** 2026-10-05
+- **Last verified:** 2026-10-05 (`ead6be5f`; collated from changes/5440-variation-gui-lost-signal.md)
+- **Summary:** Remove faulthandler_timeout=50 added by #5442: its stack dump fired inside legitimately long numerical tests and crashed the tests-shared shard on main (exit 249). A contract test keeps any future watchdog at or above the longest timeout marker.
+- **Next step:** Merge the PR, then root-cause any future hang from its faulthandler stack dump.
+
+### DL-#5436 · Prove Tools-Core Python Floor in CI
+
+- **State:** in_review
+- **Owner:** unassigned
+- **Issue:** #5436
+- **Branch:** fix/5436-tools-core-wheel-gate
+- **PR:** #5438
+- **Paths:** .github/workflows/maturin-tools-core.yml,tests/ops/test_workflow_python_floor.py
+- **Started:** 2026-10-05
+- **Last verified:** 2026-10-05 (`625c4e0c`; collated from changes/5436-ci-tools-core-new-maturin-tools-core-whe.md)
+- **Summary:** ci(tools-core): new maturin-tools-core wheel-gate proves the crate's >=3.10 floor on Python 3.10-3.12; floor policy test now has no exemptions
+- **Next step:** Merge PR #5438 once the wheel-gate is green on the fleet.
+
+### DL-#1976 · Add Collate-Changes Workflow and Wire Spec-Check to Check_Spec_Freshness
+
+- **State:** in_review
+- **Owner:** unassigned
+- **Issue:** #1976
+- **Branch:** ci/1976-tools-collate-changes
+- **PR:** #5448, #5451, #5428
+- **Paths:** see #5448
+- **Started:** 2026-10-05
+- **Last verified:** 2026-10-05 (`ad530938`; collated from changes/1976-tools-change-fragments.md)
+- **Summary:** Add collate-changes workflow and wire spec-check to check_spec_freshness
+- **Next step:** Merge the pull request.
+
 ### DL-#5385 · Propagate flight termination states and gate landing metrics
 
 - **State:** in_review
@@ -1849,6 +1888,19 @@ reachable from any live state and `abandoned` from `parked`.
   definition.
 
 ## Shipped (Last 90 Days)
+
+### DL-#2018 · Vendor Automerge_Guard and Requeue_Stalled_Merges (Stalled Merge-Queue Requeue) From Repository_Management
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #2018
+- **Branch:** merged via #5449
+- **PR:** #5449
+- **Paths:** see #5449
+- **Started:** 2026-10-05
+- **Last verified:** 2026-10-05 (`a4094e8a`; collated from changes/2018-vendor-requeue-stalled.md)
+- **Summary:** Vendor automerge_guard and requeue_stalled_merges (stalled merge-queue requeue) from Repository_Management
+- **Next step:** Shipped in PR #5449.
 
 Entries stay here for 90 days after merge, then move to the archive.
 
