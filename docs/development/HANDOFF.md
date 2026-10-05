@@ -20,6 +20,29 @@
 
 ---
 
+# Past handoff — Fix Rust 1.99 clippy errors in pendulum-core (Tools#5429)
+
+- Repository: D-sorganization/Tools
+- Working directory: `/home/user/wt/tools-clippy`
+- Branch: `fix/pendulum-core-clippy-f64`; commit: SELF; PR: see PR body
+- Governing issue: Tools#5429 (development log entry DL-#5429)
+
+## Objective and status
+
+Make `pendulum_core rust quality gate (fmt + clippy + test)` pass on the fleet's Rust 1.99. Done: removed `use std::f64;`
+from `cmaes.rs` and switched `dynamics.rs` to `as_chunks::<2>()`. Behaviour is unchanged.
+
+## Validation
+
+- `cargo +1.99 clippy --all-targets -- -D warnings` (in `src/pendulum_simulator/pendulum-core`): 5 errors before, clean after.
+- `cargo +1.99 test`: 42 passed. `cargo fmt --check`: clean.
+
+## Next step
+
+- Merge once CI is green; nothing else outstanding.
+
+---
+
 # Past handoff — Fix clippy deprecated f64 constants in tools-core (Tools#5422)
 
 - Repository: D-sorganization/Tools
