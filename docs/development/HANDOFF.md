@@ -1,3 +1,30 @@
+# Current handoff — Iron-head exact CAD family (Tools#4149 sub-task)
+
+- Repository: D-sorganization/Tools
+- Working directory: `C:/Users/diete/Repositories/Tools-worktrees/claude-4149`
+- Branch: `claude/issue-4149-iron`; commit: SELF; PR: draft, see PR body
+- Governing issue: Tools#4149 (sub-task; `Refs #4149`); development-log entry `DL-#4149`
+
+## Objective and status
+
+Add the iron head family on the wedge precedent: versioned schema, B-Rep builder, independent mass-property recovery, golden geometry test, export round-trip. Implemented; schema ranges await owner review.
+
+## Files and decisions
+
+- `iron_parameters.py` (schema + rationale docstring), `iron_geometry.py` (heel/toe sections), `iron_serialization.py` (`golf_club.iron_parameters/1`), `iron_cad.py` (builder, `recover_solid_mass_properties`), `iron_export.py` (`golf_club.iron_export/1`).
+- `_head_cad.py`: one shared helper module (datum-face matching, hollow hosel tube, deterministic file export) moved out of `wedge_cad.py`/`wedge_export.py`; wedge behaviour unchanged.
+- Body is a ruled loft of polygons (no leading-edge radius, cavity or ports in v1) so the golden test has an exact closed form. Export request/format/artifact types reuse the family-neutral wedge definitions.
+- CAD tests need the `cad` extra (`build123d==0.13.0`); with the older build123d 0.7.0 the wedge tests also fail (OCP API mismatch), so validate with the pinned version.
+
+## Validation
+
+- `python -m pytest tests/shared/python/golf_club -q` with build123d 0.13.0: see PR body for counts.
+- ruff check/format and mypy clean on touched modules; API baseline regenerated; module inventory `--check` passes.
+
+## Next step
+
+- Owner reviews the iron schema ranges and topology in the draft PR; then the next family (hybrid or driver) follows the same pattern.
+
 # Current handoff — ADR-008 license deny-list check (Tools#5417)
 
 - Repository: D-sorganization/Tools

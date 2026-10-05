@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9515,
+      "bytes_lf": 10508,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2c150cdeb94c088810ffe746dd619d8db42a24abbf90067da445ac8f38d5ffc7",
+      "content_sha256_lf": "8d1033c328b242dd77a958ab355f33a177bb19309653be23422c901b0bd4793c",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-INIT-PY-7496BE48C45A",
       "language": "python",
@@ -174,7 +174,52 @@
           },
           {
             "kind": "re-export",
+            "name": "IRON_EXPORT_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IRON_PARAMETERS_FORMAT",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "InstantaneousScrewAxis",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IronBodySections",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IronExportRequest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IronExportResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IronHeadParameters",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IronMeasuredMetrics",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IronPreset",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IronSolidResult",
             "signature": null
           },
           {
@@ -310,6 +355,11 @@
           {
             "kind": "re-export",
             "name": "ShaftTipResponse",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SolidMassProperties",
             "signature": null
           },
           {
@@ -534,6 +584,11 @@
           },
           {
             "kind": "re-export",
+            "name": "build_iron_solid",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "build_wedge_solid",
             "signature": null
           },
@@ -569,6 +624,11 @@
           },
           {
             "kind": "re-export",
+            "name": "export_iron_artifacts",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "export_wedge_artifacts",
             "signature": null
           },
@@ -595,6 +655,26 @@
           {
             "kind": "re-export",
             "name": "impact_coupling_report",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "iron_body_sections_m",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "iron_parameters_from_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "iron_parameters_to_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "iron_preset",
             "signature": null
           },
           {
@@ -650,6 +730,11 @@
           {
             "kind": "re-export",
             "name": "radial_shaft_tension",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "recover_solid_mass_properties",
             "signature": null
           },
           {
@@ -7613,10 +7698,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 6961,
+      "bytes_lf": 5863,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "c2dd9351597c6f3b48a0b0401e0d861a5b6e70ec30fd90cefc372eb8ae97a6fb",
+      "content_sha256_lf": "a2d91cc6fd7ef6c8893adad9162816f5c1053bed155aadaf322dc0c0374c1567",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-WEDGE-CAD-PY-78EED525AD5C",
       "language": "python",
@@ -7680,10 +7765,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 7022,
+      "bytes_lf": 6456,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "4b0e1196f90f802c7434110121975a74087157d4ddab82d9f6bdc889016d4cb5",
+      "content_sha256_lf": "62b12a2054a5f4276fd5b24e3f9e33c4328fb38278e6b1f6f82e245f5f567f51",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-GOLF-CLUB-WEDGE-EXPORT-PY-CDB876B575C1",
       "language": "python",

@@ -5946,6 +5946,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-04 | #4149 | feat(golf-club): iron-head exact CAD family with versioned schema `golf_club.iron_parameters/1`, B-Rep builder, independent mass-property recovery (closed form and exported-mesh divergence theorem) and STEP/BREP/STL export (#4149) |
 | 2026-10-04 | #5416 | feat(runtime-manifest): Python validator `shared.python.swing_sim.runtime_manifest` for calculation-runtime-manifest/v1, one-for-one port of `parseRuntimeManifest` with shared-fixture parity tests (#5416) |
 | 2026-10-04 | #5417 | feat(licensing): ADR-008 dependency and license deny-list check script and config (#5417) |
 | 2026-10-02 | #5404 | fix(revert): restore PBKDF2 hardening and swing-objectives correction reverted by PR 5400 (#5404) |

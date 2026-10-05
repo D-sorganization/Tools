@@ -5,16 +5,15 @@ from __future__ import annotations
 import json
 import math
 from dataclasses import asdict, dataclass
-from datetime import datetime
 from enum import Enum
 from pathlib import Path
 
+from ._head_cad import export_solid_file
 from ._validation import require_finite_float, require_identifier
 from .wedge_cad import WedgeMeasuredMetrics, build_wedge_solid
 from .wedge_parameters import WedgeHeadParameters
 
 WEDGE_EXPORT_FORMAT = "golf_club.wedge_export/1"
-_FIXED_STEP_TIMESTAMP = datetime(1970, 1, 1)
 _MIN_LINEAR_TOLERANCE_M = 1.0e-6
 _MAX_LINEAR_TOLERANCE_M = 1.0e-3
 _MIN_ANGULAR_TOLERANCE_RAD = 1.0e-4
@@ -128,23 +127,9 @@ def _export_one(
     request: WedgeExportRequest,
     export_format: WedgeExportFormat,
 ) -> WedgeExportArtifact:
-    from build123d import export_brep, export_step, export_stl
-
     path = output_directory / f"{request.stem}.{export_format.value}"
-    if export_format is WedgeExportFormat.STEP:
-        succeeded = export_step(solid, path, timestamp=_FIXED_STEP_TIMESTAMP)
-    elif export_format is WedgeExportFormat.STL:
-        succeeded = export_stl(
-            solid,
-            path,
-            tolerance=request.linear_tolerance_m * 1_000.0,
-            angular_tolerance=request.angular_tolerance_rad,
-            ascii_format=False,
-        )
-    else:
-        succeeded = export_brep(solid, path)
-    if not succeeded or not path.is_file() or path.stat().st_size == 0:
-        raise RuntimeError(f"failed to export {export_format.value} artifact")
+    tolerances = (request.linear_tolerance_m, request.angular_tolerance_rad)
+    export_solid_file(solid, path, export_format.value, tolerances)
     return WedgeExportArtifact(format=export_format, path=path)
 
 
