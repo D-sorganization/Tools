@@ -15,6 +15,9 @@ pytest.importorskip("pytestqt")
 from rate_of_closure.club import get_club  # noqa: E402
 from rate_of_closure.model import ImpactScenario  # noqa: E402
 from rate_of_closure.simulation import SimulationConfig  # noqa: E402
+from rate_of_closure.ui.pyqt6 import (
+    variation_worker as variation_worker_module,  # noqa: E402
+)
 from rate_of_closure.ui.pyqt6.variation_tab import VariationTab  # noqa: E402
 from rate_of_closure.ui.pyqt6.variation_worker import VariationWorker  # noqa: E402
 from shared.python.swing_sim.variation import (  # noqa: E402
@@ -27,6 +30,7 @@ from shared.python.swing_sim.variation import (  # noqa: E402
     run_variation,
 )
 from shared.python.swing_sim.variation.dataset_io import read_json  # noqa: E402
+from tests.rate_of_closure._qt_waits import join_worker, wait_for_state  # noqa: E402
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
 
@@ -166,7 +170,7 @@ class TestRunAndResults:
             ),
         )
 
-        with _wait_done(qtbot, tab):
+        with _wait_done(qtbot, tab, allow_failure=True):
             pass
 
         assert tab.dataset() is accepted_dataset
@@ -245,7 +249,7 @@ class TestRunAndResults:
 
         monkeypatch.setattr(variation_tab_results, "populate_result_views", fail_once)
 
-        with _wait_done(qtbot, tab):
+        with _wait_done(qtbot, tab, allow_failure=True):
             pass
 
         assert tab.dataset() is accepted_dataset
@@ -357,19 +361,73 @@ class TestRunAndResults:
         assert document["plan_document"]["schema_version"] == 3
 
 
-class _wait_done:
-    """Click Run and wait for the worker to finish."""
+class TestRunWait:
+    """Regression guards for the run wait itself (#5440)."""
 
-    def __init__(self, qtbot, tab: VariationTab) -> None:  # type: ignore[no-untyped-def]
+    def test_outcome_is_seen_when_the_worker_finishes_before_the_wait(
+        self, qtbot, tab: VariationTab, monkeypatch
+    ) -> None:  # type: ignore[no-untyped-def]
+        # Worst-case interleaving: the worker is done before the test starts
+        # waiting. A signal wait attached after start() misses it.
+        original_start = VariationWorker.start
+
+        def start_and_join(worker: VariationWorker) -> None:
+            original_start(worker)
+            assert worker.wait(30_000)
+
+        monkeypatch.setattr(VariationWorker, "start", start_and_join)
+        tab.load_plan(_fast_launch_plan(4))
+        with _wait_done(qtbot, tab):
+            pass
+        assert tab.dataset() is not None
+
+    def test_failed_study_fails_fast_with_the_worker_message(
+        self, qtbot, tab: VariationTab, monkeypatch
+    ) -> None:  # type: ignore[no-untyped-def]
+        def failing_run(*_args: object, **_kwargs: object) -> None:
+            raise RuntimeError("injected variation failure")
+
+        monkeypatch.setattr(variation_worker_module, "run_variation", failing_run)
+        tab.load_plan(_fast_launch_plan(4))
+        with pytest.raises(pytest.fail.Exception, match="injected variation failure"):
+            with _wait_done(qtbot, tab):
+                pass
+
+
+class _wait_done:
+    """Click Run and wait for the study to finish, failing fast otherwise.
+
+    Precondition: no study is in flight on the tab.
+    Postcondition: the worker thread is joined and the study was accepted;
+    a failed or cancelled study fails the test with the tab's status text
+    unless ``allow_failure`` (for tests that assert the failure path).
+    Waits on tab STATE (the worker slot cleared and Run re-enabled by the
+    ``finished`` handler connected before ``start()``), never on a signal
+    attached after the worker may already have finished (#5440).
+    """
+
+    def __init__(  # type: ignore[no-untyped-def]
+        self, qtbot, tab: VariationTab, *, allow_failure: bool = False
+    ) -> None:
         self._qtbot = qtbot
         self._tab = tab
+        self._allow_failure = allow_failure
 
     def __enter__(self) -> None:
         tab = self._tab
+        assert tab._worker is None, "a study is already in flight"
         tab._on_run()
-        assert tab._worker is not None
-        with self._qtbot.waitSignal(tab._worker.finished, timeout=60_000):
-            pass
+        worker = tab._worker
+        assert worker is not None, f"study did not start: {tab._status.text()!r}"
+        wait_for_state(
+            self._qtbot,
+            lambda: tab._worker is None and tab._run_button.isEnabled(),
+            tab._status.text,
+        )
+        join_worker(worker)
+        status = tab._status.text()
+        if not self._allow_failure and status.startswith(("Study failed", "Cancelled")):
+            pytest.fail(f"study did not succeed: {status!r}")
 
     def __exit__(self, *exc: object) -> None:
         return None

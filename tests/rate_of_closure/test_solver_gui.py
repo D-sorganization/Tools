@@ -33,14 +33,20 @@ from shared.python.swing_sim.solver.goals import (  # noqa: E402
     VariablePartition,
 )
 from shared.python.swing_sim.solver.solve import SolverResult  # noqa: E402
+from tests.rate_of_closure._qt_waits import (  # noqa: E402
+    JOIN_MS,
+    QT_WAIT_MS,
+    join_worker,
+    wait_for_state,
+)
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
 
 # Every Qt wait in this module stays strictly below the 60 s pytest-timeout
 # (pyproject.toml), so a stuck wait fails the test cleanly instead of racing
 # the thread-method timeout, which os._exit()s the xdist worker (#5440).
-_QT_WAIT_MS = 30_000
-_JOIN_MS = 10_000
+_QT_WAIT_MS = QT_WAIT_MS
+_JOIN_MS = JOIN_MS
 
 
 def _run_panel_to_completion(qtbot, panel: SolverPanel) -> SolverResult:  # type: ignore[no-untyped-def]
@@ -61,13 +67,8 @@ def _run_panel_to_completion(qtbot, panel: SolverPanel) -> SolverResult:  # type
     # button and was connected before ``start()``, so it cannot be missed.
     # Its queued call is delivered after the outcome slot, so the panel
     # already holds the result (or the failure status) when it runs.
-    try:
-        qtbot.waitUntil(panel._run_button.isEnabled, timeout=_QT_WAIT_MS)
-    except qtbot.TimeoutError:
-        pytest.fail(
-            f"solve still running after {_QT_WAIT_MS} ms: {panel._status.text()!r}"
-        )
-    assert worker.wait(_JOIN_MS), "solver worker thread did not join"
+    wait_for_state(qtbot, panel._run_button.isEnabled, panel._status.text)
+    join_worker(worker)
     result = panel.result()
     if result is None:
         pytest.fail(f"solve did not succeed: {panel._status.text()!r}")

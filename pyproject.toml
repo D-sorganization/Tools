@@ -317,11 +317,6 @@ pythonpath = [
 # See: Repository_Management/docs/FLEET_TESTING_STANDARDS.md
 timeout = 60
 timeout_method = "thread"
-# #5440: dump every thread's stack before the 60 s timeout fires. The dump
-# comes from faulthandler's C watchdog, so it still prints when a worker is
-# blocked in native (Qt) code. "signal" was rejected: SIGALRM's Python
-# handler cannot run inside a Qt event loop, and it does not exist on Windows.
-faulthandler_timeout = 50
 asyncio_mode = "auto"
 asyncio_default_fixture_loop_scope = "function"
 # Default lane excludes heavy + offline-only-violating selections per §2.
