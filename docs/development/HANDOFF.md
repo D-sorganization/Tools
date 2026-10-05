@@ -22,6 +22,8 @@ the repository settings in the PR body are still required to close the issue.
 - Review fix: base-context head checkouts aliased through workflow- or job-level `env`
   (`PR_SHA: ${{ github.event.pull_request.head.sha }}` then `ref: ${{ env.PR_SHA }}` /
   `$PR_SHA`) are now detected; 8 new cases RED before, 34 tests GREEN after.
+- Re-vendored byte-identical from Repository_Management#1990 (canonical copy; adds
+  bracket-form head refs and privileged `workflow_call` callers); 34 tests GREEN.
 
 ## Next step
 

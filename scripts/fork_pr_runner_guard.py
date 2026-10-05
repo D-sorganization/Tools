@@ -1,9 +1,10 @@
 #!/usr/bin/env python3
 """Reject workflow jobs that can run fork pull-request code on self-hosted runners.
 
-Tools is a public repository whose CI runs on ``d-sorg-fleet``, self-hosted
-runners on maintainer hardware (issue #4464). A fork pull request must never
-land on that fleet. This checker enforces two rules over
+Public fleet repositories run CI on ``d-sorg-fleet``, self-hosted runners on
+maintainer hardware (Tools#4464). A fork pull request must never land on that
+fleet. Canonical here (Repository_Management#1989), ported from Tools#5427 and
+vendored to the other fleet repositories. This checker enforces two rules over
 ``.github/workflows/*.yml``:
 
 1. **Fork PR code stays off the fleet.** In a workflow triggered by an event
@@ -24,6 +25,10 @@ land on that fleet. This checker enforces two rules over
    ``workflow_run`` (which run the base branch's workflow with base-repository
    credentials), a self-hosted job must not check out or fetch the PR head,
    unless that step is restricted to ``github.event_name == 'pull_request'``.
+   ``workflow_call`` is privileged here too: a callee inherits its caller's
+   event, and a ``workflow_run`` caller passes the job guard. A reusable-
+   workflow call under these events must not pass a head ref in ``with:``.
+   Bracket property access (``head['sha']``) is read as dotted access.
 
 A job counts as self-hosted unless every ``runs-on`` value is a literal
 GitHub-hosted label. Expressions, matrix references, runner groups and
@@ -31,7 +36,7 @@ reusable-workflow calls are treated as self-hosted (fail closed).
 
 The check reads expressions textually and does not evaluate them. It is a
 defence in depth, not a sandbox: on ``pull_request`` a fork can edit the
-workflow file itself, so the repository settings listed in issue #4464
+workflow file itself, so the repository settings listed in Tools#4464
 (approval for all outside collaborators, runner-group access) remain the
 primary control.
 """
@@ -94,6 +99,18 @@ HEAD_REF_PATTERNS = (
     re.compile(r"pull/(\$\{\{[^}]*\}\}|[^\s/]+)/(head|merge)"),
     re.compile(r"gh\s+pr\s+checkout"),
 )
+
+
+#: ``ctx['key']`` / ``ctx["key"]`` property access in a GitHub expression.
+_BRACKET_PROPERTY = re.compile(r"\[\s*['\"]([A-Za-z_][\w-]*)['\"]\s*\]")
+
+
+def dotted(text: str) -> str:
+    """Rewrite bracket property access as dots, so ``head['sha']`` reads ``head.sha``.
+
+    Postcondition: dotted-only text is returned unchanged.
+    """
+    return _BRACKET_PROPERTY.sub(r".\1", text)
 
 
 def normalize(expression: str) -> str:
@@ -226,7 +243,8 @@ def _head_ref_aliases(*scopes: Any) -> set[str]:
     for scope in scopes:
         env = scope.get("env") if isinstance(scope, dict) else None
         for name, value in env.items() if isinstance(env, dict) else ():
-            if any(p.search("\n".join(_strings(value))) for p in HEAD_REF_PATTERNS):
+            text = dotted("\n".join(_strings(value)))
+            if any(p.search(text) for p in HEAD_REF_PATTERNS):
                 names.add(str(name))
     return names
 
@@ -254,10 +272,24 @@ def _head_checkout_steps(job: dict[str, Any], aliases: set[str]) -> list[str]:
             continue
         if requires_conjunct(step.get("if"), PULL_REQUEST_ONLY):
             continue
-        text = "\n".join(_strings({k: v for k, v in step.items() if k != "if"}))
+        fields = {k: v for k, v in step.items() if k != "if"}
+        text = dotted("\n".join(_strings(fields)))
         if any(pattern.search(text) for pattern in patterns):
             found.append(str(step.get("name") or step.get("uses") or f"#{index}"))
     return found
+
+
+def _passes_head_ref(job: dict[str, Any], aliases: set[str]) -> bool:
+    """Return whether a reusable-workflow call hands the PR head to its callee.
+
+    A ``uses:`` job has no steps of its own; the callee may check out whatever
+    ref its inputs name, so a head ref in ``with:`` is a head checkout.
+    """
+    if not isinstance(job.get("uses"), str):
+        return False
+    patterns = [*HEAD_REF_PATTERNS, *(_alias_reference(a) for a in aliases)]
+    text = dotted("\n".join(_strings(job.get("with", {}))))
+    return any(pattern.search(text) for pattern in patterns)
 
 
 def job_violations(
@@ -284,12 +316,20 @@ def job_violations(
             f"'({SAME_REPO_GUARD}) && ...' to the job if:, or start runs-on with "
             f"'{' && '.join(FORK_ROUTE_CONJUNCTS)} && <hosted label> || ...'"
         )
-    if events & BASE_CONTEXT_TRIGGERS:
+    privileged_events = events & (BASE_CONTEXT_TRIGGERS | {"workflow_call"})
+    if privileged_events:
         aliases = _head_ref_aliases(workflow, job)
+        privileged = ", ".join(sorted(privileged_events))
+        if _passes_head_ref(job, aliases):
+            violations.append(
+                f"{wf_name}::{job_id}: passes a PR head ref to a reusable workflow "
+                f"under {privileged}; the callee can check it out on a "
+                f"self-hosted runner"
+            )
         for step in _head_checkout_steps(job, aliases):
             violations.append(
                 f"{wf_name}::{job_id}: step '{step}' checks out PR head code on a "
-                f"self-hosted runner under {', '.join(sorted(events & BASE_CONTEXT_TRIGGERS))}; "
+                f"self-hosted runner under {privileged}; "
                 f"restrict it to {PULL_REQUEST_ONLY} or drop the head ref"
             )
     return violations
@@ -316,11 +356,24 @@ def find_violations(workflow_dir: Path) -> list[str]:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    """Run the checker as a CLI.
+
+    Preconditions: --workflows-dir (alias --workflows) names a directory.
+    Postconditions: returns 0 when no job breaks a rule, else 1 after logging
+    one ::error:: line per violation.
+    """
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument("--workflows", type=Path, default=Path(".github") / "workflows")
+    parser.add_argument(
+        "--workflows-dir",
+        "--workflows",
+        dest="workflows_dir",
+        type=Path,
+        default=Path(".github") / "workflows",
+        help="Directory of workflow files (default: .github/workflows).",
+    )
     args = parser.parse_args(argv)
     logging.basicConfig(level=logging.INFO, format="%(message)s", stream=sys.stdout)
-    violations = find_violations(args.workflows)
+    violations = find_violations(args.workflows_dir)
     for violation in violations:
         LOG.error("::error::%s", violation)
     if violations:
