@@ -716,10 +716,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 30029,
+      "bytes_lf": 30748,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "02849ad36a1f36d93bc7ad096c6d893b5edc95842c13e86d8669450f4a7a322b",
+      "content_sha256_lf": "a784815a6b8e9feb49220a770454fc424b9a7239e26743b57259201bc96b1cbc",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-AUTOMERGE-GUARD-PY-589614C8BDE2",
       "language": "python",
@@ -7531,10 +7531,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6625,
+      "bytes_lf": 6926,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e9188d03b3c4154fc186ffd869ef71f4e2d5bc1a710a6a4bf29ae0e8e695af88",
+      "content_sha256_lf": "7818ced911d4323281a09b6a6f6a795f64a69ad1f7856d14569513ac831a3c6b",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-REQUEUE-STALLED-MERGES-PY-C0181CFB4098",
       "language": "python",
@@ -7596,6 +7596,11 @@
           {
             "kind": "constant",
             "name": "_REPO_SLUG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SCRIPT_DIR",
             "signature": null
           },
           {
