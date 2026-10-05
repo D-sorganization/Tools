@@ -17,6 +17,7 @@ pytest.importorskip("PyQt6")
 pytest.importorskip("pytestqt")
 
 from rate_of_closure.model import MPH_PER_MPS, ImpactScenario  # noqa: E402
+from rate_of_closure.ui.pyqt6 import solver_worker as solver_worker_module  # noqa: E402
 from rate_of_closure.ui.pyqt6.simulation_tab import SimulationTab  # noqa: E402
 from rate_of_closure.ui.pyqt6.solver_panel import SolverPanel  # noqa: E402
 from rate_of_closure.ui.pyqt6.solver_specs import (  # noqa: E402
@@ -34,6 +35,43 @@ from shared.python.swing_sim.solver.goals import (  # noqa: E402
 from shared.python.swing_sim.solver.solve import SolverResult  # noqa: E402
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
+
+# Every Qt wait in this module stays strictly below the 60 s pytest-timeout
+# (pyproject.toml), so a stuck wait fails the test cleanly instead of racing
+# the thread-method timeout, which os._exit()s the xdist worker (#5440).
+_QT_WAIT_MS = 30_000
+_JOIN_MS = 10_000
+
+
+def _run_panel_to_completion(qtbot, panel: SolverPanel) -> SolverResult:  # type: ignore[no-untyped-def]
+    """Run the panel's solve and return its result, failing fast otherwise.
+
+    Precondition: no solve is in flight on ``panel``.
+    Postcondition: the worker thread is joined and the panel holds the
+    returned :class:`SolverResult`; a failed or cancelled run fails the
+    test with the panel's status message instead of hanging.
+    """
+    assert panel._worker is None or not panel._worker.isRunning(), (
+        "a solve is already in flight"
+    )
+    panel._on_run()
+    worker = panel._worker
+    assert worker is not None, f"solve did not start: {panel._status.text()!r}"
+    # Wait on state, not on an edge: ``_on_finished`` re-enables the run
+    # button and was connected before ``start()``, so it cannot be missed.
+    # Its queued call is delivered after the outcome slot, so the panel
+    # already holds the result (or the failure status) when it runs.
+    try:
+        qtbot.waitUntil(panel._run_button.isEnabled, timeout=_QT_WAIT_MS)
+    except qtbot.TimeoutError:
+        pytest.fail(
+            f"solve still running after {_QT_WAIT_MS} ms: {panel._status.text()!r}"
+        )
+    assert worker.wait(_JOIN_MS), "solver worker thread did not join"
+    result = panel.result()
+    if result is None:
+        pytest.fail(f"solve did not succeed: {panel._status.text()!r}")
+    return result
 
 
 def _easy_goal_and_partition() -> tuple[ImpactGoal, VariablePartition]:
@@ -62,6 +100,8 @@ def panel(qtbot):  # type: ignore[no-untyped-def]
     qtbot.addWidget(widget)
     yield widget
     widget.stop()
+    worker = widget._worker
+    assert worker is None or worker.isFinished(), "solver worker outlived the test"
 
 
 @pytest.fixture
@@ -129,9 +169,9 @@ class TestWorker:
     def test_worker_completes_and_reports_the_pinned_solution(self, qtbot) -> None:  # type: ignore[no-untyped-def]
         goal, partition = _easy_goal_and_partition()
         worker = SolverWorker(goal, partition, n_starts=2)
-        with qtbot.waitSignal(worker.succeeded, timeout=60000) as blocker:
+        with qtbot.waitSignal(worker.succeeded, timeout=_QT_WAIT_MS) as blocker:
             worker.start()
-        worker.wait(10_000)
+        assert worker.wait(_JOIN_MS)
         result = blocker.args[0]
         assert result.converged
         # Pinned solution (matches the web parity test): ~45.82 m/s.
@@ -142,9 +182,9 @@ class TestWorker:
         goal, partition = _easy_goal_and_partition()
         worker = SolverWorker(goal, partition, n_starts=4)
         worker.cancel()
-        with qtbot.waitSignal(worker.cancelled, timeout=30000):
+        with qtbot.waitSignal(worker.cancelled, timeout=_QT_WAIT_MS):
             worker.start()
-        worker.wait(10_000)
+        assert worker.wait(_JOIN_MS)
         assert worker.cancel_event.is_set()
 
     def test_midrun_cancel_finishes_without_error(self, qtbot) -> None:  # type: ignore[no-untyped-def]
@@ -155,24 +195,52 @@ class TestWorker:
         worker.succeeded.connect(lambda _r: outcomes.append("succeeded"))
         worker.cancelled.connect(lambda: outcomes.append("cancelled"))
         worker.failed.connect(lambda _m: outcomes.append("failed"))
-        with qtbot.waitSignal(worker.finished, timeout=120000):
+        with qtbot.waitSignal(worker.finished, timeout=_QT_WAIT_MS):
             worker.start()
             worker.cancel()
-        worker.wait(10_000)
+        assert worker.wait(_JOIN_MS)
         assert worker.cancel_event.is_set()
         assert outcomes in (["succeeded"], ["cancelled"])
+
+
+class TestPanelRunWait:
+    """Regression guards for the panel-run wait itself (#5440)."""
+
+    def test_outcome_is_seen_when_the_worker_finishes_before_the_wait(  # type: ignore[no-untyped-def]
+        self, panel, qtbot, monkeypatch
+    ) -> None:
+        # Worst-case interleaving: the worker emits its outcome before the
+        # test starts waiting. A signal wait connected after start() misses
+        # the emission and blocks for its whole timeout.
+        original_start = SolverWorker.start
+
+        def start_and_join(worker: SolverWorker) -> None:
+            original_start(worker)
+            assert worker.wait(_QT_WAIT_MS)
+
+        monkeypatch.setattr(SolverWorker, "start", start_and_join)
+        _configure_easy_case(panel)
+        result = _run_panel_to_completion(qtbot, panel)
+        assert result.converged
+
+    def test_failed_solve_fails_fast_with_the_solver_message(  # type: ignore[no-untyped-def]
+        self, panel, qtbot, monkeypatch
+    ) -> None:
+        def failing_solve(*_args: object, **_kwargs: object) -> SolverResult:
+            raise RuntimeError("injected solver failure")
+
+        monkeypatch.setattr(solver_worker_module, "solve", failing_solve)
+        _configure_easy_case(panel)
+        with pytest.raises(pytest.fail.Exception, match="injected solver failure"):
+            _run_panel_to_completion(qtbot, panel)
 
 
 class TestPanelRun:
     def test_panel_run_populates_results_and_enables_apply(self, panel, qtbot) -> None:  # type: ignore[no-untyped-def]
         _configure_easy_case(panel)
         assert not panel._apply_button.isEnabled()
-        panel._on_run()
-        assert panel._worker is not None
-        with qtbot.waitSignal(panel._worker.succeeded, timeout=60000):
-            pass
-        panel._worker.wait(10_000)
-        qtbot.waitUntil(panel._apply_button.isEnabled, timeout=10000)
+        _run_panel_to_completion(qtbot, panel)
+        assert panel._apply_button.isEnabled()
         assert panel._table.rowCount() == 1
         assert panel._table.item(0, 0).text() == "Ball Speed"
         assert "Solved variables" in panel._summary.text()
@@ -185,13 +253,9 @@ class TestApply:
         panel = tab.solver_panel()
         _configure_easy_case(panel)
         panel._var_rows["impact_offset_toe_mm"].fixed_value.setValue(4.0)
-        panel._on_run()
-        with qtbot.waitSignal(panel._worker.succeeded, timeout=60000):
-            pass
-        panel._worker.wait(10_000)
-        qtbot.waitUntil(panel._apply_button.isEnabled, timeout=10000)
-        result = panel.result()
-        with qtbot.waitSignal(tab.runCompleted, timeout=30000):
+        result = _run_panel_to_completion(qtbot, panel)
+        assert panel._apply_button.isEnabled()
+        with qtbot.waitSignal(tab.runCompleted, timeout=_QT_WAIT_MS):
             panel._apply_button.click()
         config = tab.config()
         assert config.source_kind == "manual"
@@ -236,7 +300,7 @@ class TestApply:
             elapsed_s=0.0,
             starts=(),
         )
-        with qtbot.waitSignal(tab.runCompleted, timeout=60000):
+        with qtbot.waitSignal(tab.runCompleted, timeout=_QT_WAIT_MS):
             run = tab.apply_solver_solution(result, True)
         assert run is not None
         assert tab.source_kind() == "double_pendulum"
