@@ -5946,6 +5946,13 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-05 | #5442 | test_solver_gui waits on panel state instead of a signal that may already have fired, caps Qt waits below the pytest timeout, and dumps stacks on a hang (faulthandler_timeout=50) |
+| 2026-10-05 | #5443 | Remove faulthandler_timeout=50 added by #5442: its stack dump fired inside legitimately long numerical tests and crashed the tests-shared shard on main (exit 249). A contract test keeps any future watchdog at or above the longest timeout marker.; Variation GUI execution tests wait on tab state connected before start instead of a post-start signal wait; shared Qt wait helpers |
+| 2026-10-05 | #5438 | ci(tools-core): new maturin-tools-core wheel-gate proves the crate's >=3.10 floor on Python 3.10-3.12; floor policy test now has no exemptions |
+| 2026-10-05 | #5449 | Vendor automerge_guard and requeue_stalled_merges (stalled merge-queue requeue) from Repository_Management |
+| 2026-10-05 | #5428 | Vendor RM-5 Change Fragment Tooling |
+| 2026-10-05 | #5451 | Make the change-fragment round-trip test hermetic: it reused real issue #1976 against a copy of the live development log, so it failed once the collate bot recorded DL-#1976 (Tools#5450) |
+| 2026-10-05 | #5448 | Add collate-changes workflow and wire spec-check to check_spec_freshness |
 | 2026-10-04 | #5425 | feat(golf-club): iron-head exact CAD family with versioned schema `golf_club.iron_parameters/1`, B-Rep builder, independent mass-property recovery (closed form and exported-mesh divergence theorem) and STEP/BREP/STL export (#4149) |
 | 2026-10-05 | #5435 | ci: align workflow Python matrices with requires-python >=3.11 (#5434): maturin-file-watcher and maturin-swing-core split into a 3.10-3.12 wheel-gate (proves the crates' >=3.10 claim) and a 3.11-3.12 wrapper/parity job; workflow Python-floor policy test, incl. every maturin crate built on its declared floor |
 | 2026-10-05 | #5433 | test(architecture): stale module inventory fails fast with a bounded shard-level summary instead of a quadratic pytest dict diff (#5432) |
