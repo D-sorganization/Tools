@@ -93,12 +93,12 @@ feature, from proposal to ship. See the `development-logs` section of
 - **Owner:** claude
 - **Issue:** #4433
 - **Branch:** `claude/issue-4433`
-- **PR:** #5424 (draft)
+- **PR:** #5424 (draft), #5447
 - **Paths:** `tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py`, `tests/rate_of_closure/pyqt_launch_monitor_state_probe.py`, `src/rate_of_closure/web/e2e/visualization-tab-visibility.spec.ts`, `docs/audits/rate_of_closure_visual_first_epic_4433.v1.json`
 - **Started:** 2026-10-04
-- **Last verified:** 2026-10-04 — Launch Monitor Analytics pair: PyQt state geometry 2 passed (1.0 and 1.5 DPI); Playwright visibility spec 4 passed on chromium-desktop; both RED with a result-only spacer above the scatter.
+- **Last verified:** 2026-10-06 (`8c3cc237`; collated from changes/4433-launch-monitor-analytics-no-longer-scrol.md)
 - **Summary:** First tab pair (Launch Monitor Analytics) of the epic's state-by-state geometry gap: the primary scatter stays in the first viewport through result, error, loading and empty on React (3 reference viewports) and PyQt (1.0/1.5 DPI). Other pairs, approved baselines and the AT protocol stay open under the epic.
-- **Next step:** frontier review of the draft PR, then file the next tab pair as its own CLI-tier sub-task.
+- **Next step:** Merge the PR; the 1440x900 evidence captures are layout-identical and need no refresh.
 
 ### DL-#5417 · ADR-008 dependency and license deny-list check
 
@@ -1895,10 +1895,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #2018
 - **Branch:** merged via #5449
-- **PR:** #5449
+- **PR:** #5449, #5453
 - **Paths:** see #5449
 - **Started:** 2026-10-05
-- **Last verified:** 2026-10-05 (`a4094e8a`; collated from changes/2018-vendor-requeue-stalled.md)
+- **Last verified:** 2026-10-06 (`863cb3fb`; collated from changes/2018-resync-requeue.md)
 - **Summary:** Vendor automerge_guard and requeue_stalled_merges (stalled merge-queue requeue) from Repository_Management
 - **Next step:** Shipped in PR #5449.
 
