@@ -55,6 +55,8 @@ jobs:
     runs-on: d-sorg-fleet
     timeout-minutes: 30
     env:
+      RUSTUP_HOME: ${{ github.workspace }}/.rustup-home
+      CARGO_HOME: ${{ github.workspace }}/.cargo-home
       CARGO_TERM_COLOR: always
 
     strategy:
@@ -84,8 +86,12 @@ jobs:
 
           print(f"VIRTUAL_ENV={Path('.ci-venv').resolve()}")
           PY
+      - name: Isolate Rust homes
+        uses: ./.github/actions/isolate-rust-homes
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
+        with:
+          components: rustfmt, clippy
       - name: Install Build and Test Dependencies
         run: |
           python -c "import sys; assert sys.prefix != sys.base_prefix"
@@ -122,6 +128,8 @@ jobs:
     runs-on: d-sorg-fleet
     timeout-minutes: 30
     env:
+      RUSTUP_HOME: ${{ github.workspace }}/.rustup-home
+      CARGO_HOME: ${{ github.workspace }}/.cargo-home
       CARGO_TERM_COLOR: always
 
     strategy:
@@ -154,8 +162,12 @@ jobs:
           print(f"VIRTUAL_ENV={Path('.ci-venv').resolve()}")
           PY
 
+      - name: Isolate Rust homes
+        uses: ./.github/actions/isolate-rust-homes
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
+        with:
+          components: rustfmt, clippy
 
       - name: Install Build and Test Dependencies
         run: |

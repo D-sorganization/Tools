@@ -45,6 +45,8 @@ jobs:
       matrix:
         python-version: ["3.10", "3.11", "3.12"]
     env:
+      RUSTUP_HOME: ${{ github.workspace }}/.rustup-home
+      CARGO_HOME: ${{ github.workspace }}/.cargo-home
       CARGO_TERM_COLOR: always
       PYO3_USE_ABI3_FORWARD_COMPATIBILITY: "1"
     steps:
@@ -60,8 +62,12 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
 
+      - name: Isolate Rust homes
+        uses: ./.github/actions/isolate-rust-homes
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
+        with:
+          components: rustfmt, clippy
 
       - name: Create isolated Python environment
         shell: bash
