@@ -555,6 +555,8 @@ jobs:
           - src-embedded
           - src-rest
     env:
+      RUSTUP_HOME: ${{ github.workspace }}/.rustup-home
+      CARGO_HOME: ${{ github.workspace }}/.cargo-home
       # Persistent per-host download cache.  Do not also enable setup-python's
       # Actions cache on this self-hosted lane: its post-job upload can occupy a
       # runner for tens of minutes on the constrained WAN.
@@ -635,14 +637,6 @@ jobs:
           echo "VIRTUAL_ENV=$RUNNER_TEMP/ci-venv" >> "$GITHUB_ENV"
           "$RUNNER_TEMP/ci-venv/bin/python" -m pip --version
 
-      - name: Expose preinstalled Rustup
-        if: ${{ matrix.python-version == '3.11' }}
-        shell: bash
-        run: |
-          if [ -d "$HOME/.cargo/bin" ]; then
-            echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
-          fi
-
       # Cache the BUILT WHEEL, not merely the build inputs.
       #
       # This lane is the required check, and its most frequent failure is not a test
@@ -711,8 +705,14 @@ jobs:
             echo "No cached wheel present; building from source."
           fi
 
+      # Installed on every 3.11 run, wheel-cache hit or not: the data-engine tests
+      # shell out to `cargo`, and with a per-workspace RUSTUP_HOME the shared
+      # rustup proxy has no toolchain until one is installed into it (RM#2021).
+      - name: Isolate Rust homes
+        if: ${{ matrix.python-version == '3.11' }}
+        uses: ./.github/actions/isolate-rust-homes
       - name: Install Rust toolchain for tools_core wheel
-        if: ${{ matrix.python-version == '3.11' && steps.toolscore_wheel_state.outputs.need_build == 'true' }}
+        if: ${{ matrix.python-version == '3.11' }}
         uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
         env:
           CARGO_NET_RETRY: "10"
@@ -814,7 +814,6 @@ jobs:
       - name: Build tools_core Rust wheel
         if: ${{ matrix.python-version == '3.11' && steps.toolscore_wheel_state.outputs.need_build == 'true' }}
         env:
-          CARGO_HOME: ${{ github.workspace }}/.cargo-home
           CARGO_BUILD_JOBS: "1"
           CARGO_INCREMENTAL: "0"
           CARGO_TERM_COLOR: always
@@ -1021,6 +1020,7 @@ jobs:
     runs-on: d-sorg-fleet
     timeout-minutes: 45
     env:
+      RUSTUP_HOME: ${{ github.workspace }}/.rustup-home
       CARGO_HOME: ${{ github.workspace }}/.cargo-home
       CARGO_BUILD_JOBS: "1"
       CARGO_INCREMENTAL: "0"
@@ -1066,17 +1066,9 @@ jobs:
             echo "No Rust changes detected - skipping Rust quality gate."
           fi
 
-      - name: Expose preinstalled Rustup
+      - name: Isolate Rust homes
+        uses: ./.github/actions/isolate-rust-homes
         if: steps.rust-changes.outputs.has_changes == 'true'
-        shell: bash
-        run: |
-          if [ -d "$HOME/.cargo/bin" ]; then
-            echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
-          fi
-          if [ -d "$CARGO_HOME/bin" ]; then
-            echo "$CARGO_HOME/bin" >> "$GITHUB_PATH"
-          fi
-
       - name: Install Rust toolchain
         if: steps.rust-changes.outputs.has_changes == 'true'
         uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable

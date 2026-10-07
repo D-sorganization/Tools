@@ -1,0 +1,24 @@
+name: "Isolate Rust Homes"
+description: >
+  Prepares the per-workspace RUSTUP_HOME / CARGO_HOME that the calling job
+  declares in its job-level `env`, and puts `$CARGO_HOME/bin` first on PATH.
+  Persistent self-hosted runners share ~/.rustup and ~/.cargo, and one job's
+  toolchain install deletes binaries from under a concurrent job
+  (D-sorganization/Repository_Management#2021). Run this after checkout and
+  before any rust-toolchain install so the toolchain lands in the workspace.
+
+runs:
+  using: composite
+  steps:
+    - name: Prepare isolated Rust homes
+      shell: bash
+      run: |
+        : "${RUSTUP_HOME:?set RUSTUP_HOME to a workspace path in the job env}"
+        : "${CARGO_HOME:?set CARGO_HOME to a workspace path in the job env}"
+        mkdir -p "$RUSTUP_HOME" "$CARGO_HOME/bin"
+        # A preinstalled rustup proxy may still be used to bootstrap, but only
+        # as a fallback: GITHUB_PATH entries written later take precedence.
+        if [ -d "$HOME/.cargo/bin" ]; then
+          echo "$HOME/.cargo/bin" >> "$GITHUB_PATH"
+        fi
+        echo "$CARGO_HOME/bin" >> "$GITHUB_PATH"

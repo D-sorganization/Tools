@@ -53,9 +53,13 @@ def test_tauri_rust_jobs_use_isolated_toolchain_homes() -> None:
 
     assert len(check_isolate_steps) == 1
     check_script = check_isolate_steps[0]["run"]
-    assert "RUSTUP_HOME=$RUNNER_TEMP/rustup" in check_script
-    assert "CARGO_HOME=$RUNNER_TEMP/cargo" in check_script
-    assert "$RUNNER_TEMP/cargo/bin" in check_script
+    assert "RUNNER_TEMP" not in check_script
+    assert 'mkdir -p "$RUSTUP_HOME" "$CARGO_HOME/bin"' in check_script
+    assert '"$CARGO_HOME/bin" >> "$GITHUB_PATH"' in check_script
+    for job_name in ("check", "build"):
+        env = jobs[job_name]["env"]
+        assert env["RUSTUP_HOME"] == "${{ github.workspace }}/.rustup-home"
+        assert env["CARGO_HOME"] == "${{ github.workspace }}/.cargo-home"
 
     build_steps = jobs["build"]["steps"]
     build_setup_index = next(
@@ -83,11 +87,11 @@ def test_tauri_rust_jobs_use_isolated_toolchain_homes() -> None:
         for step in build_isolate_steps
         if step["name"] == "Use isolated Rust homes (Windows)"
     )
-    assert "RUSTUP_HOME=$RUNNER_TEMP/rustup" in linux_script
-    assert "CARGO_HOME=$RUNNER_TEMP/cargo" in linux_script
-    assert "$RUNNER_TEMP/cargo/bin" in linux_script
-    assert 'Join-Path $env:RUNNER_TEMP "rustup"' in windows_script
-    assert 'Join-Path $env:RUNNER_TEMP "cargo"' in windows_script
+    assert "RUNNER_TEMP" not in linux_script
+    assert 'mkdir -p "$RUSTUP_HOME" "$CARGO_HOME/bin"' in linux_script
+    assert "RUNNER_TEMP" not in windows_script
+    assert 'Join-Path $env:CARGO_HOME "bin"' in windows_script
+    assert "$env:RUSTUP_HOME" in windows_script
 
 
 def test_tauri_build_matrix_uses_stable_labels_for_display_and_artifacts() -> None:
