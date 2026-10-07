@@ -714,6 +714,8 @@ jobs:
       - name: Install Rust toolchain for tools_core wheel
         if: ${{ matrix.python-version == '3.11' }}
         uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
+        with:
+          components: rustfmt, clippy
         env:
           CARGO_NET_RETRY: "10"
           CARGO_NET_TIMEOUT: "120"

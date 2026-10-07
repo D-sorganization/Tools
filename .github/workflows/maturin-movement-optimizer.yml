@@ -66,6 +66,8 @@ jobs:
         uses: ./.github/actions/isolate-rust-homes
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
+        with:
+          components: rustfmt, clippy
 
       - name: Create isolated Python environment
         shell: bash

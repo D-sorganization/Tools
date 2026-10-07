@@ -93,3 +93,20 @@ def test_isolated_homes_are_gitignored() -> None:
     ignored = (REPO_ROOT / ".gitignore").read_text(encoding="utf-8").splitlines()
     assert ".rustup-home/" in ignored
     assert ".cargo-home/" in ignored
+
+
+@pytest.mark.parametrize(("name", "job_id", "job"), FLEET_RUST_JOBS, ids=JOB_IDS)
+def test_toolchain_installs_the_components_rust_toolchain_toml_requires(
+    name: str, job_id: str, job: dict[str, Any]
+) -> None:
+    """A fresh RUSTUP_HOME must get rustfmt/clippy up front.
+
+    ``rust-toolchain.toml`` lists them; with an empty home rustup would otherwise
+    auto-install them mid-``cargo metadata`` and fail on a ``bin/cargo-fmt``
+    conflict.
+    """
+    for step in job["steps"]:
+        if str(step.get("uses", "")).startswith("dtolnay/rust-toolchain"):
+            components = str((step.get("with") or {}).get("components", ""))
+            assert "rustfmt" in components, f"{name}::{job_id}"
+            assert "clippy" in components, f"{name}::{job_id}"
