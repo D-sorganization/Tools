@@ -141,8 +141,8 @@ jobs:
         uses: actions/cache@v6
         with:
           path: |
-            ~/.cargo/registry
-            ~/.cargo/git
+            .cargo-home/registry
+            .cargo-home/git
             _downstream/target
           key: cross-repo-${{ matrix.downstream.crate }}-${{ hashFiles('**/Cargo.toml') }}
           restore-keys: cross-repo-${{ matrix.downstream.crate }}-

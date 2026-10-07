@@ -110,3 +110,19 @@ def test_toolchain_installs_the_components_rust_toolchain_toml_requires(
             components = str((step.get("with") or {}).get("components", ""))
             assert "rustfmt" in components, f"{name}::{job_id}"
             assert "clippy" in components, f"{name}::{job_id}"
+
+
+def test_fleet_rust_jobs_do_not_cache_or_install_into_the_shared_cargo_home() -> None:
+    """Cargo no longer uses ~/.cargo once CARGO_HOME is isolated.
+
+    Putting ``$HOME/.cargo/bin`` on PATH as a rustup bootstrap fallback is fine;
+    caching it or writing binaries into it is not.
+    """
+    shared_install = re.compile(r"\$HOME/\.cargo/bin/\S")
+    for name, job_id, job in FLEET_RUST_JOBS:
+        for step in job["steps"]:
+            cached = str((step.get("with") or {}).get("path", ""))
+            assert "~/.cargo" not in cached, f"{name}::{job_id}"
+            assert not shared_install.search(str(step.get("run", ""))), (
+                f"{name}::{job_id}"
+            )

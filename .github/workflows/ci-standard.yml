@@ -705,14 +705,13 @@ jobs:
             echo "No cached wheel present; building from source."
           fi
 
-      # Installed on every 3.11 run, wheel-cache hit or not: the data-engine tests
-      # shell out to `cargo`, and with a per-workspace RUSTUP_HOME the shared
-      # rustup proxy has no toolchain until one is installed into it (RM#2021).
+      # Installed on every lane, wheel-cache hit or not: the data-engine tests
+      # (src-rest shard, 3.11 and 3.12) shell out to `cargo`, and with a
+      # per-workspace RUSTUP_HOME the shared rustup proxy has no toolchain until
+      # one is installed into it (RM#2021).
       - name: Isolate Rust homes
-        if: ${{ matrix.python-version == '3.11' }}
         uses: ./.github/actions/isolate-rust-homes
       - name: Install Rust toolchain for tools_core wheel
-        if: ${{ matrix.python-version == '3.11' }}
         uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
         with:
           components: rustfmt, clippy
@@ -1172,10 +1171,10 @@ jobs:
             -o "${archive}"
           echo "${WASM_PACK_SHA256}  ${archive}" | sha256sum --check -
           tar -xzf "${archive}"
-          mkdir -p "$HOME/.cargo/bin"
+          mkdir -p "$CARGO_HOME/bin"
           cp "wasm-pack-v${WASM_PACK_VERSION}-x86_64-unknown-linux-musl/wasm-pack" \
-            "$HOME/.cargo/bin/wasm-pack"
-          chmod +x "$HOME/.cargo/bin/wasm-pack"
+            "$CARGO_HOME/bin/wasm-pack"
+          chmod +x "$CARGO_HOME/bin/wasm-pack"
           cd rust_core/tools-core
           wasm-pack build --target web --features wasm --no-default-features
           echo "wasm-pack build completed"
