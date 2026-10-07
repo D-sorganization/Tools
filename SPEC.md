@@ -5946,6 +5946,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-07 | #5457 | CI: isolate RUSTUP_HOME/CARGO_HOME per workspace for every fleet Rust job (RM#2021) |
 | 2026-10-06 | #5447 | Launch Monitor Analytics no longer scrolls sideways at 390x844 once results render: the analysis grid uses minmax(0,1fr) tracks with min-w-0 children so result tables scroll inside their own overflow-x-auto cards; the every-state Playwright pass now asserts zero document overflow. |
 | 2026-10-06 | #5453 | Re-sync vendored automerge_guard and requeue_stalled_merges (and tests) to Repository_Management canonical (Refs Repository_Management#2018) |
 | 2026-10-05 | #5442 | test_solver_gui waits on panel state instead of a signal that may already have fired, caps Qt waits below the pytest timeout, and dumps stacks on a hang (faulthandler_timeout=50) |

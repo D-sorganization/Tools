@@ -1889,6 +1889,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5456 · CI: Isolate RUSTUP_HOME/CARGO_HOME per Workspace for Every Fleet Rust Job (RM#2021)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5456
+- **Branch:** merged via #5457
+- **PR:** #5457
+- **Paths:** .github/workflows,.github/actions/isolate-rust-homes,tests/ops
+- **Started:** 2026-10-07
+- **Last verified:** 2026-10-07 (`6e824112`; collated from changes/5456-ci-isolate-rustup-home-cargo-home-per-wo.md)
+- **Summary:** CI: isolate RUSTUP_HOME/CARGO_HOME per workspace for every fleet Rust job (RM#2021)
+- **Next step:** Shipped in PR #5457.
+
 ### DL-#2018 · Vendor Automerge_Guard and Requeue_Stalled_Merges (Stalled Merge-Queue Requeue) From Repository_Management
 
 - **State:** shipped
