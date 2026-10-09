@@ -24,7 +24,8 @@ Usage::
     python scripts/ci_test_shards.py --list
     python scripts/ci_test_shards.py --check
     python scripts/ci_test_shards.py --run tests-shared --fanout 0 --coverage-data .coverage.py311.tests-shared
-    python scripts/ci_test_shards.py --verify-status shard-status/ --python-version 3.11
+    python scripts/ci_test_shards.py --verify-status shard-status/ \
+        --run-id 12345 --run-attempt 2 --python-version 3.11
 """
 
 from __future__ import annotations
@@ -36,6 +37,8 @@ import subprocess
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
+
+from ci_shard_artifacts import add_artifact_arguments, handle_artifact_command
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 QUARANTINE_FILE = REPO_ROOT / "config" / "test_quarantine.json"
@@ -307,20 +310,6 @@ def run_shard(
     return rc
 
 
-def verify_status(status_dir: Path, python_version: str) -> list[str]:
-    """Every shard must have recorded ``success`` for this Python lane."""
-    problems: list[str] = []
-    for name in SHARD_NAMES:
-        status_file = status_dir / f"{python_version}-{name}"
-        if not status_file.is_file():
-            problems.append(f"{name}: no status recorded (shard did not run?)")
-            continue
-        outcome = status_file.read_text(encoding="utf-8").strip()
-        if outcome != "success":
-            problems.append(f"{name}: {outcome}")
-    return problems
-
-
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n\n", 1)[0])
     group = parser.add_mutually_exclusive_group(required=True)
@@ -338,19 +327,12 @@ def main(argv: list[str] | None = None) -> int:
     group.add_argument(
         "--run", metavar="SHARD", help="run one shard's pytest invocations"
     )
-    group.add_argument(
-        "--verify-status",
-        metavar="DIR",
-        help="fail unless every shard recorded success in DIR",
-    )
+    add_artifact_arguments(parser, group)
     parser.add_argument(
         "--fanout", default="0", help="pytest-xdist -n value (default 0)"
     )
     parser.add_argument(
         "--coverage-data", default=None, help="COVERAGE_FILE base name for the run"
-    )
-    parser.add_argument(
-        "--python-version", default="", help="lane label used by --verify-status"
     )
     parser.add_argument(
         "--dry-run", action="store_true", help="print the commands without running them"
@@ -373,6 +355,11 @@ def main(argv: list[str] | None = None) -> int:
         total = len(iter_test_files())
         print(f"Partition OK: {total} test files across {len(SHARDS)} shards.")
         return 0
+    artifact_result: int | None = handle_artifact_command(
+        args, parser, tuple(SHARD_NAMES)
+    )
+    if artifact_result is not None:
+        return artifact_result
     if args.run:
         return run_shard(
             args.run,
@@ -380,17 +367,6 @@ def main(argv: list[str] | None = None) -> int:
             coverage_data=args.coverage_data,
             dry_run=args.dry_run,
         )
-    if args.verify_status:
-        if not args.python_version:
-            parser.error("--verify-status requires --python-version")
-        problems = verify_status(Path(args.verify_status), args.python_version)
-        if problems:
-            print(f"Shards failed for Python {args.python_version}:", file=sys.stderr)
-            for problem in problems:
-                print(f"  - {problem}", file=sys.stderr)
-            return 1
-        print(f"All {len(SHARD_NAMES)} shards passed for Python {args.python_version}.")
-        return 0
     return 2
 
 

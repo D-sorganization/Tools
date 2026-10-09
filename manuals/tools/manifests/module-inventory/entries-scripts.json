@@ -4422,10 +4422,109 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13950,
+      "bytes_lf": 12402,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0cb612f3feed94afbf2be9addf73b0edab268f2cc157b9ed52dd53f7ec44520e",
+      "content_sha256_lf": "f34d5ddd982f680a45c6c4f9cabf23e623627686d991017e2d61c98eb28d6754",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CI-SHARD-ARTIFACTS-PY-A6BAD8D6BEED",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/ci_shard_artifacts.py",
+      "purpose": "Attempt-bound status and coverage artifact selection for CI shard gates.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ShardRun",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ShardStatus",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "STATUS_SCHEMA",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "add_artifact_arguments",
+            "signature": "parser: argparse.ArgumentParser, action_group: argparse._MutuallyExclusiveGroup"
+          },
+          {
+            "kind": "function",
+            "name": "coverage_artifact_name",
+            "signature": "run: ShardRun, attempt: int, shard: str"
+          },
+          {
+            "kind": "function",
+            "name": "handle_artifact_command",
+            "signature": "args: argparse.Namespace, parser: argparse.ArgumentParser, required_shards: tuple[str, ...]"
+          },
+          {
+            "kind": "function",
+            "name": "select_coverage_artifacts",
+            "signature": "status_dir: Path, coverage_dir: Path, output_dir: Path, run: ShardRun, required_shards: tuple[str, ...]"
+          },
+          {
+            "kind": "function",
+            "name": "status_artifact_name",
+            "signature": "run: ShardRun, attempt: int, shard: str"
+          },
+          {
+            "kind": "function",
+            "name": "verify_status_artifacts",
+            "signature": "status_dir: Path, run: ShardRun, required_shards: tuple[str, ...]"
+          },
+          {
+            "kind": "function",
+            "name": "write_status_manifest",
+            "signature": "output_dir: Path, run: ShardRun, shard: str, outcome: str"
+          }
+        ],
+        "test_paths": [
+          "tests/ops/test_ci_shard_artifacts.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 12911,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8d8402d285f7e827c015d7faeaa0ad0842b7177384e2285f144c81937a52fbf7",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CI-TEST-SHARDS-PY-F0C2918F82E4",
       "language": "python",
@@ -4558,11 +4657,6 @@
             "kind": "function",
             "name": "shard_by_name",
             "signature": "name: str"
-          },
-          {
-            "kind": "function",
-            "name": "verify_status",
-            "signature": "status_dir: Path, python_version: str"
           }
         ],
         "test_paths": [

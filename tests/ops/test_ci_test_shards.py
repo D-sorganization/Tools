@@ -8,6 +8,7 @@ Every test file is claimed by exactly one shard of
 
 from __future__ import annotations
 
+import hashlib
 import importlib.util
 import json
 import sys
@@ -26,22 +27,266 @@ pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
 
 
 def _load_shards_module() -> Any:
+    scripts_dir = str(SHARDS_SCRIPT.parent)
+    inserted = scripts_dir not in sys.path
+    if inserted:
+        sys.path.insert(0, scripts_dir)
     spec = importlib.util.spec_from_file_location("ci_test_shards", SHARDS_SCRIPT)
     assert spec is not None and spec.loader is not None
     module = importlib.util.module_from_spec(spec)
     # dataclasses resolve postponed annotations through sys.modules[__module__]
     sys.modules[spec.name] = module
     spec.loader.exec_module(module)
+    if inserted:
+        sys.path.remove(scripts_dir)
     return module
+
+
+def _load_artifacts_module() -> Any:
+    _load_shards_module()
+    return sys.modules["ci_shard_artifacts"]
 
 
 def _workflow() -> dict[str, Any]:
     return cast(dict[str, Any], yaml.safe_load(CI_STANDARD.read_text(encoding="utf-8")))
 
 
+def _write_status_artifact(
+    root: Path,
+    run_id: str,
+    attempt: int,
+    python_version: str,
+    shard: str,
+    outcome: str,
+) -> Path:
+    artifact_name = f"shard-status-{run_id}-attempt-{attempt}-{python_version}-{shard}"
+    record = {
+        "schema_version": "tools-ci-shard-status/1",
+        "run_id": run_id,
+        "run_attempt": attempt,
+        "python_version": python_version,
+        "shard": shard,
+        "outcome": outcome,
+        "artifact_name": artifact_name,
+    }
+    canonical = json.dumps(record, sort_keys=True, separators=(",", ":"))
+    record["payload_sha256"] = hashlib.sha256(canonical.encode()).hexdigest()
+    artifact_dir = root / artifact_name
+    artifact_dir.mkdir(parents=True, exist_ok=True)
+    status_path = artifact_dir / f"{python_version}-{shard}.json"
+    status_path.write_text(json.dumps(record), encoding="utf-8")
+    return status_path
+
+
+def _write_status_lane(
+    root: Path,
+    run_id: str,
+    attempt: int,
+    python_version: str,
+    outcomes: dict[str, str] | None = None,
+) -> None:
+    shards = _load_shards_module()
+    outcomes = outcomes or {}
+    for shard in shards.SHARD_NAMES:
+        _write_status_artifact(
+            root, run_id, attempt, python_version, shard, outcomes.get(shard, "success")
+        )
+
+
 def test_partition_claims_every_test_file_exactly_once() -> None:
     shards = _load_shards_module()
     assert shards.check_partition(REPO_ROOT) == []
+
+
+def test_status_verifier_selects_latest_attempt_independent_of_artifact_order(
+    tmp_path: Path,
+) -> None:
+    shards = _load_shards_module()
+    artifacts = _load_artifacts_module()
+    run_id = "37956815685"
+    _write_status_lane(tmp_path, run_id, 2, "3.12", {"src-shared": "failure"})
+    _write_status_artifact(tmp_path, run_id, 10, "3.12", "src-shared", "success")
+
+    problems = artifacts.verify_status_artifacts(
+        tmp_path, artifacts.ShardRun(run_id, 10, "3.12"), tuple(shards.SHARD_NAMES)
+    )
+
+    assert problems == []
+
+
+def test_status_verifier_uses_latest_failure_not_an_older_pass(tmp_path: Path) -> None:
+    shards = _load_shards_module()
+    artifacts = _load_artifacts_module()
+    run_id = "37956815685"
+    _write_status_lane(tmp_path, run_id, 2, "3.12")
+    _write_status_artifact(tmp_path, run_id, 10, "3.12", "src-shared", "failure")
+
+    problems = artifacts.verify_status_artifacts(
+        tmp_path, artifacts.ShardRun(run_id, 10, "3.12"), tuple(shards.SHARD_NAMES)
+    )
+
+    assert "src-shared: failure (latest run attempt 10)" in problems
+
+
+def test_status_verifier_rejects_missing_shards_and_wrong_run_identity(
+    tmp_path: Path,
+) -> None:
+    shards = _load_shards_module()
+    artifacts = _load_artifacts_module()
+    _write_status_artifact(tmp_path, "99999", 1, "3.12", "src-shared", "success")
+
+    problems = artifacts.verify_status_artifacts(
+        tmp_path,
+        artifacts.ShardRun("37956815685", 1, "3.12"),
+        tuple(shards.SHARD_NAMES),
+    )
+
+    assert any("run_id" in problem for problem in problems)
+    assert any("no status recorded" in problem for problem in problems)
+
+
+def test_status_verifier_rejects_duplicate_records_for_one_attempt(
+    tmp_path: Path,
+) -> None:
+    shards = _load_shards_module()
+    artifacts = _load_artifacts_module()
+    run_id = "37956815685"
+    _write_status_lane(tmp_path, run_id, 1, "3.12")
+    original = tmp_path / f"shard-status-{run_id}-attempt-1-3.12-src-shared"
+    duplicate = original / "duplicate.json"
+    duplicate.write_bytes((original / "3.12-src-shared.json").read_bytes())
+
+    problems = artifacts.verify_status_artifacts(
+        tmp_path, artifacts.ShardRun(run_id, 1, "3.12"), tuple(shards.SHARD_NAMES)
+    )
+
+    assert any("ambiguous duplicate" in problem for problem in problems)
+
+
+def test_status_verifier_rejects_payload_tampering(tmp_path: Path) -> None:
+    shards = _load_shards_module()
+    artifacts = _load_artifacts_module()
+    _write_status_lane(tmp_path, "37956815685", 1, "3.12")
+    status_path = (
+        tmp_path
+        / ("shard-status-37956815685-attempt-1-3.12-src-shared")
+        / "3.12-src-shared.json"
+    )
+    payload = json.loads(status_path.read_text(encoding="utf-8"))
+    payload["outcome"] = "failure"
+    status_path.write_text(json.dumps(payload), encoding="utf-8")
+
+    problems = artifacts.verify_status_artifacts(
+        tmp_path,
+        artifacts.ShardRun("37956815685", 1, "3.12"),
+        tuple(shards.SHARD_NAMES),
+    )
+
+    assert any("payload digest mismatch" in problem for problem in problems)
+
+
+def test_status_verifier_rejects_artifact_name_identity_mismatch(
+    tmp_path: Path,
+) -> None:
+    shards = _load_shards_module()
+    artifacts = _load_artifacts_module()
+    artifact = tmp_path / "shard-status-37956815685-attempt-1-3.12-src-shared"
+    _write_status_artifact(tmp_path, "37956815685", 1, "3.12", "src-shared", "success")
+    artifact.rename(tmp_path / "shard-status-37956815685-attempt-9-3.12-src-shared")
+
+    problems = artifacts.verify_status_artifacts(
+        tmp_path,
+        artifacts.ShardRun("37956815685", 9, "3.12"),
+        tuple(shards.SHARD_NAMES),
+    )
+
+    assert any("artifact directory does not match" in problem for problem in problems)
+
+
+def test_verifier_fails_if_current_matrix_result_failed_even_with_old_passes(
+    tmp_path: Path,
+) -> None:
+    shards = _load_shards_module()
+    _write_status_lane(tmp_path, "37956815685", 1, "3.12")
+
+    result = shards.main(
+        [
+            "--verify-status",
+            str(tmp_path),
+            "--run-id",
+            "37956815685",
+            "--run-attempt",
+            "2",
+            "--python-version",
+            "3.12",
+            "--matrix-result",
+            "failure",
+        ]
+    )
+
+    assert result == 1
+
+
+def test_coverage_selection_uses_same_latest_attempt_as_status(
+    tmp_path: Path,
+) -> None:
+    shards = _load_shards_module()
+    artifacts = _load_artifacts_module()
+    run_id = "37956815685"
+    status_root = tmp_path / "status"
+    coverage_root = tmp_path / "coverage"
+    selected_root = tmp_path / "selected"
+    shards_list = shards.SHARD_NAMES
+    _write_status_lane(status_root, run_id, 2, "3.12", {"src-shared": "failure"})
+    _write_status_artifact(status_root, run_id, 10, "3.12", "src-shared", "success")
+    for shard in shards_list:
+        attempt = 10 if shard == "src-shared" else 2
+        artifact = (
+            coverage_root / f"coverage-data-{run_id}-attempt-{attempt}-3.12-{shard}"
+        )
+        artifact.mkdir(parents=True)
+        value = b"latest" if attempt == 10 else b"current"
+        if shard == "src-shared":
+            value = b"latest"
+        (artifact / f".coverage.py3.12.{shard}").write_bytes(value)
+    stale_artifact = coverage_root / f"coverage-data-{run_id}-attempt-2-3.12-src-shared"
+    stale_artifact.mkdir()
+    (stale_artifact / ".coverage.py3.12.src-shared").write_bytes(b"stale")
+
+    problems = artifacts.select_coverage_artifacts(
+        status_root,
+        coverage_root,
+        selected_root,
+        artifacts.ShardRun(run_id, 10, "3.12"),
+        tuple(shards.SHARD_NAMES),
+    )
+
+    assert problems == []
+    assert (selected_root / ".coverage.py3.12.src-shared").read_bytes() == b"latest"
+
+
+def test_coverage_selection_fails_when_latest_success_has_no_coverage(
+    tmp_path: Path,
+) -> None:
+    shards = _load_shards_module()
+    artifacts = _load_artifacts_module()
+    run_id = "37956815685"
+    status_root = tmp_path / "status"
+    coverage_root = tmp_path / "coverage"
+    selected_root = tmp_path / "selected"
+    _write_status_lane(status_root, run_id, 1, "3.12")
+    coverage_root.mkdir()
+
+    problems = artifacts.select_coverage_artifacts(
+        status_root,
+        coverage_root,
+        selected_root,
+        artifacts.ShardRun(run_id, 1, "3.12"),
+        tuple(shards.SHARD_NAMES),
+    )
+
+    assert len(problems) == len(shards.SHARD_NAMES)
+    assert all("selected-attempt coverage artifact is missing" in p for p in problems)
 
 
 def test_previously_excluded_embedded_suites_are_claimed() -> None:
@@ -177,7 +422,16 @@ def test_shard_job_runs_the_partition_and_records_status() -> None:
     assert 'scripts/ci_test_shards.py --run "${{ matrix.shard }}"' in run["run"]
     status = next(step for step in steps if step.get("name") == "Record shard status")
     assert status["if"] == "always()"
-    assert "steps.run_tests.outcome" in status["run"]
+    assert "--record-status shard-status" in status["run"]
+    assert "github.run_id" in status["run"]
+    assert "github.run_attempt" in status["run"]
+    status_upload = next(
+        step for step in steps if step.get("name") == "Upload shard status"
+    )
+    assert (
+        "${{ github.run_id }}-attempt-${{ github.run_attempt }}"
+        in status_upload["with"]["name"]
+    )
 
 
 def test_src_rest_provisions_job_local_bundled_chromium_after_dependencies() -> None:
@@ -246,12 +500,31 @@ def test_gate_job_keeps_the_required_tests_context() -> None:
         if step.get("name") == "Require every shard to pass"
     )
     assert "--verify-status" in verify["run"]
+    assert "--run-id" in verify["run"]
+    assert "--run-attempt" in verify["run"]
+    assert "--matrix-result" in verify["run"]
+    status_download = next(
+        step for step in gate["steps"] if step.get("name") == "Download shard status"
+    )
+    assert "${{ github.run_id }}-attempt-*" in status_download["with"]["pattern"]
+    assert status_download["with"]["merge-multiple"] is False
+    coverage_download = next(
+        step for step in gate["steps"] if step.get("name") == "Download coverage data"
+    )
+    assert "${{ github.run_id }}-attempt-*" in coverage_download["with"]["pattern"]
+    assert coverage_download["with"]["merge-multiple"] is False
+    coverage_selection = next(
+        step
+        for step in gate["steps"]
+        if step.get("name") == "Select coverage from authoritative shard attempts"
+    )
+    assert "--select-coverage coverage-data" in coverage_selection["run"]
     combine = next(
         step
         for step in gate["steps"]
         if step.get("name") == "Combine coverage and apply the floor"
     )
-    assert "coverage combine" in combine["run"]
+    assert "coverage combine --keep selected-coverage-data/" in combine["run"]
     assert "coverage report" in combine["run"]
     assert "--fail-under" not in combine["run"], "the floor lives in pyproject only"
 
