@@ -92,8 +92,7 @@ jobs:
   # output repeats the fork route as the first `runs-on` alternative, which is
   # what scripts/fork_pr_runner_guard.py verifies statically.
   pick-runner:
-    runs-on:
-      ${{ github.event.pull_request &&
+    runs-on: ${{ github.event.pull_request &&
       github.event.pull_request.head.repo.full_name != github.repository &&
       'ubuntu-latest' ||
       !github.event.repository.private && vars.CI_RUNNER_MODE != 'local' && 'ubuntu-latest' ||
@@ -893,13 +892,18 @@ jobs:
         if: always()
         run: |
           mkdir -p shard-status
-          echo "${{ steps.run_tests.outcome }}" > "shard-status/${{ matrix.python-version }}-${{ matrix.shard }}"
+          python scripts/ci_test_shards.py --record-status shard-status \
+            --run-id "${{ github.run_id }}" \
+            --run-attempt "${{ github.run_attempt }}" \
+            --python-version "${{ matrix.python-version }}" \
+            --shard "${{ matrix.shard }}" \
+            --outcome "${{ steps.run_tests.outcome || 'not_run' }}"
 
       - name: Upload shard status
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: shard-status-${{ matrix.python-version }}-${{ matrix.shard }}
+          name: shard-status-${{ github.run_id }}-attempt-${{ github.run_attempt }}-${{ matrix.python-version }}-${{ matrix.shard }}
           path: shard-status/
           retention-days: 3
 
@@ -907,7 +911,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v7
         with:
-          name: coverage-data-${{ matrix.python-version }}-${{ matrix.shard }}
+          name: coverage-data-${{ github.run_id }}-attempt-${{ github.run_attempt }}-${{ matrix.python-version }}-${{ matrix.shard }}
           path: .coverage.py*
           include-hidden-files: true
           if-no-files-found: warn
@@ -950,26 +954,39 @@ jobs:
       - name: Download shard status
         uses: actions/download-artifact@v8
         with:
-          pattern: shard-status-${{ matrix.python-version }}-*
+          pattern: shard-status-${{ github.run_id }}-attempt-*-${{ matrix.python-version }}-*
           path: shard-status
-          merge-multiple: true
+          merge-multiple: false
 
       - name: Require every shard to pass
         run: |
-          python scripts/ci_test_shards.py --verify-status shard-status --python-version "${{ matrix.python-version }}"
+          python scripts/ci_test_shards.py --verify-status shard-status \
+            --run-id "${{ github.run_id }}" \
+            --run-attempt "${{ github.run_attempt }}" \
+            --python-version "${{ matrix.python-version }}" \
+            --matrix-result "${{ needs.tests.result }}"
 
       - name: Download coverage data
         uses: actions/download-artifact@v8
         with:
-          pattern: coverage-data-${{ matrix.python-version }}-*
+          pattern: coverage-data-${{ github.run_id }}-attempt-*-${{ matrix.python-version }}-*
           path: coverage-data
-          merge-multiple: true
+          merge-multiple: false
+
+      - name: Select coverage from authoritative shard attempts
+        run: |
+          python scripts/ci_test_shards.py --select-coverage coverage-data \
+            --status-dir shard-status \
+            --output-dir selected-coverage-data \
+            --run-id "${{ github.run_id }}" \
+            --run-attempt "${{ github.run_attempt }}" \
+            --python-version "${{ matrix.python-version }}"
 
       - name: Combine coverage and apply the floor
         run: |
           set -o pipefail
-          ls -la coverage-data
-          python -m coverage combine --keep coverage-data/.coverage.py*
+          ls -la selected-coverage-data
+          python -m coverage combine --keep selected-coverage-data/.coverage.py*
           python -m coverage xml -o coverage.xml
           # `coverage report` exits 2 when the total is below
           # [tool.coverage.report] fail_under -- the only floor in the repo.
