@@ -1,4 +1,70 @@
-# Current handoff — Re-vendor fork PR runner guard (RM#1996)
+# Current handoff — Pragmatic Programmer pass 2026-10-09
+
+- Repository: D-sorganization/Tools
+- Working directory: `/home/dieterolson/staff-worktrees/Tools-run-8147377fc62d`
+- Branch: `staff/pragmatic-programmer-task-fbc58b`; commit: SELF
+- Governing issue/epic: Pragmatic Programmer scheduled pass (no governing issue; advisory role, files no issues)
+
+## Objective and status
+
+Scheduled Pragmatic Programmer pass per `Repository_Management/docs/fleet-pragmatic-programmer.md`.
+Reviewed 44 commits merged 2026-10-02 through 2026-10-09 against the Pragmatic
+Programmer principles. Done: qualitative report written to
+`docs/assessments/pragmatic/2026-10-09-work.md` with a new `index.md` for this
+report series.
+
+Headline finding: fleet-ops tooling (fork-PR runner guard, stalled-merge
+requeue, change-fragment collation) is vendored byte-identical from
+Repository_Management into Tools; four separate commits this week existed
+only to re-sync those copies (`a4094e8ac`, `acb4fd4c5`, `ad5309384`,
+`863cb3fbc`). Commended: the merge-queue migration (orthogonality) and the
+#5440 same-day Qt-test-hang triad (broken windows, ending in a shared
+`_qt_waits.py` helper instead of a third pasted copy).
+
+## Files and decisions
+
+- `docs/assessments/pragmatic/2026-10-09-work.md`: full qualitative review (DRY,
+  orthogonality, broken windows, reversibility, good enough software),
+  patterns, improvement pathways for the Board, and commendations.
+- `docs/assessments/pragmatic/index.md`: new cumulative index for this report
+  series, distinct from the older tool-generated `pragmatic_programmer/`
+  duplicate-code dumps.
+- `docs/development/HANDOFF.md`: this entry.
+- No source code changed; docs-only PR. Per role charter, this advisory
+  pass does not file GitHub issues, take leases, or execute fixes.
+
+## Validation
+
+- `git diff --stat`: only `docs/` files changed.
+- No SPEC.md §12 entry required — `docs/assessments/**` is not in the
+  `spec-check.yml` trigger list (`src/**`, `tests/**`, `config/**`,
+  `pyproject.toml`, `Cargo.toml`, `package.json`, `requirements.txt`);
+  `SOURCE_CHANGED=false`.
+
+## Blockers and risks
+
+- None. The vendoring pathway finding is advisory input for the Board; no
+  action is taken directly by this role.
+
+## Next steps
+
+- Board to weigh centralizing the vendored fork-guard/requeue/change-fragment
+  tooling behind a published Repository_Management package instead of
+  per-repo byte-identical copies.
+- Next Pragmatic Programmer pass rotates to the `infra` portfolio
+  (Repository_Management, Runner_Dashboard, Maxwell_Daemon) per the charter's
+  4-week rotation.
+
+## Change log
+
+- `SELF` — Pragmatic Programmer 2026-10-09: qualitative review of the Tools
+  repository's past 7 days against Pragmatic Programmer principles; flags
+  vendored fleet-ops tooling as the week's DRY concern, commends the
+  merge-queue migration and the #5440 test-hang fix sequence.
+
+---
+
+# Past handoff — Re-vendor fork PR runner guard (RM#1996)
 
 - Repository: D-sorganization/Tools
 - Working directory: `/home/user/wt/tools-guard-sync`
