@@ -292,6 +292,16 @@ owner, explicit blockers, and a null immutable source commit while this
 local stack is not a merged authority. A consumer must reject unknown
 fields, versions, formats, paths, hashes, status promotion, or semantic
 divergence.</p>
+<h2 id="pdf-extractor-compatibility">PDF Extractor Compatibility</h2>
+<p>Live QA verifies the exact PDF byte digest and page count, ordered
+page identity, normalized non-whitespace character count, first-line
+prefix, fonts, bookmarks, images and annotations. Extracted line counts
+remain recorded diagnostics: an extractor version can change line
+wrapping while the PDF bytes and normalized text stay identical. Line
+counts do not participate in inventory equality. Empty-page and
+unresolved-reference checks still fail closed. Regression tests preserve
+equality under body rewrapping and verify the existing ledger with the
+CI extractor. No rendered artifact is edited by this policy.</p>
 <h1 id="references">References</h1>
 <p>The cited Pandoc and Quarto records are resolved from the governed
 bibliography declared by the pinned toolchain contract; an unresolved

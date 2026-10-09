@@ -9022,10 +9022,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 23930,
+      "bytes_lf": 24129,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "1816520103b0d66635957e0c6d08bfc8678fff73ed785333254a9d3266db669f",
+      "content_sha256_lf": "3a8ed1eee5556c8639b5b252494ed6baa36b8a74071602625f0104639bb22979",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-TOOLS-MANUAL-QA-CONTRACT-PY-100FD02D6EB5",
       "language": "python",
