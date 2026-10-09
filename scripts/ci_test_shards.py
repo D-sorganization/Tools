@@ -24,7 +24,8 @@ Usage::
     python scripts/ci_test_shards.py --list
     python scripts/ci_test_shards.py --check
     python scripts/ci_test_shards.py --run tests-shared --fanout 0 --coverage-data .coverage.py311.tests-shared
-    python scripts/ci_test_shards.py --verify-status shard-status/ --python-version 3.11
+    python scripts/ci_test_shards.py --verify-status shard-status/ \
+        --run-id 12345 --run-attempt 2 --python-version 3.11
 """
 
 from __future__ import annotations
@@ -36,6 +37,8 @@ import subprocess
 import sys
 from dataclasses import dataclass, field
 from pathlib import Path
+
+from ci_shard_artifacts import add_artifact_arguments, handle_artifact_command
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 QUARANTINE_FILE = REPO_ROOT / "config" / "test_quarantine.json"
@@ -182,6 +185,13 @@ def shard_by_name(name: str) -> Shard:
     raise SystemExit(f"unknown shard {name!r}; known: {', '.join(SHARD_NAMES)}")
 
 
+def coverage_data_filenames(shard_name: str, python_version: str) -> tuple[str, ...]:
+    """Return the exact coverage files emitted by every invocation in a shard."""
+    shard = shard_by_name(shard_name)
+    base = f".coverage.py{python_version}.{shard_name}"
+    return _coverage_files(base, len(shard.invocations))
+
+
 def _is_test_file(name: str) -> bool:
     return name.endswith(".py") and (
         name.startswith("test_") or name.endswith("_test.py")
@@ -280,6 +290,14 @@ def pytest_command(
     return cmd
 
 
+def _coverage_files(base: str, invocation_count: int) -> tuple[str, ...]:
+    if invocation_count < 1:
+        raise ValueError("a shard must contain at least one invocation")
+    if invocation_count == 1:
+        return (base,)
+    return tuple(f"{base}.{index}" for index in range(invocation_count))
+
+
 def run_shard(
     name: str,
     *,
@@ -293,8 +311,8 @@ def run_shard(
     for index, invocation in enumerate(shard.invocations):
         env = dict(os.environ)
         if coverage_data:
-            suffix = f".{index}" if len(shard.invocations) > 1 else ""
-            env["COVERAGE_FILE"] = f"{coverage_data}{suffix}"
+            filenames = _coverage_files(coverage_data, len(shard.invocations))
+            env["COVERAGE_FILE"] = filenames[index]
         cmd = pytest_command(invocation, fanout=fanout, quarantine=quarantine)
         print("+", " ".join(cmd), flush=True)
         if dry_run:
@@ -305,20 +323,6 @@ def run_shard(
         if result.returncode != 0:
             rc = result.returncode
     return rc
-
-
-def verify_status(status_dir: Path, python_version: str) -> list[str]:
-    """Every shard must have recorded ``success`` for this Python lane."""
-    problems: list[str] = []
-    for name in SHARD_NAMES:
-        status_file = status_dir / f"{python_version}-{name}"
-        if not status_file.is_file():
-            problems.append(f"{name}: no status recorded (shard did not run?)")
-            continue
-        outcome = status_file.read_text(encoding="utf-8").strip()
-        if outcome != "success":
-            problems.append(f"{name}: {outcome}")
-    return problems
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -338,19 +342,12 @@ def main(argv: list[str] | None = None) -> int:
     group.add_argument(
         "--run", metavar="SHARD", help="run one shard's pytest invocations"
     )
-    group.add_argument(
-        "--verify-status",
-        metavar="DIR",
-        help="fail unless every shard recorded success in DIR",
-    )
+    add_artifact_arguments(parser, group)
     parser.add_argument(
         "--fanout", default="0", help="pytest-xdist -n value (default 0)"
     )
     parser.add_argument(
         "--coverage-data", default=None, help="COVERAGE_FILE base name for the run"
-    )
-    parser.add_argument(
-        "--python-version", default="", help="lane label used by --verify-status"
     )
     parser.add_argument(
         "--dry-run", action="store_true", help="print the commands without running them"
@@ -373,6 +370,22 @@ def main(argv: list[str] | None = None) -> int:
         total = len(iter_test_files())
         print(f"Partition OK: {total} test files across {len(SHARDS)} shards.")
         return 0
+    expected_coverage_files = (
+        {
+            shard: coverage_data_filenames(shard, args.python_version)
+            for shard in SHARD_NAMES
+        }
+        if args.select_coverage
+        else {}
+    )
+    artifact_result: int | None = handle_artifact_command(
+        args,
+        parser,
+        tuple(SHARD_NAMES),
+        expected_coverage_files,
+    )
+    if artifact_result is not None:
+        return artifact_result
     if args.run:
         return run_shard(
             args.run,
@@ -380,17 +393,6 @@ def main(argv: list[str] | None = None) -> int:
             coverage_data=args.coverage_data,
             dry_run=args.dry_run,
         )
-    if args.verify_status:
-        if not args.python_version:
-            parser.error("--verify-status requires --python-version")
-        problems = verify_status(Path(args.verify_status), args.python_version)
-        if problems:
-            print(f"Shards failed for Python {args.python_version}:", file=sys.stderr)
-            for problem in problems:
-                print(f"  - {problem}", file=sys.stderr)
-            return 1
-        print(f"All {len(SHARD_NAMES)} shards passed for Python {args.python_version}.")
-        return 0
     return 2
 
 

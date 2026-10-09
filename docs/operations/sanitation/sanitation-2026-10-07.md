@@ -41,10 +41,10 @@ Two additional remote branches were found with no open PR and verified via
 `git merge-base --is-ancestor` to contain **zero unique commits** relative to
 `origin/main` (i.e. fully subsumed, deleting them loses no history):
 
-| Branch | Last commit | Associated PR | Verification |
-|--------|-------------|----------------|---------------|
-| `feat/4724-mocap-reconstruction` | 2026-09-09 | #5111 (closed, not merged) | ancestor-of-main: yes, 0 unique commits |
-| `fix/4458-morris-authority-fixture-parity` | 2026-09-03 | none found | ancestor-of-main: yes, 0 unique commits |
+| Branch                                     | Last commit | Associated PR              | Verification                            |
+| ------------------------------------------ | ----------- | -------------------------- | --------------------------------------- |
+| `feat/4724-mocap-reconstruction`           | 2026-09-09  | #5111 (closed, not merged) | ancestor-of-main: yes, 0 unique commits |
+| `fix/4458-morris-authority-fixture-parity` | 2026-09-03  | none found                 | ancestor-of-main: yes, 0 unique commits |
 
 Both deleted from `origin` this run (`git push origin --delete ...`).
 
