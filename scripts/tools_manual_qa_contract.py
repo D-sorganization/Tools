@@ -5,13 +5,13 @@ from __future__ import annotations
 import hashlib
 import json
 import re
-import xml.etree.ElementTree as ET
 import zipfile
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path, PurePosixPath
 from typing import Any
 
+import defusedxml.ElementTree as ET
 import pypdf
 from jsonschema import Draft202012Validator
 from pypdf.generic import IndirectObject
@@ -40,11 +40,15 @@ class ManualQAError(RuntimeError):
 
 @dataclass(frozen=True)
 class PDFPageRecord:
-    """Page observations; character_count excludes extractor-added whitespace."""
+    """Page observations with extractor-specific line counts kept as diagnostics.
+
+    Character counts exclude whitespace; inventory equality checks artifact and
+    content fields, while line wrapping may change between extractor versions.
+    """
 
     page_number: int
     character_count: int
-    line_count: int
+    line_count: int = field(compare=False)
     image_count: int
     annotation_count: int
     first_line_prefix: str

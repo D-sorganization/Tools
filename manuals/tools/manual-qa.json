@@ -5,12 +5,12 @@
   "owner_subepic": 4725,
   "inspection_mode": "complete-zero-sampling",
   "sampling_rate": 1.0,
-  "artifacts_manifest_sha256_lf": "4b8dfd92c851fbe18a5f527179a87a37dd22251b4cb24e69309ebfe7ea030a99",
+  "artifacts_manifest_sha256_lf": "ac8388a940259b27891461be71174a9437a3f472e435b4774d746361545963f8",
   "inspections": {
     "pdf": {
       "path": "manuals/tools/dist/tools-engineering-design-manual.pdf",
-      "sha256": "5ad05de7dd340873eb8f39c4ec3be22cee5ba1de7da13816fe55a8ad7b1e9779",
-      "bytes": 286808,
+      "sha256": "c179d6ace47ddeb923db14f3a0c12569a1825df480a1ca45ee347812944768ef",
+      "bytes": 288192,
       "page_count": 12,
       "uninspected_pages": 0,
       "fonts": [
@@ -27,7 +27,7 @@
         "/DSTOOL+NimbusSanL-Regu",
         "/DSTOOL+NimbusSanL-ReguItal"
       ],
-      "outline_item_count": 76,
+      "outline_item_count": 77,
       "total_images": 1,
       "total_annotations": 4,
       "pages": [
@@ -57,72 +57,72 @@
         },
         {
           "page_number": 4,
-          "character_count": 1738,
-          "line_count": 29,
+          "character_count": 1954,
+          "line_count": 30,
           "image_count": 1,
           "annotation_count": 0,
           "first_line_prefix": "Tools Engineering Design Manual Generated - Unapproved"
         },
         {
           "page_number": 5,
-          "character_count": 2917,
-          "line_count": 41,
-          "image_count": 0,
-          "annotation_count": 0,
-          "first_line_prefix": "Tools Engineering Design Manual Generated - Unapproved"
-        },
-        {
-          "page_number": 6,
-          "character_count": 2234,
-          "line_count": 40,
-          "image_count": 0,
-          "annotation_count": 0,
-          "first_line_prefix": "Tools Engineering Design Manual Generated - Unapproved"
-        },
-        {
-          "page_number": 7,
-          "character_count": 1803,
-          "line_count": 41,
-          "image_count": 0,
-          "annotation_count": 0,
-          "first_line_prefix": "Tools Engineering Design Manual Generated - Unapproved"
-        },
-        {
-          "page_number": 8,
-          "character_count": 2384,
-          "line_count": 41,
-          "image_count": 0,
-          "annotation_count": 0,
-          "first_line_prefix": "Tools Engineering Design Manual Generated - Unapproved"
-        },
-        {
-          "page_number": 9,
-          "character_count": 2666,
-          "line_count": 41,
-          "image_count": 0,
-          "annotation_count": 0,
-          "first_line_prefix": "Tools Engineering Design Manual Generated - Unapproved"
-        },
-        {
-          "page_number": 10,
-          "character_count": 2417,
-          "line_count": 39,
-          "image_count": 0,
-          "annotation_count": 0,
-          "first_line_prefix": "Tools Engineering Design Manual Generated - Unapproved"
-        },
-        {
-          "page_number": 11,
-          "character_count": 3355,
+          "character_count": 3011,
           "line_count": 42,
           "image_count": 0,
           "annotation_count": 0,
           "first_line_prefix": "Tools Engineering Design Manual Generated - Unapproved"
         },
         {
+          "page_number": 6,
+          "character_count": 2192,
+          "line_count": 41,
+          "image_count": 0,
+          "annotation_count": 0,
+          "first_line_prefix": "Tools Engineering Design Manual Generated - Unapproved"
+        },
+        {
+          "page_number": 7,
+          "character_count": 1843,
+          "line_count": 42,
+          "image_count": 0,
+          "annotation_count": 0,
+          "first_line_prefix": "Tools Engineering Design Manual Generated - Unapproved"
+        },
+        {
+          "page_number": 8,
+          "character_count": 2325,
+          "line_count": 40,
+          "image_count": 0,
+          "annotation_count": 0,
+          "first_line_prefix": "Tools Engineering Design Manual Generated - Unapproved"
+        },
+        {
+          "page_number": 9,
+          "character_count": 2487,
+          "line_count": 39,
+          "image_count": 0,
+          "annotation_count": 0,
+          "first_line_prefix": "Tools Engineering Design Manual Generated - Unapproved"
+        },
+        {
+          "page_number": 10,
+          "character_count": 2525,
+          "line_count": 40,
+          "image_count": 0,
+          "annotation_count": 0,
+          "first_line_prefix": "Tools Engineering Design Manual Generated - Unapproved"
+        },
+        {
+          "page_number": 11,
+          "character_count": 3497,
+          "line_count": 44,
+          "image_count": 0,
+          "annotation_count": 0,
+          "first_line_prefix": "Tools Engineering Design Manual Generated - Unapproved"
+        },
+        {
           "page_number": 12,
-          "character_count": 545,
-          "line_count": 9,
+          "character_count": 777,
+          "line_count": 12,
           "image_count": 0,
           "annotation_count": 4,
           "first_line_prefix": "Tools Engineering Design Manual Generated - Unapproved"
@@ -131,20 +131,20 @@
     },
     "docx": {
       "path": "manuals/tools/dist/tools-engineering-design-manual.docx",
-      "sha256": "4089d9766ee595ace553f01bb6644e81ee54130df27fab1994878c4193027464",
-      "bytes": 73789,
-      "paragraph_count": 205,
-      "heading_count": 77,
+      "sha256": "e8707b6756119ba80ec45dd332e4711058a375019dc7c938ff5922adf2923fcc",
+      "bytes": 74097,
+      "paragraph_count": 207,
+      "heading_count": 78,
       "math_element_count": 52,
       "table_count": 1,
       "drawing_count": 1,
-      "bookmark_count": 82,
+      "bookmark_count": 83,
       "unresolved_reference_count": 0
     },
     "html": {
       "path": "manuals/tools/dist/tools-engineering-design-manual.html",
-      "sha256": "5760e567ea28508f07cd025e95fb6d9e1f36b9f99b52daa3379b79b059152df4",
-      "bytes": 106378,
+      "sha256": "94a30c27d476494aaf8abe3f594a0b2745790687aa561cdeeb42db69fa8680e5",
+      "bytes": 107068,
       "has_lang": true,
       "has_viewport": true,
       "mathml_block_count": 52,
@@ -156,8 +156,8 @@
     },
     "tex": {
       "path": "manuals/tools/dist/tools-engineering-design-manual.tex",
-      "sha256": "36eac866e332adcd7692b772beb449badb55f55b3483d399fc3eef2547f4c264",
-      "bytes": 44879,
+      "sha256": "19ae022c7b2f5ae13fc5bc3a3616fa09aa10a6632a0db26cc4429147c4aebbe2",
+      "bytes": 45570,
       "has_geometry": true,
       "has_microtype": true,
       "figure_count": 2,

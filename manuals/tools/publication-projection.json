@@ -8,34 +8,34 @@
   "repository_license": "MIT",
   "private_content_allowed": false,
   "evidence": {
-    "immutable_source_commit": "b7a96fbf76513bd6e03772a2b93d1d398a93ae03",
-    "source_tree_sha256": "cd7cd79c8e097b4e83c15610af795bf9d4382d1e",
+    "immutable_source_commit": "ec77bd0f95fa4c4c1c89349f2ff0b53b936f957a",
+    "source_tree_sha256": "921665fcb49fd2ad94ba57c381c7013937685efd",
     "calculation_registry_sha256": "67fbf0697e4678afb88e146f39b6bb8e5bfe8b5e975afb039f1e616bc09017a6",
     "toolchain_lock_sha256": "62915da70f09da3fead98ae71ccb94c2afaec7db2de390faa97234e103426b9b",
     "artifact_sha256": {
       "docx": {
         "path": "manuals/tools/dist/tools-engineering-design-manual.docx",
         "media_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "bytes": 73789,
-        "sha256": "4089d9766ee595ace553f01bb6644e81ee54130df27fab1994878c4193027464"
+        "bytes": 74097,
+        "sha256": "e8707b6756119ba80ec45dd332e4711058a375019dc7c938ff5922adf2923fcc"
       },
       "html": {
         "path": "manuals/tools/dist/tools-engineering-design-manual.html",
         "media_type": "text/html",
-        "bytes": 106378,
-        "sha256": "5760e567ea28508f07cd025e95fb6d9e1f36b9f99b52daa3379b79b059152df4"
+        "bytes": 107068,
+        "sha256": "94a30c27d476494aaf8abe3f594a0b2745790687aa561cdeeb42db69fa8680e5"
       },
       "pdf": {
         "path": "manuals/tools/dist/tools-engineering-design-manual.pdf",
         "media_type": "application/pdf",
-        "bytes": 286808,
-        "sha256": "5ad05de7dd340873eb8f39c4ec3be22cee5ba1de7da13816fe55a8ad7b1e9779"
+        "bytes": 288192,
+        "sha256": "c179d6ace47ddeb923db14f3a0c12569a1825df480a1ca45ee347812944768ef"
       },
       "tex": {
         "path": "manuals/tools/dist/tools-engineering-design-manual.tex",
         "media_type": "application/x-tex",
-        "bytes": 44879,
-        "sha256": "36eac866e332adcd7692b772beb449badb55f55b3483d399fc3eef2547f4c264"
+        "bytes": 45570,
+        "sha256": "19ae022c7b2f5ae13fc5bc3a3616fa09aa10a6632a0db26cc4429147c4aebbe2"
       }
     },
     "semantic_parity": "verified-semantic-parity",
@@ -49,12 +49,12 @@
     },
     "docx_page_review": {
       "path": "manuals/tools/dist/tools-engineering-design-manual.docx",
-      "paragraph_count": 205,
-      "heading_count": 77,
+      "paragraph_count": 207,
+      "heading_count": 78,
       "math_element_count": 52,
       "table_count": 1,
       "drawing_count": 1,
-      "bookmark_count": 82,
+      "bookmark_count": 83,
       "unresolved_reference_count": 0,
       "status": "verified"
     },

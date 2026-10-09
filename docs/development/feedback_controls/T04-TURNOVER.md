@@ -60,3 +60,16 @@ canonical manual source is `manuals/tools/chapters/05-native-state-replay.qmd`;
 it records pending gates and the native provider responsibilities. Verify
 decoded class/time/model compatibility and actual R2025b independent replay
 in UpstreamDrift; these pure contracts cannot establish it.
+
+## PR5473 Extractor Regression
+
+CI on both Python3.11 and3.12 exposed pypdf6.20 body-line rewrapping on
+unchanged PDF pages2,6,7. Byte identity, normalized character counts and every
+other page inventory field matched the retained ledger. A body-rewrapping
+regression failed before marking line counts as diagnostic observations, then
+all29 QA tests passed with both local pypdf5.7 and isolated CI pypdf6.20.
+Canonical rendering chapter2 documents this boundary. The pinned toolchain
+verified before regenerating its four renderer-owned representations and QA
+ledger:12 PDF pages inspected,0 uninspected,12 fonts and77 outlines. Both
+release blockers remain. This is a qualified render and automated QA receipt,
+not human page/accessibility approval. Normal governance/handoff checks apply.
