@@ -5947,7 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
 | 2026-10-09 | #5478 | PR #5479: bind required test-shard status and coverage artifacts to run attempts and select the latest complete attempt fail-closed |
-| 2026-10-09 | #5473 | Repair canonical source-count and PDF extractor line-wrapping regressions while preserving artifact integrity and release blockers; governed follow-up for issue5472 |
+| 2026-10-09 | #5473 | Repair canonical source-count and PDF extractor line-wrapping regressions while preserving artifact integrity and release blockers; governed follow-up for issue5472; Repair canonical manual source-count regression while preserving release blockers |
 | 2026-10-09 | #5472 | Repair canonical manual source-count regression while preserving release blockers |
 | 2026-10-09 | #5471 | Add opaque native restart transport and strict replay envelope with native-clock integrity and dynamic complete manual page inspection; Add native restart transport, strict clock integrity, complete whitespace-stable manual QA and compatible public API exports |
 | 2026-10-09 | #5468 | Add bounded replay resources and privacy-aware preview manifest contracts |

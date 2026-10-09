@@ -147,6 +147,32 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5472 · Repair Canonical Manual Source-Count Regression While Preserving Release Blockers
+
+- **State:** in_review
+- **Owner:** unassigned
+- **Issue:** #5472
+- **Branch:** fix/canonical-manual-count-5472
+- **PR:** #5473
+- **Paths:** see #5473
+- **Started:** 2026-10-09
+- **Last verified:** 2026-10-09 (`25b7c1fb`; collated from changes/5472-repair-canonical-manual-source-count-reg.md)
+- **Summary:** Repair canonical manual source-count regression while preserving release blockers
+- **Next step:** Complete PR5473 CI; retain artifact integrity and native provider qualification gates
+
+### DL-#5470 · Add Opaque Native Restart Transport and Strict Replay Envelope With Native-Clock Integrity and Dynamic Complete Manual Page Inspection
+
+- **State:** in_review
+- **Owner:** unassigned
+- **Issue:** #5470
+- **Branch:** feat/native-state-artifact-5470
+- **PR:** #5471
+- **Paths:** see #5471
+- **Started:** 2026-10-09
+- **Last verified:** 2026-10-09 (`89415ee8`; collated from changes/5470-add-opaque-native-restart-transport-and.md)
+- **Summary:** Add opaque native restart transport and strict replay envelope with native-clock integrity and dynamic complete manual page inspection
+- **Next step:** Review Tools transport; integrate actual R2025b native restart provider in UpstreamDrift11921
+
 ### DL-#5463 · Bound Replay Experiment Resources and Privacy-Safe Preview Artifacts
 
 - **State:** in_review
