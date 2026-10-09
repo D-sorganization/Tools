@@ -147,6 +147,32 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5463 · Bound Replay Experiment Resources and Privacy-Safe Preview Artifacts
+
+- **State:** in_review
+- **Owner:** unassigned
+- **Issue:** #5463
+- **Branch:** feat/5463-bounded-preview-resources
+- **PR:** #5468
+- **Paths:** src/shared/python/sidekick/lab/mocap,schemas/mocap/preview-manifest-v1.schema.json,tests/shared/python/sidekick/lab/mocap,test_sidekick_public_api_stability.py,docs/development/feedback_controls
+- **Started:** 2026-10-09
+- **Last verified:** 2026-10-09 (`b1480ff6`; collated from changes/5463-add-bounded-replay-resources-and-privacy.md)
+- **Summary:** Add bounded replay resources and privacy-aware preview manifest contracts
+- **Next step:** Run targeted mocap, API, inventory and pre-PR validation; then publish T03 PR
+
+### DL-#5460 · Plan Shared Controlled-Matching and Muscle Replay Interchange With Private Evidence Boundaries
+
+- **State:** in_review
+- **Owner:** unassigned
+- **Issue:** #5460
+- **Branch:** docs/feedback-controls-5460
+- **PR:** #5465
+- **Paths:** docs/development/feedback_controls
+- **Started:** 2026-10-09
+- **Last verified:** 2026-10-09 (`789fd312`; collated from changes/5460-controlled-matching-contracts.md)
+- **Summary:** Plan shared controlled-matching and muscle replay interchange with private evidence boundaries
+- **Next step:** Start T01 contract schema and synthetic conformance fixture
+
 ### DL-#5440 · Drop Faulthandler Timeout That Crashed Tests-Shared
 
 - **State:** in_review
