@@ -3,7 +3,7 @@
 ## Development Checkpoint
 
 PR #5471 merged the implementation at `89415ee859d6fcfe3384b95e5a53691e68bf9c1b`.
-The retained T01 checkout is reused for follow-up #5472 on
+The retained T01 checkout is reused for issue #5472 in PR #5473 on
 `fix/canonical-manual-count-5472`. No new clone or native environment was created.
 UpstreamDrift #11921 consumes the seam through an exact merged dependency pin.
 The follow-up changes the governance test and handoff evidence only.

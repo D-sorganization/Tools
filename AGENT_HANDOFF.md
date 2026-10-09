@@ -142,4 +142,4 @@ python3 -m scripts.render_tools_design_manual --check
 
 ## Native State Replay Development (#5470)
 
-PR5471 merged the native artifact envelope at89415ee85; 77 contract/schema tests and231 mocap tests pass. Follow-up5472 repairs the stale fixed governance source count while preserving release blockers. See docs/development/feedback_controls/T04-TURNOVER.md and canonical manual chapter05. No native physics or release approval is implied.
+PR5471 merged the native artifact envelope at89415ee85; 77 contract/schema tests and231 mocap tests pass. PR5473 (issue5472) repairs the stale fixed governance source count while preserving release blockers. See docs/development/feedback_controls/T04-TURNOVER.md and canonical manual chapter05. No native physics or release approval is implied.

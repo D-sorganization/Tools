@@ -5946,6 +5946,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-09 | #5473 | Repair canonical manual source-count regression while preserving release blockers; publish governed follow-up for issue5472 |
 | 2026-10-09 | #5472 | Repair canonical manual source-count regression while preserving release blockers |
 | 2026-10-09 | #5471 | Add opaque native restart transport and strict replay envelope with native-clock integrity and dynamic complete manual page inspection; Add native restart transport, strict clock integrity, complete whitespace-stable manual QA and compatible public API exports |
 | 2026-10-09 | #5468 | Add bounded replay resources and privacy-aware preview manifest contracts |
