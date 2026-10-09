@@ -2,15 +2,11 @@
 
 ## Development Checkpoint
 
-Tools #5470 is leased by root/codex. The clean merged T01 checkout was reused
-initially on `feat/native-state-artifact-5470`, based on main `b1480ff6e`.
-The implementation is now merged into `feat/native-state-transport-5470`
-for draft PR5471, after main collation commit5dffcd1c4.
-No new full clone or native environment was created. Source and tests are
-committed locally; the draft initially published a documentation-only staging
-checkpoint. The complete implementation is published in ready PR5471, with
-protected automatic merge armed. UpstreamDrift #11921 consumes
-this seam after publication and exact dependency pinning.
+PR #5471 merged the implementation at `89415ee859d6fcfe3384b95e5a53691e68bf9c1b`.
+The retained T01 checkout is reused for follow-up #5472 on
+`fix/canonical-manual-count-5472`. No new clone or native environment was created.
+UpstreamDrift #11921 consumes the seam through an exact merged dependency pin.
+The follow-up changes the governance test and handoff evidence only.
 
 ## State and Validation
 
@@ -34,6 +30,14 @@ receipts are retained in fleet planning staging, not published as native
 physics evidence.
 
 ## Next Required Work
+
+Protected docs job 113769766442 passed governance commands but failed the fixed
+six-source test assertion; seven canonical QMD sources exist. The failure was
+reproduced locally. The repair enumerates canonical sources, requires the
+authority index and retains all release/publication assertions. Its first
+publication completed normal hooks after PR5471 had already merged, so #5472
+provides a focused main-based follow-up. Generated artifacts and transport code
+remain unchanged. The handoff manifest is regenerated through its existing tool.
 
 The first protected CI pass exposed three omissions: the unchanged type-check
 loop reused a type-class variable for the integrity result, the renderer test

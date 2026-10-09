@@ -37,7 +37,9 @@ def test_repository_adopts_one_qmd_authority_and_blocks_release() -> None:
     summary = verify_repository(REPO_ROOT)
 
     assert summary.manual_id == "tools"
-    assert summary.canonical_qmd_count == 6
+    canonical_sources = set((REPO_ROOT / "manuals" / "tools").rglob("*.qmd"))
+    assert REPO_ROOT / "manuals" / "tools" / "index.qmd" in canonical_sources
+    assert summary.canonical_qmd_count == len(canonical_sources)
     assert summary.calculation_count == 1
     assert summary.textbook_chapter_count == 1
     assert summary.release_status == "provisional"
