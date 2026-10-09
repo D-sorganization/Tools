@@ -3,6 +3,59 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 8522,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "46b148f467be3afd853d7b346cf24457c9efd4f10be9cf0b69f186f4c5ba46a1",
+      "family": "repository-governance-non-calculation",
+      "id": "TOOLS-MODULE-SCHEMAS-MOCAP-EXPERIMENT-REPLAY-V1-SCHEMA-JSON-0A2FCD8FE6FE",
+      "language": "json",
+      "maintainer": "Repository governance maintainers",
+      "path": "schemas/mocap/experiment-replay-v1.schema.json",
+      "purpose": "Experiment Replay Bundle v1",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://json-schema.org/draft/2020-12/schema",
+          "https://schemas.d-sorganization.org/mocap/experiment-replay-v1.schema.json"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "schema",
+            "name": "https://schemas.d-sorganization.org/mocap/experiment-replay-v1.schema.json",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 4704,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",

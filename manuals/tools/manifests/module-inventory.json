@@ -153,8 +153,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
     },
     {
-      "content_sha256_lf": "49d093810ec5362d3e641e17d4f63c5bc35cc920c28c7ee8bd54a17f44114157",
-      "entry_count": 1,
+      "content_sha256_lf": "9ea51e1d5b9f36ce17c04ba53cd3c595f544c067acf4ce0421ac72241dbcccd0",
+      "entry_count": 2,
       "package": "schemas",
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
@@ -753,10 +753,76 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-scripting.json"
     },
     {
-      "content_sha256_lf": "983436b7714f7768e0447b0e17cc7a18b578d1ae2dd3820acfff249070977be9",
-      "entry_count": 238,
+      "content_sha256_lf": "127c4d1f77c818c0cb0989a3730f668346f0ca66acd9826719cb092750c1eb84",
+      "entry_count": 13,
       "package": "src/shared/python/sidekick",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick.json"
+    },
+    {
+      "content_sha256_lf": "47c4681c7d33b1eee37ee3c2d3f426ed17c7278dceccdd8e359570eaec4392d8",
+      "entry_count": 14,
+      "package": "src/shared/python/sidekick/agent",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-agent.json"
+    },
+    {
+      "content_sha256_lf": "4c69196fdebf38d1e79029aada8a2e6652c12f18d635c495b256ee75b9cacedc",
+      "entry_count": 2,
+      "package": "src/shared/python/sidekick/api",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-api.json"
+    },
+    {
+      "content_sha256_lf": "9e3178d2541342412f7a6192178e5602d824fb1e3dd7fec34d15de04b5f9453a",
+      "entry_count": 20,
+      "package": "src/shared/python/sidekick/calculators",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-calculators.json"
+    },
+    {
+      "content_sha256_lf": "e6dd9ab1744d139f5ca1406e3886aa52fd2d3610b8fbf48296bca6f4d1a8a2d3",
+      "entry_count": 6,
+      "package": "src/shared/python/sidekick/data_processing",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-data-processing.json"
+    },
+    {
+      "content_sha256_lf": "c879ad638a1f12b916d6d9f3cc3a4efcecc2c6bd1b9bc2ca84deb7ba66662f3d",
+      "entry_count": 38,
+      "package": "src/shared/python/sidekick/lab",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-lab.json"
+    },
+    {
+      "content_sha256_lf": "6bb79acd3da5642f326d67ea8acca379918f595711823eb5d1f2a6609039a1e3",
+      "entry_count": 3,
+      "package": "src/shared/python/sidekick/persistence",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-persistence.json"
+    },
+    {
+      "content_sha256_lf": "088090fd547e1c17557959425720b614882b28a316dad18311ab4e93fb8089e5",
+      "entry_count": 59,
+      "package": "src/shared/python/sidekick/process_calculators",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-process-calculators.json"
+    },
+    {
+      "content_sha256_lf": "72fc2d66233e89bf5362bbfe9906bd41b29f5f8a31f515389d5aaaf034c9bf8d",
+      "entry_count": 6,
+      "package": "src/shared/python/sidekick/standalone",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-standalone.json"
+    },
+    {
+      "content_sha256_lf": "3183c04e7f4f8a2a382ddca67e40d57599638c767cc6ba936b5a22d5dde60364",
+      "entry_count": 1,
+      "package": "src/shared/python/sidekick/theme",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-theme.json"
+    },
+    {
+      "content_sha256_lf": "371da392e18938c5818a1ba58dccdbc5846c2a53413a7f0545ceec0ff67d2bfd",
+      "entry_count": 74,
+      "package": "src/shared/python/sidekick/ui",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-ui.json"
+    },
+    {
+      "content_sha256_lf": "47f38826afa53374a7efbe47ffcbff00f1c8852ca1cbf2c65832f662942d7a0a",
+      "entry_count": 6,
+      "package": "src/shared/python/sidekick/utils",
+      "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-utils.json"
     },
     {
       "content_sha256_lf": "6ee15764a598b18e0909ddf4df893ec04a6fd775792574a805db588614a6b1c1",

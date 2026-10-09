@@ -1,0 +1,3151 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 163,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c747a872e643156a9388ec9dfc368b62528a614f7ab34a3f408d520313b7135e",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-INIT-PY-4216F58B50AA",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/__init__.py",
+      "purpose": "Lab - Experimental data readers and laboratory tools.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 287,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "39726d5e565c7461105d64dcbb1b971dd202633666732f95ddc3ff9fef4421db",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-BIO-INIT-PY-986650C47E6B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/bio/__init__.py",
+      "purpose": "Bio/Lab - Biomechanics data readers and laboratory tools.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "C3DDataReader",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "C3DEvent",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "C3DMetadata",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 34123,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "4ad7432de61267313f2a5d764e24aefcae930e3b6d2139fa486dea7c5687a147",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-BIO-C3D-READER-PY-8457053667DC",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/bio/c3d_reader.py",
+      "purpose": "Utilities for loading and interpreting C3D motion-capture files.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "C3DDataReader",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "C3DEvent",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "C3DMetadata",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BIOMECHANICAL_MARKER_MAX_M",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BIOMECHANICAL_MARKER_MIN_M",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCHEMA_VERSION",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/lab/bio/test_c3d_edge_cases.py",
+          "src/shared/python/sidekick/tests/lab/bio/test_c3d_reader_fixed.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "N·m",
+          "cm",
+          "g",
+          "mm",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7127,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "826c6aec42e473016ae894bd3689cdaf00a826af883a30f7222559ef6c9ebdf8",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-INIT-PY-BD60513A12BD",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/__init__.py",
+      "purpose": "Camera-agnostic markerless-mocap contracts and deterministic interchange.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "AcquisitionError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ActuationInputKind",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ApprovalStatus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Availability",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ButterworthFilterConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalibrationDegeneracyKind",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalibrationObservation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalibrationPatternKind",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalibrationQuality",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalibrationTarget",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CameraCapabilities",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CameraIdentity",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CameraLayout",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CameraPose",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CapabilityAvailability",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CapabilityDeclaration",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CapabilitySupport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CaptureGroup",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ClockDomain",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ClockKind",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ClockSkewEstimate",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CoordinateFrame",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DeliveryTrajectoryMappingConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DistortionCoefficients",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DistortionModel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DropPolicy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "EXPERIMENT_REPLAY_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ExperimentReplayBundle",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ExternalServicePoseAdapter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ExtrinsicCalibrationResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ExtrinsicDegeneracyKind",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ExtrinsicQuality",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FeatureSupport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FisheyeIntrinsics",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FrameIndexEntry",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FramePacket",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FrameSource",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FrameStamp",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "GapPolicy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InitialStateSchema",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InitialStateValue",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InputChannel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InputHistory",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InputInterpolation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IntegrityHashes",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IntrinsicCalibrationResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "JointAngleConstraint",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "KeypointMapping",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "KeypointReconstruction",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "KinematicDerivatives",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "Landmark3D",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LicenseCategory",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LicenseEvaluationResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "LicenseRecord",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MOCAP_SESSION_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MediaPipePoseAdapter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MethodDescriptor",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MocapCapabilitiesReport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MocapHealthReport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MocapService",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MocapServiceConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MocapServiceStatus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MocapSessionManifest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MocapTaskResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ModelIdentity",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "MovementDetectionResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "NumericRange",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PermittedUse",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PinholeIntrinsics",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PixelObservation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PoseBackendProtocol",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PoseInferenceResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PoseInferenceStatus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PrerecordedFrameSource",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ProviderLicenseManifest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "QueueFullError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ReconstructionConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ReconstructionQuality",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RecordingIntegrityReport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RecordingPolicy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RecordingReader",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RecordingWriter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RelocalizationResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ReplayExecutionPolicy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ReplayMode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ReprojectionResidual",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RigidTransform",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SavitzkyGolayConfig",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SegmentLengthConstraint",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SessionState",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ShutterKind",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SkeletonConverter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SkeletonDefinition",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SourceState",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StateComponentRole",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StateComponentSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SupportLevel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SyncAnomaly",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SyncAnomalyType",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SyncMonitor",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SyncQuality",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SyntheticFrameSource",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SyntheticPoseAdapter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TemporalTrajectory",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "adapt_to_delivery_trajectory",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "apply_joint_angle_constraint",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "apply_segment_length_constraint",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_experiment_replay_bundle",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "build_parser",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "bundle_adjust_layout",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "c3d",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "check_coverage_and_degeneracy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "cli_main",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compute_kinematic_derivatives",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "detect_camera_movement",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "dumps_canonical",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "dumps_experiment_replay_bundle",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "estimate_pnp_pose",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "evaluate_extrinsic_quality",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "evaluate_intrinsic_quality",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_canonical_skeleton",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "get_default_mediapipe_mapping",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "load_experiment_replay_bundle",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "load_session_manifest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "reconstruct_frame_landmarks",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "reconstruct_temporal_trajectory",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "smooth_trajectory_butterworth",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "smooth_trajectory_savgol",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "triangulate_n_views",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 2085,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "add08ba75daebca69122e59d046fc7a1ed85a7bccd288e4b09b2453338e48623",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-VALIDATION-PY-667AA903FE6B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/_validation.py",
+      "purpose": "Private validation helpers for markerless-mocap contracts.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13404,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f212004e68704ddecb93833709eda64eb1ea2fcf0021576a0250318efc87a8f5",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-ACQUISITION-PY-3F48ADCE6C42",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/acquisition.py",
+      "purpose": "Camera acquisition protocol and reference drivers for markerless-mocap.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AcquisitionError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CaptureGroup",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DropPolicy",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FramePacket",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FrameSource",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PrerecordedFrameSource",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "QueueFullError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SourceState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SyntheticFrameSource",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/putting_launch_monitor/tests/test_pipeline.py",
+          "tests/camera/test_camera_sources.py",
+          "tests/shared/python/sidekick/lab/mocap/test_acquisition_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_adapter_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_sync_contracts.py"
+        ],
+        "unit_mentions": [
+          "Hz",
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_acquisition_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_adapter_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_sync_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 17623,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2dd1920232b9e38bef2e2eae0adfd1a1098328598ba81ca4ad7426674b05af51",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-ADAPTERS-PY-C0DF198E7466",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/adapters.py",
+      "purpose": "Pose backend adapters, skeleton mapping, and licensing provenance (#4715).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_adapter_contracts.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_adapter_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 938,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b67626db0b792e26e8796a25dfe6f6682d089153760cf91d31700a7348d18fb4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-C3D-INIT-PY-49B991F3A498",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/c3d/__init__.py",
+      "purpose": "C3D biomechanical data exchange (TOOLS-M9 #4716).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "BIOMECHANICAL_MARKER_MAX_M",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "BIOMECHANICAL_MARKER_MIN_M",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "C3DAnalogChannel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "C3DContainer",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "C3DEvent",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "C3DForcePlatform",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "C3DHeader",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "C3DPointChannel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "C3D_HEADER_LENGTH",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "C3D_HEADER_MAGIC_BYTE",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "compute_center_of_pressure",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "parse_c3d_header",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "serialize_c3d_header",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "unit_scale_factor",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "validate_c3d_header_magic",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "write_c3d_file",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 1538,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "1fa1ca4a9ac481d09c93f8f23563a4b561323ebf483acb7aeae5a27d4c515a8d",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-C3D-CONVERTERS-PY-600A59287894",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/c3d/converters.py",
+      "purpose": "Biomechanical dataframe conversions, scaling, and COP (TOOLS-M9 #4716).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "compute_center_of_pressure",
+            "signature": "fz: np.ndarray, mx: np.ndarray, my: np.ndarray, min_force_threshold_n: float=10.0, ground_height_m: float=0.0"
+          },
+          {
+            "kind": "function",
+            "name": "unit_scale_factor",
+            "signature": "source_units: str, target_units: str | None"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "cm",
+          "mm"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3113,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2d7aa56b1eb6313256396696441bcee544a8449cd8a5bfa6fa847f9a21c12c9d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-C3D-READER-PY-22CEE3377D33",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/c3d/reader.py",
+      "purpose": "C3D binary parser and structured data extraction (TOOLS-M9 #4716).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "C3DContainer",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C3D_HEADER_LENGTH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "C3D_HEADER_MAGIC_BYTE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "parse_c3d_header",
+            "signature": "data: bytes"
+          },
+          {
+            "kind": "function",
+            "name": "validate_c3d_header_magic",
+            "signature": "file_path: Path"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3791,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6781c1f894294e4d79572c39e63426bc009849c6af91eec06eeed6b6b6621bd9",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-C3D-SCHEMA-PY-351BDEA561CE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/c3d/schema.py",
+      "purpose": "Typed contracts and schemas for C3D biomechanical exchange (TOOLS-M9 #4716).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md",
+          "docs/adr/ADR-008-markerless-mocap-authority-and-licensing.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "C3DAnalogChannel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "C3DEvent",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "C3DForcePlatform",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "C3DHeader",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "C3DPointChannel",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BIOMECHANICAL_MARKER_MAX_M",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BIOMECHANICAL_MARKER_MIN_M",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/launch_monitor/test_schema.py",
+          "tests/shared/python/sidekick/lab/mocap/test_schema.py"
+        ],
+        "unit_mentions": [
+          "mm"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3508,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "6a71d043f987094d10c82bd32a9eff1a12ac1cfb8661ee9cacbc6f9e22487fca",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-C3D-WRITER-PY-5F79BB472A1D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/c3d/writer.py",
+      "purpose": "C3D binary writer and serialization (TOOLS-M9 #4716).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "serialize_c3d_header",
+            "signature": "header: C3DHeader"
+          },
+          {
+            "kind": "function",
+            "name": "write_c3d_file",
+            "signature": "output_path: Path, container: C3DContainer"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 16633,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "8d1eedd5149f1a4f2c961459ec66f4924cff7078ece7c5f0e5c279843319b04b",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-CALIBRATION-PY-881BCCB31ECE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/calibration.py",
+      "purpose": "Camera intrinsic calibration representations, distortion, and qualification.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_numerics.py",
+          "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_reference_placements.py",
+          "tests/shared/python/sidekick/lab/mocap/test_reference_scale.py"
+        ],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 10966,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "726eb1ad7c0167e70845e9a27cc5873d1fffa659766309af14fa7efd1e84d187",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-CALIBRATION-NUMERICS-PY-2226C716E3A5",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/calibration_numerics.py",
+      "purpose": "Numerical adapters for the canonical calibration contracts.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_numerics.py"
+        ],
+        "unit_mentions": [
+          "N"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8749,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "32f8209696a43c43e1a414ebc04205bd669d636bde072809b58be399702fb66f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-CLI-PY-D118EA68F7CD",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/cli.py",
+      "purpose": "Headless command-line interface for markerless mocap workflows (TOOLS-M10 #4727).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "build_parser",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "cli_main",
+            "signature": "argv: Sequence[str] | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_cli_service_contracts.py"
+        ],
+        "unit_mentions": [
+          "Hz",
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_cli_service_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5389,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f2a755d559c8a5b6bc3ca0e3756e33b1a1e4e433609be3c64ebb73e783ee6689",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-DEVICES-PY-29DA2D3D12B3",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/devices.py",
+      "purpose": "Vendor-neutral camera identity and capability records.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "src/putting_launch_monitor/tests/test_pipeline.py",
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1218,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3f4fa8497e135435678d71eb1d5fa91c72ca26671f8dcc0adf7bd5f9f0059fb4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-ENUMS-PY-2EC075615E18",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/enums.py",
+      "purpose": "Enumerations used by camera-agnostic markerless-mocap contracts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "src/putting_launch_monitor/tests/test_pipeline.py",
+          "tests/shared/python/sidekick/lab/mocap/test_adapter_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_temporal_contracts.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_adapter_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_temporal_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9144,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1d3676faa7ee4cfa68d6f0ba628b9cbca522a26d0ede41fb037bc17644168382",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-EXPERIMENT-CONTRACTS-PY-1D3083A6E6AA",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/experiment_contracts.py",
+      "purpose": "Shared value objects for versioned experiment/replay contracts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ActuationInputKind",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CapabilityAvailability",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CapabilityDeclaration",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CapabilitySupport",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "InitialStateSchema",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "InitialStateValue",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "InputChannel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "InputInterpolation",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ModelIdentity",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ReplayMode",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StateComponentRole",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StateComponentSpec",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXPERIMENT_REPLAY_SCHEMA_VERSION",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11608,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9238917527b3330a6da4d7483dd0a0e0464c87defd6046ef5cde2ae7cd4af9fd",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-EXPERIMENT-EXECUTION-PY-40C114423F80",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/experiment_execution.py",
+      "purpose": "Replay time-grid, input, and execution-policy contracts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "InputHistory",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "IntegrityHashes",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ReplayExecutionPolicy",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N",
+          "N m",
+          "N*m"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 9524,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d95149baa941fd48f23e12317477dd9dcdd47c9901dbfe852efe22679983a159",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-EXPERIMENT-REPLAY-PY-720F65A0880E",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/experiment_replay.py",
+      "purpose": "Validated experiment replay bundle assembly and integrity verification.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ExperimentReplayBundle",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_experiment_replay_bundle",
+            "signature": "experiment_id: str, model: ModelIdentity, capabilities: tuple[CapabilityDeclaration, ...], initial_state_values: tuple[tuple[str, tuple[float, ...]], ...], channels: tuple[InputChannel, ...], input_kind: ActuationInputKind, interpolation: InputInterpolation, time_seconds: tuple[float, ...], input_values: tuple[tuple[float, ...], ...], policy: ReplayExecutionPolicy, timebase_id: str='simulation_relative'"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_experiment_replay.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 10902,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "8fae63f1dec200877c74c59786d0f71182f77bb1b2355654aa0335d319bf6a52",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-EXTRINSICS-PY-FD8B0A3C2EFE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/extrinsics.py",
+      "purpose": "Extrinsic and flexible-layout camera calibration and relocalization.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_numerics.py",
+          "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_reference_scale.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 3019,
+      "classification": "calculation",
+      "classification_basis": "path-marker:geometry",
+      "content_sha256_lf": "47326d4c54a0550261c64ce0c0962bec5766dd132391d163ef23816881d29836",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-GEOMETRY-PY-0003847C3D41",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/geometry.py",
+      "purpose": "Coordinate-frame and rigid-transform contracts.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "src/putting_launch_monitor/tests/test_geometry.py",
+          "src/shared/python/programmatic_pid/tests/test_geometry.py",
+          "tests/programmatic_pid/test_geometry.py",
+          "tests/shared/python/sidekick/lab/mocap/test_calibration_numerics.py",
+          "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_reference_placements.py",
+          "tests/shared/python/sidekick/lab/mocap/test_reference_scale.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_extrinsic_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4988,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "aa3b10c8dcd3f34b502ce2497cc661eae810f1de5cc824260025d369be949984",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-OBSERVATIONS-PY-B9AA5942A0C3",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/observations.py",
+      "purpose": "Canonical 2-D and 3-D markerless-mocap observation records.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_temporal_contracts.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_temporal_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 12511,
+      "classification": "calculation",
+      "classification_basis": "path-marker:solver",
+      "content_sha256_lf": "314f9c041688dd387fff5fccff08e72b7df33b396659a4e06961fc923ea9a3f2",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-PLACEMENT-SOLVER-PY-6ACDF9665F4C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/placement_solver.py",
+      "purpose": "Joint camera/reference-placement estimation behind the shared contracts.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 17393,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "965a341b4a07ed1a2847641b1f7f3e336ed252922605ec1ece5bf5c24ff95aff",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-RECONSTRUCTION-PY-28F28EA4D208",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/reconstruction.py",
+      "purpose": "Cross-view observation association, robust multi-view triangulation,",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "KeypointReconstruction",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ReconstructionConfig",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ReconstructionQuality",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "reconstruct_frame_landmarks",
+            "signature": "observations: Sequence[PixelObservation], camera_layout: CameraLayout, camera_intrinsics: Mapping[str, PinholeIntrinsics | FisheyeIntrinsics], config: ReconstructionConfig | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "triangulate_n_views",
+            "signature": "observations: Sequence[PixelObservation], camera_layout: CameraLayout, camera_intrinsics: Mapping[str, PinholeIntrinsics | FisheyeIntrinsics], config: ReconstructionConfig | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "N",
+          "W"
+        ],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_reconstruction_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11523,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "fe9f083a4d620ca11948d74dad7a63ab3d4e5e6144e22752962bbec04db94cfd",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-RECORDING-PY-DACA4031F62C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/recording.py",
+      "purpose": "Crash-safe recording writer and reader for multi-camera session streams.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FrameIndexEntry",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RecordingIntegrityReport",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RecordingReader",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RecordingWriter",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10849,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cfda350e8396081899e06a0570cf23a424e775b7daf88567b0a967eadc2d3a50",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-REFERENCE-PLACEMENTS-PY-C7BA6AACC642",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/reference_placements.py",
+      "purpose": "Identified common references and multi-view placements in explicit SI frames.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PlacementObservation",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PlacementResidual",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ReferenceCamera",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ReferenceLayoutResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ReferenceSolveCancelled",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ReferenceTarget",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "common_reference",
+            "signature": "reference_id: str"
+          },
+          {
+            "kind": "function",
+            "name": "estimate_reference_layout",
+            "signature": "*, layout_id: str, world_frame: CoordinateFrame, targets: Mapping[str, ReferenceTarget], cameras: Mapping[str, ReferenceCamera], observations: Sequence[PlacementObservation], anchor_placement_id: str, anchor: RigidTransform, cancel_requested: Callable[[], bool] | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_reference_placements.py",
+          "tests/shared/python/sidekick/lab/mocap/test_reference_scale.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 5150,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "04f607253958bafded74e964a6387f70bcd723965ea82fa52568cead13e22063",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-REFERENCE-SCALE-PY-610436B45716",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/reference_scale.py",
+      "purpose": "Metric-scale evidence for an established camera layout, never pose initialization.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ReferenceScaleOptions",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ReferenceScaleProblem",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ReferenceScaleResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ScaleResidual",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "estimate_reference_scale",
+            "signature": "problem: ReferenceScaleProblem, options: ReferenceScaleOptions | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_reference_scale.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 4586,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "0619a63d297aa03363ceebdd7d6fdc436f2adeb6610e9109dc573faa1fca58c4",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-REFERENCE-SCALE-FIT-PY-ABC1A693C65B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/reference_scale_fit.py",
+      "purpose": "One-parameter length fit and immutable anchored camera-layout rescaling.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "fit_scale",
+            "signature": "problem: ReferenceScaleProblem, measurements: tuple[ScaleResidual, ...], options: ReferenceScaleOptions"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 9682,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "6342fd962a455d9348ad93cb8c3e000aedee5584ee5d2b6039c319433c7c8553",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-REFERENCE-SCALE-TRIANGULATION-PY-95162981B9AB",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/reference_scale_triangulation.py",
+      "purpose": "Lens-corrected ruler measurements through the canonical triangulation API.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_MAX_CAMERAS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_MAX_PLACEMENTS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "measure_placements",
+            "signature": "problem: ReferenceScaleProblem, options: ReferenceScaleOptions"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7025,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "50eaf694a12d755568a3bce7af99e8e75a7436c208a037ccf174275e5dfd0d6f",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-REPLAY-SERIALIZATION-PY-81E26941E6AA",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/replay_serialization.py",
+      "purpose": "Strict canonical JSON serialization for experiment replay bundles.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "dumps_experiment_replay_bundle",
+            "signature": "bundle: ExperimentReplayBundle"
+          },
+          {
+            "kind": "function",
+            "name": "load_experiment_replay_bundle",
+            "signature": "text: str"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5394,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d017e5044de0534ec0b888725fb94f24af9d7cb5e7365a1757240214db9b3118",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-SERIALIZATION-PY-8C72FF82DE0B",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/serialization.py",
+      "purpose": "Deterministic serialization for markerless-mocap contracts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/golf_club/test_serialization.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 13537,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "b7ce204034efd4b714052f79bad4a0d5d9c7c544cca35c73d86bacc132e3e928",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-SERVICE-PY-24BE82F902CB",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/service.py",
+      "purpose": "Headless mocap service endpoints and orchestration protocol (TOOLS-M10 #4727).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MocapCapabilitiesReport",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MocapHealthReport",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MocapService",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MocapServiceConfig",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MocapServiceStatus",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "MocapTaskResult",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/calculators/conversion/test_service.py",
+          "tests/shared/python/sidekick/lab/mocap/test_cli_service_contracts.py",
+          "tests/unit/agent_context/test_service.py"
+        ],
+        "unit_mentions": [
+          "mm",
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_cli_service_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5671,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0e9c034420b761330d53ac6c6ff3abd5571562a943f296c7f160afcc8ad7166c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-SESSION-PY-49348A36FD7D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/session.py",
+      "purpose": "Versioned markerless-mocap session and provenance records.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5579,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4b710c5e2867118fe425026d76c2bdb26bdd824f808b41ac558a5759d53084de",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-SKELETONS-PY-6B5B22C574E2",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/skeletons.py",
+      "purpose": "Canonical skeletons, keypoint mapping, and observation conversion (#4715).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 8259,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "f68eef72c39e85645e7da37eef3df315ceae16a90a5012592650e9c4cb5d6628",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-SYNC-PY-6C5062F6154F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/sync.py",
+      "purpose": "Synchronization analysis and sequence tracking for multi-camera streams.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ClockSkewEstimate",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SyncAnomaly",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SyncAnomalyType",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SyncMonitor",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SyncQuality",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_sync_contracts.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_sync_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 17741,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "1005ec7197e9b1210a14a833336f05ac2eeb6df8785bfea4b3ec233fbc3015dd",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-TEMPORAL-PY-1E08155EF20F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/temporal.py",
+      "purpose": "Temporal reconstruction, filtering, constraints, and delivery mapping.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_temporal_contracts.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_temporal_contracts.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2801,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "80b888c3757b4bcb1744b003c0386dd33ac3b2eca4ea50059f7942b61332dbc0",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-TIMEBASE-PY-7FFB95005501",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/timebase.py",
+      "purpose": "Clock-domain and frame-timestamp evidence contracts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_recording_contracts.py"
+        ]
+      }
+    }
+  ],
+  "package": "src/shared/python/sidekick/lab",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

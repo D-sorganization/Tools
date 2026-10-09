@@ -1,0 +1,484 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1437,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a088081ebb3540d58076f615bcf610c745ec8f672761192c52ae9ee8338c4300",
+      "family": "data-processing-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-DATA-PROCESSING-INIT-PY-F05FD240CFCB",
+      "language": "python",
+      "maintainer": "Data processing maintainers",
+      "path": "src/shared/python/sidekick/data_processing/__init__.py",
+      "purpose": "Data Processing Components for Upstream Drift Tools.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "ColumnNotFoundError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DataNotLoadedError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "DataProcessingError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FileIOError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FilterError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FitError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "TransformationError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "UnsupportedOperationError",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 25350,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "b989b09418ab75881614eb48535bb71e7ee9930c6bd7ce4f0d9db96c76fb3548",
+      "family": "data-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-DATA-PROCESSING-CORE-PY-C8CD102C9E8B",
+      "language": "python",
+      "maintainer": "Data processing maintainers",
+      "path": "src/shared/python/sidekick/data_processing/core.py",
+      "purpose": "Core Data Processing Engine.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AggregationType",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ColumnStats",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DataFormat",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DataProcessorEngine",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FitResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FitType",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ProcessingResult",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/test_data_processor_engine.py",
+          "src/shared/python/sidekick/tests/test_data_processor_engine_errors.py",
+          "src/shared/python/sidekick/tests/test_data_processor_ops.py",
+          "src/shared/python/sidekick/tests/test_data_processor_widget.py",
+          "tests/shared/python/sidekick/data_processing/test_exceptions.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5206,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "2982d8b977bb0ec3bb48734023830426fa9a2bfb18810f34ccb85fb482510234",
+      "family": "data-processing-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-DATA-PROCESSING-EMBEDDING-PY-3B0BE97D0CB7",
+      "language": "python",
+      "maintainer": "Data processing maintainers",
+      "path": "src/shared/python/sidekick/data_processing/embedding.py",
+      "purpose": "Bridge to the full Data Processor application (single source of truth).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DataProcessorUnavailableError",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REQUIRED_SUBPATHS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "create_full_data_processor_widget",
+            "signature": "parent: QWidget | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "ensure_full_data_processor_on_path",
+            "signature": "repo_root: Path | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "full_data_processor_available",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/test_data_processor_embedding.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1742,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "5f311c8e8a25912a24b4bef80323177169c9aaa36da6060c6b5442bc2a7ad371",
+      "family": "data-processing-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-DATA-PROCESSING-EXCEPTIONS-PY-443739379811",
+      "language": "python",
+      "maintainer": "Data processing maintainers",
+      "path": "src/shared/python/sidekick/data_processing/exceptions.py",
+      "purpose": "Typed exceptions for the data processing engine.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ColumnNotFoundError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DataNotLoadedError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DataProcessingError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FileIOError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FilterError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FitError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TransformationError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "UnsupportedOperationError",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/test_data_processor_engine.py",
+          "src/shared/python/sidekick/tests/test_data_processor_engine_errors.py",
+          "src/shared/python/sidekick/tests/test_exceptions.py",
+          "tests/shared/python/sidekick/data_processing/test_exceptions.py",
+          "tests/shared/python/ui/test_wave1_widget_state.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1179,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a5c724e3949715d10ca35627d83afbdf30fa4a74593706e205a5953aa26b40c2",
+      "family": "data-processing-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-DATA-PROCESSING-FORMATS-PY-EA7105113FCC",
+      "language": "python",
+      "maintainer": "Data processing maintainers",
+      "path": "src/shared/python/sidekick/data_processing/formats.py",
+      "purpose": "Supported Sidekick data I/O format registry.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FileFormatDetector",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUPPORTED_FORMATS",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/sidekick/data_processing/test_io.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 5338,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "124faf336a913c33e7d7b4ab69cf3212524cd4bd0731381e22b05ffc42b68d7c",
+      "family": "data-processing-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-DATA-PROCESSING-IO-PY-8973D78BCF75",
+      "language": "python",
+      "maintainer": "Data processing maintainers",
+      "path": "src/shared/python/sidekick/data_processing/io.py",
+      "purpose": "Data I/O utilities for data processing.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DataReader",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "DataWriter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FileFormatDetector",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/test_data_processing_io.py",
+          "tests/shared/python/sidekick/data_processing/test_io.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/shared/python/sidekick/data_processing",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}
