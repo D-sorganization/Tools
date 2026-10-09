@@ -24,6 +24,13 @@ Tools owns the MIT vendor-neutral markerless-mocap contracts and reference algor
 - Structural checks do not execute a model, score measurements, decide muscle equivalence, or declare scientific qualification. UpstreamDrift F01 owns admission and qualification; native-consumer acceptance follows runnable F06/F07 and campaign evidence.
 - Private source paths and observation payloads must remain in authorized private storage. Public fixtures use synthetic identities and opaque references only.
 
+## Bounded Experiment Resources and Preview Manifests — #5463
+
+- Public resource contracts are in `experiment_resources.py`: bounded worker, memory, disk and preview-output budgets; content-based replay cache identity; cooperative cancellation; and cache-linked elapsed-time records.
+- Path-free video references, strict `preview-manifest/1.0.0` JSON, configured preview-root resolution, file containment/size/digest verification, exact-manifest release authorization and optional remote preflight receipts are in `preview_artifacts.py` and `preview_serialization.py`. Non-destructive cleanup decisions are in `cleanup.py`.
+- Schema authority is `schemas/mocap/preview-manifest-v1.schema.json`; synthetic coverage is in `tests/shared/python/sidekick/lab/mocap/test_experiment_resources.py` and `test_preview_artifacts.py`; implementation limits and exact boundaries are documented in `docs/development/feedback_controls/T03-CONTRACT.md`.
+- These contracts do not create directories, dispatch remote jobs, delete files, emit videos or certify simulation/physics. No private capture data is included.
+
 ## Active issues
 
 - Epic #4706: vendor-neutral acquisition, calibration, reconstruction, and C3D exchange.

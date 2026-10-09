@@ -1,0 +1,34 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.d-sorganization.org/mocap/preview-manifest-v1.schema.json",
+  "title": "Motion Matching Preview Manifest v1",
+  "description": "Path-free bounded references to completed preview video artifacts; contains no raw media or source paths.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "experiment_id", "cache_key_sha256", "provider_sha256", "artifacts"],
+  "properties": {
+    "schema_version": {"const": "preview-manifest/1.0.0"},
+    "experiment_id": {"type": "string", "pattern": "^opaque:[A-Za-z0-9][A-Za-z0-9._-]{7,127}$"},
+    "cache_key_sha256": {"$ref": "#/$defs/sha256"},
+    "provider_sha256": {"$ref": "#/$defs/sha256"},
+    "artifacts": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/artifact"}
+    }
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["artifact_id", "sha256", "byte_size", "media_type"],
+      "properties": {
+        "artifact_id": {"type": "string", "pattern": "^opaque:[A-Za-z0-9][A-Za-z0-9._-]{7,127}$"},
+        "sha256": {"$ref": "#/$defs/sha256"},
+        "byte_size": {"type": "integer", "minimum": 1},
+        "media_type": {"enum": ["video/mp4", "video/webm"]}
+      }
+    }
+  }
+}
