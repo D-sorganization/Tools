@@ -8371,6 +8371,9 @@
       "CapabilityDeclaration",
       "CapabilitySupport",
       "COMPARISON_EVIDENCE_SCHEMA_VERSION",
+      "COMPILED_ACTUATOR_PROFILE_ID",
+      "COMPILED_ACTUATOR_PROFILE_SCHEMA_VERSION",
+      "COMPILED_ACTUATOR_PROFILE_VERSION",
       "ComparisonEvidenceReceipt",
       "ComparisonEvidenceRow",
       "ComparisonLevel",
@@ -9018,6 +9021,15 @@
         }
       },
       "COMPARISON_EVIDENCE_SCHEMA_VERSION": {
+        "type": "variable"
+      },
+      "COMPILED_ACTUATOR_PROFILE_ID": {
+        "type": "variable"
+      },
+      "COMPILED_ACTUATOR_PROFILE_SCHEMA_VERSION": {
+        "type": "variable"
+      },
+      "COMPILED_ACTUATOR_PROFILE_VERSION": {
         "type": "variable"
       },
       "ComparisonEvidenceReceipt": {
@@ -13658,6 +13670,9 @@
   "lab/mocap/experiment_evidence.py": {
     "__all__": [
       "COMPARISON_EVIDENCE_SCHEMA_VERSION",
+      "COMPILED_ACTUATOR_PROFILE_ID",
+      "COMPILED_ACTUATOR_PROFILE_SCHEMA_VERSION",
+      "COMPILED_ACTUATOR_PROFILE_VERSION",
       "ComparisonEvidenceReceipt",
       "ComparisonEvidenceRow",
       "ComparisonLevel",
@@ -13671,6 +13686,15 @@
     ],
     "symbols": {
       "COMPARISON_EVIDENCE_SCHEMA_VERSION": {
+        "type": "variable"
+      },
+      "COMPILED_ACTUATOR_PROFILE_ID": {
+        "type": "variable"
+      },
+      "COMPILED_ACTUATOR_PROFILE_SCHEMA_VERSION": {
+        "type": "variable"
+      },
+      "COMPILED_ACTUATOR_PROFILE_VERSION": {
         "type": "variable"
       },
       "ComparisonEvidenceReceipt": {
