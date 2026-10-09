@@ -26,7 +26,7 @@ _OPAQUE_REFERENCE = re.compile(r"^opaque:[A-Za-z0-9][A-Za-z0-9._-]{7,127}$")
 
 
 def _require_opaque_reference(value: str) -> str:
-    reference = require_text(value, "reference_id")
+    reference: str = require_text(value, "reference_id")
     if not _OPAQUE_REFERENCE.fullmatch(reference):
         raise ValueError("reference_id must be an opaque token, not a path or URL")
     return reference
