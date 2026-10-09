@@ -14,12 +14,12 @@ from typing import Any
 
 import pypdf
 from jsonschema import Draft202012Validator
+from pypdf.generic import IndirectObject
 
 from scripts.tools_manual_artifacts import sha256_lf
 
 QA_SCHEMA_VERSION = "tools-manual-qa/1.0.0"
 GOVERNANCE_SUBEPIC = 4725
-EXPECTED_PDF_PAGES = 10
 MEDIA_TYPES = {
     "docx": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     "html": "text/html",
@@ -40,6 +40,8 @@ class ManualQAError(RuntimeError):
 
 @dataclass(frozen=True)
 class PDFPageRecord:
+    """Page observations; character_count excludes extractor-added whitespace."""
+
     page_number: int
     character_count: int
     line_count: int
@@ -133,16 +135,20 @@ def sha256_file(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
+def _pdf_mapping(value: Any) -> Mapping[Any, Any] | None:
+    if isinstance(value, IndirectObject):
+        value = value.get_object()
+    return value if isinstance(value, Mapping) else None
+
+
 def inspect_pdf_artifact(pdf_path: Path) -> PDFInspectionResult:
     if not pdf_path.is_file():
         raise ManualQAError(f"PDF artifact missing: {pdf_path}")
     data = pdf_path.read_bytes()
     reader = pypdf.PdfReader(pdf_path)
     total_pages = len(reader.pages)
-    if total_pages != EXPECTED_PDF_PAGES:
-        raise ManualQAError(
-            f"PDF page count mismatch: expected {EXPECTED_PDF_PAGES}, got {total_pages}"
-        )
+    if total_pages == 0:
+        raise ManualQAError("PDF artifact has no pages to inspect")
 
     fonts: set[str] = set()
     page_records: list[PDFPageRecord] = []
@@ -168,20 +174,20 @@ def inspect_pdf_artifact(pdf_path: Path) -> PDFInspectionResult:
         annot_count = len(annots) if annots else 0
         total_annotations += annot_count
 
-        resources = page.get("/Resources")
-        if isinstance(resources, dict) and "/Font" in resources:
-            font_dict = resources["/Font"]
-            if isinstance(font_dict, dict):
-                for font_obj in font_dict.values():
-                    if hasattr(font_obj, "get"):
-                        base_font = str(font_obj.get("/BaseFont", ""))
-                        if base_font:
-                            fonts.add(base_font)
+        resources = _pdf_mapping(page.get("/Resources"))
+        font_dict = _pdf_mapping(resources.get("/Font")) if resources else None
+        if font_dict:
+            for font_ref in font_dict.values():
+                font_obj = _pdf_mapping(font_ref)
+                if font_obj:
+                    base_font = str(font_obj.get("/BaseFont", ""))
+                    if base_font:
+                        fonts.add(base_font)
 
         page_records.append(
             PDFPageRecord(
                 page_number=page_num,
-                character_count=len(text),
+                character_count=len("".join(text.split())),
                 line_count=len(lines),
                 image_count=img_count,
                 annotation_count=annot_count,
@@ -201,6 +207,8 @@ def inspect_pdf_artifact(pdf_path: Path) -> PDFInspectionResult:
     outline_count = count_outlines(reader.outline) if reader.outline else 0
     if outline_count == 0:
         raise ManualQAError("PDF document has no outlines/bookmarks")
+    if not fonts:
+        raise ManualQAError("PDF font resources could not be inspected")
 
     norm_path = PurePosixPath(pdf_path.as_posix())
     rel_path = (
@@ -472,8 +480,9 @@ def load_qa_ledger(payload: dict[str, Any]) -> ManualQALedger:
 
     inspections = payload.get("inspections", {})
     pdf_dict = inspections.get("pdf", {})
-    if pdf_dict.get("page_count") != EXPECTED_PDF_PAGES:
-        raise ManualQAError(f"PDF page count must be {EXPECTED_PDF_PAGES}")
+    page_count = pdf_dict.get("page_count")
+    if type(page_count) is not int or page_count <= 0:
+        raise ManualQAError("PDF page_count must be a positive integer")
     if pdf_dict.get("uninspected_pages") != 0:
         raise ManualQAError("uninspected_pages must be 0")
 
@@ -488,8 +497,12 @@ def load_qa_ledger(payload: dict[str, Any]) -> ManualQALedger:
         )
         for p in pdf_dict.get("pages", [])
     )
-    if len(pdf_pages) != EXPECTED_PDF_PAGES:
-        raise ManualQAError(f"PDF page record count must be {EXPECTED_PDF_PAGES}")
+    if len(pdf_pages) != page_count:
+        raise ManualQAError(
+            "PDF page record count does not match page_count; contiguous inventory required"
+        )
+    if tuple(page.page_number for page in pdf_pages) != tuple(range(1, page_count + 1)):
+        raise ManualQAError("PDF page records must be ordered and contiguous")
 
     pdf_res = PDFInspectionResult(
         path=pdf_dict["path"],
@@ -642,5 +655,9 @@ def verify_manual_qa(repo_root: Path) -> ManualQALedger:
             raise ManualQAError(
                 f"{name} artifact SHA-256 differs from QA ledger: live {digest} != ledger {ledger_digest}"
             )
+
+    live_pdf = inspect_pdf_artifact(artifacts["pdf"])
+    if ledger.pdf != live_pdf:
+        raise ManualQAError("PDF page inventory differs from the live artifact")
 
     return ledger

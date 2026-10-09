@@ -108,7 +108,7 @@
             },
             "page_count": {
               "type": "integer",
-              "const": 10
+              "minimum": 1
             },
             "uninspected_pages": {
               "type": "integer",

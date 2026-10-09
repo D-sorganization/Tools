@@ -139,6 +139,7 @@
           "minimum": 1
         },
         "character_count": {
+          "description": "Number of extracted non-whitespace characters; PDF extractor spacing is not artifact content identity.",
           "type": "integer",
           "minimum": 1
         },
