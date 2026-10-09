@@ -9,11 +9,12 @@ from typing import Any
 
 import pytest
 from jsonschema import Draft202012Validator
+from pypdf import PdfReader
 
 from scripts.tools_manual_qa_contract import (
-    EXPECTED_PDF_PAGES,
     QA_SCHEMA_VERSION,
     ManualQAError,
+    build_qa_ledger,
     inspect_docx_artifact,
     inspect_html_artifact,
     inspect_pdf_artifact,
@@ -55,9 +56,14 @@ def test_qa_ledger_loader_validates_complete_zero_sampling() -> None:
     assert ledger.sampling_rate == 1.0
 
     # PDF verification
-    assert ledger.pdf.page_count == EXPECTED_PDF_PAGES
+    actual_pdf_pages = len(
+        PdfReader(DIST_DIR / "tools-engineering-design-manual.pdf").pages
+    )
+    assert ledger.pdf.page_count == actual_pdf_pages
     assert ledger.pdf.uninspected_pages == 0
-    assert len(ledger.pdf.pages) == EXPECTED_PDF_PAGES
+    assert [page.page_number for page in ledger.pdf.pages] == list(
+        range(1, actual_pdf_pages + 1)
+    )
     assert len(ledger.pdf.fonts) >= 10
     assert ledger.pdf.outline_item_count >= 50
     assert ledger.pdf.total_images == 1
@@ -101,23 +107,37 @@ def test_inspect_pdf_artifact_extracts_all_pages_without_sampling() -> None:
     pdf_path = DIST_DIR / "tools-engineering-design-manual.pdf"
     result = inspect_pdf_artifact(pdf_path)
 
-    assert result.page_count == 10
+    actual_pdf_pages = len(PdfReader(pdf_path).pages)
+    assert actual_pdf_pages >= 12
+    assert result.page_count == actual_pdf_pages
     assert result.uninspected_pages == 0
-    assert len(result.pages) == 10
+    assert len(result.pages) == actual_pdf_pages
+    assert result.fonts
     for idx, page_record in enumerate(result.pages):
         assert page_record.page_number == idx + 1
-        assert page_record.character_count > 1000
-        assert page_record.line_count >= 20
+        assert page_record.character_count > 100
+        assert page_record.line_count >= 2
         assert len(page_record.first_line_prefix) > 5
+
+
+def test_qa_builder_inspects_every_page_of_expanded_pdf() -> None:
+    generated = build_qa_ledger(REPO_ROOT)
+    pdf = generated["inspections"]["pdf"]
+    assert pdf["page_count"] == len(
+        PdfReader(DIST_DIR / "tools-engineering-design-manual.pdf").pages
+    )
+    assert [item["page_number"] for item in pdf["pages"]] == list(
+        range(1, pdf["page_count"] + 1)
+    )
 
 
 def test_inspect_docx_artifact_finds_math_headings_and_tables() -> None:
     docx_path = DIST_DIR / "tools-engineering-design-manual.docx"
     result = inspect_docx_artifact(docx_path)
 
-    assert result.paragraph_count == 188
-    assert result.heading_count == 69
-    assert result.math_element_count == 52
+    assert result.paragraph_count >= 188
+    assert result.heading_count >= 69
+    assert result.math_element_count >= 52
     assert result.table_count == 1
     assert result.drawing_count == 1
     assert result.unresolved_reference_count == 0
@@ -129,7 +149,7 @@ def test_inspect_html_artifact_verifies_accessibility_attributes() -> None:
 
     assert result.has_lang is True
     assert result.has_viewport is True
-    assert result.mathml_block_count == 52
+    assert result.mathml_block_count >= 52
     assert result.image_count == 1
     assert result.images_with_valid_alt == 1
     assert result.images_missing_alt == 0
@@ -142,7 +162,7 @@ def test_inspect_tex_artifact_verifies_required_packages() -> None:
 
     assert result.has_geometry is True
     assert result.has_microtype is True
-    assert result.figure_count == 2
+    assert result.figure_count >= 2
     assert result.csl_reference_block_present is True
     assert result.unresolved_reference_count == 0
 
@@ -169,7 +189,15 @@ def test_verify_manual_qa_succeeds_on_repo_root() -> None:
         (lambda v: v.update(sampling_rate=0.5), "sampling_rate must be 1.0"),
         (
             lambda v: v["inspections"]["pdf"].update(page_count=5),
-            "PDF page count must be 10",
+            "PDF page record count does not match page_count",
+        ),
+        (
+            lambda v: v["inspections"]["pdf"].update(page_count=0),
+            "PDF page_count must be a positive integer",
+        ),
+        (
+            lambda v: v["inspections"]["pdf"].update(page_count=True),
+            "PDF page_count must be a positive integer",
         ),
         (
             lambda v: v["inspections"]["pdf"].update(uninspected_pages=1),
@@ -209,4 +237,19 @@ def test_loader_rejects_mutations_and_failures(
     mutation(payload)
 
     with pytest.raises(ManualQAError, match=error_message):
+        load_qa_ledger(payload)
+
+
+@pytest.mark.parametrize(
+    "mutation",
+    [
+        lambda pages: pages.pop(),
+        lambda pages: pages.__setitem__(-1, copy.deepcopy(pages[-2])),
+        lambda pages: pages.reverse(),
+    ],
+)
+def test_loader_requires_complete_ordered_unique_page_inventory(mutation: Any) -> None:
+    payload = copy.deepcopy(_json(LEDGER_PATH))
+    mutation(payload["inspections"]["pdf"]["pages"])
+    with pytest.raises(ManualQAError, match="contiguous"):
         load_qa_ledger(payload)

@@ -153,13 +153,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
     },
     {
-      "content_sha256_lf": "43724e3644ad7f0968f90f3c265adf005ca2de0c908846ddb6c32b3d17d63e4f",
-      "entry_count": 4,
+      "content_sha256_lf": "1d4fb8a745fa1ca4af633246c1674e6e741b45490a47aab4aff007896c1f0aff",
+      "entry_count": 5,
       "package": "schemas",
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "7d2037951b876d2a6c2666659b43f4a33430028db00049350cc00f49d68d163d",
+      "content_sha256_lf": "c6432773611cf4dbedd9e9356ab031d91face949c4d08bb42939d068f8c6b1e7",
       "entry_count": 114,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
@@ -783,8 +783,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-data-processing.json"
     },
     {
-      "content_sha256_lf": "c580c652eb813c676e12049440ca2a0db4cf87a6814a289de641cfe89025f400",
-      "entry_count": 44,
+      "content_sha256_lf": "f4438449abbfd5c40ef365aba8a4d505127e546c8edae8c71779cae9a8ba0d25",
+      "entry_count": 47,
       "package": "src/shared/python/sidekick/lab",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-lab.json"
     },

@@ -9022,10 +9022,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 23212,
+      "bytes_lf": 23830,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f6823830add80914409c619a250def6a3ef890a62c390b532f7908bdf807608f",
+      "content_sha256_lf": "f629b1a5c8781a47c7aca6ca9c3f23814d14145a384a2074900cb63ba64747f2",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-TOOLS-MANUAL-QA-CONTRACT-PY-100FD02D6EB5",
       "language": "python",
@@ -9100,11 +9100,6 @@
           {
             "kind": "class",
             "name": "TexInspectionResult",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "EXPECTED_PDF_PAGES",
             "signature": null
           },
           {

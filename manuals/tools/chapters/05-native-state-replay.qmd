@@ -1,0 +1,87 @@
+# Opaque Native Restart and Saved-Input Replay
+
+## Scope and Authority
+
+Tools #5470 supplies typed transport for native state that cannot be represented
+truthfully as a named numeric state vector. The wire format is
+`native-state-replay/1.1.0`. Its complete initial-state authority is a native
+artifact descriptor and separately resolved immutable payload bytes. Numeric
+observations are deliberately absent from this restart authority. The existing
+`experiment-replay/1.0.0` numeric reader and semantics remain unchanged; that
+reader rejects the native envelope instead of discarding hidden state.
+
+These are interchange contracts, not a physics solver or qualification system.
+UpstreamDrift #11921 owns actual R2025b decoding, independent integration,
+model coverage and acceptance. All required engine/model rows remain visible.
+
+## State, Model and Runtime Identity
+
+`NativeStateArtifact` binds format/version and expected decoded native class,
+exact producing runtime/provider, source and loaded-model SHA-256 values,
+native clock, solver and effective configuration/checksum policy, byte size,
+payload digest and explicit complete-native-restart or observables-only role.
+`NativeReplayModel` preserves inventory model/variant identity and ordered input
+mapping separately. Native artifacts cannot substitute an observables-only
+scope during replay admission.
+
+`freeze_native_state_artifact` verifies an owned immutable byte snapshot. It
+rejects wrong size/hash and numeric/list coercion; it never deserializes or
+executes the payload. A consumer must load these verified bytes and independently
+verify actual decoded class, time, runtime and model compatibility. Hashing MAT
+bytes identifies one serialization; it does not establish canonical semantic
+state encoding, source-to-binary equivalence or transitive library closure.
+
+## Native Clock and Input Boundary
+
+The saved native `snapshot_time_seconds` and `start_time_seconds` are finite and
+ordered, with an explicit native clock identity. Saved input histories reuse
+the existing interval-relative time and interpolation contracts. Native replay
+time is the saved snapshot plus each relative input time; the operating point
+is never retimed to zero. Overflow or loss of strict ordering at native floating
+point precision is rejected. Requested intervals and an explicitly supplied
+solver step must also survive translation to the native epoch within the larger
+of 1e-9 relative interval error or 64 ULPs of that interval. Epoch ULPs never
+relax this policy. Consumers must check effective native solver precision too. Physical input units, muscle excitation versus
+activation, force versus command, and explicit contact identity remain governed
+by the shared `InputHistory` and `ReplayExecutionPolicy` contracts.
+
+## Integrity and Failure Semantics
+
+`NativeReplayIntegrity` retains shared component hashes and adds an entire
+envelope digest, including experiment identity. Strict JSON rejects duplicate
+or unknown fields, unsupported versions and stale integrity. Capability
+availability remains distinct from declared support; required unavailable or
+unsupported capabilities remain blockers. Metadata equality does not prove a
+native engine followed the declared policy.
+
+## Native Consumer Requirements
+
+For R2025b, preserve hidden Simscape/block state, solver/execution state and
+operating-point compatibility. Disable block reduction before capture and bind
+effective solver settings rather than unresolved UI values such as `auto`.
+Verify a nonzero-time saved/reloaded restart against uninterrupted native
+integration, including discrete/hidden state. Preserve wrong model/runtime/time,
+tampered or missing blob, stale artifact and observable-downgrade negatives.
+No state reset is permitted during the requested saved-input replay horizon.
+
+## Evidence and Remaining Work
+
+Initial missing-module, coercion, public-facade, duplicate-key and experiment
+identity failures were observed before fixes. The current focused suite passes
+77 tests, including 23 unchanged numeric T01 tests and 11 native JSON Schema tests. Astra review supplied
+reproduced string-channel coercion and large-epoch interval-retiming negatives;
+both failed before correction. Configured source typing passes. The schema reuses stable numeric-contract
+definitions by local reference. The manual renderer uses the pinned toolchain;
+QA inspects every actual page and rejects missing, duplicate or reordered page
+records as the manual grows. Inventory/governance/normal hooks and actual
+R2025b integration remain pending at this development checkpoint. This chapter
+does not approve a scientific calculation or manual release.
+
+## Primary References
+
+[MathWorks R2025b ModelOperatingPoint](https://www.mathworks.com/help/releases/R2025b/simulink/slref/simulink.op.modeloperatingpoint.html)
+defines native restart state and the read-only snapshot clock; its numeric
+logged-state view excludes internal Simscape state.
+[MathWorks R2025b Operating-Point Workflow](https://www.mathworks.com/help/releases/R2025b/simulink/ug/model-operating-point-for-faster-simulation.html)
+documents compatibility and effective configuration constraints. These native
+claims require separate actual execution evidence from UpstreamDrift.

@@ -14,6 +14,11 @@
       "id": "TOOLS-DPLANE-APPROVAL-REQUIRED",
       "owner": "TOOLS-D7 and TOOLS-D8 reviewers",
       "resolution": "Complete scientific, rendered-page, accessibility, license, and human review before promoting the D-plane calculation or its artifacts."
+    },
+    {
+      "id": "TOOLS-NATIVE-STATE-REPLAY-QUALIFICATION-REQUIRED",
+      "owner": "Tools #5470 and UpstreamDrift #11921",
+      "resolution": "Complete native-state transport schema/gates and exact provider decoding/restart/integration evidence. Pure contract validation and the chapter05 source do not qualify physical replay or approve manual release."
     }
   ],
   "calculations": [

@@ -5,13 +5,13 @@
   "owner_subepic": 4725,
   "inspection_mode": "complete-zero-sampling",
   "sampling_rate": 1.0,
-  "artifacts_manifest_sha256_lf": "cd7495bbabf083e197a16676ab7e352903fd54c46df97366dd4f7466de31f215",
+  "artifacts_manifest_sha256_lf": "4b8dfd92c851fbe18a5f527179a87a37dd22251b4cb24e69309ebfe7ea030a99",
   "inspections": {
     "pdf": {
       "path": "manuals/tools/dist/tools-engineering-design-manual.pdf",
-      "sha256": "a2c25deea16a0b4cd03573d20b29bf68e20aa9ce723107081368a70836ffd557",
-      "bytes": 275840,
-      "page_count": 10,
+      "sha256": "5ad05de7dd340873eb8f39c4ec3be22cee5ba1de7da13816fe55a8ad7b1e9779",
+      "bytes": 286808,
+      "page_count": 12,
       "uninspected_pages": 0,
       "fonts": [
         "/DSTOOL+LMMathItalic10-Bold",
@@ -27,9 +27,9 @@
         "/DSTOOL+NimbusSanL-Regu",
         "/DSTOOL+NimbusSanL-ReguItal"
       ],
-      "outline_item_count": 68,
+      "outline_item_count": 76,
       "total_images": 1,
-      "total_annotations": 2,
+      "total_annotations": 4,
       "pages": [
         {
           "page_number": 1,
@@ -41,7 +41,7 @@
         },
         {
           "page_number": 2,
-          "character_count": 3676,
+          "character_count": 3673,
           "line_count": 44,
           "image_count": 0,
           "annotation_count": 0,
@@ -65,7 +65,7 @@
         },
         {
           "page_number": 5,
-          "character_count": 3335,
+          "character_count": 3334,
           "line_count": 41,
           "image_count": 0,
           "annotation_count": 0,
@@ -73,7 +73,7 @@
         },
         {
           "page_number": 6,
-          "character_count": 2597,
+          "character_count": 2596,
           "line_count": 40,
           "image_count": 0,
           "annotation_count": 0,
@@ -81,7 +81,7 @@
         },
         {
           "page_number": 7,
-          "character_count": 2103,
+          "character_count": 2100,
           "line_count": 41,
           "image_count": 0,
           "annotation_count": 0,
@@ -89,7 +89,7 @@
         },
         {
           "page_number": 8,
-          "character_count": 2711,
+          "character_count": 2709,
           "line_count": 41,
           "image_count": 0,
           "annotation_count": 0,
@@ -97,7 +97,7 @@
         },
         {
           "page_number": 9,
-          "character_count": 3081,
+          "character_count": 3079,
           "line_count": 41,
           "image_count": 0,
           "annotation_count": 0,
@@ -105,30 +105,46 @@
         },
         {
           "page_number": 10,
-          "character_count": 2144,
-          "line_count": 31,
+          "character_count": 2777,
+          "line_count": 39,
           "image_count": 0,
-          "annotation_count": 2,
+          "annotation_count": 0,
+          "first_line_prefix": "Tools Engineering Design Manual Generated - Unapproved"
+        },
+        {
+          "page_number": 11,
+          "character_count": 3842,
+          "line_count": 42,
+          "image_count": 0,
+          "annotation_count": 0,
+          "first_line_prefix": "Tools Engineering Design Manual Generated - Unapproved"
+        },
+        {
+          "page_number": 12,
+          "character_count": 610,
+          "line_count": 9,
+          "image_count": 0,
+          "annotation_count": 4,
           "first_line_prefix": "Tools Engineering Design Manual Generated - Unapproved"
         }
       ]
     },
     "docx": {
       "path": "manuals/tools/dist/tools-engineering-design-manual.docx",
-      "sha256": "2b13ec732a8dc38044f606a521bb961541b2f39f434aca6d94b1d4c910719559",
-      "bytes": 71156,
-      "paragraph_count": 188,
-      "heading_count": 69,
+      "sha256": "4089d9766ee595ace553f01bb6644e81ee54130df27fab1994878c4193027464",
+      "bytes": 73789,
+      "paragraph_count": 205,
+      "heading_count": 77,
       "math_element_count": 52,
       "table_count": 1,
       "drawing_count": 1,
-      "bookmark_count": 74,
+      "bookmark_count": 82,
       "unresolved_reference_count": 0
     },
     "html": {
       "path": "manuals/tools/dist/tools-engineering-design-manual.html",
-      "sha256": "2cd8a1e0dc5f17bd95257e452af642cb49edd897e842250c7a0d2097d0d3c5f4",
-      "bytes": 100607,
+      "sha256": "5760e567ea28508f07cd025e95fb6d9e1f36b9f99b52daa3379b79b059152df4",
+      "bytes": 106378,
       "has_lang": true,
       "has_viewport": true,
       "mathml_block_count": 52,
@@ -140,8 +156,8 @@
     },
     "tex": {
       "path": "manuals/tools/dist/tools-engineering-design-manual.tex",
-      "sha256": "188a68d12db2c292669b414d09dafcd9204b29b2c8ddd5af7fb10d893b63789c",
-      "bytes": 39156,
+      "sha256": "36eac866e332adcd7692b772beb449badb55f55b3483d399fc3eef2547f4c264",
+      "bytes": 44879,
       "has_geometry": true,
       "has_microtype": true,
       "figure_count": 2,
