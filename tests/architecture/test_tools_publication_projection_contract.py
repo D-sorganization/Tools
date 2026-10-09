@@ -10,6 +10,7 @@ from typing import Any
 import pytest
 from jsonschema import Draft202012Validator
 from jsonschema.exceptions import ValidationError
+from pypdf import PdfReader
 
 from scripts.tools_publication_projection_contract import (
     PROJECTION_SCHEMA_VERSION,
@@ -67,7 +68,8 @@ def test_publication_projection_loader_validates_evidence() -> None:
         assert rec.bytes > 0
 
     # Reviews
-    assert ledger.evidence.pdf_page_review.page_count == 10
+    pdf_path = MANUAL_ROOT / "dist" / "tools-engineering-design-manual.pdf"
+    assert ledger.evidence.pdf_page_review.page_count == len(PdfReader(pdf_path).pages)
     assert ledger.evidence.pdf_page_review.uninspected_pages == 0
     assert ledger.evidence.docx_page_review.unresolved_reference_count == 0
     assert ledger.evidence.accessibility_review.images_missing_alt == 0
@@ -168,3 +170,18 @@ def test_verify_publication_projection_fails_closed_on_tampering(
 
     with pytest.raises(error_type, match=message):
         verify_publication_projection(tmp_path)
+
+
+def test_generated_projection_schema_admits_complete_live_page_inventory() -> None:
+    from scripts.tools_publication_projection_contract import (
+        build_publication_projection,
+    )
+
+    payload = build_publication_projection(REPO_ROOT)
+    validator = Draft202012Validator(_json(SCHEMA_PATH))
+    validator.validate(payload)
+    for invalid in (0, -1, True):
+        broken = copy.deepcopy(payload)
+        broken["evidence"]["pdf_page_review"]["page_count"] = invalid
+        with pytest.raises(ValidationError):
+            validator.validate(broken)

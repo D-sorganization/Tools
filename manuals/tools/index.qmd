@@ -30,3 +30,5 @@ but none is approved for publication or engineering use.
 {{< include chapters/03-textbook-chapter-contract.qmd >}}
 
 {{< include chapters/04-swing-rate-of-closure-dplane.qmd >}}
+
+{{< include chapters/05-native-state-replay.qmd >}}

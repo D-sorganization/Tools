@@ -9,95 +9,95 @@
   },
   "repository": "D-sorganization/Tools",
   "issue_url": "https://github.com/D-sorganization/Tools/issues/4730",
-  "pr_url": "https://github.com/D-sorganization/Tools/pull/5468",
+  "pr_url": "https://github.com/D-sorganization/Tools/pull/5055",
   "commit_evidence": {
-    "local_head_sha": "043d1836376b60f7e2c7c87b345829334fc0254b",
+    "local_head_sha": "b1480ff6efb17f8dbe8926da55d24ecc10f90db3",
     "remote_head_sha": null,
-    "reviewed_tree_sha": "94dd49bb14f7a8751d2a16cb85221902f6c5a138",
+    "reviewed_tree_sha": "0e479a961a1aba90588c61bb038b32a5b2d9ac38",
     "merge_sha": null
   },
   "branch_and_worktree": {
-    "branch": "feat/5463-bounded-preview-resources",
-    "worktree": "C:\\Users\\diete\\Repositories\\Worktrees\\Tools-5463-bounded-preview-resources",
-    "is_clean": true
+    "branch": "feat/native-state-artifact-5470",
+    "worktree": "C:\\Users\\diete\\Repositories\\Worktrees\\Tools-5461-versioned-replay",
+    "is_clean": false
   },
   "check_evidence": {
     "check_design_manual_governance": {
       "command": "python -m scripts.check_design_manual_governance",
       "status": "passed",
-      "timestamp": "2026-10-09T05:53:47Z"
+      "timestamp": "2026-10-09T08:48:51Z"
     },
     "build_tools_module_inventory": {
       "command": "python -m scripts.build_tools_module_inventory --check",
       "status": "passed",
-      "timestamp": "2026-10-09T05:53:47Z"
+      "timestamp": "2026-10-09T08:48:51Z"
     },
     "lint_tools_textbook_chapters": {
       "command": "python -m scripts.lint_tools_textbook_chapters",
       "status": "passed",
-      "timestamp": "2026-10-09T05:53:47Z"
+      "timestamp": "2026-10-09T08:48:51Z"
     },
     "check_tools_exemplars": {
       "command": "python -m scripts.check_tools_exemplars",
       "status": "passed",
-      "timestamp": "2026-10-09T05:53:47Z"
+      "timestamp": "2026-10-09T08:48:51Z"
     },
     "check_tools_calculation_freshness": {
       "command": "python -m scripts.check_tools_calculation_freshness --check",
       "status": "passed",
-      "timestamp": "2026-10-09T05:53:47Z"
+      "timestamp": "2026-10-09T08:48:51Z"
     },
     "check_tools_manual_qa": {
       "command": "python -m scripts.check_tools_manual_qa --check",
       "status": "passed",
-      "timestamp": "2026-10-09T05:53:47Z"
+      "timestamp": "2026-10-09T08:48:51Z"
     },
     "check_tools_publication_projection": {
       "command": "python -m scripts.check_tools_publication_projection --check",
       "status": "passed",
-      "timestamp": "2026-10-09T05:53:47Z"
+      "timestamp": "2026-10-09T08:48:51Z"
     },
     "render_tools_design_manual": {
       "command": "python -m scripts.render_tools_design_manual --check",
       "status": "passed",
-      "timestamp": "2026-10-09T05:53:47Z"
+      "timestamp": "2026-10-09T08:48:51Z"
     },
     "check_tools_handoff": {
       "command": "python -m scripts.check_tools_handoff --check",
       "status": "passed",
-      "timestamp": "2026-10-09T05:53:47Z"
+      "timestamp": "2026-10-09T08:48:51Z"
     }
   },
   "artifact_and_test_digests": {
-    "calculation_registry_sha256": "f22e10d276306fef974368eacde887b734c6bd5610eeb78680628b0c808b9fdc",
+    "calculation_registry_sha256": "67fbf0697e4678afb88e146f39b6bb8e5bfe8b5e975afb039f1e616bc09017a6",
     "toolchain_lock_sha256": "62915da70f09da3fead98ae71ccb94c2afaec7db2de390faa97234e103426b9b",
-    "artifacts_manifest_sha256": "cd7495bbabf083e197a16676ab7e352903fd54c46df97366dd4f7466de31f215",
-    "qa_ledger_sha256": "bdc5d27e97283015191d7a633f205506095cbddd2c609b71978ff51af16ba126",
-    "publication_projection_sha256": "5d18142822b9d8f254cdccda1725db67ac02bf5d5cd997ed90c674473c9ea06b",
+    "artifacts_manifest_sha256": "4b8dfd92c851fbe18a5f527179a87a37dd22251b4cb24e69309ebfe7ea030a99",
+    "qa_ledger_sha256": "5ed7e223f2209ab1aa78f2d899d758eedb7de3d42db3ed4968aabc3e26131984",
+    "publication_projection_sha256": "5ef50bd97eb3dd27565d46f6742cd32c68d8c62278f31f9a7a07213c8c1ccba4",
     "artifacts_sha256": {
       "docx": {
         "path": "manuals/tools/dist/tools-engineering-design-manual.docx",
         "media_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        "bytes": 71156,
-        "sha256": "2b13ec732a8dc38044f606a521bb961541b2f39f434aca6d94b1d4c910719559"
+        "bytes": 73789,
+        "sha256": "4089d9766ee595ace553f01bb6644e81ee54130df27fab1994878c4193027464"
       },
       "html": {
         "path": "manuals/tools/dist/tools-engineering-design-manual.html",
         "media_type": "text/html",
-        "bytes": 100607,
-        "sha256": "2cd8a1e0dc5f17bd95257e452af642cb49edd897e842250c7a0d2097d0d3c5f4"
+        "bytes": 106378,
+        "sha256": "5760e567ea28508f07cd025e95fb6d9e1f36b9f99b52daa3379b79b059152df4"
       },
       "pdf": {
         "path": "manuals/tools/dist/tools-engineering-design-manual.pdf",
         "media_type": "application/pdf",
-        "bytes": 275840,
-        "sha256": "a2c25deea16a0b4cd03573d20b29bf68e20aa9ce723107081368a70836ffd557"
+        "bytes": 286808,
+        "sha256": "5ad05de7dd340873eb8f39c4ec3be22cee5ba1de7da13816fe55a8ad7b1e9779"
       },
       "tex": {
         "path": "manuals/tools/dist/tools-engineering-design-manual.tex",
         "media_type": "application/x-tex",
-        "bytes": 39156,
-        "sha256": "188a68d12db2c292669b414d09dafcd9204b29b2c8ddd5af7fb10d893b63789c"
+        "bytes": 44879,
+        "sha256": "36eac866e332adcd7692b772beb449badb55f55b3483d399fc3eef2547f4c264"
       }
     }
   },
@@ -112,7 +112,7 @@
       "TOOLS-HUMAN-APPROVAL-PENDING",
       "TOOLS-MARKERLESS-EXEMPLAR-BLOCKED"
     ],
-    "expiry_timestamp": "2027-01-07T05:53:47Z"
+    "expiry_timestamp": "2027-01-07T08:48:51Z"
   },
   "blockers": [
     {
@@ -127,12 +127,12 @@
     }
   ],
   "next_dependency": "TOOLS-M0 (#4708 / #4734) and parent epic DOC-TOOLS (#4707) closure",
-  "freshness_timestamp": "2026-10-09T05:53:47Z",
+  "freshness_timestamp": "2026-10-09T08:48:51Z",
   "governed_handoff_files": {
     "AGENT_HANDOFF.md": {
       "path": "AGENT_HANDOFF.md",
-      "sha256_lf": "b9ff357809ca184b6044b0f18868bf6008fc9dd806850853738d8318cb7c41f4",
-      "line_count": 141,
+      "sha256_lf": "1e7189748e3aa515bbc7add277c27006e62f0b8bdac33a34256da94fa816a30d",
+      "line_count": 145,
       "max_line_budget": 150,
       "required_sections": [
         "## Verified Agent Context: #5138",
@@ -145,7 +145,8 @@
         "## Gate Commands (Repo-Wide)",
         "## Do-Not List",
         "## Short-Term Roadmap (Ordered)",
-        "## PR Disposition \u2014 2026-09-07/08 Fleet Backlog Sweep (Tools, 22 open PRs)"
+        "## PR Disposition \u2014 2026-09-07/08 Fleet Backlog Sweep (Tools, 22 open PRs)",
+        "## Native State Replay Development (#5470)"
       ]
     },
     "src/pendulum_simulator/AGENT_HANDOFF.md": {
