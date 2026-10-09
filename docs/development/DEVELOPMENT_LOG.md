@@ -61,6 +61,7 @@ feature, from proposal to ship. See the `development-logs` section of
 - **Last verified:** 2026-10-05 — guard re-vendored from RM#1996 (Tools#5439); re-vendored to RM#2000 fail-closed bytes; `pytest tests/ops/test_fork_pr_runner_guard.py` 82 passed, guard reports 0 violations on Tools workflows.
 - **Summary:** Workflow-level defence in depth for #4464: every job in a PR-triggered workflow that can reach `d-sorg-fleet` skips fork PRs, the required `tests` lane routes fork PRs to a hosted runner, and a static checker enforces both. Admin settings (fork-PR approval, default token permissions, runner-group access) remain owner-only.
 - **Next step:** Owner applies the admin-only settings listed in the PR body, then closes #4464.
+
 ### DL-#5429 · Fix Clippy Rust 1.99 Errors in pendulum-core
 
 - **State:** in_review
