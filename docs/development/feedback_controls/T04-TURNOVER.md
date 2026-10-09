@@ -63,6 +63,11 @@ in UpstreamDrift; these pure contracts cannot establish it.
 
 ## PR5473 Extractor Regression
 
+The subsequent documentation job failed before validation because its focused
+environment omitted `defusedxml`, now imported by the QA contract. The workflow
+installs `defusedxml==0.7.1` explicitly alongside its other governance dependencies.
+This dependency repair preserves all validation steps and approval blockers.
+
 CI on both Python3.11 and3.12 exposed pypdf6.20 body-line rewrapping on
 unchanged PDF pages2,6,7. Byte identity, normalized character counts and every
 other page inventory field matched the retained ledger. A body-rewrapping
