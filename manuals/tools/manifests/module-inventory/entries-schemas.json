@@ -162,10 +162,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5158,
+      "bytes_lf": 5196,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a99d875b5211c65c42dba4417fc6c080bb1d9f4a56aaee3316d9ab3736e58707",
+      "content_sha256_lf": "be1d593774a6240777c57ace67ede9187b627df7c4424ce26da1b77e427f2e28",
       "family": "repository-governance-non-calculation",
       "id": "TOOLS-MODULE-SCHEMAS-MOCAP-NATIVE-STATE-REPLAY-V1-1-SCHEMA-JSON-AFBCE12AC8DD",
       "language": "json",

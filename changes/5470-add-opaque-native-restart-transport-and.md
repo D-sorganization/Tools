@@ -7,3 +7,5 @@ branch: "feat/native-state-artifact-5470"
 ---
 
 Native contracts/schema77, full mocap231, QA/projection39 tests pass. Full-model matching and independent native provider integration remain open.
+
+Native replay identity and clock requirements are documented in canonical chapter05 and the T04 turnover. SPEC change-log projection is owned by the post-merge fragment collation; no fabricated PR key is used before publication.

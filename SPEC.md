@@ -7755,7 +7755,3 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-10-08: Feedback-Control Evidence Interchange (#5462)
 
 - **2026-10-08**: feat(mocap, #5462) — Add structural `comparison-evidence/1.0.0` receipts that preserve model/engine rows, replay mode, required/support/availability axes, implementation identities, and opaque artifact references. Prevent replay-mode and same-input mismatches from being promoted through the generic interchange boundary; retain scientific qualification authority in UpstreamDrift. Implementation notes: `docs/development/feedback_controls/T02-CONTRACT.md`.
-
-## 2026-10-09: Opaque Native Restart Transport (#5470)
-
-- Add a separate native-state-replay/1.1.0 development envelope for immutable native artifact identity, nonzero snapshot clock, ordered saved inputs and full envelope integrity. Keep numeric T01 1.0 unchanged; native decoding and physics qualification remain in UpstreamDrift #11921. Canonical design source: manuals/tools/chapters/05-native-state-replay.qmd.

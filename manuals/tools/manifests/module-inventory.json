@@ -153,7 +153,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
     },
     {
-      "content_sha256_lf": "4042ee3defb7936c31d501fc7e9789ea79c5117b57f4deca2cbaa78283033af7",
+      "content_sha256_lf": "1d4fb8a745fa1ca4af633246c1674e6e741b45490a47aab4aff007896c1f0aff",
       "entry_count": 5,
       "package": "schemas",
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
