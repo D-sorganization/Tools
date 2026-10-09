@@ -4422,10 +4422,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12402,
+      "bytes_lf": 13591,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f34d5ddd982f680a45c6c4f9cabf23e623627686d991017e2d61c98eb28d6754",
+      "content_sha256_lf": "6fb982cfa5030208124fdb807a8960b6d8e61182863a3eec90db8e7580b49869",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CI-SHARD-ARTIFACTS-PY-A6BAD8D6BEED",
       "language": "python",
@@ -4487,12 +4487,12 @@
           {
             "kind": "function",
             "name": "handle_artifact_command",
-            "signature": "args: argparse.Namespace, parser: argparse.ArgumentParser, required_shards: tuple[str, ...]"
+            "signature": "args: argparse.Namespace, parser: argparse.ArgumentParser, required_shards: tuple[str, ...], expected_coverage_files: Mapping[str, tuple[str, ...]]"
           },
           {
             "kind": "function",
             "name": "select_coverage_artifacts",
-            "signature": "status_dir: Path, coverage_dir: Path, output_dir: Path, run: ShardRun, required_shards: tuple[str, ...]"
+            "signature": "status_dir: Path, coverage_dir: Path, output_dir: Path, run: ShardRun, required_shards: tuple[str, ...], expected_files: Mapping[str, tuple[str, ...]]"
           },
           {
             "kind": "function",
@@ -4521,10 +4521,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12911,
+      "bytes_lf": 13798,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8d8402d285f7e827c015d7faeaa0ad0842b7177384e2285f144c81937a52fbf7",
+      "content_sha256_lf": "6da939ec2a9058cf1e7e7d72ff1c1eccf8be6a25637903b741094d523af26a94",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CI-TEST-SHARDS-PY-F0C2918F82E4",
       "language": "python",
@@ -4622,6 +4622,11 @@
             "kind": "function",
             "name": "check_partition",
             "signature": "repo_root: Path=REPO_ROOT"
+          },
+          {
+            "kind": "function",
+            "name": "coverage_data_filenames",
+            "signature": "shard_name: str, python_version: str"
           },
           {
             "kind": "function",

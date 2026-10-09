@@ -7,6 +7,7 @@ import hashlib
 import json
 import shutil
 import sys
+from collections.abc import Mapping
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -211,6 +212,7 @@ def select_coverage_artifacts(
     output_dir: Path,
     run: ShardRun,
     required_shards: tuple[str, ...],
+    expected_files: Mapping[str, tuple[str, ...]],
 ) -> list[str]:
     """Copy only coverage files paired with each shard's selected status attempt."""
     latest, problems = _load_latest_statuses(status_dir, run, required_shards)
@@ -218,17 +220,44 @@ def select_coverage_artifacts(
         return problems
     if not coverage_dir.is_dir():
         return ["coverage artifact directory is missing"]
+    if set(expected_files) != set(required_shards):
+        return ["expected coverage files must name every required shard exactly once"]
     output_dir.mkdir(parents=True, exist_ok=True)
     for shard in required_shards:
         status = latest[shard]
         artifact = coverage_dir / coverage_artifact_name(run, status.run_attempt, shard)
-        filename = f".coverage.py{run.python_version}.{shard}"
-        source = artifact / filename
-        if not source.is_file():
+        filenames = expected_files[shard]
+        if not _valid_coverage_filenames(filenames):
+            problems.append(f"{shard}: expected coverage filenames are invalid")
+            continue
+        if not artifact.is_dir():
             problems.append(f"{shard}: selected-attempt coverage artifact is missing")
             continue
-        shutil.copyfile(source, output_dir / filename)
+        sources = {path.name: path for path in artifact.iterdir() if path.is_file()}
+        expected = set(filenames)
+        if set(sources) != expected:
+            problems.append(
+                f"{shard}: expected {len(expected)} coverage files, found "
+                f"{len(set(sources) & expected)}"
+            )
+            continue
+        for filename in filenames:
+            shutil.copyfile(sources[filename], output_dir / filename)
     return problems
+
+
+def _valid_coverage_filenames(filenames: tuple[str, ...]) -> bool:
+    return (
+        bool(filenames)
+        and all(
+            name.startswith(".coverage.py")
+            and "/" not in name
+            and "\\" not in name
+            and Path(name).name == name
+            for name in filenames
+        )
+        and len(set(filenames)) == len(filenames)
+    )
 
 
 def add_artifact_arguments(
@@ -286,6 +315,7 @@ def handle_artifact_command(
     args: argparse.Namespace,
     parser: argparse.ArgumentParser,
     required_shards: tuple[str, ...],
+    expected_coverage_files: Mapping[str, tuple[str, ...]],
 ) -> int | None:
     """Run one artifact command, returning ``None`` for non-artifact modes."""
     if args.verify_status:
@@ -324,6 +354,7 @@ def handle_artifact_command(
             args.output_dir,
             run,
             required_shards,
+            expected_coverage_files,
         )
         if problems:
             for problem in problems:

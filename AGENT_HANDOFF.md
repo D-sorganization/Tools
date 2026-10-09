@@ -142,4 +142,4 @@ python3 -m scripts.render_tools_design_manual --check
 
 ## Native State Replay Development (#5470)
 
-PR5471 merged the native artifact envelope at89415ee85; PR5473 (issue5472) merged at25b7c1fbf7ca8e43094c1475f63a0c1bdbb42a5a. PR5479 (#5478) binds CI shard status and coverage to run attempts; only the latest complete attempt can pass, and coverage must match that attempt. See docs/development/feedback_controls/T04-TURNOVER.md and canonical manual chapter05. No native physics or release approval is implied.
+PR5471 merged the native artifact envelope at89415ee85; PR5473 (issue5472) merged at25b7c1fbf7ca8e43094c1475f63a0c1bdbb42a5a. PR5479 (#5478) binds shard status and every pytest-invocation coverage file to run attempts; only the latest complete attempt can pass. See docs/development/feedback_controls/T04-TURNOVER.md and canonical manual chapter05. No native physics or release approval is implied.

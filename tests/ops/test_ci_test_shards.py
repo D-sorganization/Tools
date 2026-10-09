@@ -237,6 +237,9 @@ def test_coverage_selection_uses_same_latest_attempt_as_status(
     coverage_root = tmp_path / "coverage"
     selected_root = tmp_path / "selected"
     shards_list = shards.SHARD_NAMES
+    coverage_files = {
+        shard: shards.coverage_data_filenames(shard, "3.12") for shard in shards_list
+    }
     _write_status_lane(status_root, run_id, 2, "3.12", {"src-shared": "failure"})
     _write_status_artifact(status_root, run_id, 10, "3.12", "src-shared", "success")
     for shard in shards_list:
@@ -248,7 +251,8 @@ def test_coverage_selection_uses_same_latest_attempt_as_status(
         value = b"latest" if attempt == 10 else b"current"
         if shard == "src-shared":
             value = b"latest"
-        (artifact / f".coverage.py3.12.{shard}").write_bytes(value)
+        for filename in coverage_files[shard]:
+            (artifact / filename).write_bytes(value)
     stale_artifact = coverage_root / f"coverage-data-{run_id}-attempt-2-3.12-src-shared"
     stale_artifact.mkdir()
     (stale_artifact / ".coverage.py3.12.src-shared").write_bytes(b"stale")
@@ -259,10 +263,52 @@ def test_coverage_selection_uses_same_latest_attempt_as_status(
         selected_root,
         artifacts.ShardRun(run_id, 10, "3.12"),
         tuple(shards.SHARD_NAMES),
+        coverage_files,
     )
 
     assert problems == []
     assert (selected_root / ".coverage.py3.12.src-shared").read_bytes() == b"latest"
+    assert {
+        path.name for path in selected_root.glob(".coverage.py3.12.tests-rate*")
+    } == set(coverage_files["tests-rate"])
+    for shard in ("tests-shared", "src-embedded"):
+        assert {
+            path.name for path in selected_root.glob(f".coverage.py3.12.{shard}*")
+        } == set(coverage_files[shard])
+
+
+def test_coverage_selection_rejects_missing_invocation_file(tmp_path: Path) -> None:
+    shards = _load_shards_module()
+    artifacts = _load_artifacts_module()
+    run_id = "37956815685"
+    status_root = tmp_path / "status"
+    coverage_root = tmp_path / "coverage"
+    selected_root = tmp_path / "selected"
+    coverage_files = {
+        shard: shards.coverage_data_filenames(shard, "3.12")
+        for shard in shards.SHARD_NAMES
+    }
+    _write_status_lane(status_root, run_id, 1, "3.12")
+    for shard in shards.SHARD_NAMES:
+        artifact = coverage_root / f"coverage-data-{run_id}-attempt-1-3.12-{shard}"
+        artifact.mkdir(parents=True)
+        filenames = coverage_files[shard]
+        missing = filenames[-1] if shard == "tests-rate" else None
+        for filename in filenames:
+            if filename == missing:
+                continue
+            (artifact / filename).write_bytes(b"complete")
+
+    problems = artifacts.select_coverage_artifacts(
+        status_root,
+        coverage_root,
+        selected_root,
+        artifacts.ShardRun(run_id, 1, "3.12"),
+        tuple(shards.SHARD_NAMES),
+        coverage_files,
+    )
+
+    assert problems == ["tests-rate: expected 2 coverage files, found 1"]
 
 
 def test_coverage_selection_fails_when_latest_success_has_no_coverage(
@@ -283,6 +329,10 @@ def test_coverage_selection_fails_when_latest_success_has_no_coverage(
         selected_root,
         artifacts.ShardRun(run_id, 1, "3.12"),
         tuple(shards.SHARD_NAMES),
+        {
+            shard: shards.coverage_data_filenames(shard, "3.12")
+            for shard in shards.SHARD_NAMES
+        },
     )
 
     assert len(problems) == len(shards.SHARD_NAMES)
@@ -366,7 +416,7 @@ def test_club_tester_is_serial_without_dropping_its_complete_gui_workflow() -> N
     assert command[command.index("-n") + 1] == "4"
 
 
-@pytest.mark.parametrize("shard_name", ["tests-shared", "tests-rate"])
+@pytest.mark.parametrize("shard_name", ["tests-shared", "tests-rate", "src-embedded"])
 def test_serial_invocations_keep_distinct_coverage_outputs(
     monkeypatch: pytest.MonkeyPatch,
     shard_name: str,

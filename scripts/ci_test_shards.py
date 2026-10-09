@@ -185,6 +185,13 @@ def shard_by_name(name: str) -> Shard:
     raise SystemExit(f"unknown shard {name!r}; known: {', '.join(SHARD_NAMES)}")
 
 
+def coverage_data_filenames(shard_name: str, python_version: str) -> tuple[str, ...]:
+    """Return the exact coverage files emitted by every invocation in a shard."""
+    shard = shard_by_name(shard_name)
+    base = f".coverage.py{python_version}.{shard_name}"
+    return _coverage_files(base, len(shard.invocations))
+
+
 def _is_test_file(name: str) -> bool:
     return name.endswith(".py") and (
         name.startswith("test_") or name.endswith("_test.py")
@@ -283,6 +290,14 @@ def pytest_command(
     return cmd
 
 
+def _coverage_files(base: str, invocation_count: int) -> tuple[str, ...]:
+    if invocation_count < 1:
+        raise ValueError("a shard must contain at least one invocation")
+    if invocation_count == 1:
+        return (base,)
+    return tuple(f"{base}.{index}" for index in range(invocation_count))
+
+
 def run_shard(
     name: str,
     *,
@@ -296,8 +311,8 @@ def run_shard(
     for index, invocation in enumerate(shard.invocations):
         env = dict(os.environ)
         if coverage_data:
-            suffix = f".{index}" if len(shard.invocations) > 1 else ""
-            env["COVERAGE_FILE"] = f"{coverage_data}{suffix}"
+            filenames = _coverage_files(coverage_data, len(shard.invocations))
+            env["COVERAGE_FILE"] = filenames[index]
         cmd = pytest_command(invocation, fanout=fanout, quarantine=quarantine)
         print("+", " ".join(cmd), flush=True)
         if dry_run:
@@ -355,8 +370,19 @@ def main(argv: list[str] | None = None) -> int:
         total = len(iter_test_files())
         print(f"Partition OK: {total} test files across {len(SHARDS)} shards.")
         return 0
+    expected_coverage_files = (
+        {
+            shard: coverage_data_filenames(shard, args.python_version)
+            for shard in SHARD_NAMES
+        }
+        if args.select_coverage
+        else {}
+    )
     artifact_result: int | None = handle_artifact_command(
-        args, parser, tuple(SHARD_NAMES)
+        args,
+        parser,
+        tuple(SHARD_NAMES),
+        expected_coverage_files,
     )
     if artifact_result is not None:
         return artifact_result
