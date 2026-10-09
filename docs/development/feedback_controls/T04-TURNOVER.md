@@ -9,7 +9,8 @@ for draft PR5471, after main collation commit5dffcd1c4.
 No new full clone or native environment was created. Source and tests are
 committed locally; the draft initially published a documentation-only staging
 checkpoint. The complete implementation is published in ready PR5471, with
-protected automatic merge armed. UpstreamDrift #11921 consumes
+protected checks required; the latest observed automatic-merge setting is absent.
+UpstreamDrift #11921 consumes
 this seam after publication and exact dependency pinning.
 
 ## State and Validation
@@ -34,6 +35,12 @@ receipts are retained in fleet planning staging, not published as native
 physics evidence.
 
 ## Next Required Work
+
+The next protected docs run passed its governance commands and failed only the
+repository test's fixed six-source assertion (seven QMD sources now exist).
+Astra reproduced that failure locally and changed the assertion to enumerate
+canonical QMD files while requiring the authority index and retaining every
+release/publication blocker. No generated artifact or approval ledger changed.
 
 The first protected CI pass exposed three omissions: the unchanged type-check
 loop reused a type-class variable for the integrity result, the renderer test

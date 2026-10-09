@@ -142,4 +142,4 @@ python3 -m scripts.render_tools_design_manual --check
 
 ## Native State Replay Development (#5470)
 
-Root/codex is implementing the separate native artifact envelope on feat/native-state-artifact-5470. Sixty focused tests pass; JSON Schema, typing, full governance and publication are pending. See docs/development/feedback_controls/T04-TURNOVER.md and canonical manual chapter05. No native physics or release approval is implied.
+Ready PR5471 publishes the separate native artifact envelope; 77 contract/schema tests and 231 mocap tests pass. Astra reproduced and repaired the remaining stale governance test source count, preserving release blockers. Protected CI is pending. See docs/development/feedback_controls/T04-TURNOVER.md and canonical manual chapter05. No native physics or release approval is implied.

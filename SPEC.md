@@ -5946,7 +5946,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
-| 2026-10-09 | #5471 | Add opaque native restart transport and strict replay envelope with native-clock integrity and dynamic complete manual page inspection; Add native restart transport, strict clock integrity, complete whitespace-stable manual QA and compatible public API exports |
+| 2026-10-09 | #5471 | Add opaque native restart transport and strict replay envelope with native-clock integrity and dynamic complete manual page inspection; Add native restart transport, strict clock integrity, complete whitespace-stable manual QA and compatible public API exports; Add opaque native restart transport and strict replay envelope with native-clock integrity and dynamic complete manual page inspection; verify canonical source count as chapters grow without weakening release blockers |
 | 2026-10-09 | #5468 | Add bounded replay resources and privacy-aware preview manifest contracts |
 | 2026-10-09 | #5465 | Plan shared controlled-matching and muscle replay interchange with private evidence boundaries |
 | 2026-10-07 | #5457 | CI: isolate RUSTUP_HOME/CARGO_HOME per workspace for every fleet Rust job (RM#2021) |
