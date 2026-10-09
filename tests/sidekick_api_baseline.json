@@ -8380,6 +8380,8 @@
       "ClockDomain",
       "ClockKind",
       "ClockSkewEstimate",
+      "CleanupDecision",
+      "CleanupEvidence",
       "CoordinateFrame",
       "DeliveryTrajectoryMappingConfig",
       "DistortionCoefficients",
@@ -8393,6 +8395,11 @@
       "EvidenceArtifactReference",
       "EXPERIMENT_REPLAY_SCHEMA_VERSION",
       "ExperimentReplayBundle",
+      "ExperimentCancellationToken",
+      "ExperimentCancelledError",
+      "ExperimentResourceBudget",
+      "ExperimentTiming",
+      "EXPERIMENT_CACHE_KEY_VERSION",
       "FeatureSupport",
       "FisheyeIntrinsics",
       "FrameIndexEntry",
@@ -8440,6 +8447,7 @@
       "RecordingWriter",
       "ReplayExecutionPolicy",
       "ReplayMode",
+      "RemoteResourceReceipt",
       "RelocalizationResult",
       "ReprojectionResidual",
       "RigidTransform",
@@ -8459,12 +8467,18 @@
       "SyncQuality",
       "SyntheticFrameSource",
       "SyntheticPoseAdapter",
+      "PreviewArtifact",
+      "PreviewManifest",
+      "PreviewReleaseAuthorization",
+      "DEFAULT_PREVIEW_DIRECTORY",
+      "PREVIEW_MANIFEST_SCHEMA_VERSION",
       "TemporalTrajectory",
       "adapt_to_delivery_trajectory",
       "apply_joint_angle_constraint",
       "apply_segment_length_constraint",
       "bundle_adjust_layout",
       "build_experiment_replay_bundle",
+      "build_preview_root",
       "build_comparison_evidence_receipt",
       "check_coverage_and_degeneracy",
       "compute_kinematic_derivatives",
@@ -8472,19 +8486,25 @@
       "dumps_canonical",
       "dumps_comparison_evidence_receipt",
       "dumps_experiment_replay_bundle",
+      "dumps_preview_manifest",
       "estimate_pnp_pose",
       "evaluate_extrinsic_quality",
       "evaluate_intrinsic_quality",
+      "evaluate_cleanup_eligibility",
       "get_canonical_skeleton",
       "get_default_mediapipe_mapping",
       "load_session_manifest",
       "load_experiment_replay_bundle",
+      "load_preview_manifest",
       "load_comparison_evidence_receipt",
+      "make_experiment_cache_key",
+      "require_preview_release",
       "reconstruct_frame_landmarks",
       "reconstruct_temporal_trajectory",
       "smooth_trajectory_butterworth",
       "smooth_trajectory_savgol",
       "triangulate_n_views",
+      "verify_preview_artifacts",
       "c3d"
     ],
     "symbols": {
@@ -9073,7 +9093,9 @@
       "DriveMode": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
@@ -9226,6 +9248,20 @@
         }
       },
       "ClockSkewEstimate": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "CleanupDecision": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "CleanupEvidence": {
         "type": "class",
         "info": {
           "bases": [],
@@ -9518,6 +9554,120 @@
             }
           }
         }
+      },
+      "ExperimentCancellationToken": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "__init__": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "cancelled": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            },
+            "request_cancel": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            },
+            "raise_if_cancelled": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        }
+      },
+      "ExperimentCancelledError": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "RuntimeError"
+          ],
+          "methods": {}
+        }
+      },
+      "ExperimentResourceBudget": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "validate_request": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "workers",
+                  "annotation": "int",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "memory_bytes",
+                  "annotation": "int",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "disk_bytes",
+                  "annotation": "int",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "available_disk_bytes",
+                  "annotation": "int",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        }
+      },
+      "ExperimentTiming": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "EXPERIMENT_CACHE_KEY_VERSION": {
+        "type": "variable"
       },
       "FeatureSupport": {
         "type": "class",
@@ -10633,6 +10783,143 @@
           "methods": {}
         }
       },
+      "RemoteResourceReceipt": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "validate_for_dispatch": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "required_host_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "required_provider_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "required_provider_sha256",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "required_license_identity_sha256",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "required_preview_root_identity",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "workers",
+                  "annotation": "int",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "memory_bytes",
+                  "annotation": "int",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "disk_bytes",
+                  "annotation": "int",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "None"
+            },
+            "validate_returned_manifest": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "manifest",
+                  "annotation": "PreviewManifest",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "expected_cache_key_sha256",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "expected_provider_sha256",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "None"
+            },
+            "validate_returned_artifacts": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "manifest",
+                  "annotation": "PreviewManifest",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "expected_cache_key_sha256",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "expected_provider_sha256",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "preview_root",
+                  "annotation": "Path",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "artifact_paths",
+                  "annotation": "Mapping[str, Path]",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "None"
+            }
+          }
+        }
+      },
       "RelocalizationResult": {
         "type": "class",
         "info": {
@@ -11175,6 +11462,86 @@
           }
         }
       },
+      "PreviewArtifact": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "PreviewManifest": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "create": {
+              "args": [
+                {
+                  "name": "cls",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "experiment_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "artifacts",
+                  "annotation": "tuple[PreviewArtifact, ...]",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "budget",
+                  "annotation": "ExperimentResourceBudget",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "cache_key_sha256",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                },
+                {
+                  "name": "provider_sha256",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "kwonlyarg"
+                }
+              ],
+              "returns": "PreviewManifest"
+            },
+            "sha256": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            }
+          }
+        }
+      },
+      "PreviewReleaseAuthorization": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "DEFAULT_PREVIEW_DIRECTORY": {
+        "type": "variable"
+      },
+      "PREVIEW_MANIFEST_SCHEMA_VERSION": {
+        "type": "variable"
+      },
       "TemporalTrajectory": {
         "type": "class",
         "info": {
@@ -11384,6 +11751,26 @@
           "returns": "ExperimentReplayBundle"
         }
       },
+      "build_preview_root": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "environment",
+              "annotation": "Mapping[str, str]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "desktop_directory",
+              "annotation": "Path | None",
+              "default": "None",
+              "kind": "kwonlyarg"
+            }
+          ],
+          "returns": "Path"
+        }
+      },
       "build_comparison_evidence_receipt": {
         "type": "function",
         "signature": {
@@ -11542,6 +11929,20 @@
           "returns": "str"
         }
       },
+      "dumps_preview_manifest": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "manifest",
+              "annotation": "PreviewManifest",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "str"
+        }
+      },
       "estimate_pnp_pose": {
         "type": "function",
         "signature": {
@@ -11650,6 +12051,20 @@
           "returns": "tuple[CalibrationQuality, tuple[CalibrationDegeneracyKind, ...]]"
         }
       },
+      "evaluate_cleanup_eligibility": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "evidence",
+              "annotation": "CleanupEvidence",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "CleanupDecision"
+        }
+      },
       "get_canonical_skeleton": {
         "type": "function",
         "signature": {
@@ -11699,6 +12114,20 @@
           "returns": "ExperimentReplayBundle"
         }
       },
+      "load_preview_manifest": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "text",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "PreviewManifest"
+        }
+      },
       "load_comparison_evidence_receipt": {
         "type": "function",
         "signature": {
@@ -11711,6 +12140,46 @@
             }
           ],
           "returns": "ComparisonEvidenceReceipt"
+        }
+      },
+      "make_experiment_cache_key": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "bundle",
+              "annotation": "ExperimentReplayBundle",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "str"
+        }
+      },
+      "require_preview_release": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "manifest",
+              "annotation": "PreviewManifest",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "source_is_private",
+              "annotation": "bool",
+              "default": null,
+              "kind": "kwonlyarg"
+            },
+            {
+              "name": "authorization",
+              "annotation": "PreviewReleaseAuthorization | None",
+              "default": null,
+              "kind": "kwonlyarg"
+            }
+          ],
+          "returns": "None"
         }
       },
       "reconstruct_frame_landmarks": {
@@ -11841,6 +12310,32 @@
             }
           ],
           "returns": "KeypointReconstruction"
+        }
+      },
+      "verify_preview_artifacts": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "manifest",
+              "annotation": "PreviewManifest",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "preview_root",
+              "annotation": "Path",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "artifact_paths",
+              "annotation": "Mapping[str, Path]",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "None"
         }
       },
       "c3d": {
@@ -41268,6 +41763,22 @@
     "symbols": {}
   },
   "lab/mocap/reference_scale_triangulation.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/cleanup.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/experiment_resources.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/preview_artifacts.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/preview_serialization.py": {
     "__all__": [],
     "symbols": {}
   }

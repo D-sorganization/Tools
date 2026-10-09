@@ -199,10 +199,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8024,
+      "bytes_lf": 9299,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9b345533e1aa3fdb0dce5ce96589919007604e97b1f74d34d0f584f049b36fd5",
+      "content_sha256_lf": "c4f1436b1dc878c2b29ff15ad3d1283aa0b17c8a439f1be5916d9e39c8c4b929",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-INIT-PY-BD60513A12BD",
       "language": "python",
@@ -335,6 +335,16 @@
           },
           {
             "kind": "re-export",
+            "name": "CleanupDecision",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CleanupEvidence",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "ClockDomain",
             "signature": null
           },
@@ -375,6 +385,11 @@
           },
           {
             "kind": "re-export",
+            "name": "DEFAULT_PREVIEW_DIRECTORY",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "DeliveryTrajectoryMappingConfig",
             "signature": null
           },
@@ -400,6 +415,11 @@
           },
           {
             "kind": "re-export",
+            "name": "EXPERIMENT_CACHE_KEY_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "EXPERIMENT_REPLAY_SCHEMA_VERSION",
             "signature": null
           },
@@ -415,7 +435,27 @@
           },
           {
             "kind": "re-export",
+            "name": "ExperimentCancellationToken",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ExperimentCancelledError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "ExperimentReplayBundle",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ExperimentResourceBudget",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ExperimentTiming",
             "signature": null
           },
           {
@@ -625,6 +665,11 @@
           },
           {
             "kind": "re-export",
+            "name": "PREVIEW_MANIFEST_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "PermittedUse",
             "signature": null
           },
@@ -656,6 +701,21 @@
           {
             "kind": "re-export",
             "name": "PrerecordedFrameSource",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PreviewArtifact",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PreviewManifest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PreviewReleaseAuthorization",
             "signature": null
           },
           {
@@ -701,6 +761,11 @@
           {
             "kind": "re-export",
             "name": "RelocalizationResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "RemoteResourceReceipt",
             "signature": null
           },
           {
@@ -840,6 +905,11 @@
           },
           {
             "kind": "re-export",
+            "name": "build_preview_root",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "bundle_adjust_layout",
             "signature": null
           },
@@ -885,7 +955,17 @@
           },
           {
             "kind": "re-export",
+            "name": "dumps_preview_manifest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "estimate_pnp_pose",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "evaluate_cleanup_eligibility",
             "signature": null
           },
           {
@@ -920,7 +1000,17 @@
           },
           {
             "kind": "re-export",
+            "name": "load_preview_manifest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "load_session_manifest",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "make_experiment_cache_key",
             "signature": null
           },
           {
@@ -931,6 +1021,11 @@
           {
             "kind": "re-export",
             "name": "reconstruct_temporal_trajectory",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "require_preview_release",
             "signature": null
           },
           {
@@ -946,6 +1041,11 @@
           {
             "kind": "re-export",
             "name": "triangulate_n_views",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "verify_preview_artifacts",
             "signature": null
           }
         ],
@@ -1680,6 +1780,68 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 1787,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "e2271a1653131ca413fca3d895fe836560047f2333562862219b914649c52fb3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-CLEANUP-PY-C2A938E00D47",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/cleanup.py",
+      "purpose": "Non-destructive worktree cleanup eligibility contracts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CleanupDecision",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CleanupEvidence",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "evaluate_cleanup_eligibility",
+            "signature": "evidence: CleanupEvidence"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 8749,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -2251,6 +2413,90 @@
       }
     },
     {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5391,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "760924ad9b48f1950baf3a7ec85f60798eee36342c962961d786685cf9554de7",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-EXPERIMENT-RESOURCES-PY-9BFFC0898111",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/experiment_resources.py",
+      "purpose": "Bounded resource and resumability contracts for replay experiments.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ExperimentCancellationToken",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ExperimentCancelledError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ExperimentResourceBudget",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ExperimentTiming",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXPERIMENT_CACHE_KEY_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SHA256",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "make_experiment_cache_key",
+            "signature": "bundle: ExperimentReplayBundle"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_experiment_resources.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "provisional",
       "bytes_lf": 10902,
       "classification": "calculation",
@@ -2459,6 +2705,174 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14891,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "44a6823700cbb847b09731b11b3d4684938cffc1229c94f4a3c992443d855287",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-PREVIEW-ARTIFACTS-PY-5700A7F05E04",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/preview_artifacts.py",
+      "purpose": "Path-free, bounded preview artifacts and non-destructive cleanup evidence.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PreviewArtifact",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PreviewManifest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PreviewReleaseAuthorization",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RemoteResourceReceipt",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_PREVIEW_DIRECTORY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PREVIEW_MANIFEST_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_OPAQUE_TOKEN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SHA256",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_VIDEO_TYPES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_preview_root",
+            "signature": "environment: Mapping[str, str], *, desktop_directory: Path | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "require_preview_release",
+            "signature": "manifest: PreviewManifest, *, source_is_private: bool, authorization: PreviewReleaseAuthorization | None"
+          },
+          {
+            "kind": "function",
+            "name": "verify_preview_artifacts",
+            "signature": "manifest: PreviewManifest, preview_root: Path, artifact_paths: Mapping[str, Path]"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/sidekick/lab/mocap/test_preview_artifacts.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2391,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "06ac7166e58ce039e7f8e9fda2bbee4a7b86fe470e1e1611502896f1e9b138ae",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-PREVIEW-SERIALIZATION-PY-415A759710CC",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/lab/mocap/preview_serialization.py",
+      "purpose": "Strict JSON interchange for path-free preview manifests.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "dumps_preview_manifest",
+            "signature": "manifest: PreviewManifest"
+          },
+          {
+            "kind": "function",
+            "name": "load_preview_manifest",
+            "signature": "text: str"
+          }
+        ],
         "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []

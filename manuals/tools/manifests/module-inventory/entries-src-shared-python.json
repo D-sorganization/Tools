@@ -763,6 +763,8 @@
           "tests/shared/python/process_calculators/test_syngas_water_calculator_edge_cases.py",
           "tests/shared/python/sidekick/calculators/electrical/test_glass_interface.py",
           "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
+          "tests/shared/python/sidekick/lab/mocap/test_experiment_resources.py",
+          "tests/shared/python/sidekick/lab/mocap/test_preview_artifacts.py",
           "tests/shared/python/test_contracts.py",
           "tests/shared/python/test_cors.py",
           "tests/test_body_parameters_strict_validation.py",

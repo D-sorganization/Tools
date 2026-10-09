@@ -45,6 +45,7 @@ from .calibration import (
     check_coverage_and_degeneracy,
     evaluate_intrinsic_quality,
 )
+from .cleanup import CleanupDecision, CleanupEvidence, evaluate_cleanup_eligibility
 from .cli import build_parser, cli_main
 from .devices import CameraCapabilities, CameraIdentity, FeatureSupport, NumericRange
 from .enums import Availability, ClockKind, SessionState, ShutterKind, SupportLevel
@@ -86,6 +87,14 @@ from .experiment_execution import (
     ReplayExecutionPolicy,
 )
 from .experiment_replay import ExperimentReplayBundle, build_experiment_replay_bundle
+from .experiment_resources import (
+    EXPERIMENT_CACHE_KEY_VERSION,
+    ExperimentCancellationToken,
+    ExperimentCancelledError,
+    ExperimentResourceBudget,
+    ExperimentTiming,
+    make_experiment_cache_key,
+)
 from .extrinsics import (
     CameraLayout,
     CameraPose,
@@ -101,6 +110,18 @@ from .extrinsics import (
 )
 from .geometry import CoordinateFrame, RigidTransform
 from .observations import Landmark3D, PixelObservation, SkeletonDefinition
+from .preview_artifacts import (
+    DEFAULT_PREVIEW_DIRECTORY,
+    PREVIEW_MANIFEST_SCHEMA_VERSION,
+    PreviewArtifact,
+    PreviewManifest,
+    PreviewReleaseAuthorization,
+    RemoteResourceReceipt,
+    build_preview_root,
+    require_preview_release,
+    verify_preview_artifacts,
+)
+from .preview_serialization import dumps_preview_manifest, load_preview_manifest
 from .reconstruction import (
     KeypointReconstruction,
     ReconstructionConfig,
@@ -196,6 +217,8 @@ __all__ = [
     "ClockDomain",
     "ClockKind",
     "ClockSkewEstimate",
+    "CleanupDecision",
+    "CleanupEvidence",
     "CoordinateFrame",
     "DeliveryTrajectoryMappingConfig",
     "DistortionCoefficients",
@@ -209,6 +232,11 @@ __all__ = [
     "EvidenceArtifactReference",
     "EXPERIMENT_REPLAY_SCHEMA_VERSION",
     "ExperimentReplayBundle",
+    "ExperimentCancellationToken",
+    "ExperimentCancelledError",
+    "ExperimentResourceBudget",
+    "ExperimentTiming",
+    "EXPERIMENT_CACHE_KEY_VERSION",
     "FeatureSupport",
     "FisheyeIntrinsics",
     "FrameIndexEntry",
@@ -256,6 +284,7 @@ __all__ = [
     "RecordingWriter",
     "ReplayExecutionPolicy",
     "ReplayMode",
+    "RemoteResourceReceipt",
     "RelocalizationResult",
     "ReprojectionResidual",
     "RigidTransform",
@@ -275,12 +304,18 @@ __all__ = [
     "SyncQuality",
     "SyntheticFrameSource",
     "SyntheticPoseAdapter",
+    "PreviewArtifact",
+    "PreviewManifest",
+    "PreviewReleaseAuthorization",
+    "DEFAULT_PREVIEW_DIRECTORY",
+    "PREVIEW_MANIFEST_SCHEMA_VERSION",
     "TemporalTrajectory",
     "adapt_to_delivery_trajectory",
     "apply_joint_angle_constraint",
     "apply_segment_length_constraint",
     "bundle_adjust_layout",
     "build_experiment_replay_bundle",
+    "build_preview_root",
     "build_comparison_evidence_receipt",
     "check_coverage_and_degeneracy",
     "compute_kinematic_derivatives",
@@ -288,18 +323,24 @@ __all__ = [
     "dumps_canonical",
     "dumps_comparison_evidence_receipt",
     "dumps_experiment_replay_bundle",
+    "dumps_preview_manifest",
     "estimate_pnp_pose",
     "evaluate_extrinsic_quality",
     "evaluate_intrinsic_quality",
+    "evaluate_cleanup_eligibility",
     "get_canonical_skeleton",
     "get_default_mediapipe_mapping",
     "load_session_manifest",
     "load_experiment_replay_bundle",
+    "load_preview_manifest",
     "load_comparison_evidence_receipt",
+    "make_experiment_cache_key",
+    "require_preview_release",
     "reconstruct_frame_landmarks",
     "reconstruct_temporal_trajectory",
     "smooth_trajectory_butterworth",
     "smooth_trajectory_savgol",
     "triangulate_n_views",
+    "verify_preview_artifacts",
     "c3d",
 ]

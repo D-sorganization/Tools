@@ -22,7 +22,7 @@ Private source data was not downloaded into these public worktrees. Use the auth
 
 ## Resource and Preview Policy
 
-Preview directory: `%USERPROFILE%\Desktop\Motion_Matching_Previews` (created; no video yet). Use privacy-aware per-run manifests. Check free space, bound workers/caches/checkpoints and avoid duplicate raw data. Optional Tailscale jobs require host capacity, exact provider/license/path checks and private access controls. Simscape native acceptance requires MATLAB R2025b.
+Configured preview default: `%USERPROFILE%\Desktop\Motion_Matching_Previews` (not created; no video result is claimed). T03 resource/manifest contract details are in [T03-CONTRACT.md](T03-CONTRACT.md). Use privacy-aware per-run manifests. Check free space, bound workers/caches/checkpoints and avoid duplicate raw data. Optional Tailscale jobs require host capacity, exact provider/license/root checks and private access controls. Simscape native acceptance requires MATLAB R2025b.
 
 Only this task's verified merged clean worktrees may be removed after needed receipts/ignored artifacts are preserved. These documentation worktrees are unmerged at packet preparation and remain available for review. Do not remove another agent's worktree.
 

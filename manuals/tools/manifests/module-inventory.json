@@ -117,7 +117,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "82aa46668ef070bb7a1c34842dc026ccaaf2aa5f8f9ceb330b3147e949c74004",
+      "content_sha256_lf": "a60ea8f340645ca50e003656e801c9b081347757eddbb400d00e57afa6f587c4",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
@@ -153,8 +153,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
     },
     {
-      "content_sha256_lf": "3c5f5daa61e21eecd2fd9ba66bcbb47c5378bb2ecf866fa9cbf8ef3c83caac50",
-      "entry_count": 3,
+      "content_sha256_lf": "43724e3644ad7f0968f90f3c265adf005ca2de0c908846ddb6c32b3d17d63e4f",
+      "entry_count": 4,
       "package": "schemas",
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
@@ -171,7 +171,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-shared-scripts.json"
     },
     {
-      "content_sha256_lf": "63964d5e632cb13b422281ce931c8e85de436845a788809fc4e7d513b89e2994",
+      "content_sha256_lf": "1ff4cc6c51657b9d77f206633f8be4a38f88996bf1a83da92369ddf8c3946472",
       "entry_count": 1,
       "package": "src",
       "path": "manuals/tools/manifests/module-inventory/entries-src.json"
@@ -597,7 +597,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "6377d6ce0c35a2d7c742bf890fa4330ef0fb6dcee4ef2a187df1dadba54f7784",
+      "content_sha256_lf": "dd4bbf4e2dc96e9872cc5a6c28b4cc9961e44470666256a3ed965e3a1a005c8c",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
@@ -783,8 +783,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-data-processing.json"
     },
     {
-      "content_sha256_lf": "8c8588db8b720719be1b53b7bcb5b5a66130d47072cd7fa86c40268453629cba",
-      "entry_count": 40,
+      "content_sha256_lf": "c580c652eb813c676e12049440ca2a0db4cf87a6814a289de641cfe89025f400",
+      "entry_count": 44,
       "package": "src/shared/python/sidekick/lab",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-lab.json"
     },
