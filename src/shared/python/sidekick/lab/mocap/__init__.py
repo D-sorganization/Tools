@@ -69,6 +69,9 @@ from .experiment_contracts import (
 )
 from .experiment_evidence import (
     COMPARISON_EVIDENCE_SCHEMA_VERSION,
+    COMPILED_ACTUATOR_PROFILE_ID,
+    COMPILED_ACTUATOR_PROFILE_SCHEMA_VERSION,
+    COMPILED_ACTUATOR_PROFILE_VERSION,
     ComparisonEvidenceReceipt,
     ComparisonEvidenceRow,
     ComparisonLevel,
@@ -229,6 +232,9 @@ __all__ = [
     "CapabilityDeclaration",
     "CapabilitySupport",
     "COMPARISON_EVIDENCE_SCHEMA_VERSION",
+    "COMPILED_ACTUATOR_PROFILE_ID",
+    "COMPILED_ACTUATOR_PROFILE_SCHEMA_VERSION",
+    "COMPILED_ACTUATOR_PROFILE_VERSION",
     "ComparisonEvidenceReceipt",
     "ComparisonEvidenceRow",
     "ComparisonLevel",
