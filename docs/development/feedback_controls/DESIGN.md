@@ -2,7 +2,7 @@
 
 ## Scope and Authority
 
-Governing epic: https://github.com/D-sorganization/Tools/issues/5460. Domain design and primary-source review: [UpstreamDrift #11784](https://github.com/D-sorganization/UpstreamDrift/issues/11784), documentation packet `docs/development/feedback_controls/DESIGN.md`. Reference that authority rather than duplicate control equations here. This document proposes contracts; no API or runtime has been implemented.
+Governing epic: https://github.com/D-sorganization/Tools/issues/5460. Domain design and primary-source review: [UpstreamDrift #11784](https://github.com/D-sorganization/UpstreamDrift/issues/11784), documentation packet `docs/development/feedback_controls/DESIGN.md`. Reference that authority rather than duplicate control equations here. The Tools transport contract is implemented under T01; it does not qualify a solver or model.
 
 ## Public Boundaries
 
@@ -26,4 +26,4 @@ TDD contract tests use invalid permutations/timebases, missing muscle states, sa
 
 ## Review Clarifications
 
-Adopt the existing canonical model/variant/capability registry and stable engine/variant/drive-mode keys; F01 freezes baseline/policy and F09 executes ongoing conformance. #11605/#11607 retain replay authority. Tools validates generic evidence interchange; UpstreamDrift decides physics and qualification. Replay APIs accept a frozen bundle and native plant, without controller/observation providers. F07 supplies the complete pinned muscle-model/state/contact/forward-API handoff to F08. Optional NMPC needs a report/disposition and does not block acceptance of a qualified simpler controller. Public preview manifests omit local paths; resolve configured artifacts through MOTION_MATCHING_PREVIEW_ROOT, and preserve shared/user-owned directories and videos.
+Adopt the existing canonical model/variant/capability registry and stable engine/variant/drive-mode keys; F01 freezes baseline/policy and F09 executes ongoing conformance. #11605/#11607 retain replay authority. Tools validates generic evidence interchange; UpstreamDrift decides physics and qualification. Replay APIs accept a frozen bundle and a time-only input player with the native plant; observation/state-feedback callbacks and measured-state resets are forbidden, regardless of player class name. Bind the model-native complete initial state, ordered input history and time grid, and executed integration/initialization/contact policy. F07 supplies the complete pinned muscle-model/state/contact/forward-API handoff to F08. Optional NMPC needs a report/disposition and does not block acceptance of a qualified simpler controller. Public preview manifests omit local paths; resolve configured artifacts through MOTION_MATCHING_PREVIEW_ROOT, and preserve shared/user-owned directories and videos.

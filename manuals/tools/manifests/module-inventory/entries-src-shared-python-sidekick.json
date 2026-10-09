@@ -4255,10 +4255,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5925,
+      "bytes_lf": 7127,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "51337c146a43a40974480cc5a9a8cb8dfdf6020451cda7fdd444ba36bad1f97e",
+      "content_sha256_lf": "826c6aec42e473016ae894bd3689cdaf00a826af883a30f7222559ef6c9ebdf8",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-INIT-PY-BD60513A12BD",
       "language": "python",
@@ -4297,6 +4297,11 @@
           {
             "kind": "re-export",
             "name": "AcquisitionError",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ActuationInputKind",
             "signature": null
           },
           {
@@ -4361,6 +4366,21 @@
           },
           {
             "kind": "re-export",
+            "name": "CapabilityAvailability",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CapabilityDeclaration",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CapabilitySupport",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "CaptureGroup",
             "signature": null
           },
@@ -4402,6 +4422,16 @@
           {
             "kind": "re-export",
             "name": "DropPolicy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "EXPERIMENT_REPLAY_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ExperimentReplayBundle",
             "signature": null
           },
           {
@@ -4457,6 +4487,36 @@
           {
             "kind": "re-export",
             "name": "GapPolicy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InitialStateSchema",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InitialStateValue",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InputChannel",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InputHistory",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "InputInterpolation",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "IntegrityHashes",
             "signature": null
           },
           {
@@ -4556,6 +4616,11 @@
           },
           {
             "kind": "re-export",
+            "name": "ModelIdentity",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "MovementDetectionResult",
             "signature": null
           },
@@ -4646,6 +4711,16 @@
           },
           {
             "kind": "re-export",
+            "name": "ReplayExecutionPolicy",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ReplayMode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "ReprojectionResidual",
             "signature": null
           },
@@ -4687,6 +4762,16 @@
           {
             "kind": "re-export",
             "name": "SourceState",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StateComponentRole",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StateComponentSpec",
             "signature": null
           },
           {
@@ -4746,6 +4831,11 @@
           },
           {
             "kind": "re-export",
+            "name": "build_experiment_replay_bundle",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "build_parser",
             "signature": null
           },
@@ -4786,6 +4876,11 @@
           },
           {
             "kind": "re-export",
+            "name": "dumps_experiment_replay_bundle",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "estimate_pnp_pose",
             "signature": null
           },
@@ -4807,6 +4902,11 @@
           {
             "kind": "re-export",
             "name": "get_default_mediapipe_mapping",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "load_experiment_replay_bundle",
             "signature": null
           },
           {

@@ -4,13 +4,13 @@
 
 Repository: Tools. Topic branch: `docs/feedback-controls-5460`. Commit: `SELF` (resolve with `git rev-parse HEAD`). Documentation PR: not created at packet preparation; the governing epic records its final URL/state. Epic: https://github.com/D-sorganization/Tools/issues/5460.
 
-This packet completes research/planning only. No controller, native simulation, muscle fit, qualification receipt or video was produced. All implementation issues stay open. Expanded target: all registered models across six engines with defensible parity; ultimate muscle-driven OpenSim matching and independent excitation replay.
+This packet records the continuing delivery program. T01 now implements the generic versioned replay transport; no controller, native simulation, muscle fit, qualification receipt or video is claimed here. All six-engine parity and muscle-driven OpenSim matching remain the wider target.
 
 ## Read First and Resume
 
 1. Read repo AGENTS/CLAUDE/SPEC, the linked epic, this packet's implementation plan and UpstreamDrift design.
 2. Review current MOSAIC #11532 and Same-Input Parity #11605 providers and live ownership; do not create competing estimators/integrators.
-3. Claim/lease the bounded first task (T01) through Repository_Management. Freeze capabilities/metrics before human data fitting.
+3. T01 contract implementation is tracked at `src/shared/python/sidekick/lab/mocap/AGENT_HANDOFF.md` and `T01-CONTRACT.md`; coordinate its frozen schema with UpstreamDrift F01. Freeze capabilities/metrics before human data fitting.
 4. Write failing independent behavioral tests; implement behind small facades with DbC, LoD and DRY; update governed manual QMD/registries and change fragments with each implementation PR.
 5. Record native evidence and remaining gates. Torque tracking/replay is an intermediate milestone; muscle-only acceptance requires bounded reserves and complete-state excitation replay under declared contact.
 
@@ -30,10 +30,8 @@ Only this task's verified merged clean worktrees may be removed after needed rec
 
 Issue claims and presence registration succeeded for the public epics. The central mailbox reports incomplete evidence (malformed historical comments/page limit); absence of messages is not proof of exclusive ownership. Existing issue claims remain the coordination authority. No remote fleet jobs were dispatched and no performance numbers were invented.
 
-Next bounded step: T01 compatibility/schema contract with an independently generated synthetic fixture.
+Next bounded step: T02 early schema readiness follows T01/F01 and can unblock D02 evidence splitting; its later native-consumer acceptance follows F06/F07. T03 depends on T01/T02 and the frozen F01 resource/preview contract; F09 is downstream acceptance, not an implementation prerequisite. Private D04 supplies evidence to F10 and does not depend on F10.
 
 ## Executed Planning Checks
 
-- Central `scripts/pre_pr.py` with the exact changed-file list from this branch: all five gates passed; no Python or mapped runtime tests changed.
-- `git diff --cached --check`: passed.
-- Packet validation: nine documents and thirteen implementation-issue payloads passed structure, local-link, engineering-contract and public path/privacy checks.
+- T01 implementation validation is recorded in its PR after the focused contract, schema, API, and repository gates complete.

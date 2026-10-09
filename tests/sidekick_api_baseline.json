@@ -8354,6 +8354,7 @@
       "cli_main",
       "MOCAP_SESSION_SCHEMA_VERSION",
       "AcquisitionError",
+      "ActuationInputKind",
       "ApprovalStatus",
       "Availability",
       "ButterworthFilterConfig",
@@ -8366,6 +8367,9 @@
       "CameraIdentity",
       "CameraLayout",
       "CameraPose",
+      "CapabilityAvailability",
+      "CapabilityDeclaration",
+      "CapabilitySupport",
       "CaptureGroup",
       "ClockDomain",
       "ClockKind",
@@ -8379,6 +8383,8 @@
       "ExtrinsicCalibrationResult",
       "ExtrinsicDegeneracyKind",
       "ExtrinsicQuality",
+      "EXPERIMENT_REPLAY_SCHEMA_VERSION",
+      "ExperimentReplayBundle",
       "FeatureSupport",
       "FisheyeIntrinsics",
       "FrameIndexEntry",
@@ -8387,6 +8393,12 @@
       "FrameStamp",
       "GapPolicy",
       "IntrinsicCalibrationResult",
+      "InitialStateSchema",
+      "InitialStateValue",
+      "InputChannel",
+      "InputHistory",
+      "InputInterpolation",
+      "IntegrityHashes",
       "JointAngleConstraint",
       "KeypointMapping",
       "KeypointReconstruction",
@@ -8398,6 +8410,7 @@
       "MediaPipePoseAdapter",
       "MethodDescriptor",
       "MocapSessionManifest",
+      "ModelIdentity",
       "MovementDetectionResult",
       "NumericRange",
       "PermittedUse",
@@ -8415,6 +8428,8 @@
       "RecordingPolicy",
       "RecordingReader",
       "RecordingWriter",
+      "ReplayExecutionPolicy",
+      "ReplayMode",
       "RelocalizationResult",
       "ReprojectionResidual",
       "RigidTransform",
@@ -8424,6 +8439,8 @@
       "ShutterKind",
       "SkeletonConverter",
       "SkeletonDefinition",
+      "StateComponentRole",
+      "StateComponentSpec",
       "SourceState",
       "SupportLevel",
       "SyncAnomaly",
@@ -8437,16 +8454,19 @@
       "apply_joint_angle_constraint",
       "apply_segment_length_constraint",
       "bundle_adjust_layout",
+      "build_experiment_replay_bundle",
       "check_coverage_and_degeneracy",
       "compute_kinematic_derivatives",
       "detect_camera_movement",
       "dumps_canonical",
+      "dumps_experiment_replay_bundle",
       "estimate_pnp_pose",
       "evaluate_extrinsic_quality",
       "evaluate_intrinsic_quality",
       "get_canonical_skeleton",
       "get_default_mediapipe_mapping",
       "load_session_manifest",
+      "load_experiment_replay_bundle",
       "reconstruct_frame_landmarks",
       "reconstruct_temporal_trajectory",
       "smooth_trajectory_butterworth",
@@ -8700,7 +8720,9 @@
       "MocapServiceStatus": {
         "type": "class",
         "info": {
-          "bases": ["enum.StrEnum"],
+          "bases": [
+            "enum.StrEnum"
+          ],
           "methods": {}
         }
       },
@@ -8738,21 +8760,36 @@
       "AcquisitionError": {
         "type": "class",
         "info": {
-          "bases": ["RuntimeError"],
+          "bases": [
+            "RuntimeError"
+          ],
+          "methods": {}
+        }
+      },
+      "ActuationInputKind": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
       "ApprovalStatus": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
       "Availability": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
@@ -8766,7 +8803,9 @@
       "CalibrationDegeneracyKind": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
@@ -8780,14 +8819,18 @@
       "CalibrationPatternKind": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
       "CalibrationQuality": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
@@ -8919,6 +8962,31 @@
               "returns": "tuple[float, float, float]"
             }
           }
+        }
+      },
+      "CapabilityAvailability": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "StrEnum"
+          ],
+          "methods": {}
+        }
+      },
+      "CapabilityDeclaration": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "CapabilitySupport": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "StrEnum"
+          ],
+          "methods": {}
         }
       },
       "CaptureGroup": {
@@ -9063,7 +9131,9 @@
       "ClockKind": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
@@ -9110,21 +9180,27 @@
       "DistortionModel": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
       "DropPolicy": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
       "ExternalServicePoseAdapter": {
         "type": "class",
         "info": {
-          "bases": ["PoseBackendProtocol"],
+          "bases": [
+            "PoseBackendProtocol"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -9247,15 +9323,96 @@
       "ExtrinsicDegeneracyKind": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
       "ExtrinsicQuality": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
+        }
+      },
+      "EXPERIMENT_REPLAY_SCHEMA_VERSION": {
+        "type": "variable"
+      },
+      "ExperimentReplayBundle": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "blocking_capabilities": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[str, ...]"
+            },
+            "state_schema_sha256": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "input_channel_schema_sha256": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "applied_input_sha256": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "time_grid_sha256": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "policy_sha256": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            }
+          }
         }
       },
       "FeatureSupport": {
@@ -9377,7 +9534,9 @@
       "FrameSource": {
         "type": "class",
         "info": {
-          "bases": ["ABC"],
+          "bases": [
+            "ABC"
+          ],
           "methods": {
             "source_id": {
               "args": [
@@ -9532,6 +9691,50 @@
           }
         }
       },
+      "InitialStateSchema": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "InitialStateValue": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "InputChannel": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "InputHistory": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "InputInterpolation": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "StrEnum"
+          ],
+          "methods": {}
+        }
+      },
+      "IntegrityHashes": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
       "JointAngleConstraint": {
         "type": "class",
         "info": {
@@ -9570,7 +9773,9 @@
       "LicenseCategory": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
@@ -9591,7 +9796,9 @@
       "MediaPipePoseAdapter": {
         "type": "class",
         "info": {
-          "bases": ["PoseBackendProtocol"],
+          "bases": [
+            "PoseBackendProtocol"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -9712,6 +9919,13 @@
           "methods": {}
         }
       },
+      "ModelIdentity": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
       "MovementDetectionResult": {
         "type": "class",
         "info": {
@@ -9747,7 +9961,9 @@
       "PermittedUse": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
@@ -9803,7 +10019,9 @@
       "PoseBackendProtocol": {
         "type": "class",
         "info": {
-          "bases": ["ABC"],
+          "bases": [
+            "ABC"
+          ],
           "methods": {
             "backend_id": {
               "args": [
@@ -9879,14 +10097,18 @@
       "PoseInferenceStatus": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
       "PrerecordedFrameSource": {
         "type": "class",
         "info": {
-          "bases": ["FrameSource"],
+          "bases": [
+            "FrameSource"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -10065,7 +10287,9 @@
       "QueueFullError": {
         "type": "class",
         "info": {
-          "bases": ["AcquisitionError"],
+          "bases": [
+            "AcquisitionError"
+          ],
           "methods": {}
         }
       },
@@ -10079,7 +10303,9 @@
       "ReconstructionQuality": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
@@ -10259,6 +10485,22 @@
           }
         }
       },
+      "ReplayExecutionPolicy": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "ReplayMode": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "StrEnum"
+          ],
+          "methods": {}
+        }
+      },
       "RelocalizationResult": {
         "type": "class",
         "info": {
@@ -10309,14 +10551,18 @@
       "SessionState": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
       "ShutterKind": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
@@ -10376,17 +10622,37 @@
           "methods": {}
         }
       },
+      "StateComponentRole": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "StrEnum"
+          ],
+          "methods": {}
+        }
+      },
+      "StateComponentSpec": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
       "SourceState": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
       "SupportLevel": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
@@ -10400,7 +10666,9 @@
       "SyncAnomalyType": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
@@ -10495,14 +10763,18 @@
       "SyncQuality": {
         "type": "class",
         "info": {
-          "bases": ["StrEnum"],
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
       "SyntheticFrameSource": {
         "type": "class",
         "info": {
-          "bases": ["FrameSource"],
+          "bases": [
+            "FrameSource"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -10662,7 +10934,9 @@
       "SyntheticPoseAdapter": {
         "type": "class",
         "info": {
-          "bases": ["PoseBackendProtocol"],
+          "bases": [
+            "PoseBackendProtocol"
+          ],
           "methods": {
             "__init__": {
               "args": [
@@ -10904,6 +11178,80 @@
           "returns": "ExtrinsicCalibrationResult"
         }
       },
+      "build_experiment_replay_bundle": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "experiment_id",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "model",
+              "annotation": "ModelIdentity",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "capabilities",
+              "annotation": "tuple[CapabilityDeclaration, ...]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "initial_state_values",
+              "annotation": "tuple[tuple[str, tuple[float, ...]], ...]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "channels",
+              "annotation": "tuple[InputChannel, ...]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "input_kind",
+              "annotation": "ActuationInputKind",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "interpolation",
+              "annotation": "InputInterpolation",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "time_seconds",
+              "annotation": "tuple[float, ...]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "input_values",
+              "annotation": "tuple[tuple[float, ...], ...]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "policy",
+              "annotation": "ReplayExecutionPolicy",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "timebase_id",
+              "annotation": "str",
+              "default": "'simulation_relative'",
+              "kind": "arg"
+            }
+          ],
+          "returns": "ExperimentReplayBundle"
+        }
+      },
       "check_coverage_and_degeneracy": {
         "type": "function",
         "signature": {
@@ -10995,6 +11343,20 @@
             {
               "name": "manifest",
               "annotation": "MocapSessionManifest",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "str"
+        }
+      },
+      "dumps_experiment_replay_bundle": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "bundle",
+              "annotation": "ExperimentReplayBundle",
               "default": null,
               "kind": "arg"
             }
@@ -11143,6 +11505,20 @@
             }
           ],
           "returns": "MocapSessionManifest"
+        }
+      },
+      "load_experiment_replay_bundle": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "text",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "ExperimentReplayBundle"
         }
       },
       "reconstruct_frame_landmarks": {
@@ -12320,6 +12696,346 @@
   "lab/mocap/enums.py": {
     "__all__": [],
     "symbols": {}
+  },
+  "lab/mocap/experiment_contracts.py": {
+    "__all__": [
+      "EXPERIMENT_REPLAY_SCHEMA_VERSION",
+      "ActuationInputKind",
+      "CapabilityAvailability",
+      "CapabilityDeclaration",
+      "CapabilitySupport",
+      "InitialStateSchema",
+      "InitialStateValue",
+      "InputChannel",
+      "InputInterpolation",
+      "ModelIdentity",
+      "ReplayMode",
+      "StateComponentRole",
+      "StateComponentSpec"
+    ],
+    "symbols": {
+      "EXPERIMENT_REPLAY_SCHEMA_VERSION": {
+        "type": "variable"
+      },
+      "ActuationInputKind": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "StrEnum"
+          ],
+          "methods": {}
+        }
+      },
+      "CapabilityAvailability": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "StrEnum"
+          ],
+          "methods": {}
+        }
+      },
+      "CapabilityDeclaration": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "CapabilitySupport": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "StrEnum"
+          ],
+          "methods": {}
+        }
+      },
+      "InitialStateSchema": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "InitialStateValue": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "InputChannel": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "InputInterpolation": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "StrEnum"
+          ],
+          "methods": {}
+        }
+      },
+      "ModelIdentity": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "ReplayMode": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "StrEnum"
+          ],
+          "methods": {}
+        }
+      },
+      "StateComponentRole": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "StrEnum"
+          ],
+          "methods": {}
+        }
+      },
+      "StateComponentSpec": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      }
+    }
+  },
+  "lab/mocap/experiment_execution.py": {
+    "__all__": [
+      "InputHistory",
+      "IntegrityHashes",
+      "ReplayExecutionPolicy"
+    ],
+    "symbols": {
+      "InputHistory": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "IntegrityHashes": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "ReplayExecutionPolicy": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      }
+    }
+  },
+  "lab/mocap/experiment_replay.py": {
+    "__all__": [
+      "ExperimentReplayBundle",
+      "build_experiment_replay_bundle"
+    ],
+    "symbols": {
+      "ExperimentReplayBundle": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "blocking_capabilities": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[str, ...]"
+            },
+            "state_schema_sha256": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "input_channel_schema_sha256": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "applied_input_sha256": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "time_grid_sha256": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            },
+            "policy_sha256": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "str"
+            }
+          }
+        }
+      },
+      "build_experiment_replay_bundle": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "experiment_id",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "model",
+              "annotation": "ModelIdentity",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "capabilities",
+              "annotation": "tuple[CapabilityDeclaration, ...]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "initial_state_values",
+              "annotation": "tuple[tuple[str, tuple[float, ...]], ...]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "channels",
+              "annotation": "tuple[InputChannel, ...]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "input_kind",
+              "annotation": "ActuationInputKind",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "interpolation",
+              "annotation": "InputInterpolation",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "time_seconds",
+              "annotation": "tuple[float, ...]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "input_values",
+              "annotation": "tuple[tuple[float, ...], ...]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "policy",
+              "annotation": "ReplayExecutionPolicy",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "timebase_id",
+              "annotation": "str",
+              "default": "'simulation_relative'",
+              "kind": "arg"
+            }
+          ],
+          "returns": "ExperimentReplayBundle"
+        }
+      }
+    }
+  },
+  "lab/mocap/replay_serialization.py": {
+    "__all__": [
+      "dumps_experiment_replay_bundle",
+      "load_experiment_replay_bundle"
+    ],
+    "symbols": {
+      "dumps_experiment_replay_bundle": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "bundle",
+              "annotation": "ExperimentReplayBundle",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "str"
+        }
+      },
+      "load_experiment_replay_bundle": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "text",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "ExperimentReplayBundle"
+        }
+      }
+    }
   },
   "lab/mocap/extrinsics.py": {
     "__all__": [],
