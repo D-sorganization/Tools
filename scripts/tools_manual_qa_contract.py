@@ -40,6 +40,8 @@ class ManualQAError(RuntimeError):
 
 @dataclass(frozen=True)
 class PDFPageRecord:
+    """Page observations; character_count excludes extractor-added whitespace."""
+
     page_number: int
     character_count: int
     line_count: int
@@ -185,7 +187,7 @@ def inspect_pdf_artifact(pdf_path: Path) -> PDFInspectionResult:
         page_records.append(
             PDFPageRecord(
                 page_number=page_num,
-                character_count=len(text),
+                character_count=len("".join(text.split())),
                 line_count=len(lines),
                 image_count=img_count,
                 annotation_count=annot_count,

@@ -91,15 +91,15 @@ class NativeStateReplayEnvelope:
         )
         if self.schema_version != NATIVE_STATE_REPLAY_SCHEMA_VERSION:
             raise ValueError("unsupported native-state replay schema_version")
-        for name, expected in (
+        for name, expected_type in (
             ("model", NativeReplayModel),
             ("artifact", NativeStateArtifact),
             ("input_history", InputHistory),
             ("policy", ReplayExecutionPolicy),
             ("integrity", NativeReplayIntegrity),
         ):
-            if not isinstance(getattr(self, name), expected):
-                raise TypeError(f"{name} must be {expected.__name__}")
+            if not isinstance(getattr(self, name), expected_type):
+                raise TypeError(f"{name} must be {expected_type.__name__}")
         if self.artifact.role is not NativeStateRole.COMPLETE_NATIVE_RESTART:
             raise ValueError(
                 "complete native restart required; observables are insufficient"

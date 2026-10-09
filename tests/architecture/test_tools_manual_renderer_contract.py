@@ -122,6 +122,7 @@ def test_canonical_source_materialization_is_ordered_and_bounded(
         "manuals/tools/chapters/02-reproducible-rendering.qmd",
         "manuals/tools/chapters/03-textbook-chapter-contract.qmd",
         "manuals/tools/chapters/04-swing-rate-of-closure-dplane.qmd",
+        "manuals/tools/chapters/05-native-state-replay.qmd",
     )
     text = output.read_text(encoding="utf-8")
     assert "{{< include" not in text

@@ -8,7 +8,8 @@ The implementation is now merged into `feat/native-state-transport-5470`
 for draft PR5471, after main collation commit5dffcd1c4.
 No new full clone or native environment was created. Source and tests are
 committed locally; the draft initially published a documentation-only staging
-checkpoint. Full implementation publication requires the normal source push. UpstreamDrift #11921 consumes
+checkpoint. The complete implementation is published in ready PR5471, with
+protected automatic merge armed. UpstreamDrift #11921 consumes
 this seam after publication and exact dependency pinning.
 
 ## State and Validation
@@ -33,6 +34,17 @@ receipts are retained in fleet planning staging, not published as native
 physics evidence.
 
 ## Next Required Work
+
+The first protected CI pass exposed three omissions: the unchanged type-check
+loop reused a type-class variable for the integrity result, the renderer test
+still listed six sources, and the public API baseline omitted the three new
+modules. The fixes preserve existing signatures and add the intended exports.
+PDF extraction with pypdf5.7 and6.19 inserts different whitespace on seven
+pages. Page character counts now explicitly count non-whitespace characters;
+actual hashes, every page, ordering, lines, fonts, outlines, images and
+annotations remain verified. A whitespace perturbation test failed before the
+fix; both actual extractor versions verify the regenerated QA ledger. This
+does not approve the manual or change the rendered PDF bytes.
 
 The native envelope schema and malformed-input negatives are implemented, with
 local references to existing stable definitions. Actual pinned rendering yields

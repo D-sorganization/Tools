@@ -9,11 +9,11 @@
   },
   "repository": "D-sorganization/Tools",
   "issue_url": "https://github.com/D-sorganization/Tools/issues/4730",
-  "pr_url": "https://github.com/D-sorganization/Tools/pull/5055",
+  "pr_url": "https://github.com/D-sorganization/Tools/pull/5471",
   "commit_evidence": {
-    "local_head_sha": "dc27442b0a76963fd9af7d46a29564b6baa39607",
+    "local_head_sha": "b7a96fbf76513bd6e03772a2b93d1d398a93ae03",
     "remote_head_sha": null,
-    "reviewed_tree_sha": "8656aaefcb6cf8946f501426f340a8ff5675e9aa",
+    "reviewed_tree_sha": "cd7cd79c8e097b4e83c15610af795bf9d4382d1e",
     "merge_sha": null
   },
   "branch_and_worktree": {
@@ -25,55 +25,55 @@
     "check_design_manual_governance": {
       "command": "python -m scripts.check_design_manual_governance",
       "status": "passed",
-      "timestamp": "2026-10-09T09:11:41Z"
+      "timestamp": "2026-10-09T09:38:17Z"
     },
     "build_tools_module_inventory": {
       "command": "python -m scripts.build_tools_module_inventory --check",
       "status": "passed",
-      "timestamp": "2026-10-09T09:11:41Z"
+      "timestamp": "2026-10-09T09:38:17Z"
     },
     "lint_tools_textbook_chapters": {
       "command": "python -m scripts.lint_tools_textbook_chapters",
       "status": "passed",
-      "timestamp": "2026-10-09T09:11:41Z"
+      "timestamp": "2026-10-09T09:38:17Z"
     },
     "check_tools_exemplars": {
       "command": "python -m scripts.check_tools_exemplars",
       "status": "passed",
-      "timestamp": "2026-10-09T09:11:41Z"
+      "timestamp": "2026-10-09T09:38:17Z"
     },
     "check_tools_calculation_freshness": {
       "command": "python -m scripts.check_tools_calculation_freshness --check",
       "status": "passed",
-      "timestamp": "2026-10-09T09:11:41Z"
+      "timestamp": "2026-10-09T09:38:17Z"
     },
     "check_tools_manual_qa": {
       "command": "python -m scripts.check_tools_manual_qa --check",
       "status": "passed",
-      "timestamp": "2026-10-09T09:11:41Z"
+      "timestamp": "2026-10-09T09:38:17Z"
     },
     "check_tools_publication_projection": {
       "command": "python -m scripts.check_tools_publication_projection --check",
       "status": "passed",
-      "timestamp": "2026-10-09T09:11:41Z"
+      "timestamp": "2026-10-09T09:38:17Z"
     },
     "render_tools_design_manual": {
       "command": "python -m scripts.render_tools_design_manual --check",
       "status": "passed",
-      "timestamp": "2026-10-09T09:11:41Z"
+      "timestamp": "2026-10-09T09:38:17Z"
     },
     "check_tools_handoff": {
       "command": "python -m scripts.check_tools_handoff --check",
       "status": "passed",
-      "timestamp": "2026-10-09T09:11:41Z"
+      "timestamp": "2026-10-09T09:38:17Z"
     }
   },
   "artifact_and_test_digests": {
     "calculation_registry_sha256": "67fbf0697e4678afb88e146f39b6bb8e5bfe8b5e975afb039f1e616bc09017a6",
     "toolchain_lock_sha256": "62915da70f09da3fead98ae71ccb94c2afaec7db2de390faa97234e103426b9b",
     "artifacts_manifest_sha256": "4b8dfd92c851fbe18a5f527179a87a37dd22251b4cb24e69309ebfe7ea030a99",
-    "qa_ledger_sha256": "5ed7e223f2209ab1aa78f2d899d758eedb7de3d42db3ed4968aabc3e26131984",
-    "publication_projection_sha256": "8598697206bc29f9347c291a2f0ea268a7298a7b82edbf7f29425dc01a615a1a",
+    "qa_ledger_sha256": "4d8b16ff773ed93f1edfe3f2adee998168a220ba6bfba5535a2b64321adbe42d",
+    "publication_projection_sha256": "6c5e2d4ffc6676677281983aa91f14b96d40e292c31a8aab8dfefd672b691fc4",
     "artifacts_sha256": {
       "docx": {
         "path": "manuals/tools/dist/tools-engineering-design-manual.docx",
@@ -112,7 +112,7 @@
       "TOOLS-HUMAN-APPROVAL-PENDING",
       "TOOLS-MARKERLESS-EXEMPLAR-BLOCKED"
     ],
-    "expiry_timestamp": "2027-01-07T09:11:41Z"
+    "expiry_timestamp": "2027-01-07T09:38:17Z"
   },
   "blockers": [
     {
@@ -127,7 +127,7 @@
     }
   ],
   "next_dependency": "TOOLS-M0 (#4708 / #4734) and parent epic DOC-TOOLS (#4707) closure",
-  "freshness_timestamp": "2026-10-09T09:11:41Z",
+  "freshness_timestamp": "2026-10-09T09:38:17Z",
   "governed_handoff_files": {
     "AGENT_HANDOFF.md": {
       "path": "AGENT_HANDOFF.md",

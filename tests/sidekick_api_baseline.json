@@ -8505,7 +8505,22 @@
       "smooth_trajectory_savgol",
       "triangulate_n_views",
       "verify_preview_artifacts",
-      "c3d"
+      "c3d",
+      "NativeStateArtifact",
+      "NativeStateClock",
+      "NativeStateEncoding",
+      "NativeStateExecution",
+      "NativeStateIdentity",
+      "NativeStateRole",
+      "OwnedNativeStateArtifact",
+      "freeze_native_state_artifact",
+      "NATIVE_STATE_REPLAY_SCHEMA_VERSION",
+      "NativeReplayIntegrity",
+      "NativeReplayModel",
+      "NativeStateReplayEnvelope",
+      "build_native_state_replay_envelope",
+      "dumps_native_state_replay_envelope",
+      "load_native_state_replay_envelope"
     ],
     "symbols": {
       "MocapCapabilitiesReport": {
@@ -8753,9 +8768,7 @@
       "MocapServiceStatus": {
         "type": "class",
         "info": {
-          "bases": [
-            "enum.StrEnum"
-          ],
+          "bases": ["enum.StrEnum"],
           "methods": {}
         }
       },
@@ -8793,36 +8806,28 @@
       "AcquisitionError": {
         "type": "class",
         "info": {
-          "bases": [
-            "RuntimeError"
-          ],
+          "bases": ["RuntimeError"],
           "methods": {}
         }
       },
       "ActuationInputKind": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
       "ApprovalStatus": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
       "Availability": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -8836,9 +8841,7 @@
       "CalibrationDegeneracyKind": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -8852,18 +8855,14 @@
       "CalibrationPatternKind": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
       "CalibrationQuality": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -9000,9 +8999,7 @@
       "CapabilityAvailability": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -9016,9 +9013,7 @@
       "CapabilitySupport": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -9077,9 +9072,7 @@
       "ComparisonLevel": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -9093,9 +9086,7 @@
       "DriveMode": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -9241,9 +9232,7 @@
       "ClockKind": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -9304,27 +9293,21 @@
       "DistortionModel": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
       "DropPolicy": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
       "ExternalServicePoseAdapter": {
         "type": "class",
         "info": {
-          "bases": [
-            "PoseBackendProtocol"
-          ],
+          "bases": ["PoseBackendProtocol"],
           "methods": {
             "__init__": {
               "args": [
@@ -9447,27 +9430,21 @@
       "ExtrinsicDegeneracyKind": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
       "ExtrinsicQuality": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
       "EvidenceArtifactKind": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -9610,9 +9587,7 @@
       "ExperimentCancelledError": {
         "type": "class",
         "info": {
-          "bases": [
-            "RuntimeError"
-          ],
+          "bases": ["RuntimeError"],
           "methods": {}
         }
       },
@@ -9788,9 +9763,7 @@
       "FrameSource": {
         "type": "class",
         "info": {
-          "bases": [
-            "ABC"
-          ],
+          "bases": ["ABC"],
           "methods": {
             "source_id": {
               "args": [
@@ -9976,9 +9949,7 @@
       "InputInterpolation": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -10011,9 +9982,7 @@
       "ImplementationEvidenceKind": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -10055,9 +10024,7 @@
       "LicenseCategory": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -10078,9 +10045,7 @@
       "MediaPipePoseAdapter": {
         "type": "class",
         "info": {
-          "bases": [
-            "PoseBackendProtocol"
-          ],
+          "bases": ["PoseBackendProtocol"],
           "methods": {
             "__init__": {
               "args": [
@@ -10243,9 +10208,7 @@
       "PermittedUse": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -10301,9 +10264,7 @@
       "PoseBackendProtocol": {
         "type": "class",
         "info": {
-          "bases": [
-            "ABC"
-          ],
+          "bases": ["ABC"],
           "methods": {
             "backend_id": {
               "args": [
@@ -10379,18 +10340,14 @@
       "PoseInferenceStatus": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
       "PrerecordedFrameSource": {
         "type": "class",
         "info": {
-          "bases": [
-            "FrameSource"
-          ],
+          "bases": ["FrameSource"],
           "methods": {
             "__init__": {
               "args": [
@@ -10569,9 +10526,7 @@
       "QueueFullError": {
         "type": "class",
         "info": {
-          "bases": [
-            "AcquisitionError"
-          ],
+          "bases": ["AcquisitionError"],
           "methods": {}
         }
       },
@@ -10585,9 +10540,7 @@
       "ReconstructionQuality": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -10777,9 +10730,7 @@
       "ReplayMode": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -10970,18 +10921,14 @@
       "SessionState": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
       "ShutterKind": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -11044,9 +10991,7 @@
       "StateComponentRole": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -11060,18 +11005,14 @@
       "SourceState": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
       "SupportLevel": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -11085,9 +11026,7 @@
       "SyncAnomalyType": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -11182,18 +11121,14 @@
       "SyncQuality": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
       "SyntheticFrameSource": {
         "type": "class",
         "info": {
-          "bases": [
-            "FrameSource"
-          ],
+          "bases": ["FrameSource"],
           "methods": {
             "__init__": {
               "args": [
@@ -11353,9 +11288,7 @@
       "SyntheticPoseAdapter": {
         "type": "class",
         "info": {
-          "bases": [
-            "PoseBackendProtocol"
-          ],
+          "bases": ["PoseBackendProtocol"],
           "methods": {
             "__init__": {
               "args": [
@@ -12340,6 +12273,194 @@
       },
       "c3d": {
         "type": "unknown"
+      },
+      "NativeStateArtifact": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "NativeStateClock": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "NativeStateEncoding": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "NativeStateExecution": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "NativeStateIdentity": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "NativeStateRole": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "OwnedNativeStateArtifact": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "freeze_native_state_artifact": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "descriptor",
+              "annotation": "NativeStateArtifact",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "payload",
+              "annotation": "bytes | bytearray | memoryview",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "OwnedNativeStateArtifact"
+        }
+      },
+      "NATIVE_STATE_REPLAY_SCHEMA_VERSION": {
+        "type": "variable"
+      },
+      "NativeReplayIntegrity": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "NativeReplayModel": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "NativeStateReplayEnvelope": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "native_time_seconds": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[float, ...]"
+            },
+            "blocking_capabilities": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[str, ...]"
+            }
+          }
+        }
+      },
+      "build_native_state_replay_envelope": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "experiment_id",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "model",
+              "annotation": "NativeReplayModel",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "artifact",
+              "annotation": "NativeStateArtifact",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "capabilities",
+              "annotation": "tuple[CapabilityDeclaration, ...]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "input_history",
+              "annotation": "InputHistory",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "policy",
+              "annotation": "ReplayExecutionPolicy",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "NativeStateReplayEnvelope"
+        }
+      },
+      "dumps_native_state_replay_envelope": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "envelope",
+              "annotation": "NativeStateReplayEnvelope",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "str"
+        }
+      },
+      "load_native_state_replay_envelope": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "text",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "NativeStateReplayEnvelope"
+        }
       }
     }
   },
@@ -13372,6 +13493,14 @@
     "__all__": [],
     "symbols": {}
   },
+  "lab/mocap/calibration_numerics.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/cleanup.py": {
+    "__all__": [],
+    "symbols": {}
+  },
   "lab/mocap/cli.py": {
     "__all__": [],
     "symbols": {}
@@ -13443,18 +13572,14 @@
       "ActuationInputKind": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
       "CapabilityAvailability": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -13468,9 +13593,7 @@
       "CapabilitySupport": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -13498,9 +13621,7 @@
       "InputInterpolation": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -13514,18 +13635,14 @@
       "ReplayMode": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
       "StateComponentRole": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -13608,9 +13725,7 @@
       "ComparisonLevel": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -13631,9 +13746,7 @@
       "EvidenceArtifactKind": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -13666,9 +13779,7 @@
       "ImplementationEvidenceKind": {
         "type": "class",
         "info": {
-          "bases": [
-            "StrEnum"
-          ],
+          "bases": ["StrEnum"],
           "methods": {}
         }
       },
@@ -13707,11 +13818,7 @@
     }
   },
   "lab/mocap/experiment_execution.py": {
-    "__all__": [
-      "InputHistory",
-      "IntegrityHashes",
-      "ReplayExecutionPolicy"
-    ],
+    "__all__": ["InputHistory", "IntegrityHashes", "ReplayExecutionPolicy"],
     "symbols": {
       "InputHistory": {
         "type": "class",
@@ -13737,10 +13844,7 @@
     }
   },
   "lab/mocap/experiment_replay.py": {
-    "__all__": [
-      "ExperimentReplayBundle",
-      "build_experiment_replay_bundle"
-    ],
+    "__all__": ["ExperimentReplayBundle", "build_experiment_replay_bundle"],
     "symbols": {
       "ExperimentReplayBundle": {
         "type": "class",
@@ -13892,41 +13996,9 @@
       }
     }
   },
-  "lab/mocap/replay_serialization.py": {
-    "__all__": [
-      "dumps_experiment_replay_bundle",
-      "load_experiment_replay_bundle"
-    ],
-    "symbols": {
-      "dumps_experiment_replay_bundle": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "bundle",
-              "annotation": "ExperimentReplayBundle",
-              "default": null,
-              "kind": "arg"
-            }
-          ],
-          "returns": "str"
-        }
-      },
-      "load_experiment_replay_bundle": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "text",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            }
-          ],
-          "returns": "ExperimentReplayBundle"
-        }
-      }
-    }
+  "lab/mocap/experiment_resources.py": {
+    "__all__": [],
+    "symbols": {}
   },
   "lab/mocap/extrinsics.py": {
     "__all__": [],
@@ -13936,7 +14008,31 @@
     "__all__": [],
     "symbols": {}
   },
+  "lab/mocap/native_state_artifact.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/native_state_replay.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/native_state_replay_serialization.py": {
+    "__all__": [],
+    "symbols": {}
+  },
   "lab/mocap/observations.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/placement_solver.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/preview_artifacts.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/preview_serialization.py": {
     "__all__": [],
     "symbols": {}
   },
@@ -14155,6 +14251,306 @@
               "returns": "None"
             }
           }
+        }
+      }
+    }
+  },
+  "lab/mocap/reference_placements.py": {
+    "__all__": [
+      "ReferenceTarget",
+      "ReferenceCamera",
+      "PlacementObservation",
+      "PlacementResidual",
+      "ReferenceLayoutResult",
+      "ReferenceSolveCancelled",
+      "common_reference",
+      "estimate_reference_layout"
+    ],
+    "symbols": {
+      "ReferenceTarget": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "rectangle": {
+              "args": [
+                {
+                  "name": "cls",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "reference_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "width_m",
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "length_m",
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ReferenceTarget"
+            },
+            "line": {
+              "args": [
+                {
+                  "name": "cls",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "reference_id",
+                  "annotation": "str",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "length_m",
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ReferenceTarget"
+            }
+          }
+        }
+      },
+      "ReferenceCamera": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "PlacementObservation": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "calibration_observation": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "target",
+                  "annotation": "ReferenceTarget",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "CalibrationObservation"
+            }
+          }
+        }
+      },
+      "PlacementResidual": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "ReferenceLayoutResult": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "ReferenceSolveCancelled": {
+        "type": "class",
+        "info": {
+          "bases": ["RuntimeError"],
+          "methods": {}
+        }
+      },
+      "common_reference": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "reference_id",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "ReferenceTarget"
+        }
+      },
+      "estimate_reference_layout": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "layout_id",
+              "annotation": "str",
+              "default": null,
+              "kind": "kwonlyarg"
+            },
+            {
+              "name": "world_frame",
+              "annotation": "CoordinateFrame",
+              "default": null,
+              "kind": "kwonlyarg"
+            },
+            {
+              "name": "targets",
+              "annotation": "Mapping[str, ReferenceTarget]",
+              "default": null,
+              "kind": "kwonlyarg"
+            },
+            {
+              "name": "cameras",
+              "annotation": "Mapping[str, ReferenceCamera]",
+              "default": null,
+              "kind": "kwonlyarg"
+            },
+            {
+              "name": "observations",
+              "annotation": "Sequence[PlacementObservation]",
+              "default": null,
+              "kind": "kwonlyarg"
+            },
+            {
+              "name": "anchor_placement_id",
+              "annotation": "str",
+              "default": null,
+              "kind": "kwonlyarg"
+            },
+            {
+              "name": "anchor",
+              "annotation": "RigidTransform",
+              "default": null,
+              "kind": "kwonlyarg"
+            },
+            {
+              "name": "cancel_requested",
+              "annotation": "Callable[[], bool] | None",
+              "default": "None",
+              "kind": "kwonlyarg"
+            }
+          ],
+          "returns": "ReferenceLayoutResult"
+        }
+      }
+    }
+  },
+  "lab/mocap/reference_scale.py": {
+    "__all__": [
+      "ReferenceScaleOptions",
+      "ReferenceScaleProblem",
+      "ReferenceScaleResult",
+      "ScaleResidual",
+      "estimate_reference_scale"
+    ],
+    "symbols": {
+      "ReferenceScaleOptions": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "ReferenceScaleProblem": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "ReferenceScaleResult": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "ScaleResidual": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "estimate_reference_scale": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "problem",
+              "annotation": "ReferenceScaleProblem",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "options",
+              "annotation": "ReferenceScaleOptions | None",
+              "default": "None",
+              "kind": "arg"
+            }
+          ],
+          "returns": "ReferenceScaleResult"
+        }
+      }
+    }
+  },
+  "lab/mocap/reference_scale_fit.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/reference_scale_triangulation.py": {
+    "__all__": [],
+    "symbols": {}
+  },
+  "lab/mocap/replay_serialization.py": {
+    "__all__": [
+      "dumps_experiment_replay_bundle",
+      "load_experiment_replay_bundle"
+    ],
+    "symbols": {
+      "dumps_experiment_replay_bundle": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "bundle",
+              "annotation": "ExperimentReplayBundle",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "str"
+        }
+      },
+      "load_experiment_replay_bundle": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "text",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "ExperimentReplayBundle"
         }
       }
     }
@@ -41496,290 +41892,5 @@
         }
       }
     }
-  },
-  "lab/mocap/calibration_numerics.py": { "__all__": [], "symbols": {} },
-  "lab/mocap/reference_placements.py": {
-    "__all__": [
-      "ReferenceTarget",
-      "ReferenceCamera",
-      "PlacementObservation",
-      "PlacementResidual",
-      "ReferenceLayoutResult",
-      "ReferenceSolveCancelled",
-      "common_reference",
-      "estimate_reference_layout"
-    ],
-    "symbols": {
-      "ReferenceTarget": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {
-            "rectangle": {
-              "args": [
-                {
-                  "name": "cls",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "reference_id",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "width_m",
-                  "annotation": "float",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "length_m",
-                  "annotation": "float",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "ReferenceTarget"
-            },
-            "line": {
-              "args": [
-                {
-                  "name": "cls",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "reference_id",
-                  "annotation": "str",
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "length_m",
-                  "annotation": "float",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "ReferenceTarget"
-            }
-          }
-        }
-      },
-      "ReferenceCamera": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {}
-        }
-      },
-      "PlacementObservation": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {
-            "calibration_observation": {
-              "args": [
-                {
-                  "name": "self",
-                  "annotation": null,
-                  "default": null,
-                  "kind": "arg"
-                },
-                {
-                  "name": "target",
-                  "annotation": "ReferenceTarget",
-                  "default": null,
-                  "kind": "arg"
-                }
-              ],
-              "returns": "CalibrationObservation"
-            }
-          }
-        }
-      },
-      "PlacementResidual": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {}
-        }
-      },
-      "ReferenceLayoutResult": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {}
-        }
-      },
-      "ReferenceSolveCancelled": {
-        "type": "class",
-        "info": {
-          "bases": ["RuntimeError"],
-          "methods": {}
-        }
-      },
-      "common_reference": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "reference_id",
-              "annotation": "str",
-              "default": null,
-              "kind": "arg"
-            }
-          ],
-          "returns": "ReferenceTarget"
-        }
-      },
-      "estimate_reference_layout": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "layout_id",
-              "annotation": "str",
-              "default": null,
-              "kind": "kwonlyarg"
-            },
-            {
-              "name": "world_frame",
-              "annotation": "CoordinateFrame",
-              "default": null,
-              "kind": "kwonlyarg"
-            },
-            {
-              "name": "targets",
-              "annotation": "Mapping[str, ReferenceTarget]",
-              "default": null,
-              "kind": "kwonlyarg"
-            },
-            {
-              "name": "cameras",
-              "annotation": "Mapping[str, ReferenceCamera]",
-              "default": null,
-              "kind": "kwonlyarg"
-            },
-            {
-              "name": "observations",
-              "annotation": "Sequence[PlacementObservation]",
-              "default": null,
-              "kind": "kwonlyarg"
-            },
-            {
-              "name": "anchor_placement_id",
-              "annotation": "str",
-              "default": null,
-              "kind": "kwonlyarg"
-            },
-            {
-              "name": "anchor",
-              "annotation": "RigidTransform",
-              "default": null,
-              "kind": "kwonlyarg"
-            },
-            {
-              "name": "cancel_requested",
-              "annotation": "Callable[[], bool] | None",
-              "default": "None",
-              "kind": "kwonlyarg"
-            }
-          ],
-          "returns": "ReferenceLayoutResult"
-        }
-      }
-    }
-  },
-  "lab/mocap/placement_solver.py": {
-    "__all__": [],
-    "symbols": {}
-  },
-  "lab/mocap/reference_scale.py": {
-    "__all__": [
-      "ReferenceScaleOptions",
-      "ReferenceScaleProblem",
-      "ReferenceScaleResult",
-      "ScaleResidual",
-      "estimate_reference_scale"
-    ],
-    "symbols": {
-      "ReferenceScaleOptions": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {}
-        }
-      },
-      "ReferenceScaleProblem": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {}
-        }
-      },
-      "ReferenceScaleResult": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {}
-        }
-      },
-      "ScaleResidual": {
-        "type": "class",
-        "info": {
-          "bases": [],
-          "methods": {}
-        }
-      },
-      "estimate_reference_scale": {
-        "type": "function",
-        "signature": {
-          "args": [
-            {
-              "name": "problem",
-              "annotation": "ReferenceScaleProblem",
-              "default": null,
-              "kind": "arg"
-            },
-            {
-              "name": "options",
-              "annotation": "ReferenceScaleOptions | None",
-              "default": "None",
-              "kind": "arg"
-            }
-          ],
-          "returns": "ReferenceScaleResult"
-        }
-      }
-    }
-  },
-  "lab/mocap/reference_scale_fit.py": {
-    "__all__": [],
-    "symbols": {}
-  },
-  "lab/mocap/reference_scale_triangulation.py": {
-    "__all__": [],
-    "symbols": {}
-  },
-  "lab/mocap/cleanup.py": {
-    "__all__": [],
-    "symbols": {}
-  },
-  "lab/mocap/experiment_resources.py": {
-    "__all__": [],
-    "symbols": {}
-  },
-  "lab/mocap/preview_artifacts.py": {
-    "__all__": [],
-    "symbols": {}
-  },
-  "lab/mocap/preview_serialization.py": {
-    "__all__": [],
-    "symbols": {}
   }
 }

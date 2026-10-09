@@ -173,6 +173,23 @@ def test_verify_manual_qa_succeeds_on_repo_root() -> None:
     assert ledger.owner_subepic == 4725
 
 
+def test_pdf_character_inventory_ignores_extractor_whitespace(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """PDF extractors can insert whitespace without changing artifact content."""
+    from pypdf._page import PageObject
+
+    path = DIST_DIR / "tools-engineering-design-manual.pdf"
+    baseline = inspect_pdf_artifact(path)
+    original = PageObject.extract_text
+
+    def extract_with_extra_whitespace(self: Any, *args: Any, **kwargs: Any) -> str:
+        return original(self, *args, **kwargs).replace("\n", "\n \t")
+
+    monkeypatch.setattr(PageObject, "extract_text", extract_with_extra_whitespace)
+    assert inspect_pdf_artifact(path) == baseline
+
+
 @pytest.mark.parametrize(
     ("mutation", "error_message"),
     [
