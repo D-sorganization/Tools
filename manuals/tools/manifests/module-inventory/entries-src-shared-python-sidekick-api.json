@@ -1,0 +1,154 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 698,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "bde0c316a0c3504206051de59ce592345ce8b644eb49511cf7393098853620cb",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-API-INIT-PY-2503D24A41E4",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/api/__init__.py",
+      "purpose": "API standardization module for upstream_drift_tools.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "ErrorCode",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ErrorDetail",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ResponseMetadata",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StandardResponse",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "StandardResponseBuilder",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8091,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "93fff6885060f4e2924c94c0171a4846ad133e74046bdd3f302dad33aeda3c42",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-API-STANDARD-RESPONSE-PY-85C5F777A2C6",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/api/standard_response.py",
+      "purpose": "Standardized API response wrapper for all upstream_drift_tools endpoints.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ErrorCode",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ErrorDetail",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ResponseMetadata",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StandardResponse",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StandardResponseBuilder",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/sidekick/tests/test_standard_response.py",
+          "tests/unit/sidekick/test_standard_response_import.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/shared/python/sidekick/api",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

@@ -1,0 +1,404 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1193,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "134aa0a7e346ee6b08513fa6012fd8d0791e023215d12c2799d69d3bc0d77564",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-STANDALONE-INIT-PY-E95594E19507",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/standalone/__init__.py",
+      "purpose": "Sidekick standalone shell.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5168,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "dca24c3085183f5de7508469d0efaec18e0e9391abcc9bab68b74f0d07a39772",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-STANDALONE-ONBOARDING-PY-5CD8D60DB893",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/standalone/onboarding.py",
+      "purpose": "Standalone Sidekick first-run onboarding state machine.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "OnboardingState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StandaloneOnboarding",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SENTINEL_FILENAME",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/unit/sidekick/test_standalone_canonical_package.py",
+          "tests/unit/sidekick/test_standalone_runtime.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6149,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f1d70dbda850536fa8118ead199df6a4dccb9b33fb8871142f4efd08c0db7722",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-STANDALONE-PREFERENCES-PY-AD3F8263AB49",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/standalone/preferences.py",
+      "purpose": "Standalone Sidekick preferences — typed getters and Design-by-Contract setters.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "StandalonePreferences",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_LLM_PROVIDER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_PROFILE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_THEME",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "VALID_PROFILES",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/unit/sidekick/test_standalone_canonical_package.py",
+          "tests/unit/sidekick/test_standalone_runtime.py"
+        ],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13517,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cbe0f4de347dc3c2c0a3fc06d39b7a393f329675b4f18eeacab62274d2fe82cd",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-STANDALONE-RUNNER-PY-7524F77880B4",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/standalone/runner.py",
+      "purpose": "Headless calculator runner for ``sidekick run``.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "list_calculators",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "register",
+            "signature": "name: str"
+          },
+          {
+            "kind": "function",
+            "name": "run_calculator",
+            "signature": "calculator: str, inputs_path: str, output: str='-', format: str='json'"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/ai/skills/test_runner.py",
+          "tests/unit/sidekick/test_standalone_canonical_package.py",
+          "tests/unit/sidekick/test_standalone_runtime.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 8139,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f1832c46cf561508355ea2543ecaa4c8376b556e7a47dedf69f6e71a0b9814b3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-STANDALONE-SESSION-STORE-PY-04A3E0875DDF",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/standalone/session_store.py",
+      "purpose": "Persistent standalone Sidekick profile storage.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FileSessionStore",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "InMemorySessionStore",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SessionStore",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StandaloneSessionStore",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "default_store_root",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/sidekick/ui/test_tools_sidebar_state_profiles.py",
+          "tests/unit/sidekick/test_standalone_canonical_package.py",
+          "tests/unit/sidekick/test_standalone_runtime.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 14712,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "fcc9da515066efe0f9e8bbddaf399a35240d962c27b08346f0aff02754e651d6",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-STANDALONE-WINDOW-PY-DDDC2E76500C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/standalone/window.py",
+      "purpose": "StandaloneSidekickWindow — standalone QMainWindow shell — T2 (#5980).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "StandaloneSidekickConfig",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "StandaloneSidekickWindow",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/unit/sidekick/test_standalone_runtime.py"
+        ],
+        "unit_mentions": [
+          "bar",
+          "g"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/shared/python/sidekick/standalone",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}

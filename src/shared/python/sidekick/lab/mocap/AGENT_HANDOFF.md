@@ -6,6 +6,15 @@ Last updated: 2026-09-09
 
 Tools owns the MIT vendor-neutral markerless-mocap contracts and reference algorithms. UpstreamDrift owns orchestration and UX. AffineDrift owns evidence, validation publication, and sanitized visualization. Tools_Private is not part of the open runtime.
 
+## Feedback-Control Replay Contract — #5461
+
+- T01 introduces `ExperimentReplayBundle`, wire version `experiment-replay/1.0.0`, and `schemas/mocap/experiment-replay-v1.schema.json`.
+- Identity/state types and drive/replay enums live in `experiment_contracts.py`; input, time-grid, and execution-policy validation lives in `experiment_execution.py`; bundle validation and digests live in `experiment_replay.py`; strict JSON lives in `replay_serialization.py`; public exports are in `__init__.py`.
+- Inputs distinguish command, actuator torque/force, generalized effort, muscle excitation/activation, and external load. Named complete initial state supports native manifold dimensions without assuming equal position and velocity dimensions.
+- Integrity digests bind model identity, state schema, complete state values, input history/time grid, and execution policy. Source-model and optional loaded-native-model digests are distinct.
+- Required capability and availability are explicit; the transport has no qualification status. The consumer owns physics qualification and verifies the declared execution against its engine.
+- Synthetic test: `tests/shared/python/sidekick/lab/mocap/test_experiment_replay.py`. Implementation notes: `docs/development/feedback_controls/T01-CONTRACT.md`.
+
 ## Active issues
 
 - Epic #4706: vendor-neutral acquisition, calibration, reconstruction, and C3D exchange.

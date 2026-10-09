@@ -7747,3 +7747,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-09-26: Release v1.22.0 (#5367)
 
 - **2026-09-26**: chore(release, #5367) — Bump release version to v1.22.0 across pyproject.toml, package.json, and VERSION; refresh CHANGELOG.md.
+
+## 2026-10-08: Feedback-Control Replay Transport (#5461)
+
+- **2026-10-08**: feat(mocap, #5461) — Add the versioned `experiment-replay/1.0.0` transport contract for full named model-native initial state, ordered actuator torque/force, generalized effort, muscle excitation/activation or external-load input histories, explicit time grid and controller-off replay policy, provider/model identity, and integrity digests. Keep source-model and optional loaded-native-model digests distinct; keep required capabilities separate from availability, and leave physics qualification to UpstreamDrift. The T01 implementation record is `docs/development/feedback_controls/T01-CONTRACT.md`.

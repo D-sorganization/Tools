@@ -1,0 +1,254 @@
+{
+  "authority": "D-sorganization/Tools",
+  "entries": [
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 573,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "59fb4e2d7bc9c053f03854fc6fde9259d318ba9c8b02dbc7ab1a64772f1a2df6",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PERSISTENCE-INIT-PY-71F479F5415F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/persistence/__init__.py",
+      "purpose": "Shared persistence schemas for Sidekick state.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "LEGACY_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PROFILE_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "PROFILE_SCHEMA_VERSION_KEY",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ProfilePayload",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "SchemaMigration",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "current_schema_version",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "unwrap_payload",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "validate",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "wrap_state",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1405,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4d5a41ca6f9790a988944531989f319373ed5dabc91c09333f0a61e6e572fb7d",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PERSISTENCE-SCHEMA-PY-B1DC4A7B2872",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/persistence/schema.py",
+      "purpose": "Shared JSON schema helpers for persisted Sidekick profiles.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ProfilePayload",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PROFILE_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PROFILE_SCHEMA_VERSION_KEY",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/integration/sidekick/test_standalone_wheel.py",
+          "tests/shared/python/launch_monitor/test_schema.py",
+          "tests/shared/python/sidekick/lab/mocap/test_schema.py",
+          "tests/unit/sidekick/test_standalone_canonical_package.py",
+          "tests/unit/sidekick/test_standalone_runtime.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7264,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "13196b2641fe6da1914cda190cc9c27dddaa58e142d288c6bf7a50ab21828560",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PERSISTENCE-STATE-PROFILE-PY-358E4CFD49A8",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/persistence/state_profile.py",
+      "purpose": "Canonical state-profile payload helpers for round-trip between hosts.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SchemaMigration",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LEGACY_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MIGRATION_TABLE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "current_schema_version",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "unwrap_payload",
+            "signature": "payload: ProfilePayload | Mapping[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "validate",
+            "signature": "payload: Mapping[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "wrap_state",
+            "signature": "state: Mapping[str, Any]"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/sidekick/test_standalone_canonical_package.py",
+          "tests/unit/sidekick/test_standalone_runtime.py"
+        ],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    }
+  ],
+  "package": "src/shared/python/sidekick/persistence",
+  "schema_version": "tools-module-inventory-shard/1.1.0"
+}
