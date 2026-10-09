@@ -1,6 +1,6 @@
 # Markerless Mocap Handoff
 
-Last updated: 2026-09-09
+Last updated: 2026-10-08
 
 ## Authority
 
@@ -14,6 +14,15 @@ Tools owns the MIT vendor-neutral markerless-mocap contracts and reference algor
 - Integrity digests bind model identity, state schema, complete state values, input history/time grid, and execution policy. Source-model and optional loaded-native-model digests are distinct.
 - Required capability and availability are explicit; the transport has no qualification status. The consumer owns physics qualification and verifies the declared execution against its engine.
 - Synthetic test: `tests/shared/python/sidekick/lab/mocap/test_experiment_replay.py`. Implementation notes: `docs/development/feedback_controls/T01-CONTRACT.md`.
+
+## Feedback-Control Evidence Interchange — #5462
+
+- T02 adds `ComparisonEvidenceReceipt`, wire version `comparison-evidence/1.0.0`, and `schemas/mocap/comparison-evidence-v1.schema.json`.
+- Rows retain the T01 bundle when present, explicit package/variant/coarse-drive identity, required/support/availability values, implementation evidence for dynamics/contact/integrator/actuator/restart, and opaque digest-bound artifact references.
+- F01's coarse drive mode is `torque` or `muscle_excitation`; T01's fine input kind remains inside the replay bundle. F01 torque accepts actuator command/torque/force or generalized effort; muscle excitation accepts only excitation. Other pairings are rejected.
+- The caller supplies required model/engine row IDs and exact replay modes. Missing rows and evidence kinds remain visible; a different replay mode cannot satisfy the required mode, and non-identity comparisons cannot mix drive or replay modes.
+- Structural checks do not execute a model, score measurements, decide muscle equivalence, or declare scientific qualification. UpstreamDrift F01 owns admission and qualification; native-consumer acceptance follows runnable F06/F07 and campaign evidence.
+- Private source paths and observation payloads must remain in authorized private storage. Public fixtures use synthetic identities and opaque references only.
 
 ## Active issues
 

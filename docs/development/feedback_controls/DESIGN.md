@@ -14,7 +14,7 @@ Reject non-finite/unsorted times, unknown units/frames, mixed clock domains, inc
 
 ## Evidence and Privacy
 
-Retain separate statuses for IK, feedback tracking, torque replay, excitation replay, externally forced replay and autonomous model-contact replay. Missing evidence, unavailable engines and failed gates must remain machine-readable; no schema conversion upgrades them to qualified. Use independently generated synthetic fixtures in public tests. Private paths, original identities/source hashes and identifying videos remain in authorized private storage; release-safe summaries require the existing review boundary.
+Retain separate statuses for IK, feedback tracking, torque replay, excitation replay, externally forced replay and autonomous model-contact replay. T02's versioned evidence receipt preserves replay modes, required/support/availability axes, missing rows and digest-bound opaque references. Structural readiness never upgrades a result to qualified; UpstreamDrift owns scientific admission. Use independently generated synthetic fixtures in public tests. Private paths, original identities/source hashes and identifying videos remain in authorized private storage; release-safe summaries require the existing review boundary.
 
 ## Resources and Preview Interchange
 

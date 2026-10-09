@@ -11,61 +11,61 @@
   "issue_url": "https://github.com/D-sorganization/Tools/issues/4730",
   "pr_url": "https://github.com/D-sorganization/Tools/pull/5055",
   "commit_evidence": {
-    "local_head_sha": "b2da2f82854bd2084932faba37814ba43ff37b0d",
+    "local_head_sha": "b90a21dcd163480df62ae6fc6990f59930498ba8",
     "remote_head_sha": null,
-    "reviewed_tree_sha": "8922ee9333b963f23b15efb2df1426c25df87bd7",
+    "reviewed_tree_sha": "c45f766ebd192b4fac8f366a37a3be0949997b66",
     "merge_sha": null
   },
   "branch_and_worktree": {
-    "branch": "feat/5461-versioned-replay-contracts",
-    "worktree": "C:\\Users\\diete\\Repositories\\Worktrees\\Tools-5461-versioned-replay",
-    "is_clean": true
+    "branch": "feat/5462-evidence-interchange",
+    "worktree": "C:\\Users\\diete\\Repositories\\Worktrees\\Tools-5462-evidence-interchange",
+    "is_clean": false
   },
   "check_evidence": {
     "check_design_manual_governance": {
       "command": "python -m scripts.check_design_manual_governance",
       "status": "passed",
-      "timestamp": "2026-10-09T03:38:04Z"
+      "timestamp": "2026-10-09T03:31:44Z"
     },
     "build_tools_module_inventory": {
       "command": "python -m scripts.build_tools_module_inventory --check",
       "status": "passed",
-      "timestamp": "2026-10-09T03:38:04Z"
+      "timestamp": "2026-10-09T03:31:44Z"
     },
     "lint_tools_textbook_chapters": {
       "command": "python -m scripts.lint_tools_textbook_chapters",
       "status": "passed",
-      "timestamp": "2026-10-09T03:38:04Z"
+      "timestamp": "2026-10-09T03:31:44Z"
     },
     "check_tools_exemplars": {
       "command": "python -m scripts.check_tools_exemplars",
       "status": "passed",
-      "timestamp": "2026-10-09T03:38:04Z"
+      "timestamp": "2026-10-09T03:31:44Z"
     },
     "check_tools_calculation_freshness": {
       "command": "python -m scripts.check_tools_calculation_freshness --check",
       "status": "passed",
-      "timestamp": "2026-10-09T03:38:04Z"
+      "timestamp": "2026-10-09T03:31:44Z"
     },
     "check_tools_manual_qa": {
       "command": "python -m scripts.check_tools_manual_qa --check",
       "status": "passed",
-      "timestamp": "2026-10-09T03:38:04Z"
+      "timestamp": "2026-10-09T03:31:44Z"
     },
     "check_tools_publication_projection": {
       "command": "python -m scripts.check_tools_publication_projection --check",
       "status": "passed",
-      "timestamp": "2026-10-09T03:38:04Z"
+      "timestamp": "2026-10-09T03:31:44Z"
     },
     "render_tools_design_manual": {
       "command": "python -m scripts.render_tools_design_manual --check",
       "status": "passed",
-      "timestamp": "2026-10-09T03:38:04Z"
+      "timestamp": "2026-10-09T03:31:44Z"
     },
     "check_tools_handoff": {
       "command": "python -m scripts.check_tools_handoff --check",
       "status": "passed",
-      "timestamp": "2026-10-09T03:38:04Z"
+      "timestamp": "2026-10-09T03:31:44Z"
     }
   },
   "artifact_and_test_digests": {
@@ -112,7 +112,7 @@
       "TOOLS-HUMAN-APPROVAL-PENDING",
       "TOOLS-MARKERLESS-EXEMPLAR-BLOCKED"
     ],
-    "expiry_timestamp": "2027-01-07T03:38:04Z"
+    "expiry_timestamp": "2027-01-07T03:31:44Z"
   },
   "blockers": [
     {
@@ -127,7 +127,7 @@
     }
   ],
   "next_dependency": "TOOLS-M0 (#4708 / #4734) and parent epic DOC-TOOLS (#4707) closure",
-  "freshness_timestamp": "2026-10-09T03:38:04Z",
+  "freshness_timestamp": "2026-10-09T03:31:44Z",
   "governed_handoff_files": {
     "AGENT_HANDOFF.md": {
       "path": "AGENT_HANDOFF.md",
@@ -223,12 +223,13 @@
     },
     "src/shared/python/sidekick/lab/mocap/AGENT_HANDOFF.md": {
       "path": "src/shared/python/sidekick/lab/mocap/AGENT_HANDOFF.md",
-      "sha256_lf": "9a3f73a8af32a80a50aae52d7164c6acc5dc0212ecf0728474a5e6141421b6b9",
-      "line_count": 73,
+      "sha256_lf": "2b78e20d7b0485c41919e31b74a0cdb0ec40a3ece65379d48b03dd8e5e6a7e4e",
+      "line_count": 82,
       "max_line_budget": 150,
       "required_sections": [
         "## Authority",
         "## Feedback-Control Replay Contract \u2014 #5461",
+        "## Feedback-Control Evidence Interchange \u2014 #5462",
         "## Active issues",
         "## Current branch",
         "## Delivered in this slice",

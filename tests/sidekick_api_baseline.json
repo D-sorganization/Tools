@@ -8370,6 +8370,12 @@
       "CapabilityAvailability",
       "CapabilityDeclaration",
       "CapabilitySupport",
+      "COMPARISON_EVIDENCE_SCHEMA_VERSION",
+      "ComparisonEvidenceReceipt",
+      "ComparisonEvidenceRow",
+      "ComparisonLevel",
+      "ComparisonRowRequirement",
+      "DriveMode",
       "CaptureGroup",
       "ClockDomain",
       "ClockKind",
@@ -8383,6 +8389,8 @@
       "ExtrinsicCalibrationResult",
       "ExtrinsicDegeneracyKind",
       "ExtrinsicQuality",
+      "EvidenceArtifactKind",
+      "EvidenceArtifactReference",
       "EXPERIMENT_REPLAY_SCHEMA_VERSION",
       "ExperimentReplayBundle",
       "FeatureSupport",
@@ -8399,6 +8407,8 @@
       "InputHistory",
       "InputInterpolation",
       "IntegrityHashes",
+      "ImplementationEvidence",
+      "ImplementationEvidenceKind",
       "JointAngleConstraint",
       "KeypointMapping",
       "KeypointReconstruction",
@@ -8455,10 +8465,12 @@
       "apply_segment_length_constraint",
       "bundle_adjust_layout",
       "build_experiment_replay_bundle",
+      "build_comparison_evidence_receipt",
       "check_coverage_and_degeneracy",
       "compute_kinematic_derivatives",
       "detect_camera_movement",
       "dumps_canonical",
+      "dumps_comparison_evidence_receipt",
       "dumps_experiment_replay_bundle",
       "estimate_pnp_pose",
       "evaluate_extrinsic_quality",
@@ -8467,6 +8479,7 @@
       "get_default_mediapipe_mapping",
       "load_session_manifest",
       "load_experiment_replay_bundle",
+      "load_comparison_evidence_receipt",
       "reconstruct_frame_landmarks",
       "reconstruct_temporal_trajectory",
       "smooth_trajectory_butterworth",
@@ -8989,6 +9002,81 @@
           "methods": {}
         }
       },
+      "COMPARISON_EVIDENCE_SCHEMA_VERSION": {
+        "type": "variable"
+      },
+      "ComparisonEvidenceReceipt": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "missing_required_rows": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[str, ...]"
+            },
+            "missing_required_evidence": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[str, ...]"
+            }
+          }
+        }
+      },
+      "ComparisonEvidenceRow": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "replay_mode": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ReplayMode | None"
+            }
+          }
+        }
+      },
+      "ComparisonLevel": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "StrEnum"
+          ],
+          "methods": {}
+        }
+      },
+      "ComparisonRowRequirement": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "DriveMode": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
       "CaptureGroup": {
         "type": "class",
         "info": {
@@ -9335,6 +9423,22 @@
           "bases": [
             "StrEnum"
           ],
+          "methods": {}
+        }
+      },
+      "EvidenceArtifactKind": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "StrEnum"
+          ],
+          "methods": {}
+        }
+      },
+      "EvidenceArtifactReference": {
+        "type": "class",
+        "info": {
+          "bases": [],
           "methods": {}
         }
       },
@@ -9732,6 +9836,34 @@
         "type": "class",
         "info": {
           "bases": [],
+          "methods": {}
+        }
+      },
+      "ImplementationEvidence": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "is_available": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            }
+          }
+        }
+      },
+      "ImplementationEvidenceKind": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "StrEnum"
+          ],
           "methods": {}
         }
       },
@@ -11252,6 +11384,38 @@
           "returns": "ExperimentReplayBundle"
         }
       },
+      "build_comparison_evidence_receipt": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "receipt_id",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "comparison_level",
+              "annotation": "ComparisonLevel",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "requirements",
+              "annotation": "tuple[ComparisonRowRequirement, ...]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "rows",
+              "annotation": "tuple[ComparisonEvidenceRow, ...]",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "ComparisonEvidenceReceipt"
+        }
+      },
       "check_coverage_and_degeneracy": {
         "type": "function",
         "signature": {
@@ -11343,6 +11507,20 @@
             {
               "name": "manifest",
               "annotation": "MocapSessionManifest",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "str"
+        }
+      },
+      "dumps_comparison_evidence_receipt": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "receipt",
+              "annotation": "ComparisonEvidenceReceipt",
               "default": null,
               "kind": "arg"
             }
@@ -11519,6 +11697,20 @@
             }
           ],
           "returns": "ExperimentReplayBundle"
+        }
+      },
+      "load_comparison_evidence_receipt": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "text",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "ComparisonEvidenceReceipt"
         }
       },
       "reconstruct_frame_landmarks": {
@@ -12697,6 +12889,42 @@
     "__all__": [],
     "symbols": {}
   },
+  "lab/mocap/evidence_serialization.py": {
+    "__all__": [
+      "dumps_comparison_evidence_receipt",
+      "load_comparison_evidence_receipt"
+    ],
+    "symbols": {
+      "dumps_comparison_evidence_receipt": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "receipt",
+              "annotation": "ComparisonEvidenceReceipt",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "str"
+        }
+      },
+      "load_comparison_evidence_receipt": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "text",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "ComparisonEvidenceReceipt"
+        }
+      }
+    }
+  },
   "lab/mocap/experiment_contracts.py": {
     "__all__": [
       "EXPERIMENT_REPLAY_SCHEMA_VERSION",
@@ -12811,6 +13039,174 @@
         "info": {
           "bases": [],
           "methods": {}
+        }
+      }
+    }
+  },
+  "lab/mocap/experiment_evidence.py": {
+    "__all__": [
+      "COMPARISON_EVIDENCE_SCHEMA_VERSION",
+      "ComparisonEvidenceReceipt",
+      "ComparisonEvidenceRow",
+      "ComparisonLevel",
+      "ComparisonRowRequirement",
+      "DriveMode",
+      "EvidenceArtifactKind",
+      "EvidenceArtifactReference",
+      "ImplementationEvidence",
+      "ImplementationEvidenceKind",
+      "build_comparison_evidence_receipt"
+    ],
+    "symbols": {
+      "COMPARISON_EVIDENCE_SCHEMA_VERSION": {
+        "type": "variable"
+      },
+      "ComparisonEvidenceReceipt": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "missing_required_rows": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[str, ...]"
+            },
+            "missing_required_evidence": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "tuple[str, ...]"
+            }
+          }
+        }
+      },
+      "ComparisonEvidenceRow": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "replay_mode": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "ReplayMode | None"
+            }
+          }
+        }
+      },
+      "ComparisonLevel": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "StrEnum"
+          ],
+          "methods": {}
+        }
+      },
+      "ComparisonRowRequirement": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "DriveMode": {
+        "type": "class",
+        "info": {
+          "bases": ["StrEnum"],
+          "methods": {}
+        }
+      },
+      "EvidenceArtifactKind": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "StrEnum"
+          ],
+          "methods": {}
+        }
+      },
+      "EvidenceArtifactReference": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {}
+        }
+      },
+      "ImplementationEvidence": {
+        "type": "class",
+        "info": {
+          "bases": [],
+          "methods": {
+            "is_available": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "bool"
+            }
+          }
+        }
+      },
+      "ImplementationEvidenceKind": {
+        "type": "class",
+        "info": {
+          "bases": [
+            "StrEnum"
+          ],
+          "methods": {}
+        }
+      },
+      "build_comparison_evidence_receipt": {
+        "type": "function",
+        "signature": {
+          "args": [
+            {
+              "name": "receipt_id",
+              "annotation": "str",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "comparison_level",
+              "annotation": "ComparisonLevel",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "requirements",
+              "annotation": "tuple[ComparisonRowRequirement, ...]",
+              "default": null,
+              "kind": "arg"
+            },
+            {
+              "name": "rows",
+              "annotation": "tuple[ComparisonEvidenceRow, ...]",
+              "default": null,
+              "kind": "arg"
+            }
+          ],
+          "returns": "ComparisonEvidenceReceipt"
         }
       }
     }

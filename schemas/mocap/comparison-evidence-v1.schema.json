@@ -1,0 +1,85 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://schemas.d-sorganization.org/mocap/comparison-evidence-v1.schema.json",
+  "title": "Comparison Evidence Receipt v1",
+  "description": "Structural, versioned evidence interchange. It preserves declarations and opaque references; it does not assess physics or qualify a result.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "receipt_id", "comparison_level", "requirements", "rows"],
+  "properties": {
+    "schema_version": {"const": "comparison-evidence/1.0.0"},
+    "receipt_id": {"type": "string", "minLength": 1},
+    "comparison_level": {"$ref": "#/$defs/comparisonLevel"},
+    "requirements": {
+      "type": "array",
+      "minItems": 1,
+      "items": {"$ref": "#/$defs/rowRequirement"}
+    },
+    "rows": {"type": "array", "items": {"$ref": "#/$defs/evidenceRow"}}
+  },
+  "$defs": {
+    "sha256": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
+    "comparisonLevel": {
+      "enum": ["identity", "transcription_feasibility", "within_engine_replay", "same_input", "observation_accuracy", "biomechanical_equivalence"]
+    },
+    "driveMode": {"enum": ["torque", "muscle_excitation"]},
+    "replayMode": {"enum": ["native_own_contact", "externally_forced", "shared_rigid_body_emulation"]},
+    "implementationKind": {"enum": ["dynamics", "contact", "integrator", "actuator", "restart"]},
+    "artifactKind": {"enum": ["dynamics", "contact", "integrator", "actuator", "restart", "observation", "force", "muscle_state", "transcription", "observation_score"]},
+    "rowRequirement": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["row_id", "required", "replay_mode", "required_implementation_kinds", "required_artifact_kinds"],
+      "properties": {
+        "row_id": {"type": "string", "minLength": 1},
+        "required": {"type": "boolean"},
+        "replay_mode": {"oneOf": [{"$ref": "#/$defs/replayMode"}, {"type": "null"}]},
+        "required_implementation_kinds": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/implementationKind"}},
+        "required_artifact_kinds": {"type": "array", "uniqueItems": true, "items": {"$ref": "#/$defs/artifactKind"}}
+      }
+    },
+    "implementationEvidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "implementation_id", "version", "sha256", "required", "support", "availability", "reason", "evidence_reference_id"],
+      "properties": {
+        "kind": {"$ref": "#/$defs/implementationKind"},
+        "implementation_id": {"oneOf": [{"type": "string", "minLength": 1}, {"type": "null"}]},
+        "version": {"oneOf": [{"type": "string", "minLength": 1}, {"type": "null"}]},
+        "sha256": {"oneOf": [{"$ref": "#/$defs/sha256"}, {"type": "null"}]},
+        "required": {"type": "boolean"},
+        "support": {"enum": ["supported", "unsupported", "unknown"]},
+        "availability": {"enum": ["available", "unavailable", "unknown"]},
+        "reason": {"oneOf": [{"type": "string", "minLength": 1}, {"type": "null"}]},
+        "evidence_reference_id": {"oneOf": [{"type": "string", "pattern": "^opaque:[A-Za-z0-9][A-Za-z0-9._-]{7,127}$"}, {"type": "null"}]}
+      }
+    },
+    "artifactReference": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["kind", "reference_id", "sha256"],
+      "properties": {
+        "kind": {"$ref": "#/$defs/artifactKind"},
+        "reference_id": {"type": "string", "pattern": "^opaque:[A-Za-z0-9][A-Za-z0-9._-]{7,127}$"},
+        "sha256": {"$ref": "#/$defs/sha256"}
+      }
+    },
+    "evidenceRow": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["row_id", "package_id", "variant_id", "drive_mode", "replay_bundle", "support", "availability", "implementation_evidence", "artifacts", "reason"],
+      "properties": {
+        "row_id": {"type": "string", "minLength": 1},
+        "package_id": {"type": "string", "minLength": 1},
+        "variant_id": {"type": "string", "minLength": 1},
+        "drive_mode": {"$ref": "#/$defs/driveMode"},
+        "replay_bundle": {"oneOf": [{"$ref": "experiment-replay-v1.schema.json"}, {"type": "null"}]},
+        "support": {"enum": ["supported", "unsupported", "unknown"]},
+        "availability": {"enum": ["available", "unavailable", "unknown"]},
+        "implementation_evidence": {"type": "array", "items": {"$ref": "#/$defs/implementationEvidence"}},
+        "artifacts": {"type": "array", "items": {"$ref": "#/$defs/artifactReference"}},
+        "reason": {"oneOf": [{"type": "string", "minLength": 1}, {"type": "null"}]}
+      }
+    }
+  }
+}
