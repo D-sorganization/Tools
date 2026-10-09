@@ -7082,7 +7082,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | 2026-09-27 | #5376 | Prepare the v1.23.1 release by synchronizing version metadata and release notes. |
 | 2026-09-30 | #5385 | Propagate flight termination states (LANDED, TIME_LIMIT, SOLVER_FAILED, CANCELLED) before reporting landing metrics, gate carry/landing metrics to None on incomplete flights, and fail closed across inverse solver and execution profiles (Tools #5385 / UpstreamDrift #11145). |
 | 2026-10-05 | #5439 | ci(security): re-vendor `scripts/fork_pr_runner_guard.py` and new `scripts/fork_pr_guard_analysis.py` from Repository_Management (RM#1996): same-repo `if:` exemption and sink-based head-checkout analysis. |
-| 2026-10-09 | #5474 | Keep mixed actuator commands structurally distinct from torque and excitation by requiring a matching versioned compiled-actuator-profile implementation reference and actuator artifact; native model/profile validation remains UpstreamDrift-owned. |
+| 2026-10-09 | #5474 | Keep mixed actuator commands structurally distinct from torque and excitation by requiring a matching versioned compiled-actuator-profile implementation reference and actuator artifact; native model/profile validation remains UpstreamDrift-owned, and the opaque reference validator stays statically typed under skipped-import mypy checks. |
 ---
 
 <!--

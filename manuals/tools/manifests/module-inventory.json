@@ -783,7 +783,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-data-processing.json"
     },
     {
-      "content_sha256_lf": "61fe391e6500ed7c23c1d1591d675b1e9fde43b25b4908fa0da7d9c75af39ef6",
+      "content_sha256_lf": "dbafb86e7594d92c509f392368ea858379563f173bf44196b75a4601914fa188",
       "entry_count": 47,
       "package": "src/shared/python/sidekick/lab",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-lab.json"
