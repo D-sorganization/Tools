@@ -7082,7 +7082,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | 2026-09-27 | #5376 | Prepare the v1.23.1 release by synchronizing version metadata and release notes. |
 | 2026-09-30 | #5385 | Propagate flight termination states (LANDED, TIME_LIMIT, SOLVER_FAILED, CANCELLED) before reporting landing metrics, gate carry/landing metrics to None on incomplete flights, and fail closed across inverse solver and execution profiles (Tools #5385 / UpstreamDrift #11145). |
 | 2026-10-05 | #5439 | ci(security): re-vendor `scripts/fork_pr_runner_guard.py` and new `scripts/fork_pr_guard_analysis.py` from Repository_Management (RM#1996): same-repo `if:` exemption and sink-based head-checkout analysis. |
-| 2026-10-09 | #5474 | Keep mixed actuator commands structurally distinct from torque and excitation by requiring a matching versioned compiled-actuator-profile implementation reference and actuator artifact; native model/profile validation remains UpstreamDrift-owned, and the opaque reference validator stays statically typed under skipped-import mypy checks. |
+| 2026-10-09 | #5475 | Keep mixed actuator commands structurally distinct from torque and excitation by requiring a matching versioned compiled-actuator-profile implementation reference and actuator artifact; native model/profile validation remains UpstreamDrift-owned, and the opaque reference validator stays statically typed under skipped-import mypy checks. |
 ---
 
 <!--
@@ -7760,6 +7760,6 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 
 - **2026-10-08**: feat(mocap, #5462) — Add structural `comparison-evidence/1.0.0` receipts that preserve model/engine rows, replay mode, required/support/availability axes, implementation identities, and opaque artifact references. Prevent replay-mode and same-input mismatches from being promoted through the generic interchange boundary; retain scientific qualification authority in UpstreamDrift. Implementation notes: `docs/development/feedback_controls/T02-CONTRACT.md`.
 
-## 2026-10-09: Compiled Actuator Command References (#5474)
+## 2026-10-09: Compiled Actuator Command References (#5475)
 
-- **2026-10-09**: feat(mocap, #5474) — Permit a muscle-drive evidence row to carry a T01 `ACTUATOR_COMMAND` bundle only when required, supported, available actuator implementation evidence names the versioned `compiled-actuator-profile/1.0.0` discriminator and exactly matches one opaque actuator artifact reference by ID and SHA-256. This is a structural link only; UpstreamDrift resolves and verifies profile bytes against the executed native model, actuator laws, ordered channels, replay policy and full initial state. It does not equate dimensionless commands with torque, excitation or activation, or qualify model physics.
+- **2026-10-09**: feat(mocap, #5475) — Permit a muscle-drive evidence row to carry a T01 `ACTUATOR_COMMAND` bundle only when required, supported, available actuator implementation evidence names the versioned `compiled-actuator-profile/1.0.0` discriminator and exactly matches one opaque actuator artifact reference by ID and SHA-256. This is a structural link only; UpstreamDrift resolves and verifies profile bytes against the executed native model, actuator laws, ordered channels, replay policy and full initial state. It does not equate dimensionless commands with torque, excitation or activation, or qualify model physics.
