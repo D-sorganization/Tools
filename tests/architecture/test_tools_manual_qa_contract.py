@@ -190,6 +190,29 @@ def test_pdf_character_inventory_ignores_extractor_whitespace(
     assert inspect_pdf_artifact(path) == baseline
 
 
+def test_pdf_inventory_ignores_extractor_body_line_wrapping(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Extractor line wrapping is diagnostic when the same PDF text survives."""
+    from pypdf._page import PageObject
+
+    path = DIST_DIR / "tools-engineering-design-manual.pdf"
+    baseline = inspect_pdf_artifact(path)
+    original = PageObject.extract_text
+
+    def extract_rewrapped(self: Any, *args: Any, **kwargs: Any) -> str:
+        lines = original(self, *args, **kwargs).splitlines()
+        return lines[0] + "\n" + " ".join(lines[1:])
+
+    monkeypatch.setattr(PageObject, "extract_text", extract_rewrapped)
+    rewrapped = inspect_pdf_artifact(path)
+    assert any(
+        before.line_count != after.line_count
+        for before, after in zip(baseline.pages, rewrapped.pages, strict=True)
+    )
+    assert rewrapped == baseline
+
+
 @pytest.mark.parametrize(
     ("mutation", "error_message"),
     [
