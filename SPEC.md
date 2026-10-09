@@ -7751,3 +7751,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-10-08: Feedback-Control Replay Transport (#5461)
 
 - **2026-10-08**: feat(mocap, #5461) — Add the versioned `experiment-replay/1.0.0` transport contract for full named model-native initial state, ordered actuator torque/force, generalized effort, muscle excitation/activation or external-load input histories, explicit time grid and controller-off replay policy, provider/model identity, and integrity digests. Keep source-model and optional loaded-native-model digests distinct; keep required capabilities separate from availability, and leave physics qualification to UpstreamDrift. The T01 implementation record is `docs/development/feedback_controls/T01-CONTRACT.md`.
+
+## 2026-10-08: Feedback-Control Evidence Interchange (#5462)
+
+- **2026-10-08**: feat(mocap, #5462) — Add structural `comparison-evidence/1.0.0` receipts that preserve model/engine rows, replay mode, required/support/availability axes, implementation identities, and opaque artifact references. Prevent replay-mode and same-input mismatches from being promoted through the generic interchange boundary; retain scientific qualification authority in UpstreamDrift. Implementation notes: `docs/development/feedback_controls/T02-CONTRACT.md`.

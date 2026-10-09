@@ -153,8 +153,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
     },
     {
-      "content_sha256_lf": "9ea51e1d5b9f36ce17c04ba53cd3c595f544c067acf4ce0421ac72241dbcccd0",
-      "entry_count": 2,
+      "content_sha256_lf": "3c5f5daa61e21eecd2fd9ba66bcbb47c5378bb2ecf866fa9cbf8ef3c83caac50",
+      "entry_count": 3,
       "package": "schemas",
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
@@ -783,8 +783,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-data-processing.json"
     },
     {
-      "content_sha256_lf": "c879ad638a1f12b916d6d9f3cc3a4efcecc2c6bd1b9bc2ca84deb7ba66662f3d",
-      "entry_count": 38,
+      "content_sha256_lf": "8c8588db8b720719be1b53b7bcb5b5a66130d47072cd7fa86c40268453629cba",
+      "entry_count": 40,
       "package": "src/shared/python/sidekick/lab",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-lab.json"
     },

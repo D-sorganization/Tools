@@ -48,6 +48,10 @@ from .calibration import (
 from .cli import build_parser, cli_main
 from .devices import CameraCapabilities, CameraIdentity, FeatureSupport, NumericRange
 from .enums import Availability, ClockKind, SessionState, ShutterKind, SupportLevel
+from .evidence_serialization import (
+    dumps_comparison_evidence_receipt,
+    load_comparison_evidence_receipt,
+)
 from .experiment_contracts import (
     EXPERIMENT_REPLAY_SCHEMA_VERSION,
     ActuationInputKind,
@@ -61,6 +65,19 @@ from .experiment_contracts import (
     ReplayMode,
     StateComponentRole,
     StateComponentSpec,
+)
+from .experiment_evidence import (
+    COMPARISON_EVIDENCE_SCHEMA_VERSION,
+    ComparisonEvidenceReceipt,
+    ComparisonEvidenceRow,
+    ComparisonLevel,
+    ComparisonRowRequirement,
+    DriveMode,
+    EvidenceArtifactKind,
+    EvidenceArtifactReference,
+    ImplementationEvidence,
+    ImplementationEvidenceKind,
+    build_comparison_evidence_receipt,
 )
 from .experiment_execution import (
     InputHistory,
@@ -169,6 +186,12 @@ __all__ = [
     "CapabilityAvailability",
     "CapabilityDeclaration",
     "CapabilitySupport",
+    "COMPARISON_EVIDENCE_SCHEMA_VERSION",
+    "ComparisonEvidenceReceipt",
+    "ComparisonEvidenceRow",
+    "ComparisonLevel",
+    "ComparisonRowRequirement",
+    "DriveMode",
     "CaptureGroup",
     "ClockDomain",
     "ClockKind",
@@ -182,6 +205,8 @@ __all__ = [
     "ExtrinsicCalibrationResult",
     "ExtrinsicDegeneracyKind",
     "ExtrinsicQuality",
+    "EvidenceArtifactKind",
+    "EvidenceArtifactReference",
     "EXPERIMENT_REPLAY_SCHEMA_VERSION",
     "ExperimentReplayBundle",
     "FeatureSupport",
@@ -198,6 +223,8 @@ __all__ = [
     "InputHistory",
     "InputInterpolation",
     "IntegrityHashes",
+    "ImplementationEvidence",
+    "ImplementationEvidenceKind",
     "JointAngleConstraint",
     "KeypointMapping",
     "KeypointReconstruction",
@@ -254,10 +281,12 @@ __all__ = [
     "apply_segment_length_constraint",
     "bundle_adjust_layout",
     "build_experiment_replay_bundle",
+    "build_comparison_evidence_receipt",
     "check_coverage_and_degeneracy",
     "compute_kinematic_derivatives",
     "detect_camera_movement",
     "dumps_canonical",
+    "dumps_comparison_evidence_receipt",
     "dumps_experiment_replay_bundle",
     "estimate_pnp_pose",
     "evaluate_extrinsic_quality",
@@ -266,6 +295,7 @@ __all__ = [
     "get_default_mediapipe_mapping",
     "load_session_manifest",
     "load_experiment_replay_bundle",
+    "load_comparison_evidence_receipt",
     "reconstruct_frame_landmarks",
     "reconstruct_temporal_trajectory",
     "smooth_trajectory_butterworth",

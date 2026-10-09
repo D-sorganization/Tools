@@ -30,7 +30,7 @@ Only this task's verified merged clean worktrees may be removed after needed rec
 
 Issue claims and presence registration succeeded for the public epics. The central mailbox reports incomplete evidence (malformed historical comments/page limit); absence of messages is not proof of exclusive ownership. Existing issue claims remain the coordination authority. No remote fleet jobs were dispatched and no performance numbers were invented.
 
-Next bounded step: T02 early schema readiness follows T01/F01 and can unblock D02 evidence splitting; its later native-consumer acceptance follows F06/F07. T03 depends on T01/T02 and the frozen F01 resource/preview contract; F09 is downstream acceptance, not an implementation prerequisite. Private D04 supplies evidence to F10 and does not depend on F10.
+T02's early schema-readiness slice is implemented on a feature branch stacked on T01 and aligned to frozen F01 vocabulary; it is ready to unblock private D02 evidence splitting when prerequisites merge. The receipt is structural interchange only; it preserves evidence classes, required/support/availability axes, and opaque references without certifying execution or physics. T02 remains open for later native-consumer acceptance after runnable F06/F07 and campaign evidence. See [T02-CONTRACT.md](T02-CONTRACT.md). T03 depends on T01/T02 and the frozen F01 resource/preview contract; F09 is downstream acceptance, not an implementation prerequisite. Private D04 supplies evidence to F10 and does not depend on F10.
 
 ## Executed Planning Checks
 
