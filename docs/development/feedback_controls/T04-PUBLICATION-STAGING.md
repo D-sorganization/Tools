@@ -1,18 +1,14 @@
 # Native State Transport Publication Staging
 
-Tools issue #5470 requires a separately versioned opaque native restart envelope,
-strict native clock and ordered-input identity, immutable payload verification,
-and capability blockers. Existing numeric replay semantics remain authoritative.
+Draft PR5471 establishes the publishing identity for Tools issue5470. The tested
+implementation is merged into `feat/native-state-transport-5470` from retained
+local branch `feat/native-state-artifact-5470`. Full implementation publication
+requires a successful normal source push. The actual PR-keyed SPEC row was
+generated from the retained change fragment using the repository collation
+helper. No approval is promoted.
 
-The implementation is retained on local branch `feat/native-state-artifact-5470`.
-Its native/schema subset passes77 tests, the full mocap suite231, and manual
-QA/projection39. These are local prerequisite results; this initial draft does
-not yet contain or qualify that implementation. The verified pinned renderer
-produced the expanded canonical manual. Actual native decoding and production
-model matching remain UpstreamDrift responsibilities under #11921/#11923.
-
-The publishing guards require a real PR key for SPEC freshness before a source
-push. This documentation-only draft establishes that key; merge the tested
-implementation into this branch, add its actual PR row and rerun every required
-gate. Do not bypass checks or invent a PR number. The ultimate muscle-driven
-capture match and independent all-model replay epic remains active.
+Native/schema tests77, full mocap231, manual QA/projection39 and configured
+source typing passed. Canonical chapter05 and T04 turnover describe native
+clock/state/integrity contracts. Actual native decoding, production model
+matching and independent all-model replay remain UpstreamDrift responsibilities
+under11921/11923. The overall epic remains active.

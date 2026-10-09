@@ -3,9 +3,12 @@
 ## Development Checkpoint
 
 Tools #5470 is leased by root/codex. The clean merged T01 checkout was reused
-on branch `feat/native-state-artifact-5470`, based on main `b1480ff6e`.
+initially on `feat/native-state-artifact-5470`, based on main `b1480ff6e`.
+The implementation is now merged into `feat/native-state-transport-5470`
+for draft PR5471, after main collation commit5dffcd1c4.
 No new full clone or native environment was created. Source and tests are
-currently uncommitted; no T04 PR is published. UpstreamDrift #11921 consumes
+committed locally; the draft initially published a documentation-only staging
+checkpoint. Full implementation publication requires the normal source push. UpstreamDrift #11921 consumes
 this seam after publication and exact dependency pinning.
 
 ## State and Validation
