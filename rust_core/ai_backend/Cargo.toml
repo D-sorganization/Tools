@@ -40,7 +40,7 @@ walkdir = "2.3"
 regex = "1.10"
 ignore = "0.4"
 sha2 = { version = "0.10", optional = true }
-dirs = { version = "5", optional = true }
+dirs = { version = "7", optional = true }
 # ort = ONNX Runtime bindings. We use `load-dynamic` so the build does not
 # fetch onnxruntime binaries (the `download-binaries` path hit a ureq/tls
 # breakage on Windows MSVC at the time of #5227). Consumers point at their
