@@ -1,6 +1,7 @@
 //! Criterion coverage for the compiled flight-to-ground reference path.
 
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use criterion::{criterion_group, criterion_main, Criterion};
+use std::hint::black_box;
 use tools_core::flight_ground::{
     parse_ground_reference_execution_v1_json, parse_request_v1_json, run_ground_reference_v1,
 };

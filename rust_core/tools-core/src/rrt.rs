@@ -3,7 +3,7 @@ use numpy::{PyArray2, PyArrayMethods};
 #[cfg(feature = "python")]
 use pyo3::prelude::*;
 use rand::rngs::StdRng;
-use rand::{Rng, SeedableRng};
+use rand::{RngExt, SeedableRng};
 
 #[derive(Clone, Debug)]
 #[cfg_attr(feature = "python", pyclass)]
@@ -79,7 +79,7 @@ impl RRTPlanner {
     pub fn new(bounds: [f64; 6], max_iterations: usize, seed: Option<u64>) -> Self {
         let rng = match seed {
             Some(s) => StdRng::seed_from_u64(s),
-            None => StdRng::from_entropy(),
+            None => StdRng::from_rng(&mut rand::rng()),
         };
         Self {
             bounds,
@@ -164,13 +164,13 @@ impl RRTPlanner {
 
     #[cfg_attr(not(feature = "python"), allow(dead_code))]
     fn sample_point(&mut self, goal: &[f64; 3]) -> [f64; 3] {
-        if self.rng.gen::<f64>() < self.goal_bias {
+        if self.rng.random::<f64>() < self.goal_bias {
             *goal
         } else {
             [
-                self.rng.gen_range(self.bounds[0]..self.bounds[1]),
-                self.rng.gen_range(self.bounds[2]..self.bounds[3]),
-                self.rng.gen_range(self.bounds[4]..self.bounds[5]),
+                self.rng.random_range(self.bounds[0]..self.bounds[1]),
+                self.rng.random_range(self.bounds[2]..self.bounds[3]),
+                self.rng.random_range(self.bounds[4]..self.bounds[5]),
             ]
         }
     }

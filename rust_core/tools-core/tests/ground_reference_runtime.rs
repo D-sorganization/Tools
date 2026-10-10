@@ -44,7 +44,10 @@ fn compiled_reference_matches_canonical_python_golden() {
     let actual = run_ground_reference_v1(&request, &execution, || false).unwrap();
     let actual_json = canonical_result_v1_json(&actual).unwrap();
     let expected_json = canonical_result_v1_json(&expected).unwrap();
-    let digest = format!("{:x}", Sha256::digest(actual_json.as_bytes()));
+    let digest: String = Sha256::digest(actual_json.as_bytes())
+        .iter()
+        .map(|byte| format!("{byte:02x}"))
+        .collect();
 
     assert_eq!(actual_json, expected_json);
     assert_eq!(digest, expected_digest);
