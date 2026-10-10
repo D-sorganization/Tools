@@ -27,7 +27,7 @@ wasm-bindgen = { workspace = true, optional = true }
 js-sys = { version = "0.3", optional = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
-sha2 = "0.10"
+sha2 = "0.11"
 math-primitives = { path = "../math-primitives" }
 rand = "0.8"
 
