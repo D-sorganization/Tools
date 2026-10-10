@@ -29,7 +29,7 @@ serde = { workspace = true }
 serde_json = { workspace = true }
 sha2 = "0.10"
 math-primitives = { path = "../math-primitives" }
-rand = "0.8"
+rand = "0.10"
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 getrandom = { version = "0.2", features = ["js"] }
