@@ -67,7 +67,7 @@ not a claim of parity across all engines or consumers.
 ## Publication Handoff
 
 The source/test/SPEC/inventory bootstrap is committed as `14442b774d7f`; the
-manual and governance artifacts are committed as `eed47a277c1b`. Publication
+manual and governance artifacts are committed as `eed47a2707e425431715bf37b7763c23b19be19b`. Publication
 projection is regenerated against the exact source commit and current rendered
 artifacts. No remote branch or PR was created because the normal pre-push unit
 hook did not complete. The new canonical `AGENT_HANDOFF.md` pointer is saved in
