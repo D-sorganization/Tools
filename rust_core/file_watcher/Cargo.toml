@@ -18,7 +18,7 @@ extension-module = ["pyo3/extension-module"]
 
 [dependencies]
 pyo3 = { workspace = true, optional = true }
-notify = "6"
+notify = "8"
 ignore = "0.4"
 crossbeam-channel = "0.5"
 
