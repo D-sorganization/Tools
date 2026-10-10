@@ -148,6 +148,32 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5474 · Require Matching Versioned Actuator-Profile References for Mixed Command Evidence
+
+- **State:** in_review
+- **Owner:** unassigned
+- **Issue:** #5474
+- **Branch:** feat/5474-actuator-profile-reference-admission
+- **PR:** #5475
+- **Paths:** see #5475
+- **Started:** 2026-10-10
+- **Last verified:** 2026-10-10 (`86d0f28b`; collated from changes/5474-compiled-actuator-profile-evidence.md)
+- **Summary:** Require matching versioned actuator-profile references for mixed command evidence
+- **Next step:** Resolve and verify profile bytes against native execution in UpstreamDrift #11955
+
+### DL-#5454 · Deterministic 1440X900 Visual-Baseline Candidates: Settle Tab-Pill Transitions Before Capture and Pin Determinism With a Two-Session Test
+
+- **State:** in_review
+- **Owner:** unassigned
+- **Issue:** #5454
+- **Branch:** fix/5454-deterministic-visual-baselines
+- **PR:** #5481
+- **Paths:** see #5481
+- **Started:** 2026-10-10
+- **Last verified:** 2026-10-10 (`24eede77`; collated from changes/5454-deterministic-1440x900-visual-baseline-c.md)
+- **Summary:** Deterministic 1440x900 visual-baseline candidates: settle tab-pill transitions before capture and pin determinism with a two-session test
+- **Next step:** Merge the PR.
+
 ### DL-#5472 · Repair Canonical Manual Source-Count Regression While Preserving Release Blockers
 
 - **State:** in_review
