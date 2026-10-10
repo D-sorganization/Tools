@@ -80,6 +80,9 @@ jobs:
         run: python -m pip cache purge || true
       - name: Isolate Rust homes
         uses: ./.github/actions/isolate-rust-homes
+      - name: Bootstrap rustup without editing shell profiles
+        if: runner.os != 'Windows'
+        uses: ./.github/actions/bootstrap-rustup-no-modify-path
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
         with:
@@ -151,6 +154,9 @@ jobs:
 
       - name: Isolate Rust homes
         uses: ./.github/actions/isolate-rust-homes
+      - name: Bootstrap rustup without editing shell profiles
+        if: runner.os != 'Windows'
+        uses: ./.github/actions/bootstrap-rustup-no-modify-path
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
         with:
@@ -224,6 +230,9 @@ jobs:
         run: python -m pip cache purge || true
       - name: Isolate Rust homes
         uses: ./.github/actions/isolate-rust-homes
+      - name: Bootstrap rustup without editing shell profiles
+        if: runner.os != 'Windows'
+        uses: ./.github/actions/bootstrap-rustup-no-modify-path
       - name: Install Rust toolchain
         uses: dtolnay/rust-toolchain@29eef336d9b2848a0b548edc03f92a220660cdb8 # stable
         with:
