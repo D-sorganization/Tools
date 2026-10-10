@@ -66,11 +66,15 @@ not a claim of parity across all engines or consumers.
 
 ## Publication Handoff
 
-The source/test/SPEC/inventory bootstrap is committed as `14442b774d7f`.
-Publication projection is regenerated against that exact source commit and the
-current rendered artifacts. The canonical `AGENT_HANDOFF.md` pointer and its
-manifest update are held until a real draft PR URL exists; the historical
-manifest value is retained rather than replaced with a guessed URL.
+The source/test/SPEC/inventory bootstrap is committed as `14442b774d7f`; the
+manual and governance artifacts are committed as `eed47a277c1b`. Publication
+projection is regenerated against the exact source commit and current rendered
+artifacts. No remote branch or PR was created because the normal pre-push unit
+hook did not complete. The new canonical `AGENT_HANDOFF.md` pointer is saved in
+Git stash commit `67b0e06f9ad749ea2e0bd34985c54ead1404ba9d`, containing only
+`AGENT_HANDOFF.md`. The previous handoff manifest remains unchanged and is
+accurate for the base handoff file; regenerate both only after a real draft PR
+URL exists. No candidate URL is recorded for this change yet.
 
 The normal pre-push hook did not complete. Its full unit run under Windows
 Python 3.13/xdist auto terminated with a MuJoCo DLL-load access violation in
