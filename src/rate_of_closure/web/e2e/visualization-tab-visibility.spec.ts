@@ -33,13 +33,28 @@ const MAX_PAINT_SAMPLES = 20;
 // budget without relaxing any visual assertion.
 const VISUAL_EVIDENCE_TIMEOUT_MS = 180_000;
 
+// #5454: the tab pills use `transition-all`, and a transition that is still
+// interpolating a border or glow when the screenshot is taken leaves
+// run-to-run anti-aliasing noise in the tab strip, so candidate hashes differed
+// between runs on the same commit.  Snapping transitions and animations to
+// their end state changes only timing, never the settled pixels, and no
+// assertion or tolerance is involved.  Injected once per page.
+const SETTLE_STYLE_ID = "visual-baseline-settle-style";
+
 const captureStablePage = async (page: Page): Promise<Buffer> => {
-  await page.evaluate(async () => {
+  await page.evaluate(async (styleId) => {
+    if (document.getElementById(styleId) === null) {
+      const style = document.createElement("style");
+      style.id = styleId;
+      style.textContent =
+        "*, *::before, *::after { transition: none !important; animation: none !important; }";
+      document.head.appendChild(style);
+    }
     await document.fonts.ready;
     await new Promise<void>((resolvePaint) => {
       requestAnimationFrame(() => requestAnimationFrame(() => resolvePaint()));
     });
-  });
+  }, SETTLE_STYLE_ID);
   let previous: Buffer | null = null;
   let stableSamples = 0;
   for (let sample = 0; sample < MAX_PAINT_SAMPLES; sample += 1) {
@@ -264,6 +279,42 @@ test("every registered React tab exposes its primary visual in the initial viewp
   }, null, 2)}\n`);
   expect(candidates).toHaveLength(visualizationTabs("react").length);
   expect(pageErrors).toEqual([]);
+});
+
+test("1440x900 visual-baseline candidates are deterministic across fresh sessions", async (
+  { browser }, testInfo,
+) => {
+  // #5454: capture every registered React tab in two independent browser
+  // contexts on the same build and require byte-identical images, so a real
+  // visual change is distinguishable from run-to-run noise.
+  test.setTimeout(VISUAL_EVIDENCE_TIMEOUT_MS);
+  test.skip(testInfo.project.name !== "chromium-desktop", "manifest viewport authority");
+  const captureAll = async (): Promise<Record<string, string>> => {
+    const context = await browser.newContext({
+      viewport: { width: 1440, height: 900 },
+      colorScheme: "dark",
+      reducedMotion: "reduce",
+    });
+    try {
+      const page = await context.newPage();
+      await page.goto("/");
+      const hashes: Record<string, string> = {};
+      for (const entry of visualizationTabs("react")) {
+        const tab = page.locator(`#primary-tab-${entry.tabId}`);
+        await tab.scrollIntoViewIfNeeded();
+        await tab.click();
+        await page.evaluate(() => window.scrollTo(0, 0));
+        hashes[entry.tabId] = createHash("sha256")
+          .update(await captureStablePage(page)).digest("hex");
+      }
+      return hashes;
+    } finally {
+      await context.close();
+    }
+  };
+  const first = await captureAll();
+  const second = await captureAll();
+  expect(second).toEqual(first);
 });
 
 const DEMO_SOURCE = "Source: Built-In Demonstration Data";
