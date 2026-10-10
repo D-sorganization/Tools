@@ -35,16 +35,23 @@ calculation approval or exemplar.
   symmetric tensor-entry round-trip and actual MuJoCo URDF tensor/kinetic-energy
   readback.
 
-The implementation owner reported 53 focused tests passing (27 lamina tests,
-2 URDF export tests including native MuJoCo 3.3.4, and 24 existing mesh-calculator
-tests), with `PYTHONPATH=src;src/shared/python` and `--noconftest`; configured
-mypy also passed with its cache disabled. This turnover records that report,
-not a rerun by the documentation owner. A legacy humanoid test initially
-failed collection when the shared source root was missing from `PYTHONPATH`;
-adding the established `src/shared/python` root resolved collection without a
-production-code change. The first native URDF test attempt encountered a
-Windows DLL load-order issue under the pytest process; isolating the native
-readback in a subprocess resolved it, and the complete focused run passed.
+The current focused run passes all 53 tests: 27 lamina tests, 2 URDF export
+tests including native MuJoCo 3.3.4, and 24 existing mesh-calculator tests.
+The command uses `-o addopts='' -n auto` with
+`PYTEST_XDIST_AUTO_NUM_WORKERS=2`; all 53 pass in 8.88 seconds. The normal
+RM-6 pre-PR gate passes all five checks, including diff mypy. The explicit
+three-coordinate tuple construction in `triangle_lamina.py` satisfies the
+`InertiaResult` tuple annotation without changing values. Its LF-normalized
+module content hash is
+`3fd45937bed011c90b4d4e3fdf8bcf932a8bfd9a0816441ee708cc93cd4080ee`.
+
+A legacy humanoid test initially failed collection when the shared source root
+was missing from `PYTHONPATH`; adding the established `src/shared/python` root
+resolved collection without a production-code change. The first native URDF
+test attempt encountered a Windows DLL load-order issue under the pytest
+process; isolating the native readback in a subprocess resolved it. RM-6's
+initial uncapped 14-worker run later reproduced a native MuJoCo DLL access
+violation (52 passed, 1 failed); the bounded 2-worker run passed all 53.
 
 ## Governance Boundary
 
@@ -67,14 +74,13 @@ not a claim of parity across all engines or consumers.
 ## Publication Handoff
 
 The source/test/SPEC/inventory bootstrap is committed as `14442b774d7f`; the
-manual and governance artifacts are committed as `eed47a2707e425431715bf37b7763c23b19be19b`. Publication
-projection is regenerated against the exact source commit and current rendered
-artifacts. No remote branch or PR was created because the normal pre-push unit
-hook did not complete. The new canonical `AGENT_HANDOFF.md` pointer is saved in
-Git stash commit `67b0e06f9ad749ea2e0bd34985c54ead1404ba9d`, containing only
-`AGENT_HANDOFF.md`. The previous handoff manifest remains unchanged and is
-accurate for the base handoff file; regenerate both only after a real draft PR
-URL exists. No candidate URL is recorded for this change yet.
+manual and governance artifacts are committed as `eed47a2707e425431715bf37b7763c23b19be19b`. The branch has been merged
+normally with current `origin/main` (`74030f4aaecb04d0839eb2044fd0ab799b360ebb`).
+The owned root `AGENT_HANDOFF.md` pointer is preserved in stash
+`67b0e06f9ad749ea2e0bd34985c54ead1404ba9d`; it must be restored and rebound
+after a real PR URL exists. The publication projection and handoff manifest
+must then be regenerated against the exact final source commit and current
+rendered artifacts. No remote branch or PR exists yet.
 
 The normal pre-push hook did not complete. Its full unit run under Windows
 Python 3.13/xdist auto terminated with a MuJoCo DLL-load access violation in
@@ -82,9 +88,10 @@ Python 3.13/xdist auto terminated with a MuJoCo DLL-load access violation in
 and 6 xfailed when xdist stopped after two failures. Those two failures were
 caused by the sparse checkout omitting `.github/workflows`; after materializing
 `.github`, both exact tests passed serially. No full retry or push was made.
-The source-only central pre-PR run passed all five gates, including all 53
-affected tests; a subsequent normal commit hook also passed. A complete
-pre-push unit run and the actual PR-bound handoff manifest remain outstanding.
+The current normal pre-PR run passed all five gates. Its affected-test selector
+found no mapped tests after the merge, so the separate 53-test focused run is
+recorded above. A complete bounded pre-push unit run and the actual PR-bound
+handoff manifest remain outstanding.
 The publication-projection and handoff manifests need the actual source commit
 and PR identity, so they remain stale until that coordinated publication point.
 The manual release, human review, physical interpretation, and native-model

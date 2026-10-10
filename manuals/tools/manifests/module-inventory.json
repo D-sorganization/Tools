@@ -675,7 +675,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-gui-launcher.json"
     },
     {
-      "content_sha256_lf": "38f8b419b82135fedd40d283faaffd4564f28b798618072c6e7508052768b925",
+      "content_sha256_lf": "89f30e333310478803cb50f5ca424d5671bc325a02a3205d86c25d2288d72177",
       "entry_count": 30,
       "package": "src/shared/python/humanoid_character_builder",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-humanoid-character-builder.json"

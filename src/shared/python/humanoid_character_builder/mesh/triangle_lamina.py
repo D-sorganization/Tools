@@ -154,7 +154,7 @@ def compute_triangle_lamina(
         ixy=float(tensor[0, 1]),
         ixz=float(tensor[0, 2]),
         iyz=float(tensor[1, 2]),
-        center_of_mass=tuple(float(value) for value in center),
+        center_of_mass=(float(center[0]), float(center[1]), float(center[2])),
         mass=float(mass),
         volume=0.0,
         was_watertight=False,
