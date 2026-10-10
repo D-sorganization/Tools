@@ -12,7 +12,9 @@ format:
 This is the canonical editable QMD source for the Tools engineering design
 manual. It is a governance scaffold, not a released engineering manual. The
 file-level module inventory is complete for its declared tracked-source
-denominator. TOOLS-D4 registers one model-conditioned D-plane calculation and
+denominator; it is awaiting regeneration for the #5503 source additions and is
+not treated as current for this change. TOOLS-D4 registers one
+model-conditioned D-plane calculation and
 one swing/Rate-of-Closure textbook exemplar with exact source, consumer, test,
 fixture, equation, unit, and limitation traceability. The markerless-mocap
 exemplar remains explicitly blocked because its authority PR is unmerged and no
@@ -20,6 +22,11 @@ markerless module exists on this exact source base. Release remains blocked by
 TOOLS-D5 through TOOLS-D9 and outstanding D4 approvals. Generated HTML, LaTeX,
 PDF, and DOCX artifacts are reproducible engineering records under TOOLS-D2,
 but none is approved for publication or engineering use.
+
+Chapter 06 is an included, unregistered numerical-kernel note for
+triangle-multiset lamina moments. It is not a governed calculation or exemplar:
+the current freshness generator does not execute this pathway, and no source
+mesh/consumer admission or scientific review is supplied.
 
 {{< include chapters/00-governance.qmd >}}
 
@@ -32,3 +39,5 @@ but none is approved for publication or engineering use.
 {{< include chapters/04-swing-rate-of-closure-dplane.qmd >}}
 
 {{< include chapters/05-native-state-replay.qmd >}}
+
+{{< include chapters/06-triangle-lamina-mass.qmd >}}

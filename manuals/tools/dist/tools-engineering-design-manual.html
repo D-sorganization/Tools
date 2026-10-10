@@ -90,15 +90,22 @@ Pathways</p>
 <p>This is the canonical editable QMD source for the Tools engineering
 design manual. It is a governance scaffold, not a released engineering
 manual. The file-level module inventory is complete for its declared
-tracked-source denominator. TOOLS-D4 registers one model-conditioned
-D-plane calculation and one swing/Rate-of-Closure textbook exemplar with
-exact source, consumer, test, fixture, equation, unit, and limitation
-traceability. The markerless-mocap exemplar remains explicitly blocked
-because its authority PR is unmerged and no markerless module exists on
-this exact source base. Release remains blocked by TOOLS-D5 through
-TOOLS-D9 and outstanding D4 approvals. Generated HTML, LaTeX, PDF, and
-DOCX artifacts are reproducible engineering records under TOOLS-D2, but
-none is approved for publication or engineering use.</p>
+tracked-source denominator; it is awaiting regeneration for the #5503
+source additions and is not treated as current for this change. TOOLS-D4
+registers one model-conditioned D-plane calculation and one
+swing/Rate-of-Closure textbook exemplar with exact source, consumer,
+test, fixture, equation, unit, and limitation traceability. The
+markerless-mocap exemplar remains explicitly blocked because its
+authority PR is unmerged and no markerless module exists on this exact
+source base. Release remains blocked by TOOLS-D5 through TOOLS-D9 and
+outstanding D4 approvals. Generated HTML, LaTeX, PDF, and DOCX artifacts
+are reproducible engineering records under TOOLS-D2, but none is
+approved for publication or engineering use.</p>
+<p>Chapter 06 is an included, unregistered numerical-kernel note for
+triangle-multiset lamina moments. It is not a governed calculation or
+exemplar: the current freshness generator does not execute this pathway,
+and no source mesh/consumer admission or scientific review is
+supplied.</p>
 <h1 id="documentation-authority-and-release-boundary">Documentation
 Authority and Release Boundary</h1>
 <h2 id="purpose">Purpose</h2>
@@ -855,6 +862,366 @@ internal Simscape state. <a href="https://www.mathworks.com/help/releases/R2025b
 R2025b Operating-Point Workflow</a> documents compatibility and
 effective configuration constraints. These native claims require
 separate actual execution evidence from UpstreamDrift.</p>
+<h1 id="triangle-multiset-lamina-mass-moments">Triangle-Multiset Lamina
+Mass Moments</h1>
+<h2 id="purpose-and-scope-1">Purpose and Scope</h2>
+<p>This note describes the numerical kernel introduced for Tools #5503.
+Given triangles already expressed in one orthonormal metre frame and one
+positive total mass, it computes the center of mass and inertia tensor
+of a zero-thickness lamina whose surface-mass density is proportional to
+unsigned triangle area. The source is a triangle
+<strong>multiset</strong>: repeated faces count repeatedly. The kernel
+is included in the manual for transparent review but is not yet a
+registered or approved calculation. It does not load or admit a geometry
+asset, establish frame authority, infer tissue ownership, model volume
+or thickness, or qualify a native humanoid/body model.</p>
+<h2 id="design-by-contract-1">Design by Contract</h2>
+<h3 id="preconditions-1">Preconditions</h3>
+<p><code>vertices</code> must convert to a finite <code>float64</code>
+array of shape <code>(N, 3)</code>. <code>faces</code> is an integer
+array of shape <code>(T, 3)</code> whose indices lie in
+<code>[0, N)</code>. <code>mass</code> is a positive, finite,
+non-boolean scalar in kilograms. All vertex coordinates are metres in
+one caller-declared orthonormal coordinate frame. At least one input
+triangle must have positive representable area; each nonzero area and
+its normalized fraction must be representable as a positive
+<code>float64</code>, and total area must remain finite.</p>
+<h3 id="postconditions-1">Postconditions</h3>
+<p>The result reports the area-weighted center in metres and the
+center-of-mass inertia tensor in kg m² for the declared lamina. It also
+reports total unsigned area, zero-area face count, exact coincident
+positive-area face count, and indexed boundary/nonmanifold edge counts.
+The duplicate diagnostic counts each repeated coordinate face beyond its
+first occurrence. The compatible <code>InertiaResult</code> uses
+<code>volume=0</code>, <code>was_watertight=False</code>, and the
+distinct <code>triangle_multiset_lamina_mass</code> mode so it cannot
+imply a closed solid.</p>
+<h3 id="invariants-1">Invariants</h3>
+<p>Reordering faces, translating the complete geometry, or applying a
+proper rigid rotation preserves mass and scalar invariants; translation
+changes the center by the same translation and does not change central
+inertia. Scaling coordinates by a positive factor scales area by its
+square, preserves the area fractions, and scales inertia by the square
+when total mass is held fixed. Subdivision that preserves the geometric
+surface and area measure preserves the moments within numerical
+tolerance. A repeated positive-area face retains its multiplicity in
+both mass allocation and the diagnostic count.</p>
+<h2 id="coordinates-frames-and-time-1">Coordinates, Frames, and
+Time</h2>
+<h3 id="coordinate-frames-1">Coordinate Frames</h3>
+<p>The function accepts coordinates in the caller’s existing frame and
+performs no frame transform. All vertices must use the same origin,
+axes, handedness, and scale. No source-frame identifier is present in
+this numerical API; a consumer that needs provenance or a native body
+frame must bind that separately before calling it.</p>
+<h3 id="axis-and-handedness-1">Axis and Handedness</h3>
+<p>The covariance and inertia formulas use Euclidean three-dimensional
+vectors. They are invariant to proper orthogonal basis rotation when
+both inputs and outputs are transformed consistently. Triangle winding
+does not select a normal or sign: area is unsigned and the represented
+surface has no orientation semantics.</p>
+<h3 id="time-convention-1">Time Convention</h3>
+<p>This is a static geometry calculation and has no time, interpolation,
+or integration policy. It cannot be used to infer a time-varying body
+shape.</p>
+<h2 id="units-and-dimensions-1">Units and Dimensions</h2>
+<h3 id="symbol-and-unit-table-1">Symbol and Unit Table</h3>
+<table>
+<colgroup>
+<col style="width: 33%" />
+<col style="width: 33%" />
+<col style="width: 33%" />
+</colgroup>
+<thead>
+<tr>
+<th>Symbol or field</th>
+<th>Meaning</th>
+<th>Unit</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐱</mi><annotation encoding="application/x-tex">\mathbf{x}</annotation></semantics></math>,
+triangle vertices</td>
+<td>Position in the common input frame</td>
+<td>m</td>
+</tr>
+<tr>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>A</mi><mi>i</mi></msub><annotation encoding="application/x-tex">A_i</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>A</mi><annotation encoding="application/x-tex">A</annotation></semantics></math></td>
+<td>Triangle area and total multiset area</td>
+<td>m²</td>
+</tr>
+<tr>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><msub><mi>w</mi><mi>i</mi></msub><annotation encoding="application/x-tex">w_i</annotation></semantics></math></td>
+<td>Triangle area fraction</td>
+<td>1</td>
+</tr>
+<tr>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>m</mi><annotation encoding="application/x-tex">m</annotation></semantics></math></td>
+<td>Caller-specified total lamina mass</td>
+<td>kg</td>
+</tr>
+<tr>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐜</mi><annotation encoding="application/x-tex">\mathbf{c}</annotation></semantics></math></td>
+<td>Area-weighted center of mass</td>
+<td>m</td>
+</tr>
+<tr>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐂</mi><annotation encoding="application/x-tex">\mathbf{C}</annotation></semantics></math></td>
+<td>Mass-normalized central covariance</td>
+<td>m²</td>
+</tr>
+<tr>
+<td><math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐈</mi><annotation encoding="application/x-tex">\mathbf{I}</annotation></semantics></math></td>
+<td>Central inertia tensor</td>
+<td>kg m²</td>
+</tr>
+</tbody>
+</table>
+<h3 id="dimensional-checks-1">Dimensional Checks</h3>
+<p>Area fractions are dimensionless. Nonzero areas and normalized face
+fractions that underflow to zero in <code>float64</code> are rejected,
+not assigned zero mass or reported as degenerate. No geometric area
+epsilon is used. The covariance has units m² because it is an
+area-weighted second central moment divided by total area.
+Multiplication by mass yields kg m². The zero-thickness convention sets
+reported volume to 0 m³; it is not an estimated enclosed volume.</p>
+<h2 id="derivation-and-assumptions-1">Derivation and Assumptions</h2>
+<h3 id="assumptions-1">Assumptions</h3>
+<p>Each triangle carries uniform surface density, with one shared areal
+density
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>σ</mi><mo>=</mo><mi>m</mi><mi>/</mi><mi>A</mi></mrow><annotation encoding="application/x-tex">\sigma=m/A</annotation></semantics></math>
+over the entire input multiset. Mass is apportioned by unsigned area.
+Triangles may be disconnected, overlap, coincide, or have inconsistent
+winding; overlap is not removed. Degenerate zero-area triangles
+contribute no mass and are reported separately. The derivation assumes
+ordinary Euclidean coordinates and no thickness or volumetric
+contribution.</p>
+<h3 id="derivation-1">Derivation</h3>
+<p>For triangle vertices
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>𝐯</mi><mrow><mi>i</mi><mn>1</mn></mrow></msub><mo>,</mo><msub><mi>𝐯</mi><mrow><mi>i</mi><mn>2</mn></mrow></msub><mo>,</mo><msub><mi>𝐯</mi><mrow><mi>i</mi><mn>3</mn></mrow></msub></mrow><annotation encoding="application/x-tex">\mathbf{v}_{i1},\mathbf{v}_{i2},\mathbf{v}_{i3}</annotation></semantics></math>,</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>A</mi><mi>i</mi></msub><mo>=</mo><mfrac><mn>1</mn><mn>2</mn></mfrac><mrow><mo stretchy="true" form="prefix">∥</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>𝐯</mi><mrow><mi>i</mi><mn>2</mn></mrow></msub><mo>−</mo><msub><mi>𝐯</mi><mrow><mi>i</mi><mn>1</mn></mrow></msub><mo stretchy="false" form="postfix">)</mo><mo>×</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>𝐯</mi><mrow><mi>i</mi><mn>3</mn></mrow></msub><mo>−</mo><msub><mi>𝐯</mi><mrow><mi>i</mi><mn>1</mn></mrow></msub><mo stretchy="false" form="postfix">)</mo><mo stretchy="true" form="postfix">∥</mo></mrow><mo>,</mo><mspace width="2.0em"></mspace><mi>A</mi><mo>=</mo><munder><mo>∑</mo><mi>i</mi></munder><msub><mi>A</mi><mi>i</mi></msub><mo>,</mo><mspace width="2.0em"></mspace><msub><mi>w</mi><mi>i</mi></msub><mo>=</mo><mfrac><msub><mi>A</mi><mi>i</mi></msub><mi>A</mi></mfrac><mi>.</mi></mrow><annotation encoding="application/x-tex">
+A_i=\frac{1}{2}\left\|
+(\mathbf{v}_{i2}-\mathbf{v}_{i1})\times
+(\mathbf{v}_{i3}-\mathbf{v}_{i1})\right\|,\qquad
+A=\sum_i A_i,\qquad w_i=\frac{A_i}{A}.
+</annotation></semantics></math></p>
+<p>The triangle centroid is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>𝐜</mi><mi>i</mi></msub><mo>=</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>𝐯</mi><mrow><mi>i</mi><mn>1</mn></mrow></msub><mo>+</mo><msub><mi>𝐯</mi><mrow><mi>i</mi><mn>2</mn></mrow></msub><mo>+</mo><msub><mi>𝐯</mi><mrow><mi>i</mi><mn>3</mn></mrow></msub><mo stretchy="false" form="postfix">)</mo><mi>/</mi><mn>3</mn></mrow><annotation encoding="application/x-tex">\mathbf{c}_i=(\mathbf{v}_{i1}+\mathbf{v}_{i2}+
+\mathbf{v}_{i3})/3</annotation></semantics></math>, and the lamina
+center is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐜</mi><mo>=</mo><msub><mo>∑</mo><mi>i</mi></msub><msub><mi>w</mi><mi>i</mi></msub><msub><mi>𝐜</mi><mi>i</mi></msub></mrow><annotation encoding="application/x-tex">\mathbf{c}=\sum_i w_i\mathbf{c}_i</annotation></semantics></math>.
+Uniform barycentric coordinates on one triangle have covariance</p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><msub><mi>𝐂</mi><mi>i</mi></msub><mo>=</mo><mfrac><mn>1</mn><mn>12</mn></mfrac><munderover><mo>∑</mo><mrow><mi>k</mi><mo>=</mo><mn>1</mn></mrow><mn>3</mn></munderover><mo stretchy="false" form="prefix">(</mo><msub><mi>𝐯</mi><mrow><mi>i</mi><mi>k</mi></mrow></msub><mo>−</mo><msub><mi>𝐜</mi><mi>i</mi></msub><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>𝐯</mi><mrow><mi>i</mi><mi>k</mi></mrow></msub><mo>−</mo><msub><mi>𝐜</mi><mi>i</mi></msub><msup><mo stretchy="false" form="postfix">)</mo><mi>T</mi></msup><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\mathbf{C}_i=\frac{1}{12}\sum_{k=1}^{3}
+(\mathbf{v}_{ik}-\mathbf{c}_i)(\mathbf{v}_{ik}-\mathbf{c}_i)^T.
+</annotation></semantics></math></p>
+<p>Applying the law of total covariance over triangle identity and
+within-triangle position gives</p>
+<p><span id="triangle-lamina-covariance"></span></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐂</mi><mo>=</mo><munder><mo>∑</mo><mi>i</mi></munder><msub><mi>w</mi><mi>i</mi></msub><mrow><mo stretchy="true" form="prefix">[</mo><msub><mi>𝐂</mi><mi>i</mi></msub><mo>+</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>𝐜</mi><mi>i</mi></msub><mo>−</mo><mi>𝐜</mi><mo stretchy="false" form="postfix">)</mo><mo stretchy="false" form="prefix">(</mo><msub><mi>𝐜</mi><mi>i</mi></msub><mo>−</mo><mi>𝐜</mi><msup><mo stretchy="false" form="postfix">)</mo><mi>T</mi></msup><mo stretchy="true" form="postfix">]</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\mathbf{C}=\sum_i w_i\left[\mathbf{C}_i+
+(\mathbf{c}_i-\mathbf{c})(\mathbf{c}_i-\mathbf{c})^T\right].
+</annotation></semantics></math></p>
+<p>For a mass distribution with central covariance
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mi>𝐂</mi><annotation encoding="application/x-tex">\mathbf{C}</annotation></semantics></math>,</p>
+<p><span id="triangle-lamina-inertia"></span></p>
+<p><math display="block" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐈</mi><mo>=</mo><mi>m</mi><mrow><mo stretchy="true" form="prefix">[</mo><mi mathvariant="normal">tr</mi><mo stretchy="false" form="prefix">(</mo><mi>𝐂</mi><mo stretchy="false" form="postfix">)</mo><msub><mn>𝟏</mn><mn>3</mn></msub><mo>−</mo><mi>𝐂</mi><mo stretchy="true" form="postfix">]</mo></mrow><mi>.</mi></mrow><annotation encoding="application/x-tex">
+\mathbf{I}=m\left[\operatorname{tr}(\mathbf{C})\mathbf{1}_3-\mathbf{C}\right].
+</annotation></semantics></math></p>
+<p>This formula returns the standard inertia tensor, including signed
+off-diagonal tensor components.
+<code>InertiaResult.as_urdf_dict()</code> exports those same symmetric
+tensor entries as URDF <code>ixy</code>, <code>ixz</code>, and
+<code>iyz</code> coefficients. The exporter does not negate them: an
+actual MuJoCo URDF loadback test checks the reconstructed native tensor
+and kinetic energy for an asymmetric inertia. This verifies that
+particular exporter/consumer path, not every URDF parser or native
+engine.</p>
+<h2 id="algorithm-1">Algorithm</h2>
+<h3 id="inputs-1">Inputs</h3>
+<p>The public function
+<code>compute_triangle_lamina(vertices, faces, mass)</code> consumes
+only the arrays and scalar above. It does not consume a path, mesh
+object, transform, frame label, density, thickness, or native model.</p>
+<h3 id="procedure-1">Procedure</h3>
+<ol type="1">
+<li>Validate the mass and array shapes, finiteness, face dtype, and
+index bounds.</li>
+<li>Gather indexed triangles and compute unsigned area weights.</li>
+<li>Reject nonpositive or nonfinite total area; omit only exactly
+zero-area triangles from moment/topology accumulation.</li>
+<li>Choose the first vertex of a maximum-area face as a local origin,
+then compute weighted center and central covariance in that translated
+frame.</li>
+<li>Convert covariance to inertia and reject nonfinite center or tensor
+values.</li>
+<li>Count exact duplicate positive-area coordinate triangles independent
+of winding, and count edge degree using source vertex indices.</li>
+<li>Return a distinct lamina mode and explicit diagnostics without
+repairing or modifying source arrays.</li>
+</ol>
+<p>The numerical arrays are vectorized over faces. Working memory is
+linear in the number of input faces; uniqueness diagnostics sort/compare
+face and edge records and are not a streaming algorithm.</p>
+<h3 id="outputs-1">Outputs</h3>
+<p><code>TriangleLaminaResult</code> contains an
+<code>InertiaResult</code>, total area, zero-area face count, duplicate
+positive-area coordinate-face count, indexed boundary-edge count, and
+indexed nonmanifold-edge count. The embedded legacy result object
+remains mutable for compatibility. Counts are diagnostics, not mesh
+validation.</p>
+<h2 id="implementation-symbols-1">Implementation Symbols</h2>
+<h3 id="public-symbols-1">Public Symbols</h3>
+<p><code>compute_triangle_lamina</code> and
+<code>TriangleLaminaResult</code> are defined in
+<code>src/shared/python/humanoid_character_builder/mesh/triangle_lamina.py</code>.
+<code>InertiaMode.TRIANGLE_MULTISET_LAMINA_MASS</code> and the
+compatible <code>InertiaResult</code> representation are defined in
+<code>src/shared/python/humanoid_character_builder/mesh/inertia_calculator.py</code>.
+This note does not assert that the module is a stable published consumer
+API.</p>
+<h3 id="source-mapping-1">Source Mapping</h3>
+<p>The method maps to <code>_area_weights</code>,
+<code>_centered_moments</code>, and <code>compute_triangle_lamina</code>
+in <code>triangle_lamina.py</code>; mode identity is mapped in
+<code>inertia_calculator.py</code>. Analytic and metamorphic checks are
+in
+<code>src/shared/python/humanoid_character_builder/tests/test_triangle_lamina.py</code>.
+This kernel is separate from <code>MeshInertiaCalculator</code>, which
+derives solid properties from volume-mesh processing and watertightness
+policy.</p>
+<h2 id="error-and-failure-semantics-1">Error and Failure Semantics</h2>
+<h3 id="error-conditions-1">Error Conditions</h3>
+<p>Wrong scalar kind or noninteger face indices raise
+<code>TypeError</code>. Invalid scalar range, malformed/nonfinite
+vertices, face shape or bounds, no positive finite total area, and
+nonfinite output moments raise <code>ValueError</code>. The function
+does not repair malformed topology or substitute default
+mass/geometry.</p>
+<h3 id="recovery-and-cancellation-1">Recovery and Cancellation</h3>
+<p>The caller must correct source inputs and resubmit. There is no
+partial result, fallback solid calculation, or cancellation callback.
+Large inputs are bounded only by caller-provided memory and face count;
+this API provides no resource budget or streaming cancellation
+guarantee.</p>
+<h2 id="uncertainty-and-sensitivity-1">Uncertainty and Sensitivity</h2>
+<h3 id="uncertainty-sources-1">Uncertainty Sources</h3>
+<p>This kernel propagates no uncertainty distribution. Its values depend
+on caller-selected coordinates, mesh sampling, face multiplicity,
+declared mass, and the unverified assumption of uniform area density. It
+does not determine whether those assumptions are appropriate for an
+object or body segment.</p>
+<h3 id="sensitivity-1">Sensitivity</h3>
+<p>Area and second moments are sensitive to coordinate perturbations and
+changes in tessellation or face multiplicity. Very small representable
+positive areas remain in the calculation; no tolerance silently removes
+them. Nonzero areas or fractions not representable as positive
+<code>float64</code> are rejected. Summation and floating-point rounding
+still affect results. The local-origin accumulation reduces avoidable
+cancellation for translated geometry but does not provide an error bound
+for every scale or conditioning regime.</p>
+<h2 id="verification-and-validation-1">Verification and Validation</h2>
+<h3 id="test-evidence-1">Test Evidence</h3>
+<p><code>test_triangle_analytic_mass_com_and_off_diagonal</code> checks
+the exact triangular lamina result. Other tests check a rectangular
+plate and subdivision, an analytic cube shell, rigid
+transforms/scaling/input immutability, duplicate and degenerate faces,
+remote negligible-area faces, small representable and unrepresentable
+areas, complex-coordinate rejection, and invalid input classes. These
+are independent synthetic analytic or metamorphic tests; they are not
+validation against a measured object or biomechanical segment.</p>
+<h3 id="acceptance-criteria-1">Acceptance Criteria</h3>
+<p>Numerical kernel acceptance requires finite typed inputs, correct
+analytic moments, expected rigid-transform and subdivision invariants,
+explicit degeneracy diagnostics, and fail-closed invalid-input behavior.
+Those criteria do not establish source asset provenance, unit/frame
+correctness of a producer, partial-overlap handling, biological mass
+distribution, or native-model admission. The calculation freshness
+generator currently executes only the D-plane pathway; this note
+therefore remains outside the registered calculation set and cannot be
+represented as freshness-verified or exemplar-verified.</p>
+<h2 id="limits-and-applicability-1">Limits and Applicability</h2>
+<h3 id="validity-range-1">Validity Range</h3>
+<p>The equations apply to a finite positive-area triangle multiset in
+one orthonormal Euclidean metre frame with a positive finite
+caller-owned total mass. Degenerate faces may be present but contribute
+no area or mass. No evidence here establishes useful geometric scales
+beyond representable, finite floating-point inputs.</p>
+<h3 id="known-limitations-1">Known Limitations</h3>
+<p>Coincident triangles retain multiplicity; partial overlap is neither
+detected nor corrected. Duplicate detection is exact-coordinate and
+ignores winding, whereas edge topology uses vertex indices. Indexed
+boundary/nonmanifold counts do not prove surface closure, manifoldness,
+or self-intersection absence. No volume, thickness, density field,
+material, anatomy, frame transform, native asset loader, downstream
+consumer or physical acceptance is included. The registered calculation,
+freshness workflow, source asset producer and any engineering-use
+approval remain blocked.</p>
+<h2 id="worked-examples-1">Worked Examples</h2>
+<h3 id="example-inputs-1">Example Inputs</h3>
+<p>Use vertices
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(0,0,0)</annotation></semantics></math>,
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mn>3</mn><mo>,</mo><mn>0</mn><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(3,0,0)</annotation></semantics></math>,
+and
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>6</mn><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(0,6,0)</annotation></semantics></math>
+metres, one face with indices
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mn>0</mn><mo>,</mo><mn>1</mn><mo>,</mo><mn>2</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(0,1,2)</annotation></semantics></math>,
+and total mass
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>2</mn><annotation encoding="application/x-tex">2</annotation></semantics></math>
+kg. The triangle area is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mn>9</mn><annotation encoding="application/x-tex">9</annotation></semantics></math>
+m² and the face receives all of the declared mass.</p>
+<h3 id="example-results-1">Example Results</h3>
+<p>The centroid is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mo stretchy="false" form="prefix">(</mo><mn>1</mn><mo>,</mo><mn>2</mn><mo>,</mo><mn>0</mn><mo stretchy="false" form="postfix">)</mo></mrow><annotation encoding="application/x-tex">(1,2,0)</annotation></semantics></math>
+m. Integrating the uniform triangular area gives
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐂</mi><mo>=</mo><mrow><mo stretchy="true" form="prefix">[</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>1</mn><mi>/</mi><mn>2</mn></mtd><mtd columnalign="center" style="text-align: center"><mi>−</mi><mn>1</mn><mi>/</mi><mn>2</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mi>−</mi><mn>1</mn><mi>/</mi><mn>2</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>2</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd></mtr></mtable><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbf{C}=\begin{bmatrix}1/2&amp;-1/2&amp;0\\-1/2&amp;2&amp;0\\0&amp;0&amp;0\end{bmatrix}</annotation></semantics></math>
+m². The returned inertia matrix is
+<math display="inline" xmlns="http://www.w3.org/1998/Math/MathML"><semantics><mrow><mi>𝐈</mi><mo>=</mo><mrow><mo stretchy="true" form="prefix">[</mo><mtable><mtr><mtd columnalign="center" style="text-align: center"><mn>4</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>1</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd></mtr><mtr><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>0</mn></mtd><mtd columnalign="center" style="text-align: center"><mn>5</mn></mtd></mtr></mtable><mo stretchy="true" form="postfix">]</mo></mrow></mrow><annotation encoding="application/x-tex">\mathbf{I}=\begin{bmatrix}4&amp;1&amp;0\\1&amp;1&amp;0\\0&amp;0&amp;5\end{bmatrix}</annotation></semantics></math>
+kg m², with all three indexed edges counted as boundary edges. The
+example verifies the kernel’s declared lamina equations; it is not an
+asset-backed exemplar or evidence about a physical segment.</p>
+<h2 id="references-and-provenance-1">References and Provenance</h2>
+<h3 id="references-2">References</h3>
+<ul>
+<li><code>src/shared/python/humanoid_character_builder/mesh/triangle_lamina.py</code>
+— implementation of the triangle-multiset weighting and moments.</li>
+<li><code>src/shared/python/humanoid_character_builder/mesh/inertia_calculator.py</code>
+— compatible result/mode definitions and separate solid-mesh
+pathway.</li>
+<li><code>src/shared/python/humanoid_character_builder/tests/test_triangle_lamina.py</code>
+— analytic and metamorphic synthetic tests.</li>
+<li><code>src/shared/python/humanoid_character_builder/tests/test_urdf_inertia_export.py</code>
+— symmetric-entry round-trip and an actual MuJoCo tensor/kinetic-energy
+readback.</li>
+<li><a href="https://pure.korea.ac.kr/en/publications/inertia-tensor-of-a-triangle-in-barycentric-coordinates/">Inertia
+tensor of a triangle in barycentric coordinates</a> — independent
+derivation reference for triangle area moments.</li>
+<li><a href="https://github.com/ros/kdl_parser/blob/ros2/kdl_parser/src/kdl_parser.cpp">ROS
+2 KDL URDF parser</a> — primary consumer source for the direct
+tensor-coefficient interpretation tested by the exporter
+regression.</li>
+</ul>
+<h3 id="provenance-1">Provenance</h3>
+<p>This chapter is a provisional technical note for Tools #5503/#5504.
+The exact source and tests are tracked in the same development change.
+The canonical module inventory is regenerated, but executable freshness
+support beyond the D-plane calculation, governed calculation
+registration, source geometry producer, anatomical consumer
+traceability, external scientific review, artifact/page review, and
+human approval are not complete. The MuJoCo check is limited to an
+analytic asymmetric URDF fixture and does not establish all-engine
+parity. No private mesh or capture data is used or reproduced here.</p>
+<h2 id="revision-history-1">Revision History</h2>
+<h3 id="revision-record-1">Revision Record</h3>
+<ul>
+<li>0.1.0 (2026-10-10): Document the provisional triangle-multiset
+lamina kernel and its analytic/synthetic evidence; keep governed
+registration and all source/consumer/engineering qualification
+blocked.</li>
+</ul>
 <div id="refs" class="references csl-bib-body hanging-indent" role="list">
 <div id="ref-pandoc-manual" class="csl-entry" role="listitem">
 Pandoc contributors. 2026. <em>Pandoc User’s Guide</em>. Pandoc. <a href="https://pandoc.org/MANUAL.html">https://pandoc.org/MANUAL.html</a>.
