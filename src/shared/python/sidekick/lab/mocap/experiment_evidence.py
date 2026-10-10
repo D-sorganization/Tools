@@ -17,11 +17,16 @@ from .experiment_contracts import (
 from .experiment_replay import ExperimentReplayBundle
 
 COMPARISON_EVIDENCE_SCHEMA_VERSION = "comparison-evidence/1.0.0"
+COMPILED_ACTUATOR_PROFILE_ID = "compiled-actuator-profile"
+COMPILED_ACTUATOR_PROFILE_VERSION = "1.0.0"
+COMPILED_ACTUATOR_PROFILE_SCHEMA_VERSION = (
+    f"{COMPILED_ACTUATOR_PROFILE_ID}/{COMPILED_ACTUATOR_PROFILE_VERSION}"
+)
 _OPAQUE_REFERENCE = re.compile(r"^opaque:[A-Za-z0-9][A-Za-z0-9._-]{7,127}$")
 
 
 def _require_opaque_reference(value: str) -> str:
-    reference = require_text(value, "reference_id")
+    reference: str = require_text(value, "reference_id")
     if not _OPAQUE_REFERENCE.fullmatch(reference):
         raise ValueError("reference_id must be an opaque token, not a path or URL")
     return reference
@@ -181,7 +186,12 @@ class ComparisonRowRequirement:
 
 @dataclass(frozen=True, slots=True)
 class ComparisonEvidenceRow:
-    """One engine/model row with an optional T01 replay payload and receipts."""
+    """One row with optional T01 payload and structural evidence references.
+
+    A compiled-actuator profile reference is only a transport link. A native
+    consumer must resolve and validate the profile bytes against the loaded
+    model before treating an actuator-command replay as admitted evidence.
+    """
 
     row_id: str
     package_id: str
@@ -203,7 +213,6 @@ class ComparisonEvidenceRow:
             self.replay_bundle, ExperimentReplayBundle
         ):
             raise TypeError("replay_bundle must be an ExperimentReplayBundle or None")
-        self._validate_drive_mode_compatibility()
         if not isinstance(self.support, CapabilitySupport):
             raise TypeError("support must be a CapabilitySupport")
         if not isinstance(self.availability, CapabilityAvailability):
@@ -231,6 +240,7 @@ class ComparisonEvidenceRow:
             tuple(item.kind.value for item in evidence), "implementation_evidence"
         )
         require_unique_text(tuple(item.reference_id for item in artifacts), "artifacts")
+        self._validate_drive_mode_compatibility()
 
     def _validate_drive_mode_compatibility(self) -> None:
         """Keep F01's coarse drive class distinct from T01's physical input kind."""
@@ -246,10 +256,51 @@ class ComparisonEvidenceRow:
             }
         else:
             compatible = {ActuationInputKind.MUSCLE_EXCITATION}
+            if input_kind is ActuationInputKind.ACTUATOR_COMMAND:
+                self._require_compiled_actuator_profile_reference()
+                return
         if input_kind not in compatible:
             raise ValueError(
                 f"drive_mode {self.drive_mode.value!r} is incompatible with "
                 f"T01 input_kind {input_kind.value!r}"
+            )
+
+    def _require_compiled_actuator_profile_reference(self) -> None:
+        """Require matching profile links; a consumer must still resolve bytes."""
+        implementation = next(
+            (
+                item
+                for item in self.implementation_evidence
+                if item.kind is ImplementationEvidenceKind.ACTUATOR
+            ),
+            None,
+        )
+        artifacts = tuple(
+            item
+            for item in self.artifacts
+            if item.kind is EvidenceArtifactKind.ACTUATOR
+        )
+        if (
+            implementation is None
+            or not implementation.required
+            or not implementation.is_available
+            or implementation.implementation_id != COMPILED_ACTUATOR_PROFILE_ID
+            or implementation.version != COMPILED_ACTUATOR_PROFILE_VERSION
+            or implementation.evidence_reference_id is None
+            or len(artifacts) != 1
+        ):
+            raise ValueError(
+                "muscle-row actuator commands require one available, required "
+                "versioned compiled actuator profile reference and artifact"
+            )
+        artifact = artifacts[0]
+        if (
+            artifact.reference_id != implementation.evidence_reference_id
+            or artifact.sha256 != implementation.sha256
+        ):
+            raise ValueError(
+                "compiled actuator profile implementation and artifact "
+                "references differ"
             )
 
     @property
@@ -404,6 +455,9 @@ def build_comparison_evidence_receipt(
 
 __all__ = [
     "COMPARISON_EVIDENCE_SCHEMA_VERSION",
+    "COMPILED_ACTUATOR_PROFILE_ID",
+    "COMPILED_ACTUATOR_PROFILE_SCHEMA_VERSION",
+    "COMPILED_ACTUATOR_PROFILE_VERSION",
     "ComparisonEvidenceReceipt",
     "ComparisonEvidenceRow",
     "ComparisonLevel",
