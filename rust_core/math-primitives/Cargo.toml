@@ -7,7 +7,7 @@ license.workspace = true
 repository.workspace = true
 
 [dependencies]
-nalgebra = "0.33"
+nalgebra = "0.35"
 serde = { workspace = true }
 
 [dependencies.pyo3]
