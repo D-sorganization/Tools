@@ -5946,6 +5946,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-10 | #5481 | Deterministic 1440x900 visual-baseline candidates: settle tab-pill transitions before capture and pin determinism with a two-session test |
 | 2026-10-09 | #5478 | PR #5479: bind shard status to workflow attempts, retain every invocation coverage file, and select the latest complete attempt fail-closed |
 | 2026-10-09 | #5473 | Repair canonical source-count and PDF extractor line-wrapping regressions while preserving artifact integrity and release blockers; governed follow-up for issue5472; Repair canonical manual source-count regression while preserving release blockers |
 | 2026-10-09 | #5472 | Repair canonical manual source-count regression while preserving release blockers |
@@ -7085,7 +7086,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | 2026-09-27 | #5376 | Prepare the v1.23.1 release by synchronizing version metadata and release notes. |
 | 2026-09-30 | #5385 | Propagate flight termination states (LANDED, TIME_LIMIT, SOLVER_FAILED, CANCELLED) before reporting landing metrics, gate carry/landing metrics to None on incomplete flights, and fail closed across inverse solver and execution profiles (Tools #5385 / UpstreamDrift #11145). |
 | 2026-10-05 | #5439 | ci(security): re-vendor `scripts/fork_pr_runner_guard.py` and new `scripts/fork_pr_guard_analysis.py` from Repository_Management (RM#1996): same-repo `if:` exemption and sink-based head-checkout analysis. |
-| 2026-10-09 | #5475 | Keep mixed actuator commands structurally distinct from torque and excitation by requiring a matching versioned compiled-actuator-profile implementation reference and actuator artifact; native model/profile validation remains UpstreamDrift-owned, and opaque-token validation binds the shared helper result to an explicit string-typed local for mypy. |
+| 2026-10-09 | #5475 | Keep mixed actuator commands structurally distinct from torque and excitation by requiring a matching versioned compiled-actuator-profile implementation reference and actuator artifact; native model/profile validation remains UpstreamDrift-owned, and opaque-token validation binds the shared helper result to an explicit string-typed local for mypy.; Require matching versioned actuator-profile references for mixed command evidence |
 ---
 
 <!--
