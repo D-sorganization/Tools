@@ -35,6 +35,8 @@ MIN_MESH_VOLUME_M3 = 1e-10
 class InertiaMode(Enum):
     """Inertia calculation mode."""
 
+    TRIANGLE_MULTISET_LAMINA_MASS = "triangle_multiset_lamina_mass"
+
     # Compute from mesh with uniform density
     MESH_UNIFORM_DENSITY = "mesh_uniform"
 
@@ -95,16 +97,17 @@ class InertiaResult:
     def as_urdf_dict(self) -> dict[str, float]:
         """Return inertia values for URDF format.
 
-        URDF uses the convention where products of inertia are negated
-        compared to the standard mathematical inertia tensor.
-        See: https://wiki.ros.org/urdf/XML/link
+        Values are the actual symmetric tensor entries, as in ``as_matrix``.
+        URDF consumers such as ROS kdl_parser pass these coefficients directly
+        into the inertia matrix; negating them changes the physical tensor.
+        See: https://github.com/ros/kdl_parser/blob/ros2/kdl_parser/src/kdl_parser.cpp
         """
         return {
             "ixx": self.ixx,
-            "ixy": -self.ixy,  # URDF negates products of inertia
-            "ixz": -self.ixz,
+            "ixy": self.ixy,
+            "ixz": self.ixz,
             "iyy": self.iyy,
-            "iyz": -self.iyz,
+            "iyz": self.iyz,
             "izz": self.izz,
         }
 

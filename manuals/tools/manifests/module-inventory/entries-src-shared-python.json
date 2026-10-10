@@ -625,6 +625,8 @@
           "src/shared/python/calc_backend/tests/test_calc_backend_gaps.py",
           "src/shared/python/data_processing/tests/test_processor.py",
           "src/shared/python/humanoid_character_builder/tests/test_contracts.py",
+          "src/shared/python/humanoid_character_builder/tests/test_triangle_lamina.py",
+          "src/shared/python/humanoid_character_builder/tests/test_urdf_inertia_export.py",
           "src/shared/python/model_generation/tests/test_contracts.py",
           "src/shared/python/sidekick/tests/test_baghouse_calculator.py",
           "src/shared/python/sidekick/tests/test_data_io.py",

@@ -1904,10 +1904,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 20438,
+      "bytes_lf": 20606,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "aa9feac149bb104a49173b06ce6553de284c951ca3b5a505bd808cd1b886b950",
+      "content_sha256_lf": "60a45fe471c2e1cbfb2ae80d9a6b3760b62b07f0fd5327a4d5e652a49f467e10",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-MESH-INERTIA-CALCULATOR-PY-0B018A5D0256",
       "language": "python",
@@ -1942,7 +1942,7 @@
         "artifact_sha256": [],
         "chapter_paths": [],
         "citation_refs": [
-          "https://wiki.ros.org/urdf/XML/link"
+          "https://github.com/ros/kdl_parser/blob/ros2/kdl_parser/src/kdl_parser.cpp"
         ],
         "equation_refs": [],
         "public_routes": [],
@@ -1976,6 +1976,7 @@
         "test_paths": [
           "src/shared/python/humanoid_character_builder/tests/test_inertia_calculator.py",
           "src/shared/python/humanoid_character_builder/tests/test_physics_validator.py",
+          "src/shared/python/humanoid_character_builder/tests/test_urdf_inertia_export.py",
           "tests/shared/python/humanoid/test_primitive_inertia.py"
         ],
         "unit_mentions": [
@@ -2144,6 +2145,71 @@
         "unit_mentions": [
           "kg",
           "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 7273,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "d058b059644c88b382d49348ca8c96b50d4176cf13d8f10789e013598b1462de",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-HUMANOID-CHARACTER-BUILDER-MESH-TRIANGLE-LAMINA-PY-FCC4601852CC",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/humanoid_character_builder/mesh/triangle_lamina.py",
+      "purpose": "Unsigned triangle-multiset mass moments, independently of solid-volume gates.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "TriangleLaminaResult",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compute_triangle_lamina",
+            "signature": "vertices: NDArray[np.float64], faces: NDArray[np.integer], mass: float"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/humanoid_character_builder/tests/test_triangle_lamina.py"
+        ],
+        "unit_mentions": [
+          "N",
+          "kg"
         ],
         "validation_paths": []
       }
