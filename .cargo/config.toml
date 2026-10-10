@@ -1,0 +1,4 @@
+# rand 0.10 pulls getrandom 0.4, which has no default backend on
+# wasm32-unknown-unknown; select the wasm-bindgen/JS backend explicitly.
+[target.wasm32-unknown-unknown]
+rustflags = ["--cfg", 'getrandom_backend="wasm_js"']

@@ -201,7 +201,10 @@ impl PlanarGround {
 
 /// Complete translational and signed rotational state in the target frame.
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
-#[cfg_attr(feature = "python", pyo3::prelude::pyclass(name = "FlightGroundState"))]
+#[cfg_attr(
+    feature = "python",
+    pyo3::prelude::pyclass(name = "FlightGroundState", from_py_object)
+)]
 pub struct FlightState {
     pub time: f64,
     pub position: Vector3,

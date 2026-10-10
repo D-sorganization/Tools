@@ -7,7 +7,7 @@ use pyo3::types::PyAny;
 use std::collections::HashMap;
 
 /// Alarm state enumeration matching SCADA severity classifications.
-#[pyclass(module = "tools_core.scada")]
+#[pyclass(module = "tools_core.scada", from_py_object)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum AlarmState {
     Normal,
@@ -55,7 +55,7 @@ impl AlarmState {
 }
 
 /// Limits definition for a single tag.
-#[pyclass(module = "tools_core.scada")]
+#[pyclass(module = "tools_core.scada", from_py_object)]
 #[derive(Debug, Clone, Copy)]
 pub struct TagLimits {
     #[pyo3(get, set)]
@@ -83,7 +83,7 @@ impl TagLimits {
 
 /// SCADA Alarm Engine tracking active state, severity, and acknowledgments
 /// for up to 32 tags.
-#[pyclass(module = "tools_core.scada")]
+#[pyclass(module = "tools_core.scada", from_py_object)]
 #[derive(Debug, Clone)]
 pub struct AlarmEngine {
     #[pyo3(get)]
@@ -288,7 +288,7 @@ pub struct Interlock {
 }
 
 /// Configurable Safety Interlock Matrix.
-#[pyclass(module = "tools_core.scada")]
+#[pyclass(module = "tools_core.scada", from_py_object)]
 #[derive(Clone, Debug, Default)]
 pub struct InterlockMatrix {
     pub interlocks: Vec<Interlock>,
@@ -357,7 +357,7 @@ impl InterlockMatrix {
 
 /// Dynamic Gasification Process Simulator.
 /// Computes temperature in 4 zones, syngas flow rate, and pressure drop.
-#[pyclass(module = "tools_core.scada")]
+#[pyclass(module = "tools_core.scada", from_py_object)]
 #[derive(Clone, Debug)]
 pub struct GasificationSimulator {
     // Measured variables

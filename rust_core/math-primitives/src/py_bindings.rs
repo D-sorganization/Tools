@@ -293,7 +293,7 @@ pub mod py_math {
     // Pose6DOF
     // -----------------------------------------------------------------------
 
-    #[pyclass(name = "Pose6DOF")]
+    #[pyclass(name = "Pose6DOF", from_py_object)]
     #[derive(Clone)]
     struct PyPose6DOF {
         inner: transform::Pose6DOF,

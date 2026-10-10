@@ -188,10 +188,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 15627,
+      "bytes_lf": 15679,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "c3dfd611605b177bdae1008346168b81896ed6b399846652451798c4821c5871",
+      "content_sha256_lf": "b8a95dc7b0f36088a4e90068169fc3c1ed97de75c959648054b3883fd18439e4",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-RUST-CORE-SWING-CORE-SRC-SWING-PENDULUM-RS-D4B922B77A79",
       "language": "rust",
