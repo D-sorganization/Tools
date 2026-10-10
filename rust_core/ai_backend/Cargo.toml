@@ -49,7 +49,7 @@ dirs = { version = "5", optional = true }
 # ort 2.x is still in -rc; we pin a known-good combination of ort + ort-sys
 # rather than letting Cargo float between -rc.x because the API surface
 # moves between RCs.
-ort = { version = "=2.0.0-rc.10", default-features = false, features = ["load-dynamic", "ndarray"], optional = true }
+ort = { version = "=2.0.0-rc.13", default-features = false, features = ["load-dynamic", "ndarray"], optional = true }
 ort-sys = { version = "=2.0.0-rc.10", optional = true }
 tokenizers = { version = "0.20", default-features = false, features = ["onig"], optional = true }
 ndarray = { version = "0.16", optional = true }
