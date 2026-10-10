@@ -1,12 +1,16 @@
 from __future__ import annotations
 
 import json
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 from sidekick.lab.mocap import (
+    COMPILED_ACTUATOR_PROFILE_ID,
+    COMPILED_ACTUATOR_PROFILE_SCHEMA_VERSION,
+    COMPILED_ACTUATOR_PROFILE_VERSION,
     ActuationInputKind,
     CapabilityAvailability,
     CapabilitySupport,
@@ -50,9 +54,17 @@ def _replay_bundle(
             ActuationInputKind.MUSCLE_ACTIVATION,
         }
         else InputChannel(
-            "joint",
-            "joint",
-            "N" if input_kind is ActuationInputKind.ACTUATOR_FORCE else "N*m",
+            "command:actuator"
+            if input_kind is ActuationInputKind.ACTUATOR_COMMAND
+            else "joint",
+            "actuator:synthetic"
+            if input_kind is ActuationInputKind.ACTUATOR_COMMAND
+            else "joint",
+            "1"
+            if input_kind is ActuationInputKind.ACTUATOR_COMMAND
+            else "N"
+            if input_kind is ActuationInputKind.ACTUATOR_FORCE
+            else "N*m",
             frame_id=(
                 "world" if input_kind is ActuationInputKind.ACTUATOR_FORCE else None
             ),
@@ -488,3 +500,178 @@ def test_torque_drive_mode_rejects_activation_input() -> None:
             support=CapabilitySupport.SUPPORTED,
             availability=CapabilityAvailability.AVAILABLE,
         )
+
+
+def _compiled_profile_evidence(
+    *,
+    required: bool = True,
+    support: CapabilitySupport = CapabilitySupport.SUPPORTED,
+    availability: CapabilityAvailability = CapabilityAvailability.AVAILABLE,
+    implementation_id: str = COMPILED_ACTUATOR_PROFILE_ID,
+    version: str = COMPILED_ACTUATOR_PROFILE_VERSION,
+    reference_id: str = "opaque:compiled-actuator-profile-001",
+    sha256: str = "f" * 64,
+) -> tuple[ImplementationEvidence, EvidenceArtifactReference]:
+    evidence = ImplementationEvidence(
+        kind=ImplementationEvidenceKind.ACTUATOR,
+        implementation_id=implementation_id,
+        version=version,
+        sha256=sha256,
+        required=required,
+        support=support,
+        availability=availability,
+        evidence_reference_id=reference_id,
+        reason=(
+            "profile is not available"
+            if availability is not CapabilityAvailability.AVAILABLE
+            else None
+        ),
+    )
+    artifact = EvidenceArtifactReference(
+        EvidenceArtifactKind.ACTUATOR,
+        reference_id,
+        sha256,
+    )
+    return evidence, artifact
+
+
+def _mixed_command_row(
+    *,
+    implementation_evidence: tuple[ImplementationEvidence, ...] = (),
+    artifacts: tuple[EvidenceArtifactReference, ...] = (),
+) -> ComparisonEvidenceRow:
+    return ComparisonEvidenceRow(
+        row_id="synthetic-engine/model/variant/muscle-excitation",
+        package_id="synthetic-package",
+        variant_id="synthetic-variant",
+        drive_mode=DriveMode.MUSCLE_EXCITATION,
+        replay_bundle=_replay_bundle(input_kind=ActuationInputKind.ACTUATOR_COMMAND),
+        support=CapabilitySupport.SUPPORTED,
+        availability=CapabilityAvailability.AVAILABLE,
+        implementation_evidence=implementation_evidence,
+        artifacts=artifacts,
+    )
+
+
+def test_muscle_command_receipt_requires_matching_compiled_profile_artifact() -> None:
+    evidence, artifact = _compiled_profile_evidence()
+    assert COMPILED_ACTUATOR_PROFILE_SCHEMA_VERSION == (
+        "compiled-actuator-profile/1.0.0"
+    )
+
+    row = _mixed_command_row(implementation_evidence=(evidence,), artifacts=(artifact,))
+
+    assert row.replay_bundle is not None
+    assert (
+        row.replay_bundle.input_history.input_kind
+        is ActuationInputKind.ACTUATOR_COMMAND
+    )
+    assert row.implementation_evidence == (evidence,)
+    assert row.artifacts == (artifact,)
+
+
+def test_muscle_command_receipt_rejects_missing_or_unpaired_profile_reference() -> None:
+    evidence, artifact = _compiled_profile_evidence()
+
+    with pytest.raises(ValueError, match="compiled actuator profile"):
+        _mixed_command_row()
+    with pytest.raises(ValueError, match="compiled actuator profile"):
+        _mixed_command_row(implementation_evidence=(evidence,))
+    with pytest.raises(ValueError, match="compiled actuator profile"):
+        _mixed_command_row(artifacts=(artifact,))
+    conflicting_artifact = EvidenceArtifactReference(
+        EvidenceArtifactKind.ACTUATOR,
+        "opaque:second-actuator-profile-001",
+        "e" * 64,
+    )
+    with pytest.raises(ValueError, match="compiled actuator profile"):
+        _mixed_command_row(
+            implementation_evidence=(evidence,),
+            artifacts=(artifact, conflicting_artifact),
+        )
+
+
+@pytest.mark.parametrize(
+    ("evidence_overrides", "artifact_reference_id", "artifact_sha256"),
+    (
+        ({}, "opaque:other-profile-001", "f" * 64),
+        ({}, "opaque:compiled-actuator-profile-001", "e" * 64),
+        (
+            {"implementation_id": "generic-actuator"},
+            "opaque:compiled-actuator-profile-001",
+            "f" * 64,
+        ),
+        ({"version": "0.9.0"}, "opaque:compiled-actuator-profile-001", "f" * 64),
+        ({"required": False}, "opaque:compiled-actuator-profile-001", "f" * 64),
+        (
+            {
+                "support": CapabilitySupport.UNKNOWN,
+                "availability": CapabilityAvailability.UNKNOWN,
+                "reason": "profile not inspected",
+            },
+            "opaque:compiled-actuator-profile-001",
+            "f" * 64,
+        ),
+    ),
+)
+def test_muscle_command_receipt_rejects_unvalidated_profile_metadata(
+    evidence_overrides: dict[str, object],
+    artifact_reference_id: str,
+    artifact_sha256: str,
+) -> None:
+    evidence, _ = _compiled_profile_evidence()
+    evidence = replace(evidence, **evidence_overrides)
+    artifact = EvidenceArtifactReference(
+        EvidenceArtifactKind.ACTUATOR,
+        artifact_reference_id,
+        artifact_sha256,
+    )
+
+    with pytest.raises(ValueError, match="compiled actuator profile"):
+        _mixed_command_row(implementation_evidence=(evidence,), artifacts=(artifact,))
+
+
+def test_pure_muscle_excitation_receipt_does_not_need_compiled_command_profile() -> (
+    None
+):
+    row = _record(
+        row_id="synthetic-engine/model/variant/muscle-excitation",
+        input_kind=ActuationInputKind.MUSCLE_EXCITATION,
+        drive_mode=DriveMode.MUSCLE_EXCITATION,
+    )
+
+    assert row.replay_bundle is not None
+    assert (
+        row.replay_bundle.input_history.input_kind
+        is ActuationInputKind.MUSCLE_EXCITATION
+    )
+    assert tuple(item.component_id for item in row.replay_bundle.initial_state) == (
+        "q",
+        "v",
+        "activation",
+    )
+
+
+def test_compiled_command_profile_links_survive_evidence_receipt_round_trip() -> None:
+    evidence, artifact = _compiled_profile_evidence()
+    row = _mixed_command_row(implementation_evidence=(evidence,), artifacts=(artifact,))
+    requirement = ComparisonRowRequirement(
+        row.row_id,
+        required=True,
+        replay_mode=ReplayMode.NATIVE_OWN_CONTACT,
+        required_implementation_kinds=(ImplementationEvidenceKind.ACTUATOR,),
+        required_artifact_kinds=(EvidenceArtifactKind.ACTUATOR,),
+    )
+    receipt = build_comparison_evidence_receipt(
+        "synthetic-compiled-command",
+        ComparisonLevel.WITHIN_ENGINE_REPLAY,
+        (requirement,),
+        (row,),
+    )
+
+    loaded = load_comparison_evidence_receipt(
+        dumps_comparison_evidence_receipt(receipt)
+    )
+
+    assert loaded == receipt
+    assert loaded.missing_required_evidence == ()

@@ -199,10 +199,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10352,
+      "bytes_lf": 10596,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "626eb673a99d49cfca28048860ca649696cc680bb989d28dac78154ccf799069",
+      "content_sha256_lf": "2ad7d0d86614892fb3ae5cc037861e83fb6951ee6b40ee0de23b406f8dc6adeb",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-INIT-PY-BD60513A12BD",
       "language": "python",
@@ -266,6 +266,21 @@
           {
             "kind": "re-export",
             "name": "COMPARISON_EVIDENCE_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "COMPILED_ACTUATOR_PROFILE_ID",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "COMPILED_ACTUATOR_PROFILE_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "COMPILED_ACTUATOR_PROFILE_VERSION",
             "signature": null
           },
           {
@@ -2258,10 +2273,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 17034,
+      "bytes_lf": 19254,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "219a42d35396252eddea1c18f1124ea16753b32ed3fe3cd87495630568003597",
+      "content_sha256_lf": "b0fea7f3ab45c6d90d3de0332a141886838d3ebf93823c2d97359c3081c42202",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-MOCAP-EXPERIMENT-EVIDENCE-PY-EF9CB02E9203",
       "language": "python",
@@ -2345,6 +2360,21 @@
           {
             "kind": "constant",
             "name": "COMPARISON_EVIDENCE_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "COMPILED_ACTUATOR_PROFILE_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "COMPILED_ACTUATOR_PROFILE_SCHEMA_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "COMPILED_ACTUATOR_PROFILE_VERSION",
             "signature": null
           },
           {

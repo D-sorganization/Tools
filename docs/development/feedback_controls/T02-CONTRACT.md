@@ -15,16 +15,28 @@ inventory key; its `drive_mode` is the coarse F01 drive class.
 Rows carry separate `required`, `support`, and `availability` values. Replay
 drive mode remains separate from T01's finer `input_kind`: F01 `torque` admits
 actuator commands, actuator torques, actuator forces, and generalized efforts;
-F01 `muscle_excitation` admits only muscle excitation. Muscle activation,
-external loads, and incompatible drive/input pairs are rejected as replay rows
-for this version. These wire values preserve both classifications without
-silently relabeling excitation or activation as torque. A row cannot satisfy a
-different required replay mode; comparisons above identity cannot mix
-drive classes or native-own-contact, externally-forced, and
-shared-rigid-body-emulation modes.
+F01 `muscle_excitation` admits muscle excitation directly. It may also carry an
+`ACTUATOR_COMMAND` bundle only with required, supported, available
+`ACTUATOR` implementation evidence named `compiled-actuator-profile` version
+`1.0.0`, an opaque implementation evidence reference, and exactly one matching
+`ACTUATOR` artifact reference with the same reference ID and digest. This is a
+structural link between the row and profile artifact; T02 does not resolve the
+artifact bytes, inspect a native model, or claim that the profile is valid.
+UpstreamDrift must resolve and hash the profile bytes and verify them against
+the exact loaded model, compiled channel/law order, replay policy and complete
+initial state before admitting native replay. A dimensionless native actuator
+command remains distinct from torque, force, generalized effort, muscle
+excitation and activation. Muscle activation, external loads, and other
+incompatible drive/input pairs remain rejected as replay rows. These wire
+values preserve both classifications without silently relabeling one input
+as another. A row cannot satisfy a different required replay mode;
+comparisons above identity cannot mix drive classes or native-own-contact,
+externally-forced, and shared-rigid-body-emulation modes.
 Same-input comparisons also require identical applied-input and time-grid
 digests, channel-schema, execution-policy, and state-schema digests. These are
-structural admission checks, not numerical or physical acceptance.
+structural admission checks, not numerical or physical acceptance. The
+`comparison-evidence/1.0.0` schema is unchanged; the opt-in profile discriminator
+is carried in fields already present in implementation and artifact evidence.
 
 Dynamics, contact, integrator, actuator, and restart implementation identities
 are carried independently with optional digest-bound evidence references.

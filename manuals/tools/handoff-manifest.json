@@ -9,63 +9,63 @@
   },
   "repository": "D-sorganization/Tools",
   "issue_url": "https://github.com/D-sorganization/Tools/issues/4730",
-  "pr_url": "https://github.com/D-sorganization/Tools/pull/5479",
+  "pr_url": "https://github.com/D-sorganization/Tools/pull/5475",
   "commit_evidence": {
-    "local_head_sha": "605c40933eb1fb0343108245513a3339860a9c91",
+    "local_head_sha": "4e4bde070ba2e9294e3786883579b1ef09ab4f51",
     "remote_head_sha": null,
-    "reviewed_tree_sha": "cc4b84eaeeec1ec7c2cb2451b554ff2e6dad6273",
+    "reviewed_tree_sha": "92c5691320408045e88c7b98f99df4afb8cd104a",
     "merge_sha": null
   },
   "branch_and_worktree": {
-    "branch": "fix/ci-shard-attempt-artifact-authority",
-    "worktree": "C:\\Users\\diete\\Repositories\\Worktrees\\Tools-5478-shard-attempt-artifacts",
-    "is_clean": false
+    "branch": "feat/5474-actuator-profile-reference-admission",
+    "worktree": "C:\\Users\\diete\\Repositories\\Worktrees\\Tools-5474-actuator-profile-reference",
+    "is_clean": true
   },
   "check_evidence": {
     "check_design_manual_governance": {
       "command": "python -m scripts.check_design_manual_governance",
       "status": "passed",
-      "timestamp": "2026-10-09T17:52:36Z"
+      "timestamp": "2026-10-09T19:34:20Z"
     },
     "build_tools_module_inventory": {
       "command": "python -m scripts.build_tools_module_inventory --check",
       "status": "passed",
-      "timestamp": "2026-10-09T17:52:36Z"
+      "timestamp": "2026-10-09T19:34:20Z"
     },
     "lint_tools_textbook_chapters": {
       "command": "python -m scripts.lint_tools_textbook_chapters",
       "status": "passed",
-      "timestamp": "2026-10-09T17:52:36Z"
+      "timestamp": "2026-10-09T19:34:20Z"
     },
     "check_tools_exemplars": {
       "command": "python -m scripts.check_tools_exemplars",
       "status": "passed",
-      "timestamp": "2026-10-09T17:52:36Z"
+      "timestamp": "2026-10-09T19:34:20Z"
     },
     "check_tools_calculation_freshness": {
       "command": "python -m scripts.check_tools_calculation_freshness --check",
       "status": "passed",
-      "timestamp": "2026-10-09T17:52:36Z"
+      "timestamp": "2026-10-09T19:34:20Z"
     },
     "check_tools_manual_qa": {
       "command": "python -m scripts.check_tools_manual_qa --check",
       "status": "passed",
-      "timestamp": "2026-10-09T17:52:36Z"
+      "timestamp": "2026-10-09T19:34:20Z"
     },
     "check_tools_publication_projection": {
       "command": "python -m scripts.check_tools_publication_projection --check",
       "status": "passed",
-      "timestamp": "2026-10-09T17:52:36Z"
+      "timestamp": "2026-10-09T19:34:20Z"
     },
     "render_tools_design_manual": {
       "command": "python -m scripts.render_tools_design_manual --check",
       "status": "passed",
-      "timestamp": "2026-10-09T17:52:36Z"
+      "timestamp": "2026-10-09T19:34:20Z"
     },
     "check_tools_handoff": {
       "command": "python -m scripts.check_tools_handoff --check",
       "status": "passed",
-      "timestamp": "2026-10-09T17:52:36Z"
+      "timestamp": "2026-10-09T19:34:20Z"
     }
   },
   "artifact_and_test_digests": {
@@ -112,7 +112,7 @@
       "TOOLS-HUMAN-APPROVAL-PENDING",
       "TOOLS-MARKERLESS-EXEMPLAR-BLOCKED"
     ],
-    "expiry_timestamp": "2027-01-07T17:52:36Z"
+    "expiry_timestamp": "2027-01-07T19:34:20Z"
   },
   "blockers": [
     {
@@ -127,7 +127,7 @@
     }
   ],
   "next_dependency": "TOOLS-M0 (#4708 / #4734) and parent epic DOC-TOOLS (#4707) closure",
-  "freshness_timestamp": "2026-10-09T17:52:36Z",
+  "freshness_timestamp": "2026-10-09T19:34:20Z",
   "governed_handoff_files": {
     "AGENT_HANDOFF.md": {
       "path": "AGENT_HANDOFF.md",
@@ -224,7 +224,7 @@
     },
     "src/shared/python/sidekick/lab/mocap/AGENT_HANDOFF.md": {
       "path": "src/shared/python/sidekick/lab/mocap/AGENT_HANDOFF.md",
-      "sha256_lf": "3030fc67fc223bbe3bfe3ba8be941644d8183c5693c48f81eda308a4e7de5874",
+      "sha256_lf": "444bf9c9549707ee5db438c64cb58b717b96125f5ed0551236159a6906df42fa",
       "line_count": 89,
       "max_line_budget": 150,
       "required_sections": [
