@@ -74,25 +74,26 @@ not a claim of parity across all engines or consumers.
 ## Publication Handoff
 
 The source/test/SPEC/inventory bootstrap is committed as `14442b774d7f`; the
-manual and governance artifacts are committed as `eed47a2707e425431715bf37b7763c23b19be19b`. The branch has been merged
-normally with current `origin/main` (`74030f4aaecb04d0839eb2044fd0ab799b360ebb`).
-The owned root `AGENT_HANDOFF.md` pointer is preserved in stash
-`67b0e06f9ad749ea2e0bd34985c54ead1404ba9d`; it must be restored and rebound
-after a real PR URL exists. The publication projection and handoff manifest
-must then be regenerated against the exact final source commit and current
-rendered artifacts. No remote branch or PR exists yet.
+manual and governance artifacts are committed as `eed47a2707e425431715bf37b7763c23b19be19b`. The branch includes a normal merge of current
+`origin/main` (`74030f4aaecb04d0839eb2044fd0ab799b360ebb`). Draft PR #5510 is
+open at https://github.com/D-sorganization/Tools/pull/5510. Its exact provider
+source commit is `920e6fd633e796cf311cfd16f294fd45f5ad8cb1`, tree
+`e2ea298055d03302eee1d9e186d1e1e894412137`; the lamina module's LF SHA-256 is
+`3fd45937bed011c90b4d4e3fdf8bcf932a8bfd9a0816441ee708cc93cd4080ee`. The
+publication projection is regenerated against that source commit and current
+rendered artifacts. The handoff manifest is regenerated with the actual PR
+URL; the owned root handoff pointer from stash
+`67b0e06f9ad749ea2e0bd34985c54ead1404ba9d` is now restored with the PR link.
 
-The normal pre-push hook did not complete. Its full unit run under Windows
-Python 3.13/xdist auto terminated with a MuJoCo DLL-load access violation in
-`tests/unit/lower_body_model/conftest.py`; 1,034 tests had passed, 24 skipped,
-and 6 xfailed when xdist stopped after two failures. Those two failures were
-caused by the sparse checkout omitting `.github/workflows`; after materializing
-`.github`, both exact tests passed serially. No full retry or push was made.
-The current normal pre-PR run passed all five gates. Its affected-test selector
-found no mapped tests after the merge, so the separate 53-test focused run is
-recorded above. A complete bounded pre-push unit run and the actual PR-bound
-handoff manifest remain outstanding.
-The publication-projection and handoff manifests need the actual source commit
-and PR identity, so they remain stale until that coordinated publication point.
-The manual release, human review, physical interpretation, and native-model
-integration remain blocked.
+RM-6 pre-PR passed all five gates. The full normal pre-push passed with
+`PYTEST_XDIST_AUTO_NUM_WORKERS=1`, including all unit tests, mypy, Bandit,
+pip-audit, and fleet guardrails. A two-worker attempt stopped on MuJoCo DLL
+access violations after 1,069 passed, 24 skipped, and 6 xfailed, plus one
+sparse-checkout `FileNotFoundError` in
+`test_current_user_docs_do_not_claim_root_python_310_support`. The five exact
+documentation paths were hydrated; that test passed independently. The earlier
+14-worker run had the same native DLL issue and also lacked `.github/workflows`;
+both previously failing workflow tests passed after `.github` was materialized.
+The draft remains blocked on reviewer/consumer integration. Manual release,
+human approval, physical interpretation, and native-model integration remain
+blocked.
