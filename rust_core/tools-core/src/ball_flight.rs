@@ -53,7 +53,7 @@ pub const NUMERICAL_EPSILON: f64 = 1e-10;
 
 /// Physical properties of a golf ball.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
-#[cfg_attr(feature = "python", pyo3::prelude::pyclass)]
+#[cfg_attr(feature = "python", pyo3::prelude::pyclass(from_py_object))]
 #[cfg_attr(feature = "wasm", wasm_bindgen::prelude::wasm_bindgen)]
 pub struct BallProperties {
     /// Mass [kg].
@@ -126,7 +126,7 @@ impl BallProperties {
 
 /// Initial launch conditions.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
-#[cfg_attr(feature = "python", pyo3::prelude::pyclass)]
+#[cfg_attr(feature = "python", pyo3::prelude::pyclass(from_py_object))]
 #[cfg_attr(feature = "wasm", wasm_bindgen::prelude::wasm_bindgen)]
 pub struct LaunchConditions {
     /// Launch speed [m/s].
@@ -155,7 +155,7 @@ impl Default for LaunchConditions {
 
 /// Environmental conditions.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
-#[cfg_attr(feature = "python", pyo3::prelude::pyclass)]
+#[cfg_attr(feature = "python", pyo3::prelude::pyclass(from_py_object))]
 pub struct EnvironmentalConditions {
     /// Air density [kg/m³].
     pub air_density: f64,
@@ -177,7 +177,7 @@ impl Default for EnvironmentalConditions {
 
 /// A single point in the ball trajectory.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
-#[cfg_attr(feature = "python", pyo3::prelude::pyclass)]
+#[cfg_attr(feature = "python", pyo3::prelude::pyclass(from_py_object))]
 pub struct TrajectoryPoint {
     /// Time [s].
     pub time: f64,
@@ -205,7 +205,7 @@ impl TrajectoryPoint {
 
 /// Summary of a completed trajectory.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize)]
-#[cfg_attr(feature = "python", pyo3::prelude::pyclass)]
+#[cfg_attr(feature = "python", pyo3::prelude::pyclass(from_py_object))]
 #[cfg_attr(feature = "wasm", wasm_bindgen::prelude::wasm_bindgen)]
 pub struct TrajectoryAnalysis {
     /// Total carry distance [m].

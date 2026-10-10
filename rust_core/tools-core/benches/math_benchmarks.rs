@@ -2,7 +2,8 @@
 //!
 //! Run with: `cargo bench`
 
-use criterion::{black_box, criterion_group, criterion_main, Criterion};
+use criterion::{criterion_group, criterion_main, Criterion};
+use std::hint::black_box;
 use tools_core::ball_flight::{
     self, analyze_trajectory, apply_spin_decay, calculate_accel_core, simulate_trajectory,
     BallProperties, EnvironmentalConditions, LaunchConditions,

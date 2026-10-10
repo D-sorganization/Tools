@@ -135,7 +135,10 @@ fn request_fingerprint(
     request: &FlightToGroundRequestV1,
 ) -> Result<String, GroundReferenceRuntimeErrorV1> {
     let canonical = canonical_normalized_request_v1_json(request).map_err(request_error)?;
-    Ok(format!("{:x}", Sha256::digest(canonical.as_bytes())))
+    Ok(Sha256::digest(canonical.as_bytes())
+        .iter()
+        .map(|byte| format!("{byte:02x}"))
+        .collect())
 }
 
 fn request_error(error: super::GroundRequestV1Error) -> GroundReferenceRuntimeErrorV1 {

@@ -16,7 +16,7 @@ use crate::types::Vector3;
 /// Stored as `(w, x, y, z)` where `w` is the scalar part.
 /// Always normalized (magnitude = 1) to represent valid rotations.
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
-#[cfg_attr(feature = "python", pyo3::prelude::pyclass)]
+#[cfg_attr(feature = "python", pyo3::prelude::pyclass(from_py_object))]
 #[cfg_attr(feature = "wasm", wasm_bindgen::prelude::wasm_bindgen)]
 pub struct Quaternion {
     pub w: f64,
