@@ -52,6 +52,7 @@ export interface TelemetryState {
   activeAlarms: ActiveAlarm[];
   eStopActive: boolean;
   firstOutTagId: number | null;
+  plcTripLatch: "tripped" | "clear" | "unknown";
   powerSupplyStatus: PowerSupplyStatus | undefined;
   temperatureStatus: TemperatureStatus | undefined;
   /**
@@ -155,6 +156,7 @@ export function useTelemetryStream(
   const [activeAlarms, setActiveAlarms] = useState<ActiveAlarm[]>([]);
   const [eStopActive, setEStopActive] = useState<boolean>(false);
   const [firstOutTagId, setFirstOutTagId] = useState<number | null>(null);
+  const [plcTripLatch, setPlcTripLatch] = useState<"tripped" | "clear" | "unknown">("unknown");
   const [powerSupplyStatus, setPowerSupplyStatus] = useState<
     PowerSupplyStatus | undefined
   >(undefined);
@@ -266,6 +268,9 @@ export function useTelemetryStream(
         }
         if (typeof frame.e_stop_active === "boolean") {
           setEStopActive(frame.e_stop_active);
+        }
+        if (frame.plc_trip_latch !== undefined) {
+          setPlcTripLatch(frame.plc_trip_latch);
         }
         if (frame.first_out_tag_id !== undefined) {
           setFirstOutTagId(frame.first_out_tag_id);
@@ -397,6 +402,7 @@ export function useTelemetryStream(
     activeAlarms,
     eStopActive,
     firstOutTagId,
+    plcTripLatch,
     powerSupplyStatus,
     temperatureStatus,
     dataAgeMs,

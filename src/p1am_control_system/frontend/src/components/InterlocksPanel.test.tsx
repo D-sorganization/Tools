@@ -10,41 +10,62 @@ const interlocks: InterlockConfig[] = Array.from({ length: 32 }, () => ({
   hihi_limit: null,
 }));
 
-function renderPanel(props: { tripped?: boolean; firstOutTagId?: number | null }) {
+function renderPanel(props: {
+  firstOutTagId?: number | null;
+  plcTripLatch?: "tripped" | "clear" | "unknown";
+  connected?: boolean;
+}) {
   return render(
     <InterlocksPanel
       interlocks={interlocks}
       onChange={vi.fn()}
       onDeploy={vi.fn()}
       deploying={false}
+      connected={true}
       {...props}
     />,
   );
 }
 
 describe("InterlocksPanel first-out indicator (F07)", () => {
-  it("shows the first-out tag name when tripped and the tag is known", () => {
-    renderPanel({ tripped: true, firstOutTagId: 7 });
+  it("shows the first-out tag name when the PLC latch is tripped and the tag is known", () => {
+    renderPanel({ plcTripLatch: "tripped", firstOutTagId: 7 });
     expect(screen.getByTestId("first-out")).toHaveTextContent("Tag 7");
   });
 
   it("shows tag 0 (falsy id) rather than treating it as unknown", () => {
-    renderPanel({ tripped: true, firstOutTagId: 0 });
+    renderPanel({ plcTripLatch: "tripped", firstOutTagId: 0 });
     expect(screen.getByTestId("first-out")).toHaveTextContent("Tag 0");
   });
 
-  it("shows an explicit unknown state when tripped but the read failed", () => {
-    renderPanel({ tripped: true, firstOutTagId: null });
-    expect(screen.getByTestId("first-out")).toHaveTextContent(/unknown/i);
+  it("PLC-only trip with unknown tag still shows the trip", () => {
+    renderPanel({ plcTripLatch: "tripped", firstOutTagId: null });
+    expect(screen.getByTestId("first-out")).toHaveTextContent(
+      /PLC trip latched, first-out unknown/i,
+    );
   });
 
-  it("shows unknown when tripped and the field is absent", () => {
-    renderPanel({ tripped: true });
-    expect(screen.getByTestId("first-out")).toHaveTextContent(/unknown/i);
-  });
-
-  it("shows no first-out when not tripped", () => {
-    renderPanel({ tripped: false, firstOutTagId: null });
+  it("shows nothing alarming when the latch is clear", () => {
+    renderPanel({ plcTripLatch: "clear", firstOutTagId: null });
     expect(screen.queryByTestId("first-out")).toBeNull();
+    expect(screen.queryByTestId("trip-status-unknown")).toBeNull();
+  });
+
+  it("shows an explicit trip status unknown state when the latch is unknown and connected", () => {
+    renderPanel({ plcTripLatch: "unknown", connected: true });
+    expect(screen.getByTestId("trip-status-unknown")).toHaveTextContent(
+      /trip status unknown/i,
+    );
+    expect(screen.queryByTestId("first-out")).toBeNull();
+  });
+
+  it("treats an absent latch field as unknown while connected", () => {
+    renderPanel({ connected: true });
+    expect(screen.getByTestId("trip-status-unknown")).toBeInTheDocument();
+  });
+
+  it("does not claim unknown trip status when not connected", () => {
+    renderPanel({ plcTripLatch: "unknown", connected: false });
+    expect(screen.queryByTestId("trip-status-unknown")).toBeNull();
   });
 });

@@ -8,10 +8,12 @@ interface InterlocksPanelProps {
   onChange: (tagId: number, field: keyof InterlockConfig, value: number | null) => void;
   onDeploy: () => void;
   deploying: boolean;
-  /** True while the plant is tripped / E-stop latched. */
-  tripped?: boolean;
+  /** Firmware trip latch tri-state; absent is treated as unknown. */
+  plcTripLatch?: "tripped" | "clear" | "unknown";
   /** Firmware first-out tag index; null/undefined = unknown (never guessed). */
   firstOutTagId?: number | null;
+  /** Whether the telemetry link is live (unknown trip status is only flagged then). */
+  connected?: boolean;
 }
 
 const InterlocksPanelImpl: React.FC<InterlocksPanelProps> = ({
@@ -19,8 +21,9 @@ const InterlocksPanelImpl: React.FC<InterlocksPanelProps> = ({
   onChange,
   onDeploy,
   deploying,
-  tripped = false,
+  plcTripLatch = "unknown",
   firstOutTagId = null,
+  connected = false,
 }) => {
   const [selectedTag, setSelectedTag] = useState<number>(0);
   const baseId = useId();
@@ -48,16 +51,24 @@ const InterlocksPanelImpl: React.FC<InterlocksPanelProps> = ({
         </button>
       </div>
       <div className="p-4 flex-1 overflow-auto">
-        {(tripped || firstOutTagId !== null) && (
+        {plcTripLatch === "tripped" && (
           <div
             data-testid="first-out"
-            role="status"
+            role="alert"
             className="mb-4 rounded-lg border border-red-500/40 bg-red-900/20 p-2 text-sm text-red-300"
           >
-            First-out trip:{" "}
-            <strong>
-              {firstOutTagId === null ? "Unknown (not reported by PLC)" : `Tag ${firstOutTagId}`}
-            </strong>
+            {firstOutTagId === null
+              ? "PLC trip latched, first-out unknown"
+              : <>First-out trip: <strong>{`Tag ${firstOutTagId}`}</strong></>}
+          </div>
+        )}
+        {plcTripLatch === "unknown" && connected && (
+          <div
+            data-testid="trip-status-unknown"
+            role="status"
+            className="mb-4 rounded-lg border border-yellow-500/40 bg-yellow-900/20 p-2 text-sm text-yellow-300"
+          >
+            Trip status unknown (PLC trip latch not readable)
           </div>
         )}
         <div className="flex gap-4 mb-6">
