@@ -58,6 +58,27 @@
       "owner": "Swing simulation and Rate of Closure maintainers",
       "review_owner": "TOOLS-D7 and TOOLS-D8 reviewers",
       "approval_state": "blocked-pending-human-approval"
+    },
+    {
+      "exemplar_id": "tools.exemplar.triangle-lamina-mass",
+      "title": "Triangle-Multiset Lamina Mass Moments",
+      "status": "blocked",
+      "chapter_id": null,
+      "calculation_ids": [],
+      "module_ids": [],
+      "source_paths": [],
+      "test_paths": [],
+      "consumer_paths": [],
+      "worked_examples": [],
+      "blockers": [
+        "The chapter06 numerical note is not a registered calculation: executable freshness is D-plane-only, and no source-geometry producer, admitted frame, or consumer evidence is linked."
+      ],
+      "dependency_evidence": [
+        "Tools #5503 source and synthetic tests are implementation evidence only."
+      ],
+      "owner": "Humanoid Character Builder maintainers",
+      "review_owner": "TOOLS-D5, TOOLS-D6 and TOOLS-D7 reviewers",
+      "approval_state": "blocked-pending-human-approval"
     }
   ]
 }

@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "59c1ea56831cd64c987db3a0374c3a8c0117f6f6b189fc50ecf8d7360b61ea33",
+      "content_sha256_lf": "fa8b8af0d5cbfdbc88ae9f61f70d1e027e3955cbb661b9b78a851737248c972e",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -171,7 +171,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-shared-scripts.json"
     },
     {
-      "content_sha256_lf": "1ff4cc6c51657b9d77f206633f8be4a38f88996bf1a83da92369ddf8c3946472",
+      "content_sha256_lf": "482457438c623f821348a5fdee94e93ee755002b7a140e4fe400fda11c8e701d",
       "entry_count": 1,
       "package": "src",
       "path": "manuals/tools/manifests/module-inventory/entries-src.json"
@@ -597,7 +597,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "dd4bbf4e2dc96e9872cc5a6c28b4cc9961e44470666256a3ed965e3a1a005c8c",
+      "content_sha256_lf": "f3172e968168925a8dbd4381fb04b129252ea81083e905ef8fef9f79a582af16",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
@@ -675,8 +675,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-gui-launcher.json"
     },
     {
-      "content_sha256_lf": "2750f1bd9ecbc5816e2166448f21408a79b225cbb41c5d7fc4f3bcafe0a94564",
-      "entry_count": 29,
+      "content_sha256_lf": "89f30e333310478803cb50f5ca424d5671bc325a02a3205d86c25d2288d72177",
+      "entry_count": 30,
       "package": "src/shared/python/humanoid_character_builder",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-humanoid-character-builder.json"
     },

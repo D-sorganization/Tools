@@ -134,14 +134,14 @@
   pdfcreator={LaTeX via pandoc}}
 
 \ifXeTeX
-\special{pdf:trailerid [ <5f88e121d8d645d650de6aeb30af230d> <5f88e121d8d645d650de6aeb30af230d> ]}
+\special{pdf:trailerid [ <f63a05cc0b528f1a6f8259f70c1cd109> <f63a05cc0b528f1a6f8259f70c1cd109> ]}
 \fi
 \ifPDFTeX
 \pdftrailerid{}
-\pdftrailer{/ID [ <5f88e121d8d645d650de6aeb30af230d> <5f88e121d8d645d650de6aeb30af230d> ]}
+\pdftrailer{/ID [ <f63a05cc0b528f1a6f8259f70c1cd109> <f63a05cc0b528f1a6f8259f70c1cd109> ]}
 \fi
 \ifLuaTeX
-\pdfvariable trailerid {[ <5f88e121d8d645d650de6aeb30af230d> <5f88e121d8d645d650de6aeb30af230d> ]}
+\pdfvariable trailerid {[ <f63a05cc0b528f1a6f8259f70c1cd109> <f63a05cc0b528f1a6f8259f70c1cd109> ]}
 \fi
 
 \title{Tools Engineering Design Manual}
@@ -163,15 +163,22 @@
 This is the canonical editable QMD source for the Tools engineering
 design manual. It is a governance scaffold, not a released engineering
 manual. The file-level module inventory is complete for its declared
-tracked-source denominator. TOOLS-D4 registers one model-conditioned
-D-plane calculation and one swing/Rate-of-Closure textbook exemplar with
-exact source, consumer, test, fixture, equation, unit, and limitation
-traceability. The markerless-mocap exemplar remains explicitly blocked
-because its authority PR is unmerged and no markerless module exists on
-this exact source base. Release remains blocked by TOOLS-D5 through
-TOOLS-D9 and outstanding D4 approvals. Generated HTML, LaTeX, PDF, and
-DOCX artifacts are reproducible engineering records under TOOLS-D2, but
-none is approved for publication or engineering use.
+tracked-source denominator; it is awaiting regeneration for the \#5503
+source additions and is not treated as current for this change. TOOLS-D4
+registers one model-conditioned D-plane calculation and one
+swing/Rate-of-Closure textbook exemplar with exact source, consumer,
+test, fixture, equation, unit, and limitation traceability. The
+markerless-mocap exemplar remains explicitly blocked because its
+authority PR is unmerged and no markerless module exists on this exact
+source base. Release remains blocked by TOOLS-D5 through TOOLS-D9 and
+outstanding D4 approvals. Generated HTML, LaTeX, PDF, and DOCX artifacts
+are reproducible engineering records under TOOLS-D2, but none is
+approved for publication or engineering use.
+
+Chapter 06 is an included, unregistered numerical-kernel note for
+triangle-multiset lamina moments. It is not a governed calculation or
+exemplar: the current freshness generator does not execute this pathway,
+and no source mesh/consumer admission or scientific review is supplied.
 
 \section{Documentation Authority and Release
 Boundary}\label{documentation-authority-and-release-boundary}
@@ -1033,6 +1040,426 @@ internal Simscape state.
 R2025b Operating-Point Workflow} documents compatibility and effective
 configuration constraints. These native claims require separate actual
 execution evidence from UpstreamDrift.
+
+\section{Triangle-Multiset Lamina Mass
+Moments}\label{triangle-multiset-lamina-mass-moments}
+
+\subsection{Purpose and Scope}\label{purpose-and-scope-1}
+
+This note describes the numerical kernel introduced for Tools \#5503.
+Given triangles already expressed in one orthonormal metre frame and one
+positive total mass, it computes the center of mass and inertia tensor
+of a zero-thickness lamina whose surface-mass density is proportional to
+unsigned triangle area. The source is a triangle \textbf{multiset}:
+repeated faces count repeatedly. The kernel is included in the manual
+for transparent review but is not yet a registered or approved
+calculation. It does not load or admit a geometry asset, establish frame
+authority, infer tissue ownership, model volume or thickness, or qualify
+a native humanoid/body model.
+
+\subsection{Design by Contract}\label{design-by-contract-1}
+
+\subsubsection{Preconditions}\label{preconditions-1}
+
+\texttt{vertices} must convert to a finite \texttt{float64} array of
+shape \texttt{(N,\ 3)}. \texttt{faces} is an integer array of shape
+\texttt{(T,\ 3)} whose indices lie in \texttt{{[}0,\ N)}. \texttt{mass}
+is a positive, finite, non-boolean scalar in kilograms. All vertex
+coordinates are metres in one caller-declared orthonormal coordinate
+frame. At least one input triangle must have positive representable
+area; each nonzero area and its normalized fraction must be
+representable as a positive \texttt{float64}, and total area must remain
+finite.
+
+\subsubsection{Postconditions}\label{postconditions-1}
+
+The result reports the area-weighted center in metres and the
+center-of-mass inertia tensor in kg m² for the declared lamina. It also
+reports total unsigned area, zero-area face count, exact coincident
+positive-area face count, and indexed boundary/nonmanifold edge counts.
+The duplicate diagnostic counts each repeated coordinate face beyond its
+first occurrence. The compatible \texttt{InertiaResult} uses
+\texttt{volume=0}, \texttt{was\_watertight=False}, and the distinct
+\texttt{triangle\_multiset\_lamina\_mass} mode so it cannot imply a
+closed solid.
+
+\subsubsection{Invariants}\label{invariants-1}
+
+Reordering faces, translating the complete geometry, or applying a
+proper rigid rotation preserves mass and scalar invariants; translation
+changes the center by the same translation and does not change central
+inertia. Scaling coordinates by a positive factor scales area by its
+square, preserves the area fractions, and scales inertia by the square
+when total mass is held fixed. Subdivision that preserves the geometric
+surface and area measure preserves the moments within numerical
+tolerance. A repeated positive-area face retains its multiplicity in
+both mass allocation and the diagnostic count.
+
+\subsection{Coordinates, Frames, and
+Time}\label{coordinates-frames-and-time-1}
+
+\subsubsection{Coordinate Frames}\label{coordinate-frames-1}
+
+The function accepts coordinates in the caller's existing frame and
+performs no frame transform. All vertices must use the same origin,
+axes, handedness, and scale. No source-frame identifier is present in
+this numerical API; a consumer that needs provenance or a native body
+frame must bind that separately before calling it.
+
+\subsubsection{Axis and Handedness}\label{axis-and-handedness-1}
+
+The covariance and inertia formulas use Euclidean three-dimensional
+vectors. They are invariant to proper orthogonal basis rotation when
+both inputs and outputs are transformed consistently. Triangle winding
+does not select a normal or sign: area is unsigned and the represented
+surface has no orientation semantics.
+
+\subsubsection{Time Convention}\label{time-convention-1}
+
+This is a static geometry calculation and has no time, interpolation, or
+integration policy. It cannot be used to infer a time-varying body
+shape.
+
+\subsection{Units and Dimensions}\label{units-and-dimensions-1}
+
+\subsubsection{Symbol and Unit Table}\label{symbol-and-unit-table-1}
+
+{\def\LTcaptype{none} % do not increment counter
+\begin{longtable}[]{@{}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}
+  >{\raggedright\arraybackslash}p{(\linewidth - 4\tabcolsep) * \real{0.3333}}@{}}
+\toprule\noalign{}
+\begin{minipage}[b]{\linewidth}\raggedright
+Symbol or field
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Meaning
+\end{minipage} & \begin{minipage}[b]{\linewidth}\raggedright
+Unit
+\end{minipage} \\
+\midrule\noalign{}
+\endhead
+\bottomrule\noalign{}
+\endlastfoot
+\(\mathbf{x}\), triangle vertices & Position in the common input frame &
+m \\
+\(A_i\), \(A\) & Triangle area and total multiset area & m² \\
+\(w_i\) & Triangle area fraction & 1 \\
+\(m\) & Caller-specified total lamina mass & kg \\
+\(\mathbf{c}\) & Area-weighted center of mass & m \\
+\(\mathbf{C}\) & Mass-normalized central covariance & m² \\
+\(\mathbf{I}\) & Central inertia tensor & kg m² \\
+\end{longtable}
+}
+
+\subsubsection{Dimensional Checks}\label{dimensional-checks-1}
+
+Area fractions are dimensionless. Nonzero areas and normalized face
+fractions that underflow to zero in \texttt{float64} are rejected, not
+assigned zero mass or reported as degenerate. No geometric area epsilon
+is used. The covariance has units m² because it is an area-weighted
+second central moment divided by total area. Multiplication by mass
+yields kg m². The zero-thickness convention sets reported volume to 0
+m³; it is not an estimated enclosed volume.
+
+\subsection{Derivation and
+Assumptions}\label{derivation-and-assumptions-1}
+
+\subsubsection{Assumptions}\label{assumptions-1}
+
+Each triangle carries uniform surface density, with one shared areal
+density \(\sigma=m/A\) over the entire input multiset. Mass is
+apportioned by unsigned area. Triangles may be disconnected, overlap,
+coincide, or have inconsistent winding; overlap is not removed.
+Degenerate zero-area triangles contribute no mass and are reported
+separately. The derivation assumes ordinary Euclidean coordinates and no
+thickness or volumetric contribution.
+
+\subsubsection{Derivation}\label{derivation-1}
+
+For triangle vertices
+\(\mathbf{v}_{i1},\mathbf{v}_{i2},\mathbf{v}_{i3}\),
+
+\[
+A_i=\frac{1}{2}\left\|
+(\mathbf{v}_{i2}-\mathbf{v}_{i1})\times
+(\mathbf{v}_{i3}-\mathbf{v}_{i1})\right\|,\qquad
+A=\sum_i A_i,\qquad w_i=\frac{A_i}{A}.
+\]
+
+The triangle centroid is
+\(\mathbf{c}_i=(\mathbf{v}_{i1}+\mathbf{v}_{i2}+
+\mathbf{v}_{i3})/3\), and the lamina center is
+\(\mathbf{c}=\sum_i w_i\mathbf{c}_i\). Uniform barycentric coordinates
+on one triangle have covariance
+
+\[
+\mathbf{C}_i=\frac{1}{12}\sum_{k=1}^{3}
+(\mathbf{v}_{ik}-\mathbf{c}_i)(\mathbf{v}_{ik}-\mathbf{c}_i)^T.
+\]
+
+Applying the law of total covariance over triangle identity and
+within-triangle position gives
+
+\protect\phantomsection\label{triangle-lamina-covariance}{}
+
+\[
+\mathbf{C}=\sum_i w_i\left[\mathbf{C}_i+
+(\mathbf{c}_i-\mathbf{c})(\mathbf{c}_i-\mathbf{c})^T\right].
+\]
+
+For a mass distribution with central covariance \(\mathbf{C}\),
+
+\protect\phantomsection\label{triangle-lamina-inertia}{}
+
+\[
+\mathbf{I}=m\left[\operatorname{tr}(\mathbf{C})\mathbf{1}_3-\mathbf{C}\right].
+\]
+
+This formula returns the standard inertia tensor, including signed
+off-diagonal tensor components. \texttt{InertiaResult.as\_urdf\_dict()}
+exports those same symmetric tensor entries as URDF \texttt{ixy},
+\texttt{ixz}, and \texttt{iyz} coefficients. The exporter does not
+negate them: an actual MuJoCo URDF loadback test checks the
+reconstructed native tensor and kinetic energy for an asymmetric
+inertia. This verifies that particular exporter/consumer path, not every
+URDF parser or native engine.
+
+\subsection{Algorithm}\label{algorithm-1}
+
+\subsubsection{Inputs}\label{inputs-1}
+
+The public function
+\texttt{compute\_triangle\_lamina(vertices,\ faces,\ mass)} consumes
+only the arrays and scalar above. It does not consume a path, mesh
+object, transform, frame label, density, thickness, or native model.
+
+\subsubsection{Procedure}\label{procedure-1}
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Validate the mass and array shapes, finiteness, face dtype, and index
+  bounds.
+\item
+  Gather indexed triangles and compute unsigned area weights.
+\item
+  Reject nonpositive or nonfinite total area; omit only exactly
+  zero-area triangles from moment/topology accumulation.
+\item
+  Choose the first vertex of a maximum-area face as a local origin, then
+  compute weighted center and central covariance in that translated
+  frame.
+\item
+  Convert covariance to inertia and reject nonfinite center or tensor
+  values.
+\item
+  Count exact duplicate positive-area coordinate triangles independent
+  of winding, and count edge degree using source vertex indices.
+\item
+  Return a distinct lamina mode and explicit diagnostics without
+  repairing or modifying source arrays.
+\end{enumerate}
+
+The numerical arrays are vectorized over faces. Working memory is linear
+in the number of input faces; uniqueness diagnostics sort/compare face
+and edge records and are not a streaming algorithm.
+
+\subsubsection{Outputs}\label{outputs-1}
+
+\texttt{TriangleLaminaResult} contains an \texttt{InertiaResult}, total
+area, zero-area face count, duplicate positive-area coordinate-face
+count, indexed boundary-edge count, and indexed nonmanifold-edge count.
+The embedded legacy result object remains mutable for compatibility.
+Counts are diagnostics, not mesh validation.
+
+\subsection{Implementation Symbols}\label{implementation-symbols-1}
+
+\subsubsection{Public Symbols}\label{public-symbols-1}
+
+\texttt{compute\_triangle\_lamina} and \texttt{TriangleLaminaResult} are
+defined in
+\texttt{src/shared/python/humanoid\_character\_builder/mesh/triangle\_lamina.py}.
+\texttt{InertiaMode.TRIANGLE\_MULTISET\_LAMINA\_MASS} and the compatible
+\texttt{InertiaResult} representation are defined in
+\texttt{src/shared/python/humanoid\_character\_builder/mesh/inertia\_calculator.py}.
+This note does not assert that the module is a stable published consumer
+API.
+
+\subsubsection{Source Mapping}\label{source-mapping-1}
+
+The method maps to \texttt{\_area\_weights},
+\texttt{\_centered\_moments}, and \texttt{compute\_triangle\_lamina} in
+\texttt{triangle\_lamina.py}; mode identity is mapped in
+\texttt{inertia\_calculator.py}. Analytic and metamorphic checks are in
+\texttt{src/shared/python/humanoid\_character\_builder/tests/test\_triangle\_lamina.py}.
+This kernel is separate from \texttt{MeshInertiaCalculator}, which
+derives solid properties from volume-mesh processing and watertightness
+policy.
+
+\subsection{Error and Failure
+Semantics}\label{error-and-failure-semantics-1}
+
+\subsubsection{Error Conditions}\label{error-conditions-1}
+
+Wrong scalar kind or noninteger face indices raise \texttt{TypeError}.
+Invalid scalar range, malformed/nonfinite vertices, face shape or
+bounds, no positive finite total area, and nonfinite output moments
+raise \texttt{ValueError}. The function does not repair malformed
+topology or substitute default mass/geometry.
+
+\subsubsection{Recovery and
+Cancellation}\label{recovery-and-cancellation-1}
+
+The caller must correct source inputs and resubmit. There is no partial
+result, fallback solid calculation, or cancellation callback. Large
+inputs are bounded only by caller-provided memory and face count; this
+API provides no resource budget or streaming cancellation guarantee.
+
+\subsection{Uncertainty and
+Sensitivity}\label{uncertainty-and-sensitivity-1}
+
+\subsubsection{Uncertainty Sources}\label{uncertainty-sources-1}
+
+This kernel propagates no uncertainty distribution. Its values depend on
+caller-selected coordinates, mesh sampling, face multiplicity, declared
+mass, and the unverified assumption of uniform area density. It does not
+determine whether those assumptions are appropriate for an object or
+body segment.
+
+\subsubsection{Sensitivity}\label{sensitivity-1}
+
+Area and second moments are sensitive to coordinate perturbations and
+changes in tessellation or face multiplicity. Very small representable
+positive areas remain in the calculation; no tolerance silently removes
+them. Nonzero areas or fractions not representable as positive
+\texttt{float64} are rejected. Summation and floating-point rounding
+still affect results. The local-origin accumulation reduces avoidable
+cancellation for translated geometry but does not provide an error bound
+for every scale or conditioning regime.
+
+\subsection{Verification and
+Validation}\label{verification-and-validation-1}
+
+\subsubsection{Test Evidence}\label{test-evidence-1}
+
+\texttt{test\_triangle\_analytic\_mass\_com\_and\_off\_diagonal} checks
+the exact triangular lamina result. Other tests check a rectangular
+plate and subdivision, an analytic cube shell, rigid
+transforms/scaling/input immutability, duplicate and degenerate faces,
+remote negligible-area faces, small representable and unrepresentable
+areas, complex-coordinate rejection, and invalid input classes. These
+are independent synthetic analytic or metamorphic tests; they are not
+validation against a measured object or biomechanical segment.
+
+\subsubsection{Acceptance Criteria}\label{acceptance-criteria-1}
+
+Numerical kernel acceptance requires finite typed inputs, correct
+analytic moments, expected rigid-transform and subdivision invariants,
+explicit degeneracy diagnostics, and fail-closed invalid-input behavior.
+Those criteria do not establish source asset provenance, unit/frame
+correctness of a producer, partial-overlap handling, biological mass
+distribution, or native-model admission. The calculation freshness
+generator currently executes only the D-plane pathway; this note
+therefore remains outside the registered calculation set and cannot be
+represented as freshness-verified or exemplar-verified.
+
+\subsection{Limits and Applicability}\label{limits-and-applicability-1}
+
+\subsubsection{Validity Range}\label{validity-range-1}
+
+The equations apply to a finite positive-area triangle multiset in one
+orthonormal Euclidean metre frame with a positive finite caller-owned
+total mass. Degenerate faces may be present but contribute no area or
+mass. No evidence here establishes useful geometric scales beyond
+representable, finite floating-point inputs.
+
+\subsubsection{Known Limitations}\label{known-limitations-1}
+
+Coincident triangles retain multiplicity; partial overlap is neither
+detected nor corrected. Duplicate detection is exact-coordinate and
+ignores winding, whereas edge topology uses vertex indices. Indexed
+boundary/nonmanifold counts do not prove surface closure, manifoldness,
+or self-intersection absence. No volume, thickness, density field,
+material, anatomy, frame transform, native asset loader, downstream
+consumer or physical acceptance is included. The registered calculation,
+freshness workflow, source asset producer and any engineering-use
+approval remain blocked.
+
+\subsection{Worked Examples}\label{worked-examples-1}
+
+\subsubsection{Example Inputs}\label{example-inputs-1}
+
+Use vertices \((0,0,0)\), \((3,0,0)\), and \((0,6,0)\) metres, one face
+with indices \((0,1,2)\), and total mass \(2\) kg. The triangle area is
+\(9\) m² and the face receives all of the declared mass.
+
+\subsubsection{Example Results}\label{example-results-1}
+
+The centroid is \((1,2,0)\) m. Integrating the uniform triangular area
+gives
+\(\mathbf{C}=\begin{bmatrix}1/2&-1/2&0\\-1/2&2&0\\0&0&0\end{bmatrix}\)
+m². The returned inertia matrix is
+\(\mathbf{I}=\begin{bmatrix}4&1&0\\1&1&0\\0&0&5\end{bmatrix}\) kg m²,
+with all three indexed edges counted as boundary edges. The example
+verifies the kernel's declared lamina equations; it is not an
+asset-backed exemplar or evidence about a physical segment.
+
+\subsection{References and
+Provenance}\label{references-and-provenance-1}
+
+\subsubsection{References}\label{references-2}
+
+\begin{itemize}
+\tightlist
+\item
+  \texttt{src/shared/python/humanoid\_character\_builder/mesh/triangle\_lamina.py}
+  --- implementation of the triangle-multiset weighting and moments.
+\item
+  \texttt{src/shared/python/humanoid\_character\_builder/mesh/inertia\_calculator.py}
+  --- compatible result/mode definitions and separate solid-mesh
+  pathway.
+\item
+  \texttt{src/shared/python/humanoid\_character\_builder/tests/test\_triangle\_lamina.py}
+  --- analytic and metamorphic synthetic tests.
+\item
+  \texttt{src/shared/python/humanoid\_character\_builder/tests/test\_urdf\_inertia\_export.py}
+  --- symmetric-entry round-trip and an actual MuJoCo
+  tensor/kinetic-energy readback.
+\item
+  \href{https://pure.korea.ac.kr/en/publications/inertia-tensor-of-a-triangle-in-barycentric-coordinates/}{Inertia
+  tensor of a triangle in barycentric coordinates} --- independent
+  derivation reference for triangle area moments.
+\item
+  \href{https://github.com/ros/kdl_parser/blob/ros2/kdl_parser/src/kdl_parser.cpp}{ROS
+  2 KDL URDF parser} --- primary consumer source for the direct
+  tensor-coefficient interpretation tested by the exporter regression.
+\end{itemize}
+
+\subsubsection{Provenance}\label{provenance-1}
+
+This chapter is a provisional technical note for Tools \#5503/\#5504.
+The exact source and tests are tracked in the same development change.
+The canonical module inventory is regenerated, but executable freshness
+support beyond the D-plane calculation, governed calculation
+registration, source geometry producer, anatomical consumer
+traceability, external scientific review, artifact/page review, and
+human approval are not complete. The MuJoCo check is limited to an
+analytic asymmetric URDF fixture and does not establish all-engine
+parity. No private mesh or capture data is used or reproduced here.
+
+\subsection{Revision History}\label{revision-history-1}
+
+\subsubsection{Revision Record}\label{revision-record-1}
+
+\begin{itemize}
+\tightlist
+\item
+  0.1.0 (2026-10-10): Document the provisional triangle-multiset lamina
+  kernel and its analytic/synthetic evidence; keep governed registration
+  and all source/consumer/engineering qualification blocked.
+\end{itemize}
 
 \protect\phantomsection\label{refs}
 \begin{CSLReferences}{1}{1}

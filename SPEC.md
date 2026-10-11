@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
 | 2026-10-10 | #5507 | dependabot: group cargo and pip minor/patch updates into one weekly PR per ecosystem |
+| 2026-10-10 | #5503 | Add a provisional triangle-multiset lamina mass-moment kernel with an explicit 3-value result tuple; update renderer, artifact-QA, and exemplar contract tests; keep calculation/exemplar registration blocked pending executable freshness and source/consumer authority |
 | 2026-10-10 | #5481 | Deterministic 1440x900 visual-baseline candidates: settle tab-pill transitions before capture and pin determinism with a two-session test |
 | 2026-10-09 | #5478 | PR #5479: bind shard status to workflow attempts, retain every invocation coverage file, and select the latest complete attempt fail-closed |
 | 2026-10-09 | #5473 | Repair canonical source-count and PDF extractor line-wrapping regressions while preserving artifact integrity and release blockers; governed follow-up for issue5472; Repair canonical manual source-count regression while preserving release blockers |
@@ -7768,3 +7769,7 @@ Note on #4462 (investigated, not fixed here): the issue describes a coverage gap
 ## 2026-10-09: Compiled Actuator Command References (#5475)
 
 - **2026-10-09**: feat(mocap, #5475) — Permit a muscle-drive evidence row to carry a T01 `ACTUATOR_COMMAND` bundle only when required, supported, available actuator implementation evidence names the versioned `compiled-actuator-profile/1.0.0` discriminator and exactly matches one opaque actuator artifact reference by ID and SHA-256. This is a structural link only; UpstreamDrift resolves and verifies profile bytes against the executed native model, actuator laws, ordered channels, replay policy and full initial state. It does not equate dimensionless commands with torque, excitation or activation, or qualify model physics. Opaque-token validation binds the shared helper result to an explicit string-typed local for mypy.
+
+## 2026-10-10: Triangle-Multiset Lamina Mass and URDF Inertia Export (#5503 / #5504)
+
+- **2026-10-10**: feat(mesh, #5503, #5504) — Add a triangle-multiset zero-thickness lamina mass-moment kernel and correct URDF export of signed off-diagonal inertia entries. Synthetic analytic/metamorphic tests validate the lamina kernel; an actual MuJoCo URDF loadback checks an asymmetric tensor and kinetic energy. The chapter remains unregistered, no source geometry or anatomical model is admitted, and the focused native test does not establish all-engine parity or scientific approval. See `docs/development/triangle-lamina-mass-5503.md`.

@@ -3,7 +3,7 @@
   "manual_id": "tools",
   "release_status": "generated-unapproved",
   "source_commit": null,
-  "source_sha256_lf": "e83d68f7b0f7ec24b8ced92e6a1afd081c407a57f9eab9989ae9a074e70c21a3",
+  "source_sha256_lf": "9291650a2435114cdf0ba8d91919dbc661388cc282355ccd4c4a1752ca191ecd",
   "toolchain_lock_sha256_lf": "62915da70f09da3fead98ae71ccb94c2afaec7db2de390faa97234e103426b9b",
   "semantic_sha256": "bb183407d580e49bcd2c1be13005cfc28237b01948ea7c498d83a723d251c2f8",
   "semantic_parity": "verified",
@@ -21,32 +21,32 @@
       "format": "docx",
       "path": "manuals/tools/dist/tools-engineering-design-manual.docx",
       "media_type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-      "bytes": 74097,
-      "sha256": "e8707b6756119ba80ec45dd332e4711058a375019dc7c938ff5922adf2923fcc",
+      "bytes": 82413,
+      "sha256": "38233a9391e0fc8a0a62301924b02c6ad510646d8c5993daf05fb1afa3f60346",
       "semantic_sha256": "bb183407d580e49bcd2c1be13005cfc28237b01948ea7c498d83a723d251c2f8"
     },
     {
       "format": "html",
       "path": "manuals/tools/dist/tools-engineering-design-manual.html",
       "media_type": "text/html",
-      "bytes": 107068,
-      "sha256": "94a30c27d476494aaf8abe3f594a0b2745790687aa561cdeeb42db69fa8680e5",
+      "bytes": 134654,
+      "sha256": "08a31180d6bb4b955fe5adbbc8018d0a308ca64279b12588a6ffe227195466d6",
       "semantic_sha256": "bb183407d580e49bcd2c1be13005cfc28237b01948ea7c498d83a723d251c2f8"
     },
     {
       "format": "pdf",
       "path": "manuals/tools/dist/tools-engineering-design-manual.pdf",
       "media_type": "application/pdf",
-      "bytes": 288192,
-      "sha256": "c179d6ace47ddeb923db14f3a0c12569a1825df480a1ca45ee347812944768ef",
+      "bytes": 340120,
+      "sha256": "335bb58228b8dc85d667ca5c640f50656f891a690c3b67100abb7814b84d36e0",
       "semantic_sha256": "bb183407d580e49bcd2c1be13005cfc28237b01948ea7c498d83a723d251c2f8"
     },
     {
       "format": "tex",
       "path": "manuals/tools/dist/tools-engineering-design-manual.tex",
       "media_type": "application/x-tex",
-      "bytes": 45570,
-      "sha256": "19ae022c7b2f5ae13fc5bc3a3616fa09aa10a6632a0db26cc4429147c4aebbe2",
+      "bytes": 63934,
+      "sha256": "1ca47faae39ca6b5cb856501d62da31a93efe2d66e9862b69a8728656b7c1999",
       "semantic_sha256": "bb183407d580e49bcd2c1be13005cfc28237b01948ea7c498d83a723d251c2f8"
     }
   ]

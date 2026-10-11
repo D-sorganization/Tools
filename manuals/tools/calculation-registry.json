@@ -19,6 +19,11 @@
       "id": "TOOLS-NATIVE-STATE-REPLAY-QUALIFICATION-REQUIRED",
       "owner": "Tools #5470 and UpstreamDrift #11921",
       "resolution": "Complete native-state transport schema/gates and exact provider decoding/restart/integration evidence. Pure contract validation and the chapter05 source do not qualify physical replay or approve manual release."
+    },
+    {
+      "id": "TOOLS-TRIANGLE-LAMINA-CALCULATION-BLOCKED",
+      "owner": "Tools #5503 and TOOLS-D5/TOOLS-D6",
+      "resolution": "Chapter06 is an included but unregistered numerical note. Extend executable freshness beyond the D-plane-only generator, then establish source-asset/frame authority and consumer traceability before adding a calculation row or exemplar. The synthetic kernel tests do not qualify an anatomical or native-model mass property."
     }
   ],
   "calculations": [

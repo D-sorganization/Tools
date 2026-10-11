@@ -138,7 +138,7 @@ def test_inspect_docx_artifact_finds_math_headings_and_tables() -> None:
     assert result.paragraph_count >= 188
     assert result.heading_count >= 69
     assert result.math_element_count >= 52
-    assert result.table_count == 1
+    assert result.table_count == 2
     assert result.drawing_count == 1
     assert result.unresolved_reference_count == 0
 

@@ -673,6 +673,8 @@
           "src/pendulum_simulator/tests/test_hub_options.py",
           "src/pendulum_simulator/tests/test_no_scroll_widgets.py",
           "src/shared/python/humanoid_character_builder/tests/test_inertia_calculator.py",
+          "src/shared/python/humanoid_character_builder/tests/test_triangle_lamina.py",
+          "src/shared/python/humanoid_character_builder/tests/test_urdf_inertia_export.py",
           "src/shared/python/swing_sim/conventions/tests/test_registry.py",
           "src/shared/python/swing_sim/ground/tests/test_upstream_terrain_adapter.py",
           "src/shared/python/swing_sim/impact/tests/test_dplane.py",
