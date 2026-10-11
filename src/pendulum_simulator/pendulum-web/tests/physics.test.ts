@@ -12,8 +12,10 @@
  *   8. Forward kinematics at known positions
  *   9. runSimulation pre-conditions and post-conditions
  */
+import { readFileSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
 import {
+    distalInertia,
     makePendulumParams,
     massMatrix,
     massMatrixComponents,
@@ -258,5 +260,59 @@ describe('runSimulation', () => {
         expect(() =>
             runSimulation(stdParams, [0, 0, 0, 0], 1.0, zeroTorque, 2.0)
         ).toThrow();
+    });
+});
+
+// ── Canonical distributed club convention (Tools #5431) ──────────────────────
+
+describe('distributed club convention', () => {
+    it('matches the shared Python/Rust parity fixture', () => {
+        const fixture = JSON.parse(readFileSync(
+            new URL('../../tests/fixtures/distal_inertia_cases.json', import.meta.url), 'utf8',
+        ));
+        expect(fixture.cases.length).toBeGreaterThanOrEqual(5);
+        for (const c of fixture.cases) {
+            const club = distalInertia(c.shaft_mass_kg, c.head_mass_kg, c.length_m);
+            expect(club.mass).toBeCloseTo(c.mass_kg, 14);
+            expect(club.firstMoment).toBeCloseTo(c.first_moment_kg_m, 14);
+            expect(club.pivotInertia).toBeCloseTo(c.inertia_about_pivot_kg_m2, 14);
+        }
+    });
+
+    it('issue reproducer: m1=2, m2=3, mClub=1, qdot=[0,2] carries 4 J (was 8 J lumped)', () => {
+        const p = makePendulumParams({
+            m1: 2, m2: 3, mClub: 1, L1: 0.7, L2: 1, g: 9.81, b1: 0, b2: 0, mu1: 0, mu2: 0,
+        });
+        const [, , , M22] = massMatrix(0, p);
+        expect(0.5 * M22 * 2 ** 2).toBeCloseTo(4, 12);
+    });
+
+    it('head-only limit recovers the lumped point mass; no head gives a uniform rod', () => {
+        const base = { m1: 2, L1: 0.7, g: 9.81, b1: 0, b2: 0, mu1: 0, mu2: 0 };
+        const lumped = makePendulumParams({ ...base, m2: 1e-12, mClub: 1.5, L2: 1.1 });
+        expect(massMatrix(0.4, lumped)[3]).toBeCloseTo(1.5 * 1.1 ** 2, 9);
+        const rod = makePendulumParams({ ...base, m2: 3, mClub: 0, L2: 1.2 });
+        expect(massMatrix(0.4, rod)[3]).toBeCloseTo(3 * 1.2 ** 2 / 3, 12);
+    });
+
+    it('hand-derived unit case: Mc=1, s=0.75, Jw=2/3 at L1=L2=1, m1=2', () => {
+        const p = makePendulumParams({
+            m1: 2, m2: 0.5, mClub: 0.5, L1: 1, L2: 1, g: 9.81, b1: 0, b2: 0, mu1: 0, mu2: 0,
+        });
+        const [M11, M12, , M22] = massMatrix(0, p);
+        expect(M11).toBeCloseTo((2 + 1) + 2 / 3 + 1.5, 12);
+        expect(M12).toBeCloseTo(2 / 3 + 0.75, 12);
+        expect(M22).toBeCloseTo(2 / 3, 12);
+    });
+
+    it('a passive undamped swing conserves total energy', () => {
+        const p = makePendulumParams({
+            m1: 5, m2: 0.1078, mClub: 0.2022, L1: 0.65, L2: 1.1, g: 9.81,
+            b1: 0, b2: 0, mu1: 0, mu2: 0,
+        });
+        const result = runSimulation(p, [1.0, 0.5, 0.3, -0.2], 1.0, zeroTorque, 0.0005);
+        const last = result.states[result.states.length - 1];
+        const e0 = totalEnergy(result.states[0], p);
+        expect(Math.abs(totalEnergy(last, p) - e0)).toBeLessThan(1e-6);
     });
 });

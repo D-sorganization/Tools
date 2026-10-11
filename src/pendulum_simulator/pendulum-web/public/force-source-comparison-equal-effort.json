@@ -9166,6 +9166,7 @@
     "Every winner shares the registered positive-work and squared-torque-effort caps; resulting speed is an outcome, not an objective constraint.",
     "Equal profile IDs identify objectives that selected exactly the same polynomial controls.",
     "The target speed is a study contract or comparison marker, not evidence that this fixed-hub model reproduces a human golfer.",
-    "This synthetic planar model is exploratory, not individualized swing advice."
+    "This synthetic planar model is exploratory, not individualized swing advice.",
+    "STALE: generated with the superseded lumped-tip club mass convention; the canonical distributed club (Tools #5431) changes the inertia, so these numbers must be regenerated (Tools #5553) before being cited."
   ]
 }

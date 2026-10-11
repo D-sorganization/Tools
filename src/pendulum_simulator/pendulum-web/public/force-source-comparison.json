@@ -9233,6 +9233,7 @@
     "Every winner is inside 52.30–53.05 m/s and the common actuator-effort caps.",
     "Equal profile IDs identify objectives that selected exactly the same polynomial controls.",
     "The target speed is a study contract or comparison marker, not evidence that this fixed-hub model reproduces a human golfer.",
-    "This synthetic planar model is exploratory, not individualized swing advice."
+    "This synthetic planar model is exploratory, not individualized swing advice.",
+    "STALE: generated with the superseded lumped-tip club mass convention; the canonical distributed club (Tools #5431) changes the inertia, so these numbers must be regenerated (Tools #5553) before being cited."
   ]
 }

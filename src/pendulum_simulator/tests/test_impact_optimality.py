@@ -1,9 +1,15 @@
 """Contract tests for the impact-optimality coefficient.
 
 These pin the diagnosis behind epic #4775: the optimizer stops the hands at
-impact because, in a point-mass-clubhead model, that *is* the optimum. If the
-coefficient below ever stops being identically zero for the shipped model, the
-diagnosis has changed and the surrounding conclusions need revisiting.
+impact because, in a point-mass-clubhead model, that *is* the optimum.
+
+Tools #5431 changed the shipped model from that lumped club to the canonical
+distributed one (uniform shaft ``m2`` plus a head point mass).  The diagnosis
+therefore moved exactly as the contract below warned: the coefficient is zero
+only in the head-only (lumped) limit, ``_LUMPED``, and is strictly negative for
+the shipped model, so the speed-optimal swing now wants the hands moving
+backward rather than stopped.  Follow-up #5523 re-runs the conclusions that
+rested on the old zero.
 
 Closes #4776.
 """
@@ -21,12 +27,26 @@ from double_pendulum_golf.swing_objectives.impact_optimality import (
 )
 
 _PARAMS = PendulumParams(m1=5.0, m2=0.30, L1=0.65, L2=1.10, mClub=0.20)
+# Head-only limit of the canonical club: every gram at the tip (shaft mass -> 0).
+_LUMPED = PendulumParams(m1=5.0, m2=1e-15, L1=0.65, L2=1.10, mClub=0.50)
 _TIGHT = 1e-12
 
 
-def test_shipped_point_mass_model_has_a_zero_coefficient() -> None:
-    """The headline result: a tip-concentrated club wants the hands stopped."""
-    assert impact_hand_speed_coefficient(_PARAMS) == pytest.approx(0.0, abs=_TIGHT)
+def test_head_only_limit_has_a_zero_coefficient() -> None:
+    """The old headline result survives only in the lumped limit."""
+    assert impact_hand_speed_coefficient(_LUMPED) == pytest.approx(0.0, abs=_TIGHT)
+
+
+def test_shipped_distributed_model_has_a_negative_coefficient() -> None:
+    """Tools #5431: the shipped club is distributed, so the zero is gone.
+
+    Hand-derived for m1=5, m2=0.30, mClub=0.20, L1=0.65, L2=1.10:
+    Mc=0.5, s=(0.15+0.20)*1.1=0.385, Jw=(0.10+0.20)*1.21=0.363.  The direction
+    ``M^-1 [L1+L2, L2]`` has arm component
+    ``(Jw*(L1+L2) - (Jw + s*L1)*L2) / det`` with
+    ``Jw*L1 - s*L1*L2 = 0.65*(0.363 - 0.4235) < 0``.
+    """
+    assert impact_hand_speed_coefficient(_PARAMS) < -_TIGHT
 
 
 @pytest.mark.parametrize("arm_mass", [3.0, 5.0, 9.0])
@@ -37,11 +57,11 @@ def test_coefficient_is_zero_for_every_parameter_choice(
 ) -> None:
     """The zero is structural, not a coincidence of one parameter set.
 
-    With all of segment 2's mass at the tip, the club's kinetic energy *is*
-    ``0.5 * me * v_head**2``, so any arm motion is energy that did not reach the
+    With all of the club's mass at the tip, its kinetic energy *is*
+    ``0.5 * Mc * v_head**2``, so any arm motion is energy that did not reach the
     clubhead — whatever the masses and lengths.
     """
-    params = PendulumParams(m1=arm_mass, m2=0.30, L1=arm_length, L2=1.10, mClub=head_mass)
+    params = PendulumParams(m1=arm_mass, m2=1e-15, L1=arm_length, L2=1.10, mClub=head_mass)
     assert impact_hand_speed_coefficient(params) == pytest.approx(0.0, abs=_TIGHT)
 
 
@@ -53,7 +73,7 @@ def test_coefficient_matches_the_mass_matrix_derivation() -> None:
     the level of floating-point noise (~1e-16) whose sign is meaningless.
     """
     for arm_length in (0.55, 0.65, 0.80):
-        params = PendulumParams(m1=5.0, m2=0.30, L1=arm_length, L2=1.10, mClub=0.20)
+        params = PendulumParams(m1=5.0, m2=1e-15, L1=arm_length, L2=1.10, mClub=0.50)
         direction = np.linalg.solve(
             mass_matrix(0.0, params),
             np.array([params.L1 + params.L2, params.L2]),
@@ -61,6 +81,19 @@ def test_coefficient_matches_the_mass_matrix_derivation() -> None:
         # Arm component is negligible against the uncock component it sits beside.
         assert abs(direction[0]) < 1e-12 * max(abs(direction[1]), 1.0)
         assert impact_hand_speed_coefficient(params) == pytest.approx(0.0, abs=_TIGHT)
+
+
+def test_shipped_coefficient_sign_matches_the_numerical_solve() -> None:
+    """For the shipped distributed club the closed form and ``M qdot = c`` agree."""
+    for arm_length in (0.55, 0.65, 0.80):
+        params = PendulumParams(m1=5.0, m2=0.30, L1=arm_length, L2=1.10, mClub=0.20)
+        direction = np.linalg.solve(
+            mass_matrix(0.0, params),
+            np.array([params.L1 + params.L2, params.L2]),
+        )
+        coefficient = impact_hand_speed_coefficient(params)
+        assert coefficient < 0.0
+        assert np.sign(direction[0]) == np.sign(coefficient)
 
 
 def test_coefficient_sign_tracks_the_numerical_solve_when_nonzero() -> None:
@@ -115,7 +148,8 @@ def test_only_an_unphysical_club_gives_a_forward_optimum() -> None:
 
 def test_optimal_hand_speed_sign_reports_the_three_regimes() -> None:
     """The helper names the regime rather than making callers read a float."""
-    assert optimal_hand_speed_sign(_PARAMS) == "stopped"
+    assert optimal_hand_speed_sign(_LUMPED) == "stopped"
+    assert optimal_hand_speed_sign(_PARAMS) == "backward"
     assert (
         optimal_hand_speed_sign(
             _PARAMS, club_com_m=0.89, club_inertia_kgm2=0.043, club_mass_kg=0.31
@@ -131,8 +165,8 @@ def test_optimal_hand_speed_sign_reports_the_three_regimes() -> None:
 
 
 def test_energy_optimal_rates_put_everything_in_the_club() -> None:
-    """For the shipped model the optimal split is all club, no arm."""
-    rates = energy_optimal_rates(_PARAMS, kinetic_energy_j=400.0)
+    """For the head-only limit the optimal split is all club, no arm."""
+    rates = energy_optimal_rates(_LUMPED, kinetic_energy_j=400.0)
     assert rates.arm_rate_rad_s == pytest.approx(0.0, abs=1e-9)
     assert rates.uncock_rate_rad_s > 0.0
     assert rates.hand_speed_m_s == pytest.approx(0.0, abs=1e-9)

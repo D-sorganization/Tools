@@ -13,9 +13,9 @@ use serde::{Deserialize, Serialize};
 pub struct DoublePendulumParams {
     /// Mass of arm segment (kg)
     pub m1: f64,
-    /// Mass of club segment (kg)
+    /// Mass of the uniform shaft (kg)
     pub m2: f64,
-    /// Point-mass clubhead contribution at the tip (kg)
+    /// Head point mass at the tip (kg)
     pub m_clubhead: f64,
     /// Length of arm segment (m)
     pub l1: f64,
@@ -29,7 +29,39 @@ pub struct DoublePendulumParams {
     pub friction2: f64,
 }
 
+/// Inertial properties of the club (uniform shaft plus head point mass) about the wrist.
+///
+/// Canonical convention (Tools #5431): shaft mass `m2` uniform over `l2` (COM `l2/2`,
+/// centroidal inertia `m2*l2^2/12`) plus the head point mass at the tip. This is the
+/// single Rust source of the three numbers every double-pendulum formula needs, and
+/// it mirrors Python `club_inertia.distal_inertia` (pinned by a shared JSON fixture).
+#[derive(Debug, Clone, Copy, PartialEq)]
+pub struct DistalInertia {
+    /// Total club mass `Mc = m2 + mh` (kg)
+    pub mass: f64,
+    /// First moment about the wrist `s = (m2/2 + mh) * l2` (kg m)
+    pub first_moment: f64,
+    /// Inertia about the wrist `Jw = (m2/3 + mh) * l2^2` (kg m^2)
+    pub pivot_inertia: f64,
+}
+
+impl DistalInertia {
+    /// Build from shaft mass, head mass and length.
+    pub fn new(shaft_mass: f64, head_mass: f64, length: f64) -> Self {
+        Self {
+            mass: shaft_mass + head_mass,
+            first_moment: (0.5 * shaft_mass + head_mass) * length,
+            pivot_inertia: (shaft_mass / 3.0 + head_mass) * length * length,
+        }
+    }
+}
+
 impl DoublePendulumParams {
+    /// Canonical club inertia (uniform shaft `m2` plus head `m_clubhead`) about the wrist.
+    pub fn distal_inertia(&self) -> DistalInertia {
+        DistalInertia::new(self.m2, self.m_clubhead, self.l2)
+    }
+
     /// Validate parameters are physically reasonable
     pub fn validate(&self) -> Result<(), String> {
         if self.m1 <= 0.0 {

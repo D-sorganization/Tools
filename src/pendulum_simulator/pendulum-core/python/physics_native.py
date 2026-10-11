@@ -49,8 +49,23 @@ def _float64_array(values: object) -> np.ndarray:
     return cast(np.ndarray, np.asarray(values, dtype=np.float64))
 
 
+def _distal_inertia(params: "DoublePendulumParams") -> tuple[float, float, float]:
+    """Club (mass, first moment about the wrist, wrist inertia).
+
+    Canonical distributed convention (Tools #5431): uniform shaft ``m2`` plus a
+    head point mass ``m_clubhead`` at ``l2``. Mirrors the Rust ``DistalInertia``
+    and Python ``double_pendulum_golf.club_inertia.distal_inertia``.
+    """
+    shaft, head, length = params.m2, params.m_clubhead, params.l2
+    return (
+        shaft + head,
+        (0.5 * shaft + head) * length,
+        (shaft / 3.0 + head) * length**2,
+    )
+
+
 class DoublePendulumParams:
-    """Parameters for the 2-DOF double pendulum model."""
+    """Parameters for the 2-DOF double pendulum model (uniform shaft plus head)."""
 
     def __init__(
         self,
@@ -166,11 +181,11 @@ class DoublePendulum:
         # NumPy fallback
         phi = q[1]
         cos_phi = np.cos(phi)
-        me = self.params.m2 + self.params.m_clubhead
-        m00 = (self.params.m1 + me) * self.params.l1**2 + me * self.params.l2**2
-        m00 += 2.0 * me * self.params.l1 * self.params.l2 * cos_phi
-        m01 = me * self.params.l2**2 + me * self.params.l1 * self.params.l2 * cos_phi
-        m11 = me * self.params.l2**2
+        club_mass, first_moment, wrist_inertia = _distal_inertia(self.params)
+        m00 = (self.params.m1 + club_mass) * self.params.l1**2 + wrist_inertia
+        m00 += 2.0 * first_moment * self.params.l1 * cos_phi
+        m01 = wrist_inertia + first_moment * self.params.l1 * cos_phi
+        m11 = wrist_inertia
         return _float64_array([[m00, m01], [m01, m11]])
 
     def gravity_vector(self, q: np.ndarray) -> np.ndarray:
@@ -194,11 +209,11 @@ class DoublePendulum:
         # NumPy fallback
         theta1 = q[0]
         theta2 = theta1 + q[1]
-        me = self.params.m2 + self.params.m_clubhead
-        g0 = (self.params.m1 + me) * self.params.g * self.params.l1 * np.sin(
-            theta1
-        ) + me * self.params.g * self.params.l2 * np.sin(theta2)
-        g1 = me * self.params.g * self.params.l2 * np.sin(theta2)
+        club_mass, first_moment, _ = _distal_inertia(self.params)
+        g1 = first_moment * self.params.g * np.sin(theta2)
+        g0 = (
+            self.params.m1 + club_mass
+        ) * self.params.g * self.params.l1 * np.sin(theta1) + g1
         return _float64_array([g0, g1])
 
     def coriolis(self, q: np.ndarray, qdot: np.ndarray) -> np.ndarray:
@@ -225,8 +240,8 @@ class DoublePendulum:
 
         # NumPy fallback
         phi = q[1]
-        me = self.params.m2 + self.params.m_clubhead
-        h = -me * self.params.l1 * self.params.l2 * np.sin(phi)
+        _, first_moment, _ = _distal_inertia(self.params)
+        h = -first_moment * self.params.l1 * np.sin(phi)
         c0 = h * (2.0 * qdot[0] * qdot[1] + qdot[1] ** 2)
         c1 = -h * qdot[0] ** 2
         return _float64_array([c0, c1])

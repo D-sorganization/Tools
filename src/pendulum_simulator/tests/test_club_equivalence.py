@@ -21,6 +21,8 @@ from double_pendulum_golf.swing_objectives.club_equivalence import (
     SEVEN_IRON_SPEC,
     RealClubSpec,
     coupling_error,
+    distributed_club_split,
+    distributed_coupling_error,
     equivalent_tip_mass,
     wrist_inertia,
 )
@@ -233,3 +235,43 @@ def test_coupling_error_matches_impact_hand_speed_coefficient_bracket() -> None:
     )
     err = coupling_error(DRIVER_SPEC, arm_length_m=l1, shaft_length_m=l2)
     assert err == pytest.approx(coeff / l2)
+
+
+# --- Canonical distributed split (Tools #5431) -------------------------------
+
+
+def test_distributed_split_reproduces_mass_and_wrist_inertia() -> None:
+    """Real masses on the canonical club reproduce the real mass and M22 exactly."""
+    from double_pendulum_golf.club_inertia import distal_inertia
+
+    for spec in (DRIVER_SPEC, SEVEN_IRON_SPEC):
+        shaft_mass, head_mass = distributed_club_split(spec, shaft_length_m=1.10)
+        club = distal_inertia(shaft_mass, head_mass, 1.10)
+        assert club.mass_kg == pytest.approx(spec.mass_kg)
+        assert club.inertia_about_pivot_kg_m2 == pytest.approx(wrist_inertia(spec))
+
+
+def test_driver_split_values_and_coupling() -> None:
+    """Pins the derivation in the module docstring: 0.108 kg shaft, 0.202 kg head."""
+    shaft_mass, head_mass = distributed_club_split(DRIVER_SPEC, shaft_length_m=1.10)
+    assert shaft_mass == pytest.approx(0.1078, abs=5e-4)
+    assert head_mass == pytest.approx(0.2022, abs=5e-4)
+    # Coupling within ~5% of the real club (the point-mass equivalent was -2.6%).
+    err = distributed_coupling_error(DRIVER_SPEC, 0.65, 1.10)
+    assert abs(err) / (0.65 * DRIVER_SPEC.mass_kg * DRIVER_SPEC.com_m) < 0.06
+
+
+def test_default_preset_pins_the_real_driver_wrist_row() -> None:
+    from double_pendulum_golf.physics import mass_matrix
+    from double_pendulum_golf.swing_objectives.presets import DEFAULT_PRESET
+
+    params = DEFAULT_PRESET.to_params()
+    assert params.m2 + params.mClub == pytest.approx(DRIVER_SPEC.mass_kg)
+    assert mass_matrix(0.3, params)[1, 1] == pytest.approx(0.2881, abs=1e-4)
+
+
+def test_distributed_split_rejects_unrepresentable_club() -> None:
+    with pytest.raises(ValueError, match="shaft_length_m"):
+        distributed_club_split(DRIVER_SPEC, shaft_length_m=0.0)
+    with pytest.raises(ValueError, match="not representable"):
+        distributed_club_split(DRIVER_SPEC, shaft_length_m=0.4)

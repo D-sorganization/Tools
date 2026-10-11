@@ -14,6 +14,8 @@ from typing import TYPE_CHECKING, Protocol, cast
 import numpy as np
 import numpy.typing as npt
 
+from .club_inertia import distal_inertia
+
 if TYPE_CHECKING:
     from .physics import PendulumParams
 
@@ -74,6 +76,12 @@ class TransferSignals:
     wrist_control_couple_nm: FloatArray
     club_angular_velocity_rad_s: FloatArray
     model_tier: str
+    #: Power of gravity on the club, ``Mc * g_vec . v_com`` (W). Optional; when
+    #: present the summary reports a real club energy balance (Tools #5431).
+    club_gravity_power_w: FloatArray | None = None
+    #: Passive couple on the club at the wrist (friction and joint limits), N m.
+    #: Optional; counted in the club energy balance when present.
+    wrist_passive_couple_nm: FloatArray | None = None
 
     def __post_init__(self) -> None:
         time = np.asarray(self.time_s, dtype=float).reshape(-1)
@@ -98,6 +106,10 @@ class TransferSignals:
             "grip_force_control_n",
         )
         object.__setattr__(self, "time_s", time)
+        for optional in ("club_gravity_power_w", "wrist_passive_couple_nm"):
+            value = getattr(self, optional)
+            if value is not None:
+                object.__setattr__(self, optional, _finite_vector(optional, value, count))
         for name in vector_names:
             object.__setattr__(self, name, _finite_vector(name, getattr(self, name), count))
         for name in planar_names:
@@ -129,6 +141,11 @@ class TransferSummary:
     wrist_control_work_j: float
     peak_grip_force_n: float
     model_tier: str
+    #: Change in club kinetic energy minus the work of the grip force, the wrist
+    #: couple and gravity on the club. Unlike ``work_closure_residual_j`` (an
+    #: identity by construction) this is a genuine physical energy balance; it is
+    #: ``None`` when the signals carry no gravity power.
+    club_energy_balance_residual_j: float | None = None
 
 
 def _negative_linear_integral(time: FloatArray, values: FloatArray) -> float:
@@ -204,6 +221,18 @@ def summarize_transfer(
         signals.wrist_control_couple_nm[indices] * signals.club_angular_velocity_rad_s[indices]
     )
     energy = signals.distal_kinetic_energy_j[indices]
+    balance_residual = None
+    if signals.club_gravity_power_w is not None:
+        couple = signals.wrist_control_couple_nm[indices]
+        if signals.wrist_passive_couple_nm is not None:
+            couple = couple + signals.wrist_passive_couple_nm[indices]
+        club_rate = signals.club_angular_velocity_rad_s[indices]
+        external_work = (
+            total_work
+            + float(np.trapezoid(couple * club_rate, time))
+            + float(np.trapezoid(signals.club_gravity_power_w[indices], time))
+        )
+        balance_residual = float(energy[-1] - energy[0] - external_work)
     return TransferSummary(
         start_s=float(start_s),
         end_s=float(end_s),
@@ -224,30 +253,62 @@ def summarize_transfer(
         wrist_control_work_j=float(np.trapezoid(wrist_power, time)),
         peak_grip_force_n=float(np.max(np.linalg.norm(total_force, axis=1))),
         model_tier=signals.model_tier,
+        club_energy_balance_residual_j=balance_residual,
     )
 
 
-def _club_kinetic_energy(states: FloatArray, params: PendulumParams) -> FloatArray:
-    """Return shaft-plus-clubhead kinetic energy for the planar model."""
+def _club_wrist_kinematics(
+    states: FloatArray, params: PendulumParams
+) -> tuple[FloatArray, FloatArray, FloatArray]:
+    """Return wrist velocity, club tangent and club angular rate for each state."""
     theta = states[:, 0]
-    phi = states[:, 1]
     proximal_rate = states[:, 2]
-    club_rate = proximal_rate + states[:, 3]
     wrist_velocity = np.column_stack(
         (
             params.L1 * np.cos(theta) * proximal_rate,
             params.L1 * np.sin(theta) * proximal_rate,
         )
     )
-    club_angle = theta + phi
+    club_angle = theta + states[:, 1]
     club_tangent = np.column_stack((np.cos(club_angle), np.sin(club_angle)))
-    shaft_com_velocity = wrist_velocity + 0.5 * params.L2 * club_rate[:, None] * club_tangent
-    tip_velocity = wrist_velocity + params.L2 * club_rate[:, None] * club_tangent
-    shaft_inertia = params.m2 * params.L2**2 / 12.0
-    shaft_energy = 0.5 * params.m2 * np.sum(shaft_com_velocity**2, axis=1)
-    shaft_energy += 0.5 * shaft_inertia * club_rate**2
-    head_energy = 0.5 * params.mClub * np.sum(tip_velocity**2, axis=1)
-    return np.asarray(shaft_energy + head_energy, dtype=float)
+    return wrist_velocity, club_tangent, proximal_rate + states[:, 3]
+
+
+def _club_kinetic_energy(states: FloatArray, params: PendulumParams) -> FloatArray:
+    """Return shaft-plus-clubhead kinetic energy for the planar model.
+
+    ``T = Mc|v_w|^2/2 + s (v_w . t) w + Jw w^2/2`` with the canonical club
+    inertia (mass Mc, first moment s, wrist inertia Jw) from
+    :func:`double_pendulum_golf.club_inertia.distal_inertia`.
+    """
+    club = distal_inertia(params.m2, params.mClub, params.L2)
+    wrist_velocity, tangent, rate = _club_wrist_kinematics(states, params)
+    energy = 0.5 * club.mass_kg * np.sum(wrist_velocity**2, axis=1)
+    energy += club.first_moment_kg_m * np.sum(wrist_velocity * tangent, axis=1) * rate
+    energy += 0.5 * club.inertia_about_pivot_kg_m2 * rate**2
+    return np.asarray(energy, dtype=float)
+
+
+def _club_gravity_power(states: FloatArray, params: PendulumParams) -> FloatArray:
+    """Return the power of gravity on the club, ``Mc * g_vec . v_com`` (W)."""
+    club = distal_inertia(params.m2, params.mClub, params.L2)
+    wrist_velocity, tangent, rate = _club_wrist_kinematics(states, params)
+    com_vertical_velocity = wrist_velocity[:, 1] + club.com_m * rate * tangent[:, 1]
+    return np.asarray(-club.mass_kg * params.g * com_vertical_velocity, dtype=float)
+
+
+def _wrist_passive_couple(result: _DoublePendulumResult, states: FloatArray) -> FloatArray:
+    """Friction plus joint-limit couple acting on the wrist (and so on the club)."""
+    from .physics import JointLimits, friction_torque_vector, joint_limit_torque
+
+    limits = cast("JointLimits | None", result.limits)
+    couple = np.empty(states.shape[0])
+    for index, (theta1, phi, rate1, rate2) in enumerate(states):
+        passive = friction_torque_vector(rate1, rate2, result.params)[1]
+        if limits is not None:
+            passive += joint_limit_torque(phi, rate2, limits, theta1=theta1, dtheta1=rate1)[1]
+        couple[index] = passive
+    return couple
 
 
 def double_pendulum_transfer_signals(result: object) -> TransferSignals:
@@ -292,6 +353,8 @@ def double_pendulum_transfer_signals(result: object) -> TransferSignals:
         wrist_control_couple_nm=wrist_couple,
         club_angular_velocity_rad_s=states[:, 2] + states[:, 3],
         model_tier="exact_planar_double_pendulum",
+        club_gravity_power_w=_club_gravity_power(states, typed_result.params),
+        wrist_passive_couple_nm=_wrist_passive_couple(typed_result, states),
     )
 
 
@@ -322,16 +385,16 @@ def double_pendulum_force_attribution(result: object) -> object:
     states = np.asarray(typed_result.states, dtype=np.float64)
     if states.shape != (typed_result.n_steps, 4) or not np.all(np.isfinite(states)):
         raise ValueError("double-pendulum result states must be finite with width four")
-    effective_distal_mass = params.m2 + params.mClub
+    club = distal_inertia(params.m2, params.mClub, params.L2)
     canonical = PendulumParameters(
         m1=params.m1,
         l1=params.L1,
         lc1=params.L1,
         i1=params.m1 * params.L1**2,
-        m2=effective_distal_mass,
+        m2=club.mass_kg,
         l2=params.L2,
-        lc2=params.L2,
-        i2=effective_distal_mass * params.L2**2,
+        lc2=club.com_m,
+        i2=club.inertia_about_pivot_kg_m2,
         d1=params.b1,
         d2=params.b2,
     )

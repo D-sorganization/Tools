@@ -26,7 +26,7 @@ from dataclasses import dataclass
 import numpy as np
 import numpy.typing as npt
 
-from double_pendulum_golf.physics import PendulumParams
+from double_pendulum_golf.physics import PendulumParams, club_inertia
 from double_pendulum_golf.swing_objectives.velocity_terms import coupling_constant
 
 __all__ = ["SwingSignals", "build_swing_signals", "generalized_accelerations"]
@@ -78,14 +78,12 @@ def _mass_matrix_entries(
     phi: FloatArray, params: PendulumParams
 ) -> tuple[FloatArray, FloatArray, float]:
     """Return ``(M11, M12, M22)`` for a batch of wrist angles, matching physics."""
-    effective_distal_mass = params.m2 + params.mClub
+    club = club_inertia(params)
     coupling = coupling_constant(params)
     cos_phi = np.cos(phi)
-    distal_inertia = effective_distal_mass * params.L2**2
+    distal_inertia = club.inertia_about_pivot_kg_m2
     mass_11 = (
-        (params.m1 + effective_distal_mass) * params.L1**2
-        + distal_inertia
-        + 2.0 * coupling * cos_phi
+        (params.m1 + club.mass_kg) * params.L1**2 + distal_inertia + 2.0 * coupling * cos_phi
     )
     return mass_11, distal_inertia + coupling * cos_phi, distal_inertia
 
@@ -107,9 +105,9 @@ def _gravity_terms(
 ) -> tuple[FloatArray, FloatArray]:
     """Return the gravitational generalized forces for a batch of states."""
     theta1, phi = states[:, 0], states[:, 1]
-    effective_distal_mass = params.m2 + params.mClub
-    wrist = effective_distal_mass * params.g * params.L2 * np.sin(theta1 + phi)
-    hub = (params.m1 + effective_distal_mass) * params.g * params.L1 * np.sin(theta1) + wrist
+    club = club_inertia(params)
+    wrist = club.first_moment_kg_m * params.g * np.sin(theta1 + phi)
+    hub = (params.m1 + club.mass_kg) * params.g * params.L1 * np.sin(theta1) + wrist
     return hub, wrist
 
 
@@ -281,13 +279,18 @@ def build_swing_signals(
     """
     time_array, state_array, torque_array = _validated_trajectory(time_s, states, torques)
     qddot = generalized_accelerations(state_array, torque_array, params)
-    grip_velocity, tip_velocity, _, tip_acceleration = _planar_kinematics(
+    grip_velocity, tip_velocity, grip_acceleration, tip_acceleration = _planar_kinematics(
         state_array, qddot, params
     )
 
-    effective_distal_mass = params.m2 + params.mClub
+    club = club_inertia(params)
     gravity_vector = np.array([0.0, -params.g], dtype=np.float64)
-    grip_force = effective_distal_mass * (tip_acceleration - gravity_vector)
+    # Club COM acceleration = grip + (com / L2) * (tip - grip): the COM sits at
+    # the fraction com/L2 of the way along the same rigid club.
+    club_com_acceleration = grip_acceleration + (club.com_m / params.L2) * (
+        tip_acceleration - grip_acceleration
+    )
+    grip_force = club.mass_kg * (club_com_acceleration - gravity_vector)
 
     coupling = coupling_constant(params)
     sin_phi = np.sin(state_array[:, 1])

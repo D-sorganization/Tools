@@ -83,8 +83,8 @@ class TestMassMatrixDiagonalConstant:
             ), f"M22 changed at phi={phi}: {M22} vs {M22_ref}"
 
     def test_m22_equals_expected(self, default_params: PendulumParams) -> None:
-        """M22 = m2 * L2^2 for point mass at tip."""
-        expected = default_params.m2 * default_params.L2**2
+        """M22 = Jw = m2 * L2^2 / 3 for a uniform shaft pivoted at its end (#5431)."""
+        expected = default_params.m2 * default_params.L2**2 / 3.0
         M22 = mass_matrix(0.0, default_params)[1, 1]
         assert np.isclose(M22, expected)
 
@@ -93,26 +93,27 @@ class TestMassMatrixKnownValues:
     """Verify mass matrix against hand-computed values for simple case."""
 
     def test_aligned_equal_segments(self, equal_params: PendulumParams) -> None:
-        """When m1=m2=1, L1=L2=1, phi=0:
-        M11 = 2*1 + 1 + 2*1 = 5
-        M12 = 1 + 1 = 2
-        M22 = 1
+        """When m1=m2=1 (uniform shaft, no head), L1=L2=1, phi=0:
+        Mc = 1, s = 1/2, Jw = 1/3
+        M11 = (1+1)*1 + 1/3 + 2*(1/2)*1 = 10/3
+        M12 = 1/3 + 1/2 = 5/6
+        M22 = 1/3
         """
         M = mass_matrix(0.0, equal_params)
-        assert np.isclose(M[0, 0], 5.0)
-        assert np.isclose(M[0, 1], 2.0)
-        assert np.isclose(M[1, 1], 1.0)
+        assert np.isclose(M[0, 0], 10.0 / 3.0)
+        assert np.isclose(M[0, 1], 5.0 / 6.0)
+        assert np.isclose(M[1, 1], 1.0 / 3.0)
 
     def test_perpendicular_equal_segments(self, equal_params: PendulumParams) -> None:
         """phi=pi/2 -> cos(phi)=0:
-        M11 = 2 + 1 + 0 = 3
-        M12 = 1 + 0 = 1
-        M22 = 1
+        M11 = 2 + 1/3 + 0 = 7/3
+        M12 = 1/3 + 0 = 1/3
+        M22 = 1/3
         """
         M = mass_matrix(np.pi / 2, equal_params)
-        assert np.isclose(M[0, 0], 3.0)
-        assert np.isclose(M[0, 1], 1.0)
-        assert np.isclose(M[1, 1], 1.0)
+        assert np.isclose(M[0, 0], 7.0 / 3.0)
+        assert np.isclose(M[0, 1], 1.0 / 3.0)
+        assert np.isclose(M[1, 1], 1.0 / 3.0)
 
 
 # ======================================================================

@@ -1,0 +1,53 @@
+{
+  "description": "Canonical distal (club) inertia: Mc=m2+mh, s=(m2/2+mh)L, Jw=(m2/3+mh)L^2. Shared by Python, Rust and TypeScript parity tests (Tools #5431).",
+  "cases": [
+    {
+      "shaft_mass_kg": 3,
+      "head_mass_kg": 1,
+      "length_m": 1,
+      "mass_kg": 4,
+      "first_moment_kg_m": 2.5,
+      "inertia_about_pivot_kg_m2": 2.0
+    },
+    {
+      "shaft_mass_kg": 0,
+      "head_mass_kg": 1,
+      "length_m": 1,
+      "mass_kg": 1,
+      "first_moment_kg_m": 1.0,
+      "inertia_about_pivot_kg_m2": 1.0
+    },
+    {
+      "shaft_mass_kg": 1,
+      "head_mass_kg": 0,
+      "length_m": 1,
+      "mass_kg": 1,
+      "first_moment_kg_m": 0.5,
+      "inertia_about_pivot_kg_m2": 0.3333333333333333
+    },
+    {
+      "shaft_mass_kg": 0.108,
+      "head_mass_kg": 0.202,
+      "length_m": 1.1,
+      "mass_kg": 0.31,
+      "first_moment_kg_m": 0.2816,
+      "inertia_about_pivot_kg_m2": 0.28798000000000007
+    },
+    {
+      "shaft_mass_kg": 0.3,
+      "head_mass_kg": 0.2,
+      "length_m": 1.1,
+      "mass_kg": 0.5,
+      "first_moment_kg_m": 0.385,
+      "inertia_about_pivot_kg_m2": 0.36300000000000004
+    },
+    {
+      "shaft_mass_kg": 1e-12,
+      "head_mass_kg": 0.5,
+      "length_m": 0.8,
+      "mass_kg": 0.500000000001,
+      "first_moment_kg_m": 0.40000000000040004,
+      "inertia_about_pivot_kg_m2": 0.32000000000021334
+    }
+  ]
+}
