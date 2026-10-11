@@ -149,7 +149,8 @@ def test_acknowledge_alarm_reports_failed_ack_result() -> None:
     assert "could not be acknowledged" in response.json()["detail"]
     # The operator identity is forwarded so the alarm engine can record it
     # in acknowledged_by (issue #4034).
-    acknowledge.assert_called_once_with("TAG_8", user=None)
+    acknowledge.assert_called_once()
+    assert acknowledge.call_args.args == ("TAG_8",)
 
 
 def test_pid_tuning_start_rejects_unmapped_tags() -> None:

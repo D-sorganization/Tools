@@ -190,16 +190,17 @@ def test_acknowledge_endpoint_forwards_the_operator_to_the_engine(
 
     result = asyncio.run(
         main.acknowledge_alarm(
-            _TAG, payload=main.AlarmAckPayload(user="operator-jane"), db=session
+            _TAG,
+            request=_ack_request(None),
+            payload=main.AlarmAckPayload(user="operator-jane"),
+            db=session,
         )
     )
 
     assert result["status"] == "success"
     assert session.commits == 1
-    assert state.alarm_engine.get_alarm_state(_TAG)["acknowledged_by"] == (
-        "operator-jane"
-    )
-    assert state.active_alarms[_TAG]["acknowledged_by"] == "operator-jane"
+    assert state.alarm_engine.get_alarm_state(_TAG)["acknowledged_by"] == ("anonymous")
+    assert state.active_alarms[_TAG]["acknowledged_by"] == "anonymous"
 
 
 def test_acknowledge_endpoint_defaults_the_operator_when_no_body_is_sent(
@@ -214,16 +215,19 @@ def test_acknowledge_endpoint_defaults_the_operator_when_no_body_is_sent(
 
     import asyncio
 
-    from state import DEFAULT_ACK_USER
 
     state = _tripped_state()
     monkeypatch.setattr(main, "control_context", state)
 
-    result = asyncio.run(main.acknowledge_alarm(_TAG, payload=None, db=_StubSession()))
+    result = asyncio.run(
+        main.acknowledge_alarm(
+            _TAG, request=_ack_request(None), payload=None, db=_StubSession()
+        )
+    )
 
     assert result["status"] == "success"
     assert state.alarm_engine.get_alarm_state(_TAG)["acknowledged"] is True
-    assert state.active_alarms[_TAG]["acknowledged_by"] == DEFAULT_ACK_USER
+    assert state.active_alarms[_TAG]["acknowledged_by"] == "anonymous"
 
 
 def test_fallback_and_rust_alarm_engines_share_the_ack_signature() -> None:
@@ -303,3 +307,48 @@ def test_a_genuine_value_is_still_replayed_through_the_engine() -> None:
     assert state.active_alarms[_TAG]["state"] == "HiHi"
     engine_state = state.alarm_engine.get_alarm_state(_TAG)["state"]
     assert state_name(engine_state) == "HiHi"
+
+
+def _ack_request(key: str | None) -> Any:
+    from starlette.requests import Request
+
+    headers = [(b"x-api-key", key.encode())] if key else []
+    return Request({"type": "http", "method": "POST", "headers": headers})
+
+
+def test_acknowledge_records_credential_actor_not_spoofed_user(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """#5524: the free-text ``user`` is a display note, never the actor."""
+    pytest.importorskip("fastapi")
+    pytest.importorskip("sqlmodel")
+    try:
+        import main
+    except Exception as exc:  # pragma: no cover - environment guard
+        pytest.skip(f"P1AM backend not importable in this environment: {exc}")
+
+    import asyncio
+
+    from audit import credential_fingerprint
+
+    key = "operator-secret"  # pragma: allowlist secret
+    monkeypatch.delenv("P1AM_DEV_NO_AUTH", raising=False)
+    monkeypatch.delenv("P1AM_ADMIN_API_KEY", raising=False)
+    monkeypatch.setenv("P1AM_API_KEY", key)
+    state = _tripped_state()
+    monkeypatch.setattr(main, "control_context", state)
+    session = _StubSession()
+
+    asyncio.run(
+        main.acknowledge_alarm(
+            _TAG,
+            request=_ack_request(key),
+            payload=main.AlarmAckPayload(user="admin-mallory"),
+            db=session,
+        )
+    )
+
+    acked_by = state.active_alarms[_TAG]["acknowledged_by"]
+    assert acked_by == f"admin:{credential_fingerprint(key)}"
+    assert "mallory" not in acked_by
+    assert "admin-mallory" in session.added[0].description  # display note only

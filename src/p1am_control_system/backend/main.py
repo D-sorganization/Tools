@@ -13,7 +13,7 @@ from typing import Any, cast
 import hardware
 import shutdown_safety
 from alicat_manager import create_default_manager
-from audit import AuditMiddleware
+from audit import AuditMiddleware, actor_from_headers, set_audit_context
 from auth_config import (
     log_auth_configuration,
     require_admin_key,
@@ -846,9 +846,10 @@ async def get_active_alarms() -> list[dict[str, Any]]:
 class AlarmAckPayload(BaseModel):
     """Optional body for an alarm acknowledgement.
 
-    ``user`` is recorded in the alarm engine's ``acknowledged_by`` audit field.
-    The body is optional so existing clients that POST nothing keep working;
-    those acknowledgements are attributed to the default operator.
+    ``user`` is an unverified display note only (#5524): it is logged in the
+    event description but never used as the actor. The actor recorded in the
+    alarm engine's ``acknowledged_by`` field is derived from the authenticated
+    credential tier + fingerprint. The body stays optional.
     """
 
     user: str | None = PydanticField(default=None, min_length=1, max_length=64)
@@ -860,6 +861,7 @@ class AlarmAckPayload(BaseModel):
 )
 async def acknowledge_alarm(
     tag_id: str,
+    request: Request,
     payload: AlarmAckPayload | None = None,
     db: Session = Depends(get_session),  # noqa: B008
 ) -> dict[str, str]:
@@ -870,13 +872,20 @@ async def acknowledge_alarm(
     rebuild the engine and the live alarm map.
     """
     if tag_id in control_context.active_alarms:
-        user = payload.user if payload is not None else None
+        note = payload.user if payload is not None else None
+        actor = actor_from_headers(request.headers).label
+        set_audit_context(
+            request,
+            before={"tag": tag_id, "acknowledged": False},
+            after={"tag": tag_id, "acknowledged": True, "actor": actor},
+        )
         # Log the acknowledgment
         try:
             event_log = EventLog(
                 event_type="ACKNOWLEDGE",
                 description=(
-                    f"Alarm on Tag {tag_id} acknowledged by {user or 'operator'}."
+                    f"Alarm on Tag {tag_id} acknowledged by {actor}"
+                    f"{f' (note: {note})' if note else ''}."
                 ),
                 severity=0,
             )
@@ -890,7 +899,7 @@ async def acknowledge_alarm(
                 detail=f"Failed to persist acknowledgment for alarm {tag_id}.",
             ) from e
 
-        if not control_context.acknowledge_alarm(tag_id, user=user):
+        if not control_context.acknowledge_alarm(tag_id, user=actor):
             raise HTTPException(
                 status_code=409,
                 detail=f"Alarm {tag_id} could not be acknowledged.",
