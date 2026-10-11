@@ -39,7 +39,7 @@ def test_exemplar_schema_is_strict_versioned_and_current_document_conforms() -> 
     assert schema["additionalProperties"] is False
 
 
-def test_coverage_registers_one_verified_exemplar_and_one_blocked_dependency() -> None:
+def test_coverage_registers_verified_exemplar_and_blocked_dependencies() -> None:
     coverage = load_exemplar_coverage(_json(COVERAGE_PATH))
 
     assert coverage.schema_version == "tools-exemplar-coverage/1.0.0"
@@ -47,8 +47,9 @@ def test_coverage_registers_one_verified_exemplar_and_one_blocked_dependency() -
     assert [item.exemplar_id for item in coverage.entries] == [
         "tools.exemplar.markerless-mocap",
         "tools.exemplar.swing-rate-of-closure-dplane",
+        "tools.exemplar.triangle-lamina-mass",
     ]
-    markerless, swing = coverage.entries
+    markerless, swing, lamina = coverage.entries
     assert markerless.status == "blocked"
     assert markerless.chapter_id is None
     assert markerless.calculation_ids == ()
@@ -60,6 +61,14 @@ def test_coverage_registers_one_verified_exemplar_and_one_blocked_dependency() -
     assert swing.chapter_id == "tools.textbook.swing-rate-of-closure-dplane"
     assert swing.calculation_ids == ("TOOLS-DPLANE-GEOMETRY",)
     assert swing.blockers == ()
+    assert lamina.status == "blocked"
+    assert lamina.chapter_id is None
+    assert lamina.calculation_ids == ()
+    assert lamina.blockers == (
+        "The chapter06 numerical note is not a registered calculation: "
+        "executable freshness is D-plane-only, and no source-geometry producer, "
+        "admitted frame, or consumer evidence is linked.",
+    )
 
 
 @pytest.mark.parametrize(
@@ -99,7 +108,7 @@ def test_repository_contract_links_registry_chapter_source_tests_and_example() -
     summary = verify_exemplar_repository(REPO_ROOT)
 
     assert summary.verified_exemplar_count == 1
-    assert summary.blocked_exemplar_count == 1
+    assert summary.blocked_exemplar_count == 2
     assert summary.calculation_ids == ("TOOLS-DPLANE-GEOMETRY",)
     assert summary.chapter_ids == ("tools.textbook.swing-rate-of-closure-dplane",)
     assert summary.worked_example_ids == ("square-descending",)
