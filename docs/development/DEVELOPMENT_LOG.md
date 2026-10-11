@@ -1968,6 +1968,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5506 · Dependabot: Group Cargo and Pip Minor/Patch Updates Into One Weekly PR per Ecosystem
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5506
+- **Branch:** merged via #5507
+- **PR:** #5507
+- **Paths:** see #5507
+- **Started:** 2026-10-10
+- **Last verified:** 2026-10-10 (`74030f4a`; collated from changes/5506-dependabot-group-cargo-and-pip-minor-pat.md)
+- **Summary:** dependabot: group cargo and pip minor/patch updates into one weekly PR per ecosystem
+- **Next step:** Shipped in PR #5507.
+
 ### DL-#5456 · CI: Isolate RUSTUP_HOME/CARGO_HOME per Workspace for Every Fleet Rust Job (RM#2021)
 
 - **State:** shipped
