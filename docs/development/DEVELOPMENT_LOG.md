@@ -1968,6 +1968,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5516 · Install Pyserial Alongside Pymodbus so Pymodbus 3.16.0 Imports in CI and the P1am/Test Extras
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5516
+- **Branch:** merged via #5517
+- **PR:** #5517
+- **Paths:** see #5517
+- **Started:** 2026-10-11
+- **Last verified:** 2026-10-11 (`880ebffb`; collated from changes/5516-install-pyserial-alongside-pymodbus-so-p.md)
+- **Summary:** Install pyserial alongside pymodbus so pymodbus 3.16.0 imports in CI and the p1am/test extras
+- **Next step:** Shipped in PR #5517.
+
 ### DL-#2064 · Bootstrap Rustup With --No-Modify-Path Before Dtolnay/Rust-Toolchain so CI Stops Appending CARGO_HOME Env Lines to Runner Shell Profiles (Repository_Management#2064)
 
 - **State:** shipped
