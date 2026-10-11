@@ -4,6 +4,7 @@ import logging
 import hardware
 from modbus_codec import (
     INTERLOCK_CHUNK_OFFSETS,
+    decode_first_out_tag,
     decode_interlocks,
     decode_pid_configs,
     direct_tag_address,
@@ -158,6 +159,33 @@ class AsyncModbusManager(BasePLCClient):
             except Exception as e:  # noqa: BLE001 - any I/O failure drops the connection; poll loop reconnects
                 logger.error(f"Exception during tag read: {e}")
                 self._connected = False
+                return None
+
+    async def read_first_out_tag(self) -> int | None:
+        """Read the firmware first-out trip tag (registers 561-562), fail closed.
+
+        Returns the broker tag index only while the firmware trip latch is set
+        and names a real tag; ``None`` when not tripped, unmapped, malformed, or
+        on ANY read failure. Unlike ``read_tags`` a failure here is a status gap,
+        not a link fault: it never clears ``_connected``, so it cannot interrupt
+        the control path or a de-energizing write (#5528).
+        """
+        async with self.lock:
+            if not self._connected:
+                return None
+            try:
+                response = await self._get_client().read_holding_registers(
+                    address=hardware.INTERLOCK_TRIPPED_REGISTER,
+                    count=2,
+                )
+                if response.isError() or len(response.registers) < 2:
+                    logger.warning("First-out tag read failed: %s", response)
+                    return None
+                tripped, tag_index = response.registers[0], response.registers[1]
+                first_out: int | None = decode_first_out_tag(tripped, tag_index)
+                return first_out
+            except Exception as exc:  # noqa: BLE001 - status read; never drop the control link
+                logger.warning("First-out tag read exception: %s", exc)
                 return None
 
     async def read_routing(self) -> RoutingConfig | None:

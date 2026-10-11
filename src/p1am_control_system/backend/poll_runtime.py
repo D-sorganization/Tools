@@ -49,6 +49,7 @@ __all__ = [
     "_beat_watchdog",
     "connect_once",
     "poll_once",
+    "_read_first_out_tag",
     "_read_scan_tags",
     "_reengage_service_estop",
     "_resolve_source",
@@ -231,6 +232,29 @@ async def _beat_watchdog(plc: Any) -> None:
         logger.warning("Firmware heartbeat write failed: %s", exc)
 
 
+async def _read_first_out_tag(plc: Any) -> int | None:
+    """Best-effort first-out trip tag for the frame; ``None`` means unknown.
+
+    Runs AFTER the E-stop/heartbeat writes so it can never delay them. Guarded
+    like ``_beat_watchdog``: a client without the seam, one that raises, or one
+    returning anything but a real int yields ``None`` -- never a guess (#5528).
+    """
+    read = getattr(plc, "read_first_out_tag", None)
+    if not callable(read):
+        return None
+    try:
+        result = read()
+        if inspect.isawaitable(result):
+            result = await result
+    except Exception as exc:  # noqa: BLE001 - a status read must not abort a scan
+        logger.warning("First-out tag read failed: %s", exc)
+        return None
+    if isinstance(result, bool) or not isinstance(result, int):
+        return None
+    first_out: int = result
+    return first_out
+
+
 async def _read_scan_tags(
     plc: Any, backup: Any, *, simulated: bool
 ) -> dict[str, float] | None:
@@ -396,6 +420,8 @@ async def poll_once(
     elif source == DataSource.LIVE:
         await _beat_watchdog(plc)
 
+    first_out_tag_id = await _read_first_out_tag(plc) if plc_connected else None
+
     payload: dict[str, Any] = {
         "tags": tag_list,
         "tags_dict": display_tags,
@@ -406,6 +432,7 @@ async def poll_once(
         "data_source": source.value,
         "plc_connected": plc_connected,
         "simulated": bool(simulated),
+        "first_out_tag_id": first_out_tag_id,
     }
     if temp_status is not None:
         payload["temperature"] = temp_status.model_dump()

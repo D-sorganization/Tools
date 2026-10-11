@@ -150,6 +150,7 @@ export const App: React.FC = () => {
     alicats,
     activeAlarms,
     eStopActive,
+    firstOutTagId,
     powerSupplyStatus,
     temperatureStatus,
     dataAgeMs,
@@ -1073,6 +1074,8 @@ export const App: React.FC = () => {
                   onChange={handleInterlockChange}
                   onDeploy={handleDeploy}
                   deploying={deploying}
+                  tripped={eStopActive}
+                  firstOutTagId={firstOutTagId}
                 />
               </div>
             </div>

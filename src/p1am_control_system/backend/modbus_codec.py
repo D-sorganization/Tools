@@ -225,3 +225,18 @@ def direct_tag_address(
         if tag_def.register_type == "V" and tag_def.register_num is not None:
             return int(tag_def.register_num)
     return None
+
+
+def decode_first_out_tag(tripped: int, tag_index: int) -> int | None:
+    """Decode the firmware first-out pair (registers 561/562) fail-closed.
+
+    Returns the broker tag index only when the trip latch reads exactly 1 and
+    the tag register names a real broker tag (``0 <= n < TAG_COUNT``). Anything
+    else -- not tripped, ``UNMAPPED_TAG_INDEX``, out of range, a malformed latch
+    flag -- is ``None`` (unknown); a plausible value is never guessed (#5528).
+    """
+    if tripped != 1:
+        return None
+    if isinstance(tag_index, bool) or not 0 <= tag_index < TAG_COUNT:
+        return None
+    return tag_index

@@ -119,6 +119,15 @@ class BasePLCClient(abc.ABC):
         """
         pass
 
+    async def read_first_out_tag(self) -> int | None:
+        """Return the broker tag index that latched the interlock trip.
+
+        Concrete default is ``None`` (unknown / not supported): a client with no
+        firmware first-out register must never invent one (#5528). Must not
+        raise or drop the control link on failure.
+        """
+        return None
+
     async def write_pid_setpoint(self, pid_index: int, value: float) -> bool:
         """Write a PID loop's setpoint (the AO pass-through command path).
 

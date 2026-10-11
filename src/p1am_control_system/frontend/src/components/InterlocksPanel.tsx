@@ -8,6 +8,10 @@ interface InterlocksPanelProps {
   onChange: (tagId: number, field: keyof InterlockConfig, value: number | null) => void;
   onDeploy: () => void;
   deploying: boolean;
+  /** True while the plant is tripped / E-stop latched. */
+  tripped?: boolean;
+  /** Firmware first-out tag index; null/undefined = unknown (never guessed). */
+  firstOutTagId?: number | null;
 }
 
 const InterlocksPanelImpl: React.FC<InterlocksPanelProps> = ({
@@ -15,6 +19,8 @@ const InterlocksPanelImpl: React.FC<InterlocksPanelProps> = ({
   onChange,
   onDeploy,
   deploying,
+  tripped = false,
+  firstOutTagId = null,
 }) => {
   const [selectedTag, setSelectedTag] = useState<number>(0);
   const baseId = useId();
@@ -42,6 +48,18 @@ const InterlocksPanelImpl: React.FC<InterlocksPanelProps> = ({
         </button>
       </div>
       <div className="p-4 flex-1 overflow-auto">
+        {(tripped || firstOutTagId !== null) && (
+          <div
+            data-testid="first-out"
+            role="status"
+            className="mb-4 rounded-lg border border-red-500/40 bg-red-900/20 p-2 text-sm text-red-300"
+          >
+            First-out trip:{" "}
+            <strong>
+              {firstOutTagId === null ? "Unknown (not reported by PLC)" : `Tag ${firstOutTagId}`}
+            </strong>
+          </div>
+        )}
         <div className="flex gap-4 mb-6">
           <div className="flex-1">
             <label htmlFor={`${baseId}-select-tag`} className="block text-sm font-semibold text-gray-400 mb-2">
