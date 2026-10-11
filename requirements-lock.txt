@@ -8,7 +8,7 @@
 # Held below 2.4.0 to satisfy requirements.txt's upper bound (numpy 2.4+
 # ships PEP 695 syntax in its bundled stubs, which breaks the pinned mypy).
 # The lock previously pinned 2.4.6, contradicting the very file it locks (#4014).
-numpy==2.3.5
+numpy==2.4.6
 pandas==3.0.6
 scipy==1.17.1
 matplotlib==3.11.2
@@ -29,7 +29,7 @@ types-requests==2.33.0.20261006
 # GUI & Desktop Applications
 PyQt6==6.11.0
 PyQt6-Qt6==6.11.2
-PyQt6-sip==13.12.0
+PyQt6-sip==13.13.0
 pyqtgraph==0.14.0
 pygame==2.6.1
 PyOpenGL==3.1.10
