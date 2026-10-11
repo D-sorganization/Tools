@@ -141,3 +141,35 @@ local baseline/environment/workflow/SPEC tests and both real candidate compariso
 pass. See `rate-pyqt-renderer-4844-reference-review.md` for hashes, actual runtime
 and font identity, per-view findings, repeatability, and the protected approval
 boundary. Related #5087 is closed unmerged. Normal hooks and fresh CI remain.
+
+## Font stack requalification: libfreetype6 2.13.2+dfsg-1ubuntu0.2 (#5518, #5501)
+
+Ubuntu noble published a libfreetype6 security update, so a fresh install in the
+pinned container image resolves `2.13.2+dfsg-1ubuntu0.2`. The trusted push job
+(run 38172632034, head 880ebffb9537) failed its font-stack guard with
+`libfreetype6 2.13.2+dfsg-1ubuntu0.2 != expected 2.13.2+dfsg-1ubuntu0.1`; the
+guard did its job, and the pin moves only after the references are re-verified.
+
+Qualification (2026-10-11, ControlTower-Runner WSL Docker 29.1.3), replaying the
+trusted PyQt job steps in the same pinned image
+`ubuntu:24.04@sha256:33ceb71981b602c1a7443a53469e4dba065f7503eab3078a2d7a57a2ab987517`
+(Ubuntu 24.04.4 LTS) at main `9bfe68b48`:
+
+- dpkg: libfreetype6 `2.13.2+dfsg-1ubuntu0.2`, libfontconfig1 `2.15.0-1.1ubuntu2`;
+  Matplotlib FreeType 2.14.3; PyQt6 6.11.0 / PyQt6-Qt6 6.11.2 from the constrained
+  install.
+- The committed guard reproduced the CI failure verbatim before the pin moved.
+- The 24 protected PyQt render and visibility tests passed.
+- The repo's own comparator (`_candidate_manifest` and `_compare`, tolerances
+  untouched) accepted all 10 PyQt references. Mean channel delta / changed pixels
+  in microunits (limit): clubhead 0/0, plots 0/0, neural_model_lab 0/0,
+  variation 0/0 (200/250); calculation_description 10/120 (200/250);
+  launch_monitor_analytics 135/208 (5000/10000); putting 1703/9066
+  (4000/20000); flight_explorer 8045/60167 (10000/75000); glossary 15889/37380
+  (20000/50000); simulation 36584/179083 (40000/200000).
+- The React surface is rendered by Chromium in the separate fleet job, which
+  passed in run 38172632034; it was not re-rendered here.
+
+No reference image, tolerance, or workflow changes. The single-version pin in
+`scripts/config/rate_pyqt_font_stack.v1.json` moves to `2.13.2+dfsg-1ubuntu0.2`;
+the superseded `0ubuntu0.1` now fails the guard.
