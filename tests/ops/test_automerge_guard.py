@@ -627,7 +627,7 @@ def test_cli_reports_clear_with_zero_exit(
     assert "no hold in effect" in capsys.readouterr().out
 
 
-# --- GOV-1 (#1917): warn when the active token is a personal/user token ---
+# --- GOV-1 (#1917): personal/user tokens are owner-approved (2026-10-10) ---
 
 
 @pytest.mark.parametrize(
@@ -684,13 +684,24 @@ def test_active_token_is_none_when_gh_is_unauthenticated_or_missing() -> None:
     assert automerge_guard.active_token_kind({}, runner=missing) == "none"
 
 
-def test_identity_check_warns_on_user_token_without_leaking_it(
+def test_identity_check_accepts_user_token_silently(
     caplog: pytest.LogCaptureFixture,
 ) -> None:
+    # Owner decision 2026-10-10: the personal token is an approved identity.
     env = {"GH_TOKEN": FAKE_CLASSIC_PAT}
     with caplog.at_level("WARNING"):
         ok = automerge_guard.check_token_identity(env=env, require_app_token=False)
     assert ok is True
+    assert caplog.text == ""
+
+
+def test_identity_check_require_app_refuses_user_token_without_leaking_it(
+    caplog: pytest.LogCaptureFixture,
+) -> None:
+    env = {"GH_TOKEN": FAKE_CLASSIC_PAT}
+    with caplog.at_level("WARNING"):
+        ok = automerge_guard.check_token_identity(env=env, require_app_token=True)
+    assert ok is False
     assert "personal/user token" in caplog.text
     assert FAKE_CLASSIC_PAT not in caplog.text
     assert "B" * 20 not in caplog.text
@@ -734,7 +745,7 @@ def test_cli_require_app_token_refuses_user_token(
     assert FAKE_CLASSIC_PAT not in captured.out + captured.err
 
 
-def test_cli_user_token_without_flag_warns_but_proceeds(
+def test_cli_user_token_without_flag_proceeds_silently(
     monkeypatch: pytest.MonkeyPatch,
     capsys: pytest.CaptureFixture[str],
     caplog: pytest.LogCaptureFixture,
@@ -747,8 +758,7 @@ def test_cli_user_token_without_flag_warns_but_proceeds(
     )
     with caplog.at_level("WARNING"):
         assert automerge_guard.main(["o/r", "1"]) == 0
-    # main() logs through logging.basicConfig, whose handler writes to stderr.
-    assert "personal/user token" in caplog.text
+    assert "GOV-1" not in caplog.text
     captured = capsys.readouterr()
     assert FAKE_CLASSIC_PAT not in captured.out + captured.err + caplog.text
 
