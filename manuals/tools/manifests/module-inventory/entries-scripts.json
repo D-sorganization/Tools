@@ -716,7 +716,7 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 30748,
+      "bytes_lf": 31079,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
       "content_sha256_lf": "8158020dc5ac6610c9261bc47470bfd93db2d4961307ace82c18d11ffcce3586",
