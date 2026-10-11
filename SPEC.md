@@ -5946,6 +5946,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-11 | #5505 | Bootstrap rustup with --no-modify-path before dtolnay/rust-toolchain so CI stops appending CARGO_HOME env lines to runner shell profiles (Repository_Management#2064) |
 | 2026-10-10 | #5507 | dependabot: group cargo and pip minor/patch updates into one weekly PR per ecosystem |
 | 2026-10-10 | #5481 | Deterministic 1440x900 visual-baseline candidates: settle tab-pill transitions before capture and pin determinism with a two-session test |
 | 2026-10-09 | #5478 | PR #5479: bind shard status to workflow attempts, retain every invocation coverage file, and select the latest complete attempt fail-closed |

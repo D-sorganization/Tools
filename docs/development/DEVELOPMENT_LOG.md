@@ -1968,6 +1968,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#2064 · Bootstrap Rustup With --No-Modify-Path Before Dtolnay/Rust-Toolchain so CI Stops Appending CARGO_HOME Env Lines to Runner Shell Profiles (Repository_Management#2064)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #2064
+- **Branch:** merged via #5505
+- **PR:** #5505
+- **Paths:** see #5505
+- **Started:** 2026-10-11
+- **Last verified:** 2026-10-11 (`7a453259`; collated from changes/2064-bootstrap-rustup-with-no-modify-path-bef.md)
+- **Summary:** Bootstrap rustup with --no-modify-path before dtolnay/rust-toolchain so CI stops appending CARGO_HOME env lines to runner shell profiles (Repository_Management#2064)
+- **Next step:** Shipped in PR #5505.
+
 ### DL-#5506 · Dependabot: Group Cargo and Pip Minor/Patch Updates Into One Weekly PR per Ecosystem
 
 - **State:** shipped
