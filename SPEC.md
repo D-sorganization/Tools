@@ -5946,6 +5946,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-10 | #5507 | dependabot: group cargo and pip minor/patch updates into one weekly PR per ecosystem |
 | 2026-10-10 | #5503 | Add a provisional triangle-multiset lamina mass-moment kernel with an explicit 3-value result tuple; update renderer, artifact-QA, and exemplar contract tests; keep calculation/exemplar registration blocked pending executable freshness and source/consumer authority |
 | 2026-10-10 | #5481 | Deterministic 1440x900 visual-baseline candidates: settle tab-pill transitions before capture and pin determinism with a two-session test |
 | 2026-10-09 | #5478 | PR #5479: bind shard status to workflow attempts, retain every invocation coverage file, and select the latest complete attempt fail-closed |
