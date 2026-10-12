@@ -351,7 +351,7 @@ mod tests {
         let pattern = format!("\"{key}\":");
         let start = block.find(&pattern).expect("key present") + pattern.len();
         let tail = &block[start..];
-        let end = tail.find(|c| c == ',' || c == '\n' || c == '}').unwrap();
+        let end = tail.find([',', '\n', '}']).unwrap();
         tail[..end].trim().parse().expect("number")
     }
 
