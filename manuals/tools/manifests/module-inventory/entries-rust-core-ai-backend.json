@@ -182,6 +182,7 @@
           "src/p1am_control_system/backend/tests/test_backend_p1am_safety.py",
           "src/p1am_control_system/backend/tests/test_estop_endpoint_writes.py",
           "src/p1am_control_system/backend/tests/test_estop_reconnect.py",
+          "src/p1am_control_system/backend/tests/test_first_out_tag.py",
           "src/p1am_control_system/backend/tests/test_interlock_defaults_contract.py",
           "src/p1am_control_system/backend/tests/test_interlock_limit_domain.py",
           "src/p1am_control_system/backend/tests/test_modbus_client.py",
