@@ -31,6 +31,7 @@ from historian import (
     ThrottledHistorianSink,
     _WriterCounters,
 )
+from historian_sink import HistorianSink
 from models import DataSource, RoutingConfig
 from power_supply_passthrough import ensure_power_supply_passthrough
 
@@ -41,6 +42,7 @@ __all__ = [
     "DEFAULT_HISTORIAN_QUEUE_SIZE",
     "DataQualityTracker",
     "HistorianRecord",
+    "HistorianSink",
     "HistorianWriter",
     "POLL_FAILURE_ESCALATION_THRESHOLD",
     "POLL_FAILURE_MAX_BACKOFF_S",
@@ -365,7 +367,7 @@ async def poll_once(
             surface as a fault, never as invented continuity.
         simulated: Whether the active driver is a simulator.
         temperature: Optional temperature service controller.
-        historian: Optional :class:`HistorianWriter`-like sink exposing
+        historian: Optional :class:`HistorianSink` destination exposing
             ``submit(HistorianRecord)``. The scan never touches SQLite itself.
         quality_tracker: Optional :class:`DataQualityTracker` recording
             provenance transitions as auditable events.

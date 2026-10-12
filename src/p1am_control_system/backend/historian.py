@@ -15,6 +15,7 @@ It also defines:
 from __future__ import annotations
 
 import asyncio
+import inspect
 import logging
 import time
 from collections.abc import Callable, Iterator, Mapping, Sequence
@@ -38,6 +39,7 @@ __all__ = [
     "DEFAULT_HISTORIAN_BATCH_MAX",
     "DEFAULT_HISTORIAN_QUEUE_SIZE",
     "HistorianRecord",
+    "HistorianSink",
     "HistorianWriter",
     "ThrottledHistorianSink",
     "_WriterCounters",
@@ -227,6 +229,20 @@ class HistorianWriter:
     @property
     def queue_depth(self) -> int:
         return self._queue.qsize()
+
+    def stats(self) -> Mapping[str, int]:
+        """Return a mapping snapshot of writer diagnostic counters and queue depth."""
+        return {
+            "write_failures": self._counters.write_failures,
+            "dropped_samples": self._counters.dropped_samples,
+            "rows_written": self._counters.rows_written,
+            "events_written": self._counters.events_written,
+            "retries": self._counters.retries,
+            "queue_depth": self.queue_depth,
+        }
+
+    def close(self) -> None:
+        """Release writer resources. Idempotent; never raises."""
 
     def rebind(self) -> None:
         """Recreate the outbox for the loop that is about to drain it.
@@ -432,7 +448,7 @@ class ThrottledHistorianSink:
         self._writer = writer
         self._is_sample_due = is_sample_due
 
-    def submit(self, record: HistorianRecord) -> None:
+    def submit(self, record: HistorianRecord) -> bool:
         """Forward ``record``, stripping its tag sample when none is due.
 
         Raises:
@@ -447,5 +463,34 @@ class ThrottledHistorianSink:
                 tags=None, events=record.events, quality=record.quality
             )
         if record.is_empty:
-            return
-        self._writer.submit(record)
+            return False
+        res = self._writer.submit(record)
+        return bool(res) if res is not None else True
+
+    async def drain_once(self) -> int:
+        """Drain the underlying sink if supported, returning drained count."""
+        drain = getattr(self._writer, "drain_once", None)
+        if callable(drain):
+            res = drain()
+            if inspect.isawaitable(res):
+                return int(await res)
+            return int(res)
+        return 0
+
+    def stats(self) -> Mapping[str, int]:
+        """Return diagnostic counters from the underlying sink if supported."""
+        stats_fn = getattr(self._writer, "stats", None)
+        if callable(stats_fn):
+            res = stats_fn()
+            if isinstance(res, Mapping):
+                return {str(k): int(v) for k, v in res.items()}
+        return {}
+
+    def close(self) -> None:
+        """Close the underlying sink if supported."""
+        closer = getattr(self._writer, "close", None)
+        if callable(closer):
+            closer()
+
+
+from historian_sink import HistorianSink  # noqa: E402
