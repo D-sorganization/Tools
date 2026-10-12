@@ -330,8 +330,8 @@ def _context_app(factory: object) -> FastAPI:
             reason="operator retune",
             before={
                 "setpoint": 10.0,
-                "api_key": "leak-before",
-            },  # pragma: allowlist secret
+                "api_key": "leak-before",  # pragma: allowlist secret
+            },
             after={"setpoint": 12.5, "nested": {"token": "leak-after"}},
         )
         return {"status": "ok"}

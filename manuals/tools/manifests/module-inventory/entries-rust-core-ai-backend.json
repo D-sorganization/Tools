@@ -179,6 +179,7 @@
           "src/movement_optimizer/tests/test_trajectory_optimization.py",
           "src/p1am_control_system/backend/tests/_power_supply_helpers.py",
           "src/p1am_control_system/backend/tests/test_alarm_ack_engine.py",
+          "src/p1am_control_system/backend/tests/test_audit_trail.py",
           "src/p1am_control_system/backend/tests/test_backend_p1am_safety.py",
           "src/p1am_control_system/backend/tests/test_estop_endpoint_writes.py",
           "src/p1am_control_system/backend/tests/test_estop_reconnect.py",
