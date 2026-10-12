@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "provisional",
-      "bytes_lf": 2556,
+      "bytes_lf": 2705,
       "classification": "calculation",
       "classification_basis": "path-marker:signal",
-      "content_sha256_lf": "cfb4c661ff7e3df66988eaa8411c79d54f355a7352396011338feda28b0e49e3",
+      "content_sha256_lf": "52d1c85edf1d385570bbbd7cf0aada78eaff935bf697c482ac88480966fa7671",
       "family": "signal-processing-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-INIT-PY-74FCAD42F570",
       "language": "python",
@@ -425,7 +425,9 @@
           "tests/shared/python/signal_toolkit/test_core_structural_guards.py",
           "tests/shared/python/signal_toolkit/test_filters.py",
           "tests/shared/python/signal_toolkit/test_fitting.py",
+          "tests/shared/python/signal_toolkit/test_fitting_consumer_contracts.py",
           "tests/shared/python/signal_toolkit/test_generators.py",
+          "tests/shared/python/signal_toolkit/test_import_identity.py",
           "tests/shared/python/signal_toolkit/test_limits.py",
           "tests/shared/python/signal_toolkit/test_noise.py",
           "tests/shared/python/signal_toolkit/test_signal_loader.py",
@@ -440,7 +442,8 @@
           "rad/s"
         ],
         "validation_paths": [
-          "src/shared/python/signal_toolkit/tests/test_bound_validation_3182.py"
+          "src/shared/python/signal_toolkit/tests/test_bound_validation_3182.py",
+          "tests/shared/python/signal_toolkit/test_fitting_consumer_contracts.py"
         ]
       }
     },
@@ -610,7 +613,7 @@
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "unavailable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -667,6 +670,8 @@
         "test_paths": [
           "src/shared/python/signal_toolkit/tests/test_signal_toolkit.py",
           "tests/shared/python/signal_toolkit/test_fitting.py",
+          "tests/shared/python/signal_toolkit/test_fitting_consumer_contracts.py",
+          "tests/shared/python/signal_toolkit/test_import_identity.py",
           "tests/shared/python/signal_toolkit/test_widget_mixins.py"
         ],
         "unit_mentions": [
@@ -674,7 +679,9 @@
           "g",
           "s"
         ],
-        "validation_paths": []
+        "validation_paths": [
+          "tests/shared/python/signal_toolkit/test_fitting_consumer_contracts.py"
+        ]
       }
     },
     {
@@ -755,6 +762,7 @@
         "test_paths": [
           "src/shared/python/signal_toolkit/tests/test_signal_toolkit.py",
           "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
+          "tests/shared/python/signal_toolkit/test_import_identity.py",
           "tests/shared/python/signal_toolkit/test_signal_loader.py",
           "tests/test_signal_core_coverage.py"
         ],

@@ -29,7 +29,12 @@ import importlib
 import logging
 from typing import Any
 
-from shared.python.signal_toolkit._lazy_map import LAZY
+from shared.python.import_aliases import install_shared_import_aliases
+
+from ._lazy_map import LAZY
+
+# Bind all public spellings before optional children import ``Signal``.
+install_shared_import_aliases()
 
 logger = logging.getLogger(__name__)
 
