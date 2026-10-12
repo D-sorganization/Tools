@@ -4,6 +4,7 @@ import logging
 import hardware
 from modbus_codec import (
     INTERLOCK_CHUNK_OFFSETS,
+    decode_first_out_status,
     decode_interlocks,
     decode_pid_configs,
     direct_tag_address,
@@ -159,6 +160,35 @@ class AsyncModbusManager(BasePLCClient):
                 logger.error(f"Exception during tag read: {e}")
                 self._connected = False
                 return None
+
+    async def read_first_out_status(self) -> hardware.FirstOutStatus:
+        """Read the firmware trip latch and first-out tag (regs 561-562), fail closed.
+
+        One 2-register read. Any failure (disconnected, Modbus error, exception,
+        short response) is ``FIRST_OUT_UNKNOWN`` -- never "clear". Unlike
+        ``read_tags`` a failure here is a status gap, not a link fault: it never
+        clears ``_connected``, so it cannot interrupt the control path or a
+        de-energizing write (#5528).
+        """
+        async with self.lock:
+            if not self._connected:
+                return hardware.FIRST_OUT_UNKNOWN
+            try:
+                response = await self._get_client().read_holding_registers(
+                    address=hardware.INTERLOCK_TRIPPED_REGISTER,
+                    count=2,
+                )
+                if response.isError() or len(response.registers) < 2:
+                    logger.warning("First-out status read failed: %s", response)
+                    return hardware.FIRST_OUT_UNKNOWN
+                tripped, tag_index = response.registers[0], response.registers[1]
+                status: hardware.FirstOutStatus = decode_first_out_status(
+                    tripped, tag_index
+                )
+                return status
+            except Exception as exc:  # noqa: BLE001 - status read; never drop the control link
+                logger.warning("First-out status read exception: %s", exc)
+                return hardware.FIRST_OUT_UNKNOWN
 
     async def read_routing(self) -> RoutingConfig | None:
         """Read the active routing and PID parameters directly from PLC registers."""

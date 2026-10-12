@@ -113,6 +113,11 @@ export const telemetryFrameSchema = z.object({
   alicats: z.array(alicatMfcStateSchema).optional().catch(undefined),
   active_alarms: z.record(z.string(), activeAlarmEntrySchema).optional().catch(undefined),
   e_stop_active: z.boolean().optional().catch(undefined),
+  // Firmware trip latch tri-state (F07): "unknown" is NOT "clear".
+  plc_trip_latch: z.enum(["tripped", "clear", "unknown"]).optional().catch(undefined),
+  // Firmware first-out trip tag (F07). null = not tripped OR unknown; the
+  // HMI must never infer a tag from anything else.
+  first_out_tag_id: z.number().int().nonnegative().nullable().optional().catch(undefined),
   power_supply: z.unknown().optional(),
   temperature: z.unknown().optional(),
   // Raw string on purpose: validation to a known source happens in
