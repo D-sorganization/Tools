@@ -150,6 +150,8 @@ export const App: React.FC = () => {
     alicats,
     activeAlarms,
     eStopActive,
+    firstOutTagId,
+    plcTripLatch,
     powerSupplyStatus,
     temperatureStatus,
     dataAgeMs,
@@ -1073,6 +1075,9 @@ export const App: React.FC = () => {
                   onChange={handleInterlockChange}
                   onDeploy={handleDeploy}
                   deploying={deploying}
+                  plcTripLatch={plcTripLatch}
+                  firstOutTagId={firstOutTagId}
+                  connected={freshness === "live"}
                 />
               </div>
             </div>
