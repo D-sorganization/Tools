@@ -85,7 +85,7 @@ _CREDENTIAL_HEADER = "x-api-" + "key"  # pragma: allowlist secret
 _REDACTED = "<redacted>"
 
 
-class AuditEvent(SQLModel, table=True):  # type: ignore[call-arg]
+class AuditEvent(SQLModel, table=True):
     """One state-changing request, recorded after the response was produced.
 
     This table is append-only by construction: nothing in the request-handling
