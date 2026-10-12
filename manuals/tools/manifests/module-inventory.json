@@ -387,7 +387,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-optimizer-gui.json"
     },
     {
-      "content_sha256_lf": "aa226f00bb97f1849fc9fdedce67894fbe49cbbc5966b97cc74d1d76bc24a71d",
+      "content_sha256_lf": "4b806ccc5b8a8ecbe3fe5c3be932fb5a1678a7fb921ceaf4ad7d4b3c2a4788f6",
       "entry_count": 255,
       "package": "src/p1am_control_system",
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
