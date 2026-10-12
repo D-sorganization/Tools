@@ -215,7 +215,6 @@ def test_acknowledge_endpoint_defaults_the_operator_when_no_body_is_sent(
 
     import asyncio
 
-
     state = _tripped_state()
     monkeypatch.setattr(main, "control_context", state)
 
