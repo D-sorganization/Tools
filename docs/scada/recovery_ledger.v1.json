@@ -62,7 +62,7 @@
       "id": "C1a",
       "name": "Pure-pydantic synthetic domain models",
       "decision": "re-land",
-      "file_count": 8,
+      "file_count": 6,
       "external_imports": [
         "pydantic",
         "stdlib (uuid)",
@@ -322,12 +322,6 @@
       "in_union_head": true
     },
     {
-      "path": "src/p1am_control_system/backend/asset_health.py",
-      "cluster": "C1a",
-      "decision": "re-land",
-      "in_union_head": true
-    },
-    {
       "path": "src/p1am_control_system/backend/audit_log.py",
       "cluster": "C3",
       "decision": "needs-owner",
@@ -559,12 +553,6 @@
       "path": "src/p1am_control_system/backend/tests/test_alarm_service.py",
       "cluster": "C4",
       "decision": "needs-owner",
-      "in_union_head": true
-    },
-    {
-      "path": "src/p1am_control_system/backend/tests/test_asset_health.py",
-      "cluster": "C1a",
-      "decision": "re-land",
       "in_union_head": true
     },
     {
@@ -913,7 +901,7 @@
   "totals": {
     "needs-owner": 94,
     "obsolete": 8,
-    "re-land": 9,
-    "files_classified": 111
+    "re-land": 7,
+    "files_classified": 109
   }
 }

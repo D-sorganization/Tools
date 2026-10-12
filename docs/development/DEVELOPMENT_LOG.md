@@ -148,6 +148,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5531 · SCADA F10: Advisory-Only Flatline and Command/Feedback-Mismatch Detectors (asset_health.py)
+
+- **State:** in_review
+- **Owner:** unassigned
+- **Issue:** #5531
+- **Branch:** feat/5531-asset-health
+- **PR:** #5559
+- **Paths:** see #5559
+- **Started:** 2026-10-12
+- **Last verified:** 2026-10-12 (`86819437`; collated from changes/5531-scada-f10-advisory-only-flatline-and-com.md)
+- **Summary:** SCADA F10: advisory-only flatline and command/feedback-mismatch detectors (asset_health.py)
+- **Next step:** Merge the PR.
+
 ### DL-#5572 · Preserve Signal Toolkit Import Identity
 
 - **State:** in_review

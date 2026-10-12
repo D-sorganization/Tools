@@ -391,6 +391,7 @@
           "src/p1am_control_system/backend/tests/test_poll_once.py",
           "src/p1am_control_system/backend/tests/test_power_supply_integration.py",
           "src/p1am_control_system/backend/tests/test_power_supply_persistence.py",
+          "src/p1am_control_system/backend/tests/test_procedure.py",
           "src/p1am_control_system/backend/tests/test_safety_state_machine.py",
           "src/p1am_control_system/backend/tests/test_scan_scheduler.py",
           "src/p1am_control_system/backend/tests/test_temperature_integration.py",
@@ -5494,6 +5495,130 @@
         "public_surfaces": [],
         "test_paths": [],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 11481,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "eb3976d3faff9461b4137ddfb8d86121befaee94fb9e61da3da1ca4665d9a5b1",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SCRIPTS-RERUN-DISTRIBUTED-CLUB-PY-8C47FBADF7F0",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/scripts/rerun_distributed_club.py",
+      "purpose": "Re-run the swing-objective results on the distributed club (Tools #5523).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "SECTIONS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "emit",
+            "signature": "section: str, **fields: object"
+          },
+          {
+            "kind": "function",
+            "name": "legacy_config",
+            "signature": "**overrides: object"
+          },
+          {
+            "kind": "function",
+            "name": "lumped",
+            "signature": "head_kg: float"
+          },
+          {
+            "kind": "function",
+            "name": "lumped_config",
+            "signature": "head_kg: float, **overrides: object"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str]"
+          },
+          {
+            "kind": "function",
+            "name": "section_actuation",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "section_bracket",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "section_club",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "section_comparison",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "section_frontier",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "section_masses",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "section_ranking",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "section_rollout",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N m",
+          "kg",
+          "s"
+        ],
         "validation_paths": []
       }
     },
