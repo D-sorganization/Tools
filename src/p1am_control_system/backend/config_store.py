@@ -20,8 +20,9 @@ from __future__ import annotations
 import json
 import logging
 from datetime import datetime
-from typing import TypeVar, cast
+from typing import TypeVar
 
+from config_revisions import append_revision, canonical_json
 from models import utc_now
 from pydantic import BaseModel
 from sqlmodel import Field, Session, SQLModel
@@ -39,7 +40,7 @@ __all__ = [
 _ModelT = TypeVar("_ModelT", bound=BaseModel)
 
 
-class PersistedConfig(SQLModel, table=True):  # type: ignore[call-arg]
+class PersistedConfig(SQLModel, table=True):
     """One persisted operator setting: a JSON blob keyed by a stable name."""
 
     key: str = Field(primary_key=True)
@@ -47,17 +48,42 @@ class PersistedConfig(SQLModel, table=True):  # type: ignore[call-arg]
     updated_at: datetime = Field(default_factory=utc_now)
 
 
-def save_config(session: Session, key: str, payload: dict[str, object]) -> None:
-    """Upsert a JSON-serializable ``payload`` under ``key``.
+def _upsert_current(session: Session, key: str, text: str) -> None:
+    """Stage the current-value upsert (no commit)."""
+    row = session.get(PersistedConfig, key)
+    if row is None:
+        session.add(PersistedConfig(key=key, value_json=text))
+    else:
+        row.value_json = text
+        row.updated_at = utc_now()
+        session.add(row)
+
+
+def save_config(
+    session: Session,
+    key: str,
+    payload: dict[str, object],
+    credential_fingerprint: str | None = None,
+) -> int:
+    """Upsert a JSON-serializable ``payload`` under ``key`` and append a revision.
+
+    The revision append and the ``PersistedConfig`` upsert share ONE
+    transaction: a fault between them rolls both back.
 
     Args:
         session: An active SQLModel session bound to the config DB.
         key: Non-empty stable identifier (e.g. ``"routing"``, ``"temperature"``).
         payload: A JSON-serializable dict.
+        credential_fingerprint: Hashed credential (``audit.credential_fingerprint``)
+            of the writer, or ``None``. Never the raw key.
+
+    Returns:
+        The id of the revision appended for this write.
 
     Raises:
         TypeError: if ``key`` is not a str or ``payload`` is not a dict.
-        ValueError: if ``key`` is empty or ``payload`` is not JSON-serializable.
+        ValueError: if ``key`` is empty, ``payload`` is not JSON-serializable or
+            the fingerprint is malformed.
     """
     if not isinstance(key, str):
         raise TypeError(f"key must be a str, got {type(key).__name__}")
@@ -66,20 +92,20 @@ def save_config(session: Session, key: str, payload: dict[str, object]) -> None:
     if not isinstance(payload, dict):
         raise TypeError(f"payload must be a dict, got {type(payload).__name__}")
     try:
-        text = json.dumps(payload)
+        text = canonical_json(payload)
     except (TypeError, ValueError) as exc:
         raise ValueError(
             f"payload for {key!r} is not JSON-serializable: {exc}"
         ) from exc
 
-    row = session.get(PersistedConfig, key)
-    if row is None:
-        session.add(PersistedConfig(key=key, value_json=text))
-    else:
-        row.value_json = text
-        row.updated_at = utc_now()
-        session.add(row)
-    session.commit()
+    try:
+        revision_id: int = append_revision(session, key, text, credential_fingerprint)
+        _upsert_current(session, key, text)
+        session.commit()
+    except BaseException:
+        session.rollback()
+        raise
+    return revision_id
 
 
 def load_config(session: Session, key: str) -> dict[str, object] | None:
@@ -107,8 +133,16 @@ def load_config(session: Session, key: str) -> dict[str, object] | None:
     return data
 
 
-def save_model(session: Session, key: str, model: BaseModel) -> None:
+def save_model(
+    session: Session,
+    key: str,
+    model: BaseModel,
+    credential_fingerprint: str | None = None,
+) -> int:
     """Persist a pydantic ``model`` under ``key`` (JSON-mode dump).
+
+    Returns:
+        The id of the revision appended for this write.
 
     Raises:
         TypeError: if ``model`` is not a pydantic ``BaseModel``.
@@ -117,7 +151,9 @@ def save_model(session: Session, key: str, model: BaseModel) -> None:
         raise TypeError(
             f"model must be a pydantic BaseModel, got {type(model).__name__}"
         )
-    save_config(session, key, model.model_dump(mode="json"))
+    return save_config(
+        session, key, model.model_dump(mode="json"), credential_fingerprint
+    )
 
 
 def load_model(session: Session, key: str, model_cls: type[_ModelT]) -> _ModelT | None:
@@ -132,7 +168,7 @@ def load_model(session: Session, key: str, model_cls: type[_ModelT]) -> _ModelT 
     if data is None:
         return None
     try:
-        return cast("_ModelT", model_cls(**data))
+        return model_cls(**data)
     except Exception as exc:  # noqa: BLE001 - any validation error -> default
         logger.warning(
             "Persisted config %r no longer matches %s; using default (%s)",

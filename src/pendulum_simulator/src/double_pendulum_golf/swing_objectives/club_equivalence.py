@@ -1,6 +1,16 @@
-"""Converting a real golf club into the point-mass-at-tip club this model uses.
+"""Converting a real golf club into the club this model uses.
 
-:func:`double_pendulum_golf.physics.mass_matrix` treats segment 2 as a point
+**Update (Tools #5431).** :func:`double_pendulum_golf.physics.mass_matrix` now
+models the club with the canonical *distributed* convention: a uniform shaft
+(mass ``m2``, COM at ``L2/2``, ``Icm = m2*L2**2/12``) plus a head point mass
+``mClub`` at the tip. The preset therefore uses :func:`distributed_club_split`,
+which gives the shaft and head masses that reproduce the real club's **mass and
+wrist inertia exactly** with real masses; the point-mass "equivalent tip mass"
+below is retained as documented history (it is what #4785 corrected) and as the
+``m2 -> 0`` limit, no longer as the shipped preset.
+
+Historical background (point-mass model). Before #5431,
+:func:`double_pendulum_golf.physics.mass_matrix` treated segment 2 as a point
 mass at the tip of the shaft. A real club is not that: a driver is about 0.310 kg
 with its centre of mass roughly three quarters of the way down. Those two facts
 have to be reconciled, and reconciling them **wrongly** is what produced the
@@ -94,6 +104,8 @@ __all__ = [
     "wrist_inertia",
     "equivalent_tip_mass",
     "coupling_error",
+    "distributed_club_split",
+    "distributed_coupling_error",
 ]
 
 
@@ -241,3 +253,61 @@ def coupling_error(club: RealClubSpec, arm_length_m: float, shaft_length_m: floa
         shaft_length_m - club.com_m
     )
     return float(ratio * bracket)
+
+
+def distributed_club_split(club: RealClubSpec, shaft_length_m: float) -> tuple[float, float]:
+    """Return ``(shaft_mass, head_mass)`` that reproduce the real club's mass and inertia.
+
+    With the canonical convention (uniform shaft ``m2`` plus head point mass
+    ``mh`` at the modelled shaft length ``L2``) the club's mass and wrist inertia
+    are ``m2 + mh`` and ``(m2/3 + mh) * L2**2``. Requiring both to equal the real
+    club's mass ``M`` and wrist inertia ``J = I_com + M*r**2`` gives
+
+    .. code-block:: text
+
+        m2 = 1.5 * (M - J / L2**2),     mh = M - m2
+
+    For a driver on a 1.10 m modelled shaft this is ``m2 = 0.108 kg`` (shaft plus
+    grip) and ``mh = 0.202 kg`` (a real driver head is about 0.20 kg), with the
+    wrist row ``M22 = 0.2881 kg m^2`` exact.
+
+    Args:
+        club: Measured club properties.
+        shaft_length_m: Modelled second-link length ``L2``, wrist to head.
+
+    Returns:
+        ``(shaft_mass_kg, head_mass_kg)``.
+
+    Pre: ``shaft_length_m`` positive and finite, and the club is representable:
+    its wrist inertia lies between ``M*L2**2/3`` and ``M*L2**2``.
+    Post: both masses are non-negative and sum to ``club.mass_kg``.
+    """
+    if not (shaft_length_m > 0.0 and np.isfinite(shaft_length_m)):
+        raise ValueError(f"shaft_length_m must be positive, got {shaft_length_m}")
+    shaft_mass = 1.5 * (club.mass_kg - wrist_inertia(club) / shaft_length_m**2)
+    head_mass = club.mass_kg - shaft_mass
+    if shaft_mass < 0.0 or head_mass < 0.0:
+        raise ValueError(
+            "club is not representable as a uniform shaft plus head mass at "
+            f"shaft_length_m={shaft_length_m}"
+        )
+    return float(shaft_mass), float(head_mass)
+
+
+def distributed_coupling_error(
+    club: RealClubSpec, arm_length_m: float, shaft_length_m: float
+) -> float:
+    """Return ``mu_model - mu_real`` for the mass-and-inertia-matched split.
+
+    The modeled coupling is ``L1 * s`` with ``s = (m2/2 + mh) * L2``; the real
+    coupling is ``L1 * M * r``. Unlike the point-mass equivalent this error is a
+    few percent for a driver.
+
+    Pre: ``arm_length_m`` and ``shaft_length_m`` positive and finite.
+    Post: finite.
+    """
+    if not (arm_length_m > 0.0 and np.isfinite(arm_length_m)):
+        raise ValueError(f"arm_length_m must be positive, got {arm_length_m}")
+    shaft_mass, head_mass = distributed_club_split(club, shaft_length_m)
+    first_moment = (0.5 * shaft_mass + head_mass) * shaft_length_m
+    return float(arm_length_m * (first_moment - club.mass_kg * club.com_m))

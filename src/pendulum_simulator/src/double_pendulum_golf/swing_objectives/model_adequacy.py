@@ -24,7 +24,8 @@ Historical parameter sweep notes:
 * The original frontier exploration evaluated downswings at a duration of 0.36 s
   with +/- 250 N*m hub torque limits.
 * The revised objective comparison uses a downswing duration of 0.28 s.
-* In the corrected clubhead mass sweep (0.238 kg equivalent tip mass), approximately
+* In the corrected clubhead mass sweep (lumped-limit result: 0.238 kg equivalent tip
+  mass, measured before the distributed convention of #5431; re-run under #5523), approximately
   24% modeled braking remains: even with the corrected club coupling, the optimizer
   still reverses hub torque for roughly a quarter of the downswing to achieve club
   release at impact in this planar fixed-hub geometry.

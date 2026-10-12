@@ -42,9 +42,12 @@ def _random_states(seed: int = 4767) -> np.ndarray:
     )
 
 
-def test_coupling_constant_matches_effective_segment_mass() -> None:
-    """The coupling constant is (m2 + mClub) * L1 * L2, the head being at the tip."""
-    expected = (_PARAMS.m2 + _PARAMS.mClub) * _PARAMS.L1 * _PARAMS.L2
+def test_coupling_constant_matches_club_first_moment() -> None:
+    """The coupling constant is s * L1 with s = (m2/2 + mClub) * L2 (#5431).
+
+    Hand value: s = (0.15 + 0.20) * 1.10 = 0.385, so s * L1 = 0.25025.
+    """
+    expected = (_PARAMS.m2 / 2.0 + _PARAMS.mClub) * _PARAMS.L2 * _PARAMS.L1
     assert coupling_constant(_PARAMS) == pytest.approx(expected)
     assert coupling_constant(_PARAMS) > 0.0
 

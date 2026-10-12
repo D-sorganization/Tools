@@ -85,11 +85,44 @@ export function makePendulumParams(p: PendulumParams): PendulumParams {
     return { ...p };
 }
 
-// ── Effective mass helper (DRY: used throughout) ─────────────────────────────
+// ── Club inertia (DRY: single source for every formula) ──────────────────────
 
-/** Effective mass of segment 2 = shaft mass + clubhead mass. */
-function m2eff(p: PendulumParams): number {
-    return p.m2 + p.mClub;
+/** Club mass, first moment and wrist inertia of the canonical distributed club. */
+export interface DistalInertia {
+    /** Mc = m2 + mh (kg). */
+    mass: number;
+    /** s = (m2/2 + mh) L2, first moment about the wrist (kg m). */
+    firstMoment: number;
+    /** Jw = (m2/3 + mh) L2^2, inertia about the wrist (kg m^2). */
+    pivotInertia: number;
+    /** Icm = m2 L2^2 (m2 + 4 mh) / (12 Mc); closed form, never a difference of near-equal terms. */
+    centroidalInertia: number;
+}
+
+/**
+ * Canonical club inertia (Tools #5431): uniform shaft of mass `shaft` over
+ * `length` (COM at length/2, centroidal inertia shaft*length^2/12) plus a head
+ * point mass `head` at the tip.  Mirrors Python `club_inertia.distal_inertia`
+ * and Rust `DistalInertia`; parity is pinned by the shared JSON fixture.
+ */
+export function distalInertia(shaft: number, head: number, length: number): DistalInertia {
+    // Pre (same as Python distal_inertia): finite, non-negative masses with a
+    // positive total, positive length.
+    assertFinite(shaft, 'shaft mass'); assertFinite(head, 'head mass'); assertFinite(length, 'length');
+    if (shaft < 0 || head < 0) throw new RangeError('[DbC] shaft and head masses must be non-negative');
+    const mass = shaft + head;
+    if (!(mass > 0)) throw new RangeError('[DbC] total club mass must be positive');
+    if (!(length > 0)) throw new RangeError('[DbC] club length must be positive');
+    return {
+        mass,
+        firstMoment: (0.5 * shaft + head) * length,
+        pivotInertia: (shaft / 3 + head) * length ** 2,
+        centroidalInertia: shaft * length ** 2 * (shaft + 4 * head) / (12 * mass),
+    };
+}
+
+function clubInertia(p: PendulumParams): DistalInertia {
+    return distalInertia(p.m2, p.mClub, p.L2);
 }
 
 // ── Mass matrix ───────────────────────────────────────────────────────────────
@@ -97,8 +130,10 @@ function m2eff(p: PendulumParams): number {
 /**
  * 2×2 inertia matrix as flat [M11, M12, M21, M22].
  *
- * The clubhead is modeled as a point mass at the tip of segment 2.
- * Shaft is treated as a uniform rod of mass m2, plus point mass mClub at L2.
+ * Canonical distributed club (Tools #5431): uniform shaft of mass m2 plus a
+ * head point mass mClub at L2.  With Mc = m2 + mClub, s = (m2/2 + mClub) L2 and
+ * Jw = (m2/3 + mClub) L2^2:
+ * M11 = (m1 + Mc) L1^2 + Jw + 2 s L1 cos(phi), M12 = Jw + s L1 cos(phi), M22 = Jw.
  *
  * Pre:  phi finite.
  * Post: symmetric (M12 === M21), M22 > 0.
@@ -106,10 +141,11 @@ function m2eff(p: PendulumParams): number {
 export function massMatrix(phi: number, p: PendulumParams): [number, number, number, number] {
     assertFinite(phi, 'phi');
     const c = Math.cos(phi);
-    const me = m2eff(p);
-    const M11 = (p.m1 + me) * p.L1 ** 2 + me * p.L2 ** 2 + 2 * me * p.L1 * p.L2 * c;
-    const M12 = me * p.L2 ** 2 + me * p.L1 * p.L2 * c;
-    const M22 = me * p.L2 ** 2;
+    const club = clubInertia(p);
+    const M11 = (p.m1 + club.mass) * p.L1 ** 2 + club.pivotInertia
+        + 2 * club.firstMoment * p.L1 * c;
+    const M12 = club.pivotInertia + club.firstMoment * p.L1 * c;
+    const M22 = club.pivotInertia;
     // Post: symmetry trivially satisfied (M12 == M21 by construction)
     if (!(M22 > 0)) throw new Error('[DbC post] M22 must be positive');
     return [M11, M12, M12, M22];
@@ -125,8 +161,7 @@ export function massMatrixComponents(phi: number, p: PendulumParams) {
 function coriolisVector(phi: number, dtheta1: number, dphi: number,
     p: PendulumParams): [number, number] {
     assertFinite(phi, 'phi'); assertFinite(dtheta1, 'dtheta1'); assertFinite(dphi, 'dphi');
-    const me = m2eff(p);
-    const h = -me * p.L1 * p.L2 * Math.sin(phi);
+    const h = -clubInertia(p).firstMoment * p.L1 * Math.sin(phi);
     return [h * (2 * dtheta1 * dphi + dphi ** 2), -h * dtheta1 ** 2];
 }
 
@@ -154,7 +189,7 @@ export function generalizedForceSources(
     state.forEach((value, index) => assertFinite(value, `state[${index}]`));
     applied.forEach((value, index) => assertFinite(value, `applied[${index}]`));
     const [theta1, phi, dtheta1, dphi] = state;
-    const coupling = -m2eff(p) * p.L1 * p.L2 * Math.sin(phi);
+    const coupling = -clubInertia(p).firstMoment * p.L1 * Math.sin(phi);
     const gravity = gravityVector(theta1, phi, p);
     const damping = frictionTorqueVector(dtheta1, dphi, p);
     return {
@@ -170,10 +205,10 @@ export function generalizedForceSources(
 
 function gravityVector(theta1: number, phi: number,
     p: PendulumParams): [number, number] {
-    const me = m2eff(p);
+    const club = clubInertia(p);
     const a2 = theta1 + phi;
-    const G1 = (p.m1 + me) * p.g * p.L1 * Math.sin(theta1) + me * p.g * p.L2 * Math.sin(a2);
-    const G2 = me * p.g * p.L2 * Math.sin(a2);
+    const G2 = club.firstMoment * p.g * Math.sin(a2);
+    const G1 = (p.m1 + club.mass) * p.g * p.L1 * Math.sin(theta1) + G2;
     return [G1, G2];
 }
 
@@ -370,8 +405,9 @@ export interface HandPathForce {
 /**
  * Resolve the physical grip force along the instantaneous wrist path.
  *
- * The distal mass convention matches this engine's equations of motion: shaft
- * and clubhead mass are lumped at the tip. A stationary wrist has no defined
+ * The distal mass convention matches this engine's equations of motion: the
+ * force is the total club mass times its COM acceleration (uniform shaft plus
+ * head point mass, Tools #5431). A stationary wrist has no defined
  * path tangent, so ``tangentForceN`` is null and its instantaneous power is 0.
  */
 export function gripForceAlongHandPath(
@@ -398,10 +434,15 @@ export function gripForceAlongHandPath(
     const tipAccelerationY = wristAccelerationY + p.L2 * (
         Math.sin(clubAngle) * clubAcceleration + Math.cos(clubAngle) * clubRate ** 2
     );
-    const effectiveDistalMass = m2eff(p);
+    const club = clubInertia(p);
+    const comFraction = club.firstMoment / (club.mass * p.L2);
+    const comAccelerationX = wristAccelerationX
+        + comFraction * (tipAccelerationX - wristAccelerationX);
+    const comAccelerationY = wristAccelerationY
+        + comFraction * (tipAccelerationY - wristAccelerationY);
     const forceN: [number, number] = [
-        effectiveDistalMass * tipAccelerationX,
-        effectiveDistalMass * (tipAccelerationY + p.g),
+        club.mass * comAccelerationX,
+        club.mass * (comAccelerationY + p.g),
     ];
     const handVelocity = jointVelocities(state, p).wristVel;
     const handSpeedMps = Math.hypot(...handVelocity);
@@ -423,9 +464,10 @@ export interface BaseForce {
 }
 
 /**
- * Compute the reaction force at the base (shoulder pivot).
- * F_base = sum of (m_i * a_cm_i) + sum(m_i * g_vec)
- * Using Newton's second law on the whole system.
+ * Reaction force the shoulder pivot exerts on the arm.  Mirrors Python
+ * `net_joint_forces()['shoulder']` (Tools #5522): arm m1 is a point mass at the
+ * wrist (L1), plus the distributed club.  F = sum(m_i (a_i - g_vec)) with
+ * g_vec = [0, -g], so hanging at rest fy = +(m1 + Mc) g.
  *
  * Pre: state and accelerations finite.
  * Post: magnitude >= 0.
@@ -436,28 +478,18 @@ export function baseForce(state: State, qddot: [number, number], p: PendulumPara
     const a2 = theta1 + phi;
     const da2 = dtheta1 + dphi;
     const dda2 = qdd1 + qdd2;
-    const me = m2eff(p);
+    const club = clubInertia(p);
+    const comOffset = club.firstMoment / club.mass;
 
-    // Center of mass accelerations for arm (at L1/2) and shaft+clubhead (at wrist + L2)
-    // Arm COM acceleration (uniform rod, COM at L1/2):
-    const ax1 = (p.L1 / 2) * (Math.cos(theta1) * qdd1 - Math.sin(theta1) * dtheta1 ** 2);
-    const ay1 = (p.L1 / 2) * (Math.sin(theta1) * qdd1 + Math.cos(theta1) * dtheta1 ** 2);
-
-    // Wrist acceleration:
     const awx = p.L1 * (Math.cos(theta1) * qdd1 - Math.sin(theta1) * dtheta1 ** 2);
     const awy = p.L1 * (Math.sin(theta1) * qdd1 + Math.cos(theta1) * dtheta1 ** 2);
 
-    // Tip acceleration (for clubhead point mass):
-    const atx = awx + p.L2 * (Math.cos(a2) * dda2 - Math.sin(a2) * da2 ** 2);
-    const aty = awy + p.L2 * (Math.sin(a2) * dda2 + Math.cos(a2) * da2 ** 2);
+    // Distributed-club COM (shaft + head) at firstMoment / mass from the wrist.
+    const acx = awx + comOffset * (Math.cos(a2) * dda2 - Math.sin(a2) * da2 ** 2);
+    const acy = awy + comOffset * (Math.sin(a2) * dda2 + Math.cos(a2) * da2 ** 2);
 
-    // Shaft COM at L2/2 from wrist:
-    const asx = awx + (p.L2 / 2) * (Math.cos(a2) * dda2 - Math.sin(a2) * da2 ** 2);
-    const asy = awy + (p.L2 / 2) * (Math.sin(a2) * dda2 + Math.cos(a2) * da2 ** 2);
-
-    // F = sum(m_i * a_i) + sum(m_i * [0, g])
-    const fx = p.m1 * ax1 + p.m2 * asx + p.mClub * atx;
-    const fy = p.m1 * ay1 + p.m2 * asy + p.mClub * aty - (p.m1 + me) * p.g;
+    const fx = p.m1 * awx + club.mass * acx;
+    const fy = p.m1 * (awy + p.g) + club.mass * (acy + p.g);
 
     return { fx, fy, magnitude: Math.sqrt(fx ** 2 + fy ** 2) };
 }
@@ -512,9 +544,10 @@ export function kineticEnergy(state: State, p: PendulumParams): number {
 
 export function potentialEnergy(state: State, p: PendulumParams): number {
     const [theta1, phi] = state;
-    const me = m2eff(p);
+    const club = clubInertia(p);
     const a2 = theta1 + phi;
-    return -(p.m1 + me) * p.g * p.L1 * Math.cos(theta1) - me * p.g * p.L2 * Math.cos(a2);
+    return -(p.m1 + club.mass) * p.g * p.L1 * Math.cos(theta1)
+        - club.firstMoment * p.g * Math.cos(a2);
 }
 
 export function totalEnergy(state: State, p: PendulumParams): number {
