@@ -119,6 +119,9 @@ ROUTE_TIERS: dict[tuple[str, str], str] = {
     ("POST", "/api/alicats/{device_id}/setpoint"): ADMIN,
     ("POST", "/api/alicats/{device_id}/gas"): ADMIN,
     ("POST", "/api/project/import"): ADMIN,
+    # Config revision history (F04, #5527): audit data, admin-only, read-only.
+    ("GET", "/api/config/revisions"): ADMIN,
+    ("GET", "/api/config/revisions/{revision_id}"): ADMIN,
     # --- Power supply and heater --------------------------------------------#
     # main.py mounts create_power_supply_router / create_temperature_router
     # UNCONDITIONALLY, so these rows are never stale and must never be dropped:
@@ -164,6 +167,7 @@ PATH_PARAM_SAMPLES: dict[str, str] = {
     "tag_id": "TAG_0",
     "pid_index": "0",
     "device_id": "MFC_1",
+    "revision_id": "1",
 }
 
 _DENIED = (401, 403)

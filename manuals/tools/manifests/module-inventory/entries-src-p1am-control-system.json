@@ -431,10 +431,91 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5130,
+      "bytes_lf": 6116,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0b52684b5d34dd3d7d1992a03bfd965d3e761816aea45d5ae2d2f21c85d0193f",
+      "content_sha256_lf": "f90f923dac928bcb03f08292c32e5c92cc9a9eb11c758d67edb923200594bff1",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-CONFIG-REVISIONS-PY-210D2998D24E",
+      "language": "python",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/backend/config_revisions.py",
+      "purpose": "Append-only configuration revision history (SCADA F04 slice, issue #5527).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [
+          "/api/config/revisions",
+          "/api/config/revisions/{revision_id}"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ConfigRevision",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "append_revision",
+            "signature": "session: Session, key: str, value_json: str, credential_fingerprint: str | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "canonical_json",
+            "signature": "payload: dict[str, object]"
+          },
+          {
+            "kind": "function",
+            "name": "create_config_revision_router",
+            "signature": "get_session: Callable[..., Iterator[Session]], require_admin: Callable[..., None]"
+          },
+          {
+            "kind": "function",
+            "name": "get_revision",
+            "signature": "session: Session, revision_id: int"
+          },
+          {
+            "kind": "function",
+            "name": "list_revisions",
+            "signature": "session: Session, key: str, limit: int=_MAX_LIST"
+          }
+        ],
+        "test_paths": [
+          "src/p1am_control_system/backend/tests/test_config_revisions.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6193,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b652a57bfe16f70ac9f59824afd1558ff0ed3963569b8b783ea13f728d4c3635",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-CONFIG-STORE-PY-62F1873A2264",
       "language": "python",
@@ -487,12 +568,12 @@
           {
             "kind": "function",
             "name": "save_config",
-            "signature": "session: Session, key: str, payload: dict[str, object]"
+            "signature": "session: Session, key: str, payload: dict[str, object], credential_fingerprint: str | None=None"
           },
           {
             "kind": "function",
             "name": "save_model",
-            "signature": "session: Session, key: str, model: BaseModel"
+            "signature": "session: Session, key: str, model: BaseModel, credential_fingerprint: str | None=None"
           }
         ],
         "test_paths": [
@@ -2082,10 +2163,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 51356,
+      "bytes_lf": 52154,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "5a6299c75fd342fe696b7ae30a13af87359ea61d64e27baea4fefaf1d64e9a2f",
+      "content_sha256_lf": "1753d077adef39829cef1e2becdfd44852e8eac5b2c11d0a988d0c0cef9b0973",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-MAIN-PY-C47A4D7AC436",
       "language": "python",
@@ -2308,7 +2389,7 @@
           {
             "kind": "function",
             "name": "update_routing",
-            "signature": "config: RoutingConfig"
+            "signature": "config: RoutingConfig, request: Request"
           }
         ],
         "test_paths": [],
