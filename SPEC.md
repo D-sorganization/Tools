@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-11 | #5514 | Sync the agent-identity managed block and vendored automerge_guard.py: the owner's personal token is an approved agent identity |
 | 2026-10-11 | #5517 | Install pyserial alongside pymodbus so pymodbus 3.16.0 imports in CI and the p1am/test extras |
 | 2026-10-11 | #5505 | Bootstrap rustup with --no-modify-path before dtolnay/rust-toolchain so CI stops appending CARGO_HOME env lines to runner shell profiles (Repository_Management#2064) |
 | 2026-10-10 | #5507 | dependabot: group cargo and pip minor/patch updates into one weekly PR per ecosystem |
