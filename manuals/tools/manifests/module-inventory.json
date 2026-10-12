@@ -813,7 +813,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-theme.json"
     },
     {
-      "content_sha256_lf": "371da392e18938c5818a1ba58dccdbc5846c2a53413a7f0545ceec0ff67d2bfd",
+      "content_sha256_lf": "6c15532a53253a26036f0398d8e9c7f4afdb7a177ee27f94a0177ee91b0f4645",
       "entry_count": 74,
       "package": "src/shared/python/sidekick/ui",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-ui.json"
