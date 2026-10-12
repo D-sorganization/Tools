@@ -31,7 +31,7 @@ Complex FRF #5155 (PR #5156) is merged onto main. Numerical shaft #5133 is merge
 - Camera task owns UpstreamDrift #9860–#9863; preserve its scopes. Resume the complete requirement matrix in docs/development/impact-acoustics/PROGRESS.md; exact-pin consumers and physical/blinded final synthesis remain required.
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-09-09
+> Last updated: 2026-10-12
 > **Current state only**, capped at 150 lines by `CLAUDE.md`; history lives in git and `docs/agent_handoff_archive/`.
 > Do not append dated entries here again.
 
@@ -66,6 +66,7 @@ Tools is the fleet's shared engineering-tools monorepo (45+ tools: PyQt6 GUIs, F
 
 ## Active Delivery Boundaries
 
+- Signal shape validation #5569 is in review on `codex/signal-optimized-structural-guards` at `312cc9567`: four `python -O` regressions pass; UpstreamDrift #7704 must repin Tools only after protected merge. Manual publication approval is unchanged.
 - **Putting launch monitor #5218** — camera putting for GSPro; core (PR #5224, merged)
   measured on the rig, PyQt6 window merged (PR #5225, #5219); launcher
   registration in PR #5226 (#5220); validation is the remaining child. See `src/putting_launch_monitor/AGENT_HANDOFF.md`.
