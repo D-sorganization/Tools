@@ -202,10 +202,15 @@ async def test_get_routing_success() -> None:
 @pytest.mark.asyncio
 async def test_update_routing_success(
     sample_routing_config: RoutingConfig,
+    tmp_path: Any,
+    monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """Verify POST /api/routing writes configs and triggers Save to Flash coil."""
     mock_write_routing = AsyncMock(return_value=True)
     mock_save_flash = AsyncMock(return_value=True)
+    cfg_engine = create_engine(f"sqlite:///{(tmp_path / 'cfg.db').as_posix()}")
+    SQLModel.metadata.create_all(cfg_engine)
+    monkeypatch.setattr("main._config_session", lambda: Session(cfg_engine))
 
     with (
         patch.object(modbus_manager, "_connected", True),
@@ -216,6 +221,8 @@ async def test_update_routing_success(
         response = client.post("/api/routing", json=payload)
         assert response.status_code == 200
         assert response.json()["status"] == "success"
+        # F04 (#5527): the new config revision id is returned additively.
+        assert isinstance(response.json()["revision_id"], int)
         mock_write_routing.assert_called_once()
         mock_save_flash.assert_called_once()
 

@@ -117,13 +117,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "f2f483021c5b72fb443c113b7c47b58259dc633c6710457dd8d52d31e6382775",
+      "content_sha256_lf": "d494a2f5b49d10753a2d839a14c79d01386935021a825179391d46dafe7b7dd0",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
     },
     {
-      "content_sha256_lf": "796fd13ca37d3901f34bbc508077e23d51873b9b8756ec3e523cc3bbe4441254",
+      "content_sha256_lf": "331e339b1ac9585c69b7fb69254c39bc40777ee90f03de0e817bb5e226ba0398",
       "entry_count": 5,
       "package": "rust_core/data-processor-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
@@ -387,8 +387,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-optimizer-gui.json"
     },
     {
-      "content_sha256_lf": "e7a86c39981f56b8526164b5cabe3da0e8835aa8dd133b003577a88c8505e707",
-      "entry_count": 255,
+      "content_sha256_lf": "f989a279d6f6d1e57143ff742427e7b193783fb454da87ef4d675ac0f68c92f5",
+      "entry_count": 256,
       "package": "src/p1am_control_system",
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
