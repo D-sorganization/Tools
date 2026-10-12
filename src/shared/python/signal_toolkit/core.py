@@ -8,24 +8,27 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import Any, ClassVar
 
 import numpy as np
 
 try:
-    from shared.python.contracts import PreconditionError, require
+    from shared.python.contracts import require
 except ImportError:
 
-    class PreconditionError(ValueError):
-        """Fallback structural precondition error without shared contracts."""
-
-        def __init__(self, message: str, value: object = None) -> None:
-            super().__init__(message)
-
-    def require(condition: object, message: str = "", *args: object) -> None:
+    def require(condition: bool, message: str, value: Any = None) -> None:
         """Fallback DbC require when pycontracts is not installed."""
         if not condition:
             raise ValueError(message)
+
+
+def _structural_error(message: str, value: object = None) -> ValueError:
+    """Return the public precondition error or a standalone fallback."""
+    try:
+        from shared.python.contracts import PreconditionError
+    except ImportError:
+        return ValueError(message)
+    return PreconditionError(message, value)
 
 
 @dataclass
@@ -64,25 +67,25 @@ class Signal:
         self.values = np.asarray(self.values, dtype=np.float64)
 
         if self.time.ndim != 1:
-            raise PreconditionError(
+            raise _structural_error(
                 f"Time must be 1D array, got shape {self.time.shape}",
                 self.time.shape,
             )
 
         if self.values.ndim == 1:
             if len(self.time) != len(self.values):
-                raise PreconditionError(
+                raise _structural_error(
                     f"Time and values must have same length: "
                     f"{len(self.time)} vs {len(self.values)}"
                 )
         elif self.values.ndim == 2:
             if self.values.shape[0] != len(self.time):
-                raise PreconditionError(
+                raise _structural_error(
                     f"First dimension of values must match time length: "
                     f"{self.values.shape[0]} vs {len(self.time)}"
                 )
         else:
-            raise PreconditionError(
+            raise _structural_error(
                 f"Values must be 1D or 2D array, got shape {self.values.shape}",
                 self.values.shape,
             )

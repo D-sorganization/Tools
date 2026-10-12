@@ -825,7 +825,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-utils.json"
     },
     {
-      "content_sha256_lf": "28d8462fe3a5f7fc971768c1efc427319667c1f6c984e0be75602fe4ed1b66b2",
+      "content_sha256_lf": "532559fd0d2ed2b56e9b39540f6a06ae78ab9c682a7796385e75705d5927166b",
       "entry_count": 18,
       "package": "src/shared/python/signal_toolkit",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-signal-toolkit.json"
