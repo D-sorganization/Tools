@@ -148,6 +148,58 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5572 · Preserve Signal Toolkit Import Identity
+
+- **State:** in_review
+- **Owner:** codex
+- **Issue:** #5572
+- **Branch:** codex/signal-optimized-structural-guards
+- **PR:** #5573
+- **Paths:** src/shared/python/signal_toolkit/__init__.py, tests/shared/python/signal_toolkit/test_import_identity.py, manuals/tools/manifests/module-inventory.json
+- **Started:** 2026-10-12
+- **Last verified:** 2026-10-12 (`8a11691b`; collated from changes/5572-signal-toolkit-import-identity.md)
+- **Summary:** Bind Signal toolkit import aliases before package children capture provider classes.
+- **Next step:** Complete governed log migration, full pre-PR validation, and protected provider publication.
+
+### DL-#5571 · Preserve Signal Fitting Consumer Contracts
+
+- **State:** in_review
+- **Owner:** codex
+- **Issue:** #5571
+- **Branch:** codex/signal-optimized-structural-guards
+- **PR:** #5573
+- **Paths:** src/shared/python/signal_toolkit/fitting.py, tests/shared/python/signal_toolkit/test_fitting_consumer_contracts.py, manuals/tools/manifests/module-inventory.json
+- **Started:** 2026-10-12
+- **Last verified:** 2026-10-12 (`8a11691b`; collated from changes/5571-signal-fitting-consumer-contracts.md)
+- **Summary:** Preserve Signal fitting empty-input and failed-fit ndarray identity contracts in the canonical Tools provider.
+- **Next step:** Complete governed log migration, full pre-PR validation, and protected provider publication with Signal #5569.
+
+### DL-#5570 · Reconcile Development Log Provenance
+
+- **State:** in_review
+- **Owner:** codex
+- **Issue:** #5570
+- **Branch:** codex/signal-optimized-structural-guards
+- **PR:** #5573
+- **Paths:** .secrets.baseline, docs/development/DEVELOPMENT_LOG.md, docs/development/development-log-provenance-migration.md, docs/development/provenance/tools-devlog-migration-plan.json, docs/development/provenance/tools-devlog-metadata-review.md, docs/development/provenance/tools-devlog-migration-receipt.json, shared_scripts/development_log_migration.py
+- **Started:** 2026-10-12
+- **Last verified:** 2026-10-12 (`8a11691b`; collated from changes/5570-governed-development-log-provenance.md)
+- **Summary:** Reconcile inherited Tools development-log findings through the reviewed, lossless RM provenance migration.
+- **Next step:** Resolve PR #5573 CI findings, rerun canonical RM-6, and complete protected merge; separately review stale historical feature states.
+
+### DL-#5569 · Keep Signal Structural Shape Validation Active Under Optimized Python
+
+- **State:** in_review
+- **Owner:** unassigned
+- **Issue:** #5569
+- **Branch:** codex/signal-optimized-structural-guards
+- **PR:** #5573
+- **Paths:** src/shared/python/signal_toolkit/core.py; tests/shared/python/signal_toolkit/test_core_structural_guards.py; manuals/tools/manifests/module-inventory.json; manuals/tools/manifests/module-inventory/entries-src-shared-python-signal-toolkit.json
+- **Started:** 2026-10-12
+- **Last verified:** 2026-10-12 (`8a11691b`; collated from changes/5569-keep-signal-structural-shape-validation.md)
+- **Summary:** Keep Signal structural shape validation active under optimized Python
+- **Next step:** Review and merge Tools fix, then repin and mirror the provider in UpstreamDrift #7704
+
 ### DL-#5528 · SCADA F07: Publish Firmware Trip Latch Tri-State (Plc_Trip_Latch) and First-Out Tag (First_Out_Tag_Id) From One Register Read; InterlocksPanel Shows PLC Trip and an Explicit Unknown State
 
 - **State:** in_review
