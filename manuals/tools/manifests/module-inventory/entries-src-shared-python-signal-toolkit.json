@@ -581,10 +581,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 26078,
+      "bytes_lf": 26132,
       "classification": "calculation",
       "classification_basis": "path-marker:signal",
-      "content_sha256_lf": "41f2f951a11e972e706844f7144be886ed52222807e0dd8a5c1d029d8f4d2ef2",
+      "content_sha256_lf": "27272e45bf96df2335dc041a4a3f5a82b1e8c21800785e3be3875bf0c1801071",
       "family": "signal-processing-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-FITTING-PY-38C1998A2327",
       "language": "python",
