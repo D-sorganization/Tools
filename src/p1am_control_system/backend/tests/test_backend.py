@@ -471,6 +471,18 @@ def test_mpc_simulation() -> None:
     assert len(data["mpc"]["pv"]) == 50
 
 
+def test_mpc_simulation_response_is_advisory_with_stable_hash() -> None:
+    """The MPC response carries an advisory record that is never writable."""
+    payload = {"prediction_horizon": 10, "control_horizon": 3, "setpoint": 40.0}
+    first = client.post("/api/mpc/simulate", json=payload).json()["advisory"]
+    second = client.post("/api/mpc/simulate", json=payload).json()["advisory"]
+    assert first["authoritative_write_available"] is False
+    assert first["finding_type"] == "advisory"
+    assert first["solver_status"] == "success"
+    assert first["model_hash"] == second["model_hash"]
+    assert first["inputs_hash"] == second["inputs_hash"]
+
+
 def test_project_import_and_hierarchy() -> None:
     """Test importing a project zip file, building hierarchy and retrieving it."""
     import io
