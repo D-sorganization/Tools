@@ -117,13 +117,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "52ee7f8b44a5a8975ecd14cad8b7f9fbad9590aee78dbd13c1bacde7f267b5fa",
+      "content_sha256_lf": "740d4d7cd9788fdeeec357e7ca5a2fdf7a908cef7d4109cb87a3706520f94fae",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
     },
     {
-      "content_sha256_lf": "15ff1515d95cc2195852ed91c87e6fa06886ba848cbe71e9df1f27d45b8cd773",
+      "content_sha256_lf": "796fd13ca37d3901f34bbc508077e23d51873b9b8756ec3e523cc3bbe4441254",
       "entry_count": 5,
       "package": "rust_core/data-processor-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
@@ -267,7 +267,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-file-watcher.json"
     },
     {
-      "content_sha256_lf": "d0317e2cc6a70702bae6aa1f88f9153f9002bd21e6e5da4c43d89d6602acb934",
+      "content_sha256_lf": "d195b8957c8b99cd4bbdc02e560b59371cb37c9c8337bcbc0084afb3429b6588",
       "entry_count": 18,
       "package": "src/financial_calculator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-financial-calculator.json"
@@ -297,7 +297,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-folder-tool-pro.json"
     },
     {
-      "content_sha256_lf": "9b9fcae6a20a602b616ded7914cd3c8a0dbdf69406cd9faac732fbfdbd919193",
+      "content_sha256_lf": "0db27ab6bc50c0ca69e8a9a224d10d21faffa14c22990a8db9b0c99df2c8de0a",
       "entry_count": 17,
       "package": "src/function_generator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-function-generator.json"
@@ -387,13 +387,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-optimizer-gui.json"
     },
     {
-      "content_sha256_lf": "652ba234895548255898434687cac3c77c769e22ecb915bb147baba68cc92810",
-      "entry_count": 254,
+      "content_sha256_lf": "0c5b6d9b61918c2f8162848e05582a4fba6ff7f330453d1f3a374616371bd0e3",
+      "entry_count": 255,
       "package": "src/p1am_control_system",
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
     {
-      "content_sha256_lf": "6e1a280bcb5d0b1f8deb048b853eff394bd87b57dd1be53603735632b1cce754",
+      "content_sha256_lf": "e15fc20c8fb551ce41beefbde0803e33cde3301fc1c07e25c9fa6bd31e47524b",
       "entry_count": 167,
       "package": "src/pendulum_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pendulum-simulator.json"
@@ -411,7 +411,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-plant-simulator.json"
     },
     {
-      "content_sha256_lf": "5fe93dba41a3ebc90e18d34dc01272ec79a826826bff61ada56f572fdee622a1",
+      "content_sha256_lf": "9562c3f4b77cf20bed1986b77ceb411a4e78d36a3c04cfa7c7b89cbba39f4c92",
       "entry_count": 18,
       "package": "src/pressure_drop_calculator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pressure-drop-calculator.json"
@@ -585,7 +585,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rotation-transforms.json"
     },
     {
-      "content_sha256_lf": "5e35f821eff91a2c29664d9324d7f25dc4142d976b57aa9f50d7404cc872b7c0",
+      "content_sha256_lf": "e03cc6c07e53541ad004cc5ee0cdd242593d868afbe38d7f66329adae91a1ce8",
       "entry_count": 26,
       "package": "src/rrt_path_planner",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rrt-path-planner.json"
@@ -597,7 +597,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "f3172e968168925a8dbd4381fb04b129252ea81083e905ef8fef9f79a582af16",
+      "content_sha256_lf": "732a7d4f249c3e0977747257c133d865b6e5b7fe6f7331c09d5571640187f446",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
