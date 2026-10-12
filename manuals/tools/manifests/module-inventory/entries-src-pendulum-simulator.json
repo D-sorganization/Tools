@@ -1468,10 +1468,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 15753,
+      "bytes_lf": 15732,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "aa7d0f34702819a0347b14bd175dd99fe48cecca83dd69a7f77fc7842c522ce7",
+      "content_sha256_lf": "191ce4cd491554053bc829ea9696231fe21d40f9269095ed0aadc1bd05d8b719",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-CORE-SRC-DOUBLE-RS-B7C0B8F9B9FC",
       "language": "rust",
