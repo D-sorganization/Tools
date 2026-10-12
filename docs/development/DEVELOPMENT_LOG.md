@@ -1968,6 +1968,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5518 · Fix(Ci): Requalify Libfreetype6 2.13.2+Dfsg-1Ubuntu0.2 for the Rate PyQt Font-Stack Guard; All 10 PyQt References Pass Unchanged Under Existing Tolerances (Closes #5518, Closes #5501)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5518
+- **Branch:** merged via #5549
+- **PR:** #5549
+- **Paths:** see #5549
+- **Started:** 2026-10-12
+- **Last verified:** 2026-10-12 (`8d4201fc`; collated from changes/5518-fix-ci-requalify-libfreetype6-2-13-2-dfs.md)
+- **Summary:** fix(ci): requalify libfreetype6 2.13.2+dfsg-1ubuntu0.2 for the Rate PyQt font-stack guard; all 10 PyQt references pass unchanged under existing tolerances (Closes #5518, Closes #5501)
+- **Next step:** Shipped in PR #5549.
+
 ### DL-#1917 · Sync the Agent-Identity Managed Block and Vendored automerge_guard.py: The Owner's Personal Token Is an Approved Agent Identity
 
 - **State:** shipped
