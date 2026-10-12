@@ -825,7 +825,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-utils.json"
     },
     {
-      "content_sha256_lf": "4e31019926f76e7768548dcddfe8b353240a38c931273da7041ecfdb562696b7",
+      "content_sha256_lf": "a46529d6936d424542556abca5dad063c2a58f45866fe92fdb5be883820f8fe7",
       "entry_count": 18,
       "package": "src/shared/python/signal_toolkit",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-signal-toolkit.json"
@@ -951,7 +951,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-signal-processing-studio.json"
     },
     {
-      "content_sha256_lf": "378133e8396b65d9c251ec05f28c00291465394c05f2b6f44bf5590ea46b04aa",
+      "content_sha256_lf": "028ee5969b5588c1a3a04f18d05dd60882379aa5e0cca1f5d6712205902926b7",
       "entry_count": 1,
       "package": "src/signal_toolkit",
       "path": "manuals/tools/manifests/module-inventory/entries-src-signal-toolkit.json"
