@@ -22,6 +22,10 @@ from PyQt6.QtCore import QPointF
 from PyQt6.QtGui import QColor, QPainter, QPen
 
 Projector = Callable[[tuple[float, float]], QPointF]
+# Optional injectable arrow renderer: ``(painter, projector, arrows, scale)``.
+# Receives only non-zero arrows. Lets a host (e.g. UpstreamDrift) draw arrows
+# with its own glyph renderer without Tools owning a ``force_overlay`` package.
+ArrowRenderer = Callable[[QPainter, Projector, Sequence["ForceArrow"], float], None]
 
 _ARROWHEAD_ANGLE_RAD = math.radians(28.0)
 _MIN_SHAFT_PX = 1.5
@@ -82,6 +86,38 @@ def _magnitude(vector: tuple[float, float]) -> float:
     return math.hypot(vector[0], vector[1])
 
 
+def nonzero_arrows(arrows: Sequence[ForceArrow]) -> tuple[ForceArrow, ...]:
+    """Return the arrows whose world vector has non-zero length."""
+    return tuple(arrow for arrow in arrows if _magnitude(arrow.vector_m) > 0.0)
+
+
+def scaled_arrow_vectors(
+    arrows: Sequence[ForceArrow], scale: float
+) -> tuple[tuple[tuple[float, float, float], tuple[float, float, float]], ...]:
+    """Return ``(point_m, force)`` 3-vectors for each non-zero arrow.
+
+    Planar canvas arrows are lifted to ``z = 0`` with the vector multiplied by
+    ``scale``; this is the data a host needs to build its own wrench/glyph
+    objects (parity with UpstreamDrift's ``arrows_to_force_torque_frame``).
+
+    Preconditions:
+        ``scale`` is positive and finite.
+    """
+    _require_valid_scale(scale)
+    return tuple(
+        (
+            (arrow.origin_m[0], arrow.origin_m[1], 0.0),
+            (arrow.vector_m[0] * scale, arrow.vector_m[1] * scale, 0.0),
+        )
+        for arrow in nonzero_arrows(arrows)
+    )
+
+
+def _require_valid_scale(scale: float) -> None:
+    if not math.isfinite(scale) or scale <= 0.0:
+        raise ValueError("scale must be a positive, finite number")
+
+
 def auto_scale_factor(arrows: Sequence[ForceArrow], target_world_len: float) -> float:
     """Return a scale so the largest arrow spans about ``target_world_len``.
 
@@ -122,14 +158,22 @@ def draw_force_arrows(
     arrows: Sequence[ForceArrow],
     *,
     scale: float,
+    renderer: ArrowRenderer | None = None,
 ) -> None:
     """Draw force arrows by projecting origin and scaled tip through ``projector``.
+
+    When ``renderer`` is supplied it draws the non-zero arrows instead of the
+    built-in line + arrowhead primitive (and is not called if none remain).
 
     Preconditions:
         ``scale`` is positive and finite.
     """
-    if not math.isfinite(scale) or scale <= 0.0:
-        raise ValueError("scale must be a positive, finite number")
+    _require_valid_scale(scale)
+    if renderer is not None:
+        drawn = nonzero_arrows(arrows)
+        if drawn:
+            renderer(painter, projector, drawn, scale)
+        return
     for arrow in arrows:
         origin_x, origin_y = arrow.origin_m
         vector_x, vector_y = arrow.vector_m
@@ -212,6 +256,7 @@ def draw_overlay_scene(
     *,
     arrow_scale: float,
     torque_reference_nm: float,
+    arrow_renderer: ArrowRenderer | None = None,
 ) -> None:
     """Draw every primitive in ``scene`` (DRY entry point for the canvas).
 
@@ -219,7 +264,13 @@ def draw_overlay_scene(
         ``arrow_scale`` is positive/finite and ``torque_reference_nm`` positive.
     """
     if scene.arrows:
-        draw_force_arrows(painter, projector, scene.arrows, scale=arrow_scale)
+        draw_force_arrows(
+            painter,
+            projector,
+            scene.arrows,
+            scale=arrow_scale,
+            renderer=arrow_renderer,
+        )
     if scene.torque_arcs:
         draw_torque_arcs(
             painter, projector, scene.torque_arcs, reference_nm=torque_reference_nm

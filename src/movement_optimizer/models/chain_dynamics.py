@@ -9,16 +9,7 @@ from typing import Final, TypeAlias
 import numpy as np
 from numpy.typing import NDArray
 
-try:
-    # Prefer the fleet-canonical constant (issue #3994) so this stays in
-    # sync with the rest of the fleet instead of drifting independently.
-    from shared.python.sidekick.utils.unit_constants import (
-        STANDARD_GRAVITY as GRAVITY_M_S2,
-    )
-except ImportError:
-    # Not importable in a bare/standalone environment (e.g. a wheel install
-    # without the monorepo's shared.python on the path) -- same value.
-    GRAVITY_M_S2: float = 9.80665  # type: ignore[no-redef]
+from ..constants import GRAVITY_M_S2
 
 DEFAULT_SEGMENT_COUNT: Final[int] = 12
 DEFAULT_SEGMENT_LENGTH_M: Final[float] = 0.18
@@ -157,6 +148,10 @@ class ChainRollout:
     positions: FloatArray
     energy_j: FloatArray
     tip_speed_m_s: FloatArray
+
+    def frame_count(self) -> int:
+        """Return the number of rendered chain frames."""
+        return int(self.positions.shape[0])
 
 
 def segment_vectors(config: ChainConfig, angles_rad: FloatArray) -> FloatArray:

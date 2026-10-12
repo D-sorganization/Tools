@@ -148,6 +148,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5528 · SCADA F07: Publish Firmware Trip Latch Tri-State (Plc_Trip_Latch) and First-Out Tag (First_Out_Tag_Id) From One Register Read; InterlocksPanel Shows PLC Trip and an Explicit Unknown State
+
+- **State:** in_review
+- **Owner:** claude
+- **Issue:** #5528
+- **Branch:** feat/5528-first-out-tag
+- **PR:** #5550
+- **Paths:** see #5550
+- **Started:** 2026-10-12
+- **Last verified:** 2026-10-12 (`aa48c2e1`; collated from changes/5528-scada-f07-read-firmware-first-out-trip-t.md)
+- **Summary:** SCADA F07: publish firmware trip latch tri-state (plc_trip_latch) and first-out tag (first_out_tag_id) from one register read; InterlocksPanel shows PLC trip and an explicit unknown state
+- **Next step:** Review and merge; F07 matrix row stays partial until cited.
+
 ### DL-#5474 · Require Matching Versioned Actuator-Profile References for Mixed Command Evidence
 
 - **State:** in_review
