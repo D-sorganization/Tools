@@ -1466,10 +1466,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 12846,
+      "bytes_lf": 15753,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "49097b27e4454958e4d3d7c11ebd9ff2217610375700fdbc82302b9d8c278d81",
+      "content_sha256_lf": "aa7d0f34702819a0347b14bd175dd99fe48cecca83dd69a7f77fc7842c522ce7",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-CORE-SRC-DOUBLE-RS-B7C0B8F9B9FC",
       "language": "rust",
@@ -2125,10 +2125,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 10695,
+      "bytes_lf": 12141,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "62542b6fe5591eeeb88f3129ee476d1f6357030fb706dae9ffdec985ac4feb7f",
+      "content_sha256_lf": "814ae36a35aef5b4c3e43fa7c4057366dc03478759d080bd887286a77858774f",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-CORE-SRC-TYPES-RS-161F77959225",
       "language": "rust",
@@ -3614,10 +3614,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 48522,
+      "bytes_lf": 51699,
       "classification": "calculation",
       "classification_basis": "path-marker:force",
-      "content_sha256_lf": "e8265932a1d85df7476699b71ddc7309da52ac0ddc05a478b57cb8c8bba7d819",
+      "content_sha256_lf": "94a9f2817d4bfe435c4b2f1b75452d3c8ca472eafca1e0a60356549093ac4e89",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-FORCESOURCEOPTIMIZATION-TS-F6C0040C15CC",
       "language": "typescript",
@@ -3796,10 +3796,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 7150,
+      "bytes_lf": 7151,
       "classification": "calculation",
       "classification_basis": "path-marker:force",
-      "content_sha256_lf": "aaf09a6dcb5aa1f2aa1e95adb11aa6f5232aea69af4418792288356172721428",
+      "content_sha256_lf": "5545c2eb7bd586b5021b151f272185d1a5f21dd25273d30726b5fe80dfa2ccf6",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-FORCESOURCETYPES-TS-CB8CFD999104",
       "language": "typescript",
@@ -4261,10 +4261,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 27009,
+      "bytes_lf": 27737,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "e95fa55405dfbc7f60cd99c5ded00b0ea3df0b322b4b45d6adb0b0e671ea078f",
+      "content_sha256_lf": "7cf61c592dc2189e929675a6fafa65017ef316195d9fc1ccdc64f7ed71da6873",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-WEB-SRC-PHYSICS-TS-24B32F483306",
       "language": "typescript",
@@ -5767,6 +5767,68 @@
     },
     {
       "authority_status": "provisional",
+      "bytes_lf": 3294,
+      "classification": "calculation",
+      "classification_basis": "path-marker:inertia",
+      "content_sha256_lf": "93fbb5c46a36cced19ac4a92296e90987acdf3964726c0ad5917ed547c3ad063",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-CLUB-INERTIA-PY-4CBB676AA81E",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/src/double_pendulum_golf/club_inertia.py",
+      "purpose": "Single source of truth for the distal (club) segment's inertial properties.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DistalSegmentInertia",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "distal_inertia",
+            "signature": "shaft_mass_kg: float, head_mass_kg: float, length_m: float"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 6175,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
@@ -7226,10 +7288,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 24033,
+      "bytes_lf": 24395,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "0c017b1704de54863cc38100187830b7ae912068f1160aa8d86a24095491b7e0",
+      "content_sha256_lf": "ed1f8faa92b248610c5ea69a28a8b87bdcbf7b8f9fb7d9c0ce5c25dc656d7e89",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-GUI-CONTROLS-WIDGET-PY-8E96EFC47A3A",
       "language": "python",
@@ -13190,10 +13252,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 11315,
+      "bytes_lf": 11411,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "a8851209112f89693e56f3eea5d1d8e944b3ee467e39e67155215d1fcbb68401",
+      "content_sha256_lf": "f348830760c414eba770cfa239fd84b72a57dc13a2a1f1d6acd1d5072eb7a6fa",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-MODEL-ADEQUACY-PY-E5B09834B73A",
       "language": "python",
@@ -13271,10 +13333,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 8166,
+      "bytes_lf": 8256,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "f8a8a1e42cd18b0d43cdf52e12c1bd0fdfb4c89f37887f792b88f9054f379071",
+      "content_sha256_lf": "5289c3c1396468487fdfd9cab53327c57fb02ce976319ce90671c378a5c3393d",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-OBJECTIVE-REALISM-PY-703B0EB9E7BE",
       "language": "python",

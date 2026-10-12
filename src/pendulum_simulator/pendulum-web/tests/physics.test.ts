@@ -23,12 +23,14 @@ import {
     frictionTorqueVector,
     makePolynomialTorque,
     forwardKinematics,
+    generalizedForceSources,
     gripForceAlongHandPath,
     kineticEnergy,
     potentialEnergy,
     totalEnergy,
     runSimulation,
 } from '../src/physics';
+import { PRESETS } from '../src/presets';
 import type { PendulumParams, State } from '../src/physics';
 
 // ── Fixtures ──────────────────────────────────────────────────────────────────
@@ -314,5 +316,63 @@ describe('distributed club convention', () => {
         const last = result.states[result.states.length - 1];
         const e0 = totalEnergy(result.states[0], p);
         expect(Math.abs(totalEnergy(last, p) - e0)).toBeLessThan(1e-6);
+    });
+
+    it('centroidal inertia is a closed form that stays non-negative for a vanishing shaft', () => {
+        const fixture = JSON.parse(readFileSync(
+            new URL('../../tests/fixtures/distal_inertia_cases.json', import.meta.url), 'utf8',
+        ));
+        for (const c of fixture.cases) {
+            const club = distalInertia(c.shaft_mass_kg, c.head_mass_kg, c.length_m);
+            expect(Math.abs(club.centroidalInertia - c.centroidal_inertia_kg_m2))
+                .toBeLessThanOrEqual(1e-14 * Math.abs(c.centroidal_inertia_kg_m2) + 1e-300);
+        }
+        for (let i = 0; i < 200; i++) {
+            const length = 0.5 + i / 199;
+            expect(distalInertia(1e-15, 0.5, length).centroidalInertia).toBeGreaterThanOrEqual(0);
+        }
+    });
+
+    it('rejects invalid club inputs like the Python/Rust implementations', () => {
+        expect(() => distalInertia(-1, 1, 1)).toThrow();
+        expect(() => distalInertia(1, -0.1, 1)).toThrow();
+        expect(() => distalInertia(0, 0, 1)).toThrow();
+        expect(() => distalInertia(1, 1, 0)).toThrow();
+        expect(() => distalInertia(NaN, 1, 1)).toThrow();
+        expect(() => distalInertia(1, Infinity, 1)).toThrow();
+    });
+
+    it('matches the shared golden M, C, G and PE cases', () => {
+        const fixture = JSON.parse(readFileSync(
+            new URL('../../tests/fixtures/distal_dynamics_cases.json', import.meta.url), 'utf8',
+        ));
+        expect(fixture.cases.length).toBeGreaterThanOrEqual(5);
+        const close = (got: number, want: number) =>
+            expect(Math.abs(got - want)).toBeLessThanOrEqual(1e-12 * Math.max(1, Math.abs(want)));
+        for (const c of fixture.cases) {
+            const p = makePendulumParams({
+                m1: c.m1, m2: c.shaft_mass_kg, mClub: c.head_mass_kg, L1: c.l1, L2: c.l2,
+                g: c.g, b1: 0, b2: 0, mu1: 0, mu2: 0,
+            });
+            const [M11, M12, , M22] = massMatrix(c.phi, p);
+            close(M11, c.m11); close(M12, c.m12); close(M22, c.m22);
+            const src = generalizedForceSources([c.theta1, c.phi, c.dtheta1, c.dphi], p, [0, 0]);
+            // sources are the negatives of C*qdot and G on the right-hand side of M qdd
+            close(-(src.coriolis[0] + src.squaredSpeed[0]), c.c1);
+            close(-(src.coriolis[1] + src.squaredSpeed[1]), c.c2);
+            close(-src.gravity[0], c.g1); close(-src.gravity[1], c.g2);
+            close(potentialEnergy([c.theta1, c.phi, c.dtheta1, c.dphi], p), c.potential_energy_j);
+        }
+    });
+
+    it('golf presets are pinned to the shared driver split fixture', () => {
+        const driver = JSON.parse(readFileSync(
+            new URL('../../tests/fixtures/driver_preset.json', import.meta.url), 'utf8',
+        ));
+        for (const preset of PRESETS.slice(0, 2)) {
+            expect(preset.params.m2).toBeCloseTo(driver.shaft_mass_kg, 14);
+            expect(preset.params.mClub).toBeCloseTo(driver.head_mass_kg, 14);
+            expect(preset.params.L2).toBeCloseTo(driver.length_m, 14);
+        }
     });
 });

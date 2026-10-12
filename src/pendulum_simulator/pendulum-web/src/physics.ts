@@ -95,6 +95,8 @@ export interface DistalInertia {
     firstMoment: number;
     /** Jw = (m2/3 + mh) L2^2, inertia about the wrist (kg m^2). */
     pivotInertia: number;
+    /** Icm = m2 L2^2 (m2 + 4 mh) / (12 Mc); closed form, never a difference of near-equal terms. */
+    centroidalInertia: number;
 }
 
 /**
@@ -104,10 +106,18 @@ export interface DistalInertia {
  * and Rust `DistalInertia`; parity is pinned by the shared JSON fixture.
  */
 export function distalInertia(shaft: number, head: number, length: number): DistalInertia {
+    // Pre (same as Python distal_inertia): finite, non-negative masses with a
+    // positive total, positive length.
+    assertFinite(shaft, 'shaft mass'); assertFinite(head, 'head mass'); assertFinite(length, 'length');
+    if (shaft < 0 || head < 0) throw new RangeError('[DbC] shaft and head masses must be non-negative');
+    const mass = shaft + head;
+    if (!(mass > 0)) throw new RangeError('[DbC] total club mass must be positive');
+    if (!(length > 0)) throw new RangeError('[DbC] club length must be positive');
     return {
-        mass: shaft + head,
+        mass,
         firstMoment: (0.5 * shaft + head) * length,
         pivotInertia: (shaft / 3 + head) * length ** 2,
+        centroidalInertia: shaft * length ** 2 * (shaft + 4 * head) / (12 * mass),
     };
 }
 

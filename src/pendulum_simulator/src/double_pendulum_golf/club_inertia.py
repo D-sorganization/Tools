@@ -11,6 +11,10 @@ re-deriving them:
 * ``mass_kg``                   Mc = m2 + mh
 * ``first_moment_kg_m``         s  = m2*L2/2 + mh*L2      (= Mc * COM distance)
 * ``inertia_about_pivot_kg_m2`` Jw = m2*L2**2/3 + mh*L2**2 (= Icm + Mc * COM**2)
+* ``centroidal_inertia_kg_m2``  Icm = m2*L2**2*(m2 + 4*mh) / (12*Mc), the closed form
+  of ``Jw - s**2/Mc``. It is never computed as a difference of near-equal
+  terms: at tiny ``m2`` that subtraction cancels catastrophically and can go
+  negative.
 
 The old lumped model (all of ``m2 + mClub`` at the tip) is the special case
 ``s = Mc*L2`` and ``Jw = Mc*L2**2``.
@@ -34,6 +38,7 @@ class DistalSegmentInertia:
     mass_kg: float
     first_moment_kg_m: float
     inertia_about_pivot_kg_m2: float
+    centroidal_inertia_kg_m2: float
 
     @property
     def com_m(self) -> float:
@@ -43,7 +48,7 @@ class DistalSegmentInertia:
     @property
     def icm_kg_m2(self) -> float:
         """Centroidal inertia of shaft plus head about the club COM."""
-        return self.inertia_about_pivot_kg_m2 - self.first_moment_kg_m * self.com_m
+        return self.centroidal_inertia_kg_m2
 
 
 def distal_inertia(
@@ -52,7 +57,7 @@ def distal_inertia(
     """Return the canonical club inertia for a uniform shaft plus head mass.
 
     Pre: masses finite and non-negative, total mass > 0, length finite and > 0.
-    Post: ``Jw >= s*com`` (non-negative centroidal inertia).
+    Post: ``Icm >= 0`` by construction (closed form, no cancellation).
     """
     for name, value in (
         ("shaft_mass_kg", shaft_mass_kg),
@@ -71,4 +76,10 @@ def distal_inertia(
         mass_kg=shaft_mass_kg + head_mass_kg,
         first_moment_kg_m=(0.5 * shaft_mass_kg + head_mass_kg) * length_m,
         inertia_about_pivot_kg_m2=(shaft_mass_kg / 3.0 + head_mass_kg) * length_m**2,
+        centroidal_inertia_kg_m2=(
+            shaft_mass_kg
+            * length_m**2
+            * (shaft_mass_kg + 4.0 * head_mass_kg)
+            / (12.0 * (shaft_mass_kg + head_mass_kg))
+        ),
     )

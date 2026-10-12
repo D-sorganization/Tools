@@ -393,8 +393,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
     {
-      "content_sha256_lf": "a92c9fff2bd1feb7d668114905513171d6987d3c3092cd52376113e57a780052",
-      "entry_count": 167,
+      "content_sha256_lf": "ab311eded31c032feffa10c386c5847c62e09f7fc509b50b9ca81e8b8de42592",
+      "entry_count": 168,
       "package": "src/pendulum_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pendulum-simulator.json"
     },
@@ -831,7 +831,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-signal-toolkit.json"
     },
     {
-      "content_sha256_lf": "cf5bc531ba1bb88041eb4a50a721199bd423e1d01edd41b6f4a13e6347e9dd51",
+      "content_sha256_lf": "a73e3b2477c20629c5bd08177f72c26380b714fecaf9a9adad340f8ac75f3f76",
       "entry_count": 19,
       "package": "src/shared/python/swing_sim",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim.json"

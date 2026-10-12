@@ -43,23 +43,57 @@ pub struct DistalInertia {
     pub first_moment: f64,
     /// Inertia about the wrist `Jw = (m2/3 + mh) * l2^2` (kg m^2)
     pub pivot_inertia: f64,
+    /// Centroidal inertia `Icm = m2 l2^2 (m2 + 4 mh) / (12 Mc)` (kg m^2).
+    ///
+    /// Closed form: `Jw - s^2/Mc` cancels catastrophically for a vanishing shaft.
+    pub centroidal_inertia: f64,
 }
 
 impl DistalInertia {
     /// Build from shaft mass, head mass and length.
-    pub fn new(shaft_mass: f64, head_mass: f64, length: f64) -> Self {
-        Self {
-            mass: shaft_mass + head_mass,
-            first_moment: (0.5 * shaft_mass + head_mass) * length,
-            pivot_inertia: (shaft_mass / 3.0 + head_mass) * length * length,
+    ///
+    /// Preconditions (same as Python `distal_inertia`): all inputs finite, masses
+    /// non-negative with a positive total, length positive.
+    pub fn new(shaft_mass: f64, head_mass: f64, length: f64) -> Result<Self, String> {
+        for (name, value) in [
+            ("shaft_mass", shaft_mass),
+            ("head_mass", head_mass),
+            ("length", length),
+        ] {
+            if !value.is_finite() {
+                return Err(format!("{name} must be finite, got {value}"));
+            }
         }
+        if shaft_mass < 0.0 || head_mass < 0.0 {
+            return Err("shaft and head masses must be non-negative".to_string());
+        }
+        let mass = shaft_mass + head_mass;
+        if mass <= 0.0 {
+            return Err("total club mass must be positive".to_string());
+        }
+        if length <= 0.0 {
+            return Err(format!("length must be positive, got {length}"));
+        }
+        let length_sq = length * length;
+        Ok(Self {
+            mass,
+            first_moment: (0.5 * shaft_mass + head_mass) * length,
+            pivot_inertia: (shaft_mass / 3.0 + head_mass) * length_sq,
+            centroidal_inertia: shaft_mass * length_sq * (shaft_mass + 4.0 * head_mass)
+                / (12.0 * mass),
+        })
     }
 }
 
 impl DoublePendulumParams {
     /// Canonical club inertia (uniform shaft `m2` plus head `m_clubhead`) about the wrist.
+    ///
+    /// # Panics
+    /// Panics when the club parameters violate the `DistalInertia::new`
+    /// preconditions; call [`DoublePendulumParams::validate`] first.
     pub fn distal_inertia(&self) -> DistalInertia {
         DistalInertia::new(self.m2, self.m_clubhead, self.l2)
+            .unwrap_or_else(|error| panic!("invalid double pendulum club: {error}"))
     }
 
     /// Validate parameters are physically reasonable

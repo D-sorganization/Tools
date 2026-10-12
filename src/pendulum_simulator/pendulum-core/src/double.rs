@@ -366,10 +366,75 @@ mod tests {
                 field(block, "shaft_mass_kg"),
                 field(block, "head_mass_kg"),
                 field(block, "length_m"),
+            )
+            .unwrap();
+            assert!(
+                (club.centroidal_inertia - field(block, "centroidal_inertia_kg_m2")).abs()
+                    <= 1e-14 * field(block, "centroidal_inertia_kg_m2").abs() + 1e-300
             );
+            assert!(club.centroidal_inertia >= 0.0);
             assert!((club.mass - field(block, "mass_kg")).abs() < 1e-14);
             assert!((club.first_moment - field(block, "first_moment_kg_m")).abs() < 1e-14);
             assert!((club.pivot_inertia - field(block, "inertia_about_pivot_kg_m2")).abs() < 1e-14);
+            checked += 1;
+        }
+        assert!(checked >= 5);
+    }
+
+    #[test]
+    fn test_distal_inertia_rejects_invalid_inputs() {
+        use crate::types::DistalInertia;
+        assert!(DistalInertia::new(-1.0, 1.0, 1.0).is_err());
+        assert!(DistalInertia::new(1.0, -0.1, 1.0).is_err());
+        assert!(DistalInertia::new(0.0, 0.0, 1.0).is_err());
+        assert!(DistalInertia::new(1.0, 1.0, 0.0).is_err());
+        assert!(DistalInertia::new(f64::NAN, 1.0, 1.0).is_err());
+        assert!(DistalInertia::new(1.0, f64::INFINITY, 1.0).is_err());
+    }
+
+    #[test]
+    fn test_centroidal_inertia_never_negative_for_vanishing_shaft() {
+        use crate::types::DistalInertia;
+        for i in 0..200 {
+            let length = 0.5 + 1.0 * (i as f64) / 199.0;
+            let club = DistalInertia::new(1e-15, 0.5, length).unwrap();
+            assert!(club.centroidal_inertia >= 0.0);
+        }
+    }
+
+    #[test]
+    fn test_dynamics_match_shared_golden_cases() {
+        let fixture = include_str!("../../tests/fixtures/distal_dynamics_cases.json");
+        let cases = &fixture[fixture.find("\"cases\"").unwrap()..];
+        let mut checked = 0;
+        for block in cases.split('{').skip(1) {
+            let p = DoublePendulumParams {
+                m1: field(block, "m1"),
+                m2: field(block, "shaft_mass_kg"),
+                m_clubhead: field(block, "head_mass_kg"),
+                l1: field(block, "l1"),
+                l2: field(block, "l2"),
+                g: field(block, "g"),
+                friction1: 0.0,
+                friction2: 0.0,
+            };
+            let q = [field(block, "theta1"), field(block, "phi")];
+            let qd = [field(block, "dtheta1"), field(block, "dphi")];
+            let close = |got: f64, want: f64| (got - want).abs() <= 1e-12 * want.abs().max(1.0);
+            let m = mass_matrix(&q, &p);
+            assert!(close(m[(0, 0)], field(block, "m11")));
+            assert!(close(m[(0, 1)], field(block, "m12")));
+            assert!(close(m[(1, 1)], field(block, "m22")));
+            let c = coriolis(&q, &qd, &p);
+            assert!(close(c[0], field(block, "c1")));
+            assert!(close(c[1], field(block, "c2")));
+            let g = gravity_vector(&q, &p);
+            assert!(close(g[0], field(block, "g1")));
+            assert!(close(g[1], field(block, "g2")));
+            let club = p.distal_inertia();
+            let potential = -(p.m1 + club.mass) * p.g * p.l1 * q[0].cos()
+                - club.first_moment * p.g * (q[0] + q[1]).cos();
+            assert!(close(potential, field(block, "potential_energy_j")));
             checked += 1;
         }
         assert!(checked >= 5);
