@@ -1981,6 +1981,45 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5527 · SCADA F04: Append-Only ConfigRevision History (SHA-256 Canonical JSON, Credential Fingerprint), Atomic With PersistedConfig Upsert, Admin-Gated List/Get Endpoints, Revision_Id on Config Write
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5527
+- **Branch:** merged via #5557
+- **PR:** #5557
+- **Paths:** see #5557
+- **Started:** 2026-10-12
+- **Last verified:** 2026-10-12 (`2b528052`; collated from changes/5527-scada-f04-append-only-configrevision-his.md)
+- **Summary:** SCADA F04: append-only ConfigRevision history (SHA-256 canonical JSON, credential fingerprint), atomic with PersistedConfig upsert, admin-gated list/get endpoints, revision_id on config write
+- **Next step:** Shipped in PR #5557.
+
+### DL-#5522 · Pendulum_Simulator: Base_Force (Python + TS) Is the Shoulder Reaction of Net_Joint_Forces: Pivot Holds Weight up (+Mg), Arm M1 at the Wrist; Archived Base_Force_Y / Control_Vector Outputs Need Re-Run Under #5523
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5522
+- **Branch:** merged via #5568
+- **PR:** #5568
+- **Paths:** see #5568
+- **Started:** 2026-10-12
+- **Last verified:** 2026-10-12 (`cd6d2cce`; collated from changes/5522-pendulum-simulator-base-force-python-ts.md)
+- **Summary:** pendulum_simulator: base_force (Python + TS) is the shoulder reaction of net_joint_forces: pivot holds weight up (+mg), arm m1 at the wrist; archived base_force_y / control_vector outputs need re-run under #5523
+- **Next step:** Shipped in PR #5568.
+
+### DL-#5431 · Pendulum_Simulator: Distributed Club Convention (Uniform Shaft M2 + Head Point Mass) Canonical in Dynamics, Forces, Energy, Transfer Diagnostics, Rust and Web; Presets Retuned to the Real Driver Split
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5431
+- **Branch:** merged via #5554
+- **PR:** #5554
+- **Paths:** see #5554
+- **Started:** 2026-10-12
+- **Last verified:** 2026-10-12 (`db5318ea`; collated from changes/5431-pendulum-simulator-distributed-club-conv.md)
+- **Summary:** pendulum_simulator: distributed club convention (uniform shaft m2 + head point mass) canonical in dynamics, forces, energy, transfer diagnostics, Rust and web; presets retuned to the real driver split
+- **Next step:** Shipped in PR #5554.
+
 ### DL-#5532 · SCADA F11: PLC Driver Registry (Register_Driver/Capabilities) Replaces the PLCFactory if/Elif; Broken Registered Drivers Raise Instead of Falling Back to the Simulator
 
 - **State:** shipped
