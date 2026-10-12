@@ -78,3 +78,6 @@ src/pendulum_simulator/tests/mass_convention_support.py
 # Shared CalculatorStateMixin test double; assertions live in the consuming
 # test_calculator_state_mixin*.py modules (#5520).
 src/shared/python/sidekick/tests/_calculator_state_helpers.py
+# Shared route/tier table + fixtures for the route-authz matrix (#4028); support
+# module, the assertions live in test_route_authz_matrix.py / _enforcement.py.
+src/p1am_control_system/backend/tests/_route_authz_helpers.py

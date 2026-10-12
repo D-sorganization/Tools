@@ -5947,6 +5947,9 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-12 | #5557 | SCADA F04: append-only ConfigRevision history (SHA-256 canonical JSON, credential fingerprint), atomic with PersistedConfig upsert, admin-gated list/get endpoints, revision_id on config write |
+| 2026-10-12 | #5568 | pendulum_simulator: base_force (Python + TS) is the shoulder reaction of net_joint_forces: pivot holds weight up (+mg), arm m1 at the wrist; archived base_force_y / control_vector outputs need re-run under #5523 |
+| 2026-10-12 | #5554 | pendulum_simulator: distributed club convention (uniform shaft m2 + head point mass) canonical in dynamics, forces, energy, transfer diagnostics, Rust and web; presets retuned to the real driver split |
 | 2026-10-12 | #5558 | SCADA F11: PLC driver registry (register_driver/capabilities) replaces the PLCFactory if/elif; broken registered drivers raise instead of falling back to the simulator |
 | 2026-10-12 | #5561 | SCADA F02: HMI DataAgeIndicator renders the scan data_source (held/fault/simulated/unknown) instead of inferring CONNECTED from frame age |
 | 2026-10-12 | #5552 | Connect calculator_state_mixin signals to bound methods so calculators are freed by refcount, not only cyclic GC |

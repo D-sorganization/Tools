@@ -13,14 +13,21 @@ from typing import Any, cast
 import hardware
 import shutdown_safety
 from alicat_manager import create_default_manager
-from audit import AuditMiddleware, actor_from_headers, set_audit_context
+from audit import (
+    AuditMiddleware,
+    actor_from_headers,
+    credential_fingerprint,
+    set_audit_context,
+)
 from auth_config import (
+    CREDENTIAL_HEADER_NAME,
     log_auth_configuration,
     require_admin_key,
     require_api_key,
     require_read_auth,
     verify_operator_key,
 )
+from config_revisions import create_config_revision_router
 from config_store import load_config, load_model, save_config, save_model
 from cors_config import RequestGuardMiddleware, resolve_cors_settings
 from data_capture import (
@@ -548,6 +555,10 @@ app.include_router(
     )
 )
 
+# Read-only, admin-gated config revision history (SCADA F04, #5527). Uses the
+# same admin dependency as the config write it audits.
+app.include_router(create_config_revision_router(get_session, require_admin_key))
+
 # Data Explorer analysis suite (historian querying, filtering, correlation,
 # spectral, trendlines, PCA, export). It is numpy-backed; if numpy or the module
 # is unavailable (e.g. the slim image without it) the feature simply stays off
@@ -687,14 +698,16 @@ async def get_routing() -> RoutingConfig:
 
 
 @app.post("/api/routing", dependencies=[Depends(require_admin_key)])
-async def update_routing(config: RoutingConfig) -> dict[str, str]:
+async def update_routing(config: RoutingConfig, request: Request) -> dict[str, Any]:
     """Write new routing configurations to the PLC.
 
     Args:
         config: RoutingConfig model.
+        request: Used only to fingerprint (hash) the presented credential.
 
     Returns:
-        JSON response indicating success.
+        JSON response indicating success. ``revision_id`` is the config
+        revision appended for this write (``None`` if persistence failed).
     """
     control_context.apply_config(config, plc_client, backup_simulator)
 
@@ -702,9 +715,15 @@ async def update_routing(config: RoutingConfig) -> dict[str, str]:
     # so it survives a restart independent of PLC flash, and refresh the overlay.
     global _persisted_routing
     _persisted_routing = config
+    revision_id: int | None = None
     try:
         with _config_session() as s:
-            save_model(s, "routing", config)
+            revision_id = save_model(
+                s,
+                "routing",
+                config,
+                credential_fingerprint(request.headers.get(CREDENTIAL_HEADER_NAME)),
+            )
     except Exception as exc:  # noqa: BLE001 - persistence must not fail a deploy
         logger.warning("Persisting routing failed (non-fatal): %s", exc)
 
@@ -713,6 +732,7 @@ async def update_routing(config: RoutingConfig) -> dict[str, str]:
         return {
             "status": "success",
             "message": "Configuration successfully applied to simulated PLC.",
+            "revision_id": revision_id,
         }
 
     success = await plc_client.write_routing(config)
@@ -738,6 +758,7 @@ async def update_routing(config: RoutingConfig) -> dict[str, str]:
     return {
         "status": "success",
         "message": ("Configuration successfully deployed and saved to PLC NVRAM."),
+        "revision_id": revision_id,
     }
 
 

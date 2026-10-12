@@ -117,19 +117,19 @@
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "2cf5619b3b1afa1c1766f7ae50479f0ad075669b65b0bd0b3c867bad51536319",
+      "content_sha256_lf": "01a0fcac179d2b143bf116926ff32b564f60bb55228f023786fa9ada756e1f2b",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
     },
     {
-      "content_sha256_lf": "796fd13ca37d3901f34bbc508077e23d51873b9b8756ec3e523cc3bbe4441254",
+      "content_sha256_lf": "331e339b1ac9585c69b7fb69254c39bc40777ee90f03de0e817bb5e226ba0398",
       "entry_count": 5,
       "package": "rust_core/data-processor-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
     },
     {
-      "content_sha256_lf": "70b3a3b3cce3eef2659ca5f044da24ff56b387fe2b3a49a7b62d3b07c7299bf8",
+      "content_sha256_lf": "cdb8fea334f8bf2ec8c13a527efd71c4baebfa4d089b45b1fcb72664170815b7",
       "entry_count": 5,
       "package": "rust_core/file_watcher",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "f6ff94189ba3641cecb27bf463076d37b8348b50302194ca48efb2aa61cfd11f",
+      "content_sha256_lf": "7f145f4acc885fce5a1500b5804daafe2d313d090ef739e52839900e3ec9cc5a",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -165,13 +165,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
     },
     {
-      "content_sha256_lf": "e1ea35560dd256a872921d8258a01d1e381b5de88b0f88e8bdd74a56c9f4f152",
-      "entry_count": 12,
+      "content_sha256_lf": "91d8f34d1e02967dea05ae41a32e5a187cfeb5f68005f660412ec7d9ca813283",
+      "entry_count": 13,
       "package": "shared_scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-shared-scripts.json"
     },
     {
-      "content_sha256_lf": "482457438c623f821348a5fdee94e93ee755002b7a140e4fe400fda11c8e701d",
+      "content_sha256_lf": "6544812f93a38265551c9256beba8ec65f57327a7375b45a3f4c67a5aa34a4d1",
       "entry_count": 1,
       "package": "src",
       "path": "manuals/tools/manifests/module-inventory/entries-src.json"
@@ -387,13 +387,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-optimizer-gui.json"
     },
     {
-      "content_sha256_lf": "c5cb5c924b37daf973f61dea0c14a3d90558287d81b0dced091a983bb99f422c",
-      "entry_count": 255,
+      "content_sha256_lf": "c7336a1307de5cf31b3df16dedf595d84ab5413cd6ad14f8daa3ff1d53deda60",
+      "entry_count": 256,
       "package": "src/p1am_control_system",
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
     {
-      "content_sha256_lf": "7deef9c5373a2825bd8288115fc8e1e95813a95cb1fabbb9dd070b583b0ae6aa",
+      "content_sha256_lf": "bf0632f204e99437330b53c7494c5f044ba2893e8ca1de17a1579523fb59f11b",
       "entry_count": 168,
       "package": "src/pendulum_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pendulum-simulator.json"
@@ -597,7 +597,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "908f6cfd32b2c3f0425d92ff2c5a1dda169a9fcff9cae4f1dbe7c9ace567b8fe",
+      "content_sha256_lf": "324be3d60eadcbe5c9572c4b0cf23bd800445ed62d0e893f172856365188f67b",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
@@ -825,7 +825,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-utils.json"
     },
     {
-      "content_sha256_lf": "6ee15764a598b18e0909ddf4df893ec04a6fd775792574a805db588614a6b1c1",
+      "content_sha256_lf": "4e31019926f76e7768548dcddfe8b353240a38c931273da7041ecfdb562696b7",
       "entry_count": 18,
       "package": "src/shared/python/signal_toolkit",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-signal-toolkit.json"

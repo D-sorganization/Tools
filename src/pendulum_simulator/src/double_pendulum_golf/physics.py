@@ -579,42 +579,22 @@ def joint_velocities(state: State, params: PendulumParams) -> dict:
 
 
 def base_force(state: State, qddot: np.ndarray, params: PendulumParams) -> dict:
-    """Compute reaction force at the shoulder pivot.
+    """Compute the reaction force the shoulder pivot exerts on the arm.
+
+    Single implementation of the sign convention: this is the ``shoulder``
+    entry of :func:`net_joint_forces` (arm ``m1`` as a point mass at the wrist
+    plus the distributed club).  Hanging at rest it is ``+(m1 + Mc) g`` in y,
+    i.e. the pivot holds the weight up (Tools #5522).
 
     Returns dict with 'fx', 'fy', 'magnitude'.
     """
     if state is None:
         raise ValueError("state must be provided")
-    theta1, phi, dtheta1, dphi = state
-    qdd1, qdd2 = qddot
-    abs_angle2 = theta1 + phi
-    dabs2 = dtheta1 + dphi
-    ddabs2 = qdd1 + qdd2
-    me = club_inertia(params).mass_kg
-
-    # Arm COM acceleration (at L1/2)
-    ax1 = (params.L1 / 2) * (np.cos(theta1) * qdd1 - np.sin(theta1) * dtheta1**2)
-    ay1 = (params.L1 / 2) * (np.sin(theta1) * qdd1 + np.cos(theta1) * dtheta1**2)
-
-    # Wrist acceleration
-    awx = params.L1 * (np.cos(theta1) * qdd1 - np.sin(theta1) * dtheta1**2)
-    awy = params.L1 * (np.sin(theta1) * qdd1 + np.cos(theta1) * dtheta1**2)
-
-    # Tip acceleration (clubhead)
-    atx = awx + params.L2 * (np.cos(abs_angle2) * ddabs2 - np.sin(abs_angle2) * dabs2**2)
-    aty = awy + params.L2 * (np.sin(abs_angle2) * ddabs2 + np.cos(abs_angle2) * dabs2**2)
-
-    # Shaft COM at L2/2 from wrist
-    asx = awx + (params.L2 / 2) * (np.cos(abs_angle2) * ddabs2 - np.sin(abs_angle2) * dabs2**2)
-    asy = awy + (params.L2 / 2) * (np.sin(abs_angle2) * ddabs2 + np.cos(abs_angle2) * dabs2**2)
-
-    fx = params.m1 * ax1 + params.m2 * asx + params.mClub * atx
-    fy = params.m1 * ay1 + params.m2 * asy + params.mClub * aty - (params.m1 + me) * params.g
-
+    fx, fy = net_joint_forces(state, qddot, params)["shoulder"]
     return {
-        "fx": float(fx),
-        "fy": float(fy),
-        "magnitude": float(np.sqrt(fx**2 + fy**2)),
+        "fx": fx,
+        "fy": fy,
+        "magnitude": float(np.hypot(fx, fy)),
     }
 
 

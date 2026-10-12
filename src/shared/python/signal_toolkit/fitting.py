@@ -22,6 +22,14 @@ from .core import Signal
 logger = logging.getLogger(__name__)
 
 
+def _require_fittable_signal(signal: Signal | None) -> None:
+    """Reject absent or empty inputs before a fitter indexes the time axis."""
+    if signal is None:
+        raise ValueError("signal must be provided")
+    if len(signal.time) == 0:
+        raise ValueError("Signal cannot be empty")
+
+
 @dataclass
 class FitResult:
     """Result of a function fitting operation.
@@ -126,8 +134,7 @@ class SinusoidFitter:
         Returns:
             FitResult with fitted parameters and statistics.
         """
-        if signal is None:
-            raise ValueError("signal must be provided")
+        _require_fittable_signal(signal)
         t = signal.time - signal.time[0]  # Shift to start at 0
         y = signal.values
 
@@ -153,7 +160,7 @@ class SinusoidFitter:
             success = True
             message = "Fit converged successfully"
         except (RuntimeError, ValueError, TypeError) as e:
-            popt = np.array(initial_guess)
+            popt = np.asarray(initial_guess)
             pcov = None
             success = False
             message = f"Fit failed: {e}"
@@ -282,8 +289,7 @@ class ExponentialFitter:
         Returns:
             FitResult with fitted parameters.
         """
-        if signal is None:
-            raise ValueError("signal must be provided")
+        _require_fittable_signal(signal)
         t = signal.time - signal.time[0]
         y = signal.values
 
@@ -314,7 +320,7 @@ class ExponentialFitter:
             success = True
             message = "Fit converged"
         except (RuntimeError, ValueError, TypeError) as e:
-            popt = np.array(initial_guess)
+            popt = np.asarray(initial_guess)
             pcov = None
             success = False
             message = f"Fit failed: {e}"
@@ -359,8 +365,7 @@ class ExponentialFitter:
         Returns:
             FitResult with fitted parameters.
         """
-        if signal is None:
-            raise ValueError("signal must be provided")
+        _require_fittable_signal(signal)
         t = signal.time - signal.time[0]
         y = signal.values
 
@@ -387,7 +392,7 @@ class ExponentialFitter:
             success = True
             message = "Fit converged"
         except (RuntimeError, ValueError, TypeError) as e:
-            popt = np.array(initial_guess)
+            popt = np.asarray(initial_guess)
             pcov = None
             success = False
             message = f"Fit failed: {e}"
@@ -434,8 +439,7 @@ class LinearFitter:
         Returns:
             FitResult with slope and intercept parameters.
         """
-        if signal is None:
-            raise ValueError("signal must be provided")
+        _require_fittable_signal(signal)
         t = signal.time - signal.time[0]
         y = signal.values
 
@@ -506,8 +510,7 @@ class PolynomialFitter:
         Returns:
             FitResult with polynomial coefficients.
         """
-        if signal is None:
-            raise ValueError("signal must be provided")
+        _require_fittable_signal(signal)
         t = signal.time - signal.time[0]
         y = signal.values
 
@@ -608,8 +611,7 @@ class CustomFunctionFitter:
         Returns:
             FitResult with fitted parameters.
         """
-        if signal is None:
-            raise ValueError("signal must be provided")
+        _require_fittable_signal(signal)
         t = signal.time - signal.time[0]
         y = signal.values
 
@@ -633,7 +635,7 @@ class CustomFunctionFitter:
             success = True
             message = "Fit converged"
         except (RuntimeError, ValueError, TypeError) as e:
-            popt = np.array(initial_guess)
+            popt = np.asarray(initial_guess)
             pcov = None
             success = False
             message = f"Fit failed: {e}"
