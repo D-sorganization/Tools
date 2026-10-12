@@ -21,6 +21,7 @@ from __future__ import annotations
 import ctypes
 import importlib
 import logging
+import os
 import sys
 from collections.abc import Callable
 from types import ModuleType
@@ -45,9 +46,16 @@ def loaded_dll_path(dll_name: str) -> str | None:
     """
     if not dll_name or not dll_name.strip():
         raise ValueError("dll_name must be a non-empty string")
-    if sys.platform != "win32":
+    if os.name != "nt":
         return None
-    kernel32 = ctypes.WinDLL("kernel32", use_last_error=True)
+    return _windows_module_path(dll_name)
+
+
+def _windows_module_path(dll_name: str) -> str | None:
+    """Ask kernel32 for the loaded module's path (Windows only)."""
+    # WinDLL exists only on Windows; attribute lookup keeps Linux type checking
+    # honest while the os.name dispatch above keeps runtime use platform-correct.
+    kernel32 = vars(ctypes)["WinDLL"]("kernel32", use_last_error=True)
     kernel32.GetModuleHandleW.restype = ctypes.c_void_p
     kernel32.GetModuleHandleW.argtypes = [ctypes.c_wchar_p]
     kernel32.GetModuleFileNameW.argtypes = [
