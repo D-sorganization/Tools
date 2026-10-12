@@ -20,7 +20,7 @@ from __future__ import annotations
 import json
 import logging
 from datetime import datetime
-from typing import TypeVar, cast
+from typing import TypeVar
 
 from config_revisions import append_revision, canonical_json
 from models import utc_now
@@ -40,7 +40,7 @@ __all__ = [
 _ModelT = TypeVar("_ModelT", bound=BaseModel)
 
 
-class PersistedConfig(SQLModel, table=True):  # type: ignore[call-arg]
+class PersistedConfig(SQLModel, table=True):
     """One persisted operator setting: a JSON blob keyed by a stable name."""
 
     key: str = Field(primary_key=True)
@@ -168,7 +168,7 @@ def load_model(session: Session, key: str, model_cls: type[_ModelT]) -> _ModelT 
     if data is None:
         return None
     try:
-        return cast("_ModelT", model_cls(**data))
+        return model_cls(**data)
     except Exception as exc:  # noqa: BLE001 - any validation error -> default
         logger.warning(
             "Persisted config %r no longer matches %s; using default (%s)",

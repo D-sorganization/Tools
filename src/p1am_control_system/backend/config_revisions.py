@@ -47,7 +47,7 @@ _FINGERPRINT_RE = re.compile(r"^[0-9a-f]{16}$")
 _MAX_LIST = 500
 
 
-class ConfigRevision(SQLModel, table=True):  # type: ignore[call-arg]
+class ConfigRevision(SQLModel, table=True):
     """One immutable revision of a persisted setting (never updated/deleted)."""
 
     __table_args__ = {"sqlite_autoincrement": True}  # ids are never reused
