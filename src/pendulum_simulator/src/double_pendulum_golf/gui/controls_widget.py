@@ -40,6 +40,7 @@ from .controls_utils import (
     require_non_negative,
     require_positive,
 )
+from ..swing_objectives.club_equivalence import DRIVER_SPEC, distributed_club_split
 from .controls_widget_base import ControlsWidgetBase
 from .torque_preview_widget import TorquePreviewWidget
 
@@ -65,6 +66,10 @@ class ControlsWidget(ControlsWidgetBase):
     azimuth_changed = pyqtSignal(float)  # radians
     force_scale_changed = pyqtSignal(float)
 
+    # Driver club split (uniform shaft + head point mass) reproducing the real
+    # club's mass and wrist inertia on the 1.10 m modelled shaft (#5431).
+    _DRIVER_SHAFT_KG, _DRIVER_HEAD_KG = distributed_club_split(DRIVER_SPEC, 1.10)
+
     # Preset: (theta1°, phi°, dth, dph, tau_sh, tau_wr, tend, m1, m2, mClub, L1, L2)
     PRESETS = {
         "Golf Swing (passive wrist)": (
@@ -76,8 +81,8 @@ class ControlsWidget(ControlsWidgetBase):
             "0",
             2.0,
             5.0,
-            0.30,
-            0.20,
+            _DRIVER_SHAFT_KG,
+            _DRIVER_HEAD_KG,
             0.65,
             1.10,
         ),
@@ -90,8 +95,8 @@ class ControlsWidget(ControlsWidgetBase):
             "-2, 3",
             2.0,
             5.0,
-            0.30,
-            0.20,
+            _DRIVER_SHAFT_KG,
+            _DRIVER_HEAD_KG,
             0.65,
             1.10,
         ),

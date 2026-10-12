@@ -1,0 +1,6 @@
+{
+  "description": "Driver club split reproducing the real driver's mass and wrist inertia on a 1.10 m modelled shaft (Tools #5431). Python presets derive it from distributed_club_split; the web presets and GUI are pinned to this file.",
+  "shaft_mass_kg": 0.10782199586776868,
+  "head_mass_kg": 0.2021780041322313,
+  "length_m": 1.1
+}

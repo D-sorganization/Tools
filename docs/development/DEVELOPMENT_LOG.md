@@ -1981,6 +1981,58 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5532 · SCADA F11: PLC Driver Registry (Register_Driver/Capabilities) Replaces the PLCFactory if/Elif; Broken Registered Drivers Raise Instead of Falling Back to the Simulator
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5532
+- **Branch:** merged via #5558
+- **PR:** #5558
+- **Paths:** see #5558
+- **Started:** 2026-10-12
+- **Last verified:** 2026-10-12 (`f3c358ac`; collated from changes/5532-scada-f11-plc-driver-registry-register-d.md)
+- **Summary:** SCADA F11: PLC driver registry (register_driver/capabilities) replaces the PLCFactory if/elif; broken registered drivers raise instead of falling back to the simulator
+- **Next step:** Shipped in PR #5558.
+
+### DL-#5525 · SCADA F02: HMI DataAgeIndicator Renders the Scan Data_Source (Held/Fault/Simulated/Unknown) Instead of Inferring CONNECTED From Frame Age
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5525
+- **Branch:** merged via #5561
+- **PR:** #5561
+- **Paths:** see #5561
+- **Started:** 2026-10-12
+- **Last verified:** 2026-10-12 (`0f3bcaad`; collated from changes/5525-scada-f02-hmi-dataageindicator-renders-t.md)
+- **Summary:** SCADA F02: HMI DataAgeIndicator renders the scan data_source (held/fault/simulated/unknown) instead of inferring CONNECTED from frame age
+- **Next step:** Shipped in PR #5561.
+
+### DL-#5520 · Connect Calculator_State_Mixin Signals to Bound Methods so Calculators Are Freed by Refcount, Not Only Cyclic GC
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5520
+- **Branch:** merged via #5552
+- **PR:** #5552
+- **Paths:** see #5552
+- **Started:** 2026-10-12
+- **Last verified:** 2026-10-12 (`24bb0c38`; collated from changes/5520-calculator-gc-cycles.md)
+- **Summary:** Connect calculator_state_mixin signals to bound methods so calculators are freed by refcount, not only cyclic GC
+- **Next step:** Shipped in PR #5552.
+
+### DL-#5515 · Movement_Optimizer: BodyModel Uses Shared Standard Gravity (9.80665), Add DbC Accessors (Torque_Joint_Count, Has_Com_Samples, Max_Abs_Swing_Angle_rad, Frame_Count) and an Injectable Force-Arrow Renderer Hook on Draw_Force_Arrows (UD Parity)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5515
+- **Branch:** merged via #5555
+- **PR:** #5555
+- **Paths:** see #5555
+- **Started:** 2026-10-12
+- **Last verified:** 2026-10-12 (`55c081d1`; collated from changes/5515-movement-optimizer-bodymodel-uses-shared.md)
+- **Summary:** movement_optimizer: BodyModel uses shared standard gravity (9.80665), add DbC accessors (torque_joint_count, has_com_samples, max_abs_swing_angle_rad, frame_count) and an injectable force-arrow renderer hook on draw_force_arrows (UD parity)
+- **Next step:** Shipped in PR #5555.
+
 ### DL-#5518 · Fix(Ci): Requalify Libfreetype6 2.13.2+Dfsg-1Ubuntu0.2 for the Rate PyQt Font-Stack Guard; All 10 PyQt References Pass Unchanged Under Existing Tolerances (Closes #5518, Closes #5501)
 
 - **State:** shipped

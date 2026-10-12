@@ -152,20 +152,26 @@ shoulder angle and φ is the wrist angle relative to the arm:
 <div class="eq">
 <span class="matrix">
      ┌                                                            ┐
-M =  │  (m₁+mₑ)L₁² + mₑL₂² + 2mₑL₁L₂cos φ    mₑL₂² + mₑL₁L₂cos φ  │
-     │  mₑL₂² + mₑL₁L₂cos φ                     mₑL₂²                  │
+M =  │  (m₁+M_c)L₁² + J_w + 2sL₁cos φ    J_w + sL₁cos φ  │
+     │  J_w + sL₁cos φ                     J_w                  │
      └                                                            ┘
 </span>
 </div>
-<p>where <span class="eq-inline">mₑ = m₂ + m<sub>club</sub></span>
-is the effective distal mass (shaft + clubhead).</p>
+<p>where the club is a <b>uniform shaft</b> of mass m₂ (centre of mass at L₂/2,
+inertia m₂L₂²/12 about it) plus a <b>head point mass</b> m<sub>club</sub> at the tip:
+<span class="eq-inline">M_c = m₂ + m<sub>club</sub></span>,
+<span class="eq-inline">s = (m₂/2 + m<sub>club</sub>)L₂</span> and
+<span class="eq-inline">J_w = (m₂/3 + m<sub>club</sub>)L₂²</span>.
+Putting all the mass at the tip (s = M_cL₂, J_w = M_cL₂²) recovers the older lumped model.</p>
 
 <h3>2.1 Parameter Definitions</h3>
 <table class="params">
 <tr><td>m₁</td><td>Mass of segment 1 (arms), kg</td></tr>
-<tr><td>m₂</td><td>Mass of segment 2 (shaft), kg</td></tr>
+<tr><td>m₂</td><td>Mass of segment 2 (uniform shaft), kg</td></tr>
 <tr><td>m<sub>club</sub></td><td>Clubhead point mass at tip of shaft, kg</td></tr>
-<tr><td>mₑ</td><td>Effective mass: m₂ + m<sub>club</sub></td></tr>
+<tr><td>M_c</td><td>Total club mass: m₂ + m<sub>club</sub>, kg</td></tr>
+<tr><td>s</td><td>First moment of the club about the wrist: (m₂/2 + m<sub>club</sub>)L₂, kg·m</td></tr>
+<tr><td>J_w</td><td>Club inertia about the wrist: (m₂/3 + m<sub>club</sub>)L₂², kg·m²</td></tr>
 <tr><td>L₁</td><td>Length of segment 1, m</td></tr>
 <tr><td>L₂</td><td>Length of segment 2, m</td></tr>
 <tr><td>φ</td><td>Relative wrist angle, rad</td></tr>
@@ -175,11 +181,11 @@ is the effective distal mass (shaft + clubhead).</p>
 <ul>
 <li><b>M₁₁</b> — Effective inertia at the shoulder when the wrist is locked.
 Includes contributions from both segments plus the coupling term
-<span class="eq-inline">2mₑL₁L₂cos φ</span> that depends on the relative
+<span class="eq-inline">2sL₁cos φ</span> that depends on the relative
 configuration.</li>
 <li><b>M₂₂</b> — Effective inertia at the wrist when the shoulder is locked.
-This is simply <span class="eq-inline">mₑL₂²</span>, the inertia of the
-distal segment about the wrist.</li>
+This is simply <span class="eq-inline">J_w</span>, the inertia of the
+club (shaft plus head) about the wrist.</li>
 <li><b>M₁₂ = M₂₁</b> — <b>Inertial coupling</b>. This is the key term for
 energy transfer in golf swings. When joint 1 accelerates, the off-diagonal
 term creates a "free" torque at joint 2 (and vice versa).  This is how the
@@ -296,7 +302,7 @@ C  =  │  −h (2 θ̇₁ φ̇ + φ̇²)           │
       │   h θ̇₁²                           │
       └                                        ┘
 
-where  h = mₑ L₁ L₂ sin φ
+where  h = s L₁ sin φ
 </span>
 </div>
 <p>
@@ -310,8 +316,8 @@ term (∝ φ̇²).
 <div class="eq">
 <span class="matrix">
       ┌                                                      ┐
-G  =  │  (m₁ + mₑ) g L₁ sin θ₁  +  mₑ g L₂ sin(θ₁ + φ)  │
-      │  mₑ g L₂ sin(θ₁ + φ)                                │
+G  =  │  (m₁ + M_c) g L₁ sin θ₁  +  s g sin(θ₁ + φ)  │
+      │  s g sin(θ₁ + φ)                                │
       └                                                      ┘
 </span>
 </div>

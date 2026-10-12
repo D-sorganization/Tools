@@ -12,7 +12,7 @@ without changing the physics:
   hub row. It is the kinetic chain: as the club uncocks it drains angular
   momentum out of the arms.
 
-With ``h = -mu*sin(phi)`` and ``mu = (m2 + mClub)*L1*L2`` matching
+With ``h = -mu*sin(phi)`` and ``mu = s*L1`` (``s`` = club first moment about the wrist) matching
 ``physics.mass_matrix``, the shipped combined vector is
 
 .. code-block:: text
@@ -38,7 +38,7 @@ from dataclasses import dataclass
 import numpy as np
 import numpy.typing as npt
 
-from double_pendulum_golf.physics import PendulumParams, coriolis_vector
+from double_pendulum_golf.physics import PendulumParams, club_inertia, coriolis_vector
 
 __all__ = [
     "VelocityTerms",
@@ -88,12 +88,15 @@ def _require_finite(phi: float, dtheta1: float, dphi: float) -> None:
 
 
 def coupling_constant(params: PendulumParams) -> float:
-    """Return the inertial coupling constant ``mu = (m2 + mClub) * L1 * L2``.
+    """Return the inertial coupling constant ``mu = s * L1``.
+
+    ``s = (m2/2 + mClub) * L2`` is the club's first moment about the wrist under
+    the canonical distributed convention (uniform shaft plus head mass).
 
     This single constant scales every centrifugal and Coriolis term in the model,
     so it is the quantitative measure of how strongly the arms and club are
     dynamically coupled. It matches the off-diagonal coupling built into
-    ``physics.mass_matrix``, which treats the clubhead as a point mass at the tip.
+    ``physics.mass_matrix``.
 
     Args:
         params: Double pendulum physical parameters.
@@ -103,8 +106,7 @@ def coupling_constant(params: PendulumParams) -> float:
 
     Post: strictly positive, because masses and lengths are positive by contract.
     """
-    effective_distal_mass = params.m2 + params.mClub
-    return float(effective_distal_mass * params.L1 * params.L2)
+    return float(club_inertia(params).first_moment_kg_m * params.L1)
 
 
 def _coupling_sine(phi: float, params: PendulumParams) -> float:

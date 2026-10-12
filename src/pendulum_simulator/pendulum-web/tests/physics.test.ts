@@ -12,8 +12,10 @@
  *   8. Forward kinematics at known positions
  *   9. runSimulation pre-conditions and post-conditions
  */
+import { readFileSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
 import {
+    distalInertia,
     makePendulumParams,
     massMatrix,
     massMatrixComponents,
@@ -21,12 +23,14 @@ import {
     frictionTorqueVector,
     makePolynomialTorque,
     forwardKinematics,
+    generalizedForceSources,
     gripForceAlongHandPath,
     kineticEnergy,
     potentialEnergy,
     totalEnergy,
     runSimulation,
 } from '../src/physics';
+import { PRESETS } from '../src/presets';
 import type { PendulumParams, State } from '../src/physics';
 
 // ── Fixtures ──────────────────────────────────────────────────────────────────
@@ -258,5 +262,117 @@ describe('runSimulation', () => {
         expect(() =>
             runSimulation(stdParams, [0, 0, 0, 0], 1.0, zeroTorque, 2.0)
         ).toThrow();
+    });
+});
+
+// ── Canonical distributed club convention (Tools #5431) ──────────────────────
+
+describe('distributed club convention', () => {
+    it('matches the shared Python/Rust parity fixture', () => {
+        const fixture = JSON.parse(readFileSync(
+            new URL('../../tests/fixtures/distal_inertia_cases.json', import.meta.url), 'utf8',
+        ));
+        expect(fixture.cases.length).toBeGreaterThanOrEqual(5);
+        for (const c of fixture.cases) {
+            const club = distalInertia(c.shaft_mass_kg, c.head_mass_kg, c.length_m);
+            expect(club.mass).toBeCloseTo(c.mass_kg, 14);
+            expect(club.firstMoment).toBeCloseTo(c.first_moment_kg_m, 14);
+            expect(club.pivotInertia).toBeCloseTo(c.inertia_about_pivot_kg_m2, 14);
+        }
+    });
+
+    it('issue reproducer: m1=2, m2=3, mClub=1, qdot=[0,2] carries 4 J (was 8 J lumped)', () => {
+        const p = makePendulumParams({
+            m1: 2, m2: 3, mClub: 1, L1: 0.7, L2: 1, g: 9.81, b1: 0, b2: 0, mu1: 0, mu2: 0,
+        });
+        const [, , , M22] = massMatrix(0, p);
+        expect(0.5 * M22 * 2 ** 2).toBeCloseTo(4, 12);
+    });
+
+    it('head-only limit recovers the lumped point mass; no head gives a uniform rod', () => {
+        const base = { m1: 2, L1: 0.7, g: 9.81, b1: 0, b2: 0, mu1: 0, mu2: 0 };
+        const lumped = makePendulumParams({ ...base, m2: 1e-12, mClub: 1.5, L2: 1.1 });
+        expect(massMatrix(0.4, lumped)[3]).toBeCloseTo(1.5 * 1.1 ** 2, 9);
+        const rod = makePendulumParams({ ...base, m2: 3, mClub: 0, L2: 1.2 });
+        expect(massMatrix(0.4, rod)[3]).toBeCloseTo(3 * 1.2 ** 2 / 3, 12);
+    });
+
+    it('hand-derived unit case: Mc=1, s=0.75, Jw=2/3 at L1=L2=1, m1=2', () => {
+        const p = makePendulumParams({
+            m1: 2, m2: 0.5, mClub: 0.5, L1: 1, L2: 1, g: 9.81, b1: 0, b2: 0, mu1: 0, mu2: 0,
+        });
+        const [M11, M12, , M22] = massMatrix(0, p);
+        expect(M11).toBeCloseTo((2 + 1) + 2 / 3 + 1.5, 12);
+        expect(M12).toBeCloseTo(2 / 3 + 0.75, 12);
+        expect(M22).toBeCloseTo(2 / 3, 12);
+    });
+
+    it('a passive undamped swing conserves total energy', () => {
+        const p = makePendulumParams({
+            m1: 5, m2: 0.1078, mClub: 0.2022, L1: 0.65, L2: 1.1, g: 9.81,
+            b1: 0, b2: 0, mu1: 0, mu2: 0,
+        });
+        const result = runSimulation(p, [1.0, 0.5, 0.3, -0.2], 1.0, zeroTorque, 0.0005);
+        const last = result.states[result.states.length - 1];
+        const e0 = totalEnergy(result.states[0], p);
+        expect(Math.abs(totalEnergy(last, p) - e0)).toBeLessThan(1e-6);
+    });
+
+    it('centroidal inertia is a closed form that stays non-negative for a vanishing shaft', () => {
+        const fixture = JSON.parse(readFileSync(
+            new URL('../../tests/fixtures/distal_inertia_cases.json', import.meta.url), 'utf8',
+        ));
+        for (const c of fixture.cases) {
+            const club = distalInertia(c.shaft_mass_kg, c.head_mass_kg, c.length_m);
+            expect(Math.abs(club.centroidalInertia - c.centroidal_inertia_kg_m2))
+                .toBeLessThanOrEqual(1e-14 * Math.abs(c.centroidal_inertia_kg_m2) + 1e-300);
+        }
+        for (let i = 0; i < 200; i++) {
+            const length = 0.5 + i / 199;
+            expect(distalInertia(1e-15, 0.5, length).centroidalInertia).toBeGreaterThanOrEqual(0);
+        }
+    });
+
+    it('rejects invalid club inputs like the Python/Rust implementations', () => {
+        expect(() => distalInertia(-1, 1, 1)).toThrow();
+        expect(() => distalInertia(1, -0.1, 1)).toThrow();
+        expect(() => distalInertia(0, 0, 1)).toThrow();
+        expect(() => distalInertia(1, 1, 0)).toThrow();
+        expect(() => distalInertia(NaN, 1, 1)).toThrow();
+        expect(() => distalInertia(1, Infinity, 1)).toThrow();
+    });
+
+    it('matches the shared golden M, C, G and PE cases', () => {
+        const fixture = JSON.parse(readFileSync(
+            new URL('../../tests/fixtures/distal_dynamics_cases.json', import.meta.url), 'utf8',
+        ));
+        expect(fixture.cases.length).toBeGreaterThanOrEqual(5);
+        const close = (got: number, want: number) =>
+            expect(Math.abs(got - want)).toBeLessThanOrEqual(1e-12 * Math.max(1, Math.abs(want)));
+        for (const c of fixture.cases) {
+            const p = makePendulumParams({
+                m1: c.m1, m2: c.shaft_mass_kg, mClub: c.head_mass_kg, L1: c.l1, L2: c.l2,
+                g: c.g, b1: 0, b2: 0, mu1: 0, mu2: 0,
+            });
+            const [M11, M12, , M22] = massMatrix(c.phi, p);
+            close(M11, c.m11); close(M12, c.m12); close(M22, c.m22);
+            const src = generalizedForceSources([c.theta1, c.phi, c.dtheta1, c.dphi], p, [0, 0]);
+            // sources are the negatives of C*qdot and G on the right-hand side of M qdd
+            close(-(src.coriolis[0] + src.squaredSpeed[0]), c.c1);
+            close(-(src.coriolis[1] + src.squaredSpeed[1]), c.c2);
+            close(-src.gravity[0], c.g1); close(-src.gravity[1], c.g2);
+            close(potentialEnergy([c.theta1, c.phi, c.dtheta1, c.dphi], p), c.potential_energy_j);
+        }
+    });
+
+    it('golf presets are pinned to the shared driver split fixture', () => {
+        const driver = JSON.parse(readFileSync(
+            new URL('../../tests/fixtures/driver_preset.json', import.meta.url), 'utf8',
+        ));
+        for (const preset of PRESETS.slice(0, 2)) {
+            expect(preset.params.m2).toBeCloseTo(driver.shaft_mass_kg, 14);
+            expect(preset.params.mClub).toBeCloseTo(driver.head_mass_kg, 14);
+            expect(preset.params.L2).toBeCloseTo(driver.length_m, 14);
+        }
     });
 });

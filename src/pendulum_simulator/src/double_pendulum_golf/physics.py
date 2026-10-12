@@ -3,7 +3,11 @@
 """
 Double pendulum golf swing physics using Lagrangian formulation with relative coordinates.
 
-Model: 2-segment pendulum (arms + shaft) with clubhead point mass at tip.
+Model: 2-segment pendulum. Segment 1 (arms) is a point mass at the wrist.
+Segment 2 is the club under the canonical distributed convention (Tools #5431):
+a uniform shaft of mass ``m2`` (COM at L2/2, Icm = m2*L2**2/12) plus a head point
+mass ``mClub`` at the tip. The club's mass, first moment and wrist inertia come
+from :func:`double_pendulum_golf.club_inertia.distal_inertia` (single source).
 
 Coordinate convention:
     q1 (theta1): Absolute angle of segment 1 (arms) from downward vertical,
@@ -16,7 +20,7 @@ Coordinate convention:
 Segments:
     Segment 1 = "Arms" (shoulder to wrist)
     Segment 2 = "Shaft" (wrist to clubhead)
-    Clubhead  = point mass at tip of shaft
+    Clubhead  = point mass at tip of shaft (the shaft itself is a uniform rod)
 """
 
 from __future__ import annotations
@@ -29,6 +33,7 @@ import numpy as np
 import numpy.typing as npt
 
 from . import native_backend as _native_backend
+from .club_inertia import DistalSegmentInertia, distal_inertia
 from .constants import GRAVITY_MSS
 
 _log = logging.getLogger(__name__)
@@ -53,10 +58,10 @@ class PendulumParams:
     """
 
     m1: float  # mass of arms (kg), typical ~5.0
-    m2: float  # mass of shaft (kg), typical ~0.30
+    m2: float  # mass of uniform shaft (kg), typical ~0.11
     L1: float  # length of arms (m), typical ~0.65
     L2: float  # length of shaft (m), typical ~1.10
-    mClub: float = 0.0  # clubhead mass (kg), typical ~0.20
+    mClub: float = 0.0  # head point mass at the tip (kg), typical ~0.20
     g: float = GRAVITY_MSS  # gravitational acceleration (m/s²)
     b1: float = 0.0  # viscous damping at shoulder (N·m·s/rad)
     b2: float = 0.0  # viscous damping at wrist (N·m·s/rad)
@@ -149,13 +154,13 @@ TorqueFunc = Callable[[float], tuple[float, float]]
 
 
 # ---------------------------------------------------------------------------
-# Effective mass helper (DRY)
+# Club inertia helper (DRY): one canonical source for every consumer
 # ---------------------------------------------------------------------------
 
 
-def _m2eff(params: PendulumParams) -> float:
-    """Effective mass of segment 2: shaft + clubhead."""
-    return params.m2 + params.mClub
+def club_inertia(params: PendulumParams) -> DistalSegmentInertia:
+    """Mass, first moment and wrist inertia of shaft plus head (see module doc)."""
+    return distal_inertia(params.m2, params.mClub, params.L2)
 
 
 # ---------------------------------------------------------------------------
@@ -166,7 +171,8 @@ def _m2eff(params: PendulumParams) -> float:
 def mass_matrix(phi: float, params: PendulumParams) -> np.ndarray:
     """Compute the 2x2 mass (inertia) matrix M(q).
 
-    Clubhead is modeled as a point mass at the tip of the shaft.
+    The club is a uniform shaft plus a head point mass (canonical convention):
+    M22 = Jw, M12 = Jw + s*L1*cos(phi), M11 = (m1 + Mc)*L1**2 + Jw + 2*s*L1*cos(phi).
 
     Pre: phi is finite.
     Post: symmetric positive-definite 2x2 matrix.
@@ -177,13 +183,14 @@ def mass_matrix(phi: float, params: PendulumParams) -> np.ndarray:
     if native_mass_matrix is not None:
         return native_mass_matrix
 
-    m1, L1, L2 = params.m1, params.L1, params.L2
-    me = _m2eff(params)
+    m1, L1 = params.m1, params.L1
+    club = club_inertia(params)
+    s, jw = club.first_moment_kg_m, club.inertia_about_pivot_kg_m2
     cos_phi = np.cos(phi)
 
-    M11 = (m1 + me) * L1**2 + me * L2**2 + 2.0 * me * L1 * L2 * cos_phi
-    M12 = me * L2**2 + me * L1 * L2 * cos_phi
-    M22 = me * L2**2
+    M11 = (m1 + club.mass_kg) * L1**2 + jw + 2.0 * s * L1 * cos_phi
+    M12 = jw + s * L1 * cos_phi
+    M22 = jw
 
     M = np.array([[M11, M12], [M12, M22]])
     if not (np.isclose(M[0, 1], M[1, 0])):
@@ -223,8 +230,7 @@ def coriolis_vector(
     if native_coriolis is not None:
         return native_coriolis
 
-    me = _m2eff(params)
-    h = -me * params.L1 * params.L2 * np.sin(phi)
+    h = -club_inertia(params).first_moment_kg_m * params.L1 * np.sin(phi)
     c1 = h * (2.0 * dtheta1 * dphi + dphi**2)
     c2 = -h * dtheta1**2
     result = np.array([c1, c2])
@@ -244,11 +250,11 @@ def gravity_vector(theta1: float, phi: float, params: PendulumParams) -> np.ndar
     if native_gravity is not None:
         return native_gravity
 
-    me = _m2eff(params)
-    L1, L2, g = params.L1, params.L2, params.g
+    club = club_inertia(params)
+    L1, g = params.L1, params.g
     abs_angle2 = theta1 + phi
-    G1 = (params.m1 + me) * g * L1 * np.sin(theta1) + me * g * L2 * np.sin(abs_angle2)
-    G2 = me * g * L2 * np.sin(abs_angle2)
+    G2 = club.first_moment_kg_m * g * np.sin(abs_angle2)
+    G1 = (params.m1 + club.mass_kg) * g * L1 * np.sin(theta1) + G2
 
     result = np.array([G1, G2])
     if not (all(np.isfinite(result))):
@@ -584,7 +590,7 @@ def base_force(state: State, qddot: np.ndarray, params: PendulumParams) -> dict:
     abs_angle2 = theta1 + phi
     dabs2 = dtheta1 + dphi
     ddabs2 = qdd1 + qdd2
-    me = _m2eff(params)
+    me = club_inertia(params).mass_kg
 
     # Arm COM acceleration (at L1/2)
     ax1 = (params.L1 / 2) * (np.cos(theta1) * qdd1 - np.sin(theta1) * dtheta1**2)
@@ -665,7 +671,10 @@ def control_vector(
 
 
 def linear_accelerations(state: State, qddot: np.ndarray, params: PendulumParams) -> dict:
-    """Compute linear accelerations of joints in world coordinates."""
+    """Compute linear accelerations of the joints and the club centre of mass.
+
+    Keys: ``wrist``, ``tip`` and ``club_com`` (COM of shaft plus head).
+    """
     if not (state.shape == (4,) and qddot.shape == (2,)):
         raise ValueError("state must be (4,) and qddot must be (2,)")
     theta1, phi, dtheta1, dphi = state
@@ -677,10 +686,16 @@ def linear_accelerations(state: State, qddot: np.ndarray, params: PendulumParams
 
     ax_w = L1 * (-np.sin(theta1) * dtheta1**2 + np.cos(theta1) * ddtheta1)
     ay_w = L1 * (np.cos(theta1) * dtheta1**2 + np.sin(theta1) * ddtheta1)
-    ax_t = ax_w + L2 * (-np.sin(abs_angle2) * dabs2**2 + np.cos(abs_angle2) * ddabs2)
-    ay_t = ay_w + L2 * (np.cos(abs_angle2) * dabs2**2 + np.sin(abs_angle2) * ddabs2)
+    # Unit-length club-frame acceleration: a(r) = a_wrist + r * (x_hat, y_hat).
+    x_hat = -np.sin(abs_angle2) * dabs2**2 + np.cos(abs_angle2) * ddabs2
+    y_hat = np.cos(abs_angle2) * dabs2**2 + np.sin(abs_angle2) * ddabs2
+    com = club_inertia(params).com_m
 
-    return {"wrist": (ax_w, ay_w), "tip": (ax_t, ay_t)}
+    return {
+        "wrist": (ax_w, ay_w),
+        "tip": (ax_w + L2 * x_hat, ay_w + L2 * y_hat),
+        "club_com": (ax_w + com * x_hat, ay_w + com * y_hat),
+    }
 
 
 def net_joint_forces(state: State, qddot: np.ndarray, params: PendulumParams) -> dict:
@@ -689,12 +704,12 @@ def net_joint_forces(state: State, qddot: np.ndarray, params: PendulumParams) ->
         raise ValueError("state must be provided")
     acc = linear_accelerations(state, qddot, params)
     g_vec = np.array([0.0, -params.g])
-    me = _m2eff(params)
+    club_mass = club_inertia(params).mass_kg
 
     a_w = np.array(acc["wrist"])
-    a_t = np.array(acc["tip"])
-    f_wrist = me * a_t - me * g_vec
-    f_shoulder = (params.m1 * a_w + me * a_t) - (params.m1 + me) * g_vec
+    a_club = np.array(acc["club_com"])
+    f_wrist = club_mass * (a_club - g_vec)
+    f_shoulder = params.m1 * (a_w - g_vec) + f_wrist
 
     return {
         "shoulder": (float(f_shoulder[0]), float(f_shoulder[1])),
@@ -724,11 +739,11 @@ def potential_energy(state: State, params: PendulumParams) -> float:
     if state is None:
         raise ValueError("state must be provided")
     theta1, phi = state[0], state[1]
-    me = _m2eff(params)
+    club = club_inertia(params)
     abs_angle2 = theta1 + phi
-    V = -(params.m1 + me) * params.g * params.L1 * np.cos(
+    V = -(params.m1 + club.mass_kg) * params.g * params.L1 * np.cos(
         theta1
-    ) - me * params.g * params.L2 * np.cos(abs_angle2)
+    ) - club.first_moment_kg_m * params.g * np.cos(abs_angle2)
     return float(V)
 
 

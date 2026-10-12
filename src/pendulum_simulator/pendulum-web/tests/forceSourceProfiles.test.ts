@@ -59,7 +59,9 @@ function effortSeries(): ForceSourceSeries {
 
 describe('sixth-order continuous torque profiles', () => {
     it('uses the repository-authoritative inertia-matched driver and hub budget', () => {
-        expect(PRESETS[0].params.m2 + PRESETS[0].params.mClub).toBeCloseTo(0.2381186694, 8);
+        const { m2, mClub, L2 } = PRESETS[0].params;
+        expect(m2 + mClub).toBeCloseTo(0.310, 8);
+        expect((m2 / 3 + mClub) * L2 ** 2).toBeCloseTo(0.28812, 4);
         expect(DEFAULT_OPTIMIZATION_CONSTRAINTS.shoulderTorqueNm).toEqual({ min: -250, max: 250, step: 5 });
         expect(DEFAULT_OPTIMIZATION_CONSTRAINTS.wristTorqueLimitNm).toBe(30);
         expect(DEFAULT_OPTIMIZATION_CONSTRAINTS.targetClubheadSpeedMps).toBe(52.3);

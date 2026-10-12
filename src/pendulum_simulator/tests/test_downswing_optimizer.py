@@ -59,7 +59,11 @@ def test_config_rejects_a_downswing_the_golfer_cannot_deliver() -> None:
     higher — and the message says so.
     """
     config = _config()
-    assert config.minimum_sweep_duration_s == pytest.approx(0.2856, abs=1e-3)
+    # Tools #5431: Jw = (0.30/3 + 0.20) * 1.10**2 = 0.363, s = 0.385, so
+    # M11(phi0) = 5.5 * 0.65**2 + 0.363 + 2 * 0.385 * 0.65 * cos(1.745)
+    # = 2.600 and t_min = sqrt(2 * 2.618 / (180 / 2.600)) = 0.2750 s
+    # (was 0.2856 s with the lumped 0.50 kg tip mass).
+    assert config.minimum_sweep_duration_s == pytest.approx(0.2750, abs=1e-3)
 
     with pytest.raises(ValueError, match="below the"):
         _config(duration_s=0.20)

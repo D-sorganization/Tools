@@ -20,7 +20,7 @@
 
 | Feature                                  | Status             | Notes                                                      |
 | ---------------------------------------- | ------------------ | ---------------------------------------------------------- |
-| Double pendulum (2-DOF)                  | :white_check_mark: | Shoulder + wrist, clubhead point mass                      |
+| Double pendulum (2-DOF)                  | :white_check_mark: | Shoulder + wrist; uniform shaft plus head point mass (#5431) |
 | Triple pendulum (3-DOF)                  | :white_check_mark: | Three cascading segments                                   |
 | Golfer upper body (8-DOF, 4 constraints) | :white_check_mark: | Hub + bilateral arms + club, closed loop                   |
 | Mass matrix M(q)                         | :white_check_mark: | All three models                                           |
