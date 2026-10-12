@@ -391,6 +391,7 @@
           "src/p1am_control_system/backend/tests/test_poll_once.py",
           "src/p1am_control_system/backend/tests/test_power_supply_integration.py",
           "src/p1am_control_system/backend/tests/test_power_supply_persistence.py",
+          "src/p1am_control_system/backend/tests/test_procedure.py",
           "src/p1am_control_system/backend/tests/test_safety_state_machine.py",
           "src/p1am_control_system/backend/tests/test_scan_scheduler.py",
           "src/p1am_control_system/backend/tests/test_temperature_integration.py",
