@@ -22,6 +22,7 @@ from typing import Any
 
 from alarm_processing import process_alarm_events
 from data_quality import DataQualityTracker
+from hardware import FIRST_OUT_UNKNOWN, FirstOutStatus
 from historian import (
     DEFAULT_HISTORIAN_BATCH_MAX,
     DEFAULT_HISTORIAN_QUEUE_SIZE,
@@ -49,6 +50,7 @@ __all__ = [
     "_beat_watchdog",
     "connect_once",
     "poll_once",
+    "_read_first_out_status",
     "_read_scan_tags",
     "_reengage_service_estop",
     "_resolve_source",
@@ -231,6 +233,37 @@ async def _beat_watchdog(plc: Any) -> None:
         logger.warning("Firmware heartbeat write failed: %s", exc)
 
 
+async def _read_first_out_status(plc: Any) -> FirstOutStatus:
+    """Best-effort trip latch + first-out tag for the frame; fail closed.
+
+    Runs AFTER the E-stop/heartbeat writes so it can never delay them. Guarded
+    like ``_beat_watchdog``: a client without the seam, one that raises, or one
+    returning anything but a well-formed status yields ``FIRST_OUT_UNKNOWN`` --
+    never "clear", never a guessed tag (#5528).
+    """
+    read = getattr(plc, "read_first_out_status", None)
+    if not callable(read):
+        return FIRST_OUT_UNKNOWN
+    try:
+        result = read()
+        if inspect.isawaitable(result):
+            result = await result
+    except Exception as exc:  # noqa: BLE001 - a status read must not abort a scan
+        logger.warning("First-out status read failed: %s", exc)
+        return FIRST_OUT_UNKNOWN
+    if not isinstance(result, FirstOutStatus):
+        return FIRST_OUT_UNKNOWN
+    if result.latch not in ("tripped", "clear", "unknown"):
+        return FIRST_OUT_UNKNOWN
+    if result.tag_id is not None and (
+        result.latch != "tripped"
+        or isinstance(result.tag_id, bool)
+        or not isinstance(result.tag_id, int)
+    ):
+        return FIRST_OUT_UNKNOWN
+    return result
+
+
 async def _read_scan_tags(
     plc: Any, backup: Any, *, simulated: bool
 ) -> dict[str, float] | None:
@@ -396,6 +429,10 @@ async def poll_once(
     elif source == DataSource.LIVE:
         await _beat_watchdog(plc)
 
+    first_out = (
+        await _read_first_out_status(plc) if plc_connected else FIRST_OUT_UNKNOWN
+    )
+
     payload: dict[str, Any] = {
         "tags": tag_list,
         "tags_dict": display_tags,
@@ -406,6 +443,8 @@ async def poll_once(
         "data_source": source.value,
         "plc_connected": plc_connected,
         "simulated": bool(simulated),
+        "plc_trip_latch": first_out.latch,
+        "first_out_tag_id": first_out.tag_id,
     }
     if temp_status is not None:
         payload["temperature"] = temp_status.model_dump()
