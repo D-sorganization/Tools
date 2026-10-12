@@ -8,7 +8,7 @@ from __future__ import annotations
 
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from typing import ClassVar
+from typing import Any, ClassVar
 
 import numpy as np
 
@@ -16,10 +16,19 @@ try:
     from shared.python.contracts import require
 except ImportError:
 
-    def require(condition: object, message: str = "", *args: object) -> None:
+    def require(condition: bool, message: str, value: Any = None) -> None:
         """Fallback DbC require when pycontracts is not installed."""
         if not condition:
             raise ValueError(message)
+
+
+def _structural_error(message: str, value: object = None) -> ValueError:
+    """Return the public precondition error or a standalone fallback."""
+    try:
+        from shared.python.contracts import PreconditionError
+    except ImportError:
+        return ValueError(message)
+    return PreconditionError(message, value)
 
 
 @dataclass
@@ -57,27 +66,26 @@ class Signal:
         self.time = np.asarray(self.time, dtype=np.float64)
         self.values = np.asarray(self.values, dtype=np.float64)
 
-        require(
-            self.time.ndim == 1,
-            f"Time must be 1D array, got shape {self.time.shape}",
-            self.time.shape,
-        )
+        if self.time.ndim != 1:
+            raise _structural_error(
+                f"Time must be 1D array, got shape {self.time.shape}",
+                self.time.shape,
+            )
 
         if self.values.ndim == 1:
-            require(
-                len(self.time) == len(self.values),
-                f"Time and values must have same length: "
-                f"{len(self.time)} vs {len(self.values)}",
-            )
+            if len(self.time) != len(self.values):
+                raise _structural_error(
+                    f"Time and values must have same length: "
+                    f"{len(self.time)} vs {len(self.values)}"
+                )
         elif self.values.ndim == 2:
-            require(
-                self.values.shape[0] == len(self.time),
-                f"First dimension of values must match time length: "
-                f"{self.values.shape[0]} vs {len(self.time)}",
-            )
+            if self.values.shape[0] != len(self.time):
+                raise _structural_error(
+                    f"First dimension of values must match time length: "
+                    f"{self.values.shape[0]} vs {len(self.time)}"
+                )
         else:
-            require(
-                False,
+            raise _structural_error(
                 f"Values must be 1D or 2D array, got shape {self.values.shape}",
                 self.values.shape,
             )
