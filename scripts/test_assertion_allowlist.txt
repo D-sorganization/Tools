@@ -75,3 +75,6 @@ src/putting_launch_monitor/tests/synthetic.py
 # Pendulum mass-convention (Tools #5431): shared constants and helpers the
 # test_mass_convention* modules import; not a test module itself.
 src/pendulum_simulator/tests/mass_convention_support.py
+# Shared CalculatorStateMixin test double; assertions live in the consuming
+# test_calculator_state_mixin*.py modules (#5520).
+src/shared/python/sidekick/tests/_calculator_state_helpers.py

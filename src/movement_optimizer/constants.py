@@ -13,6 +13,17 @@ from typing import Any
 
 import numpy as np
 
+try:
+    # Prefer the fleet-canonical constant (issue #3994) so this stays in
+    # sync with the rest of the fleet instead of drifting independently.
+    from shared.python.sidekick.utils.unit_constants import (
+        STANDARD_GRAVITY as GRAVITY_M_S2,
+    )
+except ImportError:
+    # Not importable in a bare/standalone environment (e.g. a wheel install
+    # without the monorepo's shared.python on the path) -- same value.
+    GRAVITY_M_S2: float = 9.80665  # type: ignore[no-redef]  # m/s^2, ISO 80000-3
+
 # ------------------------------------------------------------------
 # Segment mass fractions  (fraction of total body mass)
 # Bilateral segments are lumped into a single 2-D sagittal-plane value.
