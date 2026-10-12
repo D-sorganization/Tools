@@ -1,0 +1,438 @@
+{
+  "schema_version": 1,
+  "source_sha256": "a52fb20b1221ed012fac8e9b9cdef973db268918e635226c275af7418ead4555",
+  "quarantine_receipt": "docs/development/provenance/tools-devlog-migration-receipt.json",
+  "decisions": [
+    {
+      "source_line": 26,
+      "source_sha256": "23c629bce57f376bbd0ae8d4a4e7b880b396cb09fb94adc7d84b2838e77492ce",
+      "action": "amend",
+      "rationale": "Reviewed the exact historical row and current issue/PR metadata; record provenance scope only while preserving the original feature state.",
+      "verification": {
+        "date": "2026-10-12",
+        "commit": "d61e4015ecc4f52e9713b636e9840e61bf929e96",
+        "scope": "log_metadata_only",
+        "receipt_path": "docs/development/provenance/tools-devlog-metadata-review.md",
+        "receipt_sha256": "bfa97cdf92747a6ac4c24197d535b6e995860a91e411b240dd8707778ea605e5"
+      }
+    },
+    {
+      "source_line": 39,
+      "source_sha256": "c0db6165b3d8d498a84fc002cf63637d3ec30e742c40bd640119f5d6c335c6f2",
+      "action": "amend",
+      "rationale": "Reviewed the exact historical row and current issue/PR metadata; record provenance scope only while preserving the original feature state.",
+      "verification": {
+        "date": "2026-10-12",
+        "commit": "44a1ac0e3e76220177da9af93f53d4ffcbdbbd3a",
+        "scope": "log_metadata_only",
+        "receipt_path": "docs/development/provenance/tools-devlog-metadata-review.md",
+        "receipt_sha256": "bfa97cdf92747a6ac4c24197d535b6e995860a91e411b240dd8707778ea605e5"
+      }
+    },
+    {
+      "source_line": 52,
+      "source_sha256": "fda3bdf4e621337578b0b8bbdc44ef4b7aeec91cf94f71b72f08a59f6a9d8f22",
+      "action": "amend",
+      "rationale": "Reviewed the exact historical row and current issue/PR metadata; record provenance scope only while preserving the original feature state.",
+      "verification": {
+        "date": "2026-10-12",
+        "commit": "696b70a74739813e05fb07d330889fb8efef91e4",
+        "scope": "log_metadata_only",
+        "receipt_path": "docs/development/provenance/tools-devlog-metadata-review.md",
+        "receipt_sha256": "bfa97cdf92747a6ac4c24197d535b6e995860a91e411b240dd8707778ea605e5"
+      }
+    },
+    {
+      "source_line": 65,
+      "source_sha256": "6dbfa4597bb2adc7d0b6d94b9ac170a202d236a34e569dccf66a6f1ab9cad4ba",
+      "action": "amend",
+      "rationale": "Reviewed the exact historical row and current issue/PR metadata; record provenance scope only while preserving the original feature state.",
+      "verification": {
+        "date": "2026-10-12",
+        "commit": "eb4b886ad29af93ab7b22493ad9f4e4fb1bc31d8",
+        "scope": "log_metadata_only",
+        "receipt_path": "docs/development/provenance/tools-devlog-metadata-review.md",
+        "receipt_sha256": "bfa97cdf92747a6ac4c24197d535b6e995860a91e411b240dd8707778ea605e5"
+      },
+      "fields": {
+        "Summary": {
+          "value": "Removed the deprecated `use std::f64;` in `cmaes.rs` (it made `f64::INFINITY`/`NEG_INFINITY` resolve to the deprecated module constants) and replaced constant-size `chunks_exact(2)` with `as_chunks` with const parameter 2 in `dynamics.rs`, so the pendulum_core rust quality gate passes on the fleet's Rust 1.99.",
+          "evidence": "Original row contains Rust as_chunks::<2>() notation; equivalent prose avoids the generic angle-bracket placeholder scanner without changing the feature claim."
+        }
+      }
+    },
+    {
+      "source_line": 78,
+      "source_sha256": "d3759763c3436fb1f7bb05b4ce468df3d678d92e5e36fba92e391d0546f7458b",
+      "action": "amend",
+      "rationale": "Reviewed the exact historical row and current issue/PR metadata; record provenance scope only while preserving the original feature state.",
+      "verification": {
+        "date": "2026-10-12",
+        "commit": "57e90bce55e475c890a37f7dba8b53184e845497",
+        "scope": "log_metadata_only",
+        "receipt_path": "docs/development/provenance/tools-devlog-metadata-review.md",
+        "receipt_sha256": "bfa97cdf92747a6ac4c24197d535b6e995860a91e411b240dd8707778ea605e5"
+      }
+    },
+    {
+      "source_line": 104,
+      "source_sha256": "cecd54bbe3e4c7616d501da89a1807c0efcc6ae3ad03a6d5e1bb02c0316c3b01",
+      "action": "amend",
+      "rationale": "Reviewed the exact historical row and current issue/PR metadata; record provenance scope only while preserving the original feature state.",
+      "verification": {
+        "date": "2026-10-12",
+        "commit": "d7cef753e54ce89f30eca336ebe037f8a6b9ab86",
+        "scope": "log_metadata_only",
+        "receipt_path": "docs/development/provenance/tools-devlog-metadata-review.md",
+        "receipt_sha256": "bfa97cdf92747a6ac4c24197d535b6e995860a91e411b240dd8707778ea605e5"
+      }
+    },
+    {
+      "source_line": 117,
+      "source_sha256": "c9d205cba3727bce2344067f46094dba3de65c3d8030c69f4240d325f6dc950a",
+      "action": "amend",
+      "rationale": "Reviewed the exact historical row and current issue/PR metadata; record provenance scope only while preserving the original feature state.",
+      "verification": {
+        "date": "2026-10-12",
+        "commit": "f729eca97dd26fd4955bcabeb73e7083a47609bd",
+        "scope": "log_metadata_only",
+        "receipt_path": "docs/development/provenance/tools-devlog-metadata-review.md",
+        "receipt_sha256": "bfa97cdf92747a6ac4c24197d535b6e995860a91e411b240dd8707778ea605e5"
+      }
+    },
+    {
+      "source_line": 281,
+      "source_sha256": "e99ab5a0d25083053dea5636bd980d0e768f81955e78800bd00f8cb188bbcb62",
+      "action": "amend",
+      "rationale": "Reviewed the exact historical row and current issue/PR metadata; record provenance scope only while preserving the original feature state.",
+      "verification": {
+        "date": "2026-10-12",
+        "commit": "6be5b5b164a64bca8a5c6bedad57f25bd11f7b91",
+        "scope": "log_metadata_only",
+        "receipt_path": "docs/development/provenance/tools-devlog-metadata-review.md",
+        "receipt_sha256": "bfa97cdf92747a6ac4c24197d535b6e995860a91e411b240dd8707778ea605e5"
+      }
+    },
+    {
+      "source_line": 294,
+      "source_sha256": "12d3ca5ef7bfa4e9a62f82c7ac80b175cf24d8fec778984ff37cf273bd0f5abd",
+      "action": "amend",
+      "rationale": "Reviewed the exact historical row and current issue/PR metadata; record provenance scope only while preserving the original feature state.",
+      "verification": {
+        "date": "2026-10-12",
+        "commit": "b61fc5b5021b34d239b738da1390bda6a67497bd",
+        "scope": "log_metadata_only",
+        "receipt_path": "docs/development/provenance/tools-devlog-metadata-review.md",
+        "receipt_sha256": "bfa97cdf92747a6ac4c24197d535b6e995860a91e411b240dd8707778ea605e5"
+      }
+    },
+    {
+      "source_line": 307,
+      "source_sha256": "35aaba4d8a7e937fc28c89fd8261c77945f051ad6e7c224f2c30a2508a172c11",
+      "action": "amend",
+      "rationale": "Reviewed the exact historical row and current issue/PR metadata; record provenance scope only while preserving the original feature state.",
+      "verification": {
+        "date": "2026-10-12",
+        "commit": "3678409fc51024150ab28970b72e3b468935f345",
+        "scope": "log_metadata_only",
+        "receipt_path": "docs/development/provenance/tools-devlog-metadata-review.md",
+        "receipt_sha256": "bfa97cdf92747a6ac4c24197d535b6e995860a91e411b240dd8707778ea605e5"
+      }
+    },
+    {
+      "source_line": 320,
+      "source_sha256": "80fb97e619215694313486b2ee1f3c6f13b02136426388edb3c4454013b04980",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 346,
+      "source_sha256": "ee583fcdefdad2fe92652e356b77fa3d0170824a7346c9234ffb59e5d150dba8",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 359,
+      "source_sha256": "1a7b76387d704b4fcb9dc9f6dddf9a945314b13bd0eb76c7907b1f292147b503",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 372,
+      "source_sha256": "3cde6b8e0c047f94aed7e6eac13703d6eae05519a16e6c92bce65ba1d3388c50",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 385,
+      "source_sha256": "33f20c9c354d7afd3b31d8f336447f9c026b759eef566cf48c0d4a4d81f18829",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 424,
+      "source_sha256": "3f1208fbaee9d2a913c688d35a11442c92256f1d47cb8d75e113cb18e6a5efdd",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 437,
+      "source_sha256": "18950479df9e4e31c70e02e850e220bd02f9773777f8d091076be6ab98ea2758",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 450,
+      "source_sha256": "c591dd9e130b1ec54f9bce7769d39a9500bde0eea6b72281c91fd0e7bcd1c51d",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 463,
+      "source_sha256": "8990ff01d7a4a0e7506d9d5851f63919a121e64780a95a660da90939c533e461",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 489,
+      "source_sha256": "caed3bc4a3580db489c180df1606769ee1cc1da65506bf6f3ac093363c53cd22",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 502,
+      "source_sha256": "e9e5ab9015187f660e9dd205968e01d5c938295c358b35628710a22fb034c67b",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 515,
+      "source_sha256": "28348e872da740ea7f86546de3413df03c7955bcb45a750014959ae90917e974",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 528,
+      "source_sha256": "ebf9b30137b96844414d6ec628586a28233ba3863f89fb8e7b4e2836e0bff382",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 541,
+      "source_sha256": "b62c73ddff6a9b1331292efc3b80fdd22ac7d8f5c202277d455cd2eb9553edbc",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 554,
+      "source_sha256": "1bdb8488a71b42bbbba1571cffacece22aa35fc122e610b9e2b3428782b4affe",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 567,
+      "source_sha256": "65d2c158277dc8d7a4d7f4c2bc8a14318680c3f316e75e3d8fe2545b02e017dc",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 580,
+      "source_sha256": "626e58ae3dd348ce166860442498154dbb6c60dc32ad1440ac582a3ecdc141f1",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 593,
+      "source_sha256": "eade7852e7d96500e85f40f731d32fb9e959e0918eb5720c6f26edf367fda2f6",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 606,
+      "source_sha256": "c4313fa9899482816ee3b8cce9662b79bf77602cec93b4235166f01f9a3e5132",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 619,
+      "source_sha256": "1e135fd00422232efb53d164180d23649c0948b4705058a33f33dc8768ddfcbc",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 632,
+      "source_sha256": "89a1a79b5f0d88f34fb03aecf27f40f6e2e6c1f5c8640dddaeabc8755d706098",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 645,
+      "source_sha256": "25eb9301f0bf3dbb1264ec8942edd8837e7dace3e7f2c179d3cf06b8881179a3",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 658,
+      "source_sha256": "aa7ebd051ce4a1c0cc0f7fdfcb9e9dddab84ba857f6c9a09ed2294a6fd4a9534",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 671,
+      "source_sha256": "fb8792f9de67cb43d2dd9e7cfbf8fe1b2ce4a3077a73c87fd86a89f13b51964b",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 684,
+      "source_sha256": "8e53a50cce9269482f4a15ccfe9058fa2a2a711164ab742f612bc45803f46001",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 697,
+      "source_sha256": "d0f50da0ed98a42e5e855774e177788aa43f4779e8bc3b6b17990912bff8fd1d",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 710,
+      "source_sha256": "305b79469f2cc78652fafc9ee174fb4784cb5a40759b546abbd3c8e890666608",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 723,
+      "source_sha256": "a1354d578d02364d41a1f717ad8f97d55116a7aab745693b79d80366acf756be",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 749,
+      "source_sha256": "f64903404b1a5ef29c9517480d4362c5dabe2a866c64d4705047c456ff4f97cf",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 762,
+      "source_sha256": "c2fbe7e53d8c9bdb01316dc0ec7d1940d5d2cab0f0938016c8b5b5870f6089ac",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 775,
+      "source_sha256": "cd51cae27b81ae8c7672acb2fe550d7a75033ca534219e7ce32add896939bd07",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 788,
+      "source_sha256": "e1a1504814db53f4f45bc5f10a1ef1d8fbef8e346075c7440b5448c647955885",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 802,
+      "source_sha256": "912f8402114d0f3bdab99149d3124ebc3e9f403ef5e08c6c1c7fc960bda2ed5d",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 816,
+      "source_sha256": "5b0a9f32ed45b59731e4bc6c05be64dfd20a9c7f8c2afe8ff21562a7e31ad63e",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 830,
+      "source_sha256": "dc16d7164b3fc8ff75740a44b668718a53c4fa662ef7af1e336062301981c882",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 844,
+      "source_sha256": "6f73da6d5d0eb2624155d11443b4cd38407938f6a3de27d3453668d588cdda5f",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 860,
+      "source_sha256": "5ca3a82e085bb0166b37fb31bb26dc0af95bc9dacc2ce96cefbcb898335410f6",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 901,
+      "source_sha256": "18ec18c374e32574e3f3563d16763c76d2068931520d13124556d2dada26196f",
+      "action": "amend",
+      "rationale": "Reviewed the exact historical row and current issue/PR metadata; record provenance scope only while preserving the original feature state.",
+      "verification": {
+        "date": "2026-10-12",
+        "commit": "0a561daff18302ee143b214fe6a6138455d8c542",
+        "scope": "log_metadata_only",
+        "receipt_path": "docs/development/provenance/tools-devlog-metadata-review.md",
+        "receipt_sha256": "bfa97cdf92747a6ac4c24197d535b6e995860a91e411b240dd8707778ea605e5"
+      },
+      "fields": {
+        "Parked": {
+          "value": "PR #5136 closed without merge; issue #5132 closed. Await a governed decision to retry or abandon the calibration work.",
+          "evidence": "Original row Next step says PR #5136 closed without merge and issue #5132 closed; GitHub PR API confirms closed unmerged on 2026-10-12."
+        }
+      }
+    },
+    {
+      "source_line": 914,
+      "source_sha256": "f9263390c3c5b6eaa6c3b7787df21e4dda640fa2248147b83dd1dc8ec5522c5f",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 927,
+      "source_sha256": "5921830eac121f56c60b3895653757e9623df402ed62b30ea10acba6d5556d26",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 940,
+      "source_sha256": "3dbfd9ba1ca60f357a329336b7bbf1a306012f6586083b9307edf160445daddb",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 953,
+      "source_sha256": "1f1d06a634e6c93984b1e924f02eabad6ace439d5042845b3e9fe333436b8e35",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 976,
+      "source_sha256": "44267217ce5836d5f8518a764a440d61af80124e47fb9278a59574ee573e1f21",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 995,
+      "source_sha256": "d622c6d9743176e3143652f84ede572b444e150af2a4b342b3d4ea2cbafdbcee",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 1017,
+      "source_sha256": "799729f9f795bfe29398eb7459e46fead6286195af91db30623d7277f1390373",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 1067,
+      "source_sha256": "e053b81635ce17ed5e61881cb3bb03211cb1ee40d433a27a1b7f0326576cb6b8",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    },
+    {
+      "source_line": 2129,
+      "source_sha256": "ba298f8472ca8bdc6044250884930605f279980e0c46b38001b2765c99b96d7f",
+      "action": "quarantine",
+      "rationale": "Terminal historical row has unusable verification; preserve its exact bytes in the quarantine receipt without renewed feature acceptance."
+    }
+  ]
+}

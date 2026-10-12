@@ -32,7 +32,7 @@ feature, from proposal to ship. See the `development-logs` section of
 - **PR:** #5435
 - **Paths:** `.github/workflows/maturin-file-watcher.yml`, `.github/workflows/maturin-swing-core.yml`, `tests/ops/test_workflow_python_floor.py`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`, `SPEC.md`
 - **Started:** 2026-10-05
-- **Last verified:** 2026-10-05 — `tests/ops/test_workflow_python_floor.py` (incl. the maturin-crate-built-on-its-floor check) red before the split for file_watcher and swing-core, green after; `tests/test_python_version_contract.py` green; module inventory check clean; after merging main, both `wheel-gate` jobs carry the #4464 fork guard and `fork_pr_runner_guard.py` is clean.
+- **Last verified:** 2026-10-12 (`d61e4015ecc4f52e9713b636e9840e61bf929e96`; log metadata only; feature acceptance unverified; reviewed receipt `docs/development/provenance/tools-devlog-metadata-review.md`)
 - **Summary:** Split `maturin-file-watcher` and `maturin-swing-core` into a `wheel-gate` (build + import, Python 3.10-3.12, proves the crates' >=3.10 claim) and the existing wrapper/parity job (root code, now 3.11-3.12 only, since conftest will not collect it below the root floor and a 3.10 leg exited 5). A policy test fails any workflow leg below the floor of the code it exercises, and any maturin crate not built on its declared floor (`rust_core/tools-core` is a listed known gap).
 - **Next step:** Merge the PR once the Maturin workflows are green.
 
@@ -45,7 +45,7 @@ feature, from proposal to ship. See the `development-logs` section of
 - **PR:** #5433
 - **Paths:** `tests/architecture/_inventory_diff.py`, `tests/architecture/test_inventory_diff_5432.py`, `tests/architecture/test_tools_module_inventory_contract.py`
 - **Started:** 2026-10-05
-- **Last verified:** 2026-10-05 — helper tests 7 passed; stale inventory now fails with a one-line shard summary; inventory --check passes.
+- **Last verified:** 2026-10-12 (`44a1ac0e3e76220177da9af93f53d4ffcbdbbd3a`; log metadata only; feature acceptance unverified; reviewed receipt `docs/development/provenance/tools-devlog-metadata-review.md`)
 - **Summary:** The inventory freshness test compared two huge dicts with `assert ==`, whose quadratic pytest diff stalled a CI shard for 90 minutes. It now fails with a bounded shard-level summary; strictness is unchanged.
 - **Next step:** Merge PR #5433 via auto-merge.
 
@@ -58,7 +58,7 @@ feature, from proposal to ship. See the `development-logs` section of
 - **PR:** not created
 - **Paths:** `.github/workflows/`, `scripts/fork_pr_runner_guard.py`, `tests/ops/test_fork_pr_runner_guard.py`
 - **Started:** 2026-10-05
-- **Last verified:** 2026-10-05 — guard re-vendored from RM#1996 (Tools#5439); re-vendored to RM#2000 fail-closed bytes; `pytest tests/ops/test_fork_pr_runner_guard.py` 82 passed, guard reports 0 violations on Tools workflows.
+- **Last verified:** 2026-10-12 (`696b70a74739813e05fb07d330889fb8efef91e4`; log metadata only; feature acceptance unverified; reviewed receipt `docs/development/provenance/tools-devlog-metadata-review.md`)
 - **Summary:** Workflow-level defence in depth for #4464: every job in a PR-triggered workflow that can reach `d-sorg-fleet` skips fork PRs, the required `tests` lane routes fork PRs to a hosted runner, and a static checker enforces both. Admin settings (fork-PR approval, default token permissions, runner-group access) remain owner-only.
 - **Next step:** Owner applies the admin-only settings listed in the PR body, then closes #4464.
 
@@ -71,8 +71,8 @@ feature, from proposal to ship. See the `development-logs` section of
 - **PR:** see PR body
 - **Paths:** `src/pendulum_simulator/pendulum-core/src/cmaes.rs`, `src/pendulum_simulator/pendulum-core/src/dynamics.rs`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`, `SPEC.md`
 - **Started:** 2026-10-05
-- **Last verified:** 2026-10-05 — `cargo +1.99 clippy --all-targets -- -D warnings` clean (was 5 errors); `cargo +1.99 test` 42 passed; `cargo fmt --check` clean.
-- **Summary:** Removed the deprecated `use std::f64;` in `cmaes.rs` (it made `f64::INFINITY`/`NEG_INFINITY` resolve to the deprecated module constants) and replaced constant-size `chunks_exact(2)` with `as_chunks::<2>()` in `dynamics.rs`, so the pendulum_core rust quality gate passes on the fleet's Rust 1.99.
+- **Last verified:** 2026-10-12 (`eb4b886ad29af93ab7b22493ad9f4e4fb1bc31d8`; log metadata only; feature acceptance unverified; reviewed receipt `docs/development/provenance/tools-devlog-metadata-review.md`)
+- **Summary:** Removed the deprecated `use std::f64;` in `cmaes.rs` (it made `f64::INFINITY`/`NEG_INFINITY` resolve to the deprecated module constants) and replaced constant-size `chunks_exact(2)` with `as_chunks` with const parameter 2 in `dynamics.rs`, so the pendulum_core rust quality gate passes on the fleet's Rust 1.99.
 - **Next step:** Merge the PR once the pendulum_core rust quality gate is green.
 
 ### DL-#5422 · Fix Clippy Deprecated f64 Constants in tools-core
@@ -84,7 +84,7 @@ feature, from proposal to ship. See the `development-logs` section of
 - **PR:** not created
 - **Paths:** `rust_core/tools-core/src/rrt.rs`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`, `SPEC.md`
 - **Started:** 2026-10-04
-- **Last verified:** 2026-10-04 — `cargo clippy --package tools-core --all-targets -- -D warnings` 0 errors, 0 warnings; `cargo test --package tools-core` 184 passed.
+- **Last verified:** 2026-10-12 (`57e90bce55e475c890a37f7dba8b53184e845497`; log metadata only; feature acceptance unverified; reviewed receipt `docs/development/provenance/tools-devlog-metadata-review.md`)
 - **Summary:** Removed deprecated `use std::f64;` in `rust_core/tools-core/src/rrt.rs` that shadowed primitive `f64` associated constants (`f64::NEG_INFINITY` and `f64::MAX`) causing Clippy `-D warnings` failure in `rust-quality-gate` on CI Standard.
 - **Next step:** Open ready PR, arm auto-merge via Repository_Management `scripts/automerge_guard.py`.
 
@@ -110,7 +110,7 @@ feature, from proposal to ship. See the `development-logs` section of
 - **PR:** not created
 - **Paths:** `scripts/check_license_denylist.py`, `config/license_denylist.json`, `tests/architecture/test_license_denylist.py`
 - **Started:** 2026-10-04
-- **Last verified:** 2026-10-04 — tests/architecture/test_license_denylist.py 11 passed; ruff and mypy clean; script exits 0 on the repository root, with and without --installed.
+- **Last verified:** 2026-10-12 (`d7cef753e54ce89f30eca336ebe037f8a6b9ab86`; log metadata only; feature acceptance unverified; reviewed receipt `docs/development/provenance/tools-devlog-metadata-review.md`)
 - **Summary:** Enforces the ADR-008 licensing rule (no FreeMoCap or SkellyCam, AGPL ids) with a static scan of pyproject.toml and requirements files plus an optional installed-closure license walk. Lists contain only what ADR-008 names. CI wiring is out of scope.
 - **Next step:** workflow owner wires `python scripts/check_license_denylist.py` into CI as a separate workflow PR.
 
@@ -123,7 +123,7 @@ feature, from proposal to ship. See the `development-logs` section of
 - **PR:** draft (see issue)
 - **Paths:** `src/shared/python/swing_sim/runtime_manifest.py`, `tests/shared/python/test_runtime_manifest_parity_fixture.py`, `docs/specs/active/CALCULATION_RUNTIME_MANIFEST.md`
 - **Started:** 2026-10-04
-- **Last verified:** 2026-10-04 — parity test module 52 passed; ruff, ruff format and mypy clean.
+- **Last verified:** 2026-10-12 (`f729eca97dd26fd4955bcabeb73e7083a47609bd`; log metadata only; feature acceptance unverified; reviewed receipt `docs/development/provenance/tools-devlog-metadata-review.md`)
 - **Summary:** One-for-one Python port of the TypeScript `parseRuntimeManifest`, pinned by the shared `runtime_manifest_parity_v1.json` fixture.
 - **Next step:** frontier agent reviews the draft PR before it is marked ready.
 
@@ -287,7 +287,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **PR:** #5391
 - **Paths:** `src/shared/python/swing_sim/flight/`, `src/rate_of_closure/application/`, `tests/api_baselines/swing_sim_api_baseline.json`
 - **Started:** 2026-09-30
-- **Last verified:** 2026-09-30 — 231 swing_sim/flight and API-stability tests pass; ruff, black, and mypy clean.
+- **Last verified:** 2026-10-12 (`6be5b5b164a64bca8a5c6bedad57f25bd11f7b91`; log metadata only; feature acceptance unverified; reviewed receipt `docs/development/provenance/tools-devlog-metadata-review.md`)
 - **Summary:** Propagate explicit FlightTermination enum states (LANDED, TIME_LIMIT, SOLVER_FAILED, CANCELLED) before reporting landing metrics. Gate carry_distance, landing_angle, and lateral_deviation to None on non-landed flights. Fail closed across CenteredClubDeliveryAdapter, ground simulation transfer, and flight execution profiles.
 - **Next step:** Push branch, open PR #5385, and link UpstreamDrift #11145.
 
@@ -300,7 +300,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **PR:** #5368
 - **Paths:** `src/shared/python/golf_club/_pre_impact_contracts.py`, `src/shared/python/golf_club/_pre_impact_serde.py`, `src/shared/python/golf_club/modal_state.py`, `src/shared/python/golf_club/pre_impact_bundle.py`, `src/shared/python/golf_club/pre_impact_frames.py`, `tests/shared/python/golf_club/`, `tests/api_baselines/golf_club_api_baseline.json`
 - **Started:** 2026-09-26
-- **Last verified:** 2026-09-27 — 91 total tests (43 items 3-4 + 48 items 1-2) pass; API stability baseline regenerated and passes; ruff, file-size (<=500 LOC) and inventory clean.
+- **Last verified:** 2026-10-12 (`b61fc5b5021b34d239b738da1390bda6a67497bd`; log metadata only; feature acceptance unverified; reviewed receipt `docs/development/provenance/tools-devlog-metadata-review.md`)
 - **Summary:** Complete implementation of #5353: items 1-2 add the versioned pre-impact bundle wire (`PreImpactBundle`, `Provenance`, `TimeBase`, `HeadState`, `BallState`, `HandWrench`, `Pose`, `Quantity`), Plücker frame transforms with $10^{-12}$ wrench power invariance, and modal-state records with M-orthogonal projection ($0.5 \dot{q}^T M_r \dot{q} + 0.5 q^T K_r q$). Follows items 3-4 (validation and field origin) landed in #5366.
 - **Next step:** get CI green on the PR and merge through auto-merge squash.
 
@@ -313,22 +313,9 @@ reachable from any live state and `abandoned` from `parked`.
 - **PR:** #5364 (draft)
 - **Paths:** `src/shared/python/signal_toolkit/`, `src/shared/python/model_generation/`, `src/shared/python/ai/gui/session_manager.py`, `src/shared/python/humanoid_character_builder/__init__.py`, `tests/shared/python/signal_toolkit/`, `tests/shared/python/model_generation/`, `tests/unit/ai/gui/test_session_manager_2872.py`
 - **Started:** 2026-09-26
-- **Last verified:** 2026-09-26 — 327 signal_toolkit, model_generation, humanoid and session-manager tests pass; mypy and ruff clean; module inventory clean.
+- **Last verified:** 2026-10-12 (`3678409fc51024150ab28970b72e3b468935f345`; log metadata only; feature acceptance unverified; reviewed receipt `docs/development/provenance/tools-devlog-metadata-review.md`)
 - **Summary:** Preconditions on signal_toolkit smoothing/saturation/rate-limit/deadband/noise and primitive inertia mass, standard gravity from the shared constant, UTC-normalised chat session timestamps, and a corrected humanoid_character_builder docstring, so UpstreamDrift can retire its quarantined expectations by bumping the pin instead of editing its shadow copies.
 - **Next step:** get CI green on the PR and arm it through `automerge_guard.py`.
-
-### DL-#5360 · safe_eval runtime bound on integer power results
-
-- **State:** shipped
-- **Owner:** claude
-- **Issue:** #5360 (security)
-- **Branch:** `claude/tools-5360-safe-eval-pow-bound`
-- **PR:** #5361 (merged)
-- **Paths:** `src/shared/python/safe_eval.py`, `tests/shared/python/test_safe_eval.py`
-- **Started:** 2026-09-26
-- **Last verified:** 2026-09-26 — 84 safe_eval, pandas-eval and API-stability tests pass; ruff, mypy, file-size (500/500) and module inventory clean.
-- **Summary:** Every `**` is rewritten to a runtime-checked `_bounded_pow`, and two-argument scalar `pow()` shares it, so integer results above `MAX_POW_RESULT_BITS` (10,000 bits) raise `ValueError`. Closes left-nested power chains and runtime exponents that bypassed the static guards.
-- **Next step:** bump the UpstreamDrift vendor pin and retire its `test_safe_eval` quarantine IDs (UD#9411).
 
 ### DL-#5347 · Knowledge-pack golden Q&A evaluation and optional MiniLM hybrid ranking
 
@@ -342,58 +329,6 @@ reachable from any live state and `abandoned` from `parked`.
 - **Last verified:** 2026-09-26 (PR #5351 merged to main sha 1a8f012)
 - **Summary:** Added `ai/knowledge/eval.py` for golden Q&A evaluation (recall@k, MRR, must-not-source violation detection, markdown report, CLI) and optional dense MiniLM embeddings with hybrid BM25 + cosine Reciprocal Rank Fusion ranking gated by `embeddings: true`. Kept stdlib-only core importable without external ML dependencies. Rebased onto main after #5350 (Sidekick Wizards) merged; `get_minilm_embedder` now logs a warning and returns `None` on import failure instead of swallowing it, and `_search_hybrid` falls back to plain BM25 with a one-time warning when no embedder is available. Fixed mypy `no-any-return` on embedder resolution and compacted `pack.py` to 496 LOC to satisfy the file-size budget gate.
 - **Next step:** Shipped via PR #5351.
-
-### DL-#5346 · Sidekick Wizards (per-product knowledge in chat)
-
-- **State:** shipped
-- **Owner:** claude
-- **Issue:** #5346 (epic Repository_Management#1772)
-- **Branch:** `feat/5346-sidekick-wizards`
-- **PR:** #5350
-- **Paths:** `src/shared/python/ai/knowledge/wizard.py`, `src/shared/python/ai/wizards.py`, `src/shared/python/ai/adapters/base.py`, `src/shared/python/ai/gui/_panel_tools.py`, `src/shared/python/ai/rag/context_provider.py`
-- **Started:** 2026-09-25
-- **Last verified:** 2026-09-26 (PR #5350 merged to main)
-- **Summary:** `knowledge/wizard.yml` in a host product names its Wizard and pack. `build_context_instruction_section` (used by every adapter) appends the cited passages for the latest user message plus a banner when the pack is stale (freshness checked at most every 300 s). Without a Wizard the prompt is unchanged.
-- **Next step:** Shipped via PR #5350.
-
-### DL-#5345 · Knowledge-pack engine (shared.python.ai.knowledge)
-
-- **State:** shipped
-- **Owner:** claude
-- **Issue:** #5345 (epic Repository_Management#1772)
-- **Branch:** `feat/5345-knowledge-pack`
-- **PR:** #5348
-- **Paths:** `src/shared/python/ai/knowledge/`, `tests/shared/python/ai/knowledge/`, `tests/api_baselines/knowledge_api_baseline.json`, `manuals/tools/manifests/module-inventory/`
-- **Started:** 2026-09-25
-- **Last verified:** 2026-09-26 (PR #5348 merged to main)
-- **Summary:** One stdlib + PyYAML retrieval engine, vendorable by Runner_Dashboard: YAML manifest, heading chunking for Markdown/Quarto/LaTeX, SQLite FTS5 BM25 pack with citation, status (superseded hidden) and authority tie-break, per-file-hash staleness, `python -m shared.python.ai.knowledge build|search|info`.
-- **Next step:** Shipped via PR #5348.
-
-### DL-#1755 · Retire the review-comment-to-issue converter
-
-- **State:** shipped
-- **Owner:** claude
-- **Issue:** Repository_Management#1755
-- **Branch:** `chore/retire-comment-converter`
-- **PR:** #5344
-- **Paths:** `.github/workflows/Comment-to-Issue-Converter.yml`, `docs/development/`
-- **Started:** 2026-09-25
-- **Last verified:** 2026-09-26 (PR #5344 merged to main)
-- **Summary:** Remove the retired Convert-Review-Comments-to-Issues workflow from this repository per the fleet-wide Repository_Management#1755 campaign.
-- **Next step:** Shipped via PR #5344.
-
-### DL-#5333 · Optimize safe_exp and Resilient Benchmark
-
-- **State:** shipped
-- **Owner:** antigravity
-- **Issue:** #5333
-- **Branch:** `fix/5333-safe-exp-benchmark`
-- **PR:** #5334
-- **Paths:** `src/shared/python/sidekick/process_calculators/water_vapor_pressure.py`, `tests/shared/python/process_calculators/test_syngas_water_overflow.py`, `SPEC.md`, `docs/development/`
-- **Started:** 2026-09-24
-- **Last verified:** 2026-09-26 (PR #5334 merged to main)
-- **Summary:** Fix flaky CI Standard benchmark test `test_safe_exp_overhead_negligible` by eliminating min/max function call overhead in `safe_exp` and using best-of-3 runs to avoid transient runner scheduling pauses.
-- **Next step:** Shipped via PR #5334.
 
 ### DL-#5322 - Enforce the Deferred Validation Catalog
 
@@ -421,58 +356,6 @@ reachable from any live state and `abandoned` from `parked`.
 - **Summary:** Preserve the existing portfolio and Board questions while exposing all three owner plans through the shared Projects contract. Historical observations remain explicitly dated; missing evidence stays missing.
 - **Next step:** Projection published and its three parked rows/owner links verified in the dashboard; Board decisions remain pending. Enforcement is DL-#5322.
 
-### DL-#5315 · Thermal Profile Predictor Step Power Cutoff Accuracy
-
-- **State:** shipped
-- **Owner:** claude
-- **Issue:** D-sorganization/Tools#5315
-- **PR:** D-sorganization/Tools#5316
-- **Branch:** `fix/thermal-profile-step-power-cutoff`
-- **Paths:** `src/shared/python/sidekick/process_calculators/thermal_profile_predictor.py`, `tests/shared/python/process_calculators/test_thermal_profile.py`
-- **Started:** 2026-09-23
-- **Last verified:** 2026-09-23 (4 closed-form step-cutoff tests RED at 0.30–0.78 °C, green at <=0.01 °C after tightening RK45 tolerances; existing thermal tests, sidekick API stability, ruff and mypy pass.)
-- **Summary:** Tighten `predict_temperature_profile` integrator tolerances so an opaque power step no longer leaks 0.3 °C of error past a 0.1 °C acceptance; add thermal-mass contract and integration-failure check. No API change.
-- **Next step:** Shipped via PR #5316.
-
-### DL-#5299 · Constrained Passive Measured-Grip Identification
-
-- **State:** shipped
-- **Owner:** codex
-- **Issue:** D-sorganization/Tools#5299 (follow-up to #5072; parent #5068)
-- **PR:** D-sorganization/Tools#5300
-- **Branch:** `fix/5299-constrained-grip-nnls`
-- **Paths:** `src/shared/python/golf_club/measured_grip_impedance.py`, `tests/shared/python/golf_club/test_measured_grip_impedance.py`, `docs/development/impact-acoustics/MEASURED_GRIP_IMPEDANCE.md`
-- **Started:** 2026-09-22
-- **Last verified:** 2026-09-22 (TDD RED demonstrated clipped mass/stiffness and damping errors at active constraints; 78 affected grip, impact, shaft, and API-contract tests pass; ruff, mypy, module inventory, and all manual-governance gates pass.)
-- **Summary:** Replaces clipped ordinary least squares with the exact feasible solution of the two-parameter non-negative imaginary-impedance fit. The model remains passive by construction and does not make a physical identification claim from synthetic evidence.
-- **Next step:** Shipped via PR #5300.
-
-### DL-#5297 · Measured Grip FRF Qualification Requires Operating-Strain Evidence
-
-- **State:** shipped
-- **Owner:** codex
-- **Issue:** D-sorganization/Tools#5297 (follow-up to #5072; parent #5068)
-- **PR:** D-sorganization/Tools#5298
-- **Branch:** `fix/5297-measured-grip-strain`
-- **Paths:** `src/shared/python/golf_club/measured_grip_impedance.py`, `tests/shared/python/golf_club/test_measured_grip_impedance.py`, `docs/development/impact-acoustics/MEASURED_GRIP_IMPEDANCE.md`, `tests/api_baselines/golf_club_api_baseline.json`
-- **Started:** 2026-09-22
-- **Last verified:** 2026-09-22 (TDD RED reproduced the missing qualification input; 69 measured-grip, boundary, coupled-impact, and gripped-shaft tests pass; mypy, ruff, API stability, module inventory, and all nine manual-governance gates pass.)
-- **Summary:** Makes measured-grip FRF certification refuse by default until a caller explicitly declares that its operating-strain assessment passed. Magnitude, phase, and passivity agreement remain necessary but cannot independently establish linear-regime validity.
-- **Next step:** Monitor required PR checks, then merge. A physical study still needs traceable strain, geometry, calibration, and source evidence.
-
-### DL-#5301 · Measured-Grip Fixture Provenance and Qualification Boundary
-
-- **State:** shipped
-- **Owner:** codex
-- **Issue:** D-sorganization/Tools#5301 (follow-up to #5072; parent #5068)
-- **PR:** D-sorganization/Tools#5302 (dependent on #5298)
-- **Branch:** `fix/5301-grip-fixture-provenance`
-- **Paths:** `src/shared/python/golf_club/measured_grip_impedance.py`, `tests/shared/python/golf_club/test_measured_grip_impedance.py`, `docs/development/impact-acoustics/MEASURED_GRIP_IMPEDANCE.md`
-- **Started:** 2026-09-22
-- **Last verified:** 2026-09-22 (TDD RED showed a formula-generated fixture could receive physical FRF qualification; combined source-provenance, operating-strain, and public-contract tests pass after the stacked qualification gate.)
-- **Summary:** Reclassifies formula-generated fixtures as synthetic and makes source provenance a necessary condition for physical FRF qualification. Calibrated measurement declarations remain separately accepted.
-- **Next step:** Monitor the dependent review and merge after parent #5298 checks pass. Physical data collection remains separate.
-
 ### DL-#5068-planning · Deferred Physical Validation Plans
 
 - **State:** shipped
@@ -486,253 +369,6 @@ reachable from any live state and `abandoned` from `parked`.
 - **Summary:** Preserve unavailable experiments for Board review without closing mixed software epics or supplying fabricated measurements.
 - **Next step:** Shipped via PR #5306.
 
-### DL-#5303 · Reviewed Renderer Source Provenance
-
-- **State:** shipped
-- **Owner:** codex
-- **Issue:** D-sorganization/Tools#5303
-- **PR:** pending
-- **Branch:** `fix/5303-renderer-provenance`
-- **Paths:** `src/rate_of_closure/visual_baselines.v1.json`, `tests/rate_of_closure/test_visual_baseline_compare.py`, `AGENT_HANDOFF.md`, `src/rate_of_closure/AGENT_HANDOFF.md`
-- **Started:** 2026-09-22
-- **Last verified:** 2026-09-22 (the new exact-identity regression failed against `c599…`; after restoring `df410…`, all 10 visual baseline comparison tests pass)
-- **Summary:** Restores the reviewed source artifact commit for unchanged baseline images so UpstreamDrift's fail-closed provider contract accepts only the already reviewed source/hash pair. No image, tolerance, visual surface, or scientific model changes.
-- **Next step:** Shipped via closed (issue #5303 closed 2026-09-22).
-
-### DL-#4951 · Historian Licensing Ruling: Grafana AGPLv3 and TimescaleDB TSL
-
-- **State:** shipped
-- **Owner:** local
-- **Issue:** D-sorganization/Tools#4951
-- **PR:** pending
-- **Branch:** `docs/4946-4951-architecture-rulings`
-- **Paths:** `docs/development/HISTORIAN_LICENSING_RULING.md`, `SPEC.md`, `docs/development/DEVELOPMENT_LOG.md`
-- **Started:** 2026-09-21
-- **Last verified:** 2026-09-21 (local)
-- **Summary:** Formally ratify Ruling Option 1 (Internal-Only Deployment) for SCADA historian; classify as internal plant/engineering telemetry system on company infrastructure; unencumber TimescaleDB compression/continuous aggregates and Grafana dashboards; establish strict distribution-isolation invariant against packaging into external consumer bundles; unblock H3/H6 re-land.
-- **Next step:** Shipped via PR #5289.
-
-### DL-#4946 · Impact-Interval PyQt Tab Ruling: Drop as Superseded by #4473 Visual-First Tabs
-
-- **State:** shipped
-- **Owner:** local
-- **Issue:** D-sorganization/Tools#4946
-- **PR:** pending
-- **Branch:** `docs/4946-4951-architecture-rulings`
-- **Paths:** `docs/development/IMPACT_INTERVAL_TAB_RULING.md`, `SPEC.md`, `docs/development/DEVELOPMENT_LOG.md`
-- **Started:** 2026-09-21
-- **Last verified:** 2026-09-21 (local)
-- **Summary:** Formally drop proposed standalone impact_interval_view PyQt tab as superseded by #4473 visual-first tab family while preserving headless calculation package src/swing_sim/impact_interval/ as an authoritative computational backend.
-- **Next step:** Shipped via PR #5289.
-
-### DL-#4253 · Review R4: Counterfactual Methodology - Sobol, Spearman Significance, Ellipse Normality
-
-- **State:** shipped
-- **Owner:** local
-- **Issue:** D-sorganization/Tools#4253 (parent epic #4249)
-- **PR:** D-sorganization/Tools#5266
-- **Branch:** `feat/4253-counterfactual-sobol-significance`
-- **Paths:** `src/shared/python/swing_sim/variation/`, `src/rate_of_closure/`, `tests/rate_of_closure/`
-- **Started:** 2026-09-20
-- **Last verified:** 2026-09-20 (all 389 variation Python tests, 2,328 web tests, and 16 glossary tests passing; line budget <= 500 lines enforced; test_auto_complete migrated to qtbot fixture to eliminate xdist crash)
-- **Summary:** Implements Sobol first-order and total sensitivity indices via Saltelli sampling with run count guidance, permutation p-values and bootstrap CIs on Spearman correlation matrix with cell suppression/greying, Mardia bivariate normality diagnostic and convex hull fallback for 2D landing dispersion, and input truncation mean-shift analysis with UI notes.
-- **Next step:** Shipped via PR #5266.
-
-### DL-#4225 · Workspace View Compositor: Impact, Swing, Flight
-
-- **State:** shipped
-- **Owner:** antigravity
-- **Issue:** D-sorganization/Tools#4225
-- **PR:** #5264
-- **Branch:** `feat/4225-workspace-view-compositor`
-- **Paths:** `src/rate_of_closure/ui/pyqt6/`, `src/rate_of_closure/web/`, `tests/rate_of_closure/`
-- **Started:** 2026-09-19
-- **Last verified:** 2026-09-19 (all unit/headless tests pass including test_app_toolstrip.py, test_view_compositor_gui.py, test_tooltips.py, and vitest web test suite; pre-commit ruff/black/mypy pass; inventory check clean)
-- **Summary:** Multi-view workspace compositor integrating Impact, Swing, and Flight viewports with synchronized playback, run selection, and layout presets across PyQt and React toolstrips.
-- **Next step:** Merged into main.
-
-### DL-#4252 · Literature Flight Models Reconciliation, Carry Benchmark, and Wind Documentation
-
-- **State:** shipped
-- **Owner:** local
-- **Issue:** D-sorganization/Tools#4252
-- **PR:** #5265
-- **Branch:** `feat/4252-reconcile-flight-models`
-- **Paths:** `rust_core/tools-core/src/ball_flight.rs`, `src/shared/python/swing_sim/flight/`, `src/rate_of_closure/derivation_flight.py`, `src/rate_of_closure/web/src/model/derivationModels.ts`, `docs/development/flight_model_validation.json`
-- **Started:** 2026-09-19
-- **Last verified:** 2026-09-19 (all 230 flight and derivation unit/parity tests pass; Rust fast path and WaterlooPenner carry parity within 0.07% across all 5 benchmark conditions; lint/format/mypy pass)
-- **Summary:** Reconciled Rust core kernel with canonical Waterloo/Penner lift model (power law $C_L = cl_1 \cdot s^{cl_2}$, $s_{decay} = 0.05$, $C_{L,\max} = 0.155$); tightened multi-condition carry parity to < 1.0%; documented spin decay rates across all 7 registered models; added calculation description Step 4 literature comparison & wind boundaries; published open-data validation package with pinned manifest.
-- **Next step:** Shipped via PR #5265.
-
-### DL-#4162 · Wedge Delivery Metrics & Linear Waterfall Visualization
-
-- **State:** shipped
-- **Owner:** local
-- **Issue:** D-sorganization/Tools#4162 (parent epic #4158)
-- **PR:** #5268
-- **Branch:** `feat/4162-wedge-delivery-metrics-viz`
-- **Paths:** `src/shared/python/golf_club/_wedge_delivery_metrics.py`, `tests/shared/python/golf_club/test_wedge_delivery_metrics.py`, `src/rate_of_closure/ui/impact_kinematics_presentation.py`, `tests/rate_of_closure/test_wedge_ground_clearance_gui.py`, `src/rate_of_closure/web/src/model/wedgeDeliveryMetrics.ts`, `src/rate_of_closure/web/src/model/wedgeDeliveryMetrics.test.ts`, `src/rate_of_closure/web/src/components/WedgeGroundClearancePanel.tsx`, `src/rate_of_closure/web/src/components/WedgeGroundClearancePanel.test.tsx`, `src/rate_of_closure/web/src/components/SimulationDisplay.tsx`
-- **Started:** 2026-09-19
-- **Last verified:** 2026-09-19 (all 21 Python pytest and 2324 TypeScript vitest tests passing; ruff, black, mypy, and eslint passing)
-- **Summary:** Implemented synchronized wedge delivery metrics cards (total vs counterfactual attack angle, dynamic loft/lie/face, delivered bounce, low point, LE rates), linear-velocity contribution waterfall table (v_contact = v_axis + v_shaft + v_other), and accessible clickable explainers across both PyQt6 and React surfaces.
-- **Next step:** Shipped via PR #5268.
-
-### DL-#4186 · Convention Selector and Side-by-Side Launch-Monitor Comparison Workspace
-
-- **State:** shipped
-- **Owner:** local
-- **Issue:** D-sorganization/Tools#4186 (parent #4180, includes #4187)
-- **PR:** #5267
-- **Branch:** `feat/4186-convention-comparison-workspace`
-- **Paths:** `src/shared/python/swing_sim/conventions/`, `src/rate_of_closure/ui/pyqt6/`, `src/rate_of_closure/web/`, `docs/specs/LAUNCH_MONITOR_CONVENTIONS.md`
-- **Started:** 2026-09-19
-- **Last verified:** 2026-09-19 (Python 14 convention + 6 workspace tests pass; vitest 11 convention + 9 workspace tests pass; 84 definitions match SHA-256 byte-for-byte)
-- **Summary:** Built side-by-side TrackMan vs Foresight comparison workspace in PyQt6 and React with signed deltas, typed not-comparable reasons, group filtering, full-text search, CSV/JSON exports, extended 28-parameter matrix across 5 groups, and complete accessibility coverage.
-- **Next step:** Shipped via PR #5267.
-
-### DL-#4918 · Readiness P2: Content-Based Visual Baseline Gate & Main Re-Baseline
-
-- **State:** shipped
-- **Owner:** local
-- **Issue:** D-sorganization/Tools#4918
-- **PR:** #5269
-- **Branch:** `feat/4918-content-based-visual-gate`
-- **Paths:** `scripts/check_rate_visual_evidence_changes.py`, `tests/scripts/test_check_rate_visual_evidence_changes.py`, `src/rate_of_closure/visual_baselines.v1.json`, `tests/rate_of_closure/test_visual_baseline_compare.py`, `SPEC.md`
-- **Started:** 2026-09-20
-- **Last verified:** 2026-09-20 (all 35 visual baseline compare and lockstep gate tests pass; ruff, black, mypy pass; canonical content hash verification prevents whitespace-only bypass; non-visual diffs skip without evidence)
-- **Summary:** Made lockstep visual evidence gate check canonical content hash of evidence rather than mtime or whitespace additions; skipped gate for diffs that touch no .tsx/.css/.ui/paint code; re-baselined visual_baselines.v1.json source_artifact_commit to ancestor commit b64a70f394cf9cf77266512e094239237c87d3b0 on main; added deliberate 2px layout shift regression test.
-- **Next step:** Shipped via PR #5269.
-
-### DL-#5072 · Measured Grip Impedance Dynamics, Passivity and FRF Agreement
-
-- **State:** shipped
-- **Owner:** local
-- **Issue:** D-sorganization/Tools#5072 (IA-T3, parent #5068)
-- **PR:** #5259
-- **Branch:** `feat/5072-prestressed-shaft-dynamics`
-- **Paths:** `src/shared/python/golf_club/`, `tests/shared/python/golf_club/`, `docs/development/impact-acoustics/MEASURED_GRIP_IMPEDANCE.md`, `SPEC.md`
-- **Started:** 2026-09-19
-- **Last verified:** 2026-09-19 (all 67 grip/shaft dynamics tests passing; passivity Hermitian real-part audit, Gram-factor PSD fitting, full/reduced FRF agreement under quantified uncertainty, and GripBoundary consumer integration verified)
-- **Summary:** Delivers measured grip translation and rotation impedance format (`golf_club.measured_grip_impedance/1`), passivity verification, continuous passive Gram-factor model identification, full/reduced FRF magnitude and phase agreement within $k\sigma$ uncertainty intervals, antiresonance floor handling, and consumer integration into `GripBoundary` and `simulate_coupled_impact`.
-- **Next step:** Shipped via PR #5259.
-
-### DL-#4922 · Rate of Closure: Release Gate Runner and Campaign State Transition
-
-- **State:** shipped
-- **Owner:** local
-- **Issue:** D-sorganization/Tools#4922 (Governing #4201)
-- **PR:** #5273
-- **Branch:** `feat/4922-rate-of-closure-release-gate`
-- **Paths:** `scripts/release_gate.py`, `tests/scripts/test_release_gate.py`, `docs/release/rate_of_closure_campaign.v1.json`, `tests/rate_of_closure/test_campaign_release_manifest.py`, `SPEC.md`, `manuals/tools/manifests/module-inventory/`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`
-- **Started:** 2026-09-20
-- **Last verified:** 2026-09-20 (`SELF`; ran scripts/release_gate.py with all 5 pillars passing: cross-runtime parity inventory, companion/Playwright browser specs, frozen PyQt qualification, SBOM/package asset integrity, and documentation/a11y scanning; updated campaign manifest programs from implemented_unverified to verified with evidence ID release-gate-verified-4922)
-- **Summary:** Implemented `scripts/release_gate.py` automating the multi-pillar Rate-of-Closure release gate. Validates shared fixture parity inventory, Playwright companion specs, frozen PyQt qualification runner, SBOM/package metadata, and documentation/a11y manifests. Flipped 15 campaign programs in `docs/release/rate_of_closure_campaign.v1.json` from `implemented_unverified` and `specified_only` to `verified` with explicit verification evidence ID `release-gate-verified-4922`. Added comprehensive test suite `tests/scripts/test_release_gate.py`.
-- **Next step:** Shipped via PR #5273.
-
-### DL-#4382 · Rate of Closure: Frozen PyQt6 Qualification and Scientific Parity
-
-- **State:** shipped
-- **Owner:** local
-- **Issue:** D-sorganization/Tools#4382 (Parent Epic #4377)
-- **PR:** #5271
-- **Branch:** `feat/4382-frozen-pyqt6-qualification`
-- **Paths:** `src/rate_of_closure/packaging/`, `src/rate_of_closure/build_executable.py`, `tests/rate_of_closure/test_frozen_pyqt6_qualification.py`, `SPEC.md`, `manuals/tools/manifests/module-inventory/entries-src-rate-of-closure.json`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`
-- **Started:** 2026-09-20
-- **Last verified:** 2026-09-20 (`SELF`; built one-folder PyQt6 bundle dist/RateOfClosureExplorer, verified 100% headless offscreen, capability probing, hygiene check, canonical simulation parity, Ground Study evidence parity, and spaces/Unicode/unrelated-cwd relocation)
-- **Summary:** Added explicit PyInstaller spec (`rate_of_closure.spec`) and hook (`hook-rate_of_closure.py`) for Rate of Closure without relying on dynamic registration or `_bootstrap.py`. Built and qualified Windows one-folder PyQt6 artifact offscreen and interactively. Proved Qt/Matplotlib/SciPy collection, graceful optional-Rust capability messaging, bounded canonical simulation, Ground Study evidence save and byte parity against golden fixture, clean exit, spaces/Unicode/unrelated-cwd relocation, artifact hygiene, and explicit unsupported status for PyQt direct-worker restart recovery.
-- **Next step:** Shipped via PR #5271.
-
-### DL-#4300 · Rate UI Top-Toolstrip Popover Viewport Clamping
-
-- **State:** shipped
-- **Owner:** local
-- **Issue:** D-sorganization/Tools#4300
-- **PR:** https://github.com/D-sorganization/Tools/pull/5255
-- **Branch:** `fix/issue-4300-toolstrip-popover-viewport-clamping`
-- **Paths:** `src/rate_of_closure/web/src/components/AppToolstrip.tsx`, `src/rate_of_closure/web/src/components/AppToolstrip.test.tsx`, `src/rate_of_closure/web/e2e/toolstrip-popover-viewport.spec.ts`, `SPEC.md`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`
-- **Started:** 2026-09-19
-- **Last verified:** 2026-09-19 (`SELF`; wired useViewportClampedPopover into FileMenu, ViewMenu, and ToolsMenu; verified via Vitest unit tests and Playwright 520x900 viewport e2e tests)
-- **Summary:** Top-toolstrip menus (Tools, File, View) overflowed horizontally on constrained viewports (e.g. 520x900). Wired the existing useViewportClampedPopover hook into FileMenu, ViewMenu, and ToolsMenu to translate popovers horizontally to stay inside viewport gutters. Added unit and e2e regression tests.
-- **Next step:** Shipped via PR #5255.
-
-### DL-#5223 · Pre-push Mypy Hook NumPy Compatibility
-
-- **State:** shipped
-- **Owner:** local
-- **Issue:** D-sorganization/Tools#5223
-- **PR:** https://github.com/D-sorganization/Tools/pull/5254
-- **Branch:** `fix/issue-5223-bump-mypy-precommit-hook`
-- **Paths:** `.pre-commit-config.yaml`, `tests/ops/test_pre_push_mypy_scope.py`, `SPEC.md`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`
-- **Started:** 2026-09-19
-- **Last verified:** 2026-09-19 (`SELF`; mirrors-mypy bumped from v1.13.0 to v1.15.0 to support NumPy >= 2.2 stubs without cache serializer placeholder crash; pre-push hook and unit tests passed)
-- **Summary:** Pre-push mypy hook crashed on numpy-importing files when the isolated hook environment carried numpy >= 2.2 because mypy 1.13's cache serializer failed on newer type syntax. Bumped mirrors-mypy to v1.15.0 and added contract unit test.
-- **Next step:** Shipped via PR #5254.
-
-### DL-#5073 · Non-Spherical Oblique Contact Mechanics and Moving Center of Pressure
-
-- **State:** shipped
-- **Owner:** local
-- **Issue:** D-sorganization/Tools#5073 (IA-T4, parent #5068)
-- **PR:** D-sorganization/Tools#5260
-- **Branch:** `feat/5073-oblique-contact-mechanics`
-- **Paths:** `src/shared/python/swing_sim/impact/`, `tests/shared/python/golf_club/`, `SPEC.md`
-- **Started:** 2026-09-19
-- **Last verified:** 2026-09-19 (all 9 oblique contact, moving COP, and face/hosel modal tests passing; strict energy balance and observer invariance verified)
-- **Summary:** Implements non-spherical curved face geometry with bulge and roll, moving Center of Pressure (COP) kinematics, dynamic lever arm/gear-effect torque, high-frequency face trampoline and hosel bending/torsion modes, and multi-channel energy balance conservation.
-- **Next step:** Shipped via PR #5260.
-
-### DL-#5074 · Transient Vibroacoustic Radiation and Acoustic Field Solver
-
-- **State:** shipped
-- **Owner:** local
-- **Issue:** D-sorganization/Tools#5074 (IA-T5, parent #5068)
-- **PR:** #5261
-- **Branch:** `feat/5074-transient-vibroacoustic-solver`
-- **Paths:** `src/shared/python/swing_sim/vibroacoustics/`, `tests/shared/python/golf_club/`, `SPEC.md`, `docs/development/impact-acoustics/`
-- **Started:** 2026-09-19
-- **Last verified:** 2026-09-19 (all 157 vibroacoustic radiation, observer array, ball dipole, psychoacoustic, and integration tests passing; 0 ruff/black/mypy issues)
-- **Summary:** Implements transient vibroacoustic radiation solver with retarded-time Rayleigh surface integral, modal radiation transfer, observer location directivity and microphone arrays, ball impact acoustic dipole radiation, standardized psychoacoustic metrics (ISO 532-1 loudness, DIN 45692 sharpness, Leq, SEL), and calibrated pressure recordings.
-- **Next step:** Shipped via PR #5261.
-
-### DL-#4220 · Versioned Native File Commands and Workspace Persistence
-
-- **State:** shipped
-- **Owner:** local
-- **Issue:** D-sorganization/Tools#4220
-- **PR:** https://github.com/D-sorganization/Tools/pull/5258
-- **Branch:** `feat/issue-4220-rate-of-closure-file-commands`
-- **Paths:** `src/rate_of_closure/ui/pyqt6/main_window_file_commands.py`, `src/rate_of_closure/ui/pyqt6/app_toolstrip.py`, `src/rate_of_closure/ui/pyqt6/main_window.py`, `src/rate_of_closure/ui/pyqt6/workspace_navigation.py`, `tests/rate_of_closure/test_main_window_file_commands.py`, `tests/rate_of_closure/pyqt_probe_lifecycle.py`, `tests/rate_of_closure/pyqt_variation_visual_state_probe.py`
-- **Started:** 2026-09-19
-- **Last verified:** 2026-09-20 (`SELF`; restored tuple idempotency in \_freeze_json; all 10 test_main_window_file_commands.py, all 18 test_app_toolstrip.py, and all 6 test_workspace_files.py passing)
-- **Summary:** Native File commands (New, Open, Open Recent, Save, Save As, Import, Export, Close) wired into RateOfClosureMainWindow and ApplicationToolstrip with live dirty tracking, destructive action confirmation prompts, and idempotent tuple support in \_freeze_json.
-- **Next step:** Shipped via PR #5258.
-
-### DL-#5218 · Camera Putting Launch Monitor for GSPro
-
-- **State:** shipped
-- **Owner:** claude
-- **Issue:** D-sorganization/Tools#5218
-- **PR:** D-sorganization/Tools#5224 (core, merged); #5225 (GUI, merged); #5226 (launcher registration, merged); #5239 (lazy FrameSource import, merged); #5244 (shared GSPro codec, open); #5256 (replay corpus, open)
-- **Branch:** `feat/issue-5222-putting-monitor-replay-corpus`
-- **Paths:** `src/putting_launch_monitor/`, `src/shared/python/launch_monitor/`, `tests/contracts/`, `tests/unit/launch_monitor/`
-- **Started:** 2026-09-15
-- **Last verified:** 2026-09-20 (accuracy validation harness with CSV logging and running statistics, 7 unit tests passing, rig evidence and procedure page documented, #5221)
-- **Summary:** Overhead-camera putting monitor that measures launch speed and HLA on a mat-corner homography and sends putts to GSPro over Open Connect v1; shared `gspro_connect` codec extracted into `shared.python.launch_monitor`; recorded-putt replay corpus regression test suite added; accuracy validation harness (`validate` subcommand) and rig evidence page added (#5221).
-- **Next step:** Shipped via PR #5244 and #5256.
-
-### DL-#1614 · Mermaid C4 Architecture Map Contract
-
-- **State:** shipped
-- **Owner:** local
-- **Issue:** D-sorganization/Repository_Management#1614 (epic #1594)
-- **PR:** #5174
-- **Branch:** `docs/1614-c4-architecture-map`
-- **Paths:** `docs/architecture/C4.md`, `scripts/architecture_map_contract.py`, `tests/test_architecture_map_contract.py`, `.github/workflows/architecture-map-contract.yml`
-- **Started:** 2026-09-10
-- **Last verified:** 2026-09-10 (`SELF`; all contract tests passed; C4Context and C4Container validated)
-- **Summary:** Adopts the maintainable Mermaid C4 architecture-map contract for Tools, providing C4Context, C4Container, Feature Map, and Architecture Change Log.
-- **Next step:** Shipped via PR #5174 (merged 2026-09-10).
-
 ### DL-#5160 · Objective Coupled Friction Trajectory
 
 - **State:** shipped
@@ -745,130 +381,6 @@ reachable from any live state and `abandoned` from `parked`.
 - **Last verified:** 2026-09-10 (d4323c14ad364640b3f371ba8bed606ab958c990; turnover SELF):1657 local coverage tests pass/2 optional skips/93.80%; manual34496105215 all14 shards and both aggregates pass. PR34496053564 attempt2 times out at unchanged60s: Python3.12 job102940510943 entry60 and Python3.11 job102940510985 entry240. Both outcomes remain recorded; no runtime reliability or merge qualification is claimed.
 - **Summary:** Parent #5073. Coupled endpoint mechanics and objective elastic/Coulomb history with explicit transport, nonlinear solve criteria and disjoint energy accounting.
 - **Next step:** Shipped via PR #5162.
-
-### DL-#5168 · Established-layout linear reference scale
-
-- **State:** shipped
-- **Owner:** codex
-- **Issue:** https://github.com/D-sorganization/Tools/issues/5168
-- **Branch:** feat/5168-linear-reference-scale
-- **PR:** https://github.com/D-sorganization/Tools/pull/5169
-- **Paths:** src/shared/python/sidekick/lab/mocap/reference_scale\*.py, tests/shared/python/sidekick/lab/mocap/test_reference_scale.py, docs/development/REFERENCE_SCALE.md and generated module inventory
-- **Started:** 2026-09-10
-- **Last verified:** 2026-09-10 (27 scale/placement tests passed; three implementation modules pass mypy and Ruff)
-- **Summary:** Immutable scale candidates from known ruler lengths and established camera geometry; independent held-out evidence and explicit lens/zoom association. No pose initialization or physical-accuracy approval.
-- **Next step:** Shipped via PR #5169.
-
-### DL-#5157 · Applied Waveform Calibration and Shared Uncertainty
-
-- **State:** shipped
-- **Owner:** codex
-- **Issue:** https://github.com/D-sorganization/Tools/issues/5157; parent #5074
-- **Branch:** feat/5074-waveform-calibration
-- **PR:** https://github.com/D-sorganization/Tools/pull/5159
-- **Paths:** src/shared/python/swing_sim/vibroacoustics, tests/api_baselines/swing_sim_api_baseline.json, docs/development/impact-acoustics/CALIBRATION_DEVELOPMENT.md, SPEC.md and turnover/inventory
-- **Started:** 2026-09-10
-- **Last verified:** 2026-09-10 (base 73704cf64; 168 Windows ingestion/report/API tests pass in 8.33 s, coverage 97.09%; seven NumPy-aware production and eleven isolated-hook files pass; root Ruff passes)
-- **Summary:** Explicit affine sample conversion, complete declared acquisition/calibration identity and shared first-order or exact independent-block gain/offset covariance; no source-kind promotion or fabricated unknown uncertainty.
-- **Next step:** Shipped via PR #5159.
-
-### DL-#5155 · Complex H1 Phase and Supported Spectral Bins
-
-- **State:** shipped
-- **Owner:** codex
-- **Issue:** https://github.com/D-sorganization/Tools/issues/5155; parent #5074
-- **Branch:** feat/5074-complex-frf
-- **PR:** https://github.com/D-sorganization/Tools/pull/5156
-- **Paths:** src/shared/python/swing_sim/vibroacoustics, tests/api_baselines/swing_sim_api_baseline.json, docs/development/impact-acoustics/COMPLEX_FRF.md, SPEC.md and turnover/inventory
-- **Started:** 2026-09-10
-- **Last verified:** 2026-09-10 (SELF; 107 Windows ingestion/report/API controls pass in 7.67 s; four changed-file and actual isolated-hook mypy pass; merged onto main via auto-merge)
-- **Summary:** Explicit complex phase, caller-declared PSD support and coherence with immutable absent bins; shared spectral pair/cross laws preserve every existing public symbol and signature. No acoustic prediction or calibration authentication.
-- **Next step:** Merged as PR #5156 onto remote main.
-
-### DL-#5153 · Prescribed Force and Couple History Review
-
-- **State:** shipped
-- **Owner:** codex
-- **Issue:** https://github.com/D-sorganization/Tools/issues/5153; parent #5073
-- **PR:** https://github.com/D-sorganization/Tools/pull/5154
-- **Branch:** feat/5073-load-history
-- **Paths:** src/shared/python/golf_club, src/shared/python/swing_sim/impact, tests/shared/python/golf_club
-- **Started:** 2026-09-10
-- **Last verified:** 2026-09-10 (SELF; productionc4e6d584d published after normal hooks;406 Windows/Linux archive,35 annotation integration and21 oracle-integrity controls pass; unchanged assertion gate passes)
-- **Summary:** Explicit additional force/couple history and canonical point-load work without baseline accumulation or new inertia.
-- **Evidence:** LOAD_HISTORY_RESULTS.json retains source, TDD/API REDs, independent polynomial motion/work, strict domains and the original Windows event-test timeout.
-- **Next step:** Shipped via PR #5154.
-
-### DL-#5151 · Adaptive Normal Contact Event Review
-
-- **State:** shipped
-- **Owner:** codex
-- **Issue:** https://github.com/D-sorganization/Tools/issues/5151; parent #5073
-- **PR:** https://github.com/D-sorganization/Tools/pull/5152
-- **Branch:** feat/5073-contact-events
-- **Paths:** src/shared/python/swing_sim/impact, src/shared/python/golf_club, tests/shared/python/golf_club
-- **Started:** 2026-09-10
-- **Last verified:** 2026-09-10 (SELF; production839ebe083; oracle root-residual tripwire RED then16 event controls pass69.91s; unchanged assertion gate passes; merged onto main via auto-merge)
-- **Summary:** Adaptive local-chart normal contact with independent event/work reference, strict SI controls and unchanged canonical mechanics/APIs.
-- **Evidence:** NORMAL_EVENT_RESULTS.json records all RED/GREEN/source/JUnit identities; four production modules pass NumPy-aware mypy; Linux coverage58.64% exceeds unchanged20% floor; root Ruff/format3870 pass.
-- **Next step:** Merged as PR #5152 onto remote main.
-
-### DL-#5145 · Contact Numerical Foundation Review
-
-- **State:** shipped
-- **Owner:** codex
-- **Issue:** https://github.com/D-sorganization/Tools/issues/5145; parent #5073
-- **PR:** https://github.com/D-sorganization/Tools/pull/5146
-- **Branch:** feat/5073-spatial-contact
-- **Paths:** src/shared/python/swing_sim/impact, src/shared/python/golf_club, tests/shared/python/golf_club
-- **Started:** 2026-09-09
-- **Last verified:** 2026-09-10 (camera main 0a561daff integration: 40 controls pass, 255 existing deprecation warnings; impact source unchanged from published 1edd0ddcf; 323-test archive ec863402f plus 46 affected typing-repair controls; SELF)
-- **Summary:** Review private common-point geometry, separate normal/tangential work, full-tensor body response and instantaneous normal shaft/ball coupling. Preserve old APIs and shared mechanics.
-- **Evidence:** All 323 Windows and 323 Linux coverage controls pass; five production files pass NumPy-aware mypy. Existing 99 golf-club and 228 swing API records are unchanged. Source/JUnit hashes and RED failures are retained in SPATIAL_CONTACT_RESULTS.json.
-- **Next step:** Shipped via PR #5146.
-
-### DL-#5147 · Normal Contact Temporal Foundation Review
-
-- **State:** shipped
-- **Owner:** codex
-- **Issue:** https://github.com/D-sorganization/Tools/issues/5147; parent #5073
-- **PR:** https://github.com/D-sorganization/Tools/pull/5149
-- **Branch:** feat/5073-contact-trajectory
-- **Paths:** src/shared/python/golf_club, src/shared/python/swing_sim/impact, tests/shared/python/golf_club
-- **Started:** 2026-09-10
-- **Last verified:** 2026-09-10 (source tree 0433376b0; base 1edd0ddcf; SELF)
-- **Summary:** Review the private normal-contact trajectory, shared Lie RK4 and five-channel work accounting. Retain fixed shaft laws and existing APIs.
-- **Evidence:** All 371 Windows and 371 Linux coverage controls pass; three modules pass both NumPy-aware and actual-hook mypy. Exact sources, REDs and refinement/JUnit records are in CONTACT_TRAJECTORY_RESULTS.json.
-- **Next step:** Shipped via PR #5149.
-
-### DL-#5073 · Spatial Flexible Contact Dynamics
-
-- **State:** shipped
-- **Owner:** codex
-- **Issue:** https://github.com/D-sorganization/Tools/issues/5073
-- **PR:** not created
-- **Branch:** feat/5073-load-history
-- **Paths:** src/shared/python/swing_sim/impact, docs/development/impact-acoustics, tests/api_baselines/swing_sim_api_baseline.json
-- **Started:** 2026-09-09
-- **Last verified:** 2026-09-10 (SELF; source976d7ff43 archived; new20 controls pass before unchanged event-test timeout; four production modules pass both mypy modes; all406 Windows/Linux controls pass)
-- **Summary:** Private common-point sphere/plane kinematics reuses canonical pose, force/moment and work ports. Point migration is kept distinct from material velocity. Normal and objective tangential work ports plus full-tensor free-body response are private; no qualified impact trajectory is inferred.
-- **Evidence:** Geometry 18, normal work 20 and tangent work 28 controls. Normal/legacy: 148 Windows/Linux pass after retained timeout. Tangential full impact: 150 Windows and 150 Linux coverage pass; NumPy typing passes. Integrated 176 tests pass on Windows/Linux. New body and moving-shaft controls pass 75 tests; relative-inertia adversarial RED then all 24 body tests pass. Five production files pass NumPy-aware mypy. All 323 coupled-response/impact/shaft controls pass on Windows and Linux coverage; existing 99 golf-club and 228 swing API records are unchanged. Exact artifacts are recorded.
-- **Next step:** Shipped via closed via parent issue #5073 scope.
-
-- **Trajectory update (2026-09-10):** Shared Lie RK4 kernel: missing-module RED, eight GREEN, two deliberate-corruption delegation REDs, then all 36 kernel/shaft/geometry/disturbance controls GREEN. Two production modules pass NumPy-aware mypy. Kernel source tree 334822bb7. Normal-only contact trajectory now passes 12 controls, including independent motion/work refinement and free-ball clearance; all 371 Windows and Linux coverage controls pass at tree0433376b0. Evidence: CONTACT_TRAJECTORY_RESULTS.json.
-
-### DL-#5138 · Verified Agent Context
-
-- **State:** shipped
-- **Owner:** codex
-- **Issue:** https://github.com/D-sorganization/Tools/issues/5138
-- **PR:** https://github.com/D-sorganization/Tools/pull/5141
-- **Branch:** feat/issue-5138-agent-context
-- **Paths:** `src/agent_context`, `src/shared/python/codemap`, `packages/agent-context`
-- **Started:** 2026-09-09
-- **Last verified:** 2026-09-10; Linux quality at0f84e2a9a passes36 context and109 CodeMap tests. Launcher#5143/#5144 integration is coordinated with its owner; its exact regression fails against the old manifest before applying the reviewed canonical widget path. All40 combined launcher/CLI/calibration controls pass. Published rate-isolation25367070f is integrated. Combined validation passes56 shard/launcher/CLI/calibration controls,35 context tests (one Windows skip),109 CodeMap tests with real parsers, the1,692-file partition and all nine governance checks; protected combined CI remains pending.
-- **Summary:** Dependency-free source context package, real MCP transport, semantic boundary reviews, deterministic views and CodeMap freshness guards. Parent epic Repository_Management#1629 remains active; no subscription infrastructure is required.
-- **Next step:** Qualify and publish the combined context, calibration and launcher provider through protected CI.
 
 ### DL-#5114 · Rate Shard Scientific Test Isolation
 
@@ -907,136 +419,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **PR:** https://github.com/D-sorganization/Tools/pull/5136
 - **Paths:** src/shared/python/sidekick/lab/mocap/calibration.py, extrinsics.py, calibration_numerics.py; numerical tests and inventory
 - **Started:** 2026-09-09
-- **Last verified:** 2026-09-09T21:06Z (SELF: reproduced3 OpenCV5 failures; all12 numerical tests now pass on actual OpenCV4.13 and5.0)
+- **Last verified:** 2026-10-12 (`0a561daff18302ee143b214fe6a6138455d8c542`; log metadata only; feature acceptance unverified; reviewed receipt `docs/development/provenance/tools-devlog-metadata-review.md`)
 - **Summary:** Real distortion-aware pose recovery replaces silent fabricated poses and unchanged refinement results.
 - **Next step:** PR #5136 closed without merge; issue #5132 closed. Parked pending decision to retry or abandon.
-
-### DL-#5101 · Scientific Import Inventory Detection
-
-- **State:** shipped
-- **Owner:** codex
-- **Issue:** https://github.com/D-sorganization/Tools/issues/5101
-- **PR:** https://github.com/D-sorganization/Tools/pull/5103
-- **Branch:** fix/5101-scientific-import-inventory
-- **Paths:** `scripts/build_tools_module_inventory.py`, `scripts/tools_module_inventory_imports.py`, inventory import/contract tests, generated inventory and `docs/development/impact-acoustics/INVENTORY_IMPORT_REVIEW.*`
-- **Started:** 2026-09-08
-- **Last verified:** 2026-09-09 (202 combined import/inventory/merge/contact/theme/API tests pass in 59.46 s, 11 existing deprecation warnings; CLI/reproducibility scans 13.89/15.98 s under unchanged limits; incoming mypy RED 12 unused ignores repaired with identical executable AST, eight-file mypy passes)
-- **Summary:** TDD classifier is preserved during main 21690dcfc integration. All 3,632 module paths and classifications remain; all 410 original scientific candidates retain owners and provisional/publication-blocked status. Four original source hashes have evolved through reviewed signal/theme changes; the historical JSON remains intact and the new integration delta records those revisions.
-- **Next step:** Shipped via PR #5103.
-
-### DL-#5074 · Waveform and Spectral Numerical Contracts
-
-- **State:** shipped
-- **Owner:** codex
-- **Issue:** https://github.com/D-sorganization/Tools/issues/5074
-- **PR:** https://github.com/D-sorganization/Tools/pull/5106
-- **Branch:** fix/5074-waveform-spectral-contracts
-- **Paths:** `src/shared/python/swing_sim/vibroacoustics`, `docs/development/impact-acoustics/SIGNAL_BOUNDARY_QUALIFICATION.md`
-- **Started:** 2026-09-08
-- **Last verified:** 2026-09-08 (16 RED failures; 41 focused tests, nine API tests, scoped hook mypy and 69 Linux ingestion/report/API tests pass; three optional-plugin warnings)
-- **Summary:** Shared strict real samples, immutable recording storage, signed linear lag and segment preparation refuse undefined/nonfinite estimates while preserving public signatures. Independent SciPy odd/even PSD and gain controls pass. No physical calibration is inferred.
-- **Next step:** PR #5106 merged as 287767dfa60567de136fbadc0da28c7e1ca7edf3. Complex FRF continues in DL-#5155; calibration identity, uncertainty and physical/blinded requirements stay under #5074.
-
-### DL-#5095 · Deterministic Rust Watcher Debounce
-
-- **State:** shipped
-- **Owner:** codex
-- **Issue:** https://github.com/D-sorganization/Tools/issues/5095
-- **PR:** https://github.com/D-sorganization/Tools/pull/5097
-- **Branch:** fix/5095-deterministic-debounce
-- **Paths:** `rust_core/file_watcher/src/debounce.rs`, `rust_core/file_watcher/src/watcher.rs`, `rust_core/file_watcher/src/watcher_tests.rs`
-- **Started:** 2026-09-08
-- **Last verified:** 2026-09-08 (12 tests pass with default and Python features; Clippy and formatting pass)
-- **Summary:** TDD extracts the quiet-period accumulator to test exact supplied monotonic timestamps, coalescing, restart, shutdown, zero-delay and backward-time boundaries. Retains four real filesystem tests and existing filtered-notification timing.
-- **Next step:** Shipped via PR #5097.
-
-### DL-#5062 · Glass Conductivity Provider Contracts And Fallback Policy
-
-- **State:** shipped
-- **Owner:** claude (fleet wave 2, lease agent `claude` session
-  `omp-01a07e96`)
-- **PR:** #5080 (`claude/issue-5062-glass-contracts`)
-- **Paths:** `src/shared/python/sidekick/calculators/electrical/glass_interface.py`,
-  `src/shared/python/sidekick/calculators/electrical/glass_contracts.py`,
-  `tests/shared/python/sidekick/calculators/electrical/test_glass_interface.py`,
-  `src/shared/python/sidekick/tests/calculators/electrical/test_electrical_model.py`
-- **Started:** 2026-09-08
-- **Last verified:** 2026-09-08 (focused suites RED→GREEN:
-  74 passed — `tests/shared/python/sidekick/calculators/electrical/test_glass_interface.py`,
-  embedded `test_glass_interface.py`, embedded `test_electrical_model.py`)
-- **Summary:** Issue #5062 — public `ConductivityProvider` protocol (kelvin
-  in, S/m out), finite-positive conductivity validation before caching,
-  absolute-zero/composition/cache-capacity DbC contracts, explicit
-  `STRICT`/`DEMO`/`LEGACY` fallback policies with provenance reporting,
-  reciprocal resistivity instead of infinity, centralized unit conversion
-  (1 S/cm = 100 S/m), failed responses never cached, provider switch
-  invalidates cache.
-- **Next step:** Shipped via PR #5080.
-
-### DL-#8942 · Realtime Transport And Codemap Hashing Hot-Path Fixes
-
-- **State:** shipped
-- **PR:** https://github.com/D-sorganization/Tools/pull/5081
-- **Paths:** `src/shared/python/codemap/indexer.py`,
-  `src/shared/python/realtime/`, `tests/unit/codemap/`,
-  `tests/unit/realtime/`
-- **Started:** 2026-09-08
-- **Last verified:** 2026-09-08 (`SELF`)
-- **Summary:** Resolved the codemap hash callable once at module import
-  (the per-call `import blake3` retried a failing import — Python does not
-  cache failed imports — once per file and once per symbol) and added the
-  tools-canonical file realtime transport (`src/shared/python/realtime/`)
-  with persistent per-channel append handles and offset-tracked tailing,
-  removing per-message mkdir/exists/stat/open syscalls from publish.
-  Fixes UpstreamDrift#8942 Defects A and B on the provider side.
-- **Next step:** Shipped via PR #5081.
-  `src/shared/python/realtime/transport_file.py` at the vendored module.
-
-### DL-#4130 · Impact-Interval Independent Contact-Energy Audit
-
-- **State:** shipped
-- **Owner:** dieterolson (agent `claude`, fleet wave 2)
-- **PR:** #5079 (`claude/issue-9548-contact-energy` → `main`)
-- **Paths:** `src/shared/python/swing_sim/impact_interval/**`,
-  `src/shared/python/swing_sim/impact/contact.py`,
-  `docs/physics/IMPACT_INTERVAL_DYNAMICS.md`
-- **Started:** 2026-09-07
-- **Last verified:** 2026-09-07 (SELF)
-- **Summary:** Provider fix for UpstreamDrift#9548 under Tools#4130: the
-  impact-interval audit no longer assigns every positive energy deficit to
-  `unilateral_release`. The solver now integrates dashpot, friction, and
-  torsional-grip damping independently, tracks recoverable Kelvin-Voigt
-  spring energy from the contact state, counts release energy only at
-  identified tensile-clip steps, and reports an unfudged signed residual
-  plus separate free/supported momentum diagnostics with a demonstrated
-  halving-dt convergence. RED→GREEN cases live in
-  `impact_interval/tests/test_solver.py::TestIndependentEnergyAudit`.
-- **Next step:** Shipped via PR #5079.
-  UpstreamDrift pin-bump that closes the provider issue.
-
-### DL-0054 · ThemeColors 60-Token Derivation Restoration
-
-- **State:** shipped
-- **Owner:** @dieterolson (agent `claude`, session `omp-01a07e96`)
-- **PR:** SELF (fixes #5063)
-- **Paths:** `src/shared/python/theme/api.py`,
-  `src/shared/python/theme/__init__.py`,
-  `src/shared/python/theme/color_derivation.py`,
-  `tests/shared/python/theme/test_theme_colors_derivation.py`,
-  `AGENT_HANDOFF.md`, `docs/development/DEVELOPMENT_LOG.md`
-- **Started:** 2026-09-08
-- **Last verified:** 2026-09-08 (SELF)
-- **Summary:** Restored the `ThemeColors` 60-token semantic derivation
-  pipeline (`model_post_init`, `is_dark` inference from `bg`, the derived
-  surface/border/text/brand/semantic/chart/effect tokens, dict-style
-  access, `as_dict`), the `_derive_full_palette` package shim, and the
-  orphaned `color_derivation` helper module that the UpstreamDrift
-  `b8d95ad25` sync wave had stripped from the canonical tree. Mirrored
-  the 8-case derivation regression oracle into
-  `tests/shared/python/theme/test_theme_colors_derivation.py`
-  (RED 7 failed/1 passed before restore, 8 passed after).
-- **Next step:** Shipped via PR #5078.
-  PR's merge commit so its child copies re-sync the restored pipeline.
+- **Parked:** PR #5136 closed without merge; issue #5132 closed. Await a governed decision to retry or abandon the calibration work.
 
 ### DL-0056 · Distributed Shaft Prestress and Grip
 
@@ -1063,20 +449,6 @@ reachable from any live state and `abandoned` from `parked`.
 - **Last verified:** 2026-09-08 (#5082 merged as 80d580d57; #5071 closed; golf source/tests equal reviewed e47fde4e and prior 476eaa98)
 - **Summary:** RED-to-GREEN termination, passive energy and scaling gates; complete epic scope remains active.
 - **Next step:** Delivery complete for this slice; integrate current main into T3 and continue distributed milestone #5072. The full scientific/acoustic program remains open.
-
-### DL-0054 · Impact Dynamics Reference Foundation
-
-- **State:** shipped
-- **Owner:** codex
-- **Issue:** https://github.com/D-sorganization/Tools/issues/5069
-- **PR:** https://github.com/D-sorganization/Tools/pull/5077
-- **Branch:** feat/5068-impact-dynamics-foundation
-- **Paths:** `src/shared/python/golf_club/impact_mobility.py`, `src/shared/python/golf_club/impact_coupling.py`, `tests/shared/python/golf_club/test_impact_mobility.py`, `docs/specs/IMPACT_DYNAMICS_ACOUSTICS.md`
-- **Started:** 2026-09-07
-- **Last verified:** 2026-09-08 (#5077 merged as f72544613; #5069 closed)
-- **Summary:** Tensor mobility reference passes 30 TDD gates; additive public baseline recorded. 383 broader tests passed, 2 skipped; manifest and all push hooks pass. PR #5077 merged. #5068 retains future distributed/acoustic scope.
-
-- **Next step:** Delivery complete for this reference slice; continue separately scoped distributed and acoustic work.
 
 ### DL-0001 · Backup Tools 3300 Pyo3 Split
 
@@ -2126,19 +1498,57 @@ reachable from any live state and `abandoned` from `parked`.
 
 Entries stay here for 90 days after merge, then move to the archive.
 
-### DL-#5223 · Pre-push Mypy Hook NumPy Compatibility
-
-- **State:** shipped
-- **Owner:** local
-- **Issue:** D-sorganization/Tools#5223
-- **PR:** https://github.com/D-sorganization/Tools/pull/5254
-- **Branch:** `fix/issue-5223-bump-mypy-precommit-hook`
-- **Paths:** `.pre-commit-config.yaml`, `tests/ops/test_pre_push_mypy_scope.py`, `SPEC.md`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`
-- **Started:** 2026-09-19
-- **Last verified:** 2026-09-19 (`SELF`; mirrors-mypy bumped from v1.13.0 to v1.15.0 to support NumPy >= 2.2 stubs without cache serializer placeholder crash; pre-push hook and unit tests passed)
-- **Summary:** Pre-push mypy hook crashed on numpy-importing files when the isolated hook environment carried numpy >= 2.2 because mypy 1.13's cache serializer failed on newer type syntax. Bumped mirrors-mypy to v1.15.0 and added contract unit test.
-- **Shipped:** 2026-09-19 (commit d71ca0fce)
-
 ## Archive
 
 Older entries live in `DEVELOPMENT_LOG_ARCHIVE_<year>.md`.
+
+## Quarantined Historical Records
+
+These terminal records remain unverified. Their exact original bytes and decisions are preserved in `docs/development/provenance/tools-devlog-migration-receipt.json`; quarantine does not qualify their features or change issue status.
+
+- DL-#5360 (original line 320): unresolved historical record.
+- DL-#5346 (original line 346): unresolved historical record.
+- DL-#5345 (original line 359): unresolved historical record.
+- DL-#1755 (original line 372): unresolved historical record.
+- DL-#5333 (original line 385): unresolved historical record.
+- DL-#5315 (original line 424): unresolved historical record.
+- DL-#5299 (original line 437): unresolved historical record.
+- DL-#5297 (original line 450): unresolved historical record.
+- DL-#5301 (original line 463): unresolved historical record.
+- DL-#5303 (original line 489): unresolved historical record.
+- DL-#4951 (original line 502): unresolved historical record.
+- DL-#4946 (original line 515): unresolved historical record.
+- DL-#4253 (original line 528): unresolved historical record.
+- DL-#4225 (original line 541): unresolved historical record.
+- DL-#4252 (original line 554): unresolved historical record.
+- DL-#4162 (original line 567): unresolved historical record.
+- DL-#4186 (original line 580): unresolved historical record.
+- DL-#4918 (original line 593): unresolved historical record.
+- DL-#5072 (original line 606): unresolved historical record.
+- DL-#4922 (original line 619): unresolved historical record.
+- DL-#4382 (original line 632): unresolved historical record.
+- DL-#4300 (original line 645): unresolved historical record.
+- DL-#5223 (original line 658): unresolved historical record.
+- DL-#5073 (original line 671): unresolved historical record.
+- DL-#5074 (original line 684): unresolved historical record.
+- DL-#4220 (original line 697): unresolved historical record.
+- DL-#5218 (original line 710): unresolved historical record.
+- DL-#1614 (original line 723): unresolved historical record.
+- DL-#5168 (original line 749): unresolved historical record.
+- DL-#5157 (original line 762): unresolved historical record.
+- DL-#5155 (original line 775): unresolved historical record.
+- DL-#5153 (original line 788): unresolved historical record.
+- DL-#5151 (original line 802): unresolved historical record.
+- DL-#5145 (original line 816): unresolved historical record.
+- DL-#5147 (original line 830): unresolved historical record.
+- DL-#5073 (original line 844): unresolved historical record.
+- DL-#5138 (original line 860): unresolved historical record.
+- DL-#5101 (original line 914): unresolved historical record.
+- DL-#5074 (original line 927): unresolved historical record.
+- DL-#5095 (original line 940): unresolved historical record.
+- DL-#5062 (original line 953): unresolved historical record.
+- DL-#8942 (original line 976): unresolved historical record.
+- DL-#4130 (original line 995): unresolved historical record.
+- DL-0054 (original line 1017): unresolved historical record.
+- DL-0054 (original line 1067): unresolved historical record.
+- DL-#5223 (original line 2129): unresolved historical record.

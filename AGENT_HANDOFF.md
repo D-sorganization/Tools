@@ -66,7 +66,7 @@ Tools is the fleet's shared engineering-tools monorepo (45+ tools: PyQt6 GUIs, F
 
 ## Active Delivery Boundaries
 
-- Signal shape validation #5569, fitting compatibility #5571, and import identity #5572 are in review on `codex/signal-optimized-structural-guards`: optimized shape, fitting consumer, and fresh-process import-order regressions pass locally; UpstreamDrift #7704 must repin Tools only after protected merge. Inherited development-log migration #5570 awaits the governed Repository_Management #2081 tool; manual publication approval is unchanged.
+- Signal shape validation #5569, fitting compatibility #5571, and import identity #5572 are in review on `codex/signal-optimized-structural-guards`: optimized shape, fitting consumer, and fresh-process import-order regressions pass locally; UpstreamDrift #7704 must repin Tools only after protected merge. Governed development-log migration #5570 now passes the strict validator with 46 byte-preserved terminal records quarantined and 11 metadata-only amendments; full pre-PR validation is pending. Historical feature and manual publication approval are unchanged.
 - **Putting launch monitor #5218** — camera putting for GSPro; core (PR #5224, merged)
   measured on the rig, PyQt6 window merged (PR #5225, #5219); launcher
   registration in PR #5226 (#5220); validation is the remaining child. See `src/putting_launch_monitor/AGENT_HANDOFF.md`.

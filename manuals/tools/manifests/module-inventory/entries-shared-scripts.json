@@ -569,7 +569,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "not-applicable"
       },
@@ -734,9 +734,97 @@
             "signature": "name: str"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/test_development_log_migration.py",
+          "tests/test_development_log_migration_cli.py"
+        ],
         "unit_mentions": [
           "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 13634,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c7bef7aa9a45c5b3c81689230667707ff39733360446e0b8db35ad86382627fa",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SHARED-SCRIPTS-DEVELOPMENT-LOG-MIGRATION-PY-CC92D1669532",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "shared_scripts/development_log_migration.py",
+      "purpose": "Build a reviewed, provenance-bound repair of an inherited development log.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MigrationError",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ALLOWED_FIELDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "COMMIT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ISSUE_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SHA256",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "migrate",
+            "signature": "source_bytes: bytes, plan: dict[str, Any], repo_root: Path"
+          }
+        ],
+        "test_paths": [
+          "tests/test_development_log_migration.py",
+          "tests/test_development_log_migration_cli.py"
+        ],
+        "unit_mentions": [
+          "N"
         ],
         "validation_paths": []
       }
