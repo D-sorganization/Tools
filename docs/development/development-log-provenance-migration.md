@@ -59,3 +59,14 @@ This Tools copy of `shared_scripts/development_log_migration.py` is byte-identic
 to Repository_Management protected merge `db97f51573889f2a82b33562785735b3f801c24f`
 (SHA-256 `c7bef7aa9a45c5b3c81689230667707ff39733360446e0b8db35ad86382627fa`).
 The module command above uses the Tools repository's own shared validator.
+
+## Secret Scanner Audit
+
+The metadata review receipt records the public GitHub merge commits for Tools
+PRs #5435, #5433, #5391, #5368, and #5364. Detect Secrets 1.5.0 classified
+those five commit identifiers as `Hex High Entropy String` findings. Their exact
+file, type, and hashed-finding fingerprints are retained in `.secrets.baseline`
+with `is_secret: false` after checking each value against its public PR URL and
+merge-commit field. The scanner's plugins, thresholds, and exclusions are
+unchanged. This audit does not change the metadata review, migration plan,
+original-log receipt, or candidate log.

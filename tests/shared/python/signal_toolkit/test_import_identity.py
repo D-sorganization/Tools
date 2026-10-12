@@ -66,7 +66,7 @@ assert all(not name.startswith("_pinned_") for name in sys.modules)
             )
         ),
     }
-    subprocess.run(
+    result = subprocess.run(
         [
             sys.executable,
             "-c",
@@ -76,8 +76,11 @@ assert all(not name.startswith("_pinned_") for name in sys.modules)
         ],
         cwd=tmp_path,
         env=env,
-        check=True,
+        check=False,
+        capture_output=True,
+        text=True,
     )
+    assert result.returncode == 0, result.stderr
 
 
 def test_bare_first_keeps_downstream_src_namespace(tmp_path: Path) -> None:
@@ -116,4 +119,12 @@ assert downstream.DOWNSTREAM is True
             )
         ),
     }
-    subprocess.run([sys.executable, "-c", script], cwd=tmp_path, env=env, check=True)
+    result = subprocess.run(
+        [sys.executable, "-c", script],
+        cwd=tmp_path,
+        env=env,
+        check=False,
+        capture_output=True,
+        text=True,
+    )
+    assert result.returncode == 0, result.stderr
