@@ -57,9 +57,12 @@ __all__ = [
     "Actor",
     "AuditEvent",
     "AuditMiddleware",
+    "actor_from_headers",
     "credential_fingerprint",
+    "migrate_audit_event_columns",
     "redact_payload",
     "resolve_actor",
+    "set_audit_context",
 ]
 
 logger = logging.getLogger("dcs_backend.audit")
@@ -82,7 +85,7 @@ _CREDENTIAL_HEADER = "x-api-" + "key"  # pragma: allowlist secret
 _REDACTED = "<redacted>"
 
 
-class AuditEvent(SQLModel, table=True):  # type: ignore[call-arg]
+class AuditEvent(SQLModel, table=True):
     """One state-changing request, recorded after the response was produced.
 
     This table is append-only by construction: nothing in the request-handling
@@ -103,6 +106,26 @@ class AuditEvent(SQLModel, table=True):  # type: ignore[call-arg]
     client_ip: str | None = Field(default=None)
     #: Redacted JSON request body, or a shape description for large/binary ones.
     payload: str | None = Field(default=None)
+    #: Why the change was made (set by the handler via :func:`set_audit_context`).
+    reason: str | None = Field(default=None)
+    #: Redacted JSON of the value(s) before / after the change; NULL when the
+    #: handler did not supply them.
+    before_json: str | None = Field(default=None)
+    after_json: str | None = Field(default=None)
+    #: Configuration revision the change produced. Stays NULL until F04 lands.
+    config_revision: int | None = Field(default=None)
+
+
+#: Columns added after the table first shipped: name -> SQLite type.
+_ADDED_COLUMNS: dict[str, str] = {
+    "reason": "VARCHAR",
+    "before_json": "VARCHAR",
+    "after_json": "VARCHAR",
+    "config_revision": "INTEGER",
+}
+
+#: ``request.state`` attribute carrying the handler-supplied audit context.
+_CONTEXT_ATTR = "audit_context"
 
 
 @dataclass(frozen=True)
@@ -111,6 +134,11 @@ class Actor:
 
     tier: str
     fingerprint: str | None
+
+    @property
+    def label(self) -> str:
+        """Stable ``tier:fingerprint`` string safe to store as an actor name."""
+        return f"{self.tier}:{self.fingerprint}" if self.fingerprint else self.tier
 
 
 def credential_fingerprint(key: str | None) -> str | None:
@@ -147,6 +175,64 @@ def resolve_actor(api_key: str | None) -> Actor:
         # so record it as admin — that is the authority it actually carries.
         return Actor("operator" if admin_key_configured() else "admin", fingerprint)
     return Actor("invalid", fingerprint)
+
+
+def actor_from_headers(headers: Any) -> Actor:
+    """Resolve the actor from a mapping/``Headers`` carrying the API-key header."""
+    return resolve_actor(headers.get(_CREDENTIAL_HEADER))
+
+
+def set_audit_context(
+    request: Any,
+    *,
+    reason: str | None = None,
+    before: Any = None,
+    after: Any = None,
+) -> None:
+    """Attach reason/before/after to the in-flight request's audit row.
+
+    The middleware persists these (redacted) once the response is produced.
+    Handlers call this; they never touch the audit table.
+
+    Raises:
+        TypeError: If ``reason`` is neither a str nor None.
+    """
+    if reason is not None and not isinstance(reason, str):
+        raise TypeError("audit reason must be a str or None")
+    setattr(
+        request.state,
+        _CONTEXT_ATTR,
+        {"reason": reason, "before": before, "after": after},
+    )
+
+
+def _dump_redacted(value: Any) -> str | None:
+    """Redact then serialise a before/after value, bounded like a payload."""
+    if value is None:
+        return None
+    return json.dumps(redact_payload(value), default=str)[:_MAX_CAPTURED_BODY_BYTES]
+
+
+def migrate_audit_event_columns(bind: Any) -> None:
+    """Additively add the F01 columns to a pre-existing ``auditevent`` table.
+
+    Idempotent and non-destructive: existing rows keep all data and read NULL
+    for the new columns. A missing table is left for ``create_all``.
+    """
+    from sqlalchemy import text
+
+    with bind.begin() as conn:
+        columns = {
+            str(row[1]) for row in conn.exec_driver_sql("PRAGMA table_info(auditevent)")
+        }
+        if not columns:
+            return
+        for name, sql_type in _ADDED_COLUMNS.items():
+            if name not in columns:
+                conn.execute(
+                    text(f"ALTER TABLE auditevent ADD COLUMN {name} {sql_type}")
+                )
+    logger.info("Migrated auditevent: ensured reason/before/after/revision columns.")
 
 
 def redact_payload(payload: Any) -> Any:
@@ -204,7 +290,7 @@ def record_audit_event(
     proceeds — auditing must not be able to stop the plant.
     """
     logger.info(
-        "AUDIT %s %s -> %s actor=%s key=%s ip=%s payload=%s",
+        "AUDIT %s %s -> %s actor=%s key=%s ip=%s payload=%s reason=%s",
         event.method,
         event.route,
         event.status_code,
@@ -212,6 +298,7 @@ def record_audit_event(
         event.actor_fingerprint or "-",
         event.client_ip or "-",
         event.payload or "-",
+        event.reason or "-",
     )
     try:
         with session_factory() as session:
@@ -308,7 +395,8 @@ class AuditMiddleware:
         self, scope: Any, headers: dict[str, str], body: bytes, status: int
     ) -> None:
         try:
-            actor = resolve_actor(headers.get(_CREDENTIAL_HEADER))
+            actor = actor_from_headers(headers)
+            context = (scope.get("state") or {}).get(_CONTEXT_ATTR) or {}
             client = scope.get("client")
             query = scope.get("query_string", b"").decode("latin-1")
             route = scope.get("path", "")
@@ -322,6 +410,9 @@ class AuditMiddleware:
                 actor_fingerprint=actor.fingerprint,
                 client_ip=client[0] if client else None,
                 payload=_summarize_body(body, headers.get("content-type", "")),
+                reason=context.get("reason"),
+                before_json=_dump_redacted(context.get("before")),
+                after_json=_dump_redacted(context.get("after")),
             )
         except Exception as exc:  # noqa: BLE001 - never break the control path
             logger.error("Failed to build audit row: %s", exc)

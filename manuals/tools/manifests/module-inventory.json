@@ -117,7 +117,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "0d7b1f60873dea9e360dc81416b6e64cb5f477d79a09b6cbb9b2827c1daf7680",
+      "content_sha256_lf": "b388fc6c8e8d0ce02fb44e2a99ffef7399c2c982f331bff5039cc36c3edab2eb",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
@@ -387,7 +387,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-optimizer-gui.json"
     },
     {
-      "content_sha256_lf": "3de7cc9b10e95e6ef2d537ad8285ddae1bb1610f8b17dbd6c97447280408a6c4",
+      "content_sha256_lf": "9a158d34aa465d289f328eb3e5c1ba18ac88b94e84f7cb148633bd0402847a57",
       "entry_count": 258,
       "package": "src/p1am_control_system",
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
