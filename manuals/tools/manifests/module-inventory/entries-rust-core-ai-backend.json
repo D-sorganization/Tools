@@ -171,6 +171,7 @@
           "src/movement_optimizer/tests/test_chain_forces.py",
           "src/movement_optimizer/tests/test_gait_sts.py",
           "src/movement_optimizer/tests/test_issue_217_decompose.py",
+          "src/movement_optimizer/tests/test_issue_5515_ud_upstream.py",
           "src/movement_optimizer/tests/test_joint_limits.py",
           "src/movement_optimizer/tests/test_motion_tabs.py",
           "src/movement_optimizer/tests/test_rust_parity.py",

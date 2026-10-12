@@ -117,7 +117,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "52ee7f8b44a5a8975ecd14cad8b7f9fbad9590aee78dbd13c1bacde7f267b5fa",
+      "content_sha256_lf": "98d0915e3a3406636a68f3afe0b7b69063f1cb9bbea4c0d85a468ab3f632251e",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
@@ -357,7 +357,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-model-generation.json"
     },
     {
-      "content_sha256_lf": "737501a2136b3b3e83ffad794991f5e05838e95decb0c6a1b4847aec1cd04064",
+      "content_sha256_lf": "07d811e212c90f654b09f87fe8516e2108617e3da5e9c08b27d57c8c4eb227aa",
       "entry_count": 93,
       "package": "src/movement_optimizer",
       "path": "manuals/tools/manifests/module-inventory/entries-src-movement-optimizer.json"
