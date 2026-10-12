@@ -851,10 +851,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 39654,
+      "bytes_lf": 41524,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e41eee547e488dc8c69b05d54f045091fe732bd7bfc22ef76597aea1a69deb72",
+      "content_sha256_lf": "1f892da091e815250ce46f7eb1e0e471b7c6854ab4b3d9728f64c770925e7863",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-DATA-CAPTURE-PY-690C97DD4EF4",
       "language": "python",
@@ -936,6 +936,11 @@
           },
           {
             "kind": "constant",
+            "name": "EXPORT_CSV_HEADER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
             "name": "HISTORIAN_EVENT_MAX_AGE_S",
             "signature": null
           },
@@ -947,6 +952,11 @@
           {
             "kind": "constant",
             "name": "HISTORIAN_VACUUM_PAGES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "QUALITY_UNKNOWN",
             "signature": null
           },
           {
@@ -977,6 +987,11 @@
           {
             "kind": "constant",
             "name": "UTC",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_KNOWN_QUALITIES",
             "signature": null
           },
           {
@@ -1011,6 +1026,11 @@
           },
           {
             "kind": "function",
+            "name": "normalize_quality",
+            "signature": "raw: str | None"
+          },
+          {
+            "kind": "function",
             "name": "parse_query_bound",
             "signature": "value: str"
           },
@@ -1018,6 +1038,11 @@
             "kind": "function",
             "name": "parse_tag_names",
             "signature": "tag_ids: str"
+          },
+          {
+            "kind": "function",
+            "name": "query_trend_samples",
+            "signature": "session: Session, *, tag_name: str, start: _dt.datetime, end: _dt.datetime, max_points: int=TRENDS_MAX_POINTS"
           },
           {
             "kind": "function",
@@ -2335,10 +2360,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 52601,
+      "bytes_lf": 52783,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "cf8d27d31f94eccc29cd90a8f1f53fd557d8e860d88544207c0a8cadd48035e4",
+      "content_sha256_lf": "75bd2ca8d3e2c32174913d9eea1408018e897ee9293b4702420edee7aa279b6b",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-MAIN-PY-C47A4D7AC436",
       "language": "python",
