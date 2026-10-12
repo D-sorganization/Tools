@@ -199,7 +199,11 @@ def client(engine, monkeypatch: pytest.MonkeyPatch) -> TestClient:
     app = FastAPI()
     app.include_router(create_config_revision_router(_get_session, require_admin_key))
     with Session(engine) as s:
-        save_config(s, "routing", {"secret_marker": "TOPSECRET"})
+        save_config(
+            s,
+            "routing",
+            {"secret_marker": "TOPSECRET"},  # pragma: allowlist secret
+        )
     return TestClient(app, raise_server_exceptions=False)
 
 
@@ -228,7 +232,8 @@ def test_admin_lists_newest_first_and_gets_one(client: TestClient) -> None:
     assert "value" not in body[0]  # list is metadata only
     one = client.get("/api/config/revisions/1", headers=_h(_ADMIN))
     assert one.status_code == 200
-    assert one.json()["value"] == {"secret_marker": "TOPSECRET"}
+    expected = {"secret_marker": "TOPSECRET"}  # pragma: allowlist secret
+    assert one.json()["value"] == expected
     assert len(one.json()["sha256"]) == 64
     assert client.get("/api/config/revisions/99", headers=_h(_ADMIN)).status_code == 404
 

@@ -72,3 +72,7 @@ tests/rate_of_closure/browser_companion_harness.py
 # overhead camera + putt renderer the tests import; neither is a test.
 src/putting_launch_monitor/tests/__init__.py
 src/putting_launch_monitor/tests/synthetic.py
+# Shared route/tier table, route-tree collectors and autouse deployment fixture for
+# the route authz matrix; assertions live in test_route_authz_matrix.py and
+# test_route_authz_enforcement.py (#4028, split for the 500 LOC budget in #5527).
+src/p1am_control_system/backend/tests/_route_authz_helpers.py
