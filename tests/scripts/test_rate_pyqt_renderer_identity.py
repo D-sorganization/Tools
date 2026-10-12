@@ -10,7 +10,7 @@ from scripts import check_rate_pyqt_environment as environment_check
 ROOT = Path(__file__).resolve().parents[2]
 HOSTED_STACK = {
     "libfontconfig1": "2.15.0-1.1ubuntu2",
-    "libfreetype6": "2.13.2+dfsg-1ubuntu0.1",
+    "libfreetype6": "2.13.2+dfsg-1ubuntu0.2",
     "matplotlib_freetype": "2.14.3",
 }
 
@@ -19,6 +19,21 @@ def test_repository_selects_one_exact_hosted_font_stack() -> None:
     """Both capture paths must use the same qualified renderer (#4844)."""
     path = environment_check.DEFAULT_FONT_STACK_EXPECTATIONS
     assert json.loads(path.read_text(encoding="utf-8")) == HOSTED_STACK
+
+
+def test_superseded_freetype_update_is_not_the_approved_renderer(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The pre-update 0ubuntu0.1 package is no longer the qualified stack (#5518)."""
+    monkeypatch.setattr(
+        environment_check,
+        "probe_font_stack",
+        lambda: {**HOSTED_STACK, "libfreetype6": "2.13.2+dfsg-1ubuntu0.1"},
+    )
+    with pytest.raises(RuntimeError, match=r"libfreetype6 .*ubuntu0.1 != expected"):
+        environment_check.verify_font_stack(
+            environment_check.DEFAULT_FONT_STACK_EXPECTATIONS
+        )
 
 
 @pytest.mark.parametrize(
