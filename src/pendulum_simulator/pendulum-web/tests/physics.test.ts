@@ -15,6 +15,7 @@
 import { readFileSync } from 'node:fs';
 import { describe, it, expect } from 'vitest';
 import {
+    baseForce,
     distalInertia,
     makePendulumParams,
     massMatrix,
@@ -374,5 +375,41 @@ describe('distributed club convention', () => {
             expect(preset.params.mClub).toBeCloseTo(driver.head_mass_kg, 14);
             expect(preset.params.L2).toBeCloseTo(driver.length_m, 14);
         }
+    });
+});
+
+describe('baseForce sign and arm-mass convention (Tools #5522)', () => {
+    const p = makePendulumParams({
+        m1: 2, m2: 3, mClub: 1, L1: 0.7, L2: 1, g: 9.81, b1: 0, b2: 0, mu1: 0, mu2: 0,
+    });
+
+    it('static hang: pivot holds the total weight up (+y)', () => {
+        const f = baseForce([0, 0, 0, 0], [0, 0], p);
+        expect(Math.abs(f.fx)).toBeLessThan(1e-12);
+        expect(f.fy).toBeCloseTo((2 + 3 + 1) * 9.81, 10);
+    });
+
+    it('arm mass acts at the wrist (L1), not at L1/2', () => {
+        const q = makePendulumParams({
+            m1: 2, m2: 1e-9, mClub: 1e-9, L1: 0.7, L2: 1, g: 9.81, b1: 0, b2: 0, mu1: 0, mu2: 0,
+        });
+        const f = baseForce([0, 0, 0, 0], [1, 0], q);
+        expect(f.fx).toBeCloseTo(2 * 0.7, 6);
+    });
+
+    it('matches the Python shoulder reaction for a moving state', () => {
+        // Analytic cross-check: F = m1 (a_w + g ey) + Mc (a_com + g ey).
+        const s: State = [0.3, -0.2, 1.0, -0.5];
+        const qdd: [number, number] = [0.5, -0.3];
+        const [th, ph, dth, dph] = s;
+        const a2 = th + ph, da2 = dth + dph, dda2 = qdd[0] + qdd[1];
+        const aw = [0.7 * (Math.cos(th) * qdd[0] - Math.sin(th) * dth ** 2),
+                    0.7 * (Math.sin(th) * qdd[0] + Math.cos(th) * dth ** 2)];
+        const mc = 4, com = (0.5 * 3 + 1) * 1 / mc;
+        const ac = [aw[0] + com * (Math.cos(a2) * dda2 - Math.sin(a2) * da2 ** 2),
+                    aw[1] + com * (Math.sin(a2) * dda2 + Math.cos(a2) * da2 ** 2)];
+        const f = baseForce(s, qdd, p);
+        expect(f.fx).toBeCloseTo(2 * aw[0] + mc * ac[0], 10);
+        expect(f.fy).toBeCloseTo(2 * (aw[1] + 9.81) + mc * (ac[1] + 9.81), 10);
     });
 });

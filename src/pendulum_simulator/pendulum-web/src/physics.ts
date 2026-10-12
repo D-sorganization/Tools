@@ -464,9 +464,10 @@ export interface BaseForce {
 }
 
 /**
- * Compute the reaction force at the base (shoulder pivot).
- * F_base = sum of (m_i * a_cm_i) + sum(m_i * g_vec)
- * Using Newton's second law on the whole system.
+ * Reaction force the shoulder pivot exerts on the arm.  Mirrors Python
+ * `net_joint_forces()['shoulder']` (Tools #5522): arm m1 is a point mass at the
+ * wrist (L1), plus the distributed club.  F = sum(m_i (a_i - g_vec)) with
+ * g_vec = [0, -g], so hanging at rest fy = +(m1 + Mc) g.
  *
  * Pre: state and accelerations finite.
  * Post: magnitude >= 0.
@@ -477,28 +478,18 @@ export function baseForce(state: State, qddot: [number, number], p: PendulumPara
     const a2 = theta1 + phi;
     const da2 = dtheta1 + dphi;
     const dda2 = qdd1 + qdd2;
-    const clubMass = clubInertia(p).mass;
+    const club = clubInertia(p);
+    const comOffset = club.firstMoment / club.mass;
 
-    // Center of mass accelerations for arm (at L1/2) and shaft+clubhead (at wrist + L2)
-    // Arm COM acceleration (uniform rod, COM at L1/2):
-    const ax1 = (p.L1 / 2) * (Math.cos(theta1) * qdd1 - Math.sin(theta1) * dtheta1 ** 2);
-    const ay1 = (p.L1 / 2) * (Math.sin(theta1) * qdd1 + Math.cos(theta1) * dtheta1 ** 2);
-
-    // Wrist acceleration:
     const awx = p.L1 * (Math.cos(theta1) * qdd1 - Math.sin(theta1) * dtheta1 ** 2);
     const awy = p.L1 * (Math.sin(theta1) * qdd1 + Math.cos(theta1) * dtheta1 ** 2);
 
-    // Tip acceleration (for clubhead point mass):
-    const atx = awx + p.L2 * (Math.cos(a2) * dda2 - Math.sin(a2) * da2 ** 2);
-    const aty = awy + p.L2 * (Math.sin(a2) * dda2 + Math.cos(a2) * da2 ** 2);
+    // Distributed-club COM (shaft + head) at firstMoment / mass from the wrist.
+    const acx = awx + comOffset * (Math.cos(a2) * dda2 - Math.sin(a2) * da2 ** 2);
+    const acy = awy + comOffset * (Math.sin(a2) * dda2 + Math.cos(a2) * da2 ** 2);
 
-    // Shaft COM at L2/2 from wrist:
-    const asx = awx + (p.L2 / 2) * (Math.cos(a2) * dda2 - Math.sin(a2) * da2 ** 2);
-    const asy = awy + (p.L2 / 2) * (Math.sin(a2) * dda2 + Math.cos(a2) * da2 ** 2);
-
-    // F = sum(m_i * a_i) + sum(m_i * [0, g])
-    const fx = p.m1 * ax1 + p.m2 * asx + p.mClub * atx;
-    const fy = p.m1 * ay1 + p.m2 * asy + p.mClub * aty - (p.m1 + clubMass) * p.g;
+    const fx = p.m1 * awx + club.mass * acx;
+    const fy = p.m1 * (awy + p.g) + club.mass * (acy + p.g);
 
     return { fx, fy, magnitude: Math.sqrt(fx ** 2 + fy ** 2) };
 }
