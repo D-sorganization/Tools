@@ -355,10 +355,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 13317,
+      "bytes_lf": 13828,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "b96733ff32e3b8d295edce3c9199f6bba06a1cf1095f3dc0fb0aa71e341af049",
+      "content_sha256_lf": "b23aa15b98d179bdda6e7b7243c1a12739a9ec8231d6816d9c1a518c13780e7c",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-CONSTANTS-PY-0C5FE4190149",
       "language": "python",
@@ -632,6 +632,7 @@
           "src/movement_optimizer/tests/test_exercises.py",
           "src/movement_optimizer/tests/test_hypothesis.py",
           "src/movement_optimizer/tests/test_issue_217_decompose.py",
+          "src/movement_optimizer/tests/test_issue_5515_ud_upstream.py",
           "src/movement_optimizer/tests/test_joint_limits.py",
           "src/movement_optimizer/tests/test_models.py",
           "src/movement_optimizer/tests/test_neck.py",
@@ -643,6 +644,8 @@
           "N·m",
           "bar",
           "deg",
+          "g",
+          "m/s^2",
           "mm",
           "rad/s",
           "s"
@@ -3328,10 +3331,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 7000,
+      "bytes_lf": 8905,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "7ef65c7928568c657b63f66dfb7202dc0fa18b4fc4095f25b1d7de61e216e2a9",
+      "content_sha256_lf": "1985baadc1d4b79f9eca81c4fe8602cc0fdefea6e1b7ec145af5ba1b2008c4a3",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-GUI-VECTOR-OVERLAY-PY-51D17BE09C95",
       "language": "python",
@@ -3417,23 +3420,35 @@
           {
             "kind": "function",
             "name": "draw_force_arrows",
-            "signature": "painter: QPainter, projector: Projector, arrows: Sequence[ForceArrow], *, scale: float"
+            "signature": "painter: QPainter, projector: Projector, arrows: Sequence[ForceArrow], *, scale: float, renderer: ArrowRenderer | None=None"
           },
           {
             "kind": "function",
             "name": "draw_overlay_scene",
-            "signature": "painter: QPainter, projector: Projector, scene: OverlayScene, *, arrow_scale: float, torque_reference_nm: float"
+            "signature": "painter: QPainter, projector: Projector, scene: OverlayScene, *, arrow_scale: float, torque_reference_nm: float, arrow_renderer: ArrowRenderer | None=None"
           },
           {
             "kind": "function",
             "name": "draw_torque_arcs",
             "signature": "painter: QPainter, projector: Projector, arcs: Sequence[TorqueArc], *, reference_nm: float"
+          },
+          {
+            "kind": "function",
+            "name": "nonzero_arrows",
+            "signature": "arrows: Sequence[ForceArrow]"
+          },
+          {
+            "kind": "function",
+            "name": "scaled_arrow_vectors",
+            "signature": "arrows: Sequence[ForceArrow], scale: float"
           }
         ],
         "test_paths": [
+          "src/movement_optimizer/tests/test_issue_5515_ud_upstream.py",
           "src/movement_optimizer/tests/test_vector_overlay.py"
         ],
         "unit_mentions": [
+          "g",
           "s"
         ],
         "validation_paths": []
@@ -4257,10 +4272,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 11464,
+      "bytes_lf": 11490,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "4da89918a6ddbb4eed248d802592765d1f34431c8e7c6c2dc90d365ad723850c",
+      "content_sha256_lf": "be70cfb0a83242d97b53eaed95fc16f4fe581f99f37357b6913e0e2b22f43b4b",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-MODELS-BODY-MODEL-PY-90326FBCDA7D",
       "language": "python",
@@ -4334,10 +4349,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 13790,
+      "bytes_lf": 13476,
       "classification": "calculation",
       "classification_basis": "path-marker:dynamics",
-      "content_sha256_lf": "10a166126f8943ce7b264c11feff64cf2edee9df5d8869ab55ac2c97dad6c1de",
+      "content_sha256_lf": "52fa32d438ebeb2def64a7474b83465dc1c1526de34c019b1bbda35328a4dbab",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-MODELS-CHAIN-DYNAMICS-PY-8588C6BF379E",
       "language": "python",
@@ -4361,7 +4376,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "mapped",
+        "units": "unavailable",
         "validation": "unavailable"
       },
       "traceability": {
@@ -4493,12 +4508,10 @@
         ],
         "test_paths": [
           "src/movement_optimizer/tests/test_chain_forces.py",
+          "src/movement_optimizer/tests/test_issue_5515_ud_upstream.py",
           "src/movement_optimizer/tests/test_swingset_chain_models.py"
         ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
+        "unit_mentions": [],
         "validation_paths": []
       }
     },
@@ -4979,10 +4992,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 40020,
+      "bytes_lf": 40187,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "7e624270d9049d4685bad401d9acb3465a347a3bc9c8c913bf53c12c848e415b",
+      "content_sha256_lf": "0c6822d93f21a8c429ec21167c7d55dc26ad5d79b1994bb14b5ba7ee65303595",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-MODELS-SWINGSET-PY-70B15D5E8964",
       "language": "python",
@@ -5262,6 +5275,7 @@
           }
         ],
         "test_paths": [
+          "src/movement_optimizer/tests/test_issue_5515_ud_upstream.py",
           "src/movement_optimizer/tests/test_motion_analysis_panel.py",
           "src/movement_optimizer/tests/test_motion_analysis_panel_legends.py",
           "src/movement_optimizer/tests/test_swingset_chain_models.py",
@@ -6881,10 +6895,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 2747,
+      "bytes_lf": 3058,
       "classification": "calculation",
       "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "084163e618515ab59c1cf87b9232448cd92aa69632d401ca47be90102cdb1c8d",
+      "content_sha256_lf": "9caf666fdbc95d5cd404275d26a19034890c31df14d5088432026f2d25c35354",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-TRAJECTORY-RESULT-PY-9405027640B1",
       "language": "python",
@@ -6939,6 +6953,7 @@
           }
         ],
         "test_paths": [
+          "src/movement_optimizer/tests/test_issue_5515_ud_upstream.py",
           "src/movement_optimizer/tests/test_optimization_mixin.py",
           "src/movement_optimizer/tests/test_parameter_sidebar.py",
           "tests/rate_of_closure/test_movement_optimizer_swing_source.py"

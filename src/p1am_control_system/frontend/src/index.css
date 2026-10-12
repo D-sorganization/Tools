@@ -340,11 +340,24 @@ body {
 .data-age-offline .status-indicator {
   background-color: var(--color-error);
 }
-.data-age-stale .data-age-label {
+.data-age-stale .data-age-label,
+.data-age-held .data-age-label,
+.data-age-simulated .data-age-label,
+.data-age-unknown .data-age-label {
   color: var(--color-warning);
 }
-.data-age-offline .data-age-label {
+.data-age-offline .data-age-label,
+.data-age-fault .data-age-label {
   color: var(--color-error);
+}
+/* #5525: on-time frames that are not real readings. */
+.data-age-held .status-indicator,
+.data-age-simulated .status-indicator,
+.data-age-unknown .status-indicator {
+  background-color: var(--color-warning);
+}
+.data-age-fault .status-indicator {
+  background-color: var(--color-error);
 }
 .data-age-value {
   font-size: 0.7rem;

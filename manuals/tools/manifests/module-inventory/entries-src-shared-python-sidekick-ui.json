@@ -440,10 +440,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 31522,
+      "bytes_lf": 33286,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "1f2bcede19664e83d6347d64240f94ec115d2c93a6ceb52dacfe00889439d0ee",
+      "content_sha256_lf": "5a010e62227d9a168dabb34a8c7fa040ad3a50a4281a15458c4e0c5caf08e956",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-MIXINS-CALCULATOR-STATE-MIXIN-PY-347B160C8554",
       "language": "python",
@@ -489,6 +489,7 @@
           }
         ],
         "test_paths": [
+          "src/shared/python/sidekick/tests/_calculator_state_helpers.py",
           "src/shared/python/sidekick/tests/process_calculators/test_acid_gas_dewpoint_calculator.py",
           "src/shared/python/sidekick/tests/process_calculators/test_syngas_compression_engine.py",
           "src/shared/python/sidekick/tests/process_calculators/test_wgs_reactor_calculator.py",
