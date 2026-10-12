@@ -2591,6 +2591,7 @@
           "src/movement_optimizer/tests/test_gait_sts.py",
           "src/movement_optimizer/tests/test_parameter_validation.py",
           "src/p1am_control_system/backend/tests/test_alarm_nan_bad_quality.py",
+          "src/p1am_control_system/backend/tests/test_asset_health.py",
           "src/p1am_control_system/backend/tests/test_backend_p1am_safety.py",
           "src/p1am_control_system/backend/tests/test_interlock_defaults_contract.py",
           "src/p1am_control_system/backend/tests/test_modbus_codec.py",
