@@ -489,6 +489,7 @@
           }
         ],
         "test_paths": [
+          "src/shared/python/sidekick/tests/_calculator_state_helpers.py",
           "src/shared/python/sidekick/tests/process_calculators/test_acid_gas_dewpoint_calculator.py",
           "src/shared/python/sidekick/tests/process_calculators/test_syngas_compression_engine.py",
           "src/shared/python/sidekick/tests/process_calculators/test_wgs_reactor_calculator.py",
