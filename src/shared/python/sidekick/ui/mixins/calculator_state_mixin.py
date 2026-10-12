@@ -44,6 +44,21 @@ __all__ = [
 _logger = logging.getLogger(__name__)
 
 
+def _entry_for_sender(
+    entries: list[dict[str, Any]], sender: object
+) -> dict[str, Any] | None:
+    """Return the registry entry whose widget emitted the current signal.
+
+    Qt signals are routed to bound methods that read ``self.sender()`` rather
+    than to lambdas that capture per-item data, so the connection never pins
+    the calculator (#5520).
+    """
+    for entry in entries:
+        if entry["widget"] is sender:
+            return entry
+    return None
+
+
 class _SplitterStateMixin:
     """Private sub-mixin for splitter tracking and state management (GH1692)."""
 
@@ -75,10 +90,16 @@ class _SplitterStateMixin:
         self.splitters.append(splitter_info)
 
         # Connect splitter signals to track changes
-        splitter.splitterMoved.connect(lambda: self.on_splitter_moved(splitter_info))
+        splitter.splitterMoved.connect(self._on_registered_splitter_moved)
 
         # Restore saved state if available
         self.restore_splitter_state(splitter_info)
+
+    def _on_registered_splitter_moved(self, *_signal_args: object) -> None:
+        """Dispatch splitterMoved to the entry of the splitter that emitted it"""
+        entry = _entry_for_sender(self.splitters, self.sender())  # type: ignore[attr-defined]
+        if entry is not None:
+            self.on_splitter_moved(entry)
 
     def on_splitter_moved(self, splitter_info: dict[str, Any]) -> None:
         """Handle splitter movement to track state changes"""
@@ -202,8 +223,22 @@ class _ClipboardMixin:
         if hasattr(widget, "setContextMenuPolicy"):
             widget.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
             widget.customContextMenuRequested.connect(
-                lambda pos, w=widget_info: self.show_widget_context_menu(pos, w),
+                self._on_copyable_context_menu_requested,
             )
+
+    def _on_copyable_context_menu_requested(self, position: Any) -> None:
+        """Show the context menu of the registered widget that requested it"""
+        entry = _entry_for_sender(self.copyable_widgets, self.sender())  # type: ignore[attr-defined]
+        if entry is not None:
+            self.show_widget_context_menu(position, entry)
+
+    def _save_state_from_signal(self, _checked: bool = False) -> None:
+        """Adapt the signal's ``checked`` argument to save_calculator_state()"""
+        self.save_calculator_state()
+
+    def _load_state_from_signal(self, _checked: bool = False) -> None:
+        """Adapt the signal's ``checked`` argument to load_calculator_state()"""
+        self.load_calculator_state()
 
     def copy_selected_text(self, checked: bool = False) -> None:
         """Copy selected text from focused widget"""
@@ -348,11 +383,11 @@ class _ClipboardMixin:
         # State management actions
         save_action = menu.addAction("Save State")
         if save_action is not None:
-            save_action.triggered.connect(lambda: self.save_calculator_state())
+            save_action.triggered.connect(self._save_state_from_signal)
 
         load_action = menu.addAction("Load State")
         if load_action is not None:
-            load_action.triggered.connect(lambda: self.load_calculator_state())
+            load_action.triggered.connect(self._load_state_from_signal)
 
         menu.exec(cast(QWidget, self).mapToGlobal(position))
 
@@ -368,7 +403,8 @@ class _ClipboardMixin:
         # Copy action
         copy_action = menu.addAction("Copy")
         if copy_action is not None:
-            copy_action.triggered.connect(lambda: self.copy_widget_text(widget))
+            copy_action.setData(widget)
+            copy_action.triggered.connect(self._copy_widget_from_action)
 
         # Copy all action
         copy_all_action = menu.addAction("Copy All")
@@ -384,6 +420,11 @@ class _ClipboardMixin:
                 paste_action.triggered.connect(self.paste_text)
 
         menu.exec(widget.mapToGlobal(position))
+
+    def _copy_widget_from_action(self, _checked: bool = False) -> None:
+        """Copy the widget text carried on the triggered context-menu action"""
+        action = cast(QAction, self.sender())  # type: ignore[attr-defined]
+        self.copy_widget_text(action.data())
 
     def copy_widget_text(self, widget: Any) -> None:
         """Copy text from a specific widget"""
@@ -805,7 +846,7 @@ class CalculatorStateMixin(_SplitterStateMixin, _ClipboardMixin):
         from PyQt6.QtWidgets import QPushButton
 
         save_btn = QPushButton("Save State")
-        save_btn.clicked.connect(lambda: self.save_calculator_state())
+        save_btn.clicked.connect(self._save_state_from_signal)
         save_btn.setStyleSheet(
             """
             QPushButton {
@@ -826,7 +867,7 @@ class CalculatorStateMixin(_SplitterStateMixin, _ClipboardMixin):
         )
 
         load_btn = QPushButton("Load State")
-        load_btn.clicked.connect(lambda: self.load_calculator_state())
+        load_btn.clicked.connect(self._load_state_from_signal)
         load_btn.setStyleSheet(
             """
             QPushButton {

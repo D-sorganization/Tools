@@ -4,7 +4,7 @@ from __future__ import annotations
 from typing import Any
 from unittest.mock import MagicMock, patch
 
-from PyQt6.QtCore import Qt
+from PyQt6.QtCore import QPoint, Qt
 from PyQt6.QtWidgets import (
     QCheckBox,
     QComboBox,
@@ -16,15 +16,8 @@ from PyQt6.QtWidgets import (
     QTableWidget,
     QTableWidgetItem,
     QTextEdit,
-    QWidget,
 )
-from sidekick.ui.mixins.calculator_state_mixin import CalculatorStateMixin
-
-
-class MockCalculator(QWidget, CalculatorStateMixin):
-    def __init__(self, name=None) -> None:
-        QWidget.__init__(self)
-        CalculatorStateMixin.__init__(self, name)
+from sidekick.tests._calculator_state_helpers import MockCalculator
 
 
 def test_mixin_init(qapp) -> None:
@@ -283,8 +276,6 @@ def test_handle_close_event(qapp) -> None:
 
 
 def test_show_menus(qapp) -> None:
-    from PyQt6.QtCore import QPoint
-
     calc = MockCalculator()
     calc.setup_copy_paste()
 

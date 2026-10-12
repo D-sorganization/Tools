@@ -312,6 +312,7 @@
           "src/shared/python/model_generation/tests/test_api_adapters.py",
           "src/shared/python/model_generation/tests/test_contracts.py",
           "src/shared/python/plot_theme/tests/test_plot_theme.py",
+          "src/shared/python/sidekick/tests/_calculator_state_helpers.py",
           "src/shared/python/sidekick/tests/process_calculators/test_acid_gas_dewpoint_calculator.py",
           "src/shared/python/sidekick/tests/process_calculators/test_multi_param_analysis.py",
           "src/shared/python/sidekick/tests/process_calculators/test_psa_gui.py",
