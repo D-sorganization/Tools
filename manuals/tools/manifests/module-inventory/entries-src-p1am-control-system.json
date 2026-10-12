@@ -3398,10 +3398,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 2817,
+      "bytes_lf": 6478,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "dad8d00486e9fa022154fa4867fdea01c844df4b9affaf0f3f7a4a222cd11e1c",
+      "content_sha256_lf": "43cc63f39b03af6770ce758f641bdc86e4d1103309d2e913c2b12e95a11b0597",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-PLC-FACTORY-PY-CB81A14A6CAF",
       "language": "python",
@@ -3438,8 +3438,48 @@
         "public_surfaces": [
           {
             "kind": "class",
+            "name": "DriverCapabilities",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PLCDriverError",
+            "signature": null
+          },
+          {
+            "kind": "class",
             "name": "PLCFactory",
             "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DRIVERS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_REAL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SIM",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_driver",
+            "signature": "name: str"
+          },
+          {
+            "kind": "function",
+            "name": "register_driver",
+            "signature": "name: str, factory: DriverFactory, capabilities: DriverCapabilities"
+          },
+          {
+            "kind": "function",
+            "name": "registered_drivers",
+            "signature": ""
           }
         ],
         "test_paths": [
