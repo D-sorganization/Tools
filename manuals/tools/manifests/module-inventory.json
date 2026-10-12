@@ -117,7 +117,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "d494a2f5b49d10753a2d839a14c79d01386935021a825179391d46dafe7b7dd0",
+      "content_sha256_lf": "01a0fcac179d2b143bf116926ff32b564f60bb55228f023786fa9ada756e1f2b",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "fa8b8af0d5cbfdbc88ae9f61f70d1e027e3955cbb661b9b78a851737248c972e",
+      "content_sha256_lf": "89d524617ff302ff2575887c7e739b3c70c3a815c6b6d34e7e0535bb1333e152",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -387,7 +387,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-optimizer-gui.json"
     },
     {
-      "content_sha256_lf": "3de7cc9b10e95e6ef2d537ad8285ddae1bb1610f8b17dbd6c97447280408a6c4",
+      "content_sha256_lf": "9a158d34aa465d289f328eb3e5c1ba18ac88b94e84f7cb148633bd0402847a57",
       "entry_count": 258,
       "package": "src/p1am_control_system",
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
@@ -783,7 +783,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-data-processing.json"
     },
     {
-      "content_sha256_lf": "17f430ad32f5f58505d2a5018c1c606d350863322ebf7713bdbbfcd71673283e",
+      "content_sha256_lf": "9d03f9da22c86bae7d16140c972e821863b25fa5d60af983a0719f2aceab9b4f",
       "entry_count": 47,
       "package": "src/shared/python/sidekick/lab",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-lab.json"
@@ -819,8 +819,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-ui.json"
     },
     {
-      "content_sha256_lf": "47f38826afa53374a7efbe47ffcbff00f1c8852ca1cbf2c65832f662942d7a0a",
-      "entry_count": 6,
+      "content_sha256_lf": "1c28fa3bdc7ee43cac8404071f482229dc5f49bc8297e7a8f071d1cc373ba917",
+      "entry_count": 7,
       "package": "src/shared/python/sidekick/utils",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-utils.json"
     },

@@ -320,10 +320,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11998,
+      "bytes_lf": 15285,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "027996dc55bdd51f1d6f44cbbc84c9070a83eab513d76889a5d2a025ad6aaba1",
+      "content_sha256_lf": "2c49c1c7384154253bf8c3a50b0724742f7ea8eff5e36946e0a9d3ee6d5bd481",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-AUDIT-PY-F859122DA277",
       "language": "python",
@@ -385,8 +385,18 @@
           },
           {
             "kind": "function",
+            "name": "actor_from_headers",
+            "signature": "headers: Any"
+          },
+          {
+            "kind": "function",
             "name": "credential_fingerprint",
             "signature": "key: str | None"
+          },
+          {
+            "kind": "function",
+            "name": "migrate_audit_event_columns",
+            "signature": "bind: Any"
           },
           {
             "kind": "function",
@@ -397,6 +407,11 @@
             "kind": "function",
             "name": "resolve_actor",
             "signature": "api_key: str | None"
+          },
+          {
+            "kind": "function",
+            "name": "set_audit_context",
+            "signature": "request: Any, *, reason: str | None=None, before: Any=None, after: Any=None"
           }
         ],
         "test_paths": [
@@ -1765,10 +1780,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10967,
+      "bytes_lf": 11057,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c50701337d90c60bfb0213d1562a31da29a70e20a0fb210b09450777f199d800",
+      "content_sha256_lf": "f2a9aac3d733fdf0fcd91a787dd1921f3eb2eb9562242780ac83b0549a8d3642",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-DATABASE-PY-7B6D97B2ADA4",
       "language": "python",
@@ -2257,10 +2272,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 52154,
+      "bytes_lf": 52601,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "1753d077adef39829cef1e2becdfd44852e8eac5b2c11d0a988d0c0cef9b0973",
+      "content_sha256_lf": "cf8d27d31f94eccc29cd90a8f1f53fd557d8e860d88544207c0a8cadd48035e4",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-MAIN-PY-C47A4D7AC436",
       "language": "python",
@@ -2338,7 +2353,7 @@
           {
             "kind": "function",
             "name": "acknowledge_alarm",
-            "signature": "tag_id: str, payload: AlarmAckPayload | None=None, db: Session=Depends(get_session)"
+            "signature": "tag_id: str, request: Request, payload: AlarmAckPayload | None=None, db: Session=Depends(get_session)"
           },
           {
             "kind": "function",
