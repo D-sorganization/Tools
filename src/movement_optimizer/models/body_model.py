@@ -14,6 +14,7 @@ from numpy.typing import NDArray
 from ..constants import (
     BOS_INNER_FRACTION,
     COM_FRAC,
+    GRAVITY_M_S2,
     JOINT_LIMITS,
     JOINT_NAMES,
     LENGTH_FRAC,
@@ -107,7 +108,7 @@ class BodyModel:
 
         self.body_mass = body_mass
         self.height = height
-        self.g = 9.81
+        self.g = GRAVITY_M_S2
         self.abduction_angle = abduction_angle
         self.arm_angle = arm_angle
         self.squat_bar_depth = squat_bar_depth

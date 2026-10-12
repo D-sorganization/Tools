@@ -5946,6 +5946,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-12 | #5550 | SCADA F07: publish firmware trip latch tri-state (plc_trip_latch) and first-out tag (first_out_tag_id) from one register read; InterlocksPanel shows PLC trip and an explicit unknown state |
 | 2026-10-12 | #5549 | fix(ci): requalify libfreetype6 2.13.2+dfsg-1ubuntu0.2 for the Rate PyQt font-stack guard; all 10 PyQt references pass unchanged under existing tolerances (Closes #5518, Closes #5501) |
 | 2026-10-11 | #5514 | Sync the agent-identity managed block and vendored automerge_guard.py: the owner's personal token is an approved agent identity |
 | 2026-10-11 | #5517 | Install pyserial alongside pymodbus so pymodbus 3.16.0 imports in CI and the p1am/test extras |

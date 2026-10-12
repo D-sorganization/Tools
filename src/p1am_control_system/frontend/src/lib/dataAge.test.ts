@@ -1,7 +1,9 @@
 import { describe, it, expect } from "vitest";
 import {
+  DATA_SOURCES,
   DATA_STALE_MS,
   dataFreshness,
+  dataStatus,
   formatDataAge,
   type DataFreshness,
 } from "./dataAge";
@@ -55,5 +57,32 @@ describe("formatDataAge", () => {
   it("renders minutes past a minute so a 20-minute freeze is unmistakable", () => {
     expect(formatDataAge(60_000)).toBe("1 m 0 s");
     expect(formatDataAge(20 * 60_000 + 5_000)).toBe("20 m 5 s");
+  });
+});
+
+describe("dataStatus (#5525)", () => {
+  it("is live only for a fresh frame from a live source", () => {
+    expect(dataStatus("live", "live")).toBe("live");
+  });
+
+  it.each(["held", "fault", "simulated"] as const)(
+    "a fresh %s scan is reported as %s, never live",
+    (source) => {
+      expect(dataStatus("live", source)).toBe(source);
+    },
+  );
+
+  it.each([undefined, "", "LIVE", "garbage", "null"])(
+    "fails safe to unknown for source %j on a fresh frame",
+    (source) => {
+      expect(dataStatus("live", source)).toBe("unknown");
+    },
+  );
+
+  it("lets staleness and offline win over any reported source", () => {
+    for (const source of [...DATA_SOURCES, undefined, "garbage"]) {
+      expect(dataStatus("stale", source)).toBe("stale");
+      expect(dataStatus("offline", source)).toBe("offline");
+    }
   });
 });

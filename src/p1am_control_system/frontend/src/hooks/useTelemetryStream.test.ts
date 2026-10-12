@@ -319,4 +319,25 @@ describe("useTelemetryStream", () => {
     });
     expect(result.current.activeAlarms).toHaveLength(0);
   });
+
+  // --- #5525: surface the scan data_source reported by the backend ---------
+  it("exposes the reported data_source and clears it when a frame omits it", () => {
+    const { result } = renderHook(() => useTelemetryStream());
+    expect(result.current.dataSource).toBeUndefined();
+
+    act(() => {
+      MockWebSocket.instances[0].onmessage?.({
+        data: JSON.stringify({ e_stop_active: false, data_source: "held" }),
+      });
+    });
+    expect(result.current.dataSource).toBe("held");
+
+    // A later frame without the key must NOT inherit the previous "live".
+    act(() => {
+      MockWebSocket.instances[0].onmessage?.({
+        data: JSON.stringify({ e_stop_active: false }),
+      });
+    });
+    expect(result.current.dataSource).toBeUndefined();
+  });
 });
