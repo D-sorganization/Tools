@@ -12,6 +12,7 @@ Mirrors firmware/README.md "Modbus register map".
 from __future__ import annotations
 
 import math
+from typing import Literal, NamedTuple
 
 # ---- Tag broker -------------------------------------------------------
 TAG_COUNT = 32  # tags exposed by the firmware broker
@@ -84,6 +85,23 @@ HEARTBEAT_TIMEOUT_S = 2.0  # firmware-side watchdog window
 # confirm that a coil-1 reset actually took (issue #4001).
 INTERLOCK_TRIPPED_REGISTER = 561
 INTERLOCK_TRIP_TAG_REGISTER = 562
+
+TripLatch = Literal["tripped", "clear", "unknown"]
+
+
+class FirstOutStatus(NamedTuple):
+    """Firmware trip latch plus first-out tag, read in one register read.
+
+    ``latch`` is a tri-state so "unknown" (failed/malformed read, no seam) is
+    never mistaken for "clear". ``tag_id`` is an int only while ``latch`` is
+    ``"tripped"`` and the firmware names a real broker tag (#5528).
+    """
+
+    latch: TripLatch
+    tag_id: int | None
+
+
+FIRST_OUT_UNKNOWN = FirstOutStatus("unknown", None)
 
 # Plant wiring: the DC power supply's analog command rides PID loop 0. Named
 # here so the shutdown safe-state and the power-supply service agree on which

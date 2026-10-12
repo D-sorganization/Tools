@@ -225,3 +225,20 @@ def direct_tag_address(
         if tag_def.register_type == "V" and tag_def.register_num is not None:
             return int(tag_def.register_num)
     return None
+
+
+def decode_first_out_status(tripped: int, tag_index: int) -> hardware.FirstOutStatus:
+    """Decode the firmware first-out pair (registers 561/562) fail-closed.
+
+    Latch exactly 1 is ``"tripped"``, exactly 0 is ``"clear"``, anything else
+    is ``"unknown"``. A tag is returned only while tripped and only if it names
+    a real broker tag (``0 <= n < TAG_COUNT``); unmapped or out-of-range is
+    ``None``. A plausible value is never guessed (#5528).
+    """
+    if tripped == 0:
+        return hardware.FirstOutStatus("clear", None)
+    if tripped != 1:
+        return hardware.FIRST_OUT_UNKNOWN
+    if isinstance(tag_index, bool) or not 0 <= tag_index < TAG_COUNT:
+        return hardware.FirstOutStatus("tripped", None)
+    return hardware.FirstOutStatus("tripped", tag_index)
