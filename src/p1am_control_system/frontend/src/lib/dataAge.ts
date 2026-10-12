@@ -71,3 +71,46 @@ export function formatDataAge(ageMs: number | undefined): string {
   const minutes = Math.floor(totalSeconds / 60);
   return `${minutes} m ${totalSeconds - minutes * 60} s`;
 }
+
+/**
+ * Scan provenance reported by the backend in every telemetry frame (#5525).
+ *
+ * Single frontend source for the wire values; they mirror
+ * `DataSource` in `backend/models.py` (locked by a contract test). Only `live`
+ * is a plain measurement: `simulated`, `held` and `fault` scans can arrive on
+ * time yet carry no real reading, so frame age alone must never read as healthy.
+ */
+export const DATA_SOURCES = ["live", "simulated", "held", "fault"] as const;
+export type DataSource = (typeof DATA_SOURCES)[number];
+
+/** What the status pill shows: freshness bands plus every non-live source. */
+export type DataStatus =
+  | "live"
+  | "stale"
+  | "offline"
+  | Exclude<DataSource, "live">
+  /** Fresh frame whose `data_source` is missing or unrecognised (fail safe). */
+  | "unknown";
+
+function isDataSource(value: unknown): value is DataSource {
+  return (DATA_SOURCES as readonly unknown[]).includes(value);
+}
+
+/**
+ * Combine frame age with the scan's reported source.
+ *
+ * Age gates first: a stale or offline stream is stale/offline whatever source
+ * it last reported. Only a fresh frame is classified by source, and anything
+ * but a recognised value is `unknown`, never `live` — the HMI must not infer
+ * health from the absence of a fault flag.
+ *
+ * @param freshness - the age band from {@link dataFreshness}.
+ * @param source - raw `data_source` from the latest frame, if any.
+ */
+export function dataStatus(
+  freshness: DataFreshness,
+  source: string | undefined,
+): DataStatus {
+  if (freshness !== "live") return freshness;
+  return isDataSource(source) ? source : "unknown";
+}

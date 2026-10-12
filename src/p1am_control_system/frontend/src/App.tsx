@@ -156,6 +156,7 @@ export const App: React.FC = () => {
     temperatureStatus,
     dataAgeMs,
     freshness,
+    dataSource,
     droppedAlarmCount,
     setAlicats,
     setActiveAlarms,
@@ -718,7 +719,11 @@ export const App: React.FC = () => {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-          <DataAgeIndicator freshness={freshness} ageMs={dataAgeMs} />
+          <DataAgeIndicator
+            freshness={freshness}
+            dataSource={dataSource}
+            ageMs={dataAgeMs}
+          />
 
           <button
             type="button"

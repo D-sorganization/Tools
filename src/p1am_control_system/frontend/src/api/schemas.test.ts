@@ -159,3 +159,22 @@ describe("hasTelemetryContent", () => {
     if (parsed.success) expect(hasTelemetryContent(parsed.data)).toBe(true);
   });
 });
+
+describe("telemetryFrameSchema data_source (#5525)", () => {
+  it("carries the reported data_source through verbatim", () => {
+    const parsed = telemetryFrameSchema.safeParse({ tags: [], data_source: "held" });
+    expect(parsed.success && parsed.data.data_source).toBe("held");
+  });
+
+  it("drops a malformed data_source to undefined instead of failing the frame", () => {
+    const parsed = telemetryFrameSchema.safeParse({ tags: [], data_source: 42 });
+    expect(parsed.success).toBe(true);
+    if (parsed.success) expect(parsed.data.data_source).toBeUndefined();
+  });
+
+  it("does not count data_source alone as telemetry content", () => {
+    const parsed = telemetryFrameSchema.safeParse({ data_source: "live" });
+    expect(parsed.success).toBe(true);
+    if (parsed.success) expect(hasTelemetryContent(parsed.data)).toBe(false);
+  });
+});
