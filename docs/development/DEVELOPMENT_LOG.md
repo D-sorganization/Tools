@@ -148,6 +148,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5530 · SCADA F09: Declarative Procedure Model With Hold/Abort, Gated to the Simulated Driver
+
+- **State:** in_review
+- **Owner:** unassigned
+- **Issue:** #5530
+- **Branch:** feat/5530-scada
+- **PR:** #5578
+- **Paths:** see #5578
+- **Started:** 2026-10-12
+- **Last verified:** 2026-10-12 (`61c56827`; collated from changes/5530-scada-f09-declarative-procedure-model-wi.md)
+- **Summary:** SCADA F09: declarative procedure model with hold/abort, gated to the simulated driver
+- **Next step:** Merge the PR; flip F09 matrix row to landed citing it.
+
 ### DL-#5531 · SCADA F10: Advisory-Only Flatline and Command/Feedback-Mismatch Detectors (asset_health.py)
 
 - **State:** in_review
@@ -1417,6 +1430,19 @@ reachable from any live state and `abandoned` from `parked`.
   definition.
 
 ## Shipped (Last 90 Days)
+
+### DL-#5524 · SCADA F01: Audit Rows Carry Reason, Redacted Before/After and Config_Revision Columns (Additive Migration); Alarm Ack Records Credential-Derived Actor Instead of the Free-Text User
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5524
+- **Branch:** merged via #5551
+- **PR:** #5551
+- **Paths:** see #5551
+- **Started:** 2026-10-12
+- **Last verified:** 2026-10-12 (`b6e3e670`; collated from changes/5524-scada-f01-audit-rows-carry-reason-redact.md)
+- **Summary:** SCADA F01: audit rows carry reason, redacted before/after and config_revision columns (additive migration); alarm ack records credential-derived actor instead of the free-text user
+- **Next step:** Shipped in PR #5551.
 
 ### DL-#5527 · SCADA F04: Append-Only ConfigRevision History (SHA-256 Canonical JSON, Credential Fingerprint), Atomic With PersistedConfig Upsert, Admin-Gated List/Get Endpoints, Revision_Id on Config Write
 
