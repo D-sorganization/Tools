@@ -28,3 +28,22 @@ contracts plus cross-repository import compatibility suites passed 114 tests
 with eight existing deprecation warnings. Ruff check and format were applied
 to the two changed Python files. No calculation, physics pathway, or default
 policy change is included.
+
+## Full pre-PR gate
+
+The first full-gate launcher invocation failed before running checks because the
+Repository_Management checkout was added to the child process `PYTHONPATH`,
+which shadowed the Tools namespace package. The launcher environment was
+corrected to use parent-import-only setup, then the full gate completed with
+actual exit code 0: 425 affected checks passed and 10 existing warnings were
+reported. This validates the unchanged tested source at commit
+`462c56eba224cb784562d5a8ced271c24e373cf5`.
+
+The full-gate receipt is stored locally at
+`docs/development/feedback_controls_planning/tools5577_fullprepr_20261012/prepr.parent.json`
+(SHA-256 `3b2dd339070b9f74e7f46c0947b5d139cb8ba2f6e097b39b709086cf9d19de0`);
+stdout SHA-256 is `1617ab5099fd62072ddab8f95cf7e2fe4572c6163cb3506c7155af2f06dc4e3c`.
+
+The scope remains canonical enum interoperability only. The default optimized
+policy is preserved, and no product code or broader epic implementation is
+included in this turnover.
