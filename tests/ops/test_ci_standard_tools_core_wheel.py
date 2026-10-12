@@ -55,7 +55,9 @@ def test_ci_tests_job_caches_builds_and_verifies_tools_core_required_lane() -> N
     assert "import tools_core" in verify_step["run"]
 
 
-def test_ci_tests_job_runs_non_skippable_tools_core_contract_in_required_lane() -> None:
+def test_ci_tests_job_runs_non_skippable_tools_core_contract_in_required_lane(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
     workflow = _ci_standard_workflow()
     run_tests = _step_by_name(
         workflow["jobs"]["tests"]["steps"],
@@ -68,6 +70,7 @@ def test_ci_tests_job_runs_non_skippable_tools_core_contract_in_required_lane() 
     # must be claimed by a shard rather than named in the workflow.
     import importlib.util
 
+    monkeypatch.syspath_prepend(str(REPO_ROOT / "scripts"))
     spec = importlib.util.spec_from_file_location(
         "ci_test_shards", REPO_ROOT / "scripts" / "ci_test_shards.py"
     )

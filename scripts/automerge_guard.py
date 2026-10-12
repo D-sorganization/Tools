@@ -65,8 +65,9 @@ CommandRunner = Callable[[Sequence[str]], "subprocess.CompletedProcess[str]"]
 
 
 #: GOV-1 (#1917): token prefixes. An App installation token (``ghs_``) acts as
-#: the agent's bot identity; the others act as a human user, so agent actions
-#: become indistinguishable from the owner's in audit logs and carry admin rights.
+#: the agent's bot identity; the others act as the owner's user account. Owner
+#: decision 2026-10-10: the owner's personal token is an approved identity, so
+#: it is accepted silently. ``--require-app-token`` stays available as opt-in.
 APP_TOKEN_PREFIXES = ("ghs_",)
 USER_TOKEN_PREFIXES = ("ghp_", "github_pat_", "gho_", "ghu_")
 
@@ -133,11 +134,6 @@ def active_token_kind(
 
 
 _IDENTITY_WARNINGS = {
-    "user": (
-        "GOV-1: the active GitHub token is a personal/user token, not a GitHub "
-        "App installation token (ghs_). Agent actions will be attributed to a "
-        "human account. Run under the agent's App identity (#1917)."
-    ),
     "unknown": (
         "GOV-1: the active GitHub token type is unrecognised; cannot confirm it "
         "is a GitHub App installation token (ghs_) (#1917)."
@@ -155,14 +151,25 @@ def check_token_identity(
     env: Mapping[str, str] | None = None,
     runner: CommandRunner = _default_runner,
 ) -> bool:
-    """Warn on stderr unless the active token is an App installation token.
+    """Check the active token; personal tokens are owner-approved (GOV-1).
 
-    Returns ``False`` only when ``require_app_token`` is set and the token is not
-    an App token; otherwise the warning is advisory and the caller proceeds.
+    App and personal/user tokens pass silently unless ``require_app_token`` is
+    set, in which case only an App token passes. An unrecognised or missing
+    token logs an advisory warning. Returns ``False`` only when
+    ``require_app_token`` is set and the token is not an App token.
     The token itself is never logged.
     """
     kind = active_token_kind(env, runner=runner)
     if kind == "app":
+        return True
+    if kind == "user":
+        if require_app_token:
+            logger.warning(
+                "WARNING: GOV-1: --require-app-token set but the active token is "
+                "a personal/user token, not a GitHub App token (ghs_) (#1917)."
+            )
+            return False
+        logger.debug("GOV-1: personal/user token in use (owner-approved).")
         return True
     logger.warning("WARNING: %s", _IDENTITY_WARNINGS[kind])
     return not require_app_token

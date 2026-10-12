@@ -13,14 +13,21 @@ from typing import Any, cast
 import hardware
 import shutdown_safety
 from alicat_manager import create_default_manager
-from audit import AuditMiddleware
+from audit import (
+    AuditMiddleware,
+    actor_from_headers,
+    credential_fingerprint,
+    set_audit_context,
+)
 from auth_config import (
+    CREDENTIAL_HEADER_NAME,
     log_auth_configuration,
     require_admin_key,
     require_api_key,
     require_read_auth,
     verify_operator_key,
 )
+from config_revisions import create_config_revision_router
 from config_store import load_config, load_model, save_config, save_model
 from cors_config import RequestGuardMiddleware, resolve_cors_settings
 from data_capture import (
@@ -548,6 +555,10 @@ app.include_router(
     )
 )
 
+# Read-only, admin-gated config revision history (SCADA F04, #5527). Uses the
+# same admin dependency as the config write it audits.
+app.include_router(create_config_revision_router(get_session, require_admin_key))
+
 # Data Explorer analysis suite (historian querying, filtering, correlation,
 # spectral, trendlines, PCA, export). It is numpy-backed; if numpy or the module
 # is unavailable (e.g. the slim image without it) the feature simply stays off
@@ -687,14 +698,16 @@ async def get_routing() -> RoutingConfig:
 
 
 @app.post("/api/routing", dependencies=[Depends(require_admin_key)])
-async def update_routing(config: RoutingConfig) -> dict[str, str]:
+async def update_routing(config: RoutingConfig, request: Request) -> dict[str, Any]:
     """Write new routing configurations to the PLC.
 
     Args:
         config: RoutingConfig model.
+        request: Used only to fingerprint (hash) the presented credential.
 
     Returns:
-        JSON response indicating success.
+        JSON response indicating success. ``revision_id`` is the config
+        revision appended for this write (``None`` if persistence failed).
     """
     control_context.apply_config(config, plc_client, backup_simulator)
 
@@ -702,9 +715,15 @@ async def update_routing(config: RoutingConfig) -> dict[str, str]:
     # so it survives a restart independent of PLC flash, and refresh the overlay.
     global _persisted_routing
     _persisted_routing = config
+    revision_id: int | None = None
     try:
         with _config_session() as s:
-            save_model(s, "routing", config)
+            revision_id = save_model(
+                s,
+                "routing",
+                config,
+                credential_fingerprint(request.headers.get(CREDENTIAL_HEADER_NAME)),
+            )
     except Exception as exc:  # noqa: BLE001 - persistence must not fail a deploy
         logger.warning("Persisting routing failed (non-fatal): %s", exc)
 
@@ -713,6 +732,7 @@ async def update_routing(config: RoutingConfig) -> dict[str, str]:
         return {
             "status": "success",
             "message": "Configuration successfully applied to simulated PLC.",
+            "revision_id": revision_id,
         }
 
     success = await plc_client.write_routing(config)
@@ -738,6 +758,7 @@ async def update_routing(config: RoutingConfig) -> dict[str, str]:
     return {
         "status": "success",
         "message": ("Configuration successfully deployed and saved to PLC NVRAM."),
+        "revision_id": revision_id,
     }
 
 
@@ -846,9 +867,10 @@ async def get_active_alarms() -> list[dict[str, Any]]:
 class AlarmAckPayload(BaseModel):
     """Optional body for an alarm acknowledgement.
 
-    ``user`` is recorded in the alarm engine's ``acknowledged_by`` audit field.
-    The body is optional so existing clients that POST nothing keep working;
-    those acknowledgements are attributed to the default operator.
+    ``user`` is an unverified display note only (#5524): it is logged in the
+    event description but never used as the actor. The actor recorded in the
+    alarm engine's ``acknowledged_by`` field is derived from the authenticated
+    credential tier + fingerprint. The body stays optional.
     """
 
     user: str | None = PydanticField(default=None, min_length=1, max_length=64)
@@ -860,6 +882,7 @@ class AlarmAckPayload(BaseModel):
 )
 async def acknowledge_alarm(
     tag_id: str,
+    request: Request,
     payload: AlarmAckPayload | None = None,
     db: Session = Depends(get_session),  # noqa: B008
 ) -> dict[str, str]:
@@ -870,13 +893,20 @@ async def acknowledge_alarm(
     rebuild the engine and the live alarm map.
     """
     if tag_id in control_context.active_alarms:
-        user = payload.user if payload is not None else None
+        note = payload.user if payload is not None else None
+        actor = actor_from_headers(request.headers).label
+        set_audit_context(
+            request,
+            before={"tag": tag_id, "acknowledged": False},
+            after={"tag": tag_id, "acknowledged": True, "actor": actor},
+        )
         # Log the acknowledgment
         try:
             event_log = EventLog(
                 event_type="ACKNOWLEDGE",
                 description=(
-                    f"Alarm on Tag {tag_id} acknowledged by {user or 'operator'}."
+                    f"Alarm on Tag {tag_id} acknowledged by {actor}"
+                    f"{f' (note: {note})' if note else ''}."
                 ),
                 severity=0,
             )
@@ -890,7 +920,7 @@ async def acknowledge_alarm(
                 detail=f"Failed to persist acknowledgment for alarm {tag_id}.",
             ) from e
 
-        if not control_context.acknowledge_alarm(tag_id, user=user):
+        if not control_context.acknowledge_alarm(tag_id, user=actor):
             raise HTTPException(
                 status_code=409,
                 detail=f"Alarm {tag_id} could not be acknowledged.",

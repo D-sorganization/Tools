@@ -150,10 +150,13 @@ export const App: React.FC = () => {
     alicats,
     activeAlarms,
     eStopActive,
+    firstOutTagId,
+    plcTripLatch,
     powerSupplyStatus,
     temperatureStatus,
     dataAgeMs,
     freshness,
+    dataSource,
     droppedAlarmCount,
     setAlicats,
     setActiveAlarms,
@@ -716,7 +719,11 @@ export const App: React.FC = () => {
         </div>
 
         <div style={{ display: "flex", alignItems: "center", gap: "1rem" }}>
-          <DataAgeIndicator freshness={freshness} ageMs={dataAgeMs} />
+          <DataAgeIndicator
+            freshness={freshness}
+            dataSource={dataSource}
+            ageMs={dataAgeMs}
+          />
 
           <button
             type="button"
@@ -1073,6 +1080,9 @@ export const App: React.FC = () => {
                   onChange={handleInterlockChange}
                   onDeploy={handleDeploy}
                   deploying={deploying}
+                  plcTripLatch={plcTripLatch}
+                  firstOutTagId={firstOutTagId}
+                  connected={freshness === "live"}
                 />
               </div>
             </div>

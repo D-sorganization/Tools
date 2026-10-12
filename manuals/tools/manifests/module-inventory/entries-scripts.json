@@ -716,10 +716,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 30748,
+      "bytes_lf": 31079,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a784815a6b8e9feb49220a770454fc424b9a7239e26743b57259201bc96b1cbc",
+      "content_sha256_lf": "8158020dc5ac6610c9261bc47470bfd93db2d4961307ace82c18d11ffcce3586",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-AUTOMERGE-GUARD-PY-589614C8BDE2",
       "language": "python",

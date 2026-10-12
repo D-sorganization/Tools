@@ -25,6 +25,12 @@
 > inside the heuristic reference intervals, with **no hand-speed floor imposed**.
 > The claim that "the measured 6–9 m/s band is unreachable at any price" was an artifact.
 >
+> **Update (Tools #5431).** The `me = 0.238 kg` figures and the 24% braking number
+> below are _lumped-tip-mass_ results. The shipped club is now a uniform shaft plus a
+> head point mass (0.1078 kg + 0.2022 kg), which has the same wrist inertia but 30%
+> less arm/club coupling. Treat those numbers as the head-only limit until the
+> objective studies are re-run (#5523).
+>
 > What survives unchanged: the impact-optimality theorem (§1), the fact that hub
 > reversal is the release mechanism, and the direction of the club-inertia
 > result. What changes: the _severity_ was a parameter error, a moving hub is
@@ -49,6 +55,9 @@ Three things are now established, each with code and a regression test behind it
 
 1. **The optimizer is right and the model is wrong.** With a point-mass clubhead the
    energy-optimal hand speed at impact is _identically zero_, for every parameter value.
+   (Since Tools #5431 the shipped model is the distributed club, so this holds only in
+   the head-only limit `m2 -> 0`; the shipped coefficient is negative. Results built on
+   the old zero are re-run under #5523.)
 2. **Distributed club inertia cannot fix it.** For a real driver the same coefficient
    goes _negative_ — the optimum wants the hands moving backward.
 3. **Neither can actuation limits alone.** They stop the torque reversing, which is

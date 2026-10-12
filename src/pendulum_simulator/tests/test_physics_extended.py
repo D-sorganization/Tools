@@ -33,6 +33,7 @@ from double_pendulum_golf.physics import (
     linear_accelerations,
     mass_matrix,
     mass_matrix_components,
+    net_joint_forces,
     potential_energy,
     total_energy,
     ztcf_accelerations,
@@ -307,6 +308,36 @@ class TestBaseForce:
         qddot = np.array([1.0, -0.5])
         result = base_force(moving_state, qddot, params)
         assert result["magnitude"] >= 0
+
+    def test_static_hang_pivot_holds_weight_up(self) -> None:
+        """Analytic: hanging at rest the pivot reaction is +(m1+m2+mClub) g in y (#5522)."""
+        p = PendulumParams(m1=2.0, m2=3.0, mClub=1.0, L1=0.7, L2=1.0)
+        result = base_force(np.zeros(4), np.zeros(2), p)
+        assert result["fx"] == pytest.approx(0.0, abs=1e-12)
+        assert result["fy"] == pytest.approx((2.0 + 3.0 + 1.0) * p.g, rel=1e-12)
+
+    @pytest.mark.parametrize(
+        ("state", "qddot"),
+        [
+            (np.array([0.0, 0.0, 0.0, 0.0]), np.zeros(2)),
+            (np.array([0.3, -0.2, 1.0, -0.5]), np.array([0.5, -0.3])),
+            (np.array([-0.8, 0.9, -2.0, 3.0]), np.array([4.0, -6.0])),
+        ],
+    )
+    def test_equals_shoulder_reaction_of_net_joint_forces(
+        self, params: PendulumParams, state: np.ndarray, qddot: np.ndarray
+    ) -> None:
+        """One convention: base_force is the shoulder entry of net_joint_forces (#5522)."""
+        expected = net_joint_forces(state, qddot, params)["shoulder"]
+        result = base_force(state, qddot, params)
+        assert result["fx"] == pytest.approx(expected[0], rel=1e-12, abs=1e-12)
+        assert result["fy"] == pytest.approx(expected[1], rel=1e-12, abs=1e-12)
+
+    def test_arm_mass_acts_at_wrist_not_midpoint(self) -> None:
+        """Arm m1 is a point mass at L1: a pure shoulder acceleration scales with L1 (#5522)."""
+        p = PendulumParams(m1=2.0, m2=1e-9, mClub=1e-9, L1=0.7, L2=1.0)
+        result = base_force(np.zeros(4), np.array([1.0, 0.0]), p)
+        assert result["fx"] == pytest.approx(p.m1 * p.L1 * 1.0, rel=1e-6)
 
 
 # ---------------------------------------------------------------------------

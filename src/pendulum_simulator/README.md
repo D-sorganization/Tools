@@ -36,6 +36,26 @@ The simulator provides three models of increasing complexity:
    (right and left) connect through a shared club, forming 4 holonomic
    constraints that close the loop.
 
+### Mass convention (double pendulum)
+
+The double pendulum uses one club convention everywhere (Python, Rust, web;
+Tools #5431): a **uniform shaft** of mass `m2` and length `L2` (COM at `L2/2`,
+centroidal inertia `m2*L2**2/12`) plus a **head point mass** `mClub` at `L2`.
+The arm is a point mass `m1` at the wrist. With `Mc = m2 + mClub`,
+`s = (m2/2 + mClub)*L2` and `Jw = (m2/3 + mClub)*L2**2`:
+
+- `M11 = (m1 + Mc)*L1**2 + Jw + 2*s*L1*cos(phi)`, `M12 = Jw + s*L1*cos(phi)`,
+  `M22 = Jw`
+- Coriolis `h = -s*L1*sin(phi)`; gravity `G2 = s*g*sin(theta1 + phi)`
+- joint forces use `Mc` and the club COM acceleration; energy uses `Jw`/`s`
+
+Putting every gram at the tip (`m2 -> 0`) recovers the older lumped model.
+`double_pendulum_golf.club_inertia.distal_inertia` is the single source; the
+Rust `DistalInertia` and TypeScript `distalInertia` mirror it and are pinned by
+`tests/fixtures/distal_inertia_cases.json`. The shipped driver preset is
+`m2 = 0.1078 kg`, `mClub = 0.2022 kg` at `L2 = 1.10 m`, which reproduces the
+real club's mass and wrist inertia.
+
 ## Golfer Upper-Body Model
 
 The golfer model uses an 8-DOF closed kinematic loop with the following topology:

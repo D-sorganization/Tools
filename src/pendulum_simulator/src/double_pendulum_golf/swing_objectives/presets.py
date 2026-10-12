@@ -3,15 +3,16 @@
 The preset exists so the surface and the CLI start from the same, feasible
 configuration rather than each inventing one.
 
-**The club masses here are inertia-matched equivalents, not real club masses.**
-:mod:`double_pendulum_golf.physics` puts segment 2's whole mass at the tip, so
-the mass that belongs there is the one reproducing the real club's inertia about
-the wrist — 0.238 kg for a driver, against a real 0.310 kg. The earlier preset
-lumped 0.50 kg at the tip, overstating that inertia and the arm/club coupling by
-2.1x, which forced the optimizer to reverse the hub torque hard enough to stop
-the hands. That artifact was published as a structural limit of the model before
-being caught (#4785). See
-:mod:`double_pendulum_golf.swing_objectives.club_equivalence`.
+**The club masses are real masses on the canonical distributed club.**
+:mod:`double_pendulum_golf.physics` models the club as a uniform shaft plus a
+head point mass at the tip (Tools #5431). The shaft and head masses are solved
+from the measured driver so that the model reproduces the real club's total mass
+(0.310 kg) and its inertia about the wrist (0.2881 kg m^2) exactly:
+``m2 = 0.108 kg`` (shaft plus grip) and ``mClub = 0.202 kg`` (head) at the
+modelled 1.10 m shaft; see
+:func:`~double_pendulum_golf.swing_objectives.club_equivalence.distributed_club_split`.
+The earlier preset used a 0.238 kg point-mass "equivalent tip mass", which was a
+workaround for the old lumped model (#4785) and would now double-correct.
 
 Duration and torque budget carry deliberate **slack** above the golfer's minimum
 sweep time: run the comparison too close to that bound and the constraints pin
@@ -31,7 +32,7 @@ import numpy as np
 from double_pendulum_golf.physics import JointLimits, PendulumParams, TorqueClamp
 from double_pendulum_golf.swing_objectives.club_equivalence import (
     DRIVER_SPEC,
-    equivalent_tip_mass,
+    distributed_club_split,
 )
 from double_pendulum_golf.swing_objectives.downswing_config import DownswingConfig
 
@@ -48,9 +49,10 @@ _ARM_BOUND_RAD = 4.0
 #: Modelled shaft length, wrist to clubhead, in m.
 _SHAFT_LENGTH_M = 1.10
 
-#: Tip mass reproducing a real driver's inertia about the wrist. Not the club's
-#: actual mass — see the module docstring and #4785.
-_DRIVER_TIP_MASS_KG = equivalent_tip_mass(DRIVER_SPEC, shaft_length_m=_SHAFT_LENGTH_M)
+#: Shaft and head masses reproducing a real driver's mass and wrist inertia.
+_DRIVER_SHAFT_MASS_KG, _DRIVER_HEAD_MASS_KG = distributed_club_split(
+    DRIVER_SPEC, shaft_length_m=_SHAFT_LENGTH_M
+)
 
 
 @dataclass(frozen=True, slots=True)
@@ -60,11 +62,10 @@ class GolferPreset:
     Attributes:
         name: Human-readable preset name.
         arm_mass_kg: Lumped arm mass, modeled as a point mass at the hands.
-        shaft_mass_kg: Shaft share of the inertia-matched tip mass. Together
-            with ``clubhead_mass_kg`` this is the equivalent mass that
-            reproduces a real club's inertia about the wrist, not the real
-            club's mass.
-        clubhead_mass_kg: Head share of the inertia-matched tip mass.
+        shaft_mass_kg: Uniform shaft mass (including grip). With
+            ``clubhead_mass_kg`` it reproduces a real club's mass and inertia
+            about the wrist.
+        clubhead_mass_kg: Head point mass at the tip.
         arm_length_m: Hub-to-hands distance.
         club_length_m: Club length.
         top_arm_angle_rad: Arm angle at the top of the backswing.
@@ -77,8 +78,8 @@ class GolferPreset:
 
     name: str
     arm_mass_kg: float = 5.0
-    shaft_mass_kg: float = _DRIVER_TIP_MASS_KG * 0.6
-    clubhead_mass_kg: float = _DRIVER_TIP_MASS_KG * 0.4
+    shaft_mass_kg: float = _DRIVER_SHAFT_MASS_KG
+    clubhead_mass_kg: float = _DRIVER_HEAD_MASS_KG
     arm_length_m: float = 0.65
     club_length_m: float = _SHAFT_LENGTH_M
     top_arm_angle_rad: float = 2.618

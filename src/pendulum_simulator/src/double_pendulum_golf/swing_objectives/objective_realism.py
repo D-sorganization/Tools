@@ -12,7 +12,8 @@ duration (0.28 s), the five objectives land within **0.6% of each other** on
 total deviation from heuristic reference kinematics, while all of them sit an
 order of magnitude outside the bands. The spread between objectives is far
 smaller than the gap between any of them and a real swing. Even with the
-corrected inertia-matched club (0.238 kg tip mass), ~24% modeled braking
+corrected inertia-matched club (lumped-limit result: 0.238 kg tip mass, from before
+the distributed convention of #5431; re-run under #5523), ~24% modeled braking
 remains during the downswing to achieve club release.
 
 So the objective is **not** what makes these swings unrealistic. The dominant

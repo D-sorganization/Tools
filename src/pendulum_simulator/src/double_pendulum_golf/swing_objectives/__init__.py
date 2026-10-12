@@ -24,6 +24,8 @@ from double_pendulum_golf.swing_objectives.club_equivalence import (
     DRIVER_SPEC,
     SEVEN_IRON_SPEC,
     RealClubSpec,
+    distributed_club_split,
+    distributed_coupling_error,
     equivalent_tip_mass,
     wrist_inertia,
 )
@@ -162,4 +164,6 @@ __all__ = [
     "SEVEN_IRON_SPEC",
     "wrist_inertia",
     "equivalent_tip_mass",
+    "distributed_club_split",
+    "distributed_coupling_error",
 ]

@@ -263,6 +263,7 @@
           "tests/shared/python/launch_monitor/test_player_covariation_contract.py",
           "tests/shared/python/process_calculators/test_flare_calculator_engine.py",
           "tests/shared/python/signal_toolkit/test_calculus.py",
+          "tests/shared/python/signal_toolkit/test_import_identity.py",
           "tests/shared/python/signal_toolkit/test_signal_loader.py",
           "tests/shared/python/ui/test_headless_import.py",
           "tests/shared/python/utils/test_bootstrap.py",

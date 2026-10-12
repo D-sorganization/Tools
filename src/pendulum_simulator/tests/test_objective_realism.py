@@ -25,7 +25,10 @@ from double_pendulum_golf.swing_objectives.reference_kinematics import (
     TOUR_DRIVER_BANDS,
 )
 
-_PARAMS = PendulumParams(m1=5.0, m2=0.30, L1=0.65, L2=1.10, mClub=0.20)
+# Head-only limit of the canonical club (Tools #5431): the whole 0.50 kg sits at the
+# tip, which is exactly the old lumped model these baselines were measured on
+# (Jw = 0.50 * 1.10**2).  Using the limit keeps the recorded numbers valid.
+_PARAMS = PendulumParams(m1=5.0, m2=1e-15, L1=0.65, L2=1.10, mClub=0.50)
 _SUBSET = ("clubhead_speed", "centrifugal", "coriolis")
 
 

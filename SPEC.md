@@ -319,7 +319,8 @@ zero terminal torque, one wrist reversal, and a minimum low-torque transition
 are enforced. Deterministic global sampling combines physical seed families
 with multi-elite coefficient refinement. The registered version-3 artifact also
 corrects the web club from the stale 0.50 kg lumped tip mass to the authoritative
-0.2381186694 kg inertia-equivalent driver and exposes the symmetric 250 N m hub
+inertia-equivalent driver (since #5431 a uniform 0.1078 kg shaft plus a 0.2022 kg head
+point mass; the 0.2381186694 kg tip mass of the lumped model is superseded) and exposes the symmetric 250 N m hub
 budget. Its certified smooth speed strategy reaches about 53.7 m/s. Results now
 include every sampled channel, a cross-objective rank matrix, Pareto fronts,
 control work/RMS/peak/slew/transition diagnostics, and all polynomial
@@ -5946,6 +5947,20 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-12 | #5559 | SCADA F10: advisory-only flatline and command/feedback-mismatch detectors (asset_health.py) |
+| 2026-10-12 | #5573 | Keep Signal structural shape validation active under optimized Python; Reconcile inherited Tools development-log findings through the reviewed, lossless RM provenance migration.; Preserve Signal fitting empty-input and failed-fit ndarray identity contracts in the canonical Tools provider.; Bind Signal toolkit import aliases before package children capture provider classes. |
+| 2026-10-12 | #5557 | SCADA F04: append-only ConfigRevision history (SHA-256 canonical JSON, credential fingerprint), atomic with PersistedConfig upsert, admin-gated list/get endpoints, revision_id on config write |
+| 2026-10-12 | #5568 | pendulum_simulator: base_force (Python + TS) is the shoulder reaction of net_joint_forces: pivot holds weight up (+mg), arm m1 at the wrist; archived base_force_y / control_vector outputs need re-run under #5523 |
+| 2026-10-12 | #5554 | pendulum_simulator: distributed club convention (uniform shaft m2 + head point mass) canonical in dynamics, forces, energy, transfer diagnostics, Rust and web; presets retuned to the real driver split |
+| 2026-10-12 | #5558 | SCADA F11: PLC driver registry (register_driver/capabilities) replaces the PLCFactory if/elif; broken registered drivers raise instead of falling back to the simulator |
+| 2026-10-12 | #5561 | SCADA F02: HMI DataAgeIndicator renders the scan data_source (held/fault/simulated/unknown) instead of inferring CONNECTED from frame age |
+| 2026-10-12 | #5552 | Connect calculator_state_mixin signals to bound methods so calculators are freed by refcount, not only cyclic GC |
+| 2026-10-12 | #5555 | movement_optimizer: BodyModel uses shared standard gravity (9.80665), add DbC accessors (torque_joint_count, has_com_samples, max_abs_swing_angle_rad, frame_count) and an injectable force-arrow renderer hook on draw_force_arrows (UD parity) |
+| 2026-10-12 | #5550 | SCADA F07: publish firmware trip latch tri-state (plc_trip_latch) and first-out tag (first_out_tag_id) from one register read; InterlocksPanel shows PLC trip and an explicit unknown state |
+| 2026-10-12 | #5549 | fix(ci): requalify libfreetype6 2.13.2+dfsg-1ubuntu0.2 for the Rate PyQt font-stack guard; all 10 PyQt references pass unchanged under existing tolerances (Closes #5518, Closes #5501) |
+| 2026-10-11 | #5514 | Sync the agent-identity managed block and vendored automerge_guard.py: the owner's personal token is an approved agent identity |
+| 2026-10-11 | #5517 | Install pyserial alongside pymodbus so pymodbus 3.16.0 imports in CI and the p1am/test extras |
+| 2026-10-11 | #5505 | Bootstrap rustup with --no-modify-path before dtolnay/rust-toolchain so CI stops appending CARGO_HOME env lines to runner shell profiles (Repository_Management#2064) |
 | 2026-10-10 | #5507 | dependabot: group cargo and pip minor/patch updates into one weekly PR per ecosystem |
 | 2026-10-10 | #5503 | Add a provisional triangle-multiset lamina mass-moment kernel with an explicit 3-value result tuple; update renderer, artifact-QA, and exemplar contract tests; keep calculation/exemplar registration blocked pending executable freshness and source/consumer authority |
 | 2026-10-10 | #5481 | Deterministic 1440x900 visual-baseline candidates: settle tab-pill transitions before capture and pin determinism with a two-session test |

@@ -235,11 +235,95 @@
       }
     },
     {
+      "authority_status": "provisional",
+      "bytes_lf": 8662,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "03c6b20488089e47be8721816df244dde3af99a873c796f5f085324697ce83ca",
+      "family": "control-systems-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-ASSET-HEALTH-PY-4076843E3D78",
+      "language": "python",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/backend/asset_health.py",
+      "purpose": "Advisory asset-health detectors: flatline and command/feedback mismatch.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FindingKind",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "HealthFinding",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TimedSample",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ADVISORY",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "detect_command_feedback_mismatch",
+            "signature": "cmd: Sequence[TimedSample], fb: Sequence[TimedSample], *, tolerance: float, window: float"
+          },
+          {
+            "kind": "function",
+            "name": "detect_flatline",
+            "signature": "samples: Sequence[TimedSample], *, min_duration: float, tolerance: float"
+          }
+        ],
+        "test_paths": [
+          "src/p1am_control_system/backend/tests/test_asset_health.py"
+        ],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "not-applicable",
-      "bytes_lf": 11998,
+      "bytes_lf": 15285,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "027996dc55bdd51f1d6f44cbbc84c9070a83eab513d76889a5d2a025ad6aaba1",
+      "content_sha256_lf": "2c49c1c7384154253bf8c3a50b0724742f7ea8eff5e36946e0a9d3ee6d5bd481",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-AUDIT-PY-F859122DA277",
       "language": "python",
@@ -301,8 +385,18 @@
           },
           {
             "kind": "function",
+            "name": "actor_from_headers",
+            "signature": "headers: Any"
+          },
+          {
+            "kind": "function",
             "name": "credential_fingerprint",
             "signature": "key: str | None"
+          },
+          {
+            "kind": "function",
+            "name": "migrate_audit_event_columns",
+            "signature": "bind: Any"
           },
           {
             "kind": "function",
@@ -313,6 +407,11 @@
             "kind": "function",
             "name": "resolve_actor",
             "signature": "api_key: str | None"
+          },
+          {
+            "kind": "function",
+            "name": "set_audit_context",
+            "signature": "request: Any, *, reason: str | None=None, before: Any=None, after: Any=None"
           }
         ],
         "test_paths": [
@@ -431,10 +530,91 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5130,
+      "bytes_lf": 6090,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0b52684b5d34dd3d7d1992a03bfd965d3e761816aea45d5ae2d2f21c85d0193f",
+      "content_sha256_lf": "bbe964a864ca967b024a1b6299c171c5b0f8823f5ae687bbd351903aed0cf04b",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-CONFIG-REVISIONS-PY-210D2998D24E",
+      "language": "python",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/backend/config_revisions.py",
+      "purpose": "Append-only configuration revision history (SCADA F04 slice, issue #5527).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "mapped",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [
+          "/api/config/revisions",
+          "/api/config/revisions/{revision_id}"
+        ],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ConfigRevision",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "append_revision",
+            "signature": "session: Session, key: str, value_json: str, credential_fingerprint: str | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "canonical_json",
+            "signature": "payload: dict[str, object]"
+          },
+          {
+            "kind": "function",
+            "name": "create_config_revision_router",
+            "signature": "get_session: Callable[..., Iterator[Session]], require_admin: Callable[..., None]"
+          },
+          {
+            "kind": "function",
+            "name": "get_revision",
+            "signature": "session: Session, revision_id: int"
+          },
+          {
+            "kind": "function",
+            "name": "list_revisions",
+            "signature": "session: Session, key: str, limit: int=_MAX_LIST"
+          }
+        ],
+        "test_paths": [
+          "src/p1am_control_system/backend/tests/test_config_revisions.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6144,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "51314c50592e1598cfb5680f4bd26a282e79a0e9f2dbee4169067b427fb9b613",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-CONFIG-STORE-PY-62F1873A2264",
       "language": "python",
@@ -487,12 +667,12 @@
           {
             "kind": "function",
             "name": "save_config",
-            "signature": "session: Session, key: str, payload: dict[str, object]"
+            "signature": "session: Session, key: str, payload: dict[str, object], credential_fingerprint: str | None=None"
           },
           {
             "kind": "function",
             "name": "save_model",
-            "signature": "session: Session, key: str, model: BaseModel"
+            "signature": "session: Session, key: str, model: BaseModel, credential_fingerprint: str | None=None"
           }
         ],
         "test_paths": [
@@ -1600,10 +1780,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10967,
+      "bytes_lf": 11057,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c50701337d90c60bfb0213d1562a31da29a70e20a0fb210b09450777f199d800",
+      "content_sha256_lf": "f2a9aac3d733fdf0fcd91a787dd1921f3eb2eb9562242780ac83b0549a8d3642",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-DATABASE-PY-7B6D97B2ADA4",
       "language": "python",
@@ -1777,10 +1957,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 12063,
+      "bytes_lf": 12595,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "0abbc1ee87469284d15a4ba1eb5919c7907bbb2fd1b0bf4425fa11128f9601a4",
+      "content_sha256_lf": "05fb530958bd0229381a3eb795b9fd204e3121ee1565d2a6a3717e7dbdfc03d0",
       "family": "control-systems-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-HARDWARE-PY-5C4DB8BBEC0B",
       "language": "python",
@@ -1820,12 +2000,22 @@
         "public_surfaces": [
           {
             "kind": "class",
+            "name": "FirstOutStatus",
+            "signature": null
+          },
+          {
+            "kind": "class",
             "name": "NonFiniteValueError",
             "signature": null
           },
           {
             "kind": "constant",
             "name": "ESTOP_RESET_COIL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FIRST_OUT_UNKNOWN",
             "signature": null
           },
           {
@@ -2082,10 +2272,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 51356,
+      "bytes_lf": 52601,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "5a6299c75fd342fe696b7ae30a13af87359ea61d64e27baea4fefaf1d64e9a2f",
+      "content_sha256_lf": "cf8d27d31f94eccc29cd90a8f1f53fd557d8e860d88544207c0a8cadd48035e4",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-MAIN-PY-C47A4D7AC436",
       "language": "python",
@@ -2163,7 +2353,7 @@
           {
             "kind": "function",
             "name": "acknowledge_alarm",
-            "signature": "tag_id: str, payload: AlarmAckPayload | None=None, db: Session=Depends(get_session)"
+            "signature": "tag_id: str, request: Request, payload: AlarmAckPayload | None=None, db: Session=Depends(get_session)"
           },
           {
             "kind": "function",
@@ -2308,7 +2498,7 @@
           {
             "kind": "function",
             "name": "update_routing",
-            "signature": "config: RoutingConfig"
+            "signature": "config: RoutingConfig, request: Request"
           }
         ],
         "test_paths": [],
@@ -2322,10 +2512,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 30581,
+      "bytes_lf": 32121,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ca9d4f4a8b2e41d1128d203d93af6fbcc492a559373a56157e700a443caf773c",
+      "content_sha256_lf": "abbe1220ced0d8c55338281546286c3c10d9ca5395d7eb26dd226da3f822a6ef",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-MODBUS-CLIENT-PY-2770F6F53F58",
       "language": "python",
@@ -2378,10 +2568,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 9491,
+      "bytes_lf": 10276,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "1ceb9f6d55f1591b6c8e80399312d87245a6cf5c0a3dd3ec79f0d989c26e4388",
+      "content_sha256_lf": "6b3f82f54f9da81dafbb217fe3bef239c6b2323010a947c281575c0e997fd253",
       "family": "control-systems-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-MODBUS-CODEC-PY-BC02AD876958",
       "language": "python",
@@ -2458,6 +2648,11 @@
             "kind": "constant",
             "name": "UNMAPPED_TAG_NAME",
             "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "decode_first_out_status",
+            "signature": "tripped: int, tag_index: int"
           },
           {
             "kind": "function",
@@ -3299,10 +3494,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 2817,
+      "bytes_lf": 6478,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "dad8d00486e9fa022154fa4867fdea01c844df4b9affaf0f3f7a4a222cd11e1c",
+      "content_sha256_lf": "43cc63f39b03af6770ce758f641bdc86e4d1103309d2e913c2b12e95a11b0597",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-PLC-FACTORY-PY-CB81A14A6CAF",
       "language": "python",
@@ -3339,8 +3534,48 @@
         "public_surfaces": [
           {
             "kind": "class",
+            "name": "DriverCapabilities",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PLCDriverError",
+            "signature": null
+          },
+          {
+            "kind": "class",
             "name": "PLCFactory",
             "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DRIVERS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_REAL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SIM",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "get_driver",
+            "signature": "name: str"
+          },
+          {
+            "kind": "function",
+            "name": "register_driver",
+            "signature": "name: str, factory: DriverFactory, capabilities: DriverCapabilities"
+          },
+          {
+            "kind": "function",
+            "name": "registered_drivers",
+            "signature": ""
           }
         ],
         "test_paths": [
@@ -3354,10 +3589,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5587,
+      "bytes_lf": 6029,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2ef13ff6c35541c82eaee0b3c0c76bef4dbe6447cbe569b61e8656a33aba9a74",
+      "content_sha256_lf": "a36ac01ac33d3e1dbe00dee6ed9ccf0c58c30f10623069e2c1a7c416e53ecfc1",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-PLC-INTERFACE-PY-937ABFABA6AD",
       "language": "python",
@@ -3408,10 +3643,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 16618,
+      "bytes_lf": 18128,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3f1fcd74006f9882c8c985168474146dc21317104c2c91806e0ea3fb142fee9d",
+      "content_sha256_lf": "0bf2365c2966f83694a893e3581f821a24d60cab86a6b53f7e556532110c4f7a",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-POLL-RUNTIME-PY-FB742ACD5D2F",
       "language": "python",
@@ -3857,6 +4092,84 @@
           }
         ],
         "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 7196,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "495e256a97d8fc8739a6bea0ae95cc362ecaee06547d593806af14203e42e785",
+      "family": "control-systems-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-PROCEDURE-PY-5DBAE83E7B42",
+      "language": "python",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/backend/procedure.py",
+      "purpose": "Declarative procedure model with HOLD/ABORT, gated to the simulated driver.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "NotSimulatedDriverError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Procedure",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ProcedureExecutor",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ProcedureState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Step",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/p1am_control_system/backend/tests/test_procedure.py"
+        ],
         "unit_mentions": [
           "s"
         ],
@@ -7281,10 +7594,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 57318,
+      "bytes_lf": 57586,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2a07da96fc2a076131f0a7e4d61bc1cc5dbff013d57c03aacfeb3e0022eac2f4",
+      "content_sha256_lf": "9e26b39b8f60ecee9150763a75d80a584e0033f2cc1b8e291545d69e0129a5b0",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-APP-TSX-4019D5C4C9BE",
       "language": "typescript-react",
@@ -8134,10 +8447,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5837,
+      "bytes_lf": 6688,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "db83ceb393c3f87c3dd015b2003e4f5b1d1cae633dc41a114eb4b79e2de3735b",
+      "content_sha256_lf": "436c72130dde42fcc497e92e4957b96d228d5aab99c2ab05180503972ca47db5",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-API-SCHEMAS-TEST-TS-7F575D6773FF",
       "language": "typescript",
@@ -8178,10 +8491,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9881,
+      "bytes_lf": 10457,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "1cae095ed70c42ffe43cfe6b4ea18992a4d6a1ecfed215611797d9565a8de567",
+      "content_sha256_lf": "b8953cebfb71801332bf710ddae20f9ec9e221c93d7688722119f7cebeaf0c7a",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-API-SCHEMAS-TS-C0488D58187C",
       "language": "typescript",
@@ -8790,10 +9103,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1872,
+      "bytes_lf": 3703,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2cf61fb6ed599ddacb45f98c321562492ccac1e2923d310d57d050676e1b4fcc",
+      "content_sha256_lf": "0c8329629bf7fc92b067122d435dc28d5e7a59a9f3320ea9b6d0560441eb64a4",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-COMPONENTS-DATAAGEINDICATOR-TEST-TSX-24E2F72BFA7B",
       "language": "typescript-react",
@@ -8834,10 +9147,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 2095,
+      "bytes_lf": 2975,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9b14bc36b7f2acac9dcbd8b596ba3e9b8515ee19b88c4f8fec129a6d5e81d6bc",
+      "content_sha256_lf": "b0afedd51059b36064d351f2efc787de651635035d00f0092d6f048fb0233d51",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-COMPONENTS-DATAAGEINDICATOR-TSX-9C10B8A422DE",
       "language": "typescript-react",
@@ -9475,10 +9788,52 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5813,
+      "bytes_lf": 2486,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0f91904360c2f5d91c3bdc90b7987bf3943f87552fbcbd921c5187986add149a",
+      "content_sha256_lf": "f8b329b0f986d7cd1e57532588df56971687c0ecf74b10fbce187d4da553aeda",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-COMPONENTS-INTERLOCKSPANEL-TEST-TSX-A76B6A4AF914",
+      "language": "typescript-react",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/frontend/src/components/InterlocksPanel.test.tsx",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7018,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c94c066f1a55b1968703100d61ab8964d8d56daa02996356f0a81c08df69ac52",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-COMPONENTS-INTERLOCKSPANEL-TSX-514979AB7E0D",
       "language": "typescript-react",
@@ -13457,10 +13812,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11032,
+      "bytes_lf": 11800,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "bb2a05e8ffef2c784039171298a77e7e8f1f0f570fcefc8259fc0d26d57d0ea2",
+      "content_sha256_lf": "b2c5d6fa7f5a1ae9189b08e5568af92b0f22fbdca961897582e24ae92776a216",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-HOOKS-USETELEMETRYSTREAM-TEST-TS-E16B785455D8",
       "language": "typescript",
@@ -13501,10 +13856,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 15839,
+      "bytes_lf": 16805,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4cbe66c9fc1be3e87051a59f51e36d8eae1c2691be0ac027ddf1e1c1bf58c644",
+      "content_sha256_lf": "0e8dff9f7f550d25aed79e6a1b3a3b0081d16b3431780c0a4c6d2782a265e4a5",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-HOOKS-USETELEMETRYSTREAM-TS-C55BD08AA063",
       "language": "typescript",
@@ -13790,10 +14145,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 16234,
+      "bytes_lf": 16660,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "dcd3f83e9b1a838e58b00e32034c835acfafbdb985bbacfaaad4b37874988f02",
+      "content_sha256_lf": "2e263ad0abcc8de227b93df2d82c187a030b6ef95f29393f1a2bd5f2980bac73",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-INDEX-CSS-96CD5A6A9009",
       "language": "css",
@@ -14123,10 +14478,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1976,
+      "bytes_lf": 2841,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "db1b073781f6e63878369c790ba04937bd28ef7cc72485e99d01866e6c21fde9",
+      "content_sha256_lf": "83e59435b9c2177f80c834341c9293f17c4ceeb9d9c017c9439d66eeeb6a0571",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-LIB-DATAAGE-TEST-TS-1DC52DA3401F",
       "language": "typescript",
@@ -14167,10 +14522,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3067,
+      "bytes_lf": 4669,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2a422eee2dc8363646c84b1a90f328161be3e889ead562a59affa3bf6db1568d",
+      "content_sha256_lf": "fc9a8bd66f1bc6028a35831e279d99fc829d1b873fd952a1169a3aab09340596",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-LIB-DATAAGE-TS-9B9DF5AC92A7",
       "language": "typescript",
@@ -14207,6 +14562,11 @@
         "public_surfaces": [
           {
             "kind": "export",
+            "name": "DATA_SOURCES",
+            "signature": null
+          },
+          {
+            "kind": "export",
             "name": "DATA_STALE_MS",
             "signature": null
           },
@@ -14217,7 +14577,22 @@
           },
           {
             "kind": "export",
+            "name": "DataSource",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "DataStatus",
+            "signature": null
+          },
+          {
+            "kind": "export",
             "name": "dataFreshness",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "dataStatus",
             "signature": null
           },
           {

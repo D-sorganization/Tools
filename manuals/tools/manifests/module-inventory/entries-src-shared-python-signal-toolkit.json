@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "provisional",
-      "bytes_lf": 2556,
+      "bytes_lf": 2705,
       "classification": "calculation",
       "classification_basis": "path-marker:signal",
-      "content_sha256_lf": "cfb4c661ff7e3df66988eaa8411c79d54f355a7352396011338feda28b0e49e3",
+      "content_sha256_lf": "52d1c85edf1d385570bbbd7cf0aada78eaff935bf697c482ac88480966fa7671",
       "family": "signal-processing-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-INIT-PY-74FCAD42F570",
       "language": "python",
@@ -357,10 +357,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 21685,
+      "bytes_lf": 22094,
       "classification": "calculation",
       "classification_basis": "path-marker:signal",
-      "content_sha256_lf": "39e948c145c56bd079324eee1f8af903860677b4264135f63f9cc4a90e751298",
+      "content_sha256_lf": "5b49197f18e61d862826b11d134644abec7362a5a1b44b90fdb5488b10c4c975",
       "family": "signal-processing-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-CORE-PY-EF5835A09E43",
       "language": "python",
@@ -422,9 +422,12 @@
           "tests/benchmarks/test_bilateral_rust_perf.py",
           "tests/shared/python/signal_toolkit/test_adaptive_filter.py",
           "tests/shared/python/signal_toolkit/test_calculus.py",
+          "tests/shared/python/signal_toolkit/test_core_structural_guards.py",
           "tests/shared/python/signal_toolkit/test_filters.py",
           "tests/shared/python/signal_toolkit/test_fitting.py",
+          "tests/shared/python/signal_toolkit/test_fitting_consumer_contracts.py",
           "tests/shared/python/signal_toolkit/test_generators.py",
+          "tests/shared/python/signal_toolkit/test_import_identity.py",
           "tests/shared/python/signal_toolkit/test_limits.py",
           "tests/shared/python/signal_toolkit/test_noise.py",
           "tests/shared/python/signal_toolkit/test_signal_loader.py",
@@ -439,7 +442,8 @@
           "rad/s"
         ],
         "validation_paths": [
-          "src/shared/python/signal_toolkit/tests/test_bound_validation_3182.py"
+          "src/shared/python/signal_toolkit/tests/test_bound_validation_3182.py",
+          "tests/shared/python/signal_toolkit/test_fitting_consumer_contracts.py"
         ]
       }
     },
@@ -580,10 +584,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 26078,
+      "bytes_lf": 26132,
       "classification": "calculation",
       "classification_basis": "path-marker:signal",
-      "content_sha256_lf": "41f2f951a11e972e706844f7144be886ed52222807e0dd8a5c1d029d8f4d2ef2",
+      "content_sha256_lf": "27272e45bf96df2335dc041a4a3f5a82b1e8c21800785e3be3875bf0c1801071",
       "family": "signal-processing-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-FITTING-PY-38C1998A2327",
       "language": "python",
@@ -609,7 +613,7 @@
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "unavailable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -666,6 +670,8 @@
         "test_paths": [
           "src/shared/python/signal_toolkit/tests/test_signal_toolkit.py",
           "tests/shared/python/signal_toolkit/test_fitting.py",
+          "tests/shared/python/signal_toolkit/test_fitting_consumer_contracts.py",
+          "tests/shared/python/signal_toolkit/test_import_identity.py",
           "tests/shared/python/signal_toolkit/test_widget_mixins.py"
         ],
         "unit_mentions": [
@@ -673,7 +679,9 @@
           "g",
           "s"
         ],
-        "validation_paths": []
+        "validation_paths": [
+          "tests/shared/python/signal_toolkit/test_fitting_consumer_contracts.py"
+        ]
       }
     },
     {
@@ -754,6 +762,7 @@
         "test_paths": [
           "src/shared/python/signal_toolkit/tests/test_signal_toolkit.py",
           "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
+          "tests/shared/python/signal_toolkit/test_import_identity.py",
           "tests/shared/python/signal_toolkit/test_signal_loader.py",
           "tests/test_signal_core_coverage.py"
         ],

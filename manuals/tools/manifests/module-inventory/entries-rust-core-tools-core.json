@@ -2591,6 +2591,7 @@
           "src/movement_optimizer/tests/test_gait_sts.py",
           "src/movement_optimizer/tests/test_parameter_validation.py",
           "src/p1am_control_system/backend/tests/test_alarm_nan_bad_quality.py",
+          "src/p1am_control_system/backend/tests/test_asset_health.py",
           "src/p1am_control_system/backend/tests/test_backend_p1am_safety.py",
           "src/p1am_control_system/backend/tests/test_interlock_defaults_contract.py",
           "src/p1am_control_system/backend/tests/test_modbus_codec.py",
@@ -3330,6 +3331,7 @@
           "src/pendulum_simulator/tests/test_swing_signals.py",
           "src/pendulum_simulator/tests/test_toolstrip_elements.py",
           "src/shared/python/plot_engine/tests/test_specs.py",
+          "src/shared/python/sidekick/tests/test_calculator_state_mixin_lifetime.py",
           "src/shared/python/signal_toolkit/tests/__init__.py",
           "src/shared/python/signal_toolkit/tests/test_bilateral_rust_parity.py",
           "src/shared/python/signal_toolkit/tests/test_bound_validation_3182.py",
@@ -3370,6 +3372,7 @@
           "tests/shared/python/sidekick/lab/mocap/test_temporal_contracts.py",
           "tests/shared/python/signal_toolkit/test_adaptive_filter.py",
           "tests/shared/python/signal_toolkit/test_calculus.py",
+          "tests/shared/python/signal_toolkit/test_fitting_consumer_contracts.py",
           "tests/shared/python/signal_toolkit/test_generators.py",
           "tests/shared/python/signal_toolkit/test_limits.py",
           "tests/shared/python/signal_toolkit/test_signal_loader.py",
@@ -3396,6 +3399,7 @@
           "tests/shared/python/ai/test_adapter_contract.py",
           "tests/shared/python/data_processing/test_data_processing_contract.py",
           "tests/shared/python/sidekick/lab/mocap/test_temporal_contracts.py",
+          "tests/shared/python/signal_toolkit/test_fitting_consumer_contracts.py",
           "tests/unit/lower_body_model/test_public_api_contract.py"
         ]
       }

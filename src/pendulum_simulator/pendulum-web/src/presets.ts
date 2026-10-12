@@ -3,10 +3,11 @@
  *
  * Realistic defaults:
  *   Arms: m1 = 5.0 kg, L1 = 0.65 m (shoulder to wrist, typical human)
- *   Club equivalent: m2 + mClub = 0.2381186694 kg at L2 = 1.10 m.
- *   This is the tip mass that reproduces a real driver's wrist inertia, not
- *   the real club's physical mass. The 60/40 split matches the Python preset;
- *   this two-point model depends on their sum.
+ *   Club (canonical distributed convention, Tools #5431): a uniform shaft of
+ *   mass m2 = 0.1078 kg plus a head point mass mClub = 0.2022 kg at L2 = 1.10 m.
+ *   The total (0.310 kg) is the real driver's mass and the wrist inertia
+ *   Jw = (m2/3 + mClub) L2^2 = 0.2881 kg m^2 matches the real club exactly.
+ *   Same split as the Python preset (`distributed_club_split`).
  */
 import type { PendulumParams, TorqueFunc } from './physics';
 import { makePolynomialTorque, makePendulumParams } from './physics';
@@ -58,7 +59,7 @@ const _preset = (
 export const PRESETS: Preset[] = [
     _preset(
         'Golf Swing (passive wrist)',
-        5.0, 0.1428712016528925, 0.09524746776859502,
+        5.0, 0.10782199586776868, 0.2021780041322313,
         0.65, 1.10,        // arms 0.65 m, shaft 1.10 m
         0.1, 0.05, 0.02, 0.01,
         -60, 80, 0, 0,
@@ -68,7 +69,7 @@ export const PRESETS: Preset[] = [
     ),
     _preset(
         'Golf Swing (active wrist)',
-        5.0, 0.1428712016528925, 0.09524746776859502,
+        5.0, 0.10782199586776868, 0.2021780041322313,
         0.65, 1.10,
         0.1, 0.05, 0.02, 0.01,
         -60, 80, 0, 0,
@@ -84,17 +85,17 @@ export const PRESETS: Preset[] = [
         -60, 80, 0, 0,
         [-30, 12], [0],
         2.0,
-        'Heavier clubhead (350g) — more momentum transfer, slower release.',
+        'Heavier clubhead (350g head on a 300g uniform shaft) — more momentum transfer, slower release.',
     ),
     _preset(
         'Free Double Pendulum',
-        1.0, 1.0, 0.0,    // no clubhead for classic pendulum
+        1.0, 1.0, 0.0,    // uniform 1 kg rod as the second link, no head mass
         1.0, 1.0,
         0.0, 0.0, 0.0, 0.0,
         90, 0, 0, 0,
         [0], [0],
         5.0,
-        'No torques, no clubhead — chaotic dynamics demonstrating energy-conserving Lagrangian mechanics.',
+        'No torques, no clubhead — a point-mass arm and a uniform-rod second link (not two point masses); chaotic, energy-conserving Lagrangian dynamics.',
     ),
     _preset(
         'Straight Drop',
@@ -104,6 +105,6 @@ export const PRESETS: Preset[] = [
         5, 0, 0, 0,
         [0], [0],
         3.0,
-        'Near-vertical release with no driving torques.',
+        'Near-vertical release with no driving torques; the second link is a uniform rod.',
     ),
 ];

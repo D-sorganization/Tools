@@ -20,6 +20,7 @@ RUN pip install --no-cache-dir \
     pydantic-settings==2.14.2 \
     sqlmodel==0.0.38 \
     pymodbus==3.13.0 \
+    pyserial==3.5 \
     websockets==16.0 \
     python-multipart==0.0.29 \
     numpy==2.3.5

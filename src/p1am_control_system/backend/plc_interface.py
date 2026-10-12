@@ -2,6 +2,8 @@ import abc
 import asyncio
 from typing import TYPE_CHECKING, Any, Optional
 
+from hardware import FIRST_OUT_UNKNOWN, FirstOutStatus
+
 if TYPE_CHECKING:
     from models import RoutingConfig
 
@@ -118,6 +120,15 @@ class BasePLCClient(abc.ABC):
             bool: True if successful, False otherwise.
         """
         pass
+
+    async def read_first_out_status(self) -> FirstOutStatus:
+        """Return the firmware trip latch and first-out broker tag.
+
+        Concrete default is ``FIRST_OUT_UNKNOWN``: a client with no firmware
+        trip register must never report "clear" or invent a tag (#5528). Must
+        not raise or drop the control link on failure.
+        """
+        return FIRST_OUT_UNKNOWN
 
     async def write_pid_setpoint(self, pid_index: int, value: float) -> bool:
         """Write a PID loop's setpoint (the AO pass-through command path).

@@ -51,6 +51,8 @@ export interface TelemetryState {
   alicats: AlicatMFCState[];
   activeAlarms: ActiveAlarm[];
   eStopActive: boolean;
+  firstOutTagId: number | null;
+  plcTripLatch: "tripped" | "clear" | "unknown";
   powerSupplyStatus: PowerSupplyStatus | undefined;
   temperatureStatus: TemperatureStatus | undefined;
   /**
@@ -59,6 +61,11 @@ export interface TelemetryState {
    * what the UI must render and grey out on.
    */
   dataAgeMs: number | undefined;
+  /**
+   * `data_source` reported by the latest frame, or `undefined` when that frame
+   * omitted it. Never defaults to "live" (#5525); classify with `dataStatus`.
+   */
+  dataSource: string | undefined;
   /** {@link dataAgeMs} classified into live / stale / offline. */
   freshness: DataFreshness;
   /**
@@ -153,6 +160,8 @@ export function useTelemetryStream(
   const [alicats, setAlicats] = useState<AlicatMFCState[]>([]);
   const [activeAlarms, setActiveAlarms] = useState<ActiveAlarm[]>([]);
   const [eStopActive, setEStopActive] = useState<boolean>(false);
+  const [firstOutTagId, setFirstOutTagId] = useState<number | null>(null);
+  const [plcTripLatch, setPlcTripLatch] = useState<"tripped" | "clear" | "unknown">("unknown");
   const [powerSupplyStatus, setPowerSupplyStatus] = useState<
     PowerSupplyStatus | undefined
   >(undefined);
@@ -166,6 +175,7 @@ export function useTelemetryStream(
   const [lastFrameAt, setLastFrameAt] = useState<number | undefined>(undefined);
   const [nowMs, setNowMs] = useState<number>(() => Date.now());
   const [droppedAlarmCount, setDroppedAlarmCount] = useState<number>(0);
+  const [dataSource, setDataSource] = useState<string | undefined>(undefined);
 
   const wsRef = useRef<WebSocket | null>(null);
   const onConnectRef = useRef(options.onConnect);
@@ -265,6 +275,12 @@ export function useTelemetryStream(
         if (typeof frame.e_stop_active === "boolean") {
           setEStopActive(frame.e_stop_active);
         }
+        if (frame.plc_trip_latch !== undefined) {
+          setPlcTripLatch(frame.plc_trip_latch);
+        }
+        if (frame.first_out_tag_id !== undefined) {
+          setFirstOutTagId(frame.first_out_tag_id);
+        }
         if (frame.power_supply) {
           const next = frame.power_supply as PowerSupplyStatus;
           setPowerSupplyStatus((prev) =>
@@ -287,12 +303,15 @@ export function useTelemetryStream(
               : next,
           );
         }
+        // Always overwrite: a frame without the key must not inherit "live".
+        setDataSource(frame.data_source);
         markLive();
         return true;
       }
       // Legacy fallback: a bare array of tag values.
       if (Array.isArray(raw) && raw.length === TAG_COUNT) {
         pushTags(raw as number[]);
+        setDataSource(undefined);
         markLive();
         return true;
       }
@@ -391,9 +410,12 @@ export function useTelemetryStream(
     alicats,
     activeAlarms,
     eStopActive,
+    firstOutTagId,
+    plcTripLatch,
     powerSupplyStatus,
     temperatureStatus,
     dataAgeMs,
+    dataSource,
     freshness,
     isConnected: freshness === "live",
     droppedAlarmCount,
