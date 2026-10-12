@@ -7281,10 +7281,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 57318,
+      "bytes_lf": 57404,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2a07da96fc2a076131f0a7e4d61bc1cc5dbff013d57c03aacfeb3e0022eac2f4",
+      "content_sha256_lf": "b14c657b2eae363f3420fe688a6ca24f9c69a79bd2850ee5f8eddaec099caa54",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-APP-TSX-4019D5C4C9BE",
       "language": "typescript-react",
@@ -8134,10 +8134,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5837,
+      "bytes_lf": 6688,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "db83ceb393c3f87c3dd015b2003e4f5b1d1cae633dc41a114eb4b79e2de3735b",
+      "content_sha256_lf": "436c72130dde42fcc497e92e4957b96d228d5aab99c2ab05180503972ca47db5",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-API-SCHEMAS-TEST-TS-7F575D6773FF",
       "language": "typescript",
@@ -8178,10 +8178,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9881,
+      "bytes_lf": 10084,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "1cae095ed70c42ffe43cfe6b4ea18992a4d6a1ecfed215611797d9565a8de567",
+      "content_sha256_lf": "2ae0c36ecb16ffa4c8cc73cf392606f031603a886d8bf6da43f9359b29166ede",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-API-SCHEMAS-TS-C0488D58187C",
       "language": "typescript",
@@ -8790,10 +8790,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1872,
+      "bytes_lf": 3703,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2cf61fb6ed599ddacb45f98c321562492ccac1e2923d310d57d050676e1b4fcc",
+      "content_sha256_lf": "0c8329629bf7fc92b067122d435dc28d5e7a59a9f3320ea9b6d0560441eb64a4",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-COMPONENTS-DATAAGEINDICATOR-TEST-TSX-24E2F72BFA7B",
       "language": "typescript-react",
@@ -8834,10 +8834,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 2095,
+      "bytes_lf": 2975,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9b14bc36b7f2acac9dcbd8b596ba3e9b8515ee19b88c4f8fec129a6d5e81d6bc",
+      "content_sha256_lf": "b0afedd51059b36064d351f2efc787de651635035d00f0092d6f048fb0233d51",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-COMPONENTS-DATAAGEINDICATOR-TSX-9C10B8A422DE",
       "language": "typescript-react",
@@ -13457,10 +13457,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11032,
+      "bytes_lf": 11800,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "bb2a05e8ffef2c784039171298a77e7e8f1f0f570fcefc8259fc0d26d57d0ea2",
+      "content_sha256_lf": "b2c5d6fa7f5a1ae9189b08e5568af92b0f22fbdca961897582e24ae92776a216",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-HOOKS-USETELEMETRYSTREAM-TEST-TS-E16B785455D8",
       "language": "typescript",
@@ -13501,10 +13501,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 15839,
+      "bytes_lf": 16293,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4cbe66c9fc1be3e87051a59f51e36d8eae1c2691be0ac027ddf1e1c1bf58c644",
+      "content_sha256_lf": "e89b300596d4dae4e49417b8356b13d9bc6301dff6b10b335058c31628ebe193",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-HOOKS-USETELEMETRYSTREAM-TS-C55BD08AA063",
       "language": "typescript",
@@ -13790,10 +13790,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 16234,
+      "bytes_lf": 16660,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "dcd3f83e9b1a838e58b00e32034c835acfafbdb985bbacfaaad4b37874988f02",
+      "content_sha256_lf": "2e263ad0abcc8de227b93df2d82c187a030b6ef95f29393f1a2bd5f2980bac73",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-INDEX-CSS-96CD5A6A9009",
       "language": "css",
@@ -14123,10 +14123,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1976,
+      "bytes_lf": 2841,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "db1b073781f6e63878369c790ba04937bd28ef7cc72485e99d01866e6c21fde9",
+      "content_sha256_lf": "83e59435b9c2177f80c834341c9293f17c4ceeb9d9c017c9439d66eeeb6a0571",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-LIB-DATAAGE-TEST-TS-1DC52DA3401F",
       "language": "typescript",
@@ -14167,10 +14167,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3067,
+      "bytes_lf": 4669,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2a422eee2dc8363646c84b1a90f328161be3e889ead562a59affa3bf6db1568d",
+      "content_sha256_lf": "fc9a8bd66f1bc6028a35831e279d99fc829d1b873fd952a1169a3aab09340596",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-FRONTEND-SRC-LIB-DATAAGE-TS-9B9DF5AC92A7",
       "language": "typescript",
@@ -14207,6 +14207,11 @@
         "public_surfaces": [
           {
             "kind": "export",
+            "name": "DATA_SOURCES",
+            "signature": null
+          },
+          {
+            "kind": "export",
             "name": "DATA_STALE_MS",
             "signature": null
           },
@@ -14217,7 +14222,22 @@
           },
           {
             "kind": "export",
+            "name": "DataSource",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "DataStatus",
+            "signature": null
+          },
+          {
+            "kind": "export",
             "name": "dataFreshness",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "dataStatus",
             "signature": null
           },
           {

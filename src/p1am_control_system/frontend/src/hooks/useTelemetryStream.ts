@@ -59,6 +59,11 @@ export interface TelemetryState {
    * what the UI must render and grey out on.
    */
   dataAgeMs: number | undefined;
+  /**
+   * `data_source` reported by the latest frame, or `undefined` when that frame
+   * omitted it. Never defaults to "live" (#5525); classify with `dataStatus`.
+   */
+  dataSource: string | undefined;
   /** {@link dataAgeMs} classified into live / stale / offline. */
   freshness: DataFreshness;
   /**
@@ -166,6 +171,7 @@ export function useTelemetryStream(
   const [lastFrameAt, setLastFrameAt] = useState<number | undefined>(undefined);
   const [nowMs, setNowMs] = useState<number>(() => Date.now());
   const [droppedAlarmCount, setDroppedAlarmCount] = useState<number>(0);
+  const [dataSource, setDataSource] = useState<string | undefined>(undefined);
 
   const wsRef = useRef<WebSocket | null>(null);
   const onConnectRef = useRef(options.onConnect);
@@ -287,12 +293,15 @@ export function useTelemetryStream(
               : next,
           );
         }
+        // Always overwrite: a frame without the key must not inherit "live".
+        setDataSource(frame.data_source);
         markLive();
         return true;
       }
       // Legacy fallback: a bare array of tag values.
       if (Array.isArray(raw) && raw.length === TAG_COUNT) {
         pushTags(raw as number[]);
+        setDataSource(undefined);
         markLive();
         return true;
       }
@@ -394,6 +403,7 @@ export function useTelemetryStream(
     powerSupplyStatus,
     temperatureStatus,
     dataAgeMs,
+    dataSource,
     freshness,
     isConnected: freshness === "live",
     droppedAlarmCount,
