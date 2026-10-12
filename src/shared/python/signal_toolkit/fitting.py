@@ -128,6 +128,8 @@ class SinusoidFitter:
         """
         if signal is None:
             raise ValueError("signal must be provided")
+        if len(signal.time) == 0:
+            raise ValueError("Signal cannot be empty")
         t = signal.time - signal.time[0]  # Shift to start at 0
         y = signal.values
 
@@ -153,7 +155,7 @@ class SinusoidFitter:
             success = True
             message = "Fit converged successfully"
         except (RuntimeError, ValueError, TypeError) as e:
-            popt = np.array(initial_guess)
+            popt = np.asarray(initial_guess)
             pcov = None
             success = False
             message = f"Fit failed: {e}"
@@ -284,6 +286,8 @@ class ExponentialFitter:
         """
         if signal is None:
             raise ValueError("signal must be provided")
+        if len(signal.time) == 0:
+            raise ValueError("Signal cannot be empty")
         t = signal.time - signal.time[0]
         y = signal.values
 
@@ -314,7 +318,7 @@ class ExponentialFitter:
             success = True
             message = "Fit converged"
         except (RuntimeError, ValueError, TypeError) as e:
-            popt = np.array(initial_guess)
+            popt = np.asarray(initial_guess)
             pcov = None
             success = False
             message = f"Fit failed: {e}"
@@ -361,6 +365,8 @@ class ExponentialFitter:
         """
         if signal is None:
             raise ValueError("signal must be provided")
+        if len(signal.time) == 0:
+            raise ValueError("Signal cannot be empty")
         t = signal.time - signal.time[0]
         y = signal.values
 
@@ -387,7 +393,7 @@ class ExponentialFitter:
             success = True
             message = "Fit converged"
         except (RuntimeError, ValueError, TypeError) as e:
-            popt = np.array(initial_guess)
+            popt = np.asarray(initial_guess)
             pcov = None
             success = False
             message = f"Fit failed: {e}"
@@ -436,6 +442,8 @@ class LinearFitter:
         """
         if signal is None:
             raise ValueError("signal must be provided")
+        if len(signal.time) == 0:
+            raise ValueError("Signal cannot be empty")
         t = signal.time - signal.time[0]
         y = signal.values
 
@@ -508,6 +516,8 @@ class PolynomialFitter:
         """
         if signal is None:
             raise ValueError("signal must be provided")
+        if len(signal.time) == 0:
+            raise ValueError("Signal cannot be empty")
         t = signal.time - signal.time[0]
         y = signal.values
 
@@ -633,7 +643,7 @@ class CustomFunctionFitter:
             success = True
             message = "Fit converged"
         except (RuntimeError, ValueError, TypeError) as e:
-            popt = np.array(initial_guess)
+            popt = np.asarray(initial_guess)
             pcov = None
             success = False
             message = f"Fit failed: {e}"

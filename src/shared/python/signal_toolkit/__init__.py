@@ -76,3 +76,10 @@ __all__ = [
     "HAS_POLYNOMIAL_GENERATOR",
     "HAS_WIDGET",
 ]
+
+# Keep legacy top-level and canonical spellings on one module object (#12278).
+import sys as _sys
+
+_pkg = _sys.modules[__name__]
+_sys.modules["shared.python.signal_toolkit"] = _pkg
+_sys.modules["signal_toolkit"] = _pkg
