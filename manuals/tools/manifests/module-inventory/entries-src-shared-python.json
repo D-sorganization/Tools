@@ -334,6 +334,7 @@
         "public_surfaces": [],
         "test_paths": [
           "src/movement_optimizer/tests/test_scipy_dependency_contract.py",
+          "src/p1am_control_system/backend/tests/test_asset_health.py",
           "src/p1am_control_system/backend/tests/test_safety_state_machine.py",
           "src/p1am_control_system/backend/tests/test_strenum_compat.py",
           "src/python/src/utils/test_utils.py",

@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "159768ac3c7848857737587d4b05afe46031bfb8fe1310db3aabeee4ffab873f",
+      "content_sha256_lf": "d4bc6259adfeb63e08399394212487e29a9e1f31fb650aae42537bbd1aadcc10",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -387,8 +387,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-optimizer-gui.json"
     },
     {
-      "content_sha256_lf": "652ba234895548255898434687cac3c77c769e22ecb915bb147baba68cc92810",
-      "entry_count": 254,
+      "content_sha256_lf": "f529a7556f7fb7a73ea3fcf35af53ed14442e2c6987da3af181a4307aa31ae68",
+      "entry_count": 255,
       "package": "src/p1am_control_system",
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
@@ -597,7 +597,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "f3172e968168925a8dbd4381fb04b129252ea81083e905ef8fef9f79a582af16",
+      "content_sha256_lf": "8166805f98331a5f9b2cfc7f5a36dda1dc9301aa99212fbbed280837203ad667",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
