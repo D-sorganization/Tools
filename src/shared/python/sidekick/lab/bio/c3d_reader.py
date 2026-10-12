@@ -23,15 +23,22 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, cast
 
-try:
-    import ezc3d
-except ImportError:
-    ezc3d = None  # type: ignore[assignment, unused-ignore]
-
 import numpy as np
 import pandas as pd
 
 from ...utils.logging import get_logger, log_execution_time
+from ...utils.native_dll_guard import NativeDllConflictError, import_ezc3d
+
+# Single guarded import (D-sorganization/UpstreamDrift issue 12065): ezc3d must
+# never be imported directly, because on Windows it can collide with the
+# ezc3d.dll bundled in the OpenSim SDK. The failure is kept so ``_load`` can
+# raise the diagnosable error instead of a generic "not installed" message.
+_EZC3D_IMPORT_ERROR: ImportError | None = None
+try:
+    ezc3d = import_ezc3d()
+except ImportError as _ezc3d_exc:
+    ezc3d = None  # type: ignore[assignment, unused-ignore]
+    _EZC3D_IMPORT_ERROR = _ezc3d_exc
 
 __all__ = [
     "BIOMECHANICAL_MARKER_MAX_M",
@@ -757,6 +764,8 @@ class C3DDataReader:
             if not self.file_path.exists():
                 raise FileNotFoundError(f"File not found: {self.file_path}")
             if ezc3d is None:
+                if isinstance(_EZC3D_IMPORT_ERROR, NativeDllConflictError):
+                    raise _EZC3D_IMPORT_ERROR
                 raise ImportError(
                     "ezc3d is required for C3D file reading. "
                     "Install it with: pip install ezc3d\n"
