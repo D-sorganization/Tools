@@ -24,7 +24,7 @@ import logging
 import os
 import time
 from collections.abc import Callable, Iterator
-from typing import Any
+from typing import Any, cast
 
 from database import DB_FILE
 from models import DataSource, EventLog, TagLog, ensure_utc
@@ -629,7 +629,7 @@ def _dbstat_bytes(session: Session) -> dict[str, int] | None:
         )
     except Exception:  # pragma: no cover - depends on the host SQLite build
         return None
-    return {str(name): int(size or 0) for name, size in rows}
+    return {str(name): int(cast("int", size or 0)) for name, size in rows}
 
 
 def _sum_for_table(stats: dict[str, int], table: str) -> int:
