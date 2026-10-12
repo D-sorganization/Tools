@@ -766,6 +766,61 @@ async function evaluateRobustness(best: EvaluatedCandidate, config: BrowserOptim
     return summarizeRobustness(scores);
 }
 
+/** Distance from the registered equal-speed / equal-effort contract; 0 means qualified. */
+function contractShortfall(series: ForceSourceSeries, c: ForceSourceConstraints): number {
+    const effort = actuatorEffortMetrics(series);
+    let shortfall = Math.max(0, effort.total_positive_work_j / c.maxPositiveActuatorWorkJ - 1)
+        + Math.max(0, effort.squared_torque_effort_nm2_s / c.maxSquaredTorqueEffortNm2S - 1);
+    if (c.studyMode === 'equal_speed') {
+        const speed = series.clubhead_speed_m_s[series.clubhead_speed_m_s.length - 1] ?? 0;
+        shortfall += Math.max(0, (c.targetClubheadSpeedMps - speed) / c.speedToleranceMps)
+            + Math.max(0, (speed - c.targetClubheadSpeedMps - c.speedToleranceMps) / c.speedToleranceMps);
+    }
+    return shortfall;
+}
+
+const NEAR_MISS_SEED_ROUNDS = 24;
+
+/**
+ * Seed the search when the global candidate set contains golf-like swings but
+ * none inside the narrow registered speed window (or effort caps).
+ *
+ * The contract itself is never relaxed: swings are ranked by how far they sit
+ * from the contract, the neighbourhoods of the closest ones are explored, and
+ * only candidates that satisfy the full contract are returned.
+ */
+async function seedQualifiedFromNearMisses(
+    config: BrowserOptimizationConfig,
+    candidates: readonly ForceSourceCandidate[],
+): Promise<EvaluatedCandidate[]> {
+    const c = config.constraints;
+    if (c.studyMode === 'common_bounds') return [];
+    const open: BrowserOptimizationConfig = {
+        ...config, constraints: { ...c, studyMode: 'common_bounds' },
+    };
+    const ranked = new Map<string, { candidate: ForceSourceCandidate; shortfall: number }>();
+    const rank = (candidate: ForceSourceCandidate) => {
+        const key = candidateKey(candidate);
+        if (ranked.has(key)) return;
+        const evaluated = evaluateCandidate(open, candidate);
+        if (evaluated) ranked.set(key, { candidate, shortfall: contractShortfall(evaluated.scenario.series, c) });
+    };
+    candidates.forEach(rank);
+    const closest = () => [...ranked.values()]
+        .sort((left, right) => left.shortfall - right.shortfall)
+        .slice(0, Math.max(c.eliteCandidateCount, 4));
+    for (let round = 0; round < NEAR_MISS_SEED_ROUNDS; round++) {
+        const frontier = closest();
+        if (frontier.length === 0 || frontier[0].shortfall === 0) break;
+        frontier.flatMap(item => refinementNeighbors(item.candidate, config)).forEach(rank);
+        await new Promise<void>(resolve => setTimeout(resolve, 0));
+    }
+    return [...ranked.values()]
+        .filter(item => item.shortfall === 0)
+        .map(item => evaluateCandidate(config, item.candidate))
+        .filter((item): item is EvaluatedCandidate => item !== null);
+}
+
 export async function optimizeForceSource(
     config: BrowserOptimizationConfig,
     onProgress?: (progress: BrowserOptimizationProgress) => void,
@@ -792,6 +847,15 @@ export async function optimizeForceSource(
         if (completed % 12 === 0) {
             onProgress?.({ completed, total: candidates.length, bestScore: best?.score ?? -Infinity, objective: config.objective });
             await new Promise<void>(resolve => setTimeout(resolve, 0));
+        }
+    }
+    if (!best) {
+        for (const seeded of await seedQualifiedFromNearMisses(config, candidates)) {
+            qualifiedScores.push(seeded.score);
+            evaluatedPool.set(candidateKey(seeded.candidate), seeded);
+            elite.push(seeded);
+            elite = elite.sort(evaluatedOrder).slice(0, config.constraints.eliteCandidateCount);
+            if (preferredCandidate(seeded, best)) best = seeded;
         }
     }
     if (!best) throw new Error('No candidate reached the qualified, non-looping golf impact event');

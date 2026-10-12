@@ -129,9 +129,11 @@ The checked-in version-4 artifacts each run all six objectives under an
 independent research contract: 2,048 deterministic global/seeded candidates,
 16 nominal elite starts, 12 coefficient-refinement rounds, 1 ms integration,
 0.5 N m wrist-coefficient granularity, and 25 held-out robustness trials. They
-use the repository-authoritative inertia-matched driver equivalent
-(`m2 + mClub = 0.2381186694 kg`) and a selectable symmetric 250 N m hub-torque
-budget.
+use the repository-authoritative inertia-matched driver: since Tools #5431 a
+uniform shaft `m2 = 0.1078 kg` plus a head point mass `mClub = 0.2022 kg`
+(mass 0.310 kg, wrist inertia 0.2881 kg m^2; the earlier lumped
+`m2 + mClub = 0.2381186694 kg` tip mass is superseded), and a selectable
+symmetric 250 N m hub-torque budget.
 
 The default equal-speed study requires 52.30–53.05 m/s, no more than 525 J of
 positive actuator work, no more than 7,500 N²m²s of squared torque effort, and

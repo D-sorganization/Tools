@@ -319,7 +319,8 @@ zero terminal torque, one wrist reversal, and a minimum low-torque transition
 are enforced. Deterministic global sampling combines physical seed families
 with multi-elite coefficient refinement. The registered version-3 artifact also
 corrects the web club from the stale 0.50 kg lumped tip mass to the authoritative
-0.2381186694 kg inertia-equivalent driver and exposes the symmetric 250 N m hub
+inertia-equivalent driver (since #5431 a uniform 0.1078 kg shaft plus a 0.2022 kg head
+point mass; the 0.2381186694 kg tip mass of the lumped model is superseded) and exposes the symmetric 250 N m hub
 budget. Its certified smooth speed strategy reaches about 53.7 m/s. Results now
 include every sampled channel, a cross-objective rank matrix, Pareto fronts,
 control work/RMS/peak/slew/transition diagnostics, and all polynomial

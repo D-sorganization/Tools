@@ -39,12 +39,15 @@ arrive at impact with these rates without violating actuation bounds.
 
 Three regimes follow:
 
-* **Point-mass clubhead** (``r2 = L2``, ``I2 = 0``) — the model shipped in
-  :mod:`double_pendulum_golf.physics` — the bracket is **identically zero for
-  every parameter value**. All of segment 2's mass sits at the tip, so the
-  club's kinetic energy *is* ``0.5 * me * v_head**2`` and any arm motion is
-  energy that never reached the clubhead. The optimizer stops the hands because
-  stopping them is optimal.
+* **Point-mass clubhead** (``r2 = L2``, ``I2 = 0``) — the model
+  :mod:`double_pendulum_golf.physics` shipped before the distributed-club
+  convention of Tools #5431, and still the ``m2 -> 0`` limit — the bracket is
+  **identically zero for every parameter value**. All of segment 2's mass sits at
+  the tip, so the club's kinetic energy *is* ``0.5 * me * v_head**2`` and any arm
+  motion is energy that never reached the clubhead. The optimizer stopped the
+  hands because stopping them was optimal. (The shipped model is now a uniform
+  shaft plus head mass, whose bracket is negative; re-running the conclusions
+  drawn from the point-mass model is tracked in Tools #5523.)
 * **A real driver** (``m2 = 0.310 kg``, ``r2 = 0.867 m``, ``L2 = 1.143 m``,
   ``I2 = 0.0551 kg m^2``; or modelled ``L2 = 1.10 m``) gives a **negative** bracket:
   the instantaneous optimum wants the hands moving *backward* through impact.
@@ -78,7 +81,7 @@ from dataclasses import dataclass
 import numpy as np
 import numpy.typing as npt
 
-from double_pendulum_golf.physics import PendulumParams, mass_matrix
+from double_pendulum_golf.physics import PendulumParams, club_inertia, mass_matrix
 
 __all__ = [
     "EnergyOptimalRates",
@@ -121,15 +124,17 @@ def _club_properties(
 ) -> tuple[float, float, float]:
     """Resolve club mass, COM distance and inertia, defaulting to the shipped model.
 
-    The shipped model treats segment 2 as a point mass at the tip, so the
-    defaults are ``r2 = L2`` and ``I2 = 0``.
+    The shipped model is the canonical distributed club (uniform shaft plus head
+    mass), so the defaults are its total mass, COM distance and centroidal inertia
+    from :func:`double_pendulum_golf.physics.club_inertia`.
 
     Pre: any supplied override is non-negative, and the COM lies on the club.
     Post: returns ``(mass, com, inertia)`` with mass positive.
     """
-    mass = params.m2 + params.mClub if club_mass_kg is None else club_mass_kg
-    com = params.L2 if club_com_m is None else club_com_m
-    inertia = 0.0 if club_inertia_kgm2 is None else club_inertia_kgm2
+    shipped = club_inertia(params)
+    mass = shipped.mass_kg if club_mass_kg is None else club_mass_kg
+    com = shipped.com_m if club_com_m is None else club_com_m
+    inertia = shipped.icm_kg_m2 if club_inertia_kgm2 is None else club_inertia_kgm2
 
     if not (mass > 0.0 and np.isfinite(mass)):
         raise ValueError(f"club_mass_kg must be positive, got {mass}")
@@ -150,7 +155,7 @@ def impact_hand_speed_coefficient(
 
     The sign of this quantity is the sign of the energy-optimal hand speed at
     impact; its zero is the reason a point-mass-clubhead optimizer stops the
-    hands. See the module docstring for the derivation.
+    hands (that point-mass case needs explicit overrides now). See the module docstring for the derivation.
 
     Notice that the bracket ``[ I2 - m2 * r2 * (L2 - r2) ]`` is the same factor
     that governs the arm/club coupling error
@@ -161,12 +166,13 @@ def impact_hand_speed_coefficient(
         params: Double pendulum parameters. Supplies ``L1`` and ``L2``, and the
             default point-mass club properties.
         club_mass_kg: Club mass override. Defaults to ``m2 + mClub``.
-        club_com_m: Club centre-of-mass distance from the wrist. Defaults to
-            ``L2``, the shipped point-mass-at-the-tip assumption.
-        club_inertia_kgm2: Club inertia about its own COM. Defaults to zero.
+        club_com_m: Club centre-of-mass distance from the wrist. Defaults to the
+            canonical club's COM.
+        club_inertia_kgm2: Club inertia about its own COM. Defaults to the
+            canonical club's centroidal inertia.
 
     Returns:
-        The coefficient. Exactly zero for the shipped model.
+        The coefficient (zero only for a point-mass-at-the-tip club).
 
     Pre: overrides are non-negative and finite.
     Post: the result is finite.

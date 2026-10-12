@@ -18,8 +18,8 @@ Epic **#4698** is the active source-attribution extension introducing shared `fo
 **Five results that bind future work here** (regression-pinned):
 
 1. `P_coriolis_to_distal = 2 * P_centrifugal_to_distal` identically.
-2. Energy-optimal hand speed at impact is `L1*[I2 - m2*r2*(L2-r2)]`, identically zero for point-mass clubhead.
-3. Club preset was 2.1x too heavy at the tip (#4785): inertia about wrist requires `me = 0.238 kg` for driver, not 0.50.
+2. Energy-optimal hand speed at impact is `L1*[I2 - m2*r2*(L2-r2)]`, zero only for a tip-concentrated club. The shipped model is now distributed (#5431), so the coefficient is negative; #5523 re-runs conclusions built on the old zero.
+3. Canonical club (#5431): uniform shaft `m2` plus head point mass `mClub`; `Mc`, `s`, `Jw` come from `club_inertia.distal_inertia` (Rust/TS mirrors, shared JSON fixture). Driver preset `m2=0.1078`, `mClub=0.2022` (supersedes the #4785 tip-mass `me = 0.238`). Force-source JSON artifacts are STALE until #5553; `base_force` sign/arm-COM defects are #5522.
 4. Corrected model is golf-like: 49.7 m/s clubhead, 7.26 m/s hands, club/arm 3.46, inside measured bands.
 5. Browser separates equal-output efficiency from equal-input capacity.
 

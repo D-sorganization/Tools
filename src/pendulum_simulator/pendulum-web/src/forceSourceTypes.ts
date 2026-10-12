@@ -80,7 +80,7 @@ export const DEFAULT_OPTIMIZATION_CONSTRAINTS: ForceSourceConstraints = {
     integrationStepS: 0.002,
     maxArmTravelDeg: 180,
     maxClubTravelDeg: 270,
-    candidateBudget: 160,
+    candidateBudget: 2048,
     robustnessTrials: 9,
     posePerturbationDeg: 1,
     torquePerturbationFraction: 0.03,
