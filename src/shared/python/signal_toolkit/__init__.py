@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import importlib
 import logging
+import sys
 from typing import Any
 
 from shared.python.import_aliases import install_shared_import_aliases
@@ -35,6 +36,11 @@ from ._lazy_map import LAZY
 
 # Bind all public spellings before optional children import ``Signal``.
 install_shared_import_aliases()
+
+# Keep legacy top-level and canonical spellings on one module object (#12278).
+_pkg = sys.modules[__name__]
+sys.modules["shared.python.signal_toolkit"] = _pkg
+sys.modules["signal_toolkit"] = _pkg
 
 logger = logging.getLogger(__name__)
 
@@ -81,10 +87,3 @@ __all__ = [
     "HAS_POLYNOMIAL_GENERATOR",
     "HAS_WIDGET",
 ]
-
-# Keep legacy top-level and canonical spellings on one module object (#12278).
-import sys as _sys
-
-_pkg = _sys.modules[__name__]
-_sys.modules["shared.python.signal_toolkit"] = _pkg
-_sys.modules["signal_toolkit"] = _pkg
