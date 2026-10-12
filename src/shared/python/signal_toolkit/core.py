@@ -13,8 +13,14 @@ from typing import ClassVar
 import numpy as np
 
 try:
-    from shared.python.contracts import require
+    from shared.python.contracts import PreconditionError, require
 except ImportError:
+
+    class PreconditionError(ValueError):
+        """Fallback structural precondition error without shared contracts."""
+
+        def __init__(self, message: str, value: object = None) -> None:
+            super().__init__(message)
 
     def require(condition: object, message: str = "", *args: object) -> None:
         """Fallback DbC require when pycontracts is not installed."""
@@ -57,27 +63,26 @@ class Signal:
         self.time = np.asarray(self.time, dtype=np.float64)
         self.values = np.asarray(self.values, dtype=np.float64)
 
-        require(
-            self.time.ndim == 1,
-            f"Time must be 1D array, got shape {self.time.shape}",
-            self.time.shape,
-        )
+        if self.time.ndim != 1:
+            raise PreconditionError(
+                f"Time must be 1D array, got shape {self.time.shape}",
+                self.time.shape,
+            )
 
         if self.values.ndim == 1:
-            require(
-                len(self.time) == len(self.values),
-                f"Time and values must have same length: "
-                f"{len(self.time)} vs {len(self.values)}",
-            )
+            if len(self.time) != len(self.values):
+                raise PreconditionError(
+                    f"Time and values must have same length: "
+                    f"{len(self.time)} vs {len(self.values)}"
+                )
         elif self.values.ndim == 2:
-            require(
-                self.values.shape[0] == len(self.time),
-                f"First dimension of values must match time length: "
-                f"{self.values.shape[0]} vs {len(self.time)}",
-            )
+            if self.values.shape[0] != len(self.time):
+                raise PreconditionError(
+                    f"First dimension of values must match time length: "
+                    f"{self.values.shape[0]} vs {len(self.time)}"
+                )
         else:
-            require(
-                False,
+            raise PreconditionError(
                 f"Values must be 1D or 2D array, got shape {self.values.shape}",
                 self.values.shape,
             )
