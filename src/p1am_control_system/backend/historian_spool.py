@@ -21,10 +21,11 @@ Design by Contract & Safety:
 from __future__ import annotations
 
 import asyncio
+import json
 import logging
-import pickle
 import struct
 import threading
+import time
 import zlib
 from collections.abc import Awaitable, Callable, Mapping
 from pathlib import Path
@@ -88,8 +89,9 @@ class SpoolingSink:
         self._spooled_records: int = 0
         self._replayed_records: int = 0
         self._dropped_records: int = 0
+        self._quarantined_files: int = 0
         self._closed: bool = False
-        self._lock = threading.Lock()
+        self._lock = threading.RLock()
 
         self._checkpoint: int = self._read_checkpoint()
 
@@ -144,6 +146,37 @@ class SpoolingSink:
                 )
             self._write_checkpoint(0)
 
+    def _quarantine_spool(self) -> Path | None:
+        """Quarantine a corrupted/tampered spool file by moving it aside."""
+        with self._lock:
+            if not self._spool_path.exists() or self._spool_path.stat().st_size == 0:
+                self._reset_spool()
+                return None
+            timestamp = int(time.time())
+            quarantine_path = self._spool_path.with_name(
+                f"{self._spool_path.name}.quarantine.{timestamp}"
+            )
+            counter = 0
+            while quarantine_path.exists():
+                counter += 1
+                quarantine_path = self._spool_path.with_name(
+                    f"{self._spool_path.name}.quarantine.{timestamp}_{counter}"
+                )
+            try:
+                self._spool_path.rename(quarantine_path)
+                logger.warning(
+                    "Quarantined corrupt spool file %s -> %s",
+                    self._spool_path,
+                    quarantine_path,
+                )
+                self._quarantined_files += 1
+            except OSError as exc:
+                logger.warning(
+                    "Failed to quarantine spool file %s: %s", self._spool_path, exc
+                )
+            self._reset_spool()
+            return quarantine_path
+
     # -- Submit (producer side) -----------------------------------------------
 
     def submit(self, record: HistorianRecord) -> bool:
@@ -176,7 +209,9 @@ class SpoolingSink:
     def _append_to_spool(self, record: HistorianRecord) -> bool:
         """Encode and append a single record to the spool file under lock."""
         try:
-            payload = pickle.dumps(record, protocol=pickle.HIGHEST_PROTOCOL)
+            payload = json.dumps(record.to_dict(), separators=(",", ":")).encode(
+                "utf-8"
+            )
         except Exception as exc:
             logger.warning("Failed to serialize historian record: %s", exc)
             self._dropped_records += 1
@@ -273,13 +308,14 @@ class SpoolingSink:
                             break
 
                         try:
-                            record = pickle.loads(payload)
-                        except Exception:
-                            corruption_detected = True
-                            current_offset = file_size
-                            break
-
-                        if not isinstance(record, HistorianRecord):
+                            decoded = json.loads(payload.decode("utf-8"))
+                            record = HistorianRecord.from_dict(decoded)
+                        except Exception as exc:
+                            logger.warning(
+                                "Corrupt or tampered record payload in spool %s: %s",
+                                self._spool_path,
+                                exc,
+                            )
                             corruption_detected = True
                             current_offset = file_size
                             break
@@ -324,11 +360,11 @@ class SpoolingSink:
 
         if corruption_detected:
             logger.warning(
-                "Corrupt or truncated record in spool %s: skipping to EOF (%d)",
+                "Corrupt/tampered record in spool %s: quarantining file",
                 self._spool_path,
-                new_checkpoint,
             )
-            self._write_checkpoint(new_checkpoint)
+            await self._to_thread(self._quarantine_spool)
+            self._write_checkpoint(0)
 
         file_size = self._get_spool_size()
         if self._checkpoint >= file_size:
@@ -344,6 +380,7 @@ class SpoolingSink:
             "spooled_records": self._spooled_records,
             "replayed_records": self._replayed_records,
             "dropped_records": self._dropped_records,
+            "quarantined_files": self._quarantined_files,
             "spool_bytes": self._get_spool_size(),
         }
         stats_fn = getattr(self._downstream, "stats", None)

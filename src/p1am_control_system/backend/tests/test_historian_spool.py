@@ -346,3 +346,74 @@ def test_corrupted_checkpoint_file_handled_gracefully(
     assert any("failed to read checkpoint" in msg.lower() for msg in caplog.messages)
 
     sink.close()
+
+
+def test_historian_record_to_dict_and_from_dict_contract() -> None:
+    """Verify HistorianRecord serialization roundtrip and DbC validation."""
+    record = HistorianRecord(
+        tags={"temp": 21.5, "pressure": 101.3},
+        events=("ALARM_TRIP",),
+        quality="live",
+    )
+    data = record.to_dict()
+    assert isinstance(data, dict)
+    assert data["tags"] == {"temp": 21.5, "pressure": 101.3}
+    assert data["quality"] == "live"
+
+    restored = HistorianRecord.from_dict(data)
+    assert restored == record
+
+    # DbC validation on deserialization
+    with pytest.raises((ValueError, TypeError)):
+        HistorianRecord.from_dict({"tags": {"bad": "not_a_float"}})
+
+    with pytest.raises((ValueError, TypeError)):
+        HistorianRecord.from_dict({"tags": {"bad": float("nan")}})
+
+    with pytest.raises((ValueError, TypeError)):
+        HistorianRecord.from_dict({"quality": ""})
+
+
+@pytest.mark.asyncio
+async def test_tampered_spool_payload_is_rejected_and_quarantined(
+    tmp_path: Path, caplog: pytest.LogCaptureFixture
+) -> None:
+    """Verify tampered or corrupt spool files are quarantined and not executed."""
+    import struct
+    import zlib
+
+    downstream = FlakyDownstreamSink()
+    spool_path = tmp_path / "historian.spool"
+    checkpoint_path = tmp_path / "historian.checkpoint"
+
+    sink = SpoolingSink(
+        downstream, spool_path=spool_path, checkpoint_path=checkpoint_path
+    )
+    downstream.should_fail = True
+
+    rec_good = HistorianRecord(tags={"sensor": 42.0}, quality="live")
+    sink.submit(rec_good)
+
+    # Craft tampered record frame with valid magic/CRC but invalid payload
+    tampered_payload = (
+        b'{"tampered": true, "tags": {"bad": "injected_payload"}, "quality": ""}'
+    )
+    crc = zlib.crc32(tampered_payload) & 0xFFFFFFFF
+    header = struct.pack(">2sII", b"\xaa\x55", len(tampered_payload), crc)
+    with open(spool_path, "ab") as f:
+        f.write(header + tampered_payload)
+
+    downstream.should_fail = False
+    with caplog.at_level(logging.WARNING):
+        replayed = await sink.drain_once()
+
+    # Good record replayed, tampered record NOT executed or submitted
+    assert replayed == 1
+    assert downstream.submitted == [rec_good]
+
+    # Verify corrupt/tampered file was quarantined
+    quarantine_files = list(tmp_path.glob("historian.spool.quarantine*"))
+    assert len(quarantine_files) >= 1
+    assert any("quarantin" in msg.lower() for msg in caplog.messages)
+
+    sink.close()
