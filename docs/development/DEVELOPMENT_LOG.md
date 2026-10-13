@@ -1535,6 +1535,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5606 · Allowlist Merged Commit SHAs in test_f_matrix.py for Detect-Secrets
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5606
+- **Branch:** merged via #5607
+- **PR:** #5607
+- **Paths:** see #5607
+- **Started:** 2026-10-13
+- **Last verified:** 2026-10-13 (`f851bbc7`; collated from changes/5606-allowlist-merged-commit-shas-in-test-f-m.md)
+- **Summary:** Allowlist merged commit SHAs in test_f_matrix.py for detect-secrets
+- **Next step:** Shipped in PR #5607.
+
 ### DL-#5508 · Document and Enforce Coupled PyQt6-Sip 13.12.0 Deferral (#5508, Dependabot #5486)
 
 - **State:** shipped
