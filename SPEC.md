@@ -5947,6 +5947,9 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-13 | #5593 | \ Grafana provisioning-as-code: datasource and baseline dashboards\ |
+| 2026-10-13 | #5592 | Historian H5: expose queue depth, lag and drop counters |
+| 2026-10-13 | #5588 | Historian H1: Extract HistorianSink protocol for pluggable write backends; Historian H3: TimescaleDB schema migrations for hypertable compression continuous aggregates and retention |
 | 2026-10-13 | #5584 | Historian H1: Extract HistorianSink protocol for pluggable write backends; Historian H2: Durable on-disk spool so the historian survives restart (store-and-forward) |
 | 2026-10-13 | #5579 | Normalize compatible contract-level enums |
 | 2026-10-13 | #5583 | Historian H9: Historian operator/engineer documentation, runbook and ADR |

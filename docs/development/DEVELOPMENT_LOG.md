@@ -148,6 +148,32 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5545 · \ Grafana Provisioning-as-Code: Datasource and Baseline Dashboards\
+
+- **State:** in_review
+- **Owner:** unassigned
+- **Issue:** #5545
+- **Branch:** feat/5545-grafana-provisioning
+- **PR:** #5593
+- **Paths:** see #5593
+- **Started:** 2026-10-13
+- **Last verified:** 2026-10-13 (`cb98894c`; collated from changes/5545-grafana-provisioning-as-code-datasource.md)
+- **Summary:** \ Grafana provisioning-as-code: datasource and baseline dashboards\
+- **Next step:** \Merge the PR.\
+
+### DL-#5544 · Historian H5: Expose Queue Depth, Lag and Drop Counters
+
+- **State:** in_review
+- **Owner:** unassigned
+- **Issue:** #5544
+- **Branch:** feat/5544-historian-observability
+- **PR:** #5592
+- **Paths:** see #5592
+- **Started:** 2026-10-13
+- **Last verified:** 2026-10-13 (`fabb775b`; collated from changes/5544-historian-h5-expose-queue-depth-lag-and.md)
+- **Summary:** Historian H5: expose queue depth, lag and drop counters
+- **Next step:** Merge the PR.
+
 ### DL-#5541 · Historian H2: Durable On-Disk Spool so the Historian Survives Restart (Store-and-Forward)
 
 - **State:** in_review
@@ -167,10 +193,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #5540
 - **Branch:** feat/5540-historian-sink-protocol
-- **PR:** #5584
+- **PR:** #5584, #5588
 - **Paths:** see #5584
 - **Started:** 2026-10-13
-- **Last verified:** 2026-10-13 (`807a6bd0`; collated from changes/5540-historian-h1-extract-historiansink-proto.md)
+- **Last verified:** 2026-10-13 (`7c44b38f`; collated from changes/5540-historian-h1-extract-historiansink-proto.md)
 - **Summary:** Historian H1: Extract HistorianSink protocol for pluggable write backends
 - **Next step:** Merge the PR; unblocks subsequent historian slices.
 
@@ -1495,6 +1521,19 @@ reachable from any live state and `abandoned` from `parked`.
   definition.
 
 ## Shipped (Last 90 Days)
+
+### DL-#5542 · Historian H3: TimescaleDB Schema Migrations for Hypertable Compression Continuous Aggregates and Retention
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5542
+- **Branch:** merged via #5588
+- **PR:** #5588
+- **Paths:** see #5588
+- **Started:** 2026-10-13
+- **Last verified:** 2026-10-13 (`7c44b38f`; collated from changes/5542-historian-h3-timescaledb-schema-migratio.md)
+- **Summary:** Historian H3: TimescaleDB schema migrations for hypertable compression continuous aggregates and retention
+- **Next step:** Shipped in PR #5588.
 
 ### DL-#5529 · SCADA F08: /Api/Trends Gains Additive Quality Array and CSV Export Appends Quality Column (Unknown for NULL/Unrecognised)
 
