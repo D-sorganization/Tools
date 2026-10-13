@@ -107,7 +107,7 @@ class TimescaleSink:
 
         # Lazy import of driver
         try:
-            import asyncpg  # type: ignore[import-not-found]
+            import asyncpg
         except ImportError:
             logger.warning(
                 "asyncpg driver not installed; dropping %d records",
@@ -200,7 +200,7 @@ class FanOutSink:
 
     def submit(self, record: HistorianRecord) -> bool:
         """Submit to primary; forward to secondary with fault containment."""
-        accepted = self._primary.submit(record)
+        accepted = bool(self._primary.submit(record))
         try:
             self._secondary.submit(record)
         except Exception as exc:
@@ -211,11 +211,10 @@ class FanOutSink:
     async def drain_once(self) -> int:
         """Drain primary; drain secondary with fault containment."""
         drained_primary = self._primary.drain_once()
-        count = (
-            await drained_primary
-            if inspect.isawaitable(drained_primary)
-            else drained_primary
-        )
+        if inspect.isawaitable(drained_primary):
+            count = int(await drained_primary)
+        else:
+            count = int(drained_primary)
 
         try:
             drained_secondary = self._secondary.drain_once()
