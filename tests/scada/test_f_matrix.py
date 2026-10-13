@@ -78,32 +78,32 @@ def test_no_requirement_is_claimed_landed_without_being_reverified() -> None:
 MERGED_SLICES: dict[str, tuple[str, str, str]] = {
     "F01": (
         "#5551",
-        "b6e3e6709743fd6fa7dc6ab7a1d523603e51f4db",
+        "b6e3e6709743fd6fa7dc6ab7a1d523603e51f4db",  # pragma: allowlist secret
         "src/p1am_control_system/backend/audit.py",
     ),
     "F03": (
         "#5564",
-        "58002d408a08a8356506fb5d57d0a3edbdd57047",
+        "58002d408a08a8356506fb5d57d0a3edbdd57047",  # pragma: allowlist secret
         "src/p1am_control_system/backend/alarm_priority.py",
     ),
     "F04": (
         "#5557",
-        "2b528052b3a553df190f1d3262a758de79d5db73",
+        "2b528052b3a553df190f1d3262a758de79d5db73",  # pragma: allowlist secret
         "src/p1am_control_system/backend/config_revisions.py",
     ),
     "F08": (
         "#5560",
-        "649d7106cb532f025a3ba3432e4c64fd8d8b381d",
+        "649d7106cb532f025a3ba3432e4c64fd8d8b381d",  # pragma: allowlist secret
         "src/p1am_control_system/backend/data_capture.py",
     ),
     "F10": (
         "#5559",
-        "868194375430675dd2c9ad7d95f609784f866303",
+        "868194375430675dd2c9ad7d95f609784f866303",  # pragma: allowlist secret
         "src/p1am_control_system/backend/asset_health.py",
     ),
     "F16": (
         "#5563",
-        "4bf32727dc3e1882ebd0ee32f4aa85ff1d1cdce0",
+        "4bf32727dc3e1882ebd0ee32f4aa85ff1d1cdce0",  # pragma: allowlist secret
         "src/p1am_control_system/backend/advisory_result.py",
     ),
 }
