@@ -148,16 +148,29 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5523 · Pendulum_Simulator: Re-Run Swing_Objectives/Impact_Optimality/Model_Adequacy Results on the Distributed Club (51.4 m/s, 8.02 m/s Hands, 14% Braking; Centrifugal Is the Dissenting Objective) With a Reproducible Script
+
+- **State:** in_review
+- **Owner:** unassigned
+- **Issue:** #5523
+- **Branch:** fix/5523-rerun-distributed-club
+- **PR:** #5576
+- **Paths:** see #5576
+- **Started:** 2026-10-13
+- **Last verified:** 2026-10-13 (`5c1f1657`; collated from changes/5523-pendulum-simulator-re-run-swing-objectiv.md)
+- **Summary:** pendulum_simulator: re-run swing_objectives/impact_optimality/model_adequacy results on the distributed club (51.4 m/s, 8.02 m/s hands, 14% braking; centrifugal is the dissenting objective) with a reproducible script
+- **Next step:** Merge the PR; exact-provider qualification keeps results exploratory.
+
 ### DL-#5530 · SCADA F09: Declarative Procedure Model With Hold/Abort, Gated to the Simulated Driver
 
 - **State:** in_review
 - **Owner:** unassigned
 - **Issue:** #5530
 - **Branch:** feat/5530-scada
-- **PR:** #5578
+- **PR:** #5578, #5580
 - **Paths:** see #5578
 - **Started:** 2026-10-12
-- **Last verified:** 2026-10-12 (`61c56827`; collated from changes/5530-scada-f09-declarative-procedure-model-wi.md)
+- **Last verified:** 2026-10-13 (`98d0ea6c`; collated from changes/5530-scada-f09-matrix-row-flipped-to-landed-c.md)
 - **Summary:** SCADA F09: declarative procedure model with hold/abort, gated to the simulated driver
 - **Next step:** Merge the PR; flip F09 matrix row to landed citing it.
 
@@ -1430,6 +1443,45 @@ reachable from any live state and `abandoned` from `parked`.
   definition.
 
 ## Shipped (Last 90 Days)
+
+### DL-#5533 · SCADA F16: Advisory-Only AdvisoryResult Provenance Record (Model/Inputs Hash, Window, Constraints, Solver Status) on /Api/Mpc/Simulate, With Import-Guard Test
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5533
+- **Branch:** merged via #5563
+- **PR:** #5563
+- **Paths:** see #5563
+- **Started:** 2026-10-13
+- **Last verified:** 2026-10-13 (`4bf32727`; collated from changes/5533-scada-f16-advisory-only-advisoryresult-p.md)
+- **Summary:** SCADA F16: advisory-only AdvisoryResult provenance record (model/inputs hash, window, constraints, solver status) on /api/mpc/simulate, with import-guard test
+- **Next step:** Shipped in PR #5563.
+
+### DL-#5526 · SCADA F03: Per-Tag Alarm Priority Override (Validated WARNING/TRIP Enum on the Interlock Config, Persisted via the Routing Config Store; BadQuality Floor; Fails Closed to Trip)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5526
+- **Branch:** merged via #5564
+- **PR:** #5564
+- **Paths:** see #5564
+- **Started:** 2026-10-13
+- **Last verified:** 2026-10-13 (`58002d40`; collated from changes/5526-scada-f03-per-tag-alarm-priority-overrid.md)
+- **Summary:** SCADA F03: per-tag alarm priority override (validated WARNING/TRIP enum on the interlock config, persisted via the routing config store; BadQuality floor; fails closed to trip)
+- **Next step:** Shipped in PR #5564.
+
+### DL-#12065 · Route Sidekick C3d_Reader Ezc3d Import Through Shared Native-DLL Guard (UpstreamDrift #12065 PR3 Step 1)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #12065
+- **Branch:** merged via #5581
+- **PR:** #5581
+- **Paths:** see #5581
+- **Started:** 2026-10-13
+- **Last verified:** 2026-10-13 (`bdc3eed0`; collated from changes/12065-route-sidekick-c3d-reader-ezc3d-import-t.md)
+- **Summary:** Route sidekick c3d_reader ezc3d import through shared native-DLL guard (UpstreamDrift #12065 PR3 step 1)
+- **Next step:** Shipped in PR #5581.
 
 ### DL-#5524 · SCADA F01: Audit Rows Carry Reason, Redacted Before/After and Config_Revision Columns (Additive Migration); Alarm Ack Records Credential-Derived Actor Instead of the Free-Text User
 
