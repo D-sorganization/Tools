@@ -40837,6 +40837,10 @@
       }
     }
   },
+  "utils/native_dll_guard.py": {
+    "__all__": [],
+    "symbols": {}
+  },
   "utils/paths.py": {
     "__all__": ["get_repo_root"],
     "symbols": {

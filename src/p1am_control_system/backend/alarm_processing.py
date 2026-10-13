@@ -11,9 +11,11 @@ LOD: imports only the ORM model. The alarm engine is duck-typed (anything with
 
 from __future__ import annotations
 
+from collections.abc import Mapping
 from datetime import datetime, timezone
 from typing import Any
 
+from alarm_priority import BAD_QUALITY_STATE, AlarmPriority, resolve_severity
 from models import EventLog
 
 try:
@@ -21,24 +23,15 @@ try:
 except ImportError:  # Python 3.10 — repo supports 3.10+
     UTC = timezone.utc  # noqa: UP017
 
-# Alarm states that map to each severity (single source of truth — DRY).
-_SEVERITY_BY_STATE: dict[str, int] = {
-    "Low": 1,
-    "High": 1,
-    "LoLo": 2,
-    "HiHi": 2,
-    # Non-finite reading (sensor/register fault). Ranks with the trip tier: an
-    # alarmed tag whose value cannot be read cannot be shown to be safe (#3973).
-    "BadQuality": 2,
-}
 
-#: The state both engines emit for a NaN/Inf reading. Never "Normal".
-BAD_QUALITY_STATE = "BadQuality"
+def severity_for_state(state: str, priority: AlarmPriority | None = None) -> int:
+    """Map an alarm state name to a severity (0 normal, 1 Lo/Hi, 2 LoLo/HiHi/Bad).
 
-
-def severity_for_state(state: str) -> int:
-    """Map an alarm state name to a severity (0 normal, 1 Lo/Hi, 2 LoLo/HiHi/Bad)."""
-    return _SEVERITY_BY_STATE.get(state, 0)
+    ``priority`` is the tag's optional per-tag override (see ``alarm_priority``);
+    ``None`` yields the default map. ``BadQuality`` ignores any override.
+    """
+    severity: int = resolve_severity(state, priority)
+    return severity
 
 
 def state_name(state: Any) -> str:
@@ -62,6 +55,7 @@ def build_alarm_entry(
     timestamp: str,
     acknowledged: bool = False,
     acknowledged_by: str | None = None,
+    priority: AlarmPriority | None = None,
 ) -> dict[str, Any]:
     """Build one live ``active_alarms`` record.
 
@@ -74,6 +68,7 @@ def build_alarm_entry(
         timestamp: ISO-8601 stamp for when the record was raised.
         acknowledged: Whether an operator has acknowledged this alarm.
         acknowledged_by: Operator credited with the acknowledgement.
+        priority: Optional per-tag priority override for the severity.
 
     Raises:
         TypeError: If ``tag_name``, ``state``, or ``timestamp`` is not a str.
@@ -90,7 +85,7 @@ def build_alarm_entry(
         "tag_id": tag_name,
         "tag_name": tag_name,
         "state": state,
-        "severity": severity_for_state(state),
+        "severity": severity_for_state(state, priority),
         "acknowledged": bool(acknowledged),
         "acknowledged_by": acknowledged_by,
         "timestamp": timestamp,
@@ -103,6 +98,7 @@ def process_alarm_events(
     active_alarms: dict[str, dict[str, Any]],
     *,
     now: datetime | None = None,
+    priorities: Mapping[str, AlarmPriority] | None = None,
 ) -> list[EventLog]:
     """Update ``active_alarms`` in place from this scan and return EventLog rows.
 
@@ -114,6 +110,8 @@ def process_alarm_events(
             returning to Normal is dropped once acknowledged, otherwise marked
             Normal so the operator still sees it cleared.
         now: Timestamp for new-alarm records; defaults to now (UTC).
+        priorities: Optional per-tag priority overrides; a tag absent from the
+            map keeps the default severity.
 
     Returns:
         EventLog rows for every transition this scan (caller persists them).
@@ -137,7 +135,8 @@ def process_alarm_events(
     for tag_name, value in tags.items():
         for ev in alarm_engine.update_tag(tag_name, value):
             state = state_name(ev["current_state"])
-            sev = severity_for_state(state)
+            priority = priorities.get(tag_name) if priorities else None
+            sev = severity_for_state(state, priority)
 
             if state == "Normal":
                 existing = active_alarms.get(tag_name)
@@ -150,7 +149,7 @@ def process_alarm_events(
                 # A state change resets the engine's acknowledgement, so the
                 # fresh record is unacknowledged by construction.
                 active_alarms[tag_name] = build_alarm_entry(
-                    tag_name, state, timestamp=stamp
+                    tag_name, state, timestamp=stamp, priority=priority
                 )
 
             if state == BAD_QUALITY_STATE:

@@ -1127,6 +1127,7 @@
           "src/shared/python/sidekick/tests/process_calculators/test_pressure_drop_api_public_names.py",
           "src/shared/python/sidekick/tests/process_calculators/test_scrubber_engine.py",
           "src/shared/python/sidekick/tests/test_launcher_factory.py",
+          "src/shared/python/sidekick/tests/test_native_dll_guard.py",
           "src/shared/python/signal_toolkit/tests/test_noise.py",
           "src/shared/python/signal_toolkit/tests/test_signal_toolkit.py",
           "src/shared/python/swing_sim/flight/tests/test_surface_flight_cancellation.py",
