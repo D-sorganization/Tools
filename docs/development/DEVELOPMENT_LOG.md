@@ -1535,6 +1535,32 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5508 · Document and Enforce Coupled PyQt6-Sip 13.12.0 Deferral (#5508, Dependabot #5486)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5508
+- **Branch:** merged via #5600
+- **PR:** #5600
+- **Paths:** see #5600
+- **Started:** 2026-10-13
+- **Last verified:** 2026-10-13 (`dd834170`; collated from changes/5508-document-and-enforce-coupled-pyqt6-sip-1.md)
+- **Summary:** Document and enforce coupled PyQt6-sip 13.12.0 deferral (#5508, Dependabot #5486)
+- **Next step:** Shipped in PR #5600.
+
+### DL-#4089 · SCADA F-Matrix Rows F01/F03/F04/F08/F10/F16 Cite Their Merged Slices (PRs #5551, #5564, #5557, #5560, #5559, #5563) and Stay Partial With Refreshed Gaps
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #4089
+- **Branch:** merged via #5602
+- **PR:** #5602
+- **Paths:** see #5602
+- **Started:** 2026-10-13
+- **Last verified:** 2026-10-13 (`840da341`; collated from changes/4089-scada-f-matrix-rows-f01-f03-f04-f08-f10.md)
+- **Summary:** SCADA F-matrix rows F01/F03/F04/F08/F10/F16 cite their merged slices (PRs #5551, #5564, #5557, #5560, #5559, #5563) and stay partial with refreshed gaps
+- **Next step:** Shipped in PR #5602.
+
 ### DL-#5595 · Split C3DDataReader.Force_Plate_Dataframe Into Private Helpers (Pure Refactor, Adds Characterization Tests)
 
 - **State:** shipped
