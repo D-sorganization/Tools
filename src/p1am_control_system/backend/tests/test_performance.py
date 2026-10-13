@@ -101,12 +101,57 @@ class TestPerformanceController:
         cfg = c.config(scan_overruns=3, historian_write_failures=2)
         assert cfg.scan_overruns == 3
         assert cfg.historian_write_failures == 2
+        # Default additive observability fields
+        assert cfg.queue_depth == 0
+        assert cfg.oldest_pending_age_s == 0.0
+        assert cfg.historian_dropped_samples == 0
+
+    def test_config_carries_historian_observability_metrics(self) -> None:
+        c = PerformanceController(0.1, 2.0)
+        cfg = c.config(
+            scan_overruns=1,
+            historian_write_failures=0,
+            queue_depth=5,
+            oldest_pending_age_s=2.35,
+            historian_dropped_samples=3,
+        )
+        assert cfg.queue_depth == 5
+        assert cfg.oldest_pending_age_s == pytest.approx(2.35)
+        assert cfg.historian_dropped_samples == 3
+        assert cfg.historian_queue_depth == 5
+        assert cfg.historian_oldest_pending_age_s == pytest.approx(2.35)
 
     def test_config_rejects_negative_counters(self) -> None:
         c = PerformanceController(0.1, 2.0)
         with pytest.raises(ValueError):
             c.config(scan_overruns=-1)
+        with pytest.raises(ValueError):
+            c.config(queue_depth=-1)
+        with pytest.raises(ValueError):
+            c.config(oldest_pending_age_s=-0.1)
+        with pytest.raises(ValueError):
+            c.config(historian_dropped_samples=-1)
 
     def test_mode_enum_values(self) -> None:
         assert PerformanceMode.PERFORMANCE == "performance"
         assert PerformanceMode.LIGHTWEIGHT == "lightweight"
+
+    @pytest.mark.asyncio
+    async def test_get_performance_endpoint_handler(self) -> None:
+        """H5: /api/performance returns queue_depth, lag, and dropped counters."""
+        from main import get_performance, historian_writer
+        from poll_runtime import HistorianRecord
+
+        rec = HistorianRecord(tags={"TEST_TAG": 12.3}, quality="live")
+        historian_writer.submit(rec)
+        try:
+            cfg = await get_performance()
+            assert isinstance(cfg, PerformanceConfig)
+            assert cfg.queue_depth >= 1
+            assert cfg.oldest_pending_age_s >= 0.0
+            dump = cfg.model_dump()
+            assert "queue_depth" in dump
+            assert "oldest_pending_age_s" in dump
+            assert "historian_dropped_samples" in dump
+        finally:
+            await historian_writer.drain_once()

@@ -264,3 +264,71 @@ def test_loop_diagnostics_reports_every_health_counter() -> None:
         "historian_samples_dropped": 3,
         "ws_frames_dropped": 4,
     }
+
+
+class TestHistorianObservability:
+    @pytest.mark.asyncio
+    async def test_queue_depth_and_lag_grow_and_drain(self) -> None:
+        """H5: queue depth raises on enqueue, returns to 0 on drain."""
+        current_time = 100.0
+        session = _Session()
+        factory = _Factory(session)
+        writer = _writer(factory, clock=lambda: current_time)
+
+        # 1. Empty queue has depth 0 and lag 0.0 (or None)
+        assert writer.queue_depth == 0
+        assert writer.oldest_pending_age_s == 0.0
+        assert writer.stats()["queue_depth"] == 0
+        assert writer.stats()["oldest_pending_age_s"] == 0.0
+
+        # 2. Enqueue first record at t=100.0
+        rec1 = HistorianRecord(tags={"TAG_A": 10.0}, quality="live")
+        assert writer.submit(rec1) is True
+        assert writer.queue_depth == 1
+        assert writer.oldest_pending_age_s == 0.0
+
+        # Advance clock by 3.5s -> lag is 3.5s
+        current_time = 103.5
+        assert writer.oldest_pending_age_s == pytest.approx(3.5)
+        assert writer.stats()["oldest_pending_age_s"] == pytest.approx(3.5)
+
+        # Enqueue second record at t=103.5
+        rec2 = HistorianRecord(tags={"TAG_B": 20.0}, quality="live")
+        assert writer.submit(rec2) is True
+        assert writer.queue_depth == 2
+
+        # Advance clock to 108.0 -> lag tracks rec1 (108.0 - 100.0 = 8.0s)
+        current_time = 108.0
+        assert writer.oldest_pending_age_s == pytest.approx(8.0)
+        assert writer.stats()["queue_depth"] == 2
+        assert writer.stats()["oldest_pending_age_s"] == pytest.approx(8.0)
+
+        # 3. Drain all records -> returns to 0 depth and 0 lag
+        drained = await writer.drain_once()
+        assert drained == 2
+        assert writer.queue_depth == 0
+        assert writer.oldest_pending_age_s == 0.0
+        assert writer.stats()["queue_depth"] == 0
+        assert writer.stats()["oldest_pending_age_s"] == 0.0
+
+    @pytest.mark.asyncio
+    async def test_queue_overflow_tracks_dropped_samples_and_depth(self) -> None:
+        """H5: filling bounded queue reports queue_depth and dropped samples."""
+        current_time = 50.0
+        session = _Session()
+        factory = _Factory(session)
+        writer = _writer(factory, queue_size=2, clock=lambda: current_time)
+
+        writer.submit(HistorianRecord(tags={"TAG_1": 1.0}, quality="live"))
+        current_time = 52.0
+        writer.submit(HistorianRecord(tags={"TAG_2": 2.0}, quality="live"))
+        assert writer.queue_depth == 2
+        assert writer.dropped_samples == 0
+
+        # Enqueue 3rd record: drops sample from rec1
+        current_time = 54.0
+        writer.submit(HistorianRecord(tags={"TAG_3": 3.0}, quality="live"))
+        assert writer.queue_depth == 2
+        assert writer.dropped_samples == 1
+        assert writer.stats()["dropped_samples"] == 1
+        assert writer.stats()["queue_depth"] == 2

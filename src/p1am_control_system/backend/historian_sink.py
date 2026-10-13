@@ -15,7 +15,7 @@ By design:
 from __future__ import annotations
 
 from collections.abc import Awaitable, Mapping
-from typing import Protocol, runtime_checkable
+from typing import Any, Protocol, runtime_checkable
 
 from historian import HistorianRecord
 
@@ -50,7 +50,7 @@ class HistorianSink(Protocol):
         """Drain or write one batch; return count of drained records (0 if idle)."""
         ...
 
-    def stats(self) -> Mapping[str, int]:
+    def stats(self) -> Mapping[str, Any]:
         """Return a mapping of diagnostic counters and health metrics."""
         ...
 

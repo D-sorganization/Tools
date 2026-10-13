@@ -325,11 +325,14 @@ class HistorianWriter:
         to_thread: Callable[..., Any] = asyncio.to_thread,
         sleep: Callable[[float], Any] = time.sleep,
         async_sleep: Callable[[float], Any] = asyncio.sleep,
+        clock: Callable[[], float] = time.monotonic,
     ) -> None:
         if not callable(session_factory):
             raise TypeError("session_factory must be callable")
         if not callable(log_scan):
             raise TypeError("log_scan must be callable")
+        if not callable(clock):
+            raise TypeError("clock must be callable")
         for name, value in (
             ("queue_size", queue_size),
             ("batch_max", batch_max),
@@ -340,7 +343,9 @@ class HistorianWriter:
             if value < 1:
                 raise ValueError(f"{name} must be >= 1, got {value}")
         self._session_factory = session_factory
-        self._queue: asyncio.Queue[HistorianRecord] = asyncio.Queue(maxsize=queue_size)
+        self._queue: asyncio.Queue[tuple[float, HistorianRecord]] = asyncio.Queue(
+            maxsize=queue_size
+        )
         self._batch_max = batch_max
         self._retry_attempts = retry_attempts
         self._retry_delay_s = float(retry_delay_s)
@@ -351,6 +356,7 @@ class HistorianWriter:
         # Bound at construction so a test that monkeypatches ``asyncio.sleep``
         # for the scan loop cannot also hijack the writer's idle poll.
         self._async_sleep = async_sleep
+        self._clock = clock
         self._counters = _WriterCounters()
 
     # -- diagnostics ------------------------------------------------------
@@ -372,7 +378,21 @@ class HistorianWriter:
     def queue_depth(self) -> int:
         return self._queue.qsize()
 
-    def stats(self) -> Mapping[str, int]:
+    @property
+    def oldest_pending_age_s(self) -> float:
+        """Age in seconds of the oldest unwritten record (0.0 when empty)."""
+        if self._queue.empty():
+            return 0.0
+        try:
+            internal_q: Any = getattr(self._queue, "_queue", None)
+            if internal_q:
+                oldest_time = internal_q[0][0]
+                return max(0.0, float(self._clock() - oldest_time))
+        except (IndexError, TypeError, ValueError):
+            return 0.0
+        return 0.0
+
+    def stats(self) -> Mapping[str, Any]:
         """Return a mapping snapshot of writer diagnostic counters and queue depth."""
         return {
             "write_failures": self._counters.write_failures,
@@ -381,6 +401,7 @@ class HistorianWriter:
             "events_written": self._counters.events_written,
             "retries": self._counters.retries,
             "queue_depth": self.queue_depth,
+            "oldest_pending_age_s": self.oldest_pending_age_s,
         }
 
     def close(self) -> None:
@@ -409,16 +430,19 @@ class HistorianWriter:
             )
         if record.is_empty:
             return False
+        now = float(self._clock())
         try:
-            self._queue.put_nowait(record)
+            self._queue.put_nowait((now, record))
             return True
         except asyncio.QueueFull:
             pass
         # Full: evict the oldest sample but rescue its (non-resamplable) events.
         rescued: tuple[Any, ...] = ()
+        oldest_time = now
         try:
-            evicted = self._queue.get_nowait()
+            evicted_time, evicted = self._queue.get_nowait()
             rescued = evicted.events
+            oldest_time = evicted_time
             self._counters.dropped_samples += 1
         except asyncio.QueueEmpty:  # pragma: no cover - racy drain
             pass
@@ -432,7 +456,7 @@ class HistorianWriter:
             )
         )
         try:
-            self._queue.put_nowait(merged)
+            self._queue.put_nowait((oldest_time, merged))
         except asyncio.QueueFull:  # pragma: no cover - racy producer
             logger.error("Historian queue still full; dropped a scan record.")
             return False
@@ -443,12 +467,14 @@ class HistorianWriter:
         """Write one batch; return how many records it contained (0 if idle)."""
         batch: list[HistorianRecord] = []
         try:
-            batch.append(self._queue.get_nowait())
+            _, rec = self._queue.get_nowait()
+            batch.append(rec)
         except asyncio.QueueEmpty:
             return 0
         while len(batch) < self._batch_max:
             try:
-                batch.append(self._queue.get_nowait())
+                _, rec = self._queue.get_nowait()
+                batch.append(rec)
             except asyncio.QueueEmpty:
                 break
         await self._to_thread(self._write_batch, tuple(batch))
@@ -619,13 +645,23 @@ class ThrottledHistorianSink:
             return int(res)
         return 0
 
-    def stats(self) -> Mapping[str, int]:
+    @property
+    def queue_depth(self) -> int:
+        """Queue depth of the underlying writer if supported."""
+        return int(getattr(self._writer, "queue_depth", 0))
+
+    @property
+    def oldest_pending_age_s(self) -> float:
+        """Oldest pending record age of the underlying writer if supported."""
+        return float(getattr(self._writer, "oldest_pending_age_s", 0.0))
+
+    def stats(self) -> Mapping[str, Any]:
         """Return diagnostic counters from the underlying sink if supported."""
         stats_fn = getattr(self._writer, "stats", None)
         if callable(stats_fn):
             res = stats_fn()
             if isinstance(res, Mapping):
-                return {str(k): int(v) for k, v in res.items()}
+                return {str(k): v for k, v in res.items()}
         return {}
 
     def close(self) -> None:
