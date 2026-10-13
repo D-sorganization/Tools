@@ -117,7 +117,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "b388fc6c8e8d0ce02fb44e2a99ffef7399c2c982f331bff5039cc36c3edab2eb",
+      "content_sha256_lf": "118de287567ead6c002dc97ecf74dc7cc5321cbac021c22c83bba5593d70ac1e",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
@@ -129,13 +129,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
     },
     {
-      "content_sha256_lf": "cdb8fea334f8bf2ec8c13a527efd71c4baebfa4d089b45b1fcb72664170815b7",
+      "content_sha256_lf": "0558aa5ef35038bec1f28a679e80512e552a1d654a1a17987be1969ef8b05cc6",
       "entry_count": 5,
       "package": "rust_core/file_watcher",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "fa8b8af0d5cbfdbc88ae9f61f70d1e027e3955cbb661b9b78a851737248c972e",
+      "content_sha256_lf": "89d524617ff302ff2575887c7e739b3c70c3a815c6b6d34e7e0535bb1333e152",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "cb8b83ffae9f581ea2ba3bb794e8c8daccd5ee8e47fa90a4f76fb3747c86997c",
+      "content_sha256_lf": "d3b169d9a2084a26e50f8d59670bc1db95a84d7fc0112ba000d9da824a61686c",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -267,7 +267,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-file-watcher.json"
     },
     {
-      "content_sha256_lf": "154228a3ec0e084d93cfe36140288a5cd37f863a463a4c5d661f6151e9fa51ca",
+      "content_sha256_lf": "61bc7ebd8b628c66c5ba6081a1cc3139ab28323132da7385a9d07b540ef1285e",
       "entry_count": 18,
       "package": "src/financial_calculator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-financial-calculator.json"
@@ -297,7 +297,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-folder-tool-pro.json"
     },
     {
-      "content_sha256_lf": "7bf5787aa1c5698eb3cf59eecdb4e80b3bc05a61fb0325fd85a32c71bd77b74d",
+      "content_sha256_lf": "abdb157060b096650d4aba633e633cfaca616fb71f8bca9ad88cc09618494945",
       "entry_count": 17,
       "package": "src/function_generator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-function-generator.json"
@@ -387,13 +387,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-optimizer-gui.json"
     },
     {
-      "content_sha256_lf": "315898ee416d86a3f39217f0829480d6313821ccda3ea2fb8d404f16aa9e8d31",
-      "entry_count": 260,
+      "content_sha256_lf": "74e25106235edadd2a019aeae19ad6adf23eeff2c66f2a29ff15b83232ba68f0",
+      "entry_count": 261,
       "package": "src/p1am_control_system",
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
     {
-      "content_sha256_lf": "b4fbc364058d959b41b3100e043c013d3327021451c443e0d8aaad34f7c2be7d",
+      "content_sha256_lf": "cfa0f6e8e656e3016b34c1e23fedb49294298c47676fd34223447d073fd4fdc1",
       "entry_count": 169,
       "package": "src/pendulum_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pendulum-simulator.json"
@@ -411,7 +411,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-plant-simulator.json"
     },
     {
-      "content_sha256_lf": "d4bd4a9e2087e25497fd1d10fc3b2b162e205452b6e02e93310c1b97fffa15f5",
+      "content_sha256_lf": "a10e1951254c5e89344a17a6500d81059520a929ae70e8f5b8646f6e8e44bae7",
       "entry_count": 18,
       "package": "src/pressure_drop_calculator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pressure-drop-calculator.json"
@@ -585,7 +585,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rotation-transforms.json"
     },
     {
-      "content_sha256_lf": "8056a32ae8cfb72c1e17213b6a1eec06c304f13afb20504ef9ad28405f4ed1cc",
+      "content_sha256_lf": "23c5eda9cd3d148d3e5546f35ad9a66f53d60f789d9302a06ad036df83a3a1e6",
       "entry_count": 26,
       "package": "src/rrt_path_planner",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rrt-path-planner.json"
@@ -597,7 +597,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "fbaae37de243c579b83c710ef64f3658a5c88082e0931f409534ac878bb4399f",
+      "content_sha256_lf": "1f8fc2beed7241067aa64a11d72bafb6462952a28e46bb1d689b98adf6d253da",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
@@ -783,7 +783,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-data-processing.json"
     },
     {
-      "content_sha256_lf": "afd658b0a266e12033a2206ed33b631e83fd04f93104a68bc441c827c128fae2",
+      "content_sha256_lf": "9d03f9da22c86bae7d16140c972e821863b25fa5d60af983a0719f2aceab9b4f",
       "entry_count": 47,
       "package": "src/shared/python/sidekick/lab",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-lab.json"
@@ -819,8 +819,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-ui.json"
     },
     {
-      "content_sha256_lf": "47f38826afa53374a7efbe47ffcbff00f1c8852ca1cbf2c65832f662942d7a0a",
-      "entry_count": 6,
+      "content_sha256_lf": "660fb59e35c751c1eea84137869c804d2b64e7324b7c35e627b5133a11404164",
+      "entry_count": 7,
       "package": "src/shared/python/sidekick/utils",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-utils.json"
     },
