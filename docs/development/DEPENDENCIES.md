@@ -71,6 +71,25 @@ These should use `>=` minimum bounds at minimum. Completely unpinned dependencie
 **Exception:** Standard library modules (e.g., `tkinter`) cannot be pip-installed
 and should not have version specifiers.
 
+## PyQt6 binary stack (coupled pins)
+
+`PyQt6`, `PyQt6-Qt6`, and `PyQt6-sip` are **one ABI stack**. SIP is the binary shim
+each PyQt6 wheel is built against, so `PyQt6-sip` must never move independently of the
+pinned `PyQt6` release.
+
+| Context | PyQt6 | PyQt6-Qt6 | PyQt6-sip |
+| ------- | ----- | --------- | --------- |
+| CI lock (`requirements-lock.txt`, `requirements-rate-pyqt.txt`) | 6.11.0 | 6.11.2 | 13.12.0 |
+| Owner Windows dev host (MSVC runtime limit) | 6.8.1 | (wheel-bundled) | must stay compatible with 6.8.1 |
+
+Dependabot PR #5486 proposed `PyQt6-sip` 13.13.0 alone; it was closed during the
+2026-10-10 dependency consolidation (#5499) and tracked as issue #5508. Until a
+**coordinated** PyQt6 upgrade is evaluated on both the CI lock and the owner 6.8.1
+pin with Qt test shards green, keep `PyQt6-sip` at **13.12.0**.
+
+Machine-readable authority: `config/pyqt6_binary_stack_policy.v1.json`, enforced by
+`python scripts/check_pyqt6_binary_stack_policy.py`.
+
 ## Security Pinning
 
 Security-sensitive packages may use exact pins in `requirements.txt` with an explanatory

@@ -31,22 +31,22 @@ This matrix is the tracker of record, superseding the checklists on #4085, #4086
 
 | ID | Requirement | Status | Tracker | Evidence PRs |
 | --- | --- | --- | --- | --- |
-| F01 | Named-user identity, server-side RBAC, and append-only audit trail | `partial` | #4085 | #4448, #4928 |
+| F01 | Named-user identity, server-side RBAC, and append-only audit trail | `partial` | #4085 | #5551, #4448, #4928 |
 | F02 | End-to-end signal quality and communications health | `partial` | #4085 | #4678, #4893, #4928 |
-| F03 | Professional alarm lifecycle and alarm-performance management | `partial` | #4085 | #4928 |
-| F04 | Versioned configuration, approval, deployment, and rollback | `partial` | #4085 | #3912, #4928 |
+| F03 | Professional alarm lifecycle and alarm-performance management | `partial` | #4085 | #5564, #4928 |
+| F04 | Versioned configuration, approval, deployment, and rollback | `partial` | #4085 | #5557, #3912, #4928 |
 | F05 | Backup, restore, deployment identity, and system-health center | `missing` | #4085 | - |
 | F06 | Generic process overview and reusable high-performance faceplates | `missing` | #4086 | - |
 | F07 | Interlock, permissive, first-out, and managed-bypass view | `partial` | #4086 | #4928, #3912 |
-| F08 | Historian context, annotations, comparisons, and reporting | `partial` | #4086 | #4678, #4448, #3912 |
+| F08 | Historian context, annotations, comparisons, and reporting | `partial` | #4086 | #5560, #4678, #4448, #3912 |
 | F09 | Generic sequence/state and procedure demonstration | `landed` | #4087 | #5578, #3912 |
-| F10 | Asset health, calibration, and maintenance workspace | `partial` | #4086 | #4448, #3081, #3806 |
+| F10 | Asset health, calibration, and maintenance workspace | `partial` | #4086 | #5559, #4448, #3081, #3806 |
 | F11 | Driver/plugin framework and device diagnostics | `partial` | #4087 | #4448, #4893, #4928 |
 | F12 | FAT/HIL scenario runner and acceptance-evidence packages | `missing` | #4085 | - |
 | F13 | Shift log, run/campaign context, and handover reporting | `missing` | #4086 | - |
 | F14 | Notification and escalation policies | `missing` | #4087 | - |
 | F15 | High availability, time synchronization, and disaster-recovery mode | `missing` | #4087 | - |
-| F16 | Advisory optimization, digital-twin, and advanced-control workspace | `partial` | #4088 | #4448, #4928, #3062 |
+| F16 | Advisory optimization, digital-twin, and advanced-control workspace | `partial` | #4088 | #5563, #4448, #4928, #3062 |
 | H1 | Extract a HistorianSink protocol (pluggable write backend) | `missing` | #4047 | - |
 | H2 | Store-and-forward shipper that cannot stall the poll loop | `partial` | #4048 | #4678, #4893 |
 | H3 | TimescaleDB schema: hypertable, compression, CAGGs, retention | `missing` | #4049 | - |
@@ -63,7 +63,7 @@ This matrix is the tracker of record, superseding the checklists on #4085, #4086
 
 **Status:** `partial` · **Tracker:** #4085
 
-**On main:** The append-only half is real: a pure-ASGI AuditMiddleware records every POST/PUT/PATCH/DELETE into a dedicated AuditEvent table that no handler writes and clear_capture cannot erase, with redacted payload, status, client IP and credential fingerprint. Every mutating route is gated and the gate is pinned by a route matrix.
+**On main:** The append-only half is real: a pure-ASGI AuditMiddleware records every POST/PUT/PATCH/DELETE into a dedicated AuditEvent table that no handler writes and clear_capture cannot erase, with redacted payload, status, client IP and credential fingerprint. Every mutating route is gated and the gate is pinned by a route matrix. PR #5551 (merge commit b6e3e6709743fd6fa7dc6ab7a1d523603e51f4db, closes #5524) adds reason, redacted before_json/after_json and a nullable config_revision column to AuditEvent (with an additive, idempotent migration run from init_db), a set_audit_context(request, ...) hook that handlers use to attach them, and makes POST /api/alarms/{tag_id}/acknowledge record the credential-derived actor (tier:fingerprint) instead of the free-text `user`, which is now only a display note.
 
 **Implementing files (verified present on main):**
 
@@ -83,8 +83,8 @@ This matrix is the tracker of record, superseding the checklists on #4085, #4086
 **Gaps:**
 
 - Identity is not named-user: authorization is two shared environment keys (P1AM_API_KEY / P1AM_ADMIN_API_KEY), so the actor is a key tier plus a SHA-256 key fingerprint. No user accounts, no roles beyond the two nested tiers, no login.
-- Audit rows lack three fields the requirement names: reason, before/after values, and configuration revision.
-- Alarm acknowledgement takes the actor as a free-text `user` string in the request body, i.e. self-asserted and unverified.
+- The reason/before/after columns exist but only one route fills them: the alarm-acknowledge handler is the sole set_audit_context caller and sets before/after only; no route records a reason, so every other mutation stores NULL in all three.
+- AuditEvent.config_revision is never populated, although F04's ConfigRevision ids now exist on main (PR #5557): no audit row is stamped with the active configuration revision.
 - POST /api/estop is deliberately unauthenticated (documented at the call site) - an intentional exception to 'every mutation attributable'.
 
 ### F02 - End-to-end signal quality and communications health
@@ -122,7 +122,7 @@ This matrix is the tracker of record, superseding the checklists on #4085, #4086
 
 **Status:** `partial` · **Tracker:** #4085
 
-**On main:** A four-band (Low/High/LoLo/HiHi) plus BadQuality classifier with a coarse 0/1/2 severity, engine-authoritative acknowledgement that survives a routing redeploy, and an acknowledge-all header.
+**On main:** A four-band (Low/High/LoLo/HiHi) plus BadQuality classifier with a coarse 0/1/2 severity, engine-authoritative acknowledgement that survives a routing redeploy, and an acknowledge-all header. PR #5564 (merge commit 58002d408a08a8356506fb5d57d0a3edbdd57047, closes #5526) replaces the hardcoded state->severity lookup with alarm_priority.py: an optional per-tag InterlockConfig.alarm_priority (WARNING=1 / TRIP=2, validated at the config boundary and persisted with routing) applied above both the Rust engine and the Python fallback, with BadQuality pinned to trip severity as a safety floor and an unreadable override failing closed to trip severity.
 
 **Implementing files (verified present on main):**
 
@@ -131,6 +131,7 @@ This matrix is the tracker of record, superseding the checklists on #4085, #4086
 - `rust_core/tools-core/src/scada.rs`
 - `src/p1am_control_system/backend/main.py`
 - `src/p1am_control_system/frontend/src/components/AlarmsHeader.tsx`
+- `src/p1am_control_system/backend/alarm_priority.py`
 
 **Tests:**
 
@@ -139,34 +140,38 @@ This matrix is the tracker of record, superseding the checklists on #4085, #4086
 - `src/p1am_control_system/backend/tests/test_alarm_nan_bad_quality.py`
 - `src/p1am_control_system/backend/tests/test_scada_fallback.py`
 - `src/p1am_control_system/frontend/src/components/AlarmsHeader.test.tsx`
+- `src/p1am_control_system/backend/tests/test_alarm_priority.py`
 
 **Gaps:**
 
-- Absent entirely: shelving with authorization and expiry, designed suppression, configurable alarm priority (severity is a hardcoded _SEVERITY_BY_STATE map), alarm deadband or on/off delay, first-out grouping, and per-alarm operator help.
-- No alarm-performance KPI exists. backend/performance.py is loop/scan cadence health, not alarm-rate management.
+- Absent entirely: shelving with authorization and expiry, designed suppression, alarm deadband or on/off delay, first-out grouping, and per-alarm operator help.
+- Priority is two-tier (warning/trip) per tag only; there is no priority per alarm band and no HMI or dedicated API to view or edit it outside the routing payload.
+- Alarm-performance KPIs exist only as the pure function alarm_kpis.compute_alarm_kpis (PR #5597, tracked under H7); it is not wired to any API route or HMI view, so the alarm-performance-management half of this requirement is not operator-visible.
 
 ### F04 - Versioned configuration, approval, deployment, and rollback
 
 **Status:** `partial` · **Tracker:** #4085
 
-**On main:** The validation clause is partly met: protected config is a Pydantic model that rejects non-finite limits, unrouted tags default to fully disabled (Phase 0 PR #4928), deployment is behind the admin key, and the mutation is audited.
+**On main:** The validation clause is partly met: protected config is a Pydantic model that rejects non-finite limits, unrouted tags default to fully disabled (Phase 0 PR #4928), deployment is behind the admin key, and the mutation is audited. PR #5557 (merge commit 2b528052b3a553df190f1d3262a758de79d5db73, closes #5527) adds config_revisions.py: an append-only ConfigRevision table (monotonic id, key, canonical JSON, SHA-256, hashed credential fingerprint, SQLite triggers that abort UPDATE/DELETE) appended in the same transaction as the PersistedConfig upsert, POST /api/routing returning revision_id, and admin-gated read-only GET /api/config/revisions and /api/config/revisions/{id}. Previous revisions are now retained and readable.
 
 **Implementing files (verified present on main):**
 
 - `src/p1am_control_system/backend/config_store.py`
 - `src/p1am_control_system/backend/models.py`
 - `src/p1am_control_system/backend/main.py`
+- `src/p1am_control_system/backend/config_revisions.py`
 
 **Tests:**
 
 - `src/p1am_control_system/backend/tests/test_config_store.py`
 - `src/p1am_control_system/backend/tests/test_interlock_defaults_contract.py`
 - `src/p1am_control_system/backend/tests/test_validation_guards_3745.py`
+- `src/p1am_control_system/backend/tests/test_config_revisions.py`
 
 **Gaps:**
 
-- The versioning clause is not met at all. PersistedConfig is a single key -> value_json table whose writer is an upsert, so exactly one generation of each config exists: no revision id, no diff, no draft/review/approve step, no activation record, and no rollback path. The previous revision is destroyed on write.
-- There is no revision identity to stamp into audit rows or historian data, which is also what blocks F01's `revision` field.
+- Versioning is history only: there is no diff between revisions, no draft/review/approve step (a write activates immediately), no separate activation record, and no rollback endpoint or path that re-activates an earlier revision.
+- The revision id is not stamped anywhere else: AuditEvent.config_revision (F01) stays NULL and historian rows carry no revision identity.
 
 ### F05 - Backup, restore, deployment identity, and system-health center
 
@@ -223,7 +228,7 @@ This matrix is the tracker of record, superseding the checklists on #4085, #4086
 
 **Status:** `partial` · **Tracker:** #4086
 
-**On main:** A real analysis workspace: historian-sourced datasets through a deterministic align/resample/filter/derive/trim/downsample pipeline, statistics/correlation/PCA/spectrum, several plot types, CSV/JSON export, and the important negative property that gaps and non-finite samples round-trip as None rather than being interpolated.
+**On main:** A real analysis workspace: historian-sourced datasets through a deterministic align/resample/filter/derive/trim/downsample pipeline, statistics/correlation/PCA/spectrum, several plot types, CSV/JSON export, and the important negative property that gaps and non-finite samples round-trip as None rather than being interpolated. PR #5560 (merge commit 649d7106cb532f025a3ba3432e4c64fd8d8b381d, closes #5529) surfaces the stored TagLog.quality: GET /api/trends gains an index-aligned `quality` array (kept aligned under downsampling) and the tag CSV export in data_capture.py appends a Quality column, with NULL or unrecognised values serialized as an explicit `unknown` marker.
 
 **Implementing files (verified present on main):**
 
@@ -243,13 +248,14 @@ This matrix is the tracker of record, superseding the checklists on #4085, #4086
 - `src/p1am_control_system/backend/tests/test_data_explorer_expression.py`
 - `src/p1am_control_system/backend/tests/test_trends_endpoint.py`
 - `src/p1am_control_system/backend/tests/test_data_capture_queries.py`
+- `src/p1am_control_system/backend/tests/test_trend_quality.py`
 
 **Gaps:**
 
 - Saved investigations are stored client-side in localStorage under p1am.explorer.sessions.v1, so they are per-browser, unshareable and not immutable - the requirement's provenance half is unmet.
 - No export checksums, no tag-metadata capture, and no annotation model or endpoint anywhere in the subsystem.
 - No run/campaign comparison feature and no reporting output.
-- Exported CSV omits the TagLog.quality column, so an investigation cannot show which samples were simulated (same root cause as F02).
+- Quality reaches only /api/trends and the tag CSV export; the Data Explorer dataset path still reads query_trend_series (value-only) and its export carries no quality column, so an investigation still cannot show which samples were simulated.
 
 ### F09 - Generic sequence/state and procedure demonstration
 
@@ -276,7 +282,7 @@ This matrix is the tracker of record, superseding the checklists on #4085, #4086
 
 **Status:** `partial` · **Tracker:** #4086
 
-**On main:** An offline interactive AI/AO calibration CLI over raw Modbus registers, rolling feedback-noise statistics with an arc-detection flag, and a provenance tracker that logs DataSource transitions.
+**On main:** An offline interactive AI/AO calibration CLI over raw Modbus registers, rolling feedback-noise statistics with an arc-detection flag, and a provenance tracker that logs DataSource transitions. PR #5559 (merge commit 868194375430675dd2c9ad7d95f609784f866303, closes #5531) adds asset_health.py: pure detect_flatline and detect_command_feedback_mismatch functions over read-only timed samples, with explicit required thresholds, bad samples breaking runs, and a frozen HealthFinding whose finding_type is fixed to `advisory` (no severity or trip field; an import test proves no path to PLC, alarm, trip or setpoint code).
 
 **Implementing files (verified present on main):**
 
@@ -285,18 +291,20 @@ This matrix is the tracker of record, superseding the checklists on #4085, #4086
 - `src/p1am_control_system/backend/signal_stats.py`
 - `src/p1am_control_system/backend/power_supply_noise.py`
 - `src/p1am_control_system/backend/data_quality.py`
+- `src/p1am_control_system/backend/asset_health.py`
 
 **Tests:**
 
 - `src/p1am_control_system/backend/tests/test_signal_stats.py`
 - `src/p1am_control_system/backend/tests/test_power_supply_noise.py`
 - `src/p1am_control_system/backend/tests/test_poll_data_quality.py`
+- `src/p1am_control_system/backend/tests/test_asset_health.py`
 
 **Gaps:**
 
-- No asset register, no calibration-due or drift tracking, no flatline or command/feedback-mismatch detection, no runtime/start counters, and no device-statistics store.
-- No advisory maintenance-record type distinct from authoritative trips - which is the specific property the phase issue claimed.
-- No maintenance workspace: none of the eleven HMI tabs is asset health or maintenance.
+- The flatline and command/feedback-mismatch detectors are library functions only: nothing in the poll loop, API or historian calls them, so no advisory finding is produced at runtime or persisted.
+- No asset register, no calibration-due or drift tracking, no runtime/start counters, and no device-statistics store.
+- No maintenance workspace: none of the HMI tabs is asset health or maintenance.
 
 ### F11 - Driver/plugin framework and device diagnostics
 
@@ -368,7 +376,7 @@ This matrix is the tracker of record, superseding the checklists on #4085, #4086
 
 **Status:** `partial` · **Tracker:** #4088
 
-**On main:** An unconstrained DMC move solver and a PID-vs-MPC comparison exposed only as POST /api/mpc/simulate (admin-gated), so the MPC genuinely has no write path today.
+**On main:** An unconstrained DMC move solver and a PID-vs-MPC comparison exposed only as POST /api/mpc/simulate (admin-gated), so the MPC genuinely has no write path today. PR #5563 (merge commit 4bf32727dc3e1882ebd0ee32f4aa85ff1d1cdce0, closes #5533) adds advisory_result.py: POST /api/mpc/simulate now returns a frozen, strict AdvisoryResult with authoritative_write_available: Literal[False], model id, version and hash, inputs hash, input window, constraint set, solver status and an aware creation time, failing closed on blank provenance; an AST test keeps advisory_result.py and mpc.py free of PLC write seams.
 
 **Implementing files (verified present on main):**
 
@@ -376,19 +384,20 @@ This matrix is the tracker of record, superseding the checklists on #4085, #4086
 - `src/p1am_control_system/backend/tuning_router.py`
 - `src/p1am_control_system/backend/pid_tuning.py`
 - `src/p1am_control_system/backend/plant_model.py`
+- `src/p1am_control_system/backend/advisory_result.py`
 
 **Tests:**
 
 - `src/p1am_control_system/backend/tests/test_mpc_dmc.py`
 - `src/p1am_control_system/backend/tests/test_pid_tuning_math.py`
 - `src/p1am_control_system/backend/tests/test_pid_tuning_tag_guards.py`
+- `src/p1am_control_system/backend/tests/test_advisory_result.py`
 
 **Gaps:**
 
-- That absence is incidental, not an enforced review-only contract: no record states authoritative_write_available=false.
-- Advisory results carry no model or data provenance, constraint set, confidence ordering, replay evidence, or operator-disposition record.
+- The advisory record is returned in the response only: it is not persisted, carries no confidence ordering, and there is no replay evidence or operator-disposition record.
 - plant_model.py is a Plant/Area/Unit/Equipment/Tag metadata hierarchy, not a digital twin.
-- The same router's PID auto-tuning does write setpoints through write_pid_setpoint, so the advisory/authoritative boundary the requirement demands is not drawn as a policy.
+- The same router's PID auto-tuning does write setpoints through write_pid_setpoint, so the advisory/authoritative boundary the requirement demands is not drawn as a policy across the advanced-control workspace, only on the MPC output.
 
 ### H1 - Extract a HistorianSink protocol (pluggable write backend)
 

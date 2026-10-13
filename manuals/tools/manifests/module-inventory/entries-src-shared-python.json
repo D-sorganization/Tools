@@ -66,6 +66,7 @@
           "src/movement_optimizer/tests/test_thread_safety.py",
           "src/movement_optimizer/tests/test_undo_redo_menu.py",
           "src/p1am_control_system/backend/tests/test_alarm_ack_engine.py",
+          "src/p1am_control_system/backend/tests/test_alarm_kpis.py",
           "src/p1am_control_system/backend/tests/test_alarm_priority.py",
           "src/p1am_control_system/backend/tests/test_alarm_processing.py",
           "src/p1am_control_system/backend/tests/test_backend_p1am_safety.py",
