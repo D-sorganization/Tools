@@ -148,6 +148,32 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5577 · Normalize Compatible Contract-Level Enums
+
+- **State:** in_progress
+- **Owner:** unassigned
+- **Issue:** #5577
+- **Branch:** fix/contract-enum-interop-5577-20261012
+- **PR:** #5579
+- **Paths:** see #5579
+- **Started:** 2026-10-13
+- **Last verified:** 2026-10-13 (`9b880daf`; collated from changes/5577-normalize-compatible-contract-level-enum.md)
+- **Summary:** Normalize compatible contract-level enums
+- **Next step:** Complete scoped checks, review the transaction behavior, and publish the fix through a PR.
+
+### DL-#5548 · Historian H9: Historian Operator/Engineer Documentation, Runbook and ADR
+
+- **State:** in_review
+- **Owner:** unassigned
+- **Issue:** #5548
+- **Branch:** docs/5548-historian-adr-runbook
+- **PR:** #5583
+- **Paths:** see #5583
+- **Started:** 2026-10-13
+- **Last verified:** 2026-10-13 (`f71ee279`; collated from changes/5548-historian-h9-docs-runbook-adr.md)
+- **Summary:** Historian H9: Historian operator/engineer documentation, runbook and ADR
+- **Next step:** Merge the PR, flip H9 matrix row to landed citing it.
+
 ### DL-#5523 · Pendulum_Simulator: Re-Run Swing_Objectives/Impact_Optimality/Model_Adequacy Results on the Distributed Club (51.4 m/s, 8.02 m/s Hands, 14% Braking; Centrifugal Is the Dissenting Objective) With a Reproducible Script
 
 - **State:** in_review
@@ -1443,6 +1469,19 @@ reachable from any live state and `abandoned` from `parked`.
   definition.
 
 ## Shipped (Last 90 Days)
+
+### DL-#5529 · SCADA F08: /Api/Trends Gains Additive Quality Array and CSV Export Appends Quality Column (Unknown for NULL/Unrecognised)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5529
+- **Branch:** merged via #5560
+- **PR:** #5560
+- **Paths:** see #5560
+- **Started:** 2026-10-13
+- **Last verified:** 2026-10-13 (`649d7106`; collated from changes/5529-scada-f08-api-trends-gains-additive-qual.md)
+- **Summary:** SCADA F08: /api/trends gains additive quality array and CSV export appends Quality column (unknown for NULL/unrecognised)
+- **Next step:** Shipped in PR #5560.
 
 ### DL-#5533 · SCADA F16: Advisory-Only AdvisoryResult Provenance Record (Model/Inputs Hash, Window, Constraints, Solver Status) on /Api/Mpc/Simulate, With Import-Guard Test
 
