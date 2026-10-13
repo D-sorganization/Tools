@@ -2654,10 +2654,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 53433,
+      "bytes_lf": 53695,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "922ccaf45ce74b99e2413e603dbc780eaddd6095b1c13daa1bad1e7e1fa625ec",
+      "content_sha256_lf": "20385021e5020e28370e4e02fc86a49db9df6dbc14a1367573c81c0c4d706d9b",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-MAIN-PY-C47A4D7AC436",
       "language": "python",
@@ -4793,10 +4793,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9492,
+      "bytes_lf": 12127,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "23bf4e6e742c9d60939fbd8e31df85bc568d8793cfcb19af33211d87e4b04d93",
+      "content_sha256_lf": "9f49c36ca61c7afaf6b112c6a7d6f9d1d9f55ae42bf08b791f2c373b7ad37be3",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-SETTINGS-PY-9F9C81C8A062",
       "language": "python",
@@ -4883,7 +4883,8 @@
           }
         ],
         "test_paths": [
-          "src/p1am_control_system/backend/tests/test_settings.py"
+          "src/p1am_control_system/backend/tests/test_settings.py",
+          "tests/scada/test_historian_compose.py"
         ],
         "unit_mentions": [
           "g",
@@ -5514,6 +5515,88 @@
         ],
         "unit_mentions": [
           "deg",
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 10004,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d00c9b428d801b684bf904eac821138573a122cf40b7fbb67e420ee097f97013",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-TIMESCALE-SINK-PY-535BCE6B70AA",
+      "language": "python",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/backend/timescale_sink.py",
+      "purpose": "TimescaleDB and FanOut dual-write historian sinks (issue #5543, H4 of #4046).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FanOutSink",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TimescaleConfig",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "TimescaleSink",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ALLOWED_HISTORIAN_BACKENDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_TIMESCALE_QUEUE_SIZE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "create_historian_sink",
+            "signature": "backend: str, primary: HistorianSink, timescale_sink: HistorianSink | None=None, *, host: str | None=None, port: int | None=None, tls: bool=False"
+          }
+        ],
+        "test_paths": [
+          "src/p1am_control_system/backend/tests/test_timescale_sink.py",
+          "tests/scada/test_historian_compose.py"
+        ],
+        "unit_mentions": [
           "g",
           "s"
         ],
