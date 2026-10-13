@@ -1428,6 +1428,8 @@
           "src/p1am_control_system/backend/tests/test_estop_shutdown_safe_state.py",
           "src/p1am_control_system/backend/tests/test_estop_write_seams.py",
           "src/p1am_control_system/backend/tests/test_first_out_tag.py",
+          "src/p1am_control_system/backend/tests/test_historian_sink.py",
+          "src/p1am_control_system/backend/tests/test_historian_spool.py",
           "src/p1am_control_system/backend/tests/test_historian_writer.py",
           "src/p1am_control_system/backend/tests/test_modbus_client.py",
           "src/p1am_control_system/backend/tests/test_modbus_estop.py",

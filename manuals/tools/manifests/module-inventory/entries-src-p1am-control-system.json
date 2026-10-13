@@ -2346,33 +2346,36 @@
       }
     },
     {
-      "authority_status": "not-applicable",
-      "bytes_lf": 17793,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "24150110e95f1dac94da466169350df8b5161135b1a13518f2600e052929d8f5",
-      "family": "control-systems-non-calculation",
+      "authority_status": "provisional",
+      "bytes_lf": 25748,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "ed946e80c074ad1913b23ac0f259bc1962ee1b159c2e32a1b54b78131107da29",
+      "family": "control-systems-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-HISTORIAN-PY-3275BC153928",
       "language": "python",
       "maintainer": "Control systems maintainers",
       "path": "src/p1am_control_system/backend/historian.py",
       "purpose": "Time-series historian write path and background batching for the poll loop.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -2414,6 +2417,11 @@
             "kind": "function",
             "name": "log_scan",
             "signature": "session: Session, tags: dict[str, float], *, timestamp: datetime | None=None, quality: str=DataSource.LIVE.value"
+          },
+          {
+            "kind": "re-export",
+            "name": "HistorianSink",
+            "signature": null
           }
         ],
         "test_paths": [
@@ -2421,6 +2429,116 @@
         ],
         "unit_mentions": [
           "Hz",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 2027,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "918cb928313cad1779c6d7c19e5ba943c0149714305954cbaad85ec8f946ec3f",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-HISTORIAN-SINK-PY-B2789D8A3087",
+      "language": "python",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/backend/historian_sink.py",
+      "purpose": "Pluggable historian write backend protocol (issue #5540, H1 of #4046).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "HistorianSink",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/p1am_control_system/backend/tests/test_historian_sink.py"
+        ],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 15669,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ffe79a441b977083097e749ebf3ebc56f84f9aa64a79f12869692a9793ce7de7",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-HISTORIAN-SPOOL-PY-7DF507186670",
+      "language": "python",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/backend/historian_spool.py",
+      "purpose": "Durable on-disk spool for store-and-forward historian delivery (issue #5541, H2).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SpoolingSink",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/p1am_control_system/backend/tests/test_historian_spool.py"
+        ],
+        "unit_mentions": [
           "s"
         ],
         "validation_paths": []
@@ -3814,10 +3932,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 18128,
+      "bytes_lf": 18190,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0bf2365c2966f83694a893e3581f821a24d60cab86a6b53f7e556532110c4f7a",
+      "content_sha256_lf": "35efacb799f95b82e550b0dcd35a298ee8e54b9df80a43636bb52c011f128768",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-POLL-RUNTIME-PY-FB742ACD5D2F",
       "language": "python",
@@ -3900,6 +4018,11 @@
           {
             "kind": "re-export",
             "name": "HistorianRecord",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "HistorianSink",
             "signature": null
           },
           {
