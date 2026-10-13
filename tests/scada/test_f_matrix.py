@@ -70,6 +70,59 @@ def test_no_requirement_is_claimed_landed_without_being_reverified() -> None:
     assert matrix["totals"]["historian"]["landed"] == 0
 
 
+#: Rows whose bounded slice (re-filed under #4089) has merged, mapped to
+#: (delivering PR, merge commit SHA on main, a file that PR added or changed).
+#: Each stays ``partial`` because the requirement as stated is still unmet;
+#: what the row MUST do is cite the merged slice instead of describing main as
+#: it was before it landed.
+MERGED_SLICES: dict[str, tuple[str, str, str]] = {
+    "F01": (
+        "#5551",
+        "b6e3e6709743fd6fa7dc6ab7a1d523603e51f4db",
+        "src/p1am_control_system/backend/audit.py",
+    ),
+    "F03": (
+        "#5564",
+        "58002d408a08a8356506fb5d57d0a3edbdd57047",
+        "src/p1am_control_system/backend/alarm_priority.py",
+    ),
+    "F04": (
+        "#5557",
+        "2b528052b3a553df190f1d3262a758de79d5db73",
+        "src/p1am_control_system/backend/config_revisions.py",
+    ),
+    "F08": (
+        "#5560",
+        "649d7106cb532f025a3ba3432e4c64fd8d8b381d",
+        "src/p1am_control_system/backend/data_capture.py",
+    ),
+    "F10": (
+        "#5559",
+        "868194375430675dd2c9ad7d95f609784f866303",
+        "src/p1am_control_system/backend/asset_health.py",
+    ),
+    "F16": (
+        "#5563",
+        "4bf32727dc3e1882ebd0ee32f4aa85ff1d1cdce0",
+        "src/p1am_control_system/backend/advisory_result.py",
+    ),
+}
+
+
+@pytest.mark.parametrize("rid", sorted(MERGED_SLICES))
+def test_row_cites_its_merged_slice(rid: str) -> None:
+    pr, sha, path = MERGED_SLICES[rid]
+    row = next(r for r in _rows() if r["id"] == rid)
+    assert row["status"] == "partial", rid
+    assert row["evidence_prs"][0] == pr, rid
+    assert sha in str(row["delivered"]), rid
+    assert path in row["files"], rid
+    rendered = RENDERED_PATH.read_text(encoding="utf-8")
+    section = rendered.split(f"### {rid} - ", 1)[1].split("\n### ", 1)[0]
+    assert sha in section, rid
+    assert f"`{path}`" in section, rid
+
+
 def test_every_cited_path_exists() -> None:
     for row in _rows():
         for path in list(row["files"]) + list(row["tests"]):
