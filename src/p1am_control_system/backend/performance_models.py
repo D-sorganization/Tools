@@ -61,3 +61,28 @@ class PerformanceConfig(BaseModel):
         ge=0,
         description="Historian batches that failed to commit after retries.",
     )
+    queue_depth: int = Field(
+        default=0,
+        ge=0,
+        description="Records currently waiting in the historian queue.",
+    )
+    oldest_pending_age_s: float = Field(
+        default=0.0,
+        ge=0.0,
+        description="Age in seconds of the oldest unwritten record in the queue.",
+    )
+    historian_dropped_samples: int = Field(
+        default=0,
+        ge=0,
+        description="Tag samples dropped by historian queue backpressure.",
+    )
+
+    @property
+    def historian_queue_depth(self) -> int:
+        """Alias for queue_depth."""
+        return self.queue_depth
+
+    @property
+    def historian_oldest_pending_age_s(self) -> float:
+        """Alias for oldest_pending_age_s."""
+        return self.oldest_pending_age_s

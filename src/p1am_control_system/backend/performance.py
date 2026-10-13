@@ -208,21 +208,31 @@ class PerformanceController:
         *,
         scan_overruns: int = 0,
         historian_write_failures: int = 0,
+        queue_depth: int = 0,
+        oldest_pending_age_s: float = 0.0,
+        historian_dropped_samples: int = 0,
     ) -> PerformanceConfig:
-        """Report the mode, both cadences and the loop-health counters.
+        """Report mode, cadences, loop-health and historian observability.
 
         Raises:
-            TypeError: if a counter is not an int.
-            ValueError: if a counter is negative.
+            TypeError: if an integer counter is not an int or lag is not numeric.
+            ValueError: if a counter or lag is negative or non-finite.
         """
         for name, value in (
             ("scan_overruns", scan_overruns),
             ("historian_write_failures", historian_write_failures),
+            ("queue_depth", queue_depth),
+            ("historian_dropped_samples", historian_dropped_samples),
         ):
             if not isinstance(value, int) or isinstance(value, bool):
                 raise TypeError(f"{name} must be an int, got {type(value).__name__}")
             if value < 0:
                 raise ValueError(f"{name} must be >= 0, got {value}")
+
+        lag = _validate_interval(
+            oldest_pending_age_s, "oldest_pending_age_s", allow_zero=True
+        )
+
         return PerformanceConfig(
             mode=self._mode,
             poll_interval_s=self.broadcast_interval_s,
@@ -231,4 +241,7 @@ class PerformanceController:
             broadcast_every_n=self.broadcast_every_n,
             scan_overruns=scan_overruns,
             historian_write_failures=historian_write_failures,
+            queue_depth=queue_depth,
+            oldest_pending_age_s=lag,
+            historian_dropped_samples=historian_dropped_samples,
         )

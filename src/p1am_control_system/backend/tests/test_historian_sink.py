@@ -131,7 +131,7 @@ def test_historian_writer_implements_protocol() -> None:
         "queue_depth",
     }
     assert expected_keys.issubset(stats.keys())
-    assert all(isinstance(v, int) for v in stats.values())
+    assert all(isinstance(v, (int, float)) for v in stats.values())
 
     # Check close() is idempotent and does not raise
     writer.close()

@@ -1156,6 +1156,9 @@ async def get_performance() -> PerformanceConfig:
     return perf_controller.config(
         scan_overruns=scan_scheduler.overrun_count,
         historian_write_failures=historian_writer.write_failures,
+        queue_depth=historian_writer.queue_depth,
+        oldest_pending_age_s=historian_writer.oldest_pending_age_s,
+        historian_dropped_samples=historian_writer.dropped_samples,
     )
 
 
