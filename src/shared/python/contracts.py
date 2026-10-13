@@ -91,7 +91,7 @@ def _contracts_enabled() -> bool:
     return _current_contract_level() != ContractLevel.OFF
 
 
-def set_contract_level(level: enum.Enum) -> None:
+def set_contract_level(level: ContractLevel) -> None:
     """Set the global level from a canonical or value-compatible enum."""
     import sys
 
