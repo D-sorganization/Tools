@@ -5947,6 +5947,8 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-12 | #5578 | SCADA F09: declarative procedure model with hold/abort, gated to the simulated driver |
+| 2026-10-12 | #5551 | SCADA F01: audit rows carry reason, redacted before/after and config_revision columns (additive migration); alarm ack records credential-derived actor instead of the free-text user |
 | 2026-10-12 | #5559 | SCADA F10: advisory-only flatline and command/feedback-mismatch detectors (asset_health.py) |
 | 2026-10-12 | #5573 | Keep Signal structural shape validation active under optimized Python; Reconcile inherited Tools development-log findings through the reviewed, lossless RM provenance migration.; Preserve Signal fitting empty-input and failed-fit ndarray identity contracts in the canonical Tools provider.; Bind Signal toolkit import aliases before package children capture provider classes. |
 | 2026-10-12 | #5557 | SCADA F04: append-only ConfigRevision history (SHA-256 canonical JSON, credential fingerprint), atomic with PersistedConfig upsert, admin-gated list/get endpoints, revision_id on config write |

@@ -117,7 +117,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "01a0fcac179d2b143bf116926ff32b564f60bb55228f023786fa9ada756e1f2b",
+      "content_sha256_lf": "b388fc6c8e8d0ce02fb44e2a99ffef7399c2c982f331bff5039cc36c3edab2eb",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
@@ -387,14 +387,14 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-optimizer-gui.json"
     },
     {
-      "content_sha256_lf": "9a158d34aa465d289f328eb3e5c1ba18ac88b94e84f7cb148633bd0402847a57",
-      "entry_count": 258,
+      "content_sha256_lf": "d8f424ae19ad485dea125349816c6d62fb7a3a1da74958a899040c2fd1f82232",
+      "entry_count": 259,
       "package": "src/p1am_control_system",
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
     {
-      "content_sha256_lf": "e37339b79578303b97691501c9b7705fb912514d7b0200d02cbef1196aca28a0",
-      "entry_count": 168,
+      "content_sha256_lf": "4fa1b6fd487a0132413799386543a7b0894f196826a9967dfbcb96c3a5cef495",
+      "entry_count": 169,
       "package": "src/pendulum_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pendulum-simulator.json"
     },
@@ -819,13 +819,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-ui.json"
     },
     {
-      "content_sha256_lf": "1c28fa3bdc7ee43cac8404071f482229dc5f49bc8297e7a8f071d1cc373ba917",
+      "content_sha256_lf": "660fb59e35c751c1eea84137869c804d2b64e7324b7c35e627b5133a11404164",
       "entry_count": 7,
       "package": "src/shared/python/sidekick/utils",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-utils.json"
     },
     {
-      "content_sha256_lf": "4e31019926f76e7768548dcddfe8b353240a38c931273da7041ecfdb562696b7",
+      "content_sha256_lf": "c98b5c5e0afc21b9274767bf59628ed9ec34a0296cf4435b8965c1492c7a678e",
       "entry_count": 18,
       "package": "src/shared/python/signal_toolkit",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-signal-toolkit.json"
@@ -951,7 +951,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-signal-processing-studio.json"
     },
     {
-      "content_sha256_lf": "378133e8396b65d9c251ec05f28c00291465394c05f2b6f44bf5590ea46b04aa",
+      "content_sha256_lf": "028ee5969b5588c1a3a04f18d05dd60882379aa5e0cca1f5d6712205902926b7",
       "entry_count": 1,
       "package": "src/signal_toolkit",
       "path": "manuals/tools/manifests/module-inventory/entries-src-signal-toolkit.json"

@@ -39,8 +39,10 @@ Matching the wrist-row inertia gives an equivalent tip mass
     me = delta_real / L2_model^2
 
 which for a driver on a 1.10 m modelled shaft is **0.238 kg**, not 0.50 or 0.310.
-With that correction the same model, optimizer and objective produce 50.8 m/s of
-clubhead speed with 7.95 m/s of hand speed and a club/arm rate ratio of 3.18 —
+With that correction the same model, optimizer and objective produced 50.8 m/s of
+clubhead speed with 7.95 m/s of hand speed and a club/arm rate ratio of 3.18 as
+published; re-run for Tools #5523 at 0.28 s the lumped 0.238 kg club gives 49.7 m/s,
+7.27 m/s and 3.45, and the shipped distributed club 51.4 m/s, 8.02 m/s and 3.20 —
 inside the heuristic reference intervals in
 :mod:`double_pendulum_golf.swing_objectives.reference_kinematics`.
 

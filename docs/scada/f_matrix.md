@@ -10,7 +10,7 @@
 
 ## Headline
 
-0 of 16 SCADA requirements and 0 of 9 historian children are landed. The 38/38 ticked boxes on #4085-#4088 correspond to no merged code: every carrier PR was closed unmerged. Corroboration: docs/development/professional-scada-epic.md is on main with all 16 of its own feature checkboxes still unchecked.
+1 of 16 SCADA requirements (F09, via PR #5578) and 0 of 9 historian children are landed. The 38/38 ticked boxes on #4085-#4088 correspond to no merged code: every carrier PR was closed unmerged. Corroboration: docs/development/professional-scada-epic.md is on main with all 16 of its own feature checkboxes still unchecked.
 
 This matrix is the tracker of record, superseding the checklists on #4085, #4086, #4087, #4088, #4089 and #4046.
 
@@ -18,7 +18,7 @@ This matrix is the tracker of record, superseding the checklists on #4085, #4086
 
 | Series | Landed | Partial | Missing | Total |
 | --- | --- | --- | --- | --- |
-| SCADA F01-F16 | 0 | 10 | 6 | 16 |
+| SCADA F01-F16 | 1 | 9 | 6 | 16 |
 | Historian H1-H9 | 0 | 2 | 7 | 9 |
 
 ## Status classes
@@ -39,7 +39,7 @@ This matrix is the tracker of record, superseding the checklists on #4085, #4086
 | F06 | Generic process overview and reusable high-performance faceplates | `missing` | #4086 | - |
 | F07 | Interlock, permissive, first-out, and managed-bypass view | `partial` | #4086 | #4928, #3912 |
 | F08 | Historian context, annotations, comparisons, and reporting | `partial` | #4086 | #4678, #4448, #3912 |
-| F09 | Generic sequence/state and procedure demonstration | `partial` | #4087 | #3912 |
+| F09 | Generic sequence/state and procedure demonstration | `landed` | #4087 | #5578, #3912 |
 | F10 | Asset health, calibration, and maintenance workspace | `partial` | #4086 | #4448, #3081, #3806 |
 | F11 | Driver/plugin framework and device diagnostics | `partial` | #4087 | #4448, #4893, #4928 |
 | F12 | FAT/HIL scenario runner and acceptance-evidence packages | `missing` | #4085 | - |
@@ -253,22 +253,24 @@ This matrix is the tracker of record, superseding the checklists on #4085, #4086
 
 ### F09 - Generic sequence/state and procedure demonstration
 
-**Status:** `partial` · **Tracker:** #4087
+**Status:** `landed` · **Tracker:** #4087
 
-**On main:** A Generic[StateT] base class factoring the IDLE/ARMED/RUNNING/TRIPPED scaffolding, one-way E-stop latch, permissive toggle and trip latch/acknowledge, shared by the temperature and power-supply controllers.
+**On main:** A Generic[StateT] base class factoring the IDLE/ARMED/RUNNING/TRIPPED scaffolding, one-way E-stop latch, permissive toggle and trip latch/acknowledge, shared by the temperature and power-supply controllers. PR #5578 (merge commit f0112a4b76ff904c88733532c55bfbfc2d115e5c, closes #5530) adds procedure.py: Step/Procedure dataclasses and a ProcedureExecutor with RUN/HOLD/ABORT transitions, which refuses to start unless the injected PLC client is the simulated driver (NotSimulatedDriverError), and calls an injected safe_state() on ABORT, step failure and step timeout.
 
 **Implementing files (verified present on main):**
 
 - `src/p1am_control_system/backend/safety_state_machine.py`
+- `src/p1am_control_system/backend/procedure.py`
 
 **Tests:**
 
 - `src/p1am_control_system/backend/tests/test_safety_state_machine.py`
+- `src/p1am_control_system/backend/tests/test_procedure.py`
 
 **Gaps:**
 
-- This is per-controller safety scaffolding, not a sequence engine: no hold, abort or recovery transition, no declarative procedure/step/phase model, and no scenario tests.
-- No simulator-only gate confines procedure execution to the simulated driver, which the requirement makes a precondition.
+- No scenario or FAT runner that drives procedures end to end; that is the F12 roadmap and was out of scope for #5530.
+- No HMI for procedures and no persisted procedures; both were out of scope for #5530.
 
 ### F10 - Asset health, calibration, and maintenance workspace
 

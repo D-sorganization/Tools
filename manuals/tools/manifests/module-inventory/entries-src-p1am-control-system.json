@@ -45,6 +45,69 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 4506,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "1c3a5a8cb88f18db1360b8474e764e99f51b4db61a9cc3e165d6e11d6e47dafa",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-ADVISORY-RESULT-PY-7ABACB6D6B72",
+      "language": "python",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/backend/advisory_result.py",
+      "purpose": "Advisory-only result record with provenance for MPC output (SCADA F16).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AdvisoryResult",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_advisory_result",
+            "signature": "*, model_id: str, model_version: str, model_parameters: Mapping[str, Any], inputs: Mapping[str, Any], input_window: Mapping[str, Any], constraint_set: Mapping[str, Any], solver_status: str, created_at: datetime"
+          },
+          {
+            "kind": "function",
+            "name": "stable_hash",
+            "signature": "payload: Mapping[str, Any]"
+          }
+        ],
+        "test_paths": [
+          "src/p1am_control_system/backend/tests/test_advisory_result.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 6111,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -2895,10 +2958,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 10211,
+      "bytes_lf": 11995,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "00e4bd6a80887495f44ed2a9a2de67cb8f8efc77bb20d5f5eff62543fc013649",
+      "content_sha256_lf": "a54c14a9562cc0a0b4c9c78770f341a0dc54d90bad241433b914efac5f274853",
       "family": "control-systems-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-MPC-PY-310885DA8223",
       "language": "python",
@@ -2969,6 +3032,16 @@
           },
           {
             "kind": "constant",
+            "name": "MODEL_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MODEL_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
             "name": "SIM_DT",
             "signature": null
           },
@@ -2981,6 +3054,11 @@
             "kind": "function",
             "name": "simulate_pid_vs_mpc",
             "signature": "payload: MPCSimulationPayload"
+          },
+          {
+            "kind": "function",
+            "name": "simulate_with_advisory",
+            "signature": "payload: MPCSimulationPayload, *, created_at: datetime | None=None"
           },
           {
             "kind": "function",
@@ -5120,10 +5198,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12662,
+      "bytes_lf": 12668,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a6a69c9fe03feeacb6976fc1d478c957f8f0007bb8a9d85da062a42c62a1d35e",
+      "content_sha256_lf": "a8f8d833ef652b201971d045b90b9934cb2ea600cf3569fe05ce854d2d6d4623",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-TUNING-ROUTER-PY-A153D94DE73E",
       "language": "python",
