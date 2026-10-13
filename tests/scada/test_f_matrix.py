@@ -65,7 +65,8 @@ def test_no_requirement_is_claimed_landed_without_being_reverified() -> None:
     38/38.
     """
     matrix = _matrix()
-    assert matrix["totals"]["scada"]["landed"] == 0
+    # F09 is landed via PR #5578 (closes #5530). Any other flip must update this.
+    assert matrix["totals"]["scada"]["landed"] == 1
     assert matrix["totals"]["historian"]["landed"] == 0
 
 

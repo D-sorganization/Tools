@@ -109,10 +109,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 34123,
+      "bytes_lf": 34734,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "4ad7432de61267313f2a5d764e24aefcae930e3b6d2139fa486dea7c5687a147",
+      "content_sha256_lf": "100d091562a6dd79b95bd212c2ded1a6f9ca732928a686db31a6d8ef4e0262f4",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-BIO-C3D-READER-PY-8457053667DC",
       "language": "python",
@@ -184,7 +184,8 @@
         ],
         "test_paths": [
           "src/shared/python/sidekick/tests/lab/bio/test_c3d_edge_cases.py",
-          "src/shared/python/sidekick/tests/lab/bio/test_c3d_reader_fixed.py"
+          "src/shared/python/sidekick/tests/lab/bio/test_c3d_reader_fixed.py",
+          "src/shared/python/sidekick/tests/test_native_dll_guard.py"
         ],
         "unit_mentions": [
           "N",

@@ -3,8 +3,10 @@
 The shipped :class:`~double_pendulum_golf.physics.TorqueClamp` gives the golfer a
 symmetric, velocity-independent torque budget. Under that budget the
 speed-optimal downswing drives the arms to the limit and then reverses the hub
-torque to brake them to a standstill at impact — 32% of the downswing spent
-braking, hands arriving at 0.36 m/s against a measured 6-9 m/s.
+torque to brake them to a standstill at impact — on the lumped 0.50 kg tip-mass
+club, 33-35% of the downswing spent braking and hands arriving at 0.36 m/s against
+a measured 6-9 m/s (re-run for Tools #5523; the shipped distributed club arrives
+at 8.02 m/s braking 14% of the time, so this is a lumped-club result).
 
 Two pieces of physiology are missing, and this module supplies both.
 
@@ -58,7 +60,9 @@ three distinct biomechanical concepts:
 Feasibility status of the Hill candidate
 ----------------------------------------
 In the historical sweep, an optimization candidate with Hill torque-velocity bounds
-produced 6.8 m/s hand speed at impact with 0% hub braking. However, that candidate
+produced 6.8 m/s hand speed at impact with 0% hub braking (re-run for Tools #5523 on
+the lumped club: 6.84 m/s with 6% braking; on the shipped distributed club the Hill
+candidates give 11.2 m/s with a defect of ~1.9). However, that candidate
 exhibited order-one dynamics defects (~1.0). Order-one dynamics defects prevent
 presenting this candidate's 6.8 m/s output as a feasible or measured swing; it is
 dynamically infeasible under this model formulation.

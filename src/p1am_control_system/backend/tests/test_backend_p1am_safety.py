@@ -134,6 +134,16 @@ def test_acknowledge_alarm_reports_audit_commit_failure() -> None:
     failing_session.rollback.assert_called_once()
 
 
+_ACK_TEST_KEY = "ack-test-key"  # pragma: allowlist secret
+
+
+def _expected_ack_actor() -> str:
+    """The label the handler must derive from ``_ACK_TEST_KEY`` (DRY helper)."""
+    from audit import resolve_actor
+
+    return resolve_actor(_ACK_TEST_KEY).label
+
+
 def test_acknowledge_alarm_reports_failed_ack_result() -> None:
     backend_main.control_context.active_alarms["TAG_8"] = {
         "state": "High",
@@ -143,13 +153,35 @@ def test_acknowledge_alarm_reports_failed_ack_result() -> None:
     with patch.object(
         backend_main.control_context, "acknowledge_alarm", return_value=False
     ) as acknowledge:
-        response = client.post("/api/alarms/TAG_8/acknowledge")
+        response = client.post(
+            "/api/alarms/TAG_8/acknowledge",
+            headers={"X-API-Key": _ACK_TEST_KEY},
+        )
 
     assert response.status_code == 409
     assert "could not be acknowledged" in response.json()["detail"]
-    # The operator identity is forwarded so the alarm engine can record it
-    # in acknowledged_by (issue #4034).
-    acknowledge.assert_called_once_with("TAG_8", user=None)
+    # The credential-derived actor is forwarded so the alarm engine records it
+    # in acknowledged_by (issues #4034, #5524).
+    acknowledge.assert_called_once_with("TAG_8", user=_expected_ack_actor())
+
+
+def test_acknowledge_alarm_never_uses_client_supplied_user_as_actor() -> None:
+    backend_main.control_context.active_alarms["TAG_9"] = {
+        "state": "High",
+        "acknowledged": False,
+    }
+
+    with patch.object(
+        backend_main.control_context, "acknowledge_alarm", return_value=True
+    ) as acknowledge:
+        client.post(
+            "/api/alarms/TAG_9/acknowledge",
+            json={"user": "mallory"},
+            headers={"X-API-Key": _ACK_TEST_KEY},
+        )
+
+    acknowledge.assert_called_once_with("TAG_9", user=_expected_ack_actor())
+    assert acknowledge.call_args.kwargs["user"] != "mallory"
 
 
 def test_pid_tuning_start_rejects_unmapped_tags() -> None:

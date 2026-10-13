@@ -375,6 +375,7 @@
           "src/movement_optimizer/tests/test_thread_safety.py",
           "src/movement_optimizer/tests/test_undo_redo_menu.py",
           "src/p1am_control_system/backend/tests/test_alarm_ack_engine.py",
+          "src/p1am_control_system/backend/tests/test_alarm_priority.py",
           "src/p1am_control_system/backend/tests/test_alarm_processing.py",
           "src/p1am_control_system/backend/tests/test_backend_p1am_safety.py",
           "src/p1am_control_system/backend/tests/test_data_capture_core.py",
@@ -391,6 +392,7 @@
           "src/p1am_control_system/backend/tests/test_poll_once.py",
           "src/p1am_control_system/backend/tests/test_power_supply_integration.py",
           "src/p1am_control_system/backend/tests/test_power_supply_persistence.py",
+          "src/p1am_control_system/backend/tests/test_procedure.py",
           "src/p1am_control_system/backend/tests/test_safety_state_machine.py",
           "src/p1am_control_system/backend/tests/test_scan_scheduler.py",
           "src/p1am_control_system/backend/tests/test_temperature_integration.py",
@@ -5494,6 +5496,130 @@
         "public_surfaces": [],
         "test_paths": [],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 11481,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "eb3976d3faff9461b4137ddfb8d86121befaee94fb9e61da3da1ca4665d9a5b1",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SCRIPTS-RERUN-DISTRIBUTED-CLUB-PY-8C47FBADF7F0",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/scripts/rerun_distributed_club.py",
+      "purpose": "Re-run the swing-objective results on the distributed club (Tools #5523).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "SECTIONS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "emit",
+            "signature": "section: str, **fields: object"
+          },
+          {
+            "kind": "function",
+            "name": "legacy_config",
+            "signature": "**overrides: object"
+          },
+          {
+            "kind": "function",
+            "name": "lumped",
+            "signature": "head_kg: float"
+          },
+          {
+            "kind": "function",
+            "name": "lumped_config",
+            "signature": "head_kg: float, **overrides: object"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str]"
+          },
+          {
+            "kind": "function",
+            "name": "section_actuation",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "section_bracket",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "section_club",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "section_comparison",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "section_frontier",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "section_masses",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "section_ranking",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "section_rollout",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "N m",
+          "kg",
+          "s"
+        ],
         "validation_paths": []
       }
     },
@@ -12704,10 +12830,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 14539,
+      "bytes_lf": 14873,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "19f97cc425ef348763f406abea66cd9260abfb3775beae753fb4a27877427c1a",
+      "content_sha256_lf": "7361600f9b4ffa1f17267768e35b3d8d35ea30d20a58c0d53e8674888f940463",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-ACTUATION-PY-65ED0AEB5C54",
       "language": "python",
@@ -12778,6 +12904,7 @@
         "unit_mentions": [
           "N",
           "N*m",
+          "kg",
           "m/s",
           "rad/s",
           "s"
@@ -12787,10 +12914,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 12800,
+      "bytes_lf": 12969,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "a42eecb7072991b37093029439412ef42c0d3f6740e7888d8e19b0ba59a0048a",
+      "content_sha256_lf": "ed1348c6697082b9838397028a0134d47563600f5d2a9ca6fe990713430dcdca",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-CLUB-EQUIVALENCE-PY-52908F5B4992",
       "language": "python",
@@ -13173,10 +13300,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 10416,
+      "bytes_lf": 10549,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "e6e53ece5a633dda933fad966e07169ab7a7902313ee32dc5a2296a38b2915b8",
+      "content_sha256_lf": "c346140383266e941780e81984b476a055beb3012ff9ddefcbd18eb781db3556",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-IMPACT-OPTIMALITY-PY-46372125DFAF",
       "language": "python",
@@ -13245,6 +13372,7 @@
           "src/pendulum_simulator/tests/test_impact_optimality.py"
         ],
         "unit_mentions": [
+          "J",
           "kg",
           "m/s",
           "s"
@@ -13254,10 +13382,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 11411,
+      "bytes_lf": 11667,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "f348830760c414eba770cfa239fd84b72a57dc13a2a1f1d6acd1d5072eb7a6fa",
+      "content_sha256_lf": "ea0976f13ecb686169b0543e25a841d29b6cf63420b55437ad54115eed7211be",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-MODEL-ADEQUACY-PY-E5B09834B73A",
       "language": "python",
@@ -13323,6 +13451,7 @@
         ],
         "unit_mentions": [
           "N",
+          "N m",
           "N*m",
           "deg",
           "g",
@@ -13335,10 +13464,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 8256,
+      "bytes_lf": 8749,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "5289c3c1396468487fdfd9cab53327c57fb02ce976319ce90671c378a5c3393d",
+      "content_sha256_lf": "c524ba1329847f7f1d405faf730a5cd1bc75781ee48e725931bea0f5908df371",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SWING-OBJECTIVES-OBJECTIVE-REALISM-PY-703B0EB9E7BE",
       "language": "python",
@@ -13396,6 +13525,7 @@
           "src/pendulum_simulator/tests/test_objective_realism.py"
         ],
         "unit_mentions": [
+          "N m",
           "kg",
           "m/s",
           "s"

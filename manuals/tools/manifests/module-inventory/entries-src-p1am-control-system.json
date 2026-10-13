@@ -45,10 +45,151 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6111,
+      "bytes_lf": 4506,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b0cf2371c623c33b1fda0608e364cb61bc1fb1e5972e03c5d83ab0d1a8318ccb",
+      "content_sha256_lf": "1c3a5a8cb88f18db1360b8474e764e99f51b4db61a9cc3e165d6e11d6e47dafa",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-ADVISORY-RESULT-PY-7ABACB6D6B72",
+      "language": "python",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/backend/advisory_result.py",
+      "purpose": "Advisory-only result record with provenance for MPC output (SCADA F16).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AdvisoryResult",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_advisory_result",
+            "signature": "*, model_id: str, model_version: str, model_parameters: Mapping[str, Any], inputs: Mapping[str, Any], input_window: Mapping[str, Any], constraint_set: Mapping[str, Any], solver_status: str, created_at: datetime"
+          },
+          {
+            "kind": "function",
+            "name": "stable_hash",
+            "signature": "payload: Mapping[str, Any]"
+          }
+        ],
+        "test_paths": [
+          "src/p1am_control_system/backend/tests/test_advisory_result.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3949,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "bc84958fd66e8966b1d1a93f87cff67ccfc457abff89eec4880063c28d44ce3f",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-ALARM-PRIORITY-PY-CB21A1CF1CAB",
+      "language": "python",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/backend/alarm_priority.py",
+      "purpose": "Per-tag alarm priority (SCADA F03, issue #5526).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AlarmPriority",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BAD_QUALITY_STATE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_SEVERITY_BY_STATE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FAIL_CLOSED_SEVERITY",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "parse_alarm_priority",
+            "signature": "raw: Any"
+          },
+          {
+            "kind": "function",
+            "name": "resolve_severity",
+            "signature": "state: str, priority: AlarmPriority | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/p1am_control_system/backend/tests/test_alarm_priority.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6402,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "144009c6559ae27bc9dbf18d629a17872a8e9e672aa72061c6eecac76fca090f",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-ALARM-PROCESSING-PY-77E33AC894C7",
       "language": "python",
@@ -84,29 +225,19 @@
         "public_routes": [],
         "public_surfaces": [
           {
-            "kind": "constant",
-            "name": "BAD_QUALITY_STATE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_SEVERITY_BY_STATE",
-            "signature": null
-          },
-          {
             "kind": "function",
             "name": "build_alarm_entry",
-            "signature": "tag_name: str, state: str, *, timestamp: str, acknowledged: bool=False, acknowledged_by: str | None=None"
+            "signature": "tag_name: str, state: str, *, timestamp: str, acknowledged: bool=False, acknowledged_by: str | None=None, priority: AlarmPriority | None=None"
           },
           {
             "kind": "function",
             "name": "process_alarm_events",
-            "signature": "alarm_engine: Any, tags: dict[str, float], active_alarms: dict[str, dict[str, Any]], *, now: datetime | None=None"
+            "signature": "alarm_engine: Any, tags: dict[str, float], active_alarms: dict[str, dict[str, Any]], *, now: datetime | None=None, priorities: Mapping[str, AlarmPriority] | None=None"
           },
           {
             "kind": "function",
             "name": "severity_for_state",
-            "signature": "state: str"
+            "signature": "state: str, priority: AlarmPriority | None=None"
           },
           {
             "kind": "function",
@@ -320,10 +451,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11998,
+      "bytes_lf": 15285,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "027996dc55bdd51f1d6f44cbbc84c9070a83eab513d76889a5d2a025ad6aaba1",
+      "content_sha256_lf": "2c49c1c7384154253bf8c3a50b0724742f7ea8eff5e36946e0a9d3ee6d5bd481",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-AUDIT-PY-F859122DA277",
       "language": "python",
@@ -385,8 +516,18 @@
           },
           {
             "kind": "function",
+            "name": "actor_from_headers",
+            "signature": "headers: Any"
+          },
+          {
+            "kind": "function",
             "name": "credential_fingerprint",
             "signature": "key: str | None"
+          },
+          {
+            "kind": "function",
+            "name": "migrate_audit_event_columns",
+            "signature": "bind: Any"
           },
           {
             "kind": "function",
@@ -397,6 +538,11 @@
             "kind": "function",
             "name": "resolve_actor",
             "signature": "api_key: str | None"
+          },
+          {
+            "kind": "function",
+            "name": "set_audit_context",
+            "signature": "request: Any, *, reason: str | None=None, before: Any=None, after: Any=None"
           }
         ],
         "test_paths": [
@@ -1765,10 +1911,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10967,
+      "bytes_lf": 11057,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c50701337d90c60bfb0213d1562a31da29a70e20a0fb210b09450777f199d800",
+      "content_sha256_lf": "f2a9aac3d733fdf0fcd91a787dd1921f3eb2eb9562242780ac83b0549a8d3642",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-DATABASE-PY-7B6D97B2ADA4",
       "language": "python",
@@ -2257,10 +2403,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 52154,
+      "bytes_lf": 53065,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "1753d077adef39829cef1e2becdfd44852e8eac5b2c11d0a988d0c0cef9b0973",
+      "content_sha256_lf": "45bb449d9b065b4b690cdcc5b94589498191a562009f219a6141c981d7fb50eb",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-MAIN-PY-C47A4D7AC436",
       "language": "python",
@@ -2338,7 +2484,7 @@
           {
             "kind": "function",
             "name": "acknowledge_alarm",
-            "signature": "tag_id: str, payload: AlarmAckPayload | None=None, db: Session=Depends(get_session)"
+            "signature": "tag_id: str, request: Request, payload: AlarmAckPayload | None=None, db: Session=Depends(get_session)"
           },
           {
             "kind": "function",
@@ -2721,10 +2867,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 14167,
+      "bytes_lf": 14694,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "38cbcf9ef731b30925a25c9ec974150a1d2146ea2543fe6d258d5a57cfe2520e",
+      "content_sha256_lf": "1609b9cf6d2ef73bfa22d04a11efa7b3d32fd9133bb4f0e7c72d8c9a3bb205af",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-MODELS-PY-DDB50293189B",
       "language": "python",
@@ -2880,10 +3026,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 10211,
+      "bytes_lf": 11995,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "00e4bd6a80887495f44ed2a9a2de67cb8f8efc77bb20d5f5eff62543fc013649",
+      "content_sha256_lf": "a54c14a9562cc0a0b4c9c78770f341a0dc54d90bad241433b914efac5f274853",
       "family": "control-systems-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-MPC-PY-310885DA8223",
       "language": "python",
@@ -2954,6 +3100,16 @@
           },
           {
             "kind": "constant",
+            "name": "MODEL_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MODEL_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
             "name": "SIM_DT",
             "signature": null
           },
@@ -2966,6 +3122,11 @@
             "kind": "function",
             "name": "simulate_pid_vs_mpc",
             "signature": "payload: MPCSimulationPayload"
+          },
+          {
+            "kind": "function",
+            "name": "simulate_with_advisory",
+            "signature": "payload: MPCSimulationPayload, *, created_at: datetime | None=None"
           },
           {
             "kind": "function",
@@ -4084,6 +4245,84 @@
       }
     },
     {
+      "authority_status": "provisional",
+      "bytes_lf": 7196,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "495e256a97d8fc8739a6bea0ae95cc362ecaee06547d593806af14203e42e785",
+      "family": "control-systems-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-PROCEDURE-PY-5DBAE83E7B42",
+      "language": "python",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/backend/procedure.py",
+      "purpose": "Declarative procedure model with HOLD/ABORT, gated to the simulated driver.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "NotSimulatedDriverError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Procedure",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ProcedureExecutor",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ProcedureState",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "Step",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/p1am_control_system/backend/tests/test_procedure.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "not-applicable",
       "bytes_lf": 9986,
       "classification": "non-calculation",
@@ -4638,10 +4877,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 11636,
+      "bytes_lf": 12168,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "9fc89a37511d0191fb331252efcd697b00a0dfea598637991959e547502dfb33",
+      "content_sha256_lf": "8d5b07f11f08427b76386d47cbc0dc5d9df53a11ea46d1be8249133a352fb7e0",
       "family": "control-systems-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-STATE-PY-C288C9C9A698",
       "language": "python",
@@ -5027,10 +5266,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12662,
+      "bytes_lf": 12668,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a6a69c9fe03feeacb6976fc1d478c957f8f0007bb8a9d85da062a42c62a1d35e",
+      "content_sha256_lf": "a8f8d833ef652b201971d045b90b9934cb2ea600cf3569fe05ce854d2d6d4623",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-TUNING-ROUTER-PY-A153D94DE73E",
       "language": "python",

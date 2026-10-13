@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 from typing import Any
 
 import hardware
+from alarm_priority import AlarmPriority
 from alarm_processing import build_alarm_entry, state_name
 from defaults import default_routing_config
 from models import RoutingConfig
@@ -56,6 +57,14 @@ class SystemState:
         self.active_alarms: dict[str, dict[str, Any]] = {}
         self.e_stop_active = False
         self.tuning_sessions: dict[int, dict[str, Any]] = {}
+
+    def alarm_priorities(self) -> dict[str, AlarmPriority]:
+        """Per-tag priority overrides from the active config (explicit ones only)."""
+        return {
+            tag: interlock.alarm_priority
+            for tag, interlock in self.active_config.interlocks.items()
+            if interlock.alarm_priority is not None
+        }
 
     def attach_clients(self, *clients: Any) -> None:
         for client in clients:
@@ -219,6 +228,7 @@ class SystemState:
             return
 
         stamp = datetime.now(UTC).isoformat()
+        priorities = self.alarm_priorities()
         for entry in snapshot:
             tag_id = str(entry.get("tag_id", ""))
             if not tag_id:
@@ -245,6 +255,7 @@ class SystemState:
                         timestamp=str(entry.get("timestamp") or stamp),
                         acknowledged=bool(entry.get("acknowledged", False)),
                         acknowledged_by=entry.get("acknowledged_by"),
+                        priority=priorities.get(tag_id),
                     )
                     continue
 
@@ -267,4 +278,5 @@ class SystemState:
                 timestamp=str(entry.get("timestamp") or stamp),
                 acknowledged=bool(current.get("acknowledged", False)),
                 acknowledged_by=current.get("acknowledged_by"),
+                priority=priorities.get(tag_id),
             )
