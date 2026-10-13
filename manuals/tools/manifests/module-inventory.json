@@ -597,7 +597,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "b7a9e3d114a7ee4b875d3f442bb05a5028026f10d5e9280aca9d226434583cae",
+      "content_sha256_lf": "72e668e10a41f92676d4a2ad10227c23e664d216ba23fe557a2a7b77477c253c",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"

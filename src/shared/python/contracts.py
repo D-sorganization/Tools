@@ -92,15 +92,22 @@ def _contracts_enabled() -> bool:
 
 
 def set_contract_level(level: ContractLevel) -> None:
-    """Set the global contract enforcement level at runtime."""
+    """Set the global level from a canonical or value-compatible enum."""
     import sys
 
-    _ContractState.level = level
-    # Update module-level aliases so existing references see the new values
+    if not isinstance(level, enum.Enum):
+        raise TypeError("level must be a contract-level enum")
+    try:
+        canonical_level = ContractLevel(level.value)
+    except (TypeError, ValueError) as exc:
+        raise ValueError(f"unsupported contract level: {level.value!r}") from exc
+
+    _ContractState.level = canonical_level
+    # Update module-level aliases so existing references see the new values.
     current_module = sys.modules[__name__]
-    current_module.DBC_LEVEL = level  # type: ignore[attr-defined]
-    current_module.CONTRACTS_ENABLED = level != ContractLevel.OFF  # type: ignore[attr-defined]
-    logger.info("Contract enforcement level set to %s", level.value)
+    current_module.DBC_LEVEL = canonical_level  # type: ignore[attr-defined]
+    current_module.CONTRACTS_ENABLED = canonical_level != ContractLevel.OFF  # type: ignore[attr-defined]
+    logger.info("Contract enforcement level set to %s", canonical_level.value)
 
 
 def get_contract_level() -> ContractLevel:
