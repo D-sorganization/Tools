@@ -12,6 +12,7 @@ from typing import Any, cast
 
 import hardware
 import shutdown_safety
+from alarm_processing import process_alarm_events
 from alicat_manager import create_default_manager
 from audit import (
     AuditMiddleware,
@@ -271,6 +272,18 @@ def build_alarm_engine(config: RoutingConfig) -> Any:
 
 
 control_context = SystemState(alarm_engine_factory=build_alarm_engine)
+
+
+def _process_alarm_events(
+    alarm_engine: Any, tags: dict[str, float], active: dict[str, dict[str, Any]]
+) -> list[Any]:
+    """Poll-loop alarm hook applying the active config's per-tag priorities."""
+    rows: list[Any] = process_alarm_events(
+        alarm_engine, tags, active, priorities=control_context.alarm_priorities()
+    )
+    return rows
+
+
 control_context.attach_clients(plc_client, backup_simulator)
 
 
@@ -371,6 +384,7 @@ async def poll_plc_loop() -> None:
                     power_supply=power_supply_service,
                     temperature=temperature_service,
                     alarm_engine=control_context.alarm_engine,
+                    process_events=_process_alarm_events,
                     active_alarm_map=control_context.active_alarms,
                     estop_active=control_context.e_stop_active,
                     historian=_historian_sink,
