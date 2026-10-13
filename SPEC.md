@@ -5947,6 +5947,10 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-13 | #5584 | Historian H1: Extract HistorianSink protocol for pluggable write backends; Historian H2: Durable on-disk spool so the historian survives restart (store-and-forward) |
+| 2026-10-13 | #5579 | Normalize compatible contract-level enums |
+| 2026-10-13 | #5583 | Historian H9: Historian operator/engineer documentation, runbook and ADR |
+| 2026-10-13 | #5560 | SCADA F08: /api/trends gains additive quality array and CSV export appends Quality column (unknown for NULL/unrecognised) |
 | 2026-10-13 | #5563 | SCADA F16: advisory-only AdvisoryResult provenance record (model/inputs hash, window, constraints, solver status) on /api/mpc/simulate, with import-guard test |
 | 2026-10-13 | #5580 | SCADA F09 matrix row flipped to landed citing PR #5578 |
 | 2026-10-13 | #5564 | SCADA F03: per-tag alarm priority override (validated WARNING/TRIP enum on the interlock config, persisted via the routing config store; BadQuality floor; fails closed to trip) |

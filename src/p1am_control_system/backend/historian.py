@@ -17,6 +17,7 @@ from __future__ import annotations
 import asyncio
 import inspect
 import logging
+import math
 import time
 from collections.abc import Callable, Iterator, Mapping, Sequence
 from dataclasses import dataclass
@@ -80,6 +81,147 @@ class HistorianRecord:
     def is_empty(self) -> bool:
         """True when there is nothing to persist (no session need be opened)."""
         return not self.tags and not self.events
+
+    def to_dict(self) -> dict[str, Any]:
+        """Serialize record to a JSON-safe dictionary with validation."""
+        tags_dict = None
+        if self.tags is not None:
+            tags_dict = {}
+            for k, v in self.tags.items():
+                if not isinstance(k, str) or not k.strip():
+                    raise ValueError(f"tag key must be a non-empty str, got {k!r}")
+                if isinstance(v, bool):
+                    raise TypeError(f"tag value for {k!r} must be float, not bool")
+                try:
+                    fval = float(v)
+                except (TypeError, ValueError) as exc:
+                    raise TypeError(
+                        f"tag value for {k!r} must be float, got {type(v).__name__}"
+                    ) from exc
+                if not math.isfinite(fval):
+                    raise ValueError(
+                        f"tag value for {k!r} must be finite float, got {fval}"
+                    )
+                tags_dict[k] = fval
+
+        serialized_events: list[dict[str, Any]] = []
+        for ev in self.events:
+            if isinstance(ev, str):
+                serialized_events.append({"kind": "str", "value": ev})
+            elif hasattr(ev, "event_type") and hasattr(ev, "description"):
+                ts = getattr(ev, "timestamp", None)
+                ts_str: str | None = None
+                if ts is not None:
+                    if hasattr(ts, "isoformat") and callable(ts.isoformat):
+                        ts_str = str(ts.isoformat())
+                    else:
+                        ts_str = str(ts)
+                serialized_events.append(
+                    {
+                        "kind": "EventLog",
+                        "event_type": str(ev.event_type),
+                        "description": str(ev.description),
+                        "severity": int(getattr(ev, "severity", 0)),
+                        "timestamp": ts_str,
+                    }
+                )
+            elif isinstance(ev, Mapping):
+                serialized_events.append({"kind": "map", "value": dict(ev)})
+            else:
+                raise TypeError(
+                    f"Unsupported event type for serialization: {type(ev).__name__}"
+                )
+
+        return {
+            "tags": tags_dict,
+            "events": serialized_events,
+            "quality": self.quality,
+        }
+
+    @classmethod
+    def from_dict(cls, data: Mapping[str, Any]) -> HistorianRecord:
+        """Construct and validate a HistorianRecord from a dict (DbC)."""
+        if not isinstance(data, Mapping):
+            raise TypeError(f"data must be a mapping, got {type(data).__name__}")
+
+        raw_tags = data.get("tags")
+        tags: dict[str, float] | None = None
+        if raw_tags is not None:
+            if not isinstance(raw_tags, Mapping):
+                raise TypeError(
+                    f"tags must be a mapping or None, got {type(raw_tags).__name__}"
+                )
+            tags = {}
+            for k, v in raw_tags.items():
+                if not isinstance(k, str) or not k.strip():
+                    raise ValueError(f"tag key must be non-empty str, got {k!r}")
+                if isinstance(v, bool):
+                    raise TypeError(f"tag {k!r} value must be numeric float, not bool")
+                try:
+                    fval = float(v)
+                except (TypeError, ValueError) as exc:
+                    raise TypeError(
+                        f"tag {k!r} value must be numeric float, got {v!r}"
+                    ) from exc
+                if not math.isfinite(fval):
+                    raise ValueError(f"tag {k!r} value must be finite, got {fval}")
+                tags[k] = fval
+
+        raw_events = data.get("events", ())
+        if not isinstance(raw_events, (list, tuple)):
+            raise TypeError(
+                f"events must be a sequence, got {type(raw_events).__name__}"
+            )
+
+        deserialized_events: list[Any] = []
+        for item in raw_events:
+            if isinstance(item, str):
+                deserialized_events.append(item)
+            elif isinstance(item, Mapping):
+                kind = item.get("kind")
+                if kind == "str":
+                    val = item.get("value")
+                    if not isinstance(val, str):
+                        raise TypeError("string event value must be str")
+                    deserialized_events.append(val)
+                elif kind == "EventLog":
+                    ev_type = item.get("event_type")
+                    desc = item.get("description")
+                    if not isinstance(ev_type, str) or not isinstance(desc, str):
+                        raise TypeError(
+                            "EventLog requires str event_type and description"
+                        )
+                    sev = int(item.get("severity", 0))
+                    ts_raw = item.get("timestamp")
+                    ts = datetime.fromisoformat(ts_raw) if ts_raw else datetime.now(UTC)
+                    try:
+                        from models import EventLog
+
+                        deserialized_events.append(
+                            EventLog(
+                                event_type=ev_type,
+                                description=desc,
+                                severity=sev,
+                                timestamp=ts,
+                            )
+                        )
+                    except ImportError:
+                        deserialized_events.append(dict(item))
+                elif kind == "map":
+                    val = item.get("value")
+                    if not isinstance(val, Mapping):
+                        raise TypeError("map event value must be a mapping")
+                    deserialized_events.append(dict(val))
+                else:
+                    raise ValueError(f"unknown event kind: {kind!r}")
+            else:
+                raise TypeError(f"invalid event entry: {type(item).__name__}")
+
+        raw_quality = data.get("quality", DataSource.LIVE.value)
+        if not isinstance(raw_quality, str) or not raw_quality.strip():
+            raise ValueError(f"quality must be a non-empty str, got {raw_quality!r}")
+
+        return cls(tags=tags, events=tuple(deserialized_events), quality=raw_quality)
 
 
 @dataclass
