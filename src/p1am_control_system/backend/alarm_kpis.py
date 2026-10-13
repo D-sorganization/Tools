@@ -114,7 +114,7 @@ def _to_utc(ts: Any) -> datetime:
 
 
 def _tag_from_event_description(desc: Any) -> str | None:
-    """Parse a tag name from free-text event descriptions when explicit tags are absent."""
+    """Parse a tag from event descriptions when explicit tag fields are absent."""
     if not isinstance(desc, str) or "tag " not in desc.lower():
         return None
     parts = desc.split()
@@ -129,7 +129,9 @@ def _tag_from_event_description(desc: Any) -> str | None:
 
 def _tag_from_object(raw: Any) -> str:
     """Resolve tag from duck-typed alarm/event records (e.g. EventLog)."""
-    tag_raw = getattr(raw, "tag", getattr(raw, "tag_name", getattr(raw, "tag_id", None)))
+    tag_raw = getattr(
+        raw, "tag", getattr(raw, "tag_name", getattr(raw, "tag_id", None))
+    )
     if tag_raw is not None:
         return str(tag_raw)
     from_description = _tag_from_event_description(getattr(raw, "description", ""))
