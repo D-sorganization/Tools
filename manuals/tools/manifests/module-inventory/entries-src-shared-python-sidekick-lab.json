@@ -184,6 +184,7 @@
         ],
         "test_paths": [
           "src/shared/python/sidekick/tests/lab/bio/test_c3d_edge_cases.py",
+          "src/shared/python/sidekick/tests/lab/bio/test_c3d_force_plate_dataframe.py",
           "src/shared/python/sidekick/tests/lab/bio/test_c3d_reader_fixed.py",
           "src/shared/python/sidekick/tests/test_native_dll_guard.py"
         ],
