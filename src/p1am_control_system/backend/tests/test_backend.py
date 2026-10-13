@@ -296,7 +296,7 @@ def test_export_data() -> None:
 
     # 1 Header row + 3 Data rows
     assert len(rows) == 4
-    assert rows[0] == ["Timestamp", "Tag Name", "Value"]
+    assert rows[0] == ["Timestamp", "Tag Name", "Value", "Quality"]
     # Sorted by timestamp asc
     assert rows[1][1] == "TAG_2"
     assert rows[1][2] == "35.5"

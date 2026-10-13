@@ -389,10 +389,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 24980,
+      "bytes_lf": 25323,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "373a2b805098fe74bbf63afea6700f3c3f49fc9964f9a589e6f9c626ce60613d",
+      "content_sha256_lf": "0d376f2c0c9b41ca33e8e16e78070978a27e4a3133361162c5e9423da9ad064f",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CONTRACTS-PY-7B33D8E20A4B",
       "language": "python",

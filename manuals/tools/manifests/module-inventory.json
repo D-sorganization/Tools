@@ -123,7 +123,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
     },
     {
-      "content_sha256_lf": "331e339b1ac9585c69b7fb69254c39bc40777ee90f03de0e817bb5e226ba0398",
+      "content_sha256_lf": "35e24bb87681cfd5301df9bad28c555ac8c231d56183284a784960c1a359e134",
       "entry_count": 5,
       "package": "rust_core/data-processor-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
@@ -387,7 +387,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-optimizer-gui.json"
     },
     {
-      "content_sha256_lf": "889fc8cdd7105562801be8a747de68f89b3f6dc9499bd1244423708fb0824a40",
+      "content_sha256_lf": "658be4811b1cd7f2631fc0d2f98a0b9c14e77254cbca15b763acd2dde7db3380",
       "entry_count": 262,
       "package": "src/p1am_control_system",
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
@@ -597,7 +597,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "b28f799b8bfb739059d7e56a6c95c30bdd76cfa46ea87068c36c886fd50efa91",
+      "content_sha256_lf": "de670bc4375bc7c01fdebbe94d0e7f13d211955ee8d04bc80238bca7b7ac2827",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
