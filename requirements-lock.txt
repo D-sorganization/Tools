@@ -27,6 +27,7 @@ types-PyYAML==6.0.12.20260906
 types-requests==2.33.0.20261006
 
 # GUI & Desktop Applications
+# PyQt6 / PyQt6-Qt6 / PyQt6-sip move together; sip 13.13.0 deferred (#5508).
 PyQt6==6.11.0
 PyQt6-Qt6==6.11.2
 PyQt6-sip==13.12.0

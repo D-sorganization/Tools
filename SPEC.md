@@ -5947,6 +5947,10 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-13 | #5600 | Document and enforce coupled PyQt6-sip 13.12.0 deferral (#5508, Dependabot #5486) |
+| 2026-10-13 | #5602 | SCADA F-matrix rows F01/F03/F04/F08/F10/F16 cite their merged slices (PRs #5551, #5564, #5557, #5560, #5559, #5563) and stay partial with refreshed gaps |
+| 2026-10-13 | #5596 | Split C3DDataReader.force_plate_dataframe into private helpers (pure refactor, adds characterization tests) |
+| 2026-10-13 | #5597 | \ ISA-18.2 / EEMUA 191 alarm performance KPIs and dashboard\ |
 | 2026-10-13 | #5593 | \ Grafana provisioning-as-code: datasource and baseline dashboards\ |
 | 2026-10-13 | #5592 | Historian H5: expose queue depth, lag and drop counters |
 | 2026-10-13 | #5588 | Historian H1: Extract HistorianSink protocol for pluggable write backends; Historian H3: TimescaleDB schema migrations for hypertable compression continuous aggregates and retention |

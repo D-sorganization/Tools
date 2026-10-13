@@ -148,6 +148,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5546 · \ ISA-18.2 / EEMUA 191 Alarm Performance KPIs and Dashboard\
+
+- **State:** in_review
+- **Owner:** unassigned
+- **Issue:** #5546
+- **Branch:** feat/5546-alarm-kpis
+- **PR:** #5597
+- **Paths:** see #5597
+- **Started:** 2026-10-13
+- **Last verified:** 2026-10-13 (`a8a74602`; collated from changes/5546-isa-18-2-eemua-191-alarm-performance-kpi.md)
+- **Summary:** \ ISA-18.2 / EEMUA 191 alarm performance KPIs and dashboard\
+- **Next step:** \Merge the PR.\
+
 ### DL-#5545 · \ Grafana Provisioning-as-Code: Datasource and Baseline Dashboards\
 
 - **State:** in_review
@@ -1521,6 +1534,45 @@ reachable from any live state and `abandoned` from `parked`.
   definition.
 
 ## Shipped (Last 90 Days)
+
+### DL-#5508 · Document and Enforce Coupled PyQt6-Sip 13.12.0 Deferral (#5508, Dependabot #5486)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5508
+- **Branch:** merged via #5600
+- **PR:** #5600
+- **Paths:** see #5600
+- **Started:** 2026-10-13
+- **Last verified:** 2026-10-13 (`dd834170`; collated from changes/5508-document-and-enforce-coupled-pyqt6-sip-1.md)
+- **Summary:** Document and enforce coupled PyQt6-sip 13.12.0 deferral (#5508, Dependabot #5486)
+- **Next step:** Shipped in PR #5600.
+
+### DL-#4089 · SCADA F-Matrix Rows F01/F03/F04/F08/F10/F16 Cite Their Merged Slices (PRs #5551, #5564, #5557, #5560, #5559, #5563) and Stay Partial With Refreshed Gaps
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #4089
+- **Branch:** merged via #5602
+- **PR:** #5602
+- **Paths:** see #5602
+- **Started:** 2026-10-13
+- **Last verified:** 2026-10-13 (`840da341`; collated from changes/4089-scada-f-matrix-rows-f01-f03-f04-f08-f10.md)
+- **Summary:** SCADA F-matrix rows F01/F03/F04/F08/F10/F16 cite their merged slices (PRs #5551, #5564, #5557, #5560, #5559, #5563) and stay partial with refreshed gaps
+- **Next step:** Shipped in PR #5602.
+
+### DL-#5595 · Split C3DDataReader.Force_Plate_Dataframe Into Private Helpers (Pure Refactor, Adds Characterization Tests)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5595
+- **Branch:** merged via #5596
+- **PR:** #5596
+- **Paths:** see #5596
+- **Started:** 2026-10-13
+- **Last verified:** 2026-10-13 (`f7440f18`; collated from changes/5595-split-c3ddatareader-force-plate-datafram.md)
+- **Summary:** Split C3DDataReader.force_plate_dataframe into private helpers (pure refactor, adds characterization tests)
+- **Next step:** Shipped in PR #5596.
 
 ### DL-#5542 · Historian H3: TimescaleDB Schema Migrations for Hypertable Compression Continuous Aggregates and Retention
 
