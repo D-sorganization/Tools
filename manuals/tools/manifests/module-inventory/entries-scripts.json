@@ -2792,10 +2792,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5803,
+      "bytes_lf": 5781,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d547ee1131514b94d80f5fe6735da9a8f03c12196a1322387a26003505b761ec",
+      "content_sha256_lf": "4c0fcdc820f1db76599d2fdbc9e762a5ec413cf3bee9b569e44ee18023d7decb",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-PYQT6-BINARY-STACK-POLICY-PY-4083C9393650",
       "language": "python",
