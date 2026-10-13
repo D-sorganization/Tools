@@ -3,7 +3,7 @@
 # SIP wheels are locked explicitly and must stay coupled (#5508); pandas stays
 # below 4 per the declared GUI extra, and pytest-qt is pinned for rendered-test
 # stability.
-numpy==2.3.5
+numpy==2.4.6
 scipy==1.17.1
 PyQt6==6.11.0
 PyQt6-Qt6==6.11.2
