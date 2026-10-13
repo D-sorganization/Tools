@@ -40,4 +40,5 @@ Three-digit numbers are Tools-native records; four-digit numbers follow the flee
 | [ADR-0047](ADR-0047-trajectory-visualization-shared-wire-preserved-viewers.md) | Accepted | mirror (UpstreamDrift) | Trajectory Visualization — Shared Wire, Preserved Viewers |
 | [ADR-0048](ADR-0048-launch-monitor-port-plan.md) | Proposed — ratified when this document is reviewed | mirror (UpstreamDrift) | G1: Launch-Monitor Port Plan |
 | [ADR-0049](ADR-0049-fleet-adr-home.md) | Accepted | Tools | Fleet ADR Home — Shared-Layer ADRs Live in Tools, Consumers Mirror Them |
+| [ADR-0050](ADR-0050-plant-historian-timescaledb.md) | Accepted | Tools | Plant Historian — TimescaleDB and Grafana for Telemetry and Analytics |
 <!-- adr-index:end -->

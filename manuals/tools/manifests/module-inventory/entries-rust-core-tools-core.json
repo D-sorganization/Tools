@@ -3094,7 +3094,8 @@
           "src/p1am_control_system/backend/tests/test_alarm_nan_bad_quality.py",
           "src/p1am_control_system/backend/tests/test_alarm_priority.py",
           "src/p1am_control_system/backend/tests/test_scada_fallback.py",
-          "tests/scada/test_f_matrix.py"
+          "tests/scada/test_f_matrix.py",
+          "tests/scada/test_historian_docs.py"
         ],
         "unit_mentions": [
           "J",
