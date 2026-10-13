@@ -220,6 +220,29 @@ def test_top_10_contributors() -> None:
     assert summary.top_10_contributors[0]["percentage"] == expected_pct
 
 
+def test_duck_typed_event_log_resolves_tag_from_description() -> None:
+    """EventLog-style records without tag fields fall back to description parsing."""
+
+    class EventLog:
+        def __init__(self, timestamp: datetime, description: str, state: str) -> None:
+            self.timestamp = timestamp
+            self.description = description
+            self.state = state
+
+    base = datetime(2026, 10, 1, 12, 0, 0, tzinfo=UTC)
+    events = [
+        EventLog(base, "Alarm High on tag TI_101", "High"),
+        EventLog(base, "Alarm with no identifier", "High"),
+    ]
+
+    summary = compute_alarm_kpis(events)
+
+    assert summary.total_alarms == 2
+    tags = {row["tag"] for row in summary.top_10_contributors}
+    assert "TI_101" in tags
+    assert "UNKNOWN" in tags
+
+
 def test_priority_distribution() -> None:
     """Alarm priority distribution counts events by severity tier."""
     base = datetime(2026, 10, 1, 12, 0, 0, tzinfo=UTC)

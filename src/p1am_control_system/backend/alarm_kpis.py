@@ -113,6 +113,31 @@ def _to_utc(ts: Any) -> datetime:
     return datetime.now(UTC)
 
 
+def _tag_from_event_description(desc: Any) -> str | None:
+    """Parse a tag name from free-text event descriptions when explicit tags are absent."""
+    if not isinstance(desc, str) or "tag " not in desc.lower():
+        return None
+    parts = desc.split()
+    tag_word_indexes = [i for i, part in enumerate(parts) if part.lower() == "tag"]
+    if not tag_word_indexes:
+        return None
+    tag_index = tag_word_indexes[0]
+    if tag_index + 1 >= len(parts):
+        return None
+    return parts[tag_index + 1]
+
+
+def _tag_from_object(raw: Any) -> str:
+    """Resolve tag from duck-typed alarm/event records (e.g. EventLog)."""
+    tag_raw = getattr(raw, "tag", getattr(raw, "tag_name", getattr(raw, "tag_id", None)))
+    if tag_raw is not None:
+        return str(tag_raw)
+    from_description = _tag_from_event_description(getattr(raw, "description", ""))
+    if from_description is not None:
+        return from_description
+    return "UNKNOWN"
+
+
 def _extract_record(raw: Any) -> AlarmEventRecord:
     """Extract an AlarmEventRecord from a dict, ORM model, or record object."""
     if isinstance(raw, AlarmEventRecord):
@@ -132,23 +157,12 @@ def _extract_record(raw: Any) -> AlarmEventRecord:
 
     # Duck-typed object (e.g. EventLog)
     ts = _to_utc(getattr(raw, "timestamp", getattr(raw, "ts", None)))
-    tag = getattr(raw, "tag", getattr(raw, "tag_name", getattr(raw, "tag_id", None)))
-    if tag is None:
-        desc = getattr(raw, "description", "")
-        # e.g. "Alarm High on tag TI_101" or "Tag TI_101 crossed limit..."
-        if "tag " in desc.lower():
-            parts = desc.split()
-            idx = [i for i, p in enumerate(parts) if p.lower() == "tag"]
-            if idx and idx[0] + 1 < len(parts):
-                tag = parts[idx[0] + 1]
-        if not tag:
-            tag = "UNKNOWN"
-
+    tag = _tag_from_object(raw)
     state = getattr(raw, "state", getattr(raw, "event_type", "Alarm"))
     severity = getattr(raw, "severity", 1)
     return AlarmEventRecord(
         timestamp=ts,
-        tag=str(tag),
+        tag=tag,
         state=str(state),
         severity=int(severity),
     )
