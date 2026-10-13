@@ -148,6 +148,32 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5541 · Historian H2: Durable On-Disk Spool so the Historian Survives Restart (Store-and-Forward)
+
+- **State:** in_review
+- **Owner:** unassigned
+- **Issue:** #5541
+- **Branch:** feat/5541-historian-spool
+- **PR:** #5584
+- **Paths:** see #5584
+- **Started:** 2026-10-13
+- **Last verified:** 2026-10-13 (`807a6bd0`; collated from changes/5541-historian-h2-durable-on-disk-spool.md)
+- **Summary:** Historian H2: Durable on-disk spool so the historian survives restart (store-and-forward)
+- **Next step:** Merge the PR; unblocks subsequent historian slices.
+
+### DL-#5540 · Historian H1: Extract HistorianSink Protocol for Pluggable Write Backends
+
+- **State:** in_review
+- **Owner:** unassigned
+- **Issue:** #5540
+- **Branch:** feat/5540-historian-sink-protocol
+- **PR:** #5584
+- **Paths:** see #5584
+- **Started:** 2026-10-13
+- **Last verified:** 2026-10-13 (`807a6bd0`; collated from changes/5540-historian-h1-extract-historiansink-proto.md)
+- **Summary:** Historian H1: Extract HistorianSink protocol for pluggable write backends
+- **Next step:** Merge the PR; unblocks subsequent historian slices.
+
 ### DL-#5577 · Normalize Compatible Contract-Level Enums
 
 - **State:** in_progress
