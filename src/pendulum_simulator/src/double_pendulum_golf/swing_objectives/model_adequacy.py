@@ -8,7 +8,9 @@ The mechanism, in one paragraph
 Hub torque does not only turn the arms. Through the off-diagonal mass-matrix
 term ``M12`` it also drives the wrist *open*, so a hard-driving hub makes the
 club lag further rather than release. In a free rollout at full drive the wrist
-cock grows from 100 deg to 184 deg and the club never releases at all. The only
+cock grows from 100 deg to 164 deg over 0.28 s on the shipped distributed club
+(208 deg for the lumped 0.50 kg tip mass; the older 184 deg figure used
+unrecorded settings) and the club never releases at all. The only
 way this model can bring the club through to ``phi = 0`` at impact is to cut, and
 then reverse, the hub torque — which necessarily decelerates the arms. Releasing
 the club and stopping the hands are therefore the *same act* here, not two
@@ -24,11 +26,13 @@ Historical parameter sweep notes:
 * The original frontier exploration evaluated downswings at a duration of 0.36 s
   with +/- 250 N*m hub torque limits.
 * The revised objective comparison uses a downswing duration of 0.28 s.
-* In the corrected clubhead mass sweep (lumped-limit result: 0.238 kg equivalent tip
-  mass, measured before the distributed convention of #5431; re-run under #5523), approximately
-  24% modeled braking remains: even with the corrected club coupling, the optimizer
-  still reverses hub torque for roughly a quarter of the downswing to achieve club
-  release at impact in this planar fixed-hub geometry.
+* The earlier ~24% modeled braking was measured on the lumped 0.238 kg equivalent
+  tip mass, before the distributed convention of #5431. Re-run for Tools #5523 at
+  0.28 s: the lumped 0.238 kg club brakes for 19% of the downswing (peak 83 N m)
+  and the shipped distributed club for 14% (peak 45.6 N m, 51.4 m/s clubhead,
+  8.02 m/s hands, club/arm 3.20). The optimizer still reverses hub torque briefly
+  to release the club in this planar fixed-hub geometry, but far less than the
+  published quarter of the downswing.
 
 Dynamics-defect predicate meaning
 ---------------------------------

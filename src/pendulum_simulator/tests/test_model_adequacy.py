@@ -16,6 +16,8 @@ Closes #4779, #4785.
 
 from __future__ import annotations
 
+from dataclasses import replace
+
 import numpy as np
 import pytest
 
@@ -163,3 +165,58 @@ def test_swing_observables_rejects_a_malformed_trajectory() -> None:
     """Contract: the reducer fails closed on the wrong shape."""
     with pytest.raises(ValueError, match=r"\(N, 4\)"):
         swing_observables(np.zeros((1, 4)), np.zeros(1), 0.3, 0.65)
+
+
+def test_distributed_preset_frontier_values() -> None:
+    """Tools #5523: the unconstrained optimum on the distributed driver preset.
+
+    Recorded by ``scripts/rerun_distributed_club.py frontier`` at 0.28 s / 250 N*m:
+    51.40 m/s clubhead, 8.02 m/s hands, club/arm 3.20, 14% hub braking (down from
+    the ~24% quoted for the lumped 0.238 kg tip mass).  The floors 6 and 8 m/s are
+    already met by the unconstrained solution, so they return the same swing.
+    """
+    from double_pendulum_golf.swing_objectives.presets import build_config
+
+    frontier = hand_speed_frontier(build_config(), floors_ms=[0.0, 8.0])
+    free, floored = frontier.points
+    assert free.reachable and floored.reachable
+    assert free.clubhead_speed_ms == pytest.approx(51.40, abs=0.1)
+    assert free.hand_speed_ms == pytest.approx(8.02, abs=0.1)
+    assert free.club_arm_rate_ratio == pytest.approx(3.20, abs=0.05)
+    assert free.braking_fraction == pytest.approx(0.143, abs=0.05)
+    assert free.peak_braking_torque_nm < 100.0
+    assert floored.hand_speed_ms >= 8.0
+    assert floored.clubhead_speed_ms == pytest.approx(free.clubhead_speed_ms, abs=0.1)
+
+
+def test_full_hub_drive_still_does_not_release_the_club() -> None:
+    """Tools #5523: the lag mechanism survives the distributed club, but weaker.
+
+    Free rollout, hub at -250 N*m, wrist torque zero, no joint limits.  The wrist
+    cock opens from 100 deg to about 164 deg over 0.28 s on the distributed
+    preset, against 208 deg for the lumped 0.50 kg tip mass: the coupling is
+    weaker, the club still never reaches phi = 0.
+    """
+    from scipy.integrate import solve_ivp
+
+    from double_pendulum_golf.physics import equations_of_motion
+    from double_pendulum_golf.swing_objectives.presets import build_config
+
+    def end_cock_deg(config: DownswingConfig) -> float:
+        solution = solve_ivp(
+            lambda t, y: equations_of_motion(
+                y, t, config.params, lambda _t: np.array([-250.0, 0.0])
+            ),
+            (0.0, config.duration_s),
+            config.initial_state,
+            rtol=1e-9,
+            atol=1e-11,
+        )
+        assert solution.y[1].min() > 0.0
+        return float(np.degrees(solution.y[1, -1]))
+
+    distributed = end_cock_deg(build_config())
+    lumped = end_cock_deg(replace(build_config(), params=_PARAMS))
+    assert distributed == pytest.approx(164.5, abs=1.0)
+    assert lumped == pytest.approx(207.7, abs=1.0)
+    assert distributed < lumped
