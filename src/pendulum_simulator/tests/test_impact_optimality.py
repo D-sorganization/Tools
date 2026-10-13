@@ -8,8 +8,8 @@ distributed one (uniform shaft ``m2`` plus a head point mass).  The diagnosis
 therefore moved exactly as the contract below warned: the coefficient is zero
 only in the head-only (lumped) limit, ``_LUMPED``, and is strictly negative for
 the shipped model, so the speed-optimal swing now wants the hands moving
-backward rather than stopped.  Follow-up #5523 re-runs the conclusions that
-rested on the old zero.
+backward rather than stopped.  Follow-up #5523 re-ran the conclusions that
+rested on the old zero (see the pinned values below).
 
 Closes #4776.
 """
@@ -204,3 +204,49 @@ def test_rejects_non_physical_inputs() -> None:
         impact_hand_speed_coefficient(_PARAMS, club_com_m=-0.1)
     with pytest.raises(ValueError, match="club_inertia_kgm2"):
         impact_hand_speed_coefficient(_PARAMS, club_inertia_kgm2=-1.0)
+
+
+def test_real_driver_bracket_with_true_com_and_inertia() -> None:
+    """Tools #5523: omega1* bracket for the measured driver, derived by hand.
+
+    ``I2 - m2*r2*(L2 - r2)`` with ``DRIVER_SPEC`` (m=0.310, r=0.867, I=0.0551) on
+    its physical ``L2 = 1.143`` is ``0.0551 - 0.310*0.867*0.276 = -0.01908``; times
+    ``L1 = 0.65`` is ``-0.01240``.  The legacy table row (r2=0.89, I2=0.043) gave
+    ``-0.0268`` and is reproduced for comparison.
+    """
+    from double_pendulum_golf.swing_objectives.club_equivalence import DRIVER_SPEC
+
+    params = PendulumParams(m1=5.0, m2=0.30, L1=0.65, L2=DRIVER_SPEC.length_m, mClub=0.01)
+    kwargs = {
+        "club_mass_kg": DRIVER_SPEC.mass_kg,
+        "club_com_m": DRIVER_SPEC.com_m,
+        "club_inertia_kgm2": DRIVER_SPEC.inertia_about_com_kgm2,
+    }
+    coefficient = impact_hand_speed_coefficient(params, **kwargs)
+    assert coefficient / params.L1 == pytest.approx(-0.01908, abs=1e-5)
+    assert coefficient == pytest.approx(-0.01240, abs=1e-5)
+    assert optimal_hand_speed_sign(params, **kwargs) == "backward"
+
+    legacy = impact_hand_speed_coefficient(
+        params, club_mass_kg=0.31, club_com_m=0.89, club_inertia_kgm2=0.043
+    )
+    assert legacy / params.L1 == pytest.approx(-0.0268, abs=1e-4)
+
+
+def test_shipped_preset_bracket_is_backward_but_nearly_stopped() -> None:
+    """Tools #5523: on the shipped distributed driver the bracket is -0.0217.
+
+    The speed-optimal hands move backward, but only by 0.36% of the clubhead
+    speed (0.33 m/s of 91.7 m/s at 1000 J): qualitatively "stopped" survives, the
+    exact zero does not.
+    """
+    from double_pendulum_golf.swing_objectives.presets import DEFAULT_PRESET
+
+    params = DEFAULT_PRESET.to_params()
+    assert impact_hand_speed_coefficient(params) / params.L1 == pytest.approx(
+        -0.02174, abs=1e-5
+    )
+    assert optimal_hand_speed_sign(params) == "backward"
+    rates = energy_optimal_rates(params, kinetic_energy_j=1000.0)
+    assert rates.hand_speed_m_s / rates.clubhead_speed_m_s == pytest.approx(-0.00357, abs=1e-5)
+    assert abs(rates.hand_speed_m_s / rates.clubhead_speed_m_s) < 0.01

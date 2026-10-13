@@ -38,7 +38,7 @@ from fastapi import APIRouter, Depends, HTTPException
 # "step_payload_model", the body never binds, and every step request answers 422.
 # `models` imports nothing from `main`, so there is no cycle to avoid here.
 from models import PIDTuningStepPayload
-from mpc import simulate_pid_vs_mpc
+from mpc import simulate_with_advisory
 from pid_tuning import identify_fopdt_and_tune
 from pydantic import BaseModel, field_validator
 from pydantic import Field as PydanticField
@@ -294,6 +294,6 @@ def create_tuning_router(
     @router.post("/api/mpc/simulate", dependencies=[Depends(require_admin_key)])
     async def simulate_mpc(payload: MPCSimulatePayload) -> dict[str, Any]:
         """Simulate and compare standard PID against Model Predictive Control."""
-        return cast(dict[str, Any], simulate_pid_vs_mpc(payload))
+        return cast(dict[str, Any], simulate_with_advisory(payload))
 
     return router

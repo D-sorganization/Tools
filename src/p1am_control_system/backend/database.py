@@ -4,6 +4,7 @@ from collections.abc import Generator
 from pathlib import Path
 from typing import Any
 
+from audit import migrate_audit_event_columns
 from settings import P1AMSettings, get_settings
 from sqlalchemy import event
 from sqlmodel import Session, SQLModel, create_engine
@@ -119,6 +120,7 @@ def init_db() -> None:
     try:
         SQLModel.metadata.create_all(engine)
         _migrate_taglog_quality_column()
+        migrate_audit_event_columns(engine)
         _migrate_historian_indexes()
         _enable_incremental_autovacuum()
         _optimize_planner_statistics()

@@ -198,3 +198,38 @@ def test_degeneracy_flag_survives_the_wire(comparison: SwingComparison) -> None:
     payload = comparison_to_payload(comparison)
     assert payload["is_degenerate"] == comparison.is_degenerate
     assert comparison_from_payload(payload).is_degenerate == comparison.is_degenerate
+
+
+def test_distributed_preset_cross_evaluation_values() -> None:
+    """Tools #5523: raw cross-evaluation on the distributed driver preset.
+
+    Recorded by ``scripts/rerun_distributed_club.py comparison`` (0.28 s, 250 N*m,
+    21 nodes).  Raw values are independent of which objectives are compared, so a
+    three-objective subset pins the republished full-matrix entries.  Centrifugal
+    release impulse is now the dissenter: its swing gives up 2.7% of clubhead
+    speed and 8.1% of Coriolis transfer, whereas the Coriolis swing is within
+    0.3% of the clubhead-speed optimum (on the lumped model it was the reverse).
+    """
+    from double_pendulum_golf.swing_objectives.presets import build_config
+
+    config = build_config()
+    comparison = compare_objectives(config, objective_keys=_SUBSET)
+    assert not comparison.is_degenerate
+    assert config.minimum_sweep_duration_s == pytest.approx(0.2274, abs=1e-3)
+    for key in _SUBSET:
+        assert comparison.results[key].feasible
+
+    raw = comparison.raw_values
+    assert raw["clubhead_speed"]["clubhead_speed"] == pytest.approx(51.40, abs=0.1)
+    assert raw["centrifugal"]["clubhead_speed"] == pytest.approx(49.99, abs=0.2)
+    assert raw["coriolis"]["clubhead_speed"] == pytest.approx(51.26, abs=0.1)
+    assert raw["coriolis"]["coriolis"] == pytest.approx(87.28, abs=0.5)
+    assert raw["centrifugal"]["coriolis"] == pytest.approx(80.20, abs=0.5)
+    assert raw["centrifugal"]["centrifugal"] == pytest.approx(5.292, abs=0.02)
+
+    clubhead_row_share = (
+        raw["centrifugal"]["clubhead_speed"] / raw["clubhead_speed"]["clubhead_speed"]
+    )
+    assert clubhead_row_share == pytest.approx(0.9725, abs=0.005)
+    coriolis_share = raw["centrifugal"]["coriolis"] / raw["coriolis"]["coriolis"]
+    assert coriolis_share == pytest.approx(0.919, abs=0.01)
