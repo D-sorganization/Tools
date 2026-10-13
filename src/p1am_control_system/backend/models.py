@@ -8,6 +8,7 @@ except ImportError:
     UTC = timezone.utc  # noqa: UP017
 
 import hardware
+from alarm_priority import AlarmPriority, parse_alarm_priority
 from pydantic import BaseModel, field_validator
 from sqlalchemy import DateTime, Index
 from sqlalchemy.types import TypeDecorator
@@ -283,6 +284,15 @@ class InterlockConfig(BaseModel):
     low_limit: float | None = None
     high_limit: float | None = None
     hihi_limit: float | None = None
+    #: Optional explicit alarm tier for this tag (#5526); ``None`` keeps the
+    #: default state->severity map. See ``alarm_priority`` for the contract.
+    alarm_priority: AlarmPriority | None = None
+
+    @field_validator("alarm_priority", mode="before")
+    @classmethod
+    def _check_alarm_priority(cls, value: Any) -> AlarmPriority | None:
+        """Reject anything but an explicit WARNING/TRIP tier (or None)."""
+        return parse_alarm_priority(value)
 
     @field_validator("lolo_limit", "low_limit", "high_limit", "hihi_limit")
     @classmethod

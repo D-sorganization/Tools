@@ -108,10 +108,88 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6111,
+      "bytes_lf": 3949,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b0cf2371c623c33b1fda0608e364cb61bc1fb1e5972e03c5d83ab0d1a8318ccb",
+      "content_sha256_lf": "bc84958fd66e8966b1d1a93f87cff67ccfc457abff89eec4880063c28d44ce3f",
+      "family": "control-systems-non-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-ALARM-PRIORITY-PY-CB21A1CF1CAB",
+      "language": "python",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/backend/alarm_priority.py",
+      "purpose": "Per-tag alarm priority (SCADA F03, issue #5526).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AlarmPriority",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BAD_QUALITY_STATE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_SEVERITY_BY_STATE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FAIL_CLOSED_SEVERITY",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "parse_alarm_priority",
+            "signature": "raw: Any"
+          },
+          {
+            "kind": "function",
+            "name": "resolve_severity",
+            "signature": "state: str, priority: AlarmPriority | None=None"
+          }
+        ],
+        "test_paths": [
+          "src/p1am_control_system/backend/tests/test_alarm_priority.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6402,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "144009c6559ae27bc9dbf18d629a17872a8e9e672aa72061c6eecac76fca090f",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-ALARM-PROCESSING-PY-77E33AC894C7",
       "language": "python",
@@ -147,29 +225,19 @@
         "public_routes": [],
         "public_surfaces": [
           {
-            "kind": "constant",
-            "name": "BAD_QUALITY_STATE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_SEVERITY_BY_STATE",
-            "signature": null
-          },
-          {
             "kind": "function",
             "name": "build_alarm_entry",
-            "signature": "tag_name: str, state: str, *, timestamp: str, acknowledged: bool=False, acknowledged_by: str | None=None"
+            "signature": "tag_name: str, state: str, *, timestamp: str, acknowledged: bool=False, acknowledged_by: str | None=None, priority: AlarmPriority | None=None"
           },
           {
             "kind": "function",
             "name": "process_alarm_events",
-            "signature": "alarm_engine: Any, tags: dict[str, float], active_alarms: dict[str, dict[str, Any]], *, now: datetime | None=None"
+            "signature": "alarm_engine: Any, tags: dict[str, float], active_alarms: dict[str, dict[str, Any]], *, now: datetime | None=None, priorities: Mapping[str, AlarmPriority] | None=None"
           },
           {
             "kind": "function",
             "name": "severity_for_state",
-            "signature": "state: str"
+            "signature": "state: str, priority: AlarmPriority | None=None"
           },
           {
             "kind": "function",
@@ -2360,10 +2428,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 52783,
+      "bytes_lf": 53247,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "75bd2ca8d3e2c32174913d9eea1408018e897ee9293b4702420edee7aa279b6b",
+      "content_sha256_lf": "658de555d4d3e03958b9ecd1e0e93d53cbe653d9414bcf96a9d097263a21a4de",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-MAIN-PY-C47A4D7AC436",
       "language": "python",
@@ -2824,10 +2892,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 14167,
+      "bytes_lf": 14694,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "38cbcf9ef731b30925a25c9ec974150a1d2146ea2543fe6d258d5a57cfe2520e",
+      "content_sha256_lf": "1609b9cf6d2ef73bfa22d04a11efa7b3d32fd9133bb4f0e7c72d8c9a3bb205af",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-MODELS-PY-DDB50293189B",
       "language": "python",
@@ -4834,10 +4902,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 11636,
+      "bytes_lf": 12168,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "9fc89a37511d0191fb331252efcd697b00a0dfea598637991959e547502dfb33",
+      "content_sha256_lf": "8d5b07f11f08427b76386d47cbc0dc5d9df53a11ea46d1be8249133a352fb7e0",
       "family": "control-systems-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-STATE-PY-C288C9C9A698",
       "language": "python",
