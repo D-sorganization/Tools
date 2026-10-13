@@ -5,6 +5,10 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
+    ignore:
+      # PyQt6-sip is coupled to the pinned PyQt6 wheel (#5508; Dependabot #5486).
+      - dependency-name: "pyqt6-sip"
+        versions: ["13.13.0"]
     groups:
       pip-minor-patch:
         update-types:

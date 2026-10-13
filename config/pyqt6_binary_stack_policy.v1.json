@@ -1,0 +1,16 @@
+{
+  "issue": 5508,
+  "dependabot_pr": 5486,
+  "ci_lock_files": [
+    "requirements-lock.txt",
+    "requirements-rate-pyqt.txt"
+  ],
+  "coupled_pins": {
+    "PyQt6": "6.11.0",
+    "PyQt6-Qt6": "6.11.2",
+    "PyQt6-sip": "13.12.0"
+  },
+  "local_owner_pyqt6": "6.8.1",
+  "blocked_standalone_sip_versions": ["13.13.0"],
+  "rationale": "PyQt6-sip is the binary ABI shim PyQt6 is built against; it must never move independently of the pinned PyQt6 wheel. Dependabot #5486 proposed 13.13.0 alone and was deferred during #5499. CI locks PyQt6 6.11.x to sip 13.12.0; the owner Windows dev host stays on PyQt6 6.8.1 until MSVC runtime catches up, and any sip bump must remain compatible with that pin until a coordinated PyQt6 upgrade lands with Qt test shards green."
+}
