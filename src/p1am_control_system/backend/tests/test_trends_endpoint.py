@@ -75,7 +75,12 @@ def test_response_schema_and_small_range(session: Session) -> None:
         end_time=_iso(4),
         db=session,
     )
-    assert set(result) == {"timestamps", "values", "truncated"}  # frontend contract
+    assert set(result) == {
+        "timestamps",
+        "values",
+        "quality",
+        "truncated",
+    }  # frontend contract
     assert result["truncated"] is False
     assert result["values"] == [0.0, 1.0, 2.0, 3.0, 4.0]
     assert len(result["timestamps"]) == 5
