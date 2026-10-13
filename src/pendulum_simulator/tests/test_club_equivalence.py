@@ -275,3 +275,31 @@ def test_distributed_split_rejects_unrepresentable_club() -> None:
         distributed_club_split(DRIVER_SPEC, shaft_length_m=0.0)
     with pytest.raises(ValueError, match="not representable"):
         distributed_club_split(DRIVER_SPEC, shaft_length_m=0.4)
+
+
+def test_republished_inertia_and_coupling_table_values() -> None:
+    """The #5523 table: wrist inertia and coupling for each club on a 1.10 m shaft.
+
+    Derived by ``scripts/rerun_distributed_club.py club`` (Tools #5523).  Real
+    driver ``mu = m * L1 * r = 0.310 * 0.65 * 0.867``; a point mass at the tip has
+    ``mu = m * L1 * L2``; the distributed preset has ``mu = (m2/2 + mh) * L2 * L1``.
+    """
+    from double_pendulum_golf.swing_objectives.presets import DEFAULT_PRESET
+
+    arm, shaft = 0.65, 1.10
+    real_mu = DRIVER_SPEC.mass_kg * arm * DRIVER_SPEC.com_m
+    assert wrist_inertia(DRIVER_SPEC) == pytest.approx(0.2881, abs=1e-4)
+    assert real_mu == pytest.approx(0.1747, abs=1e-4)
+    assert 0.310 * shaft**2 == pytest.approx(0.3751, abs=1e-4)
+    assert 0.310 * arm * shaft == pytest.approx(0.2217, abs=1e-4)
+    assert 0.500 * shaft**2 == pytest.approx(0.6050, abs=1e-4)
+    assert 0.500 * arm * shaft == pytest.approx(0.3575, abs=1e-4)
+    assert 0.500 * arm * shaft / real_mu == pytest.approx(2.05, abs=0.01)
+
+    params = DEFAULT_PRESET.to_params()
+    preset_mu = (params.m2 / 2.0 + params.mClub) * shaft * arm
+    assert preset_mu == pytest.approx(0.1831, abs=1e-4)
+    assert preset_mu / real_mu == pytest.approx(1.048, abs=0.002)
+    assert distributed_coupling_error(DRIVER_SPEC, arm, shaft) == pytest.approx(
+        0.0084, abs=1e-4
+    )

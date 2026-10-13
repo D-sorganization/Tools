@@ -27,7 +27,7 @@
     "evidence_prs": "The merged PRs that most recently touched this requirement's first four implementing files, read from git history. They are a pointer to where the capability currently lives - NOT a claim that those PRs set out to deliver the requirement. A `missing` row has none by construction.",
     "gaps": "Every row states its gaps, including `partial` rows. This is the field that replaces a ticked checkbox: it is what remains before the requirement as written in #4089 / #4046 could be called landed."
   },
-  "headline": "0 of 16 SCADA requirements and 0 of 9 historian children are landed. The 38/38 ticked boxes on #4085-#4088 correspond to no merged code: every carrier PR was closed unmerged. Corroboration: docs/development/professional-scada-epic.md is on main with all 16 of its own feature checkboxes still unchecked.",
+  "headline": "1 of 16 SCADA requirements (F09, via PR #5578) and 0 of 9 historian children are landed. The 38/38 ticked boxes on #4085-#4088 correspond to no merged code: every carrier PR was closed unmerged. Corroboration: docs/development/professional-scada-epic.md is on main with all 16 of its own feature checkboxes still unchecked.",
   "requirements": [
     {
       "id": "F01",
@@ -248,19 +248,22 @@
       "id": "F09",
       "title": "Generic sequence/state and procedure demonstration",
       "epic": "#4087",
-      "status": "partial",
+      "status": "landed",
       "files": [
-        "src/p1am_control_system/backend/safety_state_machine.py"
+        "src/p1am_control_system/backend/safety_state_machine.py",
+        "src/p1am_control_system/backend/procedure.py"
       ],
       "tests": [
-        "src/p1am_control_system/backend/tests/test_safety_state_machine.py"
+        "src/p1am_control_system/backend/tests/test_safety_state_machine.py",
+        "src/p1am_control_system/backend/tests/test_procedure.py"
       ],
-      "delivered": "A Generic[StateT] base class factoring the IDLE/ARMED/RUNNING/TRIPPED scaffolding, one-way E-stop latch, permissive toggle and trip latch/acknowledge, shared by the temperature and power-supply controllers.",
+      "delivered": "A Generic[StateT] base class factoring the IDLE/ARMED/RUNNING/TRIPPED scaffolding, one-way E-stop latch, permissive toggle and trip latch/acknowledge, shared by the temperature and power-supply controllers. PR #5578 (merge commit f0112a4b76ff904c88733532c55bfbfc2d115e5c, closes #5530) adds procedure.py: Step/Procedure dataclasses and a ProcedureExecutor with RUN/HOLD/ABORT transitions, which refuses to start unless the injected PLC client is the simulated driver (NotSimulatedDriverError), and calls an injected safe_state() on ABORT, step failure and step timeout.",
       "gaps": [
-        "This is per-controller safety scaffolding, not a sequence engine: no hold, abort or recovery transition, no declarative procedure/step/phase model, and no scenario tests.",
-        "No simulator-only gate confines procedure execution to the simulated driver, which the requirement makes a precondition."
+        "No scenario or FAT runner that drives procedures end to end; that is the F12 roadmap and was out of scope for #5530.",
+        "No HMI for procedures and no persisted procedures; both were out of scope for #5530."
       ],
       "evidence_prs": [
+        "#5578",
         "#3912"
       ]
     },
@@ -660,8 +663,8 @@
   ],
   "totals": {
     "scada": {
-      "landed": 0,
-      "partial": 10,
+      "landed": 1,
+      "partial": 9,
       "missing": 6,
       "total": 16
     },

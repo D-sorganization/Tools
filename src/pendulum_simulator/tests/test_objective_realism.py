@@ -146,8 +146,8 @@ def test_an_inertia_matched_club_makes_the_ranking_meaningful() -> None:
     observables inside the measured bands, and the ranking separates: clubhead
     speed, Coriolis transfer, energy transfer and impulse transfer are
     indistinguishable, while **centrifugal release impulse is measurably worse**
-    — it gives up around 1 m/s of clubhead speed and pushes the club/arm rate
-    ratio to the edge of its band.
+    — it gives up about 1.4 m/s of clubhead speed and pushes the club/arm rate
+    ratio just past the upper edge of its band (4.08 against 4.0).
     """
     from double_pendulum_golf.swing_objectives.presets import build_config
 
@@ -163,3 +163,39 @@ def test_an_inertia_matched_club_makes_the_ranking_meaningful() -> None:
 
     speeds = {entry.key: entry.clubhead_speed_ms for entry in ranking.entries}
     assert speeds["clubhead_speed"] - speeds["centrifugal"] > 0.5
+
+
+def test_distributed_preset_ranking_values_and_dissenter() -> None:
+    """Tools #5523: the republished ranking on the distributed driver preset.
+
+    Recorded by ``scripts/rerun_distributed_club.py ranking`` at 0.28 s / 250 N*m
+    (deviation in band half-widths): clubhead speed, Coriolis, energy and impulse
+    transfer all sit at 0.800 with 5 of 6 observables inside their bands (only the
+    release point, 90% against 55-80%, is outside); centrifugal release impulse is
+    0.900 with 4 of 6 (club/arm ratio 4.08 against 4.0 as well).  The deviation
+    spread, 0.100, is 12% of the mean, so the ranking is flagged discriminating.
+    """
+    from double_pendulum_golf.swing_objectives.presets import build_config
+
+    ranking = objective_realism_ranking(build_config())
+    by_key = {entry.key: entry for entry in ranking.entries}
+
+    for key in ("clubhead_speed", "coriolis", "energy_transfer", "impulse_transfer"):
+        assert by_key[key].total_deviation == pytest.approx(0.800, abs=0.05)
+        assert by_key[key].inside_count == 5
+        assert by_key[key].worst_observable == "release_fraction"
+    assert by_key["centrifugal"].total_deviation == pytest.approx(0.900, abs=0.05)
+    assert by_key["centrifugal"].inside_count == 4
+    assert by_key["centrifugal"].observables["clubhead_speed_ms"] == pytest.approx(
+        49.99, abs=0.2
+    )
+    assert by_key["centrifugal"].observables["club_arm_rate_ratio"] == pytest.approx(
+        4.08, abs=0.05
+    )
+    assert by_key["clubhead_speed"].observables["hand_speed_ms"] == pytest.approx(
+        8.02, abs=0.1
+    )
+    assert ranking.deviation_spread == pytest.approx(0.100, abs=0.05)
+    assert ranking.mean_deviation == pytest.approx(0.817, abs=0.05)
+    assert ranking.is_discriminating
+    assert not ranking.reaches_measured_behaviour

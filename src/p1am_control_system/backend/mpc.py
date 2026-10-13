@@ -16,7 +16,10 @@ value -- ``free_response`` already contains the full effect of holding
 from __future__ import annotations
 
 import math
+from datetime import UTC, datetime
 from typing import Any, Protocol
+
+from advisory_result import build_advisory_result
 
 # Numeric input guards live in pid_tuning (already this module's dependency)
 # so the control package validates its arithmetic inputs in exactly one place.
@@ -41,6 +44,10 @@ MAX_MOVE = 100.0
 # The quadratic DMC objective is minimised by projected gradient descent.
 GD_ITERATIONS = 100
 GD_STEP_SCALE = 0.01
+
+# --- Advisory provenance -----------------------------------------------------
+MODEL_ID = "dmc-fopdt"
+MODEL_VERSION = "1"
 
 
 class MPCSimulationPayload(Protocol):
@@ -279,3 +286,44 @@ def simulate_pid_vs_mpc(payload: MPCSimulationPayload) -> dict[str, Any]:
             "cv": [round(x, 2) for x in mpc_cv],
         },
     }
+
+
+def simulate_with_advisory(
+    payload: MPCSimulationPayload, *, created_at: datetime | None = None
+) -> dict[str, Any]:
+    """Run :func:`simulate_pid_vs_mpc` and attach an advisory provenance record.
+
+    The record states that the output is advisory only
+    (``authoritative_write_available`` is False) and carries the model hash,
+    inputs hash, input window, constraint set and solver status. This module
+    has no write path to the PLC; the guard test in
+    ``tests/test_advisory_result.py`` keeps it that way.
+    """
+    result = simulate_pid_vs_mpc(payload)
+    advisory = build_advisory_result(
+        model_id=MODEL_ID,
+        model_version=MODEL_VERSION,
+        model_parameters={
+            "process_gain": payload.process_gain,
+            "process_tau": payload.process_tau,
+            "process_delay": payload.process_delay,
+            "prediction_horizon": payload.prediction_horizon,
+            "control_horizon": payload.control_horizon,
+            "rho": payload.rho,
+        },
+        inputs={"setpoint": payload.setpoint, "dt_s": SIM_DT, "steps": SIM_STEPS},
+        input_window={
+            "dt_s": SIM_DT,
+            "steps": SIM_STEPS,
+            "duration_s": SIM_DT * SIM_STEPS,
+        },
+        constraint_set={
+            "cv_min": CV_MIN,
+            "cv_max": CV_MAX,
+            "max_move": MAX_MOVE,
+        },
+        solver_status=str(result["status"]),
+        created_at=created_at if created_at is not None else datetime.now(UTC),
+    )
+    result["advisory"] = advisory.model_dump(mode="json")
+    return result

@@ -7,20 +7,28 @@ literature reports, and score it against heuristic reference bands.
 
 The measured answer, and why it is not the answer anyone wanted
 ---------------------------------------------------------------
-Run over the shipped two-link model under the revised objective comparison
-duration (0.28 s), the five objectives land within **0.6% of each other** on
-total deviation from heuristic reference kinematics, while all of them sit an
-order of magnitude outside the bands. The spread between objectives is far
-smaller than the gap between any of them and a real swing. Even with the
-corrected inertia-matched club (lumped-limit result: 0.238 kg tip mass, from before
-the distributed convention of #5431; re-run under #5523), ~24% modeled braking
-remains during the downswing to achieve club release.
+Two regimes, re-run for Tools #5523 (``scripts/rerun_distributed_club.py ranking``).
 
-So the objective is **not** what makes these swings unrealistic. The dominant
-term is the model's structural inability to keep the hands moving through impact
-(see :mod:`double_pendulum_golf.swing_objectives.model_adequacy`), and until that
-is addressed, ranking objectives on realism is measuring noise on top of a much
-larger bias. :func:`objective_realism_ranking` reports the spread alongside the
+*Lumped 0.50 kg tip-mass club* (the pre-#5431 preset, kept as a regression
+baseline, 0.36 s): with hands held above 3 m/s the objectives land within **0.4%
+of each other** on total deviation (8.97 to 9.00 half-widths) while all of them
+sit an order of magnitude outside the bands; unconstrained, 81.6 to 117.3, with
+Coriolis the dissenter. The spread between objectives is far smaller than the gap
+between any of them and a real swing.
+
+*Shipped distributed club* (0.28 s): every objective is golf-like, with 5 of 6
+observables inside the bands (4 for centrifugal) and only the release point
+outside (90% against 55-80%). Deviations run 0.800 to 0.900, a spread of 12% of
+the mean, so the ranking is discriminating, and the dissenter is now centrifugal
+release impulse (2.75% less clubhead speed), not Coriolis. Exploratory only.
+
+So on the lumped club the objective is **not** what makes the swings unrealistic.
+The dominant term was the model's structural inability to keep the hands moving
+through impact (see :mod:`double_pendulum_golf.swing_objectives.model_adequacy`),
+and ranking objectives on realism was measuring noise on top of a much larger
+bias. On the shipped club about 14% of the downswing still has hub torque
+opposing the arms (peak 45.6 N m), which is far milder than the ~24% quoted for
+the lumped 0.238 kg tip mass. :func:`objective_realism_ranking` reports the spread alongside the
 ranking precisely so a caller can see when the ranking is not meaningful, and
 :attr:`ObjectiveRealismRanking.is_discriminating` answers that directly.
 

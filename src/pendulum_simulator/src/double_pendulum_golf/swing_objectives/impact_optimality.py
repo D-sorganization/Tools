@@ -46,8 +46,10 @@ Three regimes follow:
   the tip, so the club's kinetic energy *is* ``0.5 * me * v_head**2`` and any arm
   motion is energy that never reached the clubhead. The optimizer stopped the
   hands because stopping them was optimal. (The shipped model is now a uniform
-  shaft plus head mass, whose bracket is negative; re-running the conclusions
-  drawn from the point-mass model is tracked in Tools #5523.)
+  shaft plus head mass, whose bracket is negative. Re-run for Tools #5523: the
+  bracket is -0.0217 kg m^2 for the shipped driver, so the energy-optimal hands
+  move *backward* but only by 0.36% of clubhead speed (-0.33 m/s at 91.7 m/s for
+  1000 J), practically stopped.)
 * **A real driver** (``m2 = 0.310 kg``, ``r2 = 0.867 m``, ``L2 = 1.143 m``,
   ``I2 = 0.0551 kg m^2``; or modelled ``L2 = 1.10 m``) gives a **negative** bracket:
   the instantaneous optimum wants the hands moving *backward* through impact.

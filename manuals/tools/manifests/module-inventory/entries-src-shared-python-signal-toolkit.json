@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "provisional",
-      "bytes_lf": 2705,
+      "bytes_lf": 2913,
       "classification": "calculation",
       "classification_basis": "path-marker:signal",
-      "content_sha256_lf": "52d1c85edf1d385570bbbd7cf0aada78eaff935bf697c482ac88480966fa7671",
+      "content_sha256_lf": "1a5726861c3ebaa5f267c19d39fb8e05b13db3c454742d6eb98525f3dc28bc71",
       "family": "signal-processing-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-INIT-PY-74FCAD42F570",
       "language": "python",

@@ -38,10 +38,12 @@ from audit import (  # noqa: E402
     AuditEvent,
     AuditMiddleware,
     credential_fingerprint,
+    migrate_audit_event_columns,
     redact_payload,
     resolve_actor,
+    set_audit_context,
 )
-from fastapi import FastAPI  # noqa: E402
+from fastapi import FastAPI, Request  # noqa: E402
 from fastapi.testclient import TestClient  # noqa: E402
 from sqlmodel import Session, SQLModel, create_engine, select  # noqa: E402
 
@@ -311,3 +313,109 @@ def test_clear_capture_cannot_erase_the_audit_trail(tmp_path: Path) -> None:
         assert session.exec(select(EventLog)).all() == []
         assert len(session.exec(select(AuditEvent)).all()) == 1
     engine.dispose()
+
+
+# --------------------------------------------------------------------------- #
+# F01: reason, before/after values, config revision (#5524)                    #
+# --------------------------------------------------------------------------- #
+
+
+def _context_app(factory: object) -> FastAPI:
+    app = FastAPI()
+
+    @app.put("/api/setpoint/{tag_id}")
+    async def put_setpoint(tag_id: str, request: Request) -> dict[str, str]:
+        set_audit_context(
+            request,
+            reason="operator retune",
+            before={
+                "setpoint": 10.0,
+                "api_key": "leak-before",  # pragma: allowlist secret
+            },
+            after={"setpoint": 12.5, "nested": {"token": "leak-after"}},
+        )
+        return {"status": "ok"}
+
+    @app.put("/api/plain/{tag_id}")
+    async def put_plain(tag_id: str) -> dict[str, str]:
+        return {"status": "ok"}
+
+    app.add_middleware(AuditMiddleware, session_factory=factory)
+    return app
+
+
+def test_audited_put_stores_reason_and_redacted_before_after(
+    audit_session_factory: object,
+) -> None:
+    import json
+
+    client = TestClient(_context_app(audit_session_factory))
+    client.put("/api/setpoint/TAG_1")
+    row = _rows(audit_session_factory)[0]
+    assert row.reason == "operator retune"
+    assert json.loads(row.before_json or "") == {
+        "setpoint": 10.0,
+        "api_key": "<redacted>",  # pragma: allowlist secret
+    }
+    assert json.loads(row.after_json or "") == {
+        "setpoint": 12.5,
+        "nested": {"token": "<redacted>"},
+    }
+    assert row.config_revision is None
+    assert "leak-" not in (row.before_json or "") + (row.after_json or "")
+
+
+def test_absent_hook_leaves_new_columns_null(audit_session_factory: object) -> None:
+    client = TestClient(_context_app(audit_session_factory))
+    client.put("/api/plain/TAG_1")
+    row = _rows(audit_session_factory)[0]
+    assert row.reason is None
+    assert row.before_json is None
+    assert row.after_json is None
+    assert row.config_revision is None
+
+
+def test_set_audit_context_rejects_non_str_reason() -> None:
+    class _Req:
+        class state:  # noqa: N801 - mimics starlette's State
+            pass
+
+    with pytest.raises(TypeError):
+        set_audit_context(_Req(), reason=123)  # type: ignore[arg-type]
+
+
+def test_legacy_audit_db_migrates_without_data_loss(tmp_path: Path) -> None:
+    engine = create_engine(f"sqlite:///{tmp_path / 'legacy.db'}")
+    with engine.begin() as conn:
+        conn.exec_driver_sql(
+            "CREATE TABLE auditevent (id INTEGER PRIMARY KEY, timestamp DATETIME, "
+            "route VARCHAR, method VARCHAR, status_code INTEGER, actor_tier VARCHAR, "
+            "actor_fingerprint VARCHAR, client_ip VARCHAR, payload VARCHAR)"
+        )
+        conn.exec_driver_sql(
+            "INSERT INTO auditevent (route, method, status_code, actor_tier) "
+            "VALUES ('/api/estop', 'POST', 200, 'admin')"
+        )
+    migrate_audit_event_columns(engine)
+    migrate_audit_event_columns(engine)  # idempotent
+    with Session(engine) as session:
+        rows = list(session.exec(select(AuditEvent)).all())
+    assert len(rows) == 1
+    assert rows[0].route == "/api/estop"
+    assert rows[0].reason is None
+    assert rows[0].config_revision is None
+    engine.dispose()
+
+
+def test_migration_skips_when_table_absent(tmp_path: Path) -> None:
+    engine = create_engine(f"sqlite:///{tmp_path / 'empty.db'}")
+    migrate_audit_event_columns(engine)  # must not raise
+    engine.dispose()
+
+
+def test_audit_rows_stay_append_only_with_new_columns() -> None:
+    import audit
+
+    source = open(audit.__file__, encoding="utf-8").read().upper()
+    assert "DELETE FROM AUDITEVENT" not in source
+    assert "UPDATE AUDITEVENT" not in source
