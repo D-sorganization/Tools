@@ -58,7 +58,7 @@ Dual-write forwarding replicates live tag samples from the local control node to
    ```bash
    # Enable external historian shipper
    P1AM_TIMESCALE_FORWARDING=true
-   P1AM_TIMESCALE_TARGET_DSN="postgresql://historian_rw:SECRET@historian-host:5432/plant_history"
+   P1AM_TIMESCALE_TARGET_DSN="postgresql://historian_rw:${HISTORIAN_PASSWORD}@historian-host:5432/plant_history"
    ```
 3. **Restart the Backend Service:**
    ```bash
