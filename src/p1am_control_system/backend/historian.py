@@ -104,17 +104,18 @@ class HistorianRecord:
                     )
                 tags_dict[k] = fval
 
-        serialized_events = []
+        serialized_events: list[dict[str, Any]] = []
         for ev in self.events:
             if isinstance(ev, str):
                 serialized_events.append({"kind": "str", "value": ev})
             elif hasattr(ev, "event_type") and hasattr(ev, "description"):
                 ts = getattr(ev, "timestamp", None)
-                ts_str = (
-                    ts.isoformat()
-                    if hasattr(ts, "isoformat")
-                    else (str(ts) if ts else None)
-                )
+                ts_str: str | None = None
+                if ts is not None:
+                    if hasattr(ts, "isoformat") and callable(ts.isoformat):
+                        ts_str = str(ts.isoformat())
+                    else:
+                        ts_str = str(ts)
                 serialized_events.append(
                     {
                         "kind": "EventLog",
@@ -172,7 +173,7 @@ class HistorianRecord:
                 f"events must be a sequence, got {type(raw_events).__name__}"
             )
 
-        deserialized_events = []
+        deserialized_events: list[Any] = []
         for item in raw_events:
             if isinstance(item, str):
                 deserialized_events.append(item)
