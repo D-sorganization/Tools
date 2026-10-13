@@ -1,0 +1,437 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "description": "ISA-18.2 / EEMUA 191 alarm performance KPIs and management dashboard.",
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 1,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "collapsed": false,
+      "custom": {
+        "kpi_key": "alarm_rate_10min"
+      },
+      "datasource": {
+        "type": "postgres",
+        "uid": "historian-timescale"
+      },
+      "description": "ISA-18.2 §4.3 metric: alarm_rate_10min (target <= 1 per 10 min normal, <= 10 upset)",
+      "fieldConfig": {
+        "defaults": {
+          "custom": {
+            "drawStyle": "bars",
+            "fillOpacity": 80,
+            "gradientMode": "none",
+            "lineWidth": 1
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 10
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 16,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "legend": {
+          "calcs": ["mean", "max"],
+          "displayMode": "table",
+          "placement": "bottom",
+          "showLegend": true
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "historian-timescale"
+          },
+          "editorMode": "code",
+          "format": "time_series",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  time_bucket('10 minutes', timestamp) AS time,\n  count(*) AS alarm_rate_10min\nFROM event_log\nWHERE event_type = 'ALARM' AND severity > 0 AND $__timeFilter(timestamp)\nGROUP BY 1\nORDER BY 1 ASC;",
+          "refId": "A"
+        }
+      ],
+      "title": "Average & Peak Alarm Rate (per 10 min)",
+      "type": "timeseries"
+    },
+    {
+      "collapsed": false,
+      "custom": {
+        "kpi_key": "flood_episodes"
+      },
+      "datasource": {
+        "type": "postgres",
+        "uid": "historian-timescale"
+      },
+      "description": "ISA-18.2 flood threshold: flood_episodes (>10 alarms in 10-minute window)",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 1
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 8,
+        "x": 16,
+        "y": 0
+      },
+      "id": 2,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "historian-timescale"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "WITH buckets AS (\n  SELECT time_bucket('10 minutes', timestamp) AS b, count(*) AS cnt\n  FROM event_log\n  WHERE event_type = 'ALARM' AND severity > 0 AND $__timeFilter(timestamp)\n  GROUP BY 1\n)\nSELECT count(*) AS flood_episodes FROM buckets WHERE cnt > 10;",
+          "refId": "A"
+        }
+      ],
+      "title": "Alarm Flood Episodes (>10 alarms / 10 min)",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "custom": {
+        "kpi_key": "chattering_alarms"
+      },
+      "datasource": {
+        "type": "postgres",
+        "uid": "historian-timescale"
+      },
+      "description": "ISA-18.2 chattering metric: chattering_alarms (>3 state transitions in 60s)",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 3
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 16,
+        "y": 4
+      },
+      "id": 3,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "historian-timescale"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT count(DISTINCT tag_name) AS chattering_alarms\nFROM (\n  SELECT tag_name, count(*) OVER (\n    PARTITION BY tag_name ORDER BY timestamp RANGE BETWEEN INTERVAL '1 minute' PRECEDING AND CURRENT ROW\n  ) AS win_count\n  FROM event_log\n  WHERE $__timeFilter(timestamp)\n) sub\nWHERE win_count > 3;",
+          "refId": "A"
+        }
+      ],
+      "title": "Chattering Alarms (>3/min)",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "custom": {
+        "kpi_key": "stale_alarms"
+      },
+      "datasource": {
+        "type": "postgres",
+        "uid": "historian-timescale"
+      },
+      "description": "ISA-18.2 standing alarm metric: stale_alarms (>24h continuous duration)",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "yellow",
+                "value": 1
+              },
+              {
+                "color": "red",
+                "value": 5
+              }
+            ]
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 4,
+        "w": 4,
+        "x": 20,
+        "y": 4
+      },
+      "id": 4,
+      "options": {
+        "colorMode": "value",
+        "graphMode": "none",
+        "justifyMode": "auto",
+        "orientation": "auto",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "textMode": "auto"
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "historian-timescale"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT count(*) AS stale_alarms\nFROM active_alarms\nWHERE timestamp <= NOW() - INTERVAL '24 hours';",
+          "refId": "A"
+        }
+      ],
+      "title": "Stale / Standing Alarms (>24h)",
+      "type": "stat"
+    },
+    {
+      "collapsed": false,
+      "custom": {
+        "kpi_key": "top_contributors"
+      },
+      "datasource": {
+        "type": "postgres",
+        "uid": "historian-timescale"
+      },
+      "description": "ISA-18.2 top contributors ranking: top_contributors (target < 5% per tag)",
+      "fieldConfig": {
+        "defaults": {
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 0,
+        "y": 8
+      },
+      "id": 5,
+      "options": {
+        "footer": {
+          "countRows": false,
+          "fields": "",
+          "reducer": ["sum"],
+          "show": false
+        },
+        "showHeader": true
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "historian-timescale"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  tag_name AS tag,\n  count(*) AS count,\n  ROUND(count(*) * 100.0 / SUM(count(*)) OVER (), 2) AS percentage\nFROM event_log\nWHERE event_type = 'ALARM' AND severity > 0 AND $__timeFilter(timestamp)\nGROUP BY tag_name\nORDER BY count DESC\nLIMIT 10;",
+          "refId": "A"
+        }
+      ],
+      "title": "Top 10 Alarm Contributors",
+      "type": "table"
+    },
+    {
+      "collapsed": false,
+      "custom": {
+        "kpi_key": "priority_distribution"
+      },
+      "datasource": {
+        "type": "postgres",
+        "uid": "historian-timescale"
+      },
+      "description": "ISA-18.2 priority distribution: priority_distribution (Warning ~80%, Trip ~5-15%)",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "palette-classic"
+          },
+          "unit": "short"
+        },
+        "overrides": []
+      },
+      "gridPos": {
+        "h": 8,
+        "w": 12,
+        "x": 12,
+        "y": 8
+      },
+      "id": 6,
+      "options": {
+        "displayLabels": ["percent", "value"],
+        "legend": {
+          "displayMode": "table",
+          "placement": "right",
+          "showLegend": true,
+          "values": ["percent", "value"]
+        },
+        "pieType": "pie",
+        "reduceOptions": {
+          "calcs": ["lastNotNull"],
+          "fields": "",
+          "values": false
+        },
+        "tooltip": {
+          "mode": "single",
+          "sort": "none"
+        }
+      },
+      "targets": [
+        {
+          "datasource": {
+            "type": "postgres",
+            "uid": "historian-timescale"
+          },
+          "editorMode": "code",
+          "format": "table",
+          "rawQuery": true,
+          "rawSql": "SELECT\n  CASE severity WHEN 1 THEN 'Warning' WHEN 2 THEN 'Trip' ELSE 'Other' END AS priority,\n  count(*) AS count\nFROM event_log\nWHERE event_type = 'ALARM' AND severity > 0 AND $__timeFilter(timestamp)\nGROUP BY severity\nORDER BY severity ASC;",
+          "refId": "A"
+        }
+      ],
+      "title": "Alarm Priority Distribution",
+      "type": "piechart"
+    }
+  ],
+  "refresh": "1m",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["historian", "isa-18.2", "eemua-191", "alarms", "scada"],
+  "templating": {
+    "list": []
+  },
+  "time": {
+    "from": "now-24h",
+    "to": "now"
+  },
+  "timepicker": {
+    "refresh_intervals": ["30s", "1m", "5m", "15m", "30m", "1h", "2h", "1d"]
+  },
+  "timezone": "browser",
+  "title": "Alarm Performance — ISA-18.2 / EEMUA 191 KPIs",
+  "uid": "alarm-performance",
+  "version": 1,
+  "weekStart": ""
+}

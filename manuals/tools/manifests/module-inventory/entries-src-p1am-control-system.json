@@ -107,6 +107,114 @@
       }
     },
     {
+      "authority_status": "provisional",
+      "bytes_lf": 10803,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "5f124289d1ad38863cc2664eddb69067b3300e177e081a63e522c6a9f362315a",
+      "family": "control-systems-calculation",
+      "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-ALARM-KPIS-PY-A088B5E0AA06",
+      "language": "python",
+      "maintainer": "Control systems maintainers",
+      "path": "src/p1am_control_system/backend/alarm_kpis.py",
+      "purpose": "Alarm performance KPIs conforming to ISA-18.2 / EEMUA 191 benchmarks.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AlarmEventRecord",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "AlarmKpiSummary",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ISA182_CHATTER_TRANSITIONS_THRESHOLD",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ISA182_CHATTER_WINDOW_SECONDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ISA182_FLOOD_THRESHOLD_PER_10MIN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ISA182_MANAGEABLE_RATE_PER_10MIN",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ISA182_RATE_PERIOD_MINUTES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ISA182_STALE_DURATION_SECONDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "KNOWN_KPI_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TOP_CONTRIBUTORS_LIMIT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compute_alarm_kpis",
+            "signature": "events: Iterable[Any]"
+          }
+        ],
+        "test_paths": [
+          "src/p1am_control_system/backend/tests/test_alarm_kpis.py"
+        ],
+        "unit_mentions": [
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
       "authority_status": "not-applicable",
       "bytes_lf": 3949,
       "classification": "non-calculation",
