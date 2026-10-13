@@ -42,7 +42,7 @@ from data_capture import (
     historian_retention_loop,
     parse_query_bound,
     parse_tag_names,
-    query_trend_series,
+    query_trend_samples,
     stream_tag_export_csv,
 )
 from database import engine, get_session, init_db
@@ -1003,7 +1003,8 @@ def get_trends(
     The series is downsampled server-side to at most ``max_points`` samples that
     evenly span ``[start_time, end_time]``, so a multi-hour or multi-day request
     returns the entire span instead of only its newest slice. ``truncated`` is
-    True whenever decimation occurred. Any server-side ``smoothing`` is applied
+    True whenever decimation occurred. ``quality`` is index-aligned with
+    ``values`` (stored provenance per sample, ``unknown`` if unrecorded). Any server-side ``smoothing`` is applied
     to the decimated values. ``max_points`` is clamped to a sane range; an
     out-of-range value yields HTTP 400.
     """
@@ -1020,7 +1021,7 @@ def get_trends(
         tag_name = f"TAG_{tag_id}"
 
     try:
-        sample_times, values, truncated = query_trend_series(
+        sample_times, values, qualities, truncated = query_trend_samples(
             db,
             tag_name=tag_name,
             start=start_dt,
@@ -1037,7 +1038,12 @@ def get_trends(
     elif smoothing == "exponential_smoothing" and values:
         values = exponential_smoothing(values, alpha)
 
-    return {"timestamps": timestamps, "values": values, "truncated": truncated}
+    return {
+        "timestamps": timestamps,
+        "values": values,
+        "quality": qualities,
+        "truncated": truncated,
+    }
 
 
 @app.get("/api/export", dependencies=[Depends(require_read_auth)])

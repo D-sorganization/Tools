@@ -179,7 +179,7 @@ class TestExportHelpers:
         statement = select(TagLog).order_by(TagLog.tag_name)
         rows = list(stream_tag_export_csv(session.get_bind(), statement, chunk_rows=1))
 
-        assert rows[0] == "Timestamp,Tag Name,Value\r\n"
+        assert rows[0] == "Timestamp,Tag Name,Value,Quality\r\n"
         assert "TAG_0,1.5" in rows[1]
         assert "TAG_1,2.5" in rows[2]
 

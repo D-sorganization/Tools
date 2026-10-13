@@ -123,7 +123,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
     },
     {
-      "content_sha256_lf": "331e339b1ac9585c69b7fb69254c39bc40777ee90f03de0e817bb5e226ba0398",
+      "content_sha256_lf": "35e24bb87681cfd5301df9bad28c555ac8c231d56183284a784960c1a359e134",
       "entry_count": 5,
       "package": "rust_core/data-processor-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
@@ -387,7 +387,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-optimizer-gui.json"
     },
     {
-      "content_sha256_lf": "ecf2b416e95debf23769bb9e1f9ad9476d281e1c7db34d0ebcb98c8495647bf6",
+      "content_sha256_lf": "f5074efac0c56d0347f42a8337d4a1b1fc16369981b097757317ef61ec6083a8",
       "entry_count": 260,
       "package": "src/p1am_control_system",
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
