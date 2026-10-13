@@ -57,8 +57,7 @@ def load_policy(path: Path) -> dict[str, object]:
             raise PolicyConfigError(f"{path}: ci_lock_files entries must be strings")
     blocked = data.get("blocked_standalone_sip_versions", [])
     if blocked is not None and not (
-        isinstance(blocked, list)
-        and all(isinstance(item, str) for item in blocked)
+        isinstance(blocked, list) and all(isinstance(item, str) for item in blocked)
     ):
         raise PolicyConfigError(
             f"{path}: blocked_standalone_sip_versions must be a list of strings"
@@ -69,9 +68,7 @@ def load_policy(path: Path) -> dict[str, object]:
 def _expected_pyqt_pins(policy: dict[str, object]) -> dict[str, str]:
     coupled = policy["coupled_pins"]
     assert isinstance(coupled, dict)
-    return {
-        key: str(coupled[_NAME_BY_CANONICAL[key]]) for key in _PYQT_DISTRIBUTIONS
-    }
+    return {key: str(coupled[_NAME_BY_CANONICAL[key]]) for key in _PYQT_DISTRIBUTIONS}
 
 
 def collect_violations(

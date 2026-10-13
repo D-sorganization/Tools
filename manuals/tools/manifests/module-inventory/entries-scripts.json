@@ -2792,6 +2792,95 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 5803,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d547ee1131514b94d80f5fe6735da9a8f03c12196a1322387a26003505b761ec",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CHECK-PYQT6-BINARY-STACK-POLICY-PY-4083C9393650",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/check_pyqt6_binary_stack_policy.py",
+      "purpose": "Enforce coupled PyQt6 / PyQt6-Qt6 / PyQt6-sip pins (#5508).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "PolicyConfigError",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_POLICY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LOGGER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_NAME_BY_CANONICAL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_PYQT_DISTRIBUTIONS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "collect_violations",
+            "signature": "root: Path, *, policy_path: Path | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "load_policy",
+            "signature": "path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/scripts/test_check_pyqt6_binary_stack_policy.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 7314,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
