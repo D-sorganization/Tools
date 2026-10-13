@@ -24,10 +24,10 @@ import logging
 import os
 import time
 from collections.abc import Callable, Iterator
-from typing import Any
+from typing import Any, cast
 
 from database import DB_FILE
-from models import EventLog, TagLog, ensure_utc
+from models import DataSource, EventLog, TagLog, ensure_utc
 from pydantic import BaseModel, Field
 from settings import P1AMSettings, get_settings
 from sqlalchemy import Engine, delete, func
@@ -254,6 +254,28 @@ def parse_tag_names(tag_ids: str) -> list[str]:
     ]
 
 
+#: Explicit marker for a stored quality that is NULL or not a known
+#: :class:`~models.DataSource` value; surfaced rather than dropped or guessed.
+QUALITY_UNKNOWN = "unknown"
+
+#: Export CSV header. ``Quality`` is appended last so existing consumers that
+#: index columns by position keep working (issue #5529).
+EXPORT_CSV_HEADER: tuple[str, ...] = ("Timestamp", "Tag Name", "Value", "Quality")
+
+_KNOWN_QUALITIES = frozenset(source.value for source in DataSource)
+
+
+def normalize_quality(raw: str | None) -> str:
+    """Map a stored ``TagLog.quality`` to a known provenance or ``unknown``.
+
+    Postcondition: the result is always a :class:`~models.DataSource` value or
+    :data:`QUALITY_UNKNOWN`; NULL and unrecognised values are never dropped.
+    """
+    if raw is not None and raw in _KNOWN_QUALITIES:
+        return raw
+    return QUALITY_UNKNOWN
+
+
 def stream_tag_export_csv(
     bind: Any,
     statement: Any,
@@ -262,14 +284,19 @@ def stream_tag_export_csv(
 ) -> Iterator[str]:
     """Yield export CSV rows without materializing the whole result set."""
     header = io.StringIO()
-    csv.writer(header).writerow(["Timestamp", "Tag Name", "Value"])
+    csv.writer(header).writerow(EXPORT_CSV_HEADER)
     yield header.getvalue()
     with Session(bind) as stream_db:
         result = stream_db.exec(statement).yield_per(chunk_rows)
         for row in result:
             line = io.StringIO()
             csv.writer(line).writerow(
-                [_iso_utc(row.timestamp), row.tag_name, row.value]
+                [
+                    _iso_utc(row.timestamp),
+                    row.tag_name,
+                    row.value,
+                    normalize_quality(row.quality),
+                ]
             )
             yield line.getvalue()
 
@@ -282,6 +309,21 @@ def query_trend_series(
     end: _dt.datetime,
     max_points: int = TRENDS_MAX_POINTS,
 ) -> tuple[list[_dt.datetime], list[float], bool]:
+    """Fetch ``(timestamps, values, truncated)``; see :func:`query_trend_samples`."""
+    timestamps, values, _, truncated = query_trend_samples(
+        session, tag_name=tag_name, start=start, end=end, max_points=max_points
+    )
+    return timestamps, values, truncated
+
+
+def query_trend_samples(
+    session: Session,
+    *,
+    tag_name: str,
+    start: _dt.datetime,
+    end: _dt.datetime,
+    max_points: int = TRENDS_MAX_POINTS,
+) -> tuple[list[_dt.datetime], list[float], list[str], bool]:
     """Fetch a tag's historian samples over ``[start, end]``, decimated to fit.
 
     A naive ``DESC + LIMIT`` clips a long window to only its newest
@@ -308,8 +350,9 @@ def query_trend_series(
         max_points: Maximum samples to return. Defaults to ``TRENDS_MAX_POINTS``.
 
     Returns:
-        ``(timestamps, values, truncated)`` — two equal-length, ascending lists
-        (datetimes and floats) plus the downsample flag.
+        ``(timestamps, values, qualities, truncated)`` — three equal-length,
+        index-aligned ascending lists (datetimes, floats, and the stored
+        provenance via :func:`normalize_quality`) plus the downsample flag.
 
     Raises:
         TypeError: If any argument is of the wrong type.
@@ -350,20 +393,22 @@ def query_trend_series(
         or 0
     )
     ordered = (
-        select(TagLog.timestamp, TagLog.value)
+        select(TagLog.timestamp, TagLog.value, TagLog.quality)
         .where(*where_clauses)
         .order_by(col(TagLog.timestamp).asc())
     )
 
     timestamps: list[_dt.datetime] = []
     values: list[float] = []
+    qualities: list[str] = []
 
     if total <= max_points:
         # Fits the budget: return every in-range sample verbatim, ascending.
-        for ts, value in session.exec(ordered):
+        for ts, value, quality in session.exec(ordered):
             timestamps.append(ts)
             values.append(float(value))
-        return timestamps, values, False
+            qualities.append(normalize_quality(quality))
+        return timestamps, values, qualities, False
 
     # Over budget: stride across the *whole* ascending cursor. Ceil division
     # keeps the emitted count <= max_points (+1 for the forced final sample).
@@ -372,19 +417,22 @@ def query_trend_series(
     last_emitted = -1
     last_ts: _dt.datetime | None = None
     last_value = 0.0
+    last_quality = QUALITY_UNKNOWN
     cursor = session.exec(ordered).yield_per(TRENDS_STREAM_CHUNK_ROWS)
-    for i, (ts, value) in enumerate(cursor):
-        last_ts, last_value = ts, value
+    for i, (ts, value, quality) in enumerate(cursor):
+        last_ts, last_value, last_quality = ts, value, normalize_quality(quality)
         if i % stride == 0:
             timestamps.append(ts)
             values.append(float(value))
+            qualities.append(last_quality)
             last_emitted = i
     # Always include the final in-range sample so the series reaches ``end``
     # rather than stopping up to one stride short of it.
     if last_emitted != last_index and last_ts is not None:
         timestamps.append(last_ts)
         values.append(float(last_value))
-    return timestamps, values, True
+        qualities.append(last_quality)
+    return timestamps, values, qualities, True
 
 
 def historian_max_bytes(settings: P1AMSettings | None = None) -> int:
@@ -581,7 +629,7 @@ def _dbstat_bytes(session: Session) -> dict[str, int] | None:
         )
     except Exception:  # pragma: no cover - depends on the host SQLite build
         return None
-    return {str(name): int(size or 0) for name, size in rows}
+    return {str(name): int(cast("int", size or 0)) for name, size in rows}
 
 
 def _sum_for_table(stats: dict[str, int], table: str) -> int:

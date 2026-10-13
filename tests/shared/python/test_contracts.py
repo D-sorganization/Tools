@@ -12,7 +12,8 @@ Covers:
 
 from __future__ import annotations
 
-from typing import Any
+import enum
+from typing import Any, cast
 
 import pytest
 
@@ -87,6 +88,70 @@ class TestContractLevel:
 
 
 # ── Exception Hierarchy ──────────────────────────────────────────────────
+
+
+class ForeignContractLevel(enum.Enum):
+    OFF = "off"
+    WARN = "warn"
+    ENFORCE = "enforce"
+
+
+class UnsupportedContractLevel(enum.Enum):
+    OTHER = "other"
+
+
+class TestForeignContractLevelInterop:
+    @pytest.mark.parametrize(
+        ("foreign_level", "expected_level"),
+        [
+            (ForeignContractLevel.ENFORCE, ContractLevel.ENFORCE),
+            (ForeignContractLevel.WARN, ContractLevel.WARN),
+            (ForeignContractLevel.OFF, ContractLevel.OFF),
+        ],
+    )
+    def test_foreign_enum_uses_canonical_level_and_behavior(
+        self,
+        foreign_level: ForeignContractLevel,
+        expected_level: ContractLevel,
+        caplog: pytest.LogCaptureFixture,
+    ) -> None:
+        previous = get_contract_level()
+        try:
+            set_contract_level(cast(Any, foreign_level))
+            caplog.clear()
+            assert get_contract_level() is expected_level
+            assert isinstance(contracts_module._ContractState.level, ContractLevel)
+            with caplog.at_level("WARNING"):
+                if expected_level is ContractLevel.ENFORCE:
+                    with pytest.raises(PreconditionError):
+                        require(False, "interop violation")
+                else:
+                    require(False, "interop violation")
+            if expected_level is ContractLevel.WARN:
+                assert [record.message for record in caplog.records] == [
+                    "[DbC pre-condition] interop violation"
+                ]
+            else:
+                assert caplog.records == []
+        finally:
+            set_contract_level(previous)
+
+    @pytest.mark.parametrize(
+        ("invalid_level", "error_type"),
+        [("warn", TypeError), (UnsupportedContractLevel.OTHER, ValueError)],
+    )
+    def test_invalid_level_does_not_mutate_state_or_aliases(
+        self, invalid_level: object, error_type: type[Exception]
+    ) -> None:
+        previous = get_contract_level()
+        previous_alias = contracts_module.DBC_LEVEL
+        previous_enabled = contracts_module.CONTRACTS_ENABLED
+        with pytest.raises(error_type):
+            set_contract_level(cast(Any, invalid_level))
+        assert get_contract_level() is previous
+        assert contracts_module._ContractState.level is previous
+        assert contracts_module.DBC_LEVEL is previous_alias
+        assert contracts_module.CONTRACTS_ENABLED is previous_enabled
 
 
 class TestContractExceptions:
