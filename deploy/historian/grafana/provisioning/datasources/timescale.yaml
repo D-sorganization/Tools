@@ -1,0 +1,31 @@
+apiVersion: 1
+
+# Grafana Datasource Provisioning: Level 3 Plant Historian TimescaleDB
+# Architecture: Tools #4046, H6 #5545, H3 #5542
+#
+# Licensing notice: Internal-only deployment per #4951 ruling (AGPLv3).
+# Safety notice: The historian is strictly non-authoritative and must never block,
+# delay, or fail the control poll loop or de-energizing safety commands.
+#
+# All credentials use environment variable interpolation (no plaintext secrets).
+
+datasources:
+  - name: TimescaleDB
+    type: postgres
+    access: proxy
+    orgId: 1
+    uid: historian-timescale
+    url: ${HISTORIAN_HOST:-timescale}:${HISTORIAN_PORT:-5432}
+    database: ${HISTORIAN_DB:-historian}
+    user: ${HISTORIAN_USER:-historian_reader}
+    secureJsonData:
+      password: ${HISTORIAN_PASSWORD}
+    jsonData:
+      sslmode: ${HISTORIAN_SSLMODE:-disable}
+      maxOpenConns: 10
+      maxIdleConns: 5
+      connMaxLifetime: 14400
+      postgresVersion: 1400
+      timescaledb: true
+    isDefault: true
+    editable: false

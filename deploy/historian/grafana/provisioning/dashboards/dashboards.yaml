@@ -1,0 +1,21 @@
+apiVersion: 1
+
+# Grafana Dashboard Provider Provisioning: Level 3 Plant Historian
+# Architecture: Tools #4046, H6 #5545
+#
+# Licensing notice: Internal-only deployment per #4951 ruling (AGPLv3).
+# Safety notice: The historian is strictly non-authoritative and must never block,
+# delay, or fail the control poll loop or de-energizing safety commands.
+
+providers:
+  - name: 'Plant Historian'
+    orgId: 1
+    folder: 'Plant Historian'
+    type: file
+    disableDeletion: false
+    editable: true
+    updateIntervalSeconds: 30
+    allowUiUpdates: false
+    options:
+      path: /etc/grafana/provisioning/dashboards
+      foldersFromFilesStructure: false
