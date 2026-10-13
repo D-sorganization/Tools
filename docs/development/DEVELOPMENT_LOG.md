@@ -148,6 +148,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5546 · \ ISA-18.2 / EEMUA 191 Alarm Performance KPIs and Dashboard\
+
+- **State:** in_review
+- **Owner:** unassigned
+- **Issue:** #5546
+- **Branch:** feat/5546-alarm-kpis
+- **PR:** #5597
+- **Paths:** see #5597
+- **Started:** 2026-10-13
+- **Last verified:** 2026-10-13 (`a8a74602`; collated from changes/5546-isa-18-2-eemua-191-alarm-performance-kpi.md)
+- **Summary:** \ ISA-18.2 / EEMUA 191 alarm performance KPIs and dashboard\
+- **Next step:** \Merge the PR.\
+
 ### DL-#5545 · \ Grafana Provisioning-as-Code: Datasource and Baseline Dashboards\
 
 - **State:** in_review
@@ -1521,6 +1534,19 @@ reachable from any live state and `abandoned` from `parked`.
   definition.
 
 ## Shipped (Last 90 Days)
+
+### DL-#5595 · Split C3DDataReader.Force_Plate_Dataframe Into Private Helpers (Pure Refactor, Adds Characterization Tests)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5595
+- **Branch:** merged via #5596
+- **PR:** #5596
+- **Paths:** see #5596
+- **Started:** 2026-10-13
+- **Last verified:** 2026-10-13 (`f7440f18`; collated from changes/5595-split-c3ddatareader-force-plate-datafram.md)
+- **Summary:** Split C3DDataReader.force_plate_dataframe into private helpers (pure refactor, adds characterization tests)
+- **Next step:** Shipped in PR #5596.
 
 ### DL-#5542 · Historian H3: TimescaleDB Schema Migrations for Hypertable Compression Continuous Aggregates and Retention
 
