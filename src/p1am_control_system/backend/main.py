@@ -104,6 +104,7 @@ from temperature_integration import (
     TemperatureService,
     create_temperature_router,
 )
+from timescale_sink import create_historian_sink
 from tuning_router import create_tuning_router
 from ws_broadcast import ConnectionManager
 
@@ -343,7 +344,8 @@ def _require_latest_tag(tag_name: str, *, role: str) -> float:
 # The scan's persistence seam: the capture throttle decides whether a sample
 # is due BEFORE the record reaches the queue, so a suppressed scan never opens
 # a session (issue #4023). Alarm/quality events are never throttled.
-_historian_sink = ThrottledHistorianSink(historian_writer, capture_throttle.due)
+_backend_sink = create_historian_sink(settings.historian_backend, historian_writer)
+_historian_sink = ThrottledHistorianSink(_backend_sink, capture_throttle.due)
 
 
 async def poll_plc_loop() -> None:
