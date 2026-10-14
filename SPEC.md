@@ -5947,6 +5947,12 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-14 | #5618 | Repair the 5609 fragment and validate pending fragments in unit tests |
+| 2026-10-14 | #5616 | Test impact_interval time cap during restitution and timestep refinement |
+| 2026-10-14 | #5611 | Refresh detect-secrets baseline for SCADA f-matrix test SHAs |
+| 2026-10-14 | #5620 | Enforce muscle definition compatibility and add synthetic same-input agreement vs model divergence fixtures |
+| 2026-10-14 | #5613 | Fix mirrored wedge sole bounce sign in wedge geometry and CAD |
+| 2026-10-14 | #5614 | \ Add Python calculation-runtime-manifest/v1 emitter,cross-manifest compatibility verifier,and specification\ |
 | 2026-10-14 | #5619 | Remove tracked HelpPanel.tsx.orig merge-artifact debris (sanitation pass) |
 | 2026-10-14 | #5599 | \ Deployment topology with docker-compose for TimescaleDB and Grafana on internal host\ |
 | 2026-10-14 | #5598 | \ Dual-write to SQLite and TimescaleDB behind P1AM_HISTORIAN_BACKEND flag\ |
