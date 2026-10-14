@@ -1561,6 +1561,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#33 · Consume UpstreamDrift Ud.Putt_Scene/1 Export via Mirror Pattern
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #33
+- **Branch:** merged via #5622
+- **PR:** #5622
+- **Paths:** see #5622
+- **Started:** 2026-10-14
+- **Last verified:** 2026-10-14 (`e27f1a5d`; collated from changes/33-consume-upstreamdrift-ud-putt-scene-1-ex.md)
+- **Summary:** consume UpstreamDrift ud.putt_scene/1 export via mirror pattern
+- **Next step:** Shipped in PR #5622.
+
 ### DL-#5617 · Repair the 5609 Fragment and Validate Pending Fragments in Unit Tests
 
 - **State:** shipped
