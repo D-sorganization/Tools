@@ -421,6 +421,8 @@ class ComparisonEvidenceReceipt:
             modes = {row.replay_mode for row in replay_rows}
             if len(modes) != 1:
                 raise ValueError("comparison cannot mix replay modes")
+            if drive_modes == {DriveMode.MUSCLE_EXCITATION}:
+                self._validate_muscle_definitions(replay_rows)
         if self.comparison_level is ComparisonLevel.SAME_INPUT and len(replay_rows) > 1:
             comparison_keys = set()
             for row in replay_rows:
@@ -440,6 +442,68 @@ class ComparisonEvidenceReceipt:
                     "same_input comparison requires matching input, time-grid, "
                     "channel, "
                     "policy, and state-schema hashes"
+                )
+
+    @staticmethod
+    def _validate_muscle_definitions(
+        replay_rows: tuple[ComparisonEvidenceRow, ...],
+    ) -> None:
+        channel_schemas = set()
+        state_schemas = set()
+        for row in replay_rows:
+            bundle = row.replay_bundle
+            assert bundle is not None, "replay row must contain a bundle"
+            channel_schemas.add(bundle.input_channel_schema_sha256)
+            state_schemas.add(bundle.state_schema_sha256)
+        if len(channel_schemas) != 1 or len(state_schemas) != 1:
+            raise ValueError("comparison cannot mix incompatible muscle definitions")
+        has_actuator_command = any(
+            row.replay_bundle is not None
+            and row.replay_bundle.input_history.input_kind
+            is ActuationInputKind.ACTUATOR_COMMAND
+            for row in replay_rows
+        )
+        if has_actuator_command:
+            actuator_hashes: set[str] = set()
+            for row in replay_rows:
+                bundle = row.replay_bundle
+                assert bundle is not None, "replay row must contain a bundle"
+                if (
+                    bundle.input_history.input_kind
+                    is not ActuationInputKind.ACTUATOR_COMMAND
+                ):
+                    raise ValueError(
+                        "comparison cannot mix incompatible muscle definitions"
+                    )
+                impl = next(
+                    (
+                        item
+                        for item in row.implementation_evidence
+                        if item.kind is ImplementationEvidenceKind.ACTUATOR
+                    ),
+                    None,
+                )
+                art = next(
+                    (
+                        item
+                        for item in row.artifacts
+                        if item.kind is EvidenceArtifactKind.ACTUATOR
+                    ),
+                    None,
+                )
+                if (
+                    impl is None
+                    or art is None
+                    or impl.sha256 is None
+                    or impl.sha256 != art.sha256
+                ):
+                    raise ValueError(
+                        "comparison cannot mix incompatible muscle definitions"
+                    )
+                actuator_hashes.add(impl.sha256)
+            if len(actuator_hashes) != 1:
+                raise ValueError(
+                    "comparison cannot mix incompatible muscle definitions"
                 )
 
 
