@@ -3,6 +3,7 @@
 - Repository: D-sorganization/Tools
 - Working directory: `/home/dieterolson/staff-worktrees/Tools-run-fd6559fafbe4`
 - Branch: `staff/sanitation-task-4f5c6b`; commit: SELF
+- Pull request: #5619 (draft)
 - Governing issue/epic: Sanitation Engineer scheduled pass (no governing issue)
 
 ## Objective and status
@@ -20,8 +21,7 @@ swept `docs/development/` and `drafts/` for new clutter. Full detail in
   `HelpPanel.tsx` since 2026-04-21.
 - `docs/operations/sanitation/sanitation-2026-10-14.md`: full report.
 - `docs/development/HANDOFF.md`: this entry.
-- `SPEC.md`: change-log row added once the PR number is known (follow-up
-  commit on this branch).
+- `SPEC.md`: added the keyed #5619 change-log row.
 - No other repo-structure changes this pass: worktrees belong to other live
   sessions (out of scope), the ~1,200 unverified remote branches remain
   too large for a single pass, and `docs/development/`/`drafts/` clutter
