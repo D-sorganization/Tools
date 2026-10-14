@@ -1215,10 +1215,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 11297,
+      "bytes_lf": 14020,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "834e9e67715d2e28a83997603a2a80977b64b3e715c86e89293a49a211c11523",
+      "content_sha256_lf": "c0342b9183b998bd7b029421af5c78a2656acd6caf7ccc85f863e370ecbac3da",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-RUNTIME-MANIFEST-PY-944B16ADC266",
       "language": "python",
@@ -1261,6 +1261,16 @@
             "kind": "constant",
             "name": "RUNTIME_MANIFEST_SCHEMA",
             "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "assert_manifests_compatible",
+            "signature": "manifest_a: Mapping[str, Any], manifest_b: Mapping[str, Any], *, require_same_commit: bool=True"
+          },
+          {
+            "kind": "function",
+            "name": "create_runtime_manifest",
+            "signature": "*, surface_id: str, build: Mapping[str, Any], calculations: Sequence[Mapping[str, Any]], provenance: Mapping[str, Any]"
           },
           {
             "kind": "function",
