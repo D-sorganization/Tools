@@ -489,4 +489,3 @@ def test_assert_manifests_compatible_permits_differing_domain_availability(
     }
 
     assert_manifests_compatible(manifest_a, manifest_b)
-
