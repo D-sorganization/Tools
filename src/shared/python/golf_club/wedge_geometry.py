@@ -44,7 +44,13 @@ class WedgeContactCandidate:
 def wedge_body_profile_m(
     parameters: WedgeHeadParameters,
 ) -> tuple[tuple[float, float], ...]:
-    """Return the canonical closed body profile as head-frame ``(x, y)`` points."""
+    """Return the canonical closed body profile as head-frame ``(x, y)`` points.
+
+    Leading edge sits at ``(face_progression_m, leading_edge_radius_m)`` and
+    trailing edge is displaced backward (``-x``) and downward (``-y``) by
+    ``bounce_deg`` for positive bounce so the trailing edge sits lower than
+    the leading edge at neutral shaft lean.
+    """
     if not isinstance(parameters, WedgeHeadParameters):
         raise TypeError("parameters must be WedgeHeadParameters")
     loft = math.radians(parameters.loft_deg)
@@ -61,7 +67,7 @@ def wedge_body_profile_m(
     )
     trailing = (
         progression - parameters.sole_width_m * math.cos(bounce),
-        leading_y + parameters.sole_width_m * math.sin(bounce),
+        leading_y - parameters.sole_width_m * math.sin(bounce),
     )
     vertical_span = top_back[1] - trailing[1]
     upper_control = (

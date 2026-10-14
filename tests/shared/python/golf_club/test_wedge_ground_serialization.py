@@ -46,7 +46,7 @@ def test_payload_is_versioned_complete_and_json_serializable() -> None:
         "velocity": "m/s",
     }
     assert payload["sequence"] == "ball_first"
-    assert payload["first_ground_contact"]["feature"] == "leading_edge_center"
+    assert payload["first_ground_contact"]["feature"] == "trailing_sole_center"
     assert len(payload["first_ground_contact"]["pose_head_to_ground"]) == 4
     assert len(payload["envelope"]) == 9
     assert payload["metrics"]["sole_entry_margin_m"] is not None

@@ -50,6 +50,13 @@ def _sweep(
     )
 
 
+_MID = wedge_preset(WedgePreset.MID_BOUNCE)
+_MID_TRAILING_Y = _MID.leading_edge_radius_m - _MID.sole_width_m * math.sin(
+    math.radians(_MID.bounce_deg)
+)
+_MID_CROSSING_TIME = (0.01 + _MID_TRAILING_Y) / 0.02
+
+
 def test_contact_candidates_cover_leading_primary_and_trailing_regions() -> None:
     low = wedge_preset(WedgePreset.LOW_BOUNCE)
     high = wedge_preset(WedgePreset.HIGH_BOUNCE)
@@ -71,7 +78,7 @@ def test_contact_candidates_cover_leading_primary_and_trailing_regions() -> None
         for candidate in high_candidates
         if candidate.feature is WedgeContactFeature.TRAILING_SOLE_CENTER
     )
-    assert high_trailing.local_point_m[1] > low_trailing.local_point_m[1]
+    assert high_trailing.local_point_m[1] < low_trailing.local_point_m[1]
 
 
 def test_handedness_mirrors_heel_and_toe_candidate_datums() -> None:
@@ -134,16 +141,20 @@ def test_between_frame_crossing_is_refined_to_the_analytic_time() -> None:
     result = _sweep(poses, ball_contact_time_s=0.25)
 
     assert result.first_ground_contact is not None
-    assert result.first_ground_contact.time_s == pytest.approx(0.5, abs=1e-9)
+    assert result.first_ground_contact.time_s == pytest.approx(
+        _MID_CROSSING_TIME, abs=1e-9
+    )
     assert (
-        result.first_ground_contact.feature is WedgeContactFeature.LEADING_EDGE_CENTER
+        result.first_ground_contact.feature is WedgeContactFeature.TRAILING_SOLE_CENTER
     )
     assert result.first_ground_contact.normal_velocity_mps == pytest.approx(-0.02)
     assert result.first_ground_contact.tangential_velocity_mps == pytest.approx(
         (0.0, 0.0, 0.0)
     )
     assert result.sequence is ContactSequence.BALL_FIRST
-    assert result.ground_after_ball_time_margin_s == pytest.approx(0.25)
+    assert result.ground_after_ball_time_margin_s == pytest.approx(
+        _MID_CROSSING_TIME - 0.25
+    )
 
 
 def test_nonlevel_lie_selects_the_low_toe_contact_region() -> None:
@@ -155,7 +166,7 @@ def test_nonlevel_lie_selects_the_low_toe_contact_region() -> None:
 
     assert result.first_ground_contact is not None
     assert result.first_ground_contact.time_s == pytest.approx(0.0)
-    assert result.first_ground_contact.feature is WedgeContactFeature.LEADING_EDGE_TOE
+    assert result.first_ground_contact.feature is WedgeContactFeature.TRAILING_SOLE_TOE
     assert result.sequence is ContactSequence.GROUND_ONLY_MISS
 
 
@@ -163,7 +174,7 @@ def test_nonlevel_lie_selects_the_low_toe_contact_region() -> None:
     ("ball_time", "end_height", "expected"),
     [
         (0.75, -0.01, ContactSequence.GROUND_FIRST),
-        (0.50, -0.01, ContactSequence.SIMULTANEOUS),
+        (_MID_CROSSING_TIME, -0.01, ContactSequence.SIMULTANEOUS),
         (0.50, 0.01, ContactSequence.BALL_ONLY),
         (None, 0.01, ContactSequence.NO_CONTACT_MISS),
     ],
@@ -196,16 +207,17 @@ def test_ball_contact_metrics_report_clearance_low_point_and_bounce() -> None:
         ball_contact_time_s=0.5,
     )
 
-    assert result.leading_edge_clearance_at_ball_m == pytest.approx(0.015)
-    assert result.minimum_pre_ball_clearance_m == pytest.approx(0.015)
-    assert result.low_point_time_s == pytest.approx(1.0)
-    assert result.low_point_world_m[1] == pytest.approx(0.01)
-    assert result.delivered_bounce_deg_at_ball == pytest.approx(parameters.bounce_deg)
-    assert result.sole_entry_margin_m == pytest.approx(
-        0.015
-        + parameters.leading_edge_radius_m
-        + 0.5 * parameters.sole_width_m * math.sin(math.radians(parameters.bounce_deg))
+    trailing_offset = (
+        parameters.leading_edge_radius_m
+        - parameters.sole_width_m * math.sin(math.radians(parameters.bounce_deg))
     )
+    assert result.leading_edge_clearance_at_ball_m == pytest.approx(0.015)
+    assert result.minimum_pre_ball_clearance_m == pytest.approx(0.015 + trailing_offset)
+    assert result.low_point_time_s == pytest.approx(1.0)
+    assert result.low_point_world_m[1] == pytest.approx(0.01 + trailing_offset)
+    assert result.low_point_feature is WedgeContactFeature.TRAILING_SOLE_CENTER
+    assert result.delivered_bounce_deg_at_ball == pytest.approx(parameters.bounce_deg)
+    assert result.sole_entry_margin_m == pytest.approx(0.015 + trailing_offset)
     assert result.path_projected_effective_bounce_deg_at_ball == pytest.approx(
         parameters.bounce_deg
     )
@@ -367,7 +379,9 @@ def test_linear_contact_time_is_stable_under_retained_timestep_refinement() -> N
 
     assert coarse_result.first_ground_contact is not None
     assert refined_result.first_ground_contact is not None
-    assert coarse_result.first_ground_contact.time_s == pytest.approx(0.5, abs=1e-9)
+    assert coarse_result.first_ground_contact.time_s == pytest.approx(
+        _MID_CROSSING_TIME, abs=1e-9
+    )
     assert refined_result.first_ground_contact.time_s == pytest.approx(
         coarse_result.first_ground_contact.time_s,
         abs=1e-9,
