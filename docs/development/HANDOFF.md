@@ -1,4 +1,58 @@
-# Current handoff — Pragmatic Programmer pass 2026-10-09
+# Current handoff — Sanitation Engineer pass 2026-10-14
+
+- Repository: D-sorganization/Tools
+- Working directory: `/home/dieterolson/staff-worktrees/Tools-run-fd6559fafbe4`
+- Branch: `staff/sanitation-task-4f5c6b`; commit: SELF
+- Governing issue/epic: Sanitation Engineer scheduled pass (no governing issue)
+
+## Objective and status
+
+Scheduled Sanitation Engineer pass per
+`Repository_Management/docs/fleet-sanitation.md`. Removed one tracked
+merge-conflict leftover file, pruned stale local remote-tracking refs, and
+swept `docs/development/` and `drafts/` for new clutter. Full detail in
+`docs/operations/sanitation/sanitation-2026-10-14.md`. Done.
+
+## Files and decisions
+
+- `src/data_processing/data_processor/web/src/components/HelpPanel.tsx.orig`:
+  removed. Unreferenced merge-artifact snapshot, superseded by
+  `HelpPanel.tsx` since 2026-04-21.
+- `docs/operations/sanitation/sanitation-2026-10-14.md`: full report.
+- `docs/development/HANDOFF.md`: this entry.
+- `SPEC.md`: change-log row added once the PR number is known (follow-up
+  commit on this branch).
+- No other repo-structure changes this pass: worktrees belong to other live
+  sessions (out of scope), the ~1,200 unverified remote branches remain
+  too large for a single pass, and `docs/development/`/`drafts/` clutter
+  checks found nothing new to archive.
+
+## Validation
+
+- `git ls-files | grep -iE '\.(orig|rej|bak)\.'`: no hits after removal.
+- `grep -rn "HelpPanel.tsx.orig"`: no references anywhere in the tree before
+  removal.
+- `git diff --stat`: one file deleted, two docs files added/edited.
+
+## Blockers and risks
+
+- None. Docs-only plus one dead-file removal; no source behavior changed.
+
+## Next steps
+
+- None for this pass. Next sanitation pass should revisit the ~1,200
+  unverified remote branches in batches, verifying ancestor-of-main status
+  per branch before any deletion.
+
+## Change log
+
+- `SELF` — Sanitation Engineer 2026-10-14: remove tracked `.orig`
+  merge-artifact debris, prune stale remote-tracking refs, confirm no new
+  docs-IA clutter since the 2026-10-07 pass.
+
+---
+
+# Past handoff — Pragmatic Programmer pass 2026-10-09
 
 - Repository: D-sorganization/Tools
 - Working directory: `/home/dieterolson/staff-worktrees/Tools-run-8147377fc62d`
