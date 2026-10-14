@@ -298,7 +298,8 @@ class UnitConverterWidget(BaseCalculatorWindow):
 
         # Arrow
         row_widget.arrow = QPushButton("⇄")
-        row_widget.arrow.setFixedWidth(35)
+        arrow_hint = row_widget.arrow.minimumSizeHint()
+        row_widget.arrow.setMinimumSize(arrow_hint.width(), arrow_hint.height())
         row_widget.arrow.clicked.connect(lambda: self._swap_values(index))
 
         # Right side
@@ -320,11 +321,13 @@ class UnitConverterWidget(BaseCalculatorWindow):
 
         # Buttons
         row_widget.copy_btn = QPushButton("📋")
-        row_widget.copy_btn.setFixedWidth(30)
+        copy_hint = row_widget.copy_btn.minimumSizeHint()
+        row_widget.copy_btn.setMinimumSize(copy_hint.width(), copy_hint.height())
         row_widget.copy_btn.clicked.connect(lambda: self._copy_result(index))
 
         action_btn = QPushButton()
-        action_btn.setFixedWidth(30)
+        action_hint = action_btn.minimumSizeHint()
+        action_btn.setMinimumSize(action_hint.width(), action_hint.height())
         style = self.style()
         if not is_saved:
             if style:

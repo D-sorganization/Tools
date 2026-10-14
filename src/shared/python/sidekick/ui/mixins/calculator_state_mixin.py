@@ -19,6 +19,7 @@ class MyCalculator(QWidget, CalculatorStateMixin):
 from __future__ import annotations
 
 import logging
+import weakref
 from datetime import datetime, timezone
 from typing import Any, cast
 
@@ -74,8 +75,17 @@ class _SplitterStateMixin:
 
         self.splitters.append(splitter_info)
 
-        # Connect splitter signals to track changes
-        splitter.splitterMoved.connect(lambda: self.on_splitter_moved(splitter_info))
+        # Connect splitter signals without a self-capturing lambda (Tools#5520).
+        weak_self = weakref.ref(self)
+
+        def _on_splitter_moved(
+            _pos: int, _index: int, info: dict[str, Any] = splitter_info
+        ) -> None:
+            owner = weak_self()
+            if owner is not None:
+                owner.on_splitter_moved(info)
+
+        splitter.splitterMoved.connect(_on_splitter_moved)
 
         # Restore saved state if available
         self.restore_splitter_state(splitter_info)
@@ -201,9 +211,16 @@ class _ClipboardMixin:
         # Setup context menu for the widget
         if hasattr(widget, "setContextMenuPolicy"):
             widget.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-            widget.customContextMenuRequested.connect(
-                lambda pos, w=widget_info: self.show_widget_context_menu(pos, w),
-            )
+            weak_self = weakref.ref(self)
+
+            def _on_context_menu(
+                pos: Any, info: dict[str, Any] = widget_info
+            ) -> None:
+                owner = weak_self()
+                if owner is not None:
+                    owner.show_widget_context_menu(pos, info)
+
+            widget.customContextMenuRequested.connect(_on_context_menu)
 
     def copy_selected_text(self, checked: bool = False) -> None:
         """Copy selected text from focused widget"""
