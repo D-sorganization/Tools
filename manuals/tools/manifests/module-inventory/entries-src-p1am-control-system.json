@@ -2654,10 +2654,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 53563,
+      "bytes_lf": 53695,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2afa18d77062d2d185c96bb14ed932e8a4171b629438946645ba60057632a1b6",
+      "content_sha256_lf": "20385021e5020e28370e4e02fc86a49db9df6dbc14a1367573c81c0c4d706d9b",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-MAIN-PY-C47A4D7AC436",
       "language": "python",
@@ -4793,10 +4793,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10247,
+      "bytes_lf": 12127,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f2cfeedfc746ccc5d33b871f66eccb8d7e192ae817366108857f3583d3126dee",
+      "content_sha256_lf": "9f49c36ca61c7afaf6b112c6a7d6f9d1d9f55ae42bf08b791f2c373b7ad37be3",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-SETTINGS-PY-9F9C81C8A062",
       "language": "python",
@@ -4883,7 +4883,8 @@
           }
         ],
         "test_paths": [
-          "src/p1am_control_system/backend/tests/test_settings.py"
+          "src/p1am_control_system/backend/tests/test_settings.py",
+          "tests/scada/test_historian_compose.py"
         ],
         "unit_mentions": [
           "g",
@@ -5522,10 +5523,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9530,
+      "bytes_lf": 9980,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7221989a3e5ef95ec7bd3377b3669e8bf2fa4515911c81a303a6d621c74cd65d",
+      "content_sha256_lf": "c9a2aba633a9c3cdc1d459f35ec7bc2ab7fede28d1db0eba935967a3cfde0660",
       "family": "control-systems-non-calculation",
       "id": "TOOLS-MODULE-SRC-P1AM-CONTROL-SYSTEM-BACKEND-TIMESCALE-SINK-PY-535BCE6B70AA",
       "language": "python",
@@ -5588,11 +5589,12 @@
           {
             "kind": "function",
             "name": "create_historian_sink",
-            "signature": "backend: str, primary: HistorianSink, timescale_sink: HistorianSink | None=None"
+            "signature": "backend: str, primary: HistorianSink, timescale_sink: HistorianSink | None=None, *, host: str | None=None, port: int | None=None, tls: bool=False"
           }
         ],
         "test_paths": [
-          "src/p1am_control_system/backend/tests/test_timescale_sink.py"
+          "src/p1am_control_system/backend/tests/test_timescale_sink.py",
+          "tests/scada/test_historian_compose.py"
         ],
         "unit_mentions": [
           "g",

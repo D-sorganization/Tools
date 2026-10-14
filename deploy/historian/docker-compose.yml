@@ -1,0 +1,46 @@
+services:
+  timescale:
+    image: timescale/timescaledb-ha:pg16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${HISTORIAN_DB:-historian}
+      POSTGRES_USER: ${HISTORIAN_USER:-historian_writer}
+      POSTGRES_PASSWORD: ${HISTORIAN_PASSWORD}
+    volumes:
+      - timescale_data:/var/lib/postgresql/data
+      - ./timescale:/docker-entrypoint-initdb.d:ro
+    ports:
+      - "127.0.0.1:${HISTORIAN_PORT:-5432}:5432"
+    networks:
+      - historian_net
+
+  grafana:
+    image: grafana/grafana:10.4.0
+    restart: unless-stopped
+    environment:
+      GF_SECURITY_ADMIN_USER: ${GRAFANA_ADMIN_USER:-admin}
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_ADMIN_PASSWORD}
+      HISTORIAN_HOST: timescale
+      HISTORIAN_PORT: 5432
+      HISTORIAN_DB: ${HISTORIAN_DB:-historian}
+      HISTORIAN_USER: ${HISTORIAN_USER:-historian_writer}
+      HISTORIAN_PASSWORD: ${HISTORIAN_PASSWORD}
+      HISTORIAN_SSLMODE: ${HISTORIAN_SSLMODE:-disable}
+    volumes:
+      - ./grafana/provisioning:/etc/grafana/provisioning:ro
+      - ./grafana/dashboards:/var/lib/grafana/dashboards:ro
+      - grafana_data:/var/lib/grafana
+    ports:
+      - "127.0.0.1:${GRAFANA_PORT:-3000}:3000"
+    depends_on:
+      - timescale
+    networks:
+      - historian_net
+
+volumes:
+  timescale_data:
+  grafana_data:
+
+networks:
+  historian_net:
+    driver: bridge

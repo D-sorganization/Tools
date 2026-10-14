@@ -344,7 +344,13 @@ def _require_latest_tag(tag_name: str, *, role: str) -> float:
 # The scan's persistence seam: the capture throttle decides whether a sample
 # is due BEFORE the record reaches the queue, so a suppressed scan never opens
 # a session (issue #4023). Alarm/quality events are never throttled.
-_backend_sink = create_historian_sink(settings.historian_backend, historian_writer)
+_backend_sink = create_historian_sink(
+    settings.historian_backend,
+    historian_writer,
+    host=settings.historian_remote_host,
+    port=settings.historian_remote_port,
+    tls=settings.historian_remote_tls,
+)
 _historian_sink = ThrottledHistorianSink(_backend_sink, capture_throttle.due)
 
 

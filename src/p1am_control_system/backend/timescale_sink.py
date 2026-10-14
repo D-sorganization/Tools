@@ -251,6 +251,10 @@ def create_historian_sink(
     backend: str,
     primary: HistorianSink,
     timescale_sink: HistorianSink | None = None,
+    *,
+    host: str | None = None,
+    port: int | None = None,
+    tls: bool = False,
 ) -> HistorianSink:
     """Factory creating the appropriate HistorianSink according to the backend strategy.
 
@@ -258,6 +262,9 @@ def create_historian_sink(
         backend: 'sqlite' or 'dual'.
         primary: Authoritative SQLite HistorianSink (e.g. HistorianWriter).
         timescale_sink: Optional explicit TimescaleSink instance.
+        host: Optional remote TimescaleDB host.
+        port: Optional remote TimescaleDB port.
+        tls: Whether TLS encryption is required.
 
     Returns:
         The configured HistorianSink.
@@ -269,7 +276,15 @@ def create_historian_sink(
     if clean == "sqlite":
         return primary
     if clean == "dual":
-        secondary = timescale_sink if timescale_sink is not None else TimescaleSink()
+        if timescale_sink is not None:
+            secondary = timescale_sink
+        else:
+            config = TimescaleConfig(
+                host=host,
+                port=port,
+                sslmode="require" if tls else None,
+            )
+            secondary = TimescaleSink(config=config)
         return FanOutSink(primary=primary, secondary=secondary)
 
     raise ValueError(

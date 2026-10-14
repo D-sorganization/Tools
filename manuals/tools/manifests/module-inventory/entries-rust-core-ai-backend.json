@@ -287,6 +287,7 @@
           "tests/rate_of_closure/test_variation_streaming_ensemble_geometry.py",
           "tests/rate_of_closure/test_variation_visual_state.py",
           "tests/rotation_converter/test_modern_robotics.py",
+          "tests/scada/test_historian_compose.py",
           "tests/scripts/test_module_inventory_merge_driver.py",
           "tests/scripts/test_release_changelog.py",
           "tests/scripts/test_start_gaai_daemon.py",

@@ -5,9 +5,9 @@ from __future__ import annotations
 import os
 from collections.abc import Mapping
 from functools import lru_cache
-from typing import Literal
+from typing import Literal, Self
 
-from pydantic import AliasChoices, Field, field_validator
+from pydantic import AliasChoices, Field, field_validator, model_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 SQLITE_SYNCHRONOUS_MODES = {"OFF", "NORMAL", "FULL", "EXTRA"}
@@ -142,6 +142,38 @@ class P1AMSettings(BaseSettings):
             "(replicates writes to TimescaleDB with failure containment)."
         ),
     )
+    historian_remote_host: str | None = Field(
+        default=None,
+        validation_alias=AliasChoices(
+            "P1AM_HISTORIAN_REMOTE_HOST",
+            "HISTORIAN_REMOTE_HOST",
+            "HISTORIAN_HOST",
+        ),
+        description=(
+            "Optional remote TimescaleDB host for split-topology plant deployment. "
+            "When configured, historian_remote_port is also required."
+        ),
+    )
+    historian_remote_port: int | None = Field(
+        default=None,
+        ge=1,
+        le=65535,
+        validation_alias=AliasChoices(
+            "P1AM_HISTORIAN_REMOTE_PORT",
+            "HISTORIAN_REMOTE_PORT",
+            "HISTORIAN_PORT",
+        ),
+        description="Port for remote TimescaleDB host (typically 5432).",
+    )
+    historian_remote_tls: bool = Field(
+        default=False,
+        validation_alias=AliasChoices(
+            "P1AM_HISTORIAN_REMOTE_TLS",
+            "HISTORIAN_REMOTE_TLS",
+            "HISTORIAN_TLS",
+        ),
+        description="Enforce TLS encryption for remote historian connection.",
+    )
     require_read_auth: bool = Field(
         default=True,
         validation_alias="P1AM_REQUIRE_READ_AUTH",
@@ -237,6 +269,24 @@ class P1AMSettings(BaseSettings):
                 f"Invalid historian backend '{value}'. Allowed values: 'sqlite', 'dual'"
             )
         return clean
+
+    @model_validator(mode="after")
+    def _validate_remote_historian(self) -> Self:
+        if self.historian_remote_host and not self.historian_remote_port:
+            msg = (
+                "Incomplete remote historian configuration: "
+                f"historian_remote_host is set ({self.historian_remote_host!r}) "
+                "but historian_remote_port is not set."
+            )
+            raise ValueError(msg)
+        if self.historian_remote_port and not self.historian_remote_host:
+            msg = (
+                "Incomplete remote historian configuration: "
+                f"historian_remote_port is set ({self.historian_remote_port!r}) "
+                "but historian_remote_host is not set."
+            )
+            raise ValueError(msg)
+        return self
 
 
 @lru_cache(maxsize=1)
