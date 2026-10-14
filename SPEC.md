@@ -5947,6 +5947,8 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-14 | #5599 | \ Deployment topology with docker-compose for TimescaleDB and Grafana on internal host\ |
+| 2026-10-14 | #5598 | \ Dual-write to SQLite and TimescaleDB behind P1AM_HISTORIAN_BACKEND flag\ |
 | 2026-10-13 | #5607 | Allowlist merged commit SHAs in test_f_matrix.py for detect-secrets |
 | 2026-10-13 | #5600 | Document and enforce coupled PyQt6-sip 13.12.0 deferral (#5508, Dependabot #5486) |
 | 2026-10-13 | #5602 | SCADA F-matrix rows F01/F03/F04/F08/F10/F16 cite their merged slices (PRs #5551, #5564, #5557, #5560, #5559, #5563) and stay partial with refreshed gaps |
