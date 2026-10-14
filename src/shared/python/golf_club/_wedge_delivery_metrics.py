@@ -106,7 +106,7 @@ _EXPLAINER_DOCS: dict[str, tuple[str, str]] = {
         "Heading of face normal.",
     ),
     "delivered_bounce": (
-        "atan2(w_sole · up, |w_sole,h|)",
+        "atan2(-w_sole · up, |w_sole,h|)",
         "Elevation of central sole.",
     ),
     "low_point": ("argmin_{cand} (cand · up)", "Spatial lowest point of wedge."),
@@ -187,7 +187,7 @@ def _world_sole(parameters: WedgeHeadParameters, pose: np.ndarray) -> np.ndarray
     local_sole = np.array(
         [
             -parameters.sole_width_m * math.cos(bounce),
-            parameters.sole_width_m * math.sin(bounce),
+            -parameters.sole_width_m * math.sin(bounce),
             0.0,
         ]
     )
@@ -202,8 +202,8 @@ def delivered_bounce_deg(
 ) -> float:
     """Return central-sole elevation above the ground plane."""
     world_sole = _world_sole(parameters, pose)
-    vertical = float(np.dot(world_sole, ground_normal))
-    horizontal = world_sole - vertical * ground_normal
+    vertical = -float(np.dot(world_sole, ground_normal))
+    horizontal = world_sole - float(np.dot(world_sole, ground_normal)) * ground_normal
     return math.degrees(math.atan2(vertical, float(np.linalg.norm(horizontal))))
 
 
@@ -225,7 +225,7 @@ def path_projected_metrics(
     sole_vertical = float(np.dot(world_sole, ground_normal))
     sole_horizontal = world_sole - sole_vertical * ground_normal
     trailing_along_path = float(np.dot(sole_horizontal, -path_direction))
-    effective_bounce = math.degrees(math.atan2(sole_vertical, trailing_along_path))
+    effective_bounce = math.degrees(math.atan2(-sole_vertical, trailing_along_path))
     reference_aoa = math.degrees(math.atan2(vertical_velocity, horizontal_speed))
     return effective_bounce, reference_aoa, effective_bounce + reference_aoa
 

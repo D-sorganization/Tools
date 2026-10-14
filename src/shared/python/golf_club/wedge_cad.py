@@ -142,7 +142,7 @@ def _measure_solid(
     )
     bounce_normal = np.array(
         [
-            -math.sin(math.radians(parameters.bounce_deg)),
+            math.sin(math.radians(parameters.bounce_deg)),
             -math.cos(math.radians(parameters.bounce_deg)),
             0.0,
         ]
@@ -151,9 +151,7 @@ def _measure_solid(
     _, measured_sole_normal = matching_planar_face(solid, bounce_normal)
     _, measured_hosel_axis = matching_planar_face(solid, shaft_axis)
     loft = math.degrees(math.atan2(measured_face_normal[1], measured_face_normal[0]))
-    bounce = math.degrees(
-        math.atan2(-measured_sole_normal[0], -measured_sole_normal[1])
-    )
+    bounce = math.degrees(math.atan2(measured_sole_normal[0], -measured_sole_normal[1]))
     lie = math.degrees(math.atan2(measured_hosel_axis[1], abs(measured_hosel_axis[2])))
     volume_m3 = float(solid.volume) * _M3_PER_MM3
     mass = volume_m3 * parameters.material_density_kg_m3

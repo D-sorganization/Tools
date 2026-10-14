@@ -69,7 +69,9 @@ class WedgeHeadParameters:
 
     Face height is measured along the face plane. Face length is the
     heel-to-toe span. Bounce is the central sole tangent angle above the
-    ground plane from leading edge toward trailing edge.
+    ground plane from leading edge toward trailing edge. For positive bounce,
+    the trailing edge sits lower than the leading edge (trailing.y < leading.y),
+    lifting the leading edge off the turf when the sole contacts the ground.
     """
 
     head_id: str
