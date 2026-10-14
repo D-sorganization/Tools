@@ -3661,10 +3661,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9517,
+      "bytes_lf": 9727,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "203e8f0fe5a2a13f06f9ecbbec60c49b4fccec3cf5a99a4da79c3d9cbc54ee1f",
+      "content_sha256_lf": "eaccba850c43a495fc081c871305b3467c1b6d77200489ab24e70d0916aadf3a",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-PUTTING-PY-668C8AE660B9",
       "language": "python",

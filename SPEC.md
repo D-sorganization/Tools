@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-14 | #33 | Consume UpstreamDrift ud.putt_scene/1 export in rate-of-closure web mirror and swing_sim |
 | 2026-10-14 | #5618 | Repair the 5609 fragment and validate pending fragments in unit tests |
 | 2026-10-14 | #5616 | Test impact_interval time cap during restitution and timestep refinement |
 | 2026-10-14 | #5611 | Refresh detect-secrets baseline for SCADA f-matrix test SHAs |

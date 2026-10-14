@@ -11,3 +11,7 @@ docs/shared/divergence_ledger.md
 # not reformat them or tests/rate_of_closure/test_web_vendored_sync.py's
 # byte-equality gate will fail.
 src/rate_of_closure/web/src/vendored/
+
+# Canonical rate-of-closure fixtures are byte-exact and SHA-256 pinned.
+tests/rate_of_closure/fixtures/
+

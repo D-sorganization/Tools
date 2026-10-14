@@ -441,7 +441,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-python.json"
     },
     {
-      "content_sha256_lf": "c60fd98dcfd5a613cee2023eb963971b13e5d93d5e453c822287e023675f24e1",
+      "content_sha256_lf": "8e13b3bf5b16fa34bddb9e89d34511a44e7a09c4e8af01388bf72d932e517268",
       "entry_count": 59,
       "package": "src/rate_of_closure",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure.json"
@@ -537,7 +537,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-hooks.json"
     },
     {
-      "content_sha256_lf": "f0dc9344c2e9cf4373488809ddb13369d34751103447883a0222e7c34ecea015",
+      "content_sha256_lf": "d9ecf3d82bbac6a73739deadbb0627069a5e24800c14b1611a4709ed3b14cf4a",
       "entry_count": 411,
       "package": "src/rate_of_closure/web/src/model",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-src-model.json"
@@ -891,7 +891,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-model-interchange.json"
     },
     {
-      "content_sha256_lf": "850545c35eedfa32d8b6ee4dceacb28c3916485ada70f18935f637e3a3a9bcf5",
+      "content_sha256_lf": "526c75a46d4b50a3d06fb98a4c4078d46a7da90c8cce22f6775e6279e97e5148",
       "entry_count": 12,
       "package": "src/shared/python/swing_sim/putting",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-putting.json"

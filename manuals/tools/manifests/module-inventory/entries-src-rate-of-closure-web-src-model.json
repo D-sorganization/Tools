@@ -16341,10 +16341,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 2226,
+      "bytes_lf": 3992,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8d6d2fbdd0b0f8e17ac4daa9cfacdf4a4a4f7b8101343b9696ae29e6423a3324",
+      "content_sha256_lf": "f32111359052c9ecf562b318cbbd1bba965dc3e1fd02b89abd6c111758e8da9d",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-PUTTINGGREENIMPORT-TEST-TS-77BC456B92D2",
       "language": "typescript",
@@ -16386,10 +16386,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 2438,
+      "bytes_lf": 2715,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "100dfd585df645ac7079cfe28264cde6af2e0656e38291adc1807f64bad6167a",
+      "content_sha256_lf": "afa6dd182a5a7a6fd2dfd19c16fca60036fb070ef09a1718d4b8f5c73a40b1b9",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-PUTTINGGREENIMPORT-TS-18374C82211A",
       "language": "typescript",
@@ -16428,6 +16428,11 @@
           {
             "kind": "export",
             "name": "ImportedGreen",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "UPSTREAMDRIFT_PUTT_SCENE_WIRE",
             "signature": null
           },
           {
@@ -16495,10 +16500,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 7793,
+      "bytes_lf": 11559,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "59ee25cc84b8e8591714086b5e00760d327c9db8b262a7c4683c376aabf1ee00",
+      "content_sha256_lf": "88f4306b77439a74fd2781137c26d4a7ffc2bb11ecb9200b2f5f0d05888bb211",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-PUTTINGGREENUDADAPTER-TS-5E85E65DDCF4",
       "language": "typescript",
@@ -16536,12 +16541,27 @@
         "public_surfaces": [
           {
             "kind": "export",
+            "name": "UD_PUTT_SCENE_SCHEMA",
+            "signature": null
+          },
+          {
+            "kind": "export",
             "name": "UdGreenTopography",
             "signature": null
           },
           {
             "kind": "export",
+            "name": "UdPuttSceneTopography",
+            "signature": null
+          },
+          {
+            "kind": "export",
             "name": "greenSurfaceFromUdJson",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "greenSurfaceFromUdSceneJson",
             "signature": null
           }
         ],
