@@ -74,7 +74,7 @@ describe("ud.putt_scene/1 mirror pattern consumer", () => {
     const raw = fs.readFileSync(sceneFixturePath);
     const digest = crypto.createHash("sha256").update(raw).digest("hex");
     expect(digest).toBe(
-      "43c483f2aaf841e281a5968deebbe9ec0e3673914f927bb761d63ef658eb6070",
+      "43c483f2aaf841e281a5968deebbe9ec0e3673914f927bb761d63ef658eb6070", // pragma: allowlist secret
     );
   });
 

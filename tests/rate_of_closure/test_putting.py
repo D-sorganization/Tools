@@ -223,7 +223,8 @@ class TestGreenDocumentBridge:
         content = fixture_path.read_text(encoding="utf-8")
         digest = hashlib.sha256(content.encode("utf-8")).hexdigest()
         assert (
-            digest == "43c483f2aaf841e281a5968deebbe9ec0e3673914f927bb761d63ef658eb6070"
+            digest
+            == "43c483f2aaf841e281a5968deebbe9ec0e3673914f927bb761d63ef658eb6070"  # pragma: allowlist secret  # noqa: E501
         )
 
         surface, wire = green_surface_from_document(content)
