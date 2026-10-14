@@ -1561,6 +1561,84 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5617 · Repair the 5609 Fragment and Validate Pending Fragments in Unit Tests
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5617
+- **Branch:** merged via #5618
+- **PR:** #5618
+- **Paths:** see #5618
+- **Started:** 2026-10-14
+- **Last verified:** 2026-10-14 (`07414813`; collated from changes/5617-repair-the-5609-fragment-and-validate-pe.md)
+- **Summary:** Repair the 5609 fragment and validate pending fragments in unit tests
+- **Next step:** Shipped in PR #5618.
+
+### DL-#5615 · Test Impact_Interval Time Cap During Restitution and Timestep Refinement
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5615
+- **Branch:** merged via #5616
+- **PR:** #5616
+- **Paths:** see #5616
+- **Started:** 2026-10-14
+- **Last verified:** 2026-10-14 (`e51ed398`; collated from changes/5615-test-impact-interval-time-cap-during-res.md)
+- **Summary:** Test impact_interval time cap during restitution and timestep refinement
+- **Next step:** Shipped in PR #5616.
+
+### DL-#5609 · Refresh Detect-Secrets Baseline for SCADA F-Matrix Test SHAs
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5609
+- **Branch:** merged via #5611
+- **PR:** #5611
+- **Paths:** see #5611
+- **Started:** 2026-10-14
+- **Last verified:** 2026-10-14 (`2d680ea2`; collated from changes/5609-refresh-detect-secrets-baseline.md)
+- **Summary:** Refresh detect-secrets baseline for SCADA f-matrix test SHAs
+- **Next step:** Shipped in PR #5611.
+
+### DL-#5462 · Enforce Muscle Definition Compatibility and Add Synthetic Same-Input Agreement vs Model Divergence Fixtures
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5462
+- **Branch:** merged via #5620
+- **PR:** #5620
+- **Paths:** see #5620
+- **Started:** 2026-10-14
+- **Last verified:** 2026-10-14 (`5d304135`; collated from changes/5462-enforce-muscle-definition-compatibility.md)
+- **Summary:** Enforce muscle definition compatibility and add synthetic same-input agreement vs model divergence fixtures
+- **Next step:** Shipped in PR #5620.
+
+### DL-#5446 · Fix Mirrored Wedge Sole Bounce Sign in Wedge Geometry and CAD
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5446
+- **Branch:** merged via #5613
+- **PR:** #5613
+- **Paths:** see #5613
+- **Started:** 2026-10-14
+- **Last verified:** 2026-10-14 (`9b605f30`; collated from changes/5446-fix-mirrored-wedge-sole-bounce-sign-in-w.md)
+- **Summary:** Fix mirrored wedge sole bounce sign in wedge geometry and CAD
+- **Next step:** Shipped in PR #5613.
+
+### DL-#4260 · \ Add Python Calculation-Runtime-Manifest/V1 Emitter,Cross-Manifest Compatibility Verifier,and Specification\
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #4260
+- **Branch:** merged via #5614
+- **PR:** #5614
+- **Paths:** see #5614
+- **Started:** 2026-10-14
+- **Last verified:** 2026-10-14 (`8bcaae41`; collated from changes/4260-add-python-calculation-runtime-manifest.md)
+- **Summary:** \ Add Python calculation-runtime-manifest/v1 emitter,cross-manifest compatibility verifier,and specification\
+- **Next step:** Shipped in PR #5614.
+
 ### DL-#5606 · Allowlist Merged Commit SHAs in test_f_matrix.py for Detect-Secrets
 
 - **State:** shipped
