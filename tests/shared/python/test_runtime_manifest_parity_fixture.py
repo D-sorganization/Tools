@@ -27,6 +27,8 @@ import pytest
 from shared.python.swing_sim.canonical_numeric_json import canonical_numeric_json
 from shared.python.swing_sim.runtime_manifest import (
     RUNTIME_MANIFEST_SCHEMA,
+    assert_manifests_compatible,
+    create_runtime_manifest,
     parse_runtime_manifest,
     runtime_manifest_from_json,
     stable_runtime_manifest_json,
@@ -368,3 +370,123 @@ def test_placeholder_token_boundaries(fixture_payload: dict[str, Any]) -> None:
         value = _source(fixture_payload)
         value["build"]["build_id"] = build_id
         assert parse_runtime_manifest(value)["build"]["build_id"] == build_id
+
+
+# --- create_runtime_manifest and assert_manifests_compatible (issue #4261) ----
+
+
+def test_create_runtime_manifest_matches_fixture(
+    fixture_payload: dict[str, Any],
+) -> None:
+    """create_runtime_manifest must emit a valid manifest identical to fixture."""
+    source = fixture_payload["manifest"]
+    created = create_runtime_manifest(
+        surface_id=source["surface_id"],
+        build=source["build"],
+        calculations=source["calculations"],
+        provenance=source["provenance"],
+    )
+    assert created == source
+    assert parse_runtime_manifest(created) == source
+    assert (
+        stable_runtime_manifest_json(created)
+        == fixture_payload["expected_canonical_json"]
+    )
+
+
+def test_assert_manifests_compatible_across_surfaces(
+    fixture_payload: dict[str, Any],
+) -> None:
+    """Compatible manifests on different surfaces (pyqt6 vs react) must pass."""
+    manifest_pyqt6 = _source(fixture_payload)
+    manifest_react = _source(fixture_payload)
+    manifest_react["surface_id"] = "tools.react"
+    manifest_react["build"]["build_id"] = "tools-rate-react/1.5.0"
+
+    assert_manifests_compatible(manifest_pyqt6, manifest_react)
+    assert_manifests_compatible(manifest_react, manifest_pyqt6)
+
+
+def test_assert_manifests_compatible_rejects_commit_mismatch(
+    fixture_payload: dict[str, Any],
+) -> None:
+    """Contradicting tools_commit must raise ValueError when required."""
+    manifest_a = _source(fixture_payload)
+    manifest_b = _source(fixture_payload)
+    manifest_b["surface_id"] = "tools.react"
+    manifest_b["build"]["tools_commit"] = "0" * 40
+
+    with pytest.raises(ValueError, match="tools_commit mismatch"):
+        assert_manifests_compatible(manifest_a, manifest_b)
+
+    assert_manifests_compatible(manifest_a, manifest_b, require_same_commit=False)
+
+
+def test_assert_manifests_compatible_rejects_package_version_mismatch(
+    fixture_payload: dict[str, Any],
+) -> None:
+    """Contradicting package_version must raise ValueError."""
+    manifest_a = _source(fixture_payload)
+    manifest_b = _source(fixture_payload)
+    manifest_b["surface_id"] = "tools.react"
+    manifest_b["build"]["package_version"] = "1.5.1"
+
+    with pytest.raises(ValueError, match="package_version mismatch"):
+        assert_manifests_compatible(manifest_a, manifest_b)
+
+
+@pytest.mark.parametrize(
+    "field",
+    [
+        "model_id",
+        "model_version",
+        "implementation_authority",
+        "backend",
+        "integrator",
+        "request_schema",
+        "result_schema",
+        "frame_id",
+        "unit_system_id",
+    ],
+)
+def test_assert_manifests_compatible_rejects_authority_contradiction(
+    fixture_payload: dict[str, Any], field: str
+) -> None:
+    """Any authority field mismatch in an available domain must raise."""
+    manifest_a = _source(fixture_payload)
+    manifest_b = _source(fixture_payload)
+    manifest_b["surface_id"] = "tools.react"
+    manifest_b["calculations"][0][field] = "different-authority-val"
+
+    with pytest.raises(
+        ValueError,
+        match=f"calculation authority mismatch in domain 'impact' for '{field}'",
+    ):
+        assert_manifests_compatible(manifest_a, manifest_b)
+
+
+def test_assert_manifests_compatible_permits_differing_domain_availability(
+    fixture_payload: dict[str, Any],
+) -> None:
+    """When a domain is available on one and unavailable on the other, pass."""
+    manifest_a = _source(fixture_payload)
+    manifest_b = _source(fixture_payload)
+    manifest_b["surface_id"] = "tools.react"
+    manifest_b["calculations"][1] = {
+        "domain": "flight",
+        "status": "unavailable",
+        "reason": "Flight calculations not available on this surface.",
+        "model_id": None,
+        "model_version": None,
+        "implementation_authority": None,
+        "backend": None,
+        "integrator": None,
+        "request_schema": None,
+        "result_schema": None,
+        "frame_id": None,
+        "unit_system_id": None,
+        "numerical_options": [],
+    }
+
+    assert_manifests_compatible(manifest_a, manifest_b)
+

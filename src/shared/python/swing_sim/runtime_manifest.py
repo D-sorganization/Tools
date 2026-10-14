@@ -265,6 +265,79 @@ def parse_runtime_manifest(value: object) -> dict[str, Any]:
     }
 
 
+def create_runtime_manifest(
+    *,
+    surface_id: str,
+    build: Mapping[str, Any],
+    calculations: Sequence[Mapping[str, Any]],
+    provenance: Mapping[str, Any],
+) -> dict[str, Any]:
+    """Build a manifest only from explicit, caller-supplied identities.
+
+    Matches TypeScript :func:`createRuntimeManifest`.
+    """
+    return parse_runtime_manifest(
+        {
+            "schema_version": RUNTIME_MANIFEST_SCHEMA,
+            "surface_id": surface_id,
+            "build": build,
+            "calculations": list(calculations),
+            "provenance": provenance,
+        }
+    )
+
+
+def assert_manifests_compatible(
+    manifest_a: Mapping[str, Any],
+    manifest_b: Mapping[str, Any],
+    *,
+    require_same_commit: bool = True,
+) -> None:
+    """Validate that two runtime manifests describe compatible calculations.
+
+    Both manifests are validated with :func:`parse_runtime_manifest`.
+
+    Raises:
+        TypeError: either manifest has an invalid JSON structure.
+        ValueError: either manifest violates the schema or manifests contradict:
+            - `require_same_commit` is True and `tools_commit` differs;
+            - `package_version` differs; or
+            - for any domain where BOTH manifests have `status == 'available'`,
+              any of :data:`_AUTHORITY_FIELDS` differs between the two manifests.
+    """
+    parsed_a = parse_runtime_manifest(manifest_a)
+    parsed_b = parse_runtime_manifest(manifest_b)
+
+    if (
+        require_same_commit
+        and parsed_a["build"]["tools_commit"] != parsed_b["build"]["tools_commit"]
+    ):
+        raise ValueError(
+            f"tools_commit mismatch: {parsed_a['build']['tools_commit']!r} != "
+            f"{parsed_b['build']['tools_commit']!r}"
+        )
+
+    if parsed_a["build"]["package_version"] != parsed_b["build"]["package_version"]:
+        raise ValueError(
+            f"package_version mismatch: {parsed_a['build']['package_version']!r} != "
+            f"{parsed_b['build']['package_version']!r}"
+        )
+
+    calcs_a = {entry["domain"]: entry for entry in parsed_a["calculations"]}
+    calcs_b = {entry["domain"]: entry for entry in parsed_b["calculations"]}
+
+    for domain in _DOMAINS:
+        auth_a = calcs_a[domain]
+        auth_b = calcs_b[domain]
+        if auth_a["status"] == "available" and auth_b["status"] == "available":
+            for field in _AUTHORITY_FIELDS:
+                if auth_a[field] != auth_b[field]:
+                    raise ValueError(
+                        f"calculation authority mismatch in domain '{domain}' "
+                        f"for '{field}': {auth_a[field]!r} != {auth_b[field]!r}"
+                    )
+
+
 def _unique_object(pairs: list[tuple[str, Any]]) -> dict[str, Any]:
     result: dict[str, Any] = {}
     for key, entry in pairs:
@@ -292,6 +365,8 @@ def stable_runtime_manifest_json(manifest: Mapping[str, Any]) -> str:
 
 __all__ = [
     "RUNTIME_MANIFEST_SCHEMA",
+    "assert_manifests_compatible",
+    "create_runtime_manifest",
     "parse_runtime_manifest",
     "runtime_manifest_from_json",
     "stable_runtime_manifest_json",
