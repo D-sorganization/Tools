@@ -16341,10 +16341,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3992,
+      "bytes_lf": 4020,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f32111359052c9ecf562b318cbbd1bba965dc3e1fd02b89abd6c111758e8da9d",
+      "content_sha256_lf": "4d0f48bac0c5386a012a6ef4151a8de10da85080145b2ffe7fcb31a2f0c2e4c8",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-WEB-SRC-MODEL-PUTTINGGREENIMPORT-TEST-TS-77BC456B92D2",
       "language": "typescript",
