@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5500,
+      "bytes_lf": 5632,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8c84de45aab2f93317c64d8c57097a2631fbf07d1d1dc91b0b0528c8706963ed",
+      "content_sha256_lf": "8bf37a6972ba856e144c55fa689cb3f872328cf864a507d24a56f337f13d1009",
       "family": "swing-simulation-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-INIT-PY-3763F6A25399",
       "language": "python",
@@ -179,6 +179,11 @@
           },
           {
             "kind": "re-export",
+            "name": "UD_PUTT_SCENE_SCHEMA",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "UdGreenTopography",
             "signature": null
           },
@@ -205,6 +210,11 @@
           {
             "kind": "re-export",
             "name": "green_surface_from_ud_json",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "green_surface_from_ud_scene_json",
             "signature": null
           },
           {
@@ -1153,10 +1163,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 14995,
+      "bytes_lf": 18262,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "e052f7b03daa3c47fe5299b8ad4ed9840c207d9db658e7971f9e677248ba5168",
+      "content_sha256_lf": "34c3f7d143030c41636cdc262b22a375bc3966b199d4d5bb0380e2f88bf5ca2d",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-PUTTING-UD-ADAPTER-PY-2E70242571A2",
       "language": "python",
@@ -1201,8 +1211,18 @@
             "signature": null
           },
           {
+            "kind": "constant",
+            "name": "UD_PUTT_SCENE_SCHEMA",
+            "signature": null
+          },
+          {
             "kind": "function",
             "name": "green_surface_from_ud_json",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "green_surface_from_ud_scene_json",
             "signature": "text: str"
           },
           {

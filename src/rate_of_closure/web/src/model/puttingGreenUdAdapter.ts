@@ -205,3 +205,128 @@ export function greenSurfaceFromUdJson(text: string): UdGreenTopography {
   const holePositionM = "hole_position" in data ? parseHolePosition(data.hole_position) : null;
   return { surface, holePositionM };
 }
+
+export const UD_PUTT_SCENE_SCHEMA = "ud.putt_scene/1";
+
+const SCENE_REQUIRED_KEYS = [
+  "schema",
+  "units",
+  "frame",
+  "roll_model",
+  "terrain",
+  "trajectory",
+  "lines",
+  "green_size_m",
+  "metrics",
+] as const;
+
+export interface UdPuttSceneTopography {
+  surface: GridGreenSurface;
+  holePositionM: [number, number] | null;
+  startPositionM: [number, number] | null;
+  schema: string;
+}
+
+/**
+ * Parse an UpstreamDrift ``ud.putt_scene/1`` scene export document.
+ *
+ * Extracts the terrain grid and cup location from a byte-deterministic
+ * scene export produced by UpstreamDrift's ``_scene_export.py``.
+ *
+ * @param text - The JSON scene export document.
+ * @returns The parsed topography: surface plus optional hole position and start position.
+ * @throws Error if the document violates the schema or is not valid JSON.
+ */
+export function greenSurfaceFromUdSceneJson(text: string): UdPuttSceneTopography {
+  if (typeof text !== "string") {
+    throw new TypeError("text must be a string");
+  }
+  let data: unknown;
+  try {
+    data = JSON.parse(text);
+  } catch {
+    throw new Error("scene export must be valid JSON");
+  }
+  if (!isPlainObject(data)) {
+    throw new Error("scene export must be an object");
+  }
+  const schema = data.schema;
+  if (schema !== UD_PUTT_SCENE_SCHEMA) {
+    throw new Error(
+      `unsupported schema ${JSON.stringify(schema)}; expected ${JSON.stringify(UD_PUTT_SCENE_SCHEMA)}`,
+    );
+  }
+  for (const key of SCENE_REQUIRED_KEYS) {
+    if (!(key in data)) {
+      throw new Error(`export is missing required field '${key}'`);
+    }
+  }
+
+  const terrain = data.terrain;
+  if (!isPlainObject(terrain)) {
+    throw new Error("terrain must be an object");
+  }
+  if (
+    !Array.isArray(terrain.x) ||
+    !Array.isArray(terrain.y) ||
+    !Array.isArray(terrain.z)
+  ) {
+    throw new Error("terrain must carry x, y, and z arrays");
+  }
+  const xs = terrain.x.map((x, i) => finiteNumber(x, `terrain.x[${i}]`));
+  const ys = terrain.y.map((y, i) => finiteNumber(y, `terrain.y[${i}]`));
+  if (xs.length < 2) throw new Error("terrain.x must span at least 2 points");
+  if (ys.length < 2) throw new Error("terrain.y must span at least 2 points");
+  if (terrain.z.length !== ys.length) {
+    throw new Error("terrain.z rows must match len(y)");
+  }
+
+  const spacingX = regularAxisSpacing(xs, "x");
+  const spacingY = regularAxisSpacing(ys, "y");
+  if (Math.abs(spacingX - spacingY) > 0.05 * Math.max(spacingX, spacingY)) {
+    throw new Error(
+      `terrain grid x and y spacings differ by more than 5%: ${spacingX} vs ${spacingY}`,
+    );
+  }
+
+  const heights: number[][] = [];
+  for (let j = 0; j < ys.length; j++) {
+    const row = terrain.z[j];
+    if (!Array.isArray(row) || row.length !== xs.length) {
+      throw new Error(`terrain.z[${j}] columns must match len(x)`);
+    }
+    const rowHeights: number[] = [];
+    for (let i = 0; i < xs.length; i++) {
+      rowHeights.push(finiteNumber(row[i], `terrain.z[${j}][${i}]`));
+    }
+    heights.push(rowHeights);
+  }
+
+  const surface = gridSurface([xs[0], ys[0]], spacingX, heights);
+
+  let holePositionM: [number, number] | null = null;
+  let startPositionM: [number, number] | null = null;
+  const lines = data.lines;
+  if (isPlainObject(lines)) {
+    if (Array.isArray(lines.cup) && lines.cup.length >= 2) {
+      holePositionM = [
+        finiteNumber(lines.cup[0], "lines.cup[0]"),
+        finiteNumber(lines.cup[1], "lines.cup[1]"),
+      ];
+    }
+    if (Array.isArray(lines.start) && lines.start.length >= 2) {
+      startPositionM = [
+        finiteNumber(lines.start[0], "lines.start[0]"),
+        finiteNumber(lines.start[1], "lines.start[1]"),
+      ];
+    }
+  }
+
+  return {
+    surface,
+    holePositionM,
+    startPositionM,
+    schema: UD_PUTT_SCENE_SCHEMA,
+  };
+}
+

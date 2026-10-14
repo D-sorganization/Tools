@@ -16,12 +16,17 @@
  */
 
 import { GREEN_SURFACE_FORMAT, greenSurfaceFromJson } from "./puttingGreenWire";
-import { greenSurfaceFromUdJson } from "./puttingGreenUdAdapter";
+import {
+  greenSurfaceFromUdJson,
+  greenSurfaceFromUdSceneJson,
+  UD_PUTT_SCENE_SCHEMA,
+} from "./puttingGreenUdAdapter";
 import type { GreenSurface } from "./puttingGreen";
 
 //: Provenance label for a green read through the P9 UD adapter — the
 //: web analogue of the Python dispatcher's second return value.
 export const UPSTREAMDRIFT_TOPOGRAPHY_WIRE = "upstreamdrift.putting_green topography";
+export const UPSTREAMDRIFT_PUTT_SCENE_WIRE = UD_PUTT_SCENE_SCHEMA;
 
 export interface ImportedGreen {
   surface: GreenSurface;
@@ -55,8 +60,15 @@ export function greenSurfaceFromDocument(text: string): ImportedGreen {
   if ("format" in data) {
     return { surface: greenSurfaceFromJson(text), wire: GREEN_SURFACE_FORMAT };
   }
+  if ("schema" in data) {
+    return {
+      surface: greenSurfaceFromUdSceneJson(text).surface,
+      wire: UPSTREAMDRIFT_PUTT_SCENE_WIRE,
+    };
+  }
   return {
     surface: greenSurfaceFromUdJson(text).surface,
     wire: UPSTREAMDRIFT_TOPOGRAPHY_WIRE,
   };
 }
+

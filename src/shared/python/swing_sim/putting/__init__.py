@@ -115,8 +115,10 @@ from .surface import (
     green_surface_to_json,
 )
 from .ud_adapter import (
+    UD_PUTT_SCENE_SCHEMA,
     UdGreenTopography,
     green_surface_from_ud_json,
+    green_surface_from_ud_scene_json,
     green_surface_to_ud_json,
 )
 
@@ -148,12 +150,14 @@ __all__ = [
     "StrokePutt",
     "StrokeSample",
     "StrokeStrike",
+    "UD_PUTT_SCENE_SCHEMA",
     "UdGreenTopography",
     "capture_speed_mps",
     "clubhead_speed_from_backstroke",
     "effective_hole_radius_m",
     "green_surface_from_json",
     "green_surface_from_ud_json",
+    "green_surface_from_ud_scene_json",
     "green_surface_to_json",
     "green_surface_to_ud_json",
     "impact_sample_index",

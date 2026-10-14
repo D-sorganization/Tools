@@ -34,10 +34,12 @@ from shared.python.swing_sim.putting import (
     DEFAULT_PUTTER_COR,
     GREEN_SURFACE_FORMAT,
     MINIMAL_PUTTERS,
+    UD_PUTT_SCENE_SCHEMA,
     GreenSurface,
     PutterSpec,
     green_surface_from_json,
     green_surface_from_ud_json,
+    green_surface_from_ud_scene_json,
 )
 
 if TYPE_CHECKING:  # pragma: no cover - typing-only, keeps SciPy out of import
@@ -136,6 +138,11 @@ def green_surface_from_document(text: str) -> tuple[GreenSurface, str]:
         raise ValueError("green document must be a JSON object")
     if "format" in data:
         return (green_surface_from_json(text), GREEN_SURFACE_FORMAT)
+    if "schema" in data:
+        return (
+            green_surface_from_ud_scene_json(text).surface,
+            UD_PUTT_SCENE_SCHEMA,
+        )
     return (
         green_surface_from_ud_json(text).surface,
         "upstreamdrift.putting_green topography",

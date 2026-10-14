@@ -212,3 +212,54 @@ class TestGreenDocumentBridge:
         )
         with pytest.raises(ValueError, match="slope"):
             green_surface_from_document(text)
+
+    def test_ud_putt_scene_artifact_is_consumed_via_mirror_pattern(self) -> None:
+        import hashlib
+        from pathlib import Path
+
+        fixture_path = (
+            Path(__file__).resolve().parent / "fixtures" / "ud_putt_scene.v1.json"
+        )
+        content = fixture_path.read_text(encoding="utf-8")
+        digest = hashlib.sha256(content.encode("utf-8")).hexdigest()
+        assert (
+            digest
+            == "43c483f2aaf841e281a5968deebbe9ec0e3673914f927bb761d63ef658eb6070"  # pragma: allowlist secret  # noqa: E501
+        )
+
+        surface, wire = green_surface_from_document(content)
+        assert wire == "ud.putt_scene/1"
+        assert isinstance(surface, GridGreenSurface)
+        assert len(surface.heights_m) == 36
+        assert len(surface.heights_m[0]) == 48
+
+    def test_ud_putt_scene_rejects_unknown_schema(self) -> None:
+        text = json.dumps(
+            {
+                "schema": "ud.putt_scene/2",
+                "units": {},
+                "frame": {},
+                "roll_model": "test",
+                "terrain": {
+                    "x": [0.0, 1.0],
+                    "y": [0.0, 1.0],
+                    "z": [[0.0, 0.0], [0.0, 0.0]],
+                },
+                "trajectory": {},
+                "lines": {},
+                "green_size_m": [1.0, 1.0],
+                "metrics": {},
+            }
+        )
+        with pytest.raises(ValueError, match="unsupported schema"):
+            green_surface_from_document(text)
+
+    def test_ud_putt_scene_rejects_missing_field(self) -> None:
+        text = json.dumps(
+            {
+                "schema": "ud.putt_scene/1",
+                "units": {},
+            }
+        )
+        with pytest.raises(ValueError, match="missing required field"):
+            green_surface_from_document(text)

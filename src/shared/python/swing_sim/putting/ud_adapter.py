@@ -110,14 +110,31 @@ from .surface import (
     _finite_number,
 )
 
+UD_PUTT_SCENE_SCHEMA = "ud.putt_scene/1"
+
 __all__ = [
+    "UD_PUTT_SCENE_SCHEMA",
     "UdGreenTopography",
     "green_surface_from_ud_json",
+    "green_surface_from_ud_scene_json",
     "green_surface_to_ud_json",
 ]
 
 _TOP_LEVEL_FIELDS = frozenset({"contours", "hole_position"})
 _CONTOUR_FIELDS = frozenset({"x", "y", "elevation"})
+_SCENE_REQUIRED_KEYS = frozenset(
+    {
+        "schema",
+        "units",
+        "frame",
+        "roll_model",
+        "terrain",
+        "trajectory",
+        "lines",
+        "green_size_m",
+        "metrics",
+    }
+)
 
 #: Relative tolerance for grid-regularity checks (node coordinates are
 #: compared against the ideal ``first + i * spacing`` lattice).
@@ -245,6 +262,88 @@ def green_surface_from_ud_json(text: str) -> UdGreenTopography:
     hole = (
         _parse_hole_position(data["hole_position"]) if "hole_position" in data else None
     )
+    return UdGreenTopography(surface=surface, hole_position_m=hole)
+
+
+def green_surface_from_ud_scene_json(text: str) -> UdGreenTopography:
+    """Read a ``ud.putt_scene/1`` artifact into a :class:`UdGreenTopography`.
+
+    Extracts the terrain grid and cup location from a byte-deterministic
+    scene export produced by UpstreamDrift's ``_scene_export.py``.
+
+    Args:
+        text: The JSON scene export document.
+
+    Returns:
+        The parsed :class:`UdGreenTopography` with surface and hole position.
+
+    Raises:
+        ValueError: If the document violates the schema or is not an object.
+        TypeError: If text is not str or fields have wrong types.
+    """
+    require(isinstance(text, str), "text must be str")
+    data = json.loads(text)
+    require(isinstance(data, dict), "scene export must be an object")
+    schema = data.get("schema")
+    require(
+        schema == UD_PUTT_SCENE_SCHEMA,
+        f"unsupported schema {schema!r}; expected {UD_PUTT_SCENE_SCHEMA!r}",
+    )
+    for key in _SCENE_REQUIRED_KEYS:
+        require(key in data, f"export is missing required field {key!r}")
+
+    terrain = data["terrain"]
+    require(isinstance(terrain, dict), "terrain must be an object")
+    require(
+        "x" in terrain and "y" in terrain and "z" in terrain,
+        "terrain must carry x, y, and z",
+    )
+    xs = [_finite_number(x, f"terrain.x[{i}]") for i, x in enumerate(terrain["x"])]
+    ys = [_finite_number(y, f"terrain.y[{i}]") for i, y in enumerate(terrain["y"])]
+    zs = terrain["z"]
+    require(len(xs) >= 2, "terrain.x must span at least 2 points")
+    require(len(ys) >= 2, "terrain.y must span at least 2 points")
+    require(
+        isinstance(zs, list) and len(zs) == len(ys),
+        "terrain.z rows must match len(y)",
+    )
+
+    spacing_x = _regular_axis_spacing(xs, "x")
+    spacing_y = _regular_axis_spacing(ys, "y")
+    require(
+        abs(spacing_x - spacing_y) <= 0.05 * max(spacing_x, spacing_y),
+        "terrain grid x and y spacings differ by more than 5%: "
+        f"{spacing_x} vs {spacing_y}",
+    )
+
+    heights_list: list[tuple[float, ...]] = []
+    for j, row in enumerate(zs):
+        require(
+            isinstance(row, list) and len(row) == len(xs),
+            f"terrain.z[{j}] columns must match len(x)",
+        )
+        heights_list.append(
+            tuple(
+                _finite_number(val, f"terrain.z[{j}][{i}]") for i, val in enumerate(row)
+            )
+        )
+
+    surface = GridGreenSurface(
+        origin_m=(xs[0], ys[0]),
+        spacing_m=spacing_x,
+        heights_m=tuple(heights_list),
+    )
+
+    hole: tuple[float, float] | None = None
+    lines = data.get("lines")
+    if isinstance(lines, dict) and "cup" in lines:
+        cup = lines["cup"]
+        if isinstance(cup, list) and len(cup) >= 2:
+            hole = (
+                _finite_number(cup[0], "lines.cup[0]"),
+                _finite_number(cup[1], "lines.cup[1]"),
+            )
+
     return UdGreenTopography(surface=surface, hole_position_m=hole)
 
 
