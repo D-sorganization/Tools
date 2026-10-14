@@ -29434,6 +29434,8 @@
   "runtime_manifest.py": {
     "__all__": [
       "RUNTIME_MANIFEST_SCHEMA",
+      "assert_manifests_compatible",
+      "create_runtime_manifest",
       "parse_runtime_manifest",
       "runtime_manifest_from_json",
       "stable_runtime_manifest_json"
@@ -29442,6 +29444,64 @@
     "symbols": {
       "RUNTIME_MANIFEST_SCHEMA": {
         "type": "variable"
+      },
+      "assert_manifests_compatible": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "Mapping[str, Any]",
+              "default": null,
+              "kind": "arg",
+              "name": "manifest_a"
+            },
+            {
+              "annotation": "Mapping[str, Any]",
+              "default": null,
+              "kind": "arg",
+              "name": "manifest_b"
+            },
+            {
+              "annotation": "bool",
+              "default": "True",
+              "kind": "kwonlyarg",
+              "name": "require_same_commit"
+            }
+          ],
+          "returns": "None"
+        },
+        "type": "function"
+      },
+      "create_runtime_manifest": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "surface_id"
+            },
+            {
+              "annotation": "Mapping[str, Any]",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "build"
+            },
+            {
+              "annotation": "Sequence[Mapping[str, Any]]",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "calculations"
+            },
+            {
+              "annotation": "Mapping[str, Any]",
+              "default": null,
+              "kind": "kwonlyarg",
+              "name": "provenance"
+            }
+          ],
+          "returns": "dict[str, Any]"
+        },
+        "type": "function"
       },
       "parse_runtime_manifest": {
         "signature": {
