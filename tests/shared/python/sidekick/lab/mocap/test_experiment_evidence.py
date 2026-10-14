@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import hashlib
 import json
 from dataclasses import replace
 from pathlib import Path
@@ -34,6 +35,7 @@ def _replay_bundle(
     replay_mode: ReplayMode = ReplayMode.NATIVE_OWN_CONTACT,
     input_values: tuple[tuple[float, ...], ...] = ((0.0,), (1.0,)),
     input_kind: ActuationInputKind = ActuationInputKind.ACTUATOR_TORQUE,
+    channel_id: str | None = None,
 ):
     from sidekick.lab.mocap import (
         CapabilityDeclaration,
@@ -46,8 +48,21 @@ def _replay_bundle(
         StateComponentSpec,
     )
 
+    target_channel_id = channel_id or (
+        "muscle:synthetic"
+        if input_kind
+        in {
+            ActuationInputKind.MUSCLE_EXCITATION,
+            ActuationInputKind.MUSCLE_ACTIVATION,
+        }
+        else (
+            "actuator:synthetic"
+            if input_kind is ActuationInputKind.ACTUATOR_COMMAND
+            else "joint"
+        )
+    )
     channel = (
-        InputChannel("muscle", "muscle:synthetic", "1")
+        InputChannel("muscle", target_channel_id, "1")
         if input_kind
         in {
             ActuationInputKind.MUSCLE_EXCITATION,
@@ -57,9 +72,7 @@ def _replay_bundle(
             "command:actuator"
             if input_kind is ActuationInputKind.ACTUATOR_COMMAND
             else "joint",
-            "actuator:synthetic"
-            if input_kind is ActuationInputKind.ACTUATOR_COMMAND
-            else "joint",
+            target_channel_id,
             "1"
             if input_kind is ActuationInputKind.ACTUATOR_COMMAND
             else "N"
@@ -159,8 +172,11 @@ def _record(
     input_values: tuple[tuple[float, ...], ...] = ((0.0,), (1.0,)),
     input_kind: ActuationInputKind = ActuationInputKind.ACTUATOR_TORQUE,
     drive_mode: DriveMode = DriveMode.TORQUE,
+    channel_id: str | None = None,
 ):
-    bundle = _replay_bundle(replay_mode, input_values, input_kind)
+    bundle = _replay_bundle(
+        replay_mode, input_values, input_kind, channel_id=channel_id
+    )
     return ComparisonEvidenceRow(
         row_id=row_id,
         package_id="synthetic-package",
@@ -537,15 +553,19 @@ def _compiled_profile_evidence(
 
 def _mixed_command_row(
     *,
+    row_id: str = "synthetic-engine/model/variant/muscle-excitation",
     implementation_evidence: tuple[ImplementationEvidence, ...] = (),
     artifacts: tuple[EvidenceArtifactReference, ...] = (),
+    channel_id: str | None = None,
 ) -> ComparisonEvidenceRow:
     return ComparisonEvidenceRow(
-        row_id="synthetic-engine/model/variant/muscle-excitation",
+        row_id=row_id,
         package_id="synthetic-package",
         variant_id="synthetic-variant",
         drive_mode=DriveMode.MUSCLE_EXCITATION,
-        replay_bundle=_replay_bundle(input_kind=ActuationInputKind.ACTUATOR_COMMAND),
+        replay_bundle=_replay_bundle(
+            input_kind=ActuationInputKind.ACTUATOR_COMMAND, channel_id=channel_id
+        ),
         support=CapabilitySupport.SUPPORTED,
         availability=CapabilityAvailability.AVAILABLE,
         implementation_evidence=implementation_evidence,
@@ -675,3 +695,356 @@ def test_compiled_command_profile_links_survive_evidence_receipt_round_trip() ->
 
     assert loaded == receipt
     assert loaded.missing_required_evidence == ()
+
+
+@pytest.mark.parametrize(
+    "comparison_level",
+    (
+        ComparisonLevel.BIOMECHANICAL_EQUIVALENCE,
+        ComparisonLevel.WITHIN_ENGINE_REPLAY,
+    ),
+)
+def test_comparison_rejects_incompatible_muscle_definitions_across_rows(
+    comparison_level: ComparisonLevel,
+) -> None:
+    first_id = "synthetic-engine-a/model/variant/muscle"
+    second_id = "synthetic-engine-b/model/variant/muscle"
+    first_req = ComparisonRowRequirement(first_id, True)
+    second_req = ComparisonRowRequirement(second_id, True)
+
+    # 1. Different muscle channel schemas ("muscle:bic_long" vs "muscle:tric_long")
+    row_bic = _record(
+        row_id=first_id,
+        drive_mode=DriveMode.MUSCLE_EXCITATION,
+        input_kind=ActuationInputKind.MUSCLE_EXCITATION,
+        channel_id="muscle:bic_long",
+    )
+    row_tric = _record(
+        row_id=second_id,
+        drive_mode=DriveMode.MUSCLE_EXCITATION,
+        input_kind=ActuationInputKind.MUSCLE_EXCITATION,
+        channel_id="muscle:tric_long",
+    )
+    with pytest.raises(ValueError, match="incompatible muscle definitions"):
+        build_comparison_evidence_receipt(
+            receipt_id="synthetic-mismatched-muscle-channels",
+            comparison_level=comparison_level,
+            requirements=(first_req, second_req),
+            rows=(row_bic, row_tric),
+        )
+
+    # 2. Different compiled actuator profile hashes
+    evidence_a, artifact_a = _compiled_profile_evidence(
+        reference_id="opaque:profile-alpha-001",
+        sha256="a" * 64,
+    )
+    evidence_b, artifact_b = _compiled_profile_evidence(
+        reference_id="opaque:profile-beta-001",
+        sha256="b" * 64,
+    )
+    cmd_row_a = _mixed_command_row(
+        row_id=first_id,
+        implementation_evidence=(evidence_a,),
+        artifacts=(artifact_a,),
+    )
+    cmd_row_b = _mixed_command_row(
+        row_id=second_id,
+        implementation_evidence=(evidence_b,),
+        artifacts=(artifact_b,),
+    )
+    with pytest.raises(ValueError, match="incompatible muscle definitions"):
+        build_comparison_evidence_receipt(
+            receipt_id="synthetic-mismatched-actuator-profiles",
+            comparison_level=comparison_level,
+            requirements=(first_req, second_req),
+            rows=(cmd_row_a, cmd_row_b),
+        )
+
+
+def _integrate_1dof_oscillator(
+    mass: float,
+    dt: float,
+    steps: int,
+    c_damping: float,
+    k_spring: float,
+    u_values: tuple[float, ...],
+    q0: float = 0.0,
+    v0: float = 0.0,
+) -> tuple[tuple[float, float], ...]:
+    q = q0
+    v = v0
+    traj = [(q, v)]
+    for k in range(steps):
+        u_k = u_values[k]
+        q_next = q + dt * v
+        v_next = v + dt * ((u_k - c_damping * v - k_spring * q) / mass)
+        q, v = q_next, v_next
+        traj.append((q, v))
+    return tuple(traj)
+
+
+def _build_oscillator_row(
+    *,
+    row_id: str,
+    engine_id: str,
+    source_model_hash: str,
+    dynamics_digest: str,
+    dt: float,
+    time_seconds: tuple[float, ...],
+    input_values: tuple[tuple[float, ...], ...],
+    q0: float,
+    v0: float,
+) -> ComparisonEvidenceRow:
+    from sidekick.lab.mocap import (
+        CapabilityDeclaration,
+        InitialStateSchema,
+        InputChannel,
+        InputInterpolation,
+        ModelIdentity,
+        ReplayExecutionPolicy,
+        StateComponentRole,
+        StateComponentSpec,
+    )
+
+    state_schema = InitialStateSchema(
+        "oscillator-1dof-state",
+        "1.0.0",
+        (
+            StateComponentSpec("q", StateComponentRole.POSITION, 1, "m", "scalar"),
+            StateComponentSpec("v", StateComponentRole.VELOCITY, 1, "m/s", "scalar"),
+        ),
+    )
+    channel = InputChannel("joint", "actuator:oscillator", "N*m")
+    policy = ReplayExecutionPolicy(
+        replay_mode=ReplayMode.NATIVE_OWN_CONTACT,
+        solver_id="deterministic-euler-solver",
+        solver_version="1.0.0",
+        integration_method="euler",
+        step_policy="fixed",
+        step_size_seconds=dt,
+        initialization_policy_id="exact-initialization",
+        initialization_policy_version="1.0.0",
+        contact_policy_id="no-contact",
+        contact_policy_version="1.0.0",
+        contact_policy_sha256="0" * 64,
+        input_player_id="time-only-player",
+        input_player_version="1.0.0",
+        observation_access=False,
+        state_feedback_access=False,
+        state_reset_allowed=False,
+    )
+    model = ModelIdentity(
+        engine_id=engine_id,
+        model_id="oscillator-1dof",
+        variant_id="damped-linear",
+        model_version="1.0.0",
+        source_model_sha256=source_model_hash,
+        provider_id="synthetic-provider",
+        provider_version="1.0.0",
+        provider_sha256="9" * 64,
+        state_schema=state_schema,
+        ordered_input_channel_ids=(channel.channel_id,),
+    )
+    bundle = build_experiment_replay_bundle(
+        experiment_id=f"oscillator-run-{engine_id}",
+        model=model,
+        capabilities=(
+            CapabilityDeclaration(
+                "forward_dynamics",
+                True,
+                CapabilitySupport.SUPPORTED,
+                CapabilityAvailability.AVAILABLE,
+            ),
+        ),
+        initial_state_values=(("q", (q0,)), ("v", (v0,))),
+        channels=(channel,),
+        input_kind=ActuationInputKind.ACTUATOR_TORQUE,
+        interpolation=InputInterpolation.ZERO_ORDER_HOLD,
+        time_seconds=time_seconds,
+        input_values=input_values,
+        policy=policy,
+    )
+    return ComparisonEvidenceRow(
+        row_id=row_id,
+        package_id=f"package-{engine_id}",
+        variant_id="damped-linear",
+        drive_mode=DriveMode.TORQUE,
+        replay_bundle=bundle,
+        support=CapabilitySupport.SUPPORTED,
+        availability=CapabilityAvailability.AVAILABLE,
+        implementation_evidence=(
+            ImplementationEvidence(
+                kind=ImplementationEvidenceKind.DYNAMICS,
+                implementation_id=f"dynamics-{engine_id}",
+                version="1.0.0",
+                sha256="d" * 64,
+                required=True,
+                support=CapabilitySupport.SUPPORTED,
+                availability=CapabilityAvailability.AVAILABLE,
+            ),
+        ),
+        artifacts=(
+            EvidenceArtifactReference(
+                kind=EvidenceArtifactKind.DYNAMICS,
+                reference_id=f"opaque:dynamics-{engine_id}-001",
+                sha256=dynamics_digest,
+            ),
+        ),
+    )
+
+
+def test_synthetic_fixture_same_input_agreement_and_intentional_model_divergence() -> (
+    None
+):
+    dt = 0.01
+    steps = 50
+    c_damping = 0.5
+    k_spring = 10.0
+    u_values = tuple(1.0 for _ in range(steps))
+    time_seconds = tuple(round(i * dt, 4) for i in range(steps + 1))
+    input_values = tuple((u_values[min(i, steps - 1)],) for i in range(steps + 1))
+    q0 = 0.0
+    v0 = 0.0
+
+    traj_a = _integrate_1dof_oscillator(
+        mass=1.0,
+        dt=dt,
+        steps=steps,
+        c_damping=c_damping,
+        k_spring=k_spring,
+        u_values=u_values,
+        q0=q0,
+        v0=v0,
+    )
+    traj_b_identical = _integrate_1dof_oscillator(
+        mass=1.0,
+        dt=dt,
+        steps=steps,
+        c_damping=c_damping,
+        k_spring=k_spring,
+        u_values=u_values,
+        q0=q0,
+        v0=v0,
+    )
+    traj_b_divergent = _integrate_1dof_oscillator(
+        mass=1.25,
+        dt=dt,
+        steps=steps,
+        c_damping=c_damping,
+        k_spring=k_spring,
+        u_values=u_values,
+        q0=q0,
+        v0=v0,
+    )
+
+    digest_a = hashlib.sha256(
+        json.dumps(traj_a, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    digest_b_identical = hashlib.sha256(
+        json.dumps(traj_b_identical, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+    digest_b_divergent = hashlib.sha256(
+        json.dumps(traj_b_divergent, separators=(",", ":")).encode("utf-8")
+    ).hexdigest()
+
+    row_a = _build_oscillator_row(
+        row_id="engine-a/oscillator/torque",
+        engine_id="engine-a",
+        source_model_hash="1" * 64,
+        dynamics_digest=digest_a,
+        dt=dt,
+        time_seconds=time_seconds,
+        input_values=input_values,
+        q0=q0,
+        v0=v0,
+    )
+    row_b_identical = _build_oscillator_row(
+        row_id="engine-b/oscillator/torque",
+        engine_id="engine-b",
+        source_model_hash="2" * 64,
+        dynamics_digest=digest_b_identical,
+        dt=dt,
+        time_seconds=time_seconds,
+        input_values=input_values,
+        q0=q0,
+        v0=v0,
+    )
+    row_b = _build_oscillator_row(
+        row_id="engine-b/oscillator/torque",
+        engine_id="engine-b-divergent",
+        source_model_hash="3" * 64,
+        dynamics_digest=digest_b_divergent,
+        dt=dt,
+        time_seconds=time_seconds,
+        input_values=input_values,
+        q0=q0,
+        v0=v0,
+    )
+
+    req_a = ComparisonRowRequirement(
+        row_id=row_a.row_id,
+        required=True,
+        replay_mode=ReplayMode.NATIVE_OWN_CONTACT,
+        required_implementation_kinds=(ImplementationEvidenceKind.DYNAMICS,),
+        required_artifact_kinds=(EvidenceArtifactKind.DYNAMICS,),
+    )
+    req_b = ComparisonRowRequirement(
+        row_id=row_b_identical.row_id,
+        required=True,
+        replay_mode=ReplayMode.NATIVE_OWN_CONTACT,
+        required_implementation_kinds=(ImplementationEvidenceKind.DYNAMICS,),
+        required_artifact_kinds=(EvidenceArtifactKind.DYNAMICS,),
+    )
+
+    # 1. Identical physical parameters (m=1.0)
+    receipt_identical = build_comparison_evidence_receipt(
+        receipt_id="oscillator-same-input-agreement",
+        comparison_level=ComparisonLevel.SAME_INPUT,
+        requirements=(req_a, req_b),
+        rows=(row_a, row_b_identical),
+    )
+    assert row_a.artifacts[0].sha256 == row_b_identical.artifacts[0].sha256
+    max_abs_diff_identical = max(
+        abs(qa[0] - qb[0]) for qa, qb in zip(traj_a, traj_b_identical, strict=True)
+    )
+    assert max_abs_diff_identical == 0.0 <= 1e-12
+    assert receipt_identical.comparison_level is ComparisonLevel.SAME_INPUT
+    assert receipt_identical.missing_required_rows == ()
+    assert receipt_identical.missing_required_evidence == ()
+    assert not hasattr(receipt_identical, "qualified")
+    assert not hasattr(receipt_identical, "qualification_status")
+
+    # 2. Intentional model divergence (m=1.0 vs m=1.25)
+    receipt_divergent = build_comparison_evidence_receipt(
+        receipt_id="oscillator-same-input-divergence",
+        comparison_level=ComparisonLevel.SAME_INPUT,
+        requirements=(req_a, req_b),
+        rows=(row_a, row_b),
+    )
+    assert row_a.artifacts[0].sha256 != row_b.artifacts[0].sha256
+    max_abs_diff_divergent = max(
+        abs(qa[0] - qb[0]) for qa, qb in zip(traj_a, traj_b_divergent, strict=True)
+    )
+    assert max_abs_diff_divergent > 1e-4
+
+    assert row_a.replay_bundle is not None
+    assert row_b.replay_bundle is not None
+    assert (
+        row_a.replay_bundle.applied_input_sha256
+        == row_b.replay_bundle.applied_input_sha256
+    )
+    assert row_a.replay_bundle.time_grid_sha256 == row_b.replay_bundle.time_grid_sha256
+    assert (
+        row_a.replay_bundle.input_channel_schema_sha256
+        == row_b.replay_bundle.input_channel_schema_sha256
+    )
+    assert row_a.replay_bundle.policy_sha256 == row_b.replay_bundle.policy_sha256
+    assert (
+        row_a.replay_bundle.state_schema_sha256
+        == row_b.replay_bundle.state_schema_sha256
+    )
+    assert receipt_divergent.comparison_level is ComparisonLevel.SAME_INPUT
+    assert receipt_divergent.missing_required_rows == ()
+    assert receipt_divergent.missing_required_evidence == ()
+    assert not hasattr(receipt_divergent, "qualified")
+    assert not hasattr(receipt_divergent, "qualification_status")
