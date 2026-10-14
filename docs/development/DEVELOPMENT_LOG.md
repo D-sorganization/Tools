@@ -148,6 +148,32 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5547 · \ Deployment Topology With Docker-Compose for TimescaleDB and Grafana on Internal Host\
+
+- **State:** in_review
+- **Owner:** unassigned
+- **Issue:** #5547
+- **Branch:** feat/5547-deployment-topology
+- **PR:** #5599
+- **Paths:** see #5599
+- **Started:** 2026-10-14
+- **Last verified:** 2026-10-14 (`6623cbd0`; collated from changes/5547-deployment-topology-with-docker-compose.md)
+- **Summary:** \ Deployment topology with docker-compose for TimescaleDB and Grafana on internal host\
+- **Next step:** \Merge the PR.\
+
+### DL-#5543 · \ Dual-Write to SQLite and TimescaleDB Behind P1AM_HISTORIAN_BACKEND Flag\
+
+- **State:** in_review
+- **Owner:** unassigned
+- **Issue:** #5543
+- **Branch:** feat/5543-dual-write
+- **PR:** #5598
+- **Paths:** see #5598
+- **Started:** 2026-10-14
+- **Last verified:** 2026-10-14 (`529c706b`; collated from changes/5543-dual-write-to-sqlite-and-timescaledb-beh.md)
+- **Summary:** \ Dual-write to SQLite and TimescaleDB behind P1AM_HISTORIAN_BACKEND flag\
+- **Next step:** \Merge the PR.\
+
 ### DL-#5546 · \ ISA-18.2 / EEMUA 191 Alarm Performance KPIs and Dashboard\
 
 - **State:** in_review
