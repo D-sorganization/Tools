@@ -131,6 +131,17 @@ class P1AMSettings(BaseSettings):
         default="NORMAL",
         validation_alias="P1AM_SQLITE_SYNCHRONOUS",
     )
+    historian_backend: str = Field(
+        default="sqlite",
+        validation_alias=AliasChoices(
+            "P1AM_HISTORIAN_BACKEND",
+            "HISTORIAN_BACKEND",
+        ),
+        description=(
+            "Historian write backend strategy: 'sqlite' (default) or 'dual' "
+            "(replicates writes to TimescaleDB with failure containment)."
+        ),
+    )
     require_read_auth: bool = Field(
         default=True,
         validation_alias="P1AM_REQUIRE_READ_AUTH",
@@ -216,6 +227,16 @@ class P1AMSettings(BaseSettings):
     def _normalize_sqlite_synchronous(cls, value: object) -> str:
         mode = str(value).strip().upper()
         return mode if mode in SQLITE_SYNCHRONOUS_MODES else "NORMAL"
+
+    @field_validator("historian_backend", mode="before")
+    @classmethod
+    def _validate_historian_backend(cls, value: object) -> str:
+        clean = str(value).strip().lower()
+        if clean not in {"sqlite", "dual"}:
+            raise ValueError(
+                f"Invalid historian backend '{value}'. Allowed values: 'sqlite', 'dual'"
+            )
+        return clean
 
 
 @lru_cache(maxsize=1)

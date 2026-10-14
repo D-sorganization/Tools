@@ -363,6 +363,7 @@
           "src/p1am_control_system/backend/tests/test_scan_scheduler.py",
           "src/p1am_control_system/backend/tests/test_temperature_integration.py",
           "src/p1am_control_system/backend/tests/test_temperature_persistence.py",
+          "src/p1am_control_system/backend/tests/test_timescale_sink.py",
           "src/p1am_control_system/backend/tests/test_validation_guards_3745.py",
           "src/p1am_control_system/backend/tests/test_ws_backpressure.py",
           "src/pendulum_simulator/signal_test.py",
