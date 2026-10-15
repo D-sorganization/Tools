@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-14 | #5624 | Night Watch: reconcile 37 stale DEVELOPMENT_LOG.md entries to shipped |
 | 2026-10-14 | #5622 | consume UpstreamDrift ud.putt_scene/1 export via mirror pattern |
 | 2026-10-14 | #33 | Consume UpstreamDrift ud.putt_scene/1 export in rate-of-closure web mirror and swing_sim |
 | 2026-10-14 | #5618 | Repair the 5609 fragment and validate pending fragments in unit tests |
