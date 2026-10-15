@@ -12,18 +12,19 @@ elements or out-of-plane (mediolateral) loads are modelled.  Do not compare
 them with static-optimization joint-reaction results without that caveat.
 ``MODEL_METADATA`` carries the same label for return-value consumers.
 
-Sign conventions versus UpstreamDrift ADR-0055 (``SpinalLoadSeries``, force
-on the superior vertebra by the inferior vertebra, ISB frame X anterior,
-Y cranial):
+Sign conventions versus UpstreamDrift ADR 0055 (UD ADR 0055,
+``docs/adr/0055-segmental-spine-kinematics-and-loads.md`` in UpstreamDrift;
+``SpinalLoadSeries``, force on the superior vertebra by the inferior
+vertebra, ISB frame X anterior, Y cranial):
 
-    * Compression: positive, equal to +F_y.  Same sign as ADR-0055.
+    * Compression: positive, equal to +F_y.  Same sign as UD ADR 0055.
     * AP shear (``spinal_shear``): positive when the superior segment loads
       the inferior vertebra anteriorly (forward trunk lean).  This is the
-      *opposite* sign of ADR-0055 F_x, which is the reaction of the inferior
+      *opposite* sign of UD ADR 0055 F_x, which is the reaction of the inferior
       vertebra (posterior for a forward lean).  Use ``to_adr0055_ap_shear``
       to convert; never negate by hand.
 
-The ADR-0055 contract itself is not copied into Tools (UD#12774).
+The UD ADR 0055 contract itself is not copied into Tools (UD#12774).
 
 Design Principles:
     DBC -- preconditions checked on public functions.
@@ -54,10 +55,10 @@ MODEL_METADATA: dict[str, object] = {
 
 
 def to_adr0055_ap_shear(shear: float | NDArray) -> float | NDArray:
-    """Convert ``spinal_shear`` output to the ADR-0055 F_x convention (N).
+    """Convert ``spinal_shear`` output to the UD ADR 0055 F_x convention (N).
 
     ``spinal_shear`` is positive for an anterior load of the superior segment
-    on the inferior vertebra.  ADR-0055 F_x is the force on the superior
+    on the inferior vertebra.  UD ADR 0055 F_x is the force on the superior
     vertebra by the inferior vertebra (anterior positive), i.e. its negation.
 
     Preconditions:
@@ -108,7 +109,7 @@ def spinal_compression(
 ) -> float | NDArray:
     """Compute axial compression force at L5/S1 (N), planar ergonomic estimate.
 
-    Compression is positive (same sign as ADR-0055 +F_y).  Not a
+    Compression is positive (same sign as UD ADR 0055 +F_y).  Not a
     musculoskeletal joint reaction; see the module docstring.
 
     At the L5/S1 joint the compressive force along the spine axis is:
@@ -164,7 +165,7 @@ def spinal_shear(
     """Compute anterior-posterior shear force at L5/S1 (N), planar estimate.
 
     Sign: positive for anterior load of the superior segment on the inferior
-    vertebra (forward lean).  This is the opposite of the ADR-0055 F_x
+    vertebra (forward lean).  This is the opposite of the UD ADR 0055 F_x
     convention; convert with ``to_adr0055_ap_shear``.  Not a musculoskeletal
     joint reaction; see the module docstring.
 

@@ -272,12 +272,12 @@ class TestPlanarErgonomicLabelling:
         doc = (spine_loads.__doc__ or "").lower()
         assert "planar ergonomic" in doc
         assert "not a musculoskeletal joint reaction" in doc
-        assert "adr-0055" in doc
+        assert "ud adr 0055" in doc
 
     def test_public_docstrings_state_sign_convention(self) -> None:
         assert "positive" in (spinal_compression.__doc__ or "").lower()
         shear_doc = (spinal_shear.__doc__ or "").lower()
-        assert "adr-0055" in shear_doc
+        assert "ud adr 0055" in shear_doc
         assert "to_adr0055_ap_shear" in shear_doc
 
     def test_metadata_labels_model(self) -> None:
