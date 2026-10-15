@@ -1561,6 +1561,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5632 · Security Dependency Upgrades: Patch/Minor Lockfile Bumps for Open Dependabot Alerts in Uv.Lock and 12 Npm Lockfiles (Major-Only Fixes Deferred)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5632
+- **Branch:** merged via #5632
+- **PR:** #5632
+- **Paths:** see #5632
+- **Started:** 2026-10-15
+- **Last verified:** 2026-10-15 (`99d00cbc`; collated from changes/5632-security-dependency-upgrades-patch-minor.md)
+- **Summary:** Security dependency upgrades: patch/minor lockfile bumps for open Dependabot alerts in uv.lock and 12 npm lockfiles (major-only fixes deferred)
+- **Next step:** Shipped in PR #5632.
+
 ### DL-#5626 · Fix Python/JAX Golfer Forward-Kinematics Club Y Sign and Club Jacobians to Match the Rust Kernel; Add Central-Difference and Shaft-Direction Tests
 
 - **State:** shipped
