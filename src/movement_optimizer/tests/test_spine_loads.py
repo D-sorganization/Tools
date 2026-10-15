@@ -6,11 +6,14 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+from movement_optimizer import spine_loads
 from movement_optimizer.models import BodyModel, make_squat_config
 from movement_optimizer.spine_loads import (
+    MODEL_METADATA,
     NIOSH_COMPRESSION_LIMIT,
     spinal_compression,
     spinal_shear,
+    to_adr0055_ap_shear,
 )
 
 
@@ -260,3 +263,64 @@ class TestNIOSHConstant:
 
     def test_niosh_limit_value(self) -> None:
         assert NIOSH_COMPRESSION_LIMIT == 3400.0
+
+
+class TestPlanarErgonomicLabelling:
+    """Issue #5630: outputs are a planar ergonomic estimate, not a joint reaction."""
+
+    def test_module_docstring_labels_planar_ergonomic_estimate(self) -> None:
+        doc = (spine_loads.__doc__ or "").lower()
+        assert "planar ergonomic" in doc
+        assert "not a musculoskeletal joint reaction" in doc
+        assert "adr-0055" in doc
+
+    def test_public_docstrings_state_sign_convention(self) -> None:
+        assert "positive" in (spinal_compression.__doc__ or "").lower()
+        shear_doc = (spinal_shear.__doc__ or "").lower()
+        assert "adr-0055" in shear_doc
+        assert "to_adr0055_ap_shear" in shear_doc
+
+    def test_metadata_labels_model(self) -> None:
+        assert MODEL_METADATA["model"] == "planar_ergonomic_l5s1_estimate"
+        assert MODEL_METADATA["is_joint_reaction"] is False
+        assert MODEL_METADATA["plane"] == "sagittal"
+        assert MODEL_METADATA["compression_sign"] == "positive"
+        assert MODEL_METADATA["ap_shear_sign"] == "anterior_load_on_inferior_vertebra"
+        assert MODEL_METADATA["niosh_compression_limit_n"] == NIOSH_COMPRESSION_LIMIT
+
+
+class TestSignConventionAgainstADR0055:
+    """Compression is +F_y; AP shear is converted to anterior-positive F_x."""
+
+    def test_static_upright_load_compression_positive(
+        self, default_body: BodyModel
+    ) -> None:
+        z = np.zeros(3)
+        comp = spinal_compression(z, z, z, default_body, 60.0, "squat")
+        assert comp > 0.0
+
+    def test_forward_lean_native_shear_positive(self, default_body: BodyModel) -> None:
+        z = np.zeros(3)
+        q = np.array([0.0, 0.0, np.radians(30)])
+        assert spinal_shear(q, z, z, default_body, 60.0, "squat") > 0.0
+
+    def test_forward_lean_adr0055_fx_is_posterior(
+        self, default_body: BodyModel
+    ) -> None:
+        """Inferior vertebra resists the anterior load: F_x on superior < 0."""
+        z = np.zeros(3)
+        q = np.array([0.0, 0.0, np.radians(30)])
+        shear = spinal_shear(q, z, z, default_body, 60.0, "squat")
+        fx = to_adr0055_ap_shear(shear)
+        assert fx < 0.0
+        np.testing.assert_allclose(fx, -shear, rtol=0, atol=0)
+
+    def test_conversion_is_array_safe_and_involutive(self) -> None:
+        arr = np.array([1.0, -2.0, 0.0])
+        out = to_adr0055_ap_shear(arr)
+        np.testing.assert_array_equal(out, -arr)
+        np.testing.assert_array_equal(to_adr0055_ap_shear(out), arr)
+
+    def test_conversion_rejects_non_finite(self) -> None:
+        with pytest.raises(ValueError):
+            to_adr0055_ap_shear(float("nan"))

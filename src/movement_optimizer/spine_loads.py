@@ -1,14 +1,34 @@
 # Copyright (c) 2026 D-Sorganization. All rights reserved.
-"""Spinal stress estimation at the L5/S1 joint.
+"""Planar ergonomic estimate of L5/S1 spinal loading.
 
-Computes compression and anterior-posterior shear forces at the L5/S1
-vertebral junction based on the sagittal-plane 3-link model.  The L5/S1
+Computes compression and anterior-posterior (AP) shear at the L5/S1
+vertebral junction from the sagittal-plane 3-link model.  The L5/S1
 joint is located at the base of the torso segment (hip joint in our model).
+
+What this is NOT: these outputs are a **planar ergonomic estimate**
+(rigid-body load on the torso segment, compared against the NIOSH limit).
+They are **not a musculoskeletal joint reaction**: no muscle forces, passive
+elements or out-of-plane (mediolateral) loads are modelled.  Do not compare
+them with static-optimization joint-reaction results without that caveat.
+``MODEL_METADATA`` carries the same label for return-value consumers.
+
+Sign conventions versus UpstreamDrift ADR-0055 (``SpinalLoadSeries``, force
+on the superior vertebra by the inferior vertebra, ISB frame X anterior,
+Y cranial):
+
+    * Compression: positive, equal to +F_y.  Same sign as ADR-0055.
+    * AP shear (``spinal_shear``): positive when the superior segment loads
+      the inferior vertebra anteriorly (forward trunk lean).  This is the
+      *opposite* sign of ADR-0055 F_x, which is the reaction of the inferior
+      vertebra (posterior for a forward lean).  Use ``to_adr0055_ap_shear``
+      to convert; never negate by hand.
+
+The ADR-0055 contract itself is not copied into Tools (UD#12774).
 
 Design Principles:
     DBC -- preconditions checked on public functions.
     DRY -- shared mass lookup factored into ``_mass_above_l5``.
-    LoD -- callers only use the two public functions.
+    LoD -- callers only use the public functions and ``MODEL_METADATA``.
 """
 
 from __future__ import annotations
@@ -20,6 +40,37 @@ from .models import BodyModel
 
 # NIOSH recommended compression limit for occupational lifting (N)
 NIOSH_COMPRESSION_LIMIT: float = 3400.0
+
+# Labels the model for consumers (issue #5630).  Read-only by convention.
+MODEL_METADATA: dict[str, object] = {
+    "model": "planar_ergonomic_l5s1_estimate",
+    "is_joint_reaction": False,
+    "plane": "sagittal",
+    "compression_sign": "positive",
+    "ap_shear_sign": "anterior_load_on_inferior_vertebra",
+    "adr0055_ap_shear_conversion": "to_adr0055_ap_shear",
+    "niosh_compression_limit_n": NIOSH_COMPRESSION_LIMIT,
+}
+
+
+def to_adr0055_ap_shear(shear: float | NDArray) -> float | NDArray:
+    """Convert ``spinal_shear`` output to the ADR-0055 F_x convention (N).
+
+    ``spinal_shear`` is positive for an anterior load of the superior segment
+    on the inferior vertebra.  ADR-0055 F_x is the force on the superior
+    vertebra by the inferior vertebra (anterior positive), i.e. its negation.
+
+    Preconditions:
+        ``shear`` is finite (scalar or array).
+    Postconditions:
+        Result has the same shape as ``shear`` and equals ``-shear``.
+    """
+    arr = np.asarray(shear, dtype=float)
+    if not np.all(np.isfinite(arr)):
+        raise ValueError("shear must be finite")
+    if arr.ndim == 0:
+        return -float(arr)
+    return -arr
 
 
 def _mass_above_l5(body: BodyModel, exercise_type: str) -> float:
@@ -55,7 +106,10 @@ def spinal_compression(
     bar_mass: float,
     exercise_type: str,
 ) -> float | NDArray:
-    """Compute axial compression force at L5/S1 (N).
+    """Compute axial compression force at L5/S1 (N), planar ergonomic estimate.
+
+    Compression is positive (same sign as ADR-0055 +F_y).  Not a
+    musculoskeletal joint reaction; see the module docstring.
 
     At the L5/S1 joint the compressive force along the spine axis is:
 
@@ -107,7 +161,12 @@ def spinal_shear(
     bar_mass: float,
     exercise_type: str,
 ) -> float | NDArray:
-    """Compute anterior-posterior shear force at L5/S1 (N).
+    """Compute anterior-posterior shear force at L5/S1 (N), planar estimate.
+
+    Sign: positive for anterior load of the superior segment on the inferior
+    vertebra (forward lean).  This is the opposite of the ADR-0055 F_x
+    convention; convert with ``to_adr0055_ap_shear``.  Not a musculoskeletal
+    joint reaction; see the module docstring.
 
     The shear force perpendicular to the spine axis includes both
     gravitational and inertial components:
