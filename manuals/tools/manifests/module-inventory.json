@@ -177,7 +177,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src.json"
     },
     {
-      "content_sha256_lf": "46d675c2df77c4a33bb31180fb00b33f6f30433124572f1d5b914c8289cbb4b6",
+      "content_sha256_lf": "5225c27f6e63e8462e6fbeedbf4dfb1e158ac520e7d58759d4f1732a444a7b8f",
       "entry_count": 12,
       "package": "src/agent_context",
       "path": "manuals/tools/manifests/module-inventory/entries-src-agent-context.json"
