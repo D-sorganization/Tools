@@ -1561,6 +1561,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5626 · Fix Python/JAX Golfer Forward-Kinematics Club Y Sign and Club Jacobians to Match the Rust Kernel; Add Central-Difference and Shaft-Direction Tests
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5626
+- **Branch:** merged via #5628
+- **PR:** #5628
+- **Paths:** see #5628
+- **Started:** 2026-10-15
+- **Last verified:** 2026-10-15 (`61a62fa4`; collated from changes/5626-fix-python-jax-golfer-forward-kinematics.md)
+- **Summary:** Fix Python/JAX golfer forward-kinematics club y sign and club Jacobians to match the Rust kernel; add central-difference and shaft-direction tests
+- **Next step:** Shipped in PR #5628.
+
 ### DL-#33 · Consume UpstreamDrift Ud.Putt_Scene/1 Export via Mirror Pattern
 
 - **State:** shipped
