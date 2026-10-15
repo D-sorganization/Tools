@@ -175,54 +175,23 @@ pub fn analytical_fk_jacobians(
     j_lh[(1, 5)] = params.l_l_fore * sin_le;
     jacobians.insert("l_wrist".to_string(), j_lh);
 
-    // Club COM Jacobian
-    let mut j_club_com = SMatrix::<f64, 2, 8>::zeros();
-    let club_sin = theta_club.sin();
-    let club_cos = theta_club.cos();
-    let half_club = params.l_club / 2.0;
+    // Club points are rh + s * (sin, -cos)(theta_club) with s measured from the
+    // right wrist pin (s = L/2 - grip_right for the COM, L - grip_right for the
+    // tip).  Hence every column except the club angle equals the right wrist's
+    // (the club adds no dependence on the hub or arm angles), and the club-angle
+    // column is s * (cos, sin)(theta_club).  See issue #5626.
+    let club_tangent = SVector::<f64, 2>::new(theta_club.cos(), theta_club.sin());
 
-    j_club_com[(0, 0)] = params.l_hub * hub_cos - params.d_rs * hub_sin
-        + params.l_r_upper * cos_rs
-        + params.l_r_fore * cos_re
-        - params.grip_right * club_sin
-        + half_club * club_sin;
-    j_club_com[(1, 0)] = params.l_hub * hub_sin
-        + params.d_rs * hub_cos
-        + params.l_r_upper * sin_rs
-        + params.l_r_fore * sin_re
-        + params.grip_right * club_cos
-        - half_club * club_cos;
-    j_club_com[(0, 1)] = params.l_r_upper * cos_rs + params.l_r_fore * cos_re;
-    j_club_com[(1, 1)] = params.l_r_upper * sin_rs + params.l_r_fore * sin_re;
-    j_club_com[(0, 2)] = params.l_r_fore * cos_re;
-    j_club_com[(1, 2)] = params.l_r_fore * sin_re;
-    j_club_com[(0, 3)] = 0.0;
-    j_club_com[(1, 3)] = 0.0;
-    j_club_com[(0, 7)] = -params.grip_right * club_cos + half_club * club_cos;
-    j_club_com[(1, 7)] = -params.grip_right * (-club_sin) - half_club * (-club_sin);
+    let mut j_club_com = j_rh;
+    j_club_com
+        .column_mut(7)
+        .copy_from(&((params.l_club / 2.0 - params.grip_right) * club_tangent));
     jacobians.insert("club_com".to_string(), j_club_com);
 
-    // Club tip Jacobian
-    let mut j_club_tip = SMatrix::<f64, 2, 8>::zeros();
-    j_club_tip[(0, 0)] = params.l_hub * hub_cos - params.d_rs * hub_sin
-        + params.l_r_upper * cos_rs
-        + params.l_r_fore * cos_re
-        - params.grip_right * club_sin
-        + params.l_club * club_sin;
-    j_club_tip[(1, 0)] = params.l_hub * hub_sin
-        + params.d_rs * hub_cos
-        + params.l_r_upper * sin_rs
-        + params.l_r_fore * sin_re
-        + params.grip_right * club_cos
-        - params.l_club * club_cos;
-    j_club_tip[(0, 1)] = params.l_r_upper * cos_rs + params.l_r_fore * cos_re;
-    j_club_tip[(1, 1)] = params.l_r_upper * sin_rs + params.l_r_fore * sin_re;
-    j_club_tip[(0, 2)] = params.l_r_fore * cos_re;
-    j_club_tip[(1, 2)] = params.l_r_fore * sin_re;
-    j_club_tip[(0, 3)] = 0.0;
-    j_club_tip[(1, 3)] = 0.0;
-    j_club_tip[(0, 7)] = -params.grip_right * club_cos + params.l_club * club_cos;
-    j_club_tip[(1, 7)] = -params.grip_right * (-club_sin) - params.l_club * (-club_sin);
+    let mut j_club_tip = j_rh;
+    j_club_tip
+        .column_mut(7)
+        .copy_from(&((params.l_club - params.grip_right) * club_tangent));
     jacobians.insert("club_tip".to_string(), j_club_tip);
 
     jacobians
@@ -525,6 +494,190 @@ mod tests {
         for i in 0..8 {
             for j in 0..8 {
                 assert!((m[(i, j)] - m[(j, i)]).abs() < 1e-10);
+            }
+        }
+    }
+
+    // ---- Jacobian-vs-forward-kinematics consistency (issue #5626) ----
+    //
+    // Every Jacobian returned by `analytical_fk_jacobians` must equal the
+    // derivative of the matching `forward_kinematics` point.  The reference is
+    // a central difference with step FD_STEP.  Error analysis: truncation is
+    // (h^2/6)|f'''| <= (1e-12/6) * (largest link length ~1.1 m) ~ 2e-13 and
+    // round-off is eps*|f|/h ~ 2.2e-16 * 2 / 1e-6 ~ 4e-10, so FD_TOL = 1e-8
+    // leaves a >20x margin while still catching any O(1e-3) analytic error
+    // (the #5626 bugs are O(0.1)).
+
+    const FD_STEP: f64 = 1e-6;
+    const FD_TOL: f64 = 1e-8;
+
+    fn params_with_grip_right(grip_right: f64) -> GolferParams {
+        GolferParams {
+            l_hub: 0.5,
+            m_hub: 5.0,
+            d_rs: 0.15,
+            d_ls: 0.2,
+            l_r_upper: 0.3,
+            m_r_upper: 2.0,
+            l_r_fore: 0.25,
+            m_r_fore: 1.0,
+            l_l_upper: 0.33,
+            m_l_upper: 2.0,
+            l_l_fore: 0.27,
+            m_l_fore: 1.0,
+            l_club: 1.1,
+            m_club: 0.4,
+            m_clubhead: 0.2,
+            grip_right,
+            grip_left: 0.1,
+            g: 9.81,
+            friction: [0.0; 7],
+        }
+    }
+
+    fn fk_point(name: &str, q: &[f64; 8], params: &GolferParams) -> (f64, f64) {
+        let fk = forward_kinematics(q, params);
+        match name {
+            "hub" => fk.hub,
+            "r_shoulder" => fk.r_shoulder,
+            "r_elbow" => fk.r_elbow,
+            "r_wrist" => fk.r_wrist,
+            "l_shoulder" => fk.l_shoulder,
+            "l_elbow" => fk.l_elbow,
+            "l_wrist" => fk.l_wrist,
+            "club_com" => fk.club_com,
+            "club_tip" => fk.club_tip,
+            other => panic!("unknown point {other}"),
+        }
+    }
+
+    const NON_TRIVIAL_CONFIGS: [[f64; 8]; 4] = [
+        [0.3, -0.5, 0.8, 0.2, 0.4, 0.7, -0.3, 1.1],
+        [-0.7, 0.9, -0.4, -0.6, -0.2, 1.2, 0.5, -0.8],
+        [1.2, 0.1, 0.3, 0.9, -1.0, -0.6, 0.7, 2.3],
+        [-0.2, -1.1, 1.0, -0.4, 0.8, 0.3, 0.1, 0.4],
+    ];
+
+    const JACOBIAN_POINTS: [&str; 9] = [
+        "hub",
+        "r_shoulder",
+        "r_elbow",
+        "r_wrist",
+        "l_shoulder",
+        "l_elbow",
+        "l_wrist",
+        "club_com",
+        "club_tip",
+    ];
+
+    fn assert_jacobians_match_fd(grip_right: f64) {
+        let params = params_with_grip_right(grip_right);
+        for q in NON_TRIVIAL_CONFIGS {
+            let jacobians = analytical_fk_jacobians(&q, &params);
+            for name in JACOBIAN_POINTS {
+                let jac = jacobians.get(name).unwrap();
+                for col in 0..8 {
+                    let mut qp = q;
+                    let mut qm = q;
+                    qp[col] += FD_STEP;
+                    qm[col] -= FD_STEP;
+                    let (xp, yp) = fk_point(name, &qp, &params);
+                    let (xm, ym) = fk_point(name, &qm, &params);
+                    let fd_x = (xp - xm) / (2.0 * FD_STEP);
+                    let fd_y = (yp - ym) / (2.0 * FD_STEP);
+                    assert!(
+                        (jac[(0, col)] - fd_x).abs() < FD_TOL,
+                        "{name} dx/dq{col} (grip_right={grip_right}, q={q:?}): analytic {} vs FD {fd_x}",
+                        jac[(0, col)]
+                    );
+                    assert!(
+                        (jac[(1, col)] - fd_y).abs() < FD_TOL,
+                        "{name} dy/dq{col} (grip_right={grip_right}, q={q:?}): analytic {} vs FD {fd_y}",
+                        jac[(1, col)]
+                    );
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn test_fk_jacobians_match_central_difference_positive_grip_right() {
+        assert_jacobians_match_fd(0.3);
+    }
+
+    #[test]
+    fn test_fk_jacobians_match_central_difference_negative_grip_right() {
+        assert_jacobians_match_fd(-0.2);
+    }
+
+    #[test]
+    fn test_fk_jacobians_match_central_difference_zero_grip_right() {
+        assert_jacobians_match_fd(0.0);
+    }
+
+    #[test]
+    fn test_club_hub_column_equals_right_wrist_hub_column() {
+        // A club point is rh + s*u(theta_club): its hub column must be the
+        // right wrist's, with no club terms (issue #5626 (b)).
+        let params = params_with_grip_right(0.3);
+        let q = NON_TRIVIAL_CONFIGS[0];
+        let jacobians = analytical_fk_jacobians(&q, &params);
+        let j_rh = jacobians.get("r_wrist").unwrap();
+        for name in ["club_com", "club_tip"] {
+            let j = jacobians.get(name).unwrap();
+            for row in 0..2 {
+                assert!(
+                    (j[(row, 0)] - j_rh[(row, 0)]).abs() < 1e-12,
+                    "{name} row {row}"
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn test_club_angle_column_matches_independent_reference() {
+        // Independent reference from the corrected UpstreamDrift formula
+        // (UD #12668 `_club_jacobians`): column 7 = s * (cos, sin)(theta_club)
+        // with s = L/2 - grip_right (COM) and L - grip_right (tip).
+        let params = params_with_grip_right(0.3);
+        let q = NON_TRIVIAL_CONFIGS[0];
+        let jacobians = analytical_fk_jacobians(&q, &params);
+        let (c, s) = (q[7].cos(), q[7].sin());
+        let com = 0.5 * params.l_club - params.grip_right;
+        let tip = params.l_club - params.grip_right;
+        let j_com = jacobians.get("club_com").unwrap();
+        let j_tip = jacobians.get("club_tip").unwrap();
+        assert!((j_com[(0, 7)] - com * c).abs() < 1e-12);
+        assert!((j_com[(1, 7)] - com * s).abs() < 1e-12);
+        assert!((j_tip[(0, 7)] - tip * c).abs() < 1e-12);
+        assert!((j_tip[(1, 7)] - tip * s).abs() < 1e-12);
+    }
+
+    #[test]
+    fn test_constraint_jacobian_matches_central_difference_of_constraint_vector() {
+        // The closure Jacobian is a forward difference (eps = 1e-7, O(eps)
+        // truncation ~ 1e-7 * |Phi''| ~ 1e-7); compare to a central difference
+        // of Phi with a 1e-5 tolerance (>> 1e-7 truncation, << O(0.1) bugs).
+        for grip_right in [0.3, -0.2] {
+            let params = params_with_grip_right(grip_right);
+            for q in NON_TRIVIAL_CONFIGS {
+                let jac = constraint_jacobian(&q, &params);
+                for col in 0..8 {
+                    let mut qp = q;
+                    let mut qm = q;
+                    qp[col] += FD_STEP;
+                    qm[col] -= FD_STEP;
+                    let d = (constraint_vector(&qp, &params) - constraint_vector(&qm, &params))
+                        / (2.0 * FD_STEP);
+                    for row in 0..4 {
+                        assert!(
+                            (jac[(row, col)] - d[row]).abs() < 1e-5,
+                            "Phi[{row}] d/dq{col}: {} vs {}",
+                            jac[(row, col)],
+                            d[row]
+                        );
+                    }
+                }
             }
         }
     }
