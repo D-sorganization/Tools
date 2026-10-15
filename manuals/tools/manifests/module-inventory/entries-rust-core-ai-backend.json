@@ -209,6 +209,7 @@
           "src/pendulum_simulator/pendulum-web/tests/forceSourceProfiles.test.ts",
           "src/pendulum_simulator/pendulum-web/tests/forceSourceStudy.test.ts",
           "src/pendulum_simulator/tests/test_downswing_optimizer.py",
+          "src/pendulum_simulator/tests/test_golfer_club_jacobian_fd.py",
           "src/pendulum_simulator/tests/test_hub_options.py",
           "src/pendulum_simulator/tests/test_jacobians.py",
           "src/pendulum_simulator/tests/test_jacobians_golfer.py",
