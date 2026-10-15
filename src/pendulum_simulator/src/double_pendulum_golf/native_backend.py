@@ -549,7 +549,7 @@ def golfer_forward_kinematics(
     club_base = tuple(result["club_base"])
     grip_left = (
         float(club_base[0] + params.grip_left * club_dx),
-        float(club_base[1] - params.grip_left * club_dy),
+        float(club_base[1] + params.grip_left * club_dy),
     )
 
     return {

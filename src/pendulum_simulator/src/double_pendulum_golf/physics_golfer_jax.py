@@ -238,15 +238,15 @@ def _club_fk_jax(
     club_dy = -jnp.cos(th_club)
 
     club_base_x = rh_x - p.grip_right * club_dx
-    club_base_y = rh_y + p.grip_right * club_dy
+    club_base_y = rh_y - p.grip_right * club_dy
     club_base = jnp.array([club_base_x, club_base_y])
 
     grip_l_on_club_x = club_base_x + p.grip_left * club_dx
-    grip_l_on_club_y = club_base_y - p.grip_left * club_dy
+    grip_l_on_club_y = club_base_y + p.grip_left * club_dy
     grip_left = jnp.array([grip_l_on_club_x, grip_l_on_club_y])
 
     club_tip_x = club_base_x + p.L_club * club_dx
-    club_tip_y = club_base_y - p.L_club * club_dy
+    club_tip_y = club_base_y + p.L_club * club_dy
     club_tip = jnp.array([club_tip_x, club_tip_y])
 
     return club_base, grip_left, club_tip
@@ -428,7 +428,7 @@ def _club_jacobians_jax(
 
     # Club COM: midpoint between club base and club tip
     coeff_club_x = 0.5 * p.L_club - p.grip_right
-    coeff_club_y = -0.5 * (p.L_club - 2 * p.grip_right)
+    coeff_club_y = 0.5 * p.L_club - p.grip_right
 
     J_club_com = jnp.zeros((2, N_DOF))
     J_club_com = J_club_com.at[0, 0].set(rh_col0_x)
@@ -442,7 +442,7 @@ def _club_jacobians_jax(
 
     # Club TIP
     coeff_tip_x = p.L_club - p.grip_right
-    coeff_tip_y = -(p.L_club - p.grip_right)
+    coeff_tip_y = p.L_club - p.grip_right
 
     J_club_tip = jnp.zeros((2, N_DOF))
     J_club_tip = J_club_tip.at[0, 0].set(rh_col0_x)
