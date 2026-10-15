@@ -5777,16 +5777,16 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 5315,
+      "bytes_lf": 8131,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "bffeada91d32fb5fee188d9aa94501588f719dc7fe927aaf1022c90bcbc42c0d",
+      "content_sha256_lf": "d2e8056cc8658d2a1f3d1b9d561049d6efbc293664c02b00170445ad8001e35a",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-SPINE-LOADS-PY-F272F3F9624A",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/spine_loads.py",
-      "purpose": "Spinal stress estimation at the L5/S1 joint.",
+      "purpose": "Planar ergonomic estimate of L5/S1 spinal loading.",
       "review_status": "review-required",
       "risk_tags": [
         "public-api",
@@ -5820,6 +5820,11 @@
         "public_surfaces": [
           {
             "kind": "constant",
+            "name": "MODEL_METADATA",
+            "signature": null
+          },
+          {
+            "kind": "constant",
             "name": "NIOSH_COMPRESSION_LIMIT",
             "signature": null
           },
@@ -5832,6 +5837,11 @@
             "kind": "function",
             "name": "spinal_shear",
             "signature": "q: NDArray, qd: NDArray, qdd: NDArray, body: BodyModel, bar_mass: float, exercise_type: str"
+          },
+          {
+            "kind": "function",
+            "name": "to_adr0055_ap_shear",
+            "signature": "shear: float | NDArray"
           }
         ],
         "test_paths": [
