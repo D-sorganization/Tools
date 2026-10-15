@@ -1654,10 +1654,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 17529,
+      "bytes_lf": 23103,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "fe53c59da0bc3030abe26524620c27b2d0473eb068a38ab1809b044078903d7c",
+      "content_sha256_lf": "34e24f2a63d0c803568744ddfef72a15c1894391ccf58cbff76e6dc1961cd0ff",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-CORE-SRC-GOLFER-RS-9CEF8079C96F",
       "language": "rust",
