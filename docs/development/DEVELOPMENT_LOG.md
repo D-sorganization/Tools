@@ -1567,10 +1567,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #5626
 - **Branch:** merged via #5628
-- **PR:** #5628
+- **PR:** #5628, #5627
 - **Paths:** see #5628
 - **Started:** 2026-10-15
-- **Last verified:** 2026-10-15 (`61a62fa4`; collated from changes/5626-fix-python-jax-golfer-forward-kinematics.md)
+- **Last verified:** 2026-10-15 (`e3cf5a43`; collated from changes/5626-fix-pendulum-core-golfer-club-jacobians.md)
 - **Summary:** Fix Python/JAX golfer forward-kinematics club y sign and club Jacobians to match the Rust kernel; add central-difference and shaft-direction tests
 - **Next step:** Shipped in PR #5628.
 

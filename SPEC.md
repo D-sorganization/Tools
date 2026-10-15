@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-15 | #5627 | Fix pendulum-core golfer club Jacobians: correct club-angle y sign and remove club terms from the hub-angle column; add central-difference FK/Jacobian consistency tests |
 | 2026-10-15 | #5628 | Fix Python/JAX golfer forward-kinematics club y sign and club Jacobians to match the Rust kernel; add central-difference and shaft-direction tests |
 | 2026-10-14 | #5622 | consume UpstreamDrift ud.putt_scene/1 export via mirror pattern |
 | 2026-10-14 | #33 | Consume UpstreamDrift ud.putt_scene/1 export in rate-of-closure web mirror and swing_sim |
