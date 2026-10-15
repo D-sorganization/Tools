@@ -153,7 +153,7 @@ def analytical_constraint_jacobian(q: np.ndarray, p: GolferParams) -> np.ndarray
     # d((grip_left - grip_right) * sin(th_club))/dq_7 = (grip_left - grip_right) * cos(th_club)
     # d(-(grip_left - grip_right) * cos(th_club))/dq_7 = (grip_l - grip_r) * sin(th_club)
     Phi_q[0, 7] -= (p.grip_left - p.grip_right) * cos_club
-    Phi_q[1, 7] += (p.grip_left - p.grip_right) * sin_club
+    Phi_q[1, 7] -= (p.grip_left - p.grip_right) * sin_club
 
     # Constraint 3: perpendicular distance = 0
     # Phi[2] = (lh - rh) · club_perp = lh_x * club_perp_x + lh_y * club_perp_y

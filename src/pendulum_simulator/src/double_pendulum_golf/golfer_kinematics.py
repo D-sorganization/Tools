@@ -180,15 +180,15 @@ def forward_kinematics(q: np.ndarray, p: GolferParams) -> dict[str, tuple[float,
     # Club base defined from right-hand grip position along club direction
     club_base = (
         rh[0] - p.grip_right * club_dx,
-        rh[1] + p.grip_right * club_dy,
+        rh[1] - p.grip_right * club_dy,
     )
     grip_l_on_club = (
         club_base[0] + p.grip_left * club_dx,
-        club_base[1] - p.grip_left * club_dy,
+        club_base[1] + p.grip_left * club_dy,
     )
     club_tip = (
         club_base[0] + p.L_club * club_dx,
-        club_base[1] - p.L_club * club_dy,
+        club_base[1] + p.L_club * club_dy,
     )
 
     result = {

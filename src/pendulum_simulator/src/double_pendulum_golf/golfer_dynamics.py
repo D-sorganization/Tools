@@ -231,7 +231,7 @@ def _club_jacobians(
     if p is None:
         raise ValueError("p must be provided")
     coeff_com_x = 0.5 * p.L_club - p.grip_right
-    coeff_com_y = -0.5 * (p.L_club - 2 * p.grip_right)
+    coeff_com_y = 0.5 * p.L_club - p.grip_right
 
     J_club_com = j_rh.copy()
     J_club_com[0, 7] = coeff_com_x * tc.cos_club
@@ -242,7 +242,7 @@ def _club_jacobians(
 
     J_club_tip = j_rh.copy()
     J_club_tip[0, 7] = coeff_tip * tc.cos_club
-    J_club_tip[1, 7] = -coeff_tip * tc.sin_club
+    J_club_tip[1, 7] = coeff_tip * tc.sin_club
 
     return J_club_com, J_club_tip
 
