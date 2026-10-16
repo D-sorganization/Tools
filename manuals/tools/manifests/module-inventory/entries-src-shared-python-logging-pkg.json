@@ -230,7 +230,7 @@
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -325,6 +325,7 @@
           "tests/shared/python/chat/test_assistant_panel_inline_controls.py",
           "tests/shared/python/chat/test_assistant_panel_memory_sync.py",
           "tests/shared/python/chat/test_chat_chunk_batching.py",
+          "tests/shared/python/chat/test_chat_dock_split_contract.py",
           "tests/shared/python/chat/test_chat_dock_widget.py",
           "tests/shared/python/chat/test_chat_input_keybindings.py",
           "tests/shared/python/chat/test_chat_queue_panel.py",
@@ -343,7 +344,9 @@
         "unit_mentions": [
           "s"
         ],
-        "validation_paths": []
+        "validation_paths": [
+          "tests/shared/python/chat/test_chat_dock_split_contract.py"
+        ]
       }
     }
   ],
