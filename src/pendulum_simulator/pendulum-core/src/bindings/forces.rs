@@ -10,9 +10,12 @@ pub mod python {
     use crate::golfer_constraints::{
         constrained_accelerations as golfer_constrained_accelerations,
         project_to_constraints as golfer_project_to_constraints,
-        project_velocity as golfer_project_velocity, BaumgarteGains,
+        project_velocity as golfer_project_velocity,
+        solve_independent_kkt as golfer_solve_independent_kkt, BaumgarteGains, CLOSURE_RANK_RTOL,
+        INDEPENDENT_CLOSURE_ROWS,
     };
     use crate::{constraint_jacobian, constraint_vector};
+    use nalgebra::{SMatrix, SVector};
     use pyo3::prelude::*;
     use std::collections::HashMap;
 
@@ -81,12 +84,71 @@ pub mod python {
             golfer_constrained_accelerations(&q_arr, &qdot_arr, &tau_arr, &params.inner, &gains)
         }));
 
+        // A closure contract violation (rank loss, non-finite input) is a
+        // `ValueError`, exactly like the Python solver.  It must not be a
+        // `RuntimeError`: `native_backend` treats that as "fall back to
+        // Python", which would silently hide the singularity.
         match result {
-            Ok((qddot, lambda)) => Ok((qddot.as_slice().to_vec(), lambda.as_slice().to_vec())),
+            Ok(Ok((qddot, lambda))) => Ok((qddot.as_slice().to_vec(), lambda.as_slice().to_vec())),
+            Ok(Err(err)) => Err(pyo3::exceptions::PyValueError::new_err(err.to_string())),
             Err(_) => Err(pyo3::exceptions::PyRuntimeError::new_err(
                 "native golfer constrained dynamics failed",
             )),
         }
+    }
+
+    /// Rows of the golfer closure that the KKT solve uses (single Rust
+    /// definition; Python asserts it equals `INDEPENDENT_CLOSURE_ROWS`).
+    #[pyfunction]
+    pub fn golfer_independent_closure_rows() -> Vec<usize> {
+        INDEPENDENT_CLOSURE_ROWS.to_vec()
+    }
+
+    /// Rank tolerance of the independent closure rows (`CLOSURE_RANK_RTOL`).
+    #[pyfunction]
+    pub fn golfer_closure_rank_rtol() -> f64 {
+        CLOSURE_RANK_RTOL
+    }
+
+    fn matrix_from_rows<const R: usize, const C: usize>(
+        rows: &[Vec<f64>],
+        name: &str,
+    ) -> PyResult<SMatrix<f64, R, C>> {
+        if rows.len() != R || rows.iter().any(|row| row.len() != C) {
+            return Err(pyo3::exceptions::PyValueError::new_err(format!(
+                "{name} must have shape ({R}, {C})"
+            )));
+        }
+        Ok(SMatrix::<f64, R, C>::from_fn(|i, j| rows[i][j]))
+    }
+
+    fn vector_from_slice<const N: usize>(values: &[f64], name: &str) -> PyResult<SVector<f64, N>> {
+        if values.len() != N {
+            return Err(pyo3::exceptions::PyValueError::new_err(format!(
+                "{name} must have shape ({N},)"
+            )));
+        }
+        Ok(SVector::<f64, N>::from_row_slice(values))
+    }
+
+    /// Independent-rows KKT solve (the kernel behind
+    /// `py_golfer_constrained_dynamics`), exposed so the Rust and Python
+    /// rank/finite/shape contracts can be compared on identical inputs.
+    /// Raises `ValueError` on bad shapes, non-finite input or rank loss.
+    #[pyfunction]
+    pub fn py_golfer_solve_independent_kkt(
+        mass: Vec<Vec<f64>>,
+        phi_q: Vec<Vec<f64>>,
+        rhs_dyn: Vec<f64>,
+        rhs_constraint: Vec<f64>,
+    ) -> PyResult<(Vec<f64>, Vec<f64>)> {
+        let mass = matrix_from_rows::<8, 8>(&mass, "M")?;
+        let phi_q = matrix_from_rows::<4, 8>(&phi_q, "Phi_q")?;
+        let rhs_dyn = vector_from_slice::<8>(&rhs_dyn, "rhs_dyn")?;
+        let rhs_constraint = vector_from_slice::<4>(&rhs_constraint, "rhs_constraint")?;
+        golfer_solve_independent_kkt(&mass, &phi_q, &rhs_dyn, &rhs_constraint)
+            .map(|(qddot, lambda)| (qddot.as_slice().to_vec(), lambda.as_slice().to_vec()))
+            .map_err(|err| pyo3::exceptions::PyValueError::new_err(err.to_string()))
     }
 
     /// Project generalized coordinates to the golfer constraint manifold.

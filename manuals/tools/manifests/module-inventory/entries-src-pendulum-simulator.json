@@ -997,10 +997,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 12095,
+      "bytes_lf": 14893,
       "classification": "calculation",
       "classification_basis": "path-marker:force",
-      "content_sha256_lf": "6c598ff4c87ccf92e67ae8d26104cc65dd400bf54a3ac39d334474c78711afa5",
+      "content_sha256_lf": "f11638ea5c18cac5ca1534625f868fd04bf6848e83398f16907b36b7b92e6f62",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-CORE-SRC-BINDINGS-FORCES-RS-62A458C0B24D",
       "language": "rust",
@@ -1025,7 +1025,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "unavailable",
-        "units": "unavailable",
+        "units": "mapped",
         "validation": "unavailable"
       },
       "traceability": {
@@ -1039,6 +1039,16 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [
+          {
+            "kind": "fn",
+            "name": "golfer_closure_rank_rtol",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "golfer_independent_closure_rows",
+            "signature": null
+          },
           {
             "kind": "fn",
             "name": "py_cmaes_optimize_torque",
@@ -1081,6 +1091,11 @@
           },
           {
             "kind": "fn",
+            "name": "py_golfer_solve_independent_kkt",
+            "signature": null
+          },
+          {
+            "kind": "fn",
             "name": "py_triple_ellipsoids",
             "signature": null
           },
@@ -1096,16 +1111,18 @@
           }
         ],
         "test_paths": [],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "N"
+        ],
         "validation_paths": []
       }
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 9784,
+      "bytes_lf": 10649,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "832b3b4540dde3c4539d7e6715bbb51d608f73a4b3b71633390508cd9edb1180",
+      "content_sha256_lf": "59e4e8a34d5d8bf9539ecac8d45a419cd0e7b5b67041f35a644300c6cbf3e57b",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-CORE-SRC-BINDINGS-INTEGRATOR-RS-7EB6CD80B2DD",
       "language": "rust",
@@ -1175,10 +1192,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 5311,
+      "bytes_lf": 5645,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "328cb4d4394b6df443c4ecb44b489095d855380456156f779434350338ab7d53",
+      "content_sha256_lf": "68ad22f885173a41012afbc47cb1a517fc2e570b8c50529be95f8acdba0a9ab3",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-CORE-SRC-BINDINGS-MOD-RS-151EE66BE5BF",
       "language": "rust",
@@ -1656,10 +1673,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 23103,
+      "bytes_lf": 26994,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "34e24f2a63d0c803568744ddfef72a15c1894391ccf58cbff76e6dc1961cd0ff",
+      "content_sha256_lf": "9d04e1820512023ada29f855cfa5eead65b35c0166b9d3771cc939096fa87a72",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-CORE-SRC-GOLFER-RS-9CEF8079C96F",
       "language": "rust",
@@ -1698,6 +1715,16 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [
+          {
+            "kind": "const",
+            "name": "INDEPENDENT_CLOSURE_ROWS",
+            "signature": null
+          },
+          {
+            "kind": "const",
+            "name": "N_CONSTRAINTS",
+            "signature": null
+          },
           {
             "kind": "fn",
             "name": "analytical_fk_jacobians",
@@ -1741,7 +1768,6 @@
         ],
         "test_paths": [],
         "unit_mentions": [
-          "J",
           "g",
           "s"
         ],
@@ -1750,10 +1776,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 7358,
+      "bytes_lf": 17905,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "15e35fd9e19aa9ccd49a71cf920462899356bb64fdeae1843943f5ed2bcc37ae",
+      "content_sha256_lf": "3c939e9f4eb7e694715913be47463bb179bf7a5f02a11837434227e8b2eab0fd",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-CORE-SRC-GOLFER-CONSTRAINTS-RS-E390502D8CB2",
       "language": "rust",
@@ -1792,6 +1818,16 @@
         "public_routes": [],
         "public_surfaces": [
           {
+            "kind": "const",
+            "name": "CLOSURE_RANK_RTOL",
+            "signature": null
+          },
+          {
+            "kind": "enum",
+            "name": "ClosureError",
+            "signature": null
+          },
+          {
             "kind": "fn",
             "name": "constrained_accelerations",
             "signature": null
@@ -1812,6 +1848,11 @@
             "signature": null
           },
           {
+            "kind": "fn",
+            "name": "solve_independent_kkt",
+            "signature": null
+          },
+          {
             "kind": "struct",
             "name": "BaumgarteGains",
             "signature": null
@@ -1822,6 +1863,7 @@
         ],
         "unit_mentions": [
           "J",
+          "N",
           "g",
           "s"
         ],

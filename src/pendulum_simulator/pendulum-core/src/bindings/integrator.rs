@@ -202,6 +202,13 @@ pub mod python {
         y0[..8].copy_from_slice(&q0);
         y0[8..16].copy_from_slice(&qdot0);
 
+        // First closure contract violation (rank loss / non-finite input).  The
+        // integrator callback cannot return an error, so it is recorded here
+        // and raised as `ValueError` after the run (parity with the Python
+        // solver, which raises instead of integrating through a singularity).
+        let closure_failure: std::cell::RefCell<Option<crate::golfer_constraints::ClosureError>> =
+            std::cell::RefCell::new(None);
+
         let result = crate::integrator::integrate_rk45(
             |t, y| {
                 let mut q = [0.0; 8];
@@ -226,13 +233,20 @@ pub mod python {
 
                 let mut dy = [0.0; 16];
                 dy[..8].copy_from_slice(&qd);
-                if let Ok((qddot, _lambda)) = result {
-                    for i in 0..8 {
-                        dy[8 + i] = qddot[i];
+                match result {
+                    Ok(Ok((qddot, _lambda))) => {
+                        for i in 0..8 {
+                            dy[8 + i] = qddot[i];
+                        }
                     }
+                    Ok(Err(err)) => {
+                        closure_failure.borrow_mut().get_or_insert(err);
+                    }
+                    // If constrained dynamics panics, return zero accelerations
+                    // (the integrator will detect the stiff region and reduce
+                    // step size)
+                    Err(_) => {}
                 }
-                // If constrained dynamics panics, return zero accelerations
-                // (the integrator will detect the stiff region and reduce step size)
 
                 dy
             },
@@ -241,6 +255,10 @@ pub mod python {
             y0,
             config,
         );
+
+        if let Some(err) = closure_failure.into_inner() {
+            return Err(pyo3::exceptions::PyValueError::new_err(err.to_string()));
+        }
 
         let times: Vec<f64> = result.iter().map(|s| s.t).collect();
         let states: Vec<Vec<f64>> = result.iter().map(|s| s.y.to_vec()).collect();

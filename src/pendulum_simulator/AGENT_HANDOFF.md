@@ -48,6 +48,7 @@ python3 -m ruff check src/pendulum_simulator
 - Do not duplicate perturbation/Monte Carlo machinery in `swing_sim/variation` — reuse `perturbation_analysis`.
 - Do not reintroduce `Array.prototype.sort()` with comparator in web Nelder-Mead hot loop.
 - Do not change golfer model's holonomic-constraint topology without updating Rust kernel and Python/web bindings.
+- The Rust and Python golfer solvers are one solver (#5638): change closure equations, `INDEPENDENT_CLOSURE_ROWS`, Baumgarte form or Coriolis in both, and keep `tests/test_golfer_rust_python_parity.py` green (needs `maturin develop` in `pendulum-core`). Known shared defect: `analytical_coriolis` reduces to `0.5 dM_ij/dq_k` (not the Christoffel symbol); Rust reproduces it for parity until both are fixed together.
 - Do not widen Drift Transfer tab beyond double-pendulum tier, and do not present proximal link rate as coaching quantity.
 - Do not resume `research/shoulder-velocity-drift-transfer`; #4406 is closed and shipped via #4450.
 
