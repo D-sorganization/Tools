@@ -24,7 +24,7 @@ elif stage.compression_type == "polytropic":
 
 - Failure scenario: η_p = 0.75, PR = 3, γ = 1.4 → code T_out = T_in·3^0.286 (same as isentropic); the polytropic exponent (n−1)/n = (γ−1)/(γ·η_p) = 0.381 gives T_out ≈ 45 K hotter at 400 K inlet. Aftercooler duty and the downstream water-dropout (computed by this very engine) are under-sized.
 - Why a newer engineer misses this: "polytropic" and "isentropic efficiency" are both ways to describe a real compressor; mixing them produces plausible numbers.
-- Proposed change: `n_exp = (gamma - 1) / (gamma * stage.efficiency)`; `temp_out = T_in * pr**n_exp`; `work = (R*T_in/n_exp) * (pr**n_exp - 1)`.
+- Proposed change: `n_exp = (gamma - 1) / (gamma * stage.efficiency)`; `temp_out = T_in * pr**n_exp`; `work_actual = (R*T_in/n_exp) * (pr**n_exp - 1) / stage.efficiency` — `(R*T_in/n_exp)*(…)` alone is the _polytropic head_; dividing by the polytropic efficiency gives the actual enthalpy work (equivalently `Cp*(T_out - T_in)`). Without the division, `power_hp` would be under-reported by 25 % at η = 0.75.
 - Verification: assert polytropic T_out > isentropic T_out for η < 1.
 - Effort: S
 
