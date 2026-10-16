@@ -1561,6 +1561,32 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5640 · Chore: Remove Committed Clutter (Unused Root Scripts, Empty Issue Template)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5640
+- **Branch:** merged via #5639
+- **PR:** #5639
+- **Paths:** see #5639
+- **Started:** 2026-10-16
+- **Last verified:** 2026-10-16 (`f9a8637d`; collated from changes/5640-chore-remove-committed-clutter-unused-ro.md)
+- **Summary:** chore: remove committed clutter (unused root scripts, empty issue template)
+- **Next step:** Shipped in PR #5639.
+
+### DL-#5635 · Golfer Constraint Solver Solves the KKT System on INDEPENDENT_CLOSURE_ROWS=(0,1) Only (Min-Norm Lstsq), Zero Multipliers on Redundant Rows 2-3, Raises ValueError on Rank Loss; GolferParams.G Default Kept at 9.81 Pending Owner Decision and Now Rejects Non-Finite G
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5635
+- **Branch:** merged via #5637
+- **PR:** #5637
+- **Paths:** see #5637
+- **Started:** 2026-10-16
+- **Last verified:** 2026-10-16 (`86c4f3b6`; collated from changes/5635-golfer-constraint-solver-solves-the-kkt.md)
+- **Summary:** Golfer constraint solver solves the KKT system on INDEPENDENT_CLOSURE_ROWS=(0,1) only (min-norm lstsq), zero multipliers on redundant rows 2-3, raises ValueError on rank loss; GolferParams.g default kept at 9.81 pending owner decision and now rejects non-finite g
+- **Next step:** Shipped in PR #5637.
+
 ### DL-#5630 · Label Movement_Optimizer.Spine_Loads as a Planar Ergonomic L5/S1 Estimate, Document UD ADR 0055 Sign Conventions, Add MODEL_METADATA and to_Adr0055_Ap_Shear
 
 - **State:** shipped
