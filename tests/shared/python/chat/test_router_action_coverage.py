@@ -20,7 +20,13 @@ from pathlib import Path
 import pytest
 
 CHAT_DIR = Path(__file__).resolve().parents[4] / "src" / "shared" / "python" / "chat"
-SENDERS = [CHAT_DIR / "_chat_dock_widget_qt.py", CHAT_DIR / "quick_bar.py"]
+SENDERS = [
+    CHAT_DIR / "_chat_dock_widget_qt.py",
+    CHAT_DIR / "_qt" / "streaming.py",
+    CHAT_DIR / "_qt" / "terminal_mode.py",
+    CHAT_DIR / "_qt" / "messaging.py",
+    CHAT_DIR / "quick_bar.py",
+]
 ROUTER = CHAT_DIR / "router_factory.py"
 PROTOCOL = CHAT_DIR / "websocket_protocol.py"
 
