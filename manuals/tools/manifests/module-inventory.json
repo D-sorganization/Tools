@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "10a7f995d3f9e038e8762e15e63a48363f4f5ad9a61405d9dae344ac71914ec8",
+      "content_sha256_lf": "794a3db17b7fd1484a06322a9c7c4ba9f3ee93afe1859d0a5ae1cd8fc43f553e",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -393,7 +393,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
     {
-      "content_sha256_lf": "24c24bda8f984c6ae7ad5ec28c7a230a00275953569d3cb8ca70f05379f21216",
+      "content_sha256_lf": "973a48d0299686d128be2222efd808b35a44052c184f28c2c4d697f889791dd2",
       "entry_count": 169,
       "package": "src/pendulum_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pendulum-simulator.json"

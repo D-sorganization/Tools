@@ -2602,6 +2602,7 @@
           "src/p1am_control_system/backend/tests/test_thermocouple_filter.py",
           "src/pendulum_simulator/tests/test_base_pendulum_widget.py",
           "src/pendulum_simulator/tests/test_diagnostics.py",
+          "src/pendulum_simulator/tests/test_golfer_params_gravity.py",
           "src/python/src/utils/test_utils.py",
           "src/shared/python/calc_backend/tests/test_calc_backend.py",
           "src/shared/python/calc_backend/tests/test_calc_backend_properties.py",

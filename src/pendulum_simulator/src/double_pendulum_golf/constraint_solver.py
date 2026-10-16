@@ -12,8 +12,13 @@ alpha and beta are stabilization gains, and Phi is the constraint vector.
 
 Design by Contract
 ------------------
-- All inputs validated with assertions.
-- Constraint Jacobian must have full row rank for the system to be solvable.
+- All inputs validated; violations raise ``ValueError``.
+- The KKT system is built from ``INDEPENDENT_CLOSURE_ROWS`` only (#5635):
+  rows 2-3 restate rows 0-1 in the club frame, so the full 4-row closure
+  Jacobian has rank 2 on the manifold and a direct solve can return large,
+  meaningless multipliers.  Those rows must have full row rank, otherwise a
+  ``ValueError`` is raised instead of returning garbage multipliers.  The
+  redundant rows always carry a zero multiplier.
 
 DRY
 ---
@@ -29,6 +34,7 @@ import numpy as np
 
 from . import native_backend as _native_backend
 from .golfer_constraints import (
+    INDEPENDENT_CLOSURE_ROWS,
     analytical_constraint_jacobian as constraint_jacobian,
     constraint_vector,
     friction_torque_vector,
@@ -52,6 +58,69 @@ logger = logging.getLogger(__name__)
 DEFAULT_ALPHA = 5.0
 DEFAULT_BETA = 5.0
 
+# Smallest admissible sigma_min / sigma_max of the independent closure rows.
+# Healthy closed configurations sit at O(0.1-1); below this the wrist pin is at
+# a kinematic singularity and the multipliers are not determined.
+CLOSURE_RANK_RTOL = 1e-8
+
+
+def _solve_independent_kkt(
+    M: np.ndarray,
+    Phi_q: np.ndarray,
+    rhs_dyn: np.ndarray,
+    rhs_constraint: np.ndarray,
+) -> tuple[np.ndarray, np.ndarray]:
+    """Solve the KKT system on ``INDEPENDENT_CLOSURE_ROWS`` only (#5635).
+
+    The massless wrist DOFs leave exact zero columns in ``M`` and ``Phi_q``,
+    so the KKT matrix stays singular even on the independent rows; the
+    minimum-norm least-squares solution is exact for that consistent system.
+
+    Raises
+    ------
+    ValueError
+        On wrong shapes, non-finite inputs, or independent closure rows that
+        have lost rank (kinematic singularity).
+
+    Returns
+    -------
+    tuple[np.ndarray, np.ndarray]
+        Accelerations ``(N_DOF,)`` and all ``N_CONSTRAINTS`` multipliers, with
+        zero on the redundant rows.
+    """
+    expected = {
+        "M": (M, (N_DOF, N_DOF)),
+        "Phi_q": (Phi_q, (N_CONSTRAINTS, N_DOF)),
+        "rhs_dyn": (rhs_dyn, (N_DOF,)),
+        "rhs_constraint": (rhs_constraint, (N_CONSTRAINTS,)),
+    }
+    for name, (value, shape) in expected.items():
+        if value.shape != shape:
+            raise ValueError(f"{name} must have shape {shape}, got {value.shape}")
+        if not np.all(np.isfinite(value)):
+            raise ValueError(f"{name} must be finite")
+
+    rows = list(INDEPENDENT_CLOSURE_ROWS)
+    closure = Phi_q[rows]
+    singular_values = np.linalg.svd(closure, compute_uv=False)
+    if not singular_values[-1] > CLOSURE_RANK_RTOL * singular_values[0]:
+        raise ValueError(
+            "independent closure rows lost rank (kinematic singularity): "
+            f"singular values {singular_values}"
+        )
+
+    n_rows = len(rows)
+    kkt = np.zeros((N_DOF + n_rows, N_DOF + n_rows))
+    kkt[:N_DOF, :N_DOF] = M
+    kkt[:N_DOF, N_DOF:] = closure.T
+    kkt[N_DOF:, :N_DOF] = closure
+    rhs = np.concatenate([rhs_dyn, rhs_constraint[rows]])
+    solution = np.linalg.lstsq(kkt, rhs, rcond=None)[0]
+
+    lambda_forces = np.zeros(N_CONSTRAINTS)
+    lambda_forces[rows] = solution[N_DOF:]
+    return solution[:N_DOF], lambda_forces
+
 
 def _solve_constrained_dynamics(
     state: State,
@@ -64,9 +133,10 @@ def _solve_constrained_dynamics(
 ) -> tuple[np.ndarray, np.ndarray]:
     """Solve the augmented KKT system for accelerations and multipliers.
 
-    Solves the KKT system:
-        [M    Phi_q^T] [qddot ] = [tau + tau_f - C - G               ]
-        [Phi_q  0    ] [lambda ] = [-gamma - 2*alpha*Phi_dot - beta^2*Phi]
+    Solves the KKT system on the independent closure rows ``r``
+    (``INDEPENDENT_CLOSURE_ROWS``):
+        [M       Phi_q[r]^T] [qddot   ] = [tau + tau_f - C - G                  ]
+        [Phi_q[r]  0       ] [lambda_r] = [(-gamma - 2*alpha*Phi_dot - beta^2*Phi)[r]]
 
     Parameters
     ----------
@@ -82,7 +152,8 @@ def _solve_constrained_dynamics(
     Returns
     -------
     tuple[np.ndarray, np.ndarray]
-        Joint accelerations and constraint multipliers.
+        Joint accelerations and constraint multipliers (zero on the
+        redundant closure rows on the Python path).
     """
     if not (state.shape == (2 * N_DOF,)):
         raise ValueError(f"State shape must be ({2 * N_DOF},)")
@@ -137,28 +208,7 @@ def _solve_constrained_dynamics(
     # Baumgarte RHS
     rhs_constraint = -gamma - 2.0 * alpha * Phi_dot - beta**2 * Phi
 
-    # Assemble KKT system
-    n = N_DOF
-    m = N_CONSTRAINTS
-    KKT = np.zeros((n + m, n + m))
-    KKT[:n, :n] = M
-    KKT[:n, n:] = Phi_q.T
-    KKT[n:, :n] = Phi_q
-
-    rhs = np.zeros(n + m)
-    rhs[:n] = rhs_dyn
-    rhs[n:] = rhs_constraint
-
-    # Solve KKT system
-    try:
-        sol = np.linalg.solve(KKT, rhs)
-    except np.linalg.LinAlgError:
-        logger.warning("KKT system singular, falling back to least-squares solver")
-        # Fallback: use least-squares if KKT is singular
-        sol, _, _, _ = np.linalg.lstsq(KKT, rhs, rcond=None)
-
-    qddot = sol[:n]
-    lambda_forces = sol[n:]
+    qddot, lambda_forces = _solve_independent_kkt(M, Phi_q, rhs_dyn, rhs_constraint)
 
     if not (np.all(np.isfinite(qddot))):
         raise ValueError(f"qddot has non-finite values: {qddot}")
