@@ -1561,6 +1561,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5630 · Label Movement_Optimizer.Spine_Loads as a Planar Ergonomic L5/S1 Estimate, Document UD ADR 0055 Sign Conventions, Add MODEL_METADATA and to_Adr0055_Ap_Shear
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5630
+- **Branch:** merged via #5634
+- **PR:** #5634
+- **Paths:** see #5634
+- **Started:** 2026-10-16
+- **Last verified:** 2026-10-16 (`432c5bcb`; collated from changes/5630-spine-loads-planar-label.md)
+- **Summary:** Label movement_optimizer.spine_loads as a planar ergonomic L5/S1 estimate, document UD ADR 0055 sign conventions, add MODEL_METADATA and to_adr0055_ap_shear
+- **Next step:** Shipped in PR #5634.
+
 ### DL-#5632 · Security Dependency Upgrades: Patch/Minor Lockfile Bumps for Open Dependabot Alerts in Uv.Lock and 12 Npm Lockfiles (Major-Only Fixes Deferred)
 
 - **State:** shipped
