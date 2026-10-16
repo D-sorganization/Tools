@@ -108,6 +108,7 @@ src/shared/python/ai/tools/cli_tools.py
 src/shared/python/ai/types.py
 src/shared/python/calc_backend/tests/test_calc_backend.py
 src/shared/python/calc_backend/tests/test_calc_backend_gaps.py
+src/shared/python/chat/_chat_dock_widget_qt.py
 src/shared/python/contracts.py
 src/shared/python/data_processing/processor.py
 src/shared/python/data_processing/tests/test_processor.py
