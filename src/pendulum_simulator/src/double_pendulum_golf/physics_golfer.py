@@ -67,6 +67,7 @@ Coordinate convention:
 
 from __future__ import annotations
 
+import math
 from collections.abc import Callable
 from dataclasses import dataclass
 from typing import Any
@@ -88,7 +89,9 @@ class GolferParams:
 
     Contract:
         - All lengths and masses must be strictly positive.
-        - Gravity must be non-negative.
+        - Gravity must be finite and non-negative.  The default is
+          ``GRAVITY_MSS`` (9.81); UpstreamDrift defaults to standard gravity
+          (9.80665), and aligning them is pending an owner decision (#5635).
         - Grip offsets must be non-negative and sum ≤ club length.
     """
 
@@ -177,8 +180,8 @@ class GolferParams:
             raise ValueError("grip_right must be ≤ L_club")
         if not (self.grip_left <= self.L_club):
             raise ValueError("grip_left must be ≤ L_club")
-        if not (self.g >= 0):
-            raise ValueError(f"g must be non-negative, got {self.g}")
+        if not (math.isfinite(self.g) and self.g >= 0):
+            raise ValueError(f"g must be finite and non-negative, got {self.g}")
         if not (self.m_clubhead >= 0):
             raise ValueError(f"m_clubhead must be non-negative, got {self.m_clubhead}")
 

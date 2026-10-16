@@ -6134,10 +6134,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 11899,
+      "bytes_lf": 14249,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "d614e8feca73a4e6b30b51408bd1adcb6842b2de19de65f139737196731e8611",
+      "content_sha256_lf": "b872706aa09ff1d80de68ec62008dc8f9687e6414fdf332f38843a0126f49b26",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-CONSTRAINT-SOLVER-PY-45AB7F5B0C10",
       "language": "python",
@@ -6175,6 +6175,11 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "CLOSURE_RANK_RTOL",
+            "signature": null
+          },
           {
             "kind": "constant",
             "name": "DEFAULT_ALPHA",
@@ -6534,10 +6539,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 10337,
+      "bytes_lf": 11070,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "cc9e28fb1f07c63370fb4906b05d6e655395f6772ccbd60826d7c2faa93627d1",
+      "content_sha256_lf": "fc6759d0119eb49bfbe6831fc2c5aa4a0575eb0ed3b0a02e4e5ac84750babf6c",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-GOLFER-CONSTRAINTS-PY-8B32A7C270FB",
       "language": "python",
@@ -6575,6 +6580,11 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "INDEPENDENT_CLOSURE_ROWS",
+            "signature": null
+          },
           {
             "kind": "function",
             "name": "analytical_constraint_jacobian",
@@ -11571,10 +11581,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 10879,
+      "bytes_lf": 11109,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "6f93887b05037f90065b7f0a2f11111780c57ae84d4c3d124670ceb596c4b4ca",
+      "content_sha256_lf": "7bf940e2d240b572a448fb2170aa47089e6e244d94359eb4f392a8e79cc4f485",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-PHYSICS-GOLFER-PY-D3E86CF11F99",
       "language": "python",
