@@ -75,19 +75,16 @@ ROOT_ALLOWLIST: frozenset[str] = frozenset(
         "benchmarks",
         "build_hooks.py",  # hatch build hooks referenced from pyproject.toml
         "changes",  # RM-5 change fragments for monotonic changelog collation
-        "commit_screensaver.py",  # root tool entry point
         "config",
         "conftest.py",
         "convert_tools_icon.py",  # generates assets/tools_icon*.ico
         "create_launcher_shortcut.ps1",
         "create_launcher_shortcut_png.ps1",
-        "create_requested_shortcuts.ps1",
         "deploy",
         "docker-compose.yml",
         "docs",
         "drafts",  # Jules-Code-Quality-Reviewer.yml is cited by docs/assessments
         "examples",
-        "generate_real_assessments.py",
         "helm",
         "launch.py",
         "launch_signal_toolkit.py",

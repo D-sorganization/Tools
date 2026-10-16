@@ -111,8 +111,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "441f7de7caf3c9e976391ab23d4e6599fb0c8aa4244e439525c015989ed3354b",
-      "entry_count": 17,
+      "content_sha256_lf": "917613848274665346945b8f6cf47846123ad3c45cfb952f8f89d3dde5213e4a",
+      "entry_count": 14,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
@@ -159,7 +159,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "fad45abe5eefa97f28eba6c7cd9a3e782082f5a3f9bbb0689c3e48a06ddb605a",
+      "content_sha256_lf": "a1bdb096726f3614714f17e92e47728e464a8db81a44807fa138b131489d385f",
       "entry_count": 116,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
