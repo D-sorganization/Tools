@@ -1776,10 +1776,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 17905,
+      "bytes_lf": 10933,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "3c939e9f4eb7e694715913be47463bb179bf7a5f02a11837434227e8b2eab0fd",
+      "content_sha256_lf": "f411fe2a6ac276329b90723b7dfbf11188edd3efabb5a9a9afd72b7fdbb53bbc",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-CORE-SRC-GOLFER-CONSTRAINTS-RS-E390502D8CB2",
       "language": "rust",
@@ -1801,7 +1801,7 @@
         "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
-        "routes": "not-applicable",
+        "routes": "mapped",
         "tests": "mapped",
         "units": "mapped",
         "validation": "unavailable"
@@ -1815,7 +1815,9 @@
         "chapter_paths": [],
         "citation_refs": [],
         "equation_refs": [],
-        "public_routes": [],
+        "public_routes": [
+          "golfer_constraints_tests.rs"
+        ],
         "public_surfaces": [
           {
             "kind": "const",
@@ -1866,6 +1868,56 @@
           "N",
           "g",
           "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 6344,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "e76b015a5453b49202338c4d7dc4c41e804054df29c76abf7676b92eace5e204",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-CORE-SRC-GOLFER-CONSTRAINTS-TESTS-RS-7400F1EE9D05",
+      "language": "rust",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/pendulum-core/src/golfer_constraints_tests.rs",
+      "purpose": null,
+      "review_status": "review-required",
+      "risk_tags": [
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [
+          "J",
+          "g"
         ],
         "validation_paths": []
       }

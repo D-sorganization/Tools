@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-16 | #5644 | Rust golfer solver (pendulum-core) is now the same solver as Python for issue #5638: closure equations, INDEPENDENT_CLOSURE_ROWS=(0,1) exposed to Python, zero multipliers on redundant rows 2-3, typed rank-loss ValueError, analytical Jacobian, 2*alpha/beta^2 Baumgarte, hub/gravity/Coriolis parity; adds Rust-vs-Python parity tests and splits golfer_constraints tests into golfer_constraints_tests.rs |
 | 2026-10-16 | #5639 | chore: remove committed clutter (unused root scripts, empty issue template) |
 | 2026-10-16 | #5637 | Golfer constraint solver solves the KKT system on INDEPENDENT_CLOSURE_ROWS=(0,1) only (min-norm lstsq), zero multipliers on redundant rows 2-3, raises ValueError on rank loss; GolferParams.g default kept at 9.81 pending owner decision and now rejects non-finite g |
 | 2026-10-16 | #5642 | Split ChatDockWidget into StreamingMixin, TerminalModeMixin and MessagingMixin under chat/_qt so the dock module stays under 1200 lines for the UpstreamDrift child copy; public import path and behaviour unchanged |
