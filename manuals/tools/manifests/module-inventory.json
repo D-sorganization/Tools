@@ -129,7 +129,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
     },
     {
-      "content_sha256_lf": "e09c226142dda11e4b04563cda0c44393b2809177277ee2f9dee9afaf265ab79",
+      "content_sha256_lf": "96edfd9ad7c13c5e4aa9a798cf2925b6a0653214debbf690849123d2eb515370",
       "entry_count": 5,
       "package": "rust_core/file_watcher",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
@@ -393,8 +393,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
     {
-      "content_sha256_lf": "4d1357803f54b5cc354168e9ee406c86caa22d8516fb98b5a2b4a928bd8fff04",
-      "entry_count": 169,
+      "content_sha256_lf": "2f5f1b9c9a2c0f56015ec522e6ddc89bf267268f2c9a63c267dbb8bfca95d044",
+      "entry_count": 170,
       "package": "src/pendulum_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pendulum-simulator.json"
     },

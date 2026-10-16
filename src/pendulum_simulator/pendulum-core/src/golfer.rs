@@ -22,10 +22,12 @@ pub fn forward_kinematics(q: &[f64; 8], params: &GolferParams) -> GolferFKResult
     let theta_hub = q[0];
     let theta_club = q[7];
 
-    // Hub center
+    // Hub center.  The standoff extends *upward* from the origin (inside the
+    // arm loop), parity with the Python model (`golfer_kinematics._hub_position`,
+    // #1103): hub = (-L sin(theta), +L cos(theta)).
     let hub_sin = theta_hub.sin();
     let hub_cos = theta_hub.cos();
-    let hub = Vec2::new(params.l_hub * hub_sin, -params.l_hub * hub_cos);
+    let hub = Vec2::new(-params.l_hub * hub_sin, params.l_hub * hub_cos);
 
     // Right shoulder
     let rs = hub.add(Vec2::new(params.d_rs * hub_cos, params.d_rs * hub_sin));
@@ -105,28 +107,28 @@ pub fn analytical_fk_jacobians(
 
     // Hub Jacobian
     let mut j_hub = SMatrix::<f64, 2, 8>::zeros();
-    j_hub[(0, 0)] = params.l_hub * hub_cos;
-    j_hub[(1, 0)] = params.l_hub * hub_sin;
+    j_hub[(0, 0)] = -params.l_hub * hub_cos;
+    j_hub[(1, 0)] = -params.l_hub * hub_sin;
     jacobians.insert("hub".to_string(), j_hub);
 
     // Right shoulder Jacobian
     let mut j_rs = SMatrix::<f64, 2, 8>::zeros();
-    j_rs[(0, 0)] = params.l_hub * hub_cos - params.d_rs * hub_sin;
-    j_rs[(1, 0)] = params.l_hub * hub_sin + params.d_rs * hub_cos;
+    j_rs[(0, 0)] = -params.l_hub * hub_cos - params.d_rs * hub_sin;
+    j_rs[(1, 0)] = -params.l_hub * hub_sin + params.d_rs * hub_cos;
     jacobians.insert("r_shoulder".to_string(), j_rs);
 
     // Left shoulder Jacobian
     let mut j_ls = SMatrix::<f64, 2, 8>::zeros();
-    j_ls[(0, 0)] = params.l_hub * hub_cos + params.d_ls * hub_sin;
-    j_ls[(1, 0)] = params.l_hub * hub_sin - params.d_ls * hub_cos;
+    j_ls[(0, 0)] = -params.l_hub * hub_cos + params.d_ls * hub_sin;
+    j_ls[(1, 0)] = -params.l_hub * hub_sin - params.d_ls * hub_cos;
     jacobians.insert("l_shoulder".to_string(), j_ls);
 
     // Right elbow Jacobian
     let mut j_re = SMatrix::<f64, 2, 8>::zeros();
     let cos_rs = theta_rs.cos();
     let sin_rs = theta_rs.sin();
-    j_re[(0, 0)] = params.l_hub * hub_cos - params.d_rs * hub_sin + params.l_r_upper * cos_rs;
-    j_re[(1, 0)] = params.l_hub * hub_sin + params.d_rs * hub_cos + params.l_r_upper * sin_rs;
+    j_re[(0, 0)] = -params.l_hub * hub_cos - params.d_rs * hub_sin + params.l_r_upper * cos_rs;
+    j_re[(1, 0)] = -params.l_hub * hub_sin + params.d_rs * hub_cos + params.l_r_upper * sin_rs;
     j_re[(0, 1)] = params.l_r_upper * cos_rs;
     j_re[(1, 1)] = params.l_r_upper * sin_rs;
     jacobians.insert("r_elbow".to_string(), j_re);
@@ -135,10 +137,10 @@ pub fn analytical_fk_jacobians(
     let mut j_rh = SMatrix::<f64, 2, 8>::zeros();
     let cos_re = theta_re.cos();
     let sin_re = theta_re.sin();
-    j_rh[(0, 0)] = params.l_hub * hub_cos - params.d_rs * hub_sin
+    j_rh[(0, 0)] = -params.l_hub * hub_cos - params.d_rs * hub_sin
         + params.l_r_upper * cos_rs
         + params.l_r_fore * cos_re;
-    j_rh[(1, 0)] = params.l_hub * hub_sin
+    j_rh[(1, 0)] = -params.l_hub * hub_sin
         + params.d_rs * hub_cos
         + params.l_r_upper * sin_rs
         + params.l_r_fore * sin_re;
@@ -152,8 +154,8 @@ pub fn analytical_fk_jacobians(
     let mut j_le = SMatrix::<f64, 2, 8>::zeros();
     let cos_ls = theta_ls.cos();
     let sin_ls = theta_ls.sin();
-    j_le[(0, 0)] = params.l_hub * hub_cos + params.d_ls * hub_sin + params.l_l_upper * cos_ls;
-    j_le[(1, 0)] = params.l_hub * hub_sin - params.d_ls * hub_cos + params.l_l_upper * sin_ls;
+    j_le[(0, 0)] = -params.l_hub * hub_cos + params.d_ls * hub_sin + params.l_l_upper * cos_ls;
+    j_le[(1, 0)] = -params.l_hub * hub_sin - params.d_ls * hub_cos + params.l_l_upper * sin_ls;
     j_le[(0, 4)] = params.l_l_upper * cos_ls;
     j_le[(1, 4)] = params.l_l_upper * sin_ls;
     jacobians.insert("l_elbow".to_string(), j_le);
@@ -162,11 +164,11 @@ pub fn analytical_fk_jacobians(
     let mut j_lh = SMatrix::<f64, 2, 8>::zeros();
     let cos_le = theta_le.cos();
     let sin_le = theta_le.sin();
-    j_lh[(0, 0)] = params.l_hub * hub_cos
+    j_lh[(0, 0)] = -params.l_hub * hub_cos
         + params.d_ls * hub_sin
         + params.l_l_upper * cos_ls
         + params.l_l_fore * cos_le;
-    j_lh[(1, 0)] = params.l_hub * hub_sin - params.d_ls * hub_cos
+    j_lh[(1, 0)] = -params.l_hub * hub_sin - params.d_ls * hub_cos
         + params.l_l_upper * sin_ls
         + params.l_l_fore * sin_le;
     j_lh[(0, 4)] = params.l_l_upper * cos_ls + params.l_l_fore * cos_le;
@@ -242,85 +244,66 @@ pub fn mass_matrix(q: &[f64; 8], params: &GolferParams) -> SMatrix<f64, 8, 8> {
     m
 }
 
-/// Compute the Coriolis vector C(q, qdot) = -dM/dt * qdot + M * d²/dt²(J) * qdot.
+/// Compute the Coriolis/centrifugal vector C(q, qdot).
 ///
-/// For now, we use a finite-difference approximation:
-/// C ≈ (M(q + eps*qdot) - M(q - eps*qdot)) / (2*eps) * qdot
+/// Parity with the Python model (`golfer_dynamics.analytical_coriolis`, #5638):
 ///
-/// This is slower but numerically robust. A more efficient analytical form would
-/// require computing all time derivatives of the Jacobians.
+/// ```text
+/// C_i = sum_jk 0.5 * (dM_ij/dq_k + dM_ik/dq_j - dM_ki/dq_j) * qdot_j * qdot_k
+/// ```
+///
+/// with `dM/dq_k` a forward difference (step `1e-7`) of the analytical mass
+/// matrix.  The Python contraction reads the third term as `dM_ki/dq_j`, which
+/// equals the second term for a symmetric `M`, so it reduces to
+/// `0.5 * dM_ij/dq_k` rather than the textbook Christoffel symbol.  That is a
+/// pre-existing defect shared by both backends (tracked separately); it is
+/// reproduced here on purpose so the two backends stay one solver.
 pub fn coriolis(q: &[f64; 8], qdot: &[f64; 8], params: &GolferParams) -> SVector<f64, 8> {
     let eps = 1e-7;
 
-    let mut q_plus = [0.0; 8];
-    let mut q_minus = [0.0; 8];
+    let m0 = mass_matrix(q, params);
+    let qdot_vec = SVector::<f64, 8>::from_row_slice(qdot);
 
-    for i in 0..8 {
-        q_plus[i] = q[i] + eps * qdot[i];
-        q_minus[i] = q[i] - eps * qdot[i];
+    let mut c = SVector::<f64, 8>::zeros();
+    for k in 0..8 {
+        let mut q_plus = *q;
+        q_plus[k] += eps;
+        let dm_dqk = (mass_matrix(&q_plus, params) - m0) / eps;
+        // sum_j 0.5 * dM_ij/dq_k * qdot_j, weighted by qdot_k
+        c += 0.5 * qdot[k] * (dm_dqk * qdot_vec);
     }
-
-    let m_plus = mass_matrix(&q_plus, params);
-    let m_minus = mass_matrix(&q_minus, params);
-
-    let dm_dqdot = (m_plus - m_minus) / (2.0 * eps);
-
-    -dm_dqdot * SVector::<f64, 8>::from_row_slice(qdot)
+    c
 }
 
-/// Compute the gravity vector G(q).
+/// Compute the gravity vector G(q) = dV/dq.
 ///
-/// G_i = -Σ_j (m_j * g) * (∂y_j / ∂q_i)
-/// where y_j is the vertical (y-axis) position of mass j.
+/// ```text
+/// V = sum_j m_j * g * y_j        =>   G_i = sum_j m_j * g * dy_j/dq_i
+/// ```
+///
+/// where `y_j` is the vertical (y-axis) position of mass `j`.  The equations of
+/// motion are `M a + C + G = tau + Phi_q^T lambda`, so `G` enters the
+/// right-hand side as `-G`.
 pub fn gravity_vector(q: &[f64; 8], params: &GolferParams) -> SVector<f64, 8> {
     let jacobians = analytical_fk_jacobians(q, params);
+    let masses = [
+        ("hub", params.m_hub),
+        ("r_elbow", params.m_r_upper),
+        ("r_wrist", params.m_r_fore),
+        ("l_elbow", params.m_l_upper),
+        ("l_wrist", params.m_l_fore),
+        ("club_com", params.m_club),
+        ("club_tip", params.m_clubhead),
+    ];
+
     let mut g = SVector::<f64, 8>::zeros();
-
-    // For each mass point, extract the vertical component of its Jacobian
-    // and add -m_j * g * J_y to the gravity vector
-
-    if let Some(j) = jacobians.get("hub") {
-        for i in 0..8 {
-            g[i] -= params.m_hub * params.g * j[(1, i)];
+    for (name, mass) in masses {
+        if let Some(j) = jacobians.get(name) {
+            for i in 0..8 {
+                g[i] += mass * params.g * j[(1, i)];
+            }
         }
     }
-
-    if let Some(j) = jacobians.get("r_elbow") {
-        for i in 0..8 {
-            g[i] -= params.m_r_upper * params.g * j[(1, i)];
-        }
-    }
-
-    if let Some(j) = jacobians.get("r_wrist") {
-        for i in 0..8 {
-            g[i] -= params.m_r_fore * params.g * j[(1, i)];
-        }
-    }
-
-    if let Some(j) = jacobians.get("l_elbow") {
-        for i in 0..8 {
-            g[i] -= params.m_l_upper * params.g * j[(1, i)];
-        }
-    }
-
-    if let Some(j) = jacobians.get("l_wrist") {
-        for i in 0..8 {
-            g[i] -= params.m_l_fore * params.g * j[(1, i)];
-        }
-    }
-
-    if let Some(j) = jacobians.get("club_com") {
-        for i in 0..8 {
-            g[i] -= params.m_club * params.g * j[(1, i)];
-        }
-    }
-
-    if let Some(j) = jacobians.get("club_tip") {
-        for i in 0..8 {
-            g[i] -= params.m_clubhead * params.g * j[(1, i)];
-        }
-    }
-
     g
 }
 
@@ -337,62 +320,79 @@ pub fn friction_torque(qdot: &[f64; 8], params: &GolferParams) -> SVector<f64, 8
     f
 }
 
-/// Compute the 4-dimensional constraint vector Φ(q).
+/// Rows of [`constraint_vector`] that form an independent closure (#5635,
+/// #5638): the left-wrist pin residual in the world frame.
 ///
-/// Constraints:
-/// 1. Right wrist constrained to left wrist (hands grip club together)
-/// 2. Left hand position on club shaft
+/// Rows 2-3 are the same residual expressed in the club frame, so they add no
+/// rank on the constraint manifold and off it differ from rows 0-1 only by a
+/// term proportional to `Phi`.  The KKT solver builds its system from these
+/// rows only.  This is the single Rust definition; the Python solver keeps its
+/// own copy (`golfer_constraints.INDEPENDENT_CLOSURE_ROWS`) and the parity
+/// tests assert the two are equal (exposed to Python as
+/// `golfer_independent_closure_rows`).
+pub const INDEPENDENT_CLOSURE_ROWS: [usize; 2] = [0, 1];
+
+/// Number of closure equations in [`constraint_vector`].
+pub const N_CONSTRAINTS: usize = 4;
+
+/// Evaluate the 4 loop-closure equations (parity with Python
+/// `golfer_constraints.constraint_vector`, #5638).
+///
+/// With `d = (sin th_club, -cos th_club)` the club direction,
+/// `n = (cos th_club, sin th_club)` its perpendicular and
+/// `s = grip_left - grip_right` the signed grip separation:
+///
+/// ```text
+/// Phi[0:2] = LH - (RH + s d)          (world frame)
+/// Phi[2]   = (LH - RH) . n            (perpendicular offset)
+/// Phi[3]   = (LH - RH) . d - s        (along-club offset)
+/// ```
+///
+/// The club is anchored at the right wrist, so rows 2-3 restate rows 0-1 in
+/// the club frame: only [`INDEPENDENT_CLOSURE_ROWS`] are independent.
 pub fn constraint_vector(q: &[f64; 8], params: &GolferParams) -> SVector<f64, 4> {
     let fk = forward_kinematics(q, params);
+    let (sin_club, cos_club) = q[7].sin_cos();
+    let club_dir = Vec2::new(sin_club, -cos_club);
+    let club_perp = Vec2::new(cos_club, sin_club);
+    let grip_sep = params.grip_left - params.grip_right;
 
-    let rh_x = fk.r_wrist.0;
-    let rh_y = fk.r_wrist.1;
-    let lh_x = fk.l_wrist.0;
-    let lh_y = fk.l_wrist.1;
+    let rh_to_lh = Vec2::new(fk.l_wrist.0 - fk.r_wrist.0, fk.l_wrist.1 - fk.r_wrist.1);
 
-    let club_base_x = fk.club_base.0;
-    let club_base_y = fk.club_base.1;
-    let club_tip_x = fk.club_tip.0;
-    let club_tip_y = fk.club_tip.1;
-
-    // Constraint 1 & 2: Right and left hands at the same location
-    let c1 = rh_x - lh_x;
-    let c2 = rh_y - lh_y;
-
-    // Constraint 3 & 4: Left hand on club shaft (parameterized by grip_left offset)
-    // Left hand should be at: club_base + grip_left * (unit vector along shaft)
-    let club_dx = club_tip_x - club_base_x;
-    let club_dy = club_tip_y - club_base_y;
-    let club_len_sq = club_dx * club_dx + club_dy * club_dy;
-    let club_len = club_len_sq.sqrt();
-
-    let expected_lh_x = club_base_x + (params.grip_left / club_len) * club_dx;
-    let expected_lh_y = club_base_y + (params.grip_left / club_len) * club_dy;
-
-    let c3 = lh_x - expected_lh_x;
-    let c4 = lh_y - expected_lh_y;
-
-    SVector::<f64, 4>::new(c1, c2, c3, c4)
+    SVector::<f64, 4>::new(
+        rh_to_lh.x - grip_sep * club_dir.x,
+        rh_to_lh.y - grip_sep * club_dir.y,
+        rh_to_lh.x * club_perp.x + rh_to_lh.y * club_perp.y,
+        rh_to_lh.x * club_dir.x + rh_to_lh.y * club_dir.y - grip_sep,
+    )
 }
 
-/// Compute the 4x8 constraint Jacobian ∂Φ/∂q.
+/// Analytical 4x8 closure Jacobian `dPhi/dq` (parity with Python
+/// `golfer_constraints.analytical_constraint_jacobian`, #5638).
 pub fn constraint_jacobian(q: &[f64; 8], params: &GolferParams) -> SMatrix<f64, 4, 8> {
-    let eps = 1e-7;
+    let jacobians = analytical_fk_jacobians(q, params);
+    let j_rel = jacobians["l_wrist"] - jacobians["r_wrist"]; // d(LH - RH)/dq, 2x8
 
-    let phi_q = constraint_vector(q, params);
+    let fk = forward_kinematics(q, params);
+    let (sin_club, cos_club) = q[7].sin_cos();
+    let club_dir = SVector::<f64, 2>::new(sin_club, -cos_club);
+    let club_perp = SVector::<f64, 2>::new(cos_club, sin_club);
+    let d_club_dir = SVector::<f64, 2>::new(cos_club, sin_club); // d(club_dir)/d(th_club)
+    let d_club_perp = SVector::<f64, 2>::new(-sin_club, cos_club);
+    let grip_sep = params.grip_left - params.grip_right;
+    let rh_to_lh = SVector::<f64, 2>::new(fk.l_wrist.0 - fk.r_wrist.0, fk.l_wrist.1 - fk.r_wrist.1);
 
     let mut jac = SMatrix::<f64, 4, 8>::zeros();
-
-    for j in 0..8 {
-        let mut q_pert = *q;
-        q_pert[j] += eps;
-        let phi_pert = constraint_vector(&q_pert, params);
-
-        for i in 0..4 {
-            jac[(i, j)] = (phi_pert[i] - phi_q[i]) / eps;
-        }
+    for col in 0..8 {
+        jac[(0, col)] = j_rel[(0, col)];
+        jac[(1, col)] = j_rel[(1, col)];
+        jac[(2, col)] = club_perp.dot(&j_rel.column(col));
+        jac[(3, col)] = club_dir.dot(&j_rel.column(col));
     }
-
+    jac[(0, 7)] -= grip_sep * d_club_dir[0];
+    jac[(1, 7)] -= grip_sep * d_club_dir[1];
+    jac[(2, 7)] += rh_to_lh.dot(&d_club_perp);
+    jac[(3, 7)] += rh_to_lh.dot(&d_club_dir);
     jac
 }
 
@@ -427,9 +427,9 @@ mod tests {
         let q = [0.0; 8]; // All angles zero
         let fk = forward_kinematics(&q, &params);
 
-        // Hub should be at (0, -l_hub)
+        // Hub extends upward from the origin (Python parity, #1103/#5638)
         assert!((fk.hub.0).abs() < 1e-10);
-        assert!((fk.hub.1 + params.l_hub).abs() < 1e-10);
+        assert!((fk.hub.1 - params.l_hub).abs() < 1e-10);
     }
 
     #[test]
@@ -655,9 +655,9 @@ mod tests {
 
     #[test]
     fn test_constraint_jacobian_matches_central_difference_of_constraint_vector() {
-        // The closure Jacobian is a forward difference (eps = 1e-7, O(eps)
-        // truncation ~ 1e-7 * |Phi''| ~ 1e-7); compare to a central difference
-        // of Phi with a 1e-5 tolerance (>> 1e-7 truncation, << O(0.1) bugs).
+        // The closure Jacobian is analytical (#5638, parity with Python
+        // `analytical_constraint_jacobian`), so it must match a central
+        // difference of Phi to the same FD_TOL as the FK Jacobians.
         for grip_right in [0.3, -0.2] {
             let params = params_with_grip_right(grip_right);
             for q in NON_TRIVIAL_CONFIGS {
@@ -671,7 +671,7 @@ mod tests {
                         / (2.0 * FD_STEP);
                     for row in 0..4 {
                         assert!(
-                            (jac[(row, col)] - d[row]).abs() < 1e-5,
+                            (jac[(row, col)] - d[row]).abs() < FD_TOL,
                             "Phi[{row}] d/dq{col}: {} vs {}",
                             jac[(row, col)],
                             d[row]
@@ -680,5 +680,57 @@ mod tests {
                 }
             }
         }
+    }
+
+    fn potential_energy(q: &[f64; 8], params: &GolferParams) -> f64 {
+        let fk = forward_kinematics(q, params);
+        params.g
+            * (params.m_hub * fk.hub.1
+                + params.m_r_upper * fk.r_elbow.1
+                + params.m_r_fore * fk.r_wrist.1
+                + params.m_l_upper * fk.l_elbow.1
+                + params.m_l_fore * fk.l_wrist.1
+                + params.m_club * fk.club_com.1
+                + params.m_clubhead * fk.club_tip.1)
+    }
+
+    #[test]
+    fn test_gravity_vector_is_the_potential_gradient() {
+        // G = dV/dq (the EOM is M a + C + G = tau + Phi_q^T lambda).  Before
+        // #5638 the sign was inverted, so a Rust-backed solve was anti-gravity.
+        let params = params_with_grip_right(0.3);
+        for q in NON_TRIVIAL_CONFIGS {
+            let g = gravity_vector(&q, &params);
+            for col in 0..8 {
+                let mut qp = q;
+                let mut qm = q;
+                qp[col] += FD_STEP;
+                qm[col] -= FD_STEP;
+                let d = (potential_energy(&qp, &params) - potential_energy(&qm, &params))
+                    / (2.0 * FD_STEP);
+                assert!(
+                    (g[col] - d).abs() < 1e-6,
+                    "G[{col}] = {} vs dV/dq = {d}",
+                    g[col]
+                );
+            }
+        }
+    }
+
+    #[test]
+    fn test_constraint_vector_vanishes_on_the_closed_loop() {
+        // Place the left wrist exactly at RH + (grip_left - grip_right) * dir:
+        // all four closure rows must vanish (rows 2-3 restate rows 0-1).
+        let params = params_with_grip_right(0.05);
+        let q = NON_TRIVIAL_CONFIGS[0];
+        let phi = constraint_vector(&q, &params);
+        let fk = forward_kinematics(&q, &params);
+        let sep = params.grip_left - params.grip_right;
+        let (s, c) = q[7].sin_cos();
+        let expected_row0 = fk.l_wrist.0 - (fk.r_wrist.0 + sep * s);
+        let expected_row1 = fk.l_wrist.1 - (fk.r_wrist.1 - sep * c);
+        assert!((phi[0] - expected_row0).abs() < 1e-12);
+        assert!((phi[1] - expected_row1).abs() < 1e-12);
+        assert_eq!(INDEPENDENT_CLOSURE_ROWS, [0, 1]);
     }
 }
