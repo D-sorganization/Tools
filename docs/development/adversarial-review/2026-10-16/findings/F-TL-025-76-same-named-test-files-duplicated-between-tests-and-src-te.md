@@ -51,10 +51,15 @@ Risk of dropping a unique case when merging pairs; review each pair diff. Rollba
 
 ## Handoff
 
-Follow-ups: F-TL-026 for strengthening the surviving assertions.
+- **Branch, commit, and pull request:** `<branch>` @ `<commit>` — PR #<n> (fill in when opened)
+- **Validation:** the command(s) under _Verification_ above, run locally and green; plus the repo's fast gates
+  (`ruff check`, `ruff format --check`, the relevant `-m unit` subset)
+- **Blockers:** none known at drafting time — record any that appear
+- **Next step:** open the PR against `main`, arm auto-merge with `scripts/automerge_guard.py`, end the session
+- **Follow-ups:** Follow-ups: F-TL-026 for strengthening the surviving assertions.
 
 Refs: adversarial review 2026-10-16, F-TL-025
 
 ---
 
-_Generated 2026-10-16 from an adversarial review of `Tools` @ `b630cd3`. This is a proposal, not a verdict — verify the cited lines before acting._
+_Generated 2026-10-16 from an adversarial review of `Tools` @ `b630cd3c`. This is a proposal, not a verdict — verify the cited lines before acting._

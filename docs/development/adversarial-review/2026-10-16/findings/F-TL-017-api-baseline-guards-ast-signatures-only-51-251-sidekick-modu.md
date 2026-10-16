@@ -58,10 +58,15 @@ The first run will fail until the 51 unguarded modules are fixed, so land the te
 
 ## Handoff
 
-Follow-ups: golden tests can land per calculator after F-TL-001..006.
+- **Branch, commit, and pull request:** `<branch>` @ `<commit>` — PR #<n> (fill in when opened)
+- **Validation:** the command(s) under _Verification_ above, run locally and green; plus the repo's fast gates
+  (`ruff check`, `ruff format --check`, the relevant `-m unit` subset)
+- **Blockers:** none known at drafting time — record any that appear
+- **Next step:** open the PR against `main`, arm auto-merge with `scripts/automerge_guard.py`, end the session
+- **Follow-ups:** Follow-ups: golden tests can land per calculator after F-TL-001..006.
 
 Refs: adversarial review 2026-10-16, F-TL-017
 
 ---
 
-_Generated 2026-10-16 from an adversarial review of `Tools` @ `b630cd3`. This is a proposal, not a verdict — verify the cited lines before acting._
+_Generated 2026-10-16 from an adversarial review of `Tools` @ `b630cd3c`. This is a proposal, not a verdict — verify the cited lines before acting._

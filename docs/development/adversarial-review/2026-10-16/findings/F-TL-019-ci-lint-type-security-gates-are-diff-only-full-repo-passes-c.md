@@ -50,10 +50,15 @@ A future ruff bump will surface violations immediately, which is the intent. Rol
 
 ## Handoff
 
-Follow-ups: nested `src/folder_tool/ruff.toml` violations under ruff 0.16.8 (47 errors, 72 format diffs).
+- **Branch, commit, and pull request:** `<branch>` @ `<commit>` — PR #<n> (fill in when opened)
+- **Validation:** the command(s) under _Verification_ above, run locally and green; plus the repo's fast gates
+  (`ruff check`, `ruff format --check`, the relevant `-m unit` subset)
+- **Blockers:** none known at drafting time — record any that appear
+- **Next step:** open the PR against `main`, arm auto-merge with `scripts/automerge_guard.py`, end the session
+- **Follow-ups:** Follow-ups: nested `src/folder_tool/ruff.toml` violations under ruff 0.16.8 (47 errors, 72 format diffs).
 
 Refs: adversarial review 2026-10-16, F-TL-019
 
 ---
 
-_Generated 2026-10-16 from an adversarial review of `Tools` @ `b630cd3`. This is a proposal, not a verdict — verify the cited lines before acting._
+_Generated 2026-10-16 from an adversarial review of `Tools` @ `b630cd3c`. This is a proposal, not a verdict — verify the cited lines before acting._
