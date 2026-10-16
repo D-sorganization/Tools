@@ -165,10 +165,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 62406,
+      "bytes_lf": 34129,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "5f02597c1e89aaeb8a7ace056952d7506bd40182495382019ceee206152926cf",
+      "content_sha256_lf": "b0c6bc5821dd5f2301ed4964d6c5fd1c6f70ae3595799133b4a3b65bdc579fcf",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-CHAT-DOCK-WIDGET-QT-PY-DD8B1382BB92",
       "language": "python",
@@ -255,6 +255,7 @@
           "src/shared/python/chat/tests/test_chat.py",
           "tests/shared/python/chat/test_chat_agent_label.py",
           "tests/shared/python/chat/test_chat_chunk_batching.py",
+          "tests/shared/python/chat/test_chat_dock_split_contract.py",
           "tests/shared/python/chat/test_chat_dock_view_state.py",
           "tests/shared/python/chat/test_chat_dock_widget.py",
           "tests/shared/python/chat/test_chat_input_keybindings.py",
@@ -277,6 +278,7 @@
           "s"
         ],
         "validation_paths": [
+          "tests/shared/python/chat/test_chat_dock_split_contract.py",
           "tests/shared/python/chat/test_native_websocket_contract.py"
         ]
       }
@@ -647,6 +649,61 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 8839,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "00ee96223065bd8029ab25dc11f9431ab66fd4be0e84b585b6b9487a04561e5b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-QT-MESSAGING-PY-75F0D893F0A0",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/_qt/messaging.py",
+      "purpose": "Messaging, input affordances, export and session helpers for the chat dock.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "MessagingMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 7360,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -782,6 +839,60 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 15452,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c0e1a54d185d613efb96a9e90313ccc59532575edc1882f5c27a6140beabc983",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-QT-STREAMING-PY-FCC8B7D7FEF0",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/_qt/streaming.py",
+      "purpose": "Streaming, send-button, queue and slash-command behaviour for the chat dock.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "StreamingMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1057,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -829,6 +940,60 @@
         ],
         "test_paths": [],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6389,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "180eb678d9a535cc95ed4af22850ebcf854816a17ed84af8380a0e14cac69344",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-QT-TERMINAL-MODE-PY-3E25DA38C028",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/chat/_qt/terminal_mode.py",
+      "purpose": "Terminal-mode controls for the chat dock.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "TerminalModeMixin",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "s"
+        ],
         "validation_paths": []
       }
     },

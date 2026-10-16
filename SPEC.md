@@ -5949,6 +5949,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 | ---------- | ---------- | ---------- |
 | 2026-10-16 | #5639 | chore: remove committed clutter (unused root scripts, empty issue template) |
 | 2026-10-16 | #5637 | Golfer constraint solver solves the KKT system on INDEPENDENT_CLOSURE_ROWS=(0,1) only (min-norm lstsq), zero multipliers on redundant rows 2-3, raises ValueError on rank loss; GolferParams.g default kept at 9.81 pending owner decision and now rejects non-finite g |
+| 2026-10-16 | #5642 | Split ChatDockWidget into StreamingMixin, TerminalModeMixin and MessagingMixin under chat/_qt so the dock module stays under 1200 lines for the UpstreamDrift child copy; public import path and behaviour unchanged |
 | 2026-10-16 | #5634 | Label movement_optimizer.spine_loads as a planar ergonomic L5/S1 estimate, document UD ADR 0055 sign conventions, add MODEL_METADATA and to_adr0055_ap_shear |
 | 2026-10-15 | #5632 | Security dependency upgrades: patch/minor lockfile bumps for open Dependabot alerts in uv.lock and 12 npm lockfiles (major-only fixes deferred) |
 | 2026-10-15 | #5627 | Fix pendulum-core golfer club Jacobians: correct club-angle y sign and remove club terms from the hub-angle column; add central-difference FK/Jacobian consistency tests |
