@@ -133,21 +133,24 @@ def build_constraints(
     t_eval: NDArray,
     dynamics: PhysicsBackend,
     bar_mass: float,
-    inner_heel: float,
-    inner_toe: float,
     q_bounds: NDArray,
     body: BodyModel,
+    *,
+    clearance_t_eval: NDArray | None = None,
 ) -> list[dict]:
     """Build the SLSQP inequality constraint list.
 
     Bench press exercises omit COM/balance constraints because the lifter
     is lying on a bench, not standing.
 
-    Pulling exercises (deadlift, clean, snatch) add bar-knee clearance.
+    Pulling exercises (deadlift, clean, snatch) add bar-knee clearance,
+    evaluated on *clearance_t_eval* (default: all of *t_eval*) so a lift
+    whose bar goes overhead can end it once the bar is above the knees.
+    The COM bounds are the inner base of support of *body*.
 
     Preconditions:
         exercise_type is a known exercise string.
-        inner_heel <= inner_toe.
+        body.inner_heel <= body.inner_toe.
 
     Complexity:
         O(1) time and memory; the returned callables do the O(N * D) work when
@@ -172,8 +175,8 @@ def build_constraints(
                     dynamics,
                     exercise_type,
                     bar_mass,
-                    inner_heel,
-                    inner_toe,
+                    body.inner_heel,
+                    body.inner_toe,
                 ),
             }
         )
@@ -184,7 +187,11 @@ def build_constraints(
                 {
                     "type": "ineq",
                     "fun": bar_knee_clearance,
-                    "args": (build_splines_fn, t_eval, body),
+                    "args": (
+                        build_splines_fn,
+                        t_eval if clearance_t_eval is None else clearance_t_eval,
+                        body,
+                    ),
                 }
             )
 

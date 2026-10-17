@@ -26,7 +26,12 @@ from .optimizer_cost import (
     compute_torque_rate_cost,
 )
 from .optimizer_diagnostics import run_minimize, run_single_start
-from .optimizer_guess import build_bounds, build_initial_guess, build_perturbed_guess
+from .optimizer_guess import (
+    build_bounds,
+    build_initial_guess,
+    build_perturbed_guess,
+    perturb_waypoints,
+)
 from .optimizer_packaging import (
     build_result_object,
     check_com_feasibility,
@@ -37,6 +42,14 @@ from .optimizer_parallel import run_parallel_starts, select_best_result
 from .optimizer_progress import ProgressTracker, detect_stall
 from .optimizer_spline import build_splines as _build_splines_fn
 from .optimizer_spline import eval_trajectory as _eval_trajectory_fn
+from .optimizer_via import (
+    ViaLayout,
+    ViaSchedule,
+    clearance_times,
+    schedule_splines,
+    via_initial_guess,
+    via_layout,
+)
 from .result import CancelledError, OptimizationResult, ProgressReport
 from .tuning import (
     BALANCE_CENTER_WEIGHT,
@@ -77,7 +90,7 @@ class TrajectoryOptimizer:
         q_end: NDArray,
         q_bounds: NDArray,
         *,
-        q_via: NDArray | None = None,
+        q_via: NDArray | ViaSchedule | None = None,
         duration: float = 2.0,
         n_waypoints: int = 12,
         n_eval: int = 60,
@@ -101,7 +114,9 @@ class TrajectoryOptimizer:
             q_end: Final joint-angle vector, shape ``(n_dof,)`` in rad.
             q_bounds: Per-joint ``(lo, hi)`` limits, shape ``(n_dof, 2)``.
             q_via: Optional intermediate waypoint inserted at the time-grid
-                midpoint. Defaults to None.
+                midpoint, or a :class:`ViaSchedule` of ordered via points each
+                pinned at its own time fraction (multi-phase lifts such as the
+                snatch). Defaults to None.
             duration: Movement duration in seconds.
             n_waypoints: Number of free interior control points (must be
                 >= 4).
@@ -155,10 +170,14 @@ class TrajectoryOptimizer:
         self._progress_lock = self._progress.lock()
 
     def _setup_time_grids(self) -> None:
-        n_ctrl = self.n_waypoints + 2
-        if self.q_via is not None:
-            n_ctrl += 1
-        self.t_ctrl = np.linspace(0, self.duration, n_ctrl)
+        self._timed: tuple[ViaSchedule, ViaLayout] | None = None
+        if isinstance(self.q_via, ViaSchedule):
+            layout = via_layout(self.q_via, self.n_waypoints, self.duration)
+            self._timed = (self.q_via, layout)
+            self.t_ctrl = layout.t_ctrl
+        else:
+            n_ctrl = self.n_waypoints + 2 + (self.q_via is not None)
+            self.t_ctrl = np.linspace(0, self.duration, n_ctrl)
         self.t_eval = np.linspace(0, self.duration, self.n_eval, dtype=np.float64)
 
     def build_splines(self, x: NDArray) -> CubicSpline:
@@ -170,6 +189,8 @@ class TrajectoryOptimizer:
             O(W * D) time and memory for ``W`` waypoint controls and ``D``
             degrees of freedom.
         """
+        if self._timed is not None:
+            return schedule_splines(x, self.q_start, self.q_end, *self._timed)
         return _build_splines_fn(
             x,
             self.q_start,
@@ -244,11 +265,15 @@ class TrajectoryOptimizer:
         return detect_stall(self._progress.cost_history)
 
     def _initial_guess(self) -> NDArray:
+        if self._timed is not None:
+            return via_initial_guess(self.q_start, self.q_end, *self._timed)
         return build_initial_guess(
             self.q_start, self.q_end, self.n_waypoints, self.n_dof, self.q_via
         )
 
     def _perturbed_guess(self, seed: int) -> NDArray:
+        if self._timed is not None:
+            return perturb_waypoints(self._initial_guess(), self.q_bounds, seed)
         return build_perturbed_guess(
             self.q_start,
             self.q_end,
@@ -270,10 +295,9 @@ class TrajectoryOptimizer:
             self.t_eval,
             self.dynamics,
             self.bar_mass,
-            self.inner_heel,
-            self.inner_toe,
             self.q_bounds,
             self.body,
+            clearance_t_eval=clearance_times(self.t_eval, self.q_via, self.duration),
         )
 
     def _minimize_single(
