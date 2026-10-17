@@ -716,10 +716,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 31079,
+      "bytes_lf": 33243,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8158020dc5ac6610c9261bc47470bfd93db2d4961307ace82c18d11ffcce3586",
+      "content_sha256_lf": "4c01f32d1416086ee54bdb86f679c756ccd1ced85800a813a7dc28328ffc7efd",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-AUTOMERGE-GUARD-PY-589614C8BDE2",
       "language": "python",
@@ -816,6 +816,16 @@
           {
             "kind": "constant",
             "name": "USER_TOKEN_PREFIXES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_CLOSE_DISARM_WINDOW_SECONDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DISARM_TIMELINE_JQ",
             "signature": null
           },
           {

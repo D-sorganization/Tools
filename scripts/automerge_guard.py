@@ -39,6 +39,7 @@ import subprocess
 import sys
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
+from datetime import datetime
 from typing import Any
 from urllib.parse import quote
 
@@ -313,26 +314,79 @@ def _pull_from(raw: dict[str, Any], pr: int) -> _PullRequest:
     )
 
 
-def _disarm_reasons(run: CommandRunner, repo: str, pr: int, sha: str) -> list[str]:
-    """Signal 3: a non-bot account disarmed auto-merge since the head arrived.
+# GitHub emits ``auto_merge_disabled`` itself when a PR is closed, stamped with
+# the closing account. The REST timeline carries no ``reason`` on that event
+# (Gasification_Model#5344), so a disarm within this many seconds of a ``closed``
+# event is the close's side effect, not a reviewer decision.
+_CLOSE_DISARM_WINDOW_SECONDS = 5
 
-    Bot actors are excluded so the Merge-Hold-Guard workflow's own revocations
-    never read as a human decision. Raises ``RuntimeError`` if unreadable.
+_DISARM_TIMELINE_JQ = (
+    '.[] | select(.event == "auto_merge_disabled" or .event == "closed") '
+    '| select(.event == "closed" or (.actor.type // "User") != "Bot") '
+    '| "\\(.created_at)\\t\\(.event)"'
+)
+
+
+def _seconds(stamp: str) -> float:
+    """Epoch seconds of an ISO-8601 UTC timestamp such as ``2026-10-14T12:57:15Z``."""
+    return datetime.fromisoformat(stamp.replace("Z", "+00:00")).timestamp()
+
+
+def _disarm_events(run: CommandRunner, repo: str, pr: int) -> dict[str, list[str]]:
+    """Timeline timestamps by event (non-bot disarms, any ``closed``).
+
+    Post: keys ``auto_merge_disabled`` and ``closed``. Bot actors are excluded
+    from disarms so the Merge-Hold-Guard workflow's own revocations never read
+    as a human decision. A later re-arm is deliberately NOT read: owner-token
+    agents re-arm within seconds of any disarm, so it cannot cancel a hold.
+    Raises ``RuntimeError`` if the timeline is unreadable.
     """
-    disarms = _gh_lines(
+    events: dict[str, list[str]] = {"auto_merge_disabled": [], "closed": []}
+    lines = _gh_lines(
         run,
         [
             "api",
             f"repos/{repo}/issues/{pr}/timeline?per_page=100",
             "--paginate",
             "--jq",
-            '.[] | select(.event == "auto_merge_disabled") '
-            '| select((.actor.type // "User") != "Bot") | .created_at',
+            _DISARM_TIMELINE_JQ,
         ],
     )
-    if not disarms:
+    for line in lines:
+        stamp, _, event = line.partition("\t")
+        if event in events:
+            events[event].append(stamp)
+    return events
+
+
+def _is_close_side_effect(disarm: str, closes: Sequence[str]) -> bool:
+    """True when ``disarm`` is GitHub's automatic disarm of a PR close."""
+    return any(
+        0 <= _seconds(disarm) - _seconds(close) <= _CLOSE_DISARM_WINDOW_SECONDS
+        for close in closes
+    )
+
+
+def _latest_reviewer_disarm(events: Mapping[str, Sequence[str]]) -> str:
+    """Latest disarm that is not the side effect of a PR close, or ``""``."""
+    disarms = [
+        stamp
+        for stamp in events["auto_merge_disabled"]
+        if not _is_close_side_effect(stamp, events["closed"])
+    ]
+    return max(disarms) if disarms else ""
+
+
+def _disarm_reasons(run: CommandRunner, repo: str, pr: int, sha: str) -> list[str]:
+    """Signal 3: a non-bot account disarmed auto-merge since the head arrived.
+
+    A disarm that is only the side effect of closing the PR is ignored; a
+    later re-arm does not supersede one (a new push does, via the head
+    arrival time). Raises ``RuntimeError`` if unreadable.
+    """
+    last_disarm = _latest_reviewer_disarm(_disarm_events(run, repo, pr))
+    if not last_disarm:
         return []
-    last_disarm = max(disarms)
     arrived = _head_arrival(run, repo, pr, sha)
     if not arrived:
         return [
