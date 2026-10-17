@@ -165,7 +165,8 @@ def snatch_bar_path(dyn: LagrangianDynamics, q: NDArray, t_frac: NDArray) -> NDA
     hang = np.array([dyn.bar_position(row, "deadlift") for row in q])
     overhead = np.array([dyn.bar_position(row, "snatch") for row in q])
     w = snatch_bar_weight(t_frac)[:, None]
-    return (1.0 - w) * hang + w * overhead
+    path: NDArray = (1.0 - w) * hang + w * overhead
+    return path
 
 
 def make_snatch_config(

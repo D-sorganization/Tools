@@ -171,11 +171,13 @@ class TrajectoryOptimizer:
 
     def _setup_time_grids(self) -> None:
         self._timed: tuple[ViaSchedule, ViaLayout] | None = None
+        self._single_via: NDArray | None = None
         if isinstance(self.q_via, ViaSchedule):
             layout = via_layout(self.q_via, self.n_waypoints, self.duration)
             self._timed = (self.q_via, layout)
             self.t_ctrl = layout.t_ctrl
         else:
+            self._single_via = self.q_via
             n_ctrl = self.n_waypoints + 2 + (self.q_via is not None)
             self.t_ctrl = np.linspace(0, self.duration, n_ctrl)
         self.t_eval = np.linspace(0, self.duration, self.n_eval, dtype=np.float64)
@@ -195,7 +197,7 @@ class TrajectoryOptimizer:
             x,
             self.q_start,
             self.q_end,
-            self.q_via,
+            self._single_via,
             self.t_ctrl,
             self.n_waypoints,
             self.n_dof,
@@ -268,7 +270,7 @@ class TrajectoryOptimizer:
         if self._timed is not None:
             return via_initial_guess(self.q_start, self.q_end, *self._timed)
         return build_initial_guess(
-            self.q_start, self.q_end, self.n_waypoints, self.n_dof, self.q_via
+            self.q_start, self.q_end, self.n_waypoints, self.n_dof, self._single_via
         )
 
     def _perturbed_guess(self, seed: int) -> NDArray:
@@ -281,7 +283,7 @@ class TrajectoryOptimizer:
             self.n_waypoints,
             self.n_dof,
             seed,
-            self.q_via,
+            self._single_via,
         )
 
     def _build_bounds(self) -> list[tuple[float, float]]:
