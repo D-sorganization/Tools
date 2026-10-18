@@ -7,6 +7,7 @@ import numpy as np
 
 from movement_optimizer.constants import PLATE_RADIUS_STD_M
 from movement_optimizer.exercises import (
+    make_clean_and_jerk_config,
     make_clean_config,
     make_jerk_config,
     make_snatch_config,
@@ -142,6 +143,49 @@ class TestSnatchConfig:
 
 
 # ------------------------------------------------------------------
+# Clean and Jerk
+# ------------------------------------------------------------------
+
+
+class TestCleanAndJerkConfig:
+    def test_clean_and_jerk_start_at_floor(self, default_body: BodyModel) -> None:
+        dyn, qs, _qe, _qb, _q_via = make_clean_and_jerk_config(default_body, 60.0)
+        fk = dyn.forward_kinematics(qs)
+        shoulder_y = fk["shoulder"][1]
+        bar_y = shoulder_y - default_body.L_arm
+        assert abs(bar_y - PLATE_RADIUS_STD_M) < 0.05, "Bar should start at plate height"
+
+    def test_clean_and_jerk_end_overhead(self, default_body: BodyModel) -> None:
+        dyn, _qs, qe, _qb, _q_via = make_clean_and_jerk_config(default_body, 60.0)
+        assert abs(qe[2]) < np.radians(10), "Clean and jerk end: torso near vertical"
+        fk = dyn.forward_kinematics(qe)
+        shoulder_h = fk["shoulder"][1]
+        total_h = default_body.L.sum()
+        assert shoulder_h > total_h * 0.90, "Clean and jerk end: shoulder must be high"
+
+    def test_clean_and_jerk_has_via_schedule(self, default_body: BodyModel) -> None:
+        _dyn, _qs, _qe, _qb, q_via = make_clean_and_jerk_config(default_body, 60.0)
+        assert isinstance(q_via, ViaSchedule)
+        assert [p.name for p in q_via.points] == [
+            "first_pull",
+            "second_pull",
+            "rack_catch",
+            "rack_recovery",
+            "jerk_dip_drive",
+            "overhead_catch",
+            "overhead_recovery",
+        ]
+
+    def test_clean_and_jerk_rack_catch_is_front_squat(self, default_body: BodyModel) -> None:
+        _dyn, _qs, _qe, _qb, q_via = make_clean_and_jerk_config(default_body, 60.0)
+        catch = {p.name: p.q for p in q_via.points}["rack_catch"]
+        # Deep front squat: knee flexed past 60 deg
+        assert catch[1] - catch[0] < np.radians(-60), "Clean and jerk catch: deep front squat"
+        # Upright trunk for front rack
+        assert abs(catch[2]) < np.radians(25), "Clean and jerk catch: upright trunk"
+
+
+# ------------------------------------------------------------------
 # Bench Press
 # ------------------------------------------------------------------
 
@@ -227,3 +271,10 @@ class TestAllEndpointsBalanced:
         dyn, qs, qe, _qb, _q_via = make_snatch_config(default_body, 60.0)
         self._check_com_in_inner_bos(default_body, dyn, qs, "deadlift", 60.0, "snatch start")
         self._check_com_in_inner_bos(default_body, dyn, qe, "squat", 60.0, "snatch end")
+
+    def test_clean_and_jerk_endpoints_balanced(self, default_body: BodyModel) -> None:
+        dyn, qs, qe, _qb, _q_via = make_clean_and_jerk_config(default_body, 60.0)
+        self._check_com_in_inner_bos(
+            default_body, dyn, qs, "deadlift", 60.0, "clean and jerk start"
+        )
+        self._check_com_in_inner_bos(default_body, dyn, qe, "squat", 60.0, "clean and jerk end")

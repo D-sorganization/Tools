@@ -181,7 +181,7 @@ def build_constraints(
             }
         )
 
-        pulling_exercises = {"deadlift", "clean", "snatch"}
+        pulling_exercises = {"deadlift", "clean", "snatch", "clean_and_jerk"}
         if exercise_type in pulling_exercises:
             constraints.append(
                 {
