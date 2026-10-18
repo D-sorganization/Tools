@@ -208,10 +208,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4303,
+      "bytes_lf": 5422,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "93f7f8595004347a65e0a0fef689fc0da26dcc7196174b2ec67dd5b187bb0d1b",
+      "content_sha256_lf": "1f5922da44f4d675f3cdd358202d690f949813cfdcecec55ea5b5304366714c3",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UTILS-NATIVE-DLL-GUARD-PY-710AB692ECC3",
       "language": "python",
@@ -266,6 +266,11 @@
             "kind": "function",
             "name": "import_ezc3d",
             "signature": "importer: Callable[[str], ModuleType]=importlib.import_module"
+          },
+          {
+            "kind": "function",
+            "name": "is_ezc3d_available",
+            "signature": ""
           },
           {
             "kind": "function",
