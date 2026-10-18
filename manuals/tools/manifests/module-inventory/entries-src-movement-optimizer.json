@@ -731,10 +731,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1198,
+      "bytes_lf": 1419,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a59230fd9a5b9719210c3590d5c2d1944dad1c25fa3aa18694d036313a1665c9",
+      "content_sha256_lf": "f7d8b03907f65eec88830eaad695f5012e2aabbd0da3a243f86b75659a3045cb",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-EXERCISES-INIT-PY-1315C9FAF2FF",
       "language": "python",
@@ -773,10 +773,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 1750,
+      "bytes_lf": 3243,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "a47c0c849af7d3b8752186777f3048a752ca8a31be9cfcf857f3caeb9af0e5a5",
+      "content_sha256_lf": "3fe65ae0e8889abe8b67074c752dbce158c657e7c052efda927d02930617ec34",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-EXERCISES-COMMON-PY-937FDBF01715",
       "language": "python",
@@ -788,7 +788,6 @@
         "public-api",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -800,7 +799,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "unavailable"
       },
@@ -822,6 +821,11 @@
           },
           {
             "kind": "function",
+            "name": "balanced_shank_pose",
+            "signature": "dynamics: LagrangianDynamics, knee_flex_deg: float, trunk_deg: float, exercise_type: str, bar_mass: float, ankle_bounds_deg: tuple[float, float]"
+          },
+          {
+            "kind": "function",
             "name": "default_bounds_deg",
             "signature": "lower: tuple[float, float], middle: tuple[float, float], upper: tuple[float, float]"
           },
@@ -834,11 +838,19 @@
             "kind": "function",
             "name": "pull_start_angles",
             "signature": "body: BodyModel, q2_deg: float"
+          },
+          {
+            "kind": "function",
+            "name": "smoothstep",
+            "signature": "t_frac: NDArray, t0: float, t1: float"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_clean_and_jerk_full_lift.py"
+        ],
         "unit_mentions": [
-          "bar"
+          "bar",
+          "s"
         ],
         "validation_paths": []
       }
@@ -897,6 +909,127 @@
         "unit_mentions": [
           "bar",
           "deg"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 10546,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "4b8754cf578c88b79b8f5cd621a6d20e0122dc5849c9db9ef23a4866823ca6b3",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-EXERCISES-CLEAN-AND-JERK-PY-372EE58CAC82",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/movement_optimizer/exercises/clean_and_jerk.py",
+      "purpose": "Clean-and-jerk exercise configuration: the whole lift, floor to lockout.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "CLEAN_AND_JERK_EVENTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CLEAN_AND_JERK_PHASES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LOCKOUT_KNEE_FLEX_DEG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OVERHEAD_CATCH_KNEE_FLEX_DEG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OVERHEAD_CATCH_TRUNK_DEG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RACK_CATCH_KNEE_FLEX_DEG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RACK_CATCH_TRUNK_DEG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ANKLE_BOUNDS_DEG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DIP_TRUNK_DEG",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "clean_and_jerk_bar_path",
+            "signature": "dyn: LagrangianDynamics, q: NDArray, t_frac: NDArray"
+          },
+          {
+            "kind": "function",
+            "name": "clean_and_jerk_bar_weights",
+            "signature": "t_frac: NDArray"
+          },
+          {
+            "kind": "function",
+            "name": "clean_and_jerk_via_schedule",
+            "signature": "dyn: LagrangianDynamics, q_start: NDArray, bar_mass: float"
+          },
+          {
+            "kind": "function",
+            "name": "make_clean_and_jerk_config",
+            "signature": "body: BodyModel, bar_mass: float"
+          }
+        ],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_clean_and_jerk_full_lift.py"
+        ],
+        "unit_mentions": [
+          "bar",
+          "deg",
+          "rad",
+          "s"
         ],
         "validation_paths": []
       }
@@ -963,10 +1096,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 2193,
+      "bytes_lf": 2328,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "0925b471f91a9441268cf60b107f0c2aba29c56160e16b62c2a4d555ae777d16",
+      "content_sha256_lf": "de404afb419d0711ff4f06568b8a31ea2820d1fe76a6e190da1ade25746ccd17",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-EXERCISES-JERK-PY-9CA63858C111",
       "language": "python",
@@ -1005,6 +1138,11 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "jerk_dip_angles",
+            "signature": ""
+          },
           {
             "kind": "function",
             "name": "make_jerk_config",
@@ -1078,10 +1216,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 7870,
+      "bytes_lf": 7446,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "76d4dd47ed859bbb1243fdd932b104c237eca7ca899f0e6cebf23cdd4ae7fb42",
+      "content_sha256_lf": "b6320dfa0a2a6730ced7a4aec4baa3887b89304c8ea259edbb63955309fee35f",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-EXERCISES-SNATCH-PY-5A1D51EFAC3D",
       "language": "python",
@@ -6409,10 +6547,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 6382,
+      "bytes_lf": 6435,
       "classification": "calculation",
       "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "6f3c7cf1bc83f9f15ae833f31793361126ced28c1a819129b355c96fa59ca145",
+      "content_sha256_lf": "62f745761ffd0cb739c4a6b54444a7f4aacdf7b31979a039519809a637437445",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-TRAJECTORY-OPTIMIZER-CONSTRAINTS-PY-E03C1EC9CE8D",
       "language": "python",
@@ -6472,6 +6610,7 @@
           }
         ],
         "test_paths": [
+          "src/movement_optimizer/tests/test_clean_and_jerk_full_lift.py",
           "src/movement_optimizer/tests/test_exercises.py",
           "src/movement_optimizer/tests/test_hypothesis.py",
           "src/movement_optimizer/tests/test_optimizer_via.py",

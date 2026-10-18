@@ -111,7 +111,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "b26081f19774377a279260424c419bd9c7aa95757fa78af27c5a70007ec2b76e",
+      "content_sha256_lf": "0b523c6473a913bca1401cb580be93b7a1511dea2832030797295bf8d5e5f29c",
       "entry_count": 14,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
@@ -357,8 +357,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-model-generation.json"
     },
     {
-      "content_sha256_lf": "be3770fad5cd1141fc576f74d1695a912e54e0d10b4d2452cf0e26530d199ddd",
-      "entry_count": 94,
+      "content_sha256_lf": "cb05b9cf979d8fb182066b896a5a9e4c283b2086fd313cbf5ee0bea03c881b71",
+      "entry_count": 95,
       "package": "src/movement_optimizer",
       "path": "manuals/tools/manifests/module-inventory/entries-src-movement-optimizer.json"
     },
@@ -585,7 +585,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rotation-transforms.json"
     },
     {
-      "content_sha256_lf": "e8edf899e7211c7a17ce2f982976f4c966bf73394dfd0be7e77657800c095f43",
+      "content_sha256_lf": "b3b6a7675f1ca4ef556d294e1258567e26387f3ebc0001eb4e8b7b9223c99e11",
       "entry_count": 26,
       "package": "src/rrt_path_planner",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rrt-path-planner.json"

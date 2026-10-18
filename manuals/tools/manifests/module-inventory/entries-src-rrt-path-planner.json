@@ -1717,6 +1717,7 @@
           "src/document_processing/pdf_renamer/tests/conftest.py",
           "src/media_processing/video_processor/apps/web/test/setup.ts",
           "src/movement_optimizer/tests/conftest.py",
+          "src/movement_optimizer/tests/test_clean_and_jerk_full_lift.py",
           "src/movement_optimizer/tests/test_snatch_pull_phase.py",
           "src/p1am_control_system/backend/tests/_power_supply_helpers.py",
           "src/p1am_control_system/backend/tests/test_database.py",
