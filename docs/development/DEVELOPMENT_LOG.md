@@ -148,6 +148,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5646 · Adversarial Review 2026-10-16: 38 Findings With Draft PR Pitches Under Docs/Development/Adversarial-Review/
+
+- **State:** in_review
+- **Owner:** unassigned
+- **Issue:** #5646
+- **Branch:** claude/adversarial-review-2026-10-16
+- **PR:** #5646
+- **Paths:** docs/development/adversarial-review/2026-10-16
+- **Started:** 2026-10-18
+- **Last verified:** 2026-10-18 (`6d094b4b`; collated from changes/5646-adversarial-review-2026-10-16.md)
+- **Summary:** Adversarial review 2026-10-16: 38 findings with draft PR pitches under docs/development/adversarial-review/
+- **Next step:** Triage Critical/High finding pages; each carries a paste-ready PR body.
+
 ### DL-#5547 · \ Deployment Topology With Docker-Compose for TimescaleDB and Grafana on Internal Host\
 
 - **State:** in_review
@@ -1560,6 +1573,32 @@ reachable from any live state and `abandoned` from `parked`.
   definition.
 
 ## Shipped (Last 90 Days)
+
+### DL-#5645 · Import Ezc3d Lazily on First C3D Read and Add Availability Check to Prevent Windows DLL Conflicts With OpenSim
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5645
+- **Branch:** merged via #5654
+- **PR:** #5654
+- **Paths:** see #5654
+- **Started:** 2026-10-18
+- **Last verified:** 2026-10-18 (`32ff75b8`; collated from changes/5645-import-ezc3d-lazily-on-first-c3d-read-an.md)
+- **Summary:** Import ezc3d lazily on first C3D read and add availability check to prevent Windows DLL conflicts with OpenSim
+- **Next step:** Shipped in PR #5654.
+
+### DL-#5638 · Rust Golfer Solver Is Now the Same Solver as Python: Closure Equations, INDEPENDENT_CLOSURE_ROWS=[0,1] (Exposed to Python), Zero Multipliers on Rows 2-3, Typed Rank-Loss Error (ValueError), Analytical Jacobian, 2*Alpha/Beta^2 Baumgarte, Hub/Gravity/Coriolis Parity; Adds Rust-vs-Python Parity Tests
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5638
+- **Branch:** merged via #5644
+- **PR:** #5644
+- **Paths:** see #5644
+- **Started:** 2026-10-18
+- **Last verified:** 2026-10-18 (`46c78180`; collated from changes/5638-rust-golfer-solver-is-now-the-same-solve.md)
+- **Summary:** Rust golfer solver is now the same solver as Python: closure equations, INDEPENDENT_CLOSURE_ROWS=[0,1] (exposed to Python), zero multipliers on rows 2-3, typed rank-loss error (ValueError), analytical Jacobian, 2*alpha/beta^2 Baumgarte, hub/gravity/Coriolis parity; adds Rust-vs-Python parity tests
+- **Next step:** Shipped in PR #5644.
 
 ### DL-#5640 · Chore: Remove Committed Clutter (Unused Root Scripts, Empty Issue Template)
 
