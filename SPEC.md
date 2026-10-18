@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-18 | #5659 | Stop and join realtime-file-tail thread when last subscriber unsubscribes |
 | 2026-10-18 | #5653 | Snatch gets a pull phase: ordered timed via points (ViaSchedule) and a phase-correct bar path |
 | 2026-10-18 | #5646 | Adversarial review 2026-10-16: 38 findings with draft PR pitches under docs/development/adversarial-review/ |
 | 2026-10-18 | #5654 | Import ezc3d lazily on first C3D read and add availability check to prevent Windows DLL conflicts with OpenSim |

@@ -1574,6 +1574,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5658 · Stop and Join Realtime-File-Tail Thread When Last Subscriber Unsubscribes
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5658
+- **Branch:** merged via #5659
+- **PR:** #5659
+- **Paths:** see #5659
+- **Started:** 2026-10-18
+- **Last verified:** 2026-10-18 (`53d5e798`; collated from changes/5658-stop-and-join-realtime-file-tail-thread.md)
+- **Summary:** Stop and join realtime-file-tail thread when last subscriber unsubscribes
+- **Next step:** Shipped in PR #5659.
+
 ### DL-#5652 · Snatch Gets a Pull Phase: Ordered Timed via Points (ViaSchedule) and a Phase-Correct Bar Path
 
 - **State:** shipped
