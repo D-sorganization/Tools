@@ -75,7 +75,7 @@ def bar_knee_clearance(
     Returns array of length n_eval:
         bar_x - knee_x + margin  (must be >= 0)
 
-    Active for deadlift, clean, and snatch exercises.
+    Active for deadlift, clean, clean-and-jerk and snatch exercises.
 
     Preconditions:
         x.ndim == 1
@@ -93,7 +93,8 @@ def bar_knee_clearance(
     # Since shoulder_x = knee_x + L[1]*sin(q1) + L[2]*sin(q2),
     # bar_x - knee_x = L[1]*sin(q1) + L[2]*sin(q2) = sin(q[:, 1:3]) @ L[1:3]
     bar_minus_knee_x = np.sin(q[:, 1:3]) @ L[1:3]
-    return bar_minus_knee_x + BAR_KNEE_CLEARANCE_M
+    clearance: NDArray = bar_minus_knee_x + BAR_KNEE_CLEARANCE_M
+    return clearance
 
 
 def joint_limit_constraint_values(
@@ -143,7 +144,8 @@ def build_constraints(
     Bench press exercises omit COM/balance constraints because the lifter
     is lying on a bench, not standing.
 
-    Pulling exercises (deadlift, clean, snatch) add bar-knee clearance,
+    Pulling exercises (deadlift, clean, clean_and_jerk, snatch) add bar-knee
+    clearance,
     evaluated on *clearance_t_eval* (default: all of *t_eval*) so a lift
     whose bar goes overhead can end it once the bar is above the knees.
     The COM bounds are the inner base of support of *body*.
@@ -181,7 +183,7 @@ def build_constraints(
             }
         )
 
-        pulling_exercises = {"deadlift", "clean", "snatch"}
+        pulling_exercises = {"deadlift", "clean", "clean_and_jerk", "snatch"}
         if exercise_type in pulling_exercises:
             constraints.append(
                 {

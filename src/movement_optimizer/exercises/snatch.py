@@ -25,15 +25,16 @@ from types import MappingProxyType
 
 import numpy as np
 from numpy.typing import NDArray
-from scipy.optimize import brentq
 
 from ..models import BodyModel, LagrangianDynamics
 from ..trajectory.optimizer_via import ViaPoint, ViaSchedule
 from ._common import (
     balance_config_pose,
+    balanced_shank_pose,
     default_bounds_deg,
     pose_deg,
     pull_start_angles,
+    smoothstep,
 )
 
 #: Phase start times as fractions of the lift (parity standard, snatch).
@@ -96,17 +97,14 @@ def _balanced_catch(dyn: LagrangianDynamics, bar_mass: float) -> NDArray:
     Raises:
         ValueError: If no shank angle within the ankle bounds balances it.
     """
-    knee, trunk = SNATCH_CATCH_KNEE_FLEX_DEG, SNATCH_CATCH_TRUNK_DEG
-
-    def residual(shank_deg: float) -> float:
-        q = pose_deg(shank_deg, shank_deg + knee, trunk)
-        return float(dyn.com_position(q, "snatch", bar_mass)[0] - dyn.body.inner_center)
-
-    lo, hi = _ANKLE_BOUNDS_DEG
-    if residual(lo) * residual(hi) > 0.0:
-        raise ValueError("no shank angle within the ankle bounds balances the catch")
-    shank = brentq(residual, lo, hi, xtol=1e-10)
-    return pose_deg(shank, shank + knee, trunk)
+    return balanced_shank_pose(
+        dyn,
+        SNATCH_CATCH_KNEE_FLEX_DEG,
+        SNATCH_CATCH_TRUNK_DEG,
+        "snatch",
+        bar_mass,
+        _ANKLE_BOUNDS_DEG,
+    )
 
 
 def snatch_via_schedule(dyn: LagrangianDynamics, q_start: NDArray, bar_mass: float) -> ViaSchedule:
@@ -137,9 +135,7 @@ def snatch_bar_weight(t_frac: NDArray) -> NDArray:
     0 through the pulls, 1 from the catch on, and a smoothstep across the
     turnover, when the arms turn the bar over.
     """
-    t0, t1 = SNATCH_PHASES["turnover"], SNATCH_PHASES["catch"]
-    s = np.clip((np.asarray(t_frac, dtype=float) - t0) / (t1 - t0), 0.0, 1.0)
-    return s * s * (3.0 - 2.0 * s)
+    return smoothstep(t_frac, SNATCH_PHASES["turnover"], SNATCH_PHASES["catch"])
 
 
 def snatch_bar_path(dyn: LagrangianDynamics, q: NDArray, t_frac: NDArray) -> NDArray:

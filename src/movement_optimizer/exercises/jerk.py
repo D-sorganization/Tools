@@ -22,8 +22,12 @@ def _jerk_start_angles() -> NDArray:
     return pose_deg(5, -8, 5)
 
 
-def _jerk_via_angles() -> NDArray:
-    """Dip position: quarter-squat before the explosive drive phase."""
+def jerk_dip_angles() -> NDArray:
+    """Dip position: quarter-squat before the explosive drive phase.
+
+    Shared with the full clean and jerk (:mod:`.clean_and_jerk`), whose dip
+    bottom and power-jerk catch use this knee flexion.
+    """
     return pose_deg(12, -40, 8)
 
 
@@ -56,7 +60,7 @@ def make_jerk_config(
     q_end_raw = _jerk_end_angles()
     q_end = balance_config_pose(dyn, q_end_raw, "squat", bar_mass, adjust_joint=0)
 
-    q_via_raw = _jerk_via_angles()
+    q_via_raw = jerk_dip_angles()
     q_via = balance_config_pose(dyn, q_via_raw, "squat", bar_mass, adjust_joint=2)
 
     q_bounds = default_bounds_deg((-5, 30), (-50, 5), (-5, 40))
