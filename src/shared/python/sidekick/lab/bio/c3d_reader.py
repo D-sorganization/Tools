@@ -802,8 +802,8 @@ class C3DDataReader:
         if self._c3d_data is None:
             if not self.file_path.exists():
                 raise FileNotFoundError(f"File not found: {self.file_path}")
-            reader = _get_ezc3d()
             self._validate_c3d_header()
+            reader = _get_ezc3d()
             self._c3d_data = reader.c3d(str(self.file_path))
         return self._c3d_data
 

@@ -167,12 +167,16 @@ def test_import_ezc3d_raises_early_when_opensim_loaded(
 
 def test_import_sidekick_lab_bio_does_not_eagerly_import_ezc3d() -> None:
     """Subprocess test: importing sidekick.lab.bio does not put ezc3d in sys.modules."""
-    shared_python_root = Path(__file__).resolve().parent.parent.parent.parent
+    shared_python_root = Path(__file__).resolve().parent.parent.parent
     with tempfile.TemporaryDirectory() as td:
         # Create a dummy ezc3d module in the temporary directory
         (Path(td) / "ezc3d.py").write_text("# dummy ezc3d\n", encoding="utf-8")
         env = os.environ.copy()
-        env["PYTHONPATH"] = f"{td}{os.pathsep}{shared_python_root}"
+        existing_pythonpath = env.get("PYTHONPATH", "")
+        paths = [td, str(shared_python_root)]
+        if existing_pythonpath:
+            paths.append(existing_pythonpath)
+        env["PYTHONPATH"] = os.pathsep.join(paths)
 
         code = (
             "import sys\n"
