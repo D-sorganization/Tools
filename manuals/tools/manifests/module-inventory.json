@@ -783,7 +783,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-data-processing.json"
     },
     {
-      "content_sha256_lf": "cb2cbc727e7e8cbeaaf216ae1da23bde950d0bffba47b2295e997c9eace8e5cb",
+      "content_sha256_lf": "eee09708cff1e19c5990797c726012afc53352a2ef671d304700857990648d4b",
       "entry_count": 47,
       "package": "src/shared/python/sidekick/lab",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-lab.json"
@@ -819,7 +819,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-ui.json"
     },
     {
-      "content_sha256_lf": "660fb59e35c751c1eea84137869c804d2b64e7324b7c35e627b5133a11404164",
+      "content_sha256_lf": "b9beae03578dfb54a6b1cdf44da66be982b3afc99282ea12c7a73260c6a5baa1",
       "entry_count": 7,
       "package": "src/shared/python/sidekick/utils",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-utils.json"
