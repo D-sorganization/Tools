@@ -93,7 +93,8 @@ def bar_knee_clearance(
     # Since shoulder_x = knee_x + L[1]*sin(q1) + L[2]*sin(q2),
     # bar_x - knee_x = L[1]*sin(q1) + L[2]*sin(q2) = sin(q[:, 1:3]) @ L[1:3]
     bar_minus_knee_x = np.sin(q[:, 1:3]) @ L[1:3]
-    return bar_minus_knee_x + BAR_KNEE_CLEARANCE_M
+    clearance: NDArray = bar_minus_knee_x + BAR_KNEE_CLEARANCE_M
+    return clearance
 
 
 def joint_limit_constraint_values(
