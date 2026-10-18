@@ -16,6 +16,7 @@ from __future__ import annotations
 import json
 import logging
 from datetime import datetime, timezone
+from functools import partial
 from typing import Any, cast
 
 from PyQt6.QtCore import (
@@ -491,9 +492,17 @@ class UnitConverterWidget(BaseCalculatorWindow):
             clipboard = QApplication.clipboard()
             if clipboard:
                 clipboard.setText(widget.to_value.text())
-            orig = widget.copy_btn.text()
-            widget.copy_btn.setText("✓")
-            QTimer.singleShot(1000, lambda: widget.copy_btn.setText(orig))
+            copy_btn = widget.copy_btn
+            orig = copy_btn.text()
+            copy_btn.setText("✓")
+            # Parent the reset timer to the button so it is destroyed (and never
+            # fires) if the button is deleted first; a bare singleShot lambda
+            # outlives the widget and raises "wrapped C/C++ object ... deleted".
+            reset_timer = QTimer(copy_btn)
+            reset_timer.setSingleShot(True)
+            reset_timer.timeout.connect(partial(copy_btn.setText, orig))
+            reset_timer.timeout.connect(reset_timer.deleteLater)
+            reset_timer.start(1000)
 
     def _find_widget_by_index(self, index: int) -> TypedConverterWidget | None:
         if index is None:
