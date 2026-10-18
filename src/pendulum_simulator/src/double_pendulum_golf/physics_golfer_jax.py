@@ -78,6 +78,10 @@ class GolferParamsJAX(NamedTuple):
 
 # Constants
 N_DOF = 8
+# Central-difference step for dM/dq in ``coriolis_jax``; must equal
+# ``christoffel.CORIOLIS_FD_STEP`` (pinned by test_physics_golfer_jax.py).  Kept local
+# so this optional module does not import the numpy/native stack.
+CORIOLIS_FD_STEP = 1e-5
 N_CONSTRAINTS = 4
 
 
@@ -646,7 +650,8 @@ def coriolis_jax(q: JaxArray, qdot: JaxArray, p: GolferParamsJAX) -> JaxArray:
     Uses Christoffel symbols: C_i = sum_jk c_ijk * qdot_j * qdot_k
     where c_ijk = 0.5 * (dM_ij/dq_k + dM_ik/dq_j - dM_jk/dq_i)
 
-    dM/dq_k is computed via finite difference of mass matrices.
+    dM/dq_k is a central difference (``CORIOLIS_FD_STEP``, shared with the numpy and
+    Rust backends) of the mass matrix.
 
     Parameters
     ----------
@@ -660,16 +665,20 @@ def coriolis_jax(q: JaxArray, qdot: JaxArray, p: GolferParamsJAX) -> JaxArray:
     """
     if q is None:
         raise ValueError("q must be provided")
-    eps = 1e-7
-    M0 = mass_matrix_jax(q, p)
+    eps = CORIOLIS_FD_STEP
 
     basis = jnp.eye(N_DOF)
-    dM = jax.vmap(lambda direction: (mass_matrix_jax(q + eps * direction, p) - M0) / eps)(
-        basis
-    )
+    dM = jax.vmap(
+        lambda direction: (
+            (mass_matrix_jax(q + eps * direction, p) - mass_matrix_jax(q - eps * direction, p))
+            / (2.0 * eps)
+        )
+    )(basis)
     dM = jnp.transpose(dM, (1, 2, 0))
 
-    christoffel = 0.5 * (dM + jnp.transpose(dM, (0, 2, 1)) - jnp.transpose(dM, (1, 2, 0)))
+    # Third term is dM_jk/dq_i = dM[j, k, i] -> transpose (2, 0, 1); (1, 2, 0) cancels the
+    # second term for symmetric M (#5640).
+    christoffel = 0.5 * (dM + jnp.transpose(dM, (0, 2, 1)) - jnp.transpose(dM, (2, 0, 1)))
     return jnp.einsum("ijk,j,k->i", christoffel, qdot, qdot)
 
 

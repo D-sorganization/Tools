@@ -765,10 +765,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 14126,
+      "bytes_lf": 14890,
       "classification": "calculation",
       "classification_basis": "path-marker:dynamics",
-      "content_sha256_lf": "f3abe64cd1b3d50afbd023ff0ef21ab0878ade213a8a610cfe2560eac8b88011",
+      "content_sha256_lf": "f50b2f235c4cc8b0709da0b77faa201063a7086356ef49fb8713832c4d529cdd",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-CORE-SRC-BINDINGS-DYNAMICS-RS-60BE578D54DA",
       "language": "rust",
@@ -835,6 +835,11 @@
           {
             "kind": "fn",
             "name": "py_double_mass_matrix",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_golfer_coriolis",
             "signature": null
           },
           {
@@ -1192,10 +1197,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 5645,
+      "bytes_lf": 5720,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "68ad22f885173a41012afbc47cb1a517fc2e570b8c50529be95f8acdba0a9ab3",
+      "content_sha256_lf": "ee124b2c95b5995772251a34d00e645db883d4b51c76dfae3c22f3da1cefda49",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-CORE-SRC-BINDINGS-MOD-RS-151EE66BE5BF",
       "language": "rust",
@@ -1673,10 +1678,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 26994,
+      "bytes_lf": 33824,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "9d04e1820512023ada29f855cfa5eead65b35c0166b9d3771cc939096fa87a72",
+      "content_sha256_lf": "d524e36a55ae8758808675381fb08d2b784e3f780c86cda7ebc97ba39e80d927",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-CORE-SRC-GOLFER-RS-9CEF8079C96F",
       "language": "rust",
@@ -1715,6 +1720,11 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [
+          {
+            "kind": "const",
+            "name": "CORIOLIS_FD_STEP",
+            "signature": null
+          },
           {
             "kind": "const",
             "name": "INDEPENDENT_CLOSURE_ROWS",
@@ -2086,10 +2096,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 3451,
+      "bytes_lf": 3480,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "467d7928b90b466ffa8c2e1ed0796232bafde7fc7aa481783ef95a652e48733b",
+      "content_sha256_lf": "60f732ef2534125c650fd45b6450ee247a3700962512c7fa48b3dcfc7eee677c",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-CORE-SRC-LIB-RS-F6B1C27F064A",
       "language": "rust",
@@ -5905,6 +5915,66 @@
     },
     {
       "authority_status": "provisional",
+      "bytes_lf": 2414,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "bca5b621c6ea1c94a7e84a269f63b94c172e79f0a89ca63dfb4c93aadc7d256e",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-CHRISTOFFEL-PY-A47D9D77B1B5",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/src/double_pendulum_golf/christoffel.py",
+      "purpose": "Christoffel symbols of the first kind for a configuration-dependent mass matrix.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "CORIOLIS_FD_STEP",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "christoffel_first_kind",
+            "signature": "dM: np.ndarray"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 12354,
       "classification": "calculation",
       "classification_basis": "path-marker:force",
@@ -6725,10 +6795,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 15314,
+      "bytes_lf": 15723,
       "classification": "calculation",
       "classification_basis": "path-marker:dynamics",
-      "content_sha256_lf": "3cdcc128aab80a0fcf90f01a1327350d7f9a9e7eeb08b76082bdb60bf49f8619",
+      "content_sha256_lf": "2a500c869342825cad52d4cc7449cd77e5cdb22f5d7c658455b380194c6981fb",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-GOLFER-DYNAMICS-PY-05853DCB6DBB",
       "language": "python",
@@ -11758,10 +11828,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 26830,
+      "bytes_lf": 27331,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "42e86b066840822268e33b9a19bb18a4e35167f8a0955851009cc94dcc902d44",
+      "content_sha256_lf": "cf475b677f3cf596e760f8718655f3d3843c2630e8b57b564c4338e2ce5a5a11",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-PHYSICS-GOLFER-JAX-PY-6966C582AC2C",
       "language": "python",
@@ -11802,6 +11872,11 @@
           {
             "kind": "class",
             "name": "GolferParamsJAX",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CORIOLIS_FD_STEP",
             "signature": null
           },
           {

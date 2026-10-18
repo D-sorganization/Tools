@@ -19,11 +19,14 @@ bounds and are intentionally not loosened.
 
 from __future__ import annotations
 
+from typing import Any
+
 import numpy as np
 import pytest
 
 import double_pendulum_golf.constraint_solver as constraint_solver_module
 import double_pendulum_golf.native_backend as native_backend
+from double_pendulum_golf.golfer_dynamics import analytical_coriolis
 from double_pendulum_golf.golfer_constraints import (
     INDEPENDENT_CLOSURE_ROWS,
     analytical_constraint_jacobian,
@@ -254,3 +257,41 @@ class TestRankLossContract:
         )
         np.testing.assert_allclose(qddot_rs, qddot_py, rtol=1e-12, atol=1e-12)
         np.testing.assert_allclose(lam_rs, lam_py, rtol=1e-12, atol=1e-12)
+
+
+class TestCoriolisParity:
+    """The Coriolis/centrifugal vector is one formula in both backends (#5640).
+
+    Before #5640 both dropped the third Christoffel term (``0.5 * Mdot @ qdot``), so
+    the solver-level parity above held while both were wrong.  The independent
+    Euler-Lagrange oracle lives in ``test_golfer_coriolis_oracle.py``; this checks
+    the compiled kernel against the (oracle-validated) Python one term for term.
+    """
+
+    CORIOLIS_RTOL = 1e-9
+
+    @pytest.mark.parametrize("seed", range(N_CONFIGURATIONS))
+    def test_coriolis_vector_matches_python(
+        self, params: GolferParams, core: Any, seed: int, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        rng = np.random.default_rng(300 + seed)
+        q = rng.uniform(-1.0, 1.0, N_DOF)
+        qdot = rng.uniform(-2.0, 2.0, N_DOF)
+        with monkeypatch.context() as patch:
+            patch.setenv("PENDULUM_GOLFER_BACKEND", "python")
+            expected = analytical_coriolis(q, qdot, params)
+        actual = np.asarray(
+            core.py_golfer_coriolis(
+                q.tolist(), qdot.tolist(), native_backend._to_rust_golfer_params(params)
+            )
+        )
+        np.testing.assert_allclose(
+            actual, expected, rtol=self.CORIOLIS_RTOL, atol=self.CORIOLIS_RTOL
+        )
+
+    def test_rust_rejects_wrong_length_inputs(self, params: GolferParams, core: Any) -> None:
+        rust_params = native_backend._to_rust_golfer_params(params)
+        with pytest.raises(ValueError):
+            core.py_golfer_coriolis([0.0] * 7, [0.0] * 8, rust_params)
+        with pytest.raises(ValueError):
+            core.py_golfer_coriolis([0.0] * 8, [0.0] * 7, rust_params)

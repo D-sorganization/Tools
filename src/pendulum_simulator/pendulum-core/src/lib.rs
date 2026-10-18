@@ -47,7 +47,7 @@ pub use dynamics::{
     linear_power_series, linear_work_series,
 };
 pub use golfer::{
-    analytical_fk_jacobians, constraint_jacobian, constraint_vector,
+    analytical_fk_jacobians, constraint_jacobian, constraint_vector, coriolis as golfer_coriolis,
     forward_kinematics as golfer_forward_kinematics, friction_torque as golfer_friction_torque,
     gravity_vector as golfer_gravity_vector, mass_matrix as golfer_mass_matrix,
 };

@@ -14,7 +14,7 @@ pub mod python {
     };
     use crate::{
         double_coriolis, double_equations_of_motion, double_forward_kinematics,
-        double_friction_torque, double_gravity_vector, double_mass_matrix,
+        double_friction_torque, double_gravity_vector, double_mass_matrix, golfer_coriolis,
         golfer_forward_kinematics, golfer_friction_torque, golfer_gravity_vector,
         golfer_mass_matrix, triple_coriolis, triple_equations_of_motion, triple_forward_kinematics,
         triple_friction_torque, triple_gravity_vector, triple_mass_matrix,
@@ -272,6 +272,27 @@ pub mod python {
         q_arr.copy_from_slice(&q[..8]);
         let g = golfer_gravity_vector(&q_arr, &params.inner);
         Ok(g.as_slice().to_vec())
+    }
+
+    /// Coriolis/centrifugal vector C(q, qdot); exposed so the Rust and Python
+    /// implementations can be compared term by term (#5640).
+    #[pyfunction]
+    pub fn py_golfer_coriolis(
+        q: Vec<f64>,
+        qdot: Vec<f64>,
+        params: &PyGolferParams,
+    ) -> PyResult<Vec<f64>> {
+        if q.len() != 8 || qdot.len() != 8 {
+            return Err(pyo3::exceptions::PyValueError::new_err(
+                "q and qdot must have length 8",
+            ));
+        }
+        let mut q_arr = [0.0; 8];
+        q_arr.copy_from_slice(&q[..8]);
+        let mut qdot_arr = [0.0; 8];
+        qdot_arr.copy_from_slice(&qdot[..8]);
+        let c = golfer_coriolis(&q_arr, &qdot_arr, &params.inner);
+        Ok(c.as_slice().to_vec())
     }
 
     #[pyfunction]
