@@ -79,7 +79,7 @@ class GolferParamsJAX(NamedTuple):
 # Constants
 N_DOF = 8
 # Central-difference step for dM/dq in ``coriolis_jax``; must equal
-# ``golfer_dynamics.CORIOLIS_FD_STEP`` (pinned by test_physics_golfer_jax.py).  Kept local
+# ``christoffel.CORIOLIS_FD_STEP`` (pinned by test_physics_golfer_jax.py).  Kept local
 # so this optional module does not import the numpy/native stack.
 CORIOLIS_FD_STEP = 1e-5
 N_CONSTRAINTS = 4

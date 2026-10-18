@@ -1678,10 +1678,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 33832,
+      "bytes_lf": 33824,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "1dd9baecb5a4823383bbd86ab04d924565f5ade791e3920938da40700889138f",
+      "content_sha256_lf": "d524e36a55ae8758808675381fb08d2b784e3f780c86cda7ebc97ba39e80d927",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-CORE-SRC-GOLFER-RS-9CEF8079C96F",
       "language": "rust",
@@ -5915,6 +5915,66 @@
     },
     {
       "authority_status": "provisional",
+      "bytes_lf": 2414,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pendulum",
+      "content_sha256_lf": "bca5b621c6ea1c94a7e84a269f63b94c172e79f0a89ca63dfb4c93aadc7d256e",
+      "family": "pendulum-calculation",
+      "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-CHRISTOFFEL-PY-A47D9D77B1B5",
+      "language": "python",
+      "maintainer": "Pendulum maintainers",
+      "path": "src/pendulum_simulator/src/double_pendulum_golf/christoffel.py",
+      "purpose": "Christoffel symbols of the first kind for a configuration-dependent mass matrix.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "unavailable",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "CORIOLIS_FD_STEP",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "christoffel_first_kind",
+            "signature": "dM: np.ndarray"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
       "bytes_lf": 12354,
       "classification": "calculation",
       "classification_basis": "path-marker:force",
@@ -6735,10 +6795,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 17581,
+      "bytes_lf": 15723,
       "classification": "calculation",
       "classification_basis": "path-marker:dynamics",
-      "content_sha256_lf": "6fda46ad767d90d33583bf2d070a7a8c39ba00873ecb6f986da6d438bd402be9",
+      "content_sha256_lf": "2a500c869342825cad52d4cc7449cd77e5cdb22f5d7c658455b380194c6981fb",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-GOLFER-DYNAMICS-PY-05853DCB6DBB",
       "language": "python",
@@ -6777,16 +6837,6 @@
         "public_routes": [],
         "public_surfaces": [
           {
-            "kind": "constant",
-            "name": "CORIOLIS_FD_STEP",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_SYMMETRY_RTOL",
-            "signature": null
-          },
-          {
             "kind": "function",
             "name": "analytical_coriolis",
             "signature": "q: np.ndarray, qdot: np.ndarray, p: GolferParams"
@@ -6805,11 +6855,6 @@
             "kind": "function",
             "name": "analytical_mass_matrix",
             "signature": "q: np.ndarray, p: GolferParams"
-          },
-          {
-            "kind": "function",
-            "name": "christoffel_first_kind",
-            "signature": "dM: np.ndarray"
           },
           {
             "kind": "function",
@@ -11783,10 +11828,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 27335,
+      "bytes_lf": 27331,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "75b079ca1b2584baa496525ae6e14e58831e14869b7229222df9403308d510e7",
+      "content_sha256_lf": "cf475b677f3cf596e760f8718655f3d3843c2630e8b57b564c4338e2ce5a5a11",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-PHYSICS-GOLFER-JAX-PY-6966C582AC2C",
       "language": "python",

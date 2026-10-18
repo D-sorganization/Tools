@@ -26,11 +26,11 @@ from collections.abc import Callable, Iterator
 import numpy as np
 import pytest
 
+from double_pendulum_golf.christoffel import christoffel_first_kind
 from double_pendulum_golf.golfer_dynamics import (
     analytical_coriolis,
     analytical_gravity_vector,
     analytical_mass_matrix,
-    christoffel_first_kind,
     kinetic_energy,
     total_energy,
 )

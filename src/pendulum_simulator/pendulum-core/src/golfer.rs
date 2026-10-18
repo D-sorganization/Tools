@@ -246,7 +246,7 @@ pub fn mass_matrix(q: &[f64; 8], params: &GolferParams) -> SMatrix<f64, 8, 8> {
 
 /// Central-difference step for `dM/dq` in [`coriolis`].  Near the double-precision
 /// optimum (`eps^(1/3) ~ 6e-6`).  Keep equal to `CORIOLIS_FD_STEP` in
-/// `golfer_dynamics.py`.
+/// `christoffel.py`.
 pub const CORIOLIS_FD_STEP: f64 = 1e-5;
 
 /// Contract the Christoffel symbols of the first kind with `qdot` twice.
@@ -262,7 +262,7 @@ pub const CORIOLIS_FD_STEP: f64 = 1e-5;
 /// because the first two terms of `c_ijk` each contribute `0.5 * (Mdot qdot)_i`
 /// (they are equal after relabelling `j <-> k`) and the third is the gradient of
 /// the quadratic form.  This is the single definition shared with the Python
-/// `golfer_dynamics.christoffel_first_kind` (#5640); the Python contraction
+/// `christoffel.christoffel_first_kind` (#5640); the Python contraction
 /// `0.5 * (dM + dM.transpose(0, 2, 1) - dM.transpose(2, 0, 1))` is the same tensor.
 ///
 /// Precondition: every `dm[k]` is symmetric (derivative of a symmetric `M`).

@@ -270,9 +270,9 @@ class TestCoriolisForces:
 
     def test_coriolis_step_shared_with_numpy_and_rust(self) -> None:
         """One finite-difference step in every backend (#5640)."""
-        from double_pendulum_golf import golfer_dynamics, physics_golfer_jax
+        from double_pendulum_golf import christoffel, physics_golfer_jax
 
-        assert physics_golfer_jax.CORIOLIS_FD_STEP == golfer_dynamics.CORIOLIS_FD_STEP
+        assert physics_golfer_jax.CORIOLIS_FD_STEP == christoffel.CORIOLIS_FD_STEP
 
     def test_coriolis_parity_random_states(self, random_state: np.ndarray) -> None:
         """JAX Coriolis matches numpy."""
