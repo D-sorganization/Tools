@@ -729,7 +729,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-programmatic-pid.json"
     },
     {
-      "content_sha256_lf": "ba94f233e0a3c0e824590d6a779267f6d736004b198359dfbb910305fd00dbaf",
+      "content_sha256_lf": "e5692a95b0809327e688e9d6b83c10f8dab74069583c1d508ffdc7226863bae5",
       "entry_count": 2,
       "package": "src/shared/python/realtime",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-realtime.json"
