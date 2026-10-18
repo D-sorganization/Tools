@@ -765,10 +765,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 14126,
+      "bytes_lf": 14890,
       "classification": "calculation",
       "classification_basis": "path-marker:dynamics",
-      "content_sha256_lf": "f3abe64cd1b3d50afbd023ff0ef21ab0878ade213a8a610cfe2560eac8b88011",
+      "content_sha256_lf": "f50b2f235c4cc8b0709da0b77faa201063a7086356ef49fb8713832c4d529cdd",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-CORE-SRC-BINDINGS-DYNAMICS-RS-60BE578D54DA",
       "language": "rust",
@@ -835,6 +835,11 @@
           {
             "kind": "fn",
             "name": "py_double_mass_matrix",
+            "signature": null
+          },
+          {
+            "kind": "fn",
+            "name": "py_golfer_coriolis",
             "signature": null
           },
           {
@@ -1192,10 +1197,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 5645,
+      "bytes_lf": 5720,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "68ad22f885173a41012afbc47cb1a517fc2e570b8c50529be95f8acdba0a9ab3",
+      "content_sha256_lf": "ee124b2c95b5995772251a34d00e645db883d4b51c76dfae3c22f3da1cefda49",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-CORE-SRC-BINDINGS-MOD-RS-151EE66BE5BF",
       "language": "rust",
@@ -1673,10 +1678,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 26994,
+      "bytes_lf": 33832,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "9d04e1820512023ada29f855cfa5eead65b35c0166b9d3771cc939096fa87a72",
+      "content_sha256_lf": "1dd9baecb5a4823383bbd86ab04d924565f5ade791e3920938da40700889138f",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-CORE-SRC-GOLFER-RS-9CEF8079C96F",
       "language": "rust",
@@ -1715,6 +1720,11 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [
+          {
+            "kind": "const",
+            "name": "CORIOLIS_FD_STEP",
+            "signature": null
+          },
           {
             "kind": "const",
             "name": "INDEPENDENT_CLOSURE_ROWS",
@@ -2086,10 +2096,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 3451,
+      "bytes_lf": 3480,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "467d7928b90b466ffa8c2e1ed0796232bafde7fc7aa481783ef95a652e48733b",
+      "content_sha256_lf": "60f732ef2534125c650fd45b6450ee247a3700962512c7fa48b3dcfc7eee677c",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-PENDULUM-CORE-SRC-LIB-RS-F6B1C27F064A",
       "language": "rust",
@@ -6725,10 +6735,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 15314,
+      "bytes_lf": 17581,
       "classification": "calculation",
       "classification_basis": "path-marker:dynamics",
-      "content_sha256_lf": "3cdcc128aab80a0fcf90f01a1327350d7f9a9e7eeb08b76082bdb60bf49f8619",
+      "content_sha256_lf": "6fda46ad767d90d33583bf2d070a7a8c39ba00873ecb6f986da6d438bd402be9",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-GOLFER-DYNAMICS-PY-05853DCB6DBB",
       "language": "python",
@@ -6767,6 +6777,16 @@
         "public_routes": [],
         "public_surfaces": [
           {
+            "kind": "constant",
+            "name": "CORIOLIS_FD_STEP",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SYMMETRY_RTOL",
+            "signature": null
+          },
+          {
             "kind": "function",
             "name": "analytical_coriolis",
             "signature": "q: np.ndarray, qdot: np.ndarray, p: GolferParams"
@@ -6785,6 +6805,11 @@
             "kind": "function",
             "name": "analytical_mass_matrix",
             "signature": "q: np.ndarray, p: GolferParams"
+          },
+          {
+            "kind": "function",
+            "name": "christoffel_first_kind",
+            "signature": "dM: np.ndarray"
           },
           {
             "kind": "function",
@@ -11758,10 +11783,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 26830,
+      "bytes_lf": 27335,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "42e86b066840822268e33b9a19bb18a4e35167f8a0955851009cc94dcc902d44",
+      "content_sha256_lf": "75b079ca1b2584baa496525ae6e14e58831e14869b7229222df9403308d510e7",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-PHYSICS-GOLFER-JAX-PY-6966C582AC2C",
       "language": "python",
@@ -11802,6 +11827,11 @@
           {
             "kind": "class",
             "name": "GolferParamsJAX",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CORIOLIS_FD_STEP",
             "signature": null
           },
           {

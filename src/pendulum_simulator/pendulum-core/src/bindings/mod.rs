@@ -64,6 +64,7 @@ pub mod python_init {
         // Golfer dynamics
         m.add_function(wrap_pyfunction!(dyn_py::py_golfer_mass_matrix, m)?)?;
         m.add_function(wrap_pyfunction!(dyn_py::py_golfer_gravity_vector, m)?)?;
+        m.add_function(wrap_pyfunction!(dyn_py::py_golfer_coriolis, m)?)?;
         m.add_function(wrap_pyfunction!(dyn_py::py_golfer_friction_torque, m)?)?;
         m.add_function(wrap_pyfunction!(dyn_py::py_golfer_forward_kinematics, m)?)?;
         // Golfer constraint forces

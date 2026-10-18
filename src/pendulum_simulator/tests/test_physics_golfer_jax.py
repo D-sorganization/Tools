@@ -244,9 +244,7 @@ class TestGravityVector:
         G_jax = gravity_vector_jax(q_jax, _PARAMS_JAX)
         assert G_jax.shape == (N_DOF,)
 
-    def test_gravity_vector_parity_random_configs(
-        self, random_config: np.ndarray
-    ) -> None:
+    def test_gravity_vector_parity_random_configs(self, random_config: np.ndarray) -> None:
         """JAX gravity vector matches numpy."""
         q_jax = jnp.array(random_config)
 
@@ -269,6 +267,12 @@ class TestCoriolisForces:
 
         C_jax = coriolis_jax(q_jax, qdot_jax, _PARAMS_JAX)
         assert C_jax.shape == (N_DOF,)
+
+    def test_coriolis_step_shared_with_numpy_and_rust(self) -> None:
+        """One finite-difference step in every backend (#5640)."""
+        from double_pendulum_golf import golfer_dynamics, physics_golfer_jax
+
+        assert physics_golfer_jax.CORIOLIS_FD_STEP == golfer_dynamics.CORIOLIS_FD_STEP
 
     def test_coriolis_parity_random_states(self, random_state: np.ndarray) -> None:
         """JAX Coriolis matches numpy."""

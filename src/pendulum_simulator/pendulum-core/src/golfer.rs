@@ -244,35 +244,72 @@ pub fn mass_matrix(q: &[f64; 8], params: &GolferParams) -> SMatrix<f64, 8, 8> {
     m
 }
 
-/// Compute the Coriolis/centrifugal vector C(q, qdot).
+/// Central-difference step for `dM/dq` in [`coriolis`].  Near the double-precision
+/// optimum (`eps^(1/3) ~ 6e-6`).  Keep equal to `CORIOLIS_FD_STEP` in
+/// `golfer_dynamics.py`.
+pub const CORIOLIS_FD_STEP: f64 = 1e-5;
+
+/// Contract the Christoffel symbols of the first kind with `qdot` twice.
 ///
-/// Parity with the Python model (`golfer_dynamics.analytical_coriolis`, #5638):
+/// `dm[k]` is `dM/dq_k`.  With `c_ijk = 0.5 * (dM_ij/dq_k + dM_ik/dq_j - dM_jk/dq_i)`
+/// the Coriolis/centrifugal vector is
 ///
 /// ```text
-/// C_i = sum_jk 0.5 * (dM_ij/dq_k + dM_ik/dq_j - dM_ki/dq_j) * qdot_j * qdot_k
+/// C_i = sum_jk c_ijk * qdot_j * qdot_k
+///     = (Mdot qdot)_i - 0.5 * qdot^T (dM/dq_i) qdot
 /// ```
 ///
-/// with `dM/dq_k` a forward difference (step `1e-7`) of the analytical mass
-/// matrix.  The Python contraction reads the third term as `dM_ki/dq_j`, which
-/// equals the second term for a symmetric `M`, so it reduces to
-/// `0.5 * dM_ij/dq_k` rather than the textbook Christoffel symbol.  That is a
-/// pre-existing defect shared by both backends (tracked separately); it is
-/// reproduced here on purpose so the two backends stay one solver.
-pub fn coriolis(q: &[f64; 8], qdot: &[f64; 8], params: &GolferParams) -> SVector<f64, 8> {
-    let eps = 1e-7;
+/// because the first two terms of `c_ijk` each contribute `0.5 * (Mdot qdot)_i`
+/// (they are equal after relabelling `j <-> k`) and the third is the gradient of
+/// the quadratic form.  This is the single definition shared with the Python
+/// `golfer_dynamics.christoffel_first_kind` (#5640); the Python contraction
+/// `0.5 * (dM + dM.transpose(0, 2, 1) - dM.transpose(2, 0, 1))` is the same tensor.
+///
+/// Precondition: every `dm[k]` is symmetric (derivative of a symmetric `M`).
+pub(crate) fn christoffel_contraction(
+    dm: &[SMatrix<f64, 8, 8>; 8],
+    qdot: &SVector<f64, 8>,
+) -> SVector<f64, 8> {
+    let mut m_dot_qdot = SVector::<f64, 8>::zeros();
+    let mut kinetic_gradient = SVector::<f64, 8>::zeros();
+    for (k, dm_dqk) in dm.iter().enumerate() {
+        let dm_qdot = dm_dqk * qdot;
+        m_dot_qdot += qdot[k] * dm_qdot;
+        kinetic_gradient[k] = qdot.dot(&dm_qdot);
+    }
+    m_dot_qdot - 0.5 * kinetic_gradient
+}
 
-    let m0 = mass_matrix(q, params);
+/// Compute the Coriolis/centrifugal vector C(q, qdot).
+///
+/// Parity with the Python model (`golfer_dynamics.analytical_coriolis`, #5638,
+/// #5640):
+///
+/// ```text
+/// C_i = sum_jk 0.5 * (dM_ij/dq_k + dM_ik/dq_j - dM_jk/dq_i) * qdot_j * qdot_k
+/// ```
+///
+/// with `dM/dq_k` a central difference (step [`CORIOLIS_FD_STEP`]) of the
+/// analytical mass matrix.  See [`christoffel_contraction`] for the closed form
+/// actually evaluated.  Until #5640 both backends dropped the third term (they
+/// used `dM_ki/dq_j`, which equals the second term for a symmetric `M`) and
+/// returned `0.5 * Mdot * qdot`; the two were fixed together to stay one solver.
+/// The step moved from a `1e-7` forward difference to a `1e-5` central one in the
+/// same change: round-off in `M` divided by `1e-7` made the backends disagree at
+/// ~1e-8 relative, the central difference brings that to ~1e-11.
+pub fn coriolis(q: &[f64; 8], qdot: &[f64; 8], params: &GolferParams) -> SVector<f64, 8> {
     let qdot_vec = SVector::<f64, 8>::from_row_slice(qdot);
 
-    let mut c = SVector::<f64, 8>::zeros();
-    for k in 0..8 {
+    let mut dm = [SMatrix::<f64, 8, 8>::zeros(); 8];
+    for (k, dm_dqk) in dm.iter_mut().enumerate() {
         let mut q_plus = *q;
-        q_plus[k] += eps;
-        let dm_dqk = (mass_matrix(&q_plus, params) - m0) / eps;
-        // sum_j 0.5 * dM_ij/dq_k * qdot_j, weighted by qdot_k
-        c += 0.5 * qdot[k] * (dm_dqk * qdot_vec);
+        let mut q_minus = *q;
+        q_plus[k] += CORIOLIS_FD_STEP;
+        q_minus[k] -= CORIOLIS_FD_STEP;
+        *dm_dqk = (mass_matrix(&q_plus, params) - mass_matrix(&q_minus, params))
+            / (2.0 * CORIOLIS_FD_STEP);
     }
-    c
+    christoffel_contraction(&dm, &qdot_vec)
 }
 
 /// Compute the gravity vector G(q) = dV/dq.
@@ -732,5 +769,138 @@ mod tests {
         assert!((phi[0] - expected_row0).abs() < 1e-12);
         assert!((phi[1] - expected_row1).abs() < 1e-12);
         assert_eq!(INDEPENDENT_CLOSURE_ROWS, [0, 1]);
+    }
+
+    // ---- Coriolis / Christoffel (#5640) -------------------------------------
+
+    const QDOT_SAMPLES: [[f64; 8]; 3] = [
+        [0.6, -1.1, 0.4, 0.0, 0.9, -0.7, 0.0, 1.3],
+        [-1.4, 0.3, 1.0, 0.0, -0.5, 0.8, 0.0, -0.9],
+        [0.2, 0.7, -0.6, 0.0, 1.2, 1.1, 0.0, 0.5],
+    ];
+
+    /// Deterministic dM[k] stack, each symmetric (derivative of a symmetric M).
+    fn symmetric_derivative_stack() -> [SMatrix<f64, 8, 8>; 8] {
+        let mut dm = [SMatrix::<f64, 8, 8>::zeros(); 8];
+        for (k, m) in dm.iter_mut().enumerate() {
+            for i in 0..8 {
+                for j in i..8 {
+                    let v = ((1 + i) as f64 * 0.37 + (1 + j) as f64 * 0.91 + (1 + k) as f64 * 1.7)
+                        .sin();
+                    m[(i, j)] = v;
+                    m[(j, i)] = v;
+                }
+            }
+        }
+        dm
+    }
+
+    #[test]
+    fn test_christoffel_contraction_matches_brute_force_definition() {
+        let dm = symmetric_derivative_stack();
+        for qd in QDOT_SAMPLES {
+            let qdot = SVector::<f64, 8>::from_row_slice(&qd);
+            let fast = christoffel_contraction(&dm, &qdot);
+            for i in 0..8 {
+                let mut expected = 0.0;
+                for j in 0..8 {
+                    for k in 0..8 {
+                        // c_ijk = 0.5 (dM_ij/dq_k + dM_ik/dq_j - dM_jk/dq_i)
+                        let c = 0.5 * (dm[k][(i, j)] + dm[j][(i, k)] - dm[i][(j, k)]);
+                        expected += c * qd[j] * qd[k];
+                    }
+                }
+                assert!(
+                    (fast[i] - expected).abs() < 1e-12,
+                    "C[{i}] = {} vs brute force {expected}",
+                    fast[i]
+                );
+            }
+        }
+    }
+
+    /// Euler-Lagrange reference built from M(q) alone (no Christoffel algebra):
+    /// `C = d/dt (M qdot) - dT/dq` with `T = 0.5 qdot^T M qdot`, central differences.
+    fn euler_lagrange_coriolis(
+        q: &[f64; 8],
+        qdot: &[f64; 8],
+        params: &GolferParams,
+    ) -> SVector<f64, 8> {
+        let qd = SVector::<f64, 8>::from_row_slice(qdot);
+        let mut qp = *q;
+        let mut qm = *q;
+        for i in 0..8 {
+            qp[i] += FD_STEP * qdot[i];
+            qm[i] -= FD_STEP * qdot[i];
+        }
+        let momentum_rate =
+            (mass_matrix(&qp, params) * qd - mass_matrix(&qm, params) * qd) / (2.0 * FD_STEP);
+        let kinetic = |qq: &[f64; 8]| 0.5 * qd.dot(&(mass_matrix(qq, params) * qd));
+        let mut grad_t = SVector::<f64, 8>::zeros();
+        for i in 0..8 {
+            let mut a = *q;
+            let mut b = *q;
+            a[i] += FD_STEP;
+            b[i] -= FD_STEP;
+            grad_t[i] = (kinetic(&a) - kinetic(&b)) / (2.0 * FD_STEP);
+        }
+        momentum_rate - grad_t
+    }
+
+    #[test]
+    fn test_coriolis_matches_euler_lagrange_reference() {
+        // Before #5640 this returned 0.5 * Mdot qdot (relative error 0.5-1.1).
+        let params = params_with_grip_right(0.3);
+        for q in NON_TRIVIAL_CONFIGS {
+            for qd in QDOT_SAMPLES {
+                let c = coriolis(&q, &qd, &params);
+                let reference = euler_lagrange_coriolis(&q, &qd, &params);
+                let err = (c - reference).norm() / reference.norm();
+                assert!(err < 1e-5, "relative error {err} for q={q:?} qdot={qd:?}");
+            }
+        }
+    }
+
+    #[test]
+    fn test_coriolis_is_not_half_mdot_qdot() {
+        // Guard the exact #5640 failure mode.
+        let params = params_with_grip_right(0.3);
+        let q = NON_TRIVIAL_CONFIGS[0];
+        let qd = QDOT_SAMPLES[0];
+        let qdot = SVector::<f64, 8>::from_row_slice(&qd);
+        let mut m_dot_qdot = SVector::<f64, 8>::zeros();
+        for k in 0..8 {
+            let mut qp = q;
+            let mut qm = q;
+            qp[k] += FD_STEP;
+            qm[k] -= FD_STEP;
+            let dm = (mass_matrix(&qp, &params) - mass_matrix(&qm, &params)) / (2.0 * FD_STEP);
+            m_dot_qdot += qd[k] * (dm * qdot);
+        }
+        let c = coriolis(&q, &qd, &params);
+        assert!((c - 0.5 * m_dot_qdot).norm() > 1e-3 * c.norm());
+    }
+
+    #[test]
+    fn test_coriolis_power_balance() {
+        // qdot^T (Mdot - 2C) qdot = 0 (skew-symmetry of Mdot - 2C(q, qdot)).
+        let params = params_with_grip_right(0.3);
+        for q in NON_TRIVIAL_CONFIGS {
+            for qd in QDOT_SAMPLES {
+                let qdot = SVector::<f64, 8>::from_row_slice(&qd);
+                let mut m_dot = SMatrix::<f64, 8, 8>::zeros();
+                for k in 0..8 {
+                    let mut qp = q;
+                    let mut qm = q;
+                    qp[k] += FD_STEP;
+                    qm[k] -= FD_STEP;
+                    m_dot += qd[k] * (mass_matrix(&qp, &params) - mass_matrix(&qm, &params))
+                        / (2.0 * FD_STEP);
+                }
+                let c = coriolis(&q, &qd, &params);
+                let balance = qdot.dot(&(m_dot * qdot - 2.0 * c));
+                assert!(balance.abs() < 1e-5, "power balance residual {balance}");
+            }
+        }
     }
 }

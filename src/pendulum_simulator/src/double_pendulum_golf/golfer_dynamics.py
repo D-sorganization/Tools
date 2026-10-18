@@ -15,6 +15,14 @@ from . import native_backend as _native_backend
 from .golfer_kinematics import forward_kinematics
 from .physics_golfer import GolferParams, N_DOF, State
 
+# Relative tolerance for the symmetry precondition of ``christoffel_first_kind``:
+# finite differences of a symmetric matrix are symmetric to round-off only.
+_SYMMETRY_RTOL = 1e-6
+
+# Central-difference step for dM/dq in the Coriolis vector.  Optimal for double
+# precision is ~eps^(1/3) ~ 6e-6; keep equal to CORIOLIS_FD_STEP in golfer.rs.
+CORIOLIS_FD_STEP = 1e-5
+
 
 def _mass_point_positions(q: np.ndarray, p: GolferParams) -> list[tuple[float, Callable]]:
     """Return list of (mass, position_function) for all point masses."""
@@ -346,14 +354,50 @@ def analytical_mass_matrix(q: np.ndarray, p: GolferParams) -> np.ndarray:
     return M
 
 
+def christoffel_first_kind(dM: np.ndarray) -> np.ndarray:
+    """Christoffel symbols of the first kind of the metric ``M(q)``.
+
+    ``c[i, j, k] = 0.5 * (dM_ij/dq_k + dM_ik/dq_j - dM_jk/dq_i)`` with
+    ``dM[i, j, k] = dM_ij/dq_k``.  This is the single definition of the formula; the
+    Rust backend (``pendulum-core/src/golfer.rs``) implements the same contraction.
+
+    Index map (``numpy.transpose`` semantics, ``out[x, y, z] = a[...]``):
+
+    * ``dM.transpose(0, 2, 1)[i, j, k] = dM[i, k, j] = dM_ik/dq_j``
+    * ``dM.transpose(2, 0, 1)[i, j, k] = dM[j, k, i] = dM_jk/dq_i``
+
+    ``transpose(1, 2, 0)`` would give ``dM[k, i, j] = dM_ki/dq_j``, which equals the
+    second term for a symmetric ``M`` and silently cancels it (#5640).
+
+    Contract:
+        Pre:  ``dM`` is a cubic ``(n, n, n)`` array that is symmetric in its first two
+              indices (it is the derivative of a symmetric matrix).
+        Post: ``c`` is symmetric in ``(j, k)`` and ``c[i,j,k] + c[j,i,k] == dM[i,j,k]``.
+    """
+    if not isinstance(dM, np.ndarray):
+        raise TypeError("dM must be a numpy ndarray")
+    if dM.ndim != 3 or not (dM.shape[0] == dM.shape[1] == dM.shape[2]):
+        raise ValueError(f"dM must have shape (n, n, n), got {dM.shape}")
+    scale = max(1.0, float(np.max(np.abs(dM))))
+    if not np.allclose(dM, dM.transpose(1, 0, 2), rtol=0.0, atol=_SYMMETRY_RTOL * scale):
+        raise ValueError("dM must be symmetric in its first two indices")
+    result: np.ndarray = 0.5 * (dM + dM.transpose(0, 2, 1) - dM.transpose(2, 0, 1))
+    return result
+
+
 def analytical_coriolis(q: np.ndarray, qdot: np.ndarray, p: GolferParams) -> np.ndarray:
-    """Compute C(q, qdot) = (dM/dt) * qdot analytically.
+    """Compute the Coriolis/centrifugal vector C(q, qdot) of M qddot + C + G = tau.
 
-    Uses Christoffel symbols: C_i = sum_jk c_ijk * qdot_j * qdot_k
-    where c_ijk = 0.5 * (dM_ij/dq_k + dM_ik/dq_j - dM_jk/dq_i)
+    Uses Christoffel symbols (see ``christoffel_first_kind``):
+    C_i = sum_jk c_ijk * qdot_j * qdot_k, which equals
+    ``Mdot @ qdot - 0.5 * grad_q(qdot^T M qdot)``.
 
-    dM/dq_k is computed analytically from the chain rule applied to
-    each Jacobian term.
+    dM/dq_k is a central difference (step ``CORIOLIS_FD_STEP``) of
+    ``analytical_mass_matrix``.  The Rust backend implements the same formula and step
+    (``pendulum-core/src/golfer.rs``) and ``coriolis_jax`` mirrors it; change them
+    together (#5638, #5640).  A central difference keeps both the truncation and the
+    round-off error near 1e-11, so the backends agree to ~1e-9 relative (a forward
+    difference at 1e-7 amplifies the backends' differing round-off in ``M`` to ~1e-8).
 
     Parameters
     ----------
@@ -379,18 +423,15 @@ def analytical_coriolis(q: np.ndarray, qdot: np.ndarray, p: GolferParams) -> np.
     if qdot.shape[0] > N_DOF:
         qdot = qdot[:N_DOF]
 
-    # Compute dM/dq_k analytically using finite differences of Jacobians
-    # (This is faster than recomputing M multiple times)
-    eps = 1e-7
-    M0 = analytical_mass_matrix(q, p)
     dM = np.zeros((N_DOF, N_DOF, N_DOF))  # dM[i,j,k] = dM_ij/dq_k
-
     for k in range(N_DOF):
-        q_plus = q.copy()
-        q_plus[k] += eps
-        dM[:, :, k] = (analytical_mass_matrix(q_plus, p) - M0) / eps
+        step = np.zeros(N_DOF)
+        step[k] = CORIOLIS_FD_STEP
+        dM[:, :, k] = (
+            analytical_mass_matrix(q + step, p) - analytical_mass_matrix(q - step, p)
+        ) / (2.0 * CORIOLIS_FD_STEP)
 
-    christoffel = 0.5 * (dM + dM.transpose(0, 2, 1) - dM.transpose(1, 2, 0))
+    christoffel = christoffel_first_kind(dM)
     result: np.ndarray = np.einsum("ijk,j,k->i", christoffel, qdot, qdot)
     return result
 
