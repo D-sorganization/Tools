@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-18 | #5653 | Snatch gets a pull phase: ordered timed via points (ViaSchedule) and a phase-correct bar path |
 | 2026-10-18 | #5646 | Adversarial review 2026-10-16: 38 findings with draft PR pitches under docs/development/adversarial-review/ |
 | 2026-10-18 | #5654 | Import ezc3d lazily on first C3D read and add availability check to prevent Windows DLL conflicts with OpenSim |
 | 2026-10-16 | #5644 | Rust golfer solver (pendulum-core) is now the same solver as Python for issue #5638: closure equations, INDEPENDENT_CLOSURE_ROWS=(0,1) exposed to Python, zero multipliers on redundant rows 2-3, typed rank-loss ValueError, analytical Jacobian, 2*alpha/beta^2 Baumgarte, hub/gravity/Coriolis parity; adds Rust-vs-Python parity tests and splits golfer_constraints tests into golfer_constraints_tests.rs; Rust golfer solver is now the same solver as Python: closure equations, INDEPENDENT_CLOSURE_ROWS=[0,1] (exposed to Python), zero multipliers on rows 2-3, typed rank-loss error (ValueError), analytical Jacobian, 2*alpha/beta^2 Baumgarte, hub/gravity/Coriolis parity; adds Rust-vs-Python parity tests |

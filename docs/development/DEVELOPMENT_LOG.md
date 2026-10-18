@@ -1574,6 +1574,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5652 · Snatch Gets a Pull Phase: Ordered Timed via Points (ViaSchedule) and a Phase-Correct Bar Path
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5652
+- **Branch:** merged via #5653
+- **PR:** #5653
+- **Paths:** see #5653
+- **Started:** 2026-10-18
+- **Last verified:** 2026-10-18 (`a4595051`; collated from changes/5652-snatch-gets-a-pull-phase-ordered-timed-v.md)
+- **Summary:** Snatch gets a pull phase: ordered timed via points (ViaSchedule) and a phase-correct bar path
+- **Next step:** Shipped in PR #5653.
+
 ### DL-#5645 · Import Ezc3d Lazily on First C3D Read and Add Availability Check to Prevent Windows DLL Conflicts With OpenSim
 
 - **State:** shipped
