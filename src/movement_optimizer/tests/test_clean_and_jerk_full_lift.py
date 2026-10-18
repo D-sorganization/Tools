@@ -133,7 +133,9 @@ def test_lifter_drops_under_the_bar_into_a_front_squat(solved) -> None:
 
 def test_bar_is_at_front_rack_height_from_the_catch_to_the_drive(solved) -> None:
     frac, bar, shoulder = solved["frac"], solved["bar"], solved["shoulder"]
-    rack = _window(frac, CLEAN_AND_JERK_PHASES["rack_catch"], CLEAN_AND_JERK_EVENTS["drive_extension"])
+    rack = _window(
+        frac, CLEAN_AND_JERK_PHASES["rack_catch"], CLEAN_AND_JERK_EVENTS["drive_extension"]
+    )
     np.testing.assert_allclose(bar[rack, 1], shoulder[rack], atol=1e-12)
 
 
@@ -188,5 +190,19 @@ def test_clean_and_jerk_is_a_pull_with_bar_knee_clearance(body: BodyModel) -> No
 
 def test_bar_path_rejects_mismatched_times(body: BodyModel) -> None:
     dyn, q_start, *_ = make_clean_and_jerk_config(body, 100.0)
+    with pytest.raises(ValueError, match="bar_mass"):
+        make_clean_and_jerk_config(body, -1.0)
     with pytest.raises(ValueError, match="one entry per"):
         clean_and_jerk_bar_path(dyn, np.vstack([q_start, q_start]), np.array([0.0]))
+
+
+def test_shared_pose_helpers_check_their_preconditions(body: BodyModel) -> None:
+    from movement_optimizer.exercises._common import balanced_shank_pose, smoothstep
+
+    dyn, *_ = make_clean_and_jerk_config(body, 100.0)
+    with pytest.raises(ValueError, match="t0 < t1"):
+        smoothstep(np.array([0.5]), 0.6, 0.6)
+    np.testing.assert_allclose(smoothstep(np.array([0.0, 0.5, 1.0]), 0.25, 0.75), [0, 0.5, 1])
+    # A front-squat catch cannot balance with the shank held near vertical.
+    with pytest.raises(ValueError, match="balances the pose"):
+        balanced_shank_pose(dyn, RACK_CATCH_KNEE_FLEX_DEG, 18.0, "clean_and_jerk", 100.0, (-5, 5))
