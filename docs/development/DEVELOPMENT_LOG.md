@@ -1574,6 +1574,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5661 · Full Clean and Jerk: Make_Clean_and_Jerk_Config on a Timed via Schedule at the Standard's Eight Phases and a Hang/Rack/Overhead Phase-Correct Bar Path
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5661
+- **Branch:** merged via #5662
+- **PR:** #5662
+- **Paths:** see #5662
+- **Started:** 2026-10-18
+- **Last verified:** 2026-10-18 (`0c585b39`; collated from changes/5661-full-clean-and-jerk-make-clean-and-jerk.md)
+- **Summary:** Full clean and jerk: make_clean_and_jerk_config on a timed via schedule at the standard's eight phases and a hang/rack/overhead phase-correct bar path
+- **Next step:** Shipped in PR #5662.
+
 ### DL-#5658 · Stop and Join Realtime-File-Tail Thread When Last Subscriber Unsubscribes
 
 - **State:** shipped
