@@ -184,3 +184,33 @@ def test_poll_thread_delivers_asynchronously(root: Path) -> None:
 
     transport.shutdown()
     assert received == [{"seq": 42}]
+
+
+def test_unsubscribe_last_subscriber_stops_and_joins_poll_thread(root: Path) -> None:
+    import threading
+
+    transport = _make_transport(poll_thread=True)
+    try:
+        tok = transport.subscribe("pose/canonical", lambda p: None)
+        assert transport._poll_thread is not None and transport._poll_thread.is_alive()
+        assert "pose/canonical" in transport._channels
+
+        transport.unsubscribe(tok)
+        assert "pose/canonical" not in transport._channels
+        assert not transport._channels
+        assert transport._poll_thread is None or not transport._poll_thread.is_alive()
+
+        # Resubscribing restarts poll thread and works normally
+        received = []
+        evt = threading.Event()
+        tok2 = transport.subscribe(
+            "pose/canonical", lambda p: (received.append(p), evt.set())
+        )
+        assert transport._poll_thread is not None and transport._poll_thread.is_alive()
+        transport.publish("pose/canonical", {"resub": True})
+        assert evt.wait(2.0)
+        assert received == [{"resub": True}]
+        transport.unsubscribe(tok2)
+        assert transport._poll_thread is None or not transport._poll_thread.is_alive()
+    finally:
+        transport.shutdown()
