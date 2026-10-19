@@ -74,6 +74,12 @@ export type State = [number, number, number, number];
 
 export type TorqueFunc = (t: number) => [number, number];
 
+/**
+ * Default gravitational acceleration (m/s^2): standard gravity.
+ * Single source of truth for every web default `g` (Tools #5635; was 9.81).
+ */
+export const STANDARD_GRAVITY = 9.80665;
+
 /** DbC-validated constructor for PendulumParams. */
 export function makePendulumParams(p: PendulumParams): PendulumParams {
     assertPositive(p.m1, 'm1'); assertPositive(p.m2, 'm2');

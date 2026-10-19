@@ -20,6 +20,8 @@ from __future__ import annotations
 
 from typing import Any, NamedTuple, TypeAlias
 
+from .constants import GRAVITY_STANDARD
+
 try:
     import jax  # noqa: F401
     import jax.numpy as jnp
@@ -64,7 +66,7 @@ class GolferParamsJAX(NamedTuple):
     m_clubhead: float = 0.2
 
     # Gravity
-    g: float = 9.81
+    g: float = GRAVITY_STANDARD
 
     # Dissipation (viscous damping coefficients)
     b_hub: float = 0.0

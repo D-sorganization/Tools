@@ -21,7 +21,7 @@ fn params() -> GolferParams {
         m_clubhead: 0.2,
         grip_right: 0.05,
         grip_left: 0.25,
-        g: 9.81,
+        g: crate::types::STANDARD_GRAVITY,
         friction: [0.0; 7],
     }
 }

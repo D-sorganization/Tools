@@ -90,8 +90,8 @@ class GolferParams:
     Contract:
         - All lengths and masses must be strictly positive.
         - Gravity must be finite and non-negative.  The default is
-          ``GRAVITY_MSS`` (9.81); UpstreamDrift defaults to standard gravity
-          (9.80665), and aligning them is pending an owner decision (#5635).
+          standard gravity (``GRAVITY_MSS``, 9.80665 m/s²), matching
+          UpstreamDrift (owner decision, #5635; previously 9.81).
         - Grip offsets must be non-negative and sum ≤ club length.
     """
 

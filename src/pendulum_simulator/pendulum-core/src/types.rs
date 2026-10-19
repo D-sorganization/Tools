@@ -1,5 +1,12 @@
 //! Shared types and parameter structures for physics models.
 
+/// Default gravitational acceleration (m/s^2): standard gravity.
+///
+/// Single source of truth for every Rust default `g` (PyO3 signature
+/// defaults included).  Matches UpstreamDrift and the Python
+/// `GRAVITY_STANDARD` (Tools #5635; previously 9.81).
+pub const STANDARD_GRAVITY: f64 = 9.80665;
+
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -373,5 +380,24 @@ impl Vec2 {
             x: self.x * s,
             y: self.y * s,
         }
+    }
+}
+
+#[cfg(test)]
+mod gravity_default_tests {
+    use super::STANDARD_GRAVITY;
+
+    /// Owner decision (Tools #5635): the default gravity is standard gravity.
+    #[test]
+    fn standard_gravity_is_9_80665() {
+        assert_eq!(STANDARD_GRAVITY, 9.80665);
+    }
+
+    /// The PyO3 constructors default `g` to the one constant, not a literal.
+    #[test]
+    fn pyo3_signature_defaults_use_standard_gravity() {
+        let src = include_str!("bindings/state.rs");
+        assert!(src.contains("g=STANDARD_GRAVITY"));
+        assert!(!src.contains("g=9.81"));
     }
 }

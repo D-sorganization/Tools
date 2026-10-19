@@ -18,7 +18,9 @@ pub(crate) fn to_array_8(values: Vec<f64>, name: &str) -> pyo3::PyResult<[f64; 8
 
 #[cfg(feature = "python")]
 pub mod python {
-    use crate::types::{DoublePendulumParams, GolferParams, TriplePendulumParams};
+    use crate::types::{
+        DoublePendulumParams, GolferParams, TriplePendulumParams, STANDARD_GRAVITY,
+    };
     use pyo3::prelude::*;
 
     /// Python wrapper for DoublePendulumParams
@@ -31,7 +33,7 @@ pub mod python {
     #[pymethods]
     impl PyDoublePendulumParams {
         #[new]
-        #[pyo3(signature = (m1, m2, l1, l2, g=9.81, friction1=0.0, friction2=0.0, m_clubhead=0.0))]
+        #[pyo3(signature = (m1, m2, l1, l2, g=STANDARD_GRAVITY, friction1=0.0, friction2=0.0, m_clubhead=0.0))]
         pub fn new(
             m1: f64,
             m2: f64,
@@ -73,7 +75,7 @@ pub mod python {
     #[pymethods]
     impl PyTriplePendulumParams {
         #[new]
-        #[pyo3(signature = (m1, m2, m3, l1, l2, l3, g=9.81, friction1=0.0, friction2=0.0, friction3=0.0))]
+        #[pyo3(signature = (m1, m2, m3, l1, l2, l3, g=STANDARD_GRAVITY, friction1=0.0, friction2=0.0, friction3=0.0))]
         pub fn new(
             m1: f64,
             m2: f64,

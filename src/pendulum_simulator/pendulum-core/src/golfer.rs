@@ -457,7 +457,7 @@ mod tests {
             m_clubhead: 0.2,
             grip_right: 0.3,
             grip_left: 0.3,
-            g: 9.81,
+            g: crate::types::STANDARD_GRAVITY,
             friction: [0.0; 7],
         };
 
@@ -489,7 +489,7 @@ mod tests {
             m_clubhead: 0.2,
             grip_right: 0.3,
             grip_left: 0.3,
-            g: 9.81,
+            g: crate::types::STANDARD_GRAVITY,
             friction: [0.0; 7],
         };
 
@@ -520,7 +520,7 @@ mod tests {
             m_clubhead: 0.2,
             grip_right: 0.3,
             grip_left: 0.3,
-            g: 9.81,
+            g: crate::types::STANDARD_GRAVITY,
             friction: [0.0; 7],
         };
 
@@ -567,7 +567,7 @@ mod tests {
             m_clubhead: 0.2,
             grip_right,
             grip_left: 0.1,
-            g: 9.81,
+            g: crate::types::STANDARD_GRAVITY,
             friction: [0.0; 7],
         }
     }

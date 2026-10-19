@@ -1,11 +1,10 @@
 """``GolferParams.g`` default and injection (#5635, part 2).
 
-UpstreamDrift's ``GolferParams`` defaults ``g`` to standard gravity
-(9.80665 m/s^2); Tools defaults to ``GRAVITY_MSS`` (9.81 m/s^2).  Changing the
-Tools default shifts numeric outputs, so it is pending an owner decision.
-Until then these tests pin the current default (so any change is deliberate)
-and the injection path that UpstreamDrift's adapters rely on: an explicit
-``g`` must flow straight into the gravity vector.
+Owner decision (2026-10-18): the Tools default gravity is standard gravity,
+9.80665 m/s^2, matching UpstreamDrift (previously 9.81).  These tests pin that
+default (so any change is deliberate) and the injection path that
+UpstreamDrift's adapters rely on: an explicit ``g`` must flow straight into
+the gravity vector.
 """
 
 from __future__ import annotations
@@ -39,8 +38,12 @@ _GEOMETRY = {
 }
 
 
-def test_default_g_is_unchanged_pending_owner_decision() -> None:
-    assert GolferParams(**_GEOMETRY).g == GRAVITY_MSS == 9.81
+def test_default_g_is_standard_gravity() -> None:
+    assert GolferParams(**_GEOMETRY).g == GRAVITY_STANDARD == 9.80665
+
+
+def test_legacy_gravity_mss_alias_is_standard_gravity() -> None:
+    assert GRAVITY_MSS == GRAVITY_STANDARD
 
 
 def test_standard_gravity_is_available_for_upstreamdrift_parity() -> None:
