@@ -5711,10 +5711,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 20813,
+      "bytes_lf": 22740,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "68d854038154c91b2bb84b2984f4b06cac46ec7f8eaf9fc3c02235b350d18625",
+      "content_sha256_lf": "4ce4f655824ae4c7106098f3b40eec71aa1ec13a299a5d8d8c19f3b14e10d68e",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-WIDGETS-UNIT-CONVERTER-WIDGET-PY-F0A9F728C9B0",
       "language": "python",
@@ -5777,7 +5777,8 @@
           }
         ],
         "test_paths": [
-          "src/shared/python/sidekick/tests/test_unit_converter_widget.py"
+          "src/shared/python/sidekick/tests/test_unit_converter_widget.py",
+          "src/shared/python/sidekick/tests/test_unit_converter_widget_lifetime.py"
         ],
         "unit_mentions": [
           "s"

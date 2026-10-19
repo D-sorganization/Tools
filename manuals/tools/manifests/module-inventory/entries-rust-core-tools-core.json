@@ -3335,6 +3335,7 @@
           "src/pendulum_simulator/tests/test_toolstrip_elements.py",
           "src/shared/python/plot_engine/tests/test_specs.py",
           "src/shared/python/sidekick/tests/test_calculator_state_mixin_lifetime.py",
+          "src/shared/python/sidekick/tests/test_unit_converter_widget_lifetime.py",
           "src/shared/python/signal_toolkit/tests/__init__.py",
           "src/shared/python/signal_toolkit/tests/test_bilateral_rust_parity.py",
           "src/shared/python/signal_toolkit/tests/test_bound_validation_3182.py",
