@@ -88,21 +88,31 @@ class HoverCopyTextBrowser(QTextBrowser):
             """)
 
             def restore() -> None:
-                self.copy_btn.setToolTip("Copy to clipboard")
-                self.copy_btn.setText(orig_text)
-                self.copy_btn.setIcon(orig_icon)
-                self.copy_btn.setStyleSheet("""
-                    QPushButton {
-                        background-color: rgba(30, 32, 38, 0.85);
-                        border: 1px solid #495057;
-                        border-radius: 4px;
-                        padding: 4px;
-                    }
-                    QPushButton:hover {
-                        background-color: rgba(59, 91, 219, 0.9);
-                        border-color: #3b5bdb;
-                    }
-                """)
+                try:
+                    from PyQt6 import sip
+
+                    if sip.isdeleted(self) or sip.isdeleted(self.copy_btn):
+                        return
+                except (ImportError, RuntimeError):
+                    return
+                try:
+                    self.copy_btn.setToolTip("Copy to clipboard")
+                    self.copy_btn.setText(orig_text)
+                    self.copy_btn.setIcon(orig_icon)
+                    self.copy_btn.setStyleSheet("""
+                        QPushButton {
+                            background-color: rgba(30, 32, 38, 0.85);
+                            border: 1px solid #495057;
+                            border-radius: 4px;
+                            padding: 4px;
+                        }
+                        QPushButton:hover {
+                            background-color: rgba(59, 91, 219, 0.9);
+                            border-color: #3b5bdb;
+                        }
+                    """)
+                except (RuntimeError, AttributeError):
+                    return
 
             # Button-owned so the restore dies with the button (Tools #5667).
             start_owned_single_shot(self.copy_btn, 2000, restore)

@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from typing import Any
 
-from PyQt6.QtCore import QEvent, QPointF
+from PyQt6.QtCore import QEvent, QPointF, QTimer
 from PyQt6.QtGui import QEnterEvent
 from PyQt6.QtWidgets import QApplication
 
@@ -33,6 +33,10 @@ def test_hover_copy_browser_copy(qtbot: Any) -> None:
     assert clipboard is not None
     assert clipboard.text() == "Hello, World!"
     assert widget.copy_btn.toolTip() == "Copied!"
+
+    # Stop pending restore timers so they do not fire into later tests on the worker.
+    for timer in widget.copy_btn.findChildren(QTimer):
+        timer.stop()
 
 
 def test_hover_copy_browser_hover(qtbot: Any) -> None:
