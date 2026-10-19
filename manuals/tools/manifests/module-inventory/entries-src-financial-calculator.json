@@ -419,6 +419,7 @@
           "tests/shared/python/chat/test_quick_bar_widget.py",
           "tests/shared/python/chat/test_router_error_logging.py",
           "tests/shared/python/chat/test_router_factory.py",
+          "tests/shared/python/chat/test_scroll_to_bottom_timer.py",
           "tests/shared/python/chat/test_terminal_protocol.py",
           "tests/shared/python/chat/test_terminal_runtime.py",
           "tests/shared/python/chat/test_websocket_protocol.py",

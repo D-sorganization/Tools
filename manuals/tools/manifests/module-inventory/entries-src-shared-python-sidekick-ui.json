@@ -5493,10 +5493,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 21592,
+      "bytes_lf": 22032,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "342e1003e8946fe5fa94b7954790e3559632074160f11a061c615db115305139",
+      "content_sha256_lf": "ea22b088d0e25368c7f08f5f270076b55249cd805702fd82ddb12590b7cac97b",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-WIDGETS-DATA-PROCESSOR-WIDGET-PY-2B377BDDE63F",
       "language": "python",
@@ -5540,7 +5540,8 @@
         ],
         "test_paths": [
           "src/shared/python/sidekick/tests/test_data_processor_ops.py",
-          "src/shared/python/sidekick/tests/test_data_processor_widget.py"
+          "src/shared/python/sidekick/tests/test_data_processor_widget.py",
+          "tests/shared/python/sidekick/ui/test_data_processor_status_timer.py"
         ],
         "unit_mentions": [
           "bar",
@@ -5711,10 +5712,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 22740,
+      "bytes_lf": 22465,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4ce4f655824ae4c7106098f3b40eec71aa1ec13a299a5d8d8c19f3b14e10d68e",
+      "content_sha256_lf": "164d8c18e6e238769d85bb0bdcf4c985375fe4e12f06db93877271008a7aa3dd",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-WIDGETS-UNIT-CONVERTER-WIDGET-PY-F0A9F728C9B0",
       "language": "python",

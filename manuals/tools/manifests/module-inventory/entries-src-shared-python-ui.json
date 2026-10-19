@@ -627,10 +627,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4960,
+      "bytes_lf": 5101,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7ce092a3d94b2bac64aa5386b37ab2ac17acd7028ef161c81aa66a03545c6f6f",
+      "content_sha256_lf": "9e9fb67e9f28e42f1f568ace7daeac8b3f430c4250ef85d4db7540f6f502287e",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-UI-HOVER-COPY-BROWSER-PY-E31EE3500A22",
       "language": "python",
@@ -674,9 +674,72 @@
         ],
         "test_paths": [
           "src/shared/python/tests/ui/test_hover_copy_browser.py",
-          "tests/shared/python/ui/test_headless_import.py"
+          "tests/shared/python/ui/test_headless_import.py",
+          "tests/shared/python/ui/test_owned_single_shot_timer.py"
         ],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 4170,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f306e1f575e5dee268673dd029d731ce12786f312f11563d6f5975e294f0bb02",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-UI-OWNED-TIMER-PY-B6FE336FB4DE",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ui/owned_timer.py",
+      "purpose": "Owner-parented single-shot timers that cannot outlive their widget.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "restart_owned_single_shot",
+            "signature": "owner: QObject, msec: int, callback: Callable[[], object], *, name: str"
+          },
+          {
+            "kind": "function",
+            "name": "start_owned_single_shot",
+            "signature": "owner: QObject, msec: int, callback: Callable[[], object]"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/ui/test_owned_single_shot_timer.py"
+        ],
+        "unit_mentions": [
+          "ms",
+          "s"
+        ],
         "validation_paths": []
       }
     },

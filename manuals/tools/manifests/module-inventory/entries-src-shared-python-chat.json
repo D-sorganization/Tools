@@ -649,10 +649,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8839,
+      "bytes_lf": 9108,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "00ee96223065bd8029ab25dc11f9431ab66fd4be0e84b585b6b9487a04561e5b",
+      "content_sha256_lf": "2e3b7b0c5e144542f1f599594ebbfca4bb4b0b3c2d643130e39924a88f0e6c22",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-QT-MESSAGING-PY-75F0D893F0A0",
       "language": "python",
@@ -673,7 +673,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "not-applicable"
       },
@@ -692,9 +692,16 @@
             "kind": "class",
             "name": "MessagingMixin",
             "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SCROLL_DEFER_MS",
+            "signature": null
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/shared/python/chat/test_scroll_to_bottom_timer.py"
+        ],
         "unit_mentions": [
           "g",
           "s"
