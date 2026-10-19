@@ -98,13 +98,14 @@ def restart_owned_single_shot(
     _require_timer_args(owner, msec, callback)
     if not isinstance(name, str) or not name:
         raise ValueError("name must be a non-empty string")
-    timer = owner.findChild(QTimer, name, _DIRECT_CHILDREN)
-    if timer is None:
+    existing = owner.findChildren(QTimer, name, _DIRECT_CHILDREN)
+    if existing:
+        timer = existing[0]
+        timer.timeout.disconnect()
+    else:
         timer = QTimer(owner)
         timer.setObjectName(name)
         timer.setSingleShot(True)
-    else:
-        timer.timeout.disconnect()
     timer.timeout.connect(callback)
     timer.start(msec)
     return timer

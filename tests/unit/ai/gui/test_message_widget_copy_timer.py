@@ -9,6 +9,8 @@ from __future__ import annotations
 
 import pytest
 
+pytestmark = pytest.mark.unit
+
 pytest.importorskip("PyQt6.QtCore", reason="PyQt6 required")
 
 from unittest.mock import patch  # noqa: E402
