@@ -4,10 +4,12 @@ from __future__ import annotations
 
 from typing import Any
 
-from PyQt6.QtCore import QEvent, Qt, QTimer
+from PyQt6.QtCore import QEvent, Qt
 from PyQt6.QtGui import QEnterEvent, QIcon, QPainter, QPixmap
 from PyQt6.QtSvg import QSvgRenderer
 from PyQt6.QtWidgets import QApplication, QPushButton, QTextBrowser, QWidget
+
+from .owned_timer import start_owned_single_shot
 
 __all__ = ["HoverCopyTextBrowser"]
 
@@ -102,7 +104,8 @@ class HoverCopyTextBrowser(QTextBrowser):
                     }
                 """)
 
-            QTimer.singleShot(2000, restore)
+            # Button-owned so the restore dies with the button (Tools #5667).
+            start_owned_single_shot(self.copy_btn, 2000, restore)
 
     def enterEvent(self, event: QEnterEvent | None) -> None:
         """Position and show copy button on mouse hover enter."""
