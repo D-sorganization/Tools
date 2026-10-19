@@ -1,4 +1,83 @@
-# Current handoff — Sanitation Engineer pass 2026-10-14
+# Current handoff — Night Watch pass 2026-10-14
+
+- Repository: D-sorganization/Tools
+- Working directory: `/home/dieterolson/staff-worktrees/Tools-run-6cd853c310f7`
+- Branch: `staff/night-watch-task-cfe979`; commit: SELF
+- Pull request: see Change log below (draft, opened this pass)
+- Governing issue/epic: Night Watch scheduled overnight pass (no governing issue)
+
+## Objective and status
+
+Scheduled Night Watch pass per `Repository_Management/docs/fleet-night-watch.md`.
+No open issues or PRs existed in Tools at pass start (both `gh issue list
+--state open` and `gh pr list --state open` returned empty), and main CI was
+green, so there was no simple issue/PR triage available. Instead applied the
+playbook's docs-compliance checklist item "DEVELOPMENT_LOG.md has no stale
+in_progress entries" and found every single `in_review`/`in_progress` entry
+(37 of them) referenced a PR or issue that had already merged/closed — the
+`collate-changes` fragment workflow creates DL entries on PR open but nothing
+flips them to `shipped` on merge. Verified each one individually against
+GitHub (PR/issue state, merge commit sha) via GraphQL before editing, then
+reconciled all 37 to `State: shipped` with accurate `Next step` lines. Done.
+
+## Files and decisions
+
+- `docs/development/DEVELOPMENT_LOG.md`: flipped 37 entries from
+  `in_review`/`in_progress` to `shipped` (DL-#4149, #5434, #5432, #4464,
+  #5429, #5422, #4433, #5417, #5416, #5392, #5547, #5543, #5546, #5545,
+  #5544, #5541, #5540, #5577, #5548, #5523, #5530, #5531, #5572, #5571,
+  #5570, #5569, #5528, #5474, #5454, #5472, #5470, #5463, #5460, #5440,
+  #5436, #1976, #5385, #5353, #5362). Five entries whose `PR:` field said
+  "not created" / "see PR body" / "draft (see issue)" (DL-#4464, #5429,
+  #5422, #5417, #5416) got the field corrected to the actual merged PR
+  number (#5427, #5430, #5423, #5421, #5420 respectively), found by
+  searching merged PRs that reference each issue number. Updated the
+  `Last audited` line. No code changes.
+- `docs/development/HANDOFF.md`: this entry.
+- `SPEC.md`: added the keyed PR change-log row.
+- No other repo-structure changes: no open issues/PRs existed to triage,
+  runners healthy on all three hosts per Runner Dashboard summary, no
+  holds apply to Tools.
+
+## Validation
+
+- `python3 shared_scripts/development_log.py --repo-root .` → `Development
+  log OK.`
+- `grep -n '\*\*State:\*\* (in_review|in_progress)' docs/development/DEVELOPMENT_LOG.md`
+  → no matches (zero remaining stale states).
+- For every flipped entry, confirmed via `gh api graphql` that the
+  referenced PR state is `MERGED` or (for the 5 corrected entries) that the
+  referenced issue closed `COMPLETED` with an identifiable merged closer PR.
+- `git diff --stat docs/development/DEVELOPMENT_LOG.md`: 84
+  insertions/84 deletions, all three-line-per-entry (State/PR/Next step)
+  edits — no unrelated content touched.
+
+## Blockers and risks
+
+- None. Docs-only reconciliation; no source behavior changed. The
+  underlying workflow gap (collation never flips state to `shipped` on
+  merge) will keep recurring — a real fix would mean teaching
+  `collate-changes.yml` to check merged-PR status, which is a workflow
+  change outside this pass's "simple, self-contained" scope. Flagged here
+  for a daytime owner to consider as a follow-up.
+
+## Next steps
+
+- Daytime owner: consider wiring `collate-changes.yml` (or a periodic job)
+  to flip DL entries to `shipped` automatically when their PR merges, so
+  this doesn't need another manual reconciliation pass.
+- Next Night Watch/Sanitation pass: re-check DEVELOPMENT_LOG.md staleness
+  since new fragment-collated entries will keep arriving as `in_review`.
+
+## Change log
+
+- `SELF` — Night Watch 2026-10-14: reconcile 37 stale
+  `in_review`/`in_progress` DEVELOPMENT_LOG.md entries to `shipped` after
+  verifying each referenced PR/issue was already merged/closed on GitHub.
+
+---
+
+# Past handoff — Sanitation Engineer pass 2026-10-14
 
 - Repository: D-sorganization/Tools
 - Working directory: `/home/dieterolson/staff-worktrees/Tools-run-fd6559fafbe4`

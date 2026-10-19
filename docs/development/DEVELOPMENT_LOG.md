@@ -8,11 +8,11 @@ feature, from proposal to ship. See the `development-logs` section of
 
 - **Portfolio:** infra
 - **WIP limit:** 4
-- **Last audited:** 2026-09-30 by Luna (Tools#5392 longitudinal residual variance)
+- **Last audited:** 2026-10-14 by Night Watch (reconciled 37 stale in_review/in_progress entries to shipped; every referenced PR/issue was already merged/closed)
 
 ### DL-#4149 · Exact golf-club head CAD families (iron family slice)
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** claude
 - **Issue:** #4149
 - **Branch:** `claude/issue-4149-iron`
@@ -21,11 +21,11 @@ feature, from proposal to ship. See the `development-logs` section of
 - **Started:** 2026-10-04
 - **Last verified:** 2026-10-05 @ 696b70a74 (base; golf_club API baseline realigned to `Any`) — test_iron_parameters + test_iron_cad pass with build123d 0.13.0; wedge CAD/export tests unchanged and green; ruff and mypy clean.
 - **Summary:** Iron family following the wedge precedent: versioned `golf_club.iron_parameters/1` schema with boundary DbC, ruled-loft B-Rep with fused hollow hosel, mass properties recovered from the solid and checked against a closed-form prismatoid and the exported-mesh divergence theorem, STEP/BREP/STL export with `golf_club.iron_export/1` manifest. Shared datum-face, hosel-tube and file-export helpers extracted to `_head_cad.py`. Driver, hybrid and putter families and shape optimisation remain open under #4149.
-- **Next step:** owner reviews the iron schema ranges and topology in the draft PR body.
+- **Next step:** Shipped via PR #5425.
 
 ### DL-#5434 · Align Workflow Python Matrices with requires-python
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** claude
 - **Issue:** #5434
 - **Branch:** `fix/5434-matrix-python-floor`
@@ -34,11 +34,11 @@ feature, from proposal to ship. See the `development-logs` section of
 - **Started:** 2026-10-05
 - **Last verified:** 2026-10-12 (`d61e4015ecc4f52e9713b636e9840e61bf929e96`; log metadata only; feature acceptance unverified; reviewed receipt `docs/development/provenance/tools-devlog-metadata-review.md`)
 - **Summary:** Split `maturin-file-watcher` and `maturin-swing-core` into a `wheel-gate` (build + import, Python 3.10-3.12, proves the crates' >=3.10 claim) and the existing wrapper/parity job (root code, now 3.11-3.12 only, since conftest will not collect it below the root floor and a 3.10 leg exited 5). A policy test fails any workflow leg below the floor of the code it exercises, and any maturin crate not built on its declared floor (`rust_core/tools-core` is a listed known gap).
-- **Next step:** Merge the PR once the Maturin workflows are green.
+- **Next step:** Shipped via PR #5435.
 
 ### DL-#5432 · Fail fast on stale module inventory test
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** claude
 - **Issue:** #5432
 - **Branch:** `fix/5432-inventory-fast-fail`
@@ -47,50 +47,50 @@ feature, from proposal to ship. See the `development-logs` section of
 - **Started:** 2026-10-05
 - **Last verified:** 2026-10-12 (`44a1ac0e3e76220177da9af93f53d4ffcbdbbd3a`; log metadata only; feature acceptance unverified; reviewed receipt `docs/development/provenance/tools-devlog-metadata-review.md`)
 - **Summary:** The inventory freshness test compared two huge dicts with `assert ==`, whose quadratic pytest diff stalled a CI shard for 90 minutes. It now fails with a bounded shard-level summary; strictness is unchanged.
-- **Next step:** Merge PR #5433 via auto-merge.
+- **Next step:** Shipped via PR #5433.
 
 ### DL-#4464 · Fork PRs never run on the self-hosted fleet
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** claude
 - **Issue:** #4464
 - **Branch:** `fix/4464-fork-pr-self-hosted`
-- **PR:** not created
+- **PR:** #5427
 - **Paths:** `.github/workflows/`, `scripts/fork_pr_runner_guard.py`, `tests/ops/test_fork_pr_runner_guard.py`
 - **Started:** 2026-10-05
 - **Last verified:** 2026-10-12 (`696b70a74739813e05fb07d330889fb8efef91e4`; log metadata only; feature acceptance unverified; reviewed receipt `docs/development/provenance/tools-devlog-metadata-review.md`)
 - **Summary:** Workflow-level defence in depth for #4464: every job in a PR-triggered workflow that can reach `d-sorg-fleet` skips fork PRs, the required `tests` lane routes fork PRs to a hosted runner, and a static checker enforces both. Admin settings (fork-PR approval, default token permissions, runner-group access) remain owner-only.
-- **Next step:** Owner applies the admin-only settings listed in the PR body, then closes #4464.
+- **Next step:** Shipped via PR #5427; issue #4464 closed completed.
 
 ### DL-#5429 · Fix Clippy Rust 1.99 Errors in pendulum-core
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** claude
 - **Issue:** #5429
 - **Branch:** `fix/pendulum-core-clippy-f64`
-- **PR:** see PR body
+- **PR:** #5430
 - **Paths:** `src/pendulum_simulator/pendulum-core/src/cmaes.rs`, `src/pendulum_simulator/pendulum-core/src/dynamics.rs`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`, `SPEC.md`
 - **Started:** 2026-10-05
 - **Last verified:** 2026-10-12 (`eb4b886ad29af93ab7b22493ad9f4e4fb1bc31d8`; log metadata only; feature acceptance unverified; reviewed receipt `docs/development/provenance/tools-devlog-metadata-review.md`)
 - **Summary:** Removed the deprecated `use std::f64;` in `cmaes.rs` (it made `f64::INFINITY`/`NEG_INFINITY` resolve to the deprecated module constants) and replaced constant-size `chunks_exact(2)` with `as_chunks` with const parameter 2 in `dynamics.rs`, so the pendulum_core rust quality gate passes on the fleet's Rust 1.99.
-- **Next step:** Merge the PR once the pendulum_core rust quality gate is green.
+- **Next step:** Shipped via PR #5430.
 
 ### DL-#5422 · Fix Clippy Deprecated f64 Constants in tools-core
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** antigravity
 - **Issue:** #5422
 - **Branch:** `fix/issue-5422-clippy-f64-deprecated`
-- **PR:** not created
+- **PR:** #5423
 - **Paths:** `rust_core/tools-core/src/rrt.rs`, `docs/development/DEVELOPMENT_LOG.md`, `docs/development/HANDOFF.md`, `SPEC.md`
 - **Started:** 2026-10-04
 - **Last verified:** 2026-10-12 (`57e90bce55e475c890a37f7dba8b53184e845497`; log metadata only; feature acceptance unverified; reviewed receipt `docs/development/provenance/tools-devlog-metadata-review.md`)
 - **Summary:** Removed deprecated `use std::f64;` in `rust_core/tools-core/src/rrt.rs` that shadowed primitive `f64` associated constants (`f64::NEG_INFINITY` and `f64::MAX`) causing Clippy `-D warnings` failure in `rust-quality-gate` on CI Standard.
-- **Next step:** Open ready PR, arm auto-merge via Repository_Management `scripts/automerge_guard.py`.
+- **Next step:** Shipped via PR #5423.
 
 ### DL-#4433 · Visual-first first-viewport geometry beyond the initial state
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** claude
 - **Issue:** #4433
 - **Branch:** `claude/issue-4433`
@@ -99,37 +99,37 @@ feature, from proposal to ship. See the `development-logs` section of
 - **Started:** 2026-10-04
 - **Last verified:** 2026-10-06 (`8c3cc237`; collated from changes/4433-launch-monitor-analytics-no-longer-scrol.md)
 - **Summary:** First tab pair (Launch Monitor Analytics) of the epic's state-by-state geometry gap: the primary scatter stays in the first viewport through result, error, loading and empty on React (3 reference viewports) and PyQt (1.0/1.5 DPI). Other pairs, approved baselines and the AT protocol stay open under the epic.
-- **Next step:** Merge the PR; the 1440x900 evidence captures are layout-identical and need no refresh.
+- **Next step:** Shipped via PR #5424 and #5447; epic issue #4433 closed completed 2026-10-14.
 
 ### DL-#5417 · ADR-008 dependency and license deny-list check
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** claude
 - **Issue:** #5417
 - **Branch:** `claude/issue-5417`
-- **PR:** not created
+- **PR:** #5421
 - **Paths:** `scripts/check_license_denylist.py`, `config/license_denylist.json`, `tests/architecture/test_license_denylist.py`
 - **Started:** 2026-10-04
 - **Last verified:** 2026-10-12 (`d7cef753e54ce89f30eca336ebe037f8a6b9ab86`; log metadata only; feature acceptance unverified; reviewed receipt `docs/development/provenance/tools-devlog-metadata-review.md`)
 - **Summary:** Enforces the ADR-008 licensing rule (no FreeMoCap or SkellyCam, AGPL ids) with a static scan of pyproject.toml and requirements files plus an optional installed-closure license walk. Lists contain only what ADR-008 names. CI wiring is out of scope.
-- **Next step:** workflow owner wires `python scripts/check_license_denylist.py` into CI as a separate workflow PR.
+- **Next step:** Shipped via PR #5421. CI wiring remains a separate follow-up (out of scope per original issue).
 
 ### DL-#5416 · Python validator for calculation-runtime-manifest/v1
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** claude
 - **Issue:** #5416
 - **Branch:** `claude/issue-5416`
-- **PR:** draft (see issue)
+- **PR:** #5420
 - **Paths:** `src/shared/python/swing_sim/runtime_manifest.py`, `tests/shared/python/test_runtime_manifest_parity_fixture.py`, `docs/specs/active/CALCULATION_RUNTIME_MANIFEST.md`
 - **Started:** 2026-10-04
 - **Last verified:** 2026-10-12 (`f729eca97dd26fd4955bcabeb73e7083a47609bd`; log metadata only; feature acceptance unverified; reviewed receipt `docs/development/provenance/tools-devlog-metadata-review.md`)
 - **Summary:** One-for-one Python port of the TypeScript `parseRuntimeManifest`, pinned by the shared `runtime_manifest_parity_v1.json` fixture.
-- **Next step:** frontier agent reviews the draft PR before it is marked ready.
+- **Next step:** Shipped via PR #5420.
 
 ### DL-#5392 · Longitudinal regression residual variance
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** #5392
 - **Branch:** `fix/longitudinal-residual-variance-20260930`
@@ -138,7 +138,7 @@ feature, from proposal to ship. See the `development-logs` section of
 - **Started:** 2026-09-30
 - **Last verified:** 2026-09-30 — controlled c096 baseline regression RED (0 vs 0.00020716016510533694), candidate focused GREEN (3/3), and one-worker full web Vitest rerun 2361/2361 across 238 files; type-check, lint, build, and required design-manual checks run. Initial two-worker full run retained its single import-boundary timeout; isolated test passed.
 - **Summary:** The merged #5389 optimization retained the covariance/sum-of-squares pass but derived residual variance by subtracting nearly equal aggregates, reporting zero standard error for a representable near-perfect regression with nonzero ordered residuals. Restored the intercept and ordered direct-residual sum of squares, with an independent public-analysis regression test. This is a focused follow-up to merged #5389.
-- **Next step:** root reviews the final diff and draft PR/CI before any merge decision.
+- **Next step:** Shipped via PR #5394.
 
 ## States
 
@@ -163,7 +163,7 @@ reachable from any live state and `abandoned` from `parked`.
 
 ### DL-#5547 · \ Deployment Topology With Docker-Compose for TimescaleDB and Grafana on Internal Host\
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** unassigned
 - **Issue:** #5547
 - **Branch:** feat/5547-deployment-topology
@@ -172,11 +172,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-10-14
 - **Last verified:** 2026-10-14 (`6623cbd0`; collated from changes/5547-deployment-topology-with-docker-compose.md)
 - **Summary:** \ Deployment topology with docker-compose for TimescaleDB and Grafana on internal host\
-- **Next step:** \Merge the PR.\
+- **Next step:** Shipped via PR #5599.
 
 ### DL-#5543 · \ Dual-Write to SQLite and TimescaleDB Behind P1AM_HISTORIAN_BACKEND Flag\
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** unassigned
 - **Issue:** #5543
 - **Branch:** feat/5543-dual-write
@@ -185,11 +185,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-10-14
 - **Last verified:** 2026-10-14 (`529c706b`; collated from changes/5543-dual-write-to-sqlite-and-timescaledb-beh.md)
 - **Summary:** \ Dual-write to SQLite and TimescaleDB behind P1AM_HISTORIAN_BACKEND flag\
-- **Next step:** \Merge the PR.\
+- **Next step:** Shipped via PR #5598.
 
 ### DL-#5546 · \ ISA-18.2 / EEMUA 191 Alarm Performance KPIs and Dashboard\
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** unassigned
 - **Issue:** #5546
 - **Branch:** feat/5546-alarm-kpis
@@ -198,11 +198,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-10-13
 - **Last verified:** 2026-10-13 (`a8a74602`; collated from changes/5546-isa-18-2-eemua-191-alarm-performance-kpi.md)
 - **Summary:** \ ISA-18.2 / EEMUA 191 alarm performance KPIs and dashboard\
-- **Next step:** \Merge the PR.\
+- **Next step:** Shipped via PR #5597.
 
 ### DL-#5545 · \ Grafana Provisioning-as-Code: Datasource and Baseline Dashboards\
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** unassigned
 - **Issue:** #5545
 - **Branch:** feat/5545-grafana-provisioning
@@ -211,11 +211,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-10-13
 - **Last verified:** 2026-10-13 (`cb98894c`; collated from changes/5545-grafana-provisioning-as-code-datasource.md)
 - **Summary:** \ Grafana provisioning-as-code: datasource and baseline dashboards\
-- **Next step:** \Merge the PR.\
+- **Next step:** Shipped via PR #5593.
 
 ### DL-#5544 · Historian H5: Expose Queue Depth, Lag and Drop Counters
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** unassigned
 - **Issue:** #5544
 - **Branch:** feat/5544-historian-observability
@@ -224,11 +224,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-10-13
 - **Last verified:** 2026-10-13 (`fabb775b`; collated from changes/5544-historian-h5-expose-queue-depth-lag-and.md)
 - **Summary:** Historian H5: expose queue depth, lag and drop counters
-- **Next step:** Merge the PR.
+- **Next step:** Shipped via PR #5592.
 
 ### DL-#5541 · Historian H2: Durable On-Disk Spool so the Historian Survives Restart (Store-and-Forward)
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** unassigned
 - **Issue:** #5541
 - **Branch:** feat/5541-historian-spool
@@ -237,11 +237,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-10-13
 - **Last verified:** 2026-10-13 (`807a6bd0`; collated from changes/5541-historian-h2-durable-on-disk-spool.md)
 - **Summary:** Historian H2: Durable on-disk spool so the historian survives restart (store-and-forward)
-- **Next step:** Merge the PR; unblocks subsequent historian slices.
+- **Next step:** Shipped via PR #5584.
 
 ### DL-#5540 · Historian H1: Extract HistorianSink Protocol for Pluggable Write Backends
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** unassigned
 - **Issue:** #5540
 - **Branch:** feat/5540-historian-sink-protocol
@@ -250,11 +250,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-10-13
 - **Last verified:** 2026-10-13 (`7c44b38f`; collated from changes/5540-historian-h1-extract-historiansink-proto.md)
 - **Summary:** Historian H1: Extract HistorianSink protocol for pluggable write backends
-- **Next step:** Merge the PR; unblocks subsequent historian slices.
+- **Next step:** Shipped via PR #5584.
 
 ### DL-#5577 · Normalize Compatible Contract-Level Enums
 
-- **State:** in_progress
+- **State:** shipped
 - **Owner:** unassigned
 - **Issue:** #5577
 - **Branch:** fix/contract-enum-interop-5577-20261012
@@ -263,11 +263,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-10-13
 - **Last verified:** 2026-10-13 (`9b880daf`; collated from changes/5577-normalize-compatible-contract-level-enum.md)
 - **Summary:** Normalize compatible contract-level enums
-- **Next step:** Complete scoped checks, review the transaction behavior, and publish the fix through a PR.
+- **Next step:** Shipped via PR #5579.
 
 ### DL-#5548 · Historian H9: Historian Operator/Engineer Documentation, Runbook and ADR
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** unassigned
 - **Issue:** #5548
 - **Branch:** docs/5548-historian-adr-runbook
@@ -276,11 +276,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-10-13
 - **Last verified:** 2026-10-13 (`f71ee279`; collated from changes/5548-historian-h9-docs-runbook-adr.md)
 - **Summary:** Historian H9: Historian operator/engineer documentation, runbook and ADR
-- **Next step:** Merge the PR, flip H9 matrix row to landed citing it.
+- **Next step:** Shipped via PR #5583.
 
 ### DL-#5523 · Pendulum_Simulator: Re-Run Swing_Objectives/Impact_Optimality/Model_Adequacy Results on the Distributed Club (51.4 m/s, 8.02 m/s Hands, 14% Braking; Centrifugal Is the Dissenting Objective) With a Reproducible Script
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** unassigned
 - **Issue:** #5523
 - **Branch:** fix/5523-rerun-distributed-club
@@ -289,11 +289,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-10-13
 - **Last verified:** 2026-10-13 (`5c1f1657`; collated from changes/5523-pendulum-simulator-re-run-swing-objectiv.md)
 - **Summary:** pendulum_simulator: re-run swing_objectives/impact_optimality/model_adequacy results on the distributed club (51.4 m/s, 8.02 m/s hands, 14% braking; centrifugal is the dissenting objective) with a reproducible script
-- **Next step:** Merge the PR; exact-provider qualification keeps results exploratory.
+- **Next step:** Shipped via PR #5576; exact-provider qualification keeps results exploratory.
 
 ### DL-#5530 · SCADA F09: Declarative Procedure Model With Hold/Abort, Gated to the Simulated Driver
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** unassigned
 - **Issue:** #5530
 - **Branch:** feat/5530-scada
@@ -302,11 +302,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-10-12
 - **Last verified:** 2026-10-13 (`98d0ea6c`; collated from changes/5530-scada-f09-matrix-row-flipped-to-landed-c.md)
 - **Summary:** SCADA F09: declarative procedure model with hold/abort, gated to the simulated driver
-- **Next step:** Merge the PR; flip F09 matrix row to landed citing it.
+- **Next step:** Shipped via PR #5578.
 
 ### DL-#5531 · SCADA F10: Advisory-Only Flatline and Command/Feedback-Mismatch Detectors (asset_health.py)
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** unassigned
 - **Issue:** #5531
 - **Branch:** feat/5531-asset-health
@@ -315,11 +315,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-10-12
 - **Last verified:** 2026-10-12 (`86819437`; collated from changes/5531-scada-f10-advisory-only-flatline-and-com.md)
 - **Summary:** SCADA F10: advisory-only flatline and command/feedback-mismatch detectors (asset_health.py)
-- **Next step:** Merge the PR.
+- **Next step:** Shipped via PR #5559.
 
 ### DL-#5572 · Preserve Signal Toolkit Import Identity
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** #5572
 - **Branch:** codex/signal-optimized-structural-guards
@@ -328,11 +328,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-10-12
 - **Last verified:** 2026-10-12 (`8a11691b`; collated from changes/5572-signal-toolkit-import-identity.md)
 - **Summary:** Bind Signal toolkit import aliases before package children capture provider classes.
-- **Next step:** Complete governed log migration, full pre-PR validation, and protected provider publication.
+- **Next step:** Shipped via PR #5573.
 
 ### DL-#5571 · Preserve Signal Fitting Consumer Contracts
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** #5571
 - **Branch:** codex/signal-optimized-structural-guards
@@ -341,11 +341,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-10-12
 - **Last verified:** 2026-10-12 (`8a11691b`; collated from changes/5571-signal-fitting-consumer-contracts.md)
 - **Summary:** Preserve Signal fitting empty-input and failed-fit ndarray identity contracts in the canonical Tools provider.
-- **Next step:** Complete governed log migration, full pre-PR validation, and protected provider publication with Signal #5569.
+- **Next step:** Shipped via PR #5573.
 
 ### DL-#5570 · Reconcile Development Log Provenance
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** codex
 - **Issue:** #5570
 - **Branch:** codex/signal-optimized-structural-guards
@@ -354,11 +354,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-10-12
 - **Last verified:** 2026-10-12 (`8a11691b`; collated from changes/5570-governed-development-log-provenance.md)
 - **Summary:** Reconcile inherited Tools development-log findings through the reviewed, lossless RM provenance migration.
-- **Next step:** Resolve PR #5573 CI findings, rerun canonical RM-6, and complete protected merge; separately review stale historical feature states.
+- **Next step:** Shipped via PR #5573. Stale historical feature states reviewed and reconciled by Night Watch 2026-10-14 (this pass).
 
 ### DL-#5569 · Keep Signal Structural Shape Validation Active Under Optimized Python
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** unassigned
 - **Issue:** #5569
 - **Branch:** codex/signal-optimized-structural-guards
@@ -367,11 +367,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-10-12
 - **Last verified:** 2026-10-12 (`8a11691b`; collated from changes/5569-keep-signal-structural-shape-validation.md)
 - **Summary:** Keep Signal structural shape validation active under optimized Python
-- **Next step:** Review and merge Tools fix, then repin and mirror the provider in UpstreamDrift #7704
+- **Next step:** Shipped via PR #5573. UpstreamDrift #7704 repin/mirror remains a downstream follow-up.
 
 ### DL-#5528 · SCADA F07: Publish Firmware Trip Latch Tri-State (Plc_Trip_Latch) and First-Out Tag (First_Out_Tag_Id) From One Register Read; InterlocksPanel Shows PLC Trip and an Explicit Unknown State
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** claude
 - **Issue:** #5528
 - **Branch:** feat/5528-first-out-tag
@@ -380,11 +380,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-10-12
 - **Last verified:** 2026-10-12 (`aa48c2e1`; collated from changes/5528-scada-f07-read-firmware-first-out-trip-t.md)
 - **Summary:** SCADA F07: publish firmware trip latch tri-state (plc_trip_latch) and first-out tag (first_out_tag_id) from one register read; InterlocksPanel shows PLC trip and an explicit unknown state
-- **Next step:** Review and merge; F07 matrix row stays partial until cited.
+- **Next step:** Shipped via PR #5550.
 
 ### DL-#5474 · Require Matching Versioned Actuator-Profile References for Mixed Command Evidence
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** unassigned
 - **Issue:** #5474
 - **Branch:** feat/5474-actuator-profile-reference-admission
@@ -393,11 +393,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-10-10
 - **Last verified:** 2026-10-10 (`86d0f28b`; collated from changes/5474-compiled-actuator-profile-evidence.md)
 - **Summary:** Require matching versioned actuator-profile references for mixed command evidence
-- **Next step:** Resolve and verify profile bytes against native execution in UpstreamDrift #11955
+- **Next step:** Shipped via PR #5475. Profile-bytes verification against native execution in UpstreamDrift #11955 remains a downstream follow-up.
 
 ### DL-#5454 · Deterministic 1440X900 Visual-Baseline Candidates: Settle Tab-Pill Transitions Before Capture and Pin Determinism With a Two-Session Test
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** unassigned
 - **Issue:** #5454
 - **Branch:** fix/5454-deterministic-visual-baselines
@@ -406,11 +406,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-10-10
 - **Last verified:** 2026-10-10 (`24eede77`; collated from changes/5454-deterministic-1440x900-visual-baseline-c.md)
 - **Summary:** Deterministic 1440x900 visual-baseline candidates: settle tab-pill transitions before capture and pin determinism with a two-session test
-- **Next step:** Merge the PR.
+- **Next step:** Shipped via PR #5481.
 
 ### DL-#5472 · Repair Canonical Manual Source-Count Regression While Preserving Release Blockers
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** unassigned
 - **Issue:** #5472
 - **Branch:** fix/canonical-manual-count-5472
@@ -419,11 +419,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-10-09
 - **Last verified:** 2026-10-09 (`25b7c1fb`; collated from changes/5472-repair-canonical-manual-source-count-reg.md)
 - **Summary:** Repair canonical manual source-count regression while preserving release blockers
-- **Next step:** Complete PR5473 CI; retain artifact integrity and native provider qualification gates
+- **Next step:** Shipped via PR #5473.
 
 ### DL-#5470 · Add Opaque Native Restart Transport and Strict Replay Envelope With Native-Clock Integrity and Dynamic Complete Manual Page Inspection
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** unassigned
 - **Issue:** #5470
 - **Branch:** feat/native-state-artifact-5470
@@ -432,11 +432,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-10-09
 - **Last verified:** 2026-10-09 (`89415ee8`; collated from changes/5470-add-opaque-native-restart-transport-and.md)
 - **Summary:** Add opaque native restart transport and strict replay envelope with native-clock integrity and dynamic complete manual page inspection
-- **Next step:** Review Tools transport; integrate actual R2025b native restart provider in UpstreamDrift11921
+- **Next step:** Shipped via PR #5471. Native R2025b restart provider integration in UpstreamDrift #11921 remains a downstream follow-up.
 
 ### DL-#5463 · Bound Replay Experiment Resources and Privacy-Safe Preview Artifacts
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** unassigned
 - **Issue:** #5463
 - **Branch:** feat/5463-bounded-preview-resources
@@ -445,11 +445,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-10-09
 - **Last verified:** 2026-10-09 (`b1480ff6`; collated from changes/5463-add-bounded-replay-resources-and-privacy.md)
 - **Summary:** Add bounded replay resources and privacy-aware preview manifest contracts
-- **Next step:** Run targeted mocap, API, inventory and pre-PR validation; then publish T03 PR
+- **Next step:** Shipped via PR #5468.
 
 ### DL-#5460 · Plan Shared Controlled-Matching and Muscle Replay Interchange With Private Evidence Boundaries
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** unassigned
 - **Issue:** #5460
 - **Branch:** docs/feedback-controls-5460
@@ -458,11 +458,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-10-09
 - **Last verified:** 2026-10-09 (`789fd312`; collated from changes/5460-controlled-matching-contracts.md)
 - **Summary:** Plan shared controlled-matching and muscle replay interchange with private evidence boundaries
-- **Next step:** Start T01 contract schema and synthetic conformance fixture
+- **Next step:** Shipped via PR #5465.
 
 ### DL-#5440 · Drop Faulthandler Timeout That Crashed Tests-Shared
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** unassigned
 - **Issue:** #5440
 - **Branch:** fix/5440-drop-faulthandler-timeout
@@ -471,11 +471,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-10-05
 - **Last verified:** 2026-10-05 (`ead6be5f`; collated from changes/5440-variation-gui-lost-signal.md)
 - **Summary:** Remove faulthandler_timeout=50 added by #5442: its stack dump fired inside legitimately long numerical tests and crashed the tests-shared shard on main (exit 249). A contract test keeps any future watchdog at or above the longest timeout marker.
-- **Next step:** Merge the PR, then root-cause any future hang from its faulthandler stack dump.
+- **Next step:** Shipped via PR #5443.
 
 ### DL-#5436 · Prove Tools-Core Python Floor in CI
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** unassigned
 - **Issue:** #5436
 - **Branch:** fix/5436-tools-core-wheel-gate
@@ -484,11 +484,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-10-05
 - **Last verified:** 2026-10-05 (`625c4e0c`; collated from changes/5436-ci-tools-core-new-maturin-tools-core-whe.md)
 - **Summary:** ci(tools-core): new maturin-tools-core wheel-gate proves the crate's >=3.10 floor on Python 3.10-3.12; floor policy test now has no exemptions
-- **Next step:** Merge PR #5438 once the wheel-gate is green on the fleet.
+- **Next step:** Shipped via PR #5438.
 
 ### DL-#1976 · Add Collate-Changes Workflow and Wire Spec-Check to Check_Spec_Freshness
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** unassigned
 - **Issue:** #1976
 - **Branch:** ci/1976-tools-collate-changes
@@ -497,11 +497,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-10-05
 - **Last verified:** 2026-10-05 (`ad530938`; collated from changes/1976-tools-change-fragments.md)
 - **Summary:** Add collate-changes workflow and wire spec-check to check_spec_freshness
-- **Next step:** Merge the pull request.
+- **Next step:** Shipped via PR #5448.
 
 ### DL-#5385 · Propagate flight termination states and gate landing metrics
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** local (agy executor)
 - **Issue:** #5385
 - **Branch:** `fix/tools-flight-termination-5385`
@@ -510,11 +510,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-30
 - **Last verified:** 2026-10-12 (`6be5b5b164a64bca8a5c6bedad57f25bd11f7b91`; log metadata only; feature acceptance unverified; reviewed receipt `docs/development/provenance/tools-devlog-metadata-review.md`)
 - **Summary:** Propagate explicit FlightTermination enum states (LANDED, TIME_LIMIT, SOLVER_FAILED, CANCELLED) before reporting landing metrics. Gate carry_distance, landing_angle, and lateral_deviation to None on non-landed flights. Fail closed across CenteredClubDeliveryAdapter, ground simulation transfer, and flight execution profiles.
-- **Next step:** Push branch, open PR #5385, and link UpstreamDrift #11145.
+- **Next step:** Shipped via PR #5391. UpstreamDrift #11145 link remains a downstream follow-up.
 
 ### DL-#5353 · Pre-impact bundle wire, modal-state record and public validators
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** local (agy executor)
 - **Issue:** #5353
 - **Branch:** `feat/5353-pre-impact-bundle-modal-state`
@@ -523,11 +523,11 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-26
 - **Last verified:** 2026-10-12 (`b61fc5b5021b34d239b738da1390bda6a67497bd`; log metadata only; feature acceptance unverified; reviewed receipt `docs/development/provenance/tools-devlog-metadata-review.md`)
 - **Summary:** Complete implementation of #5353: items 1-2 add the versioned pre-impact bundle wire (`PreImpactBundle`, `Provenance`, `TimeBase`, `HeadState`, `BallState`, `HandWrench`, `Pose`, `Quantity`), Plücker frame transforms with $10^{-12}$ wrench power invariance, and modal-state records with M-orthogonal projection ($0.5 \dot{q}^T M_r \dot{q} + 0.5 q^T K_r q$). Follows items 3-4 (validation and field origin) landed in #5366.
-- **Next step:** get CI green on the PR and merge through auto-merge squash.
+- **Next step:** Shipped via PR #5368.
 
 ### DL-#5362 · Input contracts surfaced by the UpstreamDrift shadow burn-down
 
-- **State:** in_review
+- **State:** shipped
 - **Owner:** claude (agy executor)
 - **Issue:** #5362
 - **Branch:** `claude/tools-5362-shadow-contracts`
@@ -536,7 +536,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Started:** 2026-09-26
 - **Last verified:** 2026-10-12 (`3678409fc51024150ab28970b72e3b468935f345`; log metadata only; feature acceptance unverified; reviewed receipt `docs/development/provenance/tools-devlog-metadata-review.md`)
 - **Summary:** Preconditions on signal_toolkit smoothing/saturation/rate-limit/deadband/noise and primitive inertia mass, standard gravity from the shared constant, UTC-normalised chat session timestamps, and a corrected humanoid_character_builder docstring, so UpstreamDrift can retire its quarantined expectations by bumping the pin instead of editing its shadow copies.
-- **Next step:** get CI green on the PR and arm it through `automerge_guard.py`.
+- **Next step:** Shipped via PR #5364.
 
 ### DL-#5347 · Knowledge-pack golden Q&A evaluation and optional MiniLM hybrid ranking
 

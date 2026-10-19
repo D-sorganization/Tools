@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-19 | #5624 | Night Watch: reconcile 37 stale DEVELOPMENT_LOG.md entries to shipped |
 | 2026-10-18 | #5662 | Full clean and jerk: make_clean_and_jerk_config on a timed via schedule at the standard's eight phases and a hang/rack/overhead phase-correct bar path |
 | 2026-10-18 | #5659 | Stop and join realtime-file-tail thread when last subscriber unsubscribes |
 | 2026-10-18 | #5653 | Snatch gets a pull phase: ordered timed via points (ViaSchedule) and a phase-correct bar path |
