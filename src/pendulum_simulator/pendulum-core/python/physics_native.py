@@ -32,6 +32,11 @@ import numpy as np
 
 logger = logging.getLogger(__name__)
 
+#: Default gravitational acceleration (m/s²): standard gravity, matching the
+#: Rust ``STANDARD_GRAVITY`` and UpstreamDrift (#5635; previously 9.81).  This
+#: wrapper ships standalone, so it carries its own copy of the one constant.
+STANDARD_GRAVITY: float = 9.80665
+
 # Try to import the compiled Rust module
 HAS_NATIVE = False
 try:
@@ -73,7 +78,7 @@ class DoublePendulumParams:
         m2: float,
         l1: float,
         l2: float,
-        g: float = 9.81,
+        g: float = STANDARD_GRAVITY,
         friction1: float = 0.0,
         friction2: float = 0.0,
         m_clubhead: float = 0.0,
@@ -150,7 +155,7 @@ class DoublePendulum:
         m2: float,
         l1: float,
         l2: float,
-        g: float = 9.81,
+        g: float = STANDARD_GRAVITY,
         m_clubhead: float = 0.0,
     ):
         # Validation delegated to DoublePendulumParams (raises TypeError/ValueError on bad input)
@@ -302,7 +307,7 @@ class GolferParams:
         m_clubhead: float,
         grip_right: float,
         grip_left: float,
-        g: float = 9.81,
+        g: float = STANDARD_GRAVITY,
     ):
         """Initialize golfer model parameters."""
         _lengths = {
@@ -411,7 +416,7 @@ class Golfer:
         m_clubhead: float,
         grip_right: float,
         grip_left: float,
-        g: float = 9.81,
+        g: float = STANDARD_GRAVITY,
     ):
         # The Golfer (8-DOF) dynamics are native-only: there is no NumPy
         # fallback. Fail fast at construction with actionable guidance rather

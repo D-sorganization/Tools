@@ -148,6 +148,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5646 · Adversarial Review 2026-10-16: 38 Findings With Draft PR Pitches Under Docs/Development/Adversarial-Review/
+
+- **State:** in_review
+- **Owner:** unassigned
+- **Issue:** #5646
+- **Branch:** claude/adversarial-review-2026-10-16
+- **PR:** #5646
+- **Paths:** docs/development/adversarial-review/2026-10-16
+- **Started:** 2026-10-18
+- **Last verified:** 2026-10-18 (`6d094b4b`; collated from changes/5646-adversarial-review-2026-10-16.md)
+- **Summary:** Adversarial review 2026-10-16: 38 findings with draft PR pitches under docs/development/adversarial-review/
+- **Next step:** Triage Critical/High finding pages; each carries a paste-ready PR body.
+
 ### DL-#5547 · \ Deployment Topology With Docker-Compose for TimescaleDB and Grafana on Internal Host\
 
 - **State:** shipped
@@ -1560,6 +1573,136 @@ reachable from any live state and `abandoned` from `parked`.
   definition.
 
 ## Shipped (Last 90 Days)
+
+### DL-#5661 · Full Clean and Jerk: Make_Clean_and_Jerk_Config on a Timed via Schedule at the Standard's Eight Phases and a Hang/Rack/Overhead Phase-Correct Bar Path
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5661
+- **Branch:** merged via #5662
+- **PR:** #5662
+- **Paths:** see #5662
+- **Started:** 2026-10-18
+- **Last verified:** 2026-10-18 (`0c585b39`; collated from changes/5661-full-clean-and-jerk-make-clean-and-jerk.md)
+- **Summary:** Full clean and jerk: make_clean_and_jerk_config on a timed via schedule at the standard's eight phases and a hang/rack/overhead phase-correct bar path
+- **Next step:** Shipped in PR #5662.
+
+### DL-#5658 · Stop and Join Realtime-File-Tail Thread When Last Subscriber Unsubscribes
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5658
+- **Branch:** merged via #5659
+- **PR:** #5659
+- **Paths:** see #5659
+- **Started:** 2026-10-18
+- **Last verified:** 2026-10-18 (`53d5e798`; collated from changes/5658-stop-and-join-realtime-file-tail-thread.md)
+- **Summary:** Stop and join realtime-file-tail thread when last subscriber unsubscribes
+- **Next step:** Shipped in PR #5659.
+
+### DL-#5652 · Snatch Gets a Pull Phase: Ordered Timed via Points (ViaSchedule) and a Phase-Correct Bar Path
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5652
+- **Branch:** merged via #5653
+- **PR:** #5653
+- **Paths:** see #5653
+- **Started:** 2026-10-18
+- **Last verified:** 2026-10-18 (`a4595051`; collated from changes/5652-snatch-gets-a-pull-phase-ordered-timed-v.md)
+- **Summary:** Snatch gets a pull phase: ordered timed via points (ViaSchedule) and a phase-correct bar path
+- **Next step:** Shipped in PR #5653.
+
+### DL-#5645 · Import Ezc3d Lazily on First C3D Read and Add Availability Check to Prevent Windows DLL Conflicts With OpenSim
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5645
+- **Branch:** merged via #5654
+- **PR:** #5654
+- **Paths:** see #5654
+- **Started:** 2026-10-18
+- **Last verified:** 2026-10-18 (`32ff75b8`; collated from changes/5645-import-ezc3d-lazily-on-first-c3d-read-an.md)
+- **Summary:** Import ezc3d lazily on first C3D read and add availability check to prevent Windows DLL conflicts with OpenSim
+- **Next step:** Shipped in PR #5654.
+
+### DL-#5638 · Rust Golfer Solver Is Now the Same Solver as Python: Closure Equations, INDEPENDENT_CLOSURE_ROWS=[0,1] (Exposed to Python), Zero Multipliers on Rows 2-3, Typed Rank-Loss Error (ValueError), Analytical Jacobian, 2*Alpha/Beta^2 Baumgarte, Hub/Gravity/Coriolis Parity; Adds Rust-vs-Python Parity Tests
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5638
+- **Branch:** merged via #5644
+- **PR:** #5644
+- **Paths:** see #5644
+- **Started:** 2026-10-18
+- **Last verified:** 2026-10-18 (`46c78180`; collated from changes/5638-rust-golfer-solver-is-now-the-same-solve.md)
+- **Summary:** Rust golfer solver is now the same solver as Python: closure equations, INDEPENDENT_CLOSURE_ROWS=[0,1] (exposed to Python), zero multipliers on rows 2-3, typed rank-loss error (ValueError), analytical Jacobian, 2*alpha/beta^2 Baumgarte, hub/gravity/Coriolis parity; adds Rust-vs-Python parity tests
+- **Next step:** Shipped in PR #5644.
+
+### DL-#5640 · Chore: Remove Committed Clutter (Unused Root Scripts, Empty Issue Template)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5640
+- **Branch:** merged via #5639
+- **PR:** #5639
+- **Paths:** see #5639
+- **Started:** 2026-10-16
+- **Last verified:** 2026-10-16 (`f9a8637d`; collated from changes/5640-chore-remove-committed-clutter-unused-ro.md)
+- **Summary:** chore: remove committed clutter (unused root scripts, empty issue template)
+- **Next step:** Shipped in PR #5639.
+
+### DL-#5635 · Golfer Constraint Solver Solves the KKT System on INDEPENDENT_CLOSURE_ROWS=(0,1) Only (Min-Norm Lstsq), Zero Multipliers on Redundant Rows 2-3, Raises ValueError on Rank Loss; GolferParams.G Default Kept at 9.81 Pending Owner Decision and Now Rejects Non-Finite G
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5635
+- **Branch:** merged via #5637
+- **PR:** #5637
+- **Paths:** see #5637
+- **Started:** 2026-10-16
+- **Last verified:** 2026-10-16 (`86c4f3b6`; collated from changes/5635-golfer-constraint-solver-solves-the-kkt.md)
+- **Summary:** Golfer constraint solver solves the KKT system on INDEPENDENT_CLOSURE_ROWS=(0,1) only (min-norm lstsq), zero multipliers on redundant rows 2-3, raises ValueError on rank loss; GolferParams.g default kept at 9.81 pending owner decision and now rejects non-finite g
+- **Next step:** Shipped in PR #5637.
+
+### DL-#5630 · Label Movement_Optimizer.Spine_Loads as a Planar Ergonomic L5/S1 Estimate, Document UD ADR 0055 Sign Conventions, Add MODEL_METADATA and to_Adr0055_Ap_Shear
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5630
+- **Branch:** merged via #5634
+- **PR:** #5634
+- **Paths:** see #5634
+- **Started:** 2026-10-16
+- **Last verified:** 2026-10-16 (`432c5bcb`; collated from changes/5630-spine-loads-planar-label.md)
+- **Summary:** Label movement_optimizer.spine_loads as a planar ergonomic L5/S1 estimate, document UD ADR 0055 sign conventions, add MODEL_METADATA and to_adr0055_ap_shear
+- **Next step:** Shipped in PR #5634.
+
+### DL-#5632 · Security Dependency Upgrades: Patch/Minor Lockfile Bumps for Open Dependabot Alerts in Uv.Lock and 12 Npm Lockfiles (Major-Only Fixes Deferred)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5632
+- **Branch:** merged via #5632
+- **PR:** #5632
+- **Paths:** see #5632
+- **Started:** 2026-10-15
+- **Last verified:** 2026-10-15 (`99d00cbc`; collated from changes/5632-security-dependency-upgrades-patch-minor.md)
+- **Summary:** Security dependency upgrades: patch/minor lockfile bumps for open Dependabot alerts in uv.lock and 12 npm lockfiles (major-only fixes deferred)
+- **Next step:** Shipped in PR #5632.
+
+### DL-#5626 · Fix Python/JAX Golfer Forward-Kinematics Club Y Sign and Club Jacobians to Match the Rust Kernel; Add Central-Difference and Shaft-Direction Tests
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5626
+- **Branch:** merged via #5628
+- **PR:** #5628, #5627
+- **Paths:** see #5628
+- **Started:** 2026-10-15
+- **Last verified:** 2026-10-15 (`e3cf5a43`; collated from changes/5626-fix-pendulum-core-golfer-club-jacobians.md)
+- **Summary:** Fix Python/JAX golfer forward-kinematics club y sign and club Jacobians to match the Rust kernel; add central-difference and shaft-direction tests
+- **Next step:** Shipped in PR #5628.
 
 ### DL-#33 · Consume UpstreamDrift Ud.Putt_Scene/1 Export via Mirror Pattern
 

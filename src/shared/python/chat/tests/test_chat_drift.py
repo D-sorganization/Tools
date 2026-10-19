@@ -20,14 +20,50 @@ REPO_ROOT = Path(__file__).resolve().parents[5 if "tests" in __file__ else 4]
 TOOLS_BASELINE_HASHES: dict[str, str] = {
     "src/shared/python/chat/_chat_dock_widget_qt.py": "".join(
         (
-            "5f02597c",
-            "1e89aaeb",
-            "8a7ace05",
-            "6952d750",
-            "6bd40182",
-            "49538201",
-            "9ceee206",
-            "152926cf",
+            "b0c6bc58",
+            "21dd5f23",
+            "01ed4964",
+            "d6c5fd1c",
+            "6f70ae35",
+            "95799133",
+            "b4a3b65b",
+            "dc579fcf",
+        )
+    ),
+    "src/shared/python/chat/_qt/messaging.py": "".join(
+        (
+            "2e3b7b0c",
+            "5e144542",
+            "f1f59959",
+            "4ebbfca4",
+            "bb4b0b3c",
+            "2d643130",
+            "e39924a8",
+            "8f0e6c22",
+        )
+    ),
+    "src/shared/python/chat/_qt/streaming.py": "".join(
+        (
+            "c0e1a54d",
+            "185d613e",
+            "fb96a9e9",
+            "0313ccc5",
+            "9532575e",
+            "dc1882f5",
+            "c27a6140",
+            "beabc983",
+        )
+    ),
+    "src/shared/python/chat/_qt/terminal_mode.py": "".join(
+        (
+            "180eb678",
+            "d9a535cc",
+            "95ed4af2",
+            "2850ebcf",
+            "854816a1",
+            "7ed84af8",
+            "380a0e14",
+            "cac69344",
         )
     ),
     "src/shared/python/chat/models.py": "".join(

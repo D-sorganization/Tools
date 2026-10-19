@@ -12,6 +12,7 @@
 
 import type { GolferParams, TorqueFuncGolfer } from './physics_golfer';
 import { makeGolferParams, makePolynomialTorque_golfer } from './physics_golfer';
+import { STANDARD_GRAVITY } from './physics';
 
 export interface PresetGolfer {
     name: string;
@@ -81,7 +82,7 @@ const _preset_golfer = (
         m_hub, m_r_upper, m_r_fore, m_l_upper, m_l_fore, m_club,
         L_hub, L_r_upper, L_r_fore, L_l_upper, L_l_fore, L_club,
         d_rs, d_ls, grip_right, grip_left,
-        m_clubhead, g: 9.81,
+        m_clubhead, g: STANDARD_GRAVITY,
         b_hub, b_rs, b_re, b_rh, b_ls, b_le, b_lh,
     });
 

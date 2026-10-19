@@ -241,10 +241,16 @@ pub fn constraint_jacobian(q: &[f64; 8], params: &GolferParams) -> SMatrix<f64, 
 
 **Constraints:**
 
-1. Right hand x = Left hand x
-2. Right hand y = Left hand y
-3. Left hand on club shaft (x component)
-4. Left hand on club shaft (y component)
+Python parity (#5638), with `d = (sin θc, -cos θc)`, `n = (cos θc, sin θc)`,
+`s = grip_left - grip_right`:
+
+1. `Φ[0:2] = LH - (RH + s d)` (world frame)
+2. `Φ[2] = (LH - RH)·n`
+3. `Φ[3] = (LH - RH)·d - s`
+
+Rows 2-3 restate rows 0-1 in the club frame; `INDEPENDENT_CLOSURE_ROWS = [0, 1]`
+is the only rows the KKT solver uses (exposed to Python as
+`golfer_independent_closure_rows()`).
 
 ## Constraint Solver Module
 
@@ -252,14 +258,14 @@ pub fn constraint_jacobian(q: &[f64; 8], params: &GolferParams) -> SMatrix<f64, 
 
 ```rust
 pub struct BaumgarteGains {
-    pub alpha: f64,  // Velocity error correction gain (typical: 10)
-    pub beta: f64,   // Position error correction gain (typical: 10)
+    pub alpha: f64,  // Velocity error correction gain (enters as 2α; default 5)
+    pub beta: f64,   // Position error correction gain (enters as β²; default 5)
 }
 ```
 
 **Method:**
 
-- `default() -> Self` - Returns (alpha=10, beta=10)
+- `default() -> Self` - Returns (alpha=5, beta=5), same as Python
 
 ### Constraint Acceleration Bias
 
@@ -271,7 +277,7 @@ pub fn constraint_acceleration_bias(
 ) -> SVector<f64, 4>
 ```
 
-Computes γ = -dJ/dt · q̇ - d²Φ/dq² term.
+Computes γ = dJ/dt · q̇ (forward difference of the analytical Jacobian, as Python).
 
 ### Constrained Accelerations (KKT Solver)
 
@@ -282,16 +288,18 @@ pub fn constrained_accelerations(
     tau: &[f64; 8],              // Generalized forces
     params: &GolferParams,
     gains: &BaumgarteGains,
-) -> (SVector<f64, 8>, SVector<f64, 4>)
+) -> Result<(SVector<f64, 8>, SVector<f64, 4>), ClosureError>
 ```
 
-**Returns:** (accelerations, Lagrange multipliers)
+**Returns:** (accelerations, Lagrange multipliers); multipliers on rows 2-3 are
+exactly zero. `ClosureError::RankLoss` (independent rows lost rank) and
+`ClosureError::NonFinite` surface to Python as `ValueError`.
 
 **System solved:**
 
 ```
 M(q) a + C(q,q̇) + G(q) = τ + Jᵀ λ
-J(q) a + γ(q,q̇) + α J q̇ + β Φ(q) = 0
+J(q) a + γ(q,q̇) + 2α J q̇ + β² Φ(q) = 0   (independent rows only)
 ```
 
 ### Constraint Projection
@@ -315,7 +323,7 @@ pub fn project_velocity(
 ) -> [f64; 8]
 ```
 
-Minimum-norm velocity correction: J q̇ = -dJ/dt q̇.
+Minimum-norm velocity correction so that J q̇ = 0.
 
 ## Integrator Module
 
@@ -433,6 +441,7 @@ def py_double_forward_kinematics(q: List[float], params: PyDoublePendulumParams)
 
 def py_golfer_mass_matrix(q: List[float], params: PyGolferParams) -> List[List[float]]: ...
 def py_golfer_gravity_vector(q: List[float], params: PyGolferParams) -> List[float]: ...
+def py_golfer_coriolis(q: List[float], qdot: List[float], params: PyGolferParams) -> List[float]: ...
 def py_golfer_forward_kinematics(q: List[float], params: PyGolferParams) -> Dict[str, List[float]]: ...
 def py_golfer_constraint_vector(q: List[float], params: PyGolferParams) -> List[float]: ...
 def py_golfer_constraint_jacobian(q: List[float], params: PyGolferParams) -> List[List[float]]: ...

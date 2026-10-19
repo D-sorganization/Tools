@@ -20,6 +20,8 @@ from __future__ import annotations
 
 from typing import Any, NamedTuple, TypeAlias
 
+from .constants import GRAVITY_STANDARD
+
 try:
     import jax  # noqa: F401
     import jax.numpy as jnp
@@ -64,7 +66,7 @@ class GolferParamsJAX(NamedTuple):
     m_clubhead: float = 0.2
 
     # Gravity
-    g: float = 9.81
+    g: float = GRAVITY_STANDARD
 
     # Dissipation (viscous damping coefficients)
     b_hub: float = 0.0
@@ -78,6 +80,10 @@ class GolferParamsJAX(NamedTuple):
 
 # Constants
 N_DOF = 8
+# Central-difference step for dM/dq in ``coriolis_jax``; must equal
+# ``christoffel.CORIOLIS_FD_STEP`` (pinned by test_physics_golfer_jax.py).  Kept local
+# so this optional module does not import the numpy/native stack.
+CORIOLIS_FD_STEP = 1e-5
 N_CONSTRAINTS = 4
 
 
@@ -238,15 +244,15 @@ def _club_fk_jax(
     club_dy = -jnp.cos(th_club)
 
     club_base_x = rh_x - p.grip_right * club_dx
-    club_base_y = rh_y + p.grip_right * club_dy
+    club_base_y = rh_y - p.grip_right * club_dy
     club_base = jnp.array([club_base_x, club_base_y])
 
     grip_l_on_club_x = club_base_x + p.grip_left * club_dx
-    grip_l_on_club_y = club_base_y - p.grip_left * club_dy
+    grip_l_on_club_y = club_base_y + p.grip_left * club_dy
     grip_left = jnp.array([grip_l_on_club_x, grip_l_on_club_y])
 
     club_tip_x = club_base_x + p.L_club * club_dx
-    club_tip_y = club_base_y - p.L_club * club_dy
+    club_tip_y = club_base_y + p.L_club * club_dy
     club_tip = jnp.array([club_tip_x, club_tip_y])
 
     return club_base, grip_left, club_tip
@@ -428,7 +434,7 @@ def _club_jacobians_jax(
 
     # Club COM: midpoint between club base and club tip
     coeff_club_x = 0.5 * p.L_club - p.grip_right
-    coeff_club_y = -0.5 * (p.L_club - 2 * p.grip_right)
+    coeff_club_y = 0.5 * p.L_club - p.grip_right
 
     J_club_com = jnp.zeros((2, N_DOF))
     J_club_com = J_club_com.at[0, 0].set(rh_col0_x)
@@ -442,7 +448,7 @@ def _club_jacobians_jax(
 
     # Club TIP
     coeff_tip_x = p.L_club - p.grip_right
-    coeff_tip_y = -(p.L_club - p.grip_right)
+    coeff_tip_y = p.L_club - p.grip_right
 
     J_club_tip = jnp.zeros((2, N_DOF))
     J_club_tip = J_club_tip.at[0, 0].set(rh_col0_x)
@@ -646,7 +652,8 @@ def coriolis_jax(q: JaxArray, qdot: JaxArray, p: GolferParamsJAX) -> JaxArray:
     Uses Christoffel symbols: C_i = sum_jk c_ijk * qdot_j * qdot_k
     where c_ijk = 0.5 * (dM_ij/dq_k + dM_ik/dq_j - dM_jk/dq_i)
 
-    dM/dq_k is computed via finite difference of mass matrices.
+    dM/dq_k is a central difference (``CORIOLIS_FD_STEP``, shared with the numpy and
+    Rust backends) of the mass matrix.
 
     Parameters
     ----------
@@ -660,16 +667,20 @@ def coriolis_jax(q: JaxArray, qdot: JaxArray, p: GolferParamsJAX) -> JaxArray:
     """
     if q is None:
         raise ValueError("q must be provided")
-    eps = 1e-7
-    M0 = mass_matrix_jax(q, p)
+    eps = CORIOLIS_FD_STEP
 
     basis = jnp.eye(N_DOF)
-    dM = jax.vmap(lambda direction: (mass_matrix_jax(q + eps * direction, p) - M0) / eps)(
-        basis
-    )
+    dM = jax.vmap(
+        lambda direction: (
+            (mass_matrix_jax(q + eps * direction, p) - mass_matrix_jax(q - eps * direction, p))
+            / (2.0 * eps)
+        )
+    )(basis)
     dM = jnp.transpose(dM, (1, 2, 0))
 
-    christoffel = 0.5 * (dM + jnp.transpose(dM, (0, 2, 1)) - jnp.transpose(dM, (1, 2, 0)))
+    # Third term is dM_jk/dq_i = dM[j, k, i] -> transpose (2, 0, 1); (1, 2, 0) cancels the
+    # second term for symmetric M (#5640).
+    christoffel = 0.5 * (dM + jnp.transpose(dM, (0, 2, 1)) - jnp.transpose(dM, (2, 0, 1)))
     return jnp.einsum("ijk,j,k->i", christoffel, qdot, qdot)
 
 

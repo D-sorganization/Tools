@@ -720,10 +720,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6218,
+      "bytes_lf": 6470,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9802ab77f37568c7cc56105625d54ea5b27bf250c853d9af73f3f5ff15fed08d",
+      "content_sha256_lf": "d4c63b5bb8a5d336c733027a0ebaca8c683afa0c29facd21c7e74866a603fae6",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-AGENT-CONTEXT-WORKSPACE-PY-DD33920D598B",
       "language": "python",
@@ -766,6 +766,11 @@
           {
             "kind": "constant",
             "name": "MAX_FILES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DEFAULT_GIT_TIMEOUT_S",
             "signature": null
           },
           {

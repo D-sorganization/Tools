@@ -16,14 +16,9 @@ from __future__ import annotations
 
 # ── Gravitational Constants ─────────────────────────────────────────────
 
-#: Standard gravitational acceleration (m/s²).
-#: Used as the default ``g`` parameter in physics engines and GUI panels.
-#: This is the conventional standard value, not the precise value at any
-#: particular latitude.
-GRAVITY_MSS: float = 9.81
-
-#: Standard acceleration of gravity (m/s²) — exact SI definition.
-#: Used for unit conversions (e.g. kgf → N) where the precise value matters.
+#: Standard acceleration of gravity (m/s²) — exact SI definition, and the
+#: default gravity of every model (single source of truth, #5635).
+#: Also used for unit conversions (e.g. kgf → N).
 try:
     # Prefer the fleet-canonical constant (issue #3994) so this stays in
     # sync with the rest of the fleet instead of drifting independently.
@@ -34,6 +29,12 @@ except ImportError:
     # pendulum_simulator ships as a standalone wheel (see Tools CLAUDE.md);
     # shared.python isn't guaranteed to be on the path there. Same value.
     GRAVITY_STANDARD: float = 9.80665  # type: ignore[no-redef]
+
+#: Default gravitational acceleration (m/s²) for every physics engine and GUI
+#: panel.  Legacy name kept for backward compatibility: it is an alias of
+#: :data:`GRAVITY_STANDARD` (9.80665, matching UpstreamDrift).  Before #5635 it
+#: was 9.81.
+GRAVITY_MSS: float = GRAVITY_STANDARD
 
 # ── Conversion Factors ──────────────────────────────────────────────────
 

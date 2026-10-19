@@ -20,8 +20,9 @@ class TestGravitationalConstants:
         assert isinstance(C.GRAVITY_MSS, float)
 
     def test_gravity_mss_standard_value(self) -> None:
-        """GRAVITY_MSS should be 9.81 m/s² (common engineering value)."""
-        assert C.GRAVITY_MSS == pytest.approx(9.81, abs=1e-6)
+        """GRAVITY_MSS is the legacy alias of standard gravity (#5635)."""
+        assert C.GRAVITY_MSS == 9.80665
+        assert C.GRAVITY_MSS is C.GRAVITY_STANDARD
 
     def test_gravity_mss_positive(self) -> None:
         assert C.GRAVITY_MSS > 0
@@ -37,9 +38,8 @@ class TestGravitationalConstants:
         assert C.GRAVITY_STANDARD > 0
 
     def test_gravity_mss_close_to_standard(self) -> None:
-        """The simplified and exact values should be within 0.01%."""
-        rel_diff = abs(C.GRAVITY_MSS - C.GRAVITY_STANDARD) / C.GRAVITY_STANDARD
-        assert rel_diff < 0.001
+        """The legacy alias and the exact value are identical (#5635)."""
+        assert C.GRAVITY_MSS == C.GRAVITY_STANDARD
 
 
 class TestConversionFactors:

@@ -109,10 +109,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 35430,
+      "bytes_lf": 35764,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "d146cb2cbe091a72d26f5af3d3318abdb1669d4d2fa4def7b026b6068ef9468b",
+      "content_sha256_lf": "84afb3a9a3aed1bdf09cd694f09f24c3e77d45b5342b8edcae3f6c6b33477b1c",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-LAB-BIO-C3D-READER-PY-8457053667DC",
       "language": "python",

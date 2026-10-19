@@ -3026,10 +3026,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10689,
+      "bytes_lf": 10860,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "156969f5f50a65057657ad1e621f34ab9b34b0fd80551dda5886584c4686b317",
+      "content_sha256_lf": "8b682d8120c5597e30ee839256297cd4795d410553d1b3e501094740b0f8452d",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-GUI-ASSISTANT-WIDGETS-PY-CA08F57C9704",
       "language": "python",
@@ -3088,7 +3088,8 @@
         ],
         "test_paths": [
           "tests/unit/ai/gui/test_chat_export.py",
-          "tests/unit/ai/gui/test_main_thread_dispatcher.py"
+          "tests/unit/ai/gui/test_main_thread_dispatcher.py",
+          "tests/unit/ai/gui/test_message_widget_copy_timer.py"
         ],
         "unit_mentions": [
           "s"

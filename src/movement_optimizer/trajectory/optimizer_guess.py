@@ -55,9 +55,22 @@ def build_perturbed_guess(
     Returns waypoint array of shape (n_waypoints, n_dof).
     """
     wp = build_initial_guess(q_start, q_end, n_waypoints, n_dof, q_via)
+    return perturb_waypoints(wp, q_bounds, seed)
+
+
+def perturb_waypoints(wp: NDArray, q_bounds: NDArray, seed: int) -> NDArray:
+    """Add the seeded multi-start perturbation to a baseline guess *wp*.
+
+    Seed 0 returns *wp* unchanged; other seeds add noise scaled to
+    PERTURBATION_SCALE of each joint range, clipped to *q_bounds*.
+
+    Preconditions:
+        seed >= 0 and q_bounds has shape (n_dof, 2).
+    """
     if seed == 0:
         return wp
 
+    wp = np.array(wp, dtype=float)
     rng = np.random.default_rng(seed * 42 + 7)
     joint_range = q_bounds[:, 1] - q_bounds[:, 0]
     noise = rng.normal(0, PERTURBATION_SCALE, wp.shape) * joint_range

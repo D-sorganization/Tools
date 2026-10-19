@@ -5947,7 +5947,20 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
-| 2026-10-14 | #5624 | Night Watch: reconcile 37 stale DEVELOPMENT_LOG.md entries to shipped |
+| 2026-10-19 | #5624 | Night Watch: reconcile 37 stale DEVELOPMENT_LOG.md entries to shipped |
+| 2026-10-18 | #5662 | Full clean and jerk: make_clean_and_jerk_config on a timed via schedule at the standard's eight phases and a hang/rack/overhead phase-correct bar path |
+| 2026-10-18 | #5659 | Stop and join realtime-file-tail thread when last subscriber unsubscribes |
+| 2026-10-18 | #5653 | Snatch gets a pull phase: ordered timed via points (ViaSchedule) and a phase-correct bar path |
+| 2026-10-18 | #5646 | Adversarial review 2026-10-16: 38 findings with draft PR pitches under docs/development/adversarial-review/ |
+| 2026-10-18 | #5654 | Import ezc3d lazily on first C3D read and add availability check to prevent Windows DLL conflicts with OpenSim |
+| 2026-10-16 | #5644 | Rust golfer solver (pendulum-core) is now the same solver as Python for issue #5638: closure equations, INDEPENDENT_CLOSURE_ROWS=(0,1) exposed to Python, zero multipliers on redundant rows 2-3, typed rank-loss ValueError, analytical Jacobian, 2*alpha/beta^2 Baumgarte, hub/gravity/Coriolis parity; adds Rust-vs-Python parity tests and splits golfer_constraints tests into golfer_constraints_tests.rs; Rust golfer solver is now the same solver as Python: closure equations, INDEPENDENT_CLOSURE_ROWS=[0,1] (exposed to Python), zero multipliers on rows 2-3, typed rank-loss error (ValueError), analytical Jacobian, 2*alpha/beta^2 Baumgarte, hub/gravity/Coriolis parity; adds Rust-vs-Python parity tests |
+| 2026-10-16 | #5639 | chore: remove committed clutter (unused root scripts, empty issue template) |
+| 2026-10-16 | #5637 | Golfer constraint solver solves the KKT system on INDEPENDENT_CLOSURE_ROWS=(0,1) only (min-norm lstsq), zero multipliers on redundant rows 2-3, raises ValueError on rank loss; GolferParams.g default kept at 9.81 pending owner decision and now rejects non-finite g |
+| 2026-10-16 | #5642 | Split ChatDockWidget into StreamingMixin, TerminalModeMixin and MessagingMixin under chat/_qt so the dock module stays under 1200 lines for the UpstreamDrift child copy; public import path and behaviour unchanged |
+| 2026-10-16 | #5634 | Label movement_optimizer.spine_loads as a planar ergonomic L5/S1 estimate, document UD ADR 0055 sign conventions, add MODEL_METADATA and to_adr0055_ap_shear |
+| 2026-10-15 | #5632 | Security dependency upgrades: patch/minor lockfile bumps for open Dependabot alerts in uv.lock and 12 npm lockfiles (major-only fixes deferred) |
+| 2026-10-15 | #5627 | Fix pendulum-core golfer club Jacobians: correct club-angle y sign and remove club terms from the hub-angle column; add central-difference FK/Jacobian consistency tests |
+| 2026-10-15 | #5628 | Fix Python/JAX golfer forward-kinematics club y sign and club Jacobians to match the Rust kernel; add central-difference and shaft-direction tests |
 | 2026-10-14 | #5622 | consume UpstreamDrift ud.putt_scene/1 export via mirror pattern |
 | 2026-10-14 | #33 | Consume UpstreamDrift ud.putt_scene/1 export in rate-of-closure web mirror and swing_sim |
 | 2026-10-14 | #5618 | Repair the 5609 fragment and validate pending fragments in unit tests |

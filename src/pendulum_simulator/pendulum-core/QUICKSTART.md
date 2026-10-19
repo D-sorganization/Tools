@@ -35,7 +35,7 @@ let params = DoublePendulumParams {
     m2: 1.0,
     l1: 1.0,
     l2: 1.0,
-    g: 9.81,
+    g: 9.80665,
     friction1: 0.0,
     friction2: 0.0,
 };
@@ -93,7 +93,7 @@ import init, { WasmDoublePendulumParams, wasm_double_mass_matrix } from "./pkg/p
 async function main() {
   await init();
 
-  const params = new WasmDoublePendulumParams(1.0, 1.0, 1.0, 1.0, 9.81, 0.0, 0.0);
+  const params = new WasmDoublePendulumParams(1.0, 1.0, 1.0, 1.0, 9.80665, 0.0, 0.0);
   const q = new Float64Array([0.1, 0.2]);
 
   const M = wasm_double_mass_matrix(q, params);
@@ -128,7 +128,7 @@ let params = GolferParams {
     m_clubhead: 0.2,
     grip_right: 0.3,
     grip_left: 0.3,
-    g: 9.81,
+    g: 9.80665,
 };
 
 let q = [0.0; 8];  // Initial configuration
@@ -167,7 +167,7 @@ model = Golfer(
     l_l_fore=0.25, m_l_fore=1.0,
     l_club=1.0, m_club=0.2, m_clubhead=0.2,
     grip_right=0.3, grip_left=0.3,
-    g=9.81
+    g=9.80665
 )
 
 q = np.zeros(8)
@@ -197,7 +197,7 @@ use nalgebra::SVector;
 
 let params = DoublePendulumParams {
     m1: 1.0, m2: 1.0, l1: 1.0, l2: 1.0,
-    g: 9.81, friction1: 0.0, friction2: 0.0,
+    g: 9.80665, friction1: 0.0, friction2: 0.0,
 };
 
 let q0 = [0.1, 0.0];

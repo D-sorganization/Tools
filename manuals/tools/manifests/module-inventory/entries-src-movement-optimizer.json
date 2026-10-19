@@ -731,10 +731,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1198,
+      "bytes_lf": 1419,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a59230fd9a5b9719210c3590d5c2d1944dad1c25fa3aa18694d036313a1665c9",
+      "content_sha256_lf": "f7d8b03907f65eec88830eaad695f5012e2aabbd0da3a243f86b75659a3045cb",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-EXERCISES-INIT-PY-1315C9FAF2FF",
       "language": "python",
@@ -773,10 +773,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 1750,
+      "bytes_lf": 3243,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "a47c0c849af7d3b8752186777f3048a752ca8a31be9cfcf857f3caeb9af0e5a5",
+      "content_sha256_lf": "3fe65ae0e8889abe8b67074c752dbce158c657e7c052efda927d02930617ec34",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-EXERCISES-COMMON-PY-937FDBF01715",
       "language": "python",
@@ -788,7 +788,6 @@
         "public-api",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -800,7 +799,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "unavailable"
       },
@@ -822,6 +821,11 @@
           },
           {
             "kind": "function",
+            "name": "balanced_shank_pose",
+            "signature": "dynamics: LagrangianDynamics, knee_flex_deg: float, trunk_deg: float, exercise_type: str, bar_mass: float, ankle_bounds_deg: tuple[float, float]"
+          },
+          {
+            "kind": "function",
             "name": "default_bounds_deg",
             "signature": "lower: tuple[float, float], middle: tuple[float, float], upper: tuple[float, float]"
           },
@@ -834,11 +838,19 @@
             "kind": "function",
             "name": "pull_start_angles",
             "signature": "body: BodyModel, q2_deg: float"
+          },
+          {
+            "kind": "function",
+            "name": "smoothstep",
+            "signature": "t_frac: NDArray, t0: float, t1: float"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_clean_and_jerk_full_lift.py"
+        ],
         "unit_mentions": [
-          "bar"
+          "bar",
+          "s"
         ],
         "validation_paths": []
       }
@@ -897,6 +909,127 @@
         "unit_mentions": [
           "bar",
           "deg"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 10546,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "4b8754cf578c88b79b8f5cd621a6d20e0122dc5849c9db9ef23a4866823ca6b3",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-EXERCISES-CLEAN-AND-JERK-PY-372EE58CAC82",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/movement_optimizer/exercises/clean_and_jerk.py",
+      "purpose": "Clean-and-jerk exercise configuration: the whole lift, floor to lockout.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "CLEAN_AND_JERK_EVENTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CLEAN_AND_JERK_PHASES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LOCKOUT_KNEE_FLEX_DEG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OVERHEAD_CATCH_KNEE_FLEX_DEG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "OVERHEAD_CATCH_TRUNK_DEG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RACK_CATCH_KNEE_FLEX_DEG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RACK_CATCH_TRUNK_DEG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ANKLE_BOUNDS_DEG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DIP_TRUNK_DEG",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "clean_and_jerk_bar_path",
+            "signature": "dyn: LagrangianDynamics, q: NDArray, t_frac: NDArray"
+          },
+          {
+            "kind": "function",
+            "name": "clean_and_jerk_bar_weights",
+            "signature": "t_frac: NDArray"
+          },
+          {
+            "kind": "function",
+            "name": "clean_and_jerk_via_schedule",
+            "signature": "dyn: LagrangianDynamics, q_start: NDArray, bar_mass: float"
+          },
+          {
+            "kind": "function",
+            "name": "make_clean_and_jerk_config",
+            "signature": "body: BodyModel, bar_mass: float"
+          }
+        ],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_clean_and_jerk_full_lift.py"
+        ],
+        "unit_mentions": [
+          "bar",
+          "deg",
+          "rad",
+          "s"
         ],
         "validation_paths": []
       }
@@ -963,10 +1096,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 2193,
+      "bytes_lf": 2328,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "0925b471f91a9441268cf60b107f0c2aba29c56160e16b62c2a4d555ae777d16",
+      "content_sha256_lf": "de404afb419d0711ff4f06568b8a31ea2820d1fe76a6e190da1ade25746ccd17",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-EXERCISES-JERK-PY-9CA63858C111",
       "language": "python",
@@ -1005,6 +1138,11 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "jerk_dip_angles",
+            "signature": ""
+          },
           {
             "kind": "function",
             "name": "make_jerk_config",
@@ -1078,10 +1216,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 2837,
+      "bytes_lf": 7446,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "f59cbd0d8adfa01339ce9908cce891f13af0aebe104289cc9bf937d55e6ba1da",
+      "content_sha256_lf": "b6320dfa0a2a6730ced7a4aec4baa3887b89304c8ea259edbb63955309fee35f",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-EXERCISES-SNATCH-PY-5A1D51EFAC3D",
       "language": "python",
@@ -1093,7 +1231,6 @@
         "public-api",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -1105,7 +1242,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "unavailable"
       },
@@ -1121,14 +1258,59 @@
         "public_routes": [],
         "public_surfaces": [
           {
+            "kind": "constant",
+            "name": "SNATCH_CATCH_KNEE_FLEX_DEG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SNATCH_CATCH_TRUNK_DEG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SNATCH_LOCKOUT_KNEE_FLEX_DEG",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SNATCH_PHASES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ANKLE_BOUNDS_DEG",
+            "signature": null
+          },
+          {
             "kind": "function",
             "name": "make_snatch_config",
             "signature": "body: BodyModel, bar_mass: float"
+          },
+          {
+            "kind": "function",
+            "name": "snatch_bar_path",
+            "signature": "dyn: LagrangianDynamics, q: NDArray, t_frac: NDArray"
+          },
+          {
+            "kind": "function",
+            "name": "snatch_bar_weight",
+            "signature": "t_frac: NDArray"
+          },
+          {
+            "kind": "function",
+            "name": "snatch_via_schedule",
+            "signature": "dyn: LagrangianDynamics, q_start: NDArray, bar_mass: float"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_snatch_pull_phase.py"
+        ],
         "unit_mentions": [
-          "bar"
+          "bar",
+          "deg",
+          "rad",
+          "s"
         ],
         "validation_paths": []
       }
@@ -5777,16 +5959,16 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 5315,
+      "bytes_lf": 8131,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "bffeada91d32fb5fee188d9aa94501588f719dc7fe927aaf1022c90bcbc42c0d",
+      "content_sha256_lf": "d2e8056cc8658d2a1f3d1b9d561049d6efbc293664c02b00170445ad8001e35a",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-SPINE-LOADS-PY-F272F3F9624A",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/movement_optimizer/spine_loads.py",
-      "purpose": "Spinal stress estimation at the L5/S1 joint.",
+      "purpose": "Planar ergonomic estimate of L5/S1 spinal loading.",
       "review_status": "review-required",
       "risk_tags": [
         "public-api",
@@ -5820,6 +6002,11 @@
         "public_surfaces": [
           {
             "kind": "constant",
+            "name": "MODEL_METADATA",
+            "signature": null
+          },
+          {
+            "kind": "constant",
             "name": "NIOSH_COMPRESSION_LIMIT",
             "signature": null
           },
@@ -5832,6 +6019,11 @@
             "kind": "function",
             "name": "spinal_shear",
             "signature": "q: NDArray, qd: NDArray, qdd: NDArray, body: BodyModel, bar_mass: float, exercise_type: str"
+          },
+          {
+            "kind": "function",
+            "name": "to_adr0055_ap_shear",
+            "signature": "shear: float | NDArray"
           }
         ],
         "test_paths": [
@@ -6037,10 +6229,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 1503,
+      "bytes_lf": 1640,
       "classification": "calculation",
       "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "20af6429e9865e5a3ffbe538b5a009f2f1c59cdfd782c0a03ee5acf397e37cb8",
+      "content_sha256_lf": "4108336b045f05e094b04e05e3a70bf88ee31c36f33e2695592930a197c83478",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-TRAJECTORY-INIT-PY-BE32D5D6A3A7",
       "language": "python",
@@ -6112,6 +6304,16 @@
           {
             "kind": "re-export",
             "name": "TrajectoryOptimizer",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ViaPoint",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "ViaSchedule",
             "signature": null
           },
           {
@@ -6226,10 +6428,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 18267,
+      "bytes_lf": 19372,
       "classification": "calculation",
       "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "ab1d6f66cad4e416e0f3f99e8825419e32e57fc08c0002d06bf2bc1ae2b1f3c2",
+      "content_sha256_lf": "9567817687fd98bcc4293db65e4d57dc8527da718e33239868f5d9d9b06441f2",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-TRAJECTORY-OPTIMIZER-PY-A585A29C490E",
       "language": "python",
@@ -6345,10 +6547,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 6005,
+      "bytes_lf": 6470,
       "classification": "calculation",
       "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "86bcd56ca0d3dfc33d149453d7aafd15b11a2ddfe2236c940c114e708d36de5e",
+      "content_sha256_lf": "49c11d0005a97b5e45303db308d01b13578339f318559631230d107afc4eb5d3",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-TRAJECTORY-OPTIMIZER-CONSTRAINTS-PY-E03C1EC9CE8D",
       "language": "python",
@@ -6394,7 +6596,7 @@
           {
             "kind": "function",
             "name": "build_constraints",
-            "signature": "exercise_type: str, build_splines_fn: _BuildSplinesFn, t_eval: NDArray, dynamics: PhysicsBackend, bar_mass: float, inner_heel: float, inner_toe: float, q_bounds: NDArray, body: BodyModel"
+            "signature": "exercise_type: str, build_splines_fn: _BuildSplinesFn, t_eval: NDArray, dynamics: PhysicsBackend, bar_mass: float, q_bounds: NDArray, body: BodyModel, *, clearance_t_eval: NDArray | None=None"
           },
           {
             "kind": "function",
@@ -6408,8 +6610,10 @@
           }
         ],
         "test_paths": [
+          "src/movement_optimizer/tests/test_clean_and_jerk_full_lift.py",
           "src/movement_optimizer/tests/test_exercises.py",
           "src/movement_optimizer/tests/test_hypothesis.py",
+          "src/movement_optimizer/tests/test_optimizer_via.py",
           "src/movement_optimizer/tests/test_trajectory_validation.py"
         ],
         "unit_mentions": [
@@ -6568,10 +6772,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 2526,
+      "bytes_lf": 2978,
       "classification": "calculation",
       "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "1a728fc8f07ad2ae5eb63316b7f2dd16072fdacb181c6dc70cca59328933e629",
+      "content_sha256_lf": "24fd2279329a0448b3994748194d8d6453bbc5a31f4914e81953a1edd0744ce1",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-TRAJECTORY-OPTIMIZER-GUESS-PY-7D585E173114",
       "language": "python",
@@ -6624,6 +6828,11 @@
             "kind": "function",
             "name": "build_perturbed_guess",
             "signature": "q_start: NDArray, q_end: NDArray, q_bounds: NDArray, n_waypoints: int, n_dof: int, seed: int, q_via: NDArray | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "perturb_waypoints",
+            "signature": "wp: NDArray, q_bounds: NDArray, seed: int"
           }
         ],
         "test_paths": [],
@@ -6890,6 +7099,101 @@
           "src/movement_optimizer/tests/test_issue_247_split_optimizer.py"
         ],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 7663,
+      "classification": "calculation",
+      "classification_basis": "path-marker:trajectory",
+      "content_sha256_lf": "4db200f2578b05d9ef662832c41b757680c0de4518ed56158552c544187b80c2",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-TRAJECTORY-OPTIMIZER-VIA-PY-3416740EF125",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/movement_optimizer/trajectory/optimizer_via.py",
+      "purpose": "Ordered, timed via points for multi-phase lifts.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ViaLayout",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ViaPoint",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ViaSchedule",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "assemble_controls",
+            "signature": "wp: NDArray, q_start: NDArray, q_end: NDArray, schedule: ViaSchedule, layout: ViaLayout"
+          },
+          {
+            "kind": "function",
+            "name": "clearance_times",
+            "signature": "t_eval: NDArray, q_via: object, duration: float"
+          },
+          {
+            "kind": "function",
+            "name": "schedule_splines",
+            "signature": "x: NDArray, q_start: NDArray, q_end: NDArray, schedule: ViaSchedule, layout: ViaLayout"
+          },
+          {
+            "kind": "function",
+            "name": "via_initial_guess",
+            "signature": "q_start: NDArray, q_end: NDArray, schedule: ViaSchedule, layout: ViaLayout"
+          },
+          {
+            "kind": "function",
+            "name": "via_layout",
+            "signature": "schedule: ViaSchedule, n_waypoints: int, duration: float"
+          }
+        ],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_optimizer_via.py"
+        ],
+        "unit_mentions": [
+          "bar",
+          "rad",
+          "s"
+        ],
         "validation_paths": []
       }
     },

@@ -20,6 +20,7 @@ from __future__ import annotations
 
 import ctypes
 import importlib
+import importlib.util
 import logging
 import os
 import sys
@@ -34,6 +35,20 @@ _DLL_FAILURE_MARKER = "DLL load failed"
 
 class NativeDllConflictError(ImportError):
     """``ezc3d`` cannot load because another native build owns ``ezc3d.dll``."""
+
+
+def is_ezc3d_available() -> bool:
+    """Return True if ezc3d is available for import without known DLL conflict.
+
+    Uses ``importlib.util.find_spec`` to check on-disk availability without
+    loading native DLLs. Returns False if opensim is already loaded.
+    """
+    if "opensim" in sys.modules:
+        return False
+    try:
+        return importlib.util.find_spec("ezc3d") is not None
+    except (ImportError, ValueError):
+        return False
 
 
 def loaded_dll_path(dll_name: str) -> str | None:
@@ -78,13 +93,28 @@ def import_ezc3d(
     """Import and return the ``ezc3d`` module, diagnosing native DLL conflicts.
 
     Raises:
+        NativeDllConflictError: ``opensim`` is already loaded in this process,
+            or the import failed with a DLL load error while a native SDK owns
+            ``ezc3d.dll``.  The message names the conflict and remedy.
         ModuleNotFoundError: ``ezc3d`` is not installed (unchanged).
-        NativeDllConflictError: the import failed with a DLL load error while a
-            native SDK (OpenSim, or any other ``ezc3d.dll``) is loaded in this
-            process.  The message names the loaded DLL and the process-boundary
-            remedy.
         ImportError: any other import failure, unchanged.
     """
+    opensim_loaded = "opensim" in sys.modules
+    owner = loaded_dll_path(EZC3D_DLL)
+    if opensim_loaded:
+        message = (
+            "ezc3d cannot load in this process: opensim is already loaded. "
+            f"{EZC3D_DLL} is already loaded from {owner or 'an unknown location'} "
+            "(opensim is imported). "
+            "The native OpenSim and Python ezc3d builds are not ABI-compatible "
+            "and cannot share a process. Read C3D in a separate process "
+            "(scripts/diagnostics/frozen_capture_trc.py) and feed the "
+            "source-bound TRC to the native process, or import ezc3d in a "
+            "process that never imports opensim."
+        )
+        logger.error(message)
+        raise NativeDllConflictError(message)
+
     try:
         return importer("ezc3d")
     except ImportError as exc:
@@ -92,8 +122,6 @@ def import_ezc3d(
             raise
         if _DLL_FAILURE_MARKER not in str(exc):
             raise
-        owner = loaded_dll_path(EZC3D_DLL)
-        opensim_loaded = "opensim" in sys.modules
         if owner is None and not opensim_loaded:
             raise
         message = (

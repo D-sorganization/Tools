@@ -10,6 +10,7 @@
 
 import type { TripleParams, TorqueFuncTriple } from './physics_triple';
 import { makeTripleParams, makePolynomialTorque3 } from './physics_triple';
+import { STANDARD_GRAVITY } from './physics';
 
 export interface PresetTriple {
     name: string;
@@ -40,7 +41,7 @@ const _preset_triple = (
     description: string,
 ): PresetTriple => {
     const params = makeTripleParams({
-        m1, m2, m3, mClub, L1, L2, L3, g: 9.81, b1, b2, b3,
+        m1, m2, m3, mClub, L1, L2, L3, g: STANDARD_GRAVITY, b1, b2, b3,
     });
     return {
         name,

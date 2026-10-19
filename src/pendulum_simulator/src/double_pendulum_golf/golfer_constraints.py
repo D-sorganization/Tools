@@ -13,13 +13,26 @@ from .golfer_dynamics import analytical_fk_jacobians
 from .golfer_kinematics import forward_kinematics
 from .physics_golfer import GolferParams, N_DOF
 
+# Rows of ``constraint_vector`` that form an independent closure (#5635, parity
+# with UpstreamDrift #12608): the left-wrist pin residual in the world frame.
+# Rows 2-3 are the same residual expressed in the club frame, so they add no
+# rank on the constraint manifold, and off it they differ from rows 0-1 only by
+# a term proportional to ``Phi``.  Solvers that invert the closure must use
+# these rows only.
+INDEPENDENT_CLOSURE_ROWS: tuple[int, ...] = (0, 1)
+
 
 def constraint_vector(q: np.ndarray, p: GolferParams) -> np.ndarray:
     """Evaluate the 4 loop-closure constraint equations.
 
     Phi(q) = 0 when the loop is closed:
-        Phi[0:2] = RH_position - club_grip_right_position = 0
-        Phi[2:4] = LH_position - club_grip_left_position = 0
+        Phi[0:2] = LH_position - club_grip_left_position = 0
+        Phi[2:4] = RH->LH vector against the club frame (perpendicular,
+                   along-club minus grip separation)
+
+    The club is anchored at the right wrist, so rows 2-3 restate rows 0-1 in
+    the club frame: only ``INDEPENDENT_CLOSURE_ROWS`` are independent and the
+    Jacobian has rank 2 on the constraint manifold.
 
     Returns
     -------
@@ -153,7 +166,7 @@ def analytical_constraint_jacobian(q: np.ndarray, p: GolferParams) -> np.ndarray
     # d((grip_left - grip_right) * sin(th_club))/dq_7 = (grip_left - grip_right) * cos(th_club)
     # d(-(grip_left - grip_right) * cos(th_club))/dq_7 = (grip_l - grip_r) * sin(th_club)
     Phi_q[0, 7] -= (p.grip_left - p.grip_right) * cos_club
-    Phi_q[1, 7] += (p.grip_left - p.grip_right) * sin_club
+    Phi_q[1, 7] -= (p.grip_left - p.grip_right) * sin_club
 
     # Constraint 3: perpendicular distance = 0
     # Phi[2] = (lh - rh) · club_perp = lh_x * club_perp_x + lh_y * club_perp_y

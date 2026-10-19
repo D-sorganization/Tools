@@ -29,16 +29,40 @@ import pandas as pd
 from ...utils.logging import get_logger, log_execution_time
 from ...utils.native_dll_guard import NativeDllConflictError, import_ezc3d
 
-# Single guarded import (D-sorganization/UpstreamDrift issue 12065): ezc3d must
-# never be imported directly, because on Windows it can collide with the
-# ezc3d.dll bundled in the OpenSim SDK. The failure is kept so ``_load`` can
-# raise the diagnosable error instead of a generic "not installed" message.
+# Lazy guarded import (Tools issue #5645, refs UpstreamDrift issue 12065): ezc3d
+# must never be imported eagerly at module import, because on Windows it can
+# collide with the ezc3d.dll bundled in the OpenSim SDK. ezc3d is loaded lazily
+# on first C3D read via _get_ezc3d(). ezc3d and _EZC3D_IMPORT_ERROR are module-level
+# attributes for backwards-compatible test patching.
+ezc3d: Any = None
 _EZC3D_IMPORT_ERROR: ImportError | None = None
-try:
-    ezc3d = import_ezc3d()
-except ImportError as _ezc3d_exc:
-    ezc3d = None  # type: ignore[assignment, unused-ignore]
-    _EZC3D_IMPORT_ERROR = _ezc3d_exc
+
+
+def _get_ezc3d() -> Any:
+    """Lazily load and return the ezc3d module on first C3D read.
+
+    Honours monkeypatched ``c3d_reader.ezc3d`` or ``_EZC3D_IMPORT_ERROR`` if set.
+    """
+    global ezc3d, _EZC3D_IMPORT_ERROR
+    if ezc3d is not None:
+        return ezc3d
+    if isinstance(_EZC3D_IMPORT_ERROR, NativeDllConflictError):
+        raise _EZC3D_IMPORT_ERROR
+
+    try:
+        ezc3d = import_ezc3d()
+        return ezc3d
+    except ImportError as exc:
+        _EZC3D_IMPORT_ERROR = exc
+        if isinstance(exc, NativeDllConflictError):
+            raise
+        raise ImportError(
+            "ezc3d is required for C3D file reading. "
+            "Install it with: pip install ezc3d\n"
+            "Note: ezc3d requires Python >=3.10. "
+            "For Python 3.9, this functionality is not available."
+        ) from exc
+
 
 __all__ = [
     "BIOMECHANICAL_MARKER_MAX_M",
@@ -778,17 +802,9 @@ class C3DDataReader:
         if self._c3d_data is None:
             if not self.file_path.exists():
                 raise FileNotFoundError(f"File not found: {self.file_path}")
-            if ezc3d is None:
-                if isinstance(_EZC3D_IMPORT_ERROR, NativeDllConflictError):
-                    raise _EZC3D_IMPORT_ERROR
-                raise ImportError(
-                    "ezc3d is required for C3D file reading. "
-                    "Install it with: pip install ezc3d\n"
-                    "Note: ezc3d requires Python >=3.10. "
-                    "For Python 3.9, this functionality is not available."
-                )
+            reader = _get_ezc3d()
             self._validate_c3d_header()
-            self._c3d_data = ezc3d.c3d(str(self.file_path))
+            self._c3d_data = reader.c3d(str(self.file_path))
         return self._c3d_data
 
     def _validate_c3d_header(self) -> None:

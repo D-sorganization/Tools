@@ -10,7 +10,7 @@
  *   Same split as the Python preset (`distributed_club_split`).
  */
 import type { PendulumParams, TorqueFunc } from './physics';
-import { makePolynomialTorque, makePendulumParams } from './physics';
+import { makePolynomialTorque, makePendulumParams, STANDARD_GRAVITY } from './physics';
 
 export interface Preset {
     name: string;
@@ -39,7 +39,7 @@ const _preset = (
     description: string,
 ): Preset => {
     const params = makePendulumParams({
-        m1, m2, mClub, L1, L2, g: 9.81, b1, b2, mu1, mu2,
+        m1, m2, mClub, L1, L2, g: STANDARD_GRAVITY, b1, b2, mu1, mu2,
     });
     return {
         name,

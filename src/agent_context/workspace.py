@@ -15,6 +15,7 @@ from .paths import CatalogError, file_hash, safe_path
 
 INDEX_VERSION = 1
 MAX_FILES = 20_000
+_DEFAULT_GIT_TIMEOUT_S = int(os.environ.get("AGENT_CONTEXT_GIT_TIMEOUT", "120"))
 
 
 def git(root: Path, *args: str, optional: bool = False) -> str:
@@ -27,7 +28,7 @@ def git(root: Path, *args: str, optional: bool = False) -> str:
             [executable, "-C", str(root), *args],
             capture_output=True,
             stdin=subprocess.DEVNULL,
-            timeout=30,
+            timeout=_DEFAULT_GIT_TIMEOUT_S,
             check=False,
             env={
                 key: value
@@ -99,7 +100,9 @@ def dependency_state(catalog: Catalog) -> dict[str, dict[str, str]]:
         if not (child / ".git").exists():
             raise CatalogError(f"Dependency is not initialized: {path}")
         actual = git(child, "rev-parse", "HEAD")
-        dirty = git(child, "status", "--porcelain", "--untracked-files=normal")
+        # Untracked scans on large vendored checkouts can exceed CI budgets on
+        # loaded self-hosted runners; tracked dirtiness is sufficient here.
+        dirty = git(child, "status", "--porcelain", "--untracked-files=no")
         provider = child / "src/agent_context"
         runtime_matches = not provider.is_dir() or implementation_id(
             provider

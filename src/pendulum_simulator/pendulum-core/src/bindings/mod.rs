@@ -64,6 +64,7 @@ pub mod python_init {
         // Golfer dynamics
         m.add_function(wrap_pyfunction!(dyn_py::py_golfer_mass_matrix, m)?)?;
         m.add_function(wrap_pyfunction!(dyn_py::py_golfer_gravity_vector, m)?)?;
+        m.add_function(wrap_pyfunction!(dyn_py::py_golfer_coriolis, m)?)?;
         m.add_function(wrap_pyfunction!(dyn_py::py_golfer_friction_torque, m)?)?;
         m.add_function(wrap_pyfunction!(dyn_py::py_golfer_forward_kinematics, m)?)?;
         // Golfer constraint forces
@@ -81,6 +82,15 @@ pub mod python_init {
             m
         )?)?;
         m.add_function(wrap_pyfunction!(forces_py::py_golfer_project_velocity, m)?)?;
+        m.add_function(wrap_pyfunction!(
+            forces_py::py_golfer_solve_independent_kkt,
+            m
+        )?)?;
+        m.add_function(wrap_pyfunction!(
+            forces_py::golfer_independent_closure_rows,
+            m
+        )?)?;
+        m.add_function(wrap_pyfunction!(forces_py::golfer_closure_rank_rtol, m)?)?;
         // Integrators / simulation
         m.add_function(wrap_pyfunction!(integ_py::py_batch_evaluate_double, m)?)?;
         m.add_function(wrap_pyfunction!(integ_py::py_simulate_double, m)?)?;

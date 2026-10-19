@@ -184,63 +184,6 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 2163,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "36290cd88aabbe25db95f1a53a0aaed7358b3361c5a93258203a0d8f017c1096",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-COMMIT-SCREENSAVER-PY-615C78A8B442",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "commit_screensaver.py",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [
-        "public-api"
-      ],
-      "states": {
-        "adrs": "mapped",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "mapped",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [
-          "docs/adr/ADR-003-api-stability-policy.md"
-        ],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [
-          {
-            "kind": "constant",
-            "name": "REPO_ROOT",
-            "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "run",
-            "signature": "cmd: list[str]"
-          }
-        ],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
       "bytes_lf": 8870,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -508,92 +451,6 @@
         "public_surfaces": [],
         "test_paths": [],
         "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 2610,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8880a708d5e81b3e2e9acf73ce22af3e97a8279889c0f5d3df1567d57b3d7463",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-CREATE-REQUESTED-SHORTCUTS-PS1-E8973B9757E3",
-      "language": "powershell",
-      "maintainer": "Tools module maintainers",
-      "path": "create_requested_shortcuts.ps1",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "unavailable",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
-      "bytes_lf": 10967,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "65da9b6e4a9ebd3cc0c4713e600c834cc45d0278d217748a5598ecad52503f21",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-GENERATE-REAL-ASSESSMENTS-PY-37065024ED54",
-      "language": "python",
-      "maintainer": "Tools module maintainers",
-      "path": "generate_real_assessments.py",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "unavailable",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "not-applicable",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [],
-        "unit_mentions": [
-          "N",
-          "g",
           "s"
         ],
         "validation_paths": []
@@ -879,6 +736,8 @@
           "src/document_processing/pdf_renamer/tests/conftest.py",
           "src/media_processing/video_processor/apps/web/test/setup.ts",
           "src/movement_optimizer/tests/conftest.py",
+          "src/movement_optimizer/tests/test_clean_and_jerk_full_lift.py",
+          "src/movement_optimizer/tests/test_snatch_pull_phase.py",
           "src/p1am_control_system/backend/tests/_power_supply_helpers.py",
           "src/p1am_control_system/backend/tests/test_database.py",
           "src/p1am_control_system/backend/tests/test_read_auth.py",

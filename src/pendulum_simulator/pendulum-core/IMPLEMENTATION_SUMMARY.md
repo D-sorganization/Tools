@@ -43,21 +43,21 @@ A complete, production-grade Rust physics library implementing 3 pendulum models
   - Each Jacobian is 2×8 (2D position w.r.t. 8 DOF)
   - Computed analytically via chain rule (not numerical differentiation)
 - **mass_matrix(q, p)**: 8×8 via M = Σ mᵢ Jᵢᵀ Jᵢ
-- **coriolis(q, qdot, p)**: Finite-difference of dM/dt
-- **gravity_vector(q, p)**: Via Jacobian y-components
+- **coriolis(q, qdot, p)**: Python-parity contraction of forward-difference dM/dq (see doc comment; shared pre-existing defect)
+- **gravity_vector(q, p)**: G = dV/dq via Jacobian y-components (EOM: M a + C + G = tau + J^T lambda)
 - **forward_kinematics(q, p)**: All 10 positions (hub, 6 arm points, club base/COM/tip)
-- **constraint_vector(q, p)**: 4D (right hand = left hand, left hand on club)
-- **constraint_jacobian(q, p)**: 4×8 (numerical finite-difference)
+- **constraint_vector(q, p)**: 4D closure, Python parity (rows 0-1: LH - (RH + s d); rows 2-3: same residual in the club frame); `INDEPENDENT_CLOSURE_ROWS = [0, 1]`
+- **constraint_jacobian(q, p)**: 4×8 analytical (Python parity)
 
 #### `golfer_constraints.rs` (288 lines)
 
-- **BaumgarteGains**: struct with α, β (default 10, 10)
+- **BaumgarteGains**: struct with α, β (default 5, 5; RHS uses 2α and β²)
 - **constraint_acceleration_bias(q, qdot, p)**: Computes γ term via finite-diff
 - **constrained_accelerations(q, qdot, τ, p, gains)**:
-  - Solves 12×12 KKT system: [M J^T; J 0][a; λ] = rhs
-  - Returns (accelerations, Lagrange multipliers)
+  - Solves the 10×10 KKT system on the independent closure rows (min-norm least squares)
+  - Returns Result<(accelerations, Lagrange multipliers)>; multipliers on rows 2-3 are exactly 0; rank loss is `ClosureError::RankLoss` (Python `ValueError`)
 - **project_to_constraints(q, p)**: Newton projection to Φ(q)=0
-- **project_velocity(q, qdot, p)**: Minimum-norm velocity correction
+- **project_velocity(q, qdot, p)**: Minimum-norm correction so that J qdot = 0 (Python parity)
 
 #### `integrator.rs` (328 lines)
 

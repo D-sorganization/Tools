@@ -16,6 +16,7 @@ from __future__ import annotations
 import json
 import logging
 from datetime import datetime, timezone
+from functools import partial
 from typing import Any, cast
 
 from PyQt6.QtCore import (
@@ -41,6 +42,7 @@ from PyQt6.QtWidgets import (
 )
 
 from shared.python.compatibility import UTC
+from shared.python.ui.owned_timer import start_owned_single_shot
 
 from ...calculators.conversion.service import UnitConversionService, get_service
 from .base_calculator_widget import BaseCalculatorWindow
@@ -283,45 +285,37 @@ class UnitConverterWidget(BaseCalculatorWindow):
         row_widget.from_value = QLineEdit()
         row_widget.from_value.setText(conv.from_value)
         row_widget.from_value.setFixedWidth(110)
-        row_widget.from_value.textChanged.connect(
-            lambda t: self._on_value_changed(index, "from", t)
-        )
+        row_widget.from_value.textChanged.connect(self._on_row_from_value_changed)
 
         row_widget.from_unit = QComboBox()
         row_widget.from_unit.setEditable(True)
         row_widget.from_unit.addItems(self.all_units)
         row_widget.from_unit.setCurrentText(conv.from_unit)
         row_widget.from_unit.setFixedWidth(130)
-        row_widget.from_unit.currentTextChanged.connect(
-            lambda u: self._on_unit_changed(index, "from", u)
-        )
+        row_widget.from_unit.currentTextChanged.connect(self._on_row_from_unit_changed)
 
         # Arrow
         row_widget.arrow = QPushButton("⇄")
         row_widget.arrow.setFixedWidth(35)
-        row_widget.arrow.clicked.connect(lambda: self._swap_values(index))
+        row_widget.arrow.clicked.connect(self._on_row_arrow_clicked)
 
         # Right side
         row_widget.to_value = QLineEdit()
         row_widget.to_value.setText(conv.to_value)
         row_widget.to_value.setFixedWidth(110)
-        row_widget.to_value.textChanged.connect(
-            lambda t: self._on_value_changed(index, "to", t)
-        )
+        row_widget.to_value.textChanged.connect(self._on_row_to_value_changed)
 
         row_widget.to_unit = QComboBox()
         row_widget.to_unit.setEditable(True)
         row_widget.to_unit.addItems(self._get_compatible_units(conv.from_unit))
         row_widget.to_unit.setCurrentText(conv.to_unit)
         row_widget.to_unit.setFixedWidth(130)
-        row_widget.to_unit.currentTextChanged.connect(
-            lambda u: self._on_unit_changed(index, "to", u)
-        )
+        row_widget.to_unit.currentTextChanged.connect(self._on_row_to_unit_changed)
 
         # Buttons
         row_widget.copy_btn = QPushButton("📋")
         row_widget.copy_btn.setFixedWidth(30)
-        row_widget.copy_btn.clicked.connect(lambda: self._copy_result(index))
+        row_widget.copy_btn.clicked.connect(self._on_row_copy_clicked)
 
         action_btn = QPushButton()
         action_btn.setFixedWidth(30)
@@ -331,13 +325,13 @@ class UnitConverterWidget(BaseCalculatorWindow):
                 action_btn.setIcon(
                     style.standardIcon(QStyle.StandardPixmap.SP_DialogSaveButton)
                 )
-            action_btn.clicked.connect(lambda: self._save_conversion(index))
+            action_btn.clicked.connect(self._on_row_save_clicked)
         else:
             if style:
                 action_btn.setIcon(
                     style.standardIcon(QStyle.StandardPixmap.SP_TrashIcon)
                 )
-            action_btn.clicked.connect(lambda: self._delete_saved_conversion(index))
+            action_btn.clicked.connect(self._on_row_delete_clicked)
 
         row_layout.addWidget(row_widget.from_value)
         row_layout.addWidget(row_widget.from_unit)
@@ -353,6 +347,48 @@ class UnitConverterWidget(BaseCalculatorWindow):
         return row_widget
 
     # Logic Methods (re-integrated from UnitConverterLogicMixin)
+
+    def _conversion_row_widget(self) -> TypedConverterWidget:
+        """Return the row widget that owns the signal sender."""
+        sender = self.sender()
+        if not isinstance(sender, QWidget):
+            raise ValueError("signal sender must be a QWidget")
+        row = sender.parent()
+        if not isinstance(row, QWidget) or not hasattr(row, "index"):
+            raise ValueError("sender must belong to a conversion row widget")
+        return cast(TypedConverterWidget, row)
+
+    def _on_row_from_value_changed(self, text: str) -> None:
+        row = self._conversion_row_widget()
+        self._on_value_changed(row.index, "from", text)
+
+    def _on_row_to_value_changed(self, text: str) -> None:
+        row = self._conversion_row_widget()
+        self._on_value_changed(row.index, "to", text)
+
+    def _on_row_from_unit_changed(self, unit: str) -> None:
+        row = self._conversion_row_widget()
+        self._on_unit_changed(row.index, "from", unit)
+
+    def _on_row_to_unit_changed(self, unit: str) -> None:
+        row = self._conversion_row_widget()
+        self._on_unit_changed(row.index, "to", unit)
+
+    def _on_row_arrow_clicked(self) -> None:
+        row = self._conversion_row_widget()
+        self._swap_values(row.index)
+
+    def _on_row_copy_clicked(self) -> None:
+        row = self._conversion_row_widget()
+        self._copy_result(row.index)
+
+    def _on_row_save_clicked(self) -> None:
+        row = self._conversion_row_widget()
+        self._save_conversion(row.index)
+
+    def _on_row_delete_clicked(self) -> None:
+        row = self._conversion_row_widget()
+        self._delete_saved_conversion(row.index)
 
     def _on_value_changed(self, index: int, direction: str, text: str) -> None:
         if index is None:
@@ -457,9 +493,11 @@ class UnitConverterWidget(BaseCalculatorWindow):
             clipboard = QApplication.clipboard()
             if clipboard:
                 clipboard.setText(widget.to_value.text())
-            orig = widget.copy_btn.text()
-            widget.copy_btn.setText("✓")
-            QTimer.singleShot(1000, lambda: widget.copy_btn.setText(orig))
+            copy_btn = widget.copy_btn
+            orig = copy_btn.text()
+            copy_btn.setText("✓")
+            # Button-owned so the reset dies with the button (Tools #5667).
+            start_owned_single_shot(copy_btn, 1000, partial(copy_btn.setText, orig))
 
     def _find_widget_by_index(self, index: int) -> TypedConverterWidget | None:
         if index is None:

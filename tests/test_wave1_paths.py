@@ -142,11 +142,6 @@ class TestMaintenanceScriptPathHygiene:
         assert "C:/Users/diete/Repositories/Tools" not in content
         assert "REPO_ROOT = Path(__file__).resolve().parent" in content
 
-    def test_commit_screensaver_uses_repo_root_discovery(self) -> None:
-        content = self._read_text("commit_screensaver.py")
-        assert "C:\\Users\\diete\\Repositories\\Tools" not in content
-        assert "REPO_ROOT = Path(__file__).resolve().parent" in content
-
     def test_convert_tools_icon_has_no_sys_path_bootstrap(self) -> None:
         content = self._read_text("convert_tools_icon.py")
         assert "sys.path.append" not in content

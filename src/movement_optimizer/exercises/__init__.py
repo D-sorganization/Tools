@@ -8,6 +8,8 @@ gait and sit-to-stand) that can be fed directly into
 
 Public exports:
     make_clean_config: Olympic clean (floor to front rack).
+    make_clean_and_jerk_config: Full clean and jerk (floor, front-squat
+        catch, jerk, overhead lockout) on a timed via schedule.
     make_snatch_config: Olympic snatch (floor to overhead).
     make_jerk_config: Jerk drive (front rack to overhead lockout).
     make_gait_config: One full gait cycle (heel strike to heel strike).
@@ -19,6 +21,7 @@ Squat, deadlift, and bench press factories live in
 """
 
 from .clean import make_clean_config as make_clean_config
+from .clean_and_jerk import make_clean_and_jerk_config as make_clean_and_jerk_config
 from .gait import GaitAnalyzer as GaitAnalyzer
 from .gait import make_gait_config as make_gait_config
 from .jerk import make_jerk_config as make_jerk_config
