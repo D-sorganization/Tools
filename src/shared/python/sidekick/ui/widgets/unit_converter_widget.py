@@ -42,6 +42,7 @@ from PyQt6.QtWidgets import (
 )
 
 from shared.python.compatibility import UTC
+from shared.python.ui.owned_timer import start_owned_single_shot
 
 from ...calculators.conversion.service import UnitConversionService, get_service
 from .base_calculator_widget import BaseCalculatorWindow
@@ -495,14 +496,8 @@ class UnitConverterWidget(BaseCalculatorWindow):
             copy_btn = widget.copy_btn
             orig = copy_btn.text()
             copy_btn.setText("✓")
-            # Parent the reset timer to the button so it is destroyed (and never
-            # fires) if the button is deleted first; a bare singleShot lambda
-            # outlives the widget and raises "wrapped C/C++ object ... deleted".
-            reset_timer = QTimer(copy_btn)
-            reset_timer.setSingleShot(True)
-            reset_timer.timeout.connect(partial(copy_btn.setText, orig))
-            reset_timer.timeout.connect(reset_timer.deleteLater)
-            reset_timer.start(1000)
+            # Button-owned so the reset dies with the button (Tools #5667).
+            start_owned_single_shot(copy_btn, 1000, partial(copy_btn.setText, orig))
 
     def _find_widget_by_index(self, index: int) -> TypedConverterWidget | None:
         if index is None:

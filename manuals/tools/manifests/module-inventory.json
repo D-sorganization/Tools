@@ -267,7 +267,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-file-watcher.json"
     },
     {
-      "content_sha256_lf": "33f6d056760e9f980233eaf316ec3d8934b4bd472e276e31d02393a9533f59b0",
+      "content_sha256_lf": "ff76628dba6ff34160c9b64db87b8c85f384c27ba6c1fc5eca5bcd354be84cc8",
       "entry_count": 18,
       "package": "src/financial_calculator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-financial-calculator.json"
@@ -297,7 +297,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-folder-tool-pro.json"
     },
     {
-      "content_sha256_lf": "89afa7a25bf8845c6292cca0d3bef0433c563c5acc9fbf1bc8ed09755ad93294",
+      "content_sha256_lf": "70719d4ce71ecb0c848b57d4fc2690530238404bf90a09819a490612e9c42590",
       "entry_count": 17,
       "package": "src/function_generator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-function-generator.json"
@@ -393,7 +393,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
     {
-      "content_sha256_lf": "a289dc939e6a448f75261645550aff091895d4ec87caa62257b1d4fa5d5e7829",
+      "content_sha256_lf": "0148b625585916cdd2bb5d787badc62431d812c321febe302ed6a445d7f8b260",
       "entry_count": 171,
       "package": "src/pendulum_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pendulum-simulator.json"
@@ -411,7 +411,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-plant-simulator.json"
     },
     {
-      "content_sha256_lf": "98e88b3323199ba63732ec2b6af5d87d0e7efbfcb148b69a8d4eda5414812016",
+      "content_sha256_lf": "686a053cbe390e79bdd8e65b94182a3fd327a85cac4e861b46a0c9c41efd3637",
       "entry_count": 18,
       "package": "src/pressure_drop_calculator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pressure-drop-calculator.json"
@@ -585,7 +585,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rotation-transforms.json"
     },
     {
-      "content_sha256_lf": "b3b6a7675f1ca4ef556d294e1258567e26387f3ebc0001eb4e8b7b9223c99e11",
+      "content_sha256_lf": "fddae8ffb951b1110e8cdd064a64de9c59ebdcab1fc7549a57f659a3a15a70ff",
       "entry_count": 26,
       "package": "src/rrt_path_planner",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rrt-path-planner.json"
@@ -597,13 +597,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "e542f421ed45dd966fbb584d54d6750f692012d8ce58e745f5f4a946bf28136d",
+      "content_sha256_lf": "8ef11011ebce85294226327862ce70946c45d3c20d933e200909580922a249cd",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
     },
     {
-      "content_sha256_lf": "8a4a6095737d70ff0343a6827dc14f3d3d24e47a9df19e79228c20929f099e2d",
+      "content_sha256_lf": "09c34d6081bafcf6556bbbbe5e721314eaf1355e80ccf47bc6699685ee74ec23",
       "entry_count": 122,
       "package": "src/shared/python/ai",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-ai.json"
@@ -621,7 +621,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-camera.json"
     },
     {
-      "content_sha256_lf": "886f2428754d375d3a09175caf652fb1db06c1b283d8045e1ac3a441a0b5295b",
+      "content_sha256_lf": "b1db27face6ed376fe4255a21e52ea6ffb7aa465b69abb6e3eaaf630da38792f",
       "entry_count": 51,
       "package": "src/shared/python/chat",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-chat.json"
@@ -813,7 +813,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-theme.json"
     },
     {
-      "content_sha256_lf": "544069453b6109c818856b3af2149d52e9a4b7e2318c5a51fff76a4f3c1be9e0",
+      "content_sha256_lf": "c8b57a4b5288ca34905774633129581d1619f96e99ed4233d19d49325d65d7bb",
       "entry_count": 74,
       "package": "src/shared/python/sidekick/ui",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-ui.json"
@@ -927,8 +927,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-theme.json"
     },
     {
-      "content_sha256_lf": "db28a49bc69d65bb4fba8c4fb2a94d8610aaae245e054540575f64dd3b477d67",
-      "entry_count": 9,
+      "content_sha256_lf": "495ea539ccf97c805879d53441042a6e5c33a15ead706a58ccc2d5490ef7f663",
+      "entry_count": 10,
       "package": "src/shared/python/ui",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-ui.json"
     },

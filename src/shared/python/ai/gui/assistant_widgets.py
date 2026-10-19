@@ -5,6 +5,7 @@ from __future__ import annotations
 import threading
 from collections.abc import Callable
 from datetime import datetime
+from functools import partial
 from typing import TYPE_CHECKING, Any
 
 from PyQt6 import QtGui
@@ -25,6 +26,7 @@ from shared.python.ai.types import ConversationContext
 from shared.python.compatibility import UTC
 from shared.python.logging_pkg.logging_config import get_logger
 from shared.python.theme.style_constants import Styles
+from shared.python.ui.owned_timer import start_owned_single_shot
 
 if TYPE_CHECKING:
     from shared.python.ai.adapters.base import BaseAgentAdapter
@@ -184,9 +186,10 @@ class MessageWidget(QFrame):
         copy_message_to_clipboard(self._content)
         original = self._copy_btn.text()
         self._copy_btn.setText("Copied!")
-        from PyQt6.QtCore import QTimer
-
-        QTimer.singleShot(1500, lambda: self._copy_btn.setText(original))
+        # Button-owned so the reset dies with the button (Tools #5667).
+        start_owned_single_shot(
+            self._copy_btn, 1500, partial(self._copy_btn.setText, original)
+        )
 
 
 class StreamWorker(QThread):

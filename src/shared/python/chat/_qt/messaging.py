@@ -15,14 +15,18 @@ import logging
 from pathlib import Path
 from typing import Any
 
-from PyQt6.QtCore import QTimer
 from PyQt6.QtWidgets import QApplication, QFileDialog
+
+from shared.python.ui.owned_timer import start_owned_single_shot
 
 from . import exports as _exports
 from . import sessions as _sessions
 from .bubbles import ChatMessageBubble
 
 logger = logging.getLogger(__name__)
+
+# Lets the layout settle before scrolling to the newest bubble.
+_SCROLL_DEFER_MS = 10
 
 
 class MessagingMixin:
@@ -158,14 +162,16 @@ class MessagingMixin:
                 self._add_bubble(role, content)
 
     def _scroll_to_bottom(self) -> None:
-        QTimer.singleShot(
-            10,
-            lambda: (
+        scroll_area = self._scroll_area
+
+        def scroll_now() -> None:
+            scrollbar = scroll_area.verticalScrollBar()
+            if scrollbar is not None:
                 scrollbar.setValue(scrollbar.maximum())
-                if (scrollbar := self._scroll_area.verticalScrollBar()) is not None
-                else None
-            ),
-        )
+
+        # Scroll-area-owned so a deferred scroll never touches a deleted
+        # dock (Tools #5667).
+        start_owned_single_shot(scroll_area, _SCROLL_DEFER_MS, scroll_now)
 
     # ── Export / condense (Tools issues #2735, #2736) ───────────────
 
