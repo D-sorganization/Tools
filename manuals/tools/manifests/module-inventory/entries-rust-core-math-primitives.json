@@ -1109,6 +1109,7 @@
           "src/p1am_control_system/backend/tests/test_system_state.py",
           "src/p1am_control_system/backend/tests/test_validation_guards_3745.py",
           "src/pendulum_simulator/tests/test_constants.py",
+          "src/pendulum_simulator/tests/test_default_gravity_5635.py",
           "src/pendulum_simulator/tests/test_friction.py",
           "src/pendulum_simulator/tests/test_friction_triple.py",
           "src/pendulum_simulator/tests/test_issue_fixes.py",

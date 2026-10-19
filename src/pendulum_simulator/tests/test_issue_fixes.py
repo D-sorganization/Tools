@@ -380,7 +380,7 @@ class TestSharedConstants:
     def test_constants_importable(self) -> None:
         from double_pendulum_golf.constants import GRAVITY_MSS, GRAVITY_STANDARD
 
-        assert GRAVITY_MSS == 9.81
+        assert GRAVITY_MSS == 9.80665  # legacy alias of GRAVITY_STANDARD (#5635; was 9.81)
         assert GRAVITY_STANDARD == 9.80665
 
     def test_conversion_factors(self) -> None:

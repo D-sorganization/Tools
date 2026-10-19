@@ -71,7 +71,7 @@ pub use triple::{
 };
 pub use types::{
     DoubleFKResult, DoublePendulumParams, GolferFKResult, GolferParams, TripleFKResult,
-    TriplePendulumParams, Vec2,
+    TriplePendulumParams, Vec2, STANDARD_GRAVITY,
 };
 
 // FFI re-exports: preserve the pre-refactor `crate::py_bindings` /

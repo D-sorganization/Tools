@@ -264,7 +264,7 @@ mod tests {
         let params = TriplePendulumParams {
             masses: [1.0, 1.0, 1.0],
             lengths: [1.0, 1.0, 1.0],
-            g: 9.81,
+            g: crate::types::STANDARD_GRAVITY,
             friction: [0.0, 0.0, 0.0],
         };
 
@@ -282,7 +282,7 @@ mod tests {
         let params = TriplePendulumParams {
             masses: [1.0, 1.0, 1.0],
             lengths: [1.0, 1.0, 1.0],
-            g: 9.81,
+            g: crate::types::STANDARD_GRAVITY,
             friction: [0.0, 0.0, 0.0],
         };
 
@@ -303,7 +303,7 @@ mod tests {
         let params = TriplePendulumParams {
             masses: [1.0, 1.0, 1.0],
             lengths: [1.0, 1.0, 1.0],
-            g: 9.81,
+            g: crate::types::STANDARD_GRAVITY,
             friction: [0.0, 0.0, 0.0],
         };
 
@@ -323,7 +323,7 @@ mod tests {
         let params = TriplePendulumParams {
             masses: [1.0, 1.0, 1.0],
             lengths: [1.0, 1.0, 1.0],
-            g: 9.81,
+            g: crate::types::STANDARD_GRAVITY,
             friction: [0.0, 0.0, 0.0],
         };
 
@@ -340,7 +340,7 @@ mod tests {
         let params = TriplePendulumParams {
             masses: [1.0, 1.0, 1.0],
             lengths: [1.0, 1.0, 1.0],
-            g: 9.81,
+            g: crate::types::STANDARD_GRAVITY,
             friction: [0.0, 0.0, 0.0],
         };
 

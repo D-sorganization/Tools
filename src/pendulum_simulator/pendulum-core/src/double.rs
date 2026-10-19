@@ -184,7 +184,7 @@ mod tests {
             m_clubhead: 0.0,
             l1: 1.0,
             l2: 1.0,
-            g: 9.81,
+            g: crate::types::STANDARD_GRAVITY,
             friction1: 0.0,
             friction2: 0.0,
         };
@@ -206,7 +206,7 @@ mod tests {
             m_clubhead: 0.0,
             l1: 1.0,
             l2: 1.0,
-            g: 9.81,
+            g: crate::types::STANDARD_GRAVITY,
             friction1: 0.0,
             friction2: 0.0,
         };
@@ -292,7 +292,7 @@ mod tests {
             m_clubhead,
             l1: 0.7,
             l2,
-            g: 9.81,
+            g: crate::types::STANDARD_GRAVITY,
             friction1: 0.0,
             friction2: 0.0,
         }

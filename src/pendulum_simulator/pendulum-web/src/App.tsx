@@ -10,6 +10,7 @@ import {
   makePendulumParams,
   makePolynomialTorque,
   runSimulation,
+  STANDARD_GRAVITY,
 } from "./physics";
 import {
   makeTripleParams,
@@ -436,7 +437,7 @@ export default function App() {
         mClub,
         L1,
         L2,
-        g: 9.81,
+        g: STANDARD_GRAVITY,
         b1,
         b2,
         mu1,
@@ -499,7 +500,7 @@ export default function App() {
         L1: L1_t,
         L2: L2_t,
         L3: L3_t,
-        g: 9.81,
+        g: STANDARD_GRAVITY,
         b1: b1_t,
         b2: b2_t,
         b3: b3_t,
@@ -569,7 +570,7 @@ export default function App() {
         grip_right: 0.1,
         grip_left: 0.1,
         m_clubhead: 0.2,
-        g: 9.81,
+        g: STANDARD_GRAVITY,
         b_hub: 0.1,
         b_rs: 0.08,
         b_re: 0.06,
@@ -620,7 +621,7 @@ export default function App() {
   ]);
 
   const currentDoubleParams = makePendulumParams({
-    m1, m2, mClub, L1, L2, g: 9.81, b1, b2, mu1, mu2,
+    m1, m2, mClub, L1, L2, g: STANDARD_GRAVITY, b1, b2, mu1, mu2,
   });
   const currentDoubleInitialState = buildStateFromDeg(theta1Deg, phiDeg, 0, 0);
 

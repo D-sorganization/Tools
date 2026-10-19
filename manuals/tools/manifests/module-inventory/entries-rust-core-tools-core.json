@@ -712,7 +712,6 @@
           "src/data_processing/data_processor/python/tests/test_advanced_analysis.py",
           "src/p1am_control_system/backend/tests/test_power_supply_integration.py",
           "src/p1am_control_system/backend/tests/test_power_supply_sensor_units.py",
-          "src/pendulum_simulator/tests/test_constants.py",
           "src/shared/python/ai/tests/test_adapter_factory.py",
           "src/shared/python/swing_sim/ground/tests/test_upstream_terrain_adapter.py",
           "tests/architecture/test_design_manual_governance_contract.py",
