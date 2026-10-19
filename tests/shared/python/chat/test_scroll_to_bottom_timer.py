@@ -54,3 +54,46 @@ def test_scroll_timer_scrolls_to_maximum(qapp: QApplication) -> None:
         assert scrollbar.value() == scrollbar.maximum()
     finally:
         sip.delete(host._scroll_area)
+
+
+def test_repeated_scroll_requests_share_one_pending_timer(qapp: QApplication) -> None:
+    """Loading history adds many bubbles; they must not stack N timers."""
+    host = _Host()
+    try:
+        for _ in range(25):
+            host._scroll_to_bottom()
+
+        pending = [
+            t
+            for t in host._scroll_area.findChildren(QTimer)
+            if t.isSingleShot() and t.isActive()
+        ]
+        assert len(pending) == 1
+    finally:
+        sip.delete(host._scroll_area)
+
+
+def test_stop_scroll_timer_cancels_pending_scroll(qapp: QApplication) -> None:
+    """Closing the dock must cancel a pending scroll (Tools #5672)."""
+    host = _Host()
+    try:
+        host._scroll_to_bottom()
+        host._stop_scroll_timer()
+
+        assert not [
+            t for t in host._scroll_area.findChildren(QTimer) if t.isActive()
+        ]
+    finally:
+        sip.delete(host._scroll_area)
+
+
+def test_stop_scroll_timer_is_safe_without_a_pending_scroll(
+    qapp: QApplication,
+) -> None:
+    host = _Host()
+    try:
+        host._stop_scroll_timer()
+    finally:
+        sip.delete(host._scroll_area)
+    # Scroll area already gone: still must not raise.
+    host._stop_scroll_timer()
