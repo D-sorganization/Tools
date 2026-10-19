@@ -32,14 +32,14 @@ TOOLS_BASELINE_HASHES: dict[str, str] = {
     ),
     "src/shared/python/chat/_qt/messaging.py": "".join(
         (
-            "00ee9622",
-            "3065bd80",
-            "29ab25dc",
-            "11f9431a",
-            "b66fd4be",
-            "0e84b585",
-            "b6b9487a",
-            "04561e5b",
+            "2e3b7b0c",
+            "5e144542",
+            "f1f59959",
+            "4ebbfca4",
+            "bb4b0b3c",
+            "2d643130",
+            "e39924a8",
+            "8f0e6c22",
         )
     ),
     "src/shared/python/chat/_qt/streaming.py": "".join(
