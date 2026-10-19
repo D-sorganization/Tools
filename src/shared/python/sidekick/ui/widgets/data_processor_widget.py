@@ -17,6 +17,7 @@ Can be used as a standalone widget, tab, or popup dialog.
 from __future__ import annotations
 
 import logging
+from functools import partial
 from pathlib import Path
 
 from PyQt6.QtCore import QPoint, Qt, QTimer, pyqtSignal
@@ -46,6 +47,8 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from shared.python.ui.owned_timer import restart_owned_single_shot
+
 from ...data_processing.core import (
     AggregationType,
     DataProcessorEngine,
@@ -55,6 +58,9 @@ from .base_calculator_widget import BaseCalculatorWidget
 from .mixins.data_processor_ops import DataProcessorOpsMixin
 
 _logger = logging.getLogger(__name__)
+
+_STATUS_RESET_MS = 5000
+_STATUS_RESET_TIMER = "status_reset_timer"
 
 
 class DataProcessorWidget(DataProcessorOpsMixin, BaseCalculatorWidget):
@@ -599,7 +605,14 @@ class DataProcessorWidget(DataProcessorOpsMixin, BaseCalculatorWidget):
 
     def _set_status(self, message: str, success: bool = False) -> None:
         self.status_label.setText(message)
-        QTimer.singleShot(5000, lambda: self.status_label.setText("Ready"))
+        # One label-owned timer: it dies with the label (Tools #5667) and a
+        # newer status restarts it instead of queueing an early "Ready".
+        restart_owned_single_shot(
+            self.status_label,
+            _STATUS_RESET_MS,
+            partial(self.status_label.setText, "Ready"),
+            name=_STATUS_RESET_TIMER,
+        )
 
 
 __all__ = [
