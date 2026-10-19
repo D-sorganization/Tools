@@ -627,10 +627,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5101,
+      "bytes_lf": 5514,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9e9fb67e9f28e42f1f568ace7daeac8b3f430c4250ef85d4db7540f6f502287e",
+      "content_sha256_lf": "6e87f02d2c42389e1a8d5b610a56312dd63316083ad643242dca673cd39c8d9a",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-UI-HOVER-COPY-BROWSER-PY-E31EE3500A22",
       "language": "python",
