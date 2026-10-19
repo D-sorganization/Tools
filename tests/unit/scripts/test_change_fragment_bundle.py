@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import shutil
 import subprocess
 import sys
@@ -77,6 +78,10 @@ def scratch_repo(tmp_path: Path) -> Path:
 
 
 def _cli(root: Path, *args: str) -> subprocess.CompletedProcess[str]:
+    env = os.environ.copy()
+    prefix = str(root)
+    prior = env.get("PYTHONPATH", "")
+    env["PYTHONPATH"] = prefix + (os.pathsep + prior if prior else "")
     return subprocess.run(
         [sys.executable, str(CLI), "--repo-root", str(root), *args],
         cwd=root,
@@ -84,6 +89,7 @@ def _cli(root: Path, *args: str) -> subprocess.CompletedProcess[str]:
         text=True,
         check=False,
         timeout=60,
+        env=env,
     )
 
 
@@ -140,7 +146,50 @@ def test_new_validate_collate_round_trip(scratch_repo: Path) -> None:
     # Title-cased so the collated heading passes the document-title gate.
     expected = f"### DL-#{_ROUND_TRIP_ISSUE} · Vendor the Change Fragment Tooling"
     assert expected in devlog
-    assert "- **PR:** #4242" in devlog
+    start = devlog.index(expected)
+    next_heading = devlog.find("\n### ", start + 1)
+    block = devlog[start : next_heading if next_heading != -1 else len(devlog)]
+    assert "- **PR:** #4242" in block
+    assert "- **State:** shipped" in block
+
+
+def test_collate_maps_declared_in_review_to_shipped(scratch_repo: Path) -> None:
+    """Collation runs post-merge; author ``in_review`` must not stick (Tools#5671)."""
+    devlog_path = scratch_repo / "docs/development/DEVELOPMENT_LOG.md"
+    issue = "987653"
+    assert f"DL-#{issue} " not in devlog_path.read_text(encoding="utf-8")
+    fragment = scratch_repo / "changes" / f"{issue}-review.md"
+    fragment.parent.mkdir(parents=True, exist_ok=True)
+    fragment.write_text(
+        "---\n"
+        f"issue: {issue}\n"
+        'summary: "Post-merge state promotion"\n'
+        "dl_state: in_review\n"
+        "next_step: Merge the pull request.\n"
+        f"branch: feat/{issue}\n"
+        "---\n",
+        encoding="utf-8",
+    )
+    collated = _cli(
+        scratch_repo,
+        "collate",
+        "--pr",
+        "5671",
+        "--sha",
+        "abcdef1",
+        "--date",
+        "2026-10-19",
+    )
+    assert collated.returncode == 0, collated.stderr
+    devlog = devlog_path.read_text(encoding="utf-8")
+    heading = f"### DL-#{issue} · Post-Merge State Promotion"
+    assert heading in devlog
+    start = devlog.index(heading)
+    next_heading = devlog.find("\n### ", start + 1)
+    block = devlog[start : next_heading if next_heading != -1 else len(devlog)]
+    assert "- **State:** shipped" in block
+    assert "- **State:** in_review" not in block
+    assert devlog.index("## Shipped") < devlog.index(f"DL-#{issue}")
 
 
 def test_validate_rejects_a_malformed_fragment(scratch_repo: Path) -> None:
