@@ -129,13 +129,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
     },
     {
-      "content_sha256_lf": "96edfd9ad7c13c5e4aa9a798cf2925b6a0653214debbf690849123d2eb515370",
+      "content_sha256_lf": "fe51b933de3d9586c9c0da26e5254dd53f1a4b1535fe9ed39a2f1eb560c490b5",
       "entry_count": 5,
       "package": "rust_core/file_watcher",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "1f0a5dcd0b6c3e0cc2feaca0f459e3f83ac972265cc70d226ef0591f09b18db5",
+      "content_sha256_lf": "996694b8be1b9850e04586e932709635c13de1d1ac386aedd2218d19a74a40f8",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "3e62426851f961d75cced3162256324efd6ad5afd7c8211f2a04a7978a062ea2",
+      "content_sha256_lf": "5a81b907729801e88a4b814958fe95ccfdb29d129384d0e45e4a920d44554244",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -393,7 +393,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
     {
-      "content_sha256_lf": "199fe6eca5770c4d9fa2d023a138735febdc9ce1a2895ff213cbeb102bd10795",
+      "content_sha256_lf": "a289dc939e6a448f75261645550aff091895d4ec87caa62257b1d4fa5d5e7829",
       "entry_count": 171,
       "package": "src/pendulum_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pendulum-simulator.json"
