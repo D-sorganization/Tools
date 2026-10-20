@@ -552,10 +552,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11747,
+      "bytes_lf": 12409,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "83474556fca96b450130452bcf9691fa208da0fd4f541f8f3391a94af693e28a",
+      "content_sha256_lf": "27cb6a18a7a501826bf318a98571637de75b744a74ced41a3f107518998e9031",
       "family": "native-kernels-non-calculation",
       "id": "TOOLS-MODULE-RUST-CORE-AI-BACKEND-SRC-LOCAL-EMBED-RS-539EE6C53626",
       "language": "rust",
