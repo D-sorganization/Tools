@@ -1574,6 +1574,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5680 · Initialize and Retain the ORT Environment Required by Local Embeddings
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5680
+- **Branch:** merged via #5683
+- **PR:** #5683
+- **Paths:** see #5683
+- **Started:** 2026-10-20
+- **Last verified:** 2026-10-20 (`2669f2e0`; collated from changes/5680-fix-local-embeddings-environment.md)
+- **Summary:** Initialize and retain the ORT environment required by local embeddings
+- **Next step:** Shipped in PR #5683.
+
 ### DL-#5675 · Apply Prettier to Files Already Drifted on Main; Ignore Generator-Owned Outputs and LaTeX Docs
 
 - **State:** shipped
