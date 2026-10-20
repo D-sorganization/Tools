@@ -5947,6 +5947,11 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-20 | #5674 | Coalesce chat scroll-to-bottom into one named timer and stop it when the dock closes, so a pending scroll cannot run Qt work mid-teardown (CI Standard segfault in scroll_now) |
+| 2026-10-20 | #5673 | Promote active dl_state to shipped when collating merged fragments |
+| 2026-10-20 | #5670 | Parent leaked QTimer.singleShot UI-reset timers to their widgets via shared.python.ui.owned_timer (hover copy, assistant copy, data-processor status, chat scroll, unit converter) |
+| 2026-10-20 | #5664 | Restore the third Christoffel term in the golfer Coriolis vector (Python, Rust, JAX) and add independent Euler-Lagrange oracle tests |
+| 2026-10-20 | #5668 | Default gravity is now standard 9.80665 m/s^2 across the pendulum simulator (Python, Rust, web), matching UpstreamDrift (owner decision) |
 | 2026-10-19 | #5624 | Night Watch: reconcile 37 stale DEVELOPMENT_LOG.md entries to shipped |
 | 2026-10-18 | #5662 | Full clean and jerk: make_clean_and_jerk_config on a timed via schedule at the standard's eight phases and a hang/rack/overhead phase-correct bar path |
 | 2026-10-18 | #5659 | Stop and join realtime-file-tail thread when last subscriber unsubscribes |
