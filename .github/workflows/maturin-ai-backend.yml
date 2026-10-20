@@ -1,8 +1,8 @@
 # Maturin CI — ai_backend Python wheels
 #
-# Builds and publishes Python extension wheels for the `ai_backend` Rust crate
-# across all supported platforms and Python versions.
-# Supported platforms: windows, ubuntu, linux, macos, mac.
+# Builds Python extension wheels for `ai_backend` on the native Linux fleet.
+# Windows/macOS qualification remains open in issue #5684; the Linux build
+# matrix does not claim those platforms are qualified.
 #
 # Triggered on:
 #   - push to main (when ai_backend sources change)
@@ -10,10 +10,10 @@
 #   - workflow_dispatch (manual trigger / release)
 #
 # Acceptance criteria (issue #2870):
-#   1. Matrix: os × [d-sorg-fleet]
+#   1. Matrix: native Linux fleet × Python versions
 #   2. Python versions: 3.10, 3.11, 3.12, 3.13
 #   3. maturin build --release --features python,extension-module
-#   4. Upload wheel artifacts per platform/python combination
+#   4. Upload wheel artifacts per actual runner/python combination
 
 name: Maturin — ai_backend Wheels
 
@@ -50,7 +50,7 @@ jobs:
     if: >-
       (!github.event.pull_request ||
       github.event.pull_request.head.repo.full_name == github.repository)
-    name: Build wheel (${{ matrix.platform }}, Python ${{ matrix.python-version }})
+    name: Build native Linux wheel (Python ${{ matrix.python-version }})
     runs-on: d-sorg-fleet
     timeout-minutes: 30
     env:
@@ -64,7 +64,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        platform: [ubuntu, windows, macos]
         python-version: ["3.10", "3.11", "3.12", "3.13"]
 
     steps:
@@ -95,10 +94,10 @@ jobs:
             .cargo-home/registry
             .cargo-home/git
             rust_core/ai_backend/target
-          key: maturin-${{ matrix.platform }}-py${{ matrix.python-version }}-${{ hashFiles('rust_core/ai_backend/Cargo.toml', 'Cargo.toml', 'rust-toolchain.toml') }}
+          key: maturin-${{ runner.os }}-${{ runner.arch }}-py${{ matrix.python-version }}-${{ hashFiles('rust_core/ai_backend/Cargo.toml', 'Cargo.toml', 'rust-toolchain.toml') }}
           restore-keys: |
-            maturin-${{ matrix.platform }}-py${{ matrix.python-version }}-
-            maturin-${{ matrix.platform }}-
+            maturin-${{ runner.os }}-${{ runner.arch }}-py${{ matrix.python-version }}-
+            maturin-${{ runner.os }}-${{ runner.arch }}-
 
       - name: Install maturin
         run: pip install maturin
@@ -109,20 +108,67 @@ jobs:
 
       - name: Build wheel
         working-directory: rust_core/ai_backend
-        run: maturin build --release --features python,extension-module --out ../../dist/${{ matrix.platform }}/py${{ matrix.python-version }}
+        run: maturin build --release --features python,extension-module --out ../../dist/${{ runner.os }}/${{ runner.arch }}/py${{ matrix.python-version }}
+
+      - name: Record native wheel evidence
+        shell: bash
+        run: |
+          python - <<'PY'
+          import json
+          import os
+          import platform
+          import sys
+          from pathlib import Path
+
+          from pip._vendor.packaging.tags import sys_tags
+          from pip._vendor.packaging.utils import parse_wheel_filename
+
+          output_dir = Path("dist/${{ runner.os }}/${{ runner.arch }}/py${{ matrix.python-version }}")
+          wheel_path = next(output_dir.glob("*.whl"))
+          _, _, _, wheel_tags = parse_wheel_filename(wheel_path.name)
+          compatible_tags = set(sys_tags())
+          assert wheel_tags & compatible_tags, (
+              f"Wheel tags {sorted(map(str, wheel_tags))} do not match "
+              f"this interpreter: {sys.executable}"
+          )
+          artifact_name = "wheel-${{ runner.os }}-${{ runner.arch }}-py${{ matrix.python-version }}"
+          evidence = {
+              "runner_os": "${{ runner.os }}",
+              "runner_arch": "${{ runner.arch }}",
+              "machine": platform.machine(),
+              "python_executable": sys.executable,
+              "python_version": sys.version,
+              "wheel_file": wheel_path.name,
+              "wheel_tags": sorted(map(str, wheel_tags)),
+              "compatible_tags": sorted(map(str, wheel_tags & compatible_tags)),
+              "artifact_name": artifact_name,
+          }
+          evidence_path = output_dir / "build-evidence.json"
+          evidence_path.write_text(json.dumps(evidence, indent=2) + "\n", encoding="utf-8")
+          with Path(os.environ["GITHUB_STEP_SUMMARY"]).open("a", encoding="utf-8") as summary:
+              summary.write(
+                  f"\n### {artifact_name}\n"
+                  f"- Runner: {evidence['runner_os']} / {evidence['runner_arch']} "
+                  f"({evidence['machine']})\n"
+                  f"- Python: `{evidence['python_version'].split()[0]}` "
+                  f"(`{evidence['python_executable']}`)\n"
+                  f"- Wheel: `{evidence['wheel_file']}`\n"
+                  f"- Compatible tags: `{', '.join(evidence['compatible_tags'])}`\n"
+              )
+          PY
 
       - name: Smoke-test wheel import
         shell: bash
         run: |
-          WHEEL=$(ls dist/${{ matrix.platform }}/py${{ matrix.python-version }}/*.whl | head -1)
+          WHEEL=$(ls dist/${{ runner.os }}/${{ runner.arch }}/py${{ matrix.python-version }}/*.whl | head -1)
           pip install "$WHEEL"
           python -c "import ai_backend; print('ai_backend import OK:', dir(ai_backend))"
 
       - name: Upload wheel artifact
         uses: actions/upload-artifact@v7
         with:
-          name: wheel-${{ matrix.platform }}-py${{ matrix.python-version }}
-          path: dist/${{ matrix.platform }}/py${{ matrix.python-version }}/*.whl
+          name: wheel-${{ runner.os }}-${{ runner.arch }}-py${{ matrix.python-version }}
+          path: dist/${{ runner.os }}/${{ runner.arch }}/py${{ matrix.python-version }}/*
           retention-days: 14
 
   # ── Consumption gate: build + install the wheel and exercise the adapter ────
@@ -281,6 +327,7 @@ jobs:
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "| Platform | Status |" >> $GITHUB_STEP_SUMMARY
           echo "|----------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| d-sorg-fleet | ${{ needs.build-wheels.result }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Native Linux Python matrix | ${{ needs.build-wheels.result }} |" >> $GITHUB_STEP_SUMMARY
           echo "" >> $GITHUB_STEP_SUMMARY
           echo "Python versions: 3.10, 3.11, 3.12, 3.13" >> $GITHUB_STEP_SUMMARY
+          echo "See each build-wheels matrix job summary for observed runner OS, architecture, interpreter, wheel tags, and artifact identity." >> $GITHUB_STEP_SUMMARY

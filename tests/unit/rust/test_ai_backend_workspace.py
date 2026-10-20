@@ -10,11 +10,151 @@ Run with:
 """
 
 import pathlib
+from typing import Any, cast
 
 import pytest
+import yaml
 
 # Resolve repo root relative to this test file (tests/unit/rust/ -> repo root)
 REPO_ROOT = pathlib.Path(__file__).parent.parent.parent.parent
+WORKFLOW = REPO_ROOT / ".github" / "workflows" / "maturin-ai-backend.yml"
+PYTHON_VERSIONS = ["3.10", "3.11", "3.12", "3.13"]
+
+
+def _workflow() -> dict[str, Any]:
+    """Read the workflow as YAML so comments and cosmetic labels cannot pass."""
+    return cast(dict[str, Any], yaml.safe_load(WORKFLOW.read_text(encoding="utf-8")))
+
+
+def _step(job: dict[str, Any], name: str) -> dict[str, Any]:
+    return next(step for step in job["steps"] if step.get("name") == name)
+
+
+@pytest.mark.unit
+def test_primary_build_keeps_clippy_features_fork_guard_and_failure_propagation():
+    """Matrix reduction must not weaken the existing native wheel checks."""
+    workflow = yaml.safe_load(
+        (REPO_ROOT / ".github" / "workflows" / "maturin-ai-backend.yml").read_text(
+            encoding="utf-8"
+        )
+    )
+    build = workflow["jobs"]["build-wheels"]
+    steps = build["steps"]
+    clippy = next(
+        step
+        for step in steps
+        if step.get("name") == "Clippy - ai_backend (python feature)"
+    )
+    wheel = next(step for step in steps if step.get("name") == "Build wheel")
+
+    assert build["timeout-minutes"] == 30
+    assert "head.repo.full_name == github.repository" in build["if"]
+    assert clippy["run"] == "cargo clippy --features python -- -D warnings"
+    assert "--release --features python,extension-module" in wheel["run"]
+    assert all(step.get("continue-on-error") is not True for step in steps)
+
+
+@pytest.mark.unit
+def test_required_wheel_build_matrix_is_four_python_versions_on_one_native_runner():
+    """Platform labels must not multiply Linux executions into fake OS cells."""
+    build = _workflow()["jobs"]["build-wheels"]
+
+    assert build["runs-on"] == "d-sorg-fleet"
+    assert build["strategy"]["fail-fast"] is False
+    assert build["strategy"]["matrix"] == {"python-version": PYTHON_VERSIONS}
+
+
+@pytest.mark.unit
+def test_wheel_cache_output_and_artifact_key_use_actual_runner_identity() -> None:
+    """Cache, file and upload identities must use runner OS/architecture."""
+    build = _workflow()["jobs"]["build-wheels"]
+    steps = build["steps"]
+    cache = _step(build, "Cache Cargo registry")["with"]
+    build_step = _step(build, "Build wheel")
+    upload = _step(build, "Upload wheel artifact")["with"]
+
+    for value in (cache["key"], upload["name"], build_step["run"]):
+        assert "${{ runner.os }}" in value
+        assert "${{ runner.arch }}" in value
+        assert "${{ matrix.python-version }}" in value
+    assert upload["path"] == (
+        "dist/${{ runner.os }}/${{ runner.arch }}/py${{ matrix.python-version }}/*"
+    )
+    assert "${{ matrix.platform }}" not in " ".join(
+        str(value) for value in (cache["key"], upload["name"], build_step["run"])
+    )
+    identity = (
+        "wheel-${{ runner.os }}-${{ runner.arch }}-py${{ matrix.python-version }}"
+    )
+    assert upload["name"] == identity
+    smoke = _step(build, "Smoke-test wheel import")["run"]
+    assert "dist/${{ runner.os }}/${{ runner.arch }}/" in smoke
+    assert "py${{ matrix.python-version }}" in smoke
+    assert any(step.get("name") == "Record native wheel evidence" for step in steps)
+
+
+@pytest.mark.unit
+def test_native_wheel_evidence_checks_runtime_and_installed_wheel_tag() -> None:
+    """Reported qualification must come from the interpreter and built wheel."""
+    build = _workflow()["jobs"]["build-wheels"]
+    evidence = _step(build, "Record native wheel evidence")["run"]
+    smoke = _step(build, "Smoke-test wheel import")["run"]
+
+    for marker in (
+        "platform.machine()",
+        "sys.version",
+        "sys.executable",
+        "sys_tags()",
+        "parse_wheel_filename",
+    ):
+        assert marker in evidence
+    assert "assert" in evidence
+    assert "ai_backend" in smoke
+    assert "GITHUB_STEP_SUMMARY" in evidence
+    assert (
+        "wheel-${{ runner.os }}-${{ runner.arch }}-py${{ matrix.python-version }}"
+        in evidence
+    )
+
+
+@pytest.mark.unit
+def test_adapter_gate_remains_independent_and_manual_feature_build_is_unchanged() -> (
+    None
+):
+    """Keep the real consumer gate and opt-in local-embeddings path intact."""
+    jobs = _workflow()["jobs"]
+    adapter = jobs["adapter-rust-path"]
+    optional = jobs["build-local-embeddings"]
+
+    assert "needs" not in adapter
+    assert adapter["timeout-minutes"] == 30
+    adapter_build = _step(adapter, "Build ai_backend wheel (python feature only)")[
+        "run"
+    ]
+    adapter_install = _step(adapter, "Install the built wheel")["run"]
+    assert "--features python,extension-module" in adapter_build
+    assert "--out ../../dist/adapter-gate" in adapter_build
+    assert "dist/adapter-gate/*.whl" in adapter_install
+    assert (
+        "test_rust_adapter_wheel_smoke.py"
+        in _step(
+            adapter,
+            "Exercise the RustAgentAdapter Rust path (wheel-installed smoke gate)",
+        )["run"]
+    )
+    assert "workflow_dispatch" in optional["if"]
+    assert (
+        "local-embeddings" in _step(optional, "Build wheel (local-embeddings)")["run"]
+    )
+
+
+@pytest.mark.unit
+def test_workflow_keeps_windows_and_macos_qualification_explicitly_open() -> None:
+    """Removing duplicate Linux jobs must not imply three-OS qualification."""
+    content = WORKFLOW.read_text(encoding="utf-8").lower()
+
+    assert "windows/macos qualification remains open" in content
+    assert "issue #5684" in content
 
 
 @pytest.mark.unit
