@@ -165,10 +165,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 34129,
+      "bytes_lf": 34163,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b0c6bc5821dd5f2301ed4964d6c5fd1c6f70ae3595799133b4a3b65bdc579fcf",
+      "content_sha256_lf": "31a1e00df85c68edf7cd9e56f8f1687c02969bef57fbf18526dbd5188995a6e5",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-CHAT-DOCK-WIDGET-QT-PY-DD8B1382BB92",
       "language": "python",
@@ -649,10 +649,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9108,
+      "bytes_lf": 9902,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2e3b7b0c5e144542f1f599594ebbfca4bb4b0b3c2d643130e39924a88f0e6c22",
+      "content_sha256_lf": "3e1d336a7ba050df9dbdbadbb702a140b2326f6a54faf8c9e8f2c4f796669c49",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-QT-MESSAGING-PY-75F0D893F0A0",
       "language": "python",
@@ -696,6 +696,11 @@
           {
             "kind": "constant",
             "name": "_SCROLL_DEFER_MS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SCROLL_TIMER_NAME",
             "signature": null
           }
         ],
