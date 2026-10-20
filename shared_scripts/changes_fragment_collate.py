@@ -153,6 +153,20 @@ def _normalise_block(block: list[str]) -> str:
     return "".join(block).rstrip("\n") + "\n\n"
 
 
+def _devlog_state_at_collation(dl_state: str | None, *, default: str) -> str:
+    """Map a fragment ``dl_state`` to the state written at collation time.
+
+    Collation runs only after the fragment's pull request has merged, so an
+    author-declared active state is stale and becomes ``shipped``. Paused and
+    terminal states are preserved unchanged.
+    """
+    if dl_state is None:
+        return default
+    if dl_state in development_log.ACTIVE_STATES:
+        return "shipped"
+    return dl_state
+
+
 def _render_entry(
     fragment: Fragment, *, state: str, pr: int, today: date, verified: str
 ) -> str:
@@ -188,7 +202,9 @@ def apply_devlog_entry(
     An existing ``DL-#<issue>`` entry has its State (when given), PR, Last
     verified and Next step updated; an entry that becomes terminal moves to
     the top of the Shipped section. A missing entry is created (default state
-    ``shipped``) at the top of Active or Shipped. Idempotent for equal input.
+    ``shipped``) at the top of Active or Shipped. Author-declared active states
+    are promoted to ``shipped`` at collation time because the pull request has
+    already merged. Idempotent for equal input.
 
     Raises :class:`FragmentError` when the fragment would move a terminal
     (shipped or abandoned) entry to another state: that work needs a new
@@ -202,7 +218,7 @@ def apply_devlog_entry(
     terminal = development_log.TERMINAL_STATES
 
     if span is None:
-        state = fragment.dl_state or "shipped"
+        state = _devlog_state_at_collation(fragment.dl_state, default="shipped")
         block = _render_entry(
             fragment, state=state, pr=pr, today=today, verified=verified
         )
@@ -212,7 +228,10 @@ def apply_devlog_entry(
     lines[start] = _canonical_heading(lines[start])
     current = development_log.parse_entries("".join(lines[start:end]))[0]
     old_state = current.state
-    new_state = fragment.dl_state or old_state
+    if fragment.dl_state:
+        new_state = _devlog_state_at_collation(fragment.dl_state, default=old_state)
+    else:
+        new_state = old_state
     if old_state in terminal and new_state != old_state:
         raise FragmentError(
             f"{entry_id} is {old_state}; it never moves to {new_state}. Open a "
@@ -223,7 +242,7 @@ def apply_devlog_entry(
         "PR": _merge_pr(current.fields.get("PR", ""), pr),
     }
     if fragment.dl_state:
-        updates["State"] = fragment.dl_state
+        updates["State"] = new_state
     if fragment.next_step:
         updates["Next step"] = fragment.next_step
     elif new_state == "shipped" and old_state != "shipped":
