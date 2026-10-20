@@ -37,6 +37,8 @@ const TOKENIZER_URL: &str =
 /// Expected output dimension for the default model.
 pub const DEFAULT_EMBEDDING_DIM: usize = 384;
 
+static ORT_ENVIRONMENT: Mutex<Option<ort::environment::Environment>> = Mutex::new(None);
+
 /// Maximum sequence length the model accepts. Inputs longer than this are
 /// truncated by the tokenizer.
 const MAX_SEQ_LEN: usize = 256;
@@ -81,7 +83,8 @@ impl LocalEmbedder {
         let tokenizer = Tokenizer::from_file(tokenizer_path)
             .map_err(|e| format!("Tokenizer load error: {}", e))?;
 
-        let session = Session::builder()
+        let environment = ort_environment()?;
+        let session = Session::builder(&environment)
             .map_err(|e| format!("ORT session builder error: {}", e))?
             .with_optimization_level(GraphOptimizationLevel::Level3)
             .map_err(|e| format!("ORT optimization-level error: {}", e))?
@@ -218,6 +221,21 @@ impl LocalEmbedder {
 
         Ok(results)
     }
+}
+
+fn ort_environment() -> Result<ort::environment::Environment, String> {
+    let mut environment = ORT_ENVIRONMENT
+        .lock()
+        .map_err(|_| "ORT environment initialization mutex poisoned".to_string())?;
+    if let Some(environment) = environment.as_ref() {
+        return Ok(environment.clone());
+    }
+
+    let initialized = ort::init()
+        .build()
+        .map_err(|e| format!("ORT environment initialization error: {}", e))?;
+    *environment = Some(initialized.clone());
+    Ok(initialized)
 }
 
 /// Resolve the model cache directory: `$UPSTREAM_DRIFT_MODEL_CACHE` if set,
