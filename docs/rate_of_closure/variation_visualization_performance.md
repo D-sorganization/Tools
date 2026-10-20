@@ -8,10 +8,10 @@ registered 3D point, and explicit valid-sample masks.
 
 Measured on Windows with Python 3.11.9 and Node/Vitest on 2026-08-05:
 
-| Runtime | Dataset | Preparation Time | Traced Peak Memory | Gate |
-|---|---:|---:|---:|---:|
-| Python covariance/RMS/eigenpairs | 500 x 240 x 3 | approximately 0.016 s | 8.4 MiB | less than 5 s and 100 MB |
-| TypeScript RMS/principal spread | 500 x 240 x 3 | approximately 42 ms | not exposed by Vitest | less than 2,000 ms |
+| Runtime                          |       Dataset |      Preparation Time |    Traced Peak Memory |                     Gate |
+| -------------------------------- | ------------: | --------------------: | --------------------: | -----------------------: |
+| Python covariance/RMS/eigenpairs | 500 x 240 x 3 | approximately 0.016 s |               8.4 MiB | less than 5 s and 100 MB |
+| TypeScript RMS/principal spread  | 500 x 240 x 3 |   approximately 42 ms | not exposed by Vitest |       less than 2,000 ms |
 
 The Python source-position array is 2.75 MiB. Peak memory uses Python's
 `tracemalloc`; it does not claim to include every native NumPy allocator or GPU

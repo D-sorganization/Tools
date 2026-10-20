@@ -199,13 +199,13 @@ Cross-evaluation matrix (row = swing optimized for that objective, column = valu
 that objective on the swing, percent of the column best):
 
 | swing optimized for (row) vs scored on (col) | clubhead | centrifugal | coriolis | energy | impulse | hand path |
-| ------------------------ | -------- | ----------- | -------- | ------ | ------- | --------- |
-| clubhead_speed           | 100.00   | 98.53       | 99.13    | 99.97  | 99.93   | 99.75     |
-| centrifugal              | 97.25    | 100.00      | 91.88    | 92.66  | 95.78   | 97.80     |
-| coriolis                 | 99.73    | 99.38       | 100.00   | 98.94  | 99.28   | 99.99     |
-| energy_transfer          | 99.99    | 98.26       | 98.71    | 100.00 | 100.00  | 99.62     |
-| impulse_transfer         | 99.99    | 98.26       | 98.71    | 100.00 | 100.00  | 99.62     |
-| hand_path_impulse        | 99.79    | 99.31       | 99.99    | 99.15  | 99.39   | 100.00    |
+| -------------------------------------------- | -------- | ----------- | -------- | ------ | ------- | --------- |
+| clubhead_speed                               | 100.00   | 98.53       | 99.13    | 99.97  | 99.93   | 99.75     |
+| centrifugal                                  | 97.25    | 100.00      | 91.88    | 92.66  | 95.78   | 97.80     |
+| coriolis                                     | 99.73    | 99.38       | 100.00   | 98.94  | 99.28   | 99.99     |
+| energy_transfer                              | 99.99    | 98.26       | 98.71    | 100.00 | 100.00  | 99.62     |
+| impulse_transfer                             | 99.99    | 98.26       | 98.71    | 100.00 | 100.00  | 99.62     |
+| hand_path_impulse                            | 99.79    | 99.31       | 99.99    | 99.15  | 99.39   | 100.00    |
 
 Old versus new, same six objectives on the lumped 0.5 kg club at 0.36 s (same script,
 `comparison_legacy_lumped_0.36s`): clubhead speed, centrifugal, energy, impulse and hand

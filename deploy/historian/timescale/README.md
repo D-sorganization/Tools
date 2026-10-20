@@ -8,6 +8,7 @@ Schema changes on a plant historian are an intentional operator action.
 ## Licensing Scope
 
 Per the licensing ruling in `docs/development/HISTORIAN_LICENSING_RULING.md` (#4951):
+
 - Continuous aggregates (`timescaledb.continuous`), compression policies, and retention policies are Timescale License (TSL) features.
 - These features are permitted for internal plant deployment.
 - Nothing in this directory may be bundled into distributed Rate-of-Closure deliverables.
@@ -33,6 +34,7 @@ Every file is idempotent (`IF NOT EXISTS` / `if_not_exists => TRUE`) and safe to
 ## Verification
 
 ### 1. Verify Hypertable
+
 ```sql
 SELECT hypertable_name, num_chunks
 FROM timescaledb_information.hypertables
@@ -40,6 +42,7 @@ WHERE hypertable_name = 'tag_sample';
 ```
 
 ### 2. Verify Continuous Aggregate
+
 ```sql
 SELECT view_name, materialized_only
 FROM timescaledb_information.continuous_aggregates
@@ -47,6 +50,7 @@ WHERE view_name = 'tag_sample_1m';
 ```
 
 ### 3. Verify Compression
+
 ```sql
 SELECT
     hypertable_name,
@@ -73,6 +77,7 @@ DROP MATERIALIZED VIEW IF EXISTS tag_sample_1m;
 ```
 
 Dropping tables completely (destroys data):
+
 ```sql
 DROP TABLE IF EXISTS tag_sample CASCADE;
 DROP TABLE IF EXISTS tag_definition CASCADE;

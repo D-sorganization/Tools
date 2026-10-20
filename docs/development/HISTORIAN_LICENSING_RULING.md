@@ -5,7 +5,7 @@
 **Status:** Approved & Ratified  
 **Date:** 2026-09-21  
 **Scope:** `src/p1am_control_system/historian/`, SCADA telemetry, database schemas, and Grafana dashboard assets  
-**Blocks / Unblocks:** Unblocks Historian H3/H6 re-land (Issues #4046, #4049, #4055)  
+**Blocks / Unblocks:** Unblocks Historian H3/H6 re-land (Issues #4046, #4049, #4055)
 
 ---
 

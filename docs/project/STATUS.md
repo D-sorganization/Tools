@@ -7,31 +7,31 @@
 
 ## What Moved (since 2026-09-23)
 
-| Area                   | What shipped                                                              | PR/Issue      |
-| ---------------------- | ------------------------------------------------------------------------- | ------------- |
-| Release                | Bumped to **v1.20.2 → v1.21.0 → v1.21.1 → v1.21.2**                     | #5330–#5342   |
-| AI knowledge           | Knowledge-pack engine (stdlib+PyYAML BM25 SQLite retrieval)               | #5345 / #5348 |
-| AI knowledge           | Sidekick Wizards: per-product knowledge injected into every chat turn     | #5346 / #5350 |
-| AI knowledge           | Golden Q&A evaluation + optional MiniLM hybrid ranking (BM25+cosine RRF) | #5347 / #5351 |
-| CI hygiene             | Retired review-comment-to-issue converter workflow (RM#1755)              | #5344         |
-| rate_of_closure        | Integrated movement-optimizer as `SwingSource` with golfer anthropometry  | #5331         |
-| rate_of_closure        | Bolt: single-pass loops, inline sqrt, green topography GC pressure        | #5327–#5340   |
-| Accessibility          | Improved focus ring visibility for unit converter inputs                  | #5341         |
-| Process calculators    | Optimized `safe_exp` and resilient benchmark                              | #5333 / #5334 |
-| Epics closed           | Swing-Impact-Ball-Flight (#4103), Design Manual (#4707), Putting LM (#5218) | closed      |
-| Blockers resolved      | Renderer source provenance (#5303), RUNNER_CHECK_TOKEN (#5305)            | closed        |
+| Area                | What shipped                                                                | PR/Issue      |
+| ------------------- | --------------------------------------------------------------------------- | ------------- |
+| Release             | Bumped to **v1.20.2 → v1.21.0 → v1.21.1 → v1.21.2**                         | #5330–#5342   |
+| AI knowledge        | Knowledge-pack engine (stdlib+PyYAML BM25 SQLite retrieval)                 | #5345 / #5348 |
+| AI knowledge        | Sidekick Wizards: per-product knowledge injected into every chat turn       | #5346 / #5350 |
+| AI knowledge        | Golden Q&A evaluation + optional MiniLM hybrid ranking (BM25+cosine RRF)    | #5347 / #5351 |
+| CI hygiene          | Retired review-comment-to-issue converter workflow (RM#1755)                | #5344         |
+| rate_of_closure     | Integrated movement-optimizer as `SwingSource` with golfer anthropometry    | #5331         |
+| rate_of_closure     | Bolt: single-pass loops, inline sqrt, green topography GC pressure          | #5327–#5340   |
+| Accessibility       | Improved focus ring visibility for unit converter inputs                    | #5341         |
+| Process calculators | Optimized `safe_exp` and resilient benchmark                                | #5333 / #5334 |
+| Epics closed        | Swing-Impact-Ball-Flight (#4103), Design Manual (#4707), Putting LM (#5218) | closed        |
+| Blockers resolved   | Renderer source provenance (#5303), RUNNER_CHECK_TOKEN (#5305)              | closed        |
 
 ## What Is Stuck
 
-| Item                                            | Epic / Issue  | Blocker                                                                                                                          |
-| ----------------------------------------------- | ------------- | -------------------------------------------------------------------------------------------------------------------------------- |
-| **P0 security: fork-PR policy**                 | #4464         | No PR; requires explicit Board decision on fork approval policy for public repo with self-hosted runners; unchanged since 2026-09-10 |
-| `tests (3.11)` red on `main`                    | (new 2026-09-26) | Standard CI gate `tests (3.11)` failing on latest `main` (sha 1a8f012); known failures: `test_wgs_engine_imports_without_pyqt6`, `test_python_310_fallback_exports_timezone_utc_and_str_enum`, cross-repo import compat tests, `test_folder_packer_pro_imports`; `tests (3.12)` passes |
-| Impact acoustics — physical evidence            | #5068         | Traceable apparatus, calibration, operating strain, and participant data unavailable; deferred to Board resource allocation       |
-| Ball landing / surface physical validation      | #4267         | Same physical evidence gap; deferred in planning catalog                                                                         |
-| Mocap reconstruction                            | #4706         | PR #5111 closed without merge; reconstruction active but no open PR                                                              |
-| Qt worker losses (#5114)                        | #5114         | Partial cleanup on separate branch; root cause unexplained (3 workers lost after 2,880 passes)                                   |
-| Duplicate v1.22.0 release PRs                   | #5349, #5352  | Two bot-generated v1.22.0 bump PRs open simultaneously; one should be closed                                                     |
+| Item                                       | Epic / Issue     | Blocker                                                                                                                                                                                                                                                                                |
+| ------------------------------------------ | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **P0 security: fork-PR policy**            | #4464            | No PR; requires explicit Board decision on fork approval policy for public repo with self-hosted runners; unchanged since 2026-09-10                                                                                                                                                   |
+| `tests (3.11)` red on `main`               | (new 2026-09-26) | Standard CI gate `tests (3.11)` failing on latest `main` (sha 1a8f012); known failures: `test_wgs_engine_imports_without_pyqt6`, `test_python_310_fallback_exports_timezone_utc_and_str_enum`, cross-repo import compat tests, `test_folder_packer_pro_imports`; `tests (3.12)` passes |
+| Impact acoustics — physical evidence       | #5068            | Traceable apparatus, calibration, operating strain, and participant data unavailable; deferred to Board resource allocation                                                                                                                                                            |
+| Ball landing / surface physical validation | #4267            | Same physical evidence gap; deferred in planning catalog                                                                                                                                                                                                                               |
+| Mocap reconstruction                       | #4706            | PR #5111 closed without merge; reconstruction active but no open PR                                                                                                                                                                                                                    |
+| Qt worker losses (#5114)                   | #5114            | Partial cleanup on separate branch; root cause unexplained (3 workers lost after 2,880 passes)                                                                                                                                                                                         |
+| Duplicate v1.22.0 release PRs              | #5349, #5352     | Two bot-generated v1.22.0 bump PRs open simultaneously; one should be closed                                                                                                                                                                                                           |
 
 ## What Is Next (Ordered)
 
@@ -43,23 +43,23 @@
 
 ## CI Health (2026-09-26)
 
-| Workflow                   | Status                                                               |
-| -------------------------- | -------------------------------------------------------------------- |
-| tests (3.11)               | **failure** — failing on `main` sha 1a8f012 (first seen 2026-09-26) |
-| tests (3.12)               | success                                                              |
-| Benchmark Suite            | success                                                              |
-| Heavy Integration Tests    | success                                                              |
-| Full Test Suite (Nightly)  | failure — same root cause as `tests (3.11)` silencing check         |
-| Merge Hold Guard           | success                                                              |
+| Workflow                  | Status                                                              |
+| ------------------------- | ------------------------------------------------------------------- |
+| tests (3.11)              | **failure** — failing on `main` sha 1a8f012 (first seen 2026-09-26) |
+| tests (3.12)              | success                                                             |
+| Benchmark Suite           | success                                                             |
+| Heavy Integration Tests   | success                                                             |
+| Full Test Suite (Nightly) | failure — same root cause as `tests (3.11)` silencing check         |
+| Merge Hold Guard          | success                                                             |
 
 ## Open PRs (2026-09-26)
 
-| PR    | Title                                                         | Notes                          |
-| ----- | ------------------------------------------------------------- | ------------------------------ |
-| #5355 | Bolt: Replace .reduce() with single-pass loops                | Bolt perf; not draft           |
-| #5354 | Bolt: Use explicit set population instead of flatMap          | Bolt perf; not draft           |
-| #5352 | chore(release): bump version to v1.22.0                       | Bot release PR (duplicate)     |
-| #5349 | chore(release): bump version to v1.22.0                       | Bot release PR (duplicate)     |
+| PR    | Title                                                | Notes                      |
+| ----- | ---------------------------------------------------- | -------------------------- |
+| #5355 | Bolt: Replace .reduce() with single-pass loops       | Bolt perf; not draft       |
+| #5354 | Bolt: Use explicit set population instead of flatMap | Bolt perf; not draft       |
+| #5352 | chore(release): bump version to v1.22.0              | Bot release PR (duplicate) |
+| #5349 | chore(release): bump version to v1.22.0              | Bot release PR (duplicate) |
 
 ## Decisions Needed
 

@@ -129,15 +129,15 @@ cooperative; asynchronous WASM cancellation is not part of v1.
 
 ## Terminal-state policy
 
-| Phase outcome | Public behavior | Rationale |
-| --- | --- | --- |
-| Bounce `settled_to_skid` | Run skid/roll | Exact physical handoff exists. |
-| Bounce `cancelled` | Raise `GroundReferenceCancelled` | Cancellation is operational, not a simulated result. |
-| Bounce `time_limit`, `event_limit`, `no_recontact`, `numerical_failure` | Raise `GroundReferenceExecutionError` | No qualified skid handoff exists and v1 composition would require invention. |
-| Skid/roll `rest`, `left_surface`, `time_limit`, `event_limit` | Compose `GroundSimulationResult` | These outcomes have an existing explicit v1 mapping. |
-| Skid/roll `cancelled` | Raise `GroundReferenceCancelled` | Cancellation must not masquerade as physics. |
-| Skid/roll `step_limit`, `unsupported_surface`, `numerical_failure` | Raise `GroundReferenceExecutionError` | The current public result schema has no honest mapping. |
-| Composition rejection | Raise `GroundReferenceExecutionError` with `composition_error` | The caller receives typed fail-closed evidence without exposing a fabricated result. |
+| Phase outcome                                                           | Public behavior                                                | Rationale                                                                            |
+| ----------------------------------------------------------------------- | -------------------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| Bounce `settled_to_skid`                                                | Run skid/roll                                                  | Exact physical handoff exists.                                                       |
+| Bounce `cancelled`                                                      | Raise `GroundReferenceCancelled`                               | Cancellation is operational, not a simulated result.                                 |
+| Bounce `time_limit`, `event_limit`, `no_recontact`, `numerical_failure` | Raise `GroundReferenceExecutionError`                          | No qualified skid handoff exists and v1 composition would require invention.         |
+| Skid/roll `rest`, `left_surface`, `time_limit`, `event_limit`           | Compose `GroundSimulationResult`                               | These outcomes have an existing explicit v1 mapping.                                 |
+| Skid/roll `cancelled`                                                   | Raise `GroundReferenceCancelled`                               | Cancellation must not masquerade as physics.                                         |
+| Skid/roll `step_limit`, `unsupported_surface`, `numerical_failure`      | Raise `GroundReferenceExecutionError`                          | The current public result schema has no honest mapping.                              |
+| Composition rejection                                                   | Raise `GroundReferenceExecutionError` with `composition_error` | The caller receives typed fail-closed evidence without exposing a fabricated result. |
 
 Both error types retain the phase, the native stable reason code, and the exact
 request fingerprint. `GroundReferenceCancelled` is a subclass of

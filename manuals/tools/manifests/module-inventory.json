@@ -153,13 +153,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
     },
     {
-      "content_sha256_lf": "1d4fb8a745fa1ca4af633246c1674e6e741b45490a47aab4aff007896c1f0aff",
+      "content_sha256_lf": "e24bede290a3799f42638223aeec4994e2ae0d42827a69ceef8e3f0ed88fbc54",
       "entry_count": 5,
       "package": "schemas",
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "515071646042f4edd8d7e110fa024324fc96362cff7385acaef71a3d220afd5f",
+      "content_sha256_lf": "c0f830c54784e6ab2e31c38c1d1e8778fbdec39fcab76958fe8036432f8c888d",
       "entry_count": 116,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"

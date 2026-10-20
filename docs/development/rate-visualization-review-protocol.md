@@ -13,23 +13,23 @@ outcome.
 
 Complete every field before inspection:
 
-| Field | Required Record |
-| --- | --- |
-| Repository commit SHA |  |
-| Application/package version |  |
-| Reviewer |  |
-| Review date and time zone |  |
-| Operating system and build |  |
-| React browser and version |  |
-| PyQt and Qt versions |  |
-| Font package and version |  |
-| React viewports | 1440x900, 1280x720, and 390x844 |
-| PyQt viewport and scales | 1440x900 at 100% and 150% |
-| Representative dataset identities |  |
-| Baseline manifest and image identities |  |
-| Automated evidence artifact URL |  |
-| Review evidence directory or URL |  |
-| Deviations from this protocol |  |
+| Field                                  | Required Record                 |
+| -------------------------------------- | ------------------------------- |
+| Repository commit SHA                  |                                 |
+| Application/package version            |                                 |
+| Reviewer                               |                                 |
+| Review date and time zone              |                                 |
+| Operating system and build             |                                 |
+| React browser and version              |                                 |
+| PyQt and Qt versions                   |                                 |
+| Font package and version               |                                 |
+| React viewports                        | 1440x900, 1280x720, and 390x844 |
+| PyQt viewport and scales               | 1440x900 at 100% and 150%       |
+| Representative dataset identities      |                                 |
+| Baseline manifest and image identities |                                 |
+| Automated evidence artifact URL        |                                 |
+| Review evidence directory or URL       |                                 |
+| Deviations from this protocol          |                                 |
 
 Use normal production routes and controls. Do not inject component props,
 fabricate successful results, or relabel a preview as computed evidence.
@@ -65,8 +65,8 @@ Use one row per tab/state/reference case. Add rows rather than combining
 different states under one judgment.
 
 | Surface | Tab | State | Reference Case | Dataset/Scenario | Image SHA-256 | Geometry | Scientific Context | Keyboard/Nonvisual | Performance | Finding IDs | Disposition |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-|  |  |  |  |  |  |  |  |  |  |  |  |
+| ------- | --- | ----- | -------------- | ---------------- | ------------- | -------- | ------------------ | ------------------ | ----------- | ----------- | ----------- |
+|         |     |       |                |                  |               |          |                    |                    |             |             |             |
 
 Every finding requires severity, reproduction steps, expected behavior, owner,
 and disposition. A diagnostic image is not an approved baseline until the
@@ -92,6 +92,6 @@ Select exactly one outcome:
 - [ ] Conditional approval — controlled exceptions are attached.
 - [ ] Reject — one or more required states or cases are unacceptable.
 
-Reviewer: ____________________  Date: __________
+Reviewer: **\*\*\*\***\_\_\_\_**\*\*\*\*** Date: \***\*\_\_\*\***
 
-Approver: ____________________  Date: __________
+Approver: **\*\*\*\***\_\_\_\_**\*\*\*\*** Date: \***\*\_\_\*\***

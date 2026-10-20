@@ -42,6 +42,7 @@ the complete 114-file / 686-test React suite; TypeScript; zero-warning ESLint;
 the 199-module production build; and four serial desktop/constrained-2x-DPR
 Playwright camera cases. The dependency audit reports zero vulnerabilities in
 337 packages.
+
 ## PR #4303 current-parent repair
 
 The local publication candidate normally merges exact live child

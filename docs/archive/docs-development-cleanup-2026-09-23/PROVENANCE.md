@@ -6,6 +6,7 @@ that had accumulated in `docs/development/` with no ongoing documentation value.
 ## Files
 
 ### IMPLEMENTATION_COMPLETE.txt
+
 - **Origin:** `docs/development/IMPLEMENTATION_COMPLETE.txt`
 - **Added:** commit `4eeae7b53` (chore: consolidate overnight Jules scheduled tasks, ~2026)
 - **Content:** Agent-generated implementation-complete status checklist for Phase 2.1
@@ -16,6 +17,7 @@ that had accumulated in `docs/development/` with no ongoing documentation value.
   this content in proper doc form.
 
 ### workflow_runs_tools.txt
+
 - **Origin:** `docs/development/workflow_runs_tools.txt`
 - **Added:** commit `420c66dcf` (refactor: reorganize repository structure following PR #307 pattern)
 - **Content:** Raw `gh run list` CLI output snapshot (20 lines of completed workflow runs).

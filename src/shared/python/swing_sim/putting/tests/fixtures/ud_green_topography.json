@@ -126,8 +126,5 @@
       "elevation": -0.125
     }
   ],
-  "hole_position": [
-    3.0,
-    2.0
-  ]
+  "hole_position": [3.0, 2.0]
 }

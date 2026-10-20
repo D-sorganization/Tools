@@ -77,10 +77,10 @@ and should not have version specifiers.
 each PyQt6 wheel is built against, so `PyQt6-sip` must never move independently of the
 pinned `PyQt6` release.
 
-| Context | PyQt6 | PyQt6-Qt6 | PyQt6-sip |
-| ------- | ----- | --------- | --------- |
-| CI lock (`requirements-lock.txt`, `requirements-rate-pyqt.txt`) | 6.11.0 | 6.11.2 | 13.12.0 |
-| Owner Windows dev host (MSVC runtime limit) | 6.8.1 | (wheel-bundled) | must stay compatible with 6.8.1 |
+| Context                                                         | PyQt6  | PyQt6-Qt6       | PyQt6-sip                       |
+| --------------------------------------------------------------- | ------ | --------------- | ------------------------------- |
+| CI lock (`requirements-lock.txt`, `requirements-rate-pyqt.txt`) | 6.11.0 | 6.11.2          | 13.12.0                         |
+| Owner Windows dev host (MSVC runtime limit)                     | 6.8.1  | (wheel-bundled) | must stay compatible with 6.8.1 |
 
 Dependabot PR #5486 proposed `PyQt6-sip` 13.13.0 alone; it was closed during the
 2026-10-10 dependency consolidation (#5499) and tracked as issue #5508. Until a

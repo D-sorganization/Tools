@@ -102,7 +102,6 @@ jobs:
       github.event.pull_request.head.repo.full_name == github.repository) &&
       (!contains(github.event.pull_request.labels.*.name, 'spec-exempt'))
     timeout-minutes: 5
-
     steps:
       - name: Checkout
         uses: actions/checkout@v7

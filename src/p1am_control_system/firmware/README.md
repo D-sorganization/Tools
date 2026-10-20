@@ -112,7 +112,7 @@ read below 0 % (sub-zero degC) or above 100 % near over-range; AI readings
 are pre-scaled to 0-100 % by the P1AM library before reaching the broker. A
 non-finite reading is kept as NaN — the broker's bad-quality marker — and is
 never coerced to 0.0 %. A NaN source tag drives its AO to 0.0 %, a NaN PV
-de-energizes its PID CV, and a NaN on an *interlocked* tag trips (a sensor
+de-energizes its PID CV, and a NaN on an _interlocked_ tag trips (a sensor
 fault cannot be proven safe). AO writes saturate at the physical DAC span:
 `WriteHardwareOutputs` clamps the command to [0, 100] % before writing, then
 the output scales linearly 0.0 % -> 4.000 mA, 100.0 % -> 20.000 mA.

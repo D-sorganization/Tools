@@ -7,6 +7,7 @@ high-frequency face/hosel modes, and multi-channel energy balance conservation f
 ## 1. 3D Curved Face & Non-Spherical Geometry
 
 Golf club heads feature dual-curvature face profiles:
+
 - **Bulge radius** $R_{\text{bulge}}$: horizontal radius of curvature (heel-to-toe).
 - **Roll radius** $R_{\text{roll}}$: vertical radius of curvature (crown-to-sole).
 
@@ -24,6 +25,7 @@ Newton convergence in $\le 3$ iterations to $< 10^{-13}$ m.
 
 As the ball compresses and rolls/slips during oblique impact, the Center of Pressure $p_{\text{cop}}(t)$
 migrates across the curved face.
+
 - **Migration Velocity vs Material Velocity**:
   Force power is work-conjugate to material velocities $v_{\text{mat}}(p_{\text{cop}})$, NOT geometric
   migration rate $\dot{p}_{\text{cop}}$:
@@ -41,6 +43,7 @@ migrates across the curved face.
 ## 3. High-Frequency Face & Hosel Modes
 
 Flexible clubhead structural dynamics are captured via modal coordinates $\eta_m$:
+
 - **Trampoline Mode** (~4500 Hz): Thin face plate membrane mode providing dynamic compliance.
 - **Hosel Bending Mode** (~1800 Hz): Out-of-plane bending compliance at the shaft-head junction.
 - **Hosel Torsion Mode** (~2200 Hz): In-plane torsional twisting at the hosel junction.
@@ -57,6 +60,7 @@ $$g_{\text{eff}} = g_{\text{rigid}} - u_{\text{modal}}$$
 The coupled system strictly balances power:
 $$P_{\text{mech}} = P_{\text{modal\_transfer}} + P_{\text{normal\_contact}} + P_{\text{tangential\_contact}}$$
 where:
+
 - $P_{\text{modal\_transfer}} = F_n \cdot v_{\text{modal}}$
 - $P_{\text{normal\_contact}} = F_n \cdot \dot{g}_{\text{eff}}$
 - $P_{\text{tangential\_contact}} = F_t \cdot v_t$

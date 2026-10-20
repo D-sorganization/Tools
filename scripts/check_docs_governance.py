@@ -36,6 +36,32 @@ def _fail(msg: str) -> int:
     return 1
 
 
+_ADR_README = "docs/adr/README.md"
+_ADR_TEMPLATE = "docs/adr/ADR_TEMPLATE.md"
+_ADR_README_ERROR = "ADR docs changed without updating docs/adr/README.md"
+
+
+def _adr_body_changed(changed: list[str]) -> bool:
+    return any(
+        path.startswith("docs/adr/") and path not in {_ADR_README, _ADR_TEMPLATE}
+        for path in changed
+    )
+
+
+def adr_readme_error(changed: list[str], *, index_is_fresh: bool) -> str | None:
+    """Return an error when an ADR edit leaves the records index stale.
+
+    A diff that already contains ``docs/adr/README.md`` satisfies the gate.
+    A format-only ADR edit also satisfies it when ``check_adr_references``
+    reports the records table is already current.
+    """
+    if not _adr_body_changed(changed):
+        return None
+    if _ADR_README in changed or index_is_fresh:
+        return None
+    return _ADR_README_ERROR
+
+
 def main() -> int:
     missing = [str(p.relative_to(ROOT)) for p in REQUIRED_FILES if not p.exists()]
     if missing:
@@ -53,13 +79,14 @@ def main() -> int:
                 "Assessment docs changed without updating docs/assessments/README.md"
             )
 
-    if any(
-        p.startswith("docs/adr/")
-        and p not in {"docs/adr/README.md", "docs/adr/ADR_TEMPLATE.md"}
-        for p in changed
-    ):
-        if "docs/adr/README.md" not in changed_set:
-            return _fail("ADR docs changed without updating docs/adr/README.md")
+    index_is_fresh = False
+    if _adr_body_changed(changed) and _ADR_README not in changed_set:
+        from scripts import check_adr_references
+
+        index_is_fresh = check_adr_references.main(["--root", str(ROOT)]) == 0
+    adr_error = adr_readme_error(changed, index_is_fresh=index_is_fresh)
+    if adr_error:
+        return _fail(adr_error)
 
     sys.stdout.write("docs governance checks passed\n")
     return 0

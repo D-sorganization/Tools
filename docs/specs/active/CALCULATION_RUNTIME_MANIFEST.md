@@ -28,11 +28,10 @@ not execute through a qualified authority.
 An unavailable reason has one cross-runtime grammar. It must already be
 trimmed, contain 16 through 500 Unicode scalar values, and contain at least
 three ASCII-letter word tokens of two or more letters. Boundary trimming and
-sentinel normalization use exactly the Unicode White_Space code points
+sentinel normalization use exactly the Unicode White*Space code points
 U+0009–U+000D, U+0020, U+0085, U+00A0, U+1680, U+2000–U+200A, U+2028,
 U+2029, U+202F, U+205F, and U+3000. Sentinel matching folds ASCII `A`–`Z`,
-removes that whitespace plus `.`, `/`, `_`, and `-`, and removes terminal `!`
-or `?`. The result must not equal `x`, `na`, `none`, `nodata`,
+removes that whitespace plus `.`, `/`, `*`, and `-`, and removes terminal `!`or`?`. The result must not equal `x`, `na`, `none`, `nodata`,
 `notavailable`, `notapplicable`, or `unavailable`. Consequently `x`, `n/a`,
 bare `unavailable`, punctuation/case variants, and boundary-whitespace variants
 cannot masquerade as evidence. A sentence such as “No qualified ground
@@ -147,6 +146,7 @@ boundaries, reason grammar, and bytes used by both runtimes.
 Both runtimes implement mirrored APIs conforming to the exact same contract:
 
 ### TypeScript (`src/rate_of_closure/web/src/model/runtimeManifest.ts`)
+
 - `parseRuntimeManifest(value: unknown): CalculationRuntimeManifest`:
   Validates and deeply freezes an unknown value against the v1 schema.
 - `createRuntimeManifest(input: CreateRuntimeManifestInput): CalculationRuntimeManifest`:
@@ -157,6 +157,7 @@ Both runtimes implement mirrored APIs conforming to the exact same contract:
   Canonical serialization with 11-decimal numeric policy.
 
 ### Python (`src/shared/python/swing_sim/runtime_manifest.py`)
+
 - `parse_runtime_manifest(value: object) -> dict[str, Any]`:
   Validates and returns a clean, independent dictionary copy.
 - `create_runtime_manifest(*, surface_id: str, build: Mapping[str, Any], calculations: Sequence[Mapping[str, Any]], provenance: Mapping[str, Any]) -> dict[str, Any]`:

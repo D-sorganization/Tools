@@ -24,6 +24,7 @@ the transient acoustic pressure at an observer location $x_{\text{obs}}$ is gove
 $$p(x_{\text{obs}}, t) = \frac{\rho_0}{2 \pi} \sum_{e=1}^N \frac{\ddot{w}_e(t - R_e / c_0)}{R_e} A_e$$
 
 where:
+
 - $\rho_0$ is the acoustic medium density (default $1.204 \text{ kg/m}^3$ in standard air).
 - $c_0$ is the acoustic medium sound speed ($343.2 \text{ m/s}$ at $20^\circ\text{C}$).
 - $A_e$ is the radiating surface area of element $e$.
@@ -55,6 +56,7 @@ $F_c(t)$ exerted between clubhead and ball acts as an acoustic dipole source:
 $$p_{\text{dipole}}(x_{\text{obs}}, t) = \frac{x_{\text{rel}} \cdot e_{\text{force}}}{4 \pi c_0 R^2} \dot{F}_c(t - R / c_0) + \frac{x_{\text{rel}} \cdot e_{\text{force}}}{4 \pi R^3} F_c(t - R / c_0)$$
 
 where:
+
 - The first term is the far-field radiating dipole proportional to the force time-derivative $\dot{F}_c$.
 - The second term is the near-field hydrodynamic dipole proportional to $F_c$.
 - Directivity exhibits a classic $\cos\theta$ pattern along the impact force normal axis $e_{\text{force}}$.

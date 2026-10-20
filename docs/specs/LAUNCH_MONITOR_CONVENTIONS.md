@@ -8,6 +8,7 @@ monitor. It does not claim to reproduce proprietary device algorithms or turn
 a modeled quantity into a measurement.
 
 The catalog covers 28 reconciled parameters across 5 logical groups:
+
 - **Club Delivery**: `club_speed`, `club_path`, `attack_angle`, `dynamic_lie`, `closure_rate`, `swing_direction`, `low_point`
 - **Face Orientation & Impact**: `face_angle`, `dynamic_loft`, `face_to_path`, `spin_loft`, `impact_offset`, `impact_height`
 - **Ball Launch**: `ball_speed`, `launch_angle`, `launch_direction`, `smash_factor`
@@ -15,6 +16,7 @@ The catalog covers 28 reconciled parameters across 5 logical groups:
 - **Ball Flight**: `apex_height`, `carry_distance`, `total_distance`, `carry_offline`, `curve`, `flight_time`, `landing_angle`
 
 Each parameter appears under three explicit convention IDs:
+
 - `app_native`
 - `trackman_comparable`
 - `foresight_comparable`
@@ -26,6 +28,7 @@ endorsement, or identical output from a commercial device.
 ## Required Metadata
 
 Every parameter definition includes:
+
 - a stable convention-qualified identifier and display label;
 - primary-source URL and retrieval date;
 - physical reference point and event-time policy;
@@ -55,36 +58,36 @@ a separately validated time transformation before comparing different events.
 
 ## Full Parameter Coverage Matrix
 
-| Parameter ID | Label | Group | Unit | TrackMan Policy | Foresight Policy | Comparability Verdict |
-|---|---|---|---|---|---|---|
-| `club_speed` | Club Speed | Club Delivery | m/s | Geometric center, pre-contact, measured | Face center, pre-contact, measured | Incompatible (`reference_point`) |
-| `club_path` | Club Path | Club Delivery | deg | Geometric center, max compression, measured | Face center, impact, measured | Incompatible (`reference_point`, `event_time`) |
-| `attack_angle` | Attack Angle | Club Delivery | deg | Geometric center, max compression, measured | Face center, impact, measured | Incompatible (`reference_point`, `event_time`) |
-| `dynamic_lie` | Dynamic Lie | Club Delivery | deg | Face center, max compression, measured | Face center, impact, measured | Incompatible (`event_time`) |
-| `closure_rate` | Closure Rate | Club Delivery | deg/s | Impact location, max compression, derived | Face center, impact, derived | Incompatible (`reference_point`, `event_time`) |
-| `swing_direction` | Swing Direction | Club Delivery | deg | Geometric center, pre-contact, measured | Face center, impact, unavailable | Incompatible (`availability`, `reference_point`, `event_time`) |
-| `low_point` | Low Point | Club Delivery | m | Geometric center, max compression, measured | Face center, impact, unavailable | Incompatible (`availability`, `reference_point`) |
-| `face_angle` | Face Angle | Face Orientation | deg | Impact location, max compression, measured | Impact location, impact, measured | Incompatible (`event_time`) |
-| `dynamic_loft` | Dynamic Loft | Face Orientation | deg | Impact location, max compression, measured | Impact location, impact, measured | Incompatible (`event_time`) |
-| `face_to_path` | Face to Path | Face Orientation | deg | Mixed delivery, max compression, derived | Mixed delivery, impact, derived | Incompatible (`event_time`) |
-| `spin_loft` | Spin Loft | Face Orientation | deg | Mixed delivery, max compression, derived | Mixed delivery, impact, derived | Incompatible (`event_time`) |
-| `impact_offset` | Impact Offset | Face Orientation | m | Impact location, max compression, measured | Impact location, impact, measured | Incompatible (`event_time`) |
-| `impact_height` | Impact Height | Face Orientation | m | Impact location, max compression, measured | Impact location, impact, measured | Incompatible (`event_time`) |
-| `ball_speed` | Ball Speed | Ball Launch | m/s | Ball center, post-separation, measured | Ball center, post-separation, measured | **Directly Comparable** |
-| `launch_angle` | Launch Angle | Ball Launch | deg | Ball center, post-separation, measured | Ball center, post-separation, measured | **Directly Comparable** |
-| `launch_direction` | Launch Direction | Ball Launch | deg | Ball center, post-separation, measured (+ right) | Ball center, post-separation, measured (unspecified sign) | Incompatible (`sign_rule`) |
-| `smash_factor` | Smash Factor | Ball Launch | ratio | Mixed delivery, post-separation, derived | Mixed delivery, post-separation, derived | **Directly Comparable** |
-| `total_spin` | Total Spin | Ball Spin | rpm | Ball center, post-separation, measured | Ball center, post-separation, measured | **Directly Comparable** |
-| `spin_axis` | Spin Axis | Ball Spin | deg | Ball center, post-separation, measured | Ball center, post-separation, measured | **Directly Comparable** |
-| `back_spin` | Back Spin | Ball Spin | rpm | Ball center, post-separation, measured | Ball center, post-separation, measured | **Directly Comparable** |
-| `side_spin` | Side Spin | Ball Spin | rpm | Ball center, post-separation, measured | Ball center, post-separation, measured | **Directly Comparable** |
-| `apex_height` | Apex Height | Ball Flight | m | Ball center, apex, modeled | Ball center, apex, modeled | **Directly Comparable** |
-| `carry_distance` | Carry Distance | Ball Flight | m | Ball center, landing, modeled | Ball center, landing, modeled | **Directly Comparable** |
-| `total_distance` | Total Distance | Ball Flight | m | Ball center, landing, modeled | Ball center, landing, modeled | **Directly Comparable** |
-| `carry_offline` | Carry Offline | Ball Flight | m | Ball center, landing, modeled | Ball center, landing, modeled | **Directly Comparable** |
-| `curve` | Curve | Ball Flight | m | Ball center, landing, modeled | Ball center, landing, unavailable | Incompatible (`availability`) |
-| `flight_time` | Flight Time | Ball Flight | s | Ball center, flight duration, modeled | Ball center, flight duration, modeled | **Directly Comparable** |
-| `landing_angle` | Landing Angle | Ball Flight | deg | Ball center, landing, modeled | Ball center, landing, modeled | **Directly Comparable** |
+| Parameter ID       | Label            | Group            | Unit  | TrackMan Policy                                  | Foresight Policy                                          | Comparability Verdict                                          |
+| ------------------ | ---------------- | ---------------- | ----- | ------------------------------------------------ | --------------------------------------------------------- | -------------------------------------------------------------- |
+| `club_speed`       | Club Speed       | Club Delivery    | m/s   | Geometric center, pre-contact, measured          | Face center, pre-contact, measured                        | Incompatible (`reference_point`)                               |
+| `club_path`        | Club Path        | Club Delivery    | deg   | Geometric center, max compression, measured      | Face center, impact, measured                             | Incompatible (`reference_point`, `event_time`)                 |
+| `attack_angle`     | Attack Angle     | Club Delivery    | deg   | Geometric center, max compression, measured      | Face center, impact, measured                             | Incompatible (`reference_point`, `event_time`)                 |
+| `dynamic_lie`      | Dynamic Lie      | Club Delivery    | deg   | Face center, max compression, measured           | Face center, impact, measured                             | Incompatible (`event_time`)                                    |
+| `closure_rate`     | Closure Rate     | Club Delivery    | deg/s | Impact location, max compression, derived        | Face center, impact, derived                              | Incompatible (`reference_point`, `event_time`)                 |
+| `swing_direction`  | Swing Direction  | Club Delivery    | deg   | Geometric center, pre-contact, measured          | Face center, impact, unavailable                          | Incompatible (`availability`, `reference_point`, `event_time`) |
+| `low_point`        | Low Point        | Club Delivery    | m     | Geometric center, max compression, measured      | Face center, impact, unavailable                          | Incompatible (`availability`, `reference_point`)               |
+| `face_angle`       | Face Angle       | Face Orientation | deg   | Impact location, max compression, measured       | Impact location, impact, measured                         | Incompatible (`event_time`)                                    |
+| `dynamic_loft`     | Dynamic Loft     | Face Orientation | deg   | Impact location, max compression, measured       | Impact location, impact, measured                         | Incompatible (`event_time`)                                    |
+| `face_to_path`     | Face to Path     | Face Orientation | deg   | Mixed delivery, max compression, derived         | Mixed delivery, impact, derived                           | Incompatible (`event_time`)                                    |
+| `spin_loft`        | Spin Loft        | Face Orientation | deg   | Mixed delivery, max compression, derived         | Mixed delivery, impact, derived                           | Incompatible (`event_time`)                                    |
+| `impact_offset`    | Impact Offset    | Face Orientation | m     | Impact location, max compression, measured       | Impact location, impact, measured                         | Incompatible (`event_time`)                                    |
+| `impact_height`    | Impact Height    | Face Orientation | m     | Impact location, max compression, measured       | Impact location, impact, measured                         | Incompatible (`event_time`)                                    |
+| `ball_speed`       | Ball Speed       | Ball Launch      | m/s   | Ball center, post-separation, measured           | Ball center, post-separation, measured                    | **Directly Comparable**                                        |
+| `launch_angle`     | Launch Angle     | Ball Launch      | deg   | Ball center, post-separation, measured           | Ball center, post-separation, measured                    | **Directly Comparable**                                        |
+| `launch_direction` | Launch Direction | Ball Launch      | deg   | Ball center, post-separation, measured (+ right) | Ball center, post-separation, measured (unspecified sign) | Incompatible (`sign_rule`)                                     |
+| `smash_factor`     | Smash Factor     | Ball Launch      | ratio | Mixed delivery, post-separation, derived         | Mixed delivery, post-separation, derived                  | **Directly Comparable**                                        |
+| `total_spin`       | Total Spin       | Ball Spin        | rpm   | Ball center, post-separation, measured           | Ball center, post-separation, measured                    | **Directly Comparable**                                        |
+| `spin_axis`        | Spin Axis        | Ball Spin        | deg   | Ball center, post-separation, measured           | Ball center, post-separation, measured                    | **Directly Comparable**                                        |
+| `back_spin`        | Back Spin        | Ball Spin        | rpm   | Ball center, post-separation, measured           | Ball center, post-separation, measured                    | **Directly Comparable**                                        |
+| `side_spin`        | Side Spin        | Ball Spin        | rpm   | Ball center, post-separation, measured           | Ball center, post-separation, measured                    | **Directly Comparable**                                        |
+| `apex_height`      | Apex Height      | Ball Flight      | m     | Ball center, apex, modeled                       | Ball center, apex, modeled                                | **Directly Comparable**                                        |
+| `carry_distance`   | Carry Distance   | Ball Flight      | m     | Ball center, landing, modeled                    | Ball center, landing, modeled                             | **Directly Comparable**                                        |
+| `total_distance`   | Total Distance   | Ball Flight      | m     | Ball center, landing, modeled                    | Ball center, landing, modeled                             | **Directly Comparable**                                        |
+| `carry_offline`    | Carry Offline    | Ball Flight      | m     | Ball center, landing, modeled                    | Ball center, landing, modeled                             | **Directly Comparable**                                        |
+| `curve`            | Curve            | Ball Flight      | m     | Ball center, landing, modeled                    | Ball center, landing, unavailable                         | Incompatible (`availability`)                                  |
+| `flight_time`      | Flight Time      | Ball Flight      | s     | Ball center, flight duration, modeled            | Ball center, flight duration, modeled                     | **Directly Comparable**                                        |
+| `landing_angle`    | Landing Angle    | Ball Flight      | deg   | Ball center, landing, modeled                    | Ball center, landing, modeled                             | **Directly Comparable**                                        |
 
 ## Ambiguity Register and Limitations
 
@@ -99,6 +102,7 @@ Where public sources leave definitions under-specified, the catalog enforces fai
 ## Side-by-Side Comparison Workspace
 
 The comparison workspace (PyQt `LaunchMonitorComparisonWorkspace` and React `LaunchMonitorComparisonWorkspace.tsx`) enables side-by-side analysis of TrackMan-Comparable and Foresight-Comparable values:
+
 - **Signed Delta Contract**: If two quantities are comparable, the signed difference (`TrackMan - Foresight`) is calculated and displayed with appropriate units. If non-equivalent, the table renders the typed comparability mismatch reason, preventing fabricated deltas.
 - **Search and Category Filtering**: Filter rows by logical parameter groups (`Club Delivery`, `Face Orientation`, `Ball Launch`, `Ball Spin`, `Ball Flight`) or search by parameter name, ID, and definition.
 - **Export & Serialization**: One-click deterministic JSON and CSV exports formatted for reporting and downstream verification.

@@ -678,6 +678,7 @@
   complete RK4 half-step archive. Rust parity, WebKit/Firefox, assistive-
   technology automation, approved visual baselines, protected publication,
   complete raw persistence, and remaining #4142 work stay open.
+
 ## 2026-08-13 #4142 integrated confidence mesh and #4415 policy correction
 
 - Normal merge order is approved mesh head `45800feed2954d221e6a829f0430f87d9817d582`
@@ -759,6 +760,7 @@
   TypeScript, ESLint, and the Vite production build.
   Cross-browser/assistive-technology E2E, visual baselines, import UI,
   protected publication, and remaining #4142 work stay open.
+
 ## 2026-08-13 #4415 changed-test assertion-gate correction
 
 - The constructor-only plot-definition test support module has one explicit,
@@ -877,6 +879,7 @@
 - The sparse 2σ principal-axis glyphs remain exactly that. No full confidence-
   ellipsoid mesh, cross-browser E2E, protected publication, or #4142 completion
   is claimed by this bounded slice.
+
 ## 2026-08-12 #4142 PR #4414 hosted MyPy hardening (1.16.63)
 
 - The nullable locus variable key is narrowed before the stable string-keyed
@@ -1382,7 +1385,6 @@ This child does not complete #4142; protected CI, dependency-ordered
 publication, raw-observation retention, and UpstreamDrift replacement remain
 gates.
 
-
 ## 2026-08-12 #4142 R13.7 React workflow integration
 
 - Branch `codex/4142-morris-react-integration` stacks exact reviewed React
@@ -1427,7 +1429,7 @@ gates.
   does not stop the rest of the application.
 - Capability, canonical factor editing, bounded design controls, sequential
   create/poll/cancel, request/job identity pinning, stale-generation and
-  changed-input invalidation, target selection, read-only ranked μ*,
+  changed-input invalidation, target selection, read-only ranked μ\*,
   uncertainty, availability, constant/unavailable states, and exact typed-miss/
   failure denominators are implemented with accessible labels and messages.
 - Window close never waits on the GUI thread or drops a running QThread. It
@@ -1754,6 +1756,7 @@ gates.
   both the first replacement-render React boundary and validated PyQt values.
   Current-head protected CI, review threads, and repository review remain
   release gates after publication.
+
 ## 2026-08-11 current registry parent propagation into workspace/toolstrip
 
 - Immediate child PR `#4279` keeps base
@@ -1884,6 +1887,7 @@ gates.
   findings after 76 additional focused PyQt/navigation/workspace tests.
   Current-head protected CI, unresolved-thread checks, and required repository
   review remain release gates after guarded publication.
+
 ## 2026-08-11 current D-plane parent propagation into launch-monitor registry
 
 - Immediate child PR `#4203` keeps base `feat/4189-dplane`.
@@ -1966,7 +1970,7 @@ gates.
 
 - The exact `572bf525d` PR tree passes its base-relative candidate scan, but
   `python scripts/check_file_size_budget.py --max-loc 500 --changed-only
-  --base-ref HEAD~1 --baseline-file scripts/monolith_baseline.txt` reproduces
+--base-ref HEAD~1 --baseline-file scripts/monolith_baseline.txt` reproduces
   the proactive release failure: Ruff-formatted `simulation/kinetics.py` is
   selected at 646 LOC and is not grandfathered.
 - A behavior-preserving extraction leaves a 222-LOC stable public façade and
@@ -2744,6 +2748,7 @@ remains an explicit fail-closed boundary.
 6. Verify a clean installed package and the exact UpstreamDrift dependency pin.
 7. Rerun every recorded gate, inspect protected GitHub checks/reviews, and keep
    #4201 open until every acceptance criterion has current evidence.
+
 ## 2026-08-11 pinned-Ruff propagation into D-plane visualization
 
 - Immediate child PR `#4202` keeps base
@@ -2798,6 +2803,7 @@ remains an explicit fail-closed boundary.
   applicable because this child has no Rust delta. The inherited 17-error broad
   MyPy Qt/NumPy baseline in 11 untouched files remains outside scope.
   Protected CI and required review remain release gates.
+
 ## 2026-08-11 pinned-Ruff propagation into wedge impact visualization
 
 - Immediate child PR `#4179` keeps base `feat/4166-wedge-turf-physics`.
@@ -2828,6 +2834,7 @@ remains an explicit fail-closed boundary.
   applicable because this child has no Rust delta. The inherited 17-error broad
   MyPy Qt/NumPy baseline in 11 untouched files remains outside scope.
   Protected CI and required review remain release gates.
+
 ## 2026-08-11 pinned-Ruff propagation into wedge turf physics
 
 - Immediate child PR `#4178` keeps base `feat/4161-wedge-ground-clearance`.
@@ -2839,6 +2846,7 @@ remains an explicit fail-closed boundary.
   or UI behavior changes. Workflow-pinned Ruff check/format, 127 focused tests,
   and documentation, minimum-test, SPEC-version, and diff gates are green.
   Protected current-head checks and parent-first release order remain open.
+
 ## 2026-08-10 Propagation into wedge turf physics
 
 - Immediate child PR `#4178` keeps base `feat/4161-wedge-ground-clearance`.
@@ -2854,6 +2862,7 @@ remains an explicit fail-closed boundary.
   the exact parent's green 345 React and 12 Rust tests remain applicable. The
   inherited 17-error broad MyPy Qt/NumPy baseline in 11 untouched files remains
   outside scope.
+
 ## 2026-08-11 pinned-Ruff propagation into wedge ground clearance
 
 - Immediate child PR `#4174` keeps base `feat/4163-impact-inspector`.
@@ -2865,6 +2874,7 @@ remains an explicit fail-closed boundary.
   behavior changes. Workflow-pinned Ruff check/format, 98 focused tests, and
   documentation, minimum-test, SPEC-version, and diff gates are green.
   Protected current-head checks and parent-first release order remain open.
+
 ## 2026-08-10 Propagation into wedge ground clearance
 
 - Immediate child PR `#4174` keeps base `feat/4163-impact-inspector`.
@@ -2879,6 +2889,7 @@ remains an explicit fail-closed boundary.
   Rust tests, real CPython 3.10.20 checks, scoped static analysis, and
   repository governance gates. The inherited 17-error broad MyPy Qt/NumPy
   baseline in 11 untouched files remains outside scope.
+
 ## 2026-08-11 pinned-Ruff propagation into impact inspector
 
 - Exact repaired parent `#4167` head
@@ -2889,6 +2900,7 @@ remains an explicit fail-closed boundary.
   and variation behavior are unchanged.
 - Protected current-head checks and the later investigation-suite carrier into
   the root branch remain mandatory release gates.
+
 ## 2026-08-10 Propagation into impact inspector
 
 - Immediate child PR `#4173` keeps base `feat/4144-variation-visualizations`.

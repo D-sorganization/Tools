@@ -42,7 +42,7 @@ reconciled all 37 to `State: shipped` with accurate `Next step` lines. Done.
 ## Validation
 
 - `python3 shared_scripts/development_log.py --repo-root .` → `Development
-  log OK.`
+log OK.`
 - `grep -n '\*\*State:\*\* (in_review|in_progress)' docs/development/DEVELOPMENT_LOG.md`
   → no matches (zero remaining stale states).
 - For every flipped entry, confirmed via `gh api graphql` that the
@@ -271,8 +271,6 @@ Stop the 3.10 workflow legs that collect 0 tests (pytest exit 5) because root co
 
 - Merge once CI is green; nothing else outstanding.
 
-
-
 ---
 
 # Past handoff — Fast-fail stale inventory test (Tools#5432)
@@ -294,7 +292,6 @@ Stop the 3.10 workflow legs that collect 0 tests (pytest exit 5) because root co
 ## Next step
 
 - None; auto-merge armed. If the inventory goes stale on rebase, regenerate it.
-
 
 ---
 
@@ -328,6 +325,7 @@ the repository settings in the PR body are still required to close the issue.
 ## Next step
 
 - Owner applies the admin-only settings in the PR body; new PR-triggered fleet jobs must carry the guard (the test enforces it).
+
 # Current handoff — Fix Rust 1.99 clippy errors in pendulum-core (Tools#5429)
 
 - Repository: D-sorganization/Tools
@@ -461,7 +459,6 @@ Port the TypeScript `parseRuntimeManifest` (`calculation-runtime-manifest/v1`) t
 
 ---
 
-
 # Past handoff — Restore Reverted PBKDF2 Hardening and Swing-Objectives Fix (Tools#5404)
 
 # Current handoff — Restore Reverted PBKDF2 Hardening and Swing-Objectives Fix (Tools#5404)
@@ -498,7 +495,6 @@ Restore the PBKDF2 hardening from PR #5399 (600,000 iterations default with tran
 - Commit, push branch, open PR referencing Closes #5404, and arm squash auto-merge.
 
 ---
-
 
 # Past handoff — v1.23.1 release preparation (Tools#5376)
 
@@ -565,6 +561,7 @@ GitHub and git; refreshed `docs/project/STATUS.md`, `docs/project/CHARTER.md`,
 and reconciled 5 stale `DEVELOPMENT_LOG.md` entries to `shipped`.
 
 Key findings this pass:
+
 - Three epics closed: #4103 (Swing-Impact-Ball-Flight), #4707 (Design Manual), #5218 (Putting LM)
 - Three knowledge-pack features shipped: #5345/#5348, #5346/#5350, #5347/#5351
 - **`tests (3.11)` is red on `main`** as of 2026-09-26 (sha 1a8f012); `tests (3.12)` passes

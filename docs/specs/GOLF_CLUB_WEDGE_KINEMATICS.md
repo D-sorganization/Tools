@@ -120,12 +120,12 @@ especially Table 2.
 
 For the declared state the exact vectors are:
 
-| Term | Velocity in `(target, up, right)` [m/s] | Downward speed [m/s] |
-| --- | ---: | ---: |
-| Shaft-axis datum translation | `(13.207454, -2.135647, +0.396084)` | 2.135647 |
-| Rotation about shaft | `(0, -0.193183, -0.396084)` | 0.193183 |
-| Other rotation | `(0, 0, 0)` within numerical precision | 0 |
-| **Contact point total** | **`(13.207454, -2.328830, 0)`** | **2.328830** |
+| Term                         | Velocity in `(target, up, right)` [m/s] | Downward speed [m/s] |
+| ---------------------------- | --------------------------------------: | -------------------: |
+| Shaft-axis datum translation |     `(13.207454, -2.135647, +0.396084)` |             2.135647 |
+| Rotation about shaft         |             `(0, -0.193183, -0.396084)` |             0.193183 |
+| Other rotation               |  `(0, 0, 0)` within numerical precision |                    0 |
+| **Contact point total**      |         **`(13.207454, -2.328830, 0)`** |         **2.328830** |
 
 Thus shaft-axis rotation supplies 8.2953% of the downward velocity and the
 shaft-datum translation supplies 91.7047%. Removing only the shaft term while
@@ -148,13 +148,13 @@ shaft-datum translation and geometry fixed. Values are regression-tested rather
 than obtained from a display-layer approximation.
 
 | Shaft rate [deg/s] | Total AoA [deg] | Direct shaft AoA delta [deg] | Shaft share of downward speed |
-| ---: | ---: | ---: | ---: |
-| 0 | -9.1812 | 0.0000 | 0.00% |
-| 652 | -9.5911 | -0.4099 | 4.32% |
-| 1,003 | -9.8106 | -0.6294 | 6.49% |
-| 1,307 | -10.0000 | -0.8188 | 8.30% |
-| 1,611 | -10.1887 | -1.0075 | 10.03% |
-| 2,432 | -10.6946 | -1.5134 | 14.41% |
+| -----------------: | --------------: | ---------------------------: | ----------------------------: |
+|                  0 |         -9.1812 |                       0.0000 |                         0.00% |
+|                652 |         -9.5911 |                      -0.4099 |                         4.32% |
+|              1,003 |         -9.8106 |                      -0.6294 |                         6.49% |
+|              1,307 |        -10.0000 |                      -0.8188 |                         8.30% |
+|              1,611 |        -10.1887 |                      -1.0075 |                        10.03% |
+|              2,432 |        -10.6946 |                      -1.5134 |                        14.41% |
 
 The table is a geometric sensitivity study, not a player recommendation. Rate,
 offset, lie, lean, handedness, and contact location jointly determine the sign
@@ -214,15 +214,15 @@ contact duration, and the `waterloo_penner` flight model. Delivery Inspection
 tracks the declared reference point; this recipe is not a fixed-ball collision
 detection case.
 
-| Quantity | Current configured result |
-| --- | ---: |
-| Reference velocity | `(13.207454, -2.328830, 0) m/s` |
-| Contact velocity | `(13.155691, -2.522013, -0.410056) m/s` |
-| Contact-point AoA | `-10.847087 degrees` |
-| Without-shaft counterfactual AoA | `-10.548272 degrees` |
-| Shaft counterfactual contribution | `-0.298815 degrees` |
-| Shaft share of downward speed | `6.5050%` |
-| Rigid-impact/flight carry | `22.45855 m` (`24.56 yd`) |
+| Quantity                          |               Current configured result |
+| --------------------------------- | --------------------------------------: |
+| Reference velocity                |         `(13.207454, -2.328830, 0) m/s` |
+| Contact velocity                  | `(13.155691, -2.522013, -0.410056) m/s` |
+| Contact-point AoA                 |                    `-10.847087 degrees` |
+| Without-shaft counterfactual AoA  |                    `-10.548272 degrees` |
+| Shaft counterfactual contribution |                     `-0.298815 degrees` |
+| Shaft share of downward speed     |                               `6.5050%` |
+| Rigid-impact/flight carry         |               `22.45855 m` (`24.56 yd`) |
 
 The manual attack control describes the tracked reference, not the contact
 point. To target exactly -10 degrees **contact-point** AoA with the other values
@@ -240,12 +240,12 @@ dynamic loft. With 30 mph club speed, -10 degrees AoA, centered impact, the
 current rigid-body impact model, and the `waterloo_penner` calm-flight model,
 the model predicts:
 
-| Quantity | Model result |
-| --- | ---: |
-| Ball speed | 30.449 mph |
-| Launch angle | 37.000 degrees |
-| Spin | 3,135.8 rpm |
-| Carry | 17.566 m (19.211 yd) |
+| Quantity     |         Model result |
+| ------------ | -------------------: |
+| Ball speed   |           30.449 mph |
+| Launch angle |       37.000 degrees |
+| Spin         |          3,135.8 rpm |
+| Carry        | 17.566 m (19.211 yd) |
 
 This model therefore does **not** predict 30 yards from that 30 mph delivery.
 Holding AoA and dynamic loft fixed, the same impact/flight chain requires

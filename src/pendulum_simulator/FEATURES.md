@@ -18,21 +18,21 @@
 
 ## 1 Physics Models
 
-| Feature                                  | Status             | Notes                                                      |
-| ---------------------------------------- | ------------------ | ---------------------------------------------------------- |
+| Feature                                  | Status             | Notes                                                        |
+| ---------------------------------------- | ------------------ | ------------------------------------------------------------ |
 | Double pendulum (2-DOF)                  | :white_check_mark: | Shoulder + wrist; uniform shaft plus head point mass (#5431) |
-| Triple pendulum (3-DOF)                  | :white_check_mark: | Three cascading segments                                   |
-| Golfer upper body (8-DOF, 4 constraints) | :white_check_mark: | Hub + bilateral arms + club, closed loop                   |
-| Mass matrix M(q)                         | :white_check_mark: | All three models                                           |
-| Coriolis vector C(q, qdot)               | :white_check_mark: | All three models                                           |
-| Gravity vector G(q)                      | :white_check_mark: | All three models                                           |
-| Viscous friction                         | :white_check_mark: | Per-joint damping coefficients                             |
-| Joint torque limits                      | :white_check_mark: | Clamped torque bounds, all models                          |
-| Constraint Jacobian (golfer)             | :white_check_mark: | 4x8 closed-loop constraint matrix                          |
-| KKT constrained dynamics                 | :white_check_mark: | Baumgarte stabilisation (alpha, beta)                      |
-| Constraint projection                    | :white_check_mark: | Position + velocity manifold projection                    |
-| **Massless hub standoff**                | :white_check_mark: | `hub_options.py` — epsilon mass, PSD mass matrix verified  |
-| **Adjustable rotational centre**         | :white_check_mark: | `hub_options.compute_system_com()`, `hub_offset_for_com()` |
+| Triple pendulum (3-DOF)                  | :white_check_mark: | Three cascading segments                                     |
+| Golfer upper body (8-DOF, 4 constraints) | :white_check_mark: | Hub + bilateral arms + club, closed loop                     |
+| Mass matrix M(q)                         | :white_check_mark: | All three models                                             |
+| Coriolis vector C(q, qdot)               | :white_check_mark: | All three models                                             |
+| Gravity vector G(q)                      | :white_check_mark: | All three models                                             |
+| Viscous friction                         | :white_check_mark: | Per-joint damping coefficients                               |
+| Joint torque limits                      | :white_check_mark: | Clamped torque bounds, all models                            |
+| Constraint Jacobian (golfer)             | :white_check_mark: | 4x8 closed-loop constraint matrix                            |
+| KKT constrained dynamics                 | :white_check_mark: | Baumgarte stabilisation (alpha, beta)                        |
+| Constraint projection                    | :white_check_mark: | Position + velocity manifold projection                      |
+| **Massless hub standoff**                | :white_check_mark: | `hub_options.py` — epsilon mass, PSD mass matrix verified    |
+| **Adjustable rotational centre**         | :white_check_mark: | `hub_options.compute_system_com()`, `hub_offset_for_com()`   |
 
 ## 2 Force & Moment Analysis
 

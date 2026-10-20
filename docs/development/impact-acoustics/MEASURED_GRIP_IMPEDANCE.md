@@ -68,13 +68,15 @@ For the scalar measured axis, the damping estimator uses its closed-form
 non-negative least-squares solution $C=\max(0,\operatorname{mean}(\operatorname{Re}(Z)))$.
 The imaginary-part estimator solves
 
-$$\min_{M,K \geq 0}\left\|\omega\,\operatorname{Im}(Z_{\mathrm{meas}})-
-\left(\omega^2 M-K\right)\right\|_2^2.$$
+$$
+\min_{M,K \geq 0}\left\|\omega\,\operatorname{Im}(Z_{\mathrm{meas}})-
+\left(\omega^2 M-K\right)\right\|_2^2.
+$$
 
 The implementation enumerates the unconstrained solution, each coordinate boundary,
-and the origin, selecting the least-residual feasible candidate.  This is the exact
+and the origin, selecting the least-residual feasible candidate. This is the exact
 active-set solution for the two-parameter convex problem; it does not independently
-clip an unconstrained mass or stiffness estimate.  The estimator preserves passivity,
+clip an unconstrained mass or stiffness estimate. The estimator preserves passivity,
 but its synthetic tests are numerical checks rather than physical coefficient
 identification.
 
@@ -109,11 +111,11 @@ quality of the calibration.
 - `assess_measured_frf_agreement(..., strain_qualified=False)` refuses to certify FRF
   agreement unless its caller explicitly supplies `strain_qualified=True`, derived from
   `check_operating_strain_limits` for the applicable curvature, outer radius, axial
-  strain, and declared material limit.  The default is intentionally conservative:
+  strain, and declared material limit. The default is intentionally conservative:
   a magnitude/phase/passivity match alone is numerical evidence, not proof that the
   shaft stayed in its linear operating regime.
 - The Boolean is a boundary between the numerical FRF comparison and a separately
-  traceable operating-strain assessment.  It does not authenticate a measurement or
+  traceable operating-strain assessment. It does not authenticate a measurement or
   replace the required source, calibration, geometry, and strain evidence in a future
   physical validation study.
 

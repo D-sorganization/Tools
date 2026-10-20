@@ -53,24 +53,24 @@ document.
 
 ## Artifact Inventory
 
-| Surface | Binding | Compatibility and Failure Behavior |
-| --- | --- | --- |
-| PyQt6 plan file | Full version-3 document | Legacy raw plans load with a visible warning; altered plan, metadata, or provenance fails. |
-| React plan file | Full version-3 document | Same canonical/legacy distinction; duplicate fields and incompatible local replay fail. |
-| React named-plan library | Full document or retained legacy plan | Library version 2 preserves evidence state across browser storage. |
-| Python and React workspace | Version-1 binding | Workspace version 3 preserves canonical or legacy evidence and rejects plan/ball-setup substitution. |
-| Python scalar dataset JSON | Full version-3 document | Dataset version 2 rejects legacy raw-plan documents and digest substitution. |
-| React scalar dataset JSON | Full version-3 document | Dataset version 2 emits the same evidence shape with React execution identity. |
-| Python complete geometry ensemble | Full version-3 document within dataset | Reader validates the cohesive document before accepting outcomes or traces. |
-| React swing ensemble | Full version-3 document within dataset | Export version 3 validates document, sampled inputs, trial rows, and localized commands. |
-| Durable archive | Full version-3 document in the checksummed header | Archive version 2 binds the document through the header and manifest hashes. |
-| Durable browser-to-Python request | Raw plan plus cross-runtime plan SHA-256 | Request version 2 rejects plan substitution; Python authors its own execution identity. |
-| Regional-ground request | Raw plan plus cross-runtime plan SHA-256 | Request version 2 rejects plan substitution in both runtimes. |
-| Regional-ground result | Common plan SHA-256 on every retained row | Import rejects malformed or crossed plan digests; per-trial input and regional-plan digests remain separate. |
-| Chip-forgiveness JSON | Full version-3 document | Export version 2 binds its population to the plan; no historical reader is claimed. |
-| CSV table exports | External-plan only | CSV is a review table, not self-contained replay evidence. A consumer must supply and validate the canonical JSON artifact; the table alone cannot authorize replay. |
-| Paired propagation analysis | In-memory only | No paired-study file format is currently public. Pairing requires compatible layouts and row identities; persisted comparisons must retain each source ensemble rather than infer a plan from plots. |
-| Plot and visual state | Derived, non-authoritative | Selectors and chart state do not authorize simulation or historical replay. |
+| Surface                           | Binding                                           | Compatibility and Failure Behavior                                                                                                                                                                   |
+| --------------------------------- | ------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| PyQt6 plan file                   | Full version-3 document                           | Legacy raw plans load with a visible warning; altered plan, metadata, or provenance fails.                                                                                                           |
+| React plan file                   | Full version-3 document                           | Same canonical/legacy distinction; duplicate fields and incompatible local replay fail.                                                                                                              |
+| React named-plan library          | Full document or retained legacy plan             | Library version 2 preserves evidence state across browser storage.                                                                                                                                   |
+| Python and React workspace        | Version-1 binding                                 | Workspace version 3 preserves canonical or legacy evidence and rejects plan/ball-setup substitution.                                                                                                 |
+| Python scalar dataset JSON        | Full version-3 document                           | Dataset version 2 rejects legacy raw-plan documents and digest substitution.                                                                                                                         |
+| React scalar dataset JSON         | Full version-3 document                           | Dataset version 2 emits the same evidence shape with React execution identity.                                                                                                                       |
+| Python complete geometry ensemble | Full version-3 document within dataset            | Reader validates the cohesive document before accepting outcomes or traces.                                                                                                                          |
+| React swing ensemble              | Full version-3 document within dataset            | Export version 3 validates document, sampled inputs, trial rows, and localized commands.                                                                                                             |
+| Durable archive                   | Full version-3 document in the checksummed header | Archive version 2 binds the document through the header and manifest hashes.                                                                                                                         |
+| Durable browser-to-Python request | Raw plan plus cross-runtime plan SHA-256          | Request version 2 rejects plan substitution; Python authors its own execution identity.                                                                                                              |
+| Regional-ground request           | Raw plan plus cross-runtime plan SHA-256          | Request version 2 rejects plan substitution in both runtimes.                                                                                                                                        |
+| Regional-ground result            | Common plan SHA-256 on every retained row         | Import rejects malformed or crossed plan digests; per-trial input and regional-plan digests remain separate.                                                                                         |
+| Chip-forgiveness JSON             | Full version-3 document                           | Export version 2 binds its population to the plan; no historical reader is claimed.                                                                                                                  |
+| CSV table exports                 | External-plan only                                | CSV is a review table, not self-contained replay evidence. A consumer must supply and validate the canonical JSON artifact; the table alone cannot authorize replay.                                 |
+| Paired propagation analysis       | In-memory only                                    | No paired-study file format is currently public. Pairing requires compatible layouts and row identities; persisted comparisons must retain each source ensemble rather than infer a plan from plots. |
+| Plot and visual state             | Derived, non-authoritative                        | Selectors and chart state do not authorize simulation or historical replay.                                                                                                                          |
 
 ## Replay and Cross-Runtime Rules
 

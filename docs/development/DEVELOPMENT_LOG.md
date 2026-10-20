@@ -324,7 +324,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Issue:** #5572
 - **Branch:** codex/signal-optimized-structural-guards
 - **PR:** #5573
-- **Paths:** src/shared/python/signal_toolkit/__init__.py, tests/shared/python/signal_toolkit/test_import_identity.py, manuals/tools/manifests/module-inventory.json
+- **Paths:** src/shared/python/signal_toolkit/**init**.py, tests/shared/python/signal_toolkit/test_import_identity.py, manuals/tools/manifests/module-inventory.json
 - **Started:** 2026-10-12
 - **Last verified:** 2026-10-12 (`8a11691b`; collated from changes/5572-signal-toolkit-import-identity.md)
 - **Summary:** Bind Signal toolkit import aliases before package children capture provider classes.
@@ -1665,7 +1665,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Summary:** Import ezc3d lazily on first C3D read and add availability check to prevent Windows DLL conflicts with OpenSim
 - **Next step:** Shipped in PR #5654.
 
-### DL-#5638 · Rust Golfer Solver Is Now the Same Solver as Python: Closure Equations, INDEPENDENT_CLOSURE_ROWS=[0,1] (Exposed to Python), Zero Multipliers on Rows 2-3, Typed Rank-Loss Error (ValueError), Analytical Jacobian, 2*Alpha/Beta^2 Baumgarte, Hub/Gravity/Coriolis Parity; Adds Rust-vs-Python Parity Tests
+### DL-#5638 · Rust Golfer Solver Is Now the Same Solver as Python: Closure Equations, INDEPENDENT_CLOSURE_ROWS=[0,1] (Exposed to Python), Zero Multipliers on Rows 2-3, Typed Rank-Loss Error (ValueError), Analytical Jacobian, 2\*Alpha/Beta^2 Baumgarte, Hub/Gravity/Coriolis Parity; Adds Rust-vs-Python Parity Tests
 
 - **State:** shipped
 - **Owner:** unassigned
@@ -1675,7 +1675,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Paths:** see #5644
 - **Started:** 2026-10-18
 - **Last verified:** 2026-10-18 (`46c78180`; collated from changes/5638-rust-golfer-solver-is-now-the-same-solve.md)
-- **Summary:** Rust golfer solver is now the same solver as Python: closure equations, INDEPENDENT_CLOSURE_ROWS=[0,1] (exposed to Python), zero multipliers on rows 2-3, typed rank-loss error (ValueError), analytical Jacobian, 2*alpha/beta^2 Baumgarte, hub/gravity/Coriolis parity; adds Rust-vs-Python parity tests
+- **Summary:** Rust golfer solver is now the same solver as Python: closure equations, INDEPENDENT_CLOSURE_ROWS=[0,1] (exposed to Python), zero multipliers on rows 2-3, typed rank-loss error (ValueError), analytical Jacobian, 2\*alpha/beta^2 Baumgarte, hub/gravity/Coriolis parity; adds Rust-vs-Python parity tests
 - **Next step:** Shipped in PR #5644.
 
 ### DL-#5640 · Chore: Remove Committed Clutter (Unused Root Scripts, Empty Issue Template)

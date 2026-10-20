@@ -20,14 +20,14 @@ coaching recommendation.
 
 ## Ownership and Traceability
 
-| Authority | Owns | Does Not Own |
-| --- | --- | --- |
-| Tools #4135 | Workbench shell, launch, persistence, and cross-surface application contracts | Engine-specific host execution or human validation |
-| Tools #4142 | Sampling, ensemble geometry, dispersion, quiet-zone, sensitivity, and evidence schemas | Upstream engine mappings or causal anatomical interpretation |
-| Tools #4144 | Universal arc, impact, and shot-outcome visualization semantics | A second numerical implementation in either UI |
-| Tools #4433 | Visual hierarchy, visibility, accessibility, responsiveness, performance, and image-governance rules | Automatic human approval |
-| Tools #4832 | R14.6 state/case acceptance authority and review packet | Fabricated state execution or unsigned review evidence |
-| UpstreamDrift #8358 | Engine execution, canonical parameter mapping, stable marker traces, and consumer orchestration | Tools-owned sampling, statistics, or visualization algorithms |
+| Authority           | Owns                                                                                                 | Does Not Own                                                  |
+| ------------------- | ---------------------------------------------------------------------------------------------------- | ------------------------------------------------------------- |
+| Tools #4135         | Workbench shell, launch, persistence, and cross-surface application contracts                        | Engine-specific host execution or human validation            |
+| Tools #4142         | Sampling, ensemble geometry, dispersion, quiet-zone, sensitivity, and evidence schemas               | Upstream engine mappings or causal anatomical interpretation  |
+| Tools #4144         | Universal arc, impact, and shot-outcome visualization semantics                                      | A second numerical implementation in either UI                |
+| Tools #4433         | Visual hierarchy, visibility, accessibility, responsiveness, performance, and image-governance rules | Automatic human approval                                      |
+| Tools #4832         | R14.6 state/case acceptance authority and review packet                                              | Fabricated state execution or unsigned review evidence        |
+| UpstreamDrift #8358 | Engine execution, canonical parameter mapping, stable marker traces, and consumer orchestration      | Tools-owned sampling, statistics, or visualization algorithms |
 
 Tools owns the numerical and evidence authorities under
 `shared.python.swing_sim.variation` and `rate_of_closure`. UpstreamDrift owns

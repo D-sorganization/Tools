@@ -50,17 +50,17 @@ an explicit trustworthy identity field and fails closed otherwise.
 
 ## Current Capability Statuses
 
-| Capability | Repository | Issue | Status |
-| --- | --- | --- | --- |
-| `analysis-contract-v2` | UpstreamDrift | #8790 | **complete** |
-| `corpus-use-qualification` | Campaign | #21 | **complete** |
-| `multi-source-flight-model-campaign` | Campaign | #21 | **complete** |
-| `paired-device-validation` | Campaign | #22 | **protocol_ready** |
-| `within-player-covariation` | Tools | #4277 | **complete** |
-| `strokes-gained-and-proxy` | Tools | #4584 | **complete** |
-| `professional-evidence-publication` | AffineDrift | #3883 | **complete** |
-| `rate-client-feature-parity` | Tools | #4226 | **in_progress** |
-| `neural-model-lab` | Tools | #4240 | **in_progress** |
+| Capability                           | Repository    | Issue | Status             |
+| ------------------------------------ | ------------- | ----- | ------------------ |
+| `analysis-contract-v2`               | UpstreamDrift | #8790 | **complete**       |
+| `corpus-use-qualification`           | Campaign      | #21   | **complete**       |
+| `multi-source-flight-model-campaign` | Campaign      | #21   | **complete**       |
+| `paired-device-validation`           | Campaign      | #22   | **protocol_ready** |
+| `within-player-covariation`          | Tools         | #4277 | **complete**       |
+| `strokes-gained-and-proxy`           | Tools         | #4584 | **complete**       |
+| `professional-evidence-publication`  | AffineDrift   | #3883 | **complete**       |
+| `rate-client-feature-parity`         | Tools         | #4226 | **in_progress**    |
+| `neural-model-lab`                   | Tools         | #4240 | **in_progress**    |
 
 ## Completion rule
 

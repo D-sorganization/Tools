@@ -28,10 +28,10 @@ tracker says the defect is resolved while the code says otherwise.
 ### Nature of the Issue
 
 - [x] Empirical insufficiency (the regression test proving the inertia
-  arithmetic is gone, so nothing in CI would catch a recurrence)
+      arithmetic is gone, so nothing in CI would catch a recurrence)
 - [x] Overgeneralization (the reverted text re-asserts "inside the measured
-  bands" — a claim against literature-measured bounds — that the correction
-  explicitly identified as false)
+      bands" — a claim against literature-measured bounds — that the correction
+      explicitly identified as false)
 - [ ] Logical gap
 - [ ] Unstated assumption
 - [ ] Terminological ambiguity
@@ -69,7 +69,7 @@ mentions.
 - [ ] Low
 - [ ] Medium
 - [x] High (a live security weakening plus a reinstated, closed-as-fixed
-  scientific defect)
+      scientific defect)
 
 ### Suggested Remedies
 
@@ -109,11 +109,11 @@ impact speed).
 
 - [ ] Logical gap
 - [x] Unstated assumption (that a single linear `(k, c)` pair calibrated to
-  one `e` value generalizes across the impact-speed range the solver is used
-  for)
+      one `e` value generalizes across the impact-speed range the solver is used
+      for)
 - [ ] Overgeneralization
 - [x] Empirical insufficiency (no comparison to measured golf-ball
-  force-deflection or COR-vs-speed curves)
+      force-deflection or COR-vs-speed curves)
 - [ ] Terminological ambiguity
 - [ ] Literature conflict
 
@@ -146,7 +146,7 @@ similar unquantified simplification sitting in the same paragraph.
 
 - [ ] Low
 - [x] Medium (argument tightening required — the document's own disclosure
-  standard, applied elsewhere in the same section, is not applied here)
+      standard, applied elsewhere in the same section, is not applied here)
 - [ ] High
 
 ### Suggested Remedies
@@ -188,10 +188,10 @@ those implementations and their known failure modes originate from.
 - [ ] Overgeneralization
 - [ ] Empirical insufficiency
 - [x] Terminological ambiguity (claims are stated as self-evident derivations
-  rather than attributed results, making it hard for a reader to check them
-  against the source theory)
+      rather than attributed results, making it hard for a reader to check them
+      against the source theory)
 - [x] Literature conflict (not a conflict in content, but an absence that
-  prevents a reader from checking for one)
+      prevents a reader from checking for one)
 
 ### Why This Is a Problem
 
@@ -213,15 +213,15 @@ implementation of that theory.
   `docs/development/impact-acoustics/MEASURED_GRIP_IMPEDANCE.md`, both of
   which cite primary sources for every quantitative claim.
 - The standard primary reference for exactly these claims is Bendat, J. S. &
-  Piersol, A. G., *Random Data: Analysis and Measurement Procedures* (Wiley),
+  Piersol, A. G., _Random Data: Analysis and Measurement Procedures_ (Wiley),
   and Welch, P. (1967), "The use of fast Fourier transform for the estimation
-  of power spectra," *IEEE Trans. Audio Electroacoust.* 15(2), 70–73 —
+  of power spectra," _IEEE Trans. Audio Electroacoust._ 15(2), 70–73 —
   neither is cited.
 
 ### Severity
 
 - [x] Low (clarification/citation needed; the derivations themselves are not
-  disputed)
+      disputed)
 - [ ] Medium
 - [ ] High
 

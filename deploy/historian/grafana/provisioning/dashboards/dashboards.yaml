@@ -8,9 +8,9 @@ apiVersion: 1
 # delay, or fail the control poll loop or de-energizing safety commands.
 
 providers:
-  - name: 'Plant Historian'
+  - name: "Plant Historian"
     orgId: 1
-    folder: 'Plant Historian'
+    folder: "Plant Historian"
     type: file
     disableDeletion: false
     editable: true

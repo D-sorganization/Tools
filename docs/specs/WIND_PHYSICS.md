@@ -14,11 +14,11 @@ drag and lift calculation; it is not a display-only offset.
 
 The canonical flight frame is right-handed: `x` forward along the target
 line, `y` left, and `z` up. `base_velocity_mps` is the direction the air moves
-*to*. All components and positions are SI.
+_to_. All components and positions are SI.
 
 ## Meteorological Adapter
 
-The UI accepts a horizontal speed and a bearing the wind comes *from*, measured
+The UI accepts a horizontal speed and a bearing the wind comes _from_, measured
 clockwise from the target line:
 
 - 0 degrees is a headwind from the target;
