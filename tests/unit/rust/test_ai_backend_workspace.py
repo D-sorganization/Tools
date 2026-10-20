@@ -9,7 +9,10 @@ Run with:
     pytest tests/unit/rust/test_ai_backend_workspace.py -v
 """
 
+import os
 import pathlib
+import shutil
+import subprocess
 from typing import Any, cast
 
 import pytest
@@ -28,6 +31,20 @@ def _workflow() -> dict[str, Any]:
 
 def _step(job: dict[str, Any], name: str) -> dict[str, Any]:
     return next(step for step in job["steps"] if step.get("name") == name)
+
+
+def _bash_executable() -> str:
+    """Prefer the Git Bash shipped with Git on Windows test hosts."""
+    if os.name == "nt":
+        git_exe = shutil.which("git")
+        if git_exe is not None:
+            git_bash = pathlib.Path(git_exe).resolve().parents[1] / "bin" / "bash.exe"
+            if git_bash.is_file():
+                return str(git_bash)
+    bash = shutil.which("bash")
+    if bash is None:
+        raise RuntimeError("Bash is required to exercise the workflow smoke step")
+    return bash
 
 
 @pytest.mark.unit
@@ -110,14 +127,72 @@ def test_native_wheel_evidence_checks_runtime_and_installed_wheel_tag() -> None:
         assert marker in evidence
     assert "assert" in evidence
     assert "ai_backend" in smoke
-    assert "shopt -s nullglob" in smoke
-    assert "${#WHEELS[@]} != 1" in smoke
-    assert "Expected exactly one wheel" in smoke
     assert "GITHUB_STEP_SUMMARY" in evidence
     assert (
         "wheel-${{ runner.os }}-${{ runner.arch }}-py${{ matrix.python-version }}"
         in evidence
     )
+
+
+@pytest.mark.unit
+@pytest.mark.parametrize(
+    ("wheel_names", "expected_returncode", "expected_install"),
+    [
+        ([], 1, None),
+        (["one wheel.whl"], 0, "one wheel.whl"),
+        (["one.whl", "two.whl"], 1, None),
+    ],
+)
+def test_wheel_smoke_requires_exactly_one_match_before_install(
+    tmp_path: pathlib.Path,
+    wheel_names: list[str],
+    expected_returncode: int,
+    expected_install: str | None,
+) -> None:
+    """Execute the actual workflow step with only pip and Python stubbed."""
+    workflow = _workflow()
+    build = workflow["jobs"]["build-wheels"]
+    smoke = _step(build, "Smoke-test wheel import")["run"]
+    smoke = (
+        smoke.replace("${{ runner.os }}", "Linux")
+        .replace("${{ runner.arch }}", "X64")
+        .replace("${{ matrix.python-version }}", "3.11")
+    )
+    wheel_dir = tmp_path / "dist" / "Linux" / "X64" / "py3.11"
+    wheel_dir.mkdir(parents=True)
+    for name in wheel_names:
+        (wheel_dir / name).touch()
+
+    pip_log = tmp_path / "pip-arguments.txt"
+    python_log = tmp_path / "python-arguments.txt"
+    stubs = (
+        'pip() { printf "<%s>\\n" "$@" >> "$PIP_LOG"; }\n'
+        'python() { printf "<%s>\\n" "$@" >> "$PYTHON_LOG"; }\n'
+    )
+    env = os.environ.copy()
+    env.pop("BASH_ENV", None)
+    env["PIP_LOG"] = str(pip_log)
+    env["PYTHON_LOG"] = str(python_log)
+    result = subprocess.run(
+        [_bash_executable(), "--noprofile", "--norc", "-c", stubs + smoke],
+        cwd=tmp_path,
+        env=env,
+        capture_output=True,
+        text=True,
+        check=False,
+        timeout=10,
+    )
+
+    assert result.returncode == expected_returncode, result.stderr
+    if expected_install is None:
+        assert not pip_log.exists()
+        assert not python_log.exists()
+    else:
+        assert pip_log.read_text(encoding="utf-8").splitlines() == [
+            "<install>",
+            f"<{wheel_dir.relative_to(tmp_path).as_posix()}/{expected_install}>",
+        ]
+        assert python_log.exists()
 
 
 @pytest.mark.unit
