@@ -2152,10 +2152,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1865,
+      "bytes_lf": 2793,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "017f6291ccfd97572c4a2adbb49c3b41baca8f0b663f027528c7de8832934236",
+      "content_sha256_lf": "3acdfd22771d43e212ca2e05f5d1c57690070be14a6a503909fb150370b2e8c9",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-DOCS-GOVERNANCE-PY-92BC2DAEE266",
       "language": "python",
@@ -2175,7 +2175,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "not-applicable",
         "validation": "not-applicable"
       },
@@ -2200,12 +2200,34 @@
             "signature": null
           },
           {
+            "kind": "constant",
+            "name": "_ADR_README",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ADR_README_ERROR",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_ADR_TEMPLATE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "adr_readme_error",
+            "signature": "changed: list[str], *, index_is_fresh: bool"
+          },
+          {
             "kind": "function",
             "name": "main",
             "signature": ""
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/scripts/test_check_docs_governance.py"
+        ],
         "unit_mentions": [],
         "validation_paths": []
       }
