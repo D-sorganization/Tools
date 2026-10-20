@@ -110,6 +110,9 @@ def test_native_wheel_evidence_checks_runtime_and_installed_wheel_tag() -> None:
         assert marker in evidence
     assert "assert" in evidence
     assert "ai_backend" in smoke
+    assert "shopt -s nullglob" in smoke
+    assert "${#WHEELS[@]} != 1" in smoke
+    assert "Expected exactly one wheel" in smoke
     assert "GITHUB_STEP_SUMMARY" in evidence
     assert (
         "wheel-${{ runner.os }}-${{ runner.arch }}-py${{ matrix.python-version }}"

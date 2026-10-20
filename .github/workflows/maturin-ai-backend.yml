@@ -160,7 +160,13 @@ jobs:
       - name: Smoke-test wheel import
         shell: bash
         run: |
-          WHEEL=$(ls dist/${{ runner.os }}/${{ runner.arch }}/py${{ matrix.python-version }}/*.whl | head -1)
+          shopt -s nullglob
+          WHEELS=(dist/${{ runner.os }}/${{ runner.arch }}/py${{ matrix.python-version }}/*.whl)
+          if (( ${#WHEELS[@]} != 1 )); then
+            printf 'Expected exactly one wheel, found %s\n' "${#WHEELS[@]}" >&2
+            exit 1
+          fi
+          WHEEL="${WHEELS[0]}"
           pip install "$WHEEL"
           python -c "import ai_backend; print('ai_backend import OK:', dir(ai_backend))"
 
@@ -291,7 +297,7 @@ jobs:
         run: |
           pip install onnxruntime
           ORT_LIB=$(python -c "import onnxruntime, pathlib; print(next(pathlib.Path(onnxruntime.__file__).parent.rglob('libonnxruntime*.so*'), ''))")
-          echo "ORT_DYLIB_PATH=$ORT_LIB" >> $GITHUB_ENV
+          echo "ORT_DYLIB_PATH=$ORT_LIB" >> "$GITHUB_ENV"
           echo "Located onnxruntime shared library: $ORT_LIB"
 
       - name: Build wheel (local-embeddings)
@@ -323,11 +329,13 @@ jobs:
     steps:
       - name: Report results
         run: |
-          echo "## Maturin ai_backend Wheel Build" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "| Platform | Status |" >> $GITHUB_STEP_SUMMARY
-          echo "|----------|--------|" >> $GITHUB_STEP_SUMMARY
-          echo "| Native Linux Python matrix | ${{ needs.build-wheels.result }} |" >> $GITHUB_STEP_SUMMARY
-          echo "" >> $GITHUB_STEP_SUMMARY
-          echo "Python versions: 3.10, 3.11, 3.12, 3.13" >> $GITHUB_STEP_SUMMARY
-          echo "See each build-wheels matrix job summary for observed runner OS, architecture, interpreter, wheel tags, and artifact identity." >> $GITHUB_STEP_SUMMARY
+          {
+            echo "## Maturin ai_backend Wheel Build"
+            echo ""
+            echo "| Platform | Status |"
+            echo "|----------|--------|"
+            echo "| Native Linux Python matrix | ${{ needs.build-wheels.result }} |"
+            echo ""
+            echo "Python versions: 3.10, 3.11, 3.12, 3.13"
+            echo "See each build-wheels matrix job summary for observed runner OS, architecture, interpreter, wheel tags, and artifact identity."
+          } >> "$GITHUB_STEP_SUMMARY"
