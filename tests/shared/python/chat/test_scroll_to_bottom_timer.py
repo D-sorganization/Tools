@@ -80,9 +80,7 @@ def test_stop_scroll_timer_cancels_pending_scroll(qapp: QApplication) -> None:
         host._scroll_to_bottom()
         host._stop_scroll_timer()
 
-        assert not [
-            t for t in host._scroll_area.findChildren(QTimer) if t.isActive()
-        ]
+        assert not [t for t in host._scroll_area.findChildren(QTimer) if t.isActive()]
     finally:
         sip.delete(host._scroll_area)
 
