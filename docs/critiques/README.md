@@ -26,6 +26,6 @@ literature conflict) and severity (Low / Medium / High), per
 
 ## Reports
 
-| Date       | Summary                                                                                                        |
-| ---------- | ---------------------------------------------------------------------------------------------------------------- |
+| Date       | Summary                                                                                                                                                                                                                |
+| ---------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | 2026-10-02 | [summary](2026-10-02/summary.md) — a merged automated PR silently reverted a security fix and a published scientific correction back onto `main`; two secondary evidentiary gaps in the impact-acoustics program docs. |

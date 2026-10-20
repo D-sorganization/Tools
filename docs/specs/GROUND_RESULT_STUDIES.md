@@ -64,13 +64,13 @@ an otherwise eligible result.
 
 ## Status and solver eligibility
 
-| Evidence | Study status | Objective eligible |
-| --- | --- | --- |
-| Complete result, rest termination, qualified calibrated bound profile, measured/literature result calibration with positive confidence | `complete` | Yes |
-| Partial surface or airborne terminal observation | `censored` | No |
-| Failed result | `failed` | No |
-| Required contact evidence unavailable | `unavailable` | No |
-| Missing profile binding, unqualified profile, or illustrative-only profile | Result-derived status | No |
+| Evidence                                                                                                                               | Study status          | Objective eligible |
+| -------------------------------------------------------------------------------------------------------------------------------------- | --------------------- | ------------------ |
+| Complete result, rest termination, qualified calibrated bound profile, measured/literature result calibration with positive confidence | `complete`            | Yes                |
+| Partial surface or airborne terminal observation                                                                                       | `censored`            | No                 |
+| Failed result                                                                                                                          | `failed`              | No                 |
+| Required contact evidence unavailable                                                                                                  | `unavailable`         | No                 |
+| Missing profile binding, unqualified profile, or illustrative-only profile                                                             | Result-derived status | No                 |
 
 Eligibility is derived from evidence and encoded with canonical reasons; a
 caller cannot forge it independently. The complete strict material profile is

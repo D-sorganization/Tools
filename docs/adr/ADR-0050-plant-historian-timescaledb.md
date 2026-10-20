@@ -56,8 +56,8 @@ Licensing boundaries for the SCADA historian are ratified by `docs/development/H
 - **No External Distribution:** No customer-facing deliverable—such as the Rate-of-Closure desktop application, standalone wheels, or client installers—shall bundle, depend upon, or vendor TimescaleDB or Grafana runtimes.
 - **No Commercial DBaaS:** Telemetry persistence is strictly an internal operational tool; it is never offered as a commercial managed database service or cloud platform.
 - **Compliance Analysis:**
-  - *TimescaleDB (TSL):* Advanced features (columnar compression, continuous aggregates, retention policies) are governed by the Timescale License. Internal plant operation complies with TSL Section 2.2.
-  - *Grafana (AGPLv3):* Internal operation behind access controls for plant monitoring does not trigger external network copyleft distribution obligations.
+  - _TimescaleDB (TSL):_ Advanced features (columnar compression, continuous aggregates, retention policies) are governed by the Timescale License. Internal plant operation complies with TSL Section 2.2.
+  - _Grafana (AGPLv3):_ Internal operation behind access controls for plant monitoring does not trigger external network copyleft distribution obligations.
 
 ## Alternatives Considered
 

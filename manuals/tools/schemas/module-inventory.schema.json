@@ -50,20 +50,12 @@
   },
   "$defs": {
     "authorityStatus": {
-      "enum": [
-        "blocked",
-        "not-applicable",
-        "provisional"
-      ]
+      "enum": ["blocked", "not-applicable", "provisional"]
     },
     "blocker": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "id",
-        "owner",
-        "resolution"
-      ],
+      "required": ["id", "owner", "resolution"],
       "properties": {
         "id": {
           "type": "string",
@@ -80,10 +72,7 @@
       }
     },
     "classification": {
-      "enum": [
-        "calculation",
-        "non-calculation"
-      ]
+      "enum": ["calculation", "non-calculation"]
     },
     "count": {
       "type": "integer",
@@ -153,10 +142,7 @@
           "minLength": 1
         },
         "purpose": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         },
         "review_status": {
           "$ref": "#/$defs/reviewStatus"
@@ -175,12 +161,7 @@
     "family": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "classification",
-        "id",
-        "maintainer",
-        "rationale"
-      ],
+      "required": ["classification", "id", "maintainer", "rationale"],
       "properties": {
         "classification": {
           "$ref": "#/$defs/classification"
@@ -202,11 +183,7 @@
     "hashContract": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "algorithm",
-        "line_endings",
-        "tree_encoding"
-      ],
+      "required": ["algorithm", "line_endings", "tree_encoding"],
       "properties": {
         "algorithm": {
           "const": "sha256"
@@ -222,10 +199,7 @@
     "producer": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "generator_path",
-        "schema_path"
-      ],
+      "required": ["generator_path", "schema_path"],
       "properties": {
         "generator_path": {
           "const": "scripts/build_tools_module_inventory.py"
@@ -238,11 +212,7 @@
     "publicSurface": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "kind",
-        "name",
-        "signature"
-      ],
+      "required": ["kind", "name", "signature"],
       "properties": {
         "kind": {
           "type": "string",
@@ -253,29 +223,17 @@
           "minLength": 1
         },
         "signature": {
-          "type": [
-            "string",
-            "null"
-          ]
+          "type": ["string", "null"]
         }
       }
     },
     "reviewStatus": {
-      "enum": [
-        "blocked",
-        "inventory-baseline",
-        "review-required"
-      ]
+      "enum": ["blocked", "inventory-baseline", "review-required"]
     },
     "scope": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "discovery",
-        "exclusions",
-        "roots",
-        "suffixes"
-      ],
+      "required": ["discovery", "exclusions", "roots", "suffixes"],
       "properties": {
         "discovery": {
           "const": "tracked-implementation-and-governed-configuration-modules"
@@ -294,12 +252,7 @@
     "shardDescriptor": {
       "type": "object",
       "additionalProperties": false,
-      "required": [
-        "content_sha256_lf",
-        "entry_count",
-        "package",
-        "path"
-      ],
+      "required": ["content_sha256_lf", "entry_count", "package", "path"],
       "properties": {
         "content_sha256_lf": {
           "$ref": "#/$defs/sha256"

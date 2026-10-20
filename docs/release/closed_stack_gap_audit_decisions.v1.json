@@ -268,10 +268,7 @@
             "docs/rate_of_closure/LAUNCH_MONITOR_PLAYER_WORKSPACE_V2.md",
             "docs/rate_of_closure/LAUNCH_MONITOR_WORKSPACE_V3.md"
           ],
-          "landed_via": [
-            "#4587",
-            "#4622"
-          ],
+          "landed_via": ["#4587", "#4622"],
           "rationale": "v2 doc states it is a selective recovery of feat/4226 against the current app shell"
         },
         {
@@ -305,11 +302,7 @@
             "src/shared/python/launch_monitor/importer.py",
             "src/shared/python/launch_monitor/schema.py"
           ],
-          "landed_via": [
-            "#4473",
-            "#4587",
-            "#4622"
-          ],
+          "landed_via": ["#4473", "#4587", "#4622"],
           "rationale": "2.0.0 project schema kept readable as a labelled compatibility import (CONTRACT_VERSION 2.0.0) and superseded by launch-monitor-workspace/v3; import and unit inference moved to the ADR-0046 canonical layer"
         },
         {
@@ -324,9 +317,7 @@
             "src/shared/python/launch_monitor/strokes_gained.py",
             "src/shared/python/launch_monitor/dispersion.py"
           ],
-          "landed_via": [
-            "#4587"
-          ],
+          "landed_via": ["#4587"],
           "rationale": "dispersion and strokes-gained are now source-backed and fail closed in the governed platform; canonical statistics live in the ADR-0046 layer"
         },
         {
@@ -358,9 +349,7 @@
             "src/rate_of_closure/ui/pyqt6/launch_monitor_analytics_tab.py",
             "src/rate_of_closure/ui/pyqt6/launch_monitor_analysis_results.py"
           ],
-          "landed_via": [
-            "#4473"
-          ],
+          "landed_via": ["#4473"],
           "rationale": "analytics tab re-implemented against the current PyQt shell"
         },
         {
@@ -402,10 +391,7 @@
             "src/rate_of_closure/ui/pyqt6/launch_monitor_analytics_tab.py",
             "src/rate_of_closure/ui/pyqt6/launch_monitor_canonical_workspace_mixin.py"
           ],
-          "landed_via": [
-            "#4473",
-            "#4587"
-          ],
+          "landed_via": ["#4473", "#4587"],
           "rationale": "demo_frame and dataset loading live in the analytics tab and canonical workspace mixin"
         },
         {
@@ -426,9 +412,7 @@
           "superseded_by": [
             "src/rate_of_closure/ui/pyqt6/launch_monitor_player_workspace.py"
           ],
-          "landed_via": [
-            "#4587"
-          ],
+          "landed_via": ["#4587"],
           "rationale": "player workspace v2 with explicit identity attestation replaces the v1 controls"
         },
         {
@@ -440,9 +424,7 @@
             "src/rate_of_closure/ui/pyqt6/launch_monitor_linked_scatter_panel.py",
             "src/rate_of_closure/ui/pyqt6/launch_monitor_covariation_view.py"
           ],
-          "landed_via": [
-            "#4592"
-          ],
+          "landed_via": ["#4592"],
           "rationale": "linked scatter and covariation views supersede the generic plot widget"
         },
         {
@@ -453,9 +435,7 @@
           "superseded_by": [
             "src/rate_of_closure/ui/pyqt6/launch_monitor_preview.py"
           ],
-          "landed_via": [
-            "#4473"
-          ],
+          "landed_via": ["#4473"],
           "rationale": "table preview landed under a different name"
         },
         {
@@ -487,9 +467,7 @@
             "src/rate_of_closure/web/src/components/LaunchMonitorCovariation.test.tsx",
             "src/rate_of_closure/web/src/components/LaunchMonitorLinkedScatter.test.tsx"
           ],
-          "landed_via": [
-            "#4592"
-          ],
+          "landed_via": ["#4592"],
           "rationale": "tests follow the superseding components"
         },
         {
@@ -501,9 +479,7 @@
             "src/rate_of_closure/web/src/components/LaunchMonitorCovariationChart.tsx",
             "src/rate_of_closure/web/src/components/LaunchMonitorLinkedScatter.tsx"
           ],
-          "landed_via": [
-            "#4592"
-          ],
+          "landed_via": ["#4592"],
           "rationale": "chart surfaces re-implemented with covariation and linked-scatter semantics"
         },
         {
@@ -514,9 +490,7 @@
           "superseded_by": [
             "src/rate_of_closure/web/src/components/LaunchMonitorAnalyticsPanel.test.tsx"
           ],
-          "landed_via": [
-            "#4473"
-          ],
+          "landed_via": ["#4473"],
           "rationale": "tests follow the superseding component"
         },
         {
@@ -527,9 +501,7 @@
           "superseded_by": [
             "src/rate_of_closure/web/src/components/LaunchMonitorAnalyticsPanel.tsx"
           ],
-          "landed_via": [
-            "#4473"
-          ],
+          "landed_via": ["#4473"],
           "rationale": "imported-results panel is the analytics panel on main"
         },
         {
@@ -540,9 +512,7 @@
           "superseded_by": [
             "src/rate_of_closure/web/src/components/LaunchMonitorPlayerWorkspace.tsx"
           ],
-          "landed_via": [
-            "#4587"
-          ],
+          "landed_via": ["#4587"],
           "rationale": "player workspace v2 replaces v1 insights"
         },
         {
@@ -563,9 +533,7 @@
           "superseded_by": [
             "src/rate_of_closure/web/src/model/launchMonitorAnalysis.test.ts"
           ],
-          "landed_via": [
-            "#4473"
-          ],
+          "landed_via": ["#4473"],
           "rationale": "tests follow the superseding model"
         },
         {
@@ -577,9 +545,7 @@
             "src/rate_of_closure/web/src/model/launchMonitorAnalysis.ts",
             "src/rate_of_closure/web/src/model/launchMonitorFileParsing.ts"
           ],
-          "landed_via": [
-            "#4473"
-          ],
+          "landed_via": ["#4473"],
           "rationale": "file parsing and analysis model superseded"
         },
         {
@@ -591,10 +557,7 @@
             "src/rate_of_closure/web/src/model/launchMonitorPerformance.test.ts",
             "src/rate_of_closure/web/src/model/launchMonitorCovariation.test.ts"
           ],
-          "landed_via": [
-            "#4587",
-            "#4592"
-          ],
+          "landed_via": ["#4587", "#4592"],
           "rationale": "tests follow the superseding models"
         },
         {
@@ -606,10 +569,7 @@
             "src/rate_of_closure/web/src/model/launchMonitorPerformance.ts",
             "src/rate_of_closure/web/src/model/launchMonitorCovariation.ts"
           ],
-          "landed_via": [
-            "#4587",
-            "#4592"
-          ],
+          "landed_via": ["#4587", "#4592"],
           "rationale": "metricUnit/metricLabel and player analytics live in the performance and covariation models"
         },
         {
@@ -621,10 +581,7 @@
             "src/rate_of_closure/web/src/model/launchMonitorWorkspace.ts",
             "src/rate_of_closure/web/src/model/launchMonitorWorkspaceV3.ts"
           ],
-          "landed_via": [
-            "#4587",
-            "#4622"
-          ],
+          "landed_via": ["#4587", "#4622"],
           "rationale": "LaunchMonitorProject/parseLaunchMonitorProject exist on main in launchMonitorWorkspace.ts; the v3 contract adds versioned migration"
         },
         {
@@ -676,9 +633,7 @@
             "tests/rate_of_closure/test_launch_monitor_performance.py",
             "tests/rate_of_closure/test_launch_monitor_strokes_gained.py"
           ],
-          "landed_via": [
-            "#4587"
-          ],
+          "landed_via": ["#4587"],
           "rationale": "tests follow the superseding modules"
         },
         {
@@ -730,10 +685,7 @@
             "docs/rate_of_closure/LAUNCH_MONITOR_PLAYER_WORKSPACE_V2.md",
             "docs/rate_of_closure/LAUNCH_MONITOR_WORKSPACE_V3.md"
           ],
-          "landed_via": [
-            "#4587",
-            "#4622"
-          ],
+          "landed_via": ["#4587", "#4622"],
           "rationale": "v2 doc states it is a selective recovery of feat/4226 against the current app shell"
         },
         {
@@ -741,12 +693,8 @@
           "in_audit_missing_list": true,
           "present_at_head_oid": true,
           "decision": "obsolete",
-          "superseded_by": [
-            "docs/rate_of_closure/NEURAL_MODEL_LAB_V2.md"
-          ],
-          "landed_via": [
-            "#4587"
-          ],
+          "superseded_by": ["docs/rate_of_closure/NEURAL_MODEL_LAB_V2.md"],
+          "landed_via": ["#4587"],
           "rationale": "Neural Model Lab v2 doc supersedes v1"
         },
         {
@@ -770,11 +718,7 @@
             "src/shared/python/launch_monitor/importer.py",
             "src/shared/python/launch_monitor/schema.py"
           ],
-          "landed_via": [
-            "#4473",
-            "#4587",
-            "#4622"
-          ],
+          "landed_via": ["#4473", "#4587", "#4622"],
           "rationale": "2.0.0 project schema kept readable as a labelled compatibility import (CONTRACT_VERSION 2.0.0) and superseded by launch-monitor-workspace/v3; import and unit inference moved to the ADR-0046 canonical layer"
         },
         {
@@ -789,9 +733,7 @@
             "src/shared/python/launch_monitor/strokes_gained.py",
             "src/shared/python/launch_monitor/dispersion.py"
           ],
-          "landed_via": [
-            "#4587"
-          ],
+          "landed_via": ["#4587"],
           "rationale": "dispersion and strokes-gained are now source-backed and fail closed in the governed platform; canonical statistics live in the ADR-0046 layer"
         },
         {
@@ -799,12 +741,8 @@
           "in_audit_missing_list": true,
           "present_at_head_oid": true,
           "decision": "obsolete",
-          "superseded_by": [
-            "src/rate_of_closure/neural_lab_contract.py"
-          ],
-          "landed_via": [
-            "#4587"
-          ],
+          "superseded_by": ["src/rate_of_closure/neural_lab_contract.py"],
+          "landed_via": ["#4587"],
           "rationale": "only launch-monitor-neural-bundle/v2 is accepted on main; v1 bundles were never released from main so there is no migration debt"
         },
         {
@@ -816,9 +754,7 @@
             "src/rate_of_closure/ui/pyqt6/neural_model_lab_training.py",
             "src/rate_of_closure/neural_lab_contract.py"
           ],
-          "landed_via": [
-            "#4587"
-          ],
+          "landed_via": ["#4587"],
           "rationale": "v1 trained in-process; v2 policy (NEURAL_MODEL_LAB_V2.md) is that neither UI trains in its own process, so re-landing would violate the governed contract"
         },
         {
@@ -830,9 +766,7 @@
             "src/rate_of_closure/ui/pyqt6/launch_monitor_analytics_tab.py",
             "src/rate_of_closure/ui/pyqt6/launch_monitor_analysis_results.py"
           ],
-          "landed_via": [
-            "#4473"
-          ],
+          "landed_via": ["#4473"],
           "rationale": "analytics tab re-implemented against the current PyQt shell"
         },
         {
@@ -844,10 +778,7 @@
             "src/rate_of_closure/ui/pyqt6/launch_monitor_analytics_tab.py",
             "src/rate_of_closure/ui/pyqt6/launch_monitor_canonical_workspace_mixin.py"
           ],
-          "landed_via": [
-            "#4473",
-            "#4587"
-          ],
+          "landed_via": ["#4473", "#4587"],
           "rationale": "demo_frame and dataset loading live in the analytics tab and canonical workspace mixin"
         },
         {
@@ -858,9 +789,7 @@
           "superseded_by": [
             "src/rate_of_closure/ui/pyqt6/launch_monitor_player_workspace.py"
           ],
-          "landed_via": [
-            "#4587"
-          ],
+          "landed_via": ["#4587"],
           "rationale": "player workspace v2 with explicit identity attestation replaces the v1 controls"
         },
         {
@@ -872,9 +801,7 @@
             "src/rate_of_closure/ui/pyqt6/launch_monitor_linked_scatter_panel.py",
             "src/rate_of_closure/ui/pyqt6/launch_monitor_covariation_view.py"
           ],
-          "landed_via": [
-            "#4592"
-          ],
+          "landed_via": ["#4592"],
           "rationale": "linked scatter and covariation views supersede the generic plot widget"
         },
         {
@@ -885,9 +812,7 @@
           "superseded_by": [
             "src/rate_of_closure/ui/pyqt6/launch_monitor_preview.py"
           ],
-          "landed_via": [
-            "#4473"
-          ],
+          "landed_via": ["#4473"],
           "rationale": "table preview landed under a different name"
         },
         {
@@ -899,9 +824,7 @@
             "src/rate_of_closure/ui/pyqt6/neural_model_lab_tab.py",
             "src/rate_of_closure/ui/pyqt6/neural_model_lab_widgets.py"
           ],
-          "landed_via": [
-            "#4587"
-          ],
+          "landed_via": ["#4587"],
           "rationale": "v2 tab and widgets supersede"
         },
         {
@@ -913,9 +836,7 @@
             "src/rate_of_closure/ui/pyqt6/neural_model_lab_tab.py",
             "src/rate_of_closure/ui/pyqt6/neural_model_lab_training.py"
           ],
-          "landed_via": [
-            "#4587"
-          ],
+          "landed_via": ["#4587"],
           "rationale": "v2 group-safe training request controls supersede"
         },
         {
@@ -927,9 +848,7 @@
             "src/rate_of_closure/web/src/components/LaunchMonitorCovariation.test.tsx",
             "src/rate_of_closure/web/src/components/LaunchMonitorLinkedScatter.test.tsx"
           ],
-          "landed_via": [
-            "#4592"
-          ],
+          "landed_via": ["#4592"],
           "rationale": "tests follow the superseding components"
         },
         {
@@ -941,9 +860,7 @@
             "src/rate_of_closure/web/src/components/LaunchMonitorCovariationChart.tsx",
             "src/rate_of_closure/web/src/components/LaunchMonitorLinkedScatter.tsx"
           ],
-          "landed_via": [
-            "#4592"
-          ],
+          "landed_via": ["#4592"],
           "rationale": "chart surfaces re-implemented with covariation and linked-scatter semantics"
         },
         {
@@ -954,9 +871,7 @@
           "superseded_by": [
             "src/rate_of_closure/web/src/components/LaunchMonitorAnalyticsPanel.test.tsx"
           ],
-          "landed_via": [
-            "#4473"
-          ],
+          "landed_via": ["#4473"],
           "rationale": "tests follow the superseding component"
         },
         {
@@ -967,9 +882,7 @@
           "superseded_by": [
             "src/rate_of_closure/web/src/components/LaunchMonitorAnalyticsPanel.tsx"
           ],
-          "landed_via": [
-            "#4473"
-          ],
+          "landed_via": ["#4473"],
           "rationale": "imported-results panel is the analytics panel on main"
         },
         {
@@ -980,9 +893,7 @@
           "superseded_by": [
             "src/rate_of_closure/web/src/components/LaunchMonitorPlayerWorkspace.tsx"
           ],
-          "landed_via": [
-            "#4587"
-          ],
+          "landed_via": ["#4587"],
           "rationale": "player workspace v2 replaces v1 insights"
         },
         {
@@ -993,9 +904,7 @@
           "superseded_by": [
             "src/rate_of_closure/web/src/components/NeuralModelLabPanel.tsx"
           ],
-          "landed_via": [
-            "#4587"
-          ],
+          "landed_via": ["#4587"],
           "rationale": "v2 panel supersedes"
         },
         {
@@ -1006,9 +915,7 @@
           "superseded_by": [
             "src/rate_of_closure/web/src/model/launchMonitorAnalysis.test.ts"
           ],
-          "landed_via": [
-            "#4473"
-          ],
+          "landed_via": ["#4473"],
           "rationale": "tests follow the superseding model"
         },
         {
@@ -1020,9 +927,7 @@
             "src/rate_of_closure/web/src/model/launchMonitorAnalysis.ts",
             "src/rate_of_closure/web/src/model/launchMonitorFileParsing.ts"
           ],
-          "landed_via": [
-            "#4473"
-          ],
+          "landed_via": ["#4473"],
           "rationale": "file parsing and analysis model superseded"
         },
         {
@@ -1034,10 +939,7 @@
             "src/rate_of_closure/web/src/model/launchMonitorPerformance.test.ts",
             "src/rate_of_closure/web/src/model/launchMonitorCovariation.test.ts"
           ],
-          "landed_via": [
-            "#4587",
-            "#4592"
-          ],
+          "landed_via": ["#4587", "#4592"],
           "rationale": "tests follow the superseding models"
         },
         {
@@ -1049,10 +951,7 @@
             "src/rate_of_closure/web/src/model/launchMonitorPerformance.ts",
             "src/rate_of_closure/web/src/model/launchMonitorCovariation.ts"
           ],
-          "landed_via": [
-            "#4587",
-            "#4592"
-          ],
+          "landed_via": ["#4587", "#4592"],
           "rationale": "metricUnit/metricLabel and player analytics live in the performance and covariation models"
         },
         {
@@ -1064,10 +963,7 @@
             "src/rate_of_closure/web/src/model/launchMonitorWorkspace.ts",
             "src/rate_of_closure/web/src/model/launchMonitorWorkspaceV3.ts"
           ],
-          "landed_via": [
-            "#4587",
-            "#4622"
-          ],
+          "landed_via": ["#4587", "#4622"],
           "rationale": "LaunchMonitorProject/parseLaunchMonitorProject exist on main in launchMonitorWorkspace.ts; the v3 contract adds versioned migration"
         },
         {
@@ -1078,9 +974,7 @@
           "superseded_by": [
             "src/rate_of_closure/web/src/model/neuralLabContract.test.ts"
           ],
-          "landed_via": [
-            "#4587"
-          ],
+          "landed_via": ["#4587"],
           "rationale": "tests follow the v2 contract"
         },
         {
@@ -1091,9 +985,7 @@
           "superseded_by": [
             "src/rate_of_closure/web/src/model/neuralLabContract.ts"
           ],
-          "landed_via": [
-            "#4587"
-          ],
+          "landed_via": ["#4587"],
           "rationale": "PORTABLE_MODEL_SCHEMA/ModelVariable/DenseLayer/inferPortableModel exist on main under the v2 contract"
         },
         {
@@ -1104,9 +996,7 @@
           "superseded_by": [
             "src/rate_of_closure/web/src/model/neuralLabContract.test.ts"
           ],
-          "landed_via": [
-            "#4587"
-          ],
+          "landed_via": ["#4587"],
           "rationale": "tests follow the v2 contract"
         },
         {
@@ -1117,9 +1007,7 @@
           "superseded_by": [
             "src/rate_of_closure/web/src/model/neuralLabContract.ts"
           ],
-          "landed_via": [
-            "#4587"
-          ],
+          "landed_via": ["#4587"],
           "rationale": "training request is part of the v2 contract"
         },
         {
@@ -1131,9 +1019,7 @@
             "tests/rate_of_closure/test_launch_monitor_performance.py",
             "tests/rate_of_closure/test_launch_monitor_strokes_gained.py"
           ],
-          "landed_via": [
-            "#4587"
-          ],
+          "landed_via": ["#4587"],
           "rationale": "tests follow the superseding modules"
         },
         {
@@ -1144,9 +1030,7 @@
           "superseded_by": [
             "tests/rate_of_closure/test_neural_lab_contract_v2.py"
           ],
-          "landed_via": [
-            "#4587"
-          ],
+          "landed_via": ["#4587"],
           "rationale": "v2 contract tests supersede"
         },
         {
@@ -1157,9 +1041,7 @@
           "superseded_by": [
             "tests/rate_of_closure/test_neural_model_lab_v2_tab.py"
           ],
-          "landed_via": [
-            "#4587"
-          ],
+          "landed_via": ["#4587"],
           "rationale": "v2 tab tests supersede"
         }
       ]

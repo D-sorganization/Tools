@@ -9,14 +9,7 @@
   "audit_issue": "#4912",
   "program": "D-sorganization/Repository_Management#1505",
   "tracker_of_record": true,
-  "supersedes": [
-    "#4085",
-    "#4086",
-    "#4087",
-    "#4088",
-    "#4089",
-    "#4046"
-  ],
+  "supersedes": ["#4085", "#4086", "#4087", "#4088", "#4089", "#4046"],
   "status_classes": {
     "landed": "the requirement as stated is substantially implemented on main and covered by tests on main",
     "partial": "some capability exists on main, but the requirement as stated is not met; the specific gap is recorded",
@@ -54,11 +47,7 @@
         "AuditEvent.config_revision is never populated, although F04's ConfigRevision ids now exist on main (PR #5557): no audit row is stamped with the active configuration revision.",
         "POST /api/estop is deliberately unauthenticated (documented at the call site) - an intentional exception to 'every mutation attributable'."
       ],
-      "evidence_prs": [
-        "#5551",
-        "#4448",
-        "#4928"
-      ]
+      "evidence_prs": ["#5551", "#4448", "#4928"]
     },
     {
       "id": "F02",
@@ -88,11 +77,7 @@
         "The React frontend contains zero references to `data_source`. The poll loop publishes it in the frame, but the HMI infers badness only from wall-clock frame age, so a `held` or `fault` scan arriving on time renders as CONNECTED.",
         "Quality is scan-scoped, not per-tag; there are no source/server timestamps, per-tag diagnostic reason codes, or sequence numbers."
       ],
-      "evidence_prs": [
-        "#4678",
-        "#4893",
-        "#4928"
-      ]
+      "evidence_prs": ["#4678", "#4893", "#4928"]
     },
     {
       "id": "F03",
@@ -121,10 +106,7 @@
         "Priority is two-tier (warning/trip) per tag only; there is no priority per alarm band and no HMI or dedicated API to view or edit it outside the routing payload.",
         "Alarm-performance KPIs exist only as the pure function alarm_kpis.compute_alarm_kpis (PR #5597, tracked under H7); it is not wired to any API route or HMI view, so the alarm-performance-management half of this requirement is not operator-visible."
       ],
-      "evidence_prs": [
-        "#5564",
-        "#4928"
-      ]
+      "evidence_prs": ["#5564", "#4928"]
     },
     {
       "id": "F04",
@@ -148,11 +130,7 @@
         "Versioning is history only: there is no diff between revisions, no draft/review/approve step (a write activates immediately), no separate activation record, and no rollback endpoint or path that re-activates an earlier revision.",
         "The revision id is not stamped anywhere else: AuditEvent.config_revision (F01) stays NULL and historian rows carry no revision identity."
       ],
-      "evidence_prs": [
-        "#5557",
-        "#3912",
-        "#4928"
-      ]
+      "evidence_prs": ["#5557", "#3912", "#4928"]
     },
     {
       "id": "F05",
@@ -212,10 +190,7 @@
         "Managed bypass is entirely absent: no bypass record, role gate, reason, expiry, banner, or non-bypassable policy exists.",
         "rust_core/tools-core/src/scada.rs contains an InterlockMatrix, but no Python in the SCADA backend references it. It is dead relative to this subsystem and is deliberately not counted as evidence."
       ],
-      "evidence_prs": [
-        "#4928",
-        "#3912"
-      ]
+      "evidence_prs": ["#4928", "#3912"]
     },
     {
       "id": "F08",
@@ -247,12 +222,7 @@
         "No run/campaign comparison feature and no reporting output.",
         "Quality reaches only /api/trends and the tag CSV export; the Data Explorer dataset path still reads query_trend_series (value-only) and its export carries no quality column, so an investigation still cannot show which samples were simulated."
       ],
-      "evidence_prs": [
-        "#5560",
-        "#4678",
-        "#4448",
-        "#3912"
-      ]
+      "evidence_prs": ["#5560", "#4678", "#4448", "#3912"]
     },
     {
       "id": "F09",
@@ -272,10 +242,7 @@
         "No scenario or FAT runner that drives procedures end to end; that is the F12 roadmap and was out of scope for #5530.",
         "No HMI for procedures and no persisted procedures; both were out of scope for #5530."
       ],
-      "evidence_prs": [
-        "#5578",
-        "#3912"
-      ]
+      "evidence_prs": ["#5578", "#3912"]
     },
     {
       "id": "F10",
@@ -302,12 +269,7 @@
         "No asset register, no calibration-due or drift tracking, no runtime/start counters, and no device-statistics store.",
         "No maintenance workspace: none of the HMI tabs is asset health or maintenance."
       ],
-      "evidence_prs": [
-        "#5559",
-        "#4448",
-        "#3081",
-        "#3806"
-      ]
+      "evidence_prs": ["#5559", "#4448", "#3081", "#3806"]
     },
     {
       "id": "F11",
@@ -335,11 +297,7 @@
         "settings.py holds API keys as plain str (no SecretStr / repr suppression), so redaction covers audit bodies only.",
         "The `neural` driver does not satisfy the ABC and raises TypeError on instantiation; see the needs_owner entry for #3984."
       ],
-      "evidence_prs": [
-        "#4448",
-        "#4893",
-        "#4928"
-      ]
+      "evidence_prs": ["#4448", "#4893", "#4928"]
     },
     {
       "id": "F12",
@@ -422,12 +380,7 @@
         "plant_model.py is a Plant/Area/Unit/Equipment/Tag metadata hierarchy, not a digital twin.",
         "The same router's PID auto-tuning does write setpoints through write_pid_setpoint, so the advisory/authoritative boundary the requirement demands is not drawn as a policy across the advanced-control workspace, only on the MPC output."
       ],
-      "evidence_prs": [
-        "#5563",
-        "#4448",
-        "#4928",
-        "#3062"
-      ]
+      "evidence_prs": ["#5563", "#4448", "#4928", "#3062"]
     },
     {
       "id": "H1",
@@ -463,10 +416,7 @@
         "This is an in-process write buffer, not a store-and-forward shipper: no durable on-disk spool surviving restart, no remote destination, and no forward/replay/checkpoint or at-least-once delivery.",
         "A full queue silently drops samples by design."
       ],
-      "evidence_prs": [
-        "#4678",
-        "#4893"
-      ]
+      "evidence_prs": ["#4678", "#4893"]
     },
     {
       "id": "H3",
@@ -520,11 +470,7 @@
         "queue_depth is implemented as a property but referenced nowhere outside historian.py, so it is not actually observable.",
         "No lag or latency metric (no oldest-unshipped timestamp or backlog age) and no /metrics surface at all."
       ],
-      "evidence_prs": [
-        "#4678",
-        "#4893",
-        "#4448"
-      ]
+      "evidence_prs": ["#4678", "#4893", "#4448"]
     },
     {
       "id": "H6",

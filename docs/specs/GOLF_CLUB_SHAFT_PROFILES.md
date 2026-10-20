@@ -38,15 +38,15 @@ silently assumed.
 
 Each `ShaftStation` stores:
 
-| Field | Meaning |
-| --- | --- |
-| `position_m` | Raw-butt station coordinate |
-| `outer_diameter_m`, `inner_diameter_m` | Annular section diameters |
-| `linear_density_kg_m` | Measured mass per unit length |
-| `ei_about_x_n_m2`, `ei_about_y_n_m2` | Engineering bending stiffnesses |
-| `gj_n_m2` | Engineering torsional stiffness |
-| `damping_ratio` | Dimensionless local damping ratio |
-| `spine_angle_rad` | Unwrapped local stiffness-axis orientation |
+| Field                                  | Meaning                                    |
+| -------------------------------------- | ------------------------------------------ |
+| `position_m`                           | Raw-butt station coordinate                |
+| `outer_diameter_m`, `inner_diameter_m` | Annular section diameters                  |
+| `linear_density_kg_m`                  | Measured mass per unit length              |
+| `ei_about_x_n_m2`, `ei_about_y_n_m2`   | Engineering bending stiffnesses            |
+| `gj_n_m2`                              | Engineering torsional stiffness            |
+| `damping_ratio`                        | Dimensionless local damping ratio          |
+| `spine_angle_rad`                      | Unwrapped local stiffness-axis orientation |
 
 Stations must be strictly ordered and include both raw endpoints. Geometry,
 density, and stiffness must be positive; inner diameter must remain below outer

@@ -301,7 +301,6 @@ authority processes stop. The ACL boundary does not protect against the same
 user, Administrator, SYSTEM, offline disk access, or process injection, and it
 makes no installer-owned cleanup claim.
 
-
 Accepted transitions are durable before publication. A succeeded result
 survives process loss. Startup maps interrupted queued/running work to
 `execution_failed/authority_restart` and cancel-requested work to cancelled;

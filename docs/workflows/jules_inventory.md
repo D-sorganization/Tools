@@ -14,36 +14,36 @@ one. "Token permissions" lists the top-level `permissions:` block and any
 job-level escalation. Runs dated 2026-05-30 05:04-05:05 are one burst of
 28 failures from a single dispatch and count as "not in use since".
 
-| Workflow | Trigger | Last run (UTC) | Token permissions (top-level / job) | Owner | Recommendation |
-| --- | --- | --- | --- | --- | --- |
-| Jules-Archivist.yml | workflow_call | 2026-05-30 failure | contents: read / archive-tasks: contents: write | none | retire |
-| Jules-Assessment-Generator.yml | workflow_call, workflow_dispatch | 2026-05-30 failure | contents: read / generate-assessments: contents+issues: write | none | retire |
-| Jules-Assessment-Remediator.yml | workflow_dispatch, schedule | 2026-08-02 failure | contents: read / remediate: contents+pull-requests+issues: write | none | retire (scheduled, failing) |
-| Jules-Auto-Assign-Issues.yml | issues | 2026-08-04 success | issues: write | none | **keep** (works; issues-only token) |
-| Jules-Auto-Rebase.yml | workflow_call, workflow_dispatch | 2026-05-30 failure | contents: read / auto-rebase-prs: contents+pull-requests: write | none | retire |
-| Jules-Auto-Refactor.yml | workflow_call, workflow_dispatch | 2026-05-30 failure | contents: read / auto-refactor: contents+pull-requests: write | none | retire |
-| Jules-Auto-Repair.yml | workflow_call, workflow_dispatch | 2026-05-30 failure | contents+actions+checks: read / intelligent-repair: contents+pull-requests: write | none | retire (callee of Control-Tower; guarded via caller in #4923) |
-| Jules-Cleaner.yml | pull_request | 2026-08-04 cancelled | none top-level / cleanup: pull-requests+contents: write | none | retire (writes on every PR, no owner) |
-| Jules-Code-Quality-Fixer.yml | workflow_call, workflow_dispatch | 2026-05-30 failure | contents: read / fix-issues: contents+pull-requests+issues: write | none | retire |
-| Jules-Code-Quality-Reviewer.yml | workflow_call, workflow_dispatch | 2026-05-30 failure | contents: read / review: contents+issues: write | none | retire |
-| Jules-Completist.yml | workflow_call, workflow_dispatch, schedule | 2026-08-02 cancelled | contents: read / audit: contents+pull-requests+issues: write | none | retire (scheduled, cancelled) |
-| Jules-Comprehensive-Assessment.yml | schedule, workflow_dispatch | 2026-08-02 cancelled | contents: read / comprehensive-assessment: contents+issues: write | none | retire (scheduled, cancelled) |
-| Jules-Control-Tower.yml | push, pull_request, workflow_run, workflow_dispatch | 2026-05-22 cancelled | contents+actions+checks: read; `secrets: inherit` into 10 write-capable callees | none | **keep** only while any callee is kept; every job same-repo-guarded in #4923 |
-| Jules-Critics-Comments.yml | workflow_call, workflow_dispatch, schedule | 2026-08-02 cancelled | contents+pull-requests: write (top-level) | none | retire |
-| Jules-Diff-Verifier.yml | pull_request, workflow_dispatch | 2026-09-03 skipped | contents: read, pull-requests: write, issues: read | none | **keep** (runs on every PR today; read-only checkout) |
-| Jules-Documentation-Auditor.yml | workflow_call, workflow_dispatch | 2026-05-30 failure | contents: read / audit-documentation: contents+pull-requests+issues: write | none | retire |
-| Jules-Documentation-Scribe.yml | workflow_call | 2026-05-30 failure | contents: read / audit-documentation: contents+pull-requests: write | none | retire |
-| Jules-Hotfix-Creator.yml | workflow_call | 2026-05-30 failure | contents: read / create-hotfix: contents+pull-requests: write | none | retire |
-| Jules-Issue-Mention-Handler.yml | issue_comment | 2026-08-04 success | contents+pull-requests+issues: write (top-level) | none | **keep** (in use), but narrow the top-level token to the job that pushes |
-| Jules-Issue-Resolver.yml | workflow_call, workflow_dispatch | 2026-05-30 failure | contents: read / resolve-issues: contents+pull-requests+issues: write | none | retire |
-| Jules-Laymans-Terms-Writer.yml | workflow_call, workflow_dispatch, schedule | 2026-08-02 cancelled | contents+pull-requests: write (top-level) | none | retire |
-| Jules-PR-AutoFix.yml | workflow_run (CI Standard), workflow_dispatch | 2026-08-04 cancelled | contents+pull-requests: write, actions+checks: read (top-level) | none | **keep** if any auto-fix is wanted; same-repo guard added in #4923; otherwise retire with Control-Tower |
-| Jules-PR-Cleanup.yml | workflow_dispatch | 2026-05-30 failure | contents: read, pull-requests: write | none | retire |
-| Jules-Sentinel.yml | workflow_call, workflow_dispatch | 2026-05-30 failure | contents: read / security-audit: contents+issues+security-events: write | none | retire (CodeQL re-enabled in #4923 covers the scan) |
-| Jules-Supersede-Check.yml | push, workflow_dispatch | 2026-08-03 failure | contents: read, pull-requests: write | none | retire (fails on every push) |
-| Jules-Tech-Custodian.yml | workflow_call | 2026-05-30 failure | none top-level / refactor-worst-file: contents+pull-requests: write | none | retire |
-| Jules-Test-Generator.yml | workflow_call | 2026-05-30 failure | none top-level (inherits caller) | none | retire |
-| jules-assessment-runner.yml | workflow_dispatch | 2026-05-30 failure | none top-level (inherits default) | none | retire |
+| Workflow                           | Trigger                                             | Last run (UTC)       | Token permissions (top-level / job)                                               | Owner | Recommendation                                                                                          |
+| ---------------------------------- | --------------------------------------------------- | -------------------- | --------------------------------------------------------------------------------- | ----- | ------------------------------------------------------------------------------------------------------- |
+| Jules-Archivist.yml                | workflow_call                                       | 2026-05-30 failure   | contents: read / archive-tasks: contents: write                                   | none  | retire                                                                                                  |
+| Jules-Assessment-Generator.yml     | workflow_call, workflow_dispatch                    | 2026-05-30 failure   | contents: read / generate-assessments: contents+issues: write                     | none  | retire                                                                                                  |
+| Jules-Assessment-Remediator.yml    | workflow_dispatch, schedule                         | 2026-08-02 failure   | contents: read / remediate: contents+pull-requests+issues: write                  | none  | retire (scheduled, failing)                                                                             |
+| Jules-Auto-Assign-Issues.yml       | issues                                              | 2026-08-04 success   | issues: write                                                                     | none  | **keep** (works; issues-only token)                                                                     |
+| Jules-Auto-Rebase.yml              | workflow_call, workflow_dispatch                    | 2026-05-30 failure   | contents: read / auto-rebase-prs: contents+pull-requests: write                   | none  | retire                                                                                                  |
+| Jules-Auto-Refactor.yml            | workflow_call, workflow_dispatch                    | 2026-05-30 failure   | contents: read / auto-refactor: contents+pull-requests: write                     | none  | retire                                                                                                  |
+| Jules-Auto-Repair.yml              | workflow_call, workflow_dispatch                    | 2026-05-30 failure   | contents+actions+checks: read / intelligent-repair: contents+pull-requests: write | none  | retire (callee of Control-Tower; guarded via caller in #4923)                                           |
+| Jules-Cleaner.yml                  | pull_request                                        | 2026-08-04 cancelled | none top-level / cleanup: pull-requests+contents: write                           | none  | retire (writes on every PR, no owner)                                                                   |
+| Jules-Code-Quality-Fixer.yml       | workflow_call, workflow_dispatch                    | 2026-05-30 failure   | contents: read / fix-issues: contents+pull-requests+issues: write                 | none  | retire                                                                                                  |
+| Jules-Code-Quality-Reviewer.yml    | workflow_call, workflow_dispatch                    | 2026-05-30 failure   | contents: read / review: contents+issues: write                                   | none  | retire                                                                                                  |
+| Jules-Completist.yml               | workflow_call, workflow_dispatch, schedule          | 2026-08-02 cancelled | contents: read / audit: contents+pull-requests+issues: write                      | none  | retire (scheduled, cancelled)                                                                           |
+| Jules-Comprehensive-Assessment.yml | schedule, workflow_dispatch                         | 2026-08-02 cancelled | contents: read / comprehensive-assessment: contents+issues: write                 | none  | retire (scheduled, cancelled)                                                                           |
+| Jules-Control-Tower.yml            | push, pull_request, workflow_run, workflow_dispatch | 2026-05-22 cancelled | contents+actions+checks: read; `secrets: inherit` into 10 write-capable callees   | none  | **keep** only while any callee is kept; every job same-repo-guarded in #4923                            |
+| Jules-Critics-Comments.yml         | workflow_call, workflow_dispatch, schedule          | 2026-08-02 cancelled | contents+pull-requests: write (top-level)                                         | none  | retire                                                                                                  |
+| Jules-Diff-Verifier.yml            | pull_request, workflow_dispatch                     | 2026-09-03 skipped   | contents: read, pull-requests: write, issues: read                                | none  | **keep** (runs on every PR today; read-only checkout)                                                   |
+| Jules-Documentation-Auditor.yml    | workflow_call, workflow_dispatch                    | 2026-05-30 failure   | contents: read / audit-documentation: contents+pull-requests+issues: write        | none  | retire                                                                                                  |
+| Jules-Documentation-Scribe.yml     | workflow_call                                       | 2026-05-30 failure   | contents: read / audit-documentation: contents+pull-requests: write               | none  | retire                                                                                                  |
+| Jules-Hotfix-Creator.yml           | workflow_call                                       | 2026-05-30 failure   | contents: read / create-hotfix: contents+pull-requests: write                     | none  | retire                                                                                                  |
+| Jules-Issue-Mention-Handler.yml    | issue_comment                                       | 2026-08-04 success   | contents+pull-requests+issues: write (top-level)                                  | none  | **keep** (in use), but narrow the top-level token to the job that pushes                                |
+| Jules-Issue-Resolver.yml           | workflow_call, workflow_dispatch                    | 2026-05-30 failure   | contents: read / resolve-issues: contents+pull-requests+issues: write             | none  | retire                                                                                                  |
+| Jules-Laymans-Terms-Writer.yml     | workflow_call, workflow_dispatch, schedule          | 2026-08-02 cancelled | contents+pull-requests: write (top-level)                                         | none  | retire                                                                                                  |
+| Jules-PR-AutoFix.yml               | workflow_run (CI Standard), workflow_dispatch       | 2026-08-04 cancelled | contents+pull-requests: write, actions+checks: read (top-level)                   | none  | **keep** if any auto-fix is wanted; same-repo guard added in #4923; otherwise retire with Control-Tower |
+| Jules-PR-Cleanup.yml               | workflow_dispatch                                   | 2026-05-30 failure   | contents: read, pull-requests: write                                              | none  | retire                                                                                                  |
+| Jules-Sentinel.yml                 | workflow_call, workflow_dispatch                    | 2026-05-30 failure   | contents: read / security-audit: contents+issues+security-events: write           | none  | retire (CodeQL re-enabled in #4923 covers the scan)                                                     |
+| Jules-Supersede-Check.yml          | push, workflow_dispatch                             | 2026-08-03 failure   | contents: read, pull-requests: write                                              | none  | retire (fails on every push)                                                                            |
+| Jules-Tech-Custodian.yml           | workflow_call                                       | 2026-05-30 failure   | none top-level / refactor-worst-file: contents+pull-requests: write               | none  | retire                                                                                                  |
+| Jules-Test-Generator.yml           | workflow_call                                       | 2026-05-30 failure   | none top-level (inherits caller)                                                  | none  | retire                                                                                                  |
+| jules-assessment-runner.yml        | workflow_dispatch                                   | 2026-05-30 failure   | none top-level (inherits default)                                                 | none  | retire                                                                                                  |
 
 ## Summary
 
@@ -70,11 +70,11 @@ Program (Repository_Management#1505). **25 of the 28 retired, 3 kept.**
 
 ### Kept (3)
 
-| Workflow | Why |
-| --- | --- |
-| `Jules-Auto-Assign-Issues.yml` | In use (success 2026-08-04) and holds an `issues: write` token only. |
+| Workflow                          | Why                                                                                                                                                                                                                                                                                         |
+| --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Jules-Auto-Assign-Issues.yml`    | In use (success 2026-08-04) and holds an `issues: write` token only.                                                                                                                                                                                                                        |
 | `Jules-Issue-Mention-Handler.yml` | In use (success 2026-08-04). Token narrowed here: top level is now `contents: read`, and `contents: read` + `issues: write` sits on `fix-issue` alone. It never pushes and never uses `GITHUB_TOKEN` on a PR, so the old top-level `contents`/`pull-requests`/`issues: write` was unneeded. |
-| `Jules-Diff-Verifier.yml` | Runs on every PR with a read-only checkout. |
+| `Jules-Diff-Verifier.yml`         | Runs on every PR with a read-only checkout.                                                                                                                                                                                                                                                 |
 
 ### Retired (25)
 
@@ -83,7 +83,7 @@ The inventory recommended retiring 23. `Jules-PR-AutoFix.yml` and
 automated CI repair at all". It does not: CI repair in this fleet is done by
 the Claude and Codex remediation agents and the desktop Autofix. Neither
 workflow has run at all since 2026-08-04 (Control-Tower not since 2026-05-22),
-and Control-Tower is the *only* caller of ten of the retired reusable
+and Control-Tower is the _only_ caller of ten of the retired reusable
 workflows, so retiring it and its callees together keeps the call graph
 consistent - leaving either side would have left a broken pair.
 

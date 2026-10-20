@@ -623,6 +623,7 @@ SPEC 1.16.65 records this slice. Torque history is sampled on the state grid,
 not a complete RK4 half-step archive. Rust parity, cross-browser/assistive-
 technology evidence, approved visual baselines, protected publication,
 complete raw persistence, and remaining #4142 scope stay open.
+
 ## 2026-08-13 Integrated confidence mesh and #4415 assertion policy (#4142)
 
 - Normal merge order preserves approved mesh head
@@ -697,6 +698,7 @@ complete raw persistence, and remaining #4142 scope stay open.
   scope remain open. Evidence is 1,419 broad Rate/shared-variation Python and
   845 React tests, strict isolated changed-source Python 3.12 MyPy,
   Ruff/format, TypeScript, ESLint, and a Vite production build.
+
 ## 2026-08-13 PR #4415 changed-test assertion-gate correction (#4142)
 
 - The Changed Test Assertion Check now recognizes the exact constructor-only
@@ -1310,7 +1312,6 @@ This child does not complete #4142; protected CI, dependency-ordered
 publication, raw-observation retention, and UpstreamDrift replacement remain
 gates.
 
-
 ## 2026-08-12 Morris UI stack alignment
 
 The combined React branch now has current PyQt PR #4400 head
@@ -1616,6 +1617,7 @@ match protected Ruff 0.14.10 output and are normalized to the exact reviewed
 parent blobs while their commit remains in history. This local reconciliation
 still requires independent review, exact-head protected CI, unresolved-thread
 checks, dependency order, and ordinary publication.
+
 ## 2026-08-11 Current registry parent propagation (#4203 → #4279)
 
 PR `#4279` remains on `feat/4218-toolstrip-workspace` with base
@@ -1667,6 +1669,7 @@ exist on neither side of this pre-manifest stack and are not applicable.
 Review, ordinary publication, protected exact-head CI, unresolved threads,
 dependency order,
 and release remain open.
+
 ## 2026-08-11 Remote workspace history reconciled locally
 
 PR `#4279` retains branch `feat/4218-toolstrip-workspace` and base
@@ -1706,6 +1709,7 @@ behavior remain unchanged while the parent kinetics façade/dynamics/series
 split and pinned formatting are inherited. This local merge does not satisfy
 fresh protected CI, required review, unresolved-thread, dependency, or release
 gates.
+
 ## 2026-08-11 Current D-plane parent propagation (#4202 → #4203)
 
 PR `#4203` remains on `feat/4181-launch-monitor-registry` with base
@@ -2118,6 +2122,7 @@ Verification is `12 passed` on Windows and `12 passed` on WSL Python 3.11
 under importlib collection; Ruff/format and exact mypy 1.13 pass for both
 changed modules. The dataclass metadata assertion remains active behind an
 explicit test-only `Any` introspection boundary.
+
 ## 2026-08-11 pinned-Ruff parent propagation (#4179 → #4202)
 
 Exact clean child head `ba4aa35cc384d51ed3aa52eb532a67e960669c27`
@@ -2180,6 +2185,7 @@ exact parent's 12 unchanged `swing-core` tests remain applicable because this
 child has no Rust delta. The 17-error broad MyPy Qt/NumPy baseline in 11
 untouched files remains separate. Protected CI and required review remain
 release gates.
+
 ## 2026-08-11 pinned-Ruff parent propagation (#4178 → #4179)
 
 Exact clean child head `ea7acebf033379d6beefd70eb51027ebd3d01be7`
@@ -2218,6 +2224,7 @@ gates. The exact parent's 12 unchanged `swing-core` tests remain applicable
 because this child has no Rust delta. The 17-error broad MyPy Qt/NumPy baseline
 in 11 untouched files remains separate. Protected CI and required review
 remain release gates.
+
 ## 2026-08-11 pinned-Ruff parent propagation (#4174 → #4178)
 
 Exact clean child head `ca567fe7d3fa48b1900ad3098045f4200cfe86a7`
@@ -2241,6 +2248,7 @@ changes. Workflow-pinned Ruff check/format, 98 focused impact/kinetics/wedge/
 PyQt/layout tests, and repository documentation, minimum-test, SPEC-version,
 and diff gates are green. Protected checks and parent-first release order
 remain mandatory.
+
 ## 2026-08-11 PR #4178 pinned-Ruff format repair
 
 Exact published head `b8822401f4522e867d6b160125953981a39a770d`
@@ -2293,6 +2301,7 @@ real CPython 3.10.20 compile/UTC checks, scoped Ruff/Black/MyPy, and repository
 governance checks. The existing 17-error broad MyPy Qt/NumPy baseline across
 11 untouched files is documented, not expanded. Current-head protected CI and
 required review remain pending.
+
 ## 2026-08-10 Python 3.10 Repair Propagation
 
 Draft child PR `#4173` (`feat/4163-impact-inspector`) retains its
@@ -2418,7 +2427,7 @@ branches or wait for #4119 to land.
   live QThreads, and retries the window close only after they finish. The UI
   never evaluates physics itself.
 - `morris_tab.py` uses shared request/presentation contracts for ordered factor
-  drafts and target-local rankings. It displays μ*, standard error, μ, σ,
+  drafts and target-local rankings. It displays μ\*, standard error, μ, σ,
   availability/adequacy, valid pairs, typed no-impact overlap,
   no-impact-unavailable, failed, and nonfinite counts. Constant-output zeroes
   remain rankable; unavailable effects remain visibly unranked. Results are

@@ -5,6 +5,7 @@ Grafana dashboard and datasource provisioning for the Level 3 plant historian (T
 ## 🛡️ Safety & Non-Authoritative Invariant
 
 The plant historian and its Grafana visualization layer are **strictly non-authoritative**:
+
 - Dashboards and queries are passive observers of process history.
 - The historian and Grafana never block, stall, or delay the real-time control loop or safety-critical de-energizing commands.
 - Operators must not rely on Grafana dashboard updates for emergency de-energization or machine-safety interlocks; those functions are implemented autonomously in local controller hardware.
@@ -35,19 +36,21 @@ deploy/historian/grafana/
 
 All credentials and endpoints use environment variable interpolation (no plaintext passwords committed):
 
-| Variable | Default | Purpose |
-|---|---|---|
-| `HISTORIAN_HOST` | `timescale` | Hostname of the TimescaleDB instance |
-| `HISTORIAN_PORT` | `5432` | TimescaleDB port |
-| `HISTORIAN_DB` | `historian` | Target database name |
-| `HISTORIAN_USER` | `historian_reader` | Read-only database role for Grafana |
-| `HISTORIAN_PASSWORD` | *(required)* | Password for `HISTORIAN_USER` |
-| `HISTORIAN_SSLMODE` | `disable` | SSL mode (`disable`, `require`, `verify-full`) |
+| Variable             | Default            | Purpose                                        |
+| -------------------- | ------------------ | ---------------------------------------------- |
+| `HISTORIAN_HOST`     | `timescale`        | Hostname of the TimescaleDB instance           |
+| `HISTORIAN_PORT`     | `5432`             | TimescaleDB port                               |
+| `HISTORIAN_DB`       | `historian`        | Target database name                           |
+| `HISTORIAN_USER`     | `historian_reader` | Read-only database role for Grafana            |
+| `HISTORIAN_PASSWORD` | _(required)_       | Password for `HISTORIAN_USER`                  |
+| `HISTORIAN_SSLMODE`  | `disable`          | SSL mode (`disable`, `require`, `verify-full`) |
 
 ## 📊 Dashboards
 
 ### Plant Overview (`uid: plant-overview`)
+
 Visualizes process tag telemetry against the H3 continuous aggregate (`tag_sample_1m`):
+
 - **Process Tag Trends**: 1-minute averaged time series across configured tags.
 - **Excursion Envelope**: Minimum and maximum envelope bands preserving transient spikes that an average alone would mask.
 - **Tag Statistics & Sample Counts**: Summary metrics and aggregate sample counts per tag.

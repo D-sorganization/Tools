@@ -12,28 +12,28 @@ Tools is a large, ambitious shared-library monorepo (2389 Python files, 3 langua
 
 ## Score Summary
 
-| Criterion | Grade (0-10) | Weight | Confidence | Findings |
-| --- | --- | --- | --- | --- |
-| A. Project Organization | 6 | 5 | high | 14 |
-| B. Documentation | 5 | 6 | high | 9 |
-| C. Testing | 7 | 12 | medium | 13 |
-| D. Robustness | 6 | 10 | high | 11 |
-| E. Performance | 7 | 5 | high | 22 |
-| F. Code Craftsmanship | 5 | 8 | high | 43 |
-| G. Dependencies | 5 | 6 | medium | 8 |
-| H. Security | 6 | 12 | high | 1 |
-| I. Configuration | 6 | 4 | medium | 3 |
-| J. Observability | 5 | 6 | medium | 0 |
-| K. Maintainability | 4 | 6 | high | 7 |
-| L. CI/CD | 5 | 8 | high | 3 |
-| M. Deployment | 3 | 4 | high | 0 |
-| N. Compliance | 7 | 2 | medium | 0 |
-| O. Agentic Usability | 4 | 6 | high | 0 |
-| **Overall** | | **100** | | **134** |
+| Criterion               | Grade (0-10) | Weight  | Confidence | Findings |
+| ----------------------- | ------------ | ------- | ---------- | -------- |
+| A. Project Organization | 6            | 5       | high       | 14       |
+| B. Documentation        | 5            | 6       | high       | 9        |
+| C. Testing              | 7            | 12      | medium     | 13       |
+| D. Robustness           | 6            | 10      | high       | 11       |
+| E. Performance          | 7            | 5       | high       | 22       |
+| F. Code Craftsmanship   | 5            | 8       | high       | 43       |
+| G. Dependencies         | 5            | 6       | medium     | 8        |
+| H. Security             | 6            | 12      | high       | 1        |
+| I. Configuration        | 6            | 4       | medium     | 3        |
+| J. Observability        | 5            | 6       | medium     | 0        |
+| K. Maintainability      | 4            | 6       | high       | 7        |
+| L. CI/CD                | 5            | 8       | high       | 3        |
+| M. Deployment           | 3            | 4       | high       | 0        |
+| N. Compliance           | 7            | 2       | medium     | 0        |
+| O. Agentic Usability    | 4            | 6       | high       | 0        |
+| **Overall**             |              | **100** |            | **134**  |
 
 ## What's Working Well
 
-- Exemplary security-critical code: safe_eval.py validates expressions via an AST node allowlist with __builtins__={} and explicit DbC pre/post/invariant docstrings; scripting_env.py adds escape-gadget screening + execution timeouts + SecurityError handling — the two bandit 'findings' are confirmed false positives.
+- Exemplary security-critical code: safe_eval.py validates expressions via an AST node allowlist with **builtins**={} and explicit DbC pre/post/invariant docstrings; scripting_env.py adds escape-gadget screening + execution timeouts + SecurityError handling — the two bandit 'findings' are confirmed false positives.
 - A genuine Design-by-Contract framework (src/shared/python/contracts.py) with require/ensure/precondition/postcondition and DBC_LEVEL enforce/warn/off env control, adopted across 46 modules — real, not aspirational.
 - Comprehensive, honest governance and reproducibility: CLAUDE.md/AGENTS.md/SECURITY.md/SPEC.md, dependabot, detect-secrets, CVE-pinned dependencies, and lockfiles across pip + npm + uv + Cargo with a pinned rust-toolchain.
 - Mature test taxonomy: 610 dedicated test files plus embedded suites, 13+ markers (contract/parity/dwsim/e2e), strict-markers, per-test 60s timeouts, xdist loadscope, and an AST-based public-API stability baseline guarding the downstream contract surface.
@@ -53,4 +53,3 @@ Tools is a large, ambitious shared-library monorepo (2389 Python files, 3 langua
 ## Methodology
 
 Read-only worktree off `origin/main`; uvx static sweeps (ruff/bandit/radon + pattern greps); parallel adversarial reviewers per A-O dimension and per high-risk subsystem; every candidate finding independently skeptic-verified at its cited line before filing; weighted A-O scoring (PP1-PP8 Pragmatic Programmer principles).
-

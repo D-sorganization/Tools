@@ -628,6 +628,7 @@ localized/variation Python tests (one expected Rust-wheel skip), 6/6 production
 Playwright tests, TypeScript, ESLint, and Vite build. Protected publication,
 WebKit/Firefox, assistive-technology automation, approved visual baselines,
 complete raw torque persistence, Rust parity, and remaining #4142 stay open.
+
 ## 2026-08-13 Integrated confidence mesh and #4415 assertion policy (#4142)
 
 This normal merge preserves approved confidence-ellipsoid rendering head
@@ -717,6 +718,7 @@ production build.
 Cross-browser/assistive-technology E2E,
 approved visual baselines, import UI, protected publication, and remaining
 #4142 scope remain open.
+
 ## 2026-08-13 PR #4415 changed-test assertion-gate correction (#4142)
 
 Version 1.16.65 explicitly classifies
@@ -1388,7 +1390,6 @@ This child does not complete #4142; protected CI, dependency-ordered
 publication, raw-observation retention, and UpstreamDrift replacement remain
 gates.
 
-
 ## 2026-08-12 React Morris workflow integration (#4142 R13.7)
 
 Branch `codex/4142-morris-react-integration` stacks the independently reviewed
@@ -1441,7 +1442,7 @@ Branch `codex/4142-morris-pyqt-workflow` starts at exact UI-contract parent
 - The PyQt surface provides a capability gate, canonical editable factor order,
   trajectories/even-levels/seed/minimum-effects/workers, sequential background
   create/poll/cancel, pinned request/job identity, stale-generation and
-  changed-input invalidation, read-only target-local ranked μ*, uncertainty,
+  changed-input invalidation, read-only target-local ranked μ\*, uncertainty,
   availability/adequacy, and all typed miss/failure denominators. Closing is
   nonblocking: every live transport thread remains owned and the window close
   is deferred until the retained workers finish.
@@ -1772,6 +1773,7 @@ executor observation; no partial report or per-sample diagnostic is exposed.
 - This reconciliation is local only. Independent review, fresh exact-head
   protected CI, unresolved-thread checks, dependency order, and ordinary
   publication remain required before merge or release.
+
 ## 2026-08-11 current registry parent propagation (#4203 → #4279)
 
 - PR `#4279` remains on `feat/4218-toolstrip-workspace`, based on
@@ -1837,6 +1839,7 @@ executor observation; no partial report or per-sample diagnostic is exposed.
 - This candidate remains local pending independent review, ordinary
   publication, protected
   exact-head CI, unresolved-thread checks, and dependency order.
+
 ## 2026-08-11 remote automation reconciliation for workspace PR #4279
 
 - Exact local workspace head `0b22c401a26c31441a599d8d9b39de123706e7ea`
@@ -1881,6 +1884,7 @@ executor observation; no partial report or per-sample diagnostic is exposed.
   size-budget repair.
 - This merge is local only. Fresh exact-head protected CI, review, unresolved
   threads, and dependency gates remain required before publication or merge.
+
 ## 2026-08-11 current D-plane parent propagation (#4202 → #4203)
 
 - PR `#4203` remains on `feat/4181-launch-monitor-registry`, based on
@@ -2355,6 +2359,7 @@ for both changed test modules. The frozen-dataclass assertion casts only its
 introspection target to `Any`, matching the later carrier boundary while
 retaining the runtime assertion. The minimal WSL environment reports only
 unknown-option warnings for intentionally omitted optional pytest plugins.
+
 ## 2026-08-11 pinned-Ruff parent propagation (#4179 → #4202)
 
 - Child PR `#4202` remains on `feat/4189-dplane`, based on
@@ -2432,6 +2437,7 @@ unknown-option warnings for intentionally omitted optional pytest plugins.
   applicable because this child has no Rust delta. The inherited broad MyPy
   baseline remains 17 Qt/NumPy typing findings in 11 untouched files.
   Protected CI and required review remain release gates.
+
 ## 2026-08-11 pinned-Ruff parent propagation (#4178 → #4179)
 
 - Child PR `#4179` remains on `feat/4162-wedge-impact-visualization`, based on
@@ -2478,6 +2484,7 @@ unknown-option warnings for intentionally omitted optional pytest plugins.
   applicable because this child has no Rust delta. The inherited broad MyPy
   baseline remains 17 Qt/NumPy typing findings in 11 untouched files.
   Protected CI and required review remain release gates.
+
 ## 2026-08-11 pinned-Ruff parent propagation (#4174 → #4178)
 
 - Child PR `#4178` remains on `feat/4166-wedge-turf-physics`, based on
@@ -2507,6 +2514,7 @@ unknown-option warnings for intentionally omitted optional pytest plugins.
   PyQt, and layout tests are green. Documentation, minimum-test, SPEC-version,
   and diff gates are also green. Protected checks, review, and parent-first
   release order remain gates.
+
 ## 2026-08-11 PR #4178 pinned-Ruff format repair
 
 - Exact published head `b8822401f4522e867d6b160125953981a39a770d`
@@ -2566,6 +2574,7 @@ unknown-option warnings for intentionally omitted optional pytest plugins.
   inherited broad MyPy baseline is 17 Qt/NumPy typing findings in 11 untouched
   files and remains outside this propagation scope. Protected CI and review
   remain release gates.
+
 ## 2026-08-10 Parent Repair Propagation (#4167 → #4173)
 
 - Child PR `#4173` remains on `feat/4163-impact-inspector`, based on

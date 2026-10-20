@@ -13,7 +13,7 @@
 - Severity: Low - Category: security
 - Confidence: medium
 - Location: src/p1am_control_system/backend/main.py:790-800; src/p1am_control_system/backend/auth_config.py:33-36
-- Evidence: `@app.post("/api/estop")` with no `dependencies=`; auth_config docstring: "E-stop _activation_ … is intentionally left unauthenticated so a panic stop is always reachable".
+- Evidence: `@app.post("/api/estop")` with no `dependencies=`; auth*config docstring: "E-stop \_activation* … is intentionally left unauthenticated so a panic stop is always reachable".
 - Failure scenario: anything on the HMI network can trip the heater relay in a loop and prevent restart; defensible, but should carry caller IP in the audit event, a per-source cooldown, and a documented network-segmentation assumption.
 - Proposed change: keep unauthenticated; log `request.client.host`; 1/s per-source limit; note in SECURITY.md.
 - Effort: S

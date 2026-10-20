@@ -18,37 +18,37 @@ content-addressed.
 
 ## Top level
 
-| Field | Type | Required | Notes |
-| --- | --- | --- | --- |
-| `format` | string | yes | Exactly `"golf_club.fitting_document/1"` |
-| `document_id` | string | yes | Non-empty identifier, OEM-chosen |
-| `face` | object | yes | See **face** |
-| `assembly` | object | yes | A complete `golf_club.assembly/1` sub-document |
-| `shaft_profile` | object | yes | A complete `golf_club.shaft_profile/1` sub-document |
-| `tip_mass` | object | yes | See **tip_mass** |
-| `mesh_reference` | object | no | See **mesh_reference** |
-| `provenance` | object | yes | See **provenance** |
+| Field            | Type   | Required | Notes                                               |
+| ---------------- | ------ | -------- | --------------------------------------------------- |
+| `format`         | string | yes      | Exactly `"golf_club.fitting_document/1"`            |
+| `document_id`    | string | yes      | Non-empty identifier, OEM-chosen                    |
+| `face`           | object | yes      | See **face**                                        |
+| `assembly`       | object | yes      | A complete `golf_club.assembly/1` sub-document      |
+| `shaft_profile`  | object | yes      | A complete `golf_club.shaft_profile/1` sub-document |
+| `tip_mass`       | object | yes      | See **tip_mass**                                    |
+| `mesh_reference` | object | no       | See **mesh_reference**                              |
+| `provenance`     | object | yes      | See **provenance**                                  |
 
 ## face
 
-| Field | Type | Constraint |
-| --- | --- | --- |
-| `loft_deg` | number | `(0, 90)` |
-| `lie_deg` | number | `(30, 90)` |
-| `bulge_m` | number | `>= 0`; `0` = flat face (irons/wedges) |
-| `roll_m` | number | `>= 0`; `0` = flat face |
+| Field      | Type   | Constraint                             |
+| ---------- | ------ | -------------------------------------- |
+| `loft_deg` | number | `(0, 90)`                              |
+| `lie_deg`  | number | `(30, 90)`                             |
+| `bulge_m`  | number | `>= 0`; `0` = flat face (irons/wedges) |
+| `roll_m`   | number | `>= 0`; `0` = flat face                |
 
 ## tip_mass
 
 The head as the shaft tip sees it — the inputs of the shaft forward-dynamics
 model (`quasi_static_centrifugal_alignment/1`).
 
-| Field | Type | Constraint | Meaning |
-| --- | --- | --- | --- |
-| `mass_kg` | number | `> 0` | Head mass |
-| `cg_back_m` | number | `>= 0` | CG behind the shaft axis (face-normal) |
-| `cg_toe_m` | number | `>= 0` | CG toe-ward of the shaft axis |
-| `cg_drop_m` | number | `>= 0` | CG axial distance below the tip |
+| Field       | Type   | Constraint | Meaning                                |
+| ----------- | ------ | ---------- | -------------------------------------- |
+| `mass_kg`   | number | `> 0`      | Head mass                              |
+| `cg_back_m` | number | `>= 0`     | CG behind the shaft axis (face-normal) |
+| `cg_toe_m`  | number | `>= 0`     | CG toe-ward of the shaft axis          |
+| `cg_drop_m` | number | `>= 0`     | CG axial distance below the tip        |
 
 ## mesh_reference (optional)
 
@@ -56,12 +56,12 @@ Pins an external head STL and the scale needed to reproduce the derived
 inertia tensor. Exactly **one** of `density_kg_m3` / `target_mass_kg` must be
 present — the same selector `mesh_inertia` enforces.
 
-| Field | Type | Constraint |
-| --- | --- | --- |
-| `name` | string | Non-empty |
-| `sha256` | string | 64 lowercase hex characters (SHA-256 of the STL bytes) |
-| `density_kg_m3` | number | `> 0`; mutually exclusive with `target_mass_kg` |
-| `target_mass_kg` | number | `> 0`; mutually exclusive with `density_kg_m3` |
+| Field            | Type   | Constraint                                             |
+| ---------------- | ------ | ------------------------------------------------------ |
+| `name`           | string | Non-empty                                              |
+| `sha256`         | string | 64 lowercase hex characters (SHA-256 of the STL bytes) |
+| `density_kg_m3`  | number | `> 0`; mutually exclusive with `target_mass_kg`        |
+| `target_mass_kg` | number | `> 0`; mutually exclusive with `density_kg_m3`         |
 
 The referenced mesh must be watertight with outward winding; the parser of
 the mesh itself (`stl_validation`, `mesh_mass_properties`) refuses anything
@@ -70,11 +70,11 @@ OEM shell models should supply their measured tensor through the assembly.
 
 ## provenance
 
-| Field | Type | Constraint |
-| --- | --- | --- |
+| Field         | Type   | Constraint                                                   |
+| ------------- | ------ | ------------------------------------------------------------ |
 | `source_kind` | string | One of `oem_export`, `measured`, `parametric`, `cad_derived` |
-| `tool_name` | string | Non-empty |
-| `exported_at` | string | ISO-8601 date (`YYYY-MM-DD`) or datetime with `Z`/offset |
+| `tool_name`   | string | Non-empty                                                    |
+| `exported_at` | string | ISO-8601 date (`YYYY-MM-DD`) or datetime with `Z`/offset     |
 
 ## Sub-document references
 

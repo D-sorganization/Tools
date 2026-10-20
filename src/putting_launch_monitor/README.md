@@ -133,4 +133,3 @@ python -m pytest -m slow src/putting_launch_monitor/tests/test_replay_corpus.py
    python -m putting_launch_monitor replay --video src/putting_launch_monitor/tests/data/putt_my_test.avi --calibration src/putting_launch_monitor/tests/data/calibration.json
    python -m pytest -m slow src/putting_launch_monitor/tests/test_replay_corpus.py
    ```
-

@@ -11,7 +11,7 @@ Extend the impact-zone model into a professional clubfitting instrument:
 1. **Twist counterfactuals** — how head mass properties (mass, CG, inertia tensor)
    change the face-closure response and gear-effect spin for off-center strikes.
 2. **Shaft forward dynamics** — how bending/torsional stiffness distributions change
-   the *delivered* club state (dynamic loft, face closure, droop, speed) for the same
+   the _delivered_ club state (dynamic loft, face closure, droop, speed) for the same
    swing input.
 3. **CAD-driven heads** — mass properties derived from watertight meshes so an OEM
    head design drives the impact model directly.
@@ -28,34 +28,34 @@ limit in tests.
 
 ## 2. What already exists (measured 2026-08-18, not assumed)
 
-| Capability | Where | State |
-| --- | --- | --- |
-| Rigid club assembly, mass-property composition, provenance binding | `golf_club/assembly.py`, `rate_of_closure/club/assembly_binding.py` | shipped |
-| Measured shaft profiles (per-station EI/GJ/density/spine) | `golf_club/shaft_profile.py` | shipped |
-| Shaft statics (cantilever tip response) and modal FE (bending modes) | `golf_club/shaft_statics.py`, `shaft_dynamics.py` | shipped |
-| Mesh volume + centroid (divergence theorem), watertightness | `rate_of_closure/club/volumetrics.py` | shipped |
-| CAD/STL validation, parametric heads, wedge geometry | `golf_club/cad_validation.py`, `stl_validation.py`, `club/parametric_head.py`, `wedge_*` | shipped |
-| Impact models (rigid COR, spring-damper, finite-time), gear effect, D-plane | `swing_sim/impact/` | shipped |
-| Head-CG tensor passthrough into the impact solver (`clubhead_moi_tensor`) | `impact/solver.py`, `club/simulation_adapter.py` | shipped |
-| Delivery front-end (launch-monitor numbers → impact inputs) | `impact/delivery.py` | shipped |
-| Monte Carlo + Morris sensitivity, registry with extension seam | `swing_sim/variation/` | shipped |
-| Ball flight, ground, twist (closure-rate) derivation, both GUIs | `swing_sim/flight`, `ground`, `rate_of_closure/derivation*.py` | shipped |
+| Capability                                                                  | Where                                                                                    | State   |
+| --------------------------------------------------------------------------- | ---------------------------------------------------------------------------------------- | ------- |
+| Rigid club assembly, mass-property composition, provenance binding          | `golf_club/assembly.py`, `rate_of_closure/club/assembly_binding.py`                      | shipped |
+| Measured shaft profiles (per-station EI/GJ/density/spine)                   | `golf_club/shaft_profile.py`                                                             | shipped |
+| Shaft statics (cantilever tip response) and modal FE (bending modes)        | `golf_club/shaft_statics.py`, `shaft_dynamics.py`                                        | shipped |
+| Mesh volume + centroid (divergence theorem), watertightness                 | `rate_of_closure/club/volumetrics.py`                                                    | shipped |
+| CAD/STL validation, parametric heads, wedge geometry                        | `golf_club/cad_validation.py`, `stl_validation.py`, `club/parametric_head.py`, `wedge_*` | shipped |
+| Impact models (rigid COR, spring-damper, finite-time), gear effect, D-plane | `swing_sim/impact/`                                                                      | shipped |
+| Head-CG tensor passthrough into the impact solver (`clubhead_moi_tensor`)   | `impact/solver.py`, `club/simulation_adapter.py`                                         | shipped |
+| Delivery front-end (launch-monitor numbers → impact inputs)                 | `impact/delivery.py`                                                                     | shipped |
+| Monte Carlo + Morris sensitivity, registry with extension seam              | `swing_sim/variation/`                                                                   | shipped |
+| Ball flight, ground, twist (closure-rate) derivation, both GUIs             | `swing_sim/flight`, `ground`, `rate_of_closure/derivation*.py`                           | shipped |
 
 **Interpretation discipline:** `adapt_club_assembly_for_impact`'s "never use assembly
-inertia" refers to *whole-club* inertia; the validated **head-CG** tensor is rotated
+inertia" refers to _whole-club_ inertia; the validated **head-CG** tensor is rotated
 into the app frame and consumed when a binding + attitude exist. The epic builds on
 that path; it does not replace it.
 
 ## 3. Gaps this epic closes
 
-| # | Gap | Child |
-| --- | --- | --- |
-| G1 | No full **inertia tensor from a watertight mesh** (volumetrics stops at volume + centroid); CAD heads cannot drive the MOI path | C1 |
-| G2 | No **forward coupling** from shaft stiffness to delivered state — statics and modal frequencies exist, but nothing produces dynamic-loft/closure/droop/speed deltas from a swing input | C2 |
-| G3 | No single **OEM interchange document** bundling assembly + shaft profile + face geometry + mesh reference + provenance in one versioned wire | C3 |
-| G4 | No **counterfactual engine**: apply club-parameter deltas, rerun delivery→impact→flight, and report outcome deltas + sensitivities | C4 |
-| G5 | No **delivery-trajectory contract** or Drake/MuJoCo/OpenSim adapters | C5 |
-| G6 | No **Club Tester surface** in either GUI | C6/C7 |
+| #   | Gap                                                                                                                                                                                    | Child |
+| --- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- |
+| G1  | No full **inertia tensor from a watertight mesh** (volumetrics stops at volume + centroid); CAD heads cannot drive the MOI path                                                        | C1    |
+| G2  | No **forward coupling** from shaft stiffness to delivered state — statics and modal frequencies exist, but nothing produces dynamic-loft/closure/droop/speed deltas from a swing input | C2    |
+| G3  | No single **OEM interchange document** bundling assembly + shaft profile + face geometry + mesh reference + provenance in one versioned wire                                           | C3    |
+| G4  | No **counterfactual engine**: apply club-parameter deltas, rerun delivery→impact→flight, and report outcome deltas + sensitivities                                                     | C4    |
+| G5  | No **delivery-trajectory contract** or Drake/MuJoCo/OpenSim adapters                                                                                                                   | C5    |
+| G6  | No **Club Tester surface** in either GUI                                                                                                                                               | C6/C7 |
 
 ## 4. Architecture
 

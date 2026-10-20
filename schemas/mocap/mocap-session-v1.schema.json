@@ -19,33 +19,33 @@
     "warnings"
   ],
   "properties": {
-    "schema_version": {"const": "mocap-session/1.0.0"},
-    "session_id": {"type": "string", "minLength": 1},
-    "created_at_utc": {"type": "string", "format": "date-time"},
-    "state": {"enum": ["draft", "recording", "finalized", "incomplete"]},
-    "world_frame": {"$ref": "#/$defs/coordinateFrame"},
+    "schema_version": { "const": "mocap-session/1.0.0" },
+    "session_id": { "type": "string", "minLength": 1 },
+    "created_at_utc": { "type": "string", "format": "date-time" },
+    "state": { "enum": ["draft", "recording", "finalized", "incomplete"] },
+    "world_frame": { "$ref": "#/$defs/coordinateFrame" },
     "cameras": {
       "type": "array",
-      "items": {"$ref": "#/$defs/cameraIdentity"}
+      "items": { "$ref": "#/$defs/cameraIdentity" }
     },
     "clocks": {
       "type": "array",
-      "items": {"$ref": "#/$defs/clockDomain"}
+      "items": { "$ref": "#/$defs/clockDomain" }
     },
     "methods": {
       "type": "array",
-      "items": {"$ref": "#/$defs/methodDescriptor"}
+      "items": { "$ref": "#/$defs/methodDescriptor" }
     },
-    "recording_policy": {"$ref": "#/$defs/recordingPolicy"},
+    "recording_policy": { "$ref": "#/$defs/recordingPolicy" },
     "calibration_ids": {
       "type": "array",
       "uniqueItems": true,
-      "items": {"type": "string", "minLength": 1}
+      "items": { "type": "string", "minLength": 1 }
     },
     "warnings": {
       "type": "array",
       "uniqueItems": true,
-      "items": {"type": "string", "minLength": 1}
+      "items": { "type": "string", "minLength": 1 }
     }
   },
   "$defs": {
@@ -62,13 +62,13 @@
         "firmware_version"
       ],
       "properties": {
-        "provider_id": {"type": "string", "minLength": 1},
-        "device_id": {"type": "string", "minLength": 1},
-        "transport": {"type": "string", "minLength": 1},
-        "vendor": {"type": ["string", "null"], "minLength": 1},
-        "model": {"type": ["string", "null"], "minLength": 1},
-        "serial_number": {"type": ["string", "null"], "minLength": 1},
-        "firmware_version": {"type": ["string", "null"], "minLength": 1}
+        "provider_id": { "type": "string", "minLength": 1 },
+        "device_id": { "type": "string", "minLength": 1 },
+        "transport": { "type": "string", "minLength": 1 },
+        "vendor": { "type": ["string", "null"], "minLength": 1 },
+        "model": { "type": ["string", "null"], "minLength": 1 },
+        "serial_number": { "type": ["string", "null"], "minLength": 1 },
+        "firmware_version": { "type": ["string", "null"], "minLength": 1 }
       }
     },
     "clockDomain": {
@@ -76,54 +76,88 @@
       "additionalProperties": false,
       "required": ["clock_id", "kind", "tick_period_seconds", "monotonic"],
       "properties": {
-        "clock_id": {"type": "string", "minLength": 1},
-        "kind": {"enum": ["device-hardware", "trigger", "host-monotonic", "utc-presentation"]},
-        "tick_period_seconds": {"type": "number", "exclusiveMinimum": 0},
-        "monotonic": {"type": "boolean"}
+        "clock_id": { "type": "string", "minLength": 1 },
+        "kind": {
+          "enum": [
+            "device-hardware",
+            "trigger",
+            "host-monotonic",
+            "utc-presentation"
+          ]
+        },
+        "tick_period_seconds": { "type": "number", "exclusiveMinimum": 0 },
+        "monotonic": { "type": "boolean" }
       }
     },
     "coordinateFrame": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["frame_id", "handedness", "x_axis", "y_axis", "z_axis", "length_unit"],
+      "required": [
+        "frame_id",
+        "handedness",
+        "x_axis",
+        "y_axis",
+        "z_axis",
+        "length_unit"
+      ],
       "properties": {
-        "frame_id": {"type": "string", "minLength": 1},
-        "handedness": {"enum": ["right-handed", "left-handed"]},
-        "x_axis": {"type": "string", "minLength": 1},
-        "y_axis": {"type": "string", "minLength": 1},
-        "z_axis": {"type": "string", "minLength": 1},
-        "length_unit": {"type": "string", "minLength": 1}
+        "frame_id": { "type": "string", "minLength": 1 },
+        "handedness": { "enum": ["right-handed", "left-handed"] },
+        "x_axis": { "type": "string", "minLength": 1 },
+        "y_axis": { "type": "string", "minLength": 1 },
+        "z_axis": { "type": "string", "minLength": 1 },
+        "length_unit": { "type": "string", "minLength": 1 }
       }
     },
     "methodDescriptor": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["method_id", "version", "implementation", "license_spdx", "artifact_sha256"],
+      "required": [
+        "method_id",
+        "version",
+        "implementation",
+        "license_spdx",
+        "artifact_sha256"
+      ],
       "properties": {
-        "method_id": {"type": "string", "minLength": 1},
-        "version": {"type": "string", "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][A-Za-z0-9.-]+)?$"},
-        "implementation": {"type": "string", "minLength": 1},
-        "license_spdx": {"type": "string", "minLength": 1},
-        "artifact_sha256": {"type": ["string", "null"], "pattern": "^[0-9a-f]{64}$"}
+        "method_id": { "type": "string", "minLength": 1 },
+        "version": {
+          "type": "string",
+          "pattern": "^[0-9]+\\.[0-9]+\\.[0-9]+(?:[-+][A-Za-z0-9.-]+)?$"
+        },
+        "implementation": { "type": "string", "minLength": 1 },
+        "license_spdx": { "type": "string", "minLength": 1 },
+        "artifact_sha256": {
+          "type": ["string", "null"],
+          "pattern": "^[0-9a-f]{64}$"
+        }
       }
     },
     "recordingPolicy": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["consent_recorded", "raw_video_retained", "retention_days", "no_store"],
+      "required": [
+        "consent_recorded",
+        "raw_video_retained",
+        "retention_days",
+        "no_store"
+      ],
       "properties": {
-        "consent_recorded": {"type": "boolean"},
-        "raw_video_retained": {"type": "boolean"},
-        "retention_days": {"type": "integer", "minimum": 0},
-        "no_store": {"type": "boolean"}
+        "consent_recorded": { "type": "boolean" },
+        "raw_video_retained": { "type": "boolean" },
+        "retention_days": { "type": "integer", "minimum": 0 },
+        "no_store": { "type": "boolean" }
       },
       "allOf": [
         {
-          "if": {"properties": {"no_store": {"const": true}}, "required": ["no_store"]},
+          "if": {
+            "properties": { "no_store": { "const": true } },
+            "required": ["no_store"]
+          },
           "then": {
             "properties": {
-              "raw_video_retained": {"const": false},
-              "retention_days": {"const": 0}
+              "raw_video_retained": { "const": false },
+              "retention_days": { "const": 0 }
             }
           }
         }

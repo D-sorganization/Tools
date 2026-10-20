@@ -22,23 +22,25 @@ Three-digit numbers are Tools-native records; four-digit numbers follow the flee
 `mirror (UpstreamDrift)` rows carry a provenance header naming their source commit.
 
 <!-- adr-index:start -->
-| ADR | Status | Origin | Title |
-| --- | ------ | ------ | ----- |
-| [ADR-001](ADR-001-monorepo-workspaces.md) | Accepted | Tools | Monorepo Workspace Structure |
-| [ADR-002](ADR-002-shared-library-module-structure.md) | Accepted | Tools | Shared Library and Module Namespace Structure |
-| [ADR-003](ADR-003-api-stability-policy.md) | Accepted | Tools | API Stability and Backwards-Compatibility Policy |
-| [ADR-004](ADR-004-ruff-formatter.md) | Accepted | Tools | Ruff Format Over Black for Code Formatting |
-| [ADR-005](ADR-005-plugin-discovery-vs-registry.md) | Accepted | Tools | Plugin Discovery vs. Centralized Registry |
-| [ADR-006](ADR-006-type-safety-mypy-strict.md) | Accepted | Tools | Type Safety Enforcement with mypy and py.typed |
-| [ADR-007](ADR-007-engineering-design-manual-authority.md) | Accepted | Tools | Engineering Design Manual Authority and Release Boundary |
-| [ADR-008](ADR-008-markerless-mocap-authority-and-licensing.md) | Accepted for contract implementation | Tools | Markerless Mocap Authority, Interchange, and Licensing |
-| [ADR-0016](ADR-0016-error-handling-discipline.md) | Accepted | mirror (UpstreamDrift) | Error-handling discipline and the ratchet pattern |
-| [ADR-0022](ADR-0022-chat-sidekick-boundary.md) | Accepted | mirror (UpstreamDrift) | Chat Sidekick Boundary |
-| [ADR-0031](ADR-0031-launch-monitor-canonical-shot-schema.md) | Accepted | mirror (UpstreamDrift) | Canonical Launch Monitor Shot Schema |
-| [ADR-0045](ADR-0045-putting-integration-one-experience-two-preserved-stacks.md) | Accepted | mirror (UpstreamDrift) | Putting Integration — One Experience, Two Preserved Physics Stacks |
-| [ADR-0046](ADR-0046-launch-monitor-analytics-single-model-layer.md) | Accepted | mirror (UpstreamDrift) | Launch-Monitor Analytics — Two Workbenches, One Model Layer |
-| [ADR-0047](ADR-0047-trajectory-visualization-shared-wire-preserved-viewers.md) | Accepted | mirror (UpstreamDrift) | Trajectory Visualization — Shared Wire, Preserved Viewers |
-| [ADR-0048](ADR-0048-launch-monitor-port-plan.md) | Proposed — ratified when this document is reviewed | mirror (UpstreamDrift) | G1: Launch-Monitor Port Plan |
-| [ADR-0049](ADR-0049-fleet-adr-home.md) | Accepted | Tools | Fleet ADR Home — Shared-Layer ADRs Live in Tools, Consumers Mirror Them |
-| [ADR-0050](ADR-0050-plant-historian-timescaledb.md) | Accepted | Tools | Plant Historian — TimescaleDB and Grafana for Telemetry and Analytics |
+
+| ADR                                                                             | Status                                             | Origin                 | Title                                                                   |
+| ------------------------------------------------------------------------------- | -------------------------------------------------- | ---------------------- | ----------------------------------------------------------------------- |
+| [ADR-001](ADR-001-monorepo-workspaces.md)                                       | Accepted                                           | Tools                  | Monorepo Workspace Structure                                            |
+| [ADR-002](ADR-002-shared-library-module-structure.md)                           | Accepted                                           | Tools                  | Shared Library and Module Namespace Structure                           |
+| [ADR-003](ADR-003-api-stability-policy.md)                                      | Accepted                                           | Tools                  | API Stability and Backwards-Compatibility Policy                        |
+| [ADR-004](ADR-004-ruff-formatter.md)                                            | Accepted                                           | Tools                  | Ruff Format Over Black for Code Formatting                              |
+| [ADR-005](ADR-005-plugin-discovery-vs-registry.md)                              | Accepted                                           | Tools                  | Plugin Discovery vs. Centralized Registry                               |
+| [ADR-006](ADR-006-type-safety-mypy-strict.md)                                   | Accepted                                           | Tools                  | Type Safety Enforcement with mypy and py.typed                          |
+| [ADR-007](ADR-007-engineering-design-manual-authority.md)                       | Accepted                                           | Tools                  | Engineering Design Manual Authority and Release Boundary                |
+| [ADR-008](ADR-008-markerless-mocap-authority-and-licensing.md)                  | Accepted for contract implementation               | Tools                  | Markerless Mocap Authority, Interchange, and Licensing                  |
+| [ADR-0016](ADR-0016-error-handling-discipline.md)                               | Accepted                                           | mirror (UpstreamDrift) | Error-handling discipline and the ratchet pattern                       |
+| [ADR-0022](ADR-0022-chat-sidekick-boundary.md)                                  | Accepted                                           | mirror (UpstreamDrift) | Chat Sidekick Boundary                                                  |
+| [ADR-0031](ADR-0031-launch-monitor-canonical-shot-schema.md)                    | Accepted                                           | mirror (UpstreamDrift) | Canonical Launch Monitor Shot Schema                                    |
+| [ADR-0045](ADR-0045-putting-integration-one-experience-two-preserved-stacks.md) | Accepted                                           | mirror (UpstreamDrift) | Putting Integration — One Experience, Two Preserved Physics Stacks      |
+| [ADR-0046](ADR-0046-launch-monitor-analytics-single-model-layer.md)             | Accepted                                           | mirror (UpstreamDrift) | Launch-Monitor Analytics — Two Workbenches, One Model Layer             |
+| [ADR-0047](ADR-0047-trajectory-visualization-shared-wire-preserved-viewers.md)  | Accepted                                           | mirror (UpstreamDrift) | Trajectory Visualization — Shared Wire, Preserved Viewers               |
+| [ADR-0048](ADR-0048-launch-monitor-port-plan.md)                                | Proposed — ratified when this document is reviewed | mirror (UpstreamDrift) | G1: Launch-Monitor Port Plan                                            |
+| [ADR-0049](ADR-0049-fleet-adr-home.md)                                          | Accepted                                           | Tools                  | Fleet ADR Home — Shared-Layer ADRs Live in Tools, Consumers Mirror Them |
+| [ADR-0050](ADR-0050-plant-historian-timescaledb.md)                             | Accepted                                           | Tools                  | Plant Historian — TimescaleDB and Grafana for Telemetry and Analytics   |
+
 <!-- adr-index:end -->

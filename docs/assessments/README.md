@@ -231,11 +231,12 @@ Updated for completist report
 
 - [Audit Report Latest](completist/audit_report_jules.md)
 
-| 6.3     | 2026-07 | Executed Completist Audit (Jul 23)                                                                      |
+| 6.3 | 2026-07 | Executed Completist Audit (Jul 23) |
 
 ---
 
 _See individual Assessment_Prompt_X.md files for detailed prompts._
 
 ## 2026-03-15 Migration Note
+
 Added comprehensive assessments and completist audit results.

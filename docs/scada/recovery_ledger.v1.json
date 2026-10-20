@@ -39,10 +39,7 @@
       "src/p1am_control_system/backend/tests/test_process_overview.py"
     ],
     "approx_lines": 250,
-    "external_imports": [
-      "pydantic",
-      "stdlib"
-    ],
+    "external_imports": ["pydantic", "stdlib"],
     "note": "process_overview.py imports nothing from the stack; its test imports only process_overview; enum_compat.py is stdlib-only and is included because it unlocks the next tier at zero marginal risk. No new third-party dependency, no DB, no router, no main.py wiring, no licence exposure.",
     "why_not_landed_here": "These modules have no importer on main, so they would land as dead code in a safety subsystem and may trip the coverage and god-module policy gates. Adding unreferenced code does not move F06 off `missing` in any meaningful sense - F06 needs the faceplate/overview HMI, not a synthetic view model. Recorded so a future re-land is a reading task rather than a re-discovery task; landing it is an owner call, not an audit call."
   },
@@ -53,9 +50,7 @@
       "name": "Compat leaf",
       "decision": "re-land",
       "file_count": 1,
-      "external_imports": [
-        "stdlib only (enum, sys, typing)"
-      ],
+      "external_imports": ["stdlib only (enum, sys, typing)"],
       "rationale": "Zero-dependency StrEnum backport for the 3.10 floor; twelve stack modules gate on it. Mandatory prerequisite for every other cluster and safe on its own. It duplicates src/shared/python/compatibility.py by design, because the backend imports flat rather than by package path."
     },
     {
@@ -63,11 +58,7 @@
       "name": "Pure-pydantic synthetic domain models",
       "decision": "re-land",
       "file_count": 6,
-      "external_imports": [
-        "pydantic",
-        "stdlib (uuid)",
-        "enum_compat (C0)"
-      ],
+      "external_imports": ["pydantic", "stdlib (uuid)", "enum_compat (C0)"],
       "rationale": "Read-only view models whose identifiers are validated to begin with 'SYNTHETIC.', so they cannot bind to real plant data. Each test imports only its own module. process_overview.py imports nothing from the stack at all. They name safety concepts (AlarmState, InterlockState) as Literal aliases but actuate nothing."
     },
     {
@@ -75,9 +66,7 @@
       "name": "Notification / alarm-suppression policy",
       "decision": "needs-owner",
       "file_count": 2,
-      "external_imports": [
-        "pydantic"
-      ],
+      "external_imports": ["pydantic"],
       "rationale": "Technically as self-contained as C1a, but it implements alarm suppression, escalation and rate limiting (outcomes 'suppressed' and 'rate_limited'). ISA-18.2 suppression semantics need a human ruling even when synthetic-gated."
     },
     {
@@ -184,9 +173,7 @@
       "name": "TimescaleDB schema (licence-encumbered)",
       "decision": "needs-owner",
       "file_count": 8,
-      "external_imports": [
-        "TimescaleDB extension 2.9+"
-      ],
+      "external_imports": ["TimescaleDB extension 2.9+"],
       "rationale": "Epic #4046's licensing warning is confirmed verbatim in the SQL, not merely flagged: 002 uses `WITH (timescaledb.continuous)`, 003 uses `timescaledb.compress` / `compress_segmentby` / `compress_orderby` + `add_compression_policy`, 004 uses `add_retention_policy`. Those are Timescale-License features, not Apache-2, and they are precisely the storage economics the historian depends on - so 'use the Apache build' is not a drop-in fallback. 001 comments a dependency on 2.9+ for the hierarchical continuous aggregate, so even the base schema is not licence-clean in isolation. ADR-007 is bundled here because it is the record that would RATIFY this choice; landing it before the ruling is worse than landing nothing."
     },
     {
@@ -210,9 +197,7 @@
       "superseded_by": [
         "src/p1am_control_system/backend/tests/test_route_authz_matrix.py"
       ],
-      "landed_via": [
-        "#4682"
-      ]
+      "landed_via": ["#4682"]
     },
     {
       "id": "C14a",

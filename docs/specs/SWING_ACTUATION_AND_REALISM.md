@@ -10,9 +10,9 @@
 > **0.310 kg with its centre of mass 76% down the shaft**. In a point-mass-at-tip
 > model the quantity that matters for the uncoupled wrist row is inertia about the wrist.
 > Placing 0.310 kg at the tip of a 1.10 m modeled shaft gives an inertia of
-> **0.3751 kg·m²** (0.310 * 1.10² = 0.3751, ~1.30× the real 0.288 kg·m²). The
+> **0.3751 kg·m²** (0.310 _ 1.10² = 0.3751, ~1.30× the real 0.288 kg·m²). The
 > previously stated 0.605 kg·m² value belongs to the 0.500 kg preset
-> (0.500 * 1.10² = 0.605 kg·m², **2.10×**).
+> (0.500 _ 1.10² = 0.605 kg·m², **2.10×**).
 >
 > Club properties reported by clubfitters follow the convention of measuring inertia
 > about the physical butt of the grip. In contrast, the model wrist origin is the
@@ -93,13 +93,13 @@ objective on a quadratic form. The optimum lies along `qdot* ∝ M^-1 c` with
 omega1*  ∝  L1 * [ I2 - m2 * r2 * (L2 - r2) ]
 ```
 
-| Club model                                                                              | Bracket       | Optimal hands at impact |
-| --------------------------------------------------------------------------------------- | ------------- | ----------------------- |
-| Point mass at tip (`r2 = L2`, `I2 = 0`) — head-only limit, **no longer shipped**         | **exactly 0** | stopped                 |
-| **Shipped distributed driver** (`r2 = 0.909`, `I2 = 0.0321`, `L2 = 1.10`)                | **−0.0217**   | moving _backward_       |
-| Measured driver `DRIVER_SPEC` (`m = 0.310`, `r2 = 0.867`, `I2 = 0.0551`, `L2 = 1.143`)  | **−0.0191**   | moving _backward_       |
-| Earlier tabulated row (`m2 = 0.31`, `r2 = 0.89`, `L2 = 1.143`, `I2 = 0.043`)            | −0.0268       | moving _backward_       |
-| COM at 88% of length, or `I2 ≥ 0.2` (≈5× a driver)                                      | positive      | moving forward          |
+| Club model                                                                             | Bracket       | Optimal hands at impact |
+| -------------------------------------------------------------------------------------- | ------------- | ----------------------- |
+| Point mass at tip (`r2 = L2`, `I2 = 0`) — head-only limit, **no longer shipped**       | **exactly 0** | stopped                 |
+| **Shipped distributed driver** (`r2 = 0.909`, `I2 = 0.0321`, `L2 = 1.10`)              | **−0.0217**   | moving _backward_       |
+| Measured driver `DRIVER_SPEC` (`m = 0.310`, `r2 = 0.867`, `I2 = 0.0551`, `L2 = 1.143`) | **−0.0191**   | moving _backward_       |
+| Earlier tabulated row (`m2 = 0.31`, `r2 = 0.89`, `L2 = 1.143`, `I2 = 0.043`)           | −0.0268       | moving _backward_       |
+| COM at 88% of length, or `I2 ≥ 0.2` (≈5× a driver)                                     | positive      | moving forward          |
 
 Re-run under #5523 (`scripts/rerun_distributed_club.py bracket`): the bracket
 `I2 - m2*r2*(L2 - r2)` is in kg·m². The sign result of the theorem is unchanged for every
@@ -117,6 +117,7 @@ reached the clubhead. Verified to machine precision across a 27-point parameter 
 ### Assumptions and realizability
 
 The impact-optimality theorem is an instantaneous variational calculation evaluated under two assumptions:
+
 1. **Fixed posture**: the club is aligned with the arms (`phi = 0`, impact pose).
 2. **Fixed kinetic energy**: the instantaneous kinetic energy budget `0.5 * qdot^T M qdot` is constant.
 
@@ -167,20 +168,20 @@ in the `cos(phi)` term. Matching `delta` reproduces `M22`, but leaves coupling a
 
 ### Geometric and measurement distinctions
 
-* **Butt-based club properties**: Clubfitting measurements (such as `DRIVER_SPEC`) report inertia and
+- **Butt-based club properties**: Clubfitting measurements (such as `DRIVER_SPEC`) report inertia and
   COM relative to the physical butt of the grip.
-* **Model wrist origin**: In the double pendulum model, segment 2 rotates about the wrist joint axis,
+- **Model wrist origin**: In the double pendulum model, segment 2 rotates about the wrist joint axis,
   which lies several centimeters down the grip from the physical butt where the hands grasp the club.
-* **Physical versus modeled length**: Physical driver length (e.g. 1.143 m / 45 in butt-to-sole) differs
+- **Physical versus modeled length**: Physical driver length (e.g. 1.143 m / 45 in butt-to-sole) differs
   from the modeled second-link length `L2` (e.g. 1.10 m), which is the distance from the wrist joint
   pivot to the modeled head center of mass at the tip.
 
-|                         | Real driver     | 0.310 kg at tip | Old preset (0.500 kg) | Ratio (old / real) | **Shipped (0.1078 + 0.2022 kg)** | Ratio (shipped / real) |
-| ----------------------- | --------------- | --------------- | --------------------- | ------------------ | -------------------------------- | ---------------------- |
-| Club mass               | 0.310 kg        | 0.310 kg        | 0.500 kg              | 1.61×              | 0.310 kg                         | 1.00×                  |
-| COM from wrist          | 0.867 m         | 1.100 m         | 1.100 m               | 1.27×              | 0.909 m                          | 1.05×                  |
-| **Inertia about wrist** | **0.288 kg·m²** | **0.3751 kg·m²**| **0.605 kg·m²**       | **2.10×**          | **0.2881 kg·m²**                 | **1.00×**              |
-| **Coupling `mu`**       | **0.175 kg·m²** | **0.222 kg·m²** | **0.358 kg·m²**       | **2.05×**          | **0.183 kg·m²**                  | **1.05×**              |
+|                         | Real driver     | 0.310 kg at tip  | Old preset (0.500 kg) | Ratio (old / real) | **Shipped (0.1078 + 0.2022 kg)** | Ratio (shipped / real) |
+| ----------------------- | --------------- | ---------------- | --------------------- | ------------------ | -------------------------------- | ---------------------- |
+| Club mass               | 0.310 kg        | 0.310 kg         | 0.500 kg              | 1.61×              | 0.310 kg                         | 1.00×                  |
+| COM from wrist          | 0.867 m         | 1.100 m          | 1.100 m               | 1.27×              | 0.909 m                          | 1.05×                  |
+| **Inertia about wrist** | **0.288 kg·m²** | **0.3751 kg·m²** | **0.605 kg·m²**       | **2.10×**          | **0.2881 kg·m²**                 | **1.00×**              |
+| **Coupling `mu`**       | **0.175 kg·m²** | **0.222 kg·m²**  | **0.358 kg·m²**       | **2.05×**          | **0.183 kg·m²**                  | **1.05×**              |
 
 (`scripts/rerun_distributed_club.py club`; the `me = 0.238 kg` point-mass equivalent has
 `mu = 0.170 kg·m²`, −2.5%, and the shipped split is +4.8%, so coupling is matched to
@@ -189,8 +190,8 @@ measured butt-referenced `DRIVER_SPEC` value is `0.0551`; the split matches mass
 inertia, not the centroidal inertia).
 
 Placing the real driver's 0.310 kg at the tip of a 1.10 m modeled shaft yields `delta = 0.3751 kg·m²`
-(0.310 * 1.10² = 0.3751), which is 1.30× the real value. The historical preset lumped 0.500 kg at the tip,
-producing 0.605 kg·m² (0.500 * 1.10² = 0.605, 2.10×) and severe coupling distortion.
+(0.310 _ 1.10² = 0.3751), which is 1.30× the real value. The historical preset lumped 0.500 kg at the tip,
+producing 0.605 kg·m² (0.500 _ 1.10² = 0.605, 2.10×) and severe coupling distortion.
 
 ### Effect, holding everything else fixed
 
@@ -198,18 +199,18 @@ Re-run under #5523 at the revised comparison settings (0.28 s, 21 nodes, 250 / 2
 torque limits, `scripts/rerun_distributed_club.py masses`). The first three rows are
 the _lumped_ head-only limit of the shipped model; the last row is the shipped club.
 
-| Club                                       | Clubhead     | Hands        | Club/arm | Braking | Max defect          |
-| ------------------------------------------ | ------------ | ------------ | -------- | ------- | ------------------- |
-| Lumped 0.500 kg (old preset)               | 41.7 m/s     | 0.89 m/s     | 28.2     | 33%     | 0.36 (not converged)|
-| Lumped 0.320 kg                            | 41.6 m/s     | 2.02 m/s     | 11.6     | 38%     | 6e-14               |
-| Lumped 0.238 kg (equivalent tip mass)      | 49.7 m/s     | 7.27 m/s     | 3.45     | 19%     | 4e-13               |
-| **Distributed 0.1078 + 0.2022 kg (shipped)** | **51.4 m/s** | **8.02 m/s** | **3.20** | **14%** | 8e-15               |
+| Club                                         | Clubhead     | Hands        | Club/arm | Braking | Max defect           |
+| -------------------------------------------- | ------------ | ------------ | -------- | ------- | -------------------- |
+| Lumped 0.500 kg (old preset)                 | 41.7 m/s     | 0.89 m/s     | 28.2     | 33%     | 0.36 (not converged) |
+| Lumped 0.320 kg                              | 41.6 m/s     | 2.02 m/s     | 11.6     | 38%     | 6e-14                |
+| Lumped 0.238 kg (equivalent tip mass)        | 49.7 m/s     | 7.27 m/s     | 3.45     | 19%     | 4e-13                |
+| **Distributed 0.1078 + 0.2022 kg (shipped)** | **51.4 m/s** | **8.02 m/s** | **3.20** | **14%** | 8e-15                |
 
-| Previously published (lumped tip mass)     | Clubhead     | Hands        | Club/arm | Braking |
-| ------------------------------------------ | ------------ | ------------ | -------- | ------- |
-| 0.500 kg (old preset)                      | 36.4 m/s     | 0.36 m/s     | 59.4     | 33%     |
-| 0.320 kg                                   | 45.3 m/s     | 6.01 m/s     | 3.86     | 24%     |
-| 0.238 kg (real driver)                     | 50.8 m/s     | 7.95 m/s     | 3.18     | 24%     |
+| Previously published (lumped tip mass) | Clubhead | Hands    | Club/arm | Braking |
+| -------------------------------------- | -------- | -------- | -------- | ------- |
+| 0.500 kg (old preset)                  | 36.4 m/s | 0.36 m/s | 59.4     | 33%     |
+| 0.320 kg                               | 45.3 m/s | 6.01 m/s | 3.86     | 24%     |
+| 0.238 kg (real driver)                 | 50.8 m/s | 7.95 m/s | 3.18     | 24%     |
 
 What changed, plainly:
 
@@ -256,14 +257,14 @@ tour players are not supplied for these widened heuristic bands. For example,
 four handicap categories from scratch to high); this is not an exact professional-tour
 6–9 m/s / 45–55 m/s interval.
 
-| Observable                      | Heuristic band      | Source                                                                                                    |
-| ------------------------------- | ------------------- | --------------------------------------------------------------------------------------------------------- |
-| Clubhead speed at impact        | 45–55 m/s           | Heuristic band; [Nesbit 2005](https://www.jssm.org/jssm-04-499.xml.xml) Table 3 reports 43–50 m/s for amateur cohort |
+| Observable                      | Heuristic band      | Source                                                                                                                                                           |
+| ------------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Clubhead speed at impact        | 45–55 m/s           | Heuristic band; [Nesbit 2005](https://www.jssm.org/jssm-04-499.xml.xml) Table 3 reports 43–50 m/s for amateur cohort                                             |
 | **Hand speed at impact**        | **6–9 m/s**         | Heuristic band; [Nesbit 2005](https://www.jssm.org/jssm-04-499.xml.xml) Table 3 reports 7.1–8.0 m/s grip speed; [Miura 2001](https://doi.org/10.1007/BF02844309) |
-| Downswing duration              | 0.23–0.32 s         | Heuristic band; [Jorgensen 1970](https://doi.org/10.1119/1.1976419); [Nesbit 2005](https://www.jssm.org/jssm-04-499.xml.xml) |
-| Club / arm rate ratio at impact | 2.5–4               | Heuristic band derived from [Nesbit 2005](https://www.jssm.org/jssm-04-499.xml.xml) segment angular velocities |
-| Wrist cock at impact            | −5 to 20°           | Heuristic band; [MacKenzie & Sprigings 2009](https://doi.org/10.1007/s12283-009-0020-9) release timing |
-| Half-release point              | 55–80% of downswing | Heuristic band; [Sprigings & Neal 2000](https://doi.org/10.1123/jab.16.4.356); [MacKenzie & Sprigings 2009](https://doi.org/10.1007/s12283-009-0020-9) |
+| Downswing duration              | 0.23–0.32 s         | Heuristic band; [Jorgensen 1970](https://doi.org/10.1119/1.1976419); [Nesbit 2005](https://www.jssm.org/jssm-04-499.xml.xml)                                     |
+| Club / arm rate ratio at impact | 2.5–4               | Heuristic band derived from [Nesbit 2005](https://www.jssm.org/jssm-04-499.xml.xml) segment angular velocities                                                   |
+| Wrist cock at impact            | −5 to 20°           | Heuristic band; [MacKenzie & Sprigings 2009](https://doi.org/10.1007/s12283-009-0020-9) release timing                                                           |
+| Half-release point              | 55–80% of downswing | Heuristic band; [Sprigings & Neal 2000](https://doi.org/10.1123/jab.16.4.356); [MacKenzie & Sprigings 2009](https://doi.org/10.1007/s12283-009-0020-9)           |
 
 Two results from that literature bear directly on the diagnosis.
 
@@ -292,12 +293,13 @@ skeletal segment, absorbing mechanical energy. The implemented braking branch al
 active lengthening and energy absorption.
 
 Crucially, **net actuator power, segment deceleration, and individual-muscle activation are distinct**:
+
 1. **Net actuator power** (`P_net = tau * omega`): The net rate of work done across the joint.
    When torque opposes velocity (`P_net < 0`), net actuator power is negative and mechanical
    energy is absorbed from the segment.
 2. **Segment deceleration** (`omega * omegadot < 0`): Deceleration of a limb segment can arise
    passively from inertial interaction / coupling torques (such as uncocking acceleration)
-   even when net actuator torque is driving or zero. Segment deceleration does *not* imply active
+   even when net actuator torque is driving or zero. Segment deceleration does _not_ imply active
    muscular braking.
 3. **Individual-muscle activation**: Agonist and antagonist muscles can co-contract, and
    individual muscle units can actively lengthen while net joint torque remains positive.
@@ -337,12 +339,12 @@ rate-independent hub clamp with the tour brake fraction (0.30) and eccentric gai
 (1.30); "Hill" is the tour torque-velocity curve with symmetric braking; "Hill + weak
 brake" is `tour_hub_actuation()`.
 
-| Model variant             | Lumped: hand / ratio / braking / defect | Feasible? | Shipped club: hand / ratio / braking / defect | Feasible? |
-| ------------------------- | --------------------------------------- | --------- | --------------------------------------------- | --------- |
-| Symmetric clamp           | 0.36 m/s / 59.6 / 35% / 2e-12           | yes       | **8.02 m/s / 3.20 / 14% / 8e-15**             | **yes**   |
-| Weak brake only           | 0.46 m/s / 39.4 / 41% / 0.20            | no        | 4.48 m/s / 5.02 / 38% / 0.14                  | no        |
-| **Hill torque–velocity**  | **6.84 m/s / 2.75 / 6% / 1.47**         | **no**    | 11.23 m/s / 2.29 / 0% / 1.91                  | no        |
-| Hill + weak brake         | 7.00 m/s / 2.75 / 6% / 1.63             | no        | 11.23 m/s / 2.30 / 0% / 1.91                  | no        |
+| Model variant            | Lumped: hand / ratio / braking / defect | Feasible? | Shipped club: hand / ratio / braking / defect | Feasible? |
+| ------------------------ | --------------------------------------- | --------- | --------------------------------------------- | --------- |
+| Symmetric clamp          | 0.36 m/s / 59.6 / 35% / 2e-12           | yes       | **8.02 m/s / 3.20 / 14% / 8e-15**             | **yes**   |
+| Weak brake only          | 0.46 m/s / 39.4 / 41% / 0.20            | no        | 4.48 m/s / 5.02 / 38% / 0.14                  | no        |
+| **Hill torque–velocity** | **6.84 m/s / 2.75 / 6% / 1.47**         | **no**    | 11.23 m/s / 2.29 / 0% / 1.91                  | no        |
+| Hill + weak brake        | 7.00 m/s / 2.75 / 6% / 1.63             | no        | 11.23 m/s / 2.30 / 0% / 1.91                  | no        |
 
 Compared with the table published before #5523 (symmetric 0.36 m/s, ratio 59.2, 32%;
 weak brake 0.08 m/s, ratio 235.7, 44%, listed feasible; Hill 6.8 m/s, ratio 2.8, 0%;
@@ -386,12 +388,12 @@ cost is a few m/s of hand speed, not all of it.
 `hand_speed_frontier` measured the price with the **mis-specified** (lumped 0.50 kg) club
 under historical experiment settings (duration 0.36 s, ±250 N·m). Re-run under #5523:
 
-| Hand-speed floor          | Feasible (defect < 1e-6) | Clubhead speed | Club/arm ratio |
-| ------------------------- | ------------------------ | -------------- | -------------- |
-| none                      | yes (2e-12)              | 36.4 m/s       | 59.6           |
-| 3 m/s                     | yes (1e-14)              | 34.1 m/s       | 6.1            |
-| 5 m/s                     | no (defect 0.03)         | 29.4 m/s       | 2.9            |
-| **6 m/s (heuristic band)**| **no (defect 0.23)**     | 29.6 m/s       | 2.3            |
+| Hand-speed floor           | Feasible (defect < 1e-6) | Clubhead speed | Club/arm ratio |
+| -------------------------- | ------------------------ | -------------- | -------------- |
+| none                       | yes (2e-12)              | 36.4 m/s       | 59.6           |
+| 3 m/s                      | yes (1e-14)              | 34.1 m/s       | 6.1            |
+| 5 m/s                      | no (defect 0.03)         | 29.4 m/s       | 2.9            |
+| **6 m/s (heuristic band)** | **no (defect 0.23)**     | 29.6 m/s       | 2.3            |
 
 (Previously published: 5 m/s "marginal" at 29.6 m/s, 6 m/s "no" with no values; the
 5 m/s defect of 0.03 is above the 1e-6 predicate, so "marginal" is now "no".
@@ -417,12 +419,12 @@ observables, score against heuristic reference bands — the answer depends on w
 the model carries. Re-run under #5523 (`scripts/rerun_distributed_club.py ranking`;
 deviation is summed distance outside the bands in half-widths, so lower is better):
 
-| Regime (club, duration)                   | Deviation spread across objectives                      | Observables inside band |
-| ----------------------------------------- | ------------------------------------------------------- | ----------------------- |
-| Lumped 0.50 kg, 0.36 s, unconstrained     | 81.6 → 117.3 (Coriolis worst)                           | 1 of 6                  |
-| Lumped 0.50 kg, 0.36 s, hands ≥ 3 m/s     | 8.97 → 9.00 (**0.4% spread**)                           | 1 of 6                  |
-| **Shipped club, 0.28 s, unconstrained**   | **0.800 → 0.900 (centrifugal worst; 12% of the mean)**  | **5 of 6** (centrifugal 4) |
-| Shipped club, 0.28 s, hands ≥ 3 m/s       | identical (the floor is not binding: hands are 6.3–8.1 m/s) | 5 of 6 (centrifugal 4) |
+| Regime (club, duration)                 | Deviation spread across objectives                          | Observables inside band    |
+| --------------------------------------- | ----------------------------------------------------------- | -------------------------- |
+| Lumped 0.50 kg, 0.36 s, unconstrained   | 81.6 → 117.3 (Coriolis worst)                               | 1 of 6                     |
+| Lumped 0.50 kg, 0.36 s, hands ≥ 3 m/s   | 8.97 → 9.00 (**0.4% spread**)                               | 1 of 6                     |
+| **Shipped club, 0.28 s, unconstrained** | **0.800 → 0.900 (centrifugal worst; 12% of the mean)**      | **5 of 6** (centrifugal 4) |
+| Shipped club, 0.28 s, hands ≥ 3 m/s     | identical (the floor is not binding: hands are 6.3–8.1 m/s) | 5 of 6 (centrifugal 4)     |
 
 (Previously published for the lumped club: 81.5 → 120.3 and 8.66 → 8.71, a 0.6% spread;
 the lumped numbers drifted by up to 3% and the conclusion is unchanged.)

@@ -20,7 +20,12 @@
         "A negative wrist torque does not imply negative club acceleration at every instant.",
         "Inspect power and work as well as torque because transfer is configuration and velocity dependent."
       ],
-      "observables": ["clubhead_speed", "segment_energy", "applied_joint_power", "wrist_interface_power"],
+      "observables": [
+        "clubhead_speed",
+        "segment_energy",
+        "applied_joint_power",
+        "wrist_interface_power"
+      ],
       "limitations": [
         "The two-link model omits bilateral hand forces, shaft flexibility, and three-dimensional motion.",
         "A timing association is not by itself evidence of a unique causal pathway."
@@ -43,7 +48,12 @@
         "Compare both matched peak torque and matched actuator work.",
         "Record the parameter range; an optimum in one range is not a universal strategy."
       ],
-      "observables": ["wrist_torque", "wrist_power", "clubhead_speed", "peak_timing"],
+      "observables": [
+        "wrist_torque",
+        "wrist_power",
+        "clubhead_speed",
+        "peak_timing"
+      ],
       "limitations": [
         "The prescribed torque family is a modeling choice rather than a measured neuromuscular command.",
         "Impact, grip compliance, and strength-speed limits are outside this experiment."
@@ -66,7 +76,12 @@
         "Peak-speed order is a kinematic observation, not a complete energy-transfer measure.",
         "Use the mass-matrix view to see how geometric coupling changes through the motion."
       ],
-      "observables": ["joint_speed_sequence", "joint_power", "segment_energy", "mass_matrix"],
+      "observables": [
+        "joint_speed_sequence",
+        "joint_power",
+        "segment_energy",
+        "mass_matrix"
+      ],
       "limitations": [
         "The open chain does not represent the bilateral closed-loop geometry of two hands on a club.",
         "Segment definitions affect the apparent kinematic sequence."
@@ -89,7 +104,13 @@
         "Equal and opposite hand forces can have near-zero net force while retaining a nonzero couple.",
         "Check constraint residuals before interpreting force magnitudes."
       ],
-      "observables": ["hand_forces", "net_club_force", "equivalent_couple", "constraint_residual", "club_torque"],
+      "observables": [
+        "hand_forces",
+        "net_club_force",
+        "equivalent_couple",
+        "constraint_residual",
+        "club_torque"
+      ],
       "limitations": [
         "The planar closed-loop model simplifies scapular, wrist, grip, and shaft mechanics.",
         "Constraint forces depend on model geometry and the chosen generalized coordinates."
@@ -112,7 +133,12 @@
         "Pointwise ZTCF answers a local question; it is not a full alternative swing.",
         "A forward counterfactual must recompute the state trajectory and constraint forces."
       ],
-      "observables": ["ztcf_acceleration", "ztcf_force", "forward_trajectory", "constraint_force"],
+      "observables": [
+        "ztcf_acceleration",
+        "ztcf_force",
+        "forward_trajectory",
+        "constraint_force"
+      ],
       "limitations": [
         "Removing modeled torque is not equivalent to removing all muscle action or stiffness.",
         "Counterfactual conclusions remain conditional on model structure and initial state."
@@ -135,7 +161,12 @@
         "Do not hide sign reversals behind an average effect.",
         "Separate numerical failures from scientifically adverse results."
       ],
-      "observables": ["effect_size_distribution", "sign_consistency", "peak_timing", "numerical_residual"],
+      "observables": [
+        "effect_size_distribution",
+        "sign_consistency",
+        "peak_timing",
+        "numerical_residual"
+      ],
       "limitations": [
         "A local parameter envelope does not establish population-level biomechanics.",
         "Input distributions are assumptions and must be reported with the result."

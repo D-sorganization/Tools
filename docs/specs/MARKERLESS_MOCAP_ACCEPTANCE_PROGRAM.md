@@ -6,15 +6,15 @@ Status: Required release gates; passing the current schema slice does not qualif
 
 ## Contract levels
 
-| Level | Required evidence |
-|---|---|
-| Unit | DbC on identities, capabilities, clocks, frames, coordinates, transforms, observations, methods, policies, and manifests |
-| Property | Transform/unit invariance, deterministic serialization, perturbation/noise response, missing data, order independence where declared |
-| Component | Synthetic/prerecorded driver, capture lifecycle, calibration solver, pose mapping, association, reconstruction, C3D reader/writer |
-| Integration | Tools-to-Upstream schema, biomechanics adapters, C3D independent reader, AffineDrift sanitized fixture projection |
-| System | Mixed-camera matrix, cancellation, disconnect/reconnect, dropped frames, storage limits, crash recovery, multi-surface accessibility |
-| Physical | Shop calibration target/phantom, synchronized reference event, coverage, lighting, repeatability, task-specific reference comparison |
-| Release | Exact commit, clean export, license/SBOM, protected checks, merge SHA, artifacts, post-merge smoke and public verification |
+| Level       | Required evidence                                                                                                                    |
+| ----------- | ------------------------------------------------------------------------------------------------------------------------------------ |
+| Unit        | DbC on identities, capabilities, clocks, frames, coordinates, transforms, observations, methods, policies, and manifests             |
+| Property    | Transform/unit invariance, deterministic serialization, perturbation/noise response, missing data, order independence where declared |
+| Component   | Synthetic/prerecorded driver, capture lifecycle, calibration solver, pose mapping, association, reconstruction, C3D reader/writer    |
+| Integration | Tools-to-Upstream schema, biomechanics adapters, C3D independent reader, AffineDrift sanitized fixture projection                    |
+| System      | Mixed-camera matrix, cancellation, disconnect/reconnect, dropped frames, storage limits, crash recovery, multi-surface accessibility |
+| Physical    | Shop calibration target/phantom, synchronized reference event, coverage, lighting, repeatability, task-specific reference comparison |
+| Release     | Exact commit, clean export, license/SBOM, protected checks, merge SHA, artifacts, post-merge smoke and public verification           |
 
 ## Phase gates
 

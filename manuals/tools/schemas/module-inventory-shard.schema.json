@@ -4,12 +4,7 @@
   "title": "Tools Module Inventory Shard (one top-level package)",
   "type": "object",
   "additionalProperties": false,
-  "required": [
-    "authority",
-    "entries",
-    "package",
-    "schema_version"
-  ],
+  "required": ["authority", "entries", "package", "schema_version"],
   "properties": {
     "authority": {
       "const": "D-sorganization/Tools"

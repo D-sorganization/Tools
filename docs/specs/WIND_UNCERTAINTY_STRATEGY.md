@@ -70,7 +70,7 @@ strategy and wind draw:
 - **Policy-fixed perfect-information counterfactual** uses the true wind both
   for the same declared aim policy and for the physics. It does not search for
   a new aim, club, or policy. Therefore `information_cost_delta = actual_cost -
-  perfect_information_cost` can be negative on an individual trial; it is not
+perfect_information_cost` can be negative on an individual trial; it is not
   labelled regret or a globally optimized expected value of perfect
   information.
 

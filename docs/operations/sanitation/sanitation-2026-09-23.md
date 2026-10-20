@@ -18,11 +18,11 @@ highest-value, safe-to-complete items in a single run.
 
 Three worktrees present at time of pass:
 
-| Path | Branch | Status |
-|------|--------|--------|
-| `/home/dieterolson/staff-repos/Tools` | main | Clean — primary checkout |
-| `/home/dieterolson/staff-worktrees/Tools-run-0f35c4c1dc34` | staff/sanitation-task-b1e56d | This session |
-| `/home/dieterolson/staff-worktrees/Tools-run-4c018eb1cb99` | staff/pr-remediator-task-1796c5 | Active — not touched |
+| Path                                                       | Branch                          | Status                   |
+| ---------------------------------------------------------- | ------------------------------- | ------------------------ |
+| `/home/dieterolson/staff-repos/Tools`                      | main                            | Clean — primary checkout |
+| `/home/dieterolson/staff-worktrees/Tools-run-0f35c4c1dc34` | staff/sanitation-task-b1e56d    | This session             |
+| `/home/dieterolson/staff-worktrees/Tools-run-4c018eb1cb99` | staff/pr-remediator-task-1796c5 | Active — not touched     |
 
 No stale or pruneable worktrees identified. The pr-remediator worktree is
 active; left alone per playbook rule (no active-agent worktree pruning).
@@ -46,10 +46,10 @@ branch list is not obviously out of sync with the remote.
 Two plain-text session artifacts were found in `docs/development/` with no
 ongoing documentation value:
 
-| File | Introduced | Reason archived |
-|------|-----------|-----------------|
+| File                          | Introduced  | Reason archived                                                                                             |
+| ----------------------------- | ----------- | ----------------------------------------------------------------------------------------------------------- |
 | `IMPLEMENTATION_COMPLETE.txt` | `4eeae7b53` | Agent session status checklist for completed Phase 2.1 work (Issue #2408); redundant with existing .md docs |
-| `workflow_runs_tools.txt` | `420c66dcf` | Raw `gh run list` CLI output snapshot; stale ephemeral data |
+| `workflow_runs_tools.txt`     | `420c66dcf` | Raw `gh run list` CLI output snapshot; stale ephemeral data                                                 |
 
 Both files moved to:
 `docs/archive/docs-development-cleanup-2026-09-23/`
@@ -59,13 +59,13 @@ with a `PROVENANCE.md` explaining origin and rationale.
 
 ## Files Not Touched (Intentionally Preserved)
 
-| File | Reason preserved |
-|------|-----------------|
-| `docs/development/open_issues.json` | May serve LOCAL FIRST agent lookup (fleet policy); stale but harmless |
+| File                                                         | Reason preserved                                                                 |
+| ------------------------------------------------------------ | -------------------------------------------------------------------------------- |
+| `docs/development/open_issues.json`                          | May serve LOCAL FIRST agent lookup (fleet policy); stale but harmless            |
 | `docs/development/dbc_dry_tdd_project_audit_2026-02-27.json` | Dated audit artifact; borderline, but has reference value for historical context |
-| `docs/development/flight_model_validation.json` | Active schema `flight-validation-manifest/v1`; referenced by validation tooling |
-| `docs/development/IMPLEMENTATION_COMPLETE.txt` | Archived (see above) |
-| `docs/development/workflow_runs_tools.txt` | Archived (see above) |
+| `docs/development/flight_model_validation.json`              | Active schema `flight-validation-manifest/v1`; referenced by validation tooling  |
+| `docs/development/IMPLEMENTATION_COMPLETE.txt`               | Archived (see above)                                                             |
+| `docs/development/workflow_runs_tools.txt`                   | Archived (see above)                                                             |
 
 ---
 

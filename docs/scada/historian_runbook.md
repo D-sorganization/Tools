@@ -23,15 +23,15 @@ Governed by `docs/adr/ADR-0050-plant-historian-timescaledb.md` and licensing rul
 
 ### Primary Backend Settings (`src/p1am_control_system/backend/settings.py` & `database.py`)
 
-| Setting / Flag | Default | Description |
-| :--- | :--- | :--- |
-| `P1AM_DB_PATH` | `dcs_scada.db` | Filesystem path for the primary SQLite database. |
-| `P1AM_CAPTURE_INTERVAL_S` | `5.0` | Minimum seconds between historian sample writes (0 = every scan). |
-| `P1AM_HISTORIAN_MAX_BYTES` | `1073741824` | Byte-cap ceiling (1 GB) before retention pruning triggers in `src/p1am_control_system/backend/data_capture.py`. |
-| `P1AM_HISTORIAN_RETENTION_INTERVAL_S` | `300.0` | Interval in seconds between retention cleanup sweeps. |
-| `P1AM_SQLITE_SYNCHRONOUS` | `NORMAL` | SQLite synchronous pragma (`NORMAL`, `FULL`, `OFF`). |
-| `P1AM_POLL_INTERVAL_S` | `0.1` | Fixed 10 Hz PLC control scan period. |
-| `P1AM_REQUIRE_READ_AUTH` | `True` | Authorization gate protecting telemetry and trend query endpoints. |
+| Setting / Flag                        | Default        | Description                                                                                                     |
+| :------------------------------------ | :------------- | :-------------------------------------------------------------------------------------------------------------- |
+| `P1AM_DB_PATH`                        | `dcs_scada.db` | Filesystem path for the primary SQLite database.                                                                |
+| `P1AM_CAPTURE_INTERVAL_S`             | `5.0`          | Minimum seconds between historian sample writes (0 = every scan).                                               |
+| `P1AM_HISTORIAN_MAX_BYTES`            | `1073741824`   | Byte-cap ceiling (1 GB) before retention pruning triggers in `src/p1am_control_system/backend/data_capture.py`. |
+| `P1AM_HISTORIAN_RETENTION_INTERVAL_S` | `300.0`        | Interval in seconds between retention cleanup sweeps.                                                           |
+| `P1AM_SQLITE_SYNCHRONOUS`             | `NORMAL`       | SQLite synchronous pragma (`NORMAL`, `FULL`, `OFF`).                                                            |
+| `P1AM_POLL_INTERVAL_S`                | `0.1`          | Fixed 10 Hz PLC control scan period.                                                                            |
+| `P1AM_REQUIRE_READ_AUTH`              | `True`         | Authorization gate protecting telemetry and trend query endpoints.                                              |
 
 ### Diagnostic Metrics & Loop Counters (`src/p1am_control_system/backend/performance_models.py` & `poll_runtime.py`)
 
@@ -78,25 +78,31 @@ Perform these checks immediately after enabling dual-write or during routine aud
 
 1. **Inspect Loop Diagnostics via API:**
    Request the performance endpoint:
+
    ```bash
    curl -s http://localhost:8000/api/performance | python3 -m json.tool
    ```
+
    **Acceptance Criteria:**
+
    - `historian_write_failures` must be `0` (or not incrementing).
    - `historian_samples_dropped` must be `0`.
    - `scan_overruns` must remain steady without unexpected spikes.
 
 2. **Verify Local SQLite Persistence:**
    Confirm new samples are writing to `TagLog` (`src/p1am_control_system/backend/models.py`):
+
    ```bash
    sqlite3 dcs_scada.db "SELECT count(*), max(timestamp) FROM taglog;"
    ```
 
 3. **Verify Remote TimescaleDB Ingestion:**
    On the historian host:
+
    ```bash
    psql "$HISTORIAN_DSN" -c "SELECT count(*), max(ts) FROM tag_sample;"
    ```
+
    Confirm that `max(ts)` tracks within 5–10 seconds of current UTC time.
 
 4. **Verify Grafana Dashboard:**
@@ -136,21 +142,24 @@ Because live forwarding operates on an at-most-once in-memory queue to guarantee
 ## 4. Failure Modes & Troubleshooting
 
 ### 1. Network Partition / Remote Host Down
+
 - **Symptom:** Remote TimescaleDB becomes unreachable.
 - **System Response:** The bounded in-memory buffer fills. Once `DEFAULT_HISTORIAN_QUEUE_SIZE` is reached, `HistorianWriter` drops oldest samples while carrying alarm and quality transitions forward. `historian_samples_dropped` increments.
 - **Safety Impact:** **Zero.** The PLC poll loop runs unhindered at 10 Hz; local SQLite logging continues without interruption.
 - **Recovery:** When network connectivity is restored, live streaming resumes automatically. Run **Procedure C** to backfill the gap from SQLite.
 
 ### 2. SQLite Database Lock or Flash Latency
+
 - **Symptom:** SQLite write takes longer than normal due to disk contention or VACUUM.
 - **System Response:** The off-loop worker thread absorbs the delay. Batches are retried up to 3 times with exponential backoff.
 - **Diagnostics:** If all retries fail, `historian_write_failures` increments and the event is logged.
 
 ### 3. Continuous Aggregate Stall Hazard
+
 - **Warning:** In TimescaleDB, if a continuous aggregate rollup job halts while the raw chunk retention policy remains active, raw data will be dropped before summaries are computed, causing irreversible historical data loss.
 - **Detection:**
   ```sql
-  SELECT job_id, last_run_status, last_successful_finish, total_failures 
+  SELECT job_id, last_run_status, last_successful_finish, total_failures
   FROM timescaledb_information.job_stats;
   ```
 - **Remediation:** If the aggregate job is failing, immediately drop or pause the retention policy:
@@ -166,20 +175,26 @@ Because live forwarding operates on an at-most-once in-memory queue to guarantee
 In the event of persistent network instability, remote server corruption, unresolvable driver errors, or planned infrastructure maintenance, follow this explicit procedure to return the plant to **SQLite-only** operation.
 
 ### Step 1: Disable External Forwarding
+
 Edit the service environment configuration (`/etc/default/p1am-backend` or `.env`):
+
 ```bash
 # Disable remote forwarding entirely
 P1AM_TIMESCALE_FORWARDING=false
 ```
+
 Alternatively, remove or comment out `P1AM_TIMESCALE_TARGET_DSN`.
 
 ### Step 2: Restart the Backend Service
+
 Apply the configuration change by restarting the control daemon:
+
 ```bash
 sudo systemctl restart p1am-backend
 ```
 
 ### Step 3: Validate SQLite-Only Operation
+
 1. Confirm that the service started cleanly and the remote forwarder task is inactive:
    ```bash
    journalctl -u p1am-backend -n 30 --no-pager
@@ -195,11 +210,14 @@ sudo systemctl restart p1am-backend
 4. Confirm loop scan stability: `scan_overruns` remains at normal baseline and scan interval stays at 100 ms (`P1AM_POLL_INTERVAL_S = 0.1`).
 
 ### Step 4: Decommission Remote Services Safely
+
 With forwarding disabled, remote TimescaleDB and Grafana containers on the historian host can be stopped, backed up, or re-initialized with zero impact on the running plant:
+
 ```bash
 # On the historian host
 docker compose down
 ```
 
 ### Step 5: Data Integrity Guarantee
+
 Because SQLite has recorded all tag samples and alarms locally throughout the deployment, **zero data is lost** during or after rollback.

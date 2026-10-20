@@ -5,7 +5,7 @@
 **Status:** Approved & Ratified  
 **Date:** 2026-09-21  
 **Scope:** `src/swing_sim/impact_interval/`, `src/swing_sim/impact/types.py`, and Rate-of-Closure PyQt UI tabs  
-**Disposition:** Drop proposed standalone tab as superseded by #4473; retain headless physics calculation engine  
+**Disposition:** Drop proposed standalone tab as superseded by #4473; retain headless physics calculation engine
 
 ---
 

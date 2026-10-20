@@ -1,7 +1,5 @@
 {
-  "calibration_ids": [
-    "calibration-reference-v1"
-  ],
+  "calibration_ids": ["calibration-reference-v1"],
   "cameras": [
     {
       "device_id": "camera-01",
@@ -18,7 +16,7 @@
       "clock_id": "synthetic-clock",
       "kind": "device-hardware",
       "monotonic": true,
-      "tick_period_seconds": 1e-09
+      "tick_period_seconds": 1e-9
     }
   ],
   "created_at_utc": "2026-08-25T20:00:00Z",
@@ -40,9 +38,7 @@
   "schema_version": "mocap-session/1.0.0",
   "session_id": "session-2026-08-25-001",
   "state": "finalized",
-  "warnings": [
-    "synthetic fixture; not physical qualification"
-  ],
+  "warnings": ["synthetic fixture; not physical qualification"],
   "world_frame": {
     "frame_id": "affinedrift-world-v1",
     "handedness": "right-handed",

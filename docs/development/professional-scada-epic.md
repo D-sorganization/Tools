@@ -100,24 +100,24 @@ approved integration.
 
 ## Feature acceptance matrix
 
-| ID | Required evidence |
-| --- | --- |
-| F01 | Named sessions and server-side roles; every attempted mutation records actor, action, target, before/after, reason, time, result, and revision without secrets. |
-| F02 | Value, source/server timestamps, quality, diagnostic reason, and sequence propagate through driver, API, historian, alarm logic, and HMI; disconnect and stale scenarios pass. |
+| ID  | Required evidence                                                                                                                                                                               |
+| --- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| F01 | Named sessions and server-side roles; every attempted mutation records actor, action, target, before/after, reason, time, result, and revision without secrets.                                 |
+| F02 | Value, source/server timestamps, quality, diagnostic reason, and sequence propagate through driver, API, historian, alarm logic, and HMI; disconnect and stale scenarios pass.                  |
 | F03 | Priority, lifecycle state, acknowledgment, authorized shelving with expiry, designed suppression, first-out, deadband/delay, help, and alarm-performance reports are deterministic and audited. |
-| F04 | Draft, validate, diff, review, approve, activate, identify, and roll back a protected synthetic configuration; no bypass path can silently activate it. |
-| F05 | A clean isolated instance restores a verified package, starts de-energized, and reports build, configuration, database, clock, storage, service, driver, and backup health. |
-| F06 | One synthetic multi-area process uses reusable accessible faceplates and progressive overview-to-detail navigation with consistent quality, mode, alarm, interlock, and trend drill-down. |
-| F07 | Synthetic trips capture first-out and consequences; bypasses require role, reason, expiry, banner, audit, and a non-bypassable policy; protection categories remain distinct. |
-| F08 | Saved investigations reproduce query, tag metadata, transformations, charts, context, and export checksums; bad data is not silently interpolated. |
-| F09 | Simulator-only start, run, hold, stop, abort, and recovery transitions are deterministic, bounded, auditable, and scenario-tested with invented parameters. |
-| F10 | Calibration, drift, flatline, command/feedback mismatch, runtime/start counters, noisy signals, and device statistics generate maintainable advisory records distinct from trips. |
-| F11 | A connector can fail without crashing SCADA; its tags degrade quality, commands fail closed, diagnostics identify the connector, and secrets remain redacted. |
-| F12 | Declarative scenarios emit a self-contained evidence package with software/config hashes, expected states, alarms, audit events, timing windows, limitations, and sign-off fields. |
-| F13 | Shift/run entries are attributable, linked to exact events/trends, searchable, and append-only after sign-off with explicit handover acknowledgment. |
-| F14 | Alarm-driven notifications prove delay, suppression, escalation, acknowledgment cancellation, rate limiting, redaction, and delivery audit. |
-| F15 | Fault injection proves one command authority, ordered timestamps, buffered-data reconciliation, defined recovery objectives, and safe behavior without the HMI. |
-| F16 | Advisory results carry model/data provenance, constraints, confidence, replay evidence, and operator disposition; there is no authoritative write path. |
+| F04 | Draft, validate, diff, review, approve, activate, identify, and roll back a protected synthetic configuration; no bypass path can silently activate it.                                         |
+| F05 | A clean isolated instance restores a verified package, starts de-energized, and reports build, configuration, database, clock, storage, service, driver, and backup health.                     |
+| F06 | One synthetic multi-area process uses reusable accessible faceplates and progressive overview-to-detail navigation with consistent quality, mode, alarm, interlock, and trend drill-down.       |
+| F07 | Synthetic trips capture first-out and consequences; bypasses require role, reason, expiry, banner, audit, and a non-bypassable policy; protection categories remain distinct.                   |
+| F08 | Saved investigations reproduce query, tag metadata, transformations, charts, context, and export checksums; bad data is not silently interpolated.                                              |
+| F09 | Simulator-only start, run, hold, stop, abort, and recovery transitions are deterministic, bounded, auditable, and scenario-tested with invented parameters.                                     |
+| F10 | Calibration, drift, flatline, command/feedback mismatch, runtime/start counters, noisy signals, and device statistics generate maintainable advisory records distinct from trips.               |
+| F11 | A connector can fail without crashing SCADA; its tags degrade quality, commands fail closed, diagnostics identify the connector, and secrets remain redacted.                                   |
+| F12 | Declarative scenarios emit a self-contained evidence package with software/config hashes, expected states, alarms, audit events, timing windows, limitations, and sign-off fields.              |
+| F13 | Shift/run entries are attributable, linked to exact events/trends, searchable, and append-only after sign-off with explicit handover acknowledgment.                                            |
+| F14 | Alarm-driven notifications prove delay, suppression, escalation, acknowledgment cancellation, rate limiting, redaction, and delivery audit.                                                     |
+| F15 | Fault injection proves one command authority, ordered timestamps, buffered-data reconciliation, defined recovery objectives, and safe behavior without the HMI.                                 |
+| F16 | Advisory results carry model/data provenance, constraints, confidence, replay evidence, and operator disposition; there is no authoritative write path.                                         |
 
 ## Cross-cutting release gates
 
