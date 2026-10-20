@@ -1574,6 +1574,32 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5686 · Accept Valid Change Fragments in the SPEC Freshness Hook
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5686
+- **Branch:** fix/native-wheel-matrix-5685
+- **PR:** #5689
+- **Paths:** see #5689
+- **Started:** 2026-10-20
+- **Last verified:** 2026-10-20 (`04a8ee88`; collated from changes/5686-accept-valid-change-fragments-in-the-spe.md)
+- **Summary:** Accept valid change fragments in the SPEC freshness hook
+- **Next step:** Merge the fragment-hook conformance fix with issue 5685.
+
+### DL-#5685 · Deduplicate Native Linux Ai_Backend Wheels With Bounded Fail-Closed Smoke Selection
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5685
+- **Branch:** fix/native-wheel-matrix-5685
+- **PR:** #5689
+- **Paths:** see #5689
+- **Started:** 2026-10-20
+- **Last verified:** 2026-10-20 (`04a8ee88`; collated from changes/5685-remove-duplicate-native-linux-ai-backend.md)
+- **Summary:** Deduplicate native Linux ai_backend wheels with bounded fail-closed smoke selection
+- **Next step:** Merge PR after required checks pass.
+
 ### DL-#5680 · Initialize and Retain the ORT Environment Required by Local Embeddings
 
 - **State:** shipped
@@ -1723,10 +1749,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #5635
 - **Branch:** merged via #5637
-- **PR:** #5637, #5668
+- **PR:** #5637, #5668, #5688
 - **Paths:** see #5637
 - **Started:** 2026-10-16
-- **Last verified:** 2026-10-20 (`96a1684a`; collated from changes/5635-default-gravity-is-now-standard-9-80665.md)
+- **Last verified:** 2026-10-20 (`d520de5a`; collated from changes/5635-force-source-standard-gravity.md)
 - **Summary:** Golfer constraint solver solves the KKT system on INDEPENDENT_CLOSURE_ROWS=(0,1) only (min-norm lstsq), zero multipliers on redundant rows 2-3, raises ValueError on rank loss; GolferParams.g default kept at 9.81 pending owner decision and now rejects non-finite g
 - **Next step:** Merge the PR; UpstreamDrift needs no change (its default is already 9.80665).
 

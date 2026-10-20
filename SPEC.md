@@ -5947,6 +5947,8 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-20 | #5689 | Deduplicate native Linux ai_backend wheels with bounded fail-closed smoke selection; Accept valid change fragments in the SPEC freshness hook |
+| 2026-10-20 | #5688 | Regenerate force-source comparison artifacts and Colab notebook at standard gravity |
 | 2026-10-20 | #5683 | Initialize and retain the ORT environment required by local embeddings |
 | 2026-10-20 | #5676 | Apply prettier to files already drifted on main; ignore generator-owned outputs and LaTeX docs |
 | 2026-10-20 | #5674 | Coalesce chat scroll-to-bottom into one named timer and stop it when the dock closes, so a pending scroll cannot run Qt work mid-teardown (CI Standard segfault in scroll_now) |
