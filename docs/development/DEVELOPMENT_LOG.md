@@ -1574,6 +1574,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5675 · Apply Prettier to Files Already Drifted on Main; Ignore Generator-Owned Outputs and LaTeX Docs
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5675
+- **Branch:** merged via #5676
+- **PR:** #5676
+- **Paths:** see #5676
+- **Started:** 2026-10-20
+- **Last verified:** 2026-10-20 (`3229d840`; collated from changes/5675-apply-prettier-to-files-already-drifted.md)
+- **Summary:** Apply prettier to files already drifted on main; ignore generator-owned outputs and LaTeX docs
+- **Next step:** Shipped in PR #5676.
+
 ### DL-#5672 · Coalesce Chat Scroll-to-Bottom Into One Named Timer and Stop It When the Dock Closes, so a Pending Scroll Cannot Run Qt Work Mid-Teardown (CI Standard Segfault in Scroll_Now)
 
 - **State:** shipped
