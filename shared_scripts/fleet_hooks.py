@@ -247,27 +247,61 @@ def check_spec_freshness(args: argparse.Namespace) -> int:
         return 0
     files = staged_files() or changed_files()
     source_changes = [path for path in files if is_source(path)]
-    if not source_changes or "SPEC.md" in files:
+    if not source_changes or "SPEC.md" in files or _has_valid_fragment(files):
         return 0
     sample = ", ".join(source_changes[:5])
     failures = [f"source/config changed without staging SPEC.md: {sample}"]
     return fail_or_warn("SPEC.md freshness boundary", failures, args.warn_only)
 
 
-def _load_spec_changelog() -> ModuleType | None:
-    """Load the portable change-log helper, or ``None`` if it was not shipped."""
-    module_path = Path(__file__).with_name("spec_changelog.py")
+def _fragment_findings(files: Sequence[str]) -> tuple[int, list[str]]:
+    """Validate the change fragments present in an event's changed-file scope."""
+    module = _load_sibling_module("changes_fragment")
+    fragments = [
+        path for path in files if path.replace("\\", "/").startswith("changes/")
+    ]
+    if module is None:
+        return len(fragments), (
+            ["shared_scripts/changes_fragment.py was not shipped to this repository"]
+            if fragments
+            else []
+        )
+    in_scope = [
+        path
+        for path in fragments
+        if module.is_fragment_path(path) and (ROOT / path).is_file()
+    ]
+    failures = [
+        f"{path}: {finding}"
+        for path in in_scope
+        for finding in module.validate_fragment_file(ROOT / path)
+    ]
+    return len(in_scope), failures
+
+
+def _has_valid_fragment(files: Sequence[str]) -> bool:
+    """A valid fragment replaces the direct SPEC edit for a source change."""
+    count, failures = _fragment_findings(files)
+    return count > 0 and not failures
+
+
+def _load_sibling_module(name: str) -> ModuleType | None:
+    """Load an optional shared validator next to this vendored hook module."""
+    module_path = Path(__file__).with_name(f"{name}.py")
     if not module_path.is_file():
         return None
-    spec = importlib.util.spec_from_file_location("fleet_spec_changelog", module_path)
-    if spec is None or spec.loader is None:  # pragma: no cover - defensive
+    spec = importlib.util.spec_from_file_location(f"_fleet_{name}", module_path)
+    if spec is None or spec.loader is None:
         return None
     module = importlib.util.module_from_spec(spec)
-    # Register before exec: the module defines dataclasses, and
-    # dataclasses.field resolution looks the defining module up in sys.modules.
     sys.modules[spec.name] = module
     spec.loader.exec_module(module)
     return module
+
+
+def _load_spec_changelog() -> ModuleType | None:
+    """Load the portable change-log helper, or ``None`` if it was not shipped."""
+    return _load_sibling_module("spec_changelog")
 
 
 def _spec_text_at(ref: str) -> str | None:
