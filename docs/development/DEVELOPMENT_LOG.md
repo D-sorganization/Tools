@@ -1574,6 +1574,45 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5672 · Coalesce Chat Scroll-to-Bottom Into One Named Timer and Stop It When the Dock Closes, so a Pending Scroll Cannot Run Qt Work Mid-Teardown (CI Standard Segfault in Scroll_Now)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5672
+- **Branch:** fix/tools-5672-owned-scroll-segv
+- **PR:** #5674
+- **Paths:** see #5674
+- **Started:** 2026-10-20
+- **Last verified:** 2026-10-20 (`37a7477e`; collated from changes/5672-chat-scroll-timer-close.md)
+- **Summary:** Coalesce chat scroll-to-bottom into one named timer and stop it when the dock closes, so a pending scroll cannot run Qt work mid-teardown (CI Standard segfault in scroll_now)
+- **Next step:** Merge the PR.
+
+### DL-#5671 · Promote Active Dl_State to Shipped When Collating Merged Fragments
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5671
+- **Branch:** merged via #5673
+- **PR:** #5673
+- **Paths:** see #5673
+- **Started:** 2026-10-20
+- **Last verified:** 2026-10-20 (`303dcba7`; collated from changes/5671-promote-active-dl-state-to-shipped-when.md)
+- **Summary:** Promote active dl_state to shipped when collating merged fragments
+- **Next step:** Shipped in PR #5673.
+
+### DL-#5669 · Parent Leaked QTimer.singleShot UI-Reset Timers to Their Widgets via Shared.Python.Ui.Owned_Timer (Hover Copy, Assistant Copy, Data-Processor Status, Chat Scroll, Unit Converter)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5669
+- **Branch:** fix/leaked-singleshot-ui-timers
+- **PR:** #5670
+- **Paths:** see #5670
+- **Started:** 2026-10-20
+- **Last verified:** 2026-10-20 (`5ac74834`; collated from changes/5669-owned-single-shot-timers.md)
+- **Summary:** Parent leaked QTimer.singleShot UI-reset timers to their widgets via shared.python.ui.owned_timer (hover copy, assistant copy, data-processor status, chat scroll, unit converter)
+- **Next step:** Merge the PR.
+
 ### DL-#5661 · Full Clean and Jerk: Make_Clean_and_Jerk_Config on a Timed via Schedule at the Standard's Eight Phases and a Hang/Rack/Overhead Phase-Correct Bar Path
 
 - **State:** shipped
@@ -1645,12 +1684,12 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #5640
 - **Branch:** merged via #5639
-- **PR:** #5639
+- **PR:** #5639, #5664
 - **Paths:** see #5639
 - **Started:** 2026-10-16
-- **Last verified:** 2026-10-16 (`f9a8637d`; collated from changes/5640-chore-remove-committed-clutter-unused-ro.md)
+- **Last verified:** 2026-10-20 (`91e41ee1`; collated from changes/5640-golfer-coriolis-christoffel.md)
 - **Summary:** chore: remove committed clutter (unused root scripts, empty issue template)
-- **Next step:** Shipped in PR #5639.
+- **Next step:** Merge the PR; resync the UpstreamDrift child copy with the next vendor/ud-tools bump.
 
 ### DL-#5635 · Golfer Constraint Solver Solves the KKT System on INDEPENDENT_CLOSURE_ROWS=(0,1) Only (Min-Norm Lstsq), Zero Multipliers on Redundant Rows 2-3, Raises ValueError on Rank Loss; GolferParams.G Default Kept at 9.81 Pending Owner Decision and Now Rejects Non-Finite G
 
@@ -1658,12 +1697,12 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #5635
 - **Branch:** merged via #5637
-- **PR:** #5637
+- **PR:** #5637, #5668
 - **Paths:** see #5637
 - **Started:** 2026-10-16
-- **Last verified:** 2026-10-16 (`86c4f3b6`; collated from changes/5635-golfer-constraint-solver-solves-the-kkt.md)
+- **Last verified:** 2026-10-20 (`96a1684a`; collated from changes/5635-default-gravity-is-now-standard-9-80665.md)
 - **Summary:** Golfer constraint solver solves the KKT system on INDEPENDENT_CLOSURE_ROWS=(0,1) only (min-norm lstsq), zero multipliers on redundant rows 2-3, raises ValueError on rank loss; GolferParams.g default kept at 9.81 pending owner decision and now rejects non-finite g
-- **Next step:** Shipped in PR #5637.
+- **Next step:** Merge the PR; UpstreamDrift needs no change (its default is already 9.80665).
 
 ### DL-#5630 · Label Movement_Optimizer.Spine_Loads as a Planar Ergonomic L5/S1 Estimate, Document UD ADR 0055 Sign Conventions, Add MODEL_METADATA and to_Adr0055_Ap_Shear
 
