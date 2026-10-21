@@ -3,6 +3,46 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 1297,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f2c72edf58f2aee3b9f1afd58c199dff67b8cea7e549cb8e3ec342260365326b",
+      "family": "repository-governance-non-calculation",
+      "id": "TOOLS-MODULE-CONFIG-CI-TOOLS-RUNNER-LOAD-BASELINE-JSON-13F8D9C7AB78",
+      "language": "json",
+      "maintainer": "Repository governance maintainers",
+      "path": "config/ci_tools_runner_load_baseline.json",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 420,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
