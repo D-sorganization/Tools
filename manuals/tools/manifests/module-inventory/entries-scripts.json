@@ -6837,6 +6837,145 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 13961,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "a462c3649ecac6de19e2d94912ff42a75a2a67a83505badecdf9ce6d6c665d56",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-MEASURE-WORKFLOW-RUNNER-SHARE-PY-CBF1C646B8EE",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/measure_workflow_runner_share.py",
+      "purpose": "Measure workflow runner load by trigger event (RM-CI-000 / TOOLS-CI-011).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "DayWindow",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RunnerLoadReport",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WorkflowCount",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WorkflowRunSummary",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_WINDOW_DAYS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "GITHUB_TOTAL_COUNT_CAP",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_PAGES_PER_DAY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "METHODOLOGY_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PER_PAGE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PR_MERGE_EVENTS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCHEDULED_UTILITY_EVENTS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "aggregate_from_day_slices",
+            "signature": "slices: list[dict[str, Any]]"
+          },
+          {
+            "kind": "function",
+            "name": "created_filter_for_day",
+            "signature": "day: date"
+          },
+          {
+            "kind": "function",
+            "name": "fetch_runs_for_utc_day",
+            "signature": "owner: str, repo: str, token: str, day: date"
+          },
+          {
+            "kind": "function",
+            "name": "format_markdown_summary",
+            "signature": "report: RunnerLoadReport"
+          },
+          {
+            "kind": "function",
+            "name": "iter_utc_day_windows",
+            "signature": "end: date, window_days: int"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "measure_repo",
+            "signature": "owner: str, repo: str, token: str, window_days: int=DEFAULT_WINDOW_DAYS, end: date | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/ops/test_measure_workflow_runner_share.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 4062,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",

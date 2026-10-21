@@ -1,0 +1,63 @@
+{
+  "methodology": "RM-CI-000",
+  "repo": "D-sorganization/Tools",
+  "window_days": 2,
+  "slices": [
+    {
+      "day": "2026-10-19",
+      "responses": [
+        {
+          "total_count": 3,
+          "workflow_runs": [
+            {
+              "id": 1,
+              "event": "pull_request",
+              "name": "CI Standard",
+              "path": ".github/workflows/ci-standard.yml"
+            },
+            {
+              "id": 2,
+              "event": "schedule",
+              "name": "Full Suite Nightly",
+              "path": ".github/workflows/full-suite-nightly.yml"
+            },
+            {
+              "id": 3,
+              "event": "schedule",
+              "name": "Full Suite Nightly",
+              "path": ".github/workflows/full-suite-nightly.yml"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "day": "2026-10-20",
+      "responses": [
+        {
+          "total_count": 1000,
+          "workflow_runs": [
+            {
+              "id": 4,
+              "event": "merge_group",
+              "name": "CI Standard",
+              "path": ".github/workflows/ci-standard.yml"
+            },
+            {
+              "id": 5,
+              "event": "repository_dispatch",
+              "name": "CI Standard",
+              "path": ".github/workflows/ci-standard.yml"
+            },
+            {
+              "id": 6,
+              "event": "workflow_dispatch",
+              "name": "Benchmark Suite",
+              "path": ".github/workflows/benchmark-suite.yml"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

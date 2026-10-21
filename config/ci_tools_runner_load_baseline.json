@@ -1,0 +1,66 @@
+{
+  "methodology": "RM-CI-000",
+  "owner": "D-sorganization",
+  "repo": "Tools",
+  "window_days": 14,
+  "window_end_utc": "2026-10-20",
+  "total_runs": 5259,
+  "counts_by_event": {
+    "schedule": 691,
+    "pull_request": 2988,
+    "pull_request_target": 649,
+    "push": 738,
+    "merge_group": 162,
+    "dynamic": 24,
+    "workflow_dispatch": 7
+  },
+  "top_workflows": [
+    {
+      "name": "Merge Hold Guard",
+      "count": 1215
+    },
+    {
+      "name": "CI Standard",
+      "count": 574
+    },
+    {
+      "name": "Detect Secrets",
+      "count": 451
+    },
+    {
+      "name": "Anti-Phantom-Merge Guard",
+      "count": 408
+    },
+    {
+      "name": "Docs Governance",
+      "count": 401
+    },
+    {
+      "name": "Jules Diff Verifier (Anti-Phantom-Merge Gate)",
+      "count": 378
+    },
+    {
+      "name": "Bot CI Trigger",
+      "count": 328
+    },
+    {
+      "name": "Spec Check",
+      "count": 310
+    },
+    {
+      "name": "Topology Governance",
+      "count": 227
+    },
+    {
+      "name": "File Size Budget",
+      "count": 182
+    }
+  ],
+  "pr_merge_runs": 3150,
+  "scheduled_utility_runs": 698,
+  "pr_merge_share": 0.5989731888191672,
+  "scheduled_utility_share": 0.13272485263358053,
+  "cap_warnings": [
+    "2026-10-12: total_count>=1000; slice may be incomplete"
+  ]
+}
