@@ -1574,6 +1574,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5695 · Chore(Ci): RM-CI-000 Runner Load Measurement Script Snapshot and Scheduled-Workflow Follow-Ups (#5695)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5695
+- **Branch:** cursor/measure-schedule-utility-share-3893
+- **PR:** #5706
+- **Paths:** see #5706
+- **Started:** 2026-10-21
+- **Last verified:** 2026-10-21 (`fbef9621`; collated from changes/5695-chore-ci-rm-ci-000-runner-load-measureme.md)
+- **Summary:** chore(ci): RM-CI-000 runner load measurement script snapshot and scheduled-workflow follow-ups (#5695)
+- **Next step:** Merge PR #5706 after CI green and arm auto-merge.
+
 ### DL-#5686 · Accept Valid Change Fragments in the SPEC Freshness Hook
 
 - **State:** shipped
