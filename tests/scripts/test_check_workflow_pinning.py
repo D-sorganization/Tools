@@ -8,6 +8,22 @@ def _write_workflow(path: Path, body: str) -> Path:
     return path
 
 
+def test_allows_fleet_conflict_disarm_reusable_workflow_ref(tmp_path: Path) -> None:
+    workflow = _write_workflow(
+        tmp_path / "conflict-disarm.yml",
+        "\n".join(
+            [
+                "jobs:",
+                "  disarm:",
+                "    uses: D-sorganization/Repository_Management/"
+                ".github/workflows/reusable-conflict-disarm.yml@main",
+            ]
+        ),
+    )
+
+    assert scan_workflow(workflow) == []
+
+
 def test_allows_first_party_action_tag_refs(tmp_path: Path) -> None:
     workflow = _write_workflow(
         tmp_path / "workflow.yml",

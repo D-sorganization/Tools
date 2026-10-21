@@ -15,6 +15,12 @@ USES_RE = re.compile(r"^\s*(?:-\s*)?uses:\s*([^\s#]+)")
 CURL_PIPE_RE = re.compile(r"\b(curl|wget)\b.*\|\s*(sh|bash)\b")
 NPM_GLOBAL_RE = re.compile(r"\bnpm\s+install\s+-g\s+([^\s#]+)")
 TAG_ALLOWED_ACTION_OWNERS = frozenset({"actions", "github"})
+# Fleet reusable workflows tracked on @main (RM conflict-disarm rollout #2195).
+MUTABLE_REUSABLE_WORKFLOW_ALLOWLIST = frozenset(
+    {
+        "D-sorganization/Repository_Management/.github/workflows/reusable-conflict-disarm.yml@main",
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -83,6 +89,8 @@ def scan_workflow(path: Path) -> list[WorkflowPinningViolation]:
         uses_match = USES_RE.search(line)
         if uses_match:
             action_ref = uses_match.group(1).strip("'\"")
+            if action_ref in MUTABLE_REUSABLE_WORKFLOW_ALLOWLIST:
+                continue
             if not _is_pinned_action(action_ref):
                 violations.append(
                     WorkflowPinningViolation(
