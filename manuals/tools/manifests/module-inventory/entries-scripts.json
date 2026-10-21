@@ -4304,10 +4304,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4235,
+      "bytes_lf": 4570,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "27641e41a330077a4dbfce9b23673a0af6b43da26c2995abf0b92007d6b7372b",
+      "content_sha256_lf": "27e457ca06852ac1186b4674b7f2309b62e2610334aa46868805cc3bab7bbb32",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-WORKFLOW-PINNING-PY-3B0B867E9299",
       "language": "python",
@@ -4349,6 +4349,11 @@
           {
             "kind": "constant",
             "name": "CURL_PIPE_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MUTABLE_REUSABLE_WORKFLOW_ALLOWLIST",
             "signature": null
           },
           {
