@@ -1,5 +1,5 @@
 # Core dependencies
-pypdf>=4.0.0  # Pure Python PDF library for reading and writing
+pypdf>=6.21.1  # Patched pure Python PDF library for reading and writing
 pymupdf>=1.23.0  # High-performance PDF rendering and parsing (fitz)
 google-generativeai>=0.3.0  # Google AI Python SDK for Gemini models
 PyQt6>=6.6.0  # Python bindings for Qt6 application framework
