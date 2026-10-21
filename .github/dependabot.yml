@@ -1,31 +1,37 @@
 version: 2
-updates:
-  - package-ecosystem: "pip"
-    directory: "/"
+
+multi-ecosystem-groups:
+  weekly-deps:
     schedule:
-      interval: "weekly"
+      interval: weekly
+      day: monday
+      time: "06:00"
+      timezone: America/Los_Angeles
+
+updates:
+  - package-ecosystem: pip
+    directory: /
+    schedule:
+      interval: weekly
+    patterns: ["*"]
+    multi-ecosystem-group: weekly-deps
     open-pull-requests-limit: 10
     ignore:
-      # PyQt6-sip is coupled to the pinned PyQt6 wheel (#5508; Dependabot #5486).
-      - dependency-name: "pyqt6-sip"
+      - dependency-name: pyqt6-sip
         versions: ["13.13.0"]
-    groups:
-      pip-minor-patch:
-        update-types:
-          - "minor"
-          - "patch"
-  - package-ecosystem: "github-actions"
-    directory: "/"
+
+  - package-ecosystem: github-actions
+    directory: /
     schedule:
-      interval: "weekly"
+      interval: weekly
+    patterns: ["*"]
+    multi-ecosystem-group: weekly-deps
     open-pull-requests-limit: 10
-  - package-ecosystem: "cargo"
-    directory: "/"
+
+  - package-ecosystem: cargo
+    directory: /
     schedule:
-      interval: "weekly"
+      interval: weekly
+    patterns: ["*"]
+    multi-ecosystem-group: weekly-deps
     open-pull-requests-limit: 10
-    groups:
-      cargo-minor-patch:
-        update-types:
-          - "minor"
-          - "patch"
