@@ -78,7 +78,7 @@ gh pr checks <PR_NUMBER>
 #### g. Merge When Green
 
 ```bash
-gh pr merge <PR_NUMBER> --squash
+gh pr merge <PR_NUMBER> --auto --squash
 ```
 
 #### h. Clean Up

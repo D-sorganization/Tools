@@ -92,11 +92,11 @@ gh workflow run auto-issue-resolver.yml \
 - Creates standard PRs for review
 - Best for: Quick wins like documentation updates, hygiene fixes
 
-### 2. Draft PR Mode
+### 2. Review PR Mode
 
-- Creates draft PRs for all fixes
-- Requires manual review before marking ready
-- Best for: MAJOR/CRITICAL issues requiring human oversight
+- Creates ready-for-review PRs for all fixes (never draft)
+- Arms squash auto-merge with `gh pr merge --auto --squash` once CI is green
+- Best for: MAJOR/CRITICAL issues that still flow through CI without manual review gates
 
 ### 3. Analysis Only Mode
 
@@ -158,7 +158,7 @@ graph LR
     C --> D[Issue Analysis]
     D --> E{Priority Score}
     E -->|High ROI| F[Auto Fix]
-    E -->|Medium ROI| G[Draft PR]
+    E -->|Medium ROI| G[Ready PR + auto-merge]
     E -->|Low ROI| H[Backlog]
     F --> I[Create PR]
     G --> I
@@ -239,7 +239,7 @@ Example summary:
 
 ### For Repository Maintainers
 
-1. **Review Draft PRs Promptly** - Auto-generated PRs should be reviewed within 24-48 hours
+1. **Keep auto-merge armed** - Auto-generated PRs should open ready and use `gh pr merge --auto --squash` once CI passes
 2. **Provide Feedback** - Comment on PRs to improve fix strategies
 3. **Update Exclusions** - Mark issues that shouldn't be auto-resolved
 4. **Monitor Patterns** - Track which fix strategies work best
