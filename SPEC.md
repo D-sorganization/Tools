@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-21 | #5709 | Require patched pypdf 6.21.1 in PDF dependency declarations |
 | 2026-10-21 | #5706 | chore(ci): RM-CI-000 runner load measurement script snapshot and scheduled-workflow follow-ups (#5695) |
 | 2026-10-20 | #5689 | Deduplicate native Linux ai_backend wheels with bounded fail-closed smoke selection; Accept valid change fragments in the SPEC freshness hook |
 | 2026-10-20 | #5688 | Regenerate force-source comparison artifacts and Colab notebook at standard gravity |

@@ -1574,6 +1574,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5708 · Require Patched Pypdf 6.21.1 in PDF Dependency Declarations
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5708
+- **Branch:** merged via #5709
+- **PR:** #5709
+- **Paths:** see #5709
+- **Started:** 2026-10-21
+- **Last verified:** 2026-10-21 (`a258ac47`; collated from changes/5708-require-patched-pypdf.md)
+- **Summary:** Require patched pypdf 6.21.1 in PDF dependency declarations
+- **Next step:** Shipped in PR #5709.
+
 ### DL-#5695 · Chore(Ci): RM-CI-000 Runner Load Measurement Script Snapshot and Scheduled-Workflow Follow-Ups (#5695)
 
 - **State:** shipped
