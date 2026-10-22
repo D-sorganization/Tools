@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import os
+import re
 import stat
 import subprocess
 from pathlib import Path
@@ -11,6 +12,32 @@ import yaml
 REPO_ROOT = Path(__file__).resolve().parents[2]
 GUARD = REPO_ROOT / ".github" / "scripts" / "clean-python-toolcache.sh"
 CI_STANDARD = REPO_ROOT / ".github" / "workflows" / "ci-standard.yml"
+
+
+def test_no_unscoped_shared_toolcache_repair_job() -> None:
+    workflow = yaml.safe_load(CI_STANDARD.read_text(encoding="utf-8"))
+    assert "fix-brick-toolcache" not in workflow["jobs"], (
+        "Standalone fix-brick-toolcache job must be retired (#5712)"
+    )
+
+
+def test_no_inline_shared_toolcache_mutation_or_symlink() -> None:
+    workflow = yaml.safe_load(CI_STANDARD.read_text(encoding="utf-8"))
+    for job_name, job in workflow.get("jobs", {}).items():
+        steps = job.get("steps", [])
+        for step in steps:
+            run_cmd = step.get("run", "")
+            # direct persistent-toolcache symlink creation
+            assert not re.search(
+                r"ln\s+-s\s+.*(?:/opt/hostedtoolcache|\.shared-tool-cache)",
+                run_cmd,
+            ), f"Job {job_name} step '{step.get('name')}' must not create persistent toolcache symlinks"
+
+            # direct persistent-toolcache deletion / unlink
+            assert not re.search(
+                r"(?:rm\s+.*|os\.remove\(.*)\*?__editable__\*\.pth",
+                run_cmd,
+            ), f"Job {job_name} step '{step.get('name')}' must not delete editable .pth files in toolcache"
 
 
 def test_pyo3_guard_precedes_setup_python_in_rust_job() -> None:
