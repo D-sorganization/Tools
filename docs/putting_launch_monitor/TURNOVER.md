@@ -100,7 +100,8 @@ speed, HLA, tolerance and the calibration used; a parametrised test through
 
 1. One worktree per issue:
    `git worktree add ../_wt_claude_<issue> -b claude/<issue>-<slug> origin/main`.
-   Never `git add -A` (untracked recordings and worktrees). Never draft PRs.
+   Never `git add -A` (untracked recordings and worktrees). Open PRs ready (not
+   draft) and arm `gh pr merge --auto --squash` when CI is green.
 2. Post a lease before editing (from Repository_Management:
    `python -m scripts.post_agent_lease --agent claude --session <id> --repo Tools --issue <N>`).
 3. Every commit touching `src/` needs: one SPEC.md section 12 row keyed by

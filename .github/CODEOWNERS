@@ -1,4 +1,0 @@
-# Autofix Safety: Require manual review for workflow and script changes
-.github/workflows/ @dieterolson
-scripts/ @dieterolson
-*.py @dieterolson

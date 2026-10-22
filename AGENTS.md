@@ -533,9 +533,11 @@ All pull requests should be verified to pass the ruff, black, and mypy requireme
 ### For PR Creation
 
 - Always check if PR already exists first using `gh pr list --state open`
+- Open PRs **ready for review** — never pass `--draft` to `gh pr create`
 - Use simple, concise titles and descriptions for initial creation
 - Wrap GitHub CLI commands in powershell `-Command "..."`
 - Use single quotes inside double quotes for string parameters
+- After CI is green, arm squash auto-merge: `gh pr merge --auto --squash`
 
 ### For PR Management
 
@@ -554,8 +556,11 @@ All pull requests should be verified to pass the ruff, black, and mypy requireme
 ### Command Templates for Future Use
 
 ```bash
-# Create PR:
+# Create PR (ready, not draft):
 powershell -Command "gh pr create --title 'Your Title' --body 'Your description'"
+
+# Arm squash auto-merge when CI is green:
+powershell -Command "gh pr merge [PR_NUMBER] --auto --squash"
 
 # Check PR status:
 powershell -Command "gh pr view [PR_NUMBER]"
@@ -830,7 +835,7 @@ Full rule: [fleet-rules/pr-queue-consolidation.md](https://github.com/D-sorganiz
 
 ### Agent Tiers
 
-`tier:strong` is reserved for frontier agents, `tier:cli` is for any CLI agent, `tier:ollama` is mechanical work. An explicit label wins; an unclassified issue is strong. A CLI-tier agent never claims a strong issue: if it needs a design decision, open a draft PR with a `Blocked:` section and stop. Dispatch with `python -m scripts.dispatch_cli_agent`.
+`tier:strong` is reserved for frontier agents, `tier:cli` is for any CLI agent, `tier:ollama` is mechanical work. An explicit label wins; an unclassified issue is strong. A CLI-tier agent never claims a strong issue: if it needs a design decision, open a **ready** PR with a `Blocked:` section and stop (never `--draft`). Dispatch with `python -m scripts.dispatch_cli_agent`.
 
 Full rule: [fleet-rules/agent-tiers.md](https://github.com/D-sorganization/Repository_Management/blob/main/fleet-rules/agent-tiers.md) (synced from Repository_Management; edit the source there).
 

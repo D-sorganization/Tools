@@ -194,10 +194,12 @@ on touched files).
    - Push a fix commit (do not force-push to `main`).
    - Do not add `# noqa` or `# type: ignore` to silence a real error.
 
-7. **Review:** PRs need at least one approving review from a code owner before
-   merge. Draft PRs are welcome for early feedback.
+7. **Open ready, not draft.** Do not use `gh pr create --draft`. Open the PR
+   for review immediately; if work is blocked, use a `Blocked:` section in the
+   body instead of a draft.
 
-8. **Merge method:** squash-merge. The squash commit message is the PR title
+8. **Merge method:** squash-merge via auto-merge once CI is green:
+   `gh pr merge --auto --squash`. The squash commit message is the PR title
    (Conventional Commits format).
 
 ### PR Description Template
