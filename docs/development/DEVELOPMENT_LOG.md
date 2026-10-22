@@ -1574,6 +1574,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5712 · Retire Unscoped Shared Toolcache Repair
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5712
+- **Branch:** merged via #5715
+- **PR:** #5715
+- **Paths:** see #5715
+- **Started:** 2026-10-22
+- **Last verified:** 2026-10-22 (`00e29dcc`; collated from changes/5712-retire-unscoped-shared-toolcache-repair.md)
+- **Summary:** retire unscoped shared toolcache repair
+- **Next step:** Shipped in PR #5715.
+
 ### DL-#5708 · Require Patched Pypdf 6.21.1 in PDF Dependency Declarations
 
 - **State:** shipped
