@@ -337,11 +337,23 @@ class KnowledgePack:
         include_superseded: bool = False,
         embedder: Embedder | Callable[[str], Sequence[float]] | None = None,
         hybrid: bool = True,
+        *,
+        repo: str | None = None,
+        repository: str | None = None,
     ) -> list[Passage]:
-        """Return the top ``k`` passages using the pack's normal ranking."""
+        """Return the top ``k`` passages using the pack's normal ranking.
+
+        When ``repo`` or ``repository`` is set, SQLite applies that filter before
+        ranking and the ``k`` limit; other repositories are never considered.
+        """
+        if repo is not None and repository is not None:
+            raise ValueError("pass only one of repo or repository")
+        scoped_repo = repo if repo is not None else repository
         from .search import _search_pack
 
-        return _search_pack(self, query, k, include_superseded, embedder, hybrid)
+        return _search_pack(
+            self, query, k, include_superseded, embedder, hybrid, scoped_repo
+        )
 
     def info(self) -> PackInfo:
         m = self._meta()

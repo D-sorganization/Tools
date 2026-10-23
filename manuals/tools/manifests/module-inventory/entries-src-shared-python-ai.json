@@ -4991,10 +4991,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 13039,
+      "bytes_lf": 13514,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "b8931b91a998605e6e6adf557369c4f952cefa1a2e2d2891af78e3688f1c7e0a",
+      "content_sha256_lf": "9a81f2500e78ce4e1657ef4c1466e54ab8630824a9c02f235acaba47844c2f39",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-KNOWLEDGE-PACK-PY-9610B38EFBC3",
       "language": "python",
@@ -5136,10 +5136,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6365,
+      "bytes_lf": 6455,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "cbf96dfdcb42605a602931b7e0f6161c97c6a07faa0ea2560f8d3248bfc5bcd7",
+      "content_sha256_lf": "086d4ef8bf8c5253f12ab5eddb7ae4f1c92fe394087f267de60d39f3c467856c",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-KNOWLEDGE-SEARCH-PY-ADEBA7B3501A",
       "language": "python",
@@ -5160,7 +5160,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "mapped",
+        "tests": "not-applicable",
         "units": "not-applicable",
         "validation": "not-applicable"
       },
@@ -5201,10 +5201,7 @@
             "signature": "pack: KnowledgePack, query: str, repo: str, *, k: int=8, include_superseded: bool=False, embedder: Embedder | Callable[[str], Sequence[float]] | None=None, hybrid: bool=True"
           }
         ],
-        "test_paths": [
-          "tests/shared/python/ai/knowledge/test_hybrid_ranking.py",
-          "tests/shared/python/ai/knowledge/test_pack_build_and_search.py"
-        ],
+        "test_paths": [],
         "unit_mentions": [],
         "validation_paths": []
       }
