@@ -108,8 +108,8 @@ class VoiceTranscriber:
         model_name: str | None = None,
         backend_override: Callable[[Path], TranscriptionResult] | None = None,
     ) -> None:
-        self.model_name = model_name or os.environ.get(
-            "SIDEKICK_WHISPER_MODEL", "base.en"
+        self.model_name: str = (
+            model_name or os.environ.get("SIDEKICK_WHISPER_MODEL") or "base.en"
         )
         self._backend_override = backend_override
         self._lock = threading.Semaphore(1)
@@ -187,10 +187,9 @@ class VoiceTranscriber:
         if self._backend_override is not None:
             return self._backend_override(temp_path)
         if cap.engine == "faster-whisper":
-            from faster_whisper import WhisperModel  # type: ignore[import-not-found]
-
+            fw_mod = importlib.import_module("faster_whisper")
             if self._cached_model is None:
-                self._cached_model = WhisperModel(
+                self._cached_model = fw_mod.WhisperModel(
                     self.model_name, device="cpu", compute_type="int8"
                 )
             segments, info = self._cached_model.transcribe(
