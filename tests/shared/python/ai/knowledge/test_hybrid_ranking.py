@@ -293,3 +293,47 @@ def test_search_hybrid_falls_back_to_bm25_when_no_embedder_available(
     assert [h.anchor for h in hybrid_hits] == [h.anchor for h in bm25_hits]
     warnings = [r for r in caplog.records if r.levelno == logging.WARNING]
     assert any("bm25" in r.message.lower() for r in warnings)
+
+
+def test_hybrid_search_filters_repo_before_candidate_limits(
+    corpus: dict[str, Path], tmp_path: Path
+) -> None:
+    target = corpus["UpstreamDrift"] / "docs" / "research" / "repo-filter.tex"
+    target.write_text(
+        "\\section{Rare match}\nThe pelvis timing is documented.\n", "utf-8"
+    )
+    competitor = corpus["AffineDrift"] / "articles" / "pelvis.qmd"
+    competitor.write_text("# Pelvis\n\nA competing pelvis result.\n", "utf-8")
+    from .conftest import commit_all
+
+    commit_all(corpus["UpstreamDrift"], "add repo-filter target")
+    commit_all(corpus["AffineDrift"], "add higher-ranked competitor")
+    manifest = manifest_from_dict(
+        {
+            "id": "repo_filter",
+            "title": "Repo filter",
+            "embeddings": True,
+            "sources": [
+                {
+                    "repo": "AffineDrift",
+                    "authority": "published",
+                    "include": ["articles/**/*.qmd"],
+                },
+                {
+                    "repo": "UpstreamDrift",
+                    "authority": "findings",
+                    "include": ["docs/research/**/*.tex"],
+                },
+            ],
+        }
+    )
+    pack_path = tmp_path / "repo-filter-hybrid.sqlite"
+    embedder = DeterministicEmbedder()
+    build_pack(manifest, corpus, pack_path, embedder=embedder)
+    pack = KnowledgePack.open(pack_path)
+
+    assert pack.search("pelvis", k=1, embedder=embedder)[0].repo == "AffineDrift"
+    hits = pack.search("pelvis", k=1, embedder=embedder, repo="UpstreamDrift")
+    assert [(hit.repo, hit.source) for hit in hits] == [
+        ("UpstreamDrift", "docs/research/repo-filter.tex")
+    ]
