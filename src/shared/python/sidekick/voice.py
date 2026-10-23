@@ -7,6 +7,7 @@ import io
 import os
 import shutil
 import struct
+import tempfile
 import subprocess
 import threading
 import uuid
@@ -61,7 +62,7 @@ class TranscriptionResult:
 
 def sweep_stale_voice_temp_files() -> int:
     removed = 0
-    for base in {Path("/dev/shm"), Path("/tmp")}:
+    for base in {Path("/dev/shm"), Path(tempfile.gettempdir())}:  # nosec B108
         if not base.is_dir():
             continue
         for candidate in base.glob(f"{TEMP_PREFIX}*.tmp"):
@@ -159,8 +160,8 @@ class VoiceTranscriber:
         if not cap.available:
             raise VoiceUnavailableError(cap.detail)
 
-        shm = Path("/dev/shm")
-        temp_dir = shm if shm.is_dir() and os.access(shm, os.W_OK) else Path("/tmp")
+        shm = Path("/dev/shm")  # nosec B108
+        temp_dir = shm if shm.is_dir() and os.access(shm, os.W_OK) else Path(tempfile.gettempdir())
         temp_path = temp_dir / f"{TEMP_PREFIX}{uuid.uuid4().hex}.tmp"
         try:
             fd = os.open(str(temp_path), os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
