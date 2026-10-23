@@ -16,7 +16,9 @@ from shared.python.ai.knowledge import (
     Passage,
     build_pack,
 )
+from shared.python.ai.knowledge import sanitize_fts_query as package_sanitize_fts_query
 from shared.python.ai.knowledge.cli import main
+from shared.python.ai.knowledge.pack import sanitize_fts_query
 from shared.python.ai.knowledge.search import search_repo
 
 from .conftest import commit_all
@@ -239,3 +241,23 @@ def test_cli_output_survives_a_narrow_console_encoding(
     assert main(["search", str(out), "checks passed"]) == 0
     narrow.flush()
     assert b"Checks" in narrow.buffer.getvalue()
+
+
+def test_sanitize_fts_query_quotes_terms_and_ignores_operators() -> None:
+    assert package_sanitize_fts_query is sanitize_fts_query
+    assert sanitize_fts_query('alpha OR "\u03b2eta" NEAR/3 gamma*') == (
+        '"alpha" OR "OR" OR "\u03b2eta" OR "NEAR" OR "3" OR "gamma"'
+    )
+
+
+def test_sanitize_fts_query_returns_none_without_word_tokens() -> None:
+    assert sanitize_fts_query(" -- () !!! \u2603 ") is None
+
+
+def test_sanitize_fts_query_caps_at_32_unicode_aware_tokens() -> None:
+    query = " ".join(f"term{i}" for i in range(33))
+    result = sanitize_fts_query(query)
+    assert result is not None
+    assert result.count('"') == 64
+    assert '"term31"' in result
+    assert '"term32"' not in result

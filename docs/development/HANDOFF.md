@@ -1,3 +1,41 @@
+# Current handoff — KnowledgePack FTS compatibility, 2026-10-23
+
+- Repository: D-sorganization/Tools
+- Working directory: /home/dieterolson/staff-worktrees/codex-desktop-5723
+- Branch: codex/5723-fts-query-sanitizer; commit: SELF
+- Pull request: pending
+- Governing issue: #5723; follow-up to #5722 and Runner_Dashboard#2498
+
+## Objective and status
+
+Restore the removed public sanitize_fts_query contract used by the Runner_Dashboard consumer. Search and compatibility callers now share the same Unicode word tokenizer and 32-token budget. The implementation and focused tests are ready for review; the full repository pre-PR check remains.
+
+## Files and decisions
+
+- src/shared/python/ai/knowledge/pack.py: restored the public quoted-OR sanitizer and shared token extraction.
+- src/shared/python/ai/knowledge/search.py: reused the shared tokenizer/sanitizer without changing public search signatures or ranking.
+- src/shared/python/ai/knowledge/__init__.py: exported the restored helper.
+- tests/shared/python/ai/knowledge/test_pack_build_and_search.py: added punctuation/operator, Unicode, empty-input, and token-budget coverage.
+- changes/5723-restore-the-public-knowledgepack-fts-que.md: change fragment.
+- No search behavior outside tokenization/safe FTS expression construction changed.
+
+## Validation
+
+- RED: the new test module failed collection because sanitize_fts_query was absent from pack.py.
+- GREEN: the complete tests/shared/python/ai/knowledge folder passed (72 passed, 1 optional sentence-transformers test skipped) using a private Python 3.12 environment with declared development test dependencies.
+- Targeted ruff check/format and mypy on the changed package modules passed.
+- Change-fragment validation, SPEC freshness, development-log validation, and git diff --check passed.
+
+## Blockers and risks
+
+- The compatibility PR has not yet been opened; final canonical pre-PR validation is pending.
+
+## Next steps
+
+- Run the canonical Tools pre-PR checks, open the PR against #5723, and arm guarded squash auto-merge after verifying the PR state.
+
+---
+
 # Current handoff — Night Watch pass 2026-10-14
 
 - Repository: D-sorganization/Tools

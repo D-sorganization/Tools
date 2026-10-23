@@ -42,6 +42,27 @@ _TOKEN_RE = re.compile(r"\w+", re.UNICODE)
 _MAX_QUERY_TOKENS = 32
 _DEFAULT_RRF_K = 60
 
+
+def _query_tokens(query: str) -> list[str]:
+    """Return the bounded Unicode word tokens used by KnowledgePack search."""
+    if not isinstance(query, str):
+        raise TypeError("query must be a string")
+    return _TOKEN_RE.findall(query)[:_MAX_QUERY_TOKENS]
+
+
+def sanitize_fts_query(query: str) -> str | None:
+    """Build a safe quoted OR expression for an FTS5 query.
+
+    FTS syntax is removed by extracting word tokens, then each token is quoted.
+    The same tokenizer and 32-token limit are used by KnowledgePack search.
+    Return None when the query has no searchable word tokens.
+    """
+    tokens = _query_tokens(query)
+    if not tokens:
+        return None
+    return " OR ".join(f'"{token}"' for token in tokens)
+
+
 _SCHEMA = """
 CREATE TABLE meta (key TEXT PRIMARY KEY, value TEXT NOT NULL);
 CREATE TABLE files (

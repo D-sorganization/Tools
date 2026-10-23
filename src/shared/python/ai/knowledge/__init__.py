@@ -44,6 +44,7 @@ from .pack import (
     embedding_to_blob,
     get_minilm_embedder,
     reciprocal_rank_fusion,
+    sanitize_fts_query,
 )
 
 __all__ = [
@@ -75,4 +76,5 @@ __all__ = [
     "load_manifest",
     "manifest_from_dict",
     "reciprocal_rank_fusion",
+    "sanitize_fts_query",
 ]
