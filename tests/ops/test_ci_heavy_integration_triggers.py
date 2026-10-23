@@ -77,9 +77,10 @@ def test_cross_repo_python_integration_runs_on_merge_queue_not_default_pr() -> N
 
     assert "pull_request" not in triggers
     assert "merge_group" in triggers
-    merge_group = triggers["merge_group"]
-    assert isinstance(merge_group, dict)
-    assert set(merge_group.get("paths", [])) == _SHARED_PYTHON_PATHS
+    assert triggers["merge_group"] is None
+    push = triggers["push"]
+    assert isinstance(push, dict)
+    assert set(push.get("paths", [])) == _SHARED_PYTHON_PATHS
 
 
 def test_cross_repo_rust_integration_runs_on_merge_queue_not_default_pr() -> None:
@@ -87,6 +88,7 @@ def test_cross_repo_rust_integration_runs_on_merge_queue_not_default_pr() -> Non
 
     assert "pull_request" not in triggers
     assert "merge_group" in triggers
-    merge_group = triggers["merge_group"]
-    assert isinstance(merge_group, dict)
-    assert set(merge_group.get("paths", [])) == _RUST_PATHS
+    assert triggers["merge_group"] is None
+    push = triggers["push"]
+    assert isinstance(push, dict)
+    assert set(push.get("paths", [])) == _RUST_PATHS
