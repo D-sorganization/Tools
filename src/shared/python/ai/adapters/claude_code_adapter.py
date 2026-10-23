@@ -30,9 +30,14 @@ Example::
 
 from __future__ import annotations
 
+import json
+import os
+import re
+import secrets
 import shutil
+import signal
 import subprocess
-from collections.abc import Iterator
+from collections.abc import Iterator, Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -48,6 +53,7 @@ from shared.python.ai.types import (
     ConversationContext,
     ProviderCapabilities,
     ProviderCapability,
+    ToolCall,
 )
 from shared.python.logging_pkg.logging_config import get_logger
 
@@ -77,6 +83,100 @@ _STATIC_MODELS: tuple[str, ...] = (
     "opus",
     "haiku",
 )
+
+
+_SENSITIVE_ENV_SUFFIXES = ("_SECRET", "_PASSWORD", "_PRIVATE_KEY", "_TOKEN")
+_ENVELOPE_RE = re.compile(
+    r'<sidekick_tool_call\s+nonce="([^"]+)"\s*>(.*?)</sidekick_tool_call>',
+    re.DOTALL,
+)
+
+
+def scrub_cli_subprocess_env(env: Mapping[str, str] | None = None) -> dict[str, str]:
+    """Return a copy of ``env`` stripped of vault secrets and raw credential tokens."""
+    source = os.environ if env is None else env
+    return {
+        k: v
+        for k, v in source.items()
+        if not k.upper().startswith("VAULT_SECRET_")
+        and not any(k.upper().endswith(s) for s in _SENSITIVE_ENV_SUFFIXES)
+    }
+
+
+def terminate_cli_process_group(pid: int | None) -> bool:
+    """Best-effort SIGKILL of the CLI process group on timeout or cancellation."""
+    if pid is None or pid <= 0 or not hasattr(os, "killpg"):
+        return False
+    try:
+        os.killpg(os.getpgid(pid), signal.SIGKILL)
+        return True
+    except OSError:
+        return False
+
+
+def build_cli_tool_prompt_section(tools: Sequence[ToolDeclaration], nonce: str) -> str:
+    """Format compact TypeScript tool stubs bound to per-turn CSPRNG ``nonce``."""
+    if not nonce or not isinstance(nonce, str):
+        raise ValueError("nonce must be a non-empty string")
+    lines: list[str] = []
+    for tool in tools:
+        req = set(tool.required or ())
+        sig = ", ".join(
+            f"{k}{'' if k in req else '?'}:{v.get('type', 'any') if isinstance(v, Mapping) else 'any'}"  # noqa: E501
+            for k, v in (tool.parameters or {}).items()
+        )
+        desc = " ".join((tool.description or "").split())
+        lines.append(f"type {tool.name} = ({sig}) => Result; // {desc}")
+    stubs = "\n".join(lines) if lines else "// No tools registered."
+    return (
+        f"Available host tools:\n{stubs}\nTo invoke a tool, emit ONLY:\n"
+        f'<sidekick_tool_call nonce="{nonce}">'
+        f'{{"action_id":"<tool_name>","params":{{...}},"rationale":"..."}}'
+        f"</sidekick_tool_call>"
+    )
+
+
+def parse_cli_tool_envelopes(
+    raw_text: str, *, expected_nonce: str, tools: Sequence[ToolDeclaration]
+) -> tuple[str, list[ToolCall], int]:
+    """Extract nonce-verified ``ToolCall`` requests from CLI assistant output."""
+    if not expected_nonce:
+        raise ValueError("expected_nonce must be non-empty")
+    allowed = {t.name: t for t in tools}
+    calls: list[ToolCall] = []
+    rejected = 0
+    spans: list[tuple[int, int]] = []
+    for match in _ENVELOPE_RE.finditer(raw_text or ""):
+        found_nonce, raw_json = match.group(1), match.group(2).strip()
+        if not secrets.compare_digest(found_nonce, expected_nonce):
+            rejected += 1
+            continue
+        try:
+            payload = json.loads(raw_json)
+        except json.JSONDecodeError:
+            continue
+        if not isinstance(payload, Mapping):
+            continue
+        action_id = payload.get("action_id") or payload.get("name")
+        params = (
+            payload.get("params")
+            if "params" in payload
+            else payload.get("arguments", {})
+        )
+        if (
+            not isinstance(action_id, str)
+            or action_id not in allowed
+            or not isinstance(params, Mapping)
+        ):
+            continue
+        if set(allowed[action_id].required or ()) - set(params.keys()):
+            continue
+        calls.append(ToolCall.create(name=action_id, arguments=dict(params)))
+        spans.append(match.span())
+    cleaned = raw_text or ""
+    for s, e in reversed(spans):
+        cleaned = (cleaned[:s] + cleaned[e:]).strip()
+    return cleaned.strip(), calls, rejected
 
 
 def _resolve_binary(explicit: str | None = None) -> str | None:
@@ -150,6 +250,7 @@ class ClaudeCodeAdapter(BaseAgentAdapter):
         self._capabilities = ProviderCapabilities(
             supported=frozenset(
                 {
+                    ProviderCapability.FUNCTION_CALLING,
                     ProviderCapability.SYSTEM_MESSAGE,
                     ProviderCapability.STREAMING,
                 }
@@ -209,7 +310,8 @@ class ClaudeCodeAdapter(BaseAgentAdapter):
                 provider=self.PROVIDER_NAME,
             )
 
-        prompt = self._build_prompt(message, context)
+        nonce = secrets.token_hex(8) if tools else None
+        prompt = self._build_prompt(message, context, tools=tools, nonce=nonce)
         args = [self.binary, "-p"]
         if self.model:
             args += ["--model", self.model]
@@ -223,8 +325,11 @@ class ClaudeCodeAdapter(BaseAgentAdapter):
                 timeout=self.timeout,
                 check=False,
                 encoding="utf-8",
+                env=scrub_cli_subprocess_env(),
+                start_new_session=(os.name != "nt"),
             )
         except subprocess.TimeoutExpired as exc:
+            terminate_cli_process_group(getattr(exc, "pid", None))
             raise AITimeoutError(
                 f"Claude Code CLI timed out after {self.timeout}s",
                 provider=self.PROVIDER_NAME,
@@ -242,14 +347,25 @@ class ClaudeCodeAdapter(BaseAgentAdapter):
                 provider=self.PROVIDER_NAME,
             )
 
+        raw_stdout = (result.stdout or "").strip()
+        tool_calls: list[ToolCall] = []
+        meta: dict[str, Any] = {
+            "provider": self.PROVIDER_NAME,
+            "model": self.model or "default",
+            "stderr": (result.stderr or "")[-500:],
+        }
+        if tools and nonce is not None:
+            raw_stdout, tool_calls, rejected = parse_cli_tool_envelopes(
+                raw_stdout, expected_nonce=nonce, tools=tools
+            )
+            meta["turn_nonce"] = nonce
+            meta["rejected_tool_nonces"] = rejected
         return AgentResponse(
-            content=(result.stdout or "").strip(),
+            content=raw_stdout,
+            tool_calls=tool_calls,
+            finish_reason="tool_calls" if tool_calls else "stop",
             usage={},
-            metadata={
-                "provider": self.PROVIDER_NAME,
-                "model": self.model or "default",
-                "stderr": (result.stderr or "")[-500:],
-            },
+            metadata=meta,
         )
 
     def stream_response(
@@ -266,9 +382,14 @@ class ClaudeCodeAdapter(BaseAgentAdapter):
         completed response as one bubble.
         """
         response = self.send_message(message, context, tools)
+        for idx, tc in enumerate(response.tool_calls):
+            yield AgentChunk(
+                content="", tool_call_delta=tc.to_dict(), is_final=False, index=idx
+            )
         yield AgentChunk(
             content=response.content,
             is_final=True,
+            index=len(response.tool_calls),
         )
 
     def validate_connection(self) -> tuple[bool, str]:
@@ -310,7 +431,13 @@ class ClaudeCodeAdapter(BaseAgentAdapter):
     # ------------------------------------------------------------------ #
 
     @staticmethod
-    def _build_prompt(message: str, context: ConversationContext) -> str:
+    def _build_prompt(
+        message: str,
+        context: ConversationContext,
+        *,
+        tools: Sequence[ToolDeclaration] | None = None,
+        nonce: str | None = None,
+    ) -> str:
         """Concatenate conversation history into a single CLI prompt.
 
         The Claude Code CLI's non-interactive ``-p`` mode takes a single
@@ -319,7 +446,9 @@ class ClaudeCodeAdapter(BaseAgentAdapter):
         the current message — the same pattern AnthropicAdapter and friends
         use when collapsing context.
         """
-        parts: list[str] = []
+        parts: list[str] = (
+            [build_cli_tool_prompt_section(tools, nonce)] if (tools and nonce) else []
+        )
         for msg in getattr(context, "messages", []) or []:
             role = getattr(msg, "role", "user").capitalize()
             content = getattr(msg, "content", "") or ""
