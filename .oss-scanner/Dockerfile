@@ -39,35 +39,41 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs \
       | sh -s -- -y --profile minimal --default-toolchain stable --no-modify-path \
     && chmod -R a+rX "$RUSTUP_HOME" "$CARGO_HOME"
 
-# scanner contract: the checkout lives inside the image, at /src
-COPY . /src
+# scanner contract: the checkout lives inside the image, at /src. The scanner runs as uid 65532,
+# so ownership is set here and in the layers that create files; a final `chown -R /src` would
+# copy the whole tree (and the Rust target dir) into a new overlay layer.
+ARG SCAN_UID=65532
+COPY --chown=${SCAN_UID}:${SCAN_UID} . /src
 WORKDIR /src
 
 # Python: the core package with GUI, test, dev and P1AM backend extras (mirrors Dockerfile.dev's
 # `.[all,dev]` plus the nightly full-suite `.[dev,test]` set). A failing install fails the build.
 RUN pip install --upgrade pip "setuptools>=61,<85" wheel \
-    && pip install -e ".[all,gui,test,dev,p1am]"
+    && pip install -e ".[all,gui,test,dev,p1am]" \
+    && find /src -maxdepth 4 -name '*.egg-info' -prune -exec chown -R "${SCAN_UID}:${SCAN_UID}" {} +
 
-# Rust: fetch every crate now (the audit is offline), then build the workspace with debug info.
-# The crates are optional accelerators for the Python package, so a build failure is reported
-# but does not abort the image.
+# Rust: fetch every crate now (the audit is offline), build the workspace with debug info and run
+# its tests. The crates are optional accelerators for the Python package, so failures are
+# reported but do not abort the image. Ownership is fixed in the same layer to avoid a copy-up.
 ENV CARGO_PROFILE_DEV_DEBUG=true \
     RUSTFLAGS="-C force-frame-pointers=yes"
 RUN rustup show active-toolchain \
     && cargo fetch \
-    && (cargo build --workspace --all-targets || echo "WARNING: cargo build reported failures") \
     && (cargo fetch --manifest-path src/pendulum_simulator/pendulum-core/Cargo.toml \
-        || echo "WARNING: pendulum-core fetch failed")
+        || echo "WARNING: pendulum-core fetch failed") \
+    && (cargo build --workspace --all-targets || echo "WARNING: cargo build reported failures") \
+    && (timeout 900 cargo test --workspace --no-fail-fast \
+        || echo "WARNING: cargo test reported failures") \
+    && chown -R "${SCAN_UID}:${SCAN_UID}" /src/target /src/Cargo.lock \
+    && chmod -R a+rwX "$CARGO_HOME"
 ENV CARGO_NET_OFFLINE=true
 
 # Cheap smoke tests so we know the image works; failures are reported, never fatal. These cover
 # the network-facing backends and file importers that threat_model.md calls out.
-RUN (timeout 1500 python -m pytest -q -p no:cacheprovider -n 4 --timeout 120 \
+RUN timeout 1500 python -m pytest -q -p no:cacheprovider -n 4 --timeout 120 \
         tests/calc_backend tests/p1am_control_system tests/data_processor_io \
-        || echo "WARNING: pytest smoke subset reported failures") \
-    && (timeout 900 cargo test --workspace --no-fail-fast \
-        || echo "WARNING: cargo test reported failures")
+    || echo "WARNING: pytest smoke subset reported failures"
 
-# The scanner executes as uid 65532 with HOME on tmpfs; give it a writable tree.
-RUN mkdir -p /tmp/home && chown -R 65532:65532 /src /tmp/home
+# The scanner executes as uid 65532 with HOME on tmpfs.
+RUN mkdir -p /tmp/home && chown "${SCAN_UID}:${SCAN_UID}" /tmp/home
 ENV HOME=/tmp/home
