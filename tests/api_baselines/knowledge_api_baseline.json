@@ -1353,6 +1353,11 @@
       }
     }
   },
+  "search.py": {
+    "__all__": [],
+    "explicit_all": false,
+    "symbols": {}
+  },
   "sources.py": {
     "__all__": [
       "SourceFile",

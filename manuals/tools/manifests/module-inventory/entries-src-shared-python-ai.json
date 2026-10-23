@@ -4991,10 +4991,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 17362,
+      "bytes_lf": 13039,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "280524acc320022c5a24c995300d07571bef7445f07023f0eea66cbd75b31850",
+      "content_sha256_lf": "b8931b91a998605e6e6adf557369c4f952cefa1a2e2d2891af78e3688f1c7e0a",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-KNOWLEDGE-PACK-PY-9610B38EFBC3",
       "language": "python",
@@ -5131,6 +5131,73 @@
           "g",
           "s"
         ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5155,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "10a01f1224300251e9e5cfa714496e5feb3a7027ec57a75767fe9371152fe826",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-KNOWLEDGE-SEARCH-PY-ADEBA7B3501A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/knowledge/search.py",
+      "purpose": "SQLite-backed KnowledgePack search implementations.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_MAX_QUERY_TOKENS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_TEXT_WEIGHT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_TITLE_WEIGHT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_TOKEN_RE",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
         "validation_paths": []
       }
     },
