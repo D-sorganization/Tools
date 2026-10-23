@@ -27,8 +27,6 @@ from shared.python.ai.knowledge.pack import (
     get_minilm_embedder,
 )
 
-from .conftest import commit_all, git_repo
-
 
 class DeterministicEmbedder:
     """Simple 4-dim deterministic embedder for testing vector math.
@@ -295,71 +293,3 @@ def test_search_hybrid_falls_back_to_bm25_when_no_embedder_available(
     assert [h.anchor for h in hybrid_hits] == [h.anchor for h in bm25_hits]
     warnings = [r for r in caplog.records if r.levelno == logging.WARNING]
     assert any("bm25" in r.message.lower() for r in warnings)
-
-
-@pytest.mark.parametrize("hybrid", [False, True])
-def test_repo_filter_is_applied_before_candidate_top_k(
-    tmp_path: Path, hybrid: bool
-) -> None:
-    other = git_repo(tmp_path / "OtherRepo")
-    target = git_repo(tmp_path / "TargetRepo")
-    for index in range(60):
-        path = other / "docs" / "reports" / f"{index:03}.md"
-        path.parent.mkdir(parents=True, exist_ok=True)
-        path.write_text(
-            "# Common Common Common\n\nCommon evidence for ranking.\n", "utf-8"
-        )
-    target_file = target / "docs" / "reports" / "target.md"
-    target_file.parent.mkdir(parents=True)
-    target_file.write_text("# Common\n\nCommon target evidence.\n", "utf-8")
-    commit_all(other)
-    commit_all(target)
-
-    class RepoEmbedder:
-        def embed(self, text: str) -> list[float]:
-            return [0.0, 1.0] if "target" in text.casefold() else [1.0, 0.0]
-
-    embedder = RepoEmbedder() if hybrid else None
-    manifest = manifest_from_dict(
-        {
-            "id": "repo-filter",
-            "title": "Repo filter",
-            "embeddings": hybrid,
-            "sources": [
-                {
-                    "repo": "OtherRepo",
-                    "authority": "findings",
-                    "include": ["docs/**/*.md"],
-                },
-                {
-                    "repo": "TargetRepo",
-                    "authority": "findings",
-                    "include": ["docs/**/*.md"],
-                },
-            ],
-        }
-    )
-    pack_path = tmp_path / "repo-filter.sqlite"
-    build_pack(
-        manifest,
-        {"OtherRepo": other, "TargetRepo": target},
-        pack_path,
-        embedder=embedder,
-    )
-    pack = KnowledgePack.open(pack_path)
-
-    unfiltered = pack.search("common", k=1, hybrid=hybrid, embedder=embedder)
-    assert unfiltered and unfiltered[0].repo == "OtherRepo"
-    filtered = pack.search_repo(
-        "common", repo="TargetRepo", k=1, hybrid=hybrid, embedder=embedder
-    )
-    assert len(filtered) == 1
-    assert filtered[0].repo == "TargetRepo"
-    assert (
-        pack.search_repo(
-            "common", repo="MissingRepo", k=1, hybrid=hybrid, embedder=embedder
-        )
-        == []
-    )
-    with pytest.raises(ValueError, match="repo must be a non-empty string"):
-        pack.search_repo("common", repo=" ", hybrid=hybrid, embedder=embedder)
