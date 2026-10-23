@@ -129,7 +129,7 @@ def test_action_chip_rendering_and_validation() -> None:
 
 
 def test_voice_input_manager_whisper_status_and_wav_transcription() -> None:
-    mgr = VoiceInputManager(model_name="base.en")
+    mgr = VoiceInputManager()
     with pytest.raises(ValueError, match="Invalid WAV"):
         mgr.transcribe_wav_bytes(b"not-a-wav")
 
