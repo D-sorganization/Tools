@@ -59,7 +59,7 @@ def test_full_suite_nightly_hard_fails_missing_collection_dependencies() -> None
         assert module_name in script
 
 
-def test_full_suite_nightly_disables_xdist_on_fleet_runners() -> None:
+def test_full_suite_nightly_disables_xdist_for_stable_nightly_collection() -> None:
     script = _step_script("Run full suite")
 
     assert "-n 0" in script

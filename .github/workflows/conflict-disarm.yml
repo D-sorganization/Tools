@@ -33,3 +33,5 @@ jobs:
     with:
       dry_run: ${{ inputs.dry_run || 'true' }}
       exclude_prs: ${{ inputs.exclude_prs || '' }}
+      runner: >-
+        ${{ github.event_name == 'schedule' && 'ubuntu-latest' || 'd-sorg-fleet' }}

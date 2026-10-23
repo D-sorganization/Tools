@@ -8,7 +8,7 @@ on:
   # The live_simulation + e2e lanes must actually run on a cadence, otherwise the
   # heavy suite is vacuous (issue #3325). Keep workflow_dispatch for manual reruns.
   schedule:
-    - cron: "0 4 * * *" # nightly 04:00 UTC
+    - cron: "0 2 * * *" # nightly 02:00 UTC (staggered off 04:00/05:00 lanes)
 
 jobs:
   run-heavy-tests:
