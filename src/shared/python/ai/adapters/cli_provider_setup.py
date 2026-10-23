@@ -106,6 +106,15 @@ def _probe_codex_cli() -> tuple[str | None, str | None]:
     return binary, _safe_version(binary, ["--version"])
 
 
+def _probe_agy() -> tuple[str | None, str | None]:
+    from shared.python.ai.adapters.antigravity_cli_adapter import _resolve_binary
+
+    binary = _resolve_binary()
+    if binary is None:
+        return None, None
+    return binary, _safe_version(binary, ["--version"])
+
+
 def _probe_gemini_cli() -> tuple[str | None, str | None]:
     from shared.python.ai.adapters.gemini_cli_adapter import _resolve_binary
 
@@ -175,6 +184,18 @@ CLI_PROVIDERS: dict[str, _CliProviderSpec] = {
         ),
         auth_command="codex login",
         probe=_probe_codex_cli,
+    ),
+    "agy": _CliProviderSpec(
+        provider="agy",
+        display_name="Antigravity CLI (agy)",
+        install_command="npm install -g @google/antigravity-cli",
+        install_url="https://idx.google.com/",
+        auth_instructions=(
+            "Run `agy login` in a terminal to sign in with your Google "
+            "subscription (uses gemini-3.8-flash-high with zero API key cost)."
+        ),
+        auth_command="agy login",
+        probe=_probe_agy,
     ),
     "gemini_cli": _CliProviderSpec(
         provider="gemini_cli",
