@@ -224,7 +224,10 @@ def build_pack(
             t = datetime.now(UTC).strftime("%Y-%m-%dT%H:%M:%SZ")
             info = PackInfo(manifest.id, manifest.title, t, commits, len(files), count)
             _write_meta(conn, manifest, info)
-            conn.execute(f"PRAGMA user_version = {FORMAT_VERSION}")
+            # SQLite PRAGMA assignments do not accept bound parameters.
+            conn.execute(  # nosemgrep: python.lang.security.audit.formatted-sql-query.formatted-sql-query, python.sqlalchemy.security.sqlalchemy-execute-raw-query.sqlalchemy-execute-raw-query  # noqa: E501
+                f"PRAGMA user_version = {FORMAT_VERSION}"
+            )
             conn.commit()
         os.replace(tmp, out)
     finally:
@@ -334,120 +337,18 @@ class KnowledgePack:
         include_superseded: bool = False,
         embedder: Embedder | Callable[[str], Sequence[float]] | None = None,
         hybrid: bool = True,
+        repo: str | None = None,
     ) -> list[Passage]:
-        """Top ``k`` passages using hybrid BM25+cosine or pure BM25."""
+        """Top ``k`` passages, optionally restricted to one repository."""
         if not isinstance(query, str):
             raise TypeError("query must be a string")
         if not isinstance(k, int) or isinstance(k, bool) or k < 1:
             raise ValueError("k must be a positive integer")
-        if self.has_embeddings and hybrid:
-            return self._search_hybrid(
-                query, k=k, include_superseded=include_superseded, embedder=embedder
-            )
-        return self._search_bm25(query, k=k, include_superseded=include_superseded)
+        if repo is not None and (not isinstance(repo, str) or not repo.strip()):
+            raise ValueError("repo must be a non-empty string")
+        from .search import search_pack
 
-    def _search_bm25(
-        self, query: str, k: int, include_superseded: bool
-    ) -> list[Passage]:
-        tokens = _TOKEN_RE.findall(query)[:_MAX_QUERY_TOKENS]
-        if not tokens:
-            return []
-        match = " OR ".join('"' + t.replace('"', "") + '"' for t in tokens)
-        hidden = "" if include_superseded else _hidden_clause()
-        sql = (
-            "SELECT p.repo, p.source, p.anchor, p.title, p.text, p.commit_sha,"
-            " p.content_hash, p.status, p.authority,"
-            f" bm25(passages_fts, {_TITLE_WEIGHT}, {_TEXT_WEIGHT}) AS score"
-            " FROM passages_fts JOIN passages p ON p.id = passages_fts.rowid"
-            f" WHERE passages_fts MATCH ?{hidden}"
-            " ORDER BY score, p.authority_rank, p.id LIMIT ?"
-        )
-        with closing(self._connect()) as conn:
-            rows = conn.execute(sql, (match, k)).fetchall()
-        return [_passage(row) for row in rows]
-
-    def _search_hybrid(
-        self,
-        query: str,
-        k: int,
-        include_superseded: bool,
-        embedder: Embedder | Callable[[str], Sequence[float]] | None = None,
-    ) -> list[Passage]:
-        if embedder is None:
-            embedder = get_minilm_embedder()
-        if embedder is None:
-            _logger.warning(
-                "Pack has embeddings but no MiniLM embedder is available;"
-                " falling back to plain BM25 ranking."
-            )
-            return self._search_bm25(query, k=k, include_superseded=include_superseded)
-        emb_fn = _as_embed_fn(embedder)
-        query_vec = emb_fn(query)
-
-        candidate_pool_size = max(k * 5, 50)
-        tokens = _TOKEN_RE.findall(query)[:_MAX_QUERY_TOKENS]
-        bm25_ids: list[int] = []
-        hidden = "" if include_superseded else _hidden_clause()
-
-        with closing(self._connect()) as conn:
-            if tokens:
-                match = " OR ".join('"' + t.replace('"', "") + '"' for t in tokens)
-                bm25_sql = (
-                    "SELECT p.id FROM passages_fts JOIN passages p"
-                    f" ON p.id = passages_fts.rowid WHERE passages_fts MATCH ?{hidden}"
-                    f" ORDER BY bm25(passages_fts, {_TITLE_WEIGHT}, {_TEXT_WEIGHT}),"
-                    " p.authority_rank, p.id LIMIT ?"
-                )
-                bm25_ids = [
-                    row[0]
-                    for row in conn.execute(
-                        bm25_sql, (match, candidate_pool_size)
-                    ).fetchall()
-                ]
-
-            bm25_ranks = {p_id: rank for rank, p_id in enumerate(bm25_ids, start=1)}
-            emb_sql = (
-                "SELECT p.id, p.embedding FROM passages p"
-                f" WHERE p.embedding IS NOT NULL{hidden}"
-            )
-            scored_candidates = sorted(
-                [
-                    (cosine_similarity(query_vec, blob_to_embedding(blob)), p_id)
-                    for p_id, blob in conn.execute(emb_sql).fetchall()
-                ],
-                reverse=True,
-            )[:candidate_pool_size]
-            cosine_ranks = {
-                p_id: rank for rank, (_, p_id) in enumerate(scored_candidates, start=1)
-            }
-
-            fused_scores = reciprocal_rank_fusion(bm25_ranks, cosine_ranks)
-            if not fused_scores:
-                return []
-
-            target_ids = sorted(
-                fused_scores.keys(), key=lambda pid: -fused_scores[pid]
-            )[: k * 2]
-
-            placeholders = ",".join("?" for _ in target_ids)
-            fetch_sql = (
-                "SELECT p.repo, p.source, p.anchor, p.title, p.text, p.commit_sha,"
-                " p.content_hash, p.status, p.authority, p.authority_rank, p.id"
-                f" FROM passages p WHERE p.id IN ({placeholders})"
-            )
-            rows = conn.execute(fetch_sql, target_ids).fetchall()
-
-        passages: list[tuple[float, int, int, Passage]] = [
-            (
-                fused_scores.get(int(r[10]), 0.0),
-                int(r[9]),
-                int(r[10]),
-                _passage(r, fused_scores.get(int(r[10]), 0.0)),
-            )
-            for r in rows
-        ]
-        passages.sort(key=lambda item: (-item[0], item[1], item[2]))
-        return [item[3] for item in passages[:k]]
+        return search_pack(self, query, k, include_superseded, embedder, hybrid, repo)
 
     def info(self) -> PackInfo:
         m = self._meta()
