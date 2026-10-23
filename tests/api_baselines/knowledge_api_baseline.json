@@ -1354,9 +1354,62 @@
     }
   },
   "search.py": {
-    "__all__": [],
+    "__all__": [
+      "search_repo"
+    ],
     "explicit_all": false,
-    "symbols": {}
+    "symbols": {
+      "search_repo": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "KnowledgePack",
+              "default": null,
+              "kind": "arg",
+              "name": "pack"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "query"
+            },
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "repo"
+            },
+            {
+              "annotation": "int",
+              "default": "8",
+              "kind": "kwonlyarg",
+              "name": "k"
+            },
+            {
+              "annotation": "bool",
+              "default": "False",
+              "kind": "kwonlyarg",
+              "name": "include_superseded"
+            },
+            {
+              "annotation": "Embedder | Callable[[str], Sequence[float]] | None",
+              "default": "None",
+              "kind": "kwonlyarg",
+              "name": "embedder"
+            },
+            {
+              "annotation": "bool",
+              "default": "True",
+              "kind": "kwonlyarg",
+              "name": "hybrid"
+            }
+          ],
+          "returns": "list[Passage]"
+        },
+        "type": "function"
+      }
+    }
   },
   "sources.py": {
     "__all__": [

@@ -5136,10 +5136,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5155,
+      "bytes_lf": 6365,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "10a01f1224300251e9e5cfa714496e5feb3a7027ec57a75767fe9371152fe826",
+      "content_sha256_lf": "cbf96dfdcb42605a602931b7e0f6161c97c6a07faa0ea2560f8d3248bfc5bcd7",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-KNOWLEDGE-SEARCH-PY-ADEBA7B3501A",
       "language": "python",
@@ -5160,7 +5160,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "not-applicable",
         "validation": "not-applicable"
       },
@@ -5194,9 +5194,17 @@
             "kind": "constant",
             "name": "_TOKEN_RE",
             "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "search_repo",
+            "signature": "pack: KnowledgePack, query: str, repo: str, *, k: int=8, include_superseded: bool=False, embedder: Embedder | Callable[[str], Sequence[float]] | None=None, hybrid: bool=True"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/shared/python/ai/knowledge/test_hybrid_ranking.py",
+          "tests/shared/python/ai/knowledge/test_pack_build_and_search.py"
+        ],
         "unit_mentions": [],
         "validation_paths": []
       }

@@ -17,6 +17,7 @@ from shared.python.ai.knowledge import (
     build_pack,
 )
 from shared.python.ai.knowledge.cli import main
+from shared.python.ai.knowledge.search import search_repo
 
 from .conftest import commit_all
 
@@ -54,6 +55,30 @@ def test_search_returns_cited_passages(pack: Path) -> None:
     assert len(top.commit) == 40
     where = "AffineDrift:articles/energy/energy.qmd#energy-transfer/timing"
     assert top.citation == f"{where} @ {top.commit[:8]}"
+
+
+def test_repo_filter_applies_before_bm25_top_k(
+    manifest: PackManifest, corpus: dict[str, Path], tmp_path: Path
+) -> None:
+    """A lower-ranked matching repo is still returned when k is one."""
+    target = corpus["UpstreamDrift"] / "docs" / "research" / "repo-filter.tex"
+    target.write_text(
+        "\\section{Rare match}\nThe pelvis timing is documented.\n", "utf-8"
+    )
+    competitor = corpus["AffineDrift"] / "articles" / "pelvis.qmd"
+    competitor.write_text("# Pelvis\n\nA competing pelvis result.\n", "utf-8")
+    commit_all(corpus["UpstreamDrift"], "add repo-filter target")
+    commit_all(corpus["AffineDrift"], "add higher-ranked competitor")
+    pack_path = tmp_path / "repo-filter.sqlite"
+    build_pack(manifest, corpus, pack_path)
+
+    pack = KnowledgePack.open(pack_path)
+    assert pack.search("pelvis", k=1, hybrid=False)[0].repo == "AffineDrift"
+    filtered = search_repo(pack, "pelvis", "UpstreamDrift", k=1, hybrid=False)
+    assert [(hit.repo, hit.source) for hit in filtered] == [
+        ("UpstreamDrift", "docs/research/repo-filter.tex")
+    ]
+    assert search_repo(pack, "pelvis", "UpstreamDrift' OR 1=1 --") == []
 
 
 def test_excluded_files_are_not_indexed(pack: Path) -> None:
