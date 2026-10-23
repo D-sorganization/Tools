@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "d712d453551cbc8d78520f0539c885f9256b6d14f1f62cbf9a8e88f4b14fe743",
+      "content_sha256_lf": "1208abe9f75817604a5fab7fa453fc01dc0f1c501b92ea8446e69a9002056ede",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -759,8 +759,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick.json"
     },
     {
-      "content_sha256_lf": "47c4681c7d33b1eee37ee3c2d3f426ed17c7278dceccdd8e359570eaec4392d8",
-      "entry_count": 14,
+      "content_sha256_lf": "c301baa7aa8afcef12de43130b01f922e2493d9a7f6e545bd74295ce35e03c55",
+      "entry_count": 15,
       "package": "src/shared/python/sidekick/agent",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-agent.json"
     },
