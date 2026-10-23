@@ -5,10 +5,18 @@ concurrency:
 
 on:
   workflow_dispatch:
+  pull_request:
+    types: [opened, synchronize, reopened, labeled]
 
 jobs:
   run-heavy-tests:
     name: Heavy Integration Tests
+    if: >-
+      (!github.event.pull_request ||
+      github.event.pull_request.head.repo.full_name == github.repository) &&
+      (github.event_name == 'workflow_dispatch' ||
+      (github.event_name == 'pull_request' &&
+      contains(github.event.pull_request.labels.*.name, 'run-heavy-integration')))
     runs-on: d-sorg-fleet
     timeout-minutes: 90
     env:

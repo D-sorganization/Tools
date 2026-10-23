@@ -8,8 +8,7 @@ on:
       - "src/python/**"
       - "manifests/**"
       - ".github/workflows/cross-repo-python-integration.yml"
-  pull_request:
-    branches: [staging, main]
+  merge_group:
     paths:
       - "src/shared/python/**"
       - "src/python/**"
