@@ -77,3 +77,7 @@ RUN timeout 1500 python -m pytest -q -p no:cacheprovider -n 4 --timeout 120 \
 # The scanner executes as uid 65532 with HOME on tmpfs.
 RUN mkdir -p /tmp/home && chown "${SCAN_UID}:${SCAN_UID}" /tmp/home
 ENV HOME=/tmp/home
+
+# Phase B runs as uid 65532 (the Runner_Dashboard scan sandbox forces it);
+# declare it so the image never defaults to root (Trivy DS-0002).
+USER 65532:65532
