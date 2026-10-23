@@ -334,9 +334,7 @@ def test_hybrid_search_filters_repo_before_candidate_limits(
 
     global_hits = pack.search("pelvis", k=1, embedder=embedder)
     assert global_hits[0].repo == "AffineDrift"
-    hits = pack.search(
-        "pelvis", k=1, embedder=embedder, repo="UpstreamDrift"
-    )
+    hits = pack.search("pelvis", k=1, embedder=embedder, repo="UpstreamDrift")
     assert [(hit.repo, hit.source) for hit in hits] == [
         ("UpstreamDrift", "docs/research/repo-filter.tex")
     ]

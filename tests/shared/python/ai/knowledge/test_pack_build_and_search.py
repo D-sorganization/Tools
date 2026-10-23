@@ -79,9 +79,7 @@ def test_repo_filter_applies_before_bm25_top_k(
         ("UpstreamDrift", "docs/research/repo-filter.tex")
     ]
     assert all(hit.repo == "UpstreamDrift" for hit in filtered)
-    alias = pack.search(
-        "pelvis", k=1, hybrid=False, repository="UpstreamDrift"
-    )
+    alias = pack.search("pelvis", k=1, hybrid=False, repository="UpstreamDrift")
     assert alias == filtered
     assert pack.search("pelvis", k=1, hybrid=False, repo=None) == global_hits
     assert pack.search("pelvis", repo="UpstreamDrift' OR 1=1 --") == []
