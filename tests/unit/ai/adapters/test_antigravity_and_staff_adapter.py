@@ -10,12 +10,10 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+import shared.python.ai.adapters.antigravity_cli_adapter as agy_mod
 from shared.python.ai.adapters.antigravity_cli_adapter import (
-    DEFAULT_AGY_MODEL,
-    SUBSCRIPTION_CLI_ENABLED_BY_DEFAULT,
     AntigravityCliAdapter,
     RunnerDashboardStaffAdapter,
-    _resolve_binary,
     normalize_cli_provider_id,
     probe_runner_dashboard_staff,
 )
@@ -37,7 +35,7 @@ def _completed(rc: int = 0, stdout: str = "", stderr: str = "") -> MagicMock:
 
 
 def test_normalize_and_legacy_deprecation_shim() -> None:
-    assert SUBSCRIPTION_CLI_ENABLED_BY_DEFAULT is False
+    assert agy_mod.SUBSCRIPTION_CLI_ENABLED_BY_DEFAULT is False
     assert AntigravityCliAdapter.ENABLED_BY_DEFAULT is False
     assert normalize_cli_provider_id("AGY") == "agy"
     with pytest.deprecated_call(match="gemini_cli"):
@@ -46,7 +44,7 @@ def test_normalize_and_legacy_deprecation_shim() -> None:
         normalize_cli_provider_id("  ")
     with pytest.deprecated_call(match="gemini_cli"):
         migrated = AntigravityCliAdapter.from_legacy_config({"provider": "gemini_cli"})
-    assert migrated.model == DEFAULT_AGY_MODEL
+    assert migrated.model == agy_mod.DEFAULT_AGY_MODEL
     with pytest.raises(ValueError, match="mapping"):
         AntigravityCliAdapter.from_legacy_config("bad")  # type: ignore[arg-type]
 
@@ -54,10 +52,10 @@ def test_normalize_and_legacy_deprecation_shim() -> None:
 def test_antigravity_cli_adapter_send_and_errors(tmp_path: Path) -> None:
     fake_bin = tmp_path / "agy"
     fake_bin.write_text("")
-    assert _resolve_binary(str(fake_bin)) == str(fake_bin)
+    assert agy_mod._resolve_binary(str(fake_bin)) == str(fake_bin)
     adapter = AntigravityCliAdapter(binary=str(fake_bin))
     assert adapter.model == "gemini-3.8-flash-high"
-    assert DEFAULT_AGY_MODEL in adapter.list_models()
+    assert agy_mod.DEFAULT_AGY_MODEL in adapter.list_models()
 
     with patch(_RUN, return_value=_completed(0, stdout="agy reply\n")) as run_mock:
         resp = adapter.send_message("hello agy", ConversationContext(), [])

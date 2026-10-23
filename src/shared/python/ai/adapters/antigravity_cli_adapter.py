@@ -89,9 +89,11 @@ class AntigravityCliAdapter(GeminiCliAdapter):
         if not isinstance(config, Mapping):
             raise ValueError("config must be a mapping")
         normalize_cli_provider_id(str(config.get("provider", "agy")))
-        binary = config.get("binary") or config.get("host")
-        model = config.get("model")
-        timeout = config.get("timeout")
+        binary, model, timeout = (
+            config.get("binary") or config.get("host"),
+            config.get("model"),
+            config.get("timeout"),
+        )
         return cls(
             binary=str(binary) if binary else None,
             model=str(model) if model else None,
