@@ -347,6 +347,9 @@ def build_chat_dock_ui(dock: Any) -> ChatDockView:
     # Input row
     input_row = QHBoxLayout()
     view.input_edit = QPlainTextEdit()
+    view.input_edit.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+    view.input_edit.setEnabled(True)
+    view.input_edit.setReadOnly(False)
     install_enter_submit(view.input_edit, dock._on_send)
     view.input_edit.setMinimumHeight(60)
     view.input_edit.setMaximumHeight(150)
@@ -385,9 +388,13 @@ def build_chat_dock_ui(dock: Any) -> ChatDockView:
     )
     input_row.addWidget(view.screenshot_btn)
 
+    mic_tooltip_fn = getattr(dock._voice_manager, "tooltip_text", None)
+    mic_tooltip = (
+        mic_tooltip_fn() if callable(mic_tooltip_fn) else "Voice input (Ctrl+Shift+V)"
+    )
     view.mic_btn = _make_icon_button(
         "\U0001f3a4",
-        "Voice input (Ctrl+Shift+V)",
+        mic_tooltip,
         bg_alt,
         text_primary,
         border,

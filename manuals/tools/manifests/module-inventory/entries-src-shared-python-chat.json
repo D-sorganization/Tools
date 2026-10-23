@@ -649,10 +649,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9902,
+      "bytes_lf": 12844,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3e1d336a7ba050df9dbdbadbb702a140b2326f6a54faf8c9e8f2c4f796669c49",
+      "content_sha256_lf": "1a34a5ddb455aacd9023f171eac85a0b96fb5b6a6c13a9cc706deb35ee6868c1",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-QT-MESSAGING-PY-75F0D893F0A0",
       "language": "python",
@@ -690,7 +690,22 @@
         "public_surfaces": [
           {
             "kind": "class",
+            "name": "ActionChipModel",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "AttachmentIntakeEntry",
+            "signature": null
+          },
+          {
+            "kind": "class",
             "name": "MessagingMixin",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_ATTACHMENT_BYTES",
             "signature": null
           },
           {
@@ -702,6 +717,16 @@
             "kind": "constant",
             "name": "_SCROLL_TIMER_NAME",
             "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "compute_attachment_intake",
+            "signature": "path: Path, max_bytes: int=MAX_ATTACHMENT_BYTES"
+          },
+          {
+            "kind": "function",
+            "name": "format_action_chip_text",
+            "signature": "chip: ActionChipModel"
           }
         ],
         "test_paths": [
@@ -1011,10 +1036,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 18854,
+      "bytes_lf": 19161,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "1c0f29d6da49202526150169f22db68bec4a80edf4d26c7b283ef92042a1bdb1",
+      "content_sha256_lf": "436d615372ec2b9f414609cb24053454cbf0d5a7eb30462f8b0fb0b75042d68d",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-QT-UI-BUILDER-PY-45D90DB4DE0A",
       "language": "python",
@@ -3429,10 +3454,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6326,
+      "bytes_lf": 9502,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8a6697123e536f4a98affb14a8b56d6979eff4b7d9dd14521dc06f672f40bfee",
+      "content_sha256_lf": "07046c00f5834c9b776f7dbe3c9a36c217a3893b5fc0342bafdf29fb187c6df2",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-VOICE-INPUT-MANAGER-PY-63D8D26C9675",
       "language": "python",
@@ -3472,6 +3497,11 @@
             "kind": "class",
             "name": "VoiceInputManager",
             "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "detect_local_whisper_engine",
+            "signature": ""
           }
         ],
         "test_paths": [
