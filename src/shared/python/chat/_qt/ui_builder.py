@@ -465,35 +465,18 @@ def build_chat_dock_ui(dock: Any) -> ChatDockView:
 
 
 def _make_icon_button(
-    text: str,
-    tooltip: str,
-    bg: str,
-    fg: str,
-    border: str,
-    on_clicked: Any,
+    text: str, tooltip: str, bg: str, fg: str, border: str, on_clicked: Any
 ) -> QPushButton:
     """DRY helper for the small fixed-width icon buttons (upload, screenshot, mic)."""
-    btn = QPushButton(text)
-    btn.setToolTip(tooltip)
-    btn.setFixedWidth(28)
-    btn.setSizePolicy(QSizePolicy.Policy.Fixed, QSizePolicy.Policy.Expanding)
-    btn.setStyleSheet(
-        "QPushButton {"
-        f"  background-color: {bg}; color: {fg};"
-        "  border-radius: 4px; padding: 4px;"
-        "}"
+    style = (
+        f"QPushButton {{ background-color: {bg}; color: {fg}; border-radius: 4px; padding: 4px; }}"
         f"QPushButton:hover {{ background-color: {border}; }}"
     )
-    btn.clicked.connect(on_clicked)
-    return btn
+    return _make_action_button(text, tooltip, 28, style, on_clicked)
 
 
 def _make_action_button(
-    text: str,
-    tooltip: str,
-    width: int,
-    style: str,
-    on_clicked: Any,
+    text: str, tooltip: str, width: int, style: str, on_clicked: Any
 ) -> QPushButton:
     """DRY helper for the right-aligned action buttons (Send/Steer/Stop)."""
     btn = QPushButton(text)

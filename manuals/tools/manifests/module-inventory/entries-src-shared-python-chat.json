@@ -730,7 +730,8 @@
           }
         ],
         "test_paths": [
-          "tests/shared/python/chat/test_scroll_to_bottom_timer.py"
+          "tests/shared/python/chat/test_scroll_to_bottom_timer.py",
+          "tests/unit/chat/test_composer_parity_5732.py"
         ],
         "unit_mentions": [
           "g",
@@ -1036,10 +1037,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 19161,
+      "bytes_lf": 18940,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "436d615372ec2b9f414609cb24053454cbf0d5a7eb30462f8b0fb0b75042d68d",
+      "content_sha256_lf": "e882f371304ae4ca8bf99dcc694dbb3da4bb927777de4b58ad7b76a66435203e",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-QT-UI-BUILDER-PY-45D90DB4DE0A",
       "language": "python",
@@ -3505,7 +3506,8 @@
           }
         ],
         "test_paths": [
-          "src/shared/python/chat/tests/test_voice_input.py"
+          "src/shared/python/chat/tests/test_voice_input.py",
+          "tests/unit/chat/test_composer_parity_5732.py"
         ],
         "unit_mentions": [
           "s"

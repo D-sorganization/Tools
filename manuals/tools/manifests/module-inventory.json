@@ -129,7 +129,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
     },
     {
-      "content_sha256_lf": "fe51b933de3d9586c9c0da26e5254dd53f1a4b1535fe9ed39a2f1eb560c490b5",
+      "content_sha256_lf": "89dce93796c4affb14097cc64d673a47b766a4e6facc9f3efd45a2036a2e644b",
       "entry_count": 5,
       "package": "rust_core/file_watcher",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "3be73a58870523ff0d63f0c5e2cc5f6fd1e660c3e800fb316ce31d6f9cea452f",
+      "content_sha256_lf": "6f090339f0030023b9cd6908410051d20909ad6e1f39ad923ae6c319edfb4750",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -267,7 +267,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-file-watcher.json"
     },
     {
-      "content_sha256_lf": "ff76628dba6ff34160c9b64db87b8c85f384c27ba6c1fc5eca5bcd354be84cc8",
+      "content_sha256_lf": "8b00293d15a41372c1c73838d7a3c970df42edc4e6731f5abbd469decde8e4d7",
       "entry_count": 18,
       "package": "src/financial_calculator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-financial-calculator.json"
@@ -297,7 +297,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-folder-tool-pro.json"
     },
     {
-      "content_sha256_lf": "70719d4ce71ecb0c848b57d4fc2690530238404bf90a09819a490612e9c42590",
+      "content_sha256_lf": "afc3d6a2ab3146f1585bd558a9759de065436e440bd043e54b9e2b40c1e5a62f",
       "entry_count": 17,
       "package": "src/function_generator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-function-generator.json"
@@ -393,7 +393,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
     {
-      "content_sha256_lf": "0148b625585916cdd2bb5d787badc62431d812c321febe302ed6a445d7f8b260",
+      "content_sha256_lf": "2fb65f9690f7b1bfc29d543c8c14f77eb0de6487b0091c0ae084e6f27e51ecec",
       "entry_count": 171,
       "package": "src/pendulum_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pendulum-simulator.json"
@@ -411,7 +411,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-plant-simulator.json"
     },
     {
-      "content_sha256_lf": "686a053cbe390e79bdd8e65b94182a3fd327a85cac4e861b46a0c9c41efd3637",
+      "content_sha256_lf": "f321fa0195b7a14ae8af693aea56c1630f92b681f17b3bcd84bba675ac811984",
       "entry_count": 18,
       "package": "src/pressure_drop_calculator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pressure-drop-calculator.json"
@@ -585,7 +585,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rotation-transforms.json"
     },
     {
-      "content_sha256_lf": "fddae8ffb951b1110e8cdd064a64de9c59ebdcab1fc7549a57f659a3a15a70ff",
+      "content_sha256_lf": "f1c8107871d854820e0aabb794c2bd2019114069d6f78233d027a5e0c60cc219",
       "entry_count": 26,
       "package": "src/rrt_path_planner",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rrt-path-planner.json"
@@ -597,7 +597,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "af996482574eb0a5162e8e6dd7c89a053ab7e0b062202ff98a49ecb58c68282b",
+      "content_sha256_lf": "695173b01c58c30ba5e684639ce5fadf603c745c6f63ded81731ffa7f065315d",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
@@ -621,7 +621,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-camera.json"
     },
     {
-      "content_sha256_lf": "e515908655161a433d617a2312da8a756a9ad09e99cf0d5f9bbc9758bc964bcf",
+      "content_sha256_lf": "dc2560fb0c533642205fd49a58d5cdb499c8203258410e0fa67611344fa43b68",
       "entry_count": 51,
       "package": "src/shared/python/chat",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-chat.json"
