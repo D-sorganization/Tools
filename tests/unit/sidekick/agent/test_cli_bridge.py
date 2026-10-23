@@ -116,7 +116,7 @@ def test_capability_probe_scrubbing_and_dbc() -> None:
         {
             "PATH": "/usr/bin",
             "OPENAI_API_" + "KEY": "v1",
-            "VAULT_" + "SECRET_DB": "v2",
+            "VAULT_" + "SECRET_DB": "v2",  # pragma: allowlist secret
         }  # pragma: allowlist secret
     )
     assert scrubbed == {"PATH": "/usr/bin"}
