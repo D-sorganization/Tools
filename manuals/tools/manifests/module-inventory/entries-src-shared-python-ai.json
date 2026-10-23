@@ -483,6 +483,7 @@
           "tests/shared/python/ai/test_rust_adapter_extended.py",
           "tests/shared/python/chat/test_ai_memory_manager.py",
           "tests/shared/python/chat/test_ollama_latency_tuning.py",
+          "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
           "tests/unit/ai/test_gemini_adapter.py",
           "tests/unit/chat/test_adapter_capabilities.py"
         ],
@@ -564,10 +565,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11973,
+      "bytes_lf": 16906,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "aeb16cab573e2da44209f90bb3a3e5d8d11c48851ab88648448d479fc843819a",
+      "content_sha256_lf": "575366c8273ede46cd031c3e87809223b63d6861c1c9e4f0e1ff443b1e9e331b",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLAUDE-CODE-ADAPTER-PY-7E66ECB121E5",
       "language": "python",
@@ -617,18 +618,49 @@
           },
           {
             "kind": "constant",
+            "name": "_ENVELOPE_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
             "name": "_FALLBACK_PATHS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SENSITIVE_ENV_SUFFIXES",
             "signature": null
           },
           {
             "kind": "constant",
             "name": "_STATIC_MODELS",
             "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_cli_tool_prompt_section",
+            "signature": "tools: Sequence[ToolDeclaration], nonce: str"
+          },
+          {
+            "kind": "function",
+            "name": "parse_cli_tool_envelopes",
+            "signature": "raw_text: str, *, expected_nonce: str, tools: Sequence[ToolDeclaration]"
+          },
+          {
+            "kind": "function",
+            "name": "scrub_cli_subprocess_env",
+            "signature": "env: Mapping[str, str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "terminate_cli_process_group",
+            "signature": "pid: int | None"
           }
         ],
         "test_paths": [
           "tests/shared/python/ai/test_claude_code_adapter.py",
-          "tests/unit/ai/adapters/test_claude_code_adapter.py"
+          "tests/unit/ai/adapters/test_claude_code_adapter.py",
+          "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py"
         ],
         "unit_mentions": [
           "g",
@@ -794,10 +826,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12233,
+      "bytes_lf": 13705,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "954e48d9c21f7ecb1000d209d94d88f9358870bf351fc3b2143e2f38e4e24f4c",
+      "content_sha256_lf": "f97cc6fef6c1c46c3502861ea26374cecefffa33c64efb4361c6651cb754211e",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CODEX-CLI-ADAPTER-PY-7AFE11EBF925",
       "language": "python",
@@ -856,6 +888,7 @@
         ],
         "test_paths": [
           "tests/shared/python/ai/test_codex_cli_adapter.py",
+          "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
           "tests/unit/ai/adapters/test_codex_cli_adapter.py"
         ],
         "unit_mentions": [
@@ -1988,6 +2021,7 @@
           "tests/shared/python/ai/test_ollama_adapter_extended.py",
           "tests/shared/python/sidekick/data_processing/test_exceptions.py",
           "tests/unit/ai/adapters/test_claude_code_adapter.py",
+          "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
           "tests/unit/ai/adapters/test_cline_adapter.py",
           "tests/unit/ai/adapters/test_codex_cli_adapter.py",
           "tests/unit/ai/adapters/test_gemini_cli_adapter.py",
@@ -9667,6 +9701,7 @@
           "tests/shared/python/chat/test_message_display.py",
           "tests/shared/python/chat/test_ollama_latency_tuning.py",
           "tests/unit/ai/adapters/test_claude_code_adapter.py",
+          "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
           "tests/unit/ai/adapters/test_cline_adapter.py",
           "tests/unit/ai/adapters/test_codex_cli_adapter.py",
           "tests/unit/ai/adapters/test_gemini_cli_adapter.py",

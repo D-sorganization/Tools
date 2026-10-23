@@ -33,13 +33,20 @@ Example::
 from __future__ import annotations
 
 import os
+import secrets
 import shutil
 import subprocess
-from collections.abc import Iterator
+from collections.abc import Iterator, Sequence
 from pathlib import Path
 from typing import Any
 
 from shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
+from shared.python.ai.adapters.claude_code_adapter import (
+    build_cli_tool_prompt_section,
+    parse_cli_tool_envelopes,
+    scrub_cli_subprocess_env,
+    terminate_cli_process_group,
+)
 from shared.python.ai.exceptions import (
     AIConnectionError,
     AIProviderError,
@@ -51,6 +58,7 @@ from shared.python.ai.types import (
     ConversationContext,
     ProviderCapabilities,
     ProviderCapability,
+    ToolCall,
 )
 from shared.python.logging_pkg.logging_config import get_logger
 
@@ -148,6 +156,7 @@ class CodexCliAdapter(BaseAgentAdapter):
         self._capabilities = ProviderCapabilities(
             supported=frozenset(
                 {
+                    ProviderCapability.FUNCTION_CALLING,
                     ProviderCapability.SYSTEM_MESSAGE,
                     ProviderCapability.STREAMING,
                 }
@@ -203,7 +212,8 @@ class CodexCliAdapter(BaseAgentAdapter):
                 provider=self.PROVIDER_NAME,
             )
 
-        prompt = self._build_prompt(message, context)
+        nonce = secrets.token_hex(8) if tools else None
+        prompt = self._build_prompt(message, context, tools=tools, nonce=nonce)
         args = [self.binary, "exec", "--skip-git-repo-check"]
         if self.model:
             args += ["--model", self.model]
@@ -217,8 +227,11 @@ class CodexCliAdapter(BaseAgentAdapter):
                 timeout=self.timeout,
                 check=False,
                 encoding="utf-8",
+                env=scrub_cli_subprocess_env(),
+                start_new_session=(os.name != "nt"),
             )
         except subprocess.TimeoutExpired as exc:
+            terminate_cli_process_group(getattr(exc, "pid", None))
             raise AITimeoutError(
                 f"Codex CLI timed out after {self.timeout}s",
                 provider=self.PROVIDER_NAME,
@@ -236,14 +249,25 @@ class CodexCliAdapter(BaseAgentAdapter):
                 provider=self.PROVIDER_NAME,
             )
 
+        cleaned_stdout = self._strip_telemetry(result.stdout or "")
+        tool_calls: list[ToolCall] = []
+        meta: dict[str, Any] = {
+            "provider": self.PROVIDER_NAME,
+            "model": self.model or "default",
+            "stderr": (result.stderr or "")[-500:],
+        }
+        if tools and nonce is not None:
+            cleaned_stdout, tool_calls, rejected = parse_cli_tool_envelopes(
+                cleaned_stdout, expected_nonce=nonce, tools=tools
+            )
+            meta["turn_nonce"] = nonce
+            meta["rejected_tool_nonces"] = rejected
         return AgentResponse(
-            content=self._strip_telemetry(result.stdout or ""),
+            content=cleaned_stdout,
+            tool_calls=tool_calls,
+            finish_reason="tool_calls" if tool_calls else "stop",
             usage={},
-            metadata={
-                "provider": self.PROVIDER_NAME,
-                "model": self.model or "default",
-                "stderr": (result.stderr or "")[-500:],
-            },
+            metadata=meta,
         )
 
     def stream_response(
@@ -259,9 +283,14 @@ class CodexCliAdapter(BaseAgentAdapter):
         chunk; the chat dock handles this gracefully.
         """
         response = self.send_message(message, context, tools)
+        for idx, tc in enumerate(response.tool_calls):
+            yield AgentChunk(
+                content="", tool_call_delta=tc.to_dict(), is_final=False, index=idx
+            )
         yield AgentChunk(
             content=response.content,
             is_final=True,
+            index=len(response.tool_calls),
         )
 
     def validate_connection(self) -> tuple[bool, str]:
@@ -300,7 +329,13 @@ class CodexCliAdapter(BaseAgentAdapter):
     # ------------------------------------------------------------------ #
 
     @staticmethod
-    def _build_prompt(message: str, context: ConversationContext) -> str:
+    def _build_prompt(
+        message: str,
+        context: ConversationContext,
+        *,
+        tools: Sequence[ToolDeclaration] | None = None,
+        nonce: str | None = None,
+    ) -> str:
         """Concatenate conversation history into a single CLI prompt.
 
         Codex's ``exec`` mode takes a single positional prompt with no native
@@ -308,7 +343,9 @@ class CodexCliAdapter(BaseAgentAdapter):
         ``User:`` / ``Assistant:`` blocks followed by the current message —
         matching the convention used by the other CLI-shaped adapters.
         """
-        parts: list[str] = []
+        parts: list[str] = (
+            [build_cli_tool_prompt_section(tools, nonce)] if (tools and nonce) else []
+        )
         for msg in getattr(context, "messages", []) or []:
             role = getattr(msg, "role", "user").capitalize()
             content = getattr(msg, "content", "") or ""
