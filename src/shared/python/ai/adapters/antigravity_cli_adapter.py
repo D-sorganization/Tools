@@ -149,7 +149,7 @@ class RunnerDashboardStaffAdapter(BaseAgentAdapter):
     def thinking_capabilities(self) -> Any:
         from shared.python.chat_contracts.models import make_none_only_capabilities
 
-        return make_none_only_capabilities()
+        return make_none_only_capabilities("runner_dashboard_staff")
 
     @property
     def capabilities(self) -> ProviderCapabilities:
