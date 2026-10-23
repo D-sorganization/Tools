@@ -50,6 +50,20 @@ def _search_pack(
     return _search_bm25(pack, query, k, include_superseded, repo)
 
 
+def search_repo(
+    pack: KnowledgePack,
+    query: str,
+    repo: str,
+    *,
+    k: int = 8,
+    include_superseded: bool = False,
+    embedder: Embedder | Callable[[str], Sequence[float]] | None = None,
+    hybrid: bool = True,
+) -> list[Passage]:
+    """Search a knowledge pack within one repo before applying the result limit."""
+    return _search_pack(pack, query, k, include_superseded, embedder, hybrid, repo)
+
+
 def _search_bm25(
     pack: KnowledgePack,
     query: str,

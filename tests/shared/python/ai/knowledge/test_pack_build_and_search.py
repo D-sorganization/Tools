@@ -17,6 +17,7 @@ from shared.python.ai.knowledge import (
     build_pack,
 )
 from shared.python.ai.knowledge.cli import main
+from shared.python.ai.knowledge.search import search_repo
 
 from .conftest import commit_all
 
@@ -73,11 +74,11 @@ def test_repo_filter_applies_before_bm25_top_k(
 
     pack = KnowledgePack.open(pack_path)
     assert pack.search("pelvis", k=1, hybrid=False)[0].repo == "AffineDrift"
-    filtered = pack.search("pelvis", k=1, hybrid=False, repo="UpstreamDrift")
+    filtered = search_repo(pack, "pelvis", "UpstreamDrift", k=1, hybrid=False)
     assert [(hit.repo, hit.source) for hit in filtered] == [
         ("UpstreamDrift", "docs/research/repo-filter.tex")
     ]
-    assert pack.search("pelvis", repo="UpstreamDrift' OR 1=1 --") == []
+    assert search_repo(pack, "pelvis", "UpstreamDrift' OR 1=1 --") == []
 
 
 def test_excluded_files_are_not_indexed(pack: Path) -> None:

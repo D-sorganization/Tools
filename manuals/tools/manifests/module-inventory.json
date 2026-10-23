@@ -111,7 +111,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "0b523c6473a913bca1401cb580be93b7a1511dea2832030797295bf8d5e5f29c",
+      "content_sha256_lf": "18b80898210b27e422bb36c3f963eb1a5c87a0136a6c46803b4a1245d4f661d0",
       "entry_count": 14,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
@@ -603,7 +603,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
     },
     {
-      "content_sha256_lf": "6efa81d252c542a537e139b6693592b2ad1db06d0741587bb2150571ac17bb6a",
+      "content_sha256_lf": "fff24ad3e5e75be04562ebf4c69bdf9b34760e5298676c9eef2737904756be99",
       "entry_count": 123,
       "package": "src/shared/python/ai",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-ai.json"
