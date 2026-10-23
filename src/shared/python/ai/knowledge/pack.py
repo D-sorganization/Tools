@@ -337,18 +337,28 @@ class KnowledgePack:
         include_superseded: bool = False,
         embedder: Embedder | Callable[[str], Sequence[float]] | None = None,
         hybrid: bool = True,
-        repo: str | None = None,
     ) -> list[Passage]:
-        """Top ``k`` passages, optionally restricted to one repository."""
-        if not isinstance(query, str):
-            raise TypeError("query must be a string")
-        if not isinstance(k, int) or isinstance(k, bool) or k < 1:
-            raise ValueError("k must be a positive integer")
-        if repo is not None and (not isinstance(repo, str) or not repo.strip()):
-            raise ValueError("repo must be a non-empty string")
-        from .search import search_pack
+        """Return the top ``k`` passages using the pack's normal ranking."""
+        from .search import _search_pack
 
-        return search_pack(self, query, k, include_superseded, embedder, hybrid, repo)
+        return _search_pack(self, query, k, include_superseded, embedder, hybrid, None)
+
+    def search_repo(
+        self,
+        query: str,
+        *,
+        repo: str,
+        k: int = 8,
+        include_superseded: bool = False,
+        embedder: Embedder | Callable[[str], Sequence[float]] | None = None,
+        hybrid: bool = True,
+    ) -> list[Passage]:
+        """Search one repository before ranking and truncating candidates."""
+        if not isinstance(repo, str) or not repo.strip():
+            raise ValueError("repo must be a non-empty string")
+        from .search import _search_pack
+
+        return _search_pack(self, query, k, include_superseded, embedder, hybrid, repo)
 
     def info(self) -> PackInfo:
         m = self._meta()

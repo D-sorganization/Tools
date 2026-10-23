@@ -350,12 +350,16 @@ def test_repo_filter_is_applied_before_candidate_top_k(
 
     unfiltered = pack.search("common", k=1, hybrid=hybrid, embedder=embedder)
     assert unfiltered and unfiltered[0].repo == "OtherRepo"
-    filtered = pack.search(
-        "common", k=1, repo="TargetRepo", hybrid=hybrid, embedder=embedder
+    filtered = pack.search_repo(
+        "common", repo="TargetRepo", k=1, hybrid=hybrid, embedder=embedder
     )
     assert len(filtered) == 1
     assert filtered[0].repo == "TargetRepo"
     assert (
-        pack.search("common", k=1, repo="MissingRepo", hybrid=hybrid, embedder=embedder)
+        pack.search_repo(
+            "common", repo="MissingRepo", k=1, hybrid=hybrid, embedder=embedder
+        )
         == []
     )
+    with pytest.raises(ValueError, match="repo must be a non-empty string"):
+        pack.search_repo("common", repo=" ", hybrid=hybrid, embedder=embedder)

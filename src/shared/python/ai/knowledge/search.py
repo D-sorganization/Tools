@@ -30,7 +30,7 @@ _TOKEN_RE = re.compile(r"\w+", re.UNICODE)
 _MAX_QUERY_TOKENS = 32
 
 
-def search_pack(
+def _search_pack(
     pack: KnowledgePack,
     query: str,
     k: int,
@@ -39,6 +39,10 @@ def search_pack(
     hybrid: bool,
     repo: str | None,
 ) -> list[Passage]:
+    if not isinstance(query, str):
+        raise TypeError("query must be a string")
+    if not isinstance(k, int) or isinstance(k, bool) or k < 1:
+        raise ValueError("k must be a positive integer")
     if pack.has_embeddings and hybrid:
         return _search_hybrid(pack, query, k, include_superseded, embedder, repo)
     return _search_bm25(pack, query, k, include_superseded, repo)
