@@ -8,9 +8,28 @@ import sys
 from pathlib import Path
 
 
+def _run_isolated_import_check(script: str) -> None:
+    """Run an import contract without mutating the pytest process."""
+    repo_root = Path(__file__).resolve().parents[4]
+    env = os.environ.copy()
+    source_paths = [repo_root / "src", repo_root / "src/shared/python"]
+    env["PYTHONPATH"] = os.pathsep.join(
+        [*(str(path) for path in source_paths), env.get("PYTHONPATH", "")]
+    )
+    result = subprocess.run(
+        [sys.executable, "-c", script],
+        cwd=repo_root,
+        env=env,
+        capture_output=True,
+        check=False,
+        timeout=30,
+        text=True,
+    )
+    assert result.returncode == 0, result.stderr or result.stdout
+
+
 def test_legacy_package_reexports_sidekick_contracts() -> None:
     """Legacy imports keep resolving to the canonical sidekick API."""
-    repo_root = Path(__file__).resolve().parents[4]
     child = """
 import importlib
 import importlib.util
@@ -44,21 +63,7 @@ assert legacy.Calculator is sidekick.Calculator
 assert legacy.ValidationResult is sidekick.ValidationResult
 assert any(item.category is DeprecationWarning for item in caught)
 """
-    env = os.environ.copy()
-    source_paths = [repo_root / "src", repo_root / "src/shared/python"]
-    env["PYTHONPATH"] = os.pathsep.join(
-        [*(str(path) for path in source_paths), env.get("PYTHONPATH", "")]
-    )
-    result = subprocess.run(
-        [sys.executable, "-c", child],
-        cwd=repo_root,
-        env=env,
-        capture_output=True,
-        check=False,
-        timeout=30,
-        text=True,
-    )
-    assert result.returncode == 0, result.stderr or result.stdout
+    _run_isolated_import_check(child)
 
 
 def test_legacy_submodule_aliases_canonical_sidekick_modules() -> None:
@@ -73,19 +78,4 @@ with warnings.catch_warnings():
 sidekick_theme = importlib.import_module("sidekick.theme")
 assert legacy_theme is sidekick_theme
 """
-    repo_root = Path(__file__).resolve().parents[4]
-    env = os.environ.copy()
-    source_paths = [repo_root / "src", repo_root / "src/shared/python"]
-    env["PYTHONPATH"] = os.pathsep.join(
-        [*(str(path) for path in source_paths), env.get("PYTHONPATH", "")]
-    )
-    result = subprocess.run(
-        [sys.executable, "-c", child],
-        cwd=repo_root,
-        env=env,
-        capture_output=True,
-        check=False,
-        timeout=30,
-        text=True,
-    )
-    assert result.returncode == 0, result.stderr or result.stdout
+    _run_isolated_import_check(child)
