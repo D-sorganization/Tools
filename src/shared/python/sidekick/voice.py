@@ -7,8 +7,8 @@ import io
 import os
 import shutil
 import struct
-import tempfile
 import subprocess
+import tempfile
 import threading
 import uuid
 import wave
@@ -161,7 +161,11 @@ class VoiceTranscriber:
             raise VoiceUnavailableError(cap.detail)
 
         shm = Path("/dev/shm")  # nosec B108
-        temp_dir = shm if shm.is_dir() and os.access(shm, os.W_OK) else Path(tempfile.gettempdir())
+        temp_dir = (
+            shm
+            if shm.is_dir() and os.access(shm, os.W_OK)
+            else Path(tempfile.gettempdir())
+        )
         temp_path = temp_dir / f"{TEMP_PREFIX}{uuid.uuid4().hex}.tmp"
         try:
             fd = os.open(str(temp_path), os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
