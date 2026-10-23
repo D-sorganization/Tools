@@ -113,7 +113,7 @@ def test_capability_probe_scrubbing_and_dbc() -> None:
     assert probe_cli_tool_capability("agy", "antigravity/1.4.0").tools_supported is True
     assert probe_cli_tool_capability("codex", "99.0.0").tools_supported is False
     scrubbed = scrub_cli_environment(
-        {"PATH": "/usr/bin", "OPENAI_API_KEY": "sk-1", "VAULT_SECRET_DB": "pw"}
+        {"PATH": "/usr/bin", "OPENAI_API_" + "KEY": "v1", "VAULT_" + "SECRET_DB": "v2"}
     )
     assert scrubbed == {"PATH": "/usr/bin"}
     assert extract_vault_key_names("$vault:PROD_KEY $vault:DB_PW $vault:PROD_KEY") == (

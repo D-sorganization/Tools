@@ -727,6 +727,182 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 13001,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "3dca3a9638abf334cc51b4a2d241cce208af5fe474ae0f15f0dcb6debabdee12",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-CLI-BRIDGE-PY-55C5DD26D464",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/agent/cli_bridge.py",
+      "purpose": "Authorization-free CLI tool-call protocol & loop orchestrator (#5728, Epic #5727).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CliBridgeGoalOutcome",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CliBridgeLoopStatus",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CliCapabilityReport",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CliTurnResponse",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CliTurnTransport",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FakeCliAdapter",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "NeutralizedToolOutput",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ParsedEnvelopeBatch",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ToolStubSpec",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_MAX_GOAL_STEPS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_TOOL_OUTPUT_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_LOOKALIKE_TAG_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_NONCE_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_PINNED_CLI_VERSION_PREFIXES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SENSITIVE_ENV_SUFFIXES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_VAULT_HANDLE_RE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_nonce_tool_prompt",
+            "signature": "tools: Sequence[ToolStubSpec], *, nonce: str, fallback_full_schema: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "extract_vault_key_names",
+            "signature": "text: str"
+          },
+          {
+            "kind": "function",
+            "name": "format_minified_tool_stubs",
+            "signature": "tools: Sequence[ToolStubSpec], *, fallback_full_schema: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "generate_turn_nonce",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "neutralize_and_truncate_tool_output",
+            "signature": "raw_output: str, *, max_bytes: int=MAX_TOOL_OUTPUT_BYTES"
+          },
+          {
+            "kind": "function",
+            "name": "parse_nonce_tool_envelopes",
+            "signature": "text: str, *, expected_nonce: str, channel: str='assistant', allowed_tools: Mapping[str, ToolStubSpec] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "probe_cli_tool_capability",
+            "signature": "provider: str, version_output: str"
+          },
+          {
+            "kind": "function",
+            "name": "run_bounded_cli_goal_loop",
+            "signature": "goal_prompt: str, *, transport: CliTurnTransport, tools: Sequence[ToolStubSpec], executor: Callable[[ToolCall], str], max_steps: int=DEFAULT_MAX_GOAL_STEPS, max_repairs: int=1"
+          },
+          {
+            "kind": "function",
+            "name": "scrub_cli_environment",
+            "signature": "env: Mapping[str, str]"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/sidekick/agent/test_cli_bridge.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 7681,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
