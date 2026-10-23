@@ -171,7 +171,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-shared-scripts.json"
     },
     {
-      "content_sha256_lf": "cadb51b485cea1cfcff8c3b14b20ccc64c0387a6a314277d3e042a7f8c8e067f",
+      "content_sha256_lf": "8275780d118cb3f9e8069cfac7092b4fdac1adaebe15bb7abeb3d8c74337de93",
       "entry_count": 1,
       "package": "src",
       "path": "manuals/tools/manifests/module-inventory/entries-src.json"
@@ -597,7 +597,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "af996482574eb0a5162e8e6dd7c89a053ab7e0b062202ff98a49ecb58c68282b",
+      "content_sha256_lf": "340fc19583f89c05950b5adc47ef6e97fed5eb28c93fa98921374b5fe63f4031",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
