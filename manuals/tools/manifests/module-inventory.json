@@ -603,8 +603,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
     },
     {
-      "content_sha256_lf": "d5a467271aa396ca7d67c52b28fc23493bc64b3966aa46af82ed3987805a6f06",
-      "entry_count": 123,
+      "content_sha256_lf": "8bfa3bd1b84f1d6a03a47fe8df85e9943282851e132fa5850dc3c4cd7952a486",
+      "entry_count": 124,
       "package": "src/shared/python/ai",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-ai.json"
     },
