@@ -8,9 +8,7 @@ import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 
-HEAVY_INTEGRATION = (
-    REPO_ROOT / ".github" / "workflows" / "heavy-integration-tests.yml"
-)
+HEAVY_INTEGRATION = REPO_ROOT / ".github" / "workflows" / "heavy-integration-tests.yml"
 HEAVY_OPT_IN = REPO_ROOT / ".github" / "workflows" / "heavy-tests-opt-in.yml"
 CROSS_REPO_PYTHON = (
     REPO_ROOT / ".github" / "workflows" / "cross-repo-python-integration.yml"
@@ -74,9 +72,7 @@ def test_heavy_opt_in_uses_labelled_pull_request_not_every_sync() -> None:
     assert "workflow_dispatch" in job_if
 
 
-def test_cross_repo_python_integration_runs_on_merge_queue_not_default_pr() -> (
-    None
-):
+def test_cross_repo_python_integration_runs_on_merge_queue_not_default_pr() -> None:
     triggers = _triggers(CROSS_REPO_PYTHON)
 
     assert "pull_request" not in triggers
