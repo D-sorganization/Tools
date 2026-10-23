@@ -15,7 +15,7 @@ on:
   pull_request:
     types: [opened, synchronize, reopened]
   schedule:
-    - cron: "0 8 * * 0,4" # Sundays and Thursdays at 08:00 UTC
+    - cron: "0 8 * * 0" # Weekly Sunday 08:00 UTC (#5705; merge-queue covers PR gaps)
   workflow_dispatch:
     inputs:
       pr_number:
@@ -47,7 +47,8 @@ jobs:
     if: >-
       (!github.event.pull_request ||
       github.event.pull_request.head.repo.full_name == github.repository)
-    runs-on: d-sorg-fleet
+    runs-on: >-
+      ${{ github.event_name == 'schedule' && 'ubuntu-latest' || 'd-sorg-fleet' }}
     timeout-minutes: 2
     outputs:
       runner: ${{ steps.check.outputs.runner }}
@@ -56,8 +57,13 @@ jobs:
         id: check
         shell: bash
         run: |
-          echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
-          echo "Routing to self-hosted fleet runner."
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            echo "runner=ubuntu-latest" >> $GITHUB_OUTPUT
+            echo "Routing scheduled sweep to GitHub-hosted runner."
+          else
+            echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
+            echo "Routing to self-hosted fleet runner."
+          fi
 
   check-and-trigger:
     timeout-minutes: 30

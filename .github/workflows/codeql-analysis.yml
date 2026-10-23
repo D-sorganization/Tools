@@ -4,9 +4,8 @@ name: "CodeQL"
 # RM #1507). The file had been parked as codeql-analysis.yml.disabled with a
 # single no-op job since the runner-fleet migration. Python and
 # JavaScript/TypeScript are analysed on every PR to main and weekly on main.
-# Runs on the self-hosted fleet: local-only-runner-guard.yml does not allowlist
-# a hosted runner for this workflow, and the CodeQL bundle downloads fine
-# there (see docs/workflows/WORKFLOW_TRACKING.md).
+# Weekly scheduled scans run on ubuntu-latest (#5704) so they do not compete
+# with PR lanes on d-sorg-fleet. PR and push events use the same hosted lane.
 
 on:
   pull_request:
@@ -39,7 +38,7 @@ jobs:
       (!github.event.pull_request ||
       github.event.pull_request.head.repo.full_name == github.repository)
     name: CodeQL (${{ matrix.language }})
-    runs-on: d-sorg-fleet
+    runs-on: ubuntu-latest
     timeout-minutes: 120
     permissions:
       contents: read
