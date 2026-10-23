@@ -1,7 +1,7 @@
 <!-- Threat model for D-sorganization/Tools, in the anthropics/oss-scanner template layout. Free text; the scanner reads it before it starts. Paths are relative to the repository root (/src in the scan image). -->
-# Threat model
+# Threat Model
 
-## What this project does and where untrusted input enters
+## What This Project Does and Where Untrusted Input Enters
 
 Tools is a monorepo of engineering and scientific applications: process calculators, signal and data
 processing, URDF/MJCF robot-model builders, biomechanics (C3D, swing and putting analysis), a P&ID
@@ -68,7 +68,7 @@ archive) or, for the server components, someone who can **reach a listening port
   `src/movement_optimizer/rust_core/` exposed to Python through PyO3 (`unsafe`, unchecked array shapes and
   lengths from NumPy). C++ firmware `src/p1am_control_system/firmware/` parses serial/Modbus frames.
 
-## Components that matter most / least
+## Components That Matter Most / Least
 
 Most important:
 1. P1AM SCADA backend and its project import, auth, WebSocket and Modbus write paths (network-facing,
@@ -88,7 +88,7 @@ Out of scope: `manuals/` (generated design manual), `docs/`, `assessments/`, `dr
 (`**/dist/`), lock files, `.github/` workflow configuration, and third-party packages installed in the
 image (report those upstream).
 
-## How to exercise it
+## How to Exercise It
 
 - The image has the package installed editable at `/src` with extras `all,gui,test,dev,p1am`, plus a
   built Rust workspace (`/src/target`). Run Python as `python`; Qt is headless (`QT_QPA_PLATFORM=offscreen`,
@@ -104,7 +104,7 @@ image (report those upstream).
   and data_processor `file_utils` loaders, `project_import._safe_extract_zip`.
 - The audit runs offline. Nothing needs real PLCs, cameras, GPUs, API keys or internet access.
 
-## How you rate severity
+## How You Rate Severity
 
 These are mostly local desktop tools, with a few servers that are meant to sit on loopback or a
 trusted plant network.
@@ -122,7 +122,7 @@ trusted plant network.
 - **Low:** DoS or crash from a crafted file in a desktop app; information leaks in error messages; issues
   that need the attacker to already control the local user account or the environment variables.
 
-## Anything to leave alone
+## Anything to Leave Alone
 
 - `scripting_env.py` intentionally runs user-typed Python in-process; that by itself is not a finding.
 - The P1AM container binding 0.0.0.0 is intentional (isolation is at `docker-compose.yml` publish,
