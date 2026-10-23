@@ -448,10 +448,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 7548,
+      "bytes_lf": 7572,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "85cf23c5f144ba3fa92a118e7c34ef8fdf81ed06630a0df4ab6f2ef39a31f282",
+      "content_sha256_lf": "4b7bb146403cff566cec99dc39f5916352abe757702738a2a4b0182245ce0015",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-ANTIGRAVITY-CLI-ADAPTER-PY-B0B9F6FA112C",
       "language": "python",
