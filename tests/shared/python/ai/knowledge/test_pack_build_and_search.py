@@ -19,7 +19,6 @@ from shared.python.ai.knowledge import (
 from shared.python.ai.knowledge import sanitize_fts_query as package_sanitize_fts_query
 from shared.python.ai.knowledge.cli import main
 from shared.python.ai.knowledge.pack import sanitize_fts_query
-from shared.python.ai.knowledge.search import search_repo
 
 from .conftest import commit_all
 
