@@ -1574,6 +1574,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5737 · Isolate Compatibility Shim Tests From Global Import State
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5737
+- **Branch:** merged via #5745
+- **PR:** #5745
+- **Paths:** see #5745
+- **Started:** 2026-10-24
+- **Last verified:** 2026-10-24 (`9fb27a4c`; collated from changes/5737-isolate-compatibility-shim-tests-from-gl.md)
+- **Summary:** Isolate compatibility shim tests from global import state
+- **Next step:** Shipped in PR #5745.
+
 ### DL-#5725 · Security-Scan Contract for the Fleet Scanner
 
 - **State:** shipped
