@@ -250,11 +250,11 @@ def test_ci_standard_serializes_apt_installs_on_shared_runners() -> None:
     for step in install_steps:
         run = step["run"]
         assert run.count("flock /tmp/d-sorg-apt-install.lock") == 2
+        assert "ci_bounded_apt_install.py" in run
         assert "sudo -n true" in run
         assert "sudo -n flock /tmp/d-sorg-apt-install.lock" in run
         assert "Passwordless sudo is unavailable" in run
-        assert "apt-get -o DPkg::Lock::Timeout=300 update --fix-missing" in run
-        assert "apt-get -o DPkg::Lock::Timeout=300 install -y --fix-missing" in run
+        assert "rm -f /var/lib/dpkg/lock" not in run
 
 
 def test_quality_gate_dependency_install_uses_only_hosted_download_cache() -> None:
