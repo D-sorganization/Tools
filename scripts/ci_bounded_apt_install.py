@@ -79,9 +79,7 @@ def _sanitize_untrusted_apt_sources(run: CommandRunner) -> None:
     )
 
 
-def _apt_get(
-    run: CommandRunner, subcommand: str, packages: Sequence[str] = ()
-) -> None:
+def _apt_get(run: CommandRunner, subcommand: str, packages: Sequence[str] = ()) -> None:
     cmd = [
         "env",
         "DEBIAN_FRONTEND=noninteractive",
@@ -152,9 +150,7 @@ def install_packages(
 
     if uid != 0:
         can_sudo = (
-            sudo_check()
-            if sudo_check is not None
-            else _passwordless_sudo(base_run)
+            sudo_check() if sudo_check is not None else _passwordless_sudo(base_run)
         )
         if not can_sudo:
             return InstallResult(
