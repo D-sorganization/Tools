@@ -34,6 +34,7 @@ from __future__ import annotations
 import json
 import logging
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -56,6 +57,9 @@ DELETIONS_ACK_LABEL = "deletions-acknowledged"
 
 #: Body opt-out, for repos where the reviewer cannot apply labels.
 DELETIONS_ACK_BODY = "deletions-acknowledged:"
+
+#: Fleet lane PRs declare a deliberate block in the body (see lane-prs.md).
+_BLOCKED_SECTION = re.compile(r"^#{0,3}\s*Blocked:\s*", re.MULTILINE | re.IGNORECASE)
 
 #: Substring of the 403 body Claude Code cloud sessions get for any GraphQL call
 #: (which ``gh pr merge --auto`` uses). Only this message selects the REST route.
@@ -453,10 +457,11 @@ def evaluate_hold(
     so the arming side and the enforcing side never disagree:
 
     1. a ``do-not-merge`` or ``blocked`` label
-    2. draft state
-    3. auto-merge disabled by a non-bot account more recently than the head
+    2. a ``Blocked:`` section in the PR body (ready PR with explicit block)
+    3. draft state
+    4. auto-merge disabled by a non-bot account more recently than the head
        commit — a reviewer said no and nobody has pushed since
-    4. the diff deletes tracked files with no acknowledgement
+    5. the diff deletes tracked files with no acknowledgement
 
     Fails closed: any error computing the verdict returns ``held=True``.
     """
@@ -470,6 +475,8 @@ def evaluate_hold(
         reasons = [f"`{label}` label" for label in sorted(lowered & HOLD_LABELS)]
         if pull.draft:
             reasons.append("PR is a draft (mark ready first)")
+        if _BLOCKED_SECTION.search(pull.body):
+            reasons.append("PR body contains a `Blocked:` section")
         reasons += _disarm_reasons(run, repo, pr, pull.head_sha)
         reasons += _deletion_reasons(run, repo, pr, pull)
     except (RuntimeError, json.JSONDecodeError, OSError) as exc:
