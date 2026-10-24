@@ -57,6 +57,7 @@ jobs:
           # Repository_Management is allowlisted only in that repo; the entry is
           # harmless elsewhere.
           ALLOWLIST_FILES = {
+              "anti-phantom-merge.yml",
               "local-only-runner-guard.yml",
               "runner-health-alert.yml",
               "maturin-ai-backend.yml",

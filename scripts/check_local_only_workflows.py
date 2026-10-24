@@ -32,6 +32,7 @@ LEGACY_HOSTED_RUNNER_ALLOWLIST = {
     ".github/workflows/nightly-full-repo-quality.yml",
 }
 HOSTED_RUNNER_ALLOWLIST = {
+    (".github/workflows/anti-phantom-merge.yml", "guard"),
     (".github/workflows/ci-standard.yml", "quality-gate"),
     (".github/workflows/rate-web-playwright.yml", "production-worker-e2e"),
 }
