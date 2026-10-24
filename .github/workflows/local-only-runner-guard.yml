@@ -57,6 +57,13 @@ jobs:
           # Repository_Management is allowlisted only in that repo; the entry is
           # harmless elsewhere.
           ALLOWLIST_FILES = {
+              # Core public-repo gates (free GitHub-hosted minutes; #5782).
+              "docs-governance.yml",
+              "spec-check.yml",
+              "workflow-lint.yml",
+              "Merge-Hold-Guard.yml",
+              "detect-secrets.yml",
+              "anti-phantom-merge.yml",
               "local-only-runner-guard.yml",
               "runner-health-alert.yml",
               "maturin-ai-backend.yml",
@@ -68,7 +75,9 @@ jobs:
               "Local-Only Workflow Runner Guard",
           }
           ALLOWLIST_JOBS = {
+              ("anti-phantom-merge.yml", "guard"),
               ("ci-standard.yml", "quality-gate"),
+              ("ci-standard.yml", "rust-quality-gate"),
               ("rate-web-playwright.yml", "production-worker-e2e"),
           }
           HOSTED = re.compile(r"^(ubuntu|macos|windows)(-latest|-\d+)?$")

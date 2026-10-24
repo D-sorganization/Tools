@@ -46,14 +46,12 @@ jobs:
   guard:
     timeout-minutes: 30
     name: phantom-guard
-    runs-on: d-sorg-fleet
+    runs-on: ubuntu-latest
     # Run on every pull_request event. For label events (pull_request_target) only
     # run when the override label itself is toggled — otherwise unrelated label churn
     # spawns guard runs that cancel each other and clobber the real passing status.
-    # Fork PRs never run on the self-hosted fleet (#4464).
+    # Hosted runner only: pull_request_target runs with base-repo credentials (#3296).
     if: >-
-      (!github.event.pull_request ||
-      github.event.pull_request.head.repo.full_name == github.repository) &&
       github.event.pull_request.base.ref == 'main' &&
       (github.event_name == 'pull_request' ||
       github.event.label.name == 'phantom-guard-override')

@@ -55,7 +55,12 @@ jobs:
     if: >-
       (!github.event.pull_request ||
       github.event.pull_request.head.repo.full_name == github.repository)
-    runs-on: d-sorg-fleet
+    runs-on: >-
+      ${{ github.event.pull_request &&
+      github.event.pull_request.head.repo.full_name != github.repository &&
+      'ubuntu-latest' ||
+      !github.event.repository.private && vars.CI_RUNNER_MODE != 'local' && 'ubuntu-latest' ||
+      'd-sorg-fleet' }}
     timeout-minutes: 2
     outputs:
       runner: ${{ steps.check.outputs.runner }}
@@ -109,7 +114,7 @@ jobs:
       github.event.pull_request.head.repo.full_name == github.repository)
     timeout-minutes: 30
     needs: pick-runner
-    runs-on: d-sorg-fleet
+    runs-on: ${{ needs.pick-runner.outputs.runner }}
     steps:
       - uses: actions/checkout@v7
         with:
