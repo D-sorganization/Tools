@@ -59,6 +59,11 @@ def test_full_suite_nightly_hard_fails_missing_collection_dependencies() -> None
         assert module_name in script
 
 
+def test_full_suite_nightly_runs_on_github_hosted_runner() -> None:
+    workflow = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
+    assert workflow["jobs"]["full-suite"]["runs-on"] == "ubuntu-latest"
+
+
 def test_full_suite_nightly_disables_xdist_on_fleet_runners() -> None:
     script = _step_script("Run full suite")
 
