@@ -11,7 +11,7 @@ on:
     branches: [main]
   merge_group:
   schedule:
-    - cron: "0 4 * * *" # nightly 04:00 UTC
+    - cron: "30 5 * * *" # nightly 05:30 UTC (staggered #5701)
 
 jobs:
   run-heavy-tests:

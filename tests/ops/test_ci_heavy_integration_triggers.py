@@ -43,6 +43,15 @@ def _triggers(path: Path) -> dict[str, object]:
     return on
 
 
+def test_heavy_integration_nightly_schedule_is_staggered() -> None:
+    triggers = _triggers(HEAVY_INTEGRATION)
+    schedule = triggers.get("schedule")
+    assert isinstance(schedule, list)
+    crons = [entry.get("cron") for entry in schedule if isinstance(entry, dict)]
+    assert "30 5 * * *" in crons
+    assert "0 4 * * *" not in crons
+
+
 def test_heavy_integration_runs_on_merge_queue_and_main_push() -> None:
     triggers = _triggers(HEAVY_INTEGRATION)
 
