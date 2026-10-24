@@ -22,8 +22,8 @@ else
     "${AGENT_TOOLSDIRECTORY:-}"
     "/opt/hostedtoolcache"
     "/opt/runner-tool-cache"
-    "/home/dieterolson/actions-runners/.shared-tool-cache"
-    "/home/dieterolson/actions-runners-nvme/.shared-tool-cache"
+    "$HOME/actions-runners/.shared-tool-cache"
+    "$HOME/actions-runners-nvme/.shared-tool-cache"
   )
 fi
 

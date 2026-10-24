@@ -19,7 +19,7 @@ engineering application's frontend build. Git and Python are the only required
 runtime dependencies; MCP is optional.
 
 Branch: `feat/issue-5138-agent-context`. Commit: `SELF`. Worktree:
-`C:/Users/diete/Repositories/.context-implementation/Tools`. Development entry:
+`<worktree>/Repositories/.context-implementation/Tools`. Development entry:
 DL-#5138. Canonical root summary: `AGENT_HANDOFF.md`.
 
 ## Architecture Pointers

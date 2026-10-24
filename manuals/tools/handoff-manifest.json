@@ -18,7 +18,7 @@
   },
   "branch_and_worktree": {
     "branch": "fix/5640-coriolis-christoffel",
-    "worktree": "C:\\Users\\diete\\Repositories\\_wt_claude_tools_5640",
+    "worktree": "%USERPROFILE%\\Repositories\\_wt_claude_tools_5640",
     "is_clean": false
   },
   "check_evidence": {

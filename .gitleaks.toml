@@ -1,0 +1,16 @@
+# Gitleaks configuration for the public Tools repository.
+# Extends the upstream default rule set; see https://github.com/gitleaks/gitleaks.
+
+title = "Tools public repository"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = """
+Impact-acoustics qualification JSON stores SHA-256 content digests from pytest
+checkpoint manifests (generic-api-key false positives), not live credentials.
+"""
+paths = [
+  '''docs/development/impact-acoustics/.*_RESULTS\.json''',
+]

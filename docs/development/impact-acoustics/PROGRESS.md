@@ -614,7 +614,7 @@ JOINT_TRAJECTORY_RESULTS.json retains both platform test properties and runtime/
 source provenance. Scientific tree eda0b3efbaee46cf4ebdc57e6e67b131d31e6cdc has
 archive SHA256 f7c92000a51e3bd94a79b3130b47a2b101f849aeca976f18a0de08679daf95fd,
 60,835,840 bytes. Linux logs/XML remain in
-/home/dieterolson/.cache/codex-impact/joint-eda0b3efb. Repository Ruff passes 3,827 formatted files; all nine final governance gates
+$HOME/.cache/codex-impact/joint-eda0b3efb. Repository Ruff passes 3,827 formatted files; all nine final governance gates
 pass. Published at a2429e51a0de51c0458aff5eae06bd5972b08b8c with all normal hooks, remote verified and clean worktree; issue comment 5605461837 records publication. Complete disturbed rotating/bending convergence, full/reduced
 continuous-band port errors, physical parameters, flexible impact, calibrated
 radiation, consumers and physical/blinded final synthesis. Parent epics remain open.
@@ -648,7 +648,7 @@ Full Linux golf/signal/API passes 1,018 tests, with two optional CAD skips and
 three absent-plugin warnings, in 122.27 s. Scientific tree
 a4027d37b2b3b92b3f6a25deac860503c705ff5d is archived as 60,815,360 bytes,
 SHA256 a377fcf07d90bf04ac076acc6bfe9fc70266911f41aab74c68416d4a120752bf;
-log: /home/dieterolson/.cache/codex-impact/trajectory-a4027d37b/scientific.log.
+log: $HOME/.cache/codex-impact/trajectory-a4027d37b/scientific.log.
 Repository Ruff passes 3,824 formatted files; all nine final governance gates
 pass after canonical inventory regeneration. Normal publication remains.
 Lease renewed through 2026-09-09T18:05:21Z. The complete program remains open.
@@ -684,7 +684,7 @@ is 60,784,640 bytes, SHA256
 Its native run passes 988 tests, with two CAD skips and three absent-plugin
 warnings in 87.28 s. The final combined Windows run passes 91 in 7.49 s.
 Repository Ruff passes (3,819 formatted files). The native log is
-/home/dieterolson/.cache/codex-impact/moving-chain-11c64ccea/scientific.log.
+$HOME/.cache/codex-impact/moving-chain-11c64ccea/scientific.log.
 All nine final governance gates pass after canonical inventory regeneration;
 normal publication remains. Full trajectory integration,
 moving/rotating joint convergence, continuous full/reduced port errors, flexible
@@ -715,7 +715,7 @@ its src/tests/conftest/pyproject archive is 60,641,280 bytes, SHA256
 4631582eb358ee77a2255355b072d439495580ad55688cc5af62c93300f27990.
 The full Linux golf/signal/API run passes 956 tests, with two optional CAD
 skips and three absent-plugin configuration warnings, in 93.83 s. Its log is
-/home/dieterolson/.cache/codex-impact/frequency-band-88d7d5854/scientific.log.
+$HOME/.cache/codex-impact/frequency-band-88d7d5854/scientific.log.
 Repository Ruff passes 3,805 formatted files and all nine manual gates pass.
 Published as 842c39890755a8fcfb419b3068bf0dc58b2e97f1 through all normal
 commit/push hooks and remote verified. Main 0f2dfe3fd (mocap #5118) is now
@@ -1030,7 +1030,7 @@ no experiment, acoustic effect or perceptual preference is inferred.
 
 ## Previous Implementation: IA-T2
 
-Worktree: `C:/Users/diete/Repositories/Tools-impact-coupling`.
+Worktree: `<worktree>/Repositories/Tools-impact-coupling`.
 Branch: `fix/5071-qualified-impact-coupling`, stacked on T1 head `5932146f1`.
 The initial T2 claim check was free. Lease label posting failed; the documented
 fleet fail-open policy allows progress but is not evidence of a posted lease.

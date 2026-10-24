@@ -184,7 +184,7 @@ Since you have both Tools and Playground versions:
 1. **Create .env in Tools folder:**
 
    ```
-   c:\Users\diete\Repositories\Tools\document_processing\pdf_renamer\.env
+   %USERPROFILE%\Repositories\Tools\document_processing\pdf_renamer\.env
    ```
 
 2. **Add your key:**
@@ -202,7 +202,7 @@ Since you have both Tools and Playground versions:
 
 ```bash
 # In Playground folder
-cd c:\Users\diete\Repositories\Playground\PDFRenamer
+cd %USERPROFILE%\Repositories\Playground\PDFRenamer
 python -c "from src.pdf_renamer.config import get_api_key, _find_key_location; print(f'Key found: {bool(get_api_key())}'); print(f'Location: {_find_key_location()}')"
 ```
 
@@ -265,7 +265,7 @@ If you want a separate key for Playground:
 
 ```bash
 # Windows PowerShell
-Copy-Item "c:\Users\diete\Repositories\Tools\document_processing\pdf_renamer\.env" "c:\Users\diete\Repositories\Playground\PDFRenamer\.env"
+Copy-Item "%USERPROFILE%\Repositories\Tools\document_processing\pdf_renamer\.env" "%USERPROFILE%\Repositories\Playground\PDFRenamer\.env"
 
 # Linux/Mac
 cp ~/Repositories/Tools/document_processing/pdf_renamer/.env ~/Repositories/Playground/PDFRenamer/.env
