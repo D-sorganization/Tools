@@ -61,7 +61,7 @@ gh pr checks <PR_NUMBER>
 // turbo 8. **Merge when green**:
 
 ```bash
-gh pr merge <PR_NUMBER> --squash
+gh pr merge <PR_NUMBER> --repo D-sorganization/Tools --auto
 ```
 
 // turbo 9. **Clean up**:

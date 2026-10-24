@@ -49,7 +49,7 @@ gh pr create --title "fix: <description>" --body "Closes #<NUMBER>"
 
 ```bash
 gh pr checks <PR_NUMBER>
-gh pr merge <PR_NUMBER> --squash
+gh pr merge <PR_NUMBER> --repo D-sorganization/Tools --auto
 ```
 
 // turbo 7. **Clean up and continue**:
