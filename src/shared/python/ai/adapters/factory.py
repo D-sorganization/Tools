@@ -41,6 +41,7 @@ _LOCAL_FIRST_ORDER = (
     "bitnet",
     "claude_code",
     "codex_cli",
+    "agy",
     "gemini_cli",
     "cline",
     "openai",
@@ -53,6 +54,7 @@ _CLOUD_FIRST_ORDER = (
     "gemini",
     "claude_code",
     "codex_cli",
+    "agy",
     "gemini_cli",
     "ollama",
     "bitnet",
@@ -112,7 +114,9 @@ class AdapterFactory:
             "anthropic",
             "claude_code",  # the Claude Code CLI agent (distinct from Anthropic API)
             "gemini",
-            "gemini_cli",  # the @google/gemini-cli CLI agent (distinct from Gemini API)
+            "agy",  # the Antigravity subscription CLI agent (gemini-3.8-flash-high)
+            "gemini_cli",  # legacy @google/gemini-cli alias
+            "runner_dashboard_staff",  # local Runner Dashboard Staff (:8321)
             "cline",
         }
     )
@@ -198,6 +202,22 @@ class AdapterFactory:
 
             # `host` reused as explicit binary path override (see claude_code above).
             adapter = CodexCliAdapter(binary=host, model=model, timeout=timeout)
+
+        elif provider == "agy":
+            from shared.python.ai.adapters.antigravity_cli_adapter import (
+                AntigravityCliAdapter,
+            )
+
+            adapter = AntigravityCliAdapter(binary=host, model=model, timeout=timeout)
+
+        elif provider == "runner_dashboard_staff":
+            from shared.python.ai.adapters.antigravity_cli_adapter import (
+                RunnerDashboardStaffAdapter,
+            )
+
+            adapter = RunnerDashboardStaffAdapter(
+                base_url=host, model=model, timeout=timeout
+            )
 
         elif provider == "gemini_cli":
             from shared.python.ai.adapters.gemini_cli_adapter import (
