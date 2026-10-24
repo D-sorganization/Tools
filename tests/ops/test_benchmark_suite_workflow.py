@@ -8,6 +8,15 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 WORKFLOW = REPO_ROOT / ".github" / "workflows" / "benchmark-suite.yml"
 
 
+def test_benchmark_suite_scheduled_cadence_is_weekly() -> None:
+    workflow = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
+    on = workflow.get("on", workflow.get(True, {}))
+    assert isinstance(on, dict)
+    schedule = on.get("schedule", [])
+    crons = [entry.get("cron") for entry in schedule if isinstance(entry, dict)]
+    assert crons == ["0 6 * * 0"]
+
+
 def test_benchmark_suite_uses_an_isolated_virtual_environment() -> None:
     """A damaged shared pip installation must not contaminate benchmark jobs."""
     workflow = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
