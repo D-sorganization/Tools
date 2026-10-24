@@ -1574,6 +1574,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5723 · Restore the Public KnowledgePack FTS Query Sanitizer
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5723
+- **Branch:** codex/5723-fts-query-sanitizer
+- **PR:** #5724
+- **Paths:** see #5724
+- **Started:** 2026-10-24
+- **Last verified:** 2026-10-24 (`160c9c78`; collated from changes/5723-restore-the-public-knowledgepack-fts-que.md)
+- **Summary:** Restore the public KnowledgePack FTS query sanitizer
+- **Next step:** Merge the sanitizer compatibility PR.
+
 ### DL-#5737 · Isolate Compatibility Shim Tests From Global Import State
 
 - **State:** shipped

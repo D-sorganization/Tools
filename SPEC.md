@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-24 | #5724 | Restore the public KnowledgePack FTS query sanitizer |
 | 2026-10-24 | #5745 | Isolate compatibility shim tests from global import state |
 | 2026-10-23 | #5726 | Add a .oss-scanner security-scan contract (project.yaml, offline audit Dockerfile, threat model) for the fleet scanner pilot. |
 | 2026-10-23 | #5719 | Extract KnowledgePack BM25 and hybrid ranking into a private search module without changing the public API. |
