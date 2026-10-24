@@ -1,0 +1,22 @@
+# Security-scan contract for D-sorganization/Tools, in the anthropics/oss-scanner layout.
+# Validated by Repository_Management shared_scripts/oss_scanner_contract.py (check_contract).
+# Operator settings (cadence, budget, priority, workflow) are NOT allowed here; they live in
+# the Runner Dashboard's config/security_scan.json.
+
+# REQUIRED. The one git repository to scan.
+repo: https://github.com/D-sorganization/Tools
+
+# REQUIRED. Where reports and questions go.
+primary_contact: dieterolson@gmail.com
+
+# Optional. The project's home page.
+homepage: https://github.com/D-sorganization/Tools
+
+# Optional. true pauses reports without removing the enrolment.
+disabled: false
+
+# REQUIRED. Builds the project with network; the audit itself runs offline.
+dockerfile: .oss-scanner/Dockerfile
+
+# Strongly recommended. Read by the scanner before it starts.
+threat_model: .oss-scanner/threat_model.md

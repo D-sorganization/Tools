@@ -897,6 +897,127 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 8858,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "82101a47bd84d79bf5da9595875cd1f76aa7e25d3ec60a81617ad0b6d3799000",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-VOICE-PY-5AD13B7DEDCF",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/sidekick/voice.py",
+      "purpose": "Shared local Whisper voice-to-text transcriber for Sidekick & host apps (#5730).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "TranscriptionResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "VoiceCapability",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "VoiceTranscriber",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "VoiceUnavailableError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "VoiceValidationError",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "ALLOWED_AUDIO_MIMES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "HALLUCINATION_PHRASES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_AUDIO_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_AUDIO_DURATION_S",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "NO_SPEECH_PROB_THRESHOLD",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TEMP_PREFIX",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "filter_silence_hallucination",
+            "signature": "text: str, no_speech_prob: float=0.0"
+          },
+          {
+            "kind": "function",
+            "name": "insert_transcript_into_composer",
+            "signature": "current_text: str, transcript: str, cursor_pos: int | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "sweep_stale_voice_temp_files",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/unit/sidekick/test_voice_transcriber.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 3628,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",

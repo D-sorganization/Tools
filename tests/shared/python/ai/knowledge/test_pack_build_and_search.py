@@ -75,12 +75,19 @@ def test_repo_filter_applies_before_bm25_top_k(
     build_pack(manifest, corpus, pack_path)
 
     pack = KnowledgePack.open(pack_path)
-    assert pack.search("pelvis", k=1, hybrid=False)[0].repo == "AffineDrift"
-    filtered = search_repo(pack, "pelvis", "UpstreamDrift", k=1, hybrid=False)
+    global_hits = pack.search("pelvis", k=1, hybrid=False)
+    assert global_hits[0].repo == "AffineDrift"
+    filtered = pack.search("pelvis", k=1, hybrid=False, repo="UpstreamDrift")
     assert [(hit.repo, hit.source) for hit in filtered] == [
         ("UpstreamDrift", "docs/research/repo-filter.tex")
     ]
-    assert search_repo(pack, "pelvis", "UpstreamDrift' OR 1=1 --") == []
+    assert all(hit.repo == "UpstreamDrift" for hit in filtered)
+    alias = pack.search("pelvis", k=1, hybrid=False, repository="UpstreamDrift")
+    assert alias == filtered
+    assert pack.search("pelvis", k=1, hybrid=False, repo=None) == global_hits
+    assert pack.search("pelvis", repo="UpstreamDrift' OR 1=1 --") == []
+    with pytest.raises(ValueError, match="repo or repository"):
+        pack.search("pelvis", repo="UpstreamDrift", repository="AffineDrift")
 
 
 def test_excluded_files_are_not_indexed(pack: Path) -> None:

@@ -26,7 +26,6 @@ from shared.python.ai.knowledge.pack import (
     embedding_to_blob,
     get_minilm_embedder,
 )
-from shared.python.ai.knowledge.search import search_repo
 
 
 class DeterministicEmbedder:
@@ -333,8 +332,11 @@ def test_hybrid_search_filters_repo_before_candidate_limits(
     build_pack(manifest, corpus, pack_path, embedder=embedder)
     pack = KnowledgePack.open(pack_path)
 
-    assert pack.search("pelvis", k=1, embedder=embedder)[0].repo == "AffineDrift"
-    hits = search_repo(pack, "pelvis", "UpstreamDrift", k=1, embedder=embedder)
+    global_hits = pack.search("pelvis", k=1, embedder=embedder)
+    assert global_hits[0].repo == "AffineDrift"
+    hits = pack.search("pelvis", k=1, embedder=embedder, repo="UpstreamDrift")
     assert [(hit.repo, hit.source) for hit in hits] == [
         ("UpstreamDrift", "docs/research/repo-filter.tex")
     ]
+    assert all(hit.repo == "UpstreamDrift" for hit in hits)
+    assert pack.search("pelvis", k=1, embedder=embedder, repo=None) == global_hits

@@ -2425,6 +2425,10 @@
       }
     }
   },
+  "agent/cli_bridge.py": {
+    "__all__": [],
+    "symbols": {}
+  },
   "agent/feature_catalog.py": {
     "__all__": [
       "FeatureEntry",
@@ -41920,5 +41924,9 @@
         }
       }
     }
+  },
+  "voice.py": {
+    "__all__": [],
+    "symbols": {}
   }
 }

@@ -281,6 +281,18 @@
                   "default": "True",
                   "kind": "arg",
                   "name": "hybrid"
+                },
+                {
+                  "annotation": "str | None",
+                  "default": "None",
+                  "kind": "kwonlyarg",
+                  "name": "repo"
+                },
+                {
+                  "annotation": "str | None",
+                  "default": "None",
+                  "kind": "kwonlyarg",
+                  "name": "repository"
                 }
               ],
               "returns": "list[Passage]"
@@ -1211,6 +1223,18 @@
                   "default": "True",
                   "kind": "arg",
                   "name": "hybrid"
+                },
+                {
+                  "annotation": "str | None",
+                  "default": "None",
+                  "kind": "kwonlyarg",
+                  "name": "repo"
+                },
+                {
+                  "annotation": "str | None",
+                  "default": "None",
+                  "kind": "kwonlyarg",
+                  "name": "repository"
                 }
               ],
               "returns": "list[Passage]"

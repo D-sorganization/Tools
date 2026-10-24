@@ -75,10 +75,10 @@ on:
       - ready_for_review
       - auto_merge_enabled
   # Backstop sweep for arms that arrive without a usable event (for example a
-  # re-arm while the guard itself was being updated). Offset off the hour so it
-  # does not collide with the hourly fleet pass.
+  # re-arm while the guard itself was being updated). Six-hour cadence keeps the
+  # scheduled share low while event-driven paths remain authoritative (#5698).
   schedule:
-    - cron: "20,50 * * * *"
+    - cron: "20 */6 * * *"
   workflow_dispatch:
     inputs:
       pr_number:
