@@ -17,7 +17,8 @@ slprj/
 *.mex* 
 
 # IDE
-.cursor/
+.cursor/*
+!.cursor/environment.json
 *.cursor-chat
 .vscode/
 .idea/
