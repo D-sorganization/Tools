@@ -115,7 +115,6 @@ class VoiceTranscriber:
         self._backend_override = backend_override
         self._lock = threading.Semaphore(1)
         self._cached_model: Any = None
-        sweep_stale_voice_temp_files()
 
     def detect_capability(self) -> VoiceCapability:
         if self._backend_override is not None:

@@ -897,10 +897,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8858,
+      "bytes_lf": 8819,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "82101a47bd84d79bf5da9595875cd1f76aa7e25d3ec60a81617ad0b6d3799000",
+      "content_sha256_lf": "65a7fee0c761c03b5c819f971262d1c42bd8cd3f0b0aa36db63254bfe3d8cab5",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-VOICE-PY-5AD13B7DEDCF",
       "language": "python",
