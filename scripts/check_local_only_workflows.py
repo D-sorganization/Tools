@@ -29,6 +29,7 @@ LEGACY_HOSTED_RUNNER_ALLOWLIST = {
     ".github/workflows/Jules-Laymans-Terms-Writer.yml",
     ".github/workflows/file-size-budget.yml",
     ".github/workflows/local-only-runner-guard.yml",
+    ".github/workflows/full-suite-nightly.yml",
     ".github/workflows/nightly-full-repo-quality.yml",
 }
 HOSTED_RUNNER_ALLOWLIST = {
