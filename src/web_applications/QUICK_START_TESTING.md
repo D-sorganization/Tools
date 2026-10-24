@@ -25,7 +25,7 @@ If any are missing, create them first.
 **Create test results directory:**
 
 ```bash
-cd /home/user/Tools/src/web_applications
+cd <repo-root>/Tools/src/web_applications
 mkdir -p test_results/{reports,screenshots,axe-results}
 cd test_results
 touch TESTING_LOG.md
@@ -36,7 +36,7 @@ touch TESTING_LOG.md
 **Terminal 1 - Aurora Calculator:**
 
 ```bash
-cd /home/user/Tools/src/web_applications/calculator
+cd <repo-root>/Tools/src/web_applications/calculator
 flask --app webapp run
 # Opens on http://localhost:5000
 ```
@@ -44,7 +44,7 @@ flask --app webapp run
 **Terminal 2 - Unit Converter:**
 
 ```bash
-cd /home/user/Tools/src/web_applications/unit_converter/unit-converter-app
+cd <repo-root>/Tools/src/web_applications/unit_converter/unit-converter-app
 python -m http.server 8000
 # Opens on http://localhost:8000
 ```
@@ -52,7 +52,7 @@ python -m http.server 8000
 **Terminal 3 - URDF Viewer (if testing):**
 
 ```bash
-cd /home/user/Tools/src/web_applications/urdf_viewer
+cd <repo-root>/Tools/src/web_applications/urdf_viewer
 uvicorn app:app --reload
 # Opens on http://localhost:8000 or configured port
 ```

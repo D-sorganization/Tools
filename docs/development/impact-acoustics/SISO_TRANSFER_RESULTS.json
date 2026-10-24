@@ -4,7 +4,7 @@
   "physical_evidence": false,
   "source_archive": {
     "tree": "bdd6e0f1aaa618fc35b8e4e5c1b8f12289d400cf",
-    "archive": "C:\\Users\\diete\\AppData\\Local\\Temp\\impact-siso-source.tar",
+    "archive": "%USERPROFILE%\\AppData\\Local\\Temp\\impact-siso-source.tar",
     "bytes": 90234880,
     "sha256": "90e7bc31a4f1e78631bef2479416e67a1a617cb1066ecdc7a982eb3dcd84ab4c"
   },
@@ -218,7 +218,7 @@
     ],
     "duration_s": 176.67,
     "warnings": 3,
-    "native_directory": "/home/dieterolson/.cache/codex-impact/siso-bdd6e0f1a",
+    "native_directory": "$HOME/.cache/codex-impact/siso-bdd6e0f1a",
     "runtime": {
       "python": "3.11.15",
       "numpy": "2.3.5",

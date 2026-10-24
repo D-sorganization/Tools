@@ -183,7 +183,7 @@
     }
   },
   "full_command": [
-    "C:\\Users\\diete\\Repositories\\Tools-impact-shaft\\.venv\\Scripts\\python.exe",
+    "%USERPROFILE%\\Repositories\\Tools-impact-shaft\\.venv\\Scripts\\python.exe",
     "-m",
     "pytest",
     "tests/shared/python/golf_club",
@@ -196,10 +196,10 @@
     "--cov=src/shared/python/golf_club",
     "--cov=src/shared/python/swing_sim/impact",
     "--cov-report=term",
-    "--cov-report=json:C:\\Users\\diete\\AppData\\Local\\Temp/impact-polynomial-final-full-coverage.json",
+    "--cov-report=json:%USERPROFILE%\\AppData\\Local\\Temp/impact-polynomial-final-full-coverage.json",
     "--timeout=60",
     "-q",
-    "--junitxml=C:\\Users\\diete\\AppData\\Local\\Temp/impact-polynomial-final-full.xml"
+    "--junitxml=%USERPROFILE%\\AppData\\Local\\Temp/impact-polynomial-final-full.xml"
   ],
   "coverage": {
     "receipt": {

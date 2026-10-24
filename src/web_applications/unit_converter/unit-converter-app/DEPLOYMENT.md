@@ -5,7 +5,7 @@
 ### 1. Prepare Repository
 
 ```bash
-cd /home/user/Gasification_Model
+cd <repo-root>/Gasification_Model
 git add unit-converter-app/
 git commit -m "Add standalone unit converter PWA"
 git push -u origin claude/standalone-unit-converter-app-01BeDFaJRMujwcENzVBSPZQ5
@@ -150,7 +150,7 @@ convert icon.svg -resize 512x512 icon-512.png
 1. Start local server:
 
    ```bash
-   cd /home/user/Gasification_Model
+   cd <repo-root>/Gasification_Model
    python -m http.server 8000
    ```
 
