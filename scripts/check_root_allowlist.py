@@ -47,6 +47,7 @@ ROOT_ALLOWLIST: frozenset[str] = frozenset(
         ".gitignore",
         ".jules",  # Jules agent prompts and completist data
         ".mypy_cache",  # only a .gitkeep so the cache dir exists on runners
+        ".oss-scanner",  # fleet security-scanner contract (Runner_Dashboard#2566)
         ".pre-commit-config.yaml",
         ".prettierignore",
         ".secrets.baseline",  # detect-secrets baseline

@@ -260,6 +260,7 @@
           "tests/unit/ai/test_peer_review.py",
           "tests/unit/chat/export/test_copy_clipboard.py",
           "tests/unit/chat/test_ai_settings_controller.py",
+          "tests/unit/chat/test_composer_parity_5732.py",
           "tests/unit/chat/test_dock_widget_dropdowns.py",
           "tests/unit/chat/test_mid_thread_switch.py",
           "tests/unit/chat/test_workspace_command_handler.py",
