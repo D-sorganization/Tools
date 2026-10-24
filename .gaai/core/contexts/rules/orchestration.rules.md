@@ -135,7 +135,7 @@ All AI-driven execution targets the **`staging`** branch. The `production` branc
 
 > **Concurrent mode note:** This sequential constraint applies in `--max-concurrent 1` mode (default). In concurrent delivery (`--max-concurrent > 1`), each session manages its own branch independently from staging HEAD; conflicts are resolved at PR merge time via the retry-with-rebase pattern (see delivery-loop.workflow.md §Staging Push Retry Pattern).
 
-- After creating a PR, immediately enable GitHub auto-merge: `gh pr merge --auto --squash story/{id}`.
+- After creating a PR, immediately enable GitHub auto-merge: `python scripts/automerge_guard.py <owner>/<repo> <pr> --arm` or `gh pr merge <pr> --repo <owner>/<repo> --auto`.
   This ensures PRs merge automatically when CI passes, without human intervention.
 
 A pre-push hook (`.githooks/pre-push`) enforces this rule at the git level.

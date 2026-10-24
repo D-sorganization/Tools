@@ -537,7 +537,7 @@ All pull requests should be verified to pass the ruff, black, and mypy requireme
 - Use simple, concise titles and descriptions for initial creation
 - Wrap GitHub CLI commands in powershell `-Command "..."`
 - Use single quotes inside double quotes for string parameters
-- After CI is green, arm squash auto-merge: `gh pr merge --auto --squash`
+- After CI is green, arm auto-merge: `python scripts/automerge_guard.py D-sorganization/Tools <pr> --arm` or `gh pr merge <pr> --repo D-sorganization/Tools --auto`
 
 ### For PR Management
 
@@ -559,8 +559,9 @@ All pull requests should be verified to pass the ruff, black, and mypy requireme
 # Create PR (ready, not draft):
 powershell -Command "gh pr create --title 'Your Title' --body 'Your description'"
 
-# Arm squash auto-merge when CI is green:
-powershell -Command "gh pr merge [PR_NUMBER] --auto --squash"
+# Arm auto-merge when CI is green (prefer hold guard):
+python scripts/automerge_guard.py D-sorganization/Tools [PR_NUMBER] --arm
+# Or: gh pr merge [PR_NUMBER] --repo D-sorganization/Tools --auto
 
 # Check PR status:
 powershell -Command "gh pr view [PR_NUMBER]"
@@ -851,7 +852,7 @@ Full rule: [fleet-rules/agent-tiers.md](https://github.com/D-sorganization/Repos
 > Do NOT edit it directly in individual repositories — edit the source in Repository_Management/fleet-rules/pr-lifecycle.md.
 
 1. **Before pushing, run `python -m scripts.pre_pr` (RM-6).** Push once.
-2. **Open or update your lane PR ready (never as a draft).** If blocked, use a `Blocked:` section in a ready PR (see [lane-prs.md](https://github.com/D-sorganization/Repository_Management/blob/main/fleet-rules/lane-prs.md)). Arm squash auto-merge with `scripts/automerge_guard.py` (or `gh pr merge --auto --squash`) immediately; then end the session. Do not schedule check-ins, subscribe to PR activity, or enable Auto-fix.
+2. **Open or update your lane PR ready (never as a draft).** If blocked, use a `Blocked:` section in a ready PR (see [lane-prs.md](https://github.com/D-sorganization/Repository_Management/blob/main/fleet-rules/lane-prs.md)) and do **not** arm auto-merge. Otherwise arm auto-merge with `python scripts/automerge_guard.py <owner>/<repo> <pr> --arm` (or `gh pr merge <pr> --repo <owner>/<repo> --auto`) immediately; then end the session. Do not schedule check-ins, subscribe to PR activity, or enable Auto-fix.
 3. **If CI goes red, Runner Dashboard dispatches the fix (RD-1).** Do not revive the original session.
 4. **A follow-up hours later goes in a new session with a one-paragraph brief.**
 5. **Don't switch models mid-session (it throws away the prompt cache).**
@@ -879,7 +880,7 @@ Full rule: [fleet-rules/agent-tiers.md](https://github.com/D-sorganization/Repos
 
 ### Merge Queue
 
-- Every fleet repository merges through the GitHub merge queue. Arm PRs **only** with `python scripts/automerge_guard.py <owner>/<repo> <pr> --arm --strategy squash`; never `gh pr merge --admin`.
+- Every fleet repository merges through the GitHub merge queue. Arm PRs with `python scripts/automerge_guard.py <owner>/<repo> <pr> --arm` or `gh pr merge <pr> --repo <owner>/<repo> --auto` (never `--squash` / `--strategy squash`); never `gh pr merge --admin`.
 - **Never update PR branches to keep up with `main`** (`gh pr update-branch`, Auto-Update PRs workflows, rebasing a green PR). Rebase only for a real conflict. A queued PR reads `auto_merge: null`; do not re-arm or push to it.
 - Workflows that report a required check must trigger on `merge_group:`, and a `push:` trigger needs `branches-ignore: ["gh-readonly-queue/**"]`. Never edit the merge-queue rulesets without an owner decision on #1900.
 
@@ -913,7 +914,7 @@ remote, not only on the machine where it was written.
 
 1. **Work on a feature branch, never `main`.** Open a PR from that branch; do not commit on the default branch.
 2. **Commit at every meaningful checkpoint** — at least after each passing test step and before any handoff, pause, or end of session — **and push to `origin`.** Unpushed commits are not handed off.
-3. **Always open PRs ready for review** (never as drafts). Arm squash auto-merge immediately via `python scripts/automerge_guard.py <owner/repo> <pr> --arm --strategy squash` or `gh pr merge --auto --squash`. If work is blocked, still open a ready PR whose body has a `Blocked:` section explaining why; CI and branch protection are the gates, not a human “mark ready” step.
+3. **Always open PRs ready for review** (never as drafts). If work is blocked, open a ready PR whose body has a `Blocked:` section explaining why and skip arming auto-merge. Otherwise arm auto-merge immediately via `python scripts/automerge_guard.py <owner>/<repo> <pr> --arm` or `gh pr merge <pr> --repo <owner>/<repo> --auto`. CI and branch protection are the gates, not a human “mark ready” step.
 4. **Before reporting done or handing off, run `git status`.** A dirty working tree or unpushed commits means the work is not done.
 5. **Do not commit secrets or local environment files** (for example `.env`); use `.env.example` patterns and keep credentials out of git.
 

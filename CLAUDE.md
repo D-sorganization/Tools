@@ -262,9 +262,9 @@ For the canonical hook contract, see [`Repository_Management/docs/FLEET_HOOK_STA
 Fleet-wide policy from `Repository_Management#1390`, binding in this repo:
 
 1. **Full PRs, never drafts.** Every PR opens ready-for-review — do not use
-   `gh pr create --draft`. After CI is green, arm squash auto-merge with
-   `gh pr merge --auto --squash` (or `python scripts/automerge_guard.py`
-   when branch protection requires it).
+   `gh pr create --draft`. After CI is green, arm auto-merge with
+   `python scripts/automerge_guard.py D-sorganization/Tools <pr> --arm` or
+   `gh pr merge <pr> --repo D-sorganization/Tools --auto` (never `--squash`).
 2. **Commit frequently.** Small, conventional commits saving progress as you
    go; never batch a day's work into one commit.
 3. **Agent handoff documents, updated every PR and every push to main.**
