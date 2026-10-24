@@ -994,7 +994,10 @@ jobs:
       (!github.event.pull_request ||
       github.event.pull_request.head.repo.full_name == github.repository)
     needs: pick-runner
-    runs-on: d-sorg-fleet
+    runs-on: >-
+      ${{ github.event.pull_request &&
+      github.event.pull_request.head.repo.full_name != github.repository &&
+      'ubuntu-latest' || needs.pick-runner.outputs.runner }}
     timeout-minutes: 45
     env:
       RUSTUP_HOME: ${{ github.workspace }}/.rustup-home
