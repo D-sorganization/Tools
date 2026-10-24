@@ -1574,6 +1574,45 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5725 · Security-Scan Contract for the Fleet Scanner
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5725
+- **Branch:** claude/oss-scanner-contract
+- **PR:** #5726
+- **Paths:** .oss-scanner/project.yaml,.oss-scanner/Dockerfile,.oss-scanner/threat_model.md
+- **Started:** 2026-10-23
+- **Last verified:** 2026-10-23 (`37332d91`; collated from changes/5725-add-a-oss-scanner-security-scan-contract.md)
+- **Summary:** Add a .oss-scanner security-scan contract (project.yaml, offline audit Dockerfile, threat model) for the fleet scanner pilot.
+- **Next step:** Shipped in PR #5726.
+
+### DL-#5720 · Extract KnowledgePack Search Engine
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5720
+- **Branch:** codex/5718-knowledgepack-repo-filter
+- **PR:** #5719
+- **Paths:** src/shared/python/ai/knowledge/pack.py,src/shared/python/ai/knowledge/search.py,tests/api_baselines/knowledge_api_baseline.json,manuals/tools/manifests/module-inventory.json,manuals/tools/manifests/module-inventory/entries-src-shared-python-ai.json
+- **Started:** 2026-10-23
+- **Last verified:** 2026-10-23 (`c913821b`; collated from changes/5720-extract-knowledgepack-search-engine.md)
+- **Summary:** Extract KnowledgePack BM25 and hybrid ranking into a private search module without changing the public API.
+- **Next step:** Shipped in PR #5719.
+
+### DL-#5718 · Filter KnowledgePack Search by Repository Before Ranking Limits
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5718
+- **Branch:** codex/5718-knowledgepack-repo-filter
+- **PR:** #5722
+- **Paths:** see #5722
+- **Started:** 2026-10-23
+- **Last verified:** 2026-10-23 (`6f064e60`; collated from changes/5718-filter-knowledgepack-search-by-repositor.md)
+- **Summary:** Filter KnowledgePack search by repository before ranking limits
+- **Next step:** Merge the filtered search API.
+
 ### DL-#5712 · Retire Unscoped Shared Toolcache Repair
 
 - **State:** shipped
