@@ -32,10 +32,16 @@ LEGACY_HOSTED_RUNNER_ALLOWLIST = {
     ".github/workflows/anti-phantom-merge.yml",
     ".github/workflows/full-suite-nightly.yml",
     ".github/workflows/nightly-full-repo-quality.yml",
+    ".github/workflows/docs-governance.yml",
+    ".github/workflows/spec-check.yml",
+    ".github/workflows/workflow-lint.yml",
+    ".github/workflows/Merge-Hold-Guard.yml",
+    ".github/workflows/detect-secrets.yml",
 }
 HOSTED_RUNNER_ALLOWLIST = {
     (".github/workflows/anti-phantom-merge.yml", "guard"),
     (".github/workflows/ci-standard.yml", "quality-gate"),
+    (".github/workflows/ci-standard.yml", "rust-quality-gate"),
     (".github/workflows/codeql-analysis.yml", "analyze"),
     (".github/workflows/full-suite-nightly.yml", "full-suite"),
     (".github/workflows/nightly-full-repo-quality.yml", "full-repo-quality"),
