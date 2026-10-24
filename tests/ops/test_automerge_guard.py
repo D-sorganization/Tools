@@ -157,6 +157,16 @@ def test_draft_is_held() -> None:
     assert "mark ready first" in verdict.describe()
 
 
+def test_blocked_section_in_pr_body_is_held() -> None:
+    verdict = automerge_guard.evaluate_hold(
+        "o/r",
+        1,
+        runner=FakeGh(body="## Summary\n\nBlocked: awaiting upstream wheel build.\n"),
+    )
+    assert verdict.held is True
+    assert "Blocked:" in verdict.describe()
+
+
 def test_human_disarm_after_head_commit_is_held() -> None:
     """The PR #4709 scenario: reviewer disarms, nobody pushes, automation re-arms."""
     verdict = automerge_guard.evaluate_hold(

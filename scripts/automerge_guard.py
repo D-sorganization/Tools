@@ -57,6 +57,9 @@ DELETIONS_ACK_LABEL = "deletions-acknowledged"
 #: Body opt-out, for repos where the reviewer cannot apply labels.
 DELETIONS_ACK_BODY = "deletions-acknowledged:"
 
+#: PR-body marker from fleet lane-prs: a ready PR that must not be armed.
+BLOCKED_SECTION_PREFIX = "blocked:"
+
 #: Substring of the 403 body Claude Code cloud sessions get for any GraphQL call
 #: (which ``gh pr merge --auto`` uses). Only this message selects the REST route.
 GRAPHQL_BLOCKED_MARKER = "GitHub GraphQL is not available from Claude Code sessions"
@@ -457,6 +460,7 @@ def evaluate_hold(
     3. auto-merge disabled by a non-bot account more recently than the head
        commit — a reviewer said no and nobody has pushed since
     4. the diff deletes tracked files with no acknowledgement
+    5. the PR body contains an explicit ``Blocked:`` section (lane PRs)
 
     Fails closed: any error computing the verdict returns ``held=True``.
     """
@@ -470,12 +474,27 @@ def evaluate_hold(
         reasons = [f"`{label}` label" for label in sorted(lowered & HOLD_LABELS)]
         if pull.draft:
             reasons.append("PR is a draft (mark ready first)")
+        blocked = _blocked_section_reason(pull.body)
+        if blocked:
+            reasons.append(blocked)
         reasons += _disarm_reasons(run, repo, pr, pull.head_sha)
         reasons += _deletion_reasons(run, repo, pr, pull)
     except (RuntimeError, json.JSONDecodeError, OSError) as exc:
         # Fail closed. An unknown state is not a licence to arm.
         return HoldVerdict(True, (), error=str(exc))
     return _verdict_from(raw, pull, reasons)
+
+
+def _blocked_section_reason(body: str) -> str | None:
+    """Return a hold reason when the PR body declares an explicit ``Blocked:`` section."""
+    for line in body.splitlines():
+        stripped = line.strip()
+        lowered = stripped.lower()
+        if lowered.startswith("## blocked") or lowered == "blocked":
+            return "PR body has a Blocked: section"
+        if lowered.startswith(BLOCKED_SECTION_PREFIX):
+            return "PR body has a Blocked: section"
+    return None
 
 
 def _deletions_acknowledged(lowered_labels: set[str], body: str) -> bool:
