@@ -42,5 +42,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['C:\\Users\\diete\\Repositories\\Tools\\tools_icon_alt.ico'],
+    icon=['%USERPROFILE%\\Repositories\\Tools\\tools_icon_alt.ico'],
 )

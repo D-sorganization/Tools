@@ -50,7 +50,7 @@ Tools owns the MIT vendor-neutral markerless-mocap contracts and reference algor
 
 - Branch: `feat/4727-mocap-cli-service`
 - Base: `feat/4716-mocap-c3d-exchange`
-- Worktree: `C:\Users\diete\Repositories\Tools`
+- Worktree: `%USERPROFILE%\Repositories\Tools`
 - Pull request: Pending creation
 
 ## Delivered in this slice

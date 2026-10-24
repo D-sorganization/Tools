@@ -120,9 +120,9 @@ The new exact scientific tree is eda0b3efbaee46cf4ebdc57e6e67b131d31e6cdc;
 its archive has 60,835,840 bytes and SHA256
 f7c92000a51e3bd94a79b3130b47a2b101f849aeca976f18a0de08679daf95fd.
 Raw Linux evidence is retained in
-`/home/dieterolson/.cache/codex-impact/joint-eda0b3efb/qualification.xml`
+`$HOME/.cache/codex-impact/joint-eda0b3efb/qualification.xml`
 and `qualification.log`. Windows XML is retained at
-`C:/Users/diete/AppData/Local/Temp/impact-joint-windows.xml`.
+`<worktree>/AppData/Local/Temp/impact-joint-windows.xml`.
 
 Disturbed rotating/bending continuum convergence, full/reduced continuous-band
 port errors, identified physical parameters, flexible contact/event convergence,

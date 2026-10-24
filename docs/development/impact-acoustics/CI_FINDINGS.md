@@ -49,7 +49,7 @@ runner boundary. It checks the exact font stack and the Qt runtime/SIP pins.
 TDD and SPEC checks pass 49 tests; all nine manual checks and normal commit/push
 hooks pass. No image, tolerance or runner-policy guard was weakened.
 
-Continue in `C:/Users/diete/Repositories/Tools-impact-render`, branch
+Continue in `<worktree>/Repositories/Tools-impact-render`, branch
 `fix/4844-consistent-pyqt-renderer`, with its
 `docs/development/rate-pyqt-renderer-4844.md`. Linux capture, every-candidate
 inspection and a protected reference update remain required. The local shell

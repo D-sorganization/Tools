@@ -128,7 +128,7 @@ eval "git clone $user_input"  # Command injection vulnerability
 
 ```bash
 # ✅ Good - Validate and normalize paths
-readonly REPOS_BASE="/home/user/repos"
+readonly REPOS_BASE="<repo-root>/repos"
 repo_path=$(realpath "$REPOS_BASE/$repo_name")
 
 # Ensure path is within allowed directory

@@ -162,22 +162,22 @@ DOCUMENTATION LOCATIONS
 ================================================================================
 
 Entry Point:
-  /home/user/Tools/src/web_applications/QUICK_START_TESTING.md
+  <repo-root>/Tools/src/web_applications/QUICK_START_TESTING.md
 
 Main Guides:
-  /home/user/Tools/src/web_applications/MOBILE_TESTING_CHECKLIST.md
-  /home/user/Tools/src/web_applications/ACCESSIBILITY_TESTING_GUIDE.md
-  /home/user/Tools/src/web_applications/TESTING_INTEGRATION_GUIDE.md
+  <repo-root>/Tools/src/web_applications/MOBILE_TESTING_CHECKLIST.md
+  <repo-root>/Tools/src/web_applications/ACCESSIBILITY_TESTING_GUIDE.md
+  <repo-root>/Tools/src/web_applications/TESTING_INTEGRATION_GUIDE.md
 
 Reference Docs:
-  /home/user/Tools/src/web_applications/RESPONSIVE_DESIGN_DECISIONS.md
-  /home/user/Tools/src/web_applications/PHASE_2_2_IMPLEMENTATION_STATUS.md
-  /home/user/Tools/src/web_applications/PHASE_2_2_INDEX.md
+  <repo-root>/Tools/src/web_applications/RESPONSIVE_DESIGN_DECISIONS.md
+  <repo-root>/Tools/src/web_applications/PHASE_2_2_IMPLEMENTATION_STATUS.md
+  <repo-root>/Tools/src/web_applications/PHASE_2_2_INDEX.md
 
 Web Applications:
-  /home/user/Tools/src/web_applications/calculator/
-  /home/user/Tools/src/web_applications/unit_converter/
-  /home/user/Tools/src/web_applications/urdf_viewer/
+  <repo-root>/Tools/src/web_applications/calculator/
+  <repo-root>/Tools/src/web_applications/unit_converter/
+  <repo-root>/Tools/src/web_applications/urdf_viewer/
 
 ================================================================================
 ESTIMATED TESTING TIME

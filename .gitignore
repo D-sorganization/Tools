@@ -141,6 +141,9 @@ Cargo.lock
 pkg/
 .jules/
 
+# Local-only sanitation denylist (internal hostnames / email); never commit.
+.local/public_sanitation_denylist.txt
+
 # ── Security: Secrets & Credentials (Issue #2356) ──
 # Enhanced protection for secrets and credentials
 .env.local

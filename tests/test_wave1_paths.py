@@ -139,7 +139,7 @@ class TestMaintenanceScriptPathHygiene:
 
     def test_wave_solver_uses_repo_root_discovery(self) -> None:
         content = self._read_text("wave_solver.py")
-        assert "C:/Users/diete/Repositories/Tools" not in content
+        assert "<worktree>/Repositories/Tools" not in content
         assert "REPO_ROOT = Path(__file__).resolve().parent" in content
 
     def test_convert_tools_icon_has_no_sys_path_bootstrap(self) -> None:
