@@ -34,6 +34,22 @@ def test_guard_allows_only_hosted_ci_standard_quality_gate(tmp_path: Path) -> No
     assert rejected.returncode == 1
 
 
+def test_guard_allows_codeql_analyze_on_hosted_runner(tmp_path: Path) -> None:
+    allowed = _run_guard(
+        tmp_path,
+        "jobs:\n  analyze:\n    runs-on: ubuntu-latest\n",
+        "codeql-analysis.yml",
+    )
+    rejected = _run_guard(
+        tmp_path,
+        "jobs:\n  analyze:\n    runs-on: ubuntu-latest\n",
+        "codeql-analysis-trusted.yml",
+    )
+
+    assert allowed.returncode == 0
+    assert rejected.returncode == 1
+
+
 def test_guard_allows_only_ephemeral_pr_playwright_job(tmp_path: Path) -> None:
     allowed = _run_guard(
         tmp_path,
