@@ -57,6 +57,10 @@ jobs:
           # Repository_Management is allowlisted only in that repo; the entry is
           # harmless elsewhere.
           ALLOWLIST_FILES = {
+              # GitHub-hosted lanes (public repo; scheduled/PR guards off fleet).
+              "anti-phantom-merge.yml",
+              "full-suite-nightly.yml",
+              "nightly-full-repo-quality.yml",
               "local-only-runner-guard.yml",
               "runner-health-alert.yml",
               "maturin-ai-backend.yml",
@@ -68,6 +72,7 @@ jobs:
               "Local-Only Workflow Runner Guard",
           }
           ALLOWLIST_JOBS = {
+              ("anti-phantom-merge.yml", "guard"),
               ("ci-standard.yml", "quality-gate"),
               ("rate-web-playwright.yml", "production-worker-e2e"),
               ("full-suite-nightly.yml", "full-suite"),
@@ -151,8 +156,9 @@ jobs:
               print()
               print(f"{len(violations)} workflow(s) leak to hosted runners.")
               print(
-                  "Allowed: local-only-runner-guard.yml, runner-health-alert.yml, "
-                  "ci-standard.yml::quality-gate, "
+                  "Allowed: anti-phantom-merge.yml, full-suite-nightly.yml, "
+                  "nightly-full-repo-quality.yml, local-only-runner-guard.yml, "
+                  "runner-health-alert.yml, ci-standard.yml::quality-gate, "
                   "rate-web-playwright.yml::production-worker-e2e, "
                   "full-suite-nightly.yml::full-suite, "
                   "nightly-full-repo-quality.yml::full-repo-quality, "
