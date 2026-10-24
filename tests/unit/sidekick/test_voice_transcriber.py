@@ -17,6 +17,8 @@ from shared.python.sidekick.voice import (
     insert_transcript_into_composer,
 )
 
+pytestmark = pytest.mark.unit
+
 
 def _make_wav(duration_s: float = 0.4, amplitude: int = 0, rate: int = 16000) -> bytes:
     frames = int(duration_s * rate)
