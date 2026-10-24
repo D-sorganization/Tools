@@ -14,8 +14,6 @@ name: Bot CI Trigger
 on:
   pull_request:
     types: [opened, synchronize, reopened]
-  schedule:
-    - cron: "0 8 * * 0,4" # Sundays and Thursdays at 08:00 UTC
   workflow_dispatch:
     inputs:
       pr_number:
