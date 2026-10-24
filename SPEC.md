@@ -5947,6 +5947,9 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-23 | #5726 | Add a .oss-scanner security-scan contract (project.yaml, offline audit Dockerfile, threat model) for the fleet scanner pilot. |
+| 2026-10-23 | #5719 | Extract KnowledgePack BM25 and hybrid ranking into a private search module without changing the public API. |
+| 2026-10-23 | #5722 | Filter KnowledgePack search by repository before ranking limits |
 | 2026-10-22 | #5715 | retire unscoped shared toolcache repair |
 | 2026-10-21 | #5709 | Require patched pypdf 6.21.1 in PDF dependency declarations |
 | 2026-10-21 | #5706 | chore(ci): RM-CI-000 runner load measurement script snapshot and scheduled-workflow follow-ups (#5695) |

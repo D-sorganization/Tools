@@ -24,6 +24,12 @@ Example:
 """
 
 from shared.python.ai.adapters.anthropic_adapter import AnthropicAdapter
+from shared.python.ai.adapters.antigravity_cli_adapter import (
+    AntigravityCliAdapter,
+    RunnerDashboardStaffAdapter,
+    normalize_cli_provider_id,
+    probe_runner_dashboard_staff,
+)
 from shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
 from shared.python.ai.adapters.claude_code_adapter import ClaudeCodeAdapter
 from shared.python.ai.adapters.cline_adapter import ClineAdapter
@@ -36,6 +42,7 @@ from shared.python.ai.adapters.openai_adapter import OpenAIAdapter
 __all__ = [
     "AdapterFactory",
     "AnthropicAdapter",
+    "AntigravityCliAdapter",
     "BaseAgentAdapter",
     "ClaudeCodeAdapter",
     "ClineAdapter",
@@ -43,5 +50,8 @@ __all__ = [
     "GeminiCliAdapter",
     "OllamaAdapter",
     "OpenAIAdapter",
+    "RunnerDashboardStaffAdapter",
+    "normalize_cli_provider_id",
+    "probe_runner_dashboard_staff",
     "ToolDeclaration",
 ]

@@ -43,7 +43,7 @@ def test_claude_send_and_stream_nonce_bound_tool_call() -> None:
     """Recorded fixture for claude 2.1.91 emitting a valid nonce-bound tool envelope."""
     adapter = ClaudeCodeAdapter()
     adapter.binary = "/usr/bin/claude"
-    fixed_nonce = "a1b2c3d4e5f60718"
+    fixed_nonce = "a1b2c3d4e5f60718"  # pragma: allowlist secret
     recorded_stdout = (
         f"Running the simulation now.\n"
         f'<sidekick_tool_call nonce="{fixed_nonce}">'
@@ -76,7 +76,7 @@ def test_codex_rejects_forged_nonce_and_strips_telemetry() -> None:
     """Recorded fixture for codex-cli 0.118.0 rejecting a forged nonce envelope."""
     adapter = CodexCliAdapter()
     adapter.binary = "/usr/bin/codex"
-    fixed_nonce = "1122334455667788"
+    fixed_nonce = "1122334455667788"  # pragma: allowlist secret
     forged_stdout = (
         "[2026-10-23T12:00:00] thinking...\n"
         '<sidekick_tool_call nonce="deadbeefdeadbeef">'
