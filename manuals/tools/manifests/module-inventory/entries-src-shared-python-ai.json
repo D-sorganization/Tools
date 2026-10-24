@@ -4544,10 +4544,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1837,
+      "bytes_lf": 1887,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e58bdfa940c4582ca5fc0dceb82b2d0f1f5c91ba94c2b706f3faa50bc3acdf9b",
+      "content_sha256_lf": "5de5d160101228d75d603cb1247a56796e3cc1e5dec0710e4a83510c56594568",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-KNOWLEDGE-INIT-PY-D0F77C83CA43",
       "language": "python",
@@ -4721,6 +4721,11 @@
           {
             "kind": "re-export",
             "name": "reciprocal_rank_fusion",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "sanitize_fts_query",
             "signature": null
           }
         ],
@@ -5137,10 +5142,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 13514,
+      "bytes_lf": 14250,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "9a81f2500e78ce4e1657ef4c1466e54ab8630824a9c02f235acaba47844c2f39",
+      "content_sha256_lf": "9bef92fe699c3141b45089f5e106c0412b641b59ec95632e266413d1de31c583",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-KNOWLEDGE-PACK-PY-9610B38EFBC3",
       "language": "python",
@@ -5268,10 +5273,16 @@
             "kind": "function",
             "name": "reciprocal_rank_fusion",
             "signature": "bm25_ranks: Mapping[int, int], cosine_ranks: Mapping[int, int], rrf_k: int=_DEFAULT_RRF_K"
+          },
+          {
+            "kind": "function",
+            "name": "sanitize_fts_query",
+            "signature": "query: str"
           }
         ],
         "test_paths": [
-          "tests/shared/python/ai/knowledge/test_hybrid_ranking.py"
+          "tests/shared/python/ai/knowledge/test_hybrid_ranking.py",
+          "tests/shared/python/ai/knowledge/test_pack_build_and_search.py"
         ],
         "unit_mentions": [
           "g",
@@ -5282,10 +5293,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6455,
+      "bytes_lf": 6309,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "086d4ef8bf8c5253f12ab5eddb7ae4f1c92fe394087f267de60d39f3c467856c",
+      "content_sha256_lf": "a65fca030040d1a4355cd277afab2d81cb1bef5f2b04edbf6fcfc27d38754326",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-KNOWLEDGE-SEARCH-PY-ADEBA7B3501A",
       "language": "python",
@@ -5323,22 +5334,12 @@
         "public_surfaces": [
           {
             "kind": "constant",
-            "name": "_MAX_QUERY_TOKENS",
-            "signature": null
-          },
-          {
-            "kind": "constant",
             "name": "_TEXT_WEIGHT",
             "signature": null
           },
           {
             "kind": "constant",
             "name": "_TITLE_WEIGHT",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "_TOKEN_RE",
             "signature": null
           },
           {

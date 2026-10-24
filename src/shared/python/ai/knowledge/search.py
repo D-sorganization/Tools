@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import logging
-import re
 from collections.abc import Callable, Sequence
 from contextlib import closing
 from typing import TYPE_CHECKING
@@ -14,10 +13,12 @@ from .pack import (
     _as_embed_fn,
     _hidden_clause,
     _passage,
+    _query_tokens,
     blob_to_embedding,
     cosine_similarity,
     get_minilm_embedder,
     reciprocal_rank_fusion,
+    sanitize_fts_query,
 )
 
 if TYPE_CHECKING:
@@ -26,8 +27,6 @@ if TYPE_CHECKING:
 _logger = logging.getLogger(__name__)
 _TITLE_WEIGHT = 5.0
 _TEXT_WEIGHT = 1.0
-_TOKEN_RE = re.compile(r"\w+", re.UNICODE)
-_MAX_QUERY_TOKENS = 32
 
 
 def _search_pack(
@@ -78,10 +77,9 @@ def _search_bm25(
     include_superseded: bool,
     repo: str | None = None,
 ) -> list[Passage]:
-    tokens = _TOKEN_RE.findall(query)[:_MAX_QUERY_TOKENS]
-    if not tokens:
+    match = sanitize_fts_query(query)
+    if match is None:
         return []
-    match = " OR ".join('"' + t.replace('"', "") + '"' for t in tokens)
     hidden = "" if include_superseded else _hidden_clause()
     repo_filter = " AND p.repo = ?" if repo is not None else ""
     sql = (
@@ -120,7 +118,7 @@ def _search_hybrid(
     query_vec = emb_fn(query)
 
     candidate_pool_size = max(k * 5, 50)
-    tokens = _TOKEN_RE.findall(query)[:_MAX_QUERY_TOKENS]
+    tokens = _query_tokens(query)
     bm25_ids: list[int] = []
     hidden = "" if include_superseded else _hidden_clause()
     repo_filter = " AND p.repo = ?" if repo is not None else ""

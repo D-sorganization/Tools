@@ -28,7 +28,8 @@
       "load_golden_set",
       "load_manifest",
       "manifest_from_dict",
-      "reciprocal_rank_fusion"
+      "reciprocal_rank_fusion",
+      "sanitize_fts_query"
     ],
     "explicit_all": true,
     "symbols": {
@@ -640,6 +641,20 @@
           "returns": "dict[int, float]"
         },
         "type": "function"
+      },
+      "sanitize_fts_query": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "query"
+            }
+          ],
+          "returns": "str | None"
+        },
+        "type": "function"
       }
     }
   },
@@ -1059,7 +1074,8 @@
       "cosine_similarity",
       "embedding_to_blob",
       "get_minilm_embedder",
-      "reciprocal_rank_fusion"
+      "reciprocal_rank_fusion",
+      "sanitize_fts_query"
     ],
     "explicit_all": false,
     "symbols": {
@@ -1372,6 +1388,20 @@
             }
           ],
           "returns": "dict[int, float]"
+        },
+        "type": "function"
+      },
+      "sanitize_fts_query": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "str",
+              "default": null,
+              "kind": "arg",
+              "name": "query"
+            }
+          ],
+          "returns": "str | None"
         },
         "type": "function"
       }
