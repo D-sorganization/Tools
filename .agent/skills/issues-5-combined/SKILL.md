@@ -120,7 +120,7 @@ gh pr checks <PR_NUMBER>
 Once all CI/CD checks pass:
 
 ```bash
-gh pr merge <PR_NUMBER> --squash
+gh pr merge <PR_NUMBER> --repo D-sorganization/Tools --auto
 ```
 
 ### 9. Clean Up

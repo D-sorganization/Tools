@@ -95,7 +95,7 @@ gh workflow run auto-issue-resolver.yml \
 ### 2. Review PR Mode
 
 - Creates ready-for-review PRs for all fixes (never draft)
-- Arms squash auto-merge with `python scripts/automerge_guard.py <owner>/<repo> <pr> --arm --strategy squash` once CI is green
+- Arms auto-merge with `python scripts/automerge_guard.py <owner>/<repo> <pr> --arm` once CI is green
 - Best for: MAJOR/CRITICAL issues that still flow through CI without manual review gates
 
 ### 3. Analysis Only Mode
@@ -239,7 +239,7 @@ Example summary:
 
 ### For Repository Maintainers
 
-1. **Keep auto-merge armed** - Auto-generated PRs should open ready and arm via `python scripts/automerge_guard.py <owner>/<repo> <pr> --arm --strategy squash` once CI passes
+1. **Keep auto-merge armed** - Auto-generated PRs should open ready and arm via `python scripts/automerge_guard.py <owner>/<repo> <pr> --arm` once CI passes
 2. **Provide Feedback** - Comment on PRs to improve fix strategies
 3. **Update Exclusions** - Mark issues that shouldn't be auto-resolved
 4. **Monitor Patterns** - Track which fix strategies work best

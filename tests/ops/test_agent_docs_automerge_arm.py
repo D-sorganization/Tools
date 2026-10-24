@@ -1,4 +1,4 @@
-"""Agent-facing docs must arm auto-merge only through automerge_guard."""
+"""Agent-facing docs: arm auto-merge without squash (Dieter / #5744)."""
 
 from __future__ import annotations
 
@@ -24,7 +24,11 @@ _AGENT_DOC_DIRS: tuple[Path, ...] = (
     _REPO_ROOT / ".claude" / "skills",
 )
 
-_RAW_AUTO_MERGE = re.compile(r"gh\s+pr\s+merge\b.*--auto", re.IGNORECASE)
+_SQUASH_ARM = re.compile(
+    r"--strategy\s+squash|--squash\b|arm\s+squash\s+auto-?merge",
+    re.IGNORECASE,
+)
+_GH_PR_MERGE_AUTO = re.compile(r"gh\s+pr\s+merge\b.*--auto", re.IGNORECASE)
 
 
 def _iter_agent_doc_files() -> list[Path]:
@@ -39,22 +43,46 @@ def _agent_doc_id(path: Path) -> str:
     return path.relative_to(_REPO_ROOT).as_posix()
 
 
-@pytest.mark.parametrize("path", _iter_agent_doc_files(), ids=_agent_doc_id)
-def test_agent_docs_do_not_instruct_raw_gh_pr_merge_auto(path: Path) -> None:
-    rel = path.relative_to(_REPO_ROOT).as_posix()
-    offenders: list[str] = []
+def _iter_doc_lines(path: Path) -> list[tuple[int, str]]:
+    lines: list[tuple[int, str]] = []
     for lineno, line in enumerate(
         path.read_text(encoding="utf-8", errors="replace").splitlines(), start=1
     ):
         stripped = line.strip()
         if stripped.startswith("#") or stripped.startswith("//"):
             continue
-        if _RAW_AUTO_MERGE.search(line):
-            if re.search(r"never\s+raw|do not use raw|bypasses\s+hold", line, re.I):
-                continue
-            offenders.append(f"{rel}:{lineno}: {stripped}")
+        lines.append((lineno, line))
+    return lines
+
+
+@pytest.mark.parametrize("path", _iter_agent_doc_files(), ids=_agent_doc_id)
+def test_agent_docs_do_not_instruct_squash_auto_merge_arm(path: Path) -> None:
+    rel = path.relative_to(_REPO_ROOT).as_posix()
+    offenders: list[str] = []
+    for lineno, line in _iter_doc_lines(path):
+        if _SQUASH_ARM.search(line) and not re.search(
+            r"never\s+[`']?--squash|not\s+[`']?--squash", line, re.I
+        ):
+            offenders.append(f"{rel}:{lineno}: {line.strip()}")
     assert not offenders, (
-        "use `python scripts/automerge_guard.py <owner>/<repo> <pr> --arm "
-        "--strategy squash` instead of raw gh pr merge --auto:\n"
-        + "\n".join(offenders)
+        "arm with `gh pr merge <pr> --repo <owner>/<repo> --auto` or "
+        "`python scripts/automerge_guard.py <owner>/<repo> <pr> --arm` "
+        "(never --squash or --strategy squash):\n" + "\n".join(offenders)
     )
+
+
+@pytest.mark.parametrize("path", _iter_agent_doc_files(), ids=_agent_doc_id)
+def test_agent_docs_gh_pr_merge_auto_uses_repo_not_squash(path: Path) -> None:
+    rel = path.relative_to(_REPO_ROOT).as_posix()
+    offenders: list[str] = []
+    for lineno, line in _iter_doc_lines(path):
+        if not _GH_PR_MERGE_AUTO.search(line):
+            continue
+        if re.search(r"never\s+raw|bypasses\s+hold", line, re.I):
+            continue
+        lower = line.lower()
+        if "--squash" in lower and not re.search(r"never\s+.*--squash", lower):
+            offenders.append(f"{rel}:{lineno}: includes --squash with --auto")
+        if "--repo" not in lower:
+            offenders.append(f"{rel}:{lineno}: missing --repo on gh pr merge --auto")
+    assert not offenders, "\n".join(offenders)
