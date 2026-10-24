@@ -30,10 +30,12 @@ LEGACY_HOSTED_RUNNER_ALLOWLIST = {
     ".github/workflows/file-size-budget.yml",
     ".github/workflows/local-only-runner-guard.yml",
     ".github/workflows/nightly-full-repo-quality.yml",
+    ".github/workflows/full-suite-nightly.yml",
 }
 HOSTED_RUNNER_ALLOWLIST = {
     (".github/workflows/ci-standard.yml", "quality-gate"),
     (".github/workflows/rate-web-playwright.yml", "production-worker-e2e"),
+    (".github/workflows/codeql-analysis.yml", "analyze"),
 }
 HOSTED_RUNNER = re.compile(r"^(ubuntu|macos|windows)(-latest|-\d+(?:\.\d+)*)$")
 
