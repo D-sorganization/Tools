@@ -61,7 +61,14 @@ def search_repo(
     hybrid: bool = True,
 ) -> list[Passage]:
     """Search a knowledge pack within one repo before applying the result limit."""
-    return _search_pack(pack, query, k, include_superseded, embedder, hybrid, repo)
+    return pack.search(
+        query,
+        k=k,
+        include_superseded=include_superseded,
+        embedder=embedder,
+        hybrid=hybrid,
+        repo=repo,
+    )
 
 
 def _search_bm25(

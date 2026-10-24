@@ -123,7 +123,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
     },
     {
-      "content_sha256_lf": "6e1ad5e46240dd6b4dd69d09c0b674345cd8f29e7312604f255ae580cb4ec64d",
+      "content_sha256_lf": "6ad93c532a5365b002666c26b1ea3d073c9a86fdd65fbb64b4f7c1edc1c85648",
       "entry_count": 5,
       "package": "rust_core/data-processor-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "996694b8be1b9850e04586e932709635c13de1d1ac386aedd2218d19a74a40f8",
+      "content_sha256_lf": "a50a2a6dbff0da693db76806adeff7f28e0f79f00bfc116edece80f8e0f5a3e7",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "6f090339f0030023b9cd6908410051d20909ad6e1f39ad923ae6c319edfb4750",
+      "content_sha256_lf": "6a085ee8ab5533a03338c16dc743a8cb600906e39be4b3b5d170841b8964489d",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -171,7 +171,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-shared-scripts.json"
     },
     {
-      "content_sha256_lf": "cadb51b485cea1cfcff8c3b14b20ccc64c0387a6a314277d3e042a7f8c8e067f",
+      "content_sha256_lf": "00a594b31e9478a40984d9303d80aa34a5bf8b33b44e8d69b4d67ada37b22b61",
       "entry_count": 1,
       "package": "src",
       "path": "manuals/tools/manifests/module-inventory/entries-src.json"
@@ -597,13 +597,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "626a1842ba8f9b82db2e306e207983fddac47df13134110eb7b6f28aef3ab5fc",
+      "content_sha256_lf": "d9bce85a9f59b8ee30cbca752da2790d1251a441e00acb719723ab7d7d19dd8d",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
     },
     {
-      "content_sha256_lf": "8bfa3bd1b84f1d6a03a47fe8df85e9943282851e132fa5850dc3c4cd7952a486",
+      "content_sha256_lf": "45a76782fbe13b2082e9d1fcb5a35e5b63a0bc081f37ad785745a52c82ed130e",
       "entry_count": 124,
       "package": "src/shared/python/ai",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-ai.json"
@@ -753,8 +753,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-scripting.json"
     },
     {
-      "content_sha256_lf": "127c4d1f77c818c0cb0989a3730f668346f0ca66acd9826719cb092750c1eb84",
-      "entry_count": 13,
+      "content_sha256_lf": "6253a468e48da2328b8205cd817e6d4e352274e9c899210368aeee38f909e5a7",
+      "entry_count": 14,
       "package": "src/shared/python/sidekick",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick.json"
     },

@@ -8,13 +8,7 @@ on:
       - "src/python/**"
       - "manifests/**"
       - ".github/workflows/cross-repo-python-integration.yml"
-  pull_request:
-    branches: [staging, main]
-    paths:
-      - "src/shared/python/**"
-      - "src/python/**"
-      - "manifests/**"
-      - ".github/workflows/cross-repo-python-integration.yml"
+  merge_group:
   workflow_dispatch:
 
 concurrency:

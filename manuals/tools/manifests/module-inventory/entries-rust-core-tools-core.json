@@ -2853,7 +2853,8 @@
           "tests/shared/python/process_calculators/test_wgs_reactor_engine.py",
           "tests/unit/agent_context/test_service.py",
           "tests/unit/chat/test_composer_parity_5732.py",
-          "tests/unit/sidekick/agent/test_cli_bridge.py"
+          "tests/unit/sidekick/agent/test_cli_bridge.py",
+          "tests/unit/sidekick/test_voice_transcriber.py"
         ],
         "unit_mentions": [
           "J",
