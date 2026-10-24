@@ -199,6 +199,15 @@ class TestPullRequestTargetWorkflowHardening:
 
         assert "Never check out PR head code on pull_request_target" in workflow_text
 
+    def test_anti_phantom_guard_runs_on_github_hosted_runner(self) -> None:
+        workflow_path = _REPO_ROOT / ".github" / "workflows" / "anti-phantom-merge.yml"
+        workflow = yaml.safe_load(workflow_path.read_text(encoding="utf-8"))
+        guard_job = workflow["jobs"]["guard"]
+
+        assert guard_job["runs-on"] == "ubuntu-latest"
+        job_if = str(guard_job.get("if", ""))
+        assert "head.repo.full_name == github.repository" not in job_if
+
     def test_anti_phantom_checkout_is_bounded_and_api_fallback_keeps_paths(
         self,
     ) -> None:

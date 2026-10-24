@@ -12,7 +12,7 @@ concurrency:
 
 on:
   schedule:
-    - cron: "0 5 * * *" # nightly 05:00 UTC (after the heavy lane at 04:00)
+    - cron: "0 5 * * *" # nightly 05:00 UTC (after the heavy lane at 02:00)
   workflow_dispatch:
 
 defaults:
@@ -22,7 +22,7 @@ defaults:
 jobs:
   full-suite:
     name: Full Test Suite
-    runs-on: d-sorg-fleet
+    runs-on: ubuntu-latest
     timeout-minutes: 120
     env:
       HEAVY_TEST_SLACK_WEBHOOK: ${{ secrets.HEAVY_TEST_SLACK_WEBHOOK }}
