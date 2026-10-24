@@ -95,6 +95,14 @@ def test_codeql_is_enabled_for_python_and_javascript() -> None:
     assert "timeout-minutes" in analyze
 
 
+def test_codeql_weekly_schedule_uses_github_hosted_runner() -> None:
+    workflow = _load(WORKFLOWS / "codeql-analysis.yml")
+    runs_on = str(workflow["jobs"]["analyze"]["runs-on"])
+    assert "schedule" in runs_on
+    assert "ubuntu-latest" in runs_on
+    assert "d-sorg-fleet" in runs_on
+
+
 def test_pip_audit_ignores_carry_a_dated_justification_and_expiry() -> None:
     text = (WORKFLOWS / "ci-standard.yml").read_text(encoding="utf-8")
     step = text.split("- name: Security Scan (pip-audit)", maxsplit=1)[1].split(
