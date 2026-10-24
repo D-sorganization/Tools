@@ -254,10 +254,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1818,
+      "bytes_lf": 2142,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ae4a0276e68bdc6a375c242f4326e979ad97cad8de77a070d7b79b68849e52aa",
+      "content_sha256_lf": "efc2c24ba1f766cb4645ad0f78c4066b9cd36982bda8a2abcc75b0a8a4482229",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-INIT-PY-0775935D6BE9",
       "language": "python",
@@ -305,6 +305,11 @@
           },
           {
             "kind": "re-export",
+            "name": "AntigravityCliAdapter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "BaseAgentAdapter",
             "signature": null
           },
@@ -340,7 +345,22 @@
           },
           {
             "kind": "re-export",
+            "name": "RunnerDashboardStaffAdapter",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "ToolDeclaration",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "normalize_cli_provider_id",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "probe_runner_dashboard_staff",
             "signature": null
           }
         ],
@@ -428,6 +448,94 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 7572,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "4b7bb146403cff566cec99dc39f5916352abe757702738a2a4b0182245ce0015",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-ANTIGRAVITY-CLI-ADAPTER-PY-B0B9F6FA112C",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/adapters/antigravity_cli_adapter.py",
+      "purpose": "Antigravity (`agy`) subscription CLI adapter and Runner Dashboard staff adapter.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "http://127.0.0.1:8321"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AntigravityCliAdapter",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "RunnerDashboardStaffAdapter",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_AGY_MODEL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_STAFF_BASE_URL",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SUBSCRIPTION_CLI_ENABLED_BY_DEFAULT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "normalize_cli_provider_id",
+            "signature": "provider: str"
+          },
+          {
+            "kind": "function",
+            "name": "probe_runner_dashboard_staff",
+            "signature": "base_url: str=DEFAULT_STAFF_BASE_URL, timeout: float=2.0"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/ai/adapters/test_antigravity_and_staff_adapter.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 16687,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -483,6 +591,7 @@
           "tests/shared/python/ai/test_rust_adapter_extended.py",
           "tests/shared/python/chat/test_ai_memory_manager.py",
           "tests/shared/python/chat/test_ollama_latency_tuning.py",
+          "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
           "tests/unit/ai/test_gemini_adapter.py",
           "tests/unit/chat/test_adapter_capabilities.py"
         ],
@@ -564,10 +673,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11973,
+      "bytes_lf": 16906,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "aeb16cab573e2da44209f90bb3a3e5d8d11c48851ab88648448d479fc843819a",
+      "content_sha256_lf": "575366c8273ede46cd031c3e87809223b63d6861c1c9e4f0e1ff443b1e9e331b",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLAUDE-CODE-ADAPTER-PY-7E66ECB121E5",
       "language": "python",
@@ -617,18 +726,49 @@
           },
           {
             "kind": "constant",
+            "name": "_ENVELOPE_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
             "name": "_FALLBACK_PATHS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_SENSITIVE_ENV_SUFFIXES",
             "signature": null
           },
           {
             "kind": "constant",
             "name": "_STATIC_MODELS",
             "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_cli_tool_prompt_section",
+            "signature": "tools: Sequence[ToolDeclaration], nonce: str"
+          },
+          {
+            "kind": "function",
+            "name": "parse_cli_tool_envelopes",
+            "signature": "raw_text: str, *, expected_nonce: str, tools: Sequence[ToolDeclaration]"
+          },
+          {
+            "kind": "function",
+            "name": "scrub_cli_subprocess_env",
+            "signature": "env: Mapping[str, str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "terminate_cli_process_group",
+            "signature": "pid: int | None"
           }
         ],
         "test_paths": [
           "tests/shared/python/ai/test_claude_code_adapter.py",
-          "tests/unit/ai/adapters/test_claude_code_adapter.py"
+          "tests/unit/ai/adapters/test_claude_code_adapter.py",
+          "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py"
         ],
         "unit_mentions": [
           "g",
@@ -639,10 +779,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9817,
+      "bytes_lf": 10560,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "45fb3f2024c6a17621c4f08b83afa0d310dcfbe157e07fb328bec4631f49784e",
+      "content_sha256_lf": "ca26af0a82ba99db8944aea3769ade7d68a9302893da8584834e68017ed03cf5",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLI-PROVIDER-SETUP-PY-C79DFEFB6F41",
       "language": "python",
@@ -680,7 +820,8 @@
           "https://cline.bot/",
           "https://docs.claude.com/en/docs/claude-code/quickstart",
           "https://github.com/google-gemini/gemini-cli",
-          "https://github.com/openai/codex"
+          "https://github.com/openai/codex",
+          "https://idx.google.com/"
         ],
         "equation_refs": [],
         "public_routes": [],
@@ -707,7 +848,8 @@
           }
         ],
         "test_paths": [
-          "tests/shared/python/ai/test_cli_provider_setup.py"
+          "tests/shared/python/ai/test_cli_provider_setup.py",
+          "tests/unit/ai/adapters/test_antigravity_and_staff_adapter.py"
         ],
         "unit_mentions": [
           "g",
@@ -794,10 +936,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12233,
+      "bytes_lf": 13705,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "954e48d9c21f7ecb1000d209d94d88f9358870bf351fc3b2143e2f38e4e24f4c",
+      "content_sha256_lf": "f97cc6fef6c1c46c3502861ea26374cecefffa33c64efb4361c6651cb754211e",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CODEX-CLI-ADAPTER-PY-7AFE11EBF925",
       "language": "python",
@@ -856,6 +998,7 @@
         ],
         "test_paths": [
           "tests/shared/python/ai/test_codex_cli_adapter.py",
+          "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
           "tests/unit/ai/adapters/test_codex_cli_adapter.py"
         ],
         "unit_mentions": [
@@ -867,10 +1010,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13838,
+      "bytes_lf": 14558,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2ba74e91f9ff89ac41bc0fe72255d7308040aae981a5dd62114ad590e3d534d6",
+      "content_sha256_lf": "618c055f2d739d205a73d93c73a3eb277db82635c43a5699e6e9292ab8c2eb6a",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-FACTORY-PY-DD109CF427F5",
       "language": "python",
@@ -925,7 +1068,8 @@
         "test_paths": [
           "src/shared/python/ai/tests/test_adapter_factory.py",
           "tests/shared/python/ai/test_adapter_factory.py",
-          "tests/shared/python/ai/test_shared_dependency_imports.py"
+          "tests/shared/python/ai/test_shared_dependency_imports.py",
+          "tests/unit/ai/adapters/test_antigravity_and_staff_adapter.py"
         ],
         "unit_mentions": [
           "g",
@@ -1987,7 +2131,9 @@
           "tests/shared/python/ai/test_ollama_adapter.py",
           "tests/shared/python/ai/test_ollama_adapter_extended.py",
           "tests/shared/python/sidekick/data_processing/test_exceptions.py",
+          "tests/unit/ai/adapters/test_antigravity_and_staff_adapter.py",
           "tests/unit/ai/adapters/test_claude_code_adapter.py",
+          "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
           "tests/unit/ai/adapters/test_cline_adapter.py",
           "tests/unit/ai/adapters/test_codex_cli_adapter.py",
           "tests/unit/ai/adapters/test_gemini_cli_adapter.py",
@@ -9669,7 +9815,9 @@
           "tests/shared/python/chat/test_assistant_panel_memory_sync.py",
           "tests/shared/python/chat/test_message_display.py",
           "tests/shared/python/chat/test_ollama_latency_tuning.py",
+          "tests/unit/ai/adapters/test_antigravity_and_staff_adapter.py",
           "tests/unit/ai/adapters/test_claude_code_adapter.py",
+          "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
           "tests/unit/ai/adapters/test_cline_adapter.py",
           "tests/unit/ai/adapters/test_codex_cli_adapter.py",
           "tests/unit/ai/adapters/test_gemini_cli_adapter.py",
