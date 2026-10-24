@@ -247,14 +247,15 @@ def test_ci_standard_serializes_apt_installs_on_shared_runners() -> None:
     ]
 
     assert len(install_steps) == 2
+    script = REPO_ROOT / ".github" / "scripts" / "install-ci-system-deps.sh"
+    script_text = script.read_text(encoding="utf-8")
     for step in install_steps:
         run = step["run"]
-        assert run.count("flock /tmp/d-sorg-apt-install.lock") == 2
-        assert "sudo -n true" in run
-        assert "sudo -n flock /tmp/d-sorg-apt-install.lock" in run
-        assert "Passwordless sudo is unavailable" in run
-        assert "apt-get -o DPkg::Lock::Timeout=300 update --fix-missing" in run
-        assert "apt-get -o DPkg::Lock::Timeout=300 install -y --fix-missing" in run
+        assert "install-ci-system-deps.sh" in run
+        assert "libgl1" in run
+    assert "flock -w" in script_text
+    assert "timeout" in script_text
+    assert "rm -f /var/lib/dpkg/lock" not in script_text
 
 
 def test_quality_gate_dependency_install_uses_only_hosted_download_cache() -> None:

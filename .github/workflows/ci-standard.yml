@@ -179,24 +179,9 @@ jobs:
 
       - name: Install System Dependencies
         run: |
-          set -o pipefail
-          apt_packages=(libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6 xvfb)
-          install_system_deps() {
-            set -euo pipefail
-            while fuser /var/lib/dpkg/lock >/dev/null 2>&1 || fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done
-            rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock /var/cache/apt/pkgcache.bin /var/cache/apt/srcpkgcache.bin
-            rm -f /etc/apt/sources.list.d/*chrome* /etc/apt/sources.list.d/*google*
-            sed -i '/dl\.google\.com/d' /etc/apt/sources.list 2>/dev/null || true
-            env DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=300 update --fix-missing
-            env DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=300 install -y --fix-missing "${apt_packages[@]}"
-          }
-          if [ "$(id -u)" -eq 0 ]; then
-            flock /tmp/d-sorg-apt-install.lock bash -c "$(declare -f install_system_deps); $(declare -p apt_packages); install_system_deps"
-          elif command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
-            sudo -n flock /tmp/d-sorg-apt-install.lock bash -c "$(declare -f install_system_deps); $(declare -p apt_packages); install_system_deps"
-          else
-            echo "::warning::Passwordless sudo is unavailable; skipping apt install and using pre-provisioned system dependencies."
-          fi
+          bash .github/scripts/install-ci-system-deps.sh \
+            libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 \
+            libasound2-dev libxi6 libxtst6 xvfb
 
       - name: Install Dependencies
         # Download caching stays ON (job-level PIP_CACHE_DIR points at the
@@ -702,24 +687,9 @@ jobs:
 
       - name: Install System Dependencies
         run: |
-          set -o pipefail
-          apt_packages=(libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 libasound2-dev libxi6 libxtst6 python3-tk)
-          install_system_deps() {
-            set -euo pipefail
-            while fuser /var/lib/dpkg/lock >/dev/null 2>&1 || fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done
-            rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock /var/cache/apt/pkgcache.bin /var/cache/apt/srcpkgcache.bin
-            rm -f /etc/apt/sources.list.d/*chrome* /etc/apt/sources.list.d/*google*
-            sed -i '/dl\.google\.com/d' /etc/apt/sources.list 2>/dev/null || true
-            env DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=300 update --fix-missing
-            env DEBIAN_FRONTEND=noninteractive apt-get -o DPkg::Lock::Timeout=300 install -y --fix-missing "${apt_packages[@]}"
-          }
-          if [ "$(id -u)" -eq 0 ]; then
-            flock /tmp/d-sorg-apt-install.lock bash -c "$(declare -f install_system_deps); $(declare -p apt_packages); install_system_deps"
-          elif command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
-            sudo -n flock /tmp/d-sorg-apt-install.lock bash -c "$(declare -f install_system_deps); $(declare -p apt_packages); install_system_deps"
-          else
-            echo "::warning::Passwordless sudo is unavailable; skipping apt install and using pre-provisioned system dependencies."
-          fi
+          bash .github/scripts/install-ci-system-deps.sh \
+            libgl1 libegl1 libxrandr2 libxss1 libxcursor1 libxcomposite1 \
+            libasound2-dev libxi6 libxtst6 python3-tk
 
       - name: Install Dependencies
         # See quality-gate Install Dependencies for the rationale — the shared
@@ -759,10 +729,10 @@ jobs:
           echo "PLAYWRIGHT_BROWSERS_PATH=$PLAYWRIGHT_BROWSERS_PATH" >> "$GITHUB_ENV"
           playwright_python="$RUNNER_TEMP/ci-venv/bin/python"
           if [ "$(id -u)" -eq 0 ]; then
-            flock /tmp/d-sorg-apt-install.lock \
+            flock -w 120 /tmp/d-sorg-apt-install.lock \
               "$playwright_python" -m playwright install-deps chromium
           elif command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
-            sudo -n flock /tmp/d-sorg-apt-install.lock \
+            sudo -n flock -w 120 /tmp/d-sorg-apt-install.lock \
               "$playwright_python" -m playwright install-deps chromium
           else
             echo "::error::Cannot install Chromium system dependencies without root or passwordless sudo"
