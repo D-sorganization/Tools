@@ -8,6 +8,7 @@ from pathlib import Path
 
 import pytest
 
+from shared.python.sidekick import voice
 from shared.python.sidekick.voice import (
     TranscriptionResult,
     VoiceTranscriber,
@@ -15,6 +16,8 @@ from shared.python.sidekick.voice import (
     VoiceValidationError,
     insert_transcript_into_composer,
 )
+
+pytestmark = pytest.mark.unit
 
 
 def _make_wav(duration_s: float = 0.4, amplitude: int = 0, rate: int = 16000) -> bytes:
@@ -96,3 +99,30 @@ def test_insert_transcript_into_composer_never_autosends() -> None:
         insert_transcript_into_composer("Hello world", "there", cursor_pos=5)
         == "Hello there world"
     )
+
+
+def test_constructing_another_transcriber_preserves_inflight_audio(
+    monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    real_path = Path
+
+    def isolated_path(value: str | Path) -> Path:
+        candidate = real_path(value)
+        return tmp_path if candidate == real_path("/dev/shm") else candidate
+
+    monkeypatch.setattr(voice, "Path", isolated_path)
+    monkeypatch.setattr(voice.tempfile, "gettempdir", lambda: str(tmp_path))
+    observed_paths: list[Path] = []
+
+    def _fake_engine(path: Path) -> TranscriptionResult:
+        observed_paths.append(path)
+        assert path.exists()
+        VoiceTranscriber(backend_override=lambda _path: TranscriptionResult("ok", 0.1))
+        assert path.exists()
+        return TranscriptionResult("transcribed", 0.1)
+
+    transcriber = VoiceTranscriber(backend_override=_fake_engine)
+    result = transcriber.transcribe_bytes(_make_wav(0.4, amplitude=2200), "audio/wav")
+
+    assert result.text == "transcribed"
+    assert observed_paths and not observed_paths[0].exists()
