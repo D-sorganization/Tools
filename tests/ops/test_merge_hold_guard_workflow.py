@@ -23,6 +23,13 @@ def test_absent_hold_signals_do_not_trip_runner_errexit() -> None:
     assert "LAST_DISARM=\"$(awk -F'\\t'" in text
 
 
+def test_scheduled_backstop_runs_every_six_hours() -> None:
+    text = WORKFLOW.read_text(encoding="utf-8")
+
+    assert 'cron: "20 */6 * * *"' in text
+    assert "20,50 * * * *" not in text
+
+
 def test_scheduled_sweep_uses_rest_instead_of_graphql() -> None:
     text = WORKFLOW.read_text(encoding="utf-8")
 

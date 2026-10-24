@@ -2,7 +2,7 @@
 # Builds tools-core together with all downstream Rust crates to catch
 # version conflicts (e.g., PyO3 mismatches) before they reach downstream repos.
 #
-# Triggered on: push/PR to main that touches Rust files, plus weekly schedule.
+# Triggered on: push/merge queue to main that touches Rust files (Tools #5694).
 
 name: Cross-Repo Rust Integration
 
@@ -13,11 +13,7 @@ on:
       - "rust_core/**"
       - "Cargo.toml"
       - "rust-toolchain.toml"
-  pull_request:
-    paths:
-      - "rust_core/**"
-      - "Cargo.toml"
-      - "rust-toolchain.toml"
+  merge_group:
 
 concurrency:
   group: cross-repo-rust-${{ github.ref }}
