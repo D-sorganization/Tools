@@ -77,7 +77,7 @@ changes in #5695). Suggested direction from cron cadence and measured volume:
 
 | Workflow file | Schedule | Follow-up |
 | --- | --- | --- |
-| `Merge-Hold-Guard.yml` | `20,50 * * * *` | [#5698](https://github.com/D-sorganization/Tools/issues/5698) |
+| `Merge-Hold-Guard.yml` | `20 */6 * * *` (was `20,50 * * * *`) | **Done** — [#5698](https://github.com/D-sorganization/Tools/issues/5698) landed in [#5740](https://github.com/D-sorganization/Tools/pull/5740) (`517fc49e0`); contract: `tests/ops/test_merge_hold_guard_workflow.py::test_scheduled_backstop_runs_every_six_hours` |
 | `conflict-disarm.yml` | `15 */4 * * *` | [#5699](https://github.com/D-sorganization/Tools/issues/5699) |
 | `full-suite-nightly.yml` | `0 5 * * *` | [#5700](https://github.com/D-sorganization/Tools/issues/5700) |
 | `heavy-integration-tests.yml` | `0 4 * * *` | [#5701](https://github.com/D-sorganization/Tools/issues/5701) |
