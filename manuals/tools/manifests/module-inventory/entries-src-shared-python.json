@@ -1074,7 +1074,8 @@
         ],
         "test_paths": [
           "tests/architecture/test_shared_import_aliases_3316.py",
-          "tests/conftest.py"
+          "tests/conftest.py",
+          "tests/shared/python/upstream_drift_tools/test_compatibility_shim.py"
         ],
         "unit_mentions": [
           "g",
