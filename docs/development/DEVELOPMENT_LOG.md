@@ -1574,6 +1574,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5767 · Do Not Delete In-Flight Transcriber Audio When Constructing Another VoiceTranscriber
+
+- **State:** shipped
+- **Owner:** codex
+- **Issue:** #5767
+- **Branch:** codex/5767-voice-temp
+- **PR:** #5768
+- **Paths:** src/shared/python/sidekick/voice.py,tests/unit/sidekick/test_voice_transcriber.py,manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick.json,manuals/tools/manifests/module-inventory.json
+- **Started:** 2026-10-24
+- **Last verified:** 2026-10-24 (`ac1a060d`; collated from changes/5767-do-not-delete-in-flight-transcriber-audi.md)
+- **Summary:** Do not delete in-flight transcriber audio when constructing another VoiceTranscriber
+- **Next step:** Review and merge after canonical voice regression gates pass
+
 ### DL-#5723 · Restore the Public KnowledgePack FTS Query Sanitizer
 
 - **State:** shipped
