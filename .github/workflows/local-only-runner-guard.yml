@@ -79,6 +79,9 @@ jobs:
               ("ci-standard.yml", "quality-gate"),
               ("ci-standard.yml", "rust-quality-gate"),
               ("rate-web-playwright.yml", "production-worker-e2e"),
+              ("full-suite-nightly.yml", "full-suite"),
+              ("nightly-full-repo-quality.yml", "full-repo-quality"),
+              ("codeql-analysis.yml", "analyze"),
           }
           HOSTED = re.compile(r"^(ubuntu|macos|windows)(-latest|-\d+)?$")
 
@@ -159,7 +162,10 @@ jobs:
               print(
                   "Allowed: local-only-runner-guard.yml, runner-health-alert.yml, "
                   "ci-standard.yml::quality-gate, "
-                  "rate-web-playwright.yml::production-worker-e2e, and jobs literally named "
+                  "rate-web-playwright.yml::production-worker-e2e, "
+                  "full-suite-nightly.yml::full-suite, "
+                  "nightly-full-repo-quality.yml::full-repo-quality, "
+                  "codeql-analysis.yml::analyze, and jobs literally named "
                   "'Reject hosted runner routing'."
               )
               sys.exit(1)
