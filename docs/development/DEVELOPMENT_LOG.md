@@ -1580,12 +1580,12 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #5717
 - **Branch:** cursor/ci-apt-bounded-script-b9dd
-- **PR:** #5787
+- **PR:** #5787, #5790
 - **Paths:** see #5787
 - **Started:** 2026-10-25
-- **Last verified:** 2026-10-25 (`a4cd7239`; collated from changes/5717-bound-ci-apt-lock-and-package-acquisitio.md)
+- **Last verified:** 2026-10-25 (`6ad4516e`; collated from changes/5717-handle-missing-sudo-and-sigterm-cleanup.md)
 - **Summary:** Bound CI apt lock and package acquisition with process-group cleanup.
-- **Next step:** Merge split PRs for script, tests, and workflow wiring.
+- **Next step:** Merge after CI green.
 
 ### DL-#5744 · Route Repo-Owned Agent Auto-Merge Instructions Through automerge_guard.py and Hold Blocked: PRs.
 
