@@ -363,3 +363,50 @@ def run_bounded_cli_goal_loop(
         repairs_used,
         f"Exceeded max_steps={max_steps}",
     )
+
+
+class AgenticAppHost(Protocol):
+    """Authorization-free host control interface for simulation state and solvers."""
+
+    def read_simulation_state(self, section: str = "all") -> Mapping[str, Any]: ...
+    def mutate_parameter(self, name: str, value: Any) -> Mapping[str, Any]: ...
+    def trigger_solver(self, mode: str = "steady") -> Mapping[str, Any]: ...
+    def inspect_results(self, metric: str = "summary") -> Mapping[str, Any]: ...
+
+
+def build_app_host_tool_stubs() -> tuple[ToolStubSpec, ...]:
+    """Return canonical tool declarations for an ``AgenticAppHost``."""
+    _str = {"type": "string"}
+    return (
+        ToolStubSpec(
+            "read_simulation_state", "Read state.", {"properties": {"section": _str}}
+        ),
+        ToolStubSpec(
+            "mutate_parameter",
+            "Update parameter.",
+            {
+                "properties": {"name": _str, "value": {"type": "any"}},
+                "required": ["name", "value"],
+            },
+        ),
+        ToolStubSpec("trigger_solver", "Run solver.", {"properties": {"mode": _str}}),
+        ToolStubSpec(
+            "inspect_results", "Inspect metrics.", {"properties": {"metric": _str}}
+        ),
+    )
+
+
+def dispatch_app_host_tool_call(host: AgenticAppHost, call: ToolCall) -> str:
+    """Dispatch a validated ``ToolCall`` against ``host`` and serialize JSON."""
+    p = call.params
+    if call.action_id == "read_simulation_state":
+        out = host.read_simulation_state(str(p.get("section", "all")))
+    elif call.action_id == "mutate_parameter":
+        out = host.mutate_parameter(str(p["name"]), p.get("value"))
+    elif call.action_id == "trigger_solver":
+        out = host.trigger_solver(str(p.get("mode", "steady")))
+    elif call.action_id == "inspect_results":
+        out = host.inspect_results(str(p.get("metric", "summary")))
+    else:
+        raise ValueError(f"Unsupported AgenticAppHost action '{call.action_id}'")
+    return json.dumps(dict(out), sort_keys=True)
