@@ -157,6 +157,20 @@ def test_draft_is_held() -> None:
     assert "mark ready first" in verdict.describe()
 
 
+@pytest.mark.parametrize(
+    "body",
+    [
+        "Blocked: waiting on upstream release",
+        "## Blocked:\nNeeds Dieter sign-off.",
+        "Blocked:",
+    ],
+)
+def test_blocked_section_in_body_holds_arming(body: str) -> None:
+    verdict = automerge_guard.evaluate_hold("o/r", 1, runner=FakeGh(body=body))
+    assert verdict.held is True
+    assert "Blocked:" in verdict.describe()
+
+
 def test_human_disarm_after_head_commit_is_held() -> None:
     """The PR #4709 scenario: reviewer disarms, nobody pushes, automation re-arms."""
     verdict = automerge_guard.evaluate_hold(

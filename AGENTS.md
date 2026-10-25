@@ -537,7 +537,7 @@ All pull requests should be verified to pass the ruff, black, and mypy requireme
 - Use simple, concise titles and descriptions for initial creation
 - Wrap GitHub CLI commands in powershell `-Command "..."`
 - Use single quotes inside double quotes for string parameters
-- After CI is green, arm squash auto-merge: `gh pr merge --auto --squash`
+- After CI is green, arm squash auto-merge: `python scripts/automerge_guard.py D-sorganization/Tools <pr> --arm --strategy squash`
 
 ### For PR Management
 
@@ -559,8 +559,8 @@ All pull requests should be verified to pass the ruff, black, and mypy requireme
 # Create PR (ready, not draft):
 powershell -Command "gh pr create --title 'Your Title' --body 'Your description'"
 
-# Arm squash auto-merge when CI is green:
-powershell -Command "gh pr merge [PR_NUMBER] --auto --squash"
+# Arm squash auto-merge when CI is green (hold guard enforced):
+python scripts/automerge_guard.py D-sorganization/Tools [PR_NUMBER] --arm --strategy squash
 
 # Check PR status:
 powershell -Command "gh pr view [PR_NUMBER]"

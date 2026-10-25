@@ -78,7 +78,7 @@ gh pr checks <PR_NUMBER>
 #### g. Merge When Green
 
 ```bash
-gh pr merge <PR_NUMBER> --squash
+python scripts/automerge_guard.py D-sorganization/Tools <PR_NUMBER> --arm --strategy squash
 ```
 
 #### h. Clean Up

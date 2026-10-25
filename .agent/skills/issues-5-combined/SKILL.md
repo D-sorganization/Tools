@@ -120,7 +120,7 @@ gh pr checks <PR_NUMBER>
 Once all CI/CD checks pass:
 
 ```bash
-gh pr merge <PR_NUMBER> --squash
+python scripts/automerge_guard.py D-sorganization/Tools <PR_NUMBER> --arm --strategy squash
 ```
 
 ### 9. Clean Up
