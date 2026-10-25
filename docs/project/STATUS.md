@@ -2,7 +2,7 @@
 
 # Tools Project Status
 
-> Updated by Project Steward. Reflects state as of **2026-09-26**.
+> Updated by Project Steward. Reflects state as of **2026-10-25**.
 > This is a current-state snapshot; history lives in git and SPEC.md §12.
 
 ## What Moved (since 2026-09-23)
@@ -18,7 +18,7 @@
 | rate_of_closure     | Bolt: single-pass loops, inline sqrt, green topography GC pressure          | #5327–#5340   |
 | Accessibility       | Improved focus ring visibility for unit converter inputs                    | #5341         |
 | Process calculators | Optimized `safe_exp` and resilient benchmark                                | #5333 / #5334 |
-| Epics closed        | Swing-Impact-Ball-Flight (#4103), Design Manual (#4707), Putting LM (#5218) | closed        |
+| Epics closed        | Swing-Impact-Ball-Flight (#4103), Design Manual (#4707), Putting LM (#5218), Mocap (#4706) | closed        |
 | Blockers resolved   | Renderer source provenance (#5303), RUNNER_CHECK_TOKEN (#5305)              | closed        |
 
 ## What Is Stuck
@@ -26,31 +26,27 @@
 | Item                                       | Epic / Issue     | Blocker                                                                                                                                                                                                                                                                                |
 | ------------------------------------------ | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | **P0 security: fork-PR policy**            | #4464            | No PR; requires explicit Board decision on fork approval policy for public repo with self-hosted runners; unchanged since 2026-09-10                                                                                                                                                   |
-| `tests (3.11)` red on `main`               | (new 2026-09-26) | Standard CI gate `tests (3.11)` failing on latest `main` (sha 1a8f012); known failures: `test_wgs_engine_imports_without_pyqt6`, `test_python_310_fallback_exports_timezone_utc_and_str_enum`, cross-repo import compat tests, `test_folder_packer_pro_imports`; `tests (3.12)` passes |
 | Impact acoustics — physical evidence       | #5068            | Traceable apparatus, calibration, operating strain, and participant data unavailable; deferred to Board resource allocation                                                                                                                                                            |
 | Ball landing / surface physical validation | #4267            | Same physical evidence gap; deferred in planning catalog                                                                                                                                                                                                                               |
-| Mocap reconstruction                       | #4706            | PR #5111 closed without merge; reconstruction active but no open PR                                                                                                                                                                                                                    |
 | Qt worker losses (#5114)                   | #5114            | Partial cleanup on separate branch; root cause unexplained (3 workers lost after 2,880 passes)                                                                                                                                                                                         |
 | Duplicate v1.22.0 release PRs              | #5349, #5352     | Two bot-generated v1.22.0 bump PRs open simultaneously; one should be closed                                                                                                                                                                                                           |
 
 ## What Is Next (Ordered)
 
-1. **Fix `tests (3.11)` red on main** — standard CI gate is failing; root failures are `test_wgs_engine_imports_without_pyqt6` and 3.10-compatibility test; needs triage.
-2. **Board decision on #4464 (P0)** — fork-PR policy for public repo with self-hosted runners; unchanged for 2+ weeks.
-3. **Land mocap reconstruction** (#4706) — reopen or replace PR #5111 to deliver TOOLS-M0/M1.
-4. **Close duplicate release PR** — #5349 or #5352 (both bump v1.22.0); one must be closed.
-5. **Physical validation Board decisions** (#5068, #4729, #4267) — resource allocation still pending.
+1. **Board decision on #4464 (P0)** — fork-PR policy for public repo with self-hosted runners; unchanged for 2+ weeks.
+2. **Close duplicate release PR** — #5349 or #5352 (both bump v1.22.0); one must be closed.
+3. **Physical validation Board decisions** (#5068, #4729, #4267) — resource allocation still pending.
 
-## CI Health (2026-09-26)
+## CI Health (2026-10-25)
 
-| Workflow                  | Status                                                              |
-| ------------------------- | ------------------------------------------------------------------- |
-| tests (3.11)              | **failure** — failing on `main` sha 1a8f012 (first seen 2026-09-26) |
-| tests (3.12)              | success                                                             |
-| Benchmark Suite           | success                                                             |
-| Heavy Integration Tests   | success                                                             |
-| Full Test Suite (Nightly) | failure — same root cause as `tests (3.11)` silencing check         |
-| Merge Hold Guard          | success                                                             |
+| Workflow                  | Status                                                                                    |
+| ------------------------- | ----------------------------------------------------------------------------------------- |
+| tests (3.11)              | **success** — CI Standard run [40201013093](https://github.com/D-sorganization/Tools/actions/runs/40201013093) on `main` sha `a4cd7239` |
+| tests (3.12)              | success                                                                                   |
+| Benchmark Suite           | success                                                                                   |
+| Heavy Integration Tests   | success                                                                                   |
+| Full Test Suite (Nightly) | failure (2026-10-25 nightly on `main`)                                                  |
+| Merge Hold Guard          | success                                                                                   |
 
 ## Open PRs (2026-09-26)
 
@@ -64,9 +60,7 @@
 ## Decisions Needed
 
 - **P0 — Fork-PR security (#4464).** First appeared 2026-09-10. The public repo uses self-hosted runners; any non-new GitHub account can trigger workflow execution on personal hardware. Requires explicit Board policy ruling (restrict fork PR approvals, make repo private, or accept the risk). No agent can make this change. **Age: 16 days — approaching Board proposal threshold.**
-- **`tests (3.11)` red on main (2026-09-26).** Standard CI gate `tests (3.11)` is failing on `main` sha 1a8f012 as of today. Failures include `test_wgs_engine_imports_without_pyqt6` (headless import issue), `test_python_310_fallback_exports_timezone_utc_and_str_enum` (compatibility shim), and cross-repo import compat tests. `tests (3.12)` passes. Needs triage and a fix issue filed.
 - **Physical validation resource allocation (#5068, #4729, #4267).** Three deferred validation plans are in `docs/development/planning/`. Each needs Board approval plus verified equipment and participant access before any physical or acoustic claim can be made. Software work continues independently.
-- **Mocap reconstruction blocked (#4706).** PR #5111 was closed without merge. The reconstruction subepic has no open PR. Needs a new delivery plan or issue.
 - DV-5068: Board decision pending on whether to resource the [Owner Plan](https://github.com/D-sorganization/Tools/blob/main/docs/development/planning/DV-5068.md); accountable owner, access dates, funding and execution capacity are unverified.
 - DV-5068: Decide how to obtain and qualify equipment-specific shaft/head/grip measurements with calibration and operating-strain evidence; prerequisite evidence remains unavailable.
 - DV-5068: Decide how to obtain and qualify synchronized force, ball spin/launch and structural-motion measurements over held-out impact positions; prerequisite evidence remains unavailable.
