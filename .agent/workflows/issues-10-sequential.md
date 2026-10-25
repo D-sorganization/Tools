@@ -49,7 +49,7 @@ gh pr create --title "fix: <description>" --body "Closes #<NUMBER>"
 
 ```bash
 gh pr checks <PR_NUMBER>
-gh pr merge <PR_NUMBER> --repo D-sorganization/Tools --auto
+python scripts/automerge_guard.py D-sorganization/Tools <PR_NUMBER> --arm --strategy squash
 ```
 
 // turbo 7. **Clean up and continue**:

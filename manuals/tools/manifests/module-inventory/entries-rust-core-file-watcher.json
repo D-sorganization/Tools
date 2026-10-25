@@ -216,6 +216,7 @@
           "tests/integration/sidekick/test_standalone_wheel.py",
           "tests/ode_solver/conftest.py",
           "tests/ode_solver/test_package_layout.py",
+          "tests/ops/test_agent_docs_automerge_arm.py",
           "tests/ops/test_benchmark_suite_workflow.py",
           "tests/ops/test_ci_standard_morris_dependencies.py",
           "tests/ops/test_ci_standard_tools_core_wheel.py",

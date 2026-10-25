@@ -198,9 +198,9 @@ on touched files).
    for review immediately; if work is blocked, use a `Blocked:` section in the
    body instead of a draft.
 
-8. **Merge method:** auto-merge once CI is green:
-   `python scripts/automerge_guard.py D-sorganization/Tools <pr> --arm` or
-   `gh pr merge <pr> --repo D-sorganization/Tools --auto` (never `--squash`).
+8. **Merge method:** squash-merge via auto-merge once CI is green:
+   `python scripts/automerge_guard.py D-sorganization/Tools <pr> --arm --strategy squash`.
+   The squash commit message is the PR title (Conventional Commits format).
 
 ### PR Description Template
 

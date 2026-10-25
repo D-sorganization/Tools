@@ -129,7 +129,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
     },
     {
-      "content_sha256_lf": "89dce93796c4affb14097cc64d673a47b766a4e6facc9f3efd45a2036a2e644b",
+      "content_sha256_lf": "2892e0b4882c1f685af8ff8f1f533cf2e6f726b79f49480993778d7346a38ada",
       "entry_count": 5,
       "package": "rust_core/file_watcher",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
@@ -159,7 +159,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "a84ad83c0e5f6fc66327ec72d358e9a32277963d3f0c8ba9894da9644f99a8e5",
+      "content_sha256_lf": "041501f4d8a638a1b6d050bd9626fb35cccce5c8c25df1b1beb6d25d8deff3c6",
       "entry_count": 117,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"

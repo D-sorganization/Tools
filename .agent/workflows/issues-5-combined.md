@@ -61,7 +61,7 @@ gh pr checks <PR_NUMBER>
 // turbo 8. **Merge when green**:
 
 ```bash
-gh pr merge <PR_NUMBER> --repo D-sorganization/Tools --auto
+python scripts/automerge_guard.py D-sorganization/Tools <PR_NUMBER> --arm --strategy squash
 ```
 
 // turbo 9. **Clean up**:
