@@ -3,12 +3,17 @@
 from __future__ import annotations
 
 import argparse
+import contextlib
+import fcntl
 import logging
+import os
+import signal
 import subprocess
 import sys
 import time
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Iterator, Sequence
 from dataclasses import dataclass
+from pathlib import Path
 
 logger = logging.getLogger(__name__)
 
@@ -23,6 +28,7 @@ LOCK_FILES = (
 DEFAULT_LOCK_WAIT_BUDGET_SEC = 180.0
 DEFAULT_APT_COMMAND_BUDGET_SEC = 900.0
 DEFAULT_POLL_INTERVAL_SEC = 2.0
+DEFAULT_KILL_GRACE_SEC = 5.0
 
 
 class CiAptInstallError(RuntimeError):
@@ -37,6 +43,107 @@ class InstallResult:
     detail: str
 
 
+def _terminate_process_group(
+    proc: subprocess.Popen[str], *, kill_grace_sec: float
+) -> None:
+    """Terminate and reap the dedicated process group led by ``proc``."""
+    pgid = proc.pid
+    with contextlib.suppress(ProcessLookupError, PermissionError):
+        os.killpg(pgid, signal.SIGTERM)
+    try:
+        proc.wait(timeout=kill_grace_sec)
+    except subprocess.TimeoutExpired:
+        with contextlib.suppress(ProcessLookupError, PermissionError):
+            os.killpg(pgid, signal.SIGKILL)
+    with contextlib.suppress(Exception):
+        proc.communicate(timeout=kill_grace_sec)
+    with contextlib.suppress(ProcessLookupError, PermissionError):
+        os.killpg(pgid, signal.SIGKILL)
+    try:
+        os.killpg(pgid, 0)
+    except ProcessLookupError:
+        return
+    except PermissionError as exc:
+        raise CiAptInstallError(
+            f"Process group {pgid} cleanup status unknown after timeout"
+        ) from exc
+    raise CiAptInstallError(
+        f"Process group {pgid} survived SIGKILL after command timeout"
+    )
+
+
+def run_bounded_command(
+    cmd: Sequence[str],
+    *,
+    timeout_sec: float,
+    kill_grace_sec: float = DEFAULT_KILL_GRACE_SEC,
+) -> subprocess.CompletedProcess[str]:
+    """Run ``cmd`` in its own process group, killing all descendants on timeout."""
+    if timeout_sec <= 0:
+        raise CiAptInstallError(
+            f"Command timed out before start (budget {timeout_sec:.2f}s): {' '.join(cmd)}"
+        )
+    proc = subprocess.Popen(
+        list(cmd),
+        stdin=subprocess.DEVNULL,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+        text=True,
+        start_new_session=True,
+    )
+    try:
+        stdout, stderr = proc.communicate(timeout=timeout_sec)
+    except subprocess.TimeoutExpired as exc:
+        _terminate_process_group(proc, kill_grace_sec=kill_grace_sec)
+        raise CiAptInstallError(
+            f"Command timed out after {timeout_sec:.1f}s: {' '.join(cmd)}"
+        ) from exc
+    except BaseException:
+        _terminate_process_group(proc, kill_grace_sec=kill_grace_sec)
+        raise
+    return subprocess.CompletedProcess(
+        args=list(cmd),
+        returncode=proc.returncode if proc.returncode is not None else 1,
+        stdout=stdout,
+        stderr=stderr,
+    )
+
+
+@contextlib.contextmanager
+def _acquire_outer_lock(
+    lock_path: Path | None,
+    *,
+    deadline: float,
+    poll_interval_sec: float,
+    sleep: Callable[[float], None],
+    monotonic: Callable[[], float],
+) -> Iterator[None]:
+    """Acquire an optional flock file within ``deadline`` without deleting it."""
+    if lock_path is None:
+        yield
+        return
+    handle = lock_path.open("a+", encoding="utf-8")
+    acquired = False
+    try:
+        while True:
+            try:
+                fcntl.flock(handle.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+                acquired = True
+                break
+            except BlockingIOError:
+                if monotonic() >= deadline:
+                    raise CiAptInstallError(
+                        f"Timed out waiting for outer lock {lock_path}"
+                    ) from None
+                sleep(poll_interval_sec)
+        yield
+    finally:
+        if acquired:
+            with contextlib.suppress(OSError):
+                fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+        handle.close()
+
+
 def _lock_in_use(run: CommandRunner, lock_path: str) -> bool:
     proc = run(["fuser", lock_path])
     return proc.returncode == 0 and bool(proc.stdout.strip())
@@ -49,20 +156,43 @@ def wait_for_package_locks(
     lock_wait_budget_sec: float,
     poll_interval_sec: float,
     monotonic: Callable[[], float] = time.monotonic,
+    deadline: float | None = None,
 ) -> None:
     """Wait until apt/dpkg locks are free, failing closed after the budget."""
     if lock_wait_budget_sec < 0:
         raise ValueError("lock_wait_budget_sec must be non-negative")
-    deadline = monotonic() + lock_wait_budget_sec
-    while monotonic() < deadline:
-        if not any(_lock_in_use(run, path) for path in LOCK_FILES):
+    effective_deadline = (
+        deadline if deadline is not None else monotonic() + lock_wait_budget_sec
+    )
+    last_held: list[str] = []
+    while monotonic() < effective_deadline:
+        busy = False
+        exceeded = False
+        for path in LOCK_FILES:
+            if monotonic() >= effective_deadline:
+                exceeded = True
+                break
+            in_use = _lock_in_use(run, path)
+            if monotonic() > effective_deadline:
+                exceeded = True
+                break
+            if in_use:
+                last_held = [path]
+                busy = True
+                break
+        if exceeded:
+            break
+        if not busy:
             return
+        if monotonic() >= effective_deadline:
+            break
         sleep(poll_interval_sec)
-    holders = [path for path in LOCK_FILES if _lock_in_use(run, path)]
+    if not last_held and monotonic() <= effective_deadline:
+        last_held = [path for path in LOCK_FILES if _lock_in_use(run, path)]
     raise CiAptInstallError(
         "Timed out after "
         f"{lock_wait_budget_sec:.0f}s waiting for apt/dpkg locks to clear "
-        f"(still held: {', '.join(holders) or 'unknown'}). "
+        f"(still held: {', '.join(last_held) or 'unknown'}). "
         "Another job may be installing packages; retry later."
     )
 
@@ -101,19 +231,22 @@ def _install_under_flock(
     run: CommandRunner,
     packages: Sequence[str],
     *,
+    lock_run: CommandRunner | None = None,
     sleep: Callable[[float], None],
     lock_wait_budget_sec: float,
     apt_command_budget_sec: float,
     poll_interval_sec: float,
     monotonic: Callable[[], float],
+    deadline: float | None = None,
 ) -> None:
-    del apt_command_budget_sec  # enforced by injected runner in CI/tests
+    del apt_command_budget_sec
     wait_for_package_locks(
-        run,
+        lock_run or run,
         sleep=sleep,
         lock_wait_budget_sec=lock_wait_budget_sec,
         poll_interval_sec=poll_interval_sec,
         monotonic=monotonic,
+        deadline=deadline,
     )
     _sanitize_untrusted_apt_sources(run)
     _apt_get(run, "update")
@@ -131,18 +264,13 @@ def install_packages(
     uid: int | None = None,
     sudo_check: Callable[[], bool] | None = None,
     monotonic: Callable[[], float] = time.monotonic,
+    outer_lock_path: Path | str | None = None,
 ) -> InstallResult:
     """Install Debian packages under flock with bounded lock and apt budgets."""
     if not packages:
         raise ValueError("packages must be non-empty")
     base_run = runner or (
-        lambda cmd: subprocess.run(
-            cmd,
-            check=False,
-            text=True,
-            capture_output=True,
-            timeout=apt_command_budget_sec,
-        )
+        lambda cmd: run_bounded_command(cmd, timeout_sec=apt_command_budget_sec)
     )
 
     if uid is None:
@@ -163,15 +291,34 @@ def install_packages(
             return base_run(list(cmd))
         return base_run(["sudo", "-n", *cmd])
 
-    _install_under_flock(
-        invoke,
-        packages,
-        sleep=sleep,
-        lock_wait_budget_sec=lock_wait_budget_sec,
-        apt_command_budget_sec=apt_command_budget_sec,
+    lock_deadline = monotonic() + lock_wait_budget_sec
+
+    def invoke_lock_probe(cmd: Sequence[str]) -> subprocess.CompletedProcess[str]:
+        if runner is not None:
+            return invoke(cmd)
+        remaining = lock_deadline - monotonic()
+        target = list(cmd) if uid == 0 else ["sudo", "-n", *cmd]
+        return run_bounded_command(target, timeout_sec=remaining)
+
+    resolved_outer = Path(outer_lock_path) if outer_lock_path is not None else None
+    with _acquire_outer_lock(
+        resolved_outer,
+        deadline=lock_deadline,
         poll_interval_sec=poll_interval_sec,
+        sleep=sleep,
         monotonic=monotonic,
-    )
+    ):
+        _install_under_flock(
+            invoke,
+            packages,
+            lock_run=invoke_lock_probe,
+            sleep=sleep,
+            lock_wait_budget_sec=lock_wait_budget_sec,
+            apt_command_budget_sec=apt_command_budget_sec,
+            poll_interval_sec=poll_interval_sec,
+            monotonic=monotonic,
+            deadline=lock_deadline,
+        )
     return InstallResult(skipped=False, detail="installed")
 
 

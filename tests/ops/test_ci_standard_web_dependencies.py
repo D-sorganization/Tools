@@ -249,10 +249,10 @@ def test_ci_standard_serializes_apt_installs_on_shared_runners() -> None:
     assert len(install_steps) == 2
     for step in install_steps:
         run = step["run"]
-        assert run.count("flock /tmp/d-sorg-apt-install.lock") == 2
+        assert run.count("flock -w 180 /tmp/d-sorg-apt-install.lock") == 2
         assert "ci_bounded_apt_install.py" in run
         assert "sudo -n true" in run
-        assert "sudo -n flock /tmp/d-sorg-apt-install.lock" in run
+        assert "sudo -n flock -w 180 /tmp/d-sorg-apt-install.lock" in run
         assert "Passwordless sudo is unavailable" in run
         assert "rm -f /var/lib/dpkg/lock" not in run
 

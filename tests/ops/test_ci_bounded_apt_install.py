@@ -173,3 +173,95 @@ def test_workflow_does_not_delete_package_manager_lock_files() -> None:
     for block in install_blocks:
         assert "rm -f /var/lib/apt/lists/lock" not in block
         assert "rm -f /var/lib/dpkg/lock" not in block
+
+
+def test_wait_for_package_locks_enforces_deadline_across_slow_probes() -> None:
+    """Three free-lock fuser calls advancing 200s each must fail a 180s budget."""
+    now = 0.0
+
+    def clock() -> float:
+        return now
+
+    def slow_free_runner(cmd: Sequence[str]) -> subprocess.CompletedProcess[str]:
+        nonlocal now
+        now += 200.0
+        return _completed(returncode=1, stdout="")
+
+    with pytest.raises(ci_apt.CiAptInstallError, match="Timed out"):
+        ci_apt.wait_for_package_locks(
+            slow_free_runner,
+            sleep=lambda _s: None,
+            lock_wait_budget_sec=180.0,
+            poll_interval_sec=0.0,
+            monotonic=clock,
+        )
+    assert now <= 200.0
+
+
+def test_outer_lock_contention_exits_within_budget_without_deleting_or_stealing_lock(
+    tmp_path: Path,
+) -> None:
+    """Contention on an isolated test lock fails within budget and keeps the lock."""
+    import fcntl
+
+    lock_file = tmp_path / "d-sorg-apt-install.lock"
+    holder = lock_file.open("w", encoding="utf-8")
+    try:
+        fcntl.flock(holder.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        runner = ScriptedRunner([_completed(stdout="0\n")])
+        with pytest.raises(ci_apt.CiAptInstallError, match="outer lock"):
+            ci_apt.install_packages(
+                ["libgl1"],
+                runner=runner,
+                sleep=lambda _s: None,
+                lock_wait_budget_sec=0.05,
+                apt_command_budget_sec=1.0,
+                poll_interval_sec=0.01,
+                uid=0,
+                outer_lock_path=lock_file,
+            )
+        assert lock_file.exists()
+        # Verify original holder still holds the lock exclusively
+        probe = lock_file.open("w", encoding="utf-8")
+        try:
+            with pytest.raises(BlockingIOError):
+                fcntl.flock(probe.fileno(), fcntl.LOCK_EX | fcntl.LOCK_NB)
+        finally:
+            probe.close()
+    finally:
+        holder.close()
+
+
+def test_command_timeout_terminates_and_reaps_descendant_process_group(
+    tmp_path: Path,
+) -> None:
+    """A timed-out command must terminate and reap its spawned child processes."""
+    import os
+    import time
+
+    child_pid_file = tmp_path / "child.pid"
+    parent_script = (
+        "import subprocess, sys, time, pathlib\n"
+        "cmd = [sys.executable, '-c', 'import time; time.sleep(60)']\n"
+        "child = subprocess.Popen(cmd)\n"
+        f"pathlib.Path({str(child_pid_file)!r}).write_text(str(child.pid))\n"
+        "time.sleep(60)\n"
+    )
+    with pytest.raises(ci_apt.CiAptInstallError, match="timed out"):
+        ci_apt.run_bounded_command(
+            [sys.executable, "-c", parent_script],
+            timeout_sec=0.3,
+            kill_grace_sec=0.2,
+        )
+
+    assert child_pid_file.is_file()
+    child_pid = int(child_pid_file.read_text(encoding="utf-8").strip())
+    # Give the kernel a brief moment to finalize process table reaping
+    for _ in range(10):
+        try:
+            os.kill(child_pid, 0)
+        except ProcessLookupError:
+            break
+        time.sleep(0.05)
+    with pytest.raises(ProcessLookupError):
+        os.kill(child_pid, 0)

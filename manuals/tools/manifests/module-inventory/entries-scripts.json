@@ -4548,6 +4548,110 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 11627,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f110bc69e9d75904863371e513d3b817c4aac0ce2cff70343d0f57200c3cea58",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CI-BOUNDED-APT-INSTALL-PY-C96A938B7C81",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/ci_bounded_apt_install.py",
+      "purpose": "Bounded apt system-dependency install for CI shared runners (#5717).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CiAptInstallError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "InstallResult",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_APT_COMMAND_BUDGET_SEC",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_KILL_GRACE_SEC",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_LOCK_WAIT_BUDGET_SEC",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_POLL_INTERVAL_SEC",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LOCK_FILES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "install_packages",
+            "signature": "packages: Sequence[str], *, runner: CommandRunner | None=None, sleep: Callable[[float], None]=time.sleep, lock_wait_budget_sec: float=DEFAULT_LOCK_WAIT_BUDGET_SEC, apt_command_budget_sec: float=DEFAULT_APT_COMMAND_BUDGET_SEC, poll_interval_sec: float=DEFAULT_POLL_INTERVAL_SEC, uid: int | None=None, sudo_check: Callable[[], bool] | None=None, monotonic: Callable[[], float]=time.monotonic, outer_lock_path: Path | str | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: Sequence[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "run_bounded_command",
+            "signature": "cmd: Sequence[str], *, timeout_sec: float, kill_grace_sec: float=DEFAULT_KILL_GRACE_SEC"
+          },
+          {
+            "kind": "function",
+            "name": "wait_for_package_locks",
+            "signature": "run: CommandRunner, *, sleep: Callable[[float], None], lock_wait_budget_sec: float, poll_interval_sec: float, monotonic: Callable[[], float]=time.monotonic, deadline: float | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/ops/test_ci_bounded_apt_install.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 13591,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
