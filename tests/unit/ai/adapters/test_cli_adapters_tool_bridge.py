@@ -7,6 +7,7 @@ from unittest.mock import MagicMock, patch
 
 import pytest
 
+from src.shared.python.ai.adapters.antigravity_cli_adapter import AntigravityCliAdapter
 from src.shared.python.ai.adapters.base import ToolDeclaration
 from src.shared.python.ai.adapters.claude_code_adapter import (
     ClaudeCodeAdapter,
@@ -21,6 +22,7 @@ pytestmark = pytest.mark.unit
 
 CLAUDE_VERSION_FIXTURE = "2.1.91 (Claude Code)"
 CODEX_VERSION_FIXTURE = "codex-cli 0.118.0"
+AGY_VERSION_FIXTURE = "antigravity/1.4.0"
 
 
 def _sim_tool() -> ToolDeclaration:
@@ -35,8 +37,10 @@ def _sim_tool() -> ToolDeclaration:
 def test_claude_and_codex_advertise_function_calling() -> None:
     claude = ClaudeCodeAdapter(binary="/usr/bin/claude")
     codex = CodexCliAdapter(binary="/usr/bin/codex")
+    agy = AntigravityCliAdapter(binary="/usr/bin/agy")
     assert claude.capabilities.has_capability(ProviderCapability.FUNCTION_CALLING)
     assert codex.capabilities.has_capability(ProviderCapability.FUNCTION_CALLING)
+    assert agy.capabilities.has_capability(ProviderCapability.FUNCTION_CALLING)
 
 
 def test_claude_send_and_stream_nonce_bound_tool_call() -> None:
@@ -119,3 +123,48 @@ def test_scrub_env_and_process_group_termination() -> None:
         adapter.send_message("hang", ConversationContext(), [_sim_tool()])
     mock_killpg.assert_called_once()
     assert terminate_cli_process_group(None) is False
+
+
+def test_agy_send_and_stream_nonce_bound_tool_call_and_timeout_cleanup() -> None:
+    """Recorded fixture for agy 1.4.0 emitting a nonce-bound tool call."""
+    adapter = AntigravityCliAdapter(timeout=0.5)
+    adapter.binary = "/usr/bin/agy"
+    fixed_nonce = "99aabbccddeeff00"  # pragma: allowlist secret
+    recorded_stdout = (
+        f"Executing host tool via agy.\n"
+        f'<sidekick_tool_call nonce="{fixed_nonce}">'
+        '{"action_id":"run_simulation","params":{"temperature_k":1200.0},'
+        '"rationale":"agy tool call"}'
+        f"</sidekick_tool_call>\n"
+    )
+    completed = MagicMock(returncode=0, stdout=recorded_stdout, stderr="")
+    with (
+        patch("secrets.token_hex", return_value=fixed_nonce),
+        patch("subprocess.run", return_value=completed) as mock_run,
+    ):
+        chunks = list(
+            adapter.stream_response(
+                "run at 1200K", ConversationContext(), [_sim_tool()]
+            )
+        )
+    assert len(chunks) == 2
+    assert chunks[0].tool_call_delta is not None
+    assert chunks[0].tool_call_delta["name"] == "run_simulation"
+    assert chunks[0].tool_call_delta["arguments"] == {"temperature_k": 1200.0}
+    assert chunks[1].is_final is True
+    assert "Executing host tool via agy." in chunks[1].content
+    args_sent = mock_run.call_args.args[0]
+    prompt_sent = args_sent[-1]
+    assert f'nonce="{fixed_nonce}"' in prompt_sent
+    assert "type run_simulation = (temperature_k:number) => Result;" in prompt_sent
+
+    timeout_exc = subprocess.TimeoutExpired(cmd="agy", timeout=0.5)
+    timeout_exc.pid = 51515  # type: ignore[attr-defined]
+    with (
+        patch("subprocess.run", side_effect=timeout_exc),
+        patch("os.getpgid", return_value=51515),
+        patch("os.killpg") as mock_killpg,
+        pytest.raises(AITimeoutError),
+    ):
+        adapter.send_message("hang", ConversationContext(), [_sim_tool()])
+    mock_killpg.assert_called_once()

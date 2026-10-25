@@ -526,7 +526,8 @@
           }
         ],
         "test_paths": [
-          "tests/unit/ai/adapters/test_antigravity_and_staff_adapter.py"
+          "tests/unit/ai/adapters/test_antigravity_and_staff_adapter.py",
+          "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py"
         ],
         "unit_mentions": [
           "s"
@@ -1149,10 +1150,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10955,
+      "bytes_lf": 11907,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "1f6c8467792cc39e90efe6c2e593918a91d307c90785b473529768cd58c70e35",
+      "content_sha256_lf": "392ba73c90859383f0b98845df752be387a8dd679e78dd646da4c52f60c97d0d",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-GEMINI-CLI-ADAPTER-PY-68DBE34F3E89",
       "language": "python",
