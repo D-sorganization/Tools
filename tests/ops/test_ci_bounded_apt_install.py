@@ -122,6 +122,13 @@ def test_stalled_locks_fail_with_actionable_error() -> None:
     assert "lock" in str(exc.value).lower()
 
 
+def test_passwordless_sudo_returns_false_when_sudo_missing() -> None:
+    def missing_sudo(_cmd: Sequence[str]) -> subprocess.CompletedProcess[str]:
+        raise FileNotFoundError("sudo")
+
+    assert ci_apt._passwordless_sudo(missing_sudo) is False
+
+
 def test_missing_privilege_skips_without_mutating() -> None:
     runner = ScriptedRunner(
         [_completed(stdout="1000\n"), _completed(returncode=1)]  # id, sudo -n true
@@ -230,6 +237,46 @@ def test_outer_lock_contention_exits_within_budget_without_deleting_or_stealing_
             probe.close()
     finally:
         holder.close()
+
+
+def test_sigterm_cleans_up_command_process_group(tmp_path: Path) -> None:
+    """SIGTERM to the helper must not leave the detached command group running."""
+    import os
+    import signal
+    import threading
+    import time
+
+    child_pid_file = tmp_path / "child.pid"
+    parent_script = (
+        "import subprocess, sys, time, pathlib\n"
+        "cmd = [sys.executable, '-c', 'import time; time.sleep(60)']\n"
+        "child = subprocess.Popen(cmd)\n"
+        f"pathlib.Path({str(child_pid_file)!r}).write_text(str(child.pid))\n"
+        "time.sleep(60)\n"
+    )
+
+    def deliver_sigterm() -> None:
+        time.sleep(0.25)
+        os.kill(os.getpid(), signal.SIGTERM)
+
+    threading.Thread(target=deliver_sigterm, daemon=True).start()
+    with pytest.raises(SystemExit):
+        ci_apt.run_bounded_command(
+            [sys.executable, "-c", parent_script],
+            timeout_sec=30.0,
+            kill_grace_sec=0.2,
+        )
+
+    assert child_pid_file.is_file()
+    child_pid = int(child_pid_file.read_text(encoding="utf-8").strip())
+    for _ in range(10):
+        try:
+            os.kill(child_pid, 0)
+        except ProcessLookupError:
+            break
+        time.sleep(0.05)
+    with pytest.raises(ProcessLookupError):
+        os.kill(child_pid, 0)
 
 
 def test_command_timeout_terminates_and_reaps_descendant_process_group(

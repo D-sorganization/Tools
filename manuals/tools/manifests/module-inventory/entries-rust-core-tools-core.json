@@ -3359,6 +3359,7 @@
           "tests/data_processing/data_processor/test_vectorized_filter_split.py",
           "tests/data_processor_io/test_rust_engine_contract.py",
           "tests/heavy_integration/test_tools_contracts.py",
+          "tests/ops/test_ci_bounded_apt_install.py",
           "tests/ops/test_mirror_freshness.py",
           "tests/p1am_control_system/test_backend_security.py",
           "tests/p1am_control_system/test_desktop_tab_labels.py",

@@ -43,6 +43,26 @@ class InstallResult:
     detail: str
 
 
+@contextlib.contextmanager
+def _guard_command_process(
+    proc: subprocess.Popen[str], *, kill_grace_sec: float
+) -> Iterator[None]:
+    """Terminate ``proc``'s process group if the helper receives SIGTERM/SIGINT."""
+
+    def _handle_signal(signum: int, _frame: object | None) -> None:
+        _terminate_process_group(proc, kill_grace_sec=kill_grace_sec)
+        raise SystemExit(128 + signum)
+
+    previous: dict[int, signal.Handlers] = {}
+    for sig in (signal.SIGTERM, signal.SIGINT):
+        previous[sig] = signal.signal(sig, _handle_signal)
+    try:
+        yield
+    finally:
+        for sig, handler in previous.items():
+            signal.signal(sig, handler)
+
+
 def _terminate_process_group(
     proc: subprocess.Popen[str], *, kill_grace_sec: float
 ) -> None:
@@ -95,7 +115,8 @@ def run_bounded_command(
         start_new_session=True,
     )
     try:
-        stdout, stderr = proc.communicate(timeout=timeout_sec)
+        with _guard_command_process(proc, kill_grace_sec=kill_grace_sec):
+            stdout, stderr = proc.communicate(timeout=timeout_sec)
     except subprocess.TimeoutExpired as exc:
         _terminate_process_group(proc, kill_grace_sec=kill_grace_sec)
         raise CiAptInstallError(
@@ -326,7 +347,10 @@ def install_packages(
 
 
 def _passwordless_sudo(run: CommandRunner) -> bool:
-    proc = run(["sudo", "-n", "true"])
+    try:
+        proc = run(["sudo", "-n", "true"])
+    except (FileNotFoundError, OSError):
+        return False
     return proc.returncode == 0
 
 

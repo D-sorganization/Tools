@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "6a085ee8ab5533a03338c16dc743a8cb600906e39be4b3b5d170841b8964489d",
+      "content_sha256_lf": "96afaa0c8f684e1ff6a2cc66e7705e7beaeb92e46090e89e723460c76987cbce",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -159,7 +159,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "a3936a0bf5ed3e15c80e22255b1d8b6d16e18f82b70771c1384da6258d06b98b",
+      "content_sha256_lf": "350f309411d9ba733e8568d9dbff3c976c2dae36fbda47ffc3823496ea7b994c",
       "entry_count": 119,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
