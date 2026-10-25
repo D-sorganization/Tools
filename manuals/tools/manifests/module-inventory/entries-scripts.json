@@ -4666,7 +4666,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "not-applicable"
       },
@@ -4736,7 +4736,9 @@
             "signature": "run: CommandRunner, *, sleep: Callable[[float], None], lock_wait_budget_sec: float, poll_interval_sec: float, monotonic: Callable[[], float]=time.monotonic, deadline: float | None=None"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/ops/test_ci_bounded_apt_install.py"
+        ],
         "unit_mentions": [
           "s"
         ],

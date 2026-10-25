@@ -249,12 +249,12 @@ def test_ci_standard_serializes_apt_installs_on_shared_runners() -> None:
     assert len(install_steps) == 2
     for step in install_steps:
         run = step["run"]
-        assert run.count("flock /tmp/d-sorg-apt-install.lock") == 2
+        assert run.count("flock -w 180 /tmp/d-sorg-apt-install.lock") == 2
+        assert "ci_bounded_apt_install.py" in run
         assert "sudo -n true" in run
-        assert "sudo -n flock /tmp/d-sorg-apt-install.lock" in run
+        assert "sudo -n flock -w 180 /tmp/d-sorg-apt-install.lock" in run
         assert "Passwordless sudo is unavailable" in run
-        assert "apt-get -o DPkg::Lock::Timeout=300 update --fix-missing" in run
-        assert "apt-get -o DPkg::Lock::Timeout=300 install -y --fix-missing" in run
+        assert "rm -f /var/lib/dpkg/lock" not in run
 
 
 def test_quality_gate_dependency_install_uses_only_hosted_download_cache() -> None:
@@ -274,7 +274,7 @@ def test_quality_gate_dependency_install_uses_only_hosted_download_cache() -> No
     )
 
     assert setup_step["with"]["cache"] == "pip"
-    assert "$HOME/actions-runners" not in str(quality_job)
+    assert "/home/dieterolson/actions-runners" not in str(quality_job)
     assert "PIP_CACHE_DIR" not in install_step.get("env", {})
     assert "PIP_NO_CACHE_DIR" not in install_step.get("env", {})
 
