@@ -1574,6 +1574,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5744 · Route Repo-Owned Agent Auto-Merge Instructions Through automerge_guard.py and Hold Blocked: PRs.
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5744
+- **Branch:** merged via #5751
+- **PR:** #5751
+- **Paths:** see #5751
+- **Started:** 2026-10-25
+- **Last verified:** 2026-10-25 (`0163f367`; collated from changes/5744-route-repo-owned-agent-auto-merge-instru.md)
+- **Summary:** Route repo-owned agent auto-merge instructions through automerge_guard.py and hold Blocked: PRs.
+- **Next step:** Shipped in PR #5751.
+
 ### DL-#5775 · Add Cursor Cloud Environment.Json Fleet Bootstrap via Repository_Management Scripts/Cursor/Bootstrap.Sh.
 
 - **State:** shipped
