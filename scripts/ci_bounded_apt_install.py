@@ -14,6 +14,8 @@ import time
 from collections.abc import Callable, Iterator, Sequence
 from dataclasses import dataclass
 from pathlib import Path
+from types import FrameType
+from typing import Any
 
 logger = logging.getLogger(__name__)
 
@@ -49,18 +51,18 @@ def _guard_command_process(
 ) -> Iterator[None]:
     """Terminate ``proc``'s process group if the helper receives SIGTERM/SIGINT."""
 
-    def _handle_signal(signum: int, _frame: object | None) -> None:
+    def _handle_signal(signum: int, _frame: FrameType | None) -> None:
         _terminate_process_group(proc, kill_grace_sec=kill_grace_sec)
         raise SystemExit(128 + signum)
 
-    previous: dict[int, signal.Handlers] = {}
-    for sig in (signal.SIGTERM, signal.SIGINT):
-        previous[sig] = signal.signal(sig, _handle_signal)
+    previous: dict[signal.Signals, Any] = {}
+    for signum in (signal.SIGTERM, signal.SIGINT):
+        previous[signum] = signal.signal(signum, _handle_signal)
     try:
         yield
     finally:
-        for sig, handler in previous.items():
-            signal.signal(sig, handler)
+        for signum in previous:
+            signal.signal(signum, previous[signum])
 
 
 def _terminate_process_group(
