@@ -59,14 +59,17 @@ def _terminate_process_group(
         proc.communicate(timeout=kill_grace_sec)
     with contextlib.suppress(ProcessLookupError, PermissionError):
         os.killpg(pgid, signal.SIGKILL)
-    try:
-        os.killpg(pgid, 0)
-    except ProcessLookupError:
-        return
-    except PermissionError as exc:
-        raise CiAptInstallError(
-            f"Process group {pgid} cleanup status unknown after timeout"
-        ) from exc
+    reap_deadline = time.monotonic() + max(kill_grace_sec, 2.0)
+    while time.monotonic() < reap_deadline:
+        try:
+            os.killpg(pgid, 0)
+        except ProcessLookupError:
+            return
+        except PermissionError as exc:
+            raise CiAptInstallError(
+                f"Process group {pgid} cleanup status unknown after timeout"
+            ) from exc
+        time.sleep(0.02)
     raise CiAptInstallError(
         f"Process group {pgid} survived SIGKILL after command timeout"
     )
