@@ -21,7 +21,7 @@ merged. Read this first, then `src/putting_launch_monitor/AGENT_HANDOFF.md`
 | Shared live-camera layer                                      | `src/shared/python/camera/`                            | streams the overhead ELP at 1920x1200@60; UpstreamDrift rig adopted (UD PR #10211) |
 
 Tests: `python -m pytest src/putting_launch_monitor/tests tests/camera -q --timeout=60`
-(77 pass on main). Repo venv: `C:\Users\diete\Repositories\Tools\.venv`.
+(77 pass on main). Repo venv: `%USERPROFILE%\Repositories\Tools\.venv`.
 
 Installed lab calibration:
 `%LOCALAPPDATA%\D-sorganization\putting_launch_monitor\calibration.json` —

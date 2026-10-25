@@ -5,7 +5,7 @@
     "bytes": 90368000,
     "sha256": "6fadb92b9e871112660aea0a65957deecba2c702dded000950b3fb6c7cad0fdd"
   },
-  "linux_source_directory": "/home/dieterolson/.cache/codex-impact/review-typing-fd022afd3",
+  "linux_source_directory": "$HOME/.cache/codex-impact/review-typing-fd022afd3",
   "results": {
     "impact-review-typing-windows": {
       "sha256": "277a711c6d759c2380d126559201212d0fb79415111b0a64525bad5f4130a4d9",

@@ -86,7 +86,7 @@
   ],
   "full_regression": {
     "command": [
-      "C:\\Users\\diete\\Repositories\\Tools-impact-shaft\\.venv\\Scripts\\python.exe",
+      "%USERPROFILE%\\Repositories\\Tools-impact-shaft\\.venv\\Scripts\\python.exe",
       "-m",
       "pytest",
       "tests/shared/python/golf_club",
@@ -99,9 +99,9 @@
       "--cov=src/shared/python/golf_club",
       "--cov=src/shared/python/swing_sim/impact",
       "--cov-report=term",
-      "--cov-report=json:C:\\Users\\diete\\AppData\\Local\\Temp\\impact-kinematics-full-coverage.json",
+      "--cov-report=json:%USERPROFILE%\\AppData\\Local\\Temp\\impact-kinematics-full-coverage.json",
       "-q",
-      "--junitxml=C:\\Users\\diete\\AppData\\Local\\Temp\\impact-kinematics-full.xml"
+      "--junitxml=%USERPROFILE%\\AppData\\Local\\Temp\\impact-kinematics-full.xml"
     ],
     "actual_exit": 0,
     "receipt": {
@@ -138,11 +138,11 @@
     "skips": [
       {
         "name": "tests.shared.python.golf_club.test_wedge_cad",
-        "reason": "('C:\\\\Users\\\\diete\\\\Repositories\\\\Tools-impact-friction\\\\tests\\\\shared\\\\python\\\\golf_club\\\\test_wedge_cad.py', 7, \"Skipped: could not import 'build123d': No module named 'build123d'\")"
+        "reason": "('%USERPROFILE%\\\\Repositories\\\\Tools-impact-friction\\\\tests\\\\shared\\\\python\\\\golf_club\\\\test_wedge_cad.py', 7, \"Skipped: could not import 'build123d': No module named 'build123d'\")"
       },
       {
         "name": "tests.shared.python.golf_club.test_wedge_export",
-        "reason": "('C:\\\\Users\\\\diete\\\\Repositories\\\\Tools-impact-friction\\\\tests\\\\shared\\\\python\\\\golf_club\\\\test_wedge_export.py', 10, \"Skipped: could not import 'build123d': No module named 'build123d'\")"
+        "reason": "('%USERPROFILE%\\\\Repositories\\\\Tools-impact-friction\\\\tests\\\\shared\\\\python\\\\golf_club\\\\test_wedge_export.py', 10, \"Skipped: could not import 'build123d': No module named 'build123d'\")"
       }
     ],
     "slowest_tests": [

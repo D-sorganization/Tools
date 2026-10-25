@@ -1,7 +1,7 @@
 """Lint test: no developer-specific absolute paths in adapters or scripts (#3278).
 
-Hardcoded developer home directories (e.g. ``C:\\Users\\diete\\...`` or
-``/home/dieterolson/...``) resolve only on the original developer's machine.
+Hardcoded developer home directories (e.g. ``C:\\Users\\devuser\\...`` or
+``/home/devuser/...``) resolve only on the original developer's machine.
 In the AI CLI adapters they make the PATH fallbacks dead on every other host;
 in the fleet scripts they make every path operation fail with
 ``FileNotFoundError`` on CI runners or any other checkout. This test fails if

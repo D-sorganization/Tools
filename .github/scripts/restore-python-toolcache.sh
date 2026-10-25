@@ -59,7 +59,7 @@ restore_python() {
 }
 
 shopt -s nullglob
-for venv_dir in /home/dieterolson/actions-runners/python-venvs/[0-9]*.[0-9]*.[0-9]*; do
+for venv_dir in $HOME/actions-runners/python-venvs/[0-9]*.[0-9]*.[0-9]*; do
   version="$(basename "$venv_dir")"
   case "$version" in
     3.10.*|3.11.*|3.12.*|3.13.*)

@@ -274,7 +274,7 @@ def test_quality_gate_dependency_install_uses_only_hosted_download_cache() -> No
     )
 
     assert setup_step["with"]["cache"] == "pip"
-    assert "/home/dieterolson/actions-runners" not in str(quality_job)
+    assert "$HOME/actions-runners" not in str(quality_job)
     assert "PIP_CACHE_DIR" not in install_step.get("env", {})
     assert "PIP_NO_CACHE_DIR" not in install_step.get("env", {})
 

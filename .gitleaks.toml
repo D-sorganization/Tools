@@ -1,0 +1,22 @@
+# Gitleaks configuration for the public Tools repository.
+# Extends the upstream default rule set; see https://github.com/gitleaks/gitleaks.
+
+title = "Tools public repository"
+
+[extend]
+useDefault = true
+
+[allowlist]
+description = """
+Allowlist only the four verified SHA-256 source-file digests in impact-acoustics
+checkpoint manifests whose JSON keys contain "api" (test_contract_api.py,
+swing_sim_api_baseline.json, test_shared_package_api_stability.py).
+"""
+condition = "AND"
+paths = [
+  '''docs/development/impact-acoustics/(?:CALIBRATION|COMPLEX_FRF|CHECKPOINT_INTEGRATION)_RESULTS\.json''',
+]
+regexTarget = "line"
+regexes = [
+  '''"(?:src/shared/python/swing_sim/(?:vibroacoustics|impact)/tests/test_contract_api\.py|tests/api_baselines/swing_sim_api_baseline\.json|tests/test_shared_package_api_stability\.py)"\s*:\s*"(?:a6137d8806ca02da57009875393acc1361b34f0bbbabe4fa98fe979c1c8cb32a|23d68b92ccf9640ecf5a0dfdac623507b936aa8a65885bf194cf85ce733a22ed|37467700f498e24da19a623ea53a09af873bf81274003a73c4a2733a58d9c8f7|613b0eaad2c605f881e4a392f14c8d876247606d8f0589d0b6be79b017dd6ae1)"''',
+]

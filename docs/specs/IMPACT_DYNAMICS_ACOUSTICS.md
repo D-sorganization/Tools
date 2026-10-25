@@ -127,7 +127,7 @@ Synthetic tests and cross-engine agreement establish numerical behavior only.
 
 ## Turnover and Current Delivery
 
-- Worktree: `C:/Users/diete/Repositories/Tools-impact-acoustics`.
+- Worktree: `<worktree>/Repositories/Tools-impact-acoustics`.
 - Branch: `feat/5068-impact-dynamics-foundation`; base `b4875be19`.
 - Issue: #5069; implementation commit `SELF`; PR #5077; implementation `6d94f1d3d`.
 - TDD: missing-module RED, then 30 passing independent reference tests.

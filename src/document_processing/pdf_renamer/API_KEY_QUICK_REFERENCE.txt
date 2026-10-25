@@ -14,8 +14,8 @@ MANUAL SETUP - Create .env file with:
 
 WHERE TO SAVE .env FILE (Pick one):
 ------------------------------------
-  1. Playground: c:\Users\diete\Repositories\Playground\PDFRenamer\.env
-  2. Tools:      c:\Users\diete\Repositories\Tools\document_processing\pdf_renamer\.env
+  1. Playground: %USERPROFILE%\Repositories\Playground\PDFRenamer\.env
+  2. Tools:      %USERPROFILE%\Repositories\Tools\document_processing\pdf_renamer\.env
   3. User Home:  %USERPROFILE%\.pdf_renamer\.env
 
 
@@ -38,7 +38,7 @@ RECOMMENDED FOR YOUR SETUP:
 ----------------------------
   Since you have both Tools and Playground versions, create .env in Tools folder:
 
-  c:\Users\diete\Repositories\Tools\document_processing\pdf_renamer\.env
+  %USERPROFILE%\Repositories\Tools\document_processing\pdf_renamer\.env
 
   Both versions will automatically find and use it!
 

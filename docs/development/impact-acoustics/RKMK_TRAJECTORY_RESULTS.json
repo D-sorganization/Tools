@@ -4,7 +4,7 @@
   "physical_evidence": false,
   "source_archive": {
     "tree": "6cdf0553a2b1ed20f418a9224335c545b3c524cd",
-    "archive": "C:\\Users\\diete\\AppData\\Local\\Temp\\impact-rkmk-source.tar",
+    "archive": "%USERPROFILE%\\AppData\\Local\\Temp\\impact-rkmk-source.tar",
     "bytes": 90296320,
     "sha256": "30efb3f3706e97f02aa3e445ba13b2b53f6444d414e26e98765b620e4a5d6f15"
   },
@@ -129,7 +129,7 @@
     ],
     "duration_s": 340.34,
     "warnings": 3,
-    "native_directory": "/home/dieterolson/.cache/codex-impact/rkmk-6cdf0553a",
+    "native_directory": "$HOME/.cache/codex-impact/rkmk-6cdf0553a",
     "runtime": {
       "python": "3.11.15",
       "numpy": "2.3.5",
