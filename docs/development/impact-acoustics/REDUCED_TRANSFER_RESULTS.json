@@ -4,7 +4,7 @@
   "physical_evidence": false,
   "source_archive": {
     "tree": "cac9ca3750b10aab4073f81c53d2d63707416c9f",
-    "archive": "C:\\Users\\diete\\AppData\\Local\\Temp\\impact-port-source.tar",
+    "archive": "%USERPROFILE%\\AppData\\Local\\Temp\\impact-port-source.tar",
     "bytes": 60876800,
     "sha256": "526d9316eb57bab41a4d771b429f3f030fde54293277944e7bb31871059476ed"
   },
@@ -98,7 +98,7 @@
       "base_archive_tree": "cac9ca3750b10aab4073f81c53d2d63707416c9f",
       "changed_file": "src/shared/python/golf_club/_shaft_frequency_band.py",
       "lf_sha256": "30296e117763c07430a98179097e7175537bc09909e018eb518248101666e94d",
-      "native_dir": "/home/dieterolson/.cache/codex-impact/port-typing-30296e117"
+      "native_dir": "$HOME/.cache/codex-impact/port-typing-30296e117"
     },
     "windows": {
       "passed": 84,

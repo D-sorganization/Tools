@@ -478,6 +478,7 @@
           "tests/unit/codemap/test_codemap_ts_common.py",
           "tests/unit/codemap/test_codemap_watcher.py",
           "tests/unit/sidekick/agent/test_action_service.py",
+          "tests/unit/sidekick/agent/test_cli_bridge.py",
           "tests/unit/sidekick/agent/test_host_adapter.py",
           "tests/unit/sidekick/agent/test_subtab_adapter.py",
           "tests/unit/sidekick/conftest.py",

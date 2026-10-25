@@ -32,13 +32,20 @@ Example::
 from __future__ import annotations
 
 import os
+import secrets
 import shutil
 import subprocess
-from collections.abc import Iterator
+from collections.abc import Iterator, Sequence
 from pathlib import Path
 from typing import Any
 
 from shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
+from shared.python.ai.adapters.claude_code_adapter import (
+    build_cli_tool_prompt_section,
+    parse_cli_tool_envelopes,
+    scrub_cli_subprocess_env,
+    terminate_cli_process_group,
+)
 from shared.python.ai.exceptions import (
     AIConnectionError,
     AIProviderError,
@@ -50,6 +57,7 @@ from shared.python.ai.types import (
     ConversationContext,
     ProviderCapabilities,
     ProviderCapability,
+    ToolCall,
 )
 from shared.python.logging_pkg.logging_config import get_logger
 
@@ -137,6 +145,7 @@ class GeminiCliAdapter(BaseAgentAdapter):
         self._capabilities = ProviderCapabilities(
             supported=frozenset(
                 {
+                    ProviderCapability.FUNCTION_CALLING,
                     ProviderCapability.SYSTEM_MESSAGE,
                     ProviderCapability.STREAMING,
                 }
@@ -191,7 +200,8 @@ class GeminiCliAdapter(BaseAgentAdapter):
                 provider=self.PROVIDER_NAME,
             )
 
-        prompt = self._build_prompt(message, context)
+        nonce = secrets.token_hex(8) if tools else None
+        prompt = self._build_prompt(message, context, tools=tools, nonce=nonce)
         # `--skip-trust` because the chat UI is not necessarily launched from
         # a workspace the user has explicitly trusted; the CLI otherwise
         # refuses to run in non-interactive mode against an untrusted dir.
@@ -207,8 +217,11 @@ class GeminiCliAdapter(BaseAgentAdapter):
                 timeout=self.timeout,
                 check=False,
                 encoding="utf-8",
+                env=scrub_cli_subprocess_env(),
+                start_new_session=(os.name != "nt"),
             )
         except subprocess.TimeoutExpired as exc:
+            terminate_cli_process_group(getattr(exc, "pid", None))
             raise AITimeoutError(
                 f"Gemini CLI timed out after {self.timeout}s",
                 provider=self.PROVIDER_NAME,
@@ -226,14 +239,25 @@ class GeminiCliAdapter(BaseAgentAdapter):
                 provider=self.PROVIDER_NAME,
             )
 
+        raw_stdout = (result.stdout or "").strip()
+        tool_calls: list[ToolCall] = []
+        meta: dict[str, Any] = {
+            "provider": self.PROVIDER_NAME,
+            "model": self.model or "default",
+            "stderr": (result.stderr or "")[-500:],
+        }
+        if tools and nonce is not None:
+            raw_stdout, tool_calls, rejected = parse_cli_tool_envelopes(
+                raw_stdout, expected_nonce=nonce, tools=tools
+            )
+            meta["turn_nonce"] = nonce
+            meta["rejected_tool_nonces"] = rejected
         return AgentResponse(
-            content=(result.stdout or "").strip(),
+            content=raw_stdout,
+            tool_calls=tool_calls,
+            finish_reason="tool_calls" if tool_calls else "stop",
             usage={},
-            metadata={
-                "provider": self.PROVIDER_NAME,
-                "model": self.model or "default",
-                "stderr": (result.stderr or "")[-500:],
-            },
+            metadata=meta,
         )
 
     def stream_response(
@@ -242,17 +266,16 @@ class GeminiCliAdapter(BaseAgentAdapter):
         context: ConversationContext,
         tools: list[ToolDeclaration],
     ) -> Iterator[AgentChunk]:
-        """Yield the response as a single chunk.
-
-        Gemini supports ``--output-format=stream-json`` for true streaming
-        but parsing the line-delimited JSON adds complexity that is not yet
-        required by the chat dock. Surface the complete response as one
-        chunk for now.
-        """
+        """Yield tool-call deltas (if any) followed by the final text chunk."""
         response = self.send_message(message, context, tools)
+        for idx, tc in enumerate(response.tool_calls):
+            yield AgentChunk(
+                content="", tool_call_delta=tc.to_dict(), is_final=False, index=idx
+            )
         yield AgentChunk(
             content=response.content,
             is_final=True,
+            index=len(response.tool_calls),
         )
 
     def validate_connection(self) -> tuple[bool, str]:
@@ -293,15 +316,17 @@ class GeminiCliAdapter(BaseAgentAdapter):
     # ------------------------------------------------------------------ #
 
     @staticmethod
-    def _build_prompt(message: str, context: ConversationContext) -> str:
-        """Concatenate conversation history into a single CLI prompt.
-
-        Gemini's ``-p`` mode takes a single prompt string. Render the history
-        as alternating ``User:`` / ``Assistant:`` blocks followed by the
-        current message — matching the convention used by the other
-        CLI-shaped adapters in this package.
-        """
-        parts: list[str] = []
+    def _build_prompt(
+        message: str,
+        context: ConversationContext,
+        *,
+        tools: Sequence[ToolDeclaration] | None = None,
+        nonce: str | None = None,
+    ) -> str:
+        """Concatenate conversation history into a single CLI prompt."""
+        parts: list[str] = (
+            [build_cli_tool_prompt_section(tools, nonce)] if (tools and nonce) else []
+        )
         for msg in getattr(context, "messages", []) or []:
             role = getattr(msg, "role", "user").capitalize()
             content = getattr(msg, "content", "") or ""

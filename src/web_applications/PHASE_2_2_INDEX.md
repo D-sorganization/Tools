@@ -298,7 +298,7 @@ QUICK_START_TESTING.md (Entry Point)
 ### Web Applications
 
 ```
-/home/user/Tools/src/web_applications/
+<repo-root>/Tools/src/web_applications/
 ├── calculator/
 │   ├── static/
 │   │   ├── app.js (12.7KB) - JavaScript logic
@@ -320,7 +320,7 @@ QUICK_START_TESTING.md (Entry Point)
 ### Test Documentation
 
 ```
-/home/user/Tools/src/web_applications/
+<repo-root>/Tools/src/web_applications/
 ├── QUICK_START_TESTING.md (8.1KB) ← Entry point
 ├── MOBILE_TESTING_CHECKLIST.md (17KB)
 ├── ACCESSIBILITY_TESTING_GUIDE.md (18KB)

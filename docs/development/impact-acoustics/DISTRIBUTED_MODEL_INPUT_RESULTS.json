@@ -4,7 +4,7 @@
   "physical_validation": false,
   "scientific_source": {
     "tree": "6e3c18328d2cdc36ef89f76a376878c33317bbf9",
-    "archive": "C:\\Users\\diete\\AppData\\Local\\Temp\\impact-model-data-source.tar",
+    "archive": "%USERPROFILE%\\AppData\\Local\\Temp\\impact-model-data-source.tar",
     "bytes": 90368000,
     "sha256": "b6e51b9239abcb35e1b3d3989691b22f950a801bfeecdf6ecf1737de35d97f79"
   },

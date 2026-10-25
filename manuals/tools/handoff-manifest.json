@@ -18,7 +18,7 @@
   },
   "branch_and_worktree": {
     "branch": "fix/5640-coriolis-christoffel",
-    "worktree": "C:\\Users\\diete\\Repositories\\_wt_claude_tools_5640",
+    "worktree": "%USERPROFILE%\\Repositories\\_wt_claude_tools_5640",
     "is_clean": false
   },
   "check_evidence": {
@@ -224,7 +224,7 @@
     },
     "src/shared/python/sidekick/lab/mocap/AGENT_HANDOFF.md": {
       "path": "src/shared/python/sidekick/lab/mocap/AGENT_HANDOFF.md",
-      "sha256_lf": "444bf9c9549707ee5db438c64cb58b717b96125f5ed0551236159a6906df42fa",
+      "sha256_lf": "6f168d3736380fda4b7cc3b7fb828540a31b98f3b5e7f8e81d40338364cb6ffa",
       "line_count": 89,
       "max_line_budget": 150,
       "required_sections": [

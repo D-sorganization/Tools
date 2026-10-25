@@ -109,7 +109,7 @@ OMP and MKL thread. Its exact src/tests/conftest/pyproject archive comes from
 tree a4027d37b2b3b92b3f6a25deac860503c705ff5d, contains 60,815,360 bytes and has
 SHA256 a377fcf07d90bf04ac076acc6bfe9fc70266911f41aab74c68416d4a120752bf.
 The retained native log is
-`/home/dieterolson/.cache/codex-impact/trajectory-a4027d37b/scientific.log`.
+`$HOME/.cache/codex-impact/trajectory-a4027d37b/scientific.log`.
 
 ## Remaining program
 

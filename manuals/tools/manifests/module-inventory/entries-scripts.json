@@ -2829,6 +2829,96 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 5819,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "7035cad1fec675b2e59be2f8555743b6929231b18c935009dc1b9f930551a6a4",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CHECK-PUBLIC-REPO-SANITATION-PY-A7BF63F6EDB8",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/check_public_repo_sanitation.py",
+      "purpose": "Fail when tracked text contains developer-specific or fleet-local paths.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "Violation",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BINARY_SUFFIXES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "BUILTIN_PATTERNS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXCLUDE_FILES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EXCLUDE_PREFIXES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "LOCAL_DENYLIST",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "SCAN_PREFIXES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: Iterable[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "scan",
+            "signature": "root: Path"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 5781,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -3260,10 +3350,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6851,
+      "bytes_lf": 6940,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e0832c5d36a3ccbc310c935c2e2e9de5c0f1aa64753c979b15a60391d8ec07d7",
+      "content_sha256_lf": "7a4635a1af426fca62e6849cb66ad1c5eadf3411163c286f2b926f0b6c5c4dad",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-ROOT-ALLOWLIST-PY-94782E1774B7",
       "language": "python",

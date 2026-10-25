@@ -1574,6 +1574,45 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5775 · Add Cursor Cloud Environment.Json Fleet Bootstrap via Repository_Management Scripts/Cursor/Bootstrap.Sh.
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5775
+- **Branch:** merged via #5776
+- **PR:** #5776
+- **Paths:** see #5776
+- **Started:** 2026-10-25
+- **Last verified:** 2026-10-25 (`0204fc2f`; collated from changes/5775-add-cursor-cloud-environment-json-fleet.md)
+- **Summary:** Add Cursor Cloud environment.json fleet bootstrap via Repository_Management scripts/cursor/bootstrap.sh.
+- **Next step:** Shipped in PR #5776.
+
+### DL-#5761 · Gitleaks Allowlist for Impact-Acoustics Evidence JSON; Public Path Sanitation Guard and Scrub in Guarded Tree.
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5761
+- **Branch:** cursor/security-cleanup-scrub-c049
+- **PR:** #5761
+- **Paths:** see #5761
+- **Started:** 2026-10-25
+- **Last verified:** 2026-10-25 (`434ec4b9`; collated from changes/5761-gitleaks-allowlist-for-impact-acoustics.md)
+- **Summary:** Gitleaks allowlist for impact-acoustics evidence JSON; public path sanitation guard and scrub in guarded tree.
+- **Next step:** Expand SCAN_PREFIXES after broader docs and workflow scrub.
+
+### DL-#5727 · Wire Antigravity (Agy) CLI Adapter to Nonce-Bound Tool Bridge and Add AgenticAppHost Protocol.
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5727
+- **Branch:** merged via #5785
+- **PR:** #5785
+- **Paths:** see #5785
+- **Started:** 2026-10-25
+- **Last verified:** 2026-10-25 (`c5abe04b`; collated from changes/5727-wire-antigravity-agy-cli-adapter-to-nonc.md)
+- **Summary:** Wire Antigravity (agy) CLI adapter to nonce-bound tool bridge and add AgenticAppHost protocol.
+- **Next step:** Shipped in PR #5785.
+
 ### DL-#5767 · Do Not Delete In-Flight Transcriber Audio When Constructing Another VoiceTranscriber
 
 - **State:** shipped

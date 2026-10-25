@@ -727,10 +727,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13001,
+      "bytes_lf": 14978,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3dca3a9638abf334cc51b4a2d241cce208af5fe474ae0f15f0dcb6debabdee12",
+      "content_sha256_lf": "85bb10d0f23d7f9e38bf1149cb745c420d59c65f4fbb78c8fb3373dfc07c852b",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-CLI-BRIDGE-PY-55C5DD26D464",
       "language": "python",
@@ -766,6 +766,11 @@
         "equation_refs": [],
         "public_routes": [],
         "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "AgenticAppHost",
+            "signature": null
+          },
           {
             "kind": "class",
             "name": "CliBridgeGoalOutcome",
@@ -848,8 +853,18 @@
           },
           {
             "kind": "function",
+            "name": "build_app_host_tool_stubs",
+            "signature": ""
+          },
+          {
+            "kind": "function",
             "name": "build_nonce_tool_prompt",
             "signature": "tools: Sequence[ToolStubSpec], *, nonce: str, fallback_full_schema: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "dispatch_app_host_tool_call",
+            "signature": "host: AgenticAppHost, call: ToolCall"
           },
           {
             "kind": "function",
