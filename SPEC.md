@@ -5947,6 +5947,9 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-25 | #5776 | Add Cursor Cloud environment.json fleet bootstrap via Repository_Management scripts/cursor/bootstrap.sh. |
+| 2026-10-25 | #5761 | Gitleaks allowlist for impact-acoustics evidence JSON; public path sanitation guard and scrub in guarded tree. |
+| 2026-10-25 | #5785 | Wire Antigravity (agy) CLI adapter to nonce-bound tool bridge and add AgenticAppHost protocol. |
 | 2026-10-24 | #5768 | Do not delete in-flight transcriber audio when constructing another VoiceTranscriber |
 | 2026-10-24 | #5724 | Restore the public KnowledgePack FTS query sanitizer |
 | 2026-10-24 | #5745 | Isolate compatibility shim tests from global import state |
