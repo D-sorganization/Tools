@@ -77,7 +77,7 @@ BINARY_SUFFIXES: frozenset[str] = frozenset(
 BUILTIN_PATTERNS: tuple[tuple[str, re.Pattern[str]], ...] = (
     (
         "windows-user-home",
-        re.compile(r"[A-Za-z]:\\Users\\[A-Za-z0-9_.-]+"),
+        re.compile(r"[A-Za-z]:(?:\\+|/+)Users(?:\\+|/+)[A-Za-z0-9_.-]+"),
     ),
     (
         "posix-user-home",

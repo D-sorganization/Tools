@@ -138,11 +138,11 @@
     "skips": [
       {
         "name": "tests.shared.python.golf_club.test_wedge_cad",
-        "reason": "('C:\\\\Users\\\\diete\\\\Repositories\\\\Tools-impact-friction\\\\tests\\\\shared\\\\python\\\\golf_club\\\\test_wedge_cad.py', 7, \"Skipped: could not import 'build123d': No module named 'build123d'\")"
+        "reason": "('%USERPROFILE%\\\\Repositories\\\\Tools-impact-friction\\\\tests\\\\shared\\\\python\\\\golf_club\\\\test_wedge_cad.py', 7, \"Skipped: could not import 'build123d': No module named 'build123d'\")"
       },
       {
         "name": "tests.shared.python.golf_club.test_wedge_export",
-        "reason": "('C:\\\\Users\\\\diete\\\\Repositories\\\\Tools-impact-friction\\\\tests\\\\shared\\\\python\\\\golf_club\\\\test_wedge_export.py', 10, \"Skipped: could not import 'build123d': No module named 'build123d'\")"
+        "reason": "('%USERPROFILE%\\\\Repositories\\\\Tools-impact-friction\\\\tests\\\\shared\\\\python\\\\golf_club\\\\test_wedge_export.py', 10, \"Skipped: could not import 'build123d': No module named 'build123d'\")"
       }
     ],
     "slowest_tests": [

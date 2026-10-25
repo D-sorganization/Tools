@@ -1,5 +1,9 @@
 # -*- mode: python ; coding: utf-8 -*-
+from pathlib import Path
 from PyInstaller.utils.hooks import collect_all
+
+_REPO_ROOT = Path(SPECPATH).resolve().parents[4]
+_ICON_PATH = _REPO_ROOT / "assets" / "tools_icon_alt.ico"
 
 datas = []
 binaries = []
@@ -42,5 +46,5 @@ exe = EXE(
     target_arch=None,
     codesign_identity=None,
     entitlements_file=None,
-    icon=['%USERPROFILE%\\Repositories\\Tools\\tools_icon_alt.ico'],
+    icon=[str(_ICON_PATH)],
 )

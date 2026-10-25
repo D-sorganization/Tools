@@ -16,8 +16,8 @@ from rate_of_closure.launch_monitor_private_corpus import (
     resolve_private_corpus_path,
 )
 
-LOCAL_CAMPAIGN_ROOT = Path(
-    r"%USERPROFILE%\Repositories\Launch-Monitor-Flight-Model-Campaign"
+LOCAL_CAMPAIGN_ROOT = (
+    Path.home() / "Repositories" / "Launch-Monitor-Flight-Model-Campaign"
 )
 
 

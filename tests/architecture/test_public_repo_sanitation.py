@@ -11,6 +11,8 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 
 def test_builtin_patterns_flag_windows_and_posix_homes() -> None:
     assert sanitation.BUILTIN_PATTERNS[0][1].search(r"C:\Users\alice\file")
+    assert sanitation.BUILTIN_PATTERNS[0][1].search(r"C:\\Users\\alice\\file")
+    assert sanitation.BUILTIN_PATTERNS[0][1].search("C:/Users/alice/file")
     assert sanitation.BUILTIN_PATTERNS[1][1].search("/home/bob/staff-repos/Tools")
 
 

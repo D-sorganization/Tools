@@ -268,8 +268,8 @@
     }
   ],
   "skip_reasons": [
-    "('C:\\\\Users\\\\diete\\\\Repositories\\\\Tools-impact-friction\\\\tests\\\\shared\\\\python\\\\golf_club\\\\test_wedge_cad.py', 7, \"Skipped: could not import 'build123d': No module named 'build123d'\")",
-    "('C:\\\\Users\\\\diete\\\\Repositories\\\\Tools-impact-friction\\\\tests\\\\shared\\\\python\\\\golf_club\\\\test_wedge_export.py', 10, \"Skipped: could not import 'build123d': No module named 'build123d'\")"
+    "('%USERPROFILE%\\\\Repositories\\\\Tools-impact-friction\\\\tests\\\\shared\\\\python\\\\golf_club\\\\test_wedge_cad.py', 7, \"Skipped: could not import 'build123d': No module named 'build123d'\")",
+    "('%USERPROFILE%\\\\Repositories\\\\Tools-impact-friction\\\\tests\\\\shared\\\\python\\\\golf_club\\\\test_wedge_export.py', 10, \"Skipped: could not import 'build123d': No module named 'build123d'\")"
   ],
   "baseline_motion_work_property_comparison": {
     "test_production_entry_refines_separate_velocity_spin_impulse_and_work[60]": {

@@ -45,6 +45,7 @@ ROOT_ALLOWLIST: frozenset[str] = frozenset(
         ".gitattributes",
         ".github",
         ".gitignore",
+        ".gitleaks.toml",  # gitleaks rule-scoped allowlist for verified SHA-256 digests
         ".jules",  # Jules agent prompts and completist data
         ".mypy_cache",  # only a .gitkeep so the cache dir exists on runners
         ".oss-scanner",  # fleet security-scanner contract (Runner_Dashboard#2566)
