@@ -63,7 +63,7 @@ def test_ci_standard_installs_standalone_build_and_runtime_dependencies() -> Non
 
 
 def test_ci_standard_uses_bounded_checkout_history() -> None:
-    """PR gates need the merge parents, not every branch, tag, and packfile."""
+    """Only the test matrix can limit checkout to the merge parents."""
     import yaml
 
     workflow = yaml.safe_load(CI_STANDARD.read_text(encoding="utf-8"))
@@ -75,7 +75,9 @@ def test_ci_standard_uses_bounded_checkout_history() -> None:
             if str(step.get("uses", "")).startswith("actions/checkout@")
         )
 
-        assert checkout_step["with"]["fetch-depth"] == 2
+        assert checkout_step["with"]["fetch-depth"] == (
+            0 if job_name == "quality-gate" else 2
+        )
 
 
 def test_ci_standard_uses_persistent_python_toolcache_and_cold_cache_budgets() -> None:
