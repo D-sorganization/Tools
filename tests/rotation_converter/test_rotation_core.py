@@ -538,3 +538,35 @@ class TestShepperdBranches:
         q = rotation_matrix_to_quaternion(R)
         R2 = quaternion_to_rotation_matrix(q)
         np.testing.assert_allclose(R2, R, atol=1e-9)
+
+
+# ===========================================================================
+# Euler Angle Extraction Precision (TOOLS-28 / #5832)
+# ===========================================================================
+
+
+class TestEulerExtractionPrecision:
+    """Verify Euler angle extraction precision near gimbal lock and across conventions."""
+
+    def test_euler_extraction_near_gimbal_lock_precision(self) -> None:
+        """Verify round-trip error near gimbal lock (b near pi/2) stays below 1e-12."""
+        a = 0.5
+        b = math.pi / 2 - 1e-7
+        c = -0.3
+        R = euler_to_rotation_matrix(a, b, c, "xyz")
+        a2, b2, c2 = rotation_matrix_to_euler(R, "xyz")
+        R2 = euler_to_rotation_matrix(a2, b2, c2, "xyz")
+        diff = float(np.max(np.abs(R - R2)))
+        assert diff < 1e-12, f"Expected diff < 1e-12, got {diff}"
+
+    def test_euler_extraction_proper_euler_near_gimbal_lock_precision(self) -> None:
+        """Verify round-trip error for proper Euler convention (b near 0) stays below 1e-12."""
+        a = 0.4
+        b = 1e-7
+        c = -0.2
+        R = euler_to_rotation_matrix(a, b, c, "zxz")
+        a2, b2, c2 = rotation_matrix_to_euler(R, "zxz")
+        R2 = euler_to_rotation_matrix(a2, b2, c2, "zxz")
+        diff = float(np.max(np.abs(R - R2)))
+        assert diff < 1e-12, f"Expected diff < 1e-12, got {diff}"
+
