@@ -280,3 +280,22 @@ class TestProcessConditionAnalysis:
             "Consider compressor maintenance or replacement"
             in analysis["recommendations"]
         )
+
+    def test_isentropic_efficiency_dbc_contract_violation_raises(
+        self, engine: SyngasCompressionEngine
+    ) -> None:
+        """TOOLS-02: Efficiency > 1 violates thermodynamic postcondition and raises."""
+        mock_result = {
+            "final_temperature": 350.0,
+            "final_pressure": 5.0,
+            "total_power_hp": 100.0,
+            "stages": [
+                {
+                    "work_isentropic": 1500.0,
+                    "work_actual": 1000.0,  # W_isentropic > W_actual (eta = 1.5 > 1.0)
+                    "water_dropout": {"water_dropout": 0.0},
+                }
+            ],
+        }
+        with pytest.raises(ValueError, match="Postcondition violated"):
+            engine.analyze_process_conditions(mock_result)
