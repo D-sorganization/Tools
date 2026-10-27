@@ -1574,6 +1574,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5804 · Regularise Double Pendulum Coulomb Friction With Tanh
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5804
+- **Branch:** fix/5804-double-pendulum-friction
+- **PR:** #5808
+- **Paths:** see #5808
+- **Started:** 2026-10-27
+- **Last verified:** 2026-10-27 (`545dc19f`; collated from changes/5804-regularise-double-pendulum-coulomb-frict.md)
+- **Summary:** Regularise double pendulum Coulomb friction with tanh
+- **Next step:** Shipped in PR #5808.
+
 ### DL-#5717 · Bound CI Apt Lock and Package Acquisition With Process-Group Cleanup.
 
 - **State:** shipped
