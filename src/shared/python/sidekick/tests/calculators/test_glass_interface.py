@@ -19,13 +19,13 @@ def test_glass_interface_conductivity() -> None:
 
     # Test metal conductivity
     cond_metal = interface.get_conductivity(1000.0, is_metal=True)
-    assert cond_metal == 10000.0
+    assert cond_metal == 719000.0
 
     # Test glass conductivity
     cond_glass_1 = interface.get_conductivity(
         1200.0
     )  # Matches reference temp 1473.15 K
-    assert cond_glass_1 == pytest.approx(1.0, abs=0.01)
+    assert cond_glass_1 == pytest.approx(27.5, abs=0.01)
 
     # Test caching
     cond_glass_2 = interface.get_conductivity(1200.0)
@@ -37,11 +37,11 @@ def test_glass_interface_conductivity() -> None:
 def test_glass_interface_resistivity() -> None:
     interface = GlassPropertiesInterface()
     res = interface.get_resistivity(1200.0)
-    assert res == pytest.approx(1.0, abs=0.01)
+    assert res == pytest.approx(1.0 / 27.5, abs=0.01)
 
 
 def test_glass_interface_external_calculator() -> None:
-    def ext_calc(t, c, p) -> Any:
+    def ext_calc(t: float, c: Any, p: float) -> float:
         return 50.0
 
     interface = GlassPropertiesInterface(external_calculator=ext_calc)

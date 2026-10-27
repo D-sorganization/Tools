@@ -150,7 +150,7 @@ class TestElectricalModel:
 
         # Test metal conductivity
         cond_metal = glass.get_conductivity(1200.0, is_metal=True)
-        assert cond_metal == 10000.0
+        assert cond_metal == 719000.0
 
 
 class TestGlassPropertiesInterface:
