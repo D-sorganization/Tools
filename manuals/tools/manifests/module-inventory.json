@@ -159,14 +159,14 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "bbae3f68056327c614e68f00edc2aee9e26481a8e2561802171a99494c12fb2c",
-      "entry_count": 119,
+      "content_sha256_lf": "e75f57d1c6d129fb72b8c64dd220213556bf45a8dc50b7cca6af18c21d23dfd9",
+      "entry_count": 120,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
     },
     {
-      "content_sha256_lf": "3a20781a0b47c6481e38143702e9ad8072b2d80e584c3d29932729b491cfd04e",
-      "entry_count": 13,
+      "content_sha256_lf": "146615e4c0f876cf8e32be000edb23e5541a6fe4226191d553b7e13e319127fb",
+      "entry_count": 14,
       "package": "shared_scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-shared-scripts.json"
     },
