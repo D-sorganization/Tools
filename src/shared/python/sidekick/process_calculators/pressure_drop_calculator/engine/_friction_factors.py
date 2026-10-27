@@ -70,7 +70,9 @@ def friction_factor_colebrook(
     Colebrook-White equation (turbulent flow, Re > 4000):
     1/sqrt(f) = -2.0 * log10(eps/(3.7D) + 2.51/(Re*sqrt(f)))
 
-    Solved iteratively using Newton-Raphson method.
+    Solved iteratively using fixed-point (Picard) iteration:
+    f_{k+1} = 0.25 / [log10(eps/(3.7D) + 2.51/(Re*sqrt(f_k)))]^2
+    seeded with the Swamee-Jain explicit approximation.
 
     Args:
         reynolds_number: Reynolds number
@@ -87,7 +89,12 @@ def friction_factor_colebrook(
         J. Inst. Civil Engineers, London, 11, 133-156
 
     Note:
-        This is the most accurate correlation but requires iteration.
+        This is the standard implicit correlation for turbulent pipe flow.
+        For laminar flow (Re < 2300), this function delegates to
+        `friction_factor_laminar`. In the critical/transitional regime
+        (2300 <= Re < 4000), Colebrook iteration converges but has higher
+        uncertainty; `friction_factor_churchill` is recommended for modeling
+        transitional flow regimes.
         The Moody diagram is a graphical representation of this equation.
     """
     if reynolds_number is None:
@@ -98,7 +105,7 @@ def friction_factor_colebrook(
     # Initial guess using Swamee-Jain as starting point
     f = friction_factor_swamee_jain(reynolds_number, relative_roughness)
 
-    # Newton-Raphson iteration
+    # Fixed-point (Picard) iteration
     for i in range(max_iterations):
         f_old = f
 
