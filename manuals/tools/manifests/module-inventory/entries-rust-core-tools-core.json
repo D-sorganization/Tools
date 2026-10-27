@@ -2730,6 +2730,7 @@
           "tests/shared/python/process_calculators/test_baghouse_calculator.py",
           "tests/shared/python/process_calculators/test_financial_calculator_edge_cases.py",
           "tests/shared/python/process_calculators/test_flare_calculator.py",
+          "tests/shared/python/process_calculators/test_pressure_drop_engine.py",
           "tests/shared/python/process_calculators/test_scrubber_calculator.py",
           "tests/shared/python/process_calculators/test_scrubber_tools_5805.py",
           "tests/shared/python/process_calculators/test_syngas_compression_edge_cases.py",

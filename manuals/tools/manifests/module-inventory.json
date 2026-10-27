@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "0e39c2be8af83bf690379c9588d576bb38e68647a1ca24374f4c321906f1b163",
+      "content_sha256_lf": "a35e82c3de0c177125a4c38d357130c5f480d26486c371fd6c8f3846f8e1a4f0",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -795,7 +795,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-persistence.json"
     },
     {
-      "content_sha256_lf": "088a9e434196ea949f6594ecaf481791b6b4f9ba113def5af11491af75eb2ae3",
+      "content_sha256_lf": "a525223ba711e35fbcd594d16caabf18f19e236d8176e0cb7a9d60018a3f707f",
       "entry_count": 59,
       "package": "src/shared/python/sidekick/process_calculators",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-process-calculators.json"

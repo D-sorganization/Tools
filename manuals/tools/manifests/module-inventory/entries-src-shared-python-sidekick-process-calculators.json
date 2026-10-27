@@ -2706,10 +2706,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 12407,
+      "bytes_lf": 12672,
       "classification": "calculation",
       "classification_basis": "path-marker:calculation",
-      "content_sha256_lf": "d851344aaffe94616e935c25fcc72a1efc9935a315955cd738a8521e3fffec77",
+      "content_sha256_lf": "128e964cd619b3c9dcff19ed7fb5c32e8ee7cf0d90eab67436740ad870fbda1e",
       "family": "process-calculators-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-PRESSURE-DROP-CALCULATOR-ENGINE-PRESSURE-DROP-CALCULATION-ENGINE-PY-36A6649E81C6",
       "language": "python",
@@ -2868,7 +2868,6 @@
         "public-api",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -2880,7 +2879,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "unavailable"
       },
@@ -2931,7 +2930,9 @@
             "signature": null
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/shared/python/process_calculators/test_pressure_drop_engine.py"
+        ],
         "unit_mentions": [
           "Nm",
           "Pa",
