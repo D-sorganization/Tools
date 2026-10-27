@@ -456,6 +456,38 @@ class TestGenerateURDF:
         xml2 = generate_urdf_xml(cfg2)
         assert xml1 != xml2
 
+    def test_urdf_left_right_mirror(self) -> None:
+        """TOOLS-15: _l/_r limb joint origins mirror across sagittal plane.
+
+        Asserts that lateral y offsets are non-zero and mirror across y = 0.
+        """
+        config = URDFConfig(template="Full Humanoid", height_m=1.75)
+        xml = generate_urdf_xml(config)
+        root = ET.fromstring(xml)
+
+        joints = {j.get("name"): j for j in root.findall("joint")}
+        assert "torso_to_upper_arm_l" in joints
+        assert "torso_to_upper_arm_r" in joints
+        assert "pelvis_to_thigh_l" in joints
+        assert "pelvis_to_thigh_r" in joints
+
+        for left_name, right_name in [
+            ("torso_to_upper_arm_l", "torso_to_upper_arm_r"),
+            ("pelvis_to_thigh_l", "pelvis_to_thigh_r"),
+        ]:
+            origin_l = joints[left_name].find("origin")
+            origin_r = joints[right_name].find("origin")
+            assert origin_l is not None
+            assert origin_r is not None
+            xyz_l = [float(v) for v in origin_l.attrib["xyz"].split()]
+            xyz_r = [float(v) for v in origin_r.attrib["xyz"].split()]
+            # y offset must be non-zero and mirrored: y(_l) = -y(_r) != 0
+            assert xyz_l[1] > 0.0, f"{left_name} lateral y offset should be positive"
+            assert xyz_r[1] < 0.0, f"{right_name} lateral y offset should be negative"
+            assert xyz_l[1] == pytest.approx(-xyz_r[1]), (
+                f"{left_name} and {right_name} must mirror across sagittal plane"
+            )
+
 
 class TestValidateURDF:
     """Tests for validate_urdf_structure."""

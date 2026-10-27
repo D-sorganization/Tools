@@ -5998,10 +5998,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 26860,
+      "bytes_lf": 27269,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "4026886722664fd5c0864e0546cdf13e087a33fbfd038eaa537c29b22cd2c2af",
+      "content_sha256_lf": "25c5816b20715ec72bcfbf4c60b40396112e44090193564029f0b1145bd268ec",
       "family": "process-calculators-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-WGS-REACTOR-CALCULATOR-PY-94C4B71C226B",
       "language": "python",

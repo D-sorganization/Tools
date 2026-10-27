@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-27 | #5808 | Regularise double pendulum Coulomb friction with tanh |
 | 2026-10-25 | #5790 | Handle missing sudo and SIGTERM cleanup in bounded apt helper. |
 | 2026-10-25 | #5787 | Bound CI apt lock and package acquisition with process-group cleanup. |
 | 2026-10-25 | #5751 | Route repo-owned agent auto-merge instructions through automerge_guard.py and hold Blocked: PRs. |

@@ -1014,9 +1014,15 @@ class SteamCalculationEngine:
             # Simple approximations for water/steam properties
             # These are rough estimates and should not be used for critical applications
 
-            # Determine if liquid or vapor based on simple criteria
-            T_sat_1atm = 373.15  # K
-            if temperature < T_sat_1atm and pressure > 50000:  # Likely liquid
+            # Determine if liquid or vapor based on saturation temperature at given pressure (TOOLS-06)
+            try:
+                t_sat = self.get_saturation_temperature(pressure)
+            except (ValueError, TypeError):
+                t_sat = 373.15  # Fallback to 1 atm boiling temperature if out of saturation bounds
+
+            if (
+                temperature < t_sat - 0.05
+            ):  # Subcooled liquid (at/above saturation, treat as vapor)
                 density = 1000.0  # kg/m³
                 enthalpy = 4186.0 * (
                     temperature - 273.15

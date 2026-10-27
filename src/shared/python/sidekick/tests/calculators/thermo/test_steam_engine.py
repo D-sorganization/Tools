@@ -139,6 +139,23 @@ def test_calculate_properties_simplified() -> None:
     assert props.entropy > 0
 
 
+def test_steam_phase_from_saturation() -> None:
+    """TOOLS-06: Simplified steam calculation decides phase from Tsat(P)."""
+    engine = SteamCalculationEngine()
+
+    # 120 °C (393.15 K) @ 3 bar (300,000 Pa) is liquid (Tsat ~ 133.5 °C / 406.7 K)
+    props_3bar = engine.calculate_properties(393.15, 300000.0, engine="simplified")
+    assert props_3bar.phase == "liquid"
+
+    # 400 K @ 100 bar (10,000,000 Pa) is liquid (Tsat ~ 311 °C / 584 K)
+    props_100bar = engine.calculate_properties(400.0, 10000000.0, engine="simplified")
+    assert props_100bar.phase == "liquid"
+
+    # 400 K @ 1 atm (101,325 Pa) is vapor (Tsat = 373.15 K)
+    props_1atm = engine.calculate_properties(400.0, 101325.0, engine="simplified")
+    assert props_1atm.phase == "vapor"
+
+
 def test_simplified_vapor_entropy_includes_pressure_dependence() -> None:
     engine = SteamCalculationEngine()
 
