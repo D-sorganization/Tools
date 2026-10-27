@@ -143,6 +143,34 @@ class TestFrictionFactorColebrook:
         with pytest.raises(ValueError, match="Reynolds number must be positive"):
             friction_factor_churchill(0.0, 0.0002)
 
+    def test_tools_13_colebrook_solver_docstring_and_regime_documentation(
+        self,
+    ) -> None:
+        """TOOLS-13: Docstring must accurately reflect fixed-point (Picard) iteration,
+
+        not Newton-Raphson, and note transitional regime applicability.
+        """
+        doc = friction_factor_colebrook.__doc__ or ""
+        assert "fixed-point" in doc.lower() or "picard" in doc.lower(), (
+            "Colebrook docstring must state fixed-point (Picard) iteration"
+        )
+        assert "newton-raphson" not in doc.lower(), (
+            "Colebrook docstring must not mislabel fixed-point iteration as Newton-Raphson"
+        )
+        assert "transitional" in doc.lower() or "churchill" in doc.lower(), (
+            "Colebrook docstring must document transitional regime notes / Churchill recommendation"
+        )
+
+        # Verify numerical behavior across regimes
+        f_lam = friction_factor_colebrook(2000.0, 0.0001)
+        assert f_lam == pytest.approx(64.0 / 2000.0, rel=1e-6)
+
+        f_trans = friction_factor_colebrook(3000.0, 0.0002)
+        assert 0.01 < f_trans < 0.1
+
+        f_turb = friction_factor_colebrook(100_000.0, 0.0002)
+        assert 0.01 < f_turb < 0.05
+
     def test_churchill_negative_reynolds_raises(self) -> None:
         with pytest.raises(ValueError, match="Reynolds number must be positive"):
             friction_factor_churchill(-100.0, 0.0002)
