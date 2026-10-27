@@ -117,7 +117,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "29e64587db2a9bf1b2c16e61920625534c68240108b5a399a0ffeb5c392547dd",
+      "content_sha256_lf": "b679904fef65b4138fd9cec2439263416f87a132889dab2c10961f4d6d08aac4",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
