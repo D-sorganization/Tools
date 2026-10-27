@@ -19,14 +19,17 @@ from dataclasses import dataclass
 
 from defusedxml import ElementTree as ET
 
-from urdf_builder_gui.contracts import require
+from urdf_builder_gui.contracts import ensure, require
 
 from .anthropometric_model import (
+    GENDER_HIP_SCALE,
+    GENDER_SHOULDER_SCALE,
     URDFConfig,
     compute_box_inertia,
     compute_segment_length,
     compute_segment_mass,
     get_template_segments,
+    interpolate_gender_factor,
 )
 
 logger = logging.getLogger(__name__)
@@ -201,6 +204,29 @@ def generate_urdf_xml(config: URDFConfig) -> str:
 
     segments = get_template_segments(config.template)
 
+    # Compute lateral offsets for bilateral limb attachments (TOOLS-15)
+    shoulder_gender = interpolate_gender_factor(
+        config.gender_factor,
+        GENDER_SHOULDER_SCALE["min"],
+        GENDER_SHOULDER_SCALE["max"],
+    )
+    shoulder_width = (
+        config.height_m
+        * 0.23
+        * config.proportions.get("shoulder_width", 1.0)
+        * shoulder_gender
+    )
+
+    hip_gender = interpolate_gender_factor(
+        config.gender_factor,
+        GENDER_HIP_SCALE["min"],
+        GENDER_HIP_SCALE["max"],
+    )
+    hip_width = (
+        config.height_m * 0.20 * config.proportions.get("hip_width", 1.0) * hip_gender
+    )
+    bilateral_origins: dict[str, float] = {}
+
     lines: list[str] = [
         '<?xml version="1.0" encoding="UTF-8"?>',
         f'<robot name="{config.robot_name}">',
@@ -261,11 +287,22 @@ def generate_urdf_xml(config: URDFConfig) -> str:
         # Joint (skip for root segment)
         if seg_def.parent:
             joint_name = f"{seg_def.parent}_to_{seg_name}"
+            origin_y = 0.0
+            if seg_name == "upper_arm_l":
+                origin_y = shoulder_width / 2.0
+            elif seg_name == "upper_arm_r":
+                origin_y = -shoulder_width / 2.0
+            elif seg_name == "thigh_l":
+                origin_y = hip_width / 2.0
+            elif seg_name == "thigh_r":
+                origin_y = -hip_width / 2.0
+
+            bilateral_origins[seg_name] = origin_y
             origin_z = config.height_m * seg_def.origin_z
             lines.append(f'  <joint name="{joint_name}" type="{seg_def.joint_type}">')
             lines.append(f'    <parent link="{seg_def.parent}"/>')
             lines.append(f'    <child link="{seg_name}"/>')
-            lines.append(f'    <origin xyz="0 0 {origin_z:.4f}"/>')
+            lines.append(f'    <origin xyz="0 {origin_y:.4f} {origin_z:.4f}"/>')
             if seg_def.joint_type == "revolute":
                 lines.append(f'    <axis xyz="{seg_def.axis}"/>')
                 lines.append(
@@ -280,6 +317,20 @@ def generate_urdf_xml(config: URDFConfig) -> str:
                 )
             lines.append("  </joint>")
             lines.append("")
+
+    # DbC Post-conditions: bilateral limb joints mirror across sagittal plane
+    for left, right in [("upper_arm_l", "upper_arm_r"), ("thigh_l", "thigh_r")]:
+        if left in bilateral_origins and right in bilateral_origins:
+            y_l = bilateral_origins[left]
+            y_r = bilateral_origins[right]
+            ensure(
+                abs(y_l + y_r) < 1e-12 and y_l > 0.0,
+                (
+                    f"Bilateral joints {left} and {right} must mirror across "
+                    f"sagittal plane: y({left})={y_l}, y({right})={y_r}"
+                ),
+                (y_l, y_r),
+            )
 
     lines.append("</robot>")
 
