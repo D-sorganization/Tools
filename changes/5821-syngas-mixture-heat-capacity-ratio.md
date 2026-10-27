@@ -7,4 +7,4 @@ next_step: "Merge the PR."
 ---
 
 Evaluate syngas compression mixture heat capacity ratio via molar heat capacity
-averaging rather than linear mole-fraction averaging of component gamma values.
+averaging (Cp_mix / Cv_mix) rather than linear mole-fraction averaging of component gamma values.
