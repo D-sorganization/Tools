@@ -573,7 +573,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-distribution.json"
     },
     {
-      "content_sha256_lf": "374cabd6e1971fd5eb90afeed3f62b3464a953462b9e37cb7f83c742758bc34c",
+      "content_sha256_lf": "0f01769943a2179a3e5e9fc8716f497d08470328cda0e780b4dfabf1bf87107b",
       "entry_count": 50,
       "package": "src/rotation_converter",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rotation-converter.json"

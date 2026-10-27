@@ -880,10 +880,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 17167,
+      "bytes_lf": 17235,
       "classification": "calculation",
       "classification_basis": "path-marker:rotation",
-      "content_sha256_lf": "54369fa1d3d480e9b8fb3b29ef6c78aa4e2232904dd881c7d6cd01280120928d",
+      "content_sha256_lf": "72728791a0eddb92d5c7338855e532ea03415646d3f2f3f61b08b559261647d4",
       "family": "rotation-converter-calculation",
       "id": "TOOLS-MODULE-SRC-ROTATION-CONVERTER-CORE-PY-CBFF2403ACB7",
       "language": "python",
