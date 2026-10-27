@@ -123,7 +123,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
     },
     {
-      "content_sha256_lf": "6ad93c532a5365b002666c26b1ea3d073c9a86fdd65fbb64b4f7c1edc1c85648",
+      "content_sha256_lf": "ce8c33dd3c81ac535b108ec0c56ac287f81745b640a427587418c0f28a84b78a",
       "entry_count": 5,
       "package": "rust_core/data-processor-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "8cb53cf545e877848998ee8c87cc81897f457c4e71b75c349e3e3ddb4010dcc6",
+      "content_sha256_lf": "7ab1da494711ca9562ba056c5222f68ab4fb71783422d5941189f8ae63004a36",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -171,7 +171,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-shared-scripts.json"
     },
     {
-      "content_sha256_lf": "be05121df90f0be6745d03e2ff27e14885064631dd8f21f378f3bedbac339609",
+      "content_sha256_lf": "a7d31f30a67957947ee8193a775d13c1ad22a395e1e7e359d7140f730a3801e8",
       "entry_count": 1,
       "package": "src",
       "path": "manuals/tools/manifests/module-inventory/entries-src.json"
@@ -597,7 +597,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "4af463b44c40e10fdcfb3277757602330c3f5d46108d5e3ecd8b9ecb0577b42d",
+      "content_sha256_lf": "226289220791e994ba3a5960886eef593f051b6a179dc78c44d3d4d5349d2b97",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
@@ -795,7 +795,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-persistence.json"
     },
     {
-      "content_sha256_lf": "088090fd547e1c17557959425720b614882b28a316dad18311ab4e93fb8089e5",
+      "content_sha256_lf": "556d21b0b4be1cbe62817e7e89b71b23e8a9312fd024668bf11809b21ade747e",
       "entry_count": 59,
       "package": "src/shared/python/sidekick/process_calculators",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-process-calculators.json"
