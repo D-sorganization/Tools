@@ -69,3 +69,32 @@ class TestWGSReactorEngine:
             inlet_composition={}, temperature=673.15, pressure=25.0, steam_ratio=2.0
         )
         assert eq["conversion"] == 0.0
+
+    def test_wgs_volume_units(self, engine: WGSReactorEngine) -> None:
+        """volume = (kmol/h * 22.414 m3/kmol) / GHSV at STP (TOOLS-10)."""
+        feed_rate_kmol_h = 100.0
+        sizing = engine.size_wgs_reactor(
+            feed_rate=feed_rate_kmol_h,
+            conversion=50.0,
+            temperature=673.15,
+            catalyst_type="HTS",
+        )
+        expected_volume = (feed_rate_kmol_h * 22.414) / sizing["ghsv"]
+        assert abs(sizing["reactor_volume"] - expected_volume) < 1e-4
+
+    def test_wgs_reverse_shift(self, engine: WGSReactorEngine) -> None:
+        """When Q > K_eq, reverse shift must occur yielding negative extent/conversion (TOOLS-11)."""
+        # Rich in CO2 and H2, lean in CO and H2O -> Q >> K_eq
+        inlet = {"CO": 2.0, "H2O": 2.0, "CO2": 48.0, "H2": 48.0}
+        eq = engine.calculate_equilibrium_composition(
+            inlet_composition=inlet,
+            temperature=673.15,  # 400C, K_eq ~ 12.5; Q = (48*48)/(2*2) = 576 >> K_eq
+            pressure=25.0,
+            steam_ratio=0.0,
+        )
+        # Reverse shift: CO and H2O increase, CO2 and H2 decrease
+        assert eq["conversion"] < 0.0
+        assert eq["composition"]["CO"] > 2.0
+        assert eq["composition"]["H2O"] > 2.0
+        assert eq["composition"]["CO2"] < 48.0
+        assert eq["composition"]["H2"] < 48.0
