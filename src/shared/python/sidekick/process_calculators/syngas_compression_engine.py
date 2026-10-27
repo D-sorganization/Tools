@@ -163,7 +163,8 @@ class SyngasCompressionEngine:
         mix_mw = 0.0
         mix_tc = 0.0
         mix_pc = 0.0
-        mix_gamma = 0.0
+        total_cp = 0.0
+        total_cv = 0.0
 
         for comp, frac in mole_fractions.items():
             species = self.species_db.get_species(comp)
@@ -174,8 +175,16 @@ class SyngasCompressionEngine:
             mix_mw += frac * species.molecular_weight * 1000.0
             mix_tc += frac * species.critical_temperature
             mix_pc += frac * (species.critical_pressure / 100000.0)
-            gamma = self._APPROX_GAMMA.get(comp, DEFAULT_GAMMA_DIATOMIC)
-            mix_gamma += frac * gamma
+            gamma_i = self._APPROX_GAMMA.get(comp, DEFAULT_GAMMA_DIATOMIC)
+            # TOOLS-04: Mixture heat capacity ratio evaluates from molar heat
+            # capacities Cp/Cv rather than linear mole-fraction averaging of gamma.
+            # For ideal gas: Cp_i = (gamma_i / (gamma_i - 1)) * R, Cv_i = Cp_i - R
+            cp_i = (gamma_i / (gamma_i - 1.0)) * self.R
+            cv_i = cp_i - self.R
+            total_cp += frac * cp_i
+            total_cv += frac * cv_i
+
+        mix_gamma = total_cp / total_cv if total_cv > 0.0 else DEFAULT_GAMMA_DIATOMIC
 
         return {
             "molecular_weight": mix_mw,
