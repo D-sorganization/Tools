@@ -5947,6 +5947,11 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-27 | #5809 | Use actual gas mass flux in scrubber Eckert flow parameter |
+| 2026-10-27 | #5812 | Mirror bilateral limb joint origins with lateral offsets using shoulder/hip widths |
+| 2026-10-27 | #5813 | Convert kmol/h to Nm3/h for GHSV sizing and allow negative extent for reverse shift (TOOLS-10, TOOLS-11) |
+| 2026-10-27 | #5814 | Decide steam phase from saturation temperature at given pressure in simplified mode (TOOLS-06) |
+| 2026-10-27 | #5794 | Fetch complete quality-gate history so multi-commit push diffs retain the before SHA. |
 | 2026-10-27 | #5808 | Regularise double pendulum Coulomb friction with tanh |
 | 2026-10-25 | #5790 | Handle missing sudo and SIGTERM cleanup in bounded apt helper. |
 | 2026-10-25 | #5787 | Bound CI apt lock and package acquisition with process-group cleanup. |
