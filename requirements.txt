@@ -11,7 +11,7 @@ matplotlib>=3.9.0  # Data visualization and plotting library
 sympy>=1.12  # Symbolic mathematics and algebra
 
 # Testing & Quality Assurance
-pytest>=9.0.3  # Testing framework
+pytest>=9.0.3,<9.2.0  # Testing framework (pinned <9.2.0: pytest 9.2.0 breaks pytest-benchmark 5.3.0 and pytest.approx nested tuples)
 pytest-qt>=4.4.0  # Pytest plugin for PyQt applications
 pytest-cov>=4.0.0  # Coverage plugin for pytest (code coverage metrics)
 jsonschema>=4.26.0  # Draft 2020-12 validator for the swing_sim ground profile schema tests
