@@ -84,17 +84,40 @@ def fit_heating_parameters(
     ambient_temp: float,
     power_func: Callable[[float], float],
 ) -> tuple[float, float]:
-    """Fit thermal_mass and heat_loss_coeff to observed data."""
+    """Fit thermal_mass and heat_loss_coeff to observed data.
 
+    Args:
+        times: Sequence of observation times in seconds.
+        observed_temps: Sequence of observed temperatures in Celsius.
+        initial_temp: Initial vessel temperature in Celsius.
+        thermal_mass_guess: Initial guess for thermal mass in J/K (must be > 0).
+        heat_loss_guess: Initial guess for heat loss in W/K (must be >= 0).
+        ambient_temp: Ambient temperature in Celsius.
+        power_func: Time-dependent heating power function in Watts.
+
+    Returns:
+        Fitted (thermal_mass, heat_loss_coeff) tuple.
+    """
     if times is None:
         raise ValueError("times must be provided")
+    if observed_temps is None:
+        raise ValueError("observed_temps must be provided")
+    if len(times) != len(observed_temps):
+        raise ValueError(
+            f"times and observed_temps must have equal length, "
+            f"got {len(times)} and {len(observed_temps)}"
+        )
+    if not np.isfinite(thermal_mass_guess) or thermal_mass_guess <= 0:
+        raise ValueError(
+            f"thermal_mass_guess must be positive and finite, got {thermal_mass_guess}"
+        )
+    if not np.isfinite(heat_loss_guess) or heat_loss_guess < 0:
+        raise ValueError(
+            f"heat_loss_guess must be non-negative and finite, got {heat_loss_guess}"
+        )
 
     def model(t: Any, thermal_mass: float, heat_loss_coeff: float) -> np.ndarray:
-        """Model method.
-
-        Returns:
-            None
-        """
+        """Model evaluation for curve_fit."""
         if thermal_mass is None:
             raise ValueError("thermal_mass must be provided")
         _, temps = predict_temperature_profile(
@@ -115,5 +138,6 @@ def fit_heating_parameters(
         np.asarray(times),
         np.asarray(observed_temps),
         p0=[thermal_mass_guess, heat_loss_guess],
+        bounds=([1e-6, 0.0], [np.inf, np.inf]),
     )
-    return popt[0], popt[1]
+    return float(popt[0]), float(popt[1])
