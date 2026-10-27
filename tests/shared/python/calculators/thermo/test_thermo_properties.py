@@ -104,6 +104,41 @@ class TestMixture:
         assert result.density_kg_m3 > 0
         assert result.gamma > 1.0
 
+    def test_tools_07_mixture_entropy_includes_entropy_of_mixing(
+        self, calc: ThermoPropertiesCalculator
+    ) -> None:
+        """TOOLS-07: Mixture entropy must include ideal gas entropy of mixing.
+
+        Delta S_mix = -R sum(x_i ln x_i).
+        For an equimolar binary mixture (50% N2, 50% O2) at reference conditions
+        (25 C = 298.15 K, 101.325 kPa = 101325 Pa):
+        Pure components have S_ref = 0.0 J/(mol*K).
+        The mixture entropy must be:
+        Delta S_mix = -R * (0.5 * ln(0.5) + 0.5 * ln(0.5)) = R * ln(2)
+        Omitting Delta S_mix gives 0.0 J/(mol*K), which is thermodynamically
+        incorrect.
+        """
+        import math
+
+        result = calc.calculate(
+            temperature_c=25.0,
+            pressure_kpa=101.325,
+            composition={"N2": 0.5, "O2": 0.5},
+        )
+        expected_delta_s = R_GAS * math.log(2.0)
+        assert result.entropy_j_molk == pytest.approx(expected_delta_s, rel=1e-4)
+
+    def test_pure_component_entropy_of_mixing_zero(
+        self, calc: ThermoPropertiesCalculator
+    ) -> None:
+        """Pure components must have zero entropy of mixing at reference conditions."""
+        result = calc.calculate(
+            temperature_c=25.0,
+            pressure_kpa=101.325,
+            composition={"N2": 1.0},
+        )
+        assert result.entropy_j_molk == pytest.approx(0.0, abs=1e-10)
+
 
 # ── Thermodynamic Identities ────────────────────────────────────────────
 
