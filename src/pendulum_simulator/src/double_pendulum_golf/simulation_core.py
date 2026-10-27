@@ -68,7 +68,7 @@ def integrate_ode(
     Design by Contract
     ------------------
     Pre: initial_state is finite, t_end > 0, 0 < dt < t_end.
-    Post: t has N >= 2 points, states are all finite.
+    Post: t has N >= 2 points, states are all finite, and t[-1] reaches t_end.
     """
     if not (np.all(np.isfinite(initial_state))):
         raise ValueError("Initial state must be finite")
@@ -78,6 +78,10 @@ def integrate_ode(
         raise ValueError(f"dt must be in (0, t_end), got {dt}")
 
     t_eval = np.arange(0.0, t_end, dt)
+    if len(t_eval) > 0 and np.isclose(t_eval[-1], t_end, atol=1e-12):
+        t_eval[-1] = t_end
+    else:
+        t_eval = np.append(t_eval, t_end)
 
     kwargs: dict = {
         "t_span": (0.0, t_end),
@@ -100,4 +104,6 @@ def integrate_ode(
 
     if not (len(t) >= 2):
         raise ValueError("Simulation must produce at least 2 time points")
+    if not (np.isclose(t[-1], t_end, atol=1e-9)):
+        raise ValueError(f"Postcondition failed: t[-1]={t[-1]} did not reach t_end={t_end}")
     return t, states
