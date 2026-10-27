@@ -987,7 +987,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-upstream-drift-tools.json"
     },
     {
-      "content_sha256_lf": "dc6aca8832b0cfad22ea44f154170779857e57ea8ceef121cd728fa8fe94e898",
+      "content_sha256_lf": "c1f5105a56f25fadcd3337d3322f0131b4b1d57d7775621f4fb969a699cbce39",
       "entry_count": 12,
       "package": "src/urdf_builder_gui",
       "path": "manuals/tools/manifests/module-inventory/entries-src-urdf-builder-gui.json"
