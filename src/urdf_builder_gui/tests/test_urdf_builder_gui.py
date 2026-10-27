@@ -463,7 +463,7 @@ class TestGenerateURDF:
         """
         config = URDFConfig(template="Full Humanoid", height_m=1.75)
         xml = generate_urdf_xml(config)
-        root = ET.fromstring(xml)
+        root = ET.fromstring(xml)  # nosec B314
 
         joints = {j.get("name"): j for j in root.findall("joint")}
         assert "torso_to_upper_arm_l" in joints
