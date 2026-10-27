@@ -1574,6 +1574,71 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5805 · Use Actual Gas Mass Flux in Scrubber Eckert Flow Parameter
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5805
+- **Branch:** fix/5805-scrubber-gas-flux
+- **PR:** #5809
+- **Paths:** see #5809
+- **Started:** 2026-10-27
+- **Last verified:** 2026-10-27 (`5b144a79`; collated from changes/5805-use-actual-gas-mass-flux-in-scrubber-eck.md)
+- **Summary:** Use actual gas mass flux in scrubber Eckert flow parameter
+- **Next step:** Shipped in PR #5809.
+
+### DL-#5802 · Mirror Bilateral Limb Joint Origins With Lateral Offsets Using Shoulder/Hip Widths
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5802
+- **Branch:** fix/5802-urdf-bilateral-joint-origins
+- **PR:** #5812
+- **Paths:** see #5812
+- **Started:** 2026-10-27
+- **Last verified:** 2026-10-27 (`8bd3732b`; collated from changes/5802-urdf-bilateral-joint-origins.md)
+- **Summary:** Mirror bilateral limb joint origins with lateral offsets using shoulder/hip widths
+- **Next step:** Shipped in PR #5812.
+
+### DL-#5801 · Convert Kmol/H to Nm3/H for GHSV Sizing and Allow Negative Extent for Reverse Shift (TOOLS-10, TOOLS-11)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5801
+- **Branch:** fix/5801-wgs-volume-and-reverse-shift
+- **PR:** #5813
+- **Paths:** see #5813
+- **Started:** 2026-10-27
+- **Last verified:** 2026-10-27 (`7ee84f18`; collated from changes/5801-wgs-volume-and-reverse-shift.md)
+- **Summary:** Convert kmol/h to Nm3/h for GHSV sizing and allow negative extent for reverse shift (TOOLS-10, TOOLS-11)
+- **Next step:** Shipped in PR #5813.
+
+### DL-#5800 · Decide Steam Phase From Saturation Temperature at Given Pressure in Simplified Mode (TOOLS-06)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5800
+- **Branch:** fix/5800-steam-phase-saturation-temp
+- **PR:** #5814
+- **Paths:** see #5814
+- **Started:** 2026-10-27
+- **Last verified:** 2026-10-27 (`e94d1b18`; collated from changes/5800-steam-phase-saturation-temp.md)
+- **Summary:** Decide steam phase from saturation temperature at given pressure in simplified mode (TOOLS-06)
+- **Next step:** Shipped in PR #5814.
+
+### DL-#5769 · Fetch Complete Quality-Gate History so Multi-Commit Push Diffs Retain the Before SHA.
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5769
+- **Branch:** merged via #5794
+- **PR:** #5794
+- **Paths:** see #5794
+- **Started:** 2026-10-27
+- **Last verified:** 2026-10-27 (`2e722742`; collated from changes/5769-fetch-complete-quality-gate-history-so-m.md)
+- **Summary:** Fetch complete quality-gate history so multi-commit push diffs retain the before SHA.
+- **Next step:** Shipped in PR #5794.
+
 ### DL-#5804 · Regularise Double Pendulum Coulomb Friction With Tanh
 
 - **State:** shipped
