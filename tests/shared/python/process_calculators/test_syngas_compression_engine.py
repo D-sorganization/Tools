@@ -247,3 +247,55 @@ class TestProcessConditionAnalysis:
         )
         analysis = engine.analyze_process_conditions(result)
         assert len(analysis["concerns"]) > 0 or len(analysis["warnings"]) > 0
+
+    def test_isentropic_efficiency_le_1(
+        self,
+        engine: SyngasCompressionEngine,
+        syngas_composition: dict,
+    ) -> None:
+        """TOOLS-02: Isentropic efficiency must be W_isentropic / W_actual <= 1."""
+        stages = [CompressionStage(1.0, 5.0, 300.0, 0.75, "isentropic")]
+        result = engine.calculate_multistage_compression(
+            stages, 100.0, syngas_composition
+        )
+        analysis = engine.analyze_process_conditions(result)
+        avg_eff = analysis["average_efficiency"]
+        assert avg_eff is not None
+        assert 0.0 < avg_eff <= 1.0
+        assert avg_eff == pytest.approx(0.75, rel=1e-3)
+
+    def test_low_efficiency_triggers_warning_and_concern(
+        self,
+        engine: SyngasCompressionEngine,
+        syngas_composition: dict,
+    ) -> None:
+        """TOOLS-02: Low efficiency (< MIN_EFFICIENCY) must trigger concern."""
+        stages = [CompressionStage(1.0, 5.0, 300.0, 0.50, "isentropic")]
+        result = engine.calculate_multistage_compression(
+            stages, 100.0, syngas_composition
+        )
+        analysis = engine.analyze_process_conditions(result)
+        assert "Low compression efficiency detected" in analysis["concerns"]
+        assert (
+            "Consider compressor maintenance or replacement"
+            in analysis["recommendations"]
+        )
+
+    def test_isentropic_efficiency_dbc_contract_violation_raises(
+        self, engine: SyngasCompressionEngine
+    ) -> None:
+        """TOOLS-02: Efficiency > 1 violates thermodynamic postcondition and raises."""
+        mock_result = {
+            "final_temperature": 350.0,
+            "final_pressure": 5.0,
+            "total_power_hp": 100.0,
+            "stages": [
+                {
+                    "work_isentropic": 1500.0,
+                    "work_actual": 1000.0,  # W_isentropic > W_actual (eta = 1.5 > 1.0)
+                    "water_dropout": {"water_dropout": 0.0},
+                }
+            ],
+        }
+        with pytest.raises(ValueError, match="Postcondition violated"):
+            engine.analyze_process_conditions(mock_result)

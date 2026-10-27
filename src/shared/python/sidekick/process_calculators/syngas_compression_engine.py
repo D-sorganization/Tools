@@ -407,13 +407,23 @@ class SyngasCompressionEngine:
         ]
         if isentropic_stages:
             efficiencies = [
-                stage["work_actual"] / stage["work_isentropic"]
+                stage["work_isentropic"] / stage["work_actual"]
                 for stage in isentropic_stages
+                if stage["work_actual"] > 0
             ]
-            avg_efficiency = sum(efficiencies) / len(efficiencies)
-            if avg_efficiency < COMPRESSION_MIN_EFFICIENCY:
-                concerns.append("Low compression efficiency detected")
-                recommendations.append("Consider compressor maintenance or replacement")
+            if efficiencies:
+                avg_efficiency = sum(efficiencies) / len(efficiencies)
+                if not (0.0 < avg_efficiency <= 1.0):
+                    raise ValueError(
+                        f"Postcondition violated: average isentropic efficiency {avg_efficiency} must be in (0, 1]"
+                    )
+                if avg_efficiency < COMPRESSION_MIN_EFFICIENCY:
+                    concerns.append("Low compression efficiency detected")
+                    recommendations.append(
+                        "Consider compressor maintenance or replacement"
+                    )
+            else:
+                avg_efficiency = None
         else:
             avg_efficiency = None
 
