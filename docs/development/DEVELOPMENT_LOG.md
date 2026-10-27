@@ -1574,6 +1574,58 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5806 · Glass Interface Fallback Contract: RuntimeError Escapes DEMO/LEGACY Fallback; Sigma Defaults Drift (TOOLS-31, TOOLS-30, TP-04, GLASS-06)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5806
+- **Branch:** fix/5806-glass-interface-fallback-contract
+- **PR:** #5819
+- **Paths:** see #5819
+- **Started:** 2026-10-27
+- **Last verified:** 2026-10-27 (`559a9846`; collated from changes/5806-glass-interface-fallback-contract.md)
+- **Summary:** Glass interface fallback contract: RuntimeError escapes DEMO/LEGACY fallback; sigma defaults drift (TOOLS-31, TOOLS-30, TP-04, GLASS-06)
+- **Next step:** Merge the PR.
+
+### DL-#5803 · Fix Box Inertia Tensor Axis Alignment in anthropometric_model.py
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5803
+- **Branch:** fix/5803-urdf-box-inertia
+- **PR:** #5811
+- **Paths:** see #5811
+- **Started:** 2026-10-27
+- **Last verified:** 2026-10-27 (`356e3765`; collated from changes/5803-align-box-inertia-axes-urdf-builder.md)
+- **Summary:** Fix box inertia tensor axis alignment in anthropometric_model.py
+- **Next step:** Merge PR
+
+### DL-#5798 · Use Polytropic Exponent (Gamma-1)/(Gamma*Eta) for Discharge Temperature and Work (TOOLS-03)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5798
+- **Branch:** fix/5798-polytropic-exponent-irreversibility
+- **PR:** #5816
+- **Paths:** see #5816
+- **Started:** 2026-10-27
+- **Last verified:** 2026-10-27 (`273c280b`; collated from changes/5798-polytropic-exponent-irreversibility.md)
+- **Summary:** Use polytropic exponent (gamma-1)/(gamma*eta) for discharge temperature and work (TOOLS-03)
+- **Next step:** Merge the PR.
+
+### DL-#5797 · Compute Isentropic Efficiency as W_Isentropic / W_Actual <= 1 and Allow Low-Efficiency Warning (TOOLS-02)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5797
+- **Branch:** fix/5797-syngas-isentropic-efficiency
+- **PR:** #5815
+- **Paths:** see #5815
+- **Started:** 2026-10-27
+- **Last verified:** 2026-10-27 (`5a591908`; collated from changes/5797-syngas-isentropic-efficiency.md)
+- **Summary:** Compute isentropic efficiency as W_isentropic / W_actual <= 1 and allow low-efficiency warning (TOOLS-02)
+- **Next step:** Merge PR
+
 ### DL-#5805 · Use Actual Gas Mass Flux in Scrubber Eckert Flow Parameter
 
 - **State:** shipped

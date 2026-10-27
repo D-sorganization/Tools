@@ -5947,6 +5947,10 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-27 | #5819 | Glass interface fallback contract: RuntimeError escapes DEMO/LEGACY fallback; sigma defaults drift (TOOLS-31, TOOLS-30, TP-04, GLASS-06) |
+| 2026-10-27 | #5811 | Fix box inertia tensor axis alignment in anthropometric_model.py |
+| 2026-10-27 | #5816 | Use polytropic exponent (gamma-1)/(gamma*eta) for discharge temperature and work (TOOLS-03) |
+| 2026-10-27 | #5815 | Compute isentropic efficiency as W_isentropic / W_actual <= 1 and allow low-efficiency warning (TOOLS-02) |
 | 2026-10-27 | #5809 | Use actual gas mass flux in scrubber Eckert flow parameter |
 | 2026-10-27 | #5812 | Mirror bilateral limb joint origins with lateral offsets using shoulder/hip widths |
 | 2026-10-27 | #5813 | Convert kmol/h to Nm3/h for GHSV sizing and allow negative extent for reverse shift (TOOLS-10, TOOLS-11) |
