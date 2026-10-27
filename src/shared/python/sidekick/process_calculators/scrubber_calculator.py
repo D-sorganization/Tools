@@ -131,9 +131,7 @@ __all__ = [
 # LB_TO_KG is in unit_constants. KG_TO_LB is in unit_constants.
 # LB_PER_KG = KG_TO_LB.
 
-KG_TO_MG: Final[float] = (
-    1_000.0  # KEEP ORIGINAL VALUE FOR NOW to avoid breaking logic if it means g/kg
-)
+KG_TO_MG: Final[float] = 1_000_000.0  # [mg/kg] 1 kg = 10^6 mg (TOOLS-22)
 KG_TO_MG_PER_L: Final[float] = 1_000_000.0  # [mg/L per kg/L]
 LB_PER_KG: Final[float] = KG_TO_LB
 
