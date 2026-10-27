@@ -123,7 +123,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
     },
     {
-      "content_sha256_lf": "6ad93c532a5365b002666c26b1ea3d073c9a86fdd65fbb64b4f7c1edc1c85648",
+      "content_sha256_lf": "04fb8eea067c790e7a303578c78f146690a44869491e83e95f69f30e072013fa",
       "entry_count": 5,
       "package": "rust_core/data-processor-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
