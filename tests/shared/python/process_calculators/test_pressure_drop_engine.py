@@ -414,3 +414,62 @@ class TestWilkeViscosity:
         mu_low = calculate_mixture_viscosity_wilke(syngas_composition, 300.0, 1e5)
         mu_high = calculate_mixture_viscosity_wilke(syngas_composition, 1000.0, 1e5)
         assert mu_high > mu_low
+
+
+class TestCompressibleFlowElevation:
+    """TOOLS-12: Ensure elevation head is accounted for when compressibility_correction is enabled."""
+
+    def test_compressible_flow_includes_elevation_pressure_drop(self) -> None:
+        """When compressibility_correction=True, total_dp must include elevation head."""
+        from sidekick.process_calculators.pressure_drop_calculator import (
+            PressureDropCalculationEngine,
+        )
+        from sidekick.process_calculators.pressure_drop_calculator.models.pressure_drop_data_models import (
+            GasComposition,
+            PressureDropInputs,
+        )
+
+        engine = PressureDropCalculationEngine()
+        comp = GasComposition(components={"N2": 1.0})
+
+        inp_flat = PressureDropInputs(
+            pipe_diameter=0.05,
+            pipe_length=100.0,
+            pipe_roughness=0.000045,
+            mass_flow_rate=0.08,
+            inlet_pressure=200000.0,
+            inlet_temperature=300.0,
+            gas_composition=comp,
+            elevation_change=0.0,
+            compressibility_correction=True,
+        )
+        res_flat = engine.calculate(inp_flat)
+
+        inp_elev = PressureDropInputs(
+            pipe_diameter=0.05,
+            pipe_length=100.0,
+            pipe_roughness=0.000045,
+            mass_flow_rate=0.08,
+            inlet_pressure=200000.0,
+            inlet_temperature=300.0,
+            gas_composition=comp,
+            elevation_change=100.0,
+            compressibility_correction=True,
+        )
+        res_elev = engine.calculate(inp_elev)
+
+        assert res_elev.elevation_pressure_drop > 2000.0
+        diff = res_elev.total_pressure_drop - res_flat.total_pressure_drop
+        assert diff > 1500.0, (
+            f"Expected total_dp difference to reflect elevation head, got diff={diff}"
+        )
+        assert math.isclose(
+            res_elev.total_pressure_drop,
+            res_flat.total_pressure_drop + res_elev.elevation_pressure_drop,
+            rel_tol=0.05,
+        )
+        assert math.isclose(
+            res_elev.outlet_pressure,
+            inp_elev.inlet_pressure - res_elev.total_pressure_drop,
+            abs_tol=1e-3,
+        )
