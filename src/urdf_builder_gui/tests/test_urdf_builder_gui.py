@@ -228,6 +228,33 @@ class TestBoxInertia:
         assert iyy > 0
         assert izz > 0
 
+    def test_box_inertia_analytic(self) -> None:
+        """TOOLS-16: compute_box_inertia(m, w, h, d) matches 1/12 m(a^2 + b^2).
+
+        For a limb elongated along Z (height h), rotation about Z involves w and d
+        giving small spin inertia izz = 1/12 m (w^2 + d^2),
+        while iyy = 1/12 m (w^2 + h^2).
+        """
+        m = 12.0
+        w = 0.2
+        h = 1.0
+        d = 0.1
+        ixx, iyy, izz = compute_box_inertia(m, w, h, d)
+        # Expected:
+        # ixx = 1/12 * 12 * (1.0^2 + 0.1^2) = 1.01
+        # iyy = 1/12 * 12 * (0.2^2 + 1.0^2) = 1.04
+        # izz = 1/12 * 12 * (0.2^2 + 0.1^2) = 0.05
+        assert ixx == pytest.approx(1.01)
+        assert iyy == pytest.approx(1.04)
+        assert izz == pytest.approx(0.05)
+        # Post-condition: izz is strictly smallest for long limb along Z
+        assert izz < ixx
+        assert izz < iyy
+        # Post-condition: triangle inequalities for physical inertia tensors
+        assert ixx + iyy > izz
+        assert ixx + izz > iyy
+        assert iyy + izz > ixx
+
     def test_negative_mass_raises(self) -> None:
         with pytest.raises((PreconditionError, AssertionError)):
             compute_box_inertia(-1.0, 0.1, 0.1, 0.1)
