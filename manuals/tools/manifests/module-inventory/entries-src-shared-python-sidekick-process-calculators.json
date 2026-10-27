@@ -5615,10 +5615,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 15310,
+      "bytes_lf": 15495,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "677c81db98ab48c84ca19a70020dce5ce902d35d12ef33d7554cdcf048c7e69d",
+      "content_sha256_lf": "6dba3100b04fc47881c97a3dca6970acea1180d4ff800236a87421684788b380",
       "family": "process-calculators-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-SYNGAS-COMPRESSION-ENGINE-PY-C481B6083F52",
       "language": "python",
