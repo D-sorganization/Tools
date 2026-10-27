@@ -5228,10 +5228,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 30142,
+      "bytes_lf": 30437,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "c06c980185785c76e9e5592ed038d04c4102fd72ed01bc04537f19d31b996e45",
+      "content_sha256_lf": "bfe3d8baa8a196459a6706cc4cc8454b4efece62983f370c75cb5d0ff4ed35e2",
       "family": "process-calculators-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-SCRUBBER-CALCULATOR-PY-70A6AB502C83",
       "language": "python",
@@ -5484,7 +5484,7 @@
           {
             "kind": "function",
             "name": "calculate_flooding_velocity",
-            "signature": "liquid_mass_flux: float, gas_density: float, liquid_density: float, packing: PackingProperties, liquid_viscosity: float=WATER_VISCOSITY"
+            "signature": "liquid_mass_flux: float, gas_density: float, liquid_density: float, packing: PackingProperties, liquid_viscosity: float=WATER_VISCOSITY, gas_mass_flux: float=1.0"
           },
           {
             "kind": "function",
@@ -5525,7 +5525,8 @@
         "test_paths": [
           "src/shared/python/calc_backend/tests/test_scrubber_convergence_3181.py",
           "src/shared/python/sidekick/tests/process_calculators/test_scrubber_calculator.py",
-          "tests/shared/python/process_calculators/test_scrubber_calculator.py"
+          "tests/shared/python/process_calculators/test_scrubber_calculator.py",
+          "tests/shared/python/process_calculators/test_scrubber_tools_5805.py"
         ],
         "unit_mentions": [
           "J",

@@ -399,6 +399,7 @@ def calculate_flooding_velocity(
     liquid_density: float,
     packing: PackingProperties,
     liquid_viscosity: float = WATER_VISCOSITY,
+    gas_mass_flux: float = 1.0,
 ) -> float:
     """
     Calculate flooding gas velocity using Eckert's generalized correlation.
@@ -412,6 +413,7 @@ def calculate_flooding_velocity(
         liquid_density: Liquid density [kg/m³]
         packing: Packing properties from database
         liquid_viscosity: Liquid dynamic viscosity [Pa·s]
+        gas_mass_flux: Gas mass flow rate per unit area [kg/(m²·s)]
 
     Returns:
         Flooding gas velocity [m/s]
@@ -424,6 +426,8 @@ def calculate_flooding_velocity(
     # Flow parameter (Eckert abscissa)
     if liquid_mass_flux is None:
         raise ValueError("liquid_mass_flux must be provided")
+    if gas_mass_flux is None:
+        raise ValueError("gas_mass_flux must be provided")
     require(gas_density > 0, "gas_density must be positive", gas_density)
     require(liquid_density > 0, "liquid_density must be positive", liquid_density)
     require(
@@ -431,7 +435,10 @@ def calculate_flooding_velocity(
         "liquid_mass_flux must be non-negative",
         liquid_mass_flux,
     )
-    flow_param = (liquid_mass_flux / 1.0) * np.sqrt(gas_density / liquid_density)
+    require(gas_mass_flux > 0, "gas_mass_flux must be positive", gas_mass_flux)
+    flow_param = (liquid_mass_flux / gas_mass_flux) * np.sqrt(
+        gas_density / liquid_density
+    )
 
     # Capacity parameter at flooding (Eckert ordinate)
     # Using generalized correlation: Y_flood = C_flood * exp(-1.5 * X^0.5)

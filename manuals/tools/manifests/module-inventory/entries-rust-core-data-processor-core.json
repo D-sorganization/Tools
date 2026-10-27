@@ -427,6 +427,7 @@
           "tests/shared/python/ai/test_settings_dialog_provider_config.py",
           "tests/shared/python/model_generation/test_cli_main.py",
           "tests/shared/python/model_generation/test_repository.py",
+          "tests/shared/python/process_calculators/test_scrubber_tools_5805.py",
           "tests/shared/python/scripting/test_scripting_env.py",
           "tests/test_dry_compliance.py",
           "tests/test_mypy_exclusion_cleanup.py",

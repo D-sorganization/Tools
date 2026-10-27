@@ -782,6 +782,7 @@
           "tests/shared/python/golf_club/test_shaft_serialization.py",
           "tests/shared/python/gui_launcher/test_registry.py",
           "tests/shared/python/process_calculators/test_scrubber_calculator.py",
+          "tests/shared/python/process_calculators/test_scrubber_tools_5805.py",
           "tests/shared/python/process_calculators/test_syngas_water_calculator_edge_cases.py",
           "tests/shared/python/sidekick/calculators/electrical/test_glass_interface.py",
           "tests/shared/python/sidekick/lab/mocap/test_contracts.py",
