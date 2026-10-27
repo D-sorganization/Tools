@@ -269,13 +269,15 @@ class SyngasCompressionEngine:
             )
 
         elif stage.compression_type == "polytropic":
-            n = gamma
-            temp_out_actual = stage.inlet_temperature * (pr ** ((n - 1) / n))
+            if not (0.0 < stage.efficiency <= 1.0):
+                raise ValueError(
+                    f"Precondition violated: stage efficiency {stage.efficiency} must be in (0, 1]"
+                )
+            n_exp = (gamma - 1) / (gamma * stage.efficiency)
+            temp_out_actual = stage.inlet_temperature * (pr**n_exp)
             work_actual = (
-                (n / (n - 1))
-                * self.R
-                * stage.inlet_temperature
-                * (pr ** ((n - 1) / n) - 1)
+                (self.R * stage.inlet_temperature / n_exp)
+                * (pr**n_exp - 1)
                 / stage.efficiency
             )
 

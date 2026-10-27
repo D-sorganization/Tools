@@ -84,6 +84,71 @@ class TestCompressionWork:
         result = engine.calculate_compression_work(stage, 100.0, mixture)
         assert result["work_actual"] > 0
 
+    def test_polytropic_tout_depends_on_efficiency(
+        self, engine: SyngasCompressionEngine
+    ) -> None:
+        """TOOLS-03: Polytropic outlet temp must increase as efficiency decreases."""
+        mixture = {"molecular_weight": 28.0, "heat_capacity_ratio": 1.4}
+        stage_high_eff = CompressionStage(
+            inlet_pressure=1.0,
+            outlet_pressure=4.0,
+            inlet_temperature=300.0,
+            efficiency=0.90,
+            compression_type="polytropic",
+        )
+        stage_low_eff = CompressionStage(
+            inlet_pressure=1.0,
+            outlet_pressure=4.0,
+            inlet_temperature=300.0,
+            efficiency=0.60,
+            compression_type="polytropic",
+        )
+        r_high = engine.calculate_compression_work(stage_high_eff, 100.0, mixture)
+        r_low = engine.calculate_compression_work(stage_low_eff, 100.0, mixture)
+        # Irreversibility: lower efficiency must result in higher outlet temperature
+        assert r_low["temp_out_actual"] > r_high["temp_out_actual"]
+
+    def test_polytropic_matches_isentropic_at_unit_efficiency(
+        self, engine: SyngasCompressionEngine
+    ) -> None:
+        """TOOLS-03: At efficiency = 1.0, polytropic matches isentropic."""
+        mixture = {"molecular_weight": 28.0, "heat_capacity_ratio": 1.4}
+        stage_poly = CompressionStage(
+            inlet_pressure=1.0,
+            outlet_pressure=4.0,
+            inlet_temperature=300.0,
+            efficiency=1.0,
+            compression_type="polytropic",
+        )
+        stage_isen = CompressionStage(
+            inlet_pressure=1.0,
+            outlet_pressure=4.0,
+            inlet_temperature=300.0,
+            efficiency=1.0,
+            compression_type="isentropic",
+        )
+        r_poly = engine.calculate_compression_work(stage_poly, 100.0, mixture)
+        r_isen = engine.calculate_compression_work(stage_isen, 100.0, mixture)
+        assert r_poly["temp_out_actual"] == pytest.approx(
+            r_isen["temp_out_actual"], rel=1e-5
+        )
+        assert r_poly["work_actual"] == pytest.approx(r_isen["work_actual"], rel=1e-5)
+
+    def test_polytropic_precondition_efficiency_range(
+        self, engine: SyngasCompressionEngine
+    ) -> None:
+        """TOOLS-03: Polytropic efficiency must be in (0, 1]."""
+        mixture = {"molecular_weight": 28.0, "heat_capacity_ratio": 1.4}
+        bad_stage = CompressionStage(
+            inlet_pressure=1.0,
+            outlet_pressure=4.0,
+            inlet_temperature=300.0,
+            efficiency=1.2,
+            compression_type="polytropic",
+        )
+        with pytest.raises(ValueError, match="efficiency"):
+            engine.calculate_compression_work(bad_stage, 100.0, mixture)
+
     def test_unknown_compression_type_raises(
         self, engine: SyngasCompressionEngine
     ) -> None:

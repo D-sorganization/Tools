@@ -795,7 +795,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-persistence.json"
     },
     {
-      "content_sha256_lf": "c784da9b69ec2a732f9352b6752080a348cb3ea49c9c383752bd56e335c06189",
+      "content_sha256_lf": "adfbde4026845f1e199120fff2bae5d774f0ae2b7a19d49a3c59bdd6e07caefd",
       "entry_count": 59,
       "package": "src/shared/python/sidekick/process_calculators",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-process-calculators.json"
