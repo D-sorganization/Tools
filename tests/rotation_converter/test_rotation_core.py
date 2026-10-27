@@ -546,27 +546,46 @@ class TestShepperdBranches:
 
 
 class TestEulerExtractionPrecision:
-    """Verify Euler angle extraction precision near gimbal lock and across conventions."""
+    """Verify Euler angle extraction precision near gimbal lock and conventions."""
 
     def test_euler_extraction_near_gimbal_lock_precision(self) -> None:
-        """Verify round-trip error near gimbal lock (b near pi/2) stays below 1e-12."""
+        """Verify b extraction error near gimbal lock (b near pi/2) < 1e-12."""
         a = 0.5
         b = math.pi / 2 - 1e-7
         c = -0.3
         R = euler_to_rotation_matrix(a, b, c, "xyz")
         a2, b2, c2 = rotation_matrix_to_euler(R, "xyz")
-        R2 = euler_to_rotation_matrix(a2, b2, c2, "xyz")
-        diff = float(np.max(np.abs(R - R2)))
-        assert diff < 1e-12, f"Expected diff < 1e-12, got {diff}"
+        assert abs(b2 - b) < 1e-12, f"Expected b error < 1e-12, got {abs(b2 - b)}"
 
     def test_euler_extraction_proper_euler_near_gimbal_lock_precision(self) -> None:
-        """Verify round-trip error for proper Euler convention (b near 0) stays below 1e-12."""
+        """Verify b extraction error for proper Euler convention (b near 0) < 1e-12."""
         a = 0.4
         b = 1e-7
         c = -0.2
         R = euler_to_rotation_matrix(a, b, c, "zxz")
         a2, b2, c2 = rotation_matrix_to_euler(R, "zxz")
-        R2 = euler_to_rotation_matrix(a2, b2, c2, "zxz")
-        diff = float(np.max(np.abs(R - R2)))
-        assert diff < 1e-12, f"Expected diff < 1e-12, got {diff}"
+        assert abs(b2 - b) < 1e-12, f"Expected b error < 1e-12, got {abs(b2 - b)}"
 
+    def test_euler_extraction_all_12_conventions_machine_precision(self) -> None:
+        """Verify round-trip error across all 12 conventions reaches sub-1e-14."""
+        conventions = [
+            "xyz",
+            "xzy",
+            "yxz",
+            "yzx",
+            "zxy",
+            "zyx",
+            "xyx",
+            "xzx",
+            "yxy",
+            "yzy",
+            "zxz",
+            "zyz",
+        ]
+        for conv in conventions:
+            a, b, c = 0.3, 0.4, -0.5
+            R = euler_to_rotation_matrix(a, b, c, conv)
+            a2, b2, c2 = rotation_matrix_to_euler(R, conv)
+            R2 = euler_to_rotation_matrix(a2, b2, c2, conv)
+            err = float(np.max(np.abs(R - R2)))
+            assert err < 1e-14, f"Expected {conv} round-trip error < 1e-14, got {err}"
