@@ -309,3 +309,13 @@ class TestScrubberCalculatorContracts:
             assert result["diameter_m"] == 0.0
         except PreconditionError:
             pytest.fail("PreconditionError raised with contracts OFF")
+
+    # ── TOOLS-22: Physical unit conversion constants ───────────────────────
+
+    def test_tools_22_kg_to_mg_constant_physical_value(self) -> None:
+        """TOOLS-22: KG_TO_MG constant must equal 1_000_000.0 (1 kg = 10^6 mg)."""
+        from upstream_drift_tools.process_calculators.scrubber_calculator import (
+            KG_TO_MG,
+        )
+
+        assert KG_TO_MG == 1_000_000.0, f"Expected 1_000_000.0 mg/kg, got {KG_TO_MG}"
