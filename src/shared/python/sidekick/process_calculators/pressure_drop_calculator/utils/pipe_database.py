@@ -13,6 +13,7 @@ References:
 """
 
 import logging
+from fractions import Fraction
 
 from ..models.pressure_drop_data_models import PipeSpecification
 
@@ -337,11 +338,16 @@ def get_pipe_spec(
     )
 
 
+def _parse_nps(nps_str: str) -> float:
+    """Parse nominal pipe size string to float for numerical sorting."""
+    return float(sum(Fraction(part) for part in nps_str.strip().split()))
+
+
 def list_available_sizes() -> list[str]:
     """List all available nominal pipe sizes."""
     sizes = sorted(
         {nps for nps, _ in STEEL_PIPE_DIMENSIONS.keys()},
-        key=lambda x: float(x.replace("/", ".")) if "/" in x else float(x),
+        key=_parse_nps,
     )
     return sizes
 

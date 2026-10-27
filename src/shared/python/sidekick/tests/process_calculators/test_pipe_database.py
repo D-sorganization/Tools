@@ -122,6 +122,16 @@ class TestListAvailableSizes:
         sizes = list_available_sizes()
         assert len(sizes) == len(set(sizes))
 
+    def test_sizes_are_in_ascending_numerical_order(self):
+        """TOOLS-14: Nominal pipe sizes must sort in true ascending numerical order."""
+        sizes = list_available_sizes()
+        # '1/2' (0.5 in) must precede '3/4' (0.75 in), which must precede '1' (1.0 in)
+        assert sizes[0] == "1/2"
+        assert sizes[1] == "3/4"
+        assert sizes[2] == "1"
+        assert sizes[3] == "1.5"
+        assert sizes[4] == "2"
+
 
 # ---------------------------------------------------------------------------
 # list_schedules_for_size
