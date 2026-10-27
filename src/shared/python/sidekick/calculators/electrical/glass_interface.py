@@ -86,10 +86,10 @@ class GlassPropertiesInterface:
         self.fallback_policy = fallback_policy
         self._cache_max_size = cache_max_size
         self._default_properties = {
-            "base_conductivity": 1.0,  # S/m at reference
-            "activation_energy": 80000,  # J/mol
+            "base_conductivity": 27.5,  # S/m at reference (aligned with TP registry)
+            "activation_energy": 55000.0,  # J/mol (55 kJ/mol)
             "reference_temp": 1473.15,  # K (1200 C)
-            "metal_conductivity": 10000.0,  # S/m - Very high for molten metal
+            "metal_conductivity": 719000.0,  # S/m (7.19e5 S/m) - Molten metal heel
         }
         # Use OrderedDict for LRU cache behavior
         self._temperature_dependent_data: OrderedDict[
@@ -145,7 +145,8 @@ class GlassPropertiesInterface:
         self._validate_finite_scalar(power_density, "power_density")
         if is_metal:
             # Metal has very high conductivity, relatively constant with temperature
-            return self._default_properties["metal_conductivity"]
+            props = {**self._default_properties, **self._current_properties}
+            return float(props["metal_conductivity"])
 
         # Build cache key - use frozenset for O(1) hashing instead of sorted tuple
         comp_key = frozenset(composition.items()) if composition else None
@@ -209,7 +210,7 @@ class GlassPropertiesInterface:
         """Adjudicate provider output by policy (raises per policy contract)."""
         try:
             raw_value = float(call())
-        except (ValueError, TypeError, ArithmeticError) as exc:
+        except Exception as exc:
             if self.fallback_policy is GlassFallbackPolicy.STRICT:
                 raise
             return self._on_provider_failure(
@@ -365,12 +366,18 @@ class GlassPropertiesInterface:
         return self._last_report
 
     def update_properties(self, properties: dict) -> None:
-        """Update current glass properties.
+        """Update current glass properties and invalidate cached results.
 
         Args:
             properties: Mapping merged into current properties.
+
+        Raises:
+            ValueError: If properties is None.
         """
+        if properties is None:
+            raise ValueError("properties must be provided")
         self._current_properties.update(properties)
+        self.clear_cache()
 
     def get_current_properties(self) -> dict:
         """Get a copy of the current glass properties mapping."""
@@ -397,11 +404,10 @@ class GlassPropertiesInterface:
             temp_kelvin += power_density * _POWER_DENSITY_HEATING_COEFFICIENT
 
         # Arrhenius equation: sigma = sigma_0 * exp(-Ea/R * (1/T - 1/T_ref))
-        # Pre-computed: _arrhenius_ref_term = -Ea/(R * T_ref)
-        # So: exponent = -Ea/(R*T) - _arrhenius_ref_term = -Ea/R * (1/T - 1/T_ref)
-        props = self._default_properties
-        ea_over_r = props["activation_energy"] / _R_GAS
-        exponent = -ea_over_r / temp_kelvin + self._arrhenius_ref_term
+        props = {**self._default_properties, **self._current_properties}
+        ea_over_r = float(props["activation_energy"]) / _R_GAS
+        ref_temp = float(props["reference_temp"])
+        exponent = -ea_over_r * (1.0 / temp_kelvin - 1.0 / ref_temp)
 
         return float(props["base_conductivity"] * np.exp(exponent))
 
