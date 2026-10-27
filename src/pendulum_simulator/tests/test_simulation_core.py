@@ -60,3 +60,32 @@ class TestIntegrateOde:
         assert states.ndim == 2
         assert states.shape[1] == 3
         assert len(t) == states.shape[0]
+
+    def test_tools_27_integrate_ode_includes_t_end_in_output_grid(self) -> None:
+        """TOOLS-27: integrate_ode must include t_end in the output time grid."""
+
+        def rhs(t: float, y: np.ndarray) -> np.ndarray:
+            return -y
+
+        t_end = 2.0
+        dt = 0.05
+        t, states = integrate_ode(rhs, np.array([1.0]), t_end=t_end, dt=dt)
+        assert np.isclose(t[-1], t_end, atol=1e-12), (
+            f"Expected t[-1] to reach t_end={t_end}, got {t[-1]}"
+        )
+        expected_state_at_tend = np.exp(-t_end)
+        np.testing.assert_allclose(states[-1, 0], expected_state_at_tend, rtol=1e-4)
+
+    def test_tools_27_non_aligned_t_end_reaches_endpoint(self) -> None:
+        """TOOLS-27: when t_end is not an exact multiple of dt, t_end is still included."""
+
+        def rhs(t: float, y: np.ndarray) -> np.ndarray:
+            return -y
+
+        t_end = 1.03
+        dt = 0.1
+        t, states = integrate_ode(rhs, np.array([1.0]), t_end=t_end, dt=dt)
+        assert np.isclose(t[-1], t_end, atol=1e-12), (
+            f"Expected t[-1] to reach {t_end}, got {t[-1]}"
+        )
+        np.testing.assert_allclose(states[-1, 0], np.exp(-t_end), rtol=1e-4)
