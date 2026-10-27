@@ -23922,6 +23922,12 @@
               "annotation": "float",
               "default": "WATER_VISCOSITY",
               "kind": "arg"
+            },
+            {
+              "name": "gas_mass_flux",
+              "annotation": "float",
+              "default": "1.0",
+              "kind": "arg"
             }
           ],
           "returns": "float"
