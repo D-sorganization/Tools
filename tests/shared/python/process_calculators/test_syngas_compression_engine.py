@@ -364,3 +364,52 @@ class TestProcessConditionAnalysis:
         }
         with pytest.raises(ValueError, match="Postcondition violated"):
             engine.analyze_process_conditions(mock_result)
+
+
+class TestMixtureProperties:
+    """Tests for mixture property calculation (TOOLS-04)."""
+
+    def test_tools_04_mixture_heat_capacity_ratio_uses_molar_heat_capacities(
+        self, engine: SyngasCompressionEngine
+    ) -> None:
+        """TOOLS-04: Mixture gamma must be from molar heat capacities, not linear gamma.
+
+        For a 50/50 mixture of H2 (gamma=1.40) and CO2 (gamma=1.31):
+        Linear average yields: 0.5 * 1.40 + 0.5 * 1.31 = 1.3550
+        Thermodynamic average:
+          Cp_H2 = (1.40 / 0.40) * R = 3.5 R,   Cv_H2 = 2.5 R
+          Cp_CO2 = (1.31 / 0.31) * R = 4.2258 R, Cv_CO2 = 3.2258 R
+          Cp_mix = 0.5 * 3.5 + 0.5 * 4.2258 = 3.8629 R
+          Cv_mix = Cp_mix - R = 2.8629 R
+          gamma_mix = Cp_mix / Cv_mix = 3.8629 / 2.8629 = 1.3493 != 1.3550
+        """
+        composition = {"H2": 0.5, "CO2": 0.5}
+        props = engine.calculate_mixture_properties(composition)
+        gamma = props["heat_capacity_ratio"]
+
+        # Thermodynamic expectation
+        r_gas = engine.R
+        cp_h2 = (1.40 / 0.40) * r_gas
+        cv_h2 = cp_h2 - r_gas
+        cp_co2 = (1.31 / 0.31) * r_gas
+        cv_co2 = cp_co2 - r_gas
+        cp_mix = 0.5 * cp_h2 + 0.5 * cp_co2
+        cv_mix = 0.5 * cv_h2 + 0.5 * cv_co2
+        expected_gamma = cp_mix / cv_mix
+
+        # Assert correct thermodynamic calculation
+        assert gamma == pytest.approx(expected_gamma, rel=1e-4)
+        # Explicitly verify the buggy linear averaging is rejected
+        linear_gamma = 0.5 * 1.40 + 0.5 * 1.31
+        assert abs(gamma - linear_gamma) > 0.003
+
+    def test_pure_component_gamma_matches_table(
+        self, engine: SyngasCompressionEngine
+    ) -> None:
+        """Pure components must retain their exact table heat capacity ratio."""
+        for comp, expected_gamma in engine._APPROX_GAMMA.items():
+            props = engine.calculate_mixture_properties({comp: 1.0})
+            assert props["heat_capacity_ratio"] == pytest.approx(
+                expected_gamma, rel=1e-5
+            )
+
