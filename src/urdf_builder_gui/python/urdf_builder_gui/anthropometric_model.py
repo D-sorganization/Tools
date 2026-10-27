@@ -20,7 +20,7 @@ from shared.python.humanoid_character_builder.core.anthropometry import (
 from shared.python.humanoid_character_builder.core.anthropometry import (
     URDF_MASS_RATIOS as MASS_RATIOS,
 )
-from urdf_builder_gui.contracts import require
+from urdf_builder_gui.contracts import ensure, require
 
 logger = logging.getLogger(__name__)
 
@@ -129,6 +129,11 @@ def compute_box_inertia(
     **Pre-conditions** (DbC):
       - All parameters must be positive.
 
+    **Post-conditions** (DbC):
+      - Triangle inequalities on principal moments hold.
+      - izz is smallest for a long thin limb along z
+        (height > width and height > depth).
+
     Returns:
         Tuple of (ixx, iyy, izz) in kg·m².
     """
@@ -138,9 +143,22 @@ def compute_box_inertia(
     require(width > 0, "width must be positive", width)
     require(height > 0, "height must be positive", height)
     require(depth > 0, "depth must be positive", depth)
-    ixx = (1.0 / 12.0) * mass * (height**2 + depth**2)
-    iyy = (1.0 / 12.0) * mass * (width**2 + depth**2)
-    izz = (1.0 / 12.0) * mass * (width**2 + height**2)
+    ixx = (1.0 / 12.0) * mass * (depth**2 + height**2)
+    iyy = (1.0 / 12.0) * mass * (width**2 + height**2)
+    izz = (1.0 / 12.0) * mass * (width**2 + depth**2)
+    ensure(
+        ixx + iyy >= izz - 1e-12
+        and iyy + izz >= ixx - 1e-12
+        and ixx + izz >= iyy - 1e-12,
+        "Triangle inequalities on principal moments must hold",
+        (ixx, iyy, izz),
+    )
+    if height > width and height > depth:
+        ensure(
+            izz < ixx and izz < iyy,
+            "izz must be the smallest principal moment for a limb along z",
+            (ixx, iyy, izz),
+        )
     return ixx, iyy, izz
 
 

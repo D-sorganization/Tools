@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "a50a2a6dbff0da693db76806adeff7f28e0f79f00bfc116edece80f8e0f5a3e7",
+      "content_sha256_lf": "094e150b1d3850816da928e8ddcf9f3ea9f7ef5d52c2bb11e352f595272ab521",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -987,7 +987,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-upstream-drift-tools.json"
     },
     {
-      "content_sha256_lf": "c1f5105a56f25fadcd3337d3322f0131b4b1d57d7775621f4fb969a699cbce39",
+      "content_sha256_lf": "5e5cbaf0a65f98273eaec5a28c233dfb349affb788ab63698abd8d7ac16c72ba",
       "entry_count": 12,
       "package": "src/urdf_builder_gui",
       "path": "manuals/tools/manifests/module-inventory/entries-src-urdf-builder-gui.json"
