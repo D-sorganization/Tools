@@ -48,6 +48,8 @@ from .constants import (
     WGS_TYPICAL_GHSV,
 )
 
+STANDARD_MOLAR_VOLUME_NM3_PER_KMOL: float = 22.414  # Nm3/kmol at STP (TOOLS-10)
+
 __all__ = [
     "WGSReactorEngine",
     "create_wgs_reactor_calculator",
@@ -370,6 +372,7 @@ class WGSReactorEngine:
         c = k_eq * n_CO_0 * n_H2O_0 - n_CO2_0 * n_H2_0
 
         x_max = min(n_CO_0, n_H2O_0)
+        x_min = -min(n_CO2_0, n_H2_0)
         if abs(a) < 1e-12:
             # Linear case (K == 1): bx + c = 0.
             x = -c / b if abs(b) > 1e-30 else 0.0
@@ -380,12 +383,14 @@ class WGSReactorEngine:
             sqrt_disc = math.sqrt(disc)
             root1 = (-b + sqrt_disc) / (2.0 * a)
             root2 = (-b - sqrt_disc) / (2.0 * a)
-            # Pick the physically valid root in [0, x_max].
-            candidates = [r for r in (root1, root2) if -1e-9 <= r <= x_max + 1e-9]
-            x = candidates[0] if candidates else min(max(root1, 0.0), x_max)
+            # Pick the physically valid root in [x_min, x_max].
+            candidates = [
+                r for r in (root1, root2) if x_min - 1e-9 <= r <= x_max + 1e-9
+            ]
+            x = candidates[0] if candidates else min(max(root1, x_min), x_max)
 
         # Clamp into the physical window.
-        return float(min(max(x, 0.0), x_max))
+        return float(min(max(x, x_min), x_max))
 
     def calculate_equilibrium_composition(
         self,
@@ -435,13 +440,15 @@ class WGSReactorEngine:
         catalyst_type: str,
     ) -> dict[str, Any]:
         """Size WGS reactor based on throughput and conversion"""
-        # Space velocity (GHSV)
+        # Space velocity (GHSV) in (Nm3/h) / m3_cat
         if feed_rate is None:
             raise ValueError("feed_rate must be provided")
         ghsv = WGS_TYPICAL_GHSV  # h^-1 (typical for WGS)
 
-        # Reactor volume
-        reactor_volume = feed_rate / ghsv  # m3
+        # Reactor volume: convert feed_rate (kmol/h) to standard volumetric flow (Nm3/h)
+        # with 22.414 Nm3/kmol at STP before dividing by GHSV (TOOLS-10)
+        standard_flow_nm3_h = feed_rate * STANDARD_MOLAR_VOLUME_NM3_PER_KMOL
+        reactor_volume = standard_flow_nm3_h / ghsv  # m3
 
         # Catalyst volume (80% of reactor)
         catalyst_volume = reactor_volume * WGS_CATALYST_VOLUME_FRACTION
