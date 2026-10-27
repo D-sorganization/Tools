@@ -132,6 +132,7 @@ class PressureDropCalculationEngine:
         friction_factor: float,
         dp_incompressible: float,
         total_k_factor: float,
+        dp_elevation: float = 0.0,
     ) -> tuple[float, float, float, list[str]]:
         """Decide whether to apply compressible-flow corrections.
 
@@ -148,9 +149,10 @@ class PressureDropCalculationEngine:
                 f"Applying compressible flow correction "
                 f"(dP/P = {pressure_ratio_initial * 100:.1f}%)"
             )
-            total_dp, outlet_pressure = calculate_compressible_flow_correction(
+            dp_horizontal_incomp = dp_incompressible - dp_elevation
+            dp_horizontal_comp, _ = calculate_compressible_flow_correction(
                 inlet_pressure=inputs.inlet_pressure,
-                outlet_pressure=inputs.inlet_pressure - dp_incompressible,
+                outlet_pressure=inputs.inlet_pressure - dp_horizontal_incomp,
                 length=inputs.pipe_length,
                 diameter=inputs.pipe_diameter,
                 mass_flow_rate=inputs.mass_flow_rate,
@@ -160,7 +162,9 @@ class PressureDropCalculationEngine:
                 friction_factor=friction_factor,
                 total_k_factor=total_k_factor,
             )
-            dp_acceleration = max(total_dp - dp_incompressible, 0.0)
+            dp_acceleration = max(dp_horizontal_comp - dp_horizontal_incomp, 0.0)
+            total_dp = dp_horizontal_comp + dp_elevation
+            outlet_pressure = inputs.inlet_pressure - total_dp
 
             if abs(total_dp - dp_incompressible) > 100:
                 _logger.info(
@@ -319,6 +323,7 @@ class PressureDropCalculationEngine:
                 friction_factor,
                 dp_incompressible,
                 total_k_factor,
+                dp_elevation,
             )
         )
 

@@ -421,6 +421,8 @@ class TestCompressibleFlowElevation:
 
     def test_compressible_flow_includes_elevation_pressure_drop(self) -> None:
         """When compressibility_correction=True, total_dp must include elevation head."""
+        import math
+
         from sidekick.process_calculators.pressure_drop_calculator import (
             PressureDropCalculationEngine,
         )
