@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "7ab1da494711ca9562ba056c5222f68ab4fb71783422d5941189f8ae63004a36",
+      "content_sha256_lf": "0e39c2be8af83bf690379c9588d576bb38e68647a1ca24374f4c321906f1b163",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -771,7 +771,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-api.json"
     },
     {
-      "content_sha256_lf": "901ebecc1e1e24d481d34d63b5f8a784f5534e05ca800fb9f5b7f495d98fad0f",
+      "content_sha256_lf": "3b2a2ef45e4e574e2662d8e54e875ad1b4de4a34207aaefae4cd15c62c6b5fa4",
       "entry_count": 20,
       "package": "src/shared/python/sidekick/calculators",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-calculators.json"

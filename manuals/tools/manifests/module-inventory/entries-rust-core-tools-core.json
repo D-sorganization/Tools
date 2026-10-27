@@ -2702,6 +2702,7 @@
           "tests/shared/python/calculators/conversion/test_core.py",
           "tests/shared/python/calculators/conversion/test_flow_rate_converter.py",
           "tests/shared/python/calculators/thermo/test_steam_engine.py",
+          "tests/shared/python/calculators/thermo/test_thermo_properties.py",
           "tests/shared/python/data_processing/test_data_processor_core.py",
           "tests/shared/python/golf_club/test_coupled_impact_audit.py",
           "tests/shared/python/golf_club/test_friction_entry_reference.py",

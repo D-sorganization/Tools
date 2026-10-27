@@ -175,9 +175,17 @@ class ThermoPropertiesCalculator:
         # Enthalpy relative to 298.15 K reference
         enthalpy = mix_cp * (temp_k - 298.15)
 
+        # Entropy of mixing: Delta S_mix = -R * sum(x_i * ln(x_i)) for ideal gas
+        # (TOOLS-07)
+        delta_s_mix = -R_GAS * sum(
+            frac * math.log(frac) for frac in norm_fracs.values() if frac > 0.0
+        )
+
         # Entropy relative to 298.15 K, 101325 Pa reference
-        entropy = mix_cp * math.log(temp_k / 298.15) - R_GAS * math.log(
-            pressure_pa / 101325.0
+        entropy = (
+            mix_cp * math.log(temp_k / 298.15)
+            - R_GAS * math.log(pressure_pa / 101325.0)
+            + delta_s_mix
         )
 
         # Gibbs free energy

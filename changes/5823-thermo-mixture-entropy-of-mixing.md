@@ -7,4 +7,4 @@ next_step: "Merge the PR."
 ---
 
 Include ideal gas entropy of mixing Delta S_mix = -R sum(x_i ln x_i) in mixture
-molar entropy evaluation to restore thermodynamic consistency.
+molar entropy evaluation to restore thermodynamic consistency for multicomponent mixtures.
