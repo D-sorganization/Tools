@@ -771,7 +771,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-api.json"
     },
     {
-      "content_sha256_lf": "9e3178d2541342412f7a6192178e5602d824fb1e3dd7fec34d15de04b5f9453a",
+      "content_sha256_lf": "d937369cafaeda07fe45f36b0837ee6a64d8b9cff11f0b2d34f6d4365b3428ff",
       "entry_count": 20,
       "package": "src/shared/python/sidekick/calculators",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-calculators.json"
