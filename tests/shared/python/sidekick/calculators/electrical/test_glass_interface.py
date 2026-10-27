@@ -256,3 +256,108 @@ def test_resistivity_never_returns_infinity_for_rejected_output() -> None:
     )
     with pytest.raises(ValueError):
         interface.get_resistivity(1000.0)
+
+
+# ---------------------------------------------------------------------------
+# Contract tests between copies (Theme suite: #5796 / #5806)
+# ---------------------------------------------------------------------------
+
+
+def test_glass_fallback_catches_runtime_error() -> None:
+    """TOOLS-31: provider raising RuntimeError triggers DEMO/LEGACY fallback."""
+    provider = ScriptedProvider([RuntimeError("provider unavailable")])
+    interface = GlassPropertiesInterface(
+        conductivity_provider=provider,
+        fallback_policy=GlassFallbackPolicy.DEMO,
+    )
+    result = interface.get_conductivity(1000.0)
+    assert math.isfinite(result)
+    assert result > 0.0
+    report = interface.get_last_provider_report()
+    assert report is not None
+    assert report.fallback_reason is not None
+    assert "RuntimeError" in report.fallback_reason
+    assert report.source == "default_model"
+
+    # LEGACY policy also falls back and logs warning
+    legacy_interface = GlassPropertiesInterface(
+        conductivity_provider=ScriptedProvider([RuntimeError("legacy failure")]),
+        fallback_policy=GlassFallbackPolicy.LEGACY,
+    )
+    res_legacy = legacy_interface.get_conductivity(1000.0)
+    assert math.isfinite(res_legacy)
+    assert res_legacy > 0.0
+
+
+def test_tools_30_update_properties_affects_default_model_and_invalidates_cache() -> (
+    None
+):
+    """TOOLS-30: update_properties updates parameters, model, and cache."""
+    interface = GlassPropertiesInterface()
+    sigma_1200_default = interface.get_conductivity(1200.0)
+
+    # Overriding base_conductivity must clear cache and alter conductivity
+    interface.update_properties({"base_conductivity": 50.0})
+    sigma_1200_updated = interface.get_conductivity(1200.0)
+
+    assert sigma_1200_updated == pytest.approx(50.0)
+    assert sigma_1200_updated != pytest.approx(sigma_1200_default)
+
+    # Overriding activation_energy must also affect non-reference temperatures
+    interface.update_properties(
+        {"base_conductivity": 27.5, "activation_energy": 70000.0}
+    )
+    sigma_1000 = interface.get_conductivity(1000.0)
+    assert math.isfinite(sigma_1000)
+    assert sigma_1000 > 0.0
+
+
+def test_tp_04_external_calculator_catches_runtime_error_and_os_error() -> None:
+    """TP-04: external calculator provider outages fall back in DEMO/LEGACY."""
+
+    def failing_runtime(t: float, comp: Any, p: float) -> float:
+        raise RuntimeError("provider unavailable")
+
+    def failing_os(t: float, comp: Any, p: float) -> float:
+        raise OSError("connection reset by peer")
+
+    interface_rt = GlassPropertiesInterface(
+        external_calculator=failing_runtime,
+        fallback_policy=GlassFallbackPolicy.DEMO,
+    )
+    res_rt = interface_rt.get_conductivity(1000.0)
+    assert math.isfinite(res_rt)
+    assert res_rt > 0.0
+    report_rt = interface_rt.get_last_provider_report()
+    assert report_rt is not None
+    assert report_rt.fallback_reason is not None
+    assert "RuntimeError" in report_rt.fallback_reason
+
+    interface_os = GlassPropertiesInterface(
+        external_calculator=failing_os,
+        fallback_policy=GlassFallbackPolicy.DEMO,
+    )
+    res_os = interface_os.get_conductivity(1000.0)
+    assert math.isfinite(res_os)
+    assert res_os > 0.0
+    report_os = interface_os.get_last_provider_report()
+    assert report_os is not None
+    assert report_os.fallback_reason is not None
+    assert "OSError" in report_os.fallback_reason
+
+
+def test_glass_interface_defaults_equal_across_copies() -> None:
+    """GLASS-06: Tools glass_interface σ defaults match TP registry values."""
+    interface = GlassPropertiesInterface()
+    props = interface._default_properties
+
+    # Canonical values from TP registry (glass_models.core.boundary_defaults)
+    expected_base_conductivity = 27.5
+    expected_activation_energy = 55000.0
+    expected_reference_temp = 1473.15
+    expected_metal_conductivity = 719000.0
+
+    assert props["base_conductivity"] == pytest.approx(expected_base_conductivity)
+    assert props["activation_energy"] == pytest.approx(expected_activation_energy)
+    assert props["reference_temp"] == pytest.approx(expected_reference_temp)
+    assert props["metal_conductivity"] == pytest.approx(expected_metal_conductivity)
