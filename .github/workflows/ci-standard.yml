@@ -128,9 +128,9 @@ jobs:
         run: git config --global http.version HTTP/1.1
       - uses: actions/checkout@v7
         with:
-          # The PR merge commit and both parents are sufficient for the
-          # changed-file gates below.
-          fetch-depth: 2
+          # Push events may span multiple commits; retain their before SHA
+          # for both changed-file gates below.
+          fetch-depth: 0
       - uses: actions/setup-python@v6
         with:
           python-version: "3.12"
