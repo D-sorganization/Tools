@@ -5947,6 +5947,12 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-27 | #5838 | Correct KG_TO_MG constant from 1000.0 to 1e6 in scrubber calculator (TOOLS-22) |
+| 2026-10-27 | #5831 | Include elevation pressure drop in compressible flow calculations (TOOLS-12) |
+| 2026-10-27 | #5829 | Sort nominal pipe sizes by true physical diameter instead of string replacement (TOOLS-14) |
+| 2026-10-27 | #5827 | Ensure integrate_ode includes t_end in uniform output grid (TOOLS-27) |
+| 2026-10-27 | #5824 | Include entropy of mixing in ideal gas mixture entropy calculation (TOOLS-07) |
+| 2026-10-27 | #5822 | Compute syngas mixture heat capacity ratio from molar heat capacities (TOOLS-04) |
 | 2026-10-27 | #5819 | Glass interface fallback contract: RuntimeError escapes DEMO/LEGACY fallback; sigma defaults drift (TOOLS-31, TOOLS-30, TP-04, GLASS-06) |
 | 2026-10-27 | #5811 | Fix box inertia tensor axis alignment in anthropometric_model.py |
 | 2026-10-27 | #5816 | Use polytropic exponent (gamma-1)/(gamma*eta) for discharge temperature and work (TOOLS-03) |
