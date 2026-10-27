@@ -11482,10 +11482,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 26848,
+      "bytes_lf": 27921,
       "classification": "calculation",
       "classification_basis": "path-marker:pendulum",
-      "content_sha256_lf": "6d3977d67b14372d5ba4710175397c888c1aed274ff29a5b2fc23cbb57fdf7cc",
+      "content_sha256_lf": "684b89695e3ea8d0245cd4a2ff078354493d8ba343832a4a5671d3feacf0c008",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-PHYSICS-PY-C27CE5E2F53F",
       "language": "python",
@@ -11591,7 +11591,7 @@
           {
             "kind": "function",
             "name": "friction_torque_vector",
-            "signature": "dtheta1: float, dphi: float, params: PendulumParams"
+            "signature": "dtheta1: float, dphi: float, params: PendulumParams, v_eps: float=0.0001"
           },
           {
             "kind": "function",

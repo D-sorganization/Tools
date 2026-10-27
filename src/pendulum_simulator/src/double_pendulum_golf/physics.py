@@ -267,16 +267,44 @@ def gravity_vector(theta1: float, phi: float, params: PendulumParams) -> np.ndar
 # ---------------------------------------------------------------------------
 
 
-def friction_torque_vector(dtheta1: float, dphi: float, params: PendulumParams) -> np.ndarray:
-    """Compute dissipative torque vector (viscous + Coulomb).
+def friction_torque_vector(
+    dtheta1: float,
+    dphi: float,
+    params: PendulumParams,
+    v_eps: float = 1e-4,
+) -> np.ndarray:
+    """Compute dissipative torque vector (viscous + regularised Coulomb).
 
-    Pre: dtheta1, dphi finite.
-    Post: opposes motion direction.
+    Parameters
+    ----------
+    dtheta1 : float
+        Angular velocity of segment 1 (arm) in rad/s.
+    dphi : float
+        Relative angular velocity of segment 2 (club) in rad/s.
+    params : PendulumParams
+        Physical parameters specifying viscous (b1, b2) and Coulomb (mu1, mu2) coefficients.
+    v_eps : float, default 1e-4
+        Regularisation velocity threshold (rad/s) for tanh smoothing of Coulomb friction.
+        Eliminates the sgn discontinuity at zero velocity so RK45 step sizes stay bounded (#5804).
+
+    Pre: dtheta1, dphi, v_eps finite; v_eps > 0.
+    Post: |tau_coulomb_i| <= mu_i.
+    Post: continuous in velocities (tau -> 0 as qdot -> 0).
+    Post: result shape (2,), all values finite.
     """
-    if not (np.isfinite(dtheta1) and np.isfinite(dphi)):
+    if not (np.isfinite(dtheta1) and np.isfinite(dphi) and np.isfinite(v_eps) and v_eps > 0):
         raise ValueError("DbC Blocked: Precondition failed.")
-    tau_f1 = -params.b1 * dtheta1 - params.mu1 * np.sign(dtheta1)
-    tau_f2 = -params.b2 * dphi - params.mu2 * np.sign(dphi)
+    tau_coulomb1 = -params.mu1 * np.tanh(dtheta1 / v_eps)
+    tau_coulomb2 = -params.mu2 * np.tanh(dphi / v_eps)
+
+    # DbC Postconditions: |tau_coulomb| <= mu
+    if not (
+        abs(tau_coulomb1) <= params.mu1 + 1e-12 and abs(tau_coulomb2) <= params.mu2 + 1e-12
+    ):
+        raise ValueError("DbC Blocked: Postcondition failed: |tau_coulomb| exceeds mu.")
+
+    tau_f1 = -params.b1 * dtheta1 + tau_coulomb1
+    tau_f2 = -params.b2 * dphi + tau_coulomb2
     result = np.array([tau_f1, tau_f2])
     if not (all(np.isfinite(result))):
         raise ValueError(f"Friction torque has non-finite values: {result}")

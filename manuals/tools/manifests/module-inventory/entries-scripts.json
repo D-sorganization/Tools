@@ -5701,6 +5701,56 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 2378,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0994d07cbb0ee5bc8ea5b37f11289dc652180cdb960f45567cff151aee08c9f8",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-GENERATE-AGENT-HOOK-ADAPTERS-PY-E1A199684A5B",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/generate_agent_hook_adapters.py",
+      "purpose": "Generate fleet agent-hook adapter files from fleet-hooks/manifest.yml.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 10709,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
