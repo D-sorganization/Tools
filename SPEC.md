@@ -5947,6 +5947,8 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-28 | #5853 | evaluate aqueous acid dewpoint for HCl-H2O systems via Kiang correlation |
+| 2026-10-28 | #5856 | drop raw gh pr merge --auto instructions from fleet-managed blocks and docs |
 | 2026-10-28 | #5854 | refine gas viscosity calculation to avoid non-physical (MW/MW_air)^0.25 scaling (TOOLS-21) |
 | 2026-10-28 | #5850 | Validate triangle inequality on principal moments of inertia (TOOLS-17) |
 | 2026-10-28 | #5848 | Do not divide operating_current_a by electrode count in electrode advisor layout (TOOLS-09) |
