@@ -63,6 +63,37 @@ def _iter_repo_owned_doc_lines(path: Path) -> list[tuple[int, str]]:
     return lines
 
 
+def _iter_all_doc_lines(path: Path) -> list[tuple[int, str]]:
+    """Yield non-comment lines across all blocks (including fleet-managed)."""
+    lines: list[tuple[int, str]] = []
+    for lineno, line in enumerate(
+        path.read_text(encoding="utf-8", errors="replace").splitlines(), start=1
+    ):
+        stripped = line.strip()
+        if stripped.startswith("#") or stripped.startswith("//"):
+            continue
+        lines.append((lineno, line))
+    return lines
+
+
+@pytest.mark.parametrize("path", _iter_agent_doc_files(), ids=_agent_doc_id)
+def test_fleet_managed_blocks_do_not_instruct_raw_gh_pr_merge_auto(
+    path: Path,
+) -> None:
+    rel = path.relative_to(_REPO_ROOT).as_posix()
+    offenders: list[str] = []
+    for lineno, line in _iter_all_doc_lines(path):
+        if _RAW_AUTO_MERGE.search(line):
+            if re.search(r"never\s+raw|do not use raw|bypasses\s+hold", line, re.I):
+                continue
+            offenders.append(f"{rel}:{lineno}: {line.strip()}")
+    assert not offenders, (
+        "use `python scripts/automerge_guard.py <owner>/<repo> <pr> --arm "
+        "--strategy squash` instead of raw gh pr merge --auto in "
+        "fleet-managed blocks:\n" + "\n".join(offenders)
+    )
+
+
 @pytest.mark.parametrize("path", _iter_agent_doc_files(), ids=_agent_doc_id)
 def test_agent_docs_do_not_instruct_raw_gh_pr_merge_auto(path: Path) -> None:
     rel = path.relative_to(_REPO_ROOT).as_posix()
