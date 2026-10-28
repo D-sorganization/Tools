@@ -43,6 +43,23 @@ class TestScrubberCalculator:
         visc = calculate_gas_viscosity(temperature_k=298.15, molecular_weight=28.0134)
         assert visc > 0.00001 and visc < 0.00002
 
+    def test_gas_viscosity_physical_ordering_co2_vs_n2(self) -> None:
+        """
+        Verify gas viscosity physical ordering for polyatomic species (TOOLS-21, #5852).
+
+        Under Chapman-Enskog kinetic theory and NIST/Perry empirical data,
+        CO2 (44.01 g/mol) has a larger collision cross-section than N2 (28.01 g/mol),
+        resulting in lower dynamic viscosity at 300 K:
+          mu(CO2) ~ 14.9 - 15.0 uPa*s < mu(N2) ~ 17.8 uPa*s.
+        The naive (MW/MW_air)^0.25 scaling erroneously predicts mu(CO2) > mu(N2).
+        """
+        visc_co2 = calculate_gas_viscosity(temperature_k=300.0, molecular_weight=44.01)
+        visc_n2 = calculate_gas_viscosity(temperature_k=300.0, molecular_weight=28.01)
+        assert visc_co2 < visc_n2, (
+            f"CO2 dynamic viscosity ({visc_co2 * 1e6:.2f} uPa*s) must be lower than "
+            f"N2 dynamic viscosity ({visc_n2 * 1e6:.2f} uPa*s) at 300 K"
+        )
+
     def test_flooding_velocity_valid(self) -> None:
         """Calculate flooding threshold utilizing Eckert's Generalized Flooding correlation approximations."""
         # Key is 'Metal Pall Rings', not 'pall_ring_1_inch_ceramic'
