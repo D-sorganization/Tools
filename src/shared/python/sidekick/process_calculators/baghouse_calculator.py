@@ -161,15 +161,23 @@ class BaghouseCalculator:
         temperature_k: float,
         pressure_pa: float,
         composition: dict[str, float],
+        standard_basis: str = "STP",
     ) -> tuple[float, float]:
         """Estimate volumetric flow rates using ideal gas law.
 
         Returns:
             (acfm, scfm) - Actual and standard cubic feet per minute
         """
-        # Molecular weights in kg/mol
         if mass_flow_kg_s is None:
             raise ValueError("mass_flow_kg_s must be provided")
+
+        basis_key = standard_basis.upper()
+        if basis_key not in STANDARD_BASIS_TEMPS_K:
+            raise ValueError(
+                f"Unsupported standard_basis: {standard_basis!r}. "
+                f"Supported bases: {sorted(STANDARD_BASIS_TEMPS_K.keys())}"
+            )
+
         mw_data = {
             "H2": MW_H2_KG,
             "CO": MW_CO_KG,
@@ -198,8 +206,9 @@ class BaghouseCalculator:
         )
         acfm = vol_flow_actual_m3_s * M3_S_TO_CFM
 
-        # Standard conditions: T = 273.15 K, P = 101,325 Pa
-        density_std = ATM_PA / (r_specific * STP_TEMPERATURE_K)
+        # Standard conditions: T_std based on standard_basis, P = 101,325 Pa
+        t_std = STANDARD_BASIS_TEMPS_K[basis_key]
+        density_std = ATM_PA / (r_specific * t_std)
         vol_flow_std_m3_s = mass_flow_kg_s / density_std if density_std > 0 else 0.0
         scfm = vol_flow_std_m3_s * M3_S_TO_CFM
 
@@ -263,9 +272,7 @@ class BaghouseCalculator:
         density_actual = (
             pressure_pa / (r_spec * outlet_temp_k) if outlet_temp_k > 0 else 1.0
         )
-        flow_actual_m3_s = (
-            gas_flow_kg_s / density_actual if density_actual > 0 else 0.0
-        )
+        flow_actual_m3_s = gas_flow_kg_s / density_actual if density_actual > 0 else 0.0
         flow_acfm = flow_actual_m3_s * M3_S_TO_CFM
 
         # Standard conditions: T_std based on standard_basis, P_std = 101,325 Pa
@@ -276,8 +283,8 @@ class BaghouseCalculator:
 
         return convert(outlet_temp_k, "K", "C"), flow_acfm, flow_scfm
 
+    @staticmethod
     def _calculate_drum_sizing(
-        self,
         solid_carbon_in_kg_hr: float,
         ash_in_kg_hr: float,
         carbon_removal_efficiency: float,

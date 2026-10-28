@@ -288,10 +288,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 11847,
+      "bytes_lf": 14296,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "5913a6b8e8e6c14b9ea9f1053e95402c8d4bce243095e581b5ba51fba8da86cc",
+      "content_sha256_lf": "edfbea40f5a8bf41a875022ccc59e75449aed3be822e553c365bcbad5a52413f",
       "family": "process-calculators-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-BAGHOUSE-CALCULATOR-PY-EDA6EF2542C4",
       "language": "python",
@@ -338,6 +338,11 @@
           {
             "kind": "class",
             "name": "BaghouseResult",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "STANDARD_BASIS_TEMPS_K",
             "signature": null
           }
         ],
