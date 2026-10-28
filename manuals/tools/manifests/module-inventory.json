@@ -321,7 +321,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-humanoid-character-builder.json"
     },
     {
-      "content_sha256_lf": "1538727bfb7d915962524328e7aa4e82d7dcafb8a7d565871b6c5100d206104d",
+      "content_sha256_lf": "fcbeca8cf9e31028b40e2ffa1b0d6a4c7adf95940e10f4c67697c5aede98e02a",
       "entry_count": 7,
       "package": "src/inertia_calculator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-inertia-calculator.json"
@@ -921,7 +921,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-vibroacoustics.json"
     },
     {
-      "content_sha256_lf": "51887107eb51e0a3704df0a3b5e4cc287ac31d923e13af5ce885d091063edc0c",
+      "content_sha256_lf": "53a2e652dce91e50c507c8c723ad9709199531a6e62af17430c0d014bb594411",
       "entry_count": 22,
       "package": "src/shared/python/theme",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-theme.json"

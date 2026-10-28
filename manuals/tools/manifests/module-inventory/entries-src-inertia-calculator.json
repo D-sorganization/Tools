@@ -322,10 +322,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 18294,
+      "bytes_lf": 18928,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "ca6c1c52b5fa8041daeb3036e162398f0c19349723fa8ce35575733fa4d2a1bf",
+      "content_sha256_lf": "1813182e0a9d5235f2f97b38dc5405b5980f5965cb3ed64a35d8736daf91d8ae",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-INERTIA-CALCULATOR-PYTHON-INERTIA-CALCULATOR-UI-PYQT6-MAIN-WINDOW-PY-D82B19040B65",
       "language": "python",

@@ -209,6 +209,11 @@ def _load_main_window_module():
         "shared.python.sidekick.ui.widgets.base_calculator_widget"
     )
     shared_base_module.BaseCalculatorWindow = _FakeBaseCalculatorWindow
+    shared_theme_module = types.ModuleType("shared.python.theme")
+    shared_theme_module.__path__ = []
+    shared_catppuccin_module = types.ModuleType("shared.python.theme.catppuccin")
+    shared_catppuccin_module.CATPPUCCIN_MOCHA = MagicMock()
+    shared_catppuccin_module.get_stylesheet = MagicMock(return_value="")
 
     mocks = {
         "PyQt6": MagicMock(),
@@ -225,6 +230,8 @@ def _load_main_window_module():
         "shared.python.sidekick.ui": shared_ui_module,
         "shared.python.sidekick.ui.widgets": shared_widgets_module,
         "shared.python.sidekick.ui.widgets.base_calculator_widget": shared_base_module,
+        "shared.python.theme": shared_theme_module,
+        "shared.python.theme.catppuccin": shared_catppuccin_module,
     }
 
     # Use a unique module name to avoid caching collisions across tests
@@ -334,6 +341,23 @@ class TestValidateInertiaDbC:
             window, 0.1, 0.1, 0.1, 0.0, 0.0, 0.0
         )
         assert errors == []
+
+    def test_validate_inertia_returns_errors_for_principal_triangle_inequality_violation(
+        self,
+    ):
+        """_validate_inertia returns error when principal moments violate triangle inequality."""
+        mod = _load_main_window_module()
+        window = MagicMock(spec=mod.InertiaCalculatorWindow)
+        # Tensor with eigenvalues [1.0, 1.0, 4.0] (4.0 > 1.0 + 1.0 violates triangle inequality)
+        # rotated by 45 deg around X axis so coordinate diagonals pass diagonal checks:
+        # ixx=1.0, iyy=2.5, izz=2.5, iyz=-1.5
+        errors = mod.InertiaCalculatorWindow._validate_inertia(
+            window, 1.0, 2.5, 2.5, 0.0, 0.0, -1.5
+        )
+        assert any(
+            "triangle inequality" in e.lower() and "principal" in e.lower()
+            for e in errors
+        )
 
 
 class TestInertiaCalculatorGUIRegistration:
