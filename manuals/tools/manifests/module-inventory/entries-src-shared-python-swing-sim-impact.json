@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "provisional",
-      "bytes_lf": 2643,
+      "bytes_lf": 2747,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "ce5d660ff1dabeb15822ea9687cc46c6e1aeb7c3f5a320b7f5e5fd5809eb0687",
+      "content_sha256_lf": "d52eec1683187cf75d4c7c194dd95daed63c5115cb983d8115b0d2c83a864187",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-INIT-PY-430FD94AE71F",
       "language": "python",
@@ -178,6 +178,11 @@
           },
           {
             "kind": "re-export",
+            "name": "ToolsDeliveryEstimate",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "analyze_dplane",
             "signature": null
           },
@@ -194,6 +199,11 @@
           {
             "kind": "re-export",
             "name": "derive_delivery",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "estimate_delivery",
             "signature": null
           },
           {
@@ -1371,10 +1381,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 10724,
+      "bytes_lf": 15241,
       "classification": "calculation",
       "classification_basis": "path-marker:impact",
-      "content_sha256_lf": "943a507d544724a9765391a80c71e7895d6ae778b75a3f9eaa7b62a0204e0f80",
+      "content_sha256_lf": "9482728fdb82053c179c63c8687de40483d087c5a2bbe0be0c831f390f5619b5",
       "family": "swing-simulation-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SWING-SIM-IMPACT-DELIVERY-PY-6280D9E10DBF",
       "language": "python",
@@ -1424,6 +1434,11 @@
             "signature": null
           },
           {
+            "kind": "class",
+            "name": "ToolsDeliveryEstimate",
+            "signature": null
+          },
+          {
             "kind": "constant",
             "name": "_MAX_ANGLE_DEG",
             "signature": null
@@ -1440,6 +1455,11 @@
           },
           {
             "kind": "function",
+            "name": "estimate_delivery",
+            "signature": "params: DeliveryParameters"
+          },
+          {
+            "kind": "function",
             "name": "to_pre_impact_state",
             "signature": "params: DeliveryParameters, clubhead_mass: float=DRIVER_MASS_KG, clubhead_moi: float=DRIVER_MOI_KG_M2, clubhead_moi_tensor: np.ndarray | None=None, ball_velocity: np.ndarray | None=None, ball_angular_velocity: np.ndarray | None=None, clubhead_angular_velocity: np.ndarray | None=None"
           }
@@ -1453,6 +1473,7 @@
           "m/s",
           "mm",
           "rad/s",
+          "rpm",
           "s"
         ],
         "validation_paths": []

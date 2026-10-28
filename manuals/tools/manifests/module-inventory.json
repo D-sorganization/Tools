@@ -165,7 +165,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
     },
     {
-      "content_sha256_lf": "146615e4c0f876cf8e32be000edb23e5541a6fe4226191d553b7e13e319127fb",
+      "content_sha256_lf": "a2153f12040cc228397bc79c3f42f43bf736276906fa52e4b22ab7179186bf5f",
       "entry_count": 14,
       "package": "shared_scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-shared-scripts.json"
@@ -867,7 +867,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-ground.json"
     },
     {
-      "content_sha256_lf": "587ae97dd2c965bb53be505005ecac2497a44124bd4b50d840fa4dbaf158870d",
+      "content_sha256_lf": "e13ce64d29825d001f37f0f556ac81202614a6280d3fd92962d622e1bf85f7cd",
       "entry_count": 27,
       "package": "src/shared/python/swing_sim/impact",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-impact.json"

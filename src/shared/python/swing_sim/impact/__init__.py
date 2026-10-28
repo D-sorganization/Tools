@@ -27,7 +27,9 @@ from .constants import (
 from .delivery import (
     DeliveryDerived,
     DeliveryParameters,
+    ToolsDeliveryEstimate,
     derive_delivery,
+    estimate_delivery,
     to_pre_impact_state,
 )
 from .dplane import (
@@ -76,6 +78,7 @@ __all__ = [
     "TYPICAL_CONTACT_DURATION_S",
     "DeliveryDerived",
     "DeliveryParameters",
+    "ToolsDeliveryEstimate",
     "FaceNormalAtOffset",
     "FiniteTimeImpactModel",
     "GearEffectResult",
@@ -93,6 +96,7 @@ __all__ = [
     "compute_gear_effect",
     "create_impact_model",
     "derive_delivery",
+    "estimate_delivery",
     "face_basis",
     "offset_to_face_vector",
     "resolve_contact_normal",

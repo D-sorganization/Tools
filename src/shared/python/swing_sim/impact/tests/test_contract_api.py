@@ -22,15 +22,13 @@ EXPECTED_PUBLIC_API = {
     "DRIVER_COR",
     "DRIVER_MASS_KG",
     "DRIVER_MOI_KG_M2",
-    "GOLF_BALL_MASS_KG",
-    "GOLF_BALL_MOMENT_OF_INERTIA_KG_M2",
-    "GOLF_BALL_RADIUS_M",
-    "SPHERE_ROLLING_CAP_FACTOR",
-    "TYPICAL_CONTACT_DURATION_S",
     "DeliveryDerived",
     "DeliveryParameters",
     "FaceNormalAtOffset",
     "FiniteTimeImpactModel",
+    "GOLF_BALL_MASS_KG",
+    "GOLF_BALL_MOMENT_OF_INERTIA_KG_M2",
+    "GOLF_BALL_RADIUS_M",
     "GearEffectResult",
     "ImpactEvent",
     "ImpactModel",
@@ -41,11 +39,15 @@ EXPECTED_PUBLIC_API = {
     "PostImpactState",
     "PreImpactState",
     "RigidBodyImpactModel",
+    "SPHERE_ROLLING_CAP_FACTOR",
     "SpringDamperImpactModel",
+    "TYPICAL_CONTACT_DURATION_S",
+    "ToolsDeliveryEstimate",
     "analyze_dplane",
     "compute_gear_effect",
     "create_impact_model",
     "derive_delivery",
+    "estimate_delivery",
     "face_basis",
     "offset_to_face_vector",
     "resolve_contact_normal",
@@ -76,7 +78,11 @@ def test_parent_facade_untouched() -> None:
 
 @pytest.mark.contract
 def test_delivery_types_are_frozen_dataclasses() -> None:
-    for cls in (impact.DeliveryParameters, impact.DeliveryDerived):
+    for cls in (
+        impact.DeliveryParameters,
+        impact.DeliveryDerived,
+        impact.ToolsDeliveryEstimate,
+    ):
         assert dataclasses.is_dataclass(cls)
         assert cls.__dataclass_params__.frozen  # type: ignore[attr-defined]
 
