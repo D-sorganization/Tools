@@ -15632,6 +15632,12 @@
                   "annotation": "float",
                   "default": null,
                   "kind": "arg"
+                },
+                {
+                  "name": "standard_basis",
+                  "annotation": "str",
+                  "default": "'STP'",
+                  "kind": "arg"
                 }
               ],
               "returns": "BaghouseResult"
@@ -16588,6 +16594,12 @@
                   "name": "bag_area_ft2",
                   "annotation": "float",
                   "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "standard_basis",
+                  "annotation": "str",
+                  "default": "'STP'",
                   "kind": "arg"
                 }
               ],

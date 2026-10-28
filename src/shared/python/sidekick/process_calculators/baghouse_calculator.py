@@ -44,7 +44,6 @@ from .constants import (
 __all__ = [
     "BaghouseCalculator",
     "BaghouseResult",
-    "STANDARD_BASIS_TEMPS_K",
 ]
 
 STANDARD_BASIS_TEMPS_K: dict[str, float] = {
