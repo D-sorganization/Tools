@@ -69,6 +69,43 @@ class TestBaghouseCalculations:
         assert scfm > 0.0
         assert acfm == pytest.approx(scfm, rel=0.01)
 
+    def test_volume_flow_standard_basis(self, calculator: BaghouseCalculator) -> None:
+        """Test standard volume flow under various temperature reference bases (STP, EPA/NTP, 60F)."""
+        mix = {"N2": 1.0}
+        _, scfm_stp = calculator._estimate_volume_flow(
+            mass_flow_kg_s=1.0,
+            temperature_k=300.0,
+            pressure_pa=101325.0,
+            composition=mix,
+            standard_basis="STP",
+        )
+        _, scfm_epa = calculator._estimate_volume_flow(
+            mass_flow_kg_s=1.0,
+            temperature_k=300.0,
+            pressure_pa=101325.0,
+            composition=mix,
+            standard_basis="EPA",
+        )
+        _, scfm_60f = calculator._estimate_volume_flow(
+            mass_flow_kg_s=1.0,
+            temperature_k=300.0,
+            pressure_pa=101325.0,
+            composition=mix,
+            standard_basis="STANDARD_60F",
+        )
+
+        assert scfm_epa / scfm_stp == pytest.approx(293.15 / 273.15, rel=1e-4)
+        assert scfm_60f / scfm_stp == pytest.approx(288.71 / 273.15, rel=1e-4)
+
+        with pytest.raises(ValueError, match="Unsupported standard_basis"):
+            calculator._estimate_volume_flow(
+                mass_flow_kg_s=1.0,
+                temperature_k=300.0,
+                pressure_pa=101325.0,
+                composition=mix,
+                standard_basis="INVALID_BASIS",
+            )
+
     def test_calculate_drum_sizing(self) -> None:
         """Test drum fill time derivations."""
         (
