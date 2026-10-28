@@ -5947,6 +5947,15 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-28 | #5854 | refine gas viscosity calculation to avoid non-physical (MW/MW_air)^0.25 scaling (TOOLS-21) |
+| 2026-10-28 | #5850 | Validate triangle inequality on principal moments of inertia (TOOLS-17) |
+| 2026-10-28 | #5848 | Do not divide operating_current_a by electrode count in electrode advisor layout (TOOLS-09) |
+| 2026-10-28 | #5845 | Delete dead unreachable HAS_THERMO branch and update docstrings in baghouse_calculator (TOOLS-25) |
+| 2026-10-28 | #5843 | Support configurable standard temperature reference basis for SCFM calculation |
+| 2026-10-28 | #5841 | Correct Colebrook friction factor solver method from Newton-Raphson to fixed-point Picard iteration and document transitional regime (TOOLS-13) |
+| 2026-10-28 | #5846 | Evaluate glass conductivity strictly at glass temperature without uncited power density bias in sidekick glass_interface (GLASS-07) |
+| 2026-10-28 | #5833 | Use atan2 and hypot for Euler angle extraction near singularity (TOOLS-28) |
+| 2026-10-28 | #5818 | Evaluate water knockout at cooler temperature and re-normalize composition (TOOLS-05) |
 | 2026-10-27 | #5838 | Correct KG_TO_MG constant from 1000.0 to 1e6 in scrubber calculator (TOOLS-22) |
 | 2026-10-27 | #5831 | Include elevation pressure drop in compressible flow calculations (TOOLS-12) |
 | 2026-10-27 | #5829 | Sort nominal pipe sizes by true physical diameter instead of string replacement (TOOLS-14) |
