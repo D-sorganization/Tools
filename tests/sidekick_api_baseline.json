@@ -24379,6 +24379,12 @@
                   "annotation": "bool",
                   "default": "True",
                   "kind": "arg"
+                },
+                {
+                  "name": "cooler_temperature",
+                  "annotation": "float",
+                  "default": "INTERCOOLER_OUTLET_TEMP_K",
+                  "kind": "arg"
                 }
               ],
               "returns": "dict[str, Any]"
