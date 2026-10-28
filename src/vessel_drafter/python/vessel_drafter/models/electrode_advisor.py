@@ -156,7 +156,7 @@ def _build_default_placements(
     spacing_m = bath.width_m * 0.6
     radius_m = spacing_m * 0.4
     cad_z_mm = (bath.height_m + electrodes.top_offset_m) * MM_PER_M
-    current_per_electrode = electrodes.operating_current_a / electrodes.count
+    current_per_electrode = electrodes.operating_current_a
     effective_length_mm = electrodes.current_length_mm - electrodes.worn_length_mm
 
     placements: list[ElectrodePlacement] = []
