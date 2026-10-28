@@ -1,14 +1,10 @@
-import pytest
-
-build123d = pytest.importorskip("build123d")
+from __future__ import annotations
 
 from math import sqrt
 
+import pytest
 from vessel_drafter.models.electrode_advisor import (
     DEFAULT_ELECTRODE_ADVISOR_LAYOUT,
-)
-from vessel_drafter.projects.electrode_advisor_default_layout import (
-    build_default_layout_shape,
 )
 
 
@@ -40,6 +36,11 @@ def test_default_positions_are_evenly_spaced() -> None:
 
 
 def test_shape_bounding_box_matches_layout_envelope() -> None:
+    pytest.importorskip("build123d")
+    from vessel_drafter.projects.electrode_advisor_default_layout import (
+        build_default_layout_shape,
+    )
+
     shape = build_default_layout_shape()
     box = shape.bounding_box()
     size = box.size
@@ -47,3 +48,11 @@ def test_shape_bounding_box_matches_layout_envelope() -> None:
     assert size.X == pytest.approx(3000.0)
     assert size.Y == pytest.approx(2000.0)
     assert size.Z == pytest.approx(2700.0)
+
+
+def test_default_electrode_placement_current_matches_operating_current() -> None:
+    """Issue #5847 / TOOLS-09: placements carry operating current per phase."""
+    layout = DEFAULT_ELECTRODE_ADVISOR_LAYOUT
+    assert layout.electrodes.operating_current_a == pytest.approx(2500.0)
+    for placement in layout.placements:
+        assert placement.current_a == pytest.approx(2500.0)
