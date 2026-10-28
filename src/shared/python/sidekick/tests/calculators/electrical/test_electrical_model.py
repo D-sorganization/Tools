@@ -214,12 +214,11 @@ class TestGlassPropertiesInterface:
         assert props["viscosity"] == 1.5
 
     def test_power_density_heats_glass(self) -> Any:
-        """Line 154: power_density > 0 → increased effective temperature."""
+        """GLASS-07 (#5837): conductivity evaluates at glass temperature only."""
         glass = GlassPropertiesInterface()
         cond_no_power = glass.get_conductivity(1200.0, power_density=0)
         cond_with_power = glass.get_conductivity(1200.0, power_density=10000)
-        # Higher effective temp → higher conductivity
-        assert cond_with_power > cond_no_power
+        assert cond_with_power == cond_no_power
 
     def test_get_resistivity(self) -> Any:
         """Lines 173-180: get_resistivity returns 1/conductivity."""
