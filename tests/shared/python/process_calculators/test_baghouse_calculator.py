@@ -33,12 +33,16 @@ class TestBaghouseCalculatorInit:
         assert not hasattr(mod, "HAS_THERMO"), "Dead HAS_THERMO symbol still present"
         assert not hasattr(mod, "GasStream"), "Dead GasStream placeholder still present"
         assert not hasattr(mod, "FlowUnit"), "Dead FlowUnit placeholder still present"
-        assert not hasattr(mod, "ThermodynamicCalculator"), "Dead ThermodynamicCalculator placeholder still present"
+        assert not hasattr(mod, "ThermodynamicCalculator"), (
+            "Dead ThermodynamicCalculator placeholder still present"
+        )
 
     def test_docstring_reflects_standalone_contract(self) -> None:
         """Class docstring must not advertise dead full mode (TOOLS-25, #5844)."""
         doc = BaghouseCalculator.__doc__ or ""
-        assert "Full mode (with thermo module)" not in doc, "Docstring still advertises dead full mode"
+        assert "Full mode (with thermo module)" not in doc, (
+            "Docstring still advertises dead full mode"
+        )
 
 
 class TestBaghouseCalculations:
