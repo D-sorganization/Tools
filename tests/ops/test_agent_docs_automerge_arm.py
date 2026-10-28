@@ -89,8 +89,8 @@ def test_fleet_managed_blocks_do_not_instruct_raw_gh_pr_merge_auto(
             offenders.append(f"{rel}:{lineno}: {line.strip()}")
     assert not offenders, (
         "use `python scripts/automerge_guard.py <owner>/<repo> <pr> --arm "
-        "--strategy squash` instead of raw gh pr merge --auto in fleet-managed blocks:\n"
-        + "\n".join(offenders)
+        "--strategy squash` instead of raw gh pr merge --auto in "
+        "fleet-managed blocks:\n" + "\n".join(offenders)
     )
 
 

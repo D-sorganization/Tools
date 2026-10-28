@@ -101,7 +101,7 @@ speed, HLA, tolerance and the calibration used; a parametrised test through
 1. One worktree per issue:
    `git worktree add ../_wt_claude_<issue> -b claude/<issue>-<slug> origin/main`.
    Never `git add -A` (untracked recordings and worktrees). Open PRs ready (not
-   draft) and arm `gh pr merge --auto --squash` when CI is green.
+   draft) and arm `python scripts/automerge_guard.py <owner>/<repo> <pr> --arm --strategy squash` when CI is green.
 2. Post a lease before editing (from Repository_Management:
    `python -m scripts.post_agent_lease --agent claude --session <id> --repo Tools --issue <N>`).
 3. Every commit touching `src/` needs: one SPEC.md section 12 row keyed by
@@ -139,7 +139,7 @@ speed, HLA, tolerance and the calibration used; a parametrised test through
     Required checks are `quality-gate` and `tests (3.11)`; the rest are
     advisory. There is no standalone `jq` on this machine — filter inside
     `gh --jq`. Poll at 5 minute intervals or longer; auto-merge
-    (`gh pr merge --auto --squash`) does the merging.
+    (via automerge_guard) does the merging.
 11. CI's shallow runner falls back to a direct diff against `origin/main`
     when it has no merge-base; if main moved after your last merge, files
     added there look "deleted" and the tests lane fails — merge main again.
