@@ -64,12 +64,56 @@ import numpy as np
 
 from shared.python.contracts import require
 
-from .constants import DRIVER_MASS_KG, DRIVER_MOI_KG_M2
+from .constants import DRIVER_COR, DRIVER_MASS_KG, DRIVER_MOI_KG_M2
 from .dplane import DPlaneAnalysis, analyze_dplane
-from .types import PreImpactState
+from .models import RigidBodyImpactModel
+from .types import ImpactParameters, PreImpactState
 
 _MM_TO_M = 1e-3
 _MAX_ANGLE_DEG = 89.0
+
+
+@dataclass(frozen=True)
+class ToolsDeliveryEstimate:
+    """Delivered club and ball flight estimate with documented model basis.
+
+    Carries kinematic D-plane quantities along with physical launch angle and
+    spin rate derived from the rigid-body impulse-momentum collision model
+    (:class:`~shared.python.swing_sim.impact.models.RigidBodyImpactModel` with
+    COR impulse and Coulomb friction with 2/7 sphere rolling cap).
+
+    Attributes:
+        club_path_deg: Clubhead travel direction azimuth [deg] (+ = in-to-out)
+        attack_angle_deg: Clubhead travel elevation angle [deg] (+ = hitting up)
+        face_angle_deg: Delivered face normal azimuth [deg] (+ = open / right)
+        dynamic_loft_deg: Delivered face normal elevation [deg]
+        face_to_path_deg: Horizontal face-to-path angle [deg] (face minus path)
+        spin_loft_3d_deg: 3-D angle between travel vector and face normal [deg]
+        planar_spin_loft_deg: Planar spin loft [deg]
+        spin_axis_tilt_deg: Signed D-plane spin axis tilt [deg] (+ = fade side)
+        dplane_status: Status of the D-plane geometry ('defined', etc.)
+        launch_angle_deg: Ball launch elevation angle [deg] relative to horizontal,
+            computed via rigid-body impulse-momentum exchange with restitution (COR).
+        spin_rate_rpm: Total ball spin magnitude [rpm] (revolutions per minute),
+            computed via tangential Coulomb friction impulse capped at the 2/7
+            rolling-without-slip limit for a uniform sphere.
+        spin_rate_rad_per_s: Total ball spin magnitude [rad/s].
+        label: Provenance label identifying model basis.
+    """
+
+    club_path_deg: float | None
+    attack_angle_deg: float | None
+    face_angle_deg: float | None
+    dynamic_loft_deg: float
+    face_to_path_deg: float | None
+    spin_loft_3d_deg: float
+    planar_spin_loft_deg: float | None
+    spin_axis_tilt_deg: float | None
+    dplane_status: str
+    launch_angle_deg: float
+    spin_rate_rpm: float
+    spin_rate_rad_per_s: float = 0.0
+    label: str = "model estimate (Tools D-plane, rigid-body COR & 2/7 friction spin)"
 
 
 @dataclass(frozen=True)
@@ -230,6 +274,67 @@ def derive_delivery(
         spin_axis=spin_axis,
         spin_axis_tilt_deg=spin_axis_tilt_deg,
         dplane=dplane,
+    )
+
+
+def estimate_delivery(params: DeliveryParameters) -> ToolsDeliveryEstimate:
+    """Evaluate delivered club parameters into a ToolsDeliveryEstimate.
+
+    Computes 3D D-plane kinematics and simulates instantaneous rigid-body
+    COR impulse and friction spin to produce launch angle and spin rate.
+
+    Args:
+        params: Launch-monitor delivery parameters (speed, path, face,
+            attack angle, dynamic loft, impact offsets).
+
+
+    Returns:
+        :class:`ToolsDeliveryEstimate` carrying angles, launch angle, and spin rate.
+    """
+    derived = derive_delivery(params)
+    dplane = derived.dplane
+
+    pre_state = PreImpactState(
+        clubhead_velocity=derived.clubhead_velocity,
+        clubhead_angular_velocity=derived.clubhead_angular_velocity,
+        clubhead_orientation=derived.face_normal,
+        ball_position=np.zeros(3),
+        ball_velocity=np.zeros(3),
+        ball_angular_velocity=np.zeros(3),
+        clubhead_mass=DRIVER_MASS_KG,
+        clubhead_loft=math.radians(params.dynamic_loft_deg),
+        clubhead_moi=DRIVER_MOI_KG_M2,
+        impact_offset=derived.impact_offset,
+    )
+    model = RigidBodyImpactModel()
+    post_state = model.solve(
+        pre_state, ImpactParameters(cor=DRIVER_COR, friction_coefficient=0.4)
+    )
+
+    v_ball = post_state.ball_velocity
+    v_ball_horiz = math.hypot(float(v_ball[0]), float(v_ball[2]))
+    launch_angle_deg = (
+        math.degrees(math.atan2(float(v_ball[1]), v_ball_horiz))
+        if (v_ball_horiz > 1e-12 or abs(float(v_ball[1])) > 1e-12)
+        else 0.0
+    )
+    omega_ball = post_state.ball_angular_velocity
+    spin_rate_rad_s = float(np.linalg.norm(omega_ball))
+    spin_rate_rpm = spin_rate_rad_s * 60.0 / (2.0 * math.pi)
+
+    return ToolsDeliveryEstimate(
+        club_path_deg=dplane.club_path_deg,
+        attack_angle_deg=dplane.attack_angle_deg,
+        face_angle_deg=dplane.face_angle_deg,
+        dynamic_loft_deg=float(dplane.dynamic_loft_deg),
+        face_to_path_deg=derived.face_to_path_deg,
+        spin_loft_3d_deg=float(derived.spin_loft_deg),
+        planar_spin_loft_deg=dplane.planar_spin_loft_deg,
+        spin_axis_tilt_deg=derived.spin_axis_tilt_deg,
+        dplane_status=str(dplane.status),
+        launch_angle_deg=launch_angle_deg,
+        spin_rate_rpm=spin_rate_rpm,
+        spin_rate_rad_per_s=spin_rate_rad_s,
     )
 
 

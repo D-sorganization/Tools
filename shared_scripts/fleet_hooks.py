@@ -54,6 +54,8 @@ OVERSIZED_FILE_BYTE_BASELINES = {
     # As new subpackages are added (such as mocap #4714, #4727), this tracked AST file
     # scales with the total public symbol surface.
     "tests/sidekick_api_baseline.json": 1_120_000,
+    # Public API baseline for swing_sim AST verification.
+    "tests/api_baselines/swing_sim_api_baseline.json": 1_100_000,
     # SPEC.md specification document with full fleet-wide changelog history.
     "SPEC.md": 1_200_000,
 }

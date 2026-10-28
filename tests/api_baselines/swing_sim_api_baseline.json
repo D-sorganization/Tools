@@ -21051,6 +21051,7 @@
       "TYPICAL_CONTACT_DURATION_S",
       "DeliveryDerived",
       "DeliveryParameters",
+      "ToolsDeliveryEstimate",
       "FaceNormalAtOffset",
       "FiniteTimeImpactModel",
       "GearEffectResult",
@@ -21068,6 +21069,7 @@
       "compute_gear_effect",
       "create_impact_model",
       "derive_delivery",
+      "estimate_delivery",
       "face_basis",
       "offset_to_face_vector",
       "resolve_contact_normal",
@@ -21663,6 +21665,13 @@
       "TYPICAL_CONTACT_DURATION_S": {
         "type": "variable"
       },
+      "ToolsDeliveryEstimate": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
       "analyze_dplane": {
         "signature": {
           "args": [
@@ -21788,6 +21797,20 @@
             }
           ],
           "returns": "DeliveryDerived"
+        },
+        "type": "function"
+      },
+      "estimate_delivery": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "DeliveryParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "params"
+            }
+          ],
+          "returns": "ToolsDeliveryEstimate"
         },
         "type": "function"
       },
@@ -22649,7 +22672,9 @@
     "__all__": [
       "DeliveryDerived",
       "DeliveryParameters",
+      "ToolsDeliveryEstimate",
       "derive_delivery",
+      "estimate_delivery",
       "to_pre_impact_state"
     ],
     "explicit_all": false,
@@ -22662,6 +22687,13 @@
         "type": "class"
       },
       "DeliveryParameters": {
+        "info": {
+          "bases": [],
+          "methods": {}
+        },
+        "type": "class"
+      },
+      "ToolsDeliveryEstimate": {
         "info": {
           "bases": [],
           "methods": {}
@@ -22685,6 +22717,20 @@
             }
           ],
           "returns": "DeliveryDerived"
+        },
+        "type": "function"
+      },
+      "estimate_delivery": {
+        "signature": {
+          "args": [
+            {
+              "annotation": "DeliveryParameters",
+              "default": null,
+              "kind": "arg",
+              "name": "params"
+            }
+          ],
+          "returns": "ToolsDeliveryEstimate"
         },
         "type": "function"
       },

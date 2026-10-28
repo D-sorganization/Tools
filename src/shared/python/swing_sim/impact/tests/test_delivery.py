@@ -19,7 +19,7 @@ from shared.python.swing_sim.impact.types import ImpactParameters
 def _params(**kwargs: float) -> DeliveryParameters:
     defaults: dict[str, float] = {"clubhead_speed_mps": 50.0}
     defaults.update(kwargs)
-    return DeliveryParameters(**defaults)  # type: ignore[arg-type]
+    return DeliveryParameters(**defaults)
 
 
 @pytest.mark.unit
@@ -135,3 +135,40 @@ class TestToPreImpactState:
         pre = to_pre_impact_state(_params())
         np.testing.assert_allclose(pre.ball_velocity, 0.0)
         np.testing.assert_allclose(pre.ball_angular_velocity, 0.0)
+
+
+@pytest.mark.unit
+@pytest.mark.physics
+class TestDeliveryEstimates:
+    def test_tools_delivery_estimate_carries_launch_angle_and_spin_rate(self) -> None:
+        from ..delivery import (
+            ToolsDeliveryEstimate,
+            estimate_delivery,
+        )
+
+        params = _params(dynamic_loft_deg=10.5, clubhead_speed_mps=45.0)
+        est = estimate_delivery(params)
+        assert isinstance(est, ToolsDeliveryEstimate)
+        assert hasattr(est, "launch_angle_deg")
+        assert hasattr(est, "spin_rate_rpm")
+        assert hasattr(est, "spin_rate_rad_per_s")
+        assert est.launch_angle_deg == pytest.approx(10.5, abs=0.5)
+        assert est.spin_rate_rpm == pytest.approx(2621.8, rel=0.05)
+        assert est.spin_rate_rad_per_s > 0.0
+
+    def test_estimate_delivery_produces_tools_delivery_estimate(self) -> None:
+        from ..delivery import (
+            ToolsDeliveryEstimate,
+            estimate_delivery,
+        )
+
+        params = _params(dynamic_loft_deg=10.5, clubhead_speed_mps=45.0)
+        est = estimate_delivery(params)
+        assert isinstance(est, ToolsDeliveryEstimate)
+        assert est.launch_angle_deg == pytest.approx(10.5, abs=0.5)
+        assert est.spin_rate_rpm == pytest.approx(2621.8, rel=0.05)
+        assert est.dynamic_loft_deg == pytest.approx(10.5)
+        assert est.spin_loft_3d_deg == pytest.approx(10.5)
+        assert est.spin_axis_tilt_deg == pytest.approx(0.0, abs=1e-6)
+        assert est.dplane_status == "defined"
+        assert "Tools D-plane" in est.label
