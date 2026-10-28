@@ -37,6 +37,7 @@ Example Usage:
 from __future__ import annotations
 
 import logging
+import math
 from dataclasses import dataclass, field
 from datetime import datetime
 from typing import TYPE_CHECKING, Any
@@ -320,6 +321,7 @@ class AcidGasDewpointCalculator:
                 "Perry's Chemical Engineers' Handbook, 8th Ed.",
                 "NIST Chemistry WebBook",
                 "Industrial & Engineering Chemistry Research, 1995",
+                "Kiang, Y.-H. (1981). Acid Gas Dew Point. JAPCA 31(7):788-789",
             ],
             "H2S": [
                 "Perry's Chemical Engineers' Handbook, 8th Ed.",
@@ -449,18 +451,53 @@ class AcidGasDewpointCalculator:
             msg = f"Unknown method: {method}"
             raise ValueError(msg)
 
+    def calculate_hcl_aqueous_dewpoint(self, p_h2o_pa: float, p_hcl_pa: float) -> float:
+        """Calculate aqueous hydrochloric acid dew point using Kiang correlation.
+
+        1000 / T_dp = 3.7368 - 0.1591 * ln(P_H2O) - 0.0326 * ln(P_HCl)
+                      + 0.00269 * ln(P_H2O) * ln(P_HCl)
+        where partial pressures are in mmHg and T_dp is in Kelvin.
+
+        Citation:
+            Kiang, Y.-H. (1981). Acid Gas Dew Point. Journal of the Air Pollution
+            Control Association, 31(7), 788-789.
+        """
+        if p_h2o_pa <= 0 or p_hcl_pa <= 0:
+            return float("nan")
+
+        p_h2o_mmhg = p_h2o_pa / MMHG_TO_PA_CONV
+        p_hcl_mmhg = p_hcl_pa / MMHG_TO_PA_CONV
+
+        ln_h2o = math.log(p_h2o_mmhg)
+        ln_hcl = math.log(p_hcl_mmhg)
+
+        inv_t = 3.7368 - 0.1591 * ln_h2o - 0.0326 * ln_hcl + 0.00269 * ln_h2o * ln_hcl
+        if inv_t <= 0:
+            return float("nan")
+
+        t_k = 1000.0 / inv_t
+        return float(t_k - CELSIUS_TO_KELVIN_OFFSET)
+
     def calculate_dewpoint(
-        self, partial_pressure_pa: float, component: str, total_pressure_pa: float = 0.0
+        self,
+        partial_pressure_pa: float,
+        component: str,
+        total_pressure_pa: float = 0.0,
+        h2o_partial_pressure_pa: float = 0.0,
     ) -> float:
         """
-        Calculate dewpoint temperature using the inverse Antoine equation.
+        Calculate dewpoint temperature using inverse Antoine or acid correlations.
 
-        This method is more efficient and accurate than numerical solving methods.
+        For pure components or systems without moisture, uses the inverse
+        Antoine equation. For HCl in the presence of moisture
+        (h2o_partial_pressure_pa > 0), evaluates the Kiang (1981) aqueous
+        acid dew point correlation.
 
         Args:
             partial_pressure_pa: Partial pressure in Pa
             component: Component name
-            total_pressure_pa: Total system pressure in Pa (optional, for future use)
+            total_pressure_pa: Total system pressure in Pa (optional)
+            h2o_partial_pressure_pa: Moisture partial pressure in Pa
 
         Returns:
             Dewpoint temperature in Celsius
@@ -468,6 +505,11 @@ class AcidGasDewpointCalculator:
         if partial_pressure_pa <= 0:
             msg = f"partial_pressure_pa must be > 0, got {partial_pressure_pa}"
             raise ValueError(msg)
+
+        if component == "HCl" and h2o_partial_pressure_pa > 0:
+            return self.calculate_hcl_aqueous_dewpoint(
+                h2o_partial_pressure_pa, partial_pressure_pa
+            )
 
         require(
             component in self.antoine_constants,
@@ -502,11 +544,15 @@ class AcidGasDewpointCalculator:
         """Calculate dewpoints for each component in the mixture."""
         if partial_pressures is None:
             raise ValueError("partial_pressures must be provided")
+        h2o_partial_pa = partial_pressures.get("H2O", 0.0)
         dewpoints = {}
         for component, partial_pa in partial_pressures.items():
             if partial_pa > 0:
                 dewpoints[component] = self.calculate_dewpoint(
-                    partial_pa, component, total_pressure_pa
+                    partial_pa,
+                    component,
+                    total_pressure_pa,
+                    h2o_partial_pressure_pa=h2o_partial_pa,
                 )
             else:
                 dewpoints[component] = np.nan

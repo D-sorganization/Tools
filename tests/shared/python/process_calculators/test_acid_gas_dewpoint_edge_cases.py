@@ -202,6 +202,35 @@ class TestMixtureDewpointZeroComposition:
 
 
 # ---------------------------------------------------------------------------
+# Tests: Aqueous acid dewpoints (TOOLS-01 / #5851)
+# ---------------------------------------------------------------------------
+
+
+class TestHClAqueousDewpoint:
+    """Tests for aqueous HCl dew point via Kiang (1981) correlation."""
+
+    def test_hcl_aqueous_dewpoint_at_atmospheric_flue_gas(self, calculator):
+        """At 1 atm with 10% H2O and 1000 ppm HCl, HCl condenses
+        as aqueous acid at ~54.3 C.
+        """
+        comp = AcidGasComposition(h2o=0.10, hf=0.0, hcl=0.001, h2s=0.0, other=0.899)
+        result = calculator.calculate_dewpoint_mixture(
+            temperature_c=100.0,
+            pressure_bar=1.01325,
+            composition=comp,
+        )
+        # Water dew point at 10% (0.1013 bar = 76 mmHg) is ~46.1 C
+        assert 45.0 < result.h2o_dewpoint_c < 48.0
+
+        # Aqueous HCl dew point via Kiang is ~54.3 C (not -152 C pure Antoine)
+        assert 52.0 < result.hcl_dewpoint_c < 57.0
+
+        # Aqueous HCl condenses first, so it is the limiting component
+        assert result.limiting_component == "HCl"
+        assert result.overall_dewpoint_c == pytest.approx(result.hcl_dewpoint_c)
+
+
+# ---------------------------------------------------------------------------
 # Tests: Pure component dewpoints
 # ---------------------------------------------------------------------------
 

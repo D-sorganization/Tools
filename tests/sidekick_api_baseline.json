@@ -15426,6 +15426,29 @@
               ],
               "returns": "float"
             },
+            "calculate_hcl_aqueous_dewpoint": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "p_h2o_pa",
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "p_hcl_pa",
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "float"
+            },
             "calculate_dewpoint": {
               "args": [
                 {
@@ -15448,6 +15471,12 @@
                 },
                 {
                   "name": "total_pressure_pa",
+                  "annotation": "float",
+                  "default": "0.0",
+                  "kind": "arg"
+                },
+                {
+                  "name": "h2o_partial_pressure_pa",
                   "annotation": "float",
                   "default": "0.0",
                   "kind": "arg"
@@ -16234,6 +16263,29 @@
               ],
               "returns": "float"
             },
+            "calculate_hcl_aqueous_dewpoint": {
+              "args": [
+                {
+                  "name": "self",
+                  "annotation": null,
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "p_h2o_pa",
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg"
+                },
+                {
+                  "name": "p_hcl_pa",
+                  "annotation": "float",
+                  "default": null,
+                  "kind": "arg"
+                }
+              ],
+              "returns": "float"
+            },
             "calculate_dewpoint": {
               "args": [
                 {
@@ -16256,6 +16308,12 @@
                 },
                 {
                   "name": "total_pressure_pa",
+                  "annotation": "float",
+                  "default": "0.0",
+                  "kind": "arg"
+                },
+                {
+                  "name": "h2o_partial_pressure_pa",
                   "annotation": "float",
                   "default": "0.0",
                   "kind": "arg"
