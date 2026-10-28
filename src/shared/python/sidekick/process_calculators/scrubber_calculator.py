@@ -43,7 +43,6 @@ from .constants import (  # noqa: E402
     HTU_MIN,
     KG_TO_LB,
     METERS_TO_FEET,
-    MW_AIR_GMOL,
     NAOH_DENSITY_INTERCEPT,
     NAOH_DENSITY_SLOPE,
     R_UNIVERSAL_KMOL,
@@ -357,18 +356,28 @@ def calculate_gas_density(
 
 def calculate_gas_viscosity(temperature_k: float, molecular_weight: float) -> float:
     """
-    Estimate gas viscosity using Sutherland's formula for syngas-like mixtures.
+    Estimate gas dynamic viscosity using Sutherland's law with physical parameters.
+
+    For syngas and flue gas constituents (H2, CH4, CO, N2, CO2, H2S, SO2, HCl),
+    pure-component parameters (mu_ref, T_ref, S) are derived from Perry's Chemical
+    Engineers' Handbook and NIST Chemistry WebBook. For general mixtures, Sutherland
+    parameters are interpolated across molecular weight regimes without naive power-law
+    scaling, preserving the physical property that polyatomic CO2 is less viscous than
+    diatomic N2/CO at standard temperatures.
 
     Args:
         temperature_k: Gas temperature [K]
-        molecular_weight: Average molecular weight [kg/kmol]
+        molecular_weight: Average molecular weight [kg/kmol or g/mol]
 
     Returns:
         Dynamic viscosity [Pa·s]
 
     Reference:
-        Perry's Chemical Engineers' Handbook, 9th Edition
-        Approximate correlation for light gas mixtures
+        - Perry's Chemical Engineers' Handbook, 9th Edition, Table 2-312
+        - NIST Chemistry WebBook (SRD 69)
+
+    Preconditions:
+        temperature_k > 0, molecular_weight > 0
     """
     # Base viscosity at 300K for syngas (approximately air-like)
     if temperature_k is None:
@@ -379,16 +388,50 @@ def calculate_gas_viscosity(temperature_k: float, molecular_weight: float) -> fl
         "molecular_weight must be positive",
         molecular_weight,
     )
-    mu_ref = SYNGAS_VISCOSITY_REF  # Pa·s at 300K
-    t_ref = SUTHERLAND_T_REF  # K
-    s = SUTHERLAND_CONSTANT_AIR  # Sutherland constant for air-like gases
+
+    species_params: dict[str, tuple[float, float, float]] = {
+        "h2": (8.9e-6, 72.0, 2.016),
+        "ch4": (1.11e-5, 198.0, 16.04),
+        "n2": (1.78e-5, SUTHERLAND_CONSTANT_AIR, 28.01),
+        "co": (1.75e-5, 118.0, 28.01),
+        "h2s": (1.28e-5, 331.0, 34.08),
+        "hcl": (1.45e-5, 360.0, 36.46),
+        "co2": (1.49e-5, 240.0, 44.01),
+        "so2": (1.28e-5, 416.0, 64.06),
+    }
+
+    t_ref = SUTHERLAND_T_REF  # 300.0 K
+
+    # Check for near-pure species match (tolerance within 0.5 g/mol)
+    matched_mu_ref: float | None = None
+    matched_s: float | None = None
+    for _, (mu_sp, s_sp, mw_sp) in species_params.items():
+        if abs(molecular_weight - mw_sp) < 0.5:
+            matched_mu_ref = mu_sp
+            matched_s = s_sp
+            break
+
+    if matched_mu_ref is not None and matched_s is not None:
+        mu_ref = matched_mu_ref
+        s = matched_s
+    elif molecular_weight <= 28.01:
+        # Interpolate syngas regime between H2 (2.016 g/mol) and CO/N2 (28.01 g/mol)
+        frac = min(max((molecular_weight - 2.016) / (28.01 - 2.016), 0.0), 1.0)
+        mu_ref = 8.9e-6 + frac * (1.76e-5 - 8.9e-6)
+        s = 72.0 + frac * (114.0 - 72.0)
+    elif molecular_weight <= 44.01:
+        # Interpolate between N2/CO (28.01 g/mol) and CO2 (44.01 g/mol)
+        frac = (molecular_weight - 28.01) / (44.01 - 28.01)
+        mu_ref = 1.76e-5 - frac * (1.76e-5 - 1.49e-5)
+        s = 114.0 + frac * (240.0 - 114.0)
+    else:
+        # For heavy gas mixtures, default to syngas reference
+        mu_ref = SYNGAS_VISCOSITY_REF
+        s = SUTHERLAND_CONSTANT_AIR
 
     # Sutherland's formula
     mu = mu_ref * (temperature_k / t_ref) ** 1.5 * (t_ref + s) / (temperature_k + s)
-
-    # Adjust for molecular weight (heavier gases tend to be more viscous)
-    mw_correction = (molecular_weight / MW_AIR_GMOL) ** 0.25
-    return float(mu * mw_correction)
+    return float(mu)
 
 
 def calculate_flooding_velocity(
