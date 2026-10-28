@@ -288,10 +288,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 14296,
+      "bytes_lf": 14272,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "edfbea40f5a8bf41a875022ccc59e75449aed3be822e553c365bcbad5a52413f",
+      "content_sha256_lf": "43f1b1fcc2d9068668eb997320271b99273de1e1cbf21fc9d685b7f55be16c68",
       "family": "process-calculators-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-BAGHOUSE-CALCULATOR-PY-EDA6EF2542C4",
       "language": "python",

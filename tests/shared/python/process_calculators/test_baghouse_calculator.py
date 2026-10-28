@@ -175,7 +175,9 @@ class TestBaghouseCalculations:
             bag_area_ft2=1000.0,
             standard_basis="EPA",
         )
-        assert result_epa.flow_scfm / result.flow_scfm == pytest.approx(293.15 / 273.15, rel=1e-4)
+        assert result_epa.flow_scfm / result.flow_scfm == pytest.approx(
+            293.15 / 273.15, rel=1e-4
+        )
 
     def test_calculate_preconditions(self, calculator: BaghouseCalculator) -> None:
         """Test DbC assertions map to valid inputs."""
