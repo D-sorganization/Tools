@@ -361,3 +361,24 @@ def test_glass_interface_defaults_equal_across_copies() -> None:
     assert props["activation_energy"] == pytest.approx(expected_activation_energy)
     assert props["reference_temp"] == pytest.approx(expected_reference_temp)
     assert props["metal_conductivity"] == pytest.approx(expected_metal_conductivity)
+
+
+@pytest.mark.parametrize("temperature_celsius", [800.0, 1000.0, 1200.0, 1400.0])
+@pytest.mark.parametrize("power_density", [1e4, 1e5, 5e5, 1e6])
+def test_conductivity_does_not_depend_on_power_density(
+    temperature_celsius: float,
+    power_density: float,
+) -> None:
+    """GLASS-07 (#5837): default model evaluates at glass temperature only."""
+    interface = GlassPropertiesInterface()
+    sigma_zero = interface.get_conductivity(temperature_celsius, power_density=0.0)
+    sigma_power = interface.get_conductivity(
+        temperature_celsius, power_density=power_density
+    )
+    assert sigma_power == pytest.approx(sigma_zero, rel=1e-12)
+    assert interface._default_conductivity_model(
+        temperature_celsius, power_density=power_density
+    ) == pytest.approx(
+        interface._default_conductivity_model(temperature_celsius, power_density=0.0),
+        rel=1e-12,
+    )

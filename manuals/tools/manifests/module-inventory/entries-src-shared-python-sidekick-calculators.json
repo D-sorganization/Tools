@@ -1247,10 +1247,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 16708,
+      "bytes_lf": 16481,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "2b36f334e0cd4969c8fadb499cfbaf2a2d9284ec899d62802dfcf95c479b7c91",
+      "content_sha256_lf": "c0201295fed1d3f18aa0fb390e00a8a8be7ec2cabef2ea79aadc10aa76693898",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-CALCULATORS-ELECTRICAL-GLASS-INTERFACE-PY-783DB2C95C7E",
       "language": "python",
