@@ -461,9 +461,9 @@ def _rotation_matrix_to_euler_impl(
         sign = 1.0 if (j - i) % 3 == 1 else -1.0
 
         cb = np.clip(R[i, i], -1.0, 1.0)
-        b = math.acos(cb)
+        b = math.atan2(math.hypot(R[j, i], R[other, i]), cb)
 
-        if abs(math.sin(b)) > 1e-8:
+        if abs(math.sin(b)) > 1e-12:
             # General case: extract a and c from the i-th column/row
             # R[j,i] = sign * sin(b) * sin(a), R[other,i] = -sign * sin(b) * cos(a)
             a = math.atan2(R[j, i], -sign * R[other, i])
@@ -479,9 +479,9 @@ def _rotation_matrix_to_euler_impl(
         sign = 1.0 if (j - i) % 3 == 1 else -1.0
 
         sb = np.clip(sign * R[i, k], -1.0, 1.0)
-        b = math.asin(sb)
+        b = math.atan2(sb, math.hypot(R[i, i], R[i, j]))
 
-        if abs(math.cos(b)) > 1e-8:
+        if abs(math.cos(b)) > 1e-12:
             a = math.atan2(-sign * R[j, k], R[k, k])
             c = math.atan2(-sign * R[i, j], R[i, i])
         else:
