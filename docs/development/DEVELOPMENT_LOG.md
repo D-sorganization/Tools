@@ -1574,6 +1574,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5851 · Evaluate Aqueous Acid Dewpoint for HCl-H2O Systems via Kiang Correlation
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5851
+- **Branch:** merged via #5853
+- **PR:** #5853
+- **Paths:** see #5853
+- **Started:** 2026-10-28
+- **Last verified:** 2026-10-28 (`6f637141`; collated from changes/5851-acid-gas-dewpoint-kiang.md)
+- **Summary:** evaluate aqueous acid dewpoint for HCl-H2O systems via Kiang correlation
+- **Next step:** Shipped in PR #5853.
+
 ### DL-#5852 · Refine Gas Viscosity Calculation to Avoid Non-Physical (MW/MW_Air)^0.25 Scaling (TOOLS-21)
 
 - **State:** shipped
@@ -1918,10 +1931,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #5744
 - **Branch:** merged via #5751
-- **PR:** #5751
+- **PR:** #5751, #5856
 - **Paths:** see #5751
 - **Started:** 2026-10-25
-- **Last verified:** 2026-10-25 (`0163f367`; collated from changes/5744-route-repo-owned-agent-auto-merge-instru.md)
+- **Last verified:** 2026-10-28 (`0cdb4ff6`; collated from changes/5744-automerge-arm-guard.md)
 - **Summary:** Route repo-owned agent auto-merge instructions through automerge_guard.py and hold Blocked: PRs.
 - **Next step:** Shipped in PR #5751.
 
