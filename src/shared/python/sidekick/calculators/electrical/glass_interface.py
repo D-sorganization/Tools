@@ -35,7 +35,6 @@ _logger = logging.getLogger(__name__)
 # Performance constants
 _CACHE_MAX_SIZE = 1000  # Maximum cache entries before LRU eviction
 _R_GAS = R_UNIVERSAL  # Gas constant J/(mol·K) - pre-computed to avoid repeated lookups
-_POWER_DENSITY_HEATING_COEFFICIENT = 0.0001  # K per unit power density
 
 
 class GlassPropertiesInterface:
@@ -392,16 +391,13 @@ class GlassPropertiesInterface:
 
         Args:
             temperature_celsius: Degrees Celsius.
-            power_density: Heating term raising the effective temperature.
+            power_density: Heating term (unused by default model; conductivity
+                evaluates at glass temperature).
 
         Returns:
             Conductivity in S/m from the Arrhenius model.
         """
-        # Apply power density heating effect upfront
         temp_kelvin = celsius_to_kelvin(temperature_celsius)
-        if power_density > 0:
-            # Local heating from power density
-            temp_kelvin += power_density * _POWER_DENSITY_HEATING_COEFFICIENT
 
         # Arrhenius equation: sigma = sigma_0 * exp(-Ea/R * (1/T - 1/T_ref))
         props = {**self._default_properties, **self._current_properties}

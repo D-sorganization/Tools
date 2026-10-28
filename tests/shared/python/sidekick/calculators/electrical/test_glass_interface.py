@@ -369,10 +369,12 @@ def test_conductivity_does_not_depend_on_power_density(
     temperature_celsius: float,
     power_density: float,
 ) -> None:
-    """GLASS-07 (#5837): sigma from default model evaluates at glass temperature only."""
+    """GLASS-07 (#5837): default model evaluates at glass temperature only."""
     interface = GlassPropertiesInterface()
     sigma_zero = interface.get_conductivity(temperature_celsius, power_density=0.0)
-    sigma_power = interface.get_conductivity(temperature_celsius, power_density=power_density)
+    sigma_power = interface.get_conductivity(
+        temperature_celsius, power_density=power_density
+    )
     assert sigma_power == pytest.approx(sigma_zero, rel=1e-12)
     assert interface._default_conductivity_model(
         temperature_celsius, power_density=power_density
@@ -380,4 +382,3 @@ def test_conductivity_does_not_depend_on_power_density(
         interface._default_conductivity_model(temperature_celsius, power_density=0.0),
         rel=1e-12,
     )
-
