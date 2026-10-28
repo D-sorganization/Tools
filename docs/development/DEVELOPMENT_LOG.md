@@ -1574,6 +1574,84 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5836 · Correct KG_TO_MG Constant From 1000.0 to 1E6 in Scrubber Calculator (TOOLS-22)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5836
+- **Branch:** fix/5836-scrubber-kg-to-mg-constant
+- **PR:** #5838
+- **Paths:** see #5838
+- **Started:** 2026-10-27
+- **Last verified:** 2026-10-27 (`f1050edd`; collated from changes/5836-scrubber-kg-to-mg-constant.md)
+- **Summary:** Correct KG_TO_MG constant from 1000.0 to 1e6 in scrubber calculator (TOOLS-22)
+- **Next step:** Merge the PR.
+
+### DL-#5830 · Include Elevation Pressure Drop in Compressible Flow Calculations (TOOLS-12)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5830
+- **Branch:** fix/5830-pressure-drop-compressible-elevation
+- **PR:** #5831
+- **Paths:** see #5831
+- **Started:** 2026-10-27
+- **Last verified:** 2026-10-27 (`fb8648a4`; collated from changes/5830-pressure-drop-compressible-elevation.md)
+- **Summary:** Include elevation pressure drop in compressible flow calculations (TOOLS-12)
+- **Next step:** Merge the PR.
+
+### DL-#5828 · Sort Nominal Pipe Sizes by True Physical Diameter Instead of String Replacement (TOOLS-14)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5828
+- **Branch:** fix/5828-pipe-database-fraction-sort
+- **PR:** #5829
+- **Paths:** see #5829
+- **Started:** 2026-10-27
+- **Last verified:** 2026-10-27 (`62c61158`; collated from changes/5828-pipe-database-fraction-sort.md)
+- **Summary:** Sort nominal pipe sizes by true physical diameter instead of string replacement (TOOLS-14)
+- **Next step:** Merge the PR.
+
+### DL-#5825 · Ensure Integrate_Ode Includes T_End in Uniform Output Grid (TOOLS-27)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5825
+- **Branch:** fix/5825-simulation-core-integrate-ode-endpoint
+- **PR:** #5827
+- **Paths:** see #5827
+- **Started:** 2026-10-27
+- **Last verified:** 2026-10-27 (`253e297f`; collated from changes/5825-simulation-core-integrate-ode-endpoint.md)
+- **Summary:** Ensure integrate_ode includes t_end in uniform output grid (TOOLS-27)
+- **Next step:** Merge the PR.
+
+### DL-#5823 · Include Entropy of Mixing in Ideal Gas Mixture Entropy Calculation (TOOLS-07)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5823
+- **Branch:** fix/5823-thermo-mixture-entropy-of-mixing
+- **PR:** #5824
+- **Paths:** see #5824
+- **Started:** 2026-10-27
+- **Last verified:** 2026-10-27 (`03870cc9`; collated from changes/5823-thermo-mixture-entropy-of-mixing.md)
+- **Summary:** Include entropy of mixing in ideal gas mixture entropy calculation (TOOLS-07)
+- **Next step:** Merge the PR.
+
+### DL-#5821 · Compute Syngas Mixture Heat Capacity Ratio From Molar Heat Capacities (TOOLS-04)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5821
+- **Branch:** fix/5821-syngas-mixture-heat-capacity-ratio
+- **PR:** #5822
+- **Paths:** see #5822
+- **Started:** 2026-10-27
+- **Last verified:** 2026-10-27 (`6d2c9def`; collated from changes/5821-syngas-mixture-heat-capacity-ratio.md)
+- **Summary:** Compute syngas mixture heat capacity ratio from molar heat capacities (TOOLS-04)
+- **Next step:** Merge the PR.
+
 ### DL-#5806 · Glass Interface Fallback Contract: RuntimeError Escapes DEMO/LEGACY Fallback; Sigma Defaults Drift (TOOLS-31, TOOLS-30, TP-04, GLASS-06)
 
 - **State:** shipped
