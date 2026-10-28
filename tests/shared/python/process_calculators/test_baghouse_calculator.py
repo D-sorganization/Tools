@@ -69,6 +69,43 @@ class TestBaghouseCalculations:
         assert scfm > 0.0
         assert acfm == pytest.approx(scfm, rel=0.01)
 
+    def test_volume_flow_standard_basis(self, calculator: BaghouseCalculator) -> None:
+        """Test standard volume flow under various temperature reference bases (STP, EPA/NTP, 60F)."""
+        mix = {"N2": 1.0}
+        _, scfm_stp = calculator._estimate_volume_flow(
+            mass_flow_kg_s=1.0,
+            temperature_k=300.0,
+            pressure_pa=101325.0,
+            composition=mix,
+            standard_basis="STP",
+        )
+        _, scfm_epa = calculator._estimate_volume_flow(
+            mass_flow_kg_s=1.0,
+            temperature_k=300.0,
+            pressure_pa=101325.0,
+            composition=mix,
+            standard_basis="EPA",
+        )
+        _, scfm_60f = calculator._estimate_volume_flow(
+            mass_flow_kg_s=1.0,
+            temperature_k=300.0,
+            pressure_pa=101325.0,
+            composition=mix,
+            standard_basis="STANDARD_60F",
+        )
+
+        assert scfm_epa / scfm_stp == pytest.approx(293.15 / 273.15, rel=1e-4)
+        assert scfm_60f / scfm_stp == pytest.approx(288.71 / 273.15, rel=1e-4)
+
+        with pytest.raises(ValueError, match="Unsupported standard_basis"):
+            calculator._estimate_volume_flow(
+                mass_flow_kg_s=1.0,
+                temperature_k=300.0,
+                pressure_pa=101325.0,
+                composition=mix,
+                standard_basis="INVALID_BASIS",
+            )
+
     def test_calculate_drum_sizing(self) -> None:
         """Test drum fill time derivations."""
         (
@@ -121,6 +158,26 @@ class TestBaghouseCalculations:
         assert result.removal_efficiency["ash"] == 95.0
         assert result.air_to_cloth_ratio > 0.0
         assert result.clean_gas_flow_rate == 2.0 * 3600.0  # kg/hr
+
+        # Test calculate with EPA standard basis
+        result_epa = calculator.calculate(
+            gas_flow_kg_s=2.0,
+            inlet_temp_k=400.0,
+            pressure_pa=100000.0,
+            composition=mix,
+            solid_carbon_in_kg_hr=50.0,
+            ash_in_kg_hr=20.0,
+            carbon_removal_efficiency=0.99,
+            ash_removal_efficiency=0.95,
+            heat_loss_w=5000.0,
+            drum_volume_m3=2.5,
+            solid_density_kg_m3=800.0,
+            bag_area_ft2=1000.0,
+            standard_basis="EPA",
+        )
+        assert result_epa.flow_scfm / result.flow_scfm == pytest.approx(
+            293.15 / 273.15, rel=1e-4
+        )
 
     def test_calculate_preconditions(self, calculator: BaghouseCalculator) -> None:
         """Test DbC assertions map to valid inputs."""

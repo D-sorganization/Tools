@@ -4,8 +4,7 @@
 
 Core calculation engine for baghouse filter performance, solid removal, and drum sizing.
 
-This is a standalone calculator that can work with or without the full thermodynamic
-engine. When the thermo module is not available, it uses simplified ideal gas calculations.
+This is a standalone calculator that operates using ideal gas approximations.
 """
 
 from dataclasses import dataclass
@@ -46,6 +45,14 @@ __all__ = [
     "BaghouseCalculator",
     "BaghouseResult",
 ]
+
+STANDARD_BASIS_TEMPS_K: dict[str, float] = {
+    "STP": STP_TEMPERATURE_K,  # 273.15 K (0 °C, 32 °F)
+    "NTP": 293.15,  # 20 °C, 68 °F (EPA 40 CFR § 60.2 standard)
+    "EPA": 293.15,  # Alias for NTP
+    "STANDARD_60F": 288.71,  # 15.56 °C, 60 °F (industrial filtration basis)
+    "SATP_60F": 288.71,  # Alias for 60 °F standard
+}
 
 # Standalone simplified calculations are the shared-layer contract. Importing
 # downstream ``tools`` packages from src/shared violates the fleet dependency DAG.
@@ -153,15 +160,23 @@ class BaghouseCalculator:
         temperature_k: float,
         pressure_pa: float,
         composition: dict[str, float],
+        standard_basis: str = "STP",
     ) -> tuple[float, float]:
         """Estimate volumetric flow rates using ideal gas law.
 
         Returns:
             (acfm, scfm) - Actual and standard cubic feet per minute
         """
-        # Molecular weights in kg/mol
         if mass_flow_kg_s is None:
             raise ValueError("mass_flow_kg_s must be provided")
+
+        basis_key = standard_basis.upper()
+        if basis_key not in STANDARD_BASIS_TEMPS_K:
+            raise ValueError(
+                f"Unsupported standard_basis: {standard_basis!r}. "
+                f"Supported bases: {sorted(STANDARD_BASIS_TEMPS_K.keys())}"
+            )
+
         mw_data = {
             "H2": MW_H2_KG,
             "CO": MW_CO_KG,
@@ -177,23 +192,48 @@ class BaghouseCalculator:
             frac * mw_data.get(species, MW_DEFAULT_KG)
             for species, frac in composition.items()
         )
+        if mw_avg <= 0:
+            mw_avg = MW_DEFAULT_KG
 
-        if mw_avg > 0:
-            molar_flow = mass_flow_kg_s / mw_avg  # mol/s
-        else:
-            molar_flow = mass_flow_kg_s / MW_N2_KG  # Assume N2-like
+        r_specific = R_UNIVERSAL / mw_avg  # J/(kg·K)
 
-        # Actual volume flow (ideal gas)
-        vol_actual_m3_s = molar_flow * R_UNIVERSAL * temperature_k / pressure_pa
+        density_actual = (
+            pressure_pa / (r_specific * temperature_k) if temperature_k > 0 else 1.0
+        )
+        vol_flow_actual_m3_s = (
+            mass_flow_kg_s / density_actual if density_actual > 0 else 0.0
+        )
+        acfm = vol_flow_actual_m3_s * M3_S_TO_CFM
 
-        # Standard volume flow (at STP: 273.15 K, 101325 Pa)
-        vol_std_m3_s = molar_flow * R_UNIVERSAL * STP_TEMPERATURE_K / ATM_PA
-
-        # Convert to cfm (1 m³/s = 2118.88 cfm)
-        acfm = vol_actual_m3_s * M3_S_TO_CFM
-        scfm = vol_std_m3_s * M3_S_TO_CFM
+        # Standard conditions: T_std based on standard_basis, P = 101,325 Pa
+        t_std = STANDARD_BASIS_TEMPS_K[basis_key]
+        density_std = ATM_PA / (r_specific * t_std)
+        vol_flow_std_m3_s = mass_flow_kg_s / density_std if density_std > 0 else 0.0
+        scfm = vol_flow_std_m3_s * M3_S_TO_CFM
 
         return acfm, scfm
+
+    def _estimate_gas_constant(self, composition: dict[str, float]) -> float:
+        """Estimate specific gas constant for mixture."""
+        if composition is None:
+            raise ValueError("composition must be provided")
+        mw_data = {
+            "H2": MW_H2_KG,
+            "CO": MW_CO_KG,
+            "CO2": MW_CO2_KG,
+            "H2O": MW_H2O_KG,
+            "N2": MW_N2_KG,
+            "CH4": MW_CH4_KG,
+            "O2": MW_O2_KG,
+            "Ar": MW_AR_KG,
+        }
+        mw_avg = sum(
+            frac * mw_data.get(species, MW_DEFAULT_KG)
+            for species, frac in composition.items()
+        )
+        if mw_avg <= 0:
+            mw_avg = MW_DEFAULT_KG
+        return float(R_UNIVERSAL / mw_avg)
 
     def _calculate_outlet_thermal(
         self,
@@ -202,6 +242,7 @@ class BaghouseCalculator:
         pressure_pa: float,
         composition: dict[str, float],
         heat_loss_w: float,
+        standard_basis: str = "STP",
     ) -> tuple[float, float, float]:
         """Compute outlet temperature and volume flows using ideal gas approximations.
 
@@ -211,6 +252,13 @@ class BaghouseCalculator:
         if gas_flow_kg_s is None:
             raise ValueError("gas_flow_kg_s must be provided")
 
+        basis_key = standard_basis.upper()
+        if basis_key not in STANDARD_BASIS_TEMPS_K:
+            raise ValueError(
+                f"Unsupported standard_basis: {standard_basis!r}. "
+                f"Supported bases: {sorted(STANDARD_BASIS_TEMPS_K.keys())}"
+            )
+
         cp_mass = self._estimate_cp_ideal(composition)
         temp_drop = (
             heat_loss_w / (gas_flow_kg_s * cp_mass)
@@ -218,10 +266,21 @@ class BaghouseCalculator:
             else 0.0
         )
         outlet_temp_k = max(inlet_temp_k - temp_drop, 0.0)
-        flow_acfm, flow_scfm = self._estimate_volume_flow(
-            gas_flow_kg_s, outlet_temp_k, pressure_pa, composition
+
+        r_spec = self._estimate_gas_constant(composition)
+        density_actual = (
+            pressure_pa / (r_spec * outlet_temp_k) if outlet_temp_k > 0 else 1.0
         )
-        return outlet_temp_k - CELSIUS_TO_KELVIN_OFFSET, flow_acfm, flow_scfm
+        flow_actual_m3_s = gas_flow_kg_s / density_actual if density_actual > 0 else 0.0
+        flow_acfm = flow_actual_m3_s * M3_S_TO_CFM
+
+        # Standard conditions: T_std based on standard_basis, P_std = 101,325 Pa
+        t_std = STANDARD_BASIS_TEMPS_K[basis_key]
+        density_std = ATM_PA / (r_spec * t_std)
+        flow_std_m3_s = gas_flow_kg_s / density_std if density_std > 0 else 0.0
+        flow_scfm = flow_std_m3_s * M3_S_TO_CFM
+
+        return convert(outlet_temp_k, "K", "C"), flow_acfm, flow_scfm
 
     @staticmethod
     def _calculate_drum_sizing(
@@ -277,6 +336,7 @@ class BaghouseCalculator:
         drum_volume_m3: float,
         solid_density_kg_m3: float,
         bag_area_ft2: float,
+        standard_basis: str = "STP",
     ) -> BaghouseResult:
         """Calculate baghouse performance.
 
@@ -293,6 +353,7 @@ class BaghouseCalculator:
             drum_volume_m3: Collection drum volume [m³]
             solid_density_kg_m3: Density of collected solids [kg/m³]
             bag_area_ft2: Total bag filter area [ft²]
+            standard_basis: Standard reference condition basis ('STP', 'EPA'/'NTP', 'STANDARD_60F')
 
         Returns:
             BaghouseResult object
@@ -321,6 +382,7 @@ class BaghouseCalculator:
             pressure_pa,
             composition,
             heat_loss_w,
+            standard_basis=standard_basis,
         )
 
         (
