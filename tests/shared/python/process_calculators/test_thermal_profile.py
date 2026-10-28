@@ -113,6 +113,34 @@ class TestFitHeatingParameters:
         assert fitted_tm == pytest.approx(true_thermal_mass, rel=0.1)
         assert fitted_hl == pytest.approx(true_heat_loss, rel=0.1)
 
+    def test_fit_heating_parameters_bounds_prevents_negative_thermal_mass_crash(
+        self,
+    ) -> None:
+        """TOOLS-23 (#5834): curve_fit must use bounds so optimizer does not crash."""
+        t_eval = np.linspace(1, 200, 30)
+        _, observed = predict_temperature_profile(
+            t_span=(1.0, 200.0),
+            t_eval=t_eval,
+            initial_temp=20.0,
+            thermal_mass=500.0,
+            heat_loss_coeff=5.0,
+            ambient_temp=20.0,
+            power_func=lambda t: 1000.0,
+        )
+        # Without bounds, thermal_mass_guess=10.0, heat_loss_guess=100.0 causes
+        # leastsq to evaluate negative thermal_mass, raising ValueError.
+        fitted_tm, fitted_hl = fit_heating_parameters(
+            times=t_eval,
+            observed_temps=observed,
+            initial_temp=20.0,
+            thermal_mass_guess=10.0,
+            heat_loss_guess=100.0,
+            ambient_temp=20.0,
+            power_func=lambda t: 1000.0,
+        )
+        assert fitted_tm > 0
+        assert fitted_hl >= 0
+
 
 def _step_cutoff_closed_form(
     t: np.ndarray,
