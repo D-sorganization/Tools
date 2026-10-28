@@ -26,6 +26,20 @@ class TestBaghouseCalculatorInit:
         assert calculator is not None
         # It's okay if thermo_calc is None or set depending on environment availability
 
+    def test_no_dead_has_thermo_module_symbols(self) -> None:
+        """Module must not expose dead HAS_THERMO or dummy thermo symbol placeholders (TOOLS-25, #5844)."""
+        import upstream_drift_tools.process_calculators.baghouse_calculator as mod
+
+        assert not hasattr(mod, "HAS_THERMO"), "Dead HAS_THERMO symbol still present"
+        assert not hasattr(mod, "GasStream"), "Dead GasStream placeholder still present"
+        assert not hasattr(mod, "FlowUnit"), "Dead FlowUnit placeholder still present"
+        assert not hasattr(mod, "ThermodynamicCalculator"), "Dead ThermodynamicCalculator placeholder still present"
+
+    def test_docstring_reflects_standalone_contract(self) -> None:
+        """Class docstring must not advertise dead full mode (TOOLS-25, #5844)."""
+        doc = BaghouseCalculator.__doc__ or ""
+        assert "Full mode (with thermo module)" not in doc, "Docstring still advertises dead full mode"
+
 
 class TestBaghouseCalculations:
     """Tests for core math in the Baghouse parameter calculation."""
