@@ -20,21 +20,8 @@ import math
 from dataclasses import dataclass
 from typing import Any
 
-from .constants import (
-    ATOL_ZERO,
-    BAR_TO_PA,
-    CELSIUS_TO_KELVIN_OFFSET,
-    COMPRESSION_HIGH_POWER_HP,
-    COMPRESSION_HIGH_PRESSURE_BAR,
-    COMPRESSION_MIN_EFFICIENCY,
-    COMPRESSION_TEMP_CRITICAL_K,
-    COMPRESSION_TEMP_WARNING_K,
-    DEFAULT_GAMMA_DIATOMIC,
-    INTERCOOLER_OUTLET_TEMP_K,
-    R_GAS_J_MOL_K,
-    SECONDS_PER_HOUR,
-    WATTS_PER_HP,
-)
+from . import constants as const
+from .constants import INTERCOOLER_OUTLET_TEMP_K
 from .syngas_water_calculator import SyngasWaterCalculator
 
 __all__ = [
@@ -149,7 +136,7 @@ class SyngasCompressionEngine:
         """Initialize the engine."""
         self.water_calculator = SyngasWaterCalculator()
         self.species_db = get_species_database()
-        self.R = R_GAS_J_MOL_K
+        self.R = const.R_GAS_J_MOL_K
 
     def calculate_mixture_properties(
         self,
@@ -175,7 +162,7 @@ class SyngasCompressionEngine:
             mix_mw += frac * species.molecular_weight * 1000.0
             mix_tc += frac * species.critical_temperature
             mix_pc += frac * (species.critical_pressure / 100000.0)
-            gamma_i = self._APPROX_GAMMA.get(comp, DEFAULT_GAMMA_DIATOMIC)
+            gamma_i = self._APPROX_GAMMA.get(comp, const.DEFAULT_GAMMA_DIATOMIC)
             # TOOLS-04: Mixture heat capacity ratio evaluates from molar heat
             # capacities Cp/Cv rather than linear mole-fraction averaging of gamma.
             # For ideal gas: Cp_i = (gamma_i / (gamma_i - 1)) * R, Cv_i = Cp_i - R
@@ -184,7 +171,9 @@ class SyngasCompressionEngine:
             total_cp += frac * cp_i
             total_cv += frac * cv_i
 
-        mix_gamma = total_cp / total_cv if total_cv > 0.0 else DEFAULT_GAMMA_DIATOMIC
+        mix_gamma = (
+            total_cp / total_cv if total_cv > 0.0 else const.DEFAULT_GAMMA_DIATOMIC
+        )
 
         return {
             "molecular_weight": mix_mw,
@@ -204,11 +193,11 @@ class SyngasCompressionEngine:
         if pressure <= 0:
             raise ValueError(f"pressure must be > 0, got {pressure}")
 
-        temperature_c = temperature - CELSIUS_TO_KELVIN_OFFSET
+        temperature_c = temperature - const.CELSIUS_TO_KELVIN_OFFSET
         water_vp_pa, _ = self.water_calculator.calculate_vapor_pressure(
             temperature_c, method="auto"
         )
-        water_vp_bar = water_vp_pa / BAR_TO_PA
+        water_vp_bar = water_vp_pa / const.BAR_TO_PA
 
         if water_vp_bar <= 0:
             raise ValueError(
@@ -300,7 +289,11 @@ class SyngasCompressionEngine:
             msg = f"Unknown compression type: {stage.compression_type}"
             raise ValueError(msg)
 
-        power_hp = (flow_rate * 1000 / SECONDS_PER_HOUR) * work_actual / WATTS_PER_HP
+        power_hp = (
+            (flow_rate * 1000 / const.SECONDS_PER_HOUR)
+            * work_actual
+            / const.WATTS_PER_HP
+        )
         heat_rise = temp_out_actual - stage.inlet_temperature
 
         return {
@@ -323,19 +316,51 @@ class SyngasCompressionEngine:
         flow_rate: float,
         composition: dict[str, float],
         intercooling: bool = True,
+        cooler_temperature: float = INTERCOOLER_OUTLET_TEMP_K,
     ) -> dict[str, Any]:
-        """Calculate multistage compression with optional intercooling."""
+        """Calculate multistage compression with optional intercooling.
+
+        Parameters
+        ----------
+        stages : list[CompressionStage]
+            List of compression stages. Must not be empty.
+        flow_rate : float
+            Molar flow rate in kmol/h. Must be > 0.
+        composition : dict[str, float]
+            Gas composition in mole fractions or percentages.
+        intercooling : bool, default=True
+            Whether coolers (intercoolers and aftercooler) are active.
+        cooler_temperature : float, default=INTERCOOLER_OUTLET_TEMP_K
+            Outlet temperature of the coolers in Kelvin (default 313.15 K / 40 °C).
+            Must be > 0.
+
+        Contracts (DbC)
+        ---------------
+        Pre: stages is not empty, cooler_temperature > 0, flow_rate > 0.
+        Post: dropout >= 0 and composition sums to 1 after each stage.
+        """
         if not stages:
             raise ValueError("stages list must not be empty")
+        if cooler_temperature <= 0:
+            raise ValueError(
+                f"cooler_temperature must be > 0 K, got {cooler_temperature}"
+            )
+        if flow_rate <= 0:
+            raise ValueError(f"flow_rate must be > 0, got {flow_rate}")
 
-        mixture_props = self.calculate_mixture_properties(composition)
+        current_comp = validate_gas_composition(composition, auto_normalize=True)
+        comp_total = sum(current_comp.values())
+        if comp_total > 0 and abs(comp_total - 1.0) > 1e-9:
+            current_comp = {k: v / comp_total for k, v in current_comp.items()}
+
+        mixture_props = self.calculate_mixture_properties(current_comp)
         results = []
-        total_power = 0
+        total_power = 0.0
         current_temp = stages[0].inlet_temperature
 
         for i, stage in enumerate(stages):
             if i > 0 and intercooling:
-                stage.inlet_temperature = INTERCOOLER_OUTLET_TEMP_K
+                stage.inlet_temperature = cooler_temperature
             elif i > 0:
                 stage.inlet_temperature = current_temp
 
@@ -348,12 +373,50 @@ class SyngasCompressionEngine:
             stage_result["inlet_temp"] = stage.inlet_temperature
             stage_result["outlet_temp"] = stage_result["temp_out_actual"]
 
-            water_dropout = self.calculate_water_dropout(
-                stage_result["outlet_temp"],
-                stage.outlet_pressure,
-                composition.get("H2O", 0),
+            # Evaluate water knockout at cooler outlet temperature if intercooling
+            # is enabled, otherwise at superheated compressor discharge temperature.
+            saturation_temp = (
+                cooler_temperature if intercooling else stage_result["outlet_temp"]
             )
+            water_content_pct = current_comp.get("H2O", 0.0) * 100.0
+
+            water_dropout = self.calculate_water_dropout(
+                saturation_temp,
+                stage.outlet_pressure,
+                water_content_pct,
+            )
+            dropout_pct = water_dropout["water_dropout"]
+            if dropout_pct < 0.0:
+                raise ValueError(f"water_dropout must be >= 0, got {dropout_pct}")
+
+            # Re-normalize gas composition after water knockout
+            if dropout_pct > 0.0 and water_content_pct > 0.0:
+                total_remaining_moles = 100.0 - dropout_pct
+                if total_remaining_moles > 0:
+                    new_comp = {
+                        sp: (
+                            max(0.0, water_content_pct - dropout_pct)
+                            if sp == "H2O"
+                            else frac * 100.0
+                        )
+                        / total_remaining_moles
+                        for sp, frac in current_comp.items()
+                    }
+                    s = sum(new_comp.values())
+                    current_comp = (
+                        {k: v / s for k, v in new_comp.items()} if s > 0 else new_comp
+                    )
+                    # Recompute mixture properties for subsequent stages
+                    mixture_props = self.calculate_mixture_properties(current_comp)
+
+            # DbC postconditions
+            if water_dropout["water_dropout"] < 0.0:
+                raise ValueError("Postcondition failed: water_dropout must be >= 0")
+            if abs(sum(current_comp.values()) - 1.0) >= 1e-6:
+                raise ValueError("Postcondition failed: composition must sum to 1")
+
             stage_result["water_dropout"] = water_dropout
+            stage_result["composition"] = dict(current_comp)
 
             results.append(stage_result)
             total_power += stage_result["power_hp"]
@@ -365,6 +428,7 @@ class SyngasCompressionEngine:
             "final_temperature": current_temp,
             "final_pressure": stages[-1].outlet_pressure,
             "mixture_properties": mixture_props,
+            "final_composition": current_comp,
         }
 
     def analyze_process_conditions(
@@ -382,24 +446,24 @@ class SyngasCompressionEngine:
         final_pressure = compression_result["final_pressure"]
         total_power = compression_result["total_power_hp"]
 
-        if final_temp > COMPRESSION_TEMP_WARNING_K:
+        if final_temp > const.COMPRESSION_TEMP_WARNING_K:
             concerns.append("High final temperature may cause material degradation")
             recommendations.append(
-                "Consider additional intercooling or heat exchangers",
+                "Consider additional intercooling or heat exchangers"
             )
 
-        if final_temp > COMPRESSION_TEMP_CRITICAL_K:
+        if final_temp > const.COMPRESSION_TEMP_CRITICAL_K:
             warnings.append("CRITICAL: Temperature exceeds safe operating limits")
 
-        if final_pressure > COMPRESSION_HIGH_PRESSURE_BAR:
+        if final_pressure > const.COMPRESSION_HIGH_PRESSURE_BAR:
             concerns.append(
-                "High pressure requires special equipment and safety measures",
+                "High pressure requires special equipment and safety measures"
             )
             recommendations.append(
-                "Verify equipment pressure ratings and safety systems",
+                "Verify equipment pressure ratings and safety systems"
             )
 
-        if total_power > COMPRESSION_HIGH_POWER_HP:
+        if total_power > const.COMPRESSION_HIGH_POWER_HP:
             concerns.append("High power requirement - consider multiple compressors")
             recommendations.append("Evaluate economic feasibility of compression train")
 
@@ -407,36 +471,24 @@ class SyngasCompressionEngine:
             stage["water_dropout"]["water_dropout"]
             for stage in compression_result["stages"]
         )
-        if total_water_dropout > ATOL_ZERO:
+        if total_water_dropout > const.ATOL_ZERO:
             warnings.append(f"Water dropout detected: {total_water_dropout:.2f} mol%")
             recommendations.append("Install water knockout drums and drainage systems")
 
-        isentropic_stages = [
-            stage
-            for stage in compression_result["stages"]
-            if stage["work_isentropic"] is not None
+        effs = [
+            s["work_isentropic"] / s["work_actual"]
+            for s in compression_result["stages"]
+            if s["work_isentropic"] is not None and s["work_actual"] > 0
         ]
-        if isentropic_stages:
-            efficiencies = [
-                stage["work_isentropic"] / stage["work_actual"]
-                for stage in isentropic_stages
-                if stage["work_actual"] > 0
-            ]
-            if efficiencies:
-                avg_efficiency = sum(efficiencies) / len(efficiencies)
-                if not (0.0 < avg_efficiency <= 1.0):
-                    raise ValueError(
-                        f"Postcondition violated: average isentropic efficiency {avg_efficiency} must be in (0, 1]"
-                    )
-                if avg_efficiency < COMPRESSION_MIN_EFFICIENCY:
-                    concerns.append("Low compression efficiency detected")
-                    recommendations.append(
-                        "Consider compressor maintenance or replacement"
-                    )
-            else:
-                avg_efficiency = None
-        else:
-            avg_efficiency = None
+        avg_efficiency = sum(effs) / len(effs) if effs else None
+        if avg_efficiency is not None:
+            if not (0.0 < avg_efficiency <= 1.0):
+                raise ValueError(
+                    f"Postcondition violated: average isentropic efficiency {avg_efficiency} must be in (0, 1]"
+                )
+            if avg_efficiency < const.COMPRESSION_MIN_EFFICIENCY:
+                concerns.append("Low compression efficiency detected")
+                recommendations.append("Consider compressor maintenance or replacement")
 
         return {
             "concerns": concerns,

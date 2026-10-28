@@ -279,6 +279,86 @@ class TestMultistageCompression:
         with pytest.raises(ValueError, match="stages"):
             engine.calculate_multistage_compression([], 100.0, syngas_composition)
 
+    def test_water_dropout_after_aftercooler(
+        self,
+        engine: SyngasCompressionEngine,
+    ) -> None:
+        """TOOLS-05: water dropout must be evaluated at cooler/aftercooler T (313.15 K),
+
+        not at superheated compressor discharge temperature (~500 K).
+        Postcondition: dropout >= 0 and composition sums to 1 after each stage.
+        """
+        stages = [
+            CompressionStage(
+                inlet_pressure=1.0,
+                outlet_pressure=5.0,
+                inlet_temperature=300.0,
+                efficiency=0.85,
+                compression_type="isentropic",
+            )
+        ]
+        # Syngas with 10 mol% moisture
+        moist_composition = {
+            "H2": 0.50,
+            "CO": 0.40,
+            "H2O": 0.10,
+        }
+        result = engine.calculate_multistage_compression(
+            stages, 100.0, moist_composition, intercooling=True
+        )
+        stage0 = result["stages"][0]
+        # Discharge temp is superheated (> 450 K)
+        assert stage0["outlet_temp"] > 450.0
+
+        # At cooler temperature (313.15 K) and 5.0 bar, water must condense out
+        stage_dropout = stage0["water_dropout"]
+        assert stage_dropout["water_dropout"] > 0.0, (
+            "Water dropout must be > 0 when evaluated at cooler T (313.15 K); "
+            "evaluating at superheated discharge temp incorrectly reports 0"
+        )
+        assert stage_dropout["condensation_rate"] > 0.0
+
+        # Postcondition DbC: dropout >= 0 and composition sums to 1
+        assert stage_dropout["water_dropout"] >= 0.0
+        stage_comp = stage0.get("composition")
+        assert stage_comp is not None, "Stage result must record gas composition"
+        assert abs(sum(stage_comp.values()) - 1.0) < 1e-6
+        # Water fraction must be reduced below initial 10% (0.10)
+        assert stage_comp["H2O"] < 0.10
+
+    def test_multistage_intercooler_dropout_and_renormalization(
+        self,
+        engine: SyngasCompressionEngine,
+    ) -> None:
+        """Verify multistage water knockout and composition renormalization."""
+        stages = [
+            CompressionStage(1.0, 5.0, 300.0, 0.85, "isentropic"),
+            CompressionStage(5.0, 25.0, 313.15, 0.85, "isentropic"),
+        ]
+        moist_composition = {
+            "H2": 0.50,
+            "CO": 0.35,
+            "H2O": 0.15,
+        }
+        result = engine.calculate_multistage_compression(
+            stages, 100.0, moist_composition, intercooling=True
+        )
+        assert len(result["stages"]) == 2
+
+        comp_stage1 = result["stages"][0]["composition"]
+        comp_stage2 = result["stages"][1]["composition"]
+
+        assert abs(sum(comp_stage1.values()) - 1.0) < 1e-6
+        assert abs(sum(comp_stage2.values()) - 1.0) < 1e-6
+
+        # Water fraction decreases monotonically as pressure increases at 313.15 K
+        assert comp_stage1["H2O"] < 0.15
+        assert comp_stage2["H2O"] < comp_stage1["H2O"]
+
+        # Dropouts must be non-negative (DbC contract)
+        assert result["stages"][0]["water_dropout"]["water_dropout"] >= 0.0
+        assert result["stages"][1]["water_dropout"]["water_dropout"] >= 0.0
+
 
 class TestProcessConditionAnalysis:
     """Tests for the process condition analysis module."""
