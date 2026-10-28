@@ -488,6 +488,7 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
         # Check positive definite
         # LoD: assign np.linalg sub-attributes to local variables
         linalg_cholesky = np.linalg.cholesky
+        linalg_eigvalsh = np.linalg.eigvalsh
         linalg_error = np.linalg.LinAlgError
         tensor = np.array(
             [
@@ -500,6 +501,20 @@ class InertiaCalculatorWindow(BaseCalculatorWindow):
             linalg_cholesky(tensor)
         except linalg_error:
             errors.append("Inertia tensor is not positive definite")
+
+        # Check triangle inequality on principal moments of inertia (eigenvalues)
+        try:
+            principal_moments = linalg_eigvalsh(tensor)
+            if (
+                principal_moments[2]
+                > principal_moments[0] + principal_moments[1] + 1e-9
+            ):
+                errors.append(
+                    "Triangle inequality violated for principal moments of inertia "
+                    f"(I3={principal_moments[2]:.4g} > I1={principal_moments[0]:.4g} + I2={principal_moments[1]:.4g})"
+                )
+        except linalg_error:
+            pass
 
         return errors
 

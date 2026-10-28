@@ -342,7 +342,9 @@ class TestValidateInertiaDbC:
         )
         assert errors == []
 
-    def test_validate_inertia_returns_errors_for_principal_triangle_inequality_violation(self):
+    def test_validate_inertia_returns_errors_for_principal_triangle_inequality_violation(
+        self,
+    ):
         """_validate_inertia returns error when principal moments violate triangle inequality."""
         mod = _load_main_window_module()
         window = MagicMock(spec=mod.InertiaCalculatorWindow)
@@ -352,7 +354,10 @@ class TestValidateInertiaDbC:
         errors = mod.InertiaCalculatorWindow._validate_inertia(
             window, 1.0, 2.5, 2.5, 0.0, 0.0, -1.5
         )
-        assert any("triangle inequality" in e.lower() and "principal" in e.lower() for e in errors)
+        assert any(
+            "triangle inequality" in e.lower() and "principal" in e.lower()
+            for e in errors
+        )
 
 
 class TestInertiaCalculatorGUIRegistration:
