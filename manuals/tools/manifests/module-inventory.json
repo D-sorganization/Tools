@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "a35e82c3de0c177125a4c38d357130c5f480d26486c371fd6c8f3846f8e1a4f0",
+      "content_sha256_lf": "016c315e536c9108edf853487cc65bdbea6cfac1da6d6d55d2bdcedb5da25801",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -999,7 +999,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-verification.json"
     },
     {
-      "content_sha256_lf": "b824d453cd7f962982192db61173c5d08e7159cdc2272f2261f6375cb2d2dd80",
+      "content_sha256_lf": "b3828c53d2490a6ffbbc4b134c100a3e85ac5086b952d3ebf28b4c2135fc41d3",
       "entry_count": 33,
       "package": "src/vessel_drafter",
       "path": "manuals/tools/manifests/module-inventory/entries-src-vessel-drafter.json"

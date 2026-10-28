@@ -239,7 +239,7 @@ pub fn build_default_placements(
     let spacing_m = bath.width_m * 0.6;
     let radius_m = spacing_m * 0.4;
     let cad_z_mm = (bath.height_m + electrodes.top_offset_m) * MM_PER_M;
-    let current_per_electrode = electrodes.operating_current_a / (electrodes.count as f64);
+    let current_per_electrode = electrodes.operating_current_a;
     let effective_length_mm = electrodes.current_length_mm - electrodes.worn_length_mm;
 
     let mut placements = Vec::with_capacity(electrodes.count);
@@ -359,7 +359,7 @@ mod tests {
     }
 
     #[test]
-    fn placements_split_current_evenly() {
+    fn placements_assign_operating_current() {
         let bath = BathDefaults::new("rectangular".to_string(), 3.0, 2.0, 2.5, 1.5);
         let electrodes = ElectrodeDefaults::new(
             "graphite_standard".to_string(),
@@ -374,7 +374,7 @@ mod tests {
         let placements = build_default_placements(&bath, &electrodes);
         for p in &placements {
             assert!(
-                (p.current_a - 1000.0).abs() < 1e-9,
+                (p.current_a - 3000.0).abs() < 1e-9,
                 "current_a={}",
                 p.current_a
             );
