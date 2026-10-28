@@ -1574,6 +1574,123 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5852 · Refine Gas Viscosity Calculation to Avoid Non-Physical (MW/MW_Air)^0.25 Scaling (TOOLS-21)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5852
+- **Branch:** merged via #5854
+- **PR:** #5854
+- **Paths:** see #5854
+- **Started:** 2026-10-28
+- **Last verified:** 2026-10-28 (`f3989e07`; collated from changes/5852-scrubber-gas-viscosity-ordering.md)
+- **Summary:** refine gas viscosity calculation to avoid non-physical (MW/MW_air)^0.25 scaling (TOOLS-21)
+- **Next step:** Shipped in PR #5854.
+
+### DL-#5849 · Validate Triangle Inequality on Principal Moments of Inertia (TOOLS-17)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5849
+- **Branch:** fix/5849-inertia-principal-triangle-inequality
+- **PR:** #5850
+- **Paths:** see #5850
+- **Started:** 2026-10-28
+- **Last verified:** 2026-10-28 (`cf72fa6d`; collated from changes/5849-inertia-principal-triangle-inequality.md)
+- **Summary:** Validate triangle inequality on principal moments of inertia (TOOLS-17)
+- **Next step:** Merge PR
+
+### DL-#5847 · Do Not Divide Operating_Current_a by Electrode Count in Electrode Advisor Layout (TOOLS-09)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5847
+- **Branch:** fix/5847-electrode-operating-current
+- **PR:** #5848
+- **Paths:** see #5848
+- **Started:** 2026-10-28
+- **Last verified:** 2026-10-28 (`438e29a7`; collated from changes/5847-electrode-operating-current.md)
+- **Summary:** Do not divide operating_current_a by electrode count in electrode advisor layout (TOOLS-09)
+- **Next step:** Merge PR
+
+### DL-#5844 · Delete Dead Unreachable HAS_THERMO Branch and Update Docstrings in Baghouse_Calculator (TOOLS-25)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5844
+- **Branch:** fix/5844-baghouse-dead-thermo-branch
+- **PR:** #5845
+- **Paths:** see #5845
+- **Started:** 2026-10-28
+- **Last verified:** 2026-10-28 (`83258d3a`; collated from changes/5844-baghouse-dead-thermo-branch.md)
+- **Summary:** Delete dead unreachable HAS_THERMO branch and update docstrings in baghouse_calculator (TOOLS-25)
+- **Next step:** Merge PR
+
+### DL-#5842 · Support Configurable Standard Temperature Reference Basis for SCFM Calculation
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5842
+- **Branch:** fix/5842-baghouse-scfm-standard-basis
+- **PR:** #5843
+- **Paths:** see #5843
+- **Started:** 2026-10-28
+- **Last verified:** 2026-10-28 (`f8a0705e`; collated from changes/5842-baghouse-scfm-standard-basis.md)
+- **Summary:** Support configurable standard temperature reference basis for SCFM calculation
+- **Next step:** Merge the PR into main.
+
+### DL-#5840 · Correct Colebrook Friction Factor Solver Method From Newton-Raphson to Fixed-Point Picard Iteration and Document Transitional Regime (TOOLS-13)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5840
+- **Branch:** fix/5840-colebrook-fixed-point-docstring
+- **PR:** #5841
+- **Paths:** see #5841
+- **Started:** 2026-10-28
+- **Last verified:** 2026-10-28 (`81d3338b`; collated from changes/5840-colebrook-fixed-point-docstring.md)
+- **Summary:** Correct Colebrook friction factor solver method from Newton-Raphson to fixed-point Picard iteration and document transitional regime (TOOLS-13)
+- **Next step:** Merge the PR.
+
+### DL-#5837 · Evaluate Glass Conductivity Strictly at Glass Temperature Without Uncited Power Density Bias in Sidekick Glass_Interface (GLASS-07)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5837
+- **Branch:** fix/5837-glass-conductivity-uncited-bias
+- **PR:** #5846
+- **Paths:** see #5846
+- **Started:** 2026-10-28
+- **Last verified:** 2026-10-28 (`fce2acd5`; collated from changes/5837-glass-conductivity-uncited-bias.md)
+- **Summary:** Evaluate glass conductivity strictly at glass temperature without uncited power density bias in sidekick glass_interface (GLASS-07)
+- **Next step:** Merge PR
+
+### DL-#5832 · Use Atan2 and Hypot for Euler Angle Extraction Near Singularity (TOOLS-28)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5832
+- **Branch:** fix/5832-rotation-euler-atan2-precision
+- **PR:** #5833
+- **Paths:** see #5833
+- **Started:** 2026-10-28
+- **Last verified:** 2026-10-28 (`17af7269`; collated from changes/5832-rotation-euler-atan2-precision.md)
+- **Summary:** Use atan2 and hypot for Euler angle extraction near singularity (TOOLS-28)
+- **Next step:** Merge the PR.
+
+### DL-#5799 · Evaluate Water Knockout at Cooler Temperature and Re-Normalize Composition (TOOLS-05)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5799
+- **Branch:** fix/5799-syngas-water-dropout-cooler
+- **PR:** #5818
+- **Paths:** see #5818
+- **Started:** 2026-10-28
+- **Last verified:** 2026-10-28 (`5975d65d`; collated from changes/5799-syngas-water-dropout-cooler.md)
+- **Summary:** Evaluate water knockout at cooler temperature and re-normalize composition (TOOLS-05)
+- **Next step:** Merge the PR into main.
+
 ### DL-#5836 · Correct KG_TO_MG Constant From 1000.0 to 1E6 in Scrubber Calculator (TOOLS-22)
 
 - **State:** shipped
