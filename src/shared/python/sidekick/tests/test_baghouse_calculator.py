@@ -354,9 +354,8 @@ class TestConvertFallback:
             baghouse_calculator as bh_mod,
         )
 
-        if not bh_mod.HAS_THERMO:
-            result = bh_mod.convert(273.15, "K", "C")
-            assert abs(result - 0.0) < 0.01
+        result = bh_mod.convert(273.15, "K", "C")
+        assert abs(result - 0.0) < 0.01
 
     def test_c_to_k(self):
         """Lines 63-64: C → K conversion."""
@@ -364,9 +363,8 @@ class TestConvertFallback:
             baghouse_calculator as bh_mod,
         )
 
-        if not bh_mod.HAS_THERMO:
-            result = bh_mod.convert(0.0, "C", "K")
-            assert abs(result - 273.15) < 0.01
+        result = bh_mod.convert(0.0, "C", "K")
+        assert abs(result - 273.15) < 0.01
 
     def test_identity_fallback(self):
         """Line 65: unknown units → identity."""
@@ -374,6 +372,5 @@ class TestConvertFallback:
             baghouse_calculator as bh_mod,
         )
 
-        if not bh_mod.HAS_THERMO:
-            result = bh_mod.convert(42.0, "Pa", "bar")
-            assert result == 42.0
+        result = bh_mod.convert(42.0, "Pa", "bar")
+        assert result == 42.0

@@ -49,10 +49,6 @@ __all__ = [
 
 # Standalone simplified calculations are the shared-layer contract. Importing
 # downstream ``tools`` packages from src/shared violates the fleet dependency DAG.
-HAS_THERMO: bool = False
-FlowUnit: Any | None = None
-GasStream: Any | None = None
-ThermodynamicCalculator: Any | None = None
 
 
 def convert(value: float, from_unit: str, to_unit: str) -> float:
@@ -94,25 +90,16 @@ class BaghouseCalculator:
     """Core baghouse calculation engine.
 
     This calculator determines baghouse filter performance including solid removal
-    rates, drum fill times, and air-to-cloth ratios. It can operate in two modes:
-
-    1. Full mode (with thermo module): Uses detailed thermodynamic calculations
-    2. Simplified mode (standalone): Uses ideal gas approximations
+    rates, drum fill times, and air-to-cloth ratios using ideal gas approximations.
     """
 
     def __init__(self, thermo_calc: Any | None = None) -> None:
         """Initialize the baghouse calculator.
 
         Args:
-            thermo_calc: Optional thermodynamic calculator instance. If not provided
-                        and thermo module is available, one will be created.
+            thermo_calc: Optional legacy parameter preserved for backwards compatibility.
         """
-        if thermo_calc is not None:
-            self.thermo_calc = thermo_calc
-        elif HAS_THERMO and ThermodynamicCalculator is not None:
-            self.thermo_calc = ThermodynamicCalculator()
-        else:
-            self.thermo_calc = None
+        self.thermo_calc = thermo_calc
 
     def _estimate_cp_ideal(self, composition: dict[str, float]) -> float:
         """Estimate Cp for gas mixture using ideal gas approximation.
@@ -216,59 +203,14 @@ class BaghouseCalculator:
         composition: dict[str, float],
         heat_loss_w: float,
     ) -> tuple[float, float, float]:
-        """Compute outlet temperature and volume flows.
-
-        Tries full thermodynamic calculation first, falls back to simplified
-        ideal-gas approach if the thermo module is unavailable or errors.
+        """Compute outlet temperature and volume flows using ideal gas approximations.
 
         Returns:
             (outlet_temp_c, flow_acfm, flow_scfm)
         """
         if gas_flow_kg_s is None:
             raise ValueError("gas_flow_kg_s must be provided")
-        if (
-            self.thermo_calc is not None
-            and HAS_THERMO
-            and GasStream is not None
-            and FlowUnit is not None
-        ):
-            try:
-                stream = GasStream(
-                    flow_rate=gas_flow_kg_s,
-                    flow_unit=FlowUnit.MASS,
-                    temperature=inlet_temp_k,
-                    pressure=pressure_pa,
-                    composition=composition,
-                )
-                props = self.thermo_calc.calculate_stream_properties(stream)
-                cp_mass = props.cp
 
-                temp_drop = (
-                    heat_loss_w / (gas_flow_kg_s * cp_mass)
-                    if gas_flow_kg_s > 0 and cp_mass > 0
-                    else 0.0
-                )
-                outlet_temp_k = max(inlet_temp_k - temp_drop, 0.0)
-
-                outlet_stream = GasStream(
-                    flow_rate=gas_flow_kg_s,
-                    flow_unit=FlowUnit.MASS,
-                    temperature=outlet_temp_k,
-                    pressure=pressure_pa,
-                    composition=composition,
-                )
-                outlet_props = self.thermo_calc.calculate_stream_properties(
-                    outlet_stream
-                )
-                return (
-                    convert(outlet_temp_k, "K", "C"),
-                    outlet_props.acfm_flow,
-                    outlet_props.scfm_flow,
-                )
-            except (ValueError, ZeroDivisionError, OverflowError, TypeError):
-                self.thermo_calc = None
-
-        # Simplified path
         cp_mass = self._estimate_cp_ideal(composition)
         temp_drop = (
             heat_loss_w / (gas_flow_kg_s * cp_mass)
