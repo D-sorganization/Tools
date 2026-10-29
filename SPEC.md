@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-29 | #5862 | preserve pip cache in heavy integration workflows and raise install timeout (#5858) |
 | 2026-10-28 | #5860 | Expose launch angle and spin rate on ToolsDeliveryEstimate (#5859); expose launch angle and spin rate on ToolsDeliveryEstimate |
 | 2026-10-28 | #5853 | evaluate aqueous acid dewpoint for HCl-H2O systems via Kiang correlation |
 | 2026-10-28 | #5856 | drop raw gh pr merge --auto instructions from fleet-managed blocks and docs |
