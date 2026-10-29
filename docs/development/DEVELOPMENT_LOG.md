@@ -1574,6 +1574,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5859 · Expose Launch Angle and Spin Rate on ToolsDeliveryEstimate
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5859
+- **Branch:** merged via #5860
+- **PR:** #5860
+- **Paths:** see #5860
+- **Started:** 2026-10-28
+- **Last verified:** 2026-10-28 (`79c4bc71`; collated from changes/5859-expose-launch-angle-and-spin-rate-on-too.md)
+- **Summary:** expose launch angle and spin rate on ToolsDeliveryEstimate
+- **Next step:** Shipped in PR #5860.
+
 ### DL-#5851 · Evaluate Aqueous Acid Dewpoint for HCl-H2O Systems via Kiang Correlation
 
 - **State:** shipped
