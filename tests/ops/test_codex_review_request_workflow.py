@@ -14,5 +14,6 @@ def test_codex_review_request_uses_hosted_runner_with_gh() -> None:
     """Self-hosted fleet runners may not expose gh; hosted CI does."""
     workflow = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
     request = workflow["jobs"]["request"]
-    assert request["uses"].endswith("reusable-codex-review-request.yml@")
+    uses = request["uses"]
+    assert "reusable-codex-review-request.yml@" in uses
     assert request["with"]["runner"] == "ubuntu-latest"
