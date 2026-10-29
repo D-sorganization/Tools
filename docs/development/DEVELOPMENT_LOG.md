@@ -1574,6 +1574,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5858 · Preserve Pip Cache in Heavy Integration Workflows and Raise Install Timeout
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5858
+- **Branch:** merged via #5862
+- **PR:** #5862
+- **Paths:** see #5862
+- **Started:** 2026-10-29
+- **Last verified:** 2026-10-29 (`59972cb0`; collated from changes/5858-heavy-integration-pip-cache.md)
+- **Summary:** preserve pip cache in heavy integration workflows and raise install timeout
+- **Next step:** Shipped in PR #5862.
+
 ### DL-#5859 · Expose Launch Angle and Spin Rate on ToolsDeliveryEstimate
 
 - **State:** shipped
