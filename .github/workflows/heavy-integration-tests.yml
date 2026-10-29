@@ -33,8 +33,6 @@ jobs:
           python-version: "3.11"
           cache: pip
 
-      - name: Purge pip cache
-        run: python -m pip cache purge || true
       - name: Install system display dependencies
         run: |
           while sudo fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do sleep 1; done; sudo rm -f /var/lib/apt/lists/lock /var/cache/apt/archives/lock /var/lib/dpkg/lock && sudo apt-get -o DPkg::Lock::Timeout=300 update || true -qq
@@ -46,7 +44,7 @@ jobs:
             libasound2-dev libxi6 libxtst6
 
       - name: Install Python dependencies
-        timeout-minutes: 20
+        timeout-minutes: 35
         run: |
           pip install --upgrade pip
           if [ -f pyproject.toml ]; then pip install -e ".[dev,test]" || pip install -e .; fi
