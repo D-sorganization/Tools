@@ -80,6 +80,18 @@ def _fixture_text() -> str:
     return FIXTURE.read_text(encoding="utf-8")
 
 
+_MORRIS_UI_READY_TIMEOUT_MS = 10_000
+_MORRIS_WORKER_IDLE_TIMEOUT_MS = 10_000
+
+
+def _wait_until_run_ready(qtbot, widget) -> None:  # type: ignore[no-untyped-def]
+    """Wait for the async Morris capability probe before driving the run button."""
+    qtbot.waitUntil(
+        lambda: widget._authority_available and widget._run_button.isEnabled(),
+        timeout=_MORRIS_UI_READY_TIMEOUT_MS,
+    )
+
+
 def test_import_restores_all_drafts_controls_and_completed_evidence(qtbot) -> None:  # type: ignore[no-untyped-def]
     workspace = parse_morris_workspace(json.loads(_fixture_text()))
     widget = MorrisScreeningTab(None)
@@ -106,7 +118,7 @@ def test_invalid_or_host_mismatched_import_never_mutates_or_cancels_active_work(
     client = _BlockingClient()
     widget = MorrisScreeningTab(client, poll_interval_ms=1)
     qtbot.addWidget(widget)
-    qtbot.waitUntil(lambda: widget._run_button.isEnabled(), timeout=2_000)
+    _wait_until_run_ready(qtbot, widget)
     widget._run_button.click()
     assert client.entered.wait(timeout=2.0)
     generation = widget._generation
@@ -123,7 +135,10 @@ def test_invalid_or_host_mismatched_import_never_mutates_or_cancels_active_work(
     assert widget.workspace_document() == before
     assert not client.cancelled
     client.release.set()
-    qtbot.waitUntil(lambda: not widget.has_running_workers(), timeout=2_000)
+    qtbot.waitUntil(
+        lambda: not widget.has_running_workers(),
+        timeout=_MORRIS_WORKER_IDLE_TIMEOUT_MS,
+    )
 
 
 def test_valid_import_invalidates_active_work_only_after_complete_parse(qtbot) -> None:  # type: ignore[no-untyped-def]
@@ -132,7 +147,7 @@ def test_valid_import_invalidates_active_work_only_after_complete_parse(qtbot) -
     widget = MorrisScreeningTab(client, poll_interval_ms=1)
     qtbot.addWidget(widget)
     widget.set_simulation_config(workspace.base_config())
-    qtbot.waitUntil(lambda: widget._run_button.isEnabled(), timeout=2_000)
+    _wait_until_run_ready(qtbot, widget)
     widget._run_button.click()
     assert client.entered.wait(timeout=2.0)
     generation = widget._generation
@@ -143,7 +158,10 @@ def test_valid_import_invalidates_active_work_only_after_complete_parse(qtbot) -
     assert widget._last_job == workspace.completed_evidence.job
     assert widget._results.rowCount() == 10
     client.release.set()
-    qtbot.waitUntil(lambda: not widget.has_running_workers(), timeout=2_000)
+    qtbot.waitUntil(
+        lambda: not widget.has_running_workers(),
+        timeout=_MORRIS_WORKER_IDLE_TIMEOUT_MS,
+    )
 
 
 def test_ground_workspace_retains_disabled_canonical_tee_draft(qtbot) -> None:  # type: ignore[no-untyped-def]
@@ -203,7 +221,7 @@ def test_imported_invalid_draft_cannot_submit_stale_numeric_value(qtbot) -> None
     widget = MorrisScreeningTab(client, poll_interval_ms=1)
     qtbot.addWidget(widget)
     widget.set_simulation_config(workspace.base_config())
-    qtbot.waitUntil(lambda: widget._run_button.isEnabled(), timeout=2_000)
+    _wait_until_run_ready(qtbot, widget)
     widget.load_workspace_text(json.dumps(document))
     row = widget._factor_rows[0]
 
@@ -218,7 +236,10 @@ def test_imported_invalid_draft_cannot_submit_stale_numeric_value(qtbot) -> None
     qtbot.waitUntil(lambda: bool(client.created), timeout=2_000)
     assert client.created[0].factors[0].lower == -2.0
     client.release.set()
-    qtbot.waitUntil(lambda: not widget.has_running_workers(), timeout=2_000)
+    qtbot.waitUntil(
+        lambda: not widget.has_running_workers(),
+        timeout=_MORRIS_WORKER_IDLE_TIMEOUT_MS,
+    )
 
 
 @pytest.mark.parametrize(
@@ -233,7 +254,7 @@ def test_unrepresentable_controls_fail_before_active_run_mutation(
     widget = MorrisScreeningTab(client, poll_interval_ms=1)
     qtbot.addWidget(widget)
     widget.set_simulation_config(workspace.base_config())
-    qtbot.waitUntil(lambda: widget._run_button.isEnabled(), timeout=2_000)
+    _wait_until_run_ready(qtbot, widget)
     widget._run_button.click()
     assert client.entered.wait(timeout=2.0)
     generation = widget._generation
@@ -247,4 +268,7 @@ def test_unrepresentable_controls_fail_before_active_run_mutation(
     assert widget._generation == generation
     assert not client.cancelled
     client.release.set()
-    qtbot.waitUntil(lambda: not widget.has_running_workers(), timeout=2_000)
+    qtbot.waitUntil(
+        lambda: not widget.has_running_workers(),
+        timeout=_MORRIS_WORKER_IDLE_TIMEOUT_MS,
+    )
