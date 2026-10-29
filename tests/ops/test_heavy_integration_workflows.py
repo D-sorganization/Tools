@@ -46,3 +46,31 @@ def test_heavy_workflows_report_coverage_without_global_floor() -> None:
         assert "--cov-report=xml:heavy_coverage.xml" in test_script, workflow_path.name
         assert "--cov-report=term-missing" in test_script, workflow_path.name
         assert "--cov-fail-under=0" in test_script, workflow_path.name
+
+
+def test_heavy_workflows_preserve_pip_cache() -> None:
+    for workflow_path in HEAVY_WORKFLOWS:
+        steps = _workflow_steps(workflow_path)
+        step_names = [step.get("name") for step in steps]
+        assert "Purge pip cache" not in step_names, (
+            f"{workflow_path.name} must not purge pip cache (Tools #5858)"
+        )
+        for step in steps:
+            run_cmd = str(step.get("run", ""))
+            assert "pip cache purge" not in run_cmd, (
+                f"{workflow_path.name} step {step.get('name')} runs pip cache purge"
+            )
+
+
+def test_heavy_workflows_install_timeout_raised() -> None:
+    for workflow_path in HEAVY_WORKFLOWS:
+        steps = _workflow_steps(workflow_path)
+        install_step = next(
+            step for step in steps if step.get("name") == "Install Python dependencies"
+        )
+        timeout = int(install_step.get("timeout-minutes", 0))
+        msg = (
+            f"{workflow_path.name} Install Python dependencies timeout "
+            f"must be >= 30 min (was {timeout})"
+        )
+        assert timeout >= 30, msg
