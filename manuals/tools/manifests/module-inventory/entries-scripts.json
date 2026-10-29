@@ -7689,6 +7689,105 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 6873,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0619987e228fe3c50d2f32f2e836a4eb1a37d66be9c40b9cd5d96f30dd6e728b",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-PRE-PR-PY-CA987E60C06A",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/pre_pr.py",
+      "purpose": "Run pre-PR local checks mirroring CI gates (RM-6).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "MYPY_LEGACY_EXCLUDE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "REPO_ROOT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "RUFF_EXCLUDE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_CONFLICT_MARKER",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "changed_python_files",
+            "signature": "base_sha: str, root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: Sequence[str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "merge_base_sha",
+            "signature": "base_ref: str, root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "run_conflict_marker_check",
+            "signature": "root: Path"
+          },
+          {
+            "kind": "function",
+            "name": "run_delta_gates",
+            "signature": "root: Path, base_ref: str"
+          },
+          {
+            "kind": "function",
+            "name": "scan_conflict_markers",
+            "signature": "root: Path"
+          }
+        ],
+        "test_paths": [
+          "tests/scripts/test_pre_pr.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 3116,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
