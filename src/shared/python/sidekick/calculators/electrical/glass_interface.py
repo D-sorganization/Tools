@@ -385,16 +385,13 @@ class GlassPropertiesInterface:
 
         Args:
             temperature_celsius: Degrees Celsius.
-            power_density: Heating term raising the effective temperature.
+            power_density: Accepted for API compatibility; ignored by the
+                default Arrhenius model (#13938).
 
         Returns:
             Conductivity in S/m from the Arrhenius model.
         """
-        # Apply power density heating effect upfront
         temp_kelvin = celsius_to_kelvin(temperature_celsius)
-        if power_density > 0:
-            # Local heating from power density
-            temp_kelvin += power_density * _POWER_DENSITY_HEATING_COEFFICIENT
 
         # Arrhenius equation: sigma = sigma_0 * exp(-Ea/R * (1/T - 1/T_ref))
         # Pre-computed: _arrhenius_ref_term = -Ea/(R * T_ref)
