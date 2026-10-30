@@ -5,7 +5,8 @@ Verifies that:
 - Each function behaves correctly when called with mocked Playwright objects
 - All Playwright browser interactions are properly delegated to local variables
 
-Playwright is mocked at sys.modules level to avoid requiring playwright installed.
+Playwright is mocked only while importing the verification scripts, so the
+test harness does not replace Playwright for the rest of pytest collection.
 """
 
 from __future__ import annotations
@@ -18,19 +19,39 @@ from unittest.mock import MagicMock, patch
 import pytest
 
 
-def _install_playwright_mock() -> None:
-    """Insert a minimal playwright mock into sys.modules if not already present."""
-    if "playwright" not in sys.modules:
-        pw_mock = types.ModuleType("playwright")
-        sync_api_mock = types.ModuleType("playwright.sync_api")
-        sync_api_mock.sync_playwright = MagicMock()
-        sync_api_mock.expect = MagicMock()
-        pw_mock.sync_api = sync_api_mock
-        sys.modules["playwright"] = pw_mock
-        sys.modules["playwright.sync_api"] = sync_api_mock
+def _load_verification_module(module_name: str) -> types.ModuleType:
+    """Reload a verification module with a scoped Playwright mock."""
+    playwright_mock = types.ModuleType("playwright")
+    sync_api_mock = types.ModuleType("playwright.sync_api")
+    sync_api_mock.sync_playwright = MagicMock()
+    sync_api_mock.expect = MagicMock()
+    playwright_mock.sync_api = sync_api_mock
+
+    with patch.dict(
+        sys.modules,
+        {"playwright": playwright_mock, "playwright.sync_api": sync_api_mock},
+    ):
+        module = importlib.import_module(module_name)
+        return importlib.reload(module)
 
 
-_install_playwright_mock()
+def test_loader_restores_existing_playwright_modules_after_import_error() -> None:
+    """A failed test-module import must restore prior Playwright entries."""
+    original_playwright = types.ModuleType("playwright")
+    original_sync_api = types.ModuleType("playwright.sync_api")
+
+    with patch.dict(
+        sys.modules,
+        {
+            "playwright": original_playwright,
+            "playwright.sync_api": original_sync_api,
+        },
+    ):
+        with pytest.raises(ModuleNotFoundError):
+            _load_verification_module("verification.module_that_does_not_exist")
+
+        assert sys.modules["playwright"] is original_playwright
+        assert sys.modules["playwright.sync_api"] is original_sync_api
 
 
 def _make_playwright_ctx(mock_p: MagicMock) -> MagicMock:
@@ -63,9 +84,7 @@ class TestVerifyA11yLod:
         _, _, mock_chromium, mock_p = self._make_stack()
         ctx = _make_playwright_ctx(mock_p)
 
-        import verification.verify_a11y as mod
-
-        importlib.reload(mod)
+        mod = _load_verification_module("verification.verify_a11y")
         with patch.object(mod, "sync_playwright", return_value=ctx):
             mod.verify_a11y()
 
@@ -76,9 +95,7 @@ class TestVerifyA11yLod:
         mock_page, _, _, mock_p = self._make_stack()
         ctx = _make_playwright_ctx(mock_p)
 
-        import verification.verify_a11y as mod
-
-        importlib.reload(mod)
+        mod = _load_verification_module("verification.verify_a11y")
         with (
             patch.object(mod, "sync_playwright", return_value=ctx),
             patch.object(mod, "expect"),
@@ -122,9 +139,7 @@ class TestVerifyPaletteLod:
         _, _, mock_chromium, mock_p = self._make_stack()
         ctx = _make_playwright_ctx(mock_p)
 
-        import verification.verify_palette as mod
-
-        importlib.reload(mod)
+        mod = _load_verification_module("verification.verify_palette")
         with patch.object(mod, "sync_playwright", return_value=ctx):
             mod.run()
 
@@ -135,9 +150,7 @@ class TestVerifyPaletteLod:
         mock_page, _, _, mock_p = self._make_stack(described_by_value="gasFlowHint")
         ctx = _make_playwright_ctx(mock_p)
 
-        import verification.verify_palette as mod
-
-        importlib.reload(mod)
+        mod = _load_verification_module("verification.verify_palette")
         with patch.object(mod, "sync_playwright", return_value=ctx):
             mod.run()
 
@@ -187,9 +200,7 @@ class TestVerifyPaletteFinalLod:
         _, _, mock_chromium, mock_p = self._make_stack()
         ctx = _make_playwright_ctx(mock_p)
 
-        import verification.verify_palette_final as mod
-
-        importlib.reload(mod)
+        mod = _load_verification_module("verification.verify_palette_final")
         with patch.object(mod, "sync_playwright", return_value=ctx):
             mod.run()
 
@@ -200,9 +211,7 @@ class TestVerifyPaletteFinalLod:
         mock_page, _, _, mock_p = self._make_stack()
         ctx = _make_playwright_ctx(mock_p)
 
-        import verification.verify_palette_final as mod
-
-        importlib.reload(mod)
+        mod = _load_verification_module("verification.verify_palette_final")
         with patch.object(mod, "sync_playwright", return_value=ctx):
             mod.run()
 
@@ -214,9 +223,7 @@ class TestVerifyPaletteFinalLod:
         mock_page, _, _, mock_p = self._make_stack()
         ctx = _make_playwright_ctx(mock_p)
 
-        import verification.verify_palette_final as mod
-
-        importlib.reload(mod)
+        mod = _load_verification_module("verification.verify_palette_final")
         with patch.object(mod, "sync_playwright", return_value=ctx):
             mod.run()
 
