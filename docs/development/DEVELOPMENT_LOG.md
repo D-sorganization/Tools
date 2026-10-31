@@ -1574,6 +1574,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5881 · Heavy Integration Installs Only Requirements-Heavy.Txt (~174 MB, Was ~1.07 GB) and Keys Its Pip Cache on It, so Slow Runners No Longer Time Out
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5881
+- **Branch:** brick/ci-toolchain/5881-heavy-slim-install
+- **PR:** #5883
+- **Paths:** see #5883
+- **Started:** 2026-10-31
+- **Last verified:** 2026-10-31 (`9ba0f9fa`; collated from changes/5881-heavy-integration-installs-only-requirem.md)
+- **Summary:** Heavy Integration installs only requirements-heavy.txt (~174 MB, was ~1.07 GB) and keys its pip cache on it, so slow runners no longer time out
+- **Next step:** Compare Heavy Integration run timings on OGLaptop and nvme after merge
+
 ### DL-#5874 · Skip Vessel_Drafter Real-CAD Tests When Build123d Is Only the Tests/Vessel_Drafter MagicMock Stub
 
 - **State:** shipped
