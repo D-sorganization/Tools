@@ -1574,6 +1574,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5878 · Chat History-Browser Test Puts the Repo Root, Not Tests/, on Sys.Path so Optimizer_Gui Is No Longer Shadowed
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5878
+- **Branch:** claude/5878-chat-test-sys-path-root
+- **PR:** #5879
+- **Paths:** see #5879
+- **Started:** 2026-10-31
+- **Last verified:** 2026-10-31 (`327a6398`; collated from changes/5878-chat-history-browser-test-puts-the-repo.md)
+- **Summary:** Chat history-browser test puts the repo root, not tests/, on sys.path so optimizer_gui is no longer shadowed
+- **Next step:** Merge after required checks; confirm on the next nightly.
+
 ### DL-#5876 · Wave_Solver Main() Tests Pass an Explicit WaveConfig Instead of Parsing the Test Runner's Argv
 
 - **State:** shipped

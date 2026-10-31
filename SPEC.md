@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-10-31 | #5879 | Chat history-browser test puts the repo root, not tests/, on sys.path so optimizer_gui is no longer shadowed |
 | 2026-10-31 | #5877 | wave_solver main() tests pass an explicit WaveConfig instead of parsing the test runner's argv |
 | 2026-10-31 | #5872 | Run the scipy.signal eager-import boundary check in a fresh interpreter so it no longer pops scipy.signal from sys.modules and breaks 17 nightly tests with _signal_api NameError |
 | 2026-10-31 | #5869 | Stop verification test Playwright stubs leaking into pytest collection |
