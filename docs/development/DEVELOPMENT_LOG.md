@@ -148,6 +148,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
+### DL-#5884 · Chat Dock Tests Close Leftover Parentless Docks After Each Test so a Deferred Scroll Cannot Fire on a GC-Freed Scroll Bar and Segfault the Xdist Worker
+
+- **State:** in_review
+- **Owner:** unassigned
+- **Issue:** #5884
+- **Branch:** brick/ci-toolchain/5884-chat-scroll-segfault
+- **PR:** #5886
+- **Paths:** see #5886
+- **Started:** 2026-10-31
+- **Last verified:** 2026-10-31 (`80347f1a`; collated from changes/5884-chat-dock-tests-close-leftover-parentles.md)
+- **Summary:** Chat dock tests close leftover parentless docks after each test so a deferred scroll cannot fire on a GC-freed scroll bar and segfault the xdist worker
+- **Next step:** Merge after acceptance review
+
 ### DL-#5646 · Adversarial Review 2026-10-16: 38 Findings With Draft PR Pitches Under Docs/Development/Adversarial-Review/
 
 - **State:** in_review
