@@ -1574,6 +1574,32 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5871 · Run the Scipy.Signal Eager-Import Boundary Check in a Fresh Interpreter so It No Longer Pops Scipy.Signal From Sys.Modules and Breaks 17 Nightly Tests With _Signal_Api NameError
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5871
+- **Branch:** merged via #5872
+- **PR:** #5872
+- **Paths:** see #5872
+- **Started:** 2026-10-31
+- **Last verified:** 2026-10-31 (`e019d2a2`; collated from changes/5871-run-the-scipy-signal-eager-import-bounda.md)
+- **Summary:** Run the scipy.signal eager-import boundary check in a fresh interpreter so it no longer pops scipy.signal from sys.modules and breaks 17 nightly tests with _signal_api NameError
+- **Next step:** Shipped in PR #5872.
+
+### DL-#5868 · Stop Verification Test Playwright Stubs Leaking Into Pytest Collection
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5868
+- **Branch:** merged via #5869
+- **PR:** #5869
+- **Paths:** see #5869
+- **Started:** 2026-10-31
+- **Last verified:** 2026-10-31 (`cd85e62e`; collated from changes/5868-playwright-import-isolation.md)
+- **Summary:** Stop verification test Playwright stubs leaking into pytest collection
+- **Next step:** Shipped in PR #5869.
+
 ### DL-#5858 · Preserve Pip Cache in Heavy Integration Workflows and Raise Install Timeout
 
 - **State:** shipped
