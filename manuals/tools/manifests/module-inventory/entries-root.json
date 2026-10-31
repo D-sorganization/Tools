@@ -276,6 +276,7 @@
           "src/signal_processing_studio/tests/conftest.py",
           "src/urdf_builder_gui/tests/conftest.py",
           "src/vessel_drafter/tests/conftest.py",
+          "src/vessel_drafter/tests/test_build123d_stub_isolation.py",
           "src/web_applications/urdf_viewer/tests/conftest.py",
           "tests/architecture/test_no_session_wide_skip_leak_4497.py",
           "tests/benchmarks/conftest.py",

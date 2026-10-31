@@ -1,6 +1,7 @@
 import pytest
 
 build123d = pytest.importorskip("build123d")
+pytestmark = pytest.mark.requires_build123d
 
 import json
 
