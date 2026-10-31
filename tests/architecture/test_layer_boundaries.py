@@ -20,6 +20,7 @@ import ast
 import importlib
 import logging
 import os
+import subprocess
 import sys
 from pathlib import Path
 from typing import Any
@@ -477,14 +478,37 @@ class TestExceptionHierarchyConsistency:
         )
 
     def test_exception_import_does_not_eagerly_import_scipy_signal(self) -> None:
-        """Exception-only imports must not initialize SciPy signal internals."""
-        sys.modules.pop("upstream_drift_tools.data_processing", None)
-        sys.modules.pop("upstream_drift_tools.data_processing.exceptions", None)
-        sys.modules.pop("scipy.signal", None)
+        """Exception-only imports must not initialize SciPy signal internals.
 
-        importlib.import_module("upstream_drift_tools.data_processing.exceptions")
+        Runs in a fresh interpreter: popping ``scipy.signal`` from this process's
+        ``sys.modules`` poisons every later ``import scipy.signal`` (#5871).
+        """
+        probe = (
+            "import sys\n"
+            "import upstream_drift_tools.data_processing.exceptions\n"
+            "sys.exit(1 if 'scipy.signal' in sys.modules else 0)\n"
+        )
+        result = subprocess.run(  # noqa: S603 - fixed argv, trusted interpreter
+            [sys.executable, "-c", probe],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            timeout=60,
+            check=False,
+        )
 
-        assert "scipy.signal" not in sys.modules
+        assert result.returncode == 0, (
+            result.stderr or "scipy.signal was imported eagerly"
+        )
+
+    def test_scipy_signal_check_leaves_sys_modules_importable(self) -> None:
+        """The eager-import check must not poison ``scipy.signal`` for later tests (#5871)."""
+        pytest.importorskip("scipy")
+        importlib.import_module("scipy.signal")
+
+        self.test_exception_import_does_not_eagerly_import_scipy_signal()
+
+        from scipy.signal import savgol_filter  # noqa: F401
 
     def test_all_data_processing_exceptions_share_base(self) -> None:
         """Every exception must inherit from DataProcessingError."""
