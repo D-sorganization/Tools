@@ -111,7 +111,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "28f49fe5f425a9a5a9eee79dad608b5568928e48bfad5ffea8eeee9e15d21819",
+      "content_sha256_lf": "52cbfe3995c1ead215b249233d2a14b37f9bbc7ba60016cf706a6ea085006e1b",
       "entry_count": 14,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
@@ -345,7 +345,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-matlab.json"
     },
     {
-      "content_sha256_lf": "c43b04ae819aae787c6bda1029f0b86c266eaf42be85710d42a79a2864606643",
+      "content_sha256_lf": "61967a333cdf31ff0e96f424c1c481198dffcc362e33426b52ef2d7b015da7a7",
       "entry_count": 99,
       "package": "src/media_processing",
       "path": "manuals/tools/manifests/module-inventory/entries-src-media-processing.json"
@@ -393,7 +393,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
     {
-      "content_sha256_lf": "496185eba25de06167cda863ac060378aab06637691b91fb5dfbacf499b84593",
+      "content_sha256_lf": "fca24cedcf7b285cc162960968d2bafc201464778f91ca3431210de12ddb821b",
       "entry_count": 171,
       "package": "src/pendulum_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pendulum-simulator.json"
@@ -621,7 +621,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-camera.json"
     },
     {
-      "content_sha256_lf": "dc2560fb0c533642205fd49a58d5cdb499c8203258410e0fa67611344fa43b68",
+      "content_sha256_lf": "72228fce8d484cf3aee56e41388d4643cd9dbebe5695d57de2673124f3b41288",
       "entry_count": 51,
       "package": "src/shared/python/chat",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-chat.json"
@@ -945,7 +945,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-sidekick.json"
     },
     {
-      "content_sha256_lf": "4ccfc874b28889c210bfc55adfb375b940b86deb9404f8ef8bb9f52d15b888ef",
+      "content_sha256_lf": "45247e723691bb1c9676e4a1b521ec710e9f0f5f9928d214686ad618833125f9",
       "entry_count": 7,
       "package": "src/signal_processing_studio",
       "path": "manuals/tools/manifests/module-inventory/entries-src-signal-processing-studio.json"
@@ -963,7 +963,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-solar-system-model.json"
     },
     {
-      "content_sha256_lf": "6e173fe6036280c9c130bbec8f7715b58b59151bf0ab6da2183137c3e8bea755",
+      "content_sha256_lf": "04ca4600df3fe64bb73221aa75bb98b63172dc6a6cf6daa5a2868966fdf95584",
       "entry_count": 19,
       "package": "src/steam_engine_calculator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-steam-engine-calculator.json"
@@ -987,7 +987,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-upstream-drift-tools.json"
     },
     {
-      "content_sha256_lf": "5e5cbaf0a65f98273eaec5a28c233dfb349affb788ab63698abd8d7ac16c72ba",
+      "content_sha256_lf": "f0d9da145810d1b6b7b3ad3d39a77617b7d7c92273ca2ccbcc90d108feb864d7",
       "entry_count": 12,
       "package": "src/urdf_builder_gui",
       "path": "manuals/tools/manifests/module-inventory/entries-src-urdf-builder-gui.json"
