@@ -1,0 +1,19 @@
+# Heavy Integration lane (heavy-integration-tests.yml, heavy-tests-opt-in.yml).
+# Only what tests/heavy_integration and tests/e2e import, plus the pytest plugins
+# that pyproject addopts/ini options require. Installing ".[dev,test]" plus
+# requirements.txt here pulled ~1.07 GB of wheels the lane never imports and
+# timed the job out on slow runners (Tools #5881). Keep this list minimal; the
+# workflow's pip cache is keyed on this file.
+numpy>=2.0.1,<2.5.0
+pandas>=2.2.2
+scipy>=1.13.1,<1.18
+trimesh>=4.0.0
+ezdxf>=1.4.3
+PyQt6>=6.7.0
+pytest>=9.0.3,<9.2.0
+pytest-asyncio
+pytest-benchmark
+pytest-cov
+pytest-qt>=4.4.0
+pytest-timeout
+pytest-xdist

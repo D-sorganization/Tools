@@ -111,7 +111,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "56d1f2ace0a22c3ba3b324674f3aa2d88add393f91320afc3d4b86c432cabd0f",
+      "content_sha256_lf": "52cbfe3995c1ead215b249233d2a14b37f9bbc7ba60016cf706a6ea085006e1b",
       "entry_count": 14,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
@@ -159,7 +159,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "d545dedcf44a64aa4345f9eb552803640fe55fb566c33b9dded9a2789dbeea45",
+      "content_sha256_lf": "6725633dcfe70362ad068fbf11b27a7416a57926736a584e30fa918f63978aae",
       "entry_count": 121,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
@@ -585,7 +585,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rotation-transforms.json"
     },
     {
-      "content_sha256_lf": "c2e40ada8c91d1b4b07d2af8285906a46d5430731288a94190b954ad91a30aa9",
+      "content_sha256_lf": "26cd25ceae6c9de77fa7c5ddd925292b94e4c5d30600bb4069e9dc0ea1d58c52",
       "entry_count": 26,
       "package": "src/rrt_path_planner",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rrt-path-planner.json"

@@ -1574,6 +1574,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5874 · Skip Vessel_Drafter Real-CAD Tests When Build123d Is Only the Tests/Vessel_Drafter MagicMock Stub
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5874
+- **Branch:** claude/5874-vessel-drafter-stub-skip
+- **PR:** #5875
+- **Paths:** see #5875
+- **Started:** 2026-10-31
+- **Last verified:** 2026-10-31 (`1b9d047d`; collated from changes/5874-skip-vessel-drafter-real-cad-tests-when.md)
+- **Summary:** Skip vessel_drafter real-CAD tests when build123d is only the tests/vessel_drafter MagicMock stub
+- **Next step:** Merge after required checks; confirm on the next nightly Full Test Suite.
+
 ### DL-#5878 · Chat History-Browser Test Puts the Repo Root, Not Tests/, on Sys.Path so Optimizer_Gui Is No Longer Shadowed
 
 - **State:** shipped
