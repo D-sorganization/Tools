@@ -31,6 +31,7 @@ logger = logging.getLogger(__name__)
 CONFIG_RELPATH = Path("config") / "license_denylist.json"
 REQUIREMENTS_FILES = (
     "requirements.txt",
+    "requirements-heavy.txt",
     "requirements-lock.txt",
     "requirements-rate-pyqt.txt",
 )

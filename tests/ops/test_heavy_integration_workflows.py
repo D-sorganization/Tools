@@ -1,5 +1,8 @@
 from __future__ import annotations
 
+import ast
+import re
+import sys
 from pathlib import Path
 
 import yaml
@@ -8,6 +11,22 @@ REPO_ROOT = Path(__file__).resolve().parents[2]
 HEAVY_WORKFLOWS = (
     REPO_ROOT / ".github" / "workflows" / "heavy-integration-tests.yml",
     REPO_ROOT / ".github" / "workflows" / "heavy-tests-opt-in.yml",
+)
+HEAVY_REQUIREMENTS = REPO_ROOT / "requirements-heavy.txt"
+HEAVY_TEST_DIRS = (
+    REPO_ROOT / "tests" / "heavy_integration",
+    REPO_ROOT / "tests" / "e2e",
+)
+# Import name -> distribution name where they differ.
+_DIST_FOR_IMPORT = {"PyQt6": "pyqt6", "yaml": "pyyaml"}
+# Pytest plugins the pyproject addopts / ini options need under --strict-config.
+_REQUIRED_PLUGINS = (
+    "pytest-asyncio",
+    "pytest-benchmark",
+    "pytest-cov",
+    "pytest-qt",
+    "pytest-timeout",
+    "pytest-xdist",
 )
 
 
@@ -21,11 +40,82 @@ def _step_script(workflow_path: Path, step_name: str) -> str:
     return next(step["run"] for step in steps if step.get("name") == step_name)
 
 
-def test_heavy_workflows_install_pytest_asyncio_for_strict_config() -> None:
+def _heavy_requirement_names() -> set[str]:
+    names = set()
+    for line in HEAVY_REQUIREMENTS.read_text(encoding="utf-8").splitlines():
+        requirement = line.split("#", 1)[0].strip()
+        if requirement:
+            names.add(re.split(r"[\[<>=!~; ]", requirement, maxsplit=1)[0].lower())
+    return names
+
+
+def _third_party_imports(test_dir: Path) -> set[str]:
+    local = {"tests", "shared", "conftest"}
+    found: set[str] = set()
+    for source in test_dir.rglob("*.py"):
+        tree = ast.parse(source.read_text(encoding="utf-8"))
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Import):
+                found.update(alias.name.split(".")[0] for alias in node.names)
+            elif isinstance(node, ast.ImportFrom) and node.module and not node.level:
+                found.add(node.module.split(".")[0])
+            elif (
+                isinstance(node, ast.Call)
+                and getattr(node.func, "attr", None) == "importorskip"
+                and node.args
+                and isinstance(node.args[0], ast.Constant)
+            ):
+                found.add(str(node.args[0].value).split(".")[0])
+    return found - set(sys.stdlib_module_names) - local - {"__future__"}
+
+
+def test_heavy_requirements_cover_heavy_test_imports() -> None:
+    """Every third-party import in the heavy dirs is in requirements-heavy.txt."""
+    names = _heavy_requirement_names()
+    for test_dir in HEAVY_TEST_DIRS:
+        for module in sorted(_third_party_imports(test_dir)):
+            dist = _DIST_FOR_IMPORT.get(module, module).lower()
+            assert dist in names, f"{module} ({test_dir.name}) not in {names}"
+
+
+def test_heavy_requirements_carry_strict_config_plugins() -> None:
+    names = _heavy_requirement_names()
+    for plugin in _REQUIRED_PLUGINS:
+        assert plugin in names, plugin
+
+
+def test_heavy_workflows_install_only_the_heavy_requirements() -> None:
+    """The lane must not pull .[dev,test] or requirements.txt (~1 GB, #5881)."""
     for workflow_path in HEAVY_WORKFLOWS:
         install_script = _step_script(workflow_path, "Install Python dependencies")
 
-        assert "pytest-asyncio" in install_script, workflow_path.name
+        assert "-r requirements-heavy.txt" in install_script, workflow_path.name
+        assert ".[dev" not in install_script, workflow_path.name
+        assert "-r requirements.txt" not in install_script, workflow_path.name
+
+
+def test_heavy_workflows_key_pip_cache_on_heavy_requirements() -> None:
+    for workflow_path in HEAVY_WORKFLOWS:
+        setup = next(
+            step
+            for step in _workflow_steps(workflow_path)
+            if str(step.get("uses", "")).startswith("actions/setup-python")
+        )
+        with_block = setup["with"]
+
+        assert with_block.get("cache") == "pip", workflow_path.name
+        assert with_block.get("cache-dependency-path") == "requirements-heavy.txt", (
+            workflow_path.name
+        )
+
+
+def test_heavy_workflows_verify_the_lane_imports() -> None:
+    """importorskip deps must fail loudly when missing, not skip silently."""
+    for workflow_path in HEAVY_WORKFLOWS:
+        verify_script = _step_script(workflow_path, "Verify heavy dependencies")
+
+        for module in ("trimesh", "ezdxf", "PyQt6", "pandas", "scipy"):
+            assert f"'{module}" in verify_script, (workflow_path.name, module)
 
 
 def test_heavy_workflows_collect_only_explicit_heavy_paths() -> None:
