@@ -1574,6 +1574,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5876 · Wave_Solver Main() Tests Pass an Explicit WaveConfig Instead of Parsing the Test Runner's Argv
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5876
+- **Branch:** claude/5876-wave-solver-test-argv
+- **PR:** #5877
+- **Paths:** see #5877
+- **Started:** 2026-10-31
+- **Last verified:** 2026-10-31 (`dece4bb4`; collated from changes/5876-wave-solver-main-tests-pass-an-explicit.md)
+- **Summary:** wave_solver main() tests pass an explicit WaveConfig instead of parsing the test runner's argv
+- **Next step:** Merge after required checks; confirm on the next nightly.
+
 ### DL-#5871 · Run the Scipy.Signal Eager-Import Boundary Check in a Fresh Interpreter so It No Longer Pops Scipy.Signal From Sys.Modules and Breaks 17 Nightly Tests With _Signal_Api NameError
 
 - **State:** shipped
