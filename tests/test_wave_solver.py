@@ -31,8 +31,9 @@ def test_run_cmd_error_raises():
 def test_main_no_issues(mock_run):
     # Mock run_cmd to return None (no issues)
     mock_run.return_value = MagicMock(stdout="", returncode=0)
-    # main should return early without doing anything else
-    main()
+    # main should return early without doing anything else; an explicit config
+    # keeps main from parsing the test runner's argv (#5876).
+    main(config=WaveConfig())
     mock_run.assert_called_once()
 
 
@@ -40,7 +41,7 @@ def test_main_no_issues(mock_run):
 def test_main_invalid_json(mock_run):
     # Mock run_cmd to return invalid JSON
     mock_run.return_value = MagicMock(stdout="{invalid_json}", returncode=0)
-    main()
+    main(config=WaveConfig())
     mock_run.assert_called_once()
 
 
