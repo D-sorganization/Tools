@@ -1,6 +1,7 @@
 import pytest
 
 build123d = pytest.importorskip("build123d")
+pytestmark = pytest.mark.requires_build123d
 
 from vessel_drafter.models.vessel_drafter import (
     DEFAULT_VESSEL_DRAFTER_LAYOUT,

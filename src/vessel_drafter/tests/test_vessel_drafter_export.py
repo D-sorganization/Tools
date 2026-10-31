@@ -4,6 +4,7 @@ from pathlib import Path
 import pytest
 
 build123d = pytest.importorskip("build123d")
+pytestmark = pytest.mark.requires_build123d
 
 from vessel_drafter.exporters.vessel_export import (
     export_vessel,

@@ -10,6 +10,7 @@ from vessel_drafter.preview.vessel_drafter_view_options import (
 )
 
 
+@pytest.mark.requires_build123d
 def test_material_metrics_report_includes_refractory_totals() -> None:
     pytest.importorskip("build123d")
     report = build_material_metrics_report(DEFAULT_VESSEL_DRAFTER_LAYOUT)

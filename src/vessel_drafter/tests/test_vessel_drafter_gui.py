@@ -6,6 +6,7 @@ os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 pytest.importorskip("PyQt6.QtWidgets", reason="Qt system libraries not available")
 pytest.importorskip("build123d", reason="build123d not installed")
+pytestmark = pytest.mark.requires_build123d
 
 from PyQt6.QtWidgets import QApplication
 from vessel_drafter.gui.vessel_drafter_window import VesselDrafterWindow

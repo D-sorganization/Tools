@@ -366,6 +366,7 @@ markers = [
     "scientific: mark test as scientific validation test (numerical accuracy against reference data)",
     "headless_safe: mark test as safe to run in headless (no display) environments",
     "requires_gl: mark test as requiring OpenGL/GPU display context",
+    "requires_build123d: mark test as needing the real build123d CAD kernel, not a test stub",
     "parity: mark test as cross-repo parity check (validates Tools/UpstreamDrift/Gasification_Model alignment)",
     "requires_network: mark test as requiring network connectivity",
     "requires_database: mark test as requiring database connection",
