@@ -99,6 +99,7 @@ ROOT_ALLOWLIST: frozenset[str] = frozenset(
         "package.json",
         "packages",  # standalone lightweight distributions (agent-context)
         "pyproject.toml",
+        "requirements-heavy.txt",
         "requirements-lock.txt",
         "requirements-rate-pyqt.txt",
         "requirements.txt",
