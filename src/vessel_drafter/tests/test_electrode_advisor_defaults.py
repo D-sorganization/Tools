@@ -35,6 +35,7 @@ def test_default_positions_are_evenly_spaced() -> None:
         assert placement.effective_length_mm == pytest.approx(1350.0)
 
 
+@pytest.mark.requires_build123d
 def test_shape_bounding_box_matches_layout_envelope() -> None:
     pytest.importorskip("build123d")
     from vessel_drafter.projects.electrode_advisor_default_layout import (
