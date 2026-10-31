@@ -81,3 +81,7 @@ src/shared/python/sidekick/tests/_calculator_state_helpers.py
 # Shared route/tier table + fixtures for the route-authz matrix (#4028); support
 # module, the assertions live in test_route_authz_matrix.py / _enforcement.py.
 src/p1am_control_system/backend/tests/_route_authz_helpers.py
+# vessel_drafter package conftest: path setup plus a runtest hook that skips
+# requires_build123d tests on the tests/vessel_drafter MagicMock stub (#5874).
+# Its behaviour is asserted in test_build123d_stub_isolation.py.
+src/vessel_drafter/tests/conftest.py
