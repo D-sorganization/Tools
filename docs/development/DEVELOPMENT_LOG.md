@@ -1587,6 +1587,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5911 · Nightly Full Test Suite Provisions Bundled Chromium for the Unit-Converter Playwright Regressions
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5911
+- **Branch:** merged via #5912
+- **PR:** #5912
+- **Paths:** see #5912
+- **Started:** 2026-11-01
+- **Last verified:** 2026-11-01 (`abce3d7b`; collated from changes/5911-nightly-full-test-suite-provisions-bundl.md)
+- **Summary:** Nightly Full Test Suite provisions bundled Chromium for the unit-converter Playwright regressions
+- **Next step:** Shipped in PR #5912.
+
 ### DL-#5905 · Rate Canvas Pins Its Owning Window During paintEvent so Cyclic GC in a Pending-Draw Flush Cannot Delete It Mid-Paint and Segfault Qt
 
 - **State:** shipped

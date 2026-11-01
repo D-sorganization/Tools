@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-01 | #5912 | Nightly Full Test Suite provisions bundled Chromium for the unit-converter Playwright regressions |
 | 2026-11-01 | #5906 | Rate canvas pins its owning window during paintEvent so cyclic GC in a pending-draw flush cannot delete it mid-paint and segfault Qt |
 | 2026-11-01 | #5910 | skills_manager reads workflows only from .agents/workflows; the legacy .agent/workflows fallback is removed now that every consumer has migrated (RM #2567) |
 | 2026-11-01 | #5908 | mypy.ini skips PyQt6 imports and stubs so the PyQt6 6.12.0 QtGui.pyi syntax error no longer aborts the changed-files mypy gate |
