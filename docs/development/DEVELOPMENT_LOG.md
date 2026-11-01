@@ -1587,6 +1587,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5889 · Docs: Root REVIEW.md With Tools Review Rules (RM #2565 Rollout)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5889
+- **Branch:** merged via #5890
+- **PR:** #5890
+- **Paths:** see #5890
+- **Started:** 2026-11-01
+- **Last verified:** 2026-11-01 (`77172306`; collated from changes/5889-review-md.md)
+- **Summary:** docs: root REVIEW.md with Tools review rules (RM #2565 rollout)
+- **Next step:** Shipped in PR #5890.
+
 ### DL-#5881 · Heavy Integration Installs Only Requirements-Heavy.Txt (~174 MB, Was ~1.07 GB) and Keys Its Pip Cache on It, so Slow Runners No Longer Time Out
 
 - **State:** shipped
