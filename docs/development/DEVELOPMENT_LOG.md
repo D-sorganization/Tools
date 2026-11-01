@@ -1587,6 +1587,71 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5907 · Mypy.Ini Skips PyQt6 Imports and Stubs so the PyQt6 6.12.0 QtGui.Pyi Syntax Error No Longer Aborts the Changed-Files Mypy Gate
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5907
+- **Branch:** merged via #5908
+- **PR:** #5908
+- **Paths:** see #5908
+- **Started:** 2026-11-01
+- **Last verified:** 2026-11-01 (`84a9ccc3`; collated from changes/5907-mypy-ini-skips-pyqt6-imports-and-stubs-s.md)
+- **Summary:** mypy.ini skips PyQt6 imports and stubs so the PyQt6 6.12.0 QtGui.pyi syntax error no longer aborts the changed-files mypy gate
+- **Next step:** Shipped in PR #5908.
+
+### DL-#5902 · StrEnum Fallback Test Loads a Fresh Compatibility Module Instead of Reloading an Import-Alias Module, so It No Longer Depends on Test Order
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5902
+- **Branch:** merged via #5903
+- **PR:** #5903
+- **Paths:** see #5903
+- **Started:** 2026-11-01
+- **Last verified:** 2026-11-01 (`e56406fb`; collated from changes/5902-strenum-fallback-test-loads-a-fresh-comp.md)
+- **Summary:** StrEnum fallback test loads a fresh compatibility module instead of reloading an import-alias module, so it no longer depends on test order
+- **Next step:** Shipped in PR #5903.
+
+### DL-#5899 · CI Shards Fail Fast When an Xdist Worker Crashes (--Max-Worker-Restart=0) and the Test Step Has a 45-Minute Deadline
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5899
+- **Branch:** merged via #5900
+- **PR:** #5900
+- **Paths:** see #5900
+- **Started:** 2026-11-01
+- **Last verified:** 2026-11-01 (`cdb41a8a`; collated from changes/5899-ci-shards-fail-fast-when-an-xdist-worker.md)
+- **Summary:** CI shards fail fast when an xdist worker crashes (--max-worker-restart=0) and the test step has a 45-minute deadline
+- **Next step:** Shipped in PR #5900.
+
+### DL-#5896 · Test_Cmd_Validate_Execution Patches the Camera on the Sys.Modules Entry Cmd_Validate Imports, so a Stale Shared.Python.Camera Package Attribute Left by Other Suite Tests No Longer Lets the Real Ffmpeg Source Run (Nightly Red)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5896
+- **Branch:** merged via #5897
+- **PR:** #5897
+- **Paths:** see #5897
+- **Started:** 2026-11-01
+- **Last verified:** 2026-11-01 (`5a6c24c9`; collated from changes/5896-test-cmd-validate-execution-patches-the.md)
+- **Summary:** test_cmd_validate_execution patches the camera on the sys.modules entry cmd_validate imports, so a stale shared.python.camera package attribute left by other suite tests no longer lets the real ffmpeg source run (nightly red)
+- **Next step:** Shipped in PR #5897.
+
+### DL-#5893 · Delete Legacy .agent/ Copies and Fence GAAI Ci-Watch-and-Fix Behind the Fleet PR Lifecycle (RM #2567 Tools Slice)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5893
+- **Branch:** merged via #5904
+- **PR:** #5904
+- **Paths:** see #5904
+- **Started:** 2026-11-01
+- **Last verified:** 2026-11-01 (`ae979ad1`; collated from changes/5893-delete-legacy-agent-copies-and-fence-gaa.md)
+- **Summary:** Delete legacy .agent/ copies and fence GAAI ci-watch-and-fix behind the fleet PR lifecycle (RM #2567 Tools slice)
+- **Next step:** Shipped in PR #5904.
+
 ### DL-#5889 · Docs: Root REVIEW.md With Tools Review Rules (RM #2565 Rollout)
 
 - **State:** shipped

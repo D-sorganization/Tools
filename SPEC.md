@@ -5947,6 +5947,11 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-01 | #5908 | mypy.ini skips PyQt6 imports and stubs so the PyQt6 6.12.0 QtGui.pyi syntax error no longer aborts the changed-files mypy gate |
+| 2026-11-01 | #5903 | StrEnum fallback test loads a fresh compatibility module instead of reloading an import-alias module, so it no longer depends on test order |
+| 2026-11-01 | #5900 | CI shards fail fast when an xdist worker crashes (--max-worker-restart=0) and the test step has a 45-minute deadline |
+| 2026-11-01 | #5897 | test_cmd_validate_execution patches the camera on the sys.modules entry cmd_validate imports, so a stale shared.python.camera package attribute left by other suite tests no longer lets the real ffmpeg source run (nightly red) |
+| 2026-11-01 | #5904 | Delete legacy .agent/ copies and fence GAAI ci-watch-and-fix behind the fleet PR lifecycle (RM #2567 Tools slice) |
 | 2026-11-01 | #5890 | docs: root REVIEW.md with Tools review rules (RM #2565 rollout) |
 | 2026-10-31 | #5886 | Chat dock tests close leftover parentless docks after each test so a deferred scroll cannot fire on a GC-freed scroll bar and segfault the xdist worker |
 | 2026-10-31 | #5883 | Heavy Integration installs only requirements-heavy.txt (~174 MB, was ~1.07 GB) and keys its pip cache on it, so slow runners no longer time out |
