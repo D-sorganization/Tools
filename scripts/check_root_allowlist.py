@@ -32,7 +32,6 @@ ROOT = Path(__file__).resolve().parents[1]
 # Every tracked top-level entry that is allowed to exist. Keep sorted.
 ROOT_ALLOWLIST: frozenset[str] = frozenset(
     {
-        ".agent",  # agent skill definitions (.agent/skills/*)
         ".benchmarks",  # performance SLA docs, not pytest-benchmark output
         ".cargo",  # cargo-audit configuration for rust_core
         ".claude",

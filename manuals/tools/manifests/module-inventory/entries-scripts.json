@@ -3350,10 +3350,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 7040,
+      "bytes_lf": 6977,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9bf1d7ac03fdb4fe3ca32467b5a2c209476d2deac9ef9956f41b8841351f2a93",
+      "content_sha256_lf": "d1d66ef6955b5ef8f4314dc672c8c8e3b2dd35583598e7ab32e056f74ff4e04c",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-ROOT-ALLOWLIST-PY-94782E1774B7",
       "language": "python",
@@ -3414,6 +3414,7 @@
           }
         ],
         "test_paths": [
+          "tests/ops/test_no_legacy_agent_tree.py",
           "tests/scripts/test_check_root_allowlist.py",
           "tests/scripts/test_review_md.py"
         ],
