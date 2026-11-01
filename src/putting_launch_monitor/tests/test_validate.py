@@ -3,7 +3,10 @@
 from __future__ import annotations
 
 import argparse
+import importlib
 import io
+import sys
+import types
 from pathlib import Path
 from typing import Any
 
@@ -276,7 +279,7 @@ def test_add_validate_parser() -> None:
     assert args.auto is True
 
 
-def test_cmd_validate_execution(tmp_path: Path, monkeypatch: Any) -> None:
+def _run_cmd_validate_with_mock_camera(tmp_path: Path, monkeypatch: Any) -> None:
     cam = SyntheticCamera()
     cal = _make_calibration(cam)
     cal_path = tmp_path / "cal.json"
@@ -322,12 +325,27 @@ def test_cmd_validate_execution(tmp_path: Path, monkeypatch: Any) -> None:
 
         def close(self) -> None: ...
 
-    monkeypatch.setattr(
-        "shared.python.camera.FfmpegDirectShowSource",
-        MockSource,
-    )
+    # Patch the sys.modules entry cmd_validate imports from, not a dotted
+    # string: the full suite can leave a stale ``shared.python.camera``
+    # package attribute, and a string target lands there (#5896).
+    camera = importlib.import_module("shared.python.camera")
+    monkeypatch.setattr(camera, "FfmpegDirectShowSource", MockSource)
 
     code = cmd_validate(args)
     assert code == 0
     assert csv_path.exists()
     assert "timestamp,speed_mph" in csv_path.read_text(encoding="utf-8")
+
+
+def test_cmd_validate_execution(tmp_path: Path, monkeypatch: Any) -> None:
+    _run_cmd_validate_with_mock_camera(tmp_path, monkeypatch)
+
+
+def test_cmd_validate_mock_camera_survives_a_stale_package_attribute(
+    tmp_path: Path, monkeypatch: Any
+) -> None:
+    """Other suite tests can swap modules so the parent attribute goes stale (#5896)."""
+    importlib.import_module("shared.python.camera")
+    stale = types.ModuleType("shared.python.camera")
+    monkeypatch.setattr(sys.modules["shared.python"], "camera", stale)
+    _run_cmd_validate_with_mock_camera(tmp_path, monkeypatch)
