@@ -82,3 +82,17 @@ def test_skills_manager_get_skill(mock_workspace: Path) -> None:
     assert workflow.is_workflow
 
     assert manager.get_skill_or_workflow("missing") is None
+
+
+def test_skills_manager_ignores_legacy_agent_workflows(mock_workspace: Path) -> None:
+    """Workflows come only from .agents/workflows, never the legacy .agent tree."""
+    legacy_dir = mock_workspace / ".agent" / "workflows"
+    legacy_dir.mkdir(parents=True)
+    (legacy_dir / "legacy-only.md").write_text(
+        "# Legacy Workflow\nShould not be discovered.",
+        encoding="utf-8",
+    )
+
+    manager = SkillsManager(mock_workspace)
+
+    assert set(manager.workflows) == {"sync-all"}
