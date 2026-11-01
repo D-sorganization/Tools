@@ -97,7 +97,6 @@ azure-pipelines.yml
 .coverage
 .Jules
 .claude
-.agent
 .cursor
 
 # Additional exclusions for issue #2415
