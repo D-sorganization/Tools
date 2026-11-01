@@ -1587,6 +1587,32 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5905 · Rate Canvas Pins Its Owning Window During paintEvent so Cyclic GC in a Pending-Draw Flush Cannot Delete It Mid-Paint and Segfault Qt
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5905
+- **Branch:** merged via #5906
+- **PR:** #5906
+- **Paths:** see #5906
+- **Started:** 2026-11-01
+- **Last verified:** 2026-11-01 (`1df9764d`; collated from changes/5905-rate-canvas-pins-its-owning-window-durin.md)
+- **Summary:** Rate canvas pins its owning window during paintEvent so cyclic GC in a pending-draw flush cannot delete it mid-paint and segfault Qt
+- **Next step:** Shipped in PR #5906.
+
+### DL-#5894 · Skills_Manager Reads Workflows Only From .agents/workflows; the Legacy .agent/workflows Fallback Is Removed Now That Every Consumer Has Migrated (RM #2567)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5894
+- **Branch:** merged via #5910
+- **PR:** #5910
+- **Paths:** see #5910
+- **Started:** 2026-11-01
+- **Last verified:** 2026-11-01 (`0b5a1eba`; collated from changes/5894-skills-manager-reads-workflows-only-from.md)
+- **Summary:** skills_manager reads workflows only from .agents/workflows; the legacy .agent/workflows fallback is removed now that every consumer has migrated (RM #2567)
+- **Next step:** Shipped in PR #5910.
+
 ### DL-#5907 · Mypy.Ini Skips PyQt6 Imports and Stubs so the PyQt6 6.12.0 QtGui.Pyi Syntax Error No Longer Aborts the Changed-Files Mypy Gate
 
 - **State:** shipped
