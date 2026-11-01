@@ -66,6 +66,7 @@ ROOT_ALLOWLIST: frozenset[str] = frozenset(
         "MANIFEST.in",
         "Makefile",
         "README.md",
+        "REVIEW.md",  # repo review rules (RM #2565, Tools #5889)
         "SECURITY.md",
         "SPEC.md",
         "UnifiedToolsLauncher.py",  # launcher entry point (desktop shortcuts)
