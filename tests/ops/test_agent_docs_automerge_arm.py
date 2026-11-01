@@ -18,11 +18,7 @@ _AGENT_DOC_ROOTS: tuple[Path, ...] = (
     _REPO_ROOT / "docs" / "ci-cd" / "AUTO_ISSUE_RESOLVER.md",
 )
 
-_AGENT_DOC_DIRS: tuple[Path, ...] = (
-    _REPO_ROOT / ".agent" / "skills",
-    _REPO_ROOT / ".agent" / "workflows",
-    _REPO_ROOT / ".claude" / "skills",
-)
+_AGENT_DOC_DIRS: tuple[Path, ...] = (_REPO_ROOT / ".claude" / "skills",)
 
 _RAW_AUTO_MERGE = re.compile(r"gh\s+pr\s+merge\b.*--auto", re.IGNORECASE)
 _FLEET_BEGIN = re.compile(r"^<!--\s*BEGIN\s+FLEET-MANAGED:")

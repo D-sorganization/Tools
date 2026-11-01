@@ -41,8 +41,8 @@ python3 -m pytest -x --timeout=60 -q
 
 ## CI Watch (Post-PR)
 
-11. After creating a PR, invoke the `ci-watch-and-fix` skill to monitor CI and remediate failures.
-12. Do NOT mark a story as `done` until CI passes or the skill escalates after 3 remediation cycles.
+11. Do not run core skill `delivery/ci-watch-and-fix`; the fleet PR lifecycle governs (RM skill `fleet-pr-lifecycle`).
+12. Do NOT mark a story as `done` until CI passes.
 
 ## Escalation
 
