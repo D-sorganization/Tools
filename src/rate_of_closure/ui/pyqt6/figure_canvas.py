@@ -10,7 +10,7 @@ from matplotlib.backends.backend_qtagg import FigureCanvasQTAgg
 from matplotlib.figure import Figure
 from PyQt6 import sip
 from PyQt6.QtCore import QRect, QTimer
-from PyQt6.QtGui import QCloseEvent, QRegion
+from PyQt6.QtGui import QCloseEvent, QPaintEvent, QRegion
 
 __all__ = ["LifecycleSafeFigureCanvas"]
 
@@ -70,6 +70,23 @@ class LifecycleSafeFigureCanvas(FigureCanvasQTAgg):
         """Allow deferred redraws after a successful synchronous retry."""
         self.cancel_pending_draw()
         self._idle_draws_paused = False
+
+    def paintEvent(self, event: QPaintEvent) -> None:  # noqa: N802
+        """Paint with the owning window pinned so it cannot be destroyed mid-paint.
+
+        Matplotlib's paintEvent flushes a pending draw before it creates its
+        QPainter. If cyclic garbage collection runs during that draw, it can
+        free an unreferenced top-level window and delete this canvas inside its
+        own paint, which segfaults Qt (#5905). Holding the window's wrapper
+        keeps it reachable until the paint returns.
+        """
+        if sip.isdeleted(self):
+            return
+        owner = self.window()
+        try:
+            super().paintEvent(event)
+        finally:
+            del owner
 
     def closeEvent(self, event: QCloseEvent) -> None:  # noqa: N802
         """Cancel queued drawing before Qt starts destroying the canvas."""
