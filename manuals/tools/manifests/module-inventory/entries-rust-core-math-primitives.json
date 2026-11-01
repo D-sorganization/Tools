@@ -1217,6 +1217,7 @@
           "tests/shared/python/process_calculators/test_syngas_compression_edge_cases.py",
           "tests/shared/python/sidekick/lab/mocap/test_reference_placements.py",
           "tests/shared/python/sidekick/ui/test_tools_sidebar_runtime_tabs.py",
+          "tests/shared/python/test_compatibility.py",
           "tests/shared/python/test_safe_eval.py",
           "tests/shared/python/theme/test_icon_utils.py",
           "tests/shared/python/theme/test_typography.py",
