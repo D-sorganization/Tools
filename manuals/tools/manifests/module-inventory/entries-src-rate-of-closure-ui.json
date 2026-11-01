@@ -1850,10 +1850,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3241,
+      "bytes_lf": 3953,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "417fffe9634d8fbbf0ec80bc81e13f233c4b19ad9e22f161f1b4f14cbcf63727",
+      "content_sha256_lf": "fcc20053f739eb5477f7113a6de23f99b77b8768c707210c223e401ac5ffd7b4",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-UI-PYQT6-FIGURE-CANVAS-PY-E941219CEA0F",
       "language": "python",
@@ -1874,7 +1874,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
+        "units": "mapped",
         "validation": "not-applicable"
       },
       "traceability": {
@@ -1897,7 +1897,9 @@
         "test_paths": [
           "tests/rate_of_closure/test_figure_canvas_lifecycle.py"
         ],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "s"
+        ],
         "validation_paths": []
       }
     },
