@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-01 | #5890 | docs: root REVIEW.md with Tools review rules (RM #2565 rollout) |
 | 2026-10-31 | #5886 | Chat dock tests close leftover parentless docks after each test so a deferred scroll cannot fire on a GC-freed scroll bar and segfault the xdist worker |
 | 2026-10-31 | #5883 | Heavy Integration installs only requirements-heavy.txt (~174 MB, was ~1.07 GB) and keys its pip cache on it, so slow runners no longer time out |
 | 2026-10-31 | #5875 | Skip vessel_drafter real-CAD tests when build123d is only the tests/vessel_drafter MagicMock stub |
