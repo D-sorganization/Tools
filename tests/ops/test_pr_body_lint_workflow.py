@@ -8,7 +8,7 @@ import yaml
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 WORKFLOW = REPO_ROOT / ".github" / "workflows" / "pr-body-lint.yml"
-PINNED_SHA = "d3c5ff3fcb21e15997ca8668b8c9278e2e25dcff"
+PINNED_SHA = "d3c5ff3fcb21e15997ca8668b8c9278e2e25dcff"  # pragma: allowlist secret
 
 
 def test_pr_body_lint_is_a_report_only_pull_request_target_caller() -> None:
