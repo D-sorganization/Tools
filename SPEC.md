@@ -5947,6 +5947,8 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-01 | #5906 | Rate canvas pins its owning window during paintEvent so cyclic GC in a pending-draw flush cannot delete it mid-paint and segfault Qt |
+| 2026-11-01 | #5910 | skills_manager reads workflows only from .agents/workflows; the legacy .agent/workflows fallback is removed now that every consumer has migrated (RM #2567) |
 | 2026-11-01 | #5908 | mypy.ini skips PyQt6 imports and stubs so the PyQt6 6.12.0 QtGui.pyi syntax error no longer aborts the changed-files mypy gate |
 | 2026-11-01 | #5903 | StrEnum fallback test loads a fresh compatibility module instead of reloading an import-alias module, so it no longer depends on test order |
 | 2026-11-01 | #5900 | CI shards fail fast when an xdist worker crashes (--max-worker-restart=0) and the test step has a 45-minute deadline |
