@@ -813,6 +813,9 @@ jobs:
 
       - name: Run Tests with Coverage (Python ${{ matrix.python-version }})
         id: run_tests
+        # The slowest green shard takes ~21 min. This deadline ends any stall
+        # far inside the 90-min job timeout, which also covers setup (#5899).
+        timeout-minutes: 45
         run: |
           export PYTHONPATH="src/data_processing/data_processor/python:src/media_processing/video_processor/python:src/python/src:src/shared/python:src:${PYTHONPATH:-}"
           if [ "${{ matrix.python-version }}" = "3.11" ]; then

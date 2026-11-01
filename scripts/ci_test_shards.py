@@ -271,6 +271,11 @@ def pytest_command(
         if invocation.claims(rel):
             cmd.append(f"--ignore={rel}")
     cmd += ["-m", PYTEST_MARKER_EXPR, "-n", "0" if invocation.serial else fanout]
+    if not invocation.serial:
+        # pytest-timeout's thread method os._exit()s a stuck worker; a restarted
+        # worker left the controller stalled until the job timeout (#5899).
+        # Without restarts the crash fails the shard at once, naming the test.
+        cmd.append("--max-worker-restart=0")
     if not invocation.own_config:
         # Root addopts already carry --strict-markers/--durations; only the
         # xdist fan-out and marker expression are overridden per lane.
