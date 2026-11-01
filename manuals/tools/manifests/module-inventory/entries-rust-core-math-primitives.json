@@ -1153,6 +1153,7 @@
           "tests/ops/test_automerge_guard.py",
           "tests/ops/test_ci_heavy_integration_triggers.py",
           "tests/ops/test_ci_standard_tools_core_wheel.py",
+          "tests/ops/test_pr_body_lint_workflow.py",
           "tests/p1am_control_system/test_calibrate_safe_shutdown.py",
           "tests/p1am_control_system/test_cors_config.py",
           "tests/p1am_control_system/test_event_logger_filter_error_logging.py",
