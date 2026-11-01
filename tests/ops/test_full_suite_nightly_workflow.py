@@ -80,3 +80,30 @@ def test_full_suite_nightly_keeps_collection_floor_guard() -> None:
     assert "total < 500" in script
     assert "collection broken" in script
     assert "sys.exit(1)" in script
+
+
+def test_full_suite_nightly_provisions_chromium_before_running_the_suite() -> None:
+    """The nightly collects the unit-converter browser tests too (#5911)."""
+    workflow = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
+    steps = workflow["jobs"]["full-suite"]["steps"]
+    names = [step.get("name") for step in steps]
+    browser_step = "Provision bundled Chromium for unit-converter regressions"
+
+    assert browser_step in names
+    assert (
+        names.index("Install Python dependencies")
+        < names.index(browser_step)
+        < names.index("Run full suite")
+    )
+    assert "continue-on-error" not in steps[names.index(browser_step)]
+
+    script = _step_script(browser_step)
+    assert 'PLAYWRIGHT_BROWSERS_PATH="$RUNNER_TEMP/playwright-browsers"' in script
+    assert '"$GITHUB_ENV"' in script
+    assert 'if [ "$(id -u)" -eq 0 ]; then' in script
+    assert "sudo -n true" in script
+    assert "flock /tmp/d-sorg-apt-install.lock" in script
+    assert "-m playwright install-deps chromium" in script
+    assert "-m playwright install chromium" in script
+    assert "::error::" in script
+    assert "exit 1" in script
