@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "016c315e536c9108edf853487cc65bdbea6cfac1da6d6d55d2bdcedb5da25801",
+      "content_sha256_lf": "afcaf3f725e6f90a1fc85690b21ce0fa9b94767fc2017f6fe6eb6bfb9973dd73",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
