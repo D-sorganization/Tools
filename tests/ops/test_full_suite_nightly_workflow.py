@@ -4,6 +4,7 @@ try:
     import tomllib
 except ModuleNotFoundError:
     import tomli as tomllib
+import re
 from pathlib import Path
 
 import yaml
@@ -16,6 +17,15 @@ def _step_script(step_name: str) -> str:
     workflow = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
     steps = workflow["jobs"]["full-suite"]["steps"]
     return next(step["run"] for step in steps if step.get("name") == step_name)
+
+
+def _build_install_line() -> str:
+    """Return the nightly's `pip install` line that provides `build`."""
+    return next(
+        line
+        for line in _step_script("Install Python dependencies").splitlines()
+        if "python -m pip install" in line and '"build' in line
+    )
 
 
 def _dependency_name(spec: str) -> str:
@@ -107,3 +117,52 @@ def test_full_suite_nightly_provisions_chromium_before_running_the_suite() -> No
     assert "-m playwright install chromium" in script
     assert "::error::" in script
     assert "exit 1" in script
+
+
+def test_full_suite_nightly_keeps_libpython_reachable_under_sudo() -> None:
+    """AGENT_TOOLSDIRECTORY moves setup-python's interpreter into the workspace,
+    so it needs setup-python's LD_LIBRARY_PATH; sudo resets the environment and
+    the interpreter died with "libpython3.11.so.1.0: cannot open" (#5948)."""
+    script = _step_script("Provision bundled Chromium for unit-converter regressions")
+    assert "sudo -n flock" not in script, "sudo must not run python bare"
+    assert 'sudo -n env "LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-}" flock' in script
+
+
+def test_full_suite_nightly_installs_the_ci_standard_build_pin() -> None:
+    """The Sidekick wheel test runs `python -m build`; ci-standard installs a
+    pinned `build` but the nightly did not, so the test failed with
+    "No module named build" (#5953)."""
+    ci_standard = (REPO_ROOT / ".github" / "workflows" / "ci-standard.yml").read_text(
+        encoding="utf-8"
+    )
+    pin = re.search(r'"build[<>=][^"]*"', ci_standard)
+    assert pin, "ci-standard.yml must keep a pinned build install"
+    assert pin.group(0) in _build_install_line()
+
+
+def test_full_suite_nightly_installs_the_build_system_requires() -> None:
+    """`python -m build --no-isolation` builds against the current environment,
+    so the wheel tests failed with "Missing dependencies: wheel" until the
+    nightly installed pyproject's [build-system] requires too (#5957)."""
+    pyproject = tomllib.loads(
+        (REPO_ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    )
+    requires = pyproject["build-system"]["requires"]
+    install = _build_install_line()
+    for requirement in requires:
+        assert f'"{requirement}"' in install, (
+            f"{requirement} must be installed with build"
+        )
+
+
+def test_full_suite_nightly_keeps_the_tool_cache_outside_the_checkout() -> None:
+    """The rate_of_closure wheel test asserts the interpreter's site-packages is
+    not inside the repository; a workspace tool cache put it there (#5957)."""
+    workflow = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
+    job = workflow["jobs"]["full-suite"]
+    assert "AGENT_TOOLSDIRECTORY" not in job.get("env", {})
+    setup = next(
+        step for step in job["steps"] if step.get("name") == "Set up Python 3.11"
+    )
+    # `runner` is only available in step-level env, not job-level env.
+    assert setup["env"]["AGENT_TOOLSDIRECTORY"] == "${{ runner.temp }}/_tool_cache"

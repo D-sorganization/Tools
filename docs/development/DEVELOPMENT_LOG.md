@@ -1587,6 +1587,110 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5957 · Nightly Installs Pyproject's [Build-System] Requires (Setuptools, Wheel) With the Build Pin and Keeps Setup-Python's Tool Cache in Runner.Temp Outside the Checkout, so Both Standalone-Wheel Tests Pass.
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5957
+- **Branch:** merged via #5958
+- **PR:** #5958
+- **Paths:** see #5958
+- **Started:** 2026-11-02
+- **Last verified:** 2026-11-02 (`56286a07`; collated from changes/5957-nightly-installs-pyproject-s-build-syste.md)
+- **Summary:** Nightly installs pyproject's [build-system] requires (setuptools, wheel) with the build pin and keeps setup-python's tool cache in runner.temp outside the checkout, so both standalone-wheel tests pass.
+- **Next step:** Shipped in PR #5958.
+
+### DL-#5953 · Nightly Installs the Same Pinned Build as Ci-Standard so the Sidekick Wheel Test Can Run Python -m Build.
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5953
+- **Branch:** merged via #5955
+- **PR:** #5955
+- **Paths:** see #5955
+- **Started:** 2026-11-02
+- **Last verified:** 2026-11-02 (`f5e74187`; collated from changes/5953-nightly-installs-the-same-pinned-build-a.md)
+- **Summary:** Nightly installs the same pinned build as ci-standard so the Sidekick wheel test can run python -m build.
+- **Next step:** Shipped in PR #5955.
+
+### DL-#5951 · Rust_Adapter Joins the _RustStreamWorker QThread After Its Event Loop Quits, so a Still-Running Thread Is Never Destroyed (Merge_Group Abort)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5951
+- **Branch:** merged via #5952
+- **PR:** #5952
+- **Paths:** see #5952
+- **Started:** 2026-11-02
+- **Last verified:** 2026-11-02 (`5e85cc21`; collated from changes/5951-rust-adapter-joins-the-ruststreamworker.md)
+- **Summary:** rust_adapter joins the _RustStreamWorker QThread after its event loop quits, so a still-running thread is never destroyed (merge_group abort)
+- **Next step:** Shipped in PR #5952.
+
+### DL-#5948 · Nightly Chromium Provisioning Passes LD_LIBRARY_PATH Through Sudo so the Workspace Tool-Cache Python Can Load Libpython (Regression From #5912).
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5948
+- **Branch:** merged via #5949
+- **PR:** #5949
+- **Paths:** see #5949
+- **Started:** 2026-11-02
+- **Last verified:** 2026-11-02 (`f5fb77a1`; collated from changes/5948-nightly-chromium-provisioning-passes-ld.md)
+- **Summary:** Nightly Chromium provisioning passes LD_LIBRARY_PATH through sudo so the workspace tool-cache python can load libpython (regression from #5912).
+- **Next step:** Shipped in PR #5949.
+
+### DL-#5917 · Theme Colors Now Come From Themes.Json Alone: The Sidekick Design-Token API and designTokens.Ts Read the Catalog Directly, Scripts/sync_design_tokens.py Regenerates the Design_Tokens.Json Themes Table, a CI Test Fails on Drift, colors.py Loaders Share One Catalog Path, and the Theme README States the Do-Not-Copy Consumption Contract
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5917
+- **Branch:** merged via #5946
+- **PR:** #5946
+- **Paths:** see #5946
+- **Started:** 2026-11-02
+- **Last verified:** 2026-11-02 (`1a649fb0`; collated from changes/5917-theme-colors-now-come-from-themes-json-a.md)
+- **Summary:** Theme colors now come from themes.json alone: the sidekick design-token API and designTokens.ts read the catalog directly, scripts/sync_design_tokens.py regenerates the design_tokens.json themes table, a CI test fails on drift, colors.py loaders share one catalog path, and the theme README states the do-not-copy consumption contract
+- **Next step:** Shipped in PR #5946.
+
+### DL-#5923 · Harden Pendulum Counterfactual and Jacobian Tests; Verify Src-Embedded Shard Ownership
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5923
+- **Branch:** merged via #5939
+- **PR:** #5939
+- **Paths:** see #5939
+- **Started:** 2026-11-02
+- **Last verified:** 2026-11-02 (`a59a4b86`; collated from changes/5923-harden-pendulum-counterfactual-and-jacob.md)
+- **Summary:** Harden pendulum counterfactual and Jacobian tests; verify src-embedded shard ownership
+- **Next step:** Shipped in PR #5939.
+
+### DL-#5921 · Heavy Integration Lane Fails on Missing, Skipped or Failing Required Cases via a Versioned Manifest
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5921
+- **Branch:** merged via #5926
+- **PR:** #5926
+- **Paths:** see #5926
+- **Started:** 2026-11-02
+- **Last verified:** 2026-11-02 (`f736317b`; collated from changes/5921-heavy-integration-lane-fails-on-missing.md)
+- **Summary:** Heavy integration lane fails on missing, skipped or failing required cases via a versioned manifest
+- **Next step:** Shipped in PR #5926.
+
+### DL-#5915 · Theme Catalog: Office-Blue/Office-Green Renamed to Cobalt-Light/Fern-Light With Accents Moved Off the Word/Excel Brand Hexes, Category Office Renamed Light-Tinted, and a Themes.Json legacyIds Map so Saved ms-Word/Office-Blue/Corporate-Blue (And Other Retired Ids) Preferences Keep Loading in ThemeManager and the TS Theme Store
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5915
+- **Branch:** merged via #5925
+- **PR:** #5925
+- **Paths:** see #5925
+- **Started:** 2026-11-02
+- **Last verified:** 2026-11-02 (`28ef1585`; collated from changes/5915-theme-catalog-office-blue-office-green-r.md)
+- **Summary:** Theme catalog: office-blue/office-green renamed to cobalt-light/fern-light with accents moved off the Word/Excel brand hexes, category office renamed light-tinted, and a themes.json legacyIds map so saved ms-word/office-blue/corporate-blue (and other retired ids) preferences keep loading in ThemeManager and the TS theme store
+- **Next step:** Shipped in PR #5925.
+
 ### DL-#5911 · Nightly Full Test Suite Provisions Bundled Chromium for the Unit-Converter Playwright Regressions
 
 - **State:** shipped

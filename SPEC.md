@@ -5947,6 +5947,14 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-02 | #5958 | Nightly installs pyproject's [build-system] requires (setuptools, wheel) with the build pin and keeps setup-python's tool cache in runner.temp outside the checkout, so both standalone-wheel tests pass. |
+| 2026-11-02 | #5955 | Nightly installs the same pinned build as ci-standard so the Sidekick wheel test can run python -m build. |
+| 2026-11-02 | #5952 | rust_adapter joins the _RustStreamWorker QThread after its event loop quits, so a still-running thread is never destroyed (merge_group abort) |
+| 2026-11-02 | #5949 | Nightly Chromium provisioning passes LD_LIBRARY_PATH through sudo so the workspace tool-cache python can load libpython (regression from #5912). |
+| 2026-11-02 | #5946 | Theme colors now come from themes.json alone: the sidekick design-token API and designTokens.ts read the catalog directly, scripts/sync_design_tokens.py regenerates the design_tokens.json themes table, a CI test fails on drift, colors.py loaders share one catalog path, and the theme README states the do-not-copy consumption contract |
+| 2026-11-02 | #5939 | Harden pendulum counterfactual and Jacobian tests; verify src-embedded shard ownership |
+| 2026-11-02 | #5926 | Heavy integration lane fails on missing, skipped or failing required cases via a versioned manifest |
+| 2026-11-02 | #5925 | Theme catalog: office-blue/office-green renamed to cobalt-light/fern-light with accents moved off the Word/Excel brand hexes, category office renamed light-tinted, and a themes.json legacyIds map so saved ms-word/office-blue/corporate-blue (and other retired ids) preferences keep loading in ThemeManager and the TS theme store |
 | 2026-11-01 | #5912 | Nightly Full Test Suite provisions bundled Chromium for the unit-converter Playwright regressions |
 | 2026-11-01 | #5906 | Rate canvas pins its owning window during paintEvent so cyclic GC in a pending-draw flush cannot delete it mid-paint and segfault Qt |
 | 2026-11-01 | #5910 | skills_manager reads workflows only from .agents/workflows; the legacy .agent/workflows fallback is removed now that every consumer has migrated (RM #2567) |

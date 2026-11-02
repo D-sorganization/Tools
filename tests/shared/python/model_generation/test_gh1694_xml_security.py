@@ -80,15 +80,8 @@ class TestURDFParserXXE:
         from model_generation.converters.urdf_parser import URDFParser
 
         parser = URDFParser()
-        try:
-            model = parser.parse(XXE_PAYLOAD)
-            # If somehow no exception: the output must not contain passwd content
-            output = str(model)
-            assert "root:x:" not in output
-            assert "/bin/bash" not in output
-        except Exception:
-            # Exception is the correct behavior
-            pass
+        with pytest.raises(ValueError):
+            parser.parse(XXE_PAYLOAD)
 
 
 # ---------------------------------------------------------------------------
@@ -177,40 +170,22 @@ class TestURDFTextEditorXXE:
     """URDFTextEditor.validate must use defusedxml and reject XXE."""
 
     def test_validate_xxe_raises_or_returns_error(self) -> None:
-        """XXE in editor content must either raise or produce a validation ERROR."""
-        from model_generation.editor.text_editor import (
-            URDFTextEditor,
-            ValidationSeverity,
-        )
+        """XXE in editor content must raise or produce a validation ERROR."""
+        from model_generation.editor.text_editor import URDFTextEditor
 
         editor = URDFTextEditor()
         editor.load_string(XXE_PAYLOAD)
-        # defusedxml raises EntitiesForbidden which is a ValueError subclass
-        # The validate() method may not catch it — acceptable: the error propagates
-        try:
-            messages = editor.validate()
-            # If no exception: there must be an error-level message
-            severities = [m.severity for m in messages]
-            assert ValidationSeverity.ERROR in severities
-        except Exception:
-            # Exception is also correct (defusedxml blocking attack)
-            pass
+        with pytest.raises(ValueError):
+            editor.validate()
 
     def test_validate_billion_laughs_raises_or_returns_error(self) -> None:
-        """Billion-laughs payload must either raise or produce ERROR message."""
-        from model_generation.editor.text_editor import (
-            URDFTextEditor,
-            ValidationSeverity,
-        )
+        """Billion-laughs payload must raise or produce ERROR message."""
+        from model_generation.editor.text_editor import URDFTextEditor
 
         editor = URDFTextEditor()
         editor.load_string(BILLION_LAUGHS)
-        try:
-            messages = editor.validate()
-            severities = [m.severity for m in messages]
-            assert ValidationSeverity.ERROR in severities
-        except Exception:
-            pass
+        with pytest.raises(ValueError):
+            editor.validate()
 
     def test_valid_urdf_validates_without_error(self) -> None:
         """A valid URDF should still pass validation after hardening."""
@@ -244,18 +219,19 @@ class TestValidateMJCFXXE:
         assert isinstance(errors, list)
 
     def test_validate_mjcf_invalid_xml_returns_errors_or_raises(self) -> None:
-        """Malformed XML should either return error messages or raise (mujoco raises)."""
+        """Malformed XML must return errors (defusedxml) or raise (MuJoCo)."""
         from model_generation.converters.format_utils import validate_mjcf
 
         bad_xml = "<mujoco><unclosed>"
         try:
+            import mujoco  # noqa: F401
+        except ImportError:
             errors = validate_mjcf(bad_xml)
-            # If returned: must be a non-empty error list
             assert isinstance(errors, list)
             assert len(errors) > 0
-        except Exception:
-            # mujoco installed: raises ValueError for malformed XML — also correct
-            pass
+        else:
+            with pytest.raises(ValueError):
+                validate_mjcf(bad_xml)
 
     def test_validate_mjcf_no_stdlib_et_parse_in_fallback(self) -> None:
         """The defusedxml fallback must not import stdlib ET for ParseError."""

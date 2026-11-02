@@ -87,7 +87,7 @@ The launcher supports multiple color themes. Access the Theme menu to switch bet
 
 - Light and Dark themes
 - Editor themes (Neon Warm Dark, Vampire Dark, Frost Dark)
-- Office themes (Office Blue, Office Green)
+- Light tinted themes (Cobalt Light, Fern Light, Sandstone Yellow)
 - Custom themes
 
 ## Getting Help

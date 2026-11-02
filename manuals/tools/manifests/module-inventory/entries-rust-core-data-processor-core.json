@@ -415,6 +415,7 @@
           "tests/scada/test_f_matrix.py",
           "tests/scripts/test_audit_closed_stack_branches.py",
           "tests/scripts/test_check_changed_python_policy.py",
+          "tests/scripts/test_check_heavy_lane_report.py",
           "tests/scripts/test_check_rate_visual_evidence_changes.py",
           "tests/scripts/test_check_root_allowlist.py",
           "tests/scripts/test_check_test_assertions.py",

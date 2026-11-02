@@ -8,6 +8,7 @@
 // Theme definitions from JSON source of truth
 export {
   CHART_COLORS,
+  LEGACY_THEME_IDS,
   THEME_METADATA,
   THEME_PRESETS,
   type ThemeBaseColors,
@@ -22,6 +23,7 @@ export {
   generateSidekickCSSVariables,
   getContrastRatio,
   isDarkTheme,
+  resolveThemeId,
   verifyThemeReadability,
 } from './themeDefinitions';
 

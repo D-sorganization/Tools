@@ -1,4 +1,5 @@
 import designTokens from '../../design_tokens.json';
+import themesData from '../../theme-definitions/themes.json';
 
 export interface ThemeColors {
   bg: string;
@@ -33,7 +34,14 @@ export interface DesignTokens {
   radii: Record<string, string>;
 }
 
-const tokens: DesignTokens = designTokens as any;
+// themes.json is the single source of theme colors (Tools #5917); the themes
+// table in design_tokens.json is a generated copy (scripts/sync_design_tokens.py).
+const catalogThemes: Record<string, ThemeColors> = {};
+for (const [id, theme] of Object.entries(themesData.themes)) {
+  catalogThemes[id] = { ...theme.colors, ...theme.semantic } as ThemeColors;
+}
+
+const tokens: DesignTokens = { ...(designTokens as any), themes: catalogThemes };
 
 /**
  * Generates a string of CSS custom properties for a given theme.
