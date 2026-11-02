@@ -67,7 +67,9 @@ jobs:
             flock /tmp/d-sorg-apt-install.lock \
               "$playwright_python" -m playwright install-deps chromium
           elif command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
-            sudo -n flock /tmp/d-sorg-apt-install.lock \
+            # sudo resets the environment; the workspace tool cache's python
+            # needs setup-python's LD_LIBRARY_PATH to load libpython (#5948).
+            sudo -n env "LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-}" flock /tmp/d-sorg-apt-install.lock \
               "$playwright_python" -m playwright install-deps chromium
           else
             echo "::error::Cannot install Chromium system dependencies without root or passwordless sudo"
