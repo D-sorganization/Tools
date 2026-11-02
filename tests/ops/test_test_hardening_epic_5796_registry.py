@@ -69,14 +69,3 @@ def test_deferred_findings_do_not_duplicate_landed_ids() -> None:
         landed_ids.update(str(item) for item in finding_ids)
     overlap = landed_ids & {str(item) for item in deferred}
     assert not overlap, f"landed/deferred overlap: {sorted(overlap)}"
-
-
-@pytest.mark.unit
-def test_in_flight_test_quality_paths_exist() -> None:
-    registry = _load_registry()
-    in_flight = registry["in_flight_test_quality"]
-    assert isinstance(in_flight, list)
-    for row in in_flight:
-        assert isinstance(row, dict)
-        for rel_path in row["tests"]:
-            assert (_REPO_ROOT / str(rel_path)).is_file()

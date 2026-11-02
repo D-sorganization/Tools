@@ -108,9 +108,5 @@
     "TOOLS-27",
     "TOOLS-28",
     "TOOLS-29"
-  ],
-  "in_flight_test_quality": [
-    {"issue": 5920, "pr": 5935, "tests": ["tests/test_calculators_expanded.py"]},
-    {"issue": 5924, "pr": 5942, "tests": ["src/p1am_control_system/backend/tests/test_p1am_app_import_guard.py"]}
   ]
 }
