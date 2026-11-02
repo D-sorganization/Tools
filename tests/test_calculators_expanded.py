@@ -366,9 +366,7 @@ class TestPressureDropBasics:
             f"expected finite positive ΔP, got {dp!r}"
         )
         # Independent bound: loss cannot exceed inlet static pressure (10 bar).
-        assert dp < 10.0 * 1.0e5, (
-            f"ΔP {dp} Pa exceeds inlet pressure for this scenario"
-        )
+        assert dp < 10.0 * 1.0e5, f"ΔP {dp} Pa exceeds inlet pressure for this scenario"
 
     @pytest.mark.skipif(
         not HAS_PRESSURE_DROP, reason="PressureDropCalculator not available"
