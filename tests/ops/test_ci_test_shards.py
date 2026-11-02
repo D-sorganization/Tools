@@ -363,6 +363,18 @@ def test_previously_excluded_embedded_suites_are_claimed() -> None:
     )
 
 
+def test_pendulum_golfer_contract_tests_are_collected() -> None:
+    """#5923: golfer counterfactual/Jacobian contracts must run in src-embedded CI."""
+    shards = _load_shards_module()
+    embedded = shards.shard_by_name("src-embedded")
+    for rel in (
+        "src/pendulum_simulator/tests/test_counterfactual_golfer.py",
+        "src/pendulum_simulator/tests/test_jacobians_golfer.py",
+    ):
+        assert (REPO_ROOT / rel).is_file(), rel
+        assert embedded.claims(rel), rel
+
+
 def test_workflow_matrix_lists_exactly_the_script_shards() -> None:
     shards = _load_shards_module()
     matrix = _workflow()["jobs"]["tests"]["strategy"]["matrix"]

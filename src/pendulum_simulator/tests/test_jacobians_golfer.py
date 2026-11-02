@@ -532,16 +532,15 @@ class TestRobustness:
         assert len(J) == 6
 
     def test_zero_state(self):
-        """Should handle zero state (all angles = 0)."""
+        """Zero angles remain a supported nonsingular configuration for Jacobians."""
         p = _default_golfer_params()
         q = np.zeros(N_DOF)
 
-        # May be singular but should not crash
-        try:
-            J = jacobian_golfer(q, p)
-            assert len(J) == 6
-        except Exception:  # noqa: BLE001
-            pass  # Some configs may be singular
+        jacobian = jacobian_golfer(q, p)
+        assert len(jacobian) == 6
+        for jacobian_matrix in jacobian.values():
+            assert jacobian_matrix.shape == (2, N_DOF)
+            assert np.all(np.isfinite(jacobian_matrix))
 
     def test_large_angle_values(self):
         """Should handle large angle values (multiple turns)."""
