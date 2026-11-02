@@ -1587,6 +1587,32 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5953 · Nightly Installs the Same Pinned Build as Ci-Standard so the Sidekick Wheel Test Can Run Python -m Build.
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5953
+- **Branch:** merged via #5955
+- **PR:** #5955
+- **Paths:** see #5955
+- **Started:** 2026-11-02
+- **Last verified:** 2026-11-02 (`f5e74187`; collated from changes/5953-nightly-installs-the-same-pinned-build-a.md)
+- **Summary:** Nightly installs the same pinned build as ci-standard so the Sidekick wheel test can run python -m build.
+- **Next step:** Shipped in PR #5955.
+
+### DL-#5951 · Rust_Adapter Joins the _RustStreamWorker QThread After Its Event Loop Quits, so a Still-Running Thread Is Never Destroyed (Merge_Group Abort)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5951
+- **Branch:** merged via #5952
+- **PR:** #5952
+- **Paths:** see #5952
+- **Started:** 2026-11-02
+- **Last verified:** 2026-11-02 (`5e85cc21`; collated from changes/5951-rust-adapter-joins-the-ruststreamworker.md)
+- **Summary:** rust_adapter joins the _RustStreamWorker QThread after its event loop quits, so a still-running thread is never destroyed (merge_group abort)
+- **Next step:** Shipped in PR #5952.
+
 ### DL-#5948 · Nightly Chromium Provisioning Passes LD_LIBRARY_PATH Through Sudo so the Workspace Tool-Cache Python Can Load Libpython (Regression From #5912).
 
 - **State:** shipped
