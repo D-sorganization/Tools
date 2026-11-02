@@ -26,13 +26,16 @@ jobs:
     timeout-minutes: 120
     env:
       HEAVY_TEST_SLACK_WEBHOOK: ${{ secrets.HEAVY_TEST_SLACK_WEBHOOK }}
-      AGENT_TOOLSDIRECTORY: ${{ github.workspace }}/.tool-cache
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
 
       - name: Set up Python 3.11
+        # Outside the checkout: the wheel tests require the interpreter's
+        # site-packages not to live inside the repository (#5957).
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         uses: actions/setup-python@v6
         with:
           python-version: "3.11"
@@ -55,6 +58,9 @@ jobs:
           if [ -f pyproject.toml ]; then pip install -e ".[dev,test]"; fi
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           pip install pytest pytest-cov pytest-timeout pytest-xdist pytest-qt
+          # The wheel tests run `python -m build --no-isolation`, which needs the
+          # [build-system] requires already installed; same build pin as ci-standard (#5953, #5957).
+          python -m pip install "setuptools>=61.0,<85" "wheel" "build>=1.2.2,<=1.2.2.post1"
       # The whole collection includes the unit-converter browser regressions;
       # mirrors the src-rest step in ci-standard.yml (#5911).
       - name: Provision bundled Chromium for unit-converter regressions
@@ -67,7 +73,9 @@ jobs:
             flock /tmp/d-sorg-apt-install.lock \
               "$playwright_python" -m playwright install-deps chromium
           elif command -v sudo >/dev/null 2>&1 && sudo -n true 2>/dev/null; then
-            sudo -n flock /tmp/d-sorg-apt-install.lock \
+            # sudo resets the environment; the workspace tool cache's python
+            # needs setup-python's LD_LIBRARY_PATH to load libpython (#5948).
+            sudo -n env "LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-}" flock /tmp/d-sorg-apt-install.lock \
               "$playwright_python" -m playwright install-deps chromium
           else
             echo "::error::Cannot install Chromium system dependencies without root or passwordless sudo"

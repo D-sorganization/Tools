@@ -12,9 +12,23 @@ Each test proves real behavior of shared tools and heavy dependencies.
 
 from __future__ import annotations
 
+import importlib.util
+import shutil
 import sys
 
 import pytest
+
+
+def _require_trimesh_boolean_backend() -> None:
+    """Skip only when no trimesh boolean engine is installed.
+
+    Evidence class: installed-package (manifold3d or blender CLI).
+    """
+    if importlib.util.find_spec("manifold3d") is not None:
+        return
+    if shutil.which("blender") is not None:
+        return
+    pytest.skip("Trimesh boolean backend not available — install manifold3d or blender")
 
 
 @pytest.mark.live_simulation
@@ -42,18 +56,19 @@ class TestTrimeshGeometryContracts:
             "trimesh",
             reason="trimesh not installed — skipping heavy geometry contracts",
         )
+        _require_trimesh_boolean_backend()
 
         a = trimesh.creation.box((1, 1, 1))
         b = trimesh.creation.box((1, 1, 1))
         b.apply_translation([0.5, 0, 0])
 
-        try:
-            result = trimesh.boolean.intersection([a, b])
-            # If boolean is available (requires manifold/blender backend)
-            assert result is not None
-            assert result.volume > 0
-        except Exception:  # noqa: BLE001
-            pytest.skip("Trimesh boolean backend not available in this environment")
+        result = trimesh.boolean.intersection([a, b])
+        assert result is not None, (
+            "boolean intersection returned None with a provisioned backend"
+        )
+        assert result.volume == pytest.approx(0.5, rel=0.05), (
+            f"expected overlap volume 0.5 m³, got {result.volume}"
+        )
 
 
 @pytest.mark.live_simulation
@@ -147,3 +162,15 @@ class TestHeadlessQtEnvironment:
         assert widget.width() == 200
 
         widget.close()
+
+
+class TestTrimeshBooleanBackendGate:
+    """Unit checks for the boolean-backend prerequisite (standard CI lane)."""
+
+    def test_missing_backend_raises_typed_skip(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        monkeypatch.setattr(importlib.util, "find_spec", lambda _name: None)
+        monkeypatch.setattr(shutil, "which", lambda _name: None)
+        with pytest.raises(pytest.skip.Exception, match="boolean backend"):
+            _require_trimesh_boolean_backend()

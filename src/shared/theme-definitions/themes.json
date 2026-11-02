@@ -38,6 +38,19 @@
     "#FFD60A",
     "#AC8E68"
   ],
+  "legacyIds": {
+    "ms-word": "cobalt-light",
+    "office-blue": "cobalt-light",
+    "corporate-blue": "cobalt-light",
+    "ms-excel": "fern-light",
+    "office-green": "fern-light",
+    "sage-professional": "fern-light",
+    "legal-pad": "sandstone-yellow",
+    "monokai": "neon-warm-dark",
+    "dracula": "vampire-dark",
+    "one-dark": "frost-dark",
+    "gitpod-dark": "teal-dark"
+  },
   "themes": {
     "light": {
       "name": "Light",
@@ -318,9 +331,9 @@
         "selection_text": "#e6edf3"
       }
     },
-    "office-blue": {
-      "name": "Office Blue",
-      "category": "office",
+    "cobalt-light": {
+      "name": "Cobalt Light",
+      "category": "light-tinted",
       "isDark": false,
       "colors": {
         "bg": "#ffffff",
@@ -329,29 +342,29 @@
         "text": "#000000",
         "text_secondary": "#333333",
         "label": "#666666",
-        "focus": "#2b579a",
+        "focus": "#1f5fbf",
         "input_bg": "#ffffff",
-        "accent": "#2b579a",
+        "accent": "#1f5fbf",
         "title_bg": "#deecf9",
-        "title_border": "#2b579a",
+        "title_border": "#1f5fbf",
         "table_header": "#e6e6e6",
         "table_alt": "#f9f9f9",
-        "button_hover": "#1e3f6f"
+        "button_hover": "#174a94"
       },
       "semantic": {
         "success": "#107c10",
         "warning": "#ffb900",
         "error": "#d13438",
         "info": "#0078d4",
-        "link": "#2b579a",
-        "link_hover": "#1e3f6f",
-        "selection_bg": "#2b579a",
+        "link": "#1f5fbf",
+        "link_hover": "#174a94",
+        "selection_bg": "#1f5fbf",
         "selection_text": "#ffffff"
       }
     },
-    "office-green": {
-      "name": "Office Green",
-      "category": "office",
+    "fern-light": {
+      "name": "Fern Light",
+      "category": "light-tinted",
       "isDark": false,
       "colors": {
         "bg": "#ffffff",
@@ -360,29 +373,29 @@
         "text": "#000000",
         "text_secondary": "#333333",
         "label": "#666666",
-        "focus": "#217346",
+        "focus": "#2e7d4f",
         "input_bg": "#ffffff",
-        "accent": "#217346",
+        "accent": "#2e7d4f",
         "title_bg": "#e2f0d9",
-        "title_border": "#217346",
+        "title_border": "#2e7d4f",
         "table_header": "#e6e6e6",
         "table_alt": "#f0f7ec",
-        "button_hover": "#185c37"
+        "button_hover": "#225e3b"
       },
       "semantic": {
-        "success": "#217346",
+        "success": "#2e7d4f",
         "warning": "#ffb900",
         "error": "#d13438",
         "info": "#0078d4",
-        "link": "#217346",
-        "link_hover": "#185c37",
-        "selection_bg": "#217346",
+        "link": "#2e7d4f",
+        "link_hover": "#225e3b",
+        "selection_bg": "#2e7d4f",
         "selection_text": "#ffffff"
       }
     },
     "sandstone-yellow": {
       "name": "Sandstone Yellow",
-      "category": "office",
+      "category": "light-tinted",
       "isDark": false,
       "colors": {
         "bg": "#ffffc0",

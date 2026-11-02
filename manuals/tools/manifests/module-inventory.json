@@ -111,7 +111,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "52cbfe3995c1ead215b249233d2a14b37f9bbc7ba60016cf706a6ea085006e1b",
+      "content_sha256_lf": "d57f817543e76a04447a630898582e220458d09e39d68490d0c3cf8846441e44",
       "entry_count": 14,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
@@ -123,19 +123,19 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
     },
     {
-      "content_sha256_lf": "8ee6ecf4ff25f2ad585098e50952a5068ed4cc8461c4f3a179269a2d69454633",
+      "content_sha256_lf": "8e184db429ca20c2cb4fd1d732b23f3a78a78d124708b2fb8948747626b87ed6",
       "entry_count": 5,
       "package": "rust_core/data-processor-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
     },
     {
-      "content_sha256_lf": "2892e0b4882c1f685af8ff8f1f533cf2e6f726b79f49480993778d7346a38ada",
+      "content_sha256_lf": "2fa50b587a8695060f64b623e7e6021d5d65430dc7f8fa8dd5a3acb57da48afa",
       "entry_count": 5,
       "package": "rust_core/file_watcher",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "4f93656d845b6a46354afe70142afb51a4c855936223cf1df211f1b28c8e6c14",
+      "content_sha256_lf": "b5d2fdc4672630310e216fb2d9947b32c88bdfec3b3474697e7a27d68d22aabb",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -159,8 +159,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "324686d40318e9d8bedd85040569aab1eb3db700d39d8785052e48f67f3daddc",
-      "entry_count": 121,
+      "content_sha256_lf": "4e76e5b7309730cddf2f2ec1e98c8958465b9d6ddb5708b0d23badb13d8c6561",
+      "entry_count": 123,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
     },
@@ -585,13 +585,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rotation-transforms.json"
     },
     {
-      "content_sha256_lf": "26cd25ceae6c9de77fa7c5ddd925292b94e4c5d30600bb4069e9dc0ea1d58c52",
+      "content_sha256_lf": "cee78c43cccf46db63cc00698644f6760ce0ec05ca9cfbaa98167b29005ba1a5",
       "entry_count": 26,
       "package": "src/rrt_path_planner",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rrt-path-planner.json"
     },
     {
-      "content_sha256_lf": "c884200ff521e4133e3b095c93ea90f8feb12232b81126e0899a4ef6a3f2da48",
+      "content_sha256_lf": "5df842db261c139f567262ca622852bd68e8c6af4d3b6492fe67c3c7153cce22",
       "entry_count": 8,
       "package": "src/shared",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
@@ -603,7 +603,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
     },
     {
-      "content_sha256_lf": "c1fd738f8eb522f67b6ec2ba57f0cfaefd031f791df327baf940eb96652e3fd1",
+      "content_sha256_lf": "e5162eebb2dc5280c5736b20491eb27bb41ec2c91eec460b97fd383cf56e17f9",
       "entry_count": 124,
       "package": "src/shared/python/ai",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-ai.json"
@@ -813,7 +813,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-theme.json"
     },
     {
-      "content_sha256_lf": "c8b57a4b5288ca34905774633129581d1619f96e99ed4233d19d49325d65d7bb",
+      "content_sha256_lf": "b7f01e23f31918e7799428b3550df0b5b37a6bb2ffe00a9a9a67c56cf4416525",
       "entry_count": 74,
       "package": "src/shared/python/sidekick/ui",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-ui.json"
@@ -921,7 +921,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-vibroacoustics.json"
     },
     {
-      "content_sha256_lf": "53a2e652dce91e50c507c8c723ad9709199531a6e62af17430c0d014bb594411",
+      "content_sha256_lf": "465634cb7944d8208907a0385142dc0e24988a0192542e0d6a706627fb7831ba",
       "entry_count": 22,
       "package": "src/shared/python/theme",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-theme.json"

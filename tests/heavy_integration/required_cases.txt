@@ -1,0 +1,19 @@
+# Heavy integration lane: cases that MUST execute and pass (issue #5921).
+# Format: <junit classname>::<test name>, one per line. Removing or renaming a
+# case here is a reviewed change; a case that disappears from the report, skips
+# or fails turns the lane red. Genuinely optional backends (for example the
+# trimesh boolean backend, see #5918) stay out of this list.
+tests.e2e.test_workflows.TestBasicDataWorkflow::test_csv_upload_filter_export_json_workflow
+tests.e2e.test_workflows.TestBasicDataWorkflow::test_data_load_transform_statistics_workflow
+tests.e2e.test_workflows.TestBasicDataWorkflow::test_multi_sensor_aggregation_workflow
+tests.e2e.test_workflows.TestComplexDataTransformationWorkflows::test_data_cleaning_and_enrichment_workflow
+tests.e2e.test_workflows.TestComplexDataTransformationWorkflows::test_time_series_aggregation_workflow
+tests.e2e.test_workflows.TestErrorHandlingInWorkflows::test_workflow_with_invalid_data_detection
+tests.e2e.test_workflows.TestErrorHandlingInWorkflows::test_workflow_with_missing_data_handling
+tests.e2e.test_workflows.TestWorkflowConfigurationExecution::test_config_driven_workflow_execution
+tests.e2e.test_workflows.TestWorkflowConfigurationExecution::test_workflow_with_multiple_output_formats
+tests.heavy_integration.test_tools_contracts.TestEzdxfPIDContracts::test_pid_drawing_entities_valid
+tests.heavy_integration.test_tools_contracts.TestHeadlessQtEnvironment::test_qt_application_lifecycle
+tests.heavy_integration.test_tools_contracts.TestSignalProcessingStack::test_butterworth_filter_attenuation
+tests.heavy_integration.test_tools_contracts.TestSignalProcessingStack::test_fft_roundtrip
+tests.heavy_integration.test_tools_contracts.TestTrimeshGeometryContracts::test_box_mesh_is_watertight_and_valid_volume

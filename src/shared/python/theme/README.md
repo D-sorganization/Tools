@@ -6,7 +6,7 @@ D-sorganization repository fleet.
 ## Features
 
 - **13 built-in themes**: Light, Dark, Slate Gray, Ocean Blue, Forest Green,
-  Neon Warm Dark, Vampire Dark, Frost Dark, Teal Dark, Office Blue, Office Green, Sandstone Yellow,
+  Neon Warm Dark, Vampire Dark, Frost Dark, Teal Dark, Cobalt Light, Fern Light, Sandstone Yellow,
   High Contrast
 - **Custom themes** with QSettings persistence
 - **Theme inheritance** for docked/embedded sub-applications
@@ -15,6 +15,21 @@ D-sorganization repository fleet.
 - **Signal-based notifications** (`themeChanged`) for live updates
 - **REST API router** (FastAPI) for web-based theme CRUD
 - **Dialog widgets**: color picker, custom theme editor, theme manager
+
+## Single source of theme colors
+
+`src/shared/theme-definitions/themes.json` is the only place theme colors are
+defined. The Python loader (`colors.BUILTIN_THEMES`), the TypeScript themes
+(`typescript/theme/themeDefinitions.ts`) and the design-token APIs
+(`sidekick/ui/design_tokens.py`, `typescript/theme/designTokens.ts`) all read it
+directly. The `themes` table in `src/shared/design_tokens.json` is a generated
+copy: after editing `themes.json`, run `python scripts/sync_design_tokens.py`.
+CI fails (`tests/shared/test_theme_single_source.py`) if the copy drifts.
+
+**Consumers (UpstreamDrift, Gasification_Model):** do not copy
+`theme-definitions/`, `design_tokens.json` or this package. Import them from the
+vendored Tools checkout (`vendor/ud-tools`) so a fleet theme fix arrives with a
+submodule bump. A copied loader silently reads its own stale catalog.
 
 ## Quick Start
 

@@ -18,12 +18,17 @@ import logging
 import weakref
 from collections.abc import Iterable
 from pathlib import Path
-from typing import TYPE_CHECKING, ClassVar, cast
+from typing import TYPE_CHECKING, ClassVar
 
 from PyQt6 import sip
 from PyQt6.QtCore import QObject, QSettings, QStandardPaths, pyqtSignal
 
-from .colors import BUILTIN_THEMES, THEME_COLOR_KEYS, normalise_hex_color
+from .colors import (
+    BUILTIN_THEMES,
+    THEME_COLOR_KEYS,
+    normalise_hex_color,
+    resolve_theme_name,
+)
 from .stylesheets import generate_stylesheet
 
 if TYPE_CHECKING:
@@ -149,10 +154,12 @@ class ThemeManager(QObject):
                 self.settings.value(f"theme_{self.app_context}", "Inherit", type=str)
             )
             if pref == "Inherit":
-                return str(self.settings.value("theme", "Light", type=str))
-            return pref
+                pref = str(self.settings.value("theme", "Light", type=str))
+            return self._resolve_saved_name(pref)
 
-        return str(self.settings.value("theme", "Light", type=str))
+        return self._resolve_saved_name(
+            str(self.settings.value("theme", "Light", type=str))
+        )
 
     def get_theme_preference(self) -> str:
         """Get the current theme preference.
@@ -250,7 +257,7 @@ class ThemeManager(QObject):
             theme_name = "Light"
 
         theme = self._get_theme_dict(theme_name)
-        return cast("str", generate_stylesheet(theme))
+        return generate_stylesheet(theme)
 
     def get_current_stylesheet(self) -> str:
         """Get the stylesheet for the current theme.
@@ -280,10 +287,11 @@ class ThemeManager(QObject):
 
             self.settings.setValue(f"theme_{self.app_context}", "Inherit")
             effective_theme = self.settings.value("theme", "Light", type=str)
-            self.current_theme = effective_theme
+            self.current_theme = self._resolve_saved_name(str(effective_theme))
             self.apply_theme()
             return
 
+        theme_name = self._resolve_saved_name(theme_name)
         if not self._theme_exists(theme_name):
             logger.warning("Theme '%s' not found, ignoring", theme_name)
             return
@@ -434,6 +442,12 @@ class ThemeManager(QObject):
     # Internal Helpers
     # =========================================================================
 
+    def _resolve_saved_name(self, theme_name: str) -> str:
+        """Resolve a retired built-in name; custom themes keep their own names."""
+        if theme_name in self.custom_themes:
+            return theme_name
+        return resolve_theme_name(theme_name)
+
     def _theme_exists(self, theme_name: str) -> bool:
         """Check if a theme exists."""
         return theme_name in BUILTIN_THEMES or theme_name in self.custom_themes
@@ -443,7 +457,7 @@ class ThemeManager(QObject):
         if theme_name is None:
             raise ValueError("theme_name must be provided")
         if theme_name in BUILTIN_THEMES:
-            return cast("dict[str, str]", BUILTIN_THEMES[theme_name])
+            return BUILTIN_THEMES[theme_name]
         return self.custom_themes.get(theme_name, BUILTIN_THEMES["Light"])
 
     def _get_custom_theme_path(self) -> Path:

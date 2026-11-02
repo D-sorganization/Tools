@@ -13,27 +13,42 @@ __all__ = [
 
 def get_tokens_path() -> Path:
     """Return the absolute path to the shared design_tokens.json file."""
-    # Assuming this is installed as a package or run from the repo
-    # Traverse up: ui -> upstream_drift_tools -> python -> shared -> src -> Tools
-    # Actually, we should find it relative to this file
-    current_dir = Path(__file__).parent
-    # __file__ is src/shared/python/upstream_drift_tools/ui/design_tokens.py
-    # We want to go to src/shared/design_tokens.json
-    shared_dir = current_dir.parent.parent.parent
-    return shared_dir / "design_tokens.json"
+    # ui -> sidekick -> python -> shared
+    return Path(__file__).resolve().parents[3] / "design_tokens.json"
+
+
+# themes.json is the single source of theme colors (Tools #5917).
+_THEMES_JSON = get_tokens_path().parent / "theme-definitions" / "themes.json"
+
+
+def _load_catalog_themes() -> dict[str, dict[str, str]]:
+    """Flatten each themes.json theme's colors and semantic maps, keyed by id."""
+    with open(_THEMES_JSON, encoding="utf-8") as f:
+        catalog = json.load(f)
+    return {
+        theme_id: {**theme["colors"], **theme["semantic"]}
+        for theme_id, theme in catalog["themes"].items()
+    }
 
 
 def load_design_tokens() -> dict[str, Any]:
-    """Load the design tokens JSON file."""
+    """Load the design tokens, with theme colors read from themes.json.
+
+    The ``themes`` table in design_tokens.json is a generated copy
+    (``scripts/sync_design_tokens.py``); the catalog is read directly so a
+    color changed in themes.json alone reaches every token consumer.
+    """
     path = get_tokens_path()
     if not path.exists():
         raise FileNotFoundError(f"Design tokens not found at {path}")
 
     with open(path, encoding="utf-8") as f:
         data = json.load(f)
-        if not isinstance(data, dict):
-            raise ValueError("Expected dictionary in design_tokens.json")
-        return dict(data)
+    if not isinstance(data, dict):
+        raise ValueError("Expected dictionary in design_tokens.json")
+    tokens = dict(data)
+    tokens["themes"] = _load_catalog_themes()
+    return tokens
 
 
 def get_qss_variables(theme_name: str = "light") -> str:
