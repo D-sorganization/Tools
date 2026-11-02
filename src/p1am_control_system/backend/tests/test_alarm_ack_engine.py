@@ -18,6 +18,7 @@ import scada_fallback
 from alarm_processing import process_alarm_events, state_name
 from defaults import default_routing_config
 from models import InterlockConfig, RoutingConfig
+from p1am_app_import import import_main_app
 from state import SystemState
 
 _TAG = "TAG_1"
@@ -175,12 +176,7 @@ def test_acknowledge_endpoint_forwards_the_operator_to_the_engine(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """#4034: main.py's endpoint never reached AlarmEngine.acknowledge_alarm."""
-    pytest.importorskip("fastapi")
-    pytest.importorskip("sqlmodel")
-    try:
-        import main
-    except Exception as exc:  # pragma: no cover - environment guard
-        pytest.skip(f"P1AM backend not importable in this environment: {exc}")
+    main = import_main_app()
 
     import asyncio
 
@@ -206,12 +202,7 @@ def test_acknowledge_endpoint_forwards_the_operator_to_the_engine(
 def test_acknowledge_endpoint_defaults_the_operator_when_no_body_is_sent(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    pytest.importorskip("fastapi")
-    pytest.importorskip("sqlmodel")
-    try:
-        import main
-    except Exception as exc:  # pragma: no cover - environment guard
-        pytest.skip(f"P1AM backend not importable in this environment: {exc}")
+    main = import_main_app()
 
     import asyncio
 
@@ -319,12 +310,7 @@ def test_acknowledge_records_credential_actor_not_spoofed_user(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     """#5524: the free-text ``user`` is a display note, never the actor."""
-    pytest.importorskip("fastapi")
-    pytest.importorskip("sqlmodel")
-    try:
-        import main
-    except Exception as exc:  # pragma: no cover - environment guard
-        pytest.skip(f"P1AM backend not importable in this environment: {exc}")
+    main = import_main_app()
 
     import asyncio
 

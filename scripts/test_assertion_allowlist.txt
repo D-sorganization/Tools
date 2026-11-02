@@ -26,6 +26,10 @@ src/movement_optimizer/tests/**/__init__.py
 src/movement_optimizer/tests/**/conftest.py
 # P1AM power-supply test construction helpers shared by split runtime tests.
 src/p1am_control_system/backend/tests/_power_supply_helpers.py
+# Shared FastAPI main import helper for backend endpoint tests (#5924); behaviour
+# is asserted in test_p1am_app_import_guard.py and consumers such as
+# test_alarm_ack_engine.py / test_alicat_manager.py.
+src/p1am_control_system/backend/tests/p1am_app_import.py
 # P1AM backend package conftest: an autouse fixture that clears the shared
 # `control_context` E-stop latch on both boundaries of every test, so one
 # module cannot change another module's expected responses under xdist
