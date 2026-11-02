@@ -11,6 +11,7 @@ from alicat_manager import (
     AlicatMFC,
     create_default_manager,
 )
+from p1am_app_import import import_main_app
 
 
 @pytest.mark.parametrize(
@@ -222,10 +223,7 @@ def test_setpoint_endpoint_reports_physical_io_unsupported(
     pytest.importorskip("fastapi")
     pytest.importorskip("sqlmodel")
 
-    try:
-        import main
-    except Exception as exc:
-        pytest.skip(f"P1AM backend not importable in this environment: {exc}")
+    main = import_main_app()
 
     physical_manager = AlicatManager()
     physical_manager.add_device(

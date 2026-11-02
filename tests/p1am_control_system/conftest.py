@@ -14,8 +14,14 @@ from pathlib import Path
 _BACKEND_DIR = (
     Path(__file__).resolve().parents[2] / "src" / "p1am_control_system" / "backend"
 )
+_BACKEND_TESTS_DIR = _BACKEND_DIR / "tests"
 
 if _BACKEND_DIR.is_dir():
     backend_str = str(_BACKEND_DIR)
     if backend_str not in sys.path:
         sys.path.insert(0, backend_str)
+
+if _BACKEND_TESTS_DIR.is_dir():
+    backend_tests_str = str(_BACKEND_TESTS_DIR)
+    if backend_tests_str not in sys.path:
+        sys.path.insert(0, backend_tests_str)
