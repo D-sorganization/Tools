@@ -1587,6 +1587,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5917 · Theme Colors Now Come From Themes.Json Alone: The Sidekick Design-Token API and designTokens.Ts Read the Catalog Directly, Scripts/sync_design_tokens.py Regenerates the Design_Tokens.Json Themes Table, a CI Test Fails on Drift, colors.py Loaders Share One Catalog Path, and the Theme README States the Do-Not-Copy Consumption Contract
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5917
+- **Branch:** merged via #5946
+- **PR:** #5946
+- **Paths:** see #5946
+- **Started:** 2026-11-02
+- **Last verified:** 2026-11-02 (`1a649fb0`; collated from changes/5917-theme-colors-now-come-from-themes-json-a.md)
+- **Summary:** Theme colors now come from themes.json alone: the sidekick design-token API and designTokens.ts read the catalog directly, scripts/sync_design_tokens.py regenerates the design_tokens.json themes table, a CI test fails on drift, colors.py loaders share one catalog path, and the theme README states the do-not-copy consumption contract
+- **Next step:** Shipped in PR #5946.
+
 ### DL-#5923 · Harden Pendulum Counterfactual and Jacobian Tests; Verify Src-Embedded Shard Ownership
 
 - **State:** shipped
