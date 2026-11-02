@@ -1,0 +1,116 @@
+{
+  "schema_version": 1,
+  "epic_issue": 5796,
+  "parent_epic": 5795,
+  "deferred_tracker_issue": 5807,
+  "landed_child_issues": {
+    "5797": {"finding_ids": ["TOOLS-02"], "merge_prs": [5815]},
+    "5798": {"finding_ids": ["TOOLS-03"], "merge_prs": [5816]},
+    "5799": {"finding_ids": ["TOOLS-05"], "merge_prs": [5818]},
+    "5800": {"finding_ids": ["TOOLS-06"], "merge_prs": [5814]},
+    "5801": {"finding_ids": ["TOOLS-10", "TOOLS-11"], "merge_prs": [5813]},
+    "5802": {"finding_ids": ["TOOLS-15"], "merge_prs": [5812]},
+    "5803": {"finding_ids": ["TOOLS-16"], "merge_prs": [5811]},
+    "5804": {"finding_ids": ["TOOLS-18"], "merge_prs": [5808]},
+    "5805": {"finding_ids": ["TOOLS-20"], "merge_prs": [5809]},
+    "5806": {
+      "finding_ids": ["GLASS-06", "TOOLS-30", "TOOLS-31", "TP-04"],
+      "merge_prs": [5819]
+    }
+  },
+  "landed_tests": [
+    {
+      "finding_ids": ["TOOLS-02"],
+      "issue": 5797,
+      "path": "tests/shared/python/process_calculators/test_syngas_compression_engine.py",
+      "names": ["test_isentropic_efficiency_le_1"]
+    },
+    {
+      "finding_ids": ["TOOLS-03"],
+      "issue": 5798,
+      "path": "tests/shared/python/process_calculators/test_syngas_compression_engine.py",
+      "names": ["test_polytropic_tout_depends_on_efficiency"]
+    },
+    {
+      "finding_ids": ["TOOLS-05"],
+      "issue": 5799,
+      "path": "tests/shared/python/process_calculators/test_syngas_compression_engine.py",
+      "names": ["test_water_dropout_after_aftercooler"]
+    },
+    {
+      "finding_ids": ["TOOLS-06"],
+      "issue": 5800,
+      "path": "src/shared/python/sidekick/tests/calculators/thermo/test_steam_engine.py",
+      "names": ["test_steam_phase_from_saturation"]
+    },
+    {
+      "finding_ids": ["TOOLS-10"],
+      "issue": 5801,
+      "path": "tests/shared/python/process_calculators/test_wgs_reactor_calculator.py",
+      "names": ["test_wgs_volume_units"]
+    },
+    {
+      "finding_ids": ["TOOLS-11"],
+      "issue": 5801,
+      "path": "tests/shared/python/process_calculators/test_wgs_reactor_calculator.py",
+      "names": ["test_wgs_reverse_shift"]
+    },
+    {
+      "finding_ids": ["TOOLS-15"],
+      "issue": 5802,
+      "path": "src/urdf_builder_gui/tests/test_urdf_builder_gui.py",
+      "names": ["test_urdf_left_right_mirror"]
+    },
+    {
+      "finding_ids": ["TOOLS-16"],
+      "issue": 5803,
+      "path": "src/urdf_builder_gui/tests/test_urdf_builder_gui.py",
+      "names": ["test_box_inertia_analytic"]
+    },
+    {
+      "finding_ids": ["TOOLS-18"],
+      "issue": 5804,
+      "path": "src/pendulum_simulator/tests/test_coulomb_regularised.py",
+      "names": ["test_coulomb_regularised_rk45_step_count_bounded"]
+    },
+    {
+      "finding_ids": ["TOOLS-20"],
+      "issue": 5805,
+      "path": "tests/shared/python/process_calculators/test_scrubber_tools_5805.py",
+      "names": ["test_eckert_flow_param_uses_gas_flux"]
+    },
+    {
+      "finding_ids": ["GLASS-06", "TOOLS-31"],
+      "issue": 5806,
+      "path": "tests/shared/python/sidekick/calculators/electrical/test_glass_interface.py",
+      "names": [
+        "test_glass_interface_defaults_equal_across_copies",
+        "test_glass_fallback_catches_runtime_error"
+      ]
+    }
+  ],
+  "deferred_to_5807_finding_ids": [
+    "TOOLS-01",
+    "TOOLS-04",
+    "TOOLS-07",
+    "TOOLS-09",
+    "TOOLS-12",
+    "TOOLS-13",
+    "TOOLS-14",
+    "TOOLS-17",
+    "TOOLS-19",
+    "TOOLS-21",
+    "TOOLS-22",
+    "TOOLS-23",
+    "TOOLS-24",
+    "TOOLS-25",
+    "TOOLS-26",
+    "TOOLS-27",
+    "TOOLS-28",
+    "TOOLS-29"
+  ],
+  "in_flight_test_quality": [
+    {"issue": 5920, "pr": 5935, "tests": ["tests/test_calculators_expanded.py"]},
+    {"issue": 5924, "pr": 5942, "tests": ["src/p1am_control_system/backend/tests/test_p1am_app_import_guard.py"]}
+  ]
+}

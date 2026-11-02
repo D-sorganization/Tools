@@ -260,6 +260,7 @@
           "tests/ops/test_full_suite_nightly_workflow.py",
           "tests/ops/test_quality_gate_diff_history.py",
           "tests/ops/test_rate_web_playwright_workflow.py",
+          "tests/ops/test_test_hardening_epic_5796_registry.py",
           "tests/p1am_control_system/firmware/test_dcs.cpp",
           "tests/p1am_control_system/test_cors_config.py",
           "tests/p1am_control_system/test_desktop_hmi_annunciation.py",
