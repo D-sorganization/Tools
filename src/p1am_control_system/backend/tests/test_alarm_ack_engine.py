@@ -177,12 +177,9 @@ def test_acknowledge_endpoint_forwards_the_operator_to_the_engine(
     """#4034: main.py's endpoint never reached AlarmEngine.acknowledge_alarm."""
     pytest.importorskip("fastapi")
     pytest.importorskip("sqlmodel")
-    try:
-        import main
-    except Exception as exc:  # pragma: no cover - environment guard
-        pytest.skip(f"P1AM backend not importable in this environment: {exc}")
-
     import asyncio
+
+    import main
 
     state = _tripped_state()
     monkeypatch.setattr(main, "control_context", state)
@@ -208,12 +205,9 @@ def test_acknowledge_endpoint_defaults_the_operator_when_no_body_is_sent(
 ) -> None:
     pytest.importorskip("fastapi")
     pytest.importorskip("sqlmodel")
-    try:
-        import main
-    except Exception as exc:  # pragma: no cover - environment guard
-        pytest.skip(f"P1AM backend not importable in this environment: {exc}")
-
     import asyncio
+
+    import main
 
     state = _tripped_state()
     monkeypatch.setattr(main, "control_context", state)
@@ -321,13 +315,9 @@ def test_acknowledge_records_credential_actor_not_spoofed_user(
     """#5524: the free-text ``user`` is a display note, never the actor."""
     pytest.importorskip("fastapi")
     pytest.importorskip("sqlmodel")
-    try:
-        import main
-    except Exception as exc:  # pragma: no cover - environment guard
-        pytest.skip(f"P1AM backend not importable in this environment: {exc}")
-
     import asyncio
 
+    import main
     from audit import credential_fingerprint
 
     key = "operator-secret"  # pragma: allowlist secret
