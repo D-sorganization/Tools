@@ -1587,6 +1587,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5948 · Nightly Chromium Provisioning Passes LD_LIBRARY_PATH Through Sudo so the Workspace Tool-Cache Python Can Load Libpython (Regression From #5912).
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5948
+- **Branch:** merged via #5949
+- **PR:** #5949
+- **Paths:** see #5949
+- **Started:** 2026-11-02
+- **Last verified:** 2026-11-02 (`f5fb77a1`; collated from changes/5948-nightly-chromium-provisioning-passes-ld.md)
+- **Summary:** Nightly Chromium provisioning passes LD_LIBRARY_PATH through sudo so the workspace tool-cache python can load libpython (regression from #5912).
+- **Next step:** Shipped in PR #5949.
+
 ### DL-#5917 · Theme Colors Now Come From Themes.Json Alone: The Sidekick Design-Token API and designTokens.Ts Read the Catalog Directly, Scripts/sync_design_tokens.py Regenerates the Design_Tokens.Json Themes Table, a CI Test Fails on Drift, colors.py Loaders Share One Catalog Path, and the Theme README States the Do-Not-Copy Consumption Contract
 
 - **State:** shipped
