@@ -37,23 +37,54 @@ class TestTrimeshGeometryContracts:
         assert len(box.faces) > 0
 
     def test_mesh_boolean_intersection(self) -> None:
-        """Prove boolean ops work — used in electrode CAD pipelines."""
+        """Prove boolean ops work — used in electrode CAD pipelines.
+
+        Evidence class: installed-package (trimesh + optional boolean backend).
+        """
         trimesh = pytest.importorskip(
             "trimesh",
             reason="trimesh not installed — skipping heavy geometry contracts",
         )
+        from trimesh import boolean as trimesh_boolean
+
+        if not trimesh_boolean.engines_available:
+            pytest.skip(
+                "Trimesh boolean backend not available "
+                "(install manifold3d or blender in PATH)"
+            )
 
         a = trimesh.creation.box((1, 1, 1))
         b = trimesh.creation.box((1, 1, 1))
         b.apply_translation([0.5, 0, 0])
 
-        try:
-            result = trimesh.boolean.intersection([a, b])
-            # If boolean is available (requires manifold/blender backend)
-            assert result is not None
-            assert result.volume > 0
-        except Exception:  # noqa: BLE001
-            pytest.skip("Trimesh boolean backend not available in this environment")
+        result = trimesh.boolean.intersection([a, b])
+        assert result is not None, "boolean intersection returned None"
+        assert result.volume == pytest.approx(0.5, rel=1e-2), (
+            f"Expected overlapping unit cubes to intersect to volume 0.5, "
+            f"got {result.volume}"
+        )
+
+    def test_mesh_boolean_intersection_rejects_non_volume_meshes(self) -> None:
+        """Invalid geometry must fail loudly once a backend is provisioned."""
+        trimesh = pytest.importorskip(
+            "trimesh",
+            reason="trimesh not installed — skipping heavy geometry contracts",
+        )
+        from trimesh import boolean as trimesh_boolean
+
+        if not trimesh_boolean.engines_available:
+            pytest.skip(
+                "Trimesh boolean backend not available "
+                "(install manifold3d or blender in PATH)"
+            )
+
+        open_mesh = trimesh.Trimesh(
+            vertices=[[0, 0, 0], [1, 0, 0], [0, 1, 0]],
+            faces=[[0, 1, 2]],
+        )
+        solid = trimesh.creation.box((1, 1, 1))
+        with pytest.raises(ValueError, match="volume"):
+            trimesh.boolean.intersection([open_mesh, solid])
 
 
 @pytest.mark.live_simulation
