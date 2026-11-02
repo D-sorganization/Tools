@@ -2346,6 +2346,78 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 2835,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f76a80bba7ae3cd948ecaff028e71edc28d5d0d2a1fc3f8f83d03fa1fe20befc",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-CHECK-HEAVY-LANE-REPORT-PY-D18F9771C24A",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/check_heavy_lane_report.py",
+      "purpose": "Verify a heavy-integration JUnit report against the required-case manifest.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "DEFAULT_MANIFEST",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "case_outcomes",
+            "signature": "report: Path"
+          },
+          {
+            "kind": "function",
+            "name": "check",
+            "signature": "report: Path, manifest: Path"
+          },
+          {
+            "kind": "function",
+            "name": "load_manifest",
+            "signature": "path: Path"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/scripts/test_check_heavy_lane_report.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 7633,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
