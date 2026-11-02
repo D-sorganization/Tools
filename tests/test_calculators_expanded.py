@@ -329,6 +329,26 @@ class TestSpeedOfSound:
 # PRESSURE DROP CORRELATIONS AND PIPE FLOW
 # =============================================================================
 
+_PRESSURE_DROP_PA_KEY = "pressure_drop_pa"
+
+
+def _assert_basic_pressure_drop_oracle(result: dict[str, float]) -> None:
+    """Validate the documented basic-scenario pressure-drop result.
+
+    Evidence class: installed-package calculator oracle with an independent
+    order-of-magnitude bound for turbulent air in 2\" Sch 40 pipe (Crane 410).
+    """
+    import math
+
+    if _PRESSURE_DROP_PA_KEY not in result:
+        raise AssertionError(f"missing required key {_PRESSURE_DROP_PA_KEY!r}")
+    dp = result[_PRESSURE_DROP_PA_KEY]
+    if not math.isfinite(dp) or dp <= 0.0:
+        raise AssertionError(f"pressure drop must be finite and positive, got {dp!r}")
+    assert 1.0 < dp < 1_000_000.0, (
+        f"ΔP {dp} Pa outside expected band for the basic air scenario"
+    )
+
 
 class TestPressureDropBasics:
     """Tests for pressure drop calculations.
@@ -355,10 +375,26 @@ class TestPressureDropBasics:
             temperature=300.0,
             temperature_unit="K",
         )
-        # Result should contain pressure drop
         assert result is not None
-        # Pressure drop should be positive
-        assert result.get("pressure_drop_pa", 0.0) >= 0.0
+        _assert_basic_pressure_drop_oracle(result)
+
+    @pytest.mark.skipif(
+        not HAS_PRESSURE_DROP, reason="PressureDropCalculator not available"
+    )
+    @pytest.mark.parametrize(
+        "bad_result",
+        [
+            {},
+            {"pressure_drop_pa": 0.0},
+            {"pressure_drop_pa": float("inf")},
+            {"pressure_drop_pa": float("nan")},
+        ],
+    )
+    def test_pressure_drop_oracle_rejects_invalid_outputs(
+        bad_result: dict[str, float],
+    ) -> None:
+        with pytest.raises(AssertionError):
+            _assert_basic_pressure_drop_oracle(bad_result)
 
     @pytest.mark.skipif(
         not HAS_PRESSURE_DROP, reason="PressureDropCalculator not available"
