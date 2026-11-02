@@ -154,6 +154,13 @@ def validate() -> list[str]:
                     f"{prefix}: text/bg contrast {ratio:.1f}:1 < 4.5:1 (WCAG AA)"
                 )
 
+    # Retired ids must point at a current theme and never shadow one
+    for legacy_id, theme_id in data.get("legacyIds", {}).items():
+        if legacy_id in themes:
+            errors.append(f"legacyIds '{legacy_id}' shadows an existing theme")
+        if theme_id not in themes:
+            errors.append(f"legacyIds '{legacy_id}' -> unknown theme '{theme_id}'")
+
     return errors
 
 

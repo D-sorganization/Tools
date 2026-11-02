@@ -96,3 +96,23 @@ def test_saved_legacy_preference_loads_renamed_theme(
 
     manager.change_theme("office-green")
     assert manager.get_current_theme_name() == "Fern Light"
+
+
+def test_validator_rejects_dangling_legacy_id(
+    catalog: dict, monkeypatch: pytest.MonkeyPatch, tmp_path: Path
+) -> None:
+    import importlib.util
+
+    spec = importlib.util.spec_from_file_location(
+        "validate_themes", THEMES_JSON.parents[3] / "scripts" / "validate_themes.py"
+    )
+    validator = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(validator)
+    broken = dict(catalog, legacyIds={"ms-word": "no-such-theme", "light": "dark"})
+    bad_json = tmp_path / "themes.json"
+    bad_json.write_text(json.dumps(broken), encoding="utf-8")
+    monkeypatch.setattr(validator, "THEMES_JSON", bad_json)
+
+    errors = validator.validate()
+    assert any("no-such-theme" in err for err in errors)
+    assert any("shadows" in err for err in errors)

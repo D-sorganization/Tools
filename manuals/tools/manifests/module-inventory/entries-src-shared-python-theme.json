@@ -427,10 +427,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 16795,
+      "bytes_lf": 18512,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "87e0492dff6c7e8252981f5469f4f9a1116937751377323a85653dd08f538d03",
+      "content_sha256_lf": "0a6f898b2ef722ffc38e862bbd78d5cd664146f36856908ceab7987c1f342851",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-COLORS-PY-DF1E277BD476",
       "language": "python",
@@ -524,6 +524,7 @@
         ],
         "unit_mentions": [
           "g",
+          "ms",
           "s"
         ],
         "validation_paths": []
@@ -1589,10 +1590,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 20093,
+      "bytes_lf": 20561,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "fff3628f7214ccc5e9184415b3938400d4ce6106a820b0af465b16039eb553e5",
+      "content_sha256_lf": "700a4a7be7fdba4da3db6b39cb249e73b114d5324a6056b78573b0c05a6df0ba",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-THEME-MANAGER-PY-8E402C04BDB8",
       "language": "python",

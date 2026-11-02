@@ -64,8 +64,8 @@ export type ThemeId =
   | 'vampire-dark'
   | 'frost-dark'
   | 'teal-dark'
-  | 'office-blue'
-  | 'office-green'
+  | 'cobalt-light'
+  | 'fern-light'
   | 'sandstone-yellow'
   | 'high-contrast';
 
@@ -123,6 +123,17 @@ for (const id of Object.keys(themesData.themes) as ThemeId[]) {
   const def = themesData.themes[id as keyof typeof themesData.themes];
   THEME_PRESETS[id] = transformTheme(def);
   THEME_METADATA[id] = { category: def.category, isDark: def.isDark };
+}
+
+/** Retired theme IDs mapped to their current ID (themes.json `legacyIds`) */
+export const LEGACY_THEME_IDS: Readonly<Record<string, ThemeId>> = themesData.legacyIds as Record<
+  string,
+  ThemeId
+>;
+
+/** Resolve a saved theme ID, mapping retired IDs (e.g. `ms-word`) to their replacement */
+export function resolveThemeId(id: string): string {
+  return id in THEME_PRESETS ? id : (LEGACY_THEME_IDS[id] ?? id);
 }
 
 /** Chart colors for data visualization */
