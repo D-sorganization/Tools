@@ -4,6 +4,7 @@ try:
     import tomllib
 except ModuleNotFoundError:
     import tomli as tomllib
+import re
 from pathlib import Path
 
 import yaml
@@ -116,3 +117,16 @@ def test_full_suite_nightly_keeps_libpython_reachable_under_sudo() -> None:
     script = _step_script("Provision bundled Chromium for unit-converter regressions")
     assert "sudo -n flock" not in script, "sudo must not run python bare"
     assert 'sudo -n env "LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-}" flock' in script
+
+
+def test_full_suite_nightly_installs_the_ci_standard_build_pin() -> None:
+    """The Sidekick wheel test runs `python -m build`; ci-standard installs a
+    pinned `build` but the nightly did not, so the test failed with
+    "No module named build" (#5953)."""
+    ci_standard = (REPO_ROOT / ".github" / "workflows" / "ci-standard.yml").read_text(
+        encoding="utf-8"
+    )
+    pin = re.search(r'"build[<>=][^"]*"', ci_standard)
+    assert pin, "ci-standard.yml must keep a pinned build install"
+    script = _step_script("Install Python dependencies")
+    assert f"python -m pip install {pin.group(0)}" in script
