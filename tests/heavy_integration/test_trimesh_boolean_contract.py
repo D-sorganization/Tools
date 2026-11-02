@@ -1,4 +1,4 @@
-"""Unit tests for trimesh boolean contract helpers (evidence class: installed-package)."""
+"""Unit tests for trimesh boolean contract helpers."""
 
 from __future__ import annotations
 

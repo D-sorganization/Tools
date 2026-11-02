@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from typing import Any, Callable
+from collections.abc import Callable
+from typing import Any
 
 __all__ = [
     "EXPECTED_TRANSLATED_BOX_INTERSECTION_VOLUME",
@@ -19,7 +20,7 @@ def require_trimesh_boolean_backend(
     *,
     skip: Callable[[str], Any],
 ) -> None:
-    """Skip only when no boolean engine is provisioned; do not call intersection first."""
+    """Skip only when no boolean engine is provisioned."""
     if not trimesh_module.boolean.engines_available:
         skip(
             "Trimesh boolean backend not available "
