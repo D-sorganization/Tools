@@ -55,6 +55,8 @@ jobs:
           if [ -f pyproject.toml ]; then pip install -e ".[dev,test]"; fi
           if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
           pip install pytest pytest-cov pytest-timeout pytest-xdist pytest-qt
+          # The Sidekick wheel test runs `python -m build`; same pin as ci-standard (#5953).
+          python -m pip install "build>=1.2.2,<=1.2.2.post1"
       # The whole collection includes the unit-converter browser regressions;
       # mirrors the src-rest step in ci-standard.yml (#5911).
       - name: Provision bundled Chromium for unit-converter regressions
