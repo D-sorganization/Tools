@@ -107,3 +107,12 @@ def test_full_suite_nightly_provisions_chromium_before_running_the_suite() -> No
     assert "-m playwright install chromium" in script
     assert "::error::" in script
     assert "exit 1" in script
+
+
+def test_full_suite_nightly_keeps_libpython_reachable_under_sudo() -> None:
+    """AGENT_TOOLSDIRECTORY moves setup-python's interpreter into the workspace,
+    so it needs setup-python's LD_LIBRARY_PATH; sudo resets the environment and
+    the interpreter died with "libpython3.11.so.1.0: cannot open" (#5948)."""
+    script = _step_script("Provision bundled Chromium for unit-converter regressions")
+    assert "sudo -n flock" not in script, "sudo must not run python bare"
+    assert 'sudo -n env "LD_LIBRARY_PATH=${LD_LIBRARY_PATH:-}" flock' in script
