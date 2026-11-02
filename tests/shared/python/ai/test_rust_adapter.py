@@ -287,6 +287,9 @@ class TestStreamResponseGenerator:
             def start(self) -> None:
                 self.run()  # type: ignore[attr-defined]
 
+            def wait(self) -> bool:
+                return True  # start() already ran synchronously
+
             @classmethod
             def currentThread(cls) -> Any:
                 return mock_thread
@@ -508,9 +511,7 @@ class TestStreamWorkerLifecycle:
 
         adapter.engine._stream_chunks = ["a", "b"]
 
-        out = list(
-            adapter._stream_with_worker(_SlowUnwindWorker, "hi", queue.Queue())
-        )
+        out = list(adapter._stream_with_worker(_SlowUnwindWorker, "hi", queue.Queue()))
 
         assert [c.content for c in out] == ["a", "b"]
         assert adapter._active_worker.isFinished()
