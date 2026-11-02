@@ -1587,6 +1587,45 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5923 · Harden Pendulum Counterfactual and Jacobian Tests; Verify Src-Embedded Shard Ownership
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5923
+- **Branch:** merged via #5939
+- **PR:** #5939
+- **Paths:** see #5939
+- **Started:** 2026-11-02
+- **Last verified:** 2026-11-02 (`a59a4b86`; collated from changes/5923-harden-pendulum-counterfactual-and-jacob.md)
+- **Summary:** Harden pendulum counterfactual and Jacobian tests; verify src-embedded shard ownership
+- **Next step:** Shipped in PR #5939.
+
+### DL-#5921 · Heavy Integration Lane Fails on Missing, Skipped or Failing Required Cases via a Versioned Manifest
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5921
+- **Branch:** merged via #5926
+- **PR:** #5926
+- **Paths:** see #5926
+- **Started:** 2026-11-02
+- **Last verified:** 2026-11-02 (`f736317b`; collated from changes/5921-heavy-integration-lane-fails-on-missing.md)
+- **Summary:** Heavy integration lane fails on missing, skipped or failing required cases via a versioned manifest
+- **Next step:** Shipped in PR #5926.
+
+### DL-#5915 · Theme Catalog: Office-Blue/Office-Green Renamed to Cobalt-Light/Fern-Light With Accents Moved Off the Word/Excel Brand Hexes, Category Office Renamed Light-Tinted, and a Themes.Json legacyIds Map so Saved ms-Word/Office-Blue/Corporate-Blue (And Other Retired Ids) Preferences Keep Loading in ThemeManager and the TS Theme Store
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5915
+- **Branch:** merged via #5925
+- **PR:** #5925
+- **Paths:** see #5925
+- **Started:** 2026-11-02
+- **Last verified:** 2026-11-02 (`28ef1585`; collated from changes/5915-theme-catalog-office-blue-office-green-r.md)
+- **Summary:** Theme catalog: office-blue/office-green renamed to cobalt-light/fern-light with accents moved off the Word/Excel brand hexes, category office renamed light-tinted, and a themes.json legacyIds map so saved ms-word/office-blue/corporate-blue (and other retired ids) preferences keep loading in ThemeManager and the TS theme store
+- **Next step:** Shipped in PR #5925.
+
 ### DL-#5911 · Nightly Full Test Suite Provisions Bundled Chromium for the Unit-Converter Playwright Regressions
 
 - **State:** shipped

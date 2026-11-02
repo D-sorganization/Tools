@@ -5947,6 +5947,9 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-02 | #5939 | Harden pendulum counterfactual and Jacobian tests; verify src-embedded shard ownership |
+| 2026-11-02 | #5926 | Heavy integration lane fails on missing, skipped or failing required cases via a versioned manifest |
+| 2026-11-02 | #5925 | Theme catalog: office-blue/office-green renamed to cobalt-light/fern-light with accents moved off the Word/Excel brand hexes, category office renamed light-tinted, and a themes.json legacyIds map so saved ms-word/office-blue/corporate-blue (and other retired ids) preferences keep loading in ThemeManager and the TS theme store |
 | 2026-11-01 | #5912 | Nightly Full Test Suite provisions bundled Chromium for the unit-converter Playwright regressions |
 | 2026-11-01 | #5906 | Rate canvas pins its owning window during paintEvent so cyclic GC in a pending-draw flush cannot delete it mid-paint and segfault Qt |
 | 2026-11-01 | #5910 | skills_manager reads workflows only from .agents/workflows; the legacy .agent/workflows fallback is removed now that every consumer has migrated (RM #2567) |
