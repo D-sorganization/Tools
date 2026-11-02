@@ -17,6 +17,7 @@ Tests include:
 
 from __future__ import annotations
 
+import math
 import os
 import sys
 
@@ -339,26 +340,68 @@ class TestPressureDropBasics:
     Invariants: Laminar vs turbulent transition at Re ≈ 2300
     """
 
+    _BASIC_AIR_KWARGS = {
+        "pipe_size": "2",
+        "pipe_schedule": "40",
+        "pipe_length": 100.0,
+        "flow_rate": 500.0,
+        "flow_unit": "kg/h",
+        "pressure": 10.0,
+        "pressure_unit": "bar",
+        "temperature": 300.0,
+        "temperature_unit": "K",
+    }
+
     @pytest.mark.skipif(
         not HAS_PRESSURE_DROP, reason="PressureDropCalculator not available"
     )
     def test_pressure_drop_basic_air(self) -> None:
         """Basic pressure drop calculation with air."""
-        result = calculate_pressure_drop(
-            pipe_size="2",
-            pipe_schedule="40",
-            pipe_length=100.0,
-            flow_rate=500.0,
-            flow_unit="kg/h",
-            pressure=10.0,
-            pressure_unit="bar",
-            temperature=300.0,
-            temperature_unit="K",
+        result = calculate_pressure_drop(**self._BASIC_AIR_KWARGS)
+        assert "pressure_drop_pa" in result, (
+            "calculator must return the documented pressure_drop_pa key"
         )
-        # Result should contain pressure drop
-        assert result is not None
-        # Pressure drop should be positive
-        assert result.get("pressure_drop_pa", 0.0) >= 0.0
+        dp = result["pressure_drop_pa"]
+        assert math.isfinite(dp) and dp > 0.0, (
+            f"expected finite positive ΔP, got {dp!r}"
+        )
+        # Independent bound: loss cannot exceed inlet static pressure (10 bar).
+        assert dp < 10.0 * 1.0e5, (
+            f"ΔP {dp} Pa exceeds inlet pressure for this scenario"
+        )
+
+    @pytest.mark.skipif(
+        not HAS_PRESSURE_DROP, reason="PressureDropCalculator not available"
+    )
+    @pytest.mark.parametrize("bad_value", [0.0, float("inf"), float("nan")])
+    def test_pressure_drop_basic_oracle_rejects_bad_values(
+        self, monkeypatch: pytest.MonkeyPatch, bad_value: float
+    ) -> None:
+        """Controlled bad oracle outputs must fail the basic scenario test."""
+
+        def _stub(**_kwargs: object) -> dict[str, float]:
+            return {"pressure_drop_pa": bad_value}
+
+        monkeypatch.setattr(
+            "tests.test_calculators_expanded.calculate_pressure_drop", _stub
+        )
+        with pytest.raises(AssertionError):
+            self.test_pressure_drop_basic_air()
+
+    @pytest.mark.skipif(
+        not HAS_PRESSURE_DROP, reason="PressureDropCalculator not available"
+    )
+    def test_pressure_drop_basic_oracle_requires_result_key(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        def _stub(**_kwargs: object) -> dict[str, float]:
+            return {"velocity_m_s": 1.0}
+
+        monkeypatch.setattr(
+            "tests.test_calculators_expanded.calculate_pressure_drop", _stub
+        )
+        with pytest.raises(AssertionError, match="pressure_drop_pa"):
+            self.test_pressure_drop_basic_air()
 
     @pytest.mark.skipif(
         not HAS_PRESSURE_DROP, reason="PressureDropCalculator not available"
