@@ -19,6 +19,15 @@ def _step_script(step_name: str) -> str:
     return next(step["run"] for step in steps if step.get("name") == step_name)
 
 
+def _build_install_line() -> str:
+    """Return the nightly's `pip install` line that provides `build`."""
+    return next(
+        line
+        for line in _step_script("Install Python dependencies").splitlines()
+        if "python -m pip install" in line and '"build' in line
+    )
+
+
 def _dependency_name(spec: str) -> str:
     return (
         spec.split(";", maxsplit=1)[0]
@@ -128,5 +137,15 @@ def test_full_suite_nightly_installs_the_ci_standard_build_pin() -> None:
     )
     pin = re.search(r'"build[<>=][^"]*"', ci_standard)
     assert pin, "ci-standard.yml must keep a pinned build install"
-    script = _step_script("Install Python dependencies")
-    assert f"python -m pip install {pin.group(0)}" in script
+    assert pin.group(0) in _build_install_line()
+
+
+def test_full_suite_nightly_installs_the_build_system_requires() -> None:
+    """`python -m build --no-isolation` builds against the current environment,
+    so the wheel tests failed with "Missing dependencies: wheel" until the
+    nightly installed pyproject's [build-system] requires too (#5957)."""
+    pyproject = tomllib.loads((REPO_ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    requires = pyproject["build-system"]["requires"]
+    install = _build_install_line()
+    for requirement in requires:
+        assert f'"{requirement}"' in install, f"{requirement} must be installed with build"
