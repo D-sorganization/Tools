@@ -16,6 +16,11 @@ import sys
 
 import pytest
 
+from tests.heavy_integration.trimesh_boolean_contract import (
+    EXPECTED_TRANSLATED_BOX_INTERSECTION_VOLUME,
+    require_trimesh_boolean_backend,
+)
+
 
 @pytest.mark.live_simulation
 class TestTrimeshGeometryContracts:
@@ -42,18 +47,17 @@ class TestTrimeshGeometryContracts:
             "trimesh",
             reason="trimesh not installed — skipping heavy geometry contracts",
         )
+        require_trimesh_boolean_backend(trimesh, skip=pytest.skip)
 
         a = trimesh.creation.box((1, 1, 1))
         b = trimesh.creation.box((1, 1, 1))
         b.apply_translation([0.5, 0, 0])
 
-        try:
-            result = trimesh.boolean.intersection([a, b])
-            # If boolean is available (requires manifold/blender backend)
-            assert result is not None
-            assert result.volume > 0
-        except Exception:  # noqa: BLE001
-            pytest.skip("Trimesh boolean backend not available in this environment")
+        result = trimesh.boolean.intersection([a, b])
+        assert result is not None, "boolean intersection must return a mesh"
+        assert result.volume == pytest.approx(
+            EXPECTED_TRANSLATED_BOX_INTERSECTION_VOLUME, rel=1e-3
+        ), f"Expected overlap volume 0.5 m³, got {result.volume}"
 
 
 @pytest.mark.live_simulation
