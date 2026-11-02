@@ -330,6 +330,32 @@ class TestSpeedOfSound:
 # =============================================================================
 
 
+def _assert_pressure_drop_basic_oracle(result: dict[str, float]) -> None:
+    """Independent oracle: required key, finite positive ΔP, component sum matches."""
+    if "pressure_drop_pa" not in result:
+        raise AssertionError("pressure_drop_pa must be present in calculator output")
+    total = float(result["pressure_drop_pa"])
+    if not np.isfinite(total) or total <= 0.0:
+        raise AssertionError(
+            f"pressure_drop_pa must be finite and positive, got {total!r}"
+        )
+    required_components = (
+        "friction_loss_pa",
+        "fitting_loss_pa",
+        "elevation_loss_pa",
+    )
+    for key in required_components:
+        if key not in result:
+            raise AssertionError(f"{key} must be present in calculator output")
+    component_sum = sum(float(result[key]) for key in required_components)
+    assert_allclose(
+        total,
+        component_sum,
+        rtol=1e-6,
+        err_msg="total pressure drop must equal summed loss components",
+    )
+
+
 class TestPressureDropBasics:
     """Tests for pressure drop calculations.
 
@@ -355,10 +381,31 @@ class TestPressureDropBasics:
             temperature=300.0,
             temperature_unit="K",
         )
-        # Result should contain pressure drop
-        assert result is not None
-        # Pressure drop should be positive
-        assert result.get("pressure_drop_pa", 0.0) >= 0.0
+        _assert_pressure_drop_basic_oracle(result)
+
+    @pytest.mark.parametrize(
+        "invalid_result",
+        [
+            {},
+            {
+                "pressure_drop_pa": 0.0,
+                "friction_loss_pa": 0.0,
+                "fitting_loss_pa": 0.0,
+                "elevation_loss_pa": 0.0,
+            },
+            {
+                "pressure_drop_pa": float("inf"),
+                "friction_loss_pa": 1.0,
+                "fitting_loss_pa": 0.0,
+                "elevation_loss_pa": 0.0,
+            },
+        ],
+    )
+    def test_pressure_drop_oracle_rejects_invalid_outputs(
+        self, invalid_result: dict[str, float]
+    ) -> None:
+        with pytest.raises(AssertionError):
+            _assert_pressure_drop_basic_oracle(invalid_result)
 
     @pytest.mark.skipif(
         not HAS_PRESSURE_DROP, reason="PressureDropCalculator not available"
