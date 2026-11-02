@@ -26,13 +26,16 @@ jobs:
     timeout-minutes: 120
     env:
       HEAVY_TEST_SLACK_WEBHOOK: ${{ secrets.HEAVY_TEST_SLACK_WEBHOOK }}
-      AGENT_TOOLSDIRECTORY: ${{ github.workspace }}/.tool-cache
 
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
 
       - name: Set up Python 3.11
+        # Outside the checkout: the wheel tests require the interpreter's
+        # site-packages not to live inside the repository (#5957).
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
         uses: actions/setup-python@v6
         with:
           python-version: "3.11"

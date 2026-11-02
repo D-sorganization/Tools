@@ -153,3 +153,16 @@ def test_full_suite_nightly_installs_the_build_system_requires() -> None:
         assert f'"{requirement}"' in install, (
             f"{requirement} must be installed with build"
         )
+
+
+def test_full_suite_nightly_keeps_the_tool_cache_outside_the_checkout() -> None:
+    """The rate_of_closure wheel test asserts the interpreter's site-packages is
+    not inside the repository; a workspace tool cache put it there (#5957)."""
+    workflow = yaml.safe_load(WORKFLOW.read_text(encoding="utf-8"))
+    job = workflow["jobs"]["full-suite"]
+    assert "AGENT_TOOLSDIRECTORY" not in job.get("env", {})
+    setup = next(
+        step for step in job["steps"] if step.get("name") == "Set up Python 3.11"
+    )
+    # `runner` is only available in step-level env, not job-level env.
+    assert setup["env"]["AGENT_TOOLSDIRECTORY"] == "${{ runner.temp }}/_tool_cache"

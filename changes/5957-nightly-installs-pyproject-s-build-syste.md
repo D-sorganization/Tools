@@ -1,4 +1,4 @@
 ---
 issue: 5957
-summary: "Nightly installs pyproject's [build-system] requires (setuptools, wheel) with the build pin so the --no-isolation wheel tests can build."
+summary: "Nightly installs pyproject's [build-system] requires (setuptools, wheel) with the build pin and keeps setup-python's tool cache in runner.temp outside the checkout, so both standalone-wheel tests pass."
 ---
