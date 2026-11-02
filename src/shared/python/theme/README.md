@@ -6,7 +6,7 @@ D-sorganization repository fleet.
 ## Features
 
 - **13 built-in themes**: Light, Dark, Slate Gray, Ocean Blue, Forest Green,
-  Neon Warm Dark, Vampire Dark, Frost Dark, Teal Dark, Office Blue, Office Green, Sandstone Yellow,
+  Neon Warm Dark, Vampire Dark, Frost Dark, Teal Dark, Cobalt Light, Fern Light, Sandstone Yellow,
   High Contrast
 - **Custom themes** with QSettings persistence
 - **Theme inheritance** for docked/embedded sub-applications

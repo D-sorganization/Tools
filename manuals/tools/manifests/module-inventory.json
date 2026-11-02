@@ -591,7 +591,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rrt-path-planner.json"
     },
     {
-      "content_sha256_lf": "c884200ff521e4133e3b095c93ea90f8feb12232b81126e0899a4ef6a3f2da48",
+      "content_sha256_lf": "909104002b583dce70ef4638278baae06e23ee87ab6ed0921ffe22bf923a232a",
       "entry_count": 8,
       "package": "src/shared",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
@@ -921,7 +921,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-vibroacoustics.json"
     },
     {
-      "content_sha256_lf": "53a2e652dce91e50c507c8c723ad9709199531a6e62af17430c0d014bb594411",
+      "content_sha256_lf": "3354efbc416951499ce815e9eb3630399269a8ae18b927d2c9617ec272873a34",
       "entry_count": 22,
       "package": "src/shared/python/theme",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-theme.json"

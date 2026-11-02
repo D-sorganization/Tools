@@ -185,10 +185,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 969,
+      "bytes_lf": 1007,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "5d434afd094f86480f8a5780686952e8550e278aae524c1126e34fe8decea779",
+      "content_sha256_lf": "3b1345c684ed1f106b46308a7a52ea0c568b35e19a0b3dd6c643522b8181b13b",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-TYPESCRIPT-THEME-INDEX-TS-8055CD562DA4",
       "language": "typescript",
@@ -344,10 +344,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9754,
+      "bytes_lf": 10167,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a87cfe42bb6083096bf37469902d54a53d6ecdcc66ab7a0fdd71dabab808fdaf",
+      "content_sha256_lf": "954924cd2e0def3919853303957f91b6820022e4c4dbd46fa87594c231a21469",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-TYPESCRIPT-THEME-THEMEDEFINITIONS-TS-6298204F4742",
       "language": "typescript",
@@ -391,6 +391,11 @@
           {
             "kind": "export",
             "name": "CustomTheme",
+            "signature": null
+          },
+          {
+            "kind": "export",
+            "name": "LEGACY_THEME_IDS",
             "signature": null
           },
           {
@@ -475,23 +480,29 @@
           },
           {
             "kind": "export",
+            "name": "resolveThemeId",
+            "signature": null
+          },
+          {
+            "kind": "export",
             "name": "verifyThemeReadability",
             "signature": null
           }
         ],
         "test_paths": [],
         "unit_mentions": [
-          "g"
+          "g",
+          "ms"
         ],
         "validation_paths": []
       }
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10169,
+      "bytes_lf": 10428,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "5ce3ee2e7a53a479e5cb2194e28f0a773efb7b35f19251cc8619531796d4d3c1",
+      "content_sha256_lf": "5a0052ae6405ba527b3592cf861b267e0c3f516143dca7cac7132c4e0c078f23",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-TYPESCRIPT-THEME-THEMESTORE-TS-E13EEBAFD899",
       "language": "typescript",
@@ -562,7 +573,8 @@
         ],
         "test_paths": [],
         "unit_mentions": [
-          "g"
+          "g",
+          "ms"
         ],
         "validation_paths": []
       }

@@ -293,41 +293,41 @@ _HARDCODED_BUILTIN_THEMES: dict[str, dict[str, str]] = {
         "button_hover": "#0e9dab",
     },
     # ------------------------------------------------------------------
-    # Office/Productivity Themes
+    # Light Tinted Themes
     # ------------------------------------------------------------------
-    "Office Blue": {
-        "name": "Office Blue",
+    "Cobalt Light": {
+        "name": "Cobalt Light",
         "bg": "#ffffff",
         "group_bg": "#f3f3f3",
         "border": "#d1d1d1",
         "text": "#000000",
         "text_secondary": "#333333",
         "label": "#666666",
-        "focus": "#2b579a",
+        "focus": "#1f5fbf",
         "input_bg": "#ffffff",
-        "accent": "#2b579a",
+        "accent": "#1f5fbf",
         "title_bg": "#deecf9",
-        "title_border": "#2b579a",
+        "title_border": "#1f5fbf",
         "table_header": "#e6e6e6",
         "table_alt": "#f9f9f9",
-        "button_hover": "#1e3f6f",
+        "button_hover": "#174a94",
     },
-    "Office Green": {
-        "name": "Office Green",
+    "Fern Light": {
+        "name": "Fern Light",
         "bg": "#ffffff",
         "group_bg": "#f3f3f3",
         "border": "#d1d1d1",
         "text": "#000000",
         "text_secondary": "#333333",
         "label": "#666666",
-        "focus": "#217346",
+        "focus": "#2e7d4f",
         "input_bg": "#ffffff",
-        "accent": "#217346",
+        "accent": "#2e7d4f",
         "title_bg": "#e2f0d9",
-        "title_border": "#217346",
+        "title_border": "#2e7d4f",
         "table_header": "#e6e6e6",
         "table_alt": "#f0f7ec",
-        "button_hover": "#185c37",
+        "button_hover": "#225e3b",
     },
     "Sandstone Yellow": {
         "name": "Sandstone Yellow",
@@ -386,11 +386,61 @@ _HARDCODED_CHART_COLORS: list[str] = [
     "#AC8E68",  # Brown
 ]
 
+
+def _load_legacy_theme_names() -> dict[str, str]:
+    """Map retired theme ids to current display names (themes.json ``legacyIds``).
+
+    Returns:
+        Legacy id to display name, or an empty mapping if the JSON is unavailable.
+    """
+    json_path = (
+        Path(__file__).parent.parent.parent / "theme-definitions" / "themes.json"
+    )
+    try:
+        with open(json_path, encoding="utf-8") as f:
+            data = json.load(f)
+    except (FileNotFoundError, PermissionError, OSError) as e:
+        logger.warning("Failed to load legacy theme ids from JSON: %s", e)
+        return {}
+
+    themes = data.get("themes", {})
+    return {
+        legacy_id: themes[theme_id]["name"]
+        for legacy_id, theme_id in data.get("legacyIds", {}).items()
+        if theme_id in themes
+    }
+
+
 # Load from JSON if available, otherwise use hardcoded definitions
 BUILTIN_THEMES: dict[str, dict[str, str]] = (
     _load_themes_from_json() or _HARDCODED_BUILTIN_THEMES
 )
 CHART_COLORS: list[str] = _load_chart_colors_from_json() or _HARDCODED_CHART_COLORS
+_LEGACY_THEME_NAMES: dict[str, str] = _load_legacy_theme_names()
+
+
+def resolve_theme_name(theme_name: str) -> str:
+    """Map a saved theme preference to its current built-in display name.
+
+    Retired theme ids or display names (for example ``ms-word`` or
+    ``Office Blue``) resolve through ``legacyIds`` in themes.json, so saved
+    preferences survive theme renames. Any other name is returned unchanged.
+
+    Args:
+        theme_name: Saved theme id or display name.
+
+    Returns:
+        The current display name, or ``theme_name`` if it is not a legacy name.
+
+    Raises:
+        TypeError: If ``theme_name`` is not a string.
+    """
+    if not isinstance(theme_name, str):
+        raise TypeError(f"theme_name must be str, got {type(theme_name).__name__}")
+    if theme_name in BUILTIN_THEMES:
+        return theme_name
+    slug = "-".join(theme_name.lower().split())
+    return _LEGACY_THEME_NAMES.get(slug, theme_name)
 
 
 # ============================================================================
