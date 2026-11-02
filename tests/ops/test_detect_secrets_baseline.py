@@ -425,7 +425,9 @@ class TestFreshScanFailurePolicy:
     """Fresh-scan helper must skip only a missing executable (source-tree lane)."""
 
     def test_missing_executable_skips(self, monkeypatch: pytest.MonkeyPatch) -> None:
-        def _missing(*_args: object, **_kwargs: object) -> subprocess.CompletedProcess[str]:
+        def _missing(
+            *_args: object, **_kwargs: object
+        ) -> subprocess.CompletedProcess[str]:
             raise FileNotFoundError("detect-secrets")
 
         monkeypatch.setattr(subprocess, "run", _missing)
