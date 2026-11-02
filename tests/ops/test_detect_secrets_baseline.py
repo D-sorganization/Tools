@@ -396,15 +396,14 @@ class TestDetectSecretsScanFailureHandling:
             _require_detect_secrets_executable()
 
     def test_nonzero_scan_exit_fails_with_sanitized_diagnostics(
-        self, monkeypatch: pytest.MonkeyPatch,
+        self,
+        monkeypatch: pytest.MonkeyPatch,
     ) -> None:
         def _failing_run(
             cmd: list[str], **kwargs: object
         ) -> subprocess.CompletedProcess[str]:
             if cmd[:2] == ["detect-secrets", "--version"]:
-                return subprocess.CompletedProcess(
-                    cmd, 0, stdout="1.5.0\n", stderr=""
-                )
+                return subprocess.CompletedProcess(cmd, 0, stdout="1.5.0\n", stderr="")
             return subprocess.CompletedProcess(
                 cmd, 2, stdout="", stderr="plugin load failed: bad-config\n"
             )
