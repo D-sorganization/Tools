@@ -116,10 +116,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 2581,
+      "bytes_lf": 3035,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "831684546ae24c30fb4bf18a46f5381338aaa37a0d0cfe8a8418af56d9cba28f",
+      "content_sha256_lf": "c75be47634159b0e04f0246053ec6d0fd869425ee04c1edce93c8ab7cb7b441e",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-TYPESCRIPT-THEME-DESIGNTOKENS-TS-79E3693691E8",
       "language": "typescript",
