@@ -106,6 +106,14 @@ CI_EXCLUDE_FILES = (
 )
 
 
+def _sanitize_detect_secrets_diagnostics(stderr: str, stdout: str = "") -> str:
+    """Return a short, log-safe snippet of scanner output."""
+    combined = (stderr or stdout or "").strip()
+    if len(combined) <= 500:
+        return combined
+    return combined[:500] + "…"
+
+
 def _scan_fresh_without_updating_baseline() -> dict[str, Any]:
     """Run detect-secrets scan (no --baseline) to get a raw fresh scan result.
 
@@ -123,7 +131,11 @@ def _scan_fresh_without_updating_baseline() -> dict[str, Any]:
     except FileNotFoundError:
         pytest.skip("detect-secrets not installed — skipping staleness check")
     if result.returncode != 0:
-        pytest.skip(f"detect-secrets scan failed: {result.stderr}")
+        details = _sanitize_detect_secrets_diagnostics(result.stderr, result.stdout)
+        pytest.fail(
+            "detect-secrets scan failed "
+            f"(exit {result.returncode}): {details or 'no diagnostics'}"
+        )
     return json.loads(result.stdout)
 
 
@@ -407,3 +419,26 @@ class TestBaselineEntryIntegrity:
                 if not isinstance(iv, bool):
                     invalid.append(f"{file_key}: is_verified={iv!r}")
         assert not invalid, f"Non-boolean is_verified values: {invalid[:5]}"
+
+
+class TestDetectSecretsScanFailureHandling:
+    """Scanner failures must fail the staleness guard, not skip it."""
+
+    def test_nonzero_scan_exit_fails_with_sanitized_diagnostics(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        def _fake_run(
+            cmd: list[str],
+            **kwargs: object,
+        ) -> subprocess.CompletedProcess[str]:
+            assert cmd[0] == "detect-secrets"
+            return subprocess.CompletedProcess(
+                args=cmd,
+                returncode=2,
+                stdout="",
+                stderr="configuration error: plugin missing",
+            )
+
+        monkeypatch.setattr(subprocess, "run", _fake_run)
+        with pytest.raises(pytest.fail.Exception, match="detect-secrets scan failed"):
+            _scan_fresh_without_updating_baseline()
