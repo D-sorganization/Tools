@@ -106,6 +106,14 @@ CI_EXCLUDE_FILES = (
 )
 
 
+def _sanitize_scan_diagnostics(text: str, *, max_chars: int = 400) -> str:
+    """Return a single-line, length-bounded diagnostic for test failures."""
+    cleaned = " ".join((text or "").split())
+    if len(cleaned) <= max_chars:
+        return cleaned
+    return cleaned[: max_chars - 3] + "..."
+
+
 def _scan_fresh_without_updating_baseline() -> dict[str, Any]:
     """Run detect-secrets scan (no --baseline) to get a raw fresh scan result.
 
@@ -123,7 +131,11 @@ def _scan_fresh_without_updating_baseline() -> dict[str, Any]:
     except FileNotFoundError:
         pytest.skip("detect-secrets not installed — skipping staleness check")
     if result.returncode != 0:
-        pytest.skip(f"detect-secrets scan failed: {result.stderr}")
+        detail = _sanitize_scan_diagnostics(result.stderr or result.stdout)
+        pytest.fail(
+            "detect-secrets fresh scan failed "
+            f"(exit {result.returncode}): {detail or 'no diagnostics'}"
+        )
     return json.loads(result.stdout)
 
 
@@ -407,3 +419,44 @@ class TestBaselineEntryIntegrity:
                 if not isinstance(iv, bool):
                     invalid.append(f"{file_key}: is_verified={iv!r}")
         assert not invalid, f"Non-boolean is_verified values: {invalid[:5]}"
+
+
+class TestFreshScanFailurePolicy:
+    """Fresh-scan helper must skip only a missing executable (source-tree lane)."""
+
+    def test_missing_executable_skips(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        def _missing(*_args: object, **_kwargs: object) -> subprocess.CompletedProcess[str]:
+            raise FileNotFoundError("detect-secrets")
+
+        monkeypatch.setattr(subprocess, "run", _missing)
+        with pytest.raises(pytest.skip.Exception, match="not installed"):
+            _scan_fresh_without_updating_baseline()
+
+    def test_nonzero_exit_fails_with_sanitized_diagnostics(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        def _failed(*_args: object, **_kwargs: object) -> subprocess.CompletedProcess[str]:
+            return subprocess.CompletedProcess(
+                args=["detect-secrets"],
+                returncode=2,
+                stdout="",
+                stderr="scan broke\nsecond line",
+            )
+
+        monkeypatch.setattr(subprocess, "run", _failed)
+        with pytest.raises(pytest.fail.Exception, match="exit 2"):
+            _scan_fresh_without_updating_baseline()
+
+    def test_success_parses_json(self, monkeypatch: pytest.MonkeyPatch) -> None:
+        payload = {"version": "1.0.0", "results": {}}
+
+        def _ok(*_args: object, **_kwargs: object) -> subprocess.CompletedProcess[str]:
+            return subprocess.CompletedProcess(
+                args=["detect-secrets"],
+                returncode=0,
+                stdout=json.dumps(payload),
+                stderr="",
+            )
+
+        monkeypatch.setattr(subprocess, "run", _ok)
+        assert _scan_fresh_without_updating_baseline() == payload
