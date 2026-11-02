@@ -478,3 +478,39 @@ class _MockEventLoop:
 
     def quit(self) -> None:
         pass
+
+
+class TestStreamWorkerLifecycle:
+    """The stream worker QThread never outlives the generator (#5951)."""
+
+    def test_worker_thread_is_finished_when_generator_completes(
+        self, adapter: RustAgentAdapter
+    ) -> None:
+        """A worker still unwinding after ``stream_finished`` is joined.
+
+        ``stream_finished`` is emitted before ``run()`` returns, so the event
+        loop can quit while the thread is still alive. Destroying that
+        QThread later aborts the interpreter ("QThread: Destroyed while
+        thread is still running"), as in merge_group run 41398779530.
+        """
+        import queue
+
+        from src.shared.python.ai.adapters import rust_adapter
+
+        worker_cls = rust_adapter._make_rust_stream_worker_class()
+        if worker_cls is None:
+            pytest.skip("requires a real PyQt6 QThread")
+
+        class _SlowUnwindWorker(worker_cls):  # type: ignore[misc, valid-type]
+            def run(self) -> None:
+                super().run()
+                time.sleep(0.3)
+
+        adapter.engine._stream_chunks = ["a", "b"]
+
+        out = list(
+            adapter._stream_with_worker(_SlowUnwindWorker, "hi", queue.Queue())
+        )
+
+        assert [c.content for c in out] == ["a", "b"]
+        assert adapter._active_worker.isFinished()
