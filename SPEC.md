@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-02 | #5949 | Nightly Chromium provisioning passes LD_LIBRARY_PATH through sudo so the workspace tool-cache python can load libpython (regression from #5912). |
 | 2026-11-02 | #5946 | Theme colors now come from themes.json alone: the sidekick design-token API and designTokens.ts read the catalog directly, scripts/sync_design_tokens.py regenerates the design_tokens.json themes table, a CI test fails on drift, colors.py loaders share one catalog path, and the theme README states the do-not-copy consumption contract |
 | 2026-11-02 | #5939 | Harden pendulum counterfactual and Jacobian tests; verify src-embedded shard ownership |
 | 2026-11-02 | #5926 | Heavy integration lane fails on missing, skipped or failing required cases via a versioned manifest |
