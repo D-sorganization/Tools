@@ -144,8 +144,12 @@ def test_full_suite_nightly_installs_the_build_system_requires() -> None:
     """`python -m build --no-isolation` builds against the current environment,
     so the wheel tests failed with "Missing dependencies: wheel" until the
     nightly installed pyproject's [build-system] requires too (#5957)."""
-    pyproject = tomllib.loads((REPO_ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    pyproject = tomllib.loads(
+        (REPO_ROOT / "pyproject.toml").read_text(encoding="utf-8")
+    )
     requires = pyproject["build-system"]["requires"]
     install = _build_install_line()
     for requirement in requires:
-        assert f'"{requirement}"' in install, f"{requirement} must be installed with build"
+        assert f'"{requirement}"' in install, (
+            f"{requirement} must be installed with build"
+        )
