@@ -9,6 +9,7 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+from double_pendulum_golf.constraint_solver import project_to_constraints
 from double_pendulum_golf.jacobians_golfer import (
     _numerical_jacobian,
     delta_matrix,
@@ -16,7 +17,7 @@ from double_pendulum_golf.jacobians_golfer import (
     jacobian_golfer,
     ztcf_matrix,
 )
-from double_pendulum_golf.physics_golfer import GolferParams, N_DOF
+from double_pendulum_golf.physics_golfer import N_DOF, GolferParams
 
 
 def _default_golfer_params() -> GolferParams:
@@ -531,17 +532,16 @@ class TestRobustness:
         J = jacobian_golfer(q, p)
         assert len(J) == 6
 
-    def test_zero_state(self):
-        """Should handle zero state (all angles = 0)."""
+    def test_zero_state(self) -> None:
+        """Zero angles on the constraint manifold must still yield Jacobians."""
         p = _default_golfer_params()
-        q = np.zeros(N_DOF)
+        q = project_to_constraints(np.zeros(N_DOF), p)
 
-        # May be singular but should not crash
-        try:
-            J = jacobian_golfer(q, p)
-            assert len(J) == 6
-        except Exception:  # noqa: BLE001
-            pass  # Some configs may be singular
+        jacobian = jacobian_golfer(q, p)
+        assert len(jacobian) == 6
+        for jacobian_matrix in jacobian.values():
+            assert jacobian_matrix.shape == (2, N_DOF)
+            assert np.all(np.isfinite(jacobian_matrix))
 
     def test_large_angle_values(self):
         """Should handle large angle values (multiple turns)."""
