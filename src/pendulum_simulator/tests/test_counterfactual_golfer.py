@@ -1,6 +1,9 @@
 """Tests for counterfactual_golfer module.
 
 TDD: Tests verify zero-torque counterfactual for the golfer model.
+
+Evidence class: native-solver / source-tree dynamics contract (pendulum_simulator
+CI shard collects ``src/pendulum_simulator/tests``).
 """
 
 from __future__ import annotations
@@ -8,11 +11,15 @@ from __future__ import annotations
 import numpy as np
 import pytest
 
+from double_pendulum_golf.constraint_solver import (
+    project_to_constraints,
+    project_velocity,
+)
 from double_pendulum_golf.counterfactual_golfer import (
     zero_torque_accelerations,
     zero_torque_joint_forces,
 )
-from double_pendulum_golf.physics_golfer import GolferParams
+from double_pendulum_golf.physics_golfer import N_DOF, GolferParams
 
 
 def _default_golfer_params() -> GolferParams:
@@ -38,31 +45,29 @@ def _default_golfer_params() -> GolferParams:
     )
 
 
+def _consistent_golfer_state(params: GolferParams) -> np.ndarray:
+    """Project to the constraint manifold so the counterfactual solver is nonsingular."""
+    q = project_to_constraints(np.zeros(N_DOF), params)
+    qdot = project_velocity(q, np.zeros(N_DOF), params)
+    return np.concatenate([q, qdot])
+
+
 class TestZeroTorqueAccelerations:
     """Tests for zero-torque counterfactual accelerations."""
 
     def test_returns_array(self):
         params = _default_golfer_params()
-        # 8 DOF: q + qdot = 16 state variables
-        state = np.zeros(16)
-        # Small perturbation so constraint solver works
-        state[0] = 0.1  # hub angle
-        try:
-            result = zero_torque_accelerations(state, params)
-            assert isinstance(result, np.ndarray)
-            assert result.ndim == 1
-        except Exception:  # noqa: BLE001
-            pytest.skip("Golfer model requires specific valid state")
+        state = _consistent_golfer_state(params)
+        result = zero_torque_accelerations(state, params)
+        assert isinstance(result, np.ndarray)
+        assert result.ndim == 1
+        assert result.shape == (N_DOF,)
 
     def test_finite_output(self):
         params = _default_golfer_params()
-        state = np.zeros(16)
-        state[0] = 0.1
-        try:
-            result = zero_torque_accelerations(state, params)
-            assert np.all(np.isfinite(result)), f"Non-finite accelerations: {result}"
-        except Exception:  # noqa: BLE001
-            pytest.skip("Golfer model requires specific valid state")
+        state = _consistent_golfer_state(params)
+        result = zero_torque_accelerations(state, params)
+        assert np.all(np.isfinite(result)), f"Non-finite accelerations: {result}"
 
 
 class TestZeroTorqueJointForces:
@@ -70,10 +75,26 @@ class TestZeroTorqueJointForces:
 
     def test_returns_dict(self):
         params = _default_golfer_params()
-        state = np.zeros(16)
-        state[0] = 0.1
-        try:
-            result = zero_torque_joint_forces(state, params)
-            assert isinstance(result, dict)
-        except Exception:  # noqa: BLE001
-            pytest.skip("Golfer model requires specific valid state")
+        state = _consistent_golfer_state(params)
+        result = zero_torque_joint_forces(state, params)
+        assert isinstance(result, dict)
+        assert result, "expected at least one joint force entry"
+
+
+def test_counterfactual_module_collected_in_pendulum_shard() -> None:
+    """Guard that these tests remain in the pendulum_simulator CI shard."""
+    from pathlib import Path
+
+    repo_root = Path(__file__).resolve().parents[3]
+    shard_roots = repo_root / "scripts" / "ci_test_shards.py"
+    text = shard_roots.read_text(encoding="utf-8")
+    assert "src/pendulum_simulator/tests" in text
+
+
+class TestZeroTorqueUnsupportedInput:
+    """Documented unsupported inputs must raise, not skip."""
+
+    def test_invalid_state_shape_raises(self):
+        params = _default_golfer_params()
+        with pytest.raises(ValueError, match="State shape"):
+            zero_torque_accelerations(np.zeros(4), params)

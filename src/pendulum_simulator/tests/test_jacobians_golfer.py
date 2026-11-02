@@ -16,7 +16,7 @@ from double_pendulum_golf.jacobians_golfer import (
     jacobian_golfer,
     ztcf_matrix,
 )
-from double_pendulum_golf.physics_golfer import GolferParams, N_DOF
+from double_pendulum_golf.physics_golfer import N_DOF, GolferParams
 
 
 def _default_golfer_params() -> GolferParams:
@@ -211,7 +211,7 @@ class TestEllipsoidsGolfer:
         expected_keys = {"rh", "lh", "club_tip", "re", "le", "hub"}
         assert set(result.keys()) == expected_keys
 
-        for name, data in result.items():
+        for data in result.values():
             assert isinstance(data, dict)
             assert "jacobian" in data
             assert "directions" in data
@@ -227,7 +227,7 @@ class TestEllipsoidsGolfer:
         ellipsoid_result = ellipsoids_golfer(q, p)
         jacobian_result = jacobian_golfer(q, p)
 
-        for name in ellipsoid_result.keys():
+        for name in ellipsoid_result:
             np.testing.assert_array_equal(
                 ellipsoid_result[name]["jacobian"],
                 jacobian_result[name],
@@ -532,16 +532,15 @@ class TestRobustness:
         assert len(J) == 6
 
     def test_zero_state(self):
-        """Should handle zero state (all angles = 0)."""
+        """All-zero generalized coordinates still yield finite Jacobians."""
         p = _default_golfer_params()
         q = np.zeros(N_DOF)
 
-        # May be singular but should not crash
-        try:
-            J = jacobian_golfer(q, p)
-            assert len(J) == 6
-        except Exception:  # noqa: BLE001
-            pass  # Some configs may be singular
+        J = jacobian_golfer(q, p)
+        assert len(J) == 6
+        for joint_name, Jmat in J.items():
+            assert Jmat.shape == (2, N_DOF), joint_name
+            assert np.all(np.isfinite(Jmat)), joint_name
 
     def test_large_angle_values(self):
         """Should handle large angle values (multiple turns)."""
