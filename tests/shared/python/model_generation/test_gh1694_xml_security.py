@@ -80,15 +80,8 @@ class TestURDFParserXXE:
         from model_generation.converters.urdf_parser import URDFParser
 
         parser = URDFParser()
-        try:
-            model = parser.parse(XXE_PAYLOAD)
-            # If somehow no exception: the output must not contain passwd content
-            output = str(model)
-            assert "root:x:" not in output
-            assert "/bin/bash" not in output
-        except Exception:
-            # Exception is the correct behavior
-            pass
+        with pytest.raises(ValueError):
+            parser.parse(XXE_PAYLOAD)
 
 
 # ---------------------------------------------------------------------------
@@ -185,16 +178,12 @@ class TestURDFTextEditorXXE:
 
         editor = URDFTextEditor()
         editor.load_string(XXE_PAYLOAD)
-        # defusedxml raises EntitiesForbidden which is a ValueError subclass
-        # The validate() method may not catch it — acceptable: the error propagates
         try:
             messages = editor.validate()
-            # If no exception: there must be an error-level message
-            severities = [m.severity for m in messages]
-            assert ValidationSeverity.ERROR in severities
-        except Exception:
-            # Exception is also correct (defusedxml blocking attack)
-            pass
+        except ValueError:
+            return
+        severities = [m.severity for m in messages]
+        assert ValidationSeverity.ERROR in severities
 
     def test_validate_billion_laughs_raises_or_returns_error(self) -> None:
         """Billion-laughs payload must either raise or produce ERROR message."""
@@ -207,10 +196,10 @@ class TestURDFTextEditorXXE:
         editor.load_string(BILLION_LAUGHS)
         try:
             messages = editor.validate()
-            severities = [m.severity for m in messages]
-            assert ValidationSeverity.ERROR in severities
-        except Exception:
-            pass
+        except ValueError:
+            return
+        severities = [m.severity for m in messages]
+        assert ValidationSeverity.ERROR in severities
 
     def test_valid_urdf_validates_without_error(self) -> None:
         """A valid URDF should still pass validation after hardening."""
@@ -243,19 +232,39 @@ class TestValidateMJCFXXE:
         errors = validate_mjcf(valid_mjcf)
         assert isinstance(errors, list)
 
+    def test_validate_mjcf_xxe_returns_errors_or_raises(self) -> None:
+        """XXE payloads must not validate cleanly through the MJCF fallback path."""
+        from model_generation.converters.format_utils import validate_mjcf
+
+        try:
+            errors = validate_mjcf(XXE_PAYLOAD)
+        except ValueError:
+            return
+        assert isinstance(errors, list)
+        assert len(errors) > 0
+
+    def test_validate_mjcf_billion_laughs_returns_errors_or_raises(self) -> None:
+        """Entity-expansion probes must not validate cleanly."""
+        from model_generation.converters.format_utils import validate_mjcf
+
+        try:
+            errors = validate_mjcf(BILLION_LAUGHS)
+        except ValueError:
+            return
+        assert isinstance(errors, list)
+        assert len(errors) > 0
+
     def test_validate_mjcf_invalid_xml_returns_errors_or_raises(self) -> None:
-        """Malformed XML should either return error messages or raise (mujoco raises)."""
+        """Malformed XML should either return error messages or raise."""
         from model_generation.converters.format_utils import validate_mjcf
 
         bad_xml = "<mujoco><unclosed>"
         try:
             errors = validate_mjcf(bad_xml)
-            # If returned: must be a non-empty error list
-            assert isinstance(errors, list)
-            assert len(errors) > 0
-        except Exception:
-            # mujoco installed: raises ValueError for malformed XML — also correct
-            pass
+        except ValueError:
+            return
+        assert isinstance(errors, list)
+        assert len(errors) > 0
 
     def test_validate_mjcf_no_stdlib_et_parse_in_fallback(self) -> None:
         """The defusedxml fallback must not import stdlib ET for ParseError."""
