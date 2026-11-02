@@ -21,6 +21,7 @@ from pathlib import Path
 from typing import Any
 
 import pytest
+from _pytest.outcomes import Failed, Skipped
 
 # ---------------------------------------------------------------------------
 # Helpers
@@ -106,24 +107,50 @@ CI_EXCLUDE_FILES = (
 )
 
 
+def _sanitize_scan_diagnostics(stderr: str, *, max_chars: int = 500) -> str:
+    """Return a short, log-safe excerpt of detect-secrets stderr."""
+    cleaned = stderr.replace("\r\n", "\n").strip()
+    if len(cleaned) > max_chars:
+        cleaned = cleaned[: max_chars - 3] + "..."
+    return cleaned or "(no stderr output)"
+
+
+def _require_detect_secrets_executable() -> None:
+    """Skip only when the detect-secrets CLI is absent."""
+    try:
+        subprocess.run(
+            ["detect-secrets", "--version"],
+            capture_output=True,
+            text=True,
+            timeout=30,
+            check=False,
+        )
+    except FileNotFoundError:
+        pytest.skip("detect-secrets not installed — skipping staleness check")
+
+
 def _scan_fresh_without_updating_baseline() -> dict[str, Any]:
     """Run detect-secrets scan (no --baseline) to get a raw fresh scan result.
 
     Uses CI's exclusion pattern so the comparison is against the same file set
     the committed baseline was generated from.
+
+    Evidence class: source-tree scan via installed detect-secrets CLI.
     """
-    try:
-        result = subprocess.run(
-            ["detect-secrets", "scan", "--exclude-files", CI_EXCLUDE_FILES],
-            capture_output=True,
-            text=True,
-            cwd=str(REPO_ROOT),
-            timeout=120,
-        )
-    except FileNotFoundError:
-        pytest.skip("detect-secrets not installed — skipping staleness check")
+    _require_detect_secrets_executable()
+    result = subprocess.run(
+        ["detect-secrets", "scan", "--exclude-files", CI_EXCLUDE_FILES],
+        capture_output=True,
+        text=True,
+        cwd=str(REPO_ROOT),
+        timeout=120,
+    )
     if result.returncode != 0:
-        pytest.skip(f"detect-secrets scan failed: {result.stderr}")
+        detail = _sanitize_scan_diagnostics(result.stderr)
+        pytest.fail(
+            "detect-secrets scan failed with a non-zero exit "
+            f"(code {result.returncode}): {detail}"
+        )
     return json.loads(result.stdout)
 
 
@@ -351,6 +378,40 @@ class TestBaselineNotStale:
             "Run: detect-secrets scan --baseline .secrets.baseline to update baseline, "
             "review each finding, then commit the updated baseline."
         )
+
+
+class TestDetectSecretsScanFailureHandling:
+    """Scanner failures must fail the suite; only a missing CLI may skip."""
+
+    def test_missing_executable_skips_typed(
+        self, monkeypatch: pytest.MonkeyPatch
+    ) -> None:
+        def _missing(
+            *_args: object, **_kwargs: object
+        ) -> subprocess.CompletedProcess[str]:
+            raise FileNotFoundError("detect-secrets")
+
+        monkeypatch.setattr(subprocess, "run", _missing)
+        with pytest.raises(Skipped, match="detect-secrets not installed"):
+            _require_detect_secrets_executable()
+
+    def test_nonzero_scan_exit_fails_with_sanitized_diagnostics(
+        self, monkeypatch: pytest.MonkeyPatch,
+    ) -> None:
+        def _failing_run(
+            cmd: list[str], **kwargs: object
+        ) -> subprocess.CompletedProcess[str]:
+            if cmd[:2] == ["detect-secrets", "--version"]:
+                return subprocess.CompletedProcess(
+                    cmd, 0, stdout="1.5.0\n", stderr=""
+                )
+            return subprocess.CompletedProcess(
+                cmd, 2, stdout="", stderr="plugin load failed: bad-config\n"
+            )
+
+        monkeypatch.setattr(subprocess, "run", _failing_run)
+        with pytest.raises(Failed, match="non-zero exit"):
+            _scan_fresh_without_updating_baseline()
 
 
 class TestBaselineEntryIntegrity:
