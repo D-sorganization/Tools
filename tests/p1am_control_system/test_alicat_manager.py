@@ -12,6 +12,8 @@ from alicat_manager import (
     create_default_manager,
 )
 
+from tests.p1am_control_system.backend_import import require_backend_main
+
 
 @pytest.mark.parametrize(
     ("connection_type", "port_or_ip"),
@@ -219,13 +221,7 @@ def test_parse_ascii_response_ignores_a_foreign_address() -> None:
 def test_setpoint_endpoint_reports_physical_io_unsupported(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
-    pytest.importorskip("fastapi")
-    pytest.importorskip("sqlmodel")
-
-    try:
-        import main
-    except Exception as exc:
-        pytest.skip(f"P1AM backend not importable in this environment: {exc}")
+    main = require_backend_main()
 
     physical_manager = AlicatManager()
     physical_manager.add_device(
