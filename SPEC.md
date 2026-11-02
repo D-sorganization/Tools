@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-02 | #5942 | Narrow P1AM main import skips to missing modules; add import guard and shard ownership tests |
 | 2026-11-02 | #5958 | Nightly installs pyproject's [build-system] requires (setuptools, wheel) with the build pin and keeps setup-python's tool cache in runner.temp outside the checkout, so both standalone-wheel tests pass. |
 | 2026-11-02 | #5955 | Nightly installs the same pinned build as ci-standard so the Sidekick wheel test can run python -m build. |
 | 2026-11-02 | #5952 | rust_adapter joins the _RustStreamWorker QThread after its event loop quits, so a still-running thread is never destroyed (merge_group abort) |
