@@ -1587,6 +1587,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5957 · Nightly Installs Pyproject's [Build-System] Requires (Setuptools, Wheel) With the Build Pin and Keeps Setup-Python's Tool Cache in Runner.Temp Outside the Checkout, so Both Standalone-Wheel Tests Pass.
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5957
+- **Branch:** merged via #5958
+- **PR:** #5958
+- **Paths:** see #5958
+- **Started:** 2026-11-02
+- **Last verified:** 2026-11-02 (`56286a07`; collated from changes/5957-nightly-installs-pyproject-s-build-syste.md)
+- **Summary:** Nightly installs pyproject's [build-system] requires (setuptools, wheel) with the build pin and keeps setup-python's tool cache in runner.temp outside the checkout, so both standalone-wheel tests pass.
+- **Next step:** Shipped in PR #5958.
+
 ### DL-#5953 · Nightly Installs the Same Pinned Build as Ci-Standard so the Sidekick Wheel Test Can Run Python -m Build.
 
 - **State:** shipped
