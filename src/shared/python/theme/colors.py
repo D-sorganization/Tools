@@ -66,15 +66,17 @@ SEMANTIC_COLOR_KEYS: tuple[str, ...] = (
 )
 
 
+# The one location of the canonical catalog, shared by every loader below.
+_THEMES_JSON = Path(__file__).parent.parent.parent / "theme-definitions" / "themes.json"
+
+
 def _load_themes_from_json() -> dict[str, dict[str, str]] | None:
     """Load theme definitions from the canonical themes.json file.
 
     Returns:
         Dictionary of theme definitions, or None if JSON not available.
     """
-    json_path = (
-        Path(__file__).parent.parent.parent / "theme-definitions" / "themes.json"
-    )
+    json_path = _THEMES_JSON
     if not json_path.exists():
         return None
 
@@ -101,9 +103,7 @@ def _load_themes_from_json() -> dict[str, dict[str, str]] | None:
 
 def _load_chart_colors_from_json() -> list[str] | None:
     """Load chart colors from themes.json."""
-    json_path = (
-        Path(__file__).parent.parent.parent / "theme-definitions" / "themes.json"
-    )
+    json_path = _THEMES_JSON
     if not json_path.exists():
         return None
 
@@ -393,9 +393,7 @@ def _load_legacy_theme_names() -> dict[str, str]:
     Returns:
         Legacy id to display name, or an empty mapping if the JSON is unavailable.
     """
-    json_path = (
-        Path(__file__).parent.parent.parent / "theme-definitions" / "themes.json"
-    )
+    json_path = _THEMES_JSON
     try:
         with open(json_path, encoding="utf-8") as f:
             data = json.load(f)

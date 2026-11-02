@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "4f93656d845b6a46354afe70142afb51a4c855936223cf1df211f1b28c8e6c14",
+      "content_sha256_lf": "b5d2fdc4672630310e216fb2d9947b32c88bdfec3b3474697e7a27d68d22aabb",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -159,8 +159,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "c1874beddf804fc0400affc58d940ce8ee40f52af6b9c70307ea918aff13c68d",
-      "entry_count": 122,
+      "content_sha256_lf": "4e76e5b7309730cddf2f2ec1e98c8958465b9d6ddb5708b0d23badb13d8c6561",
+      "entry_count": 123,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
     },
@@ -591,7 +591,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rrt-path-planner.json"
     },
     {
-      "content_sha256_lf": "909104002b583dce70ef4638278baae06e23ee87ab6ed0921ffe22bf923a232a",
+      "content_sha256_lf": "5df842db261c139f567262ca622852bd68e8c6af4d3b6492fe67c3c7153cce22",
       "entry_count": 8,
       "package": "src/shared",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
@@ -813,7 +813,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-theme.json"
     },
     {
-      "content_sha256_lf": "c8b57a4b5288ca34905774633129581d1619f96e99ed4233d19d49325d65d7bb",
+      "content_sha256_lf": "b7f01e23f31918e7799428b3550df0b5b37a6bb2ffe00a9a9a67c56cf4416525",
       "entry_count": 74,
       "package": "src/shared/python/sidekick/ui",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-ui.json"
@@ -921,7 +921,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-vibroacoustics.json"
     },
     {
-      "content_sha256_lf": "3354efbc416951499ce815e9eb3630399269a8ae18b927d2c9617ec272873a34",
+      "content_sha256_lf": "465634cb7944d8208907a0385142dc0e24988a0192542e0d6a706627fb7831ba",
       "entry_count": 22,
       "package": "src/shared/python/theme",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-theme.json"

@@ -119,7 +119,7 @@ def test_get_qcolor_returns_qt_color() -> None:
 
 def test_load_theme_helpers_return_none_when_json_file_is_missing(monkeypatch) -> None:
     missing_path = _FakeThemePath(exists=False)
-    monkeypatch.setattr(colors, "Path", lambda _path: missing_path)
+    monkeypatch.setattr(colors, "_THEMES_JSON", missing_path)
 
     assert colors._load_themes_from_json() is None
     assert colors._load_chart_colors_from_json() is None
@@ -127,7 +127,7 @@ def test_load_theme_helpers_return_none_when_json_file_is_missing(monkeypatch) -
 
 def test_load_theme_helpers_return_none_when_json_file_cannot_open(monkeypatch) -> None:
     existing_path = _FakeThemePath(exists=True)
-    monkeypatch.setattr(colors, "Path", lambda _path: existing_path)
+    monkeypatch.setattr(colors, "_THEMES_JSON", existing_path)
 
     def raise_permission_error(*args, **kwargs):
         raise PermissionError("denied")

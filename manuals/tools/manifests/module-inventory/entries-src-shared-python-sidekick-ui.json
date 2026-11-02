@@ -106,10 +106,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3368,
+      "bytes_lf": 3816,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b7c14247ae01b1093d6ca504c532a80ea1bad03401ded1af7d35c6feeb18224e",
+      "content_sha256_lf": "db845d81da34b3f893735af7e3c9bafb2d6ff2209706c9a69218bb0234e4f40e",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-UI-DESIGN-TOKENS-PY-011466A20CA4",
       "language": "python",
@@ -173,7 +173,8 @@
         ],
         "test_paths": [],
         "unit_mentions": [
-          "g"
+          "g",
+          "s"
         ],
         "validation_paths": []
       }
