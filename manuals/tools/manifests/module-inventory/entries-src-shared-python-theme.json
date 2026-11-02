@@ -1590,10 +1590,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 20561,
+      "bytes_lf": 20518,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "700a4a7be7fdba4da3db6b39cb249e73b114d5324a6056b78573b0c05a6df0ba",
+      "content_sha256_lf": "eda55a1cd9cc545f3063af5fbd107a377c69d4d9f1206c4f3ddb5390dab7e69a",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-THEME-THEME-MANAGER-PY-8E402C04BDB8",
       "language": "python",
