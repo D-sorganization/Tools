@@ -96,4 +96,3 @@ def test_saved_legacy_preference_loads_renamed_theme(
 
     manager.change_theme("office-green")
     assert manager.get_current_theme_name() == "Fern Light"
-
