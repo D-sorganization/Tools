@@ -123,7 +123,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
     },
     {
-      "content_sha256_lf": "8ee6ecf4ff25f2ad585098e50952a5068ed4cc8461c4f3a179269a2d69454633",
+      "content_sha256_lf": "8e184db429ca20c2cb4fd1d732b23f3a78a78d124708b2fb8948747626b87ed6",
       "entry_count": 5,
       "package": "rust_core/data-processor-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
@@ -159,8 +159,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "324686d40318e9d8bedd85040569aab1eb3db700d39d8785052e48f67f3daddc",
-      "entry_count": 121,
+      "content_sha256_lf": "c1874beddf804fc0400affc58d940ce8ee40f52af6b9c70307ea918aff13c68d",
+      "entry_count": 122,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
     },

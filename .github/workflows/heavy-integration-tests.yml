@@ -138,6 +138,12 @@ jobs:
               print("Heavy lane collected 0 tests — failing (issue #3325).", file=sys.stderr)
               sys.exit(1)
           PYEOF
+          # Required-case manifest (issue #5921): fail when named cases are
+          # missing, skipped or failing, or when every selected case skipped.
+          set -o pipefail
+          python3 scripts/check_heavy_lane_report.py heavy_test_results.xml \
+            --manifest tests/heavy_integration/required_cases.txt \
+            | tee -a "$GITHUB_STEP_SUMMARY"
           echo "### Tail of test output" >> "$GITHUB_STEP_SUMMARY"
           echo '```' >> "$GITHUB_STEP_SUMMARY"
           tail -40 heavy_test_output.log >> "$GITHUB_STEP_SUMMARY" 2>/dev/null || true
