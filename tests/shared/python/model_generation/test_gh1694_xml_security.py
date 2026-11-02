@@ -15,6 +15,8 @@ others let EntitiesForbidden propagate as a ValueError subclass.
 
 from __future__ import annotations
 
+from pathlib import Path
+
 import pytest
 
 # ---------------------------------------------------------------------------
@@ -75,20 +77,22 @@ class TestURDFParserXXE:
         assert model.name == "test"
         assert len(model.links) == 1
 
-    def test_parse_xxe_does_not_read_filesystem(self) -> None:
-        """defusedxml must block entity resolution — /etc/passwd must not appear."""
+    def test_parse_xxe_does_not_read_filesystem(self, tmp_path: Path) -> None:
+        """defusedxml must block entity resolution — local canary must not leak."""
         from model_generation.converters.urdf_parser import URDFParser
 
+        canary_path = tmp_path / "canary.txt"
+        canary_token = "LOCAL_XXE_CANARY_5922"
+        canary_path.write_text(canary_token, encoding="utf-8")
+        payload = f"""<?xml version="1.0"?>
+<!DOCTYPE root [
+  <!ENTITY xxe SYSTEM "file://{canary_path}">
+]>
+<root>&xxe;</root>"""
+
         parser = URDFParser()
-        try:
-            model = parser.parse(XXE_PAYLOAD)
-            # If somehow no exception: the output must not contain passwd content
-            output = str(model)
-            assert "root:x:" not in output
-            assert "/bin/bash" not in output
-        except Exception:
-            # Exception is the correct behavior
-            pass
+        with pytest.raises(ValueError):
+            parser.parse(payload)
 
 
 # ---------------------------------------------------------------------------
@@ -178,39 +182,21 @@ class TestURDFTextEditorXXE:
 
     def test_validate_xxe_raises_or_returns_error(self) -> None:
         """XXE in editor content must either raise or produce a validation ERROR."""
-        from model_generation.editor.text_editor import (
-            URDFTextEditor,
-            ValidationSeverity,
-        )
+        from model_generation.editor.text_editor import URDFTextEditor
 
         editor = URDFTextEditor()
         editor.load_string(XXE_PAYLOAD)
-        # defusedxml raises EntitiesForbidden which is a ValueError subclass
-        # The validate() method may not catch it — acceptable: the error propagates
-        try:
-            messages = editor.validate()
-            # If no exception: there must be an error-level message
-            severities = [m.severity for m in messages]
-            assert ValidationSeverity.ERROR in severities
-        except Exception:
-            # Exception is also correct (defusedxml blocking attack)
-            pass
+        with pytest.raises(ValueError):
+            editor.validate()
 
     def test_validate_billion_laughs_raises_or_returns_error(self) -> None:
         """Billion-laughs payload must either raise or produce ERROR message."""
-        from model_generation.editor.text_editor import (
-            URDFTextEditor,
-            ValidationSeverity,
-        )
+        from model_generation.editor.text_editor import URDFTextEditor
 
         editor = URDFTextEditor()
         editor.load_string(BILLION_LAUGHS)
-        try:
-            messages = editor.validate()
-            severities = [m.severity for m in messages]
-            assert ValidationSeverity.ERROR in severities
-        except Exception:
-            pass
+        with pytest.raises(ValueError):
+            editor.validate()
 
     def test_valid_urdf_validates_without_error(self) -> None:
         """A valid URDF should still pass validation after hardening."""
@@ -243,19 +229,28 @@ class TestValidateMJCFXXE:
         errors = validate_mjcf(valid_mjcf)
         assert isinstance(errors, list)
 
+    def test_validate_mjcf_rejects_billion_laughs(self) -> None:
+        """Bounded entity-expansion probe must not succeed on defusedxml fallback."""
+        from model_generation.converters.format_utils import validate_mjcf
+
+        with pytest.raises(ValueError):
+            validate_mjcf(BILLION_LAUGHS)
+
     def test_validate_mjcf_invalid_xml_returns_errors_or_raises(self) -> None:
         """Malformed XML should either return error messages or raise (mujoco raises)."""
+        import importlib.util
+
         from model_generation.converters.format_utils import validate_mjcf
 
         bad_xml = "<mujoco><unclosed>"
-        try:
-            errors = validate_mjcf(bad_xml)
-            # If returned: must be a non-empty error list
-            assert isinstance(errors, list)
-            assert len(errors) > 0
-        except Exception:
-            # mujoco installed: raises ValueError for malformed XML — also correct
-            pass
+        if importlib.util.find_spec("mujoco") is not None:
+            with pytest.raises(ValueError):
+                validate_mjcf(bad_xml)
+            return
+
+        errors = validate_mjcf(bad_xml)
+        assert isinstance(errors, list)
+        assert len(errors) > 0
 
     def test_validate_mjcf_no_stdlib_et_parse_in_fallback(self) -> None:
         """The defusedxml fallback must not import stdlib ET for ParseError."""
