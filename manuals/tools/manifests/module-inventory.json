@@ -591,8 +591,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rrt-path-planner.json"
     },
     {
-      "content_sha256_lf": "5df842db261c139f567262ca622852bd68e8c6af4d3b6492fe67c3c7153cce22",
-      "entry_count": 8,
+      "content_sha256_lf": "522a643f39a064bbc2bcea0a38b9cb3d2acbfb8e1c9aea6d7b7507feab831417",
+      "entry_count": 9,
       "package": "src/shared",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
