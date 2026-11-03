@@ -1697,10 +1697,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #5917
 - **Branch:** merged via #5946
-- **PR:** #5946
+- **PR:** #5946, #5965
 - **Paths:** see #5946
 - **Started:** 2026-11-02
-- **Last verified:** 2026-11-02 (`1a649fb0`; collated from changes/5917-theme-colors-now-come-from-themes-json-a.md)
+- **Last verified:** 2026-11-03 (`138f25c2`; collated from changes/5917-single-source-theme-definitions-in-tools.md)
 - **Summary:** Theme colors now come from themes.json alone: the sidekick design-token API and designTokens.ts read the catalog directly, scripts/sync_design_tokens.py regenerates the design_tokens.json themes table, a CI test fails on drift, colors.py loaders share one catalog path, and the theme README states the do-not-copy consumption contract
 - **Next step:** Shipped in PR #5946.
 
