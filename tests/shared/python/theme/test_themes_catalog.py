@@ -9,6 +9,7 @@ from __future__ import annotations
 import json
 import re
 from pathlib import Path
+from typing import cast
 from uuid import uuid4
 
 import pytest
@@ -27,7 +28,7 @@ BRAND_HEXES = {"#2b579a", "#217346", "#185abd", "#107c41"}
 
 @pytest.fixture(scope="module")
 def catalog() -> dict:
-    return json.loads(THEMES_JSON.read_text(encoding="utf-8"))
+    return cast(dict, json.loads(THEMES_JSON.read_text(encoding="utf-8")))
 
 
 def test_no_product_names(catalog: dict) -> None:
@@ -99,13 +100,10 @@ def test_saved_legacy_preference_loads_renamed_theme(
 
 
 def test_theme_catalog_contains_curated_categories(catalog: dict) -> None:
-    themes = catalog["themes"]
-    assert "dim" in themes and themes["dim"]["category"] == "standard"
-    assert (
-        "high-contrast-light" in themes
-        and themes["high-contrast-light"]["category"] == "accessibility"
-    )
-    assert "cvd-safe" in themes and themes["cvd-safe"]["category"] == "accessibility"
+    th = catalog["themes"]
+    assert th["dim"]["category"] == "standard"
+    assert th["high-contrast-light"]["category"] == "accessibility"
+    assert th["cvd-safe"]["category"] == "accessibility"
 
 
 def test_validate_themes_contrast_and_semantics() -> None:
@@ -114,5 +112,4 @@ def test_validate_themes_contrast_and_semantics() -> None:
     sys.path.insert(0, str(THEMES_JSON.parents[3]))
     from scripts.validate_themes import validate
 
-    errors = validate()
-    assert not errors, "\n".join(errors)
+    assert not validate()

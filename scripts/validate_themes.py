@@ -56,34 +56,24 @@ def luminance(hex_color: str) -> float:
     return 0.299 * r + 0.587 * g + 0.114 * b
 
 
-def relative_luminance(hex_color: str) -> float:
-    """Calculate relative luminance Y in sRGB."""
+def contrast_ratio(fg: str, bg: str) -> float:
+    """Calculate WCAG contrast ratio between two colors."""
 
     def srgb_to_linear(c: float) -> float:
         return c / 12.92 if c <= 0.03928 else ((c + 0.055) / 1.055) ** 2.4
 
-    h = hex_color.lstrip("#")[:6]
-    r = srgb_to_linear(int(h[0:2], 16) / 255)
-    g = srgb_to_linear(int(h[2:4], 16) / 255)
-    b = srgb_to_linear(int(h[4:6], 16) / 255)
-    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+    def relative_luminance(hex_color: str) -> float:
+        h = hex_color.lstrip("#")[:6]
+        r = srgb_to_linear(int(h[0:2], 16) / 255)
+        g = srgb_to_linear(int(h[2:4], 16) / 255)
+        b = srgb_to_linear(int(h[4:6], 16) / 255)
+        return 0.2126 * r + 0.7152 * g + 0.0722 * b
 
-
-def contrast_ratio(fg: str, bg: str) -> float:
-    """Calculate WCAG contrast ratio between two colors."""
     l1 = relative_luminance(fg)
     l2 = relative_luminance(bg)
     lighter = max(l1, l2)
     darker = min(l1, l2)
     return (lighter + 0.05) / (darker + 0.05)
-
-
-def cielab_l(hex_color: str) -> float:
-    """Calculate CIELAB L* lightness from relative luminance Y."""
-    y = relative_luminance(hex_color)
-    if y > 0.008856:
-        return float(116.0 * (y ** (1.0 / 3.0)) - 16.0)
-    return float(903.3 * y)
 
 
 def validate() -> list[str]:
@@ -164,52 +154,62 @@ def validate() -> list[str]:
                     f"{prefix}: text/bg contrast {ratio:.1f}:1 < 4.5:1 (WCAG AA)"
                 )
 
-        # Secondary text and labels on background and group background (4.5:1 minimum)
+        # Secondary text/labels (4.5:1), accents (3:1), selection (4.5:1)
         for key in ("text_secondary", "label"):
-            if key in colors:
-                if "bg" in colors:
-                    ratio = contrast_ratio(colors[key], colors["bg"])
-                    if ratio < 4.5:
-                        errors.append(
-                            f"{prefix}: {key}/bg contrast {ratio:.1f}:1 < 4.5:1 (WCAG AA)"
-                        )
-                if "group_bg" in colors:
-                    ratio = contrast_ratio(colors[key], colors["group_bg"])
-                    if ratio < 4.5:
-                        errors.append(
-                            f"{prefix}: {key}/group_bg contrast {ratio:.1f}:1 < 4.5:1 (WCAG AA)"
-                        )
-
-        # UI controls accent on background (3:1 minimum)
-        if "accent" in colors and "bg" in colors:
-            ratio = contrast_ratio(colors["accent"], colors["bg"])
-            if ratio < 3.0:
-                errors.append(
-                    f"{prefix}: accent/bg contrast {ratio:.1f}:1 < 3:1 (WCAG AA UI controls)"
-                )
-
-        # Selection text on selection background (4.5:1 minimum)
-        if "selection_text" in semantic and "selection_bg" in semantic:
-            ratio = contrast_ratio(semantic["selection_text"], semantic["selection_bg"])
-            if ratio < 4.5:
-                errors.append(
-                    f"{prefix}: selection_text/selection_bg contrast {ratio:.1f}:1 < 4.5:1 (WCAG AA)"
-                )
+            for bg_k in ("bg", "group_bg"):
+                if (
+                    key in colors
+                    and bg_k in colors
+                    and contrast_ratio(colors[key], colors[bg_k]) < 4.5
+                ):
+                    errors.append(f"{prefix}: {key}/{bg_k} contrast < 4.5:1 (WCAG AA)")
+        if (
+            "accent" in colors
+            and "bg" in colors
+            and contrast_ratio(colors["accent"], colors["bg"]) < 3.0
+        ):
+            errors.append(f"{prefix}: accent/bg contrast < 3:1 (WCAG AA UI controls)")
+        if (
+            "selection_text" in semantic
+            and "selection_bg" in semantic
+            and contrast_ratio(semantic["selection_text"], semantic["selection_bg"])
+            < 4.5
+        ):
+            errors.append(
+                f"{prefix}: selection_text/selection_bg contrast < 4.5:1 (WCAG AA)"
+            )
 
         # Semantic status colors pairwise lightness difference (ΔL* >= 15)
         if all(k in semantic for k in ("success", "warning", "error")):
-            l_succ = cielab_l(semantic["success"])
-            l_warn = cielab_l(semantic["warning"])
-            l_err = cielab_l(semantic["error"])
-            pairs = [
-                ("success", "warning", abs(l_succ - l_warn)),
-                ("success", "error", abs(l_succ - l_err)),
-                ("warning", "error", abs(l_warn - l_err)),
-            ]
-            for c1, c2, delta_l in pairs:
-                if delta_l < 15.0:
+
+            def _l(c: str) -> float:
+                h = c.lstrip("#")[:6]
+                lin = [
+                    (int(h[i : i + 2], 16) / 255) / 12.92
+                    if (int(h[i : i + 2], 16) / 255) <= 0.03928
+                    else (((int(h[i : i + 2], 16) / 255) + 0.055) / 1.055) ** 2.4
+                    for i in (0, 2, 4)
+                ]
+                y = 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2]
+                return (
+                    float(116.0 * (y ** (1.0 / 3.0)) - 16.0)
+                    if y > 0.008856
+                    else float(903.3 * y)
+                )
+
+            s, w, e = (
+                _l(semantic["success"]),
+                _l(semantic["warning"]),
+                _l(semantic["error"]),
+            )
+            for c1, c2, d in (
+                ("success", "warning", abs(s - w)),
+                ("success", "error", abs(s - e)),
+                ("warning", "error", abs(w - e)),
+            ):
+                if d < 15.0:
                     errors.append(
-                        f"{prefix}: semantic {c1}/{c2} lightness diff ΔL*={delta_l:.1f} < 15.0"
+                        f"{prefix}: semantic {c1}/{c2} lightness diff ΔL*={d:.1f} < 15.0"
                     )
 
     return errors

@@ -11053,10 +11053,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8077,
+      "bytes_lf": 7840,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e4ff5d5c359a248776676fb74357b7486411259246063e377d1ac0c55e63b0b1",
+      "content_sha256_lf": "67a19a2a34e87f36848ea7755363856a3b117453c26d524ba7adab116f852b84",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-VALIDATE-THEMES-PY-A1AC2F099CAC",
       "language": "python",
@@ -11122,11 +11122,6 @@
           },
           {
             "kind": "function",
-            "name": "cielab_l",
-            "signature": "hex_color: str"
-          },
-          {
-            "kind": "function",
             "name": "contrast_ratio",
             "signature": "fg: str, bg: str"
           },
@@ -11139,11 +11134,6 @@
             "kind": "function",
             "name": "main",
             "signature": ""
-          },
-          {
-            "kind": "function",
-            "name": "relative_luminance",
-            "signature": "hex_color: str"
           },
           {
             "kind": "function",
