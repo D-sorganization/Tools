@@ -164,3 +164,42 @@ def test_tauri_local_node_selection_skips_broken_npm_toolcaches() -> None:
         )
         assert "runner externals, /opt/hostedtoolcache/node, or PATH" in script
         assert '[ -z "$node_dir" ] || [ ! -x "$node_dir/node" ]' in script
+
+
+def _linux_build_node_steps() -> list[dict]:
+    workflow = yaml.safe_load(TAURI_WORKFLOW.read_text(encoding="utf-8"))
+    return [
+        step
+        for step in workflow["jobs"]["build"]["steps"]
+        if step.get("if", "").startswith("matrix.platform.label == 'linux-x64'")
+        and "Node.js" in step.get("name", "")
+    ]
+
+
+def test_tauri_linux_build_falls_back_to_setup_node_without_local_npm() -> None:
+    """ControlTower runners ship no working npm, so the leg must not stop (#5972)."""
+    local_step, fallback_step = _linux_build_node_steps()
+
+    assert local_step["id"] == "local-node"
+    script = local_step["run"]
+    assert 'echo "found=false" >> "$GITHUB_OUTPUT"' in script
+    assert 'echo "found=true" >> "$GITHUB_OUTPUT"' in script
+    assert "exit 1" not in script
+
+    assert fallback_step["uses"] == "actions/setup-node@v6"
+    assert fallback_step["with"]["node-version"] == "24"
+    assert fallback_step["if"] == (
+        "matrix.platform.label == 'linux-x64' && "
+        "steps.local-node.outputs.found != 'true'"
+    )
+
+
+def test_tauri_build_runs_on_workflow_dispatch() -> None:
+    """A branch dispatch can prove build-leg fixes before merge (#5972)."""
+    workflow = yaml.safe_load(TAURI_WORKFLOW.read_text(encoding="utf-8"))
+    condition = " ".join(workflow["jobs"]["build"]["if"].split())
+
+    assert "github.event_name == 'workflow_dispatch'" in condition
+    assert "github.event.pull_request.head.repo.full_name == github.repository" in (
+        condition
+    )
