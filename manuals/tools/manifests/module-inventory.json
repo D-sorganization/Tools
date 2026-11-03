@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "b5d2fdc4672630310e216fb2d9947b32c88bdfec3b3474697e7a27d68d22aabb",
+      "content_sha256_lf": "14e094ede4bdea71212a7c838b2433938c651f5d0216e8a6f3ee00e91503b0a4",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
