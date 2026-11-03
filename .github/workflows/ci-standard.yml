@@ -357,6 +357,11 @@ jobs:
       - name: Minimum Test Contract Check
         run: python3 scripts/check_minimum_test_contract.py
 
+      - name: Design Tokens Drift Check (#5917)
+        run: |
+          python3 scripts/sync_design_tokens.py --check
+          python3 scripts/validate_themes.py
+
       - name: Tracked LF Blob Normalization
         run: python scripts/check_tracked_text_normalization.py
 

@@ -274,6 +274,7 @@
           "tests/shared/python/signal_toolkit/test_signal_loader.py",
           "tests/shared/python/ui/test_headless_import.py",
           "tests/shared/python/utils/test_bootstrap.py",
+          "tests/shared/test_theme_single_source.py",
           "tests/test_bootstrap.py",
           "tests/test_bootstrap_path_contract_3335.py",
           "tests/test_deferred_catalog_hook.py",
