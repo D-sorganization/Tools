@@ -1212,6 +1212,7 @@
           "tests/shared/python/humanoid/test_mesh_generator_submodules.py",
           "tests/shared/python/model_generation/test_cli_main.py",
           "tests/shared/python/model_generation/test_mesh_upload_hardening.py",
+          "tests/shared/python/model_generation/test_rate_limiter.py",
           "tests/shared/python/model_generation/test_rest_api_routes.py",
           "tests/shared/python/plot_engine/test_matplotlib_renderer.py",
           "tests/shared/python/plot_engine/test_plotly_converter.py",

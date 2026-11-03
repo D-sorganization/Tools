@@ -188,7 +188,6 @@ def test_make_request_with_backoff_raises_rate_limit_error_after_final_429(
     monkeypatch: pytest.MonkeyPatch,
     caplog: pytest.LogCaptureFixture,
 ) -> None:
-
     def fake_urlopen(
         _request: urllib.request.Request,
         timeout: float,
