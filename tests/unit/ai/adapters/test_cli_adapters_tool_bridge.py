@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import subprocess
+import sys
 from unittest.mock import MagicMock, patch
 
 import pytest
@@ -112,16 +113,17 @@ def test_scrub_env_and_process_group_termination() -> None:
 
     adapter = ClaudeCodeAdapter(timeout=0.5)
     adapter.binary = "/usr/bin/claude"
-    timeout_exc = subprocess.TimeoutExpired(cmd="claude", timeout=0.5)
-    timeout_exc.pid = 42424  # type: ignore[attr-defined]
-    with (
-        patch("subprocess.run", side_effect=timeout_exc),
-        patch("os.getpgid", return_value=42424),
-        patch("os.killpg") as mock_killpg,
-        pytest.raises(AITimeoutError),
-    ):
-        adapter.send_message("hang", ConversationContext(), [_sim_tool()])
-    mock_killpg.assert_called_once()
+    if sys.platform != "win32":
+        timeout_exc = subprocess.TimeoutExpired(cmd="claude", timeout=0.5)
+        timeout_exc.pid = 42424  # type: ignore[attr-defined]
+        with (
+            patch("subprocess.run", side_effect=timeout_exc),
+            patch("os.getpgid", return_value=42424),
+            patch("os.killpg") as mock_killpg,
+            pytest.raises(AITimeoutError),
+        ):
+            adapter.send_message("hang", ConversationContext(), [_sim_tool()])
+        mock_killpg.assert_called_once()
     assert terminate_cli_process_group(None) is False
 
 
@@ -158,13 +160,14 @@ def test_agy_send_and_stream_nonce_bound_tool_call_and_timeout_cleanup() -> None
     assert f'nonce="{fixed_nonce}"' in prompt_sent
     assert "type run_simulation = (temperature_k:number) => Result;" in prompt_sent
 
-    timeout_exc = subprocess.TimeoutExpired(cmd="agy", timeout=0.5)
-    timeout_exc.pid = 51515  # type: ignore[attr-defined]
-    with (
-        patch("subprocess.run", side_effect=timeout_exc),
-        patch("os.getpgid", return_value=51515),
-        patch("os.killpg") as mock_killpg,
-        pytest.raises(AITimeoutError),
-    ):
-        adapter.send_message("hang", ConversationContext(), [_sim_tool()])
-    mock_killpg.assert_called_once()
+    if sys.platform != "win32":
+        timeout_exc = subprocess.TimeoutExpired(cmd="agy", timeout=0.5)
+        timeout_exc.pid = 51515  # type: ignore[attr-defined]
+        with (
+            patch("subprocess.run", side_effect=timeout_exc),
+            patch("os.getpgid", return_value=51515),
+            patch("os.killpg") as mock_killpg,
+            pytest.raises(AITimeoutError),
+        ):
+            adapter.send_message("hang", ConversationContext(), [_sim_tool()])
+        mock_killpg.assert_called_once()

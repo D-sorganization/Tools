@@ -66,8 +66,71 @@ SEMANTIC_COLOR_KEYS: tuple[str, ...] = (
 )
 
 
+def _find_canonical_themes_json(from_file: str | Path | None = None) -> Path:
+    """Resolve the canonical themes.json location.
+
+    Prefers the Tools package / vendor/ud-tools location so a copied module
+    cannot silently pick up a stale consumer-local catalog (Tools #5917).
+    """
+    origin = Path(from_file or __file__).resolve()
+
+    # 1. Check if we are running in a consumer repo that vendors ud-tools
+    for p in origin.parents:
+        vendor_cand = (
+            p
+            / "vendor"
+            / "ud-tools"
+            / "src"
+            / "shared"
+            / "theme-definitions"
+            / "themes.json"
+        )
+        if vendor_cand.is_file():
+            return vendor_cand
+
+    # 2. Check path relative to this file (Tools native source tree)
+    if len(origin.parents) >= 3:
+        native = origin.parents[2] / "theme-definitions" / "themes.json"
+        if native.is_file():
+            return native
+
+    # 3. Check if importlib.resources has the package (installed wheel/distribution)
+    try:
+        import importlib.resources
+
+        res = importlib.resources.files("shared").joinpath(
+            "theme-definitions", "themes.json"
+        )
+        if res.is_file():
+            return Path(str(res))
+    except Exception:
+        pass
+
+    # 4. Check find_tools_root() if available
+    try:
+        from integrated_process_simulator.utilities.path_utils import find_tools_root
+
+        t_root = find_tools_root()
+        if t_root:
+            cand = Path(t_root) / "src" / "shared" / "theme-definitions" / "themes.json"
+            if cand.is_file():
+                return cand
+    except Exception:
+        pass
+
+    # 5. Sibling Tools repository
+    for p in origin.parents:
+        sibling = (
+            p.parent / "Tools" / "src" / "shared" / "theme-definitions" / "themes.json"
+        )
+        if sibling.is_file():
+            return sibling
+
+    return origin.parents[2] / "theme-definitions" / "themes.json"
+
+
 # The one location of the canonical catalog, shared by every loader below.
-_THEMES_JSON = Path(__file__).parent.parent.parent / "theme-definitions" / "themes.json"
+_THEMES_JSON = _find_canonical_themes_json()
 
 
 def _load_themes_from_json() -> dict[str, dict[str, str]] | None:

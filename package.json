@@ -13,8 +13,15 @@
     "src/pendulum_simulator/pendulum-web",
     "src/function_generator/web",
     "src/web_applications/unit_converter",
-    "src/ode_solver/web"
+    "src/ode_solver/web",
+    "src/shared/typescript/theme"
   ],
+  "exports": {
+    "./theme": "./src/shared/typescript/theme/index.ts",
+    "./theme/*": "./src/shared/typescript/theme/*",
+    "./themes.json": "./src/shared/theme-definitions/themes.json",
+    "./tokens": "./src/shared/design_tokens.json"
+  },
   "scripts": {
     "build": "npm run build --workspaces",
     "test": "npm run test --workspaces"

@@ -123,13 +123,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
     },
     {
-      "content_sha256_lf": "8b8964bcf2afc18af825bfeab375749a7e9b1983638be7a69e40ee3e6295f1be",
+      "content_sha256_lf": "b09213111b7ca28399a71d60a65ab2798e07c37e5adfcc4c930db4815b2e7df6",
       "entry_count": 5,
       "package": "rust_core/data-processor-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
     },
     {
-      "content_sha256_lf": "2fa50b587a8695060f64b623e7e6021d5d65430dc7f8fa8dd5a3acb57da48afa",
+      "content_sha256_lf": "b5a6025e176fe429318e891956eda2324133c7f21344b3ee242555a74f9178da",
       "entry_count": 5,
       "package": "rust_core/file_watcher",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
@@ -591,8 +591,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rrt-path-planner.json"
     },
     {
-      "content_sha256_lf": "5df842db261c139f567262ca622852bd68e8c6af4d3b6492fe67c3c7153cce22",
-      "entry_count": 8,
+      "content_sha256_lf": "522a643f39a064bbc2bcea0a38b9cb3d2acbfb8e1c9aea6d7b7507feab831417",
+      "entry_count": 9,
       "package": "src/shared",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
@@ -921,7 +921,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-swing-sim-vibroacoustics.json"
     },
     {
-      "content_sha256_lf": "465634cb7944d8208907a0385142dc0e24988a0192542e0d6a706627fb7831ba",
+      "content_sha256_lf": "f9aed42db1284b9b1fd3eea50184490ae422f5716b180af877b952ad1fc23fdd",
       "entry_count": 22,
       "package": "src/shared/python/theme",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-theme.json"

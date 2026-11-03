@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import io
+import sys
 import wave
 from pathlib import Path
 
@@ -64,7 +65,10 @@ def test_transcribe_success_and_0600_temp_cleanup() -> None:
         _make_wav(0.4, amplitude=2200), "audio/webm;codecs=opus"
     )
     assert res.text == "optimize syngas H2 CO ratio"
-    assert observed_modes == [0o600]
+    if sys.platform != "win32":
+        assert observed_modes == [0o600]
+    else:
+        assert (observed_modes[0] & 0o600) == 0o600
     assert observed_paths and not observed_paths[0].exists()
 
 
@@ -108,7 +112,11 @@ def test_constructing_another_transcriber_preserves_inflight_audio(
 
     def isolated_path(value: str | Path) -> Path:
         candidate = real_path(value)
-        return tmp_path if candidate == real_path("/dev/shm") else candidate
+        return (
+            tmp_path
+            if candidate == real_path("/dev/shm")  # nosec: B108
+            else candidate
+        )
 
     monkeypatch.setattr(voice, "Path", isolated_path)
     monkeypatch.setattr(voice.tempfile, "gettempdir", lambda: str(tmp_path))

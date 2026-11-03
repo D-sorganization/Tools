@@ -1,0 +1,13 @@
+{
+  "name": "@d-sorganization/ud-tools-theme",
+  "version": "2.0.2",
+  "description": "Shared theme definitions and utilities for D-sorganization fleet",
+  "main": "index.ts",
+  "types": "index.ts",
+  "exports": {
+    ".": "./index.ts",
+    "./tokens": "./designTokens.ts",
+    "./definitions": "./themeDefinitions.ts",
+    "./*": "./*"
+  }
+}
