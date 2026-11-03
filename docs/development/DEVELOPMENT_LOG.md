@@ -1587,6 +1587,32 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5964 · Stop Test_Rate_Limiter Patching the Global Time.Sleep, Which Hung the Full Test Suite (Nightly)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5964
+- **Branch:** merged via #5966
+- **PR:** #5966
+- **Paths:** see #5966
+- **Started:** 2026-11-03
+- **Last verified:** 2026-11-03 (`0e13dd5e`; collated from changes/5964-stop-test-rate-limiter-patching-the-glob.md)
+- **Summary:** Stop test_rate_limiter patching the global time.sleep, which hung the Full Test Suite (Nightly)
+- **Next step:** Shipped in PR #5966.
+
+### DL-#5807 · Record TOOLS-14 Deferred-Board Verification on Main
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5807
+- **Branch:** cursor/deferred-5807-tools14-closure-0e28
+- **PR:** #5961
+- **Paths:** see #5961
+- **Started:** 2026-11-03
+- **Last verified:** 2026-11-03 (`6eb47918`; collated from changes/5807-record-tools-14-deferred-board-verificat.md)
+- **Summary:** Record TOOLS-14 deferred-board verification on main
+- **Next step:** Merge and tick #5807 TOOLS-14 row
+
 ### DL-#5796 · Add Epic 5796 Test-Hardening Closure Registry and Evidence Doc
 
 - **State:** shipped
