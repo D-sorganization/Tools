@@ -1,0 +1,23 @@
+[
+  {
+    "finding_id": "TOOLS-14",
+    "board_epic": 5796,
+    "tracker_issue": 5807,
+    "implementation_issue": 5828,
+    "merge_pr": 5829,
+    "test_module": "src/shared/python/sidekick/tests/process_calculators/test_pipe_database.py",
+    "test_names": ["test_sizes_are_in_ascending_numerical_order"],
+    "notes": "Verified on main: fractional NPS keys sort by parsed diameter, not string replace."
+  }
+,
+  {
+    "finding_id": "TOOLS-04",
+    "board_epic": 5796,
+    "tracker_issue": 5807,
+    "implementation_issue": 5821,
+    "merge_pr": 5822,
+    "test_module": "tests/shared/python/process_calculators/test_syngas_compression_engine.py",
+    "test_names": ["test_tools_04_mixture_heat_capacity_ratio_uses_molar_heat_capacities"],
+    "notes": "Verified on main: mixture gamma from molar Cp, not linear mole-fraction average of component gammas."
+  }
+]

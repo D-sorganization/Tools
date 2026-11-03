@@ -123,6 +123,48 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 862,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8ba0c3d565d61a6a3cc625ec97de70a5ee0237637ebaa929b98f26ad358bd6fd",
+      "family": "repository-governance-non-calculation",
+      "id": "TOOLS-MODULE-CONFIG-DEFERRED-BOARD-5807-VERIFIED-ROWS-JSON-1750DF60573C",
+      "language": "json",
+      "maintainer": "Repository governance maintainers",
+      "path": "config/deferred_board_5807_verified_rows.json",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/ops/test_deferred_board_5807_verified_rows.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 7926,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",

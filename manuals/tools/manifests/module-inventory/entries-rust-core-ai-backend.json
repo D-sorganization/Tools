@@ -257,6 +257,7 @@
           "tests/integration/obsidian/test_vault_client.py",
           "tests/integration/sidekick/test_sidekick_host_integration.py",
           "tests/ops/test_ci_test_shards.py",
+          "tests/ops/test_deferred_board_5807_verified_rows.py",
           "tests/ops/test_full_suite_nightly_workflow.py",
           "tests/ops/test_quality_gate_diff_history.py",
           "tests/ops/test_rate_web_playwright_workflow.py",

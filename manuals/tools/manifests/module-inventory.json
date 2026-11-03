@@ -99,8 +99,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-benchmarks.json"
     },
     {
-      "content_sha256_lf": "d9be992f4ac9004ae4e27c8025b667efa770a2c780483274518919d830acbed0",
-      "entry_count": 7,
+      "content_sha256_lf": "ca8bb8ba23d66ed08bdcda941e1bfb472d6093462b91644e5acb0053cfc7de8c",
+      "entry_count": 8,
       "package": "config",
       "path": "manuals/tools/manifests/module-inventory/entries-config.json"
     },
@@ -117,7 +117,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "c2c09f1051dc6988570a5b7635f7c1b89a240fd98bf3a425329b52266ca4aaa5",
+      "content_sha256_lf": "bc1f01ac64a3b8fd98ab3c2abcf166f86f646b7c8694c3238bef3d29e348e482",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
