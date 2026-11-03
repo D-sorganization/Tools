@@ -11053,10 +11053,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5523,
+      "bytes_lf": 8077,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f3b17834af3ae9efe95894ea9e447b60ee98c2b8a148e939d2b658bb5e17c08a",
+      "content_sha256_lf": "e4ff5d5c359a248776676fb74357b7486411259246063e377d1ac0c55e63b0b1",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-VALIDATE-THEMES-PY-A1AC2F099CAC",
       "language": "python",
@@ -11076,7 +11076,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "not-applicable"
       },
@@ -11122,6 +11122,11 @@
           },
           {
             "kind": "function",
+            "name": "cielab_l",
+            "signature": "hex_color: str"
+          },
+          {
+            "kind": "function",
             "name": "contrast_ratio",
             "signature": "fg: str, bg: str"
           },
@@ -11137,11 +11142,18 @@
           },
           {
             "kind": "function",
+            "name": "relative_luminance",
+            "signature": "hex_color: str"
+          },
+          {
+            "kind": "function",
             "name": "validate",
             "signature": ""
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/shared/python/theme/test_themes_catalog.py"
+        ],
         "unit_mentions": [
           "g",
           "s"

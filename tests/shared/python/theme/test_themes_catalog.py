@@ -96,3 +96,23 @@ def test_saved_legacy_preference_loads_renamed_theme(
 
     manager.change_theme("office-green")
     assert manager.get_current_theme_name() == "Fern Light"
+
+
+def test_theme_catalog_contains_curated_categories(catalog: dict) -> None:
+    themes = catalog["themes"]
+    assert "dim" in themes and themes["dim"]["category"] == "standard"
+    assert (
+        "high-contrast-light" in themes
+        and themes["high-contrast-light"]["category"] == "accessibility"
+    )
+    assert "cvd-safe" in themes and themes["cvd-safe"]["category"] == "accessibility"
+
+
+def test_validate_themes_contrast_and_semantics() -> None:
+    import sys
+
+    sys.path.insert(0, str(THEMES_JSON.parents[3]))
+    from scripts.validate_themes import validate
+
+    errors = validate()
+    assert not errors, "\n".join(errors)
