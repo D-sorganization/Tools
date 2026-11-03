@@ -1587,6 +1587,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5968 · Record the Ud-Tools-Theme Workspace in the Root Package-Lock so Tauri Build Npm Ci Installs Again
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5968
+- **Branch:** merged via #5969
+- **PR:** #5969
+- **Paths:** see #5969
+- **Started:** 2026-11-03
+- **Last verified:** 2026-11-03 (`1ab4fa05`; collated from changes/5968-record-the-ud-tools-theme-workspace-in-t.md)
+- **Summary:** Record the ud-tools-theme workspace in the root package-lock so Tauri Build npm ci installs again
+- **Next step:** Shipped in PR #5969.
+
 ### DL-#5964 · Stop Test_Rate_Limiter Patching the Global Time.Sleep, Which Hung the Full Test Suite (Nightly)
 
 - **State:** shipped
