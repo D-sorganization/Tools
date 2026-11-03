@@ -1,8 +1,10 @@
 from __future__ import annotations
 
 import logging
+import time
 import urllib.error
 import urllib.request
+from types import SimpleNamespace
 from typing import Any
 
 import model_generation.library._rate_limiter as rate_limiter
@@ -25,6 +27,21 @@ def _http_error(
         headers or {},
         None,
     )
+
+
+def _record_sleeps(monkeypatch: pytest.MonkeyPatch) -> list[float]:
+    """Record backoff sleeps by patching only ``rate_limiter``'s ``time`` (#5964)."""
+    sleeps: list[float] = []
+    monkeypatch.setattr(
+        rate_limiter,
+        "time",
+        SimpleNamespace(
+            sleep=sleeps.append,
+            strftime=time.strftime,
+            localtime=time.localtime,
+        ),
+    )
+    return sleeps
 
 
 def test_extract_rate_limit_info_parses_valid_headers() -> None:
@@ -139,7 +156,6 @@ def test_make_request_with_backoff_retries_429_then_succeeds(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     attempts = 0
-    sleeps: list[float] = []
     response = _Response({"X-RateLimit-Remaining": "1", "X-RateLimit-Limit": "60"})
 
     def fake_urlopen(
@@ -154,7 +170,7 @@ def test_make_request_with_backoff_retries_429_then_succeeds(
         return response
 
     monkeypatch.setattr(rate_limiter.urllib.request, "urlopen", fake_urlopen)
-    monkeypatch.setattr(rate_limiter.time, "sleep", sleeps.append)
+    sleeps = _record_sleeps(monkeypatch)
 
     result = rate_limiter.make_request_with_backoff(
         "https://api.github.test/search",
@@ -172,7 +188,6 @@ def test_make_request_with_backoff_raises_rate_limit_error_after_final_429(
     monkeypatch: pytest.MonkeyPatch,
     caplog: pytest.LogCaptureFixture,
 ) -> None:
-    sleeps: list[float] = []
 
     def fake_urlopen(
         _request: urllib.request.Request,
@@ -189,7 +204,7 @@ def test_make_request_with_backoff_raises_rate_limit_error_after_final_429(
         )
 
     monkeypatch.setattr(rate_limiter.urllib.request, "urlopen", fake_urlopen)
-    monkeypatch.setattr(rate_limiter.time, "sleep", sleeps.append)
+    sleeps = _record_sleeps(monkeypatch)
     caplog.set_level(logging.WARNING, logger=rate_limiter.logger.name)
 
     with pytest.raises(
@@ -238,7 +253,6 @@ def test_make_request_with_backoff_retries_network_error_then_succeeds(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     attempts = 0
-    sleeps: list[float] = []
     response = _Response()
 
     def fake_urlopen(
@@ -253,7 +267,7 @@ def test_make_request_with_backoff_retries_network_error_then_succeeds(
         return response
 
     monkeypatch.setattr(rate_limiter.urllib.request, "urlopen", fake_urlopen)
-    monkeypatch.setattr(rate_limiter.time, "sleep", sleeps.append)
+    sleeps = _record_sleeps(monkeypatch)
 
     assert (
         rate_limiter.make_request_with_backoff(
@@ -299,3 +313,35 @@ def test_make_request_with_backoff_zero_retries_raises_rate_limit_error() -> Non
             "https://api.github.test/search",
             max_retries=0,
         )
+
+
+def test_backoff_sleep_recorder_leaves_global_time_sleep_untouched(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """#5964: patching ``time.sleep`` globally let stray threads flood ``sleeps``."""
+    real_sleep = time.sleep
+    seen_global_sleep: list[object] = []
+    response = _Response({"X-RateLimit-Remaining": "1", "X-RateLimit-Limit": "60"})
+
+    def fake_urlopen(
+        _request: urllib.request.Request,
+        timeout: float,
+    ) -> _Response:
+        seen_global_sleep.append(time.sleep)
+        if len(seen_global_sleep) == 1:
+            raise _http_error(429, {"X-RateLimit-Remaining": "0"})
+        return response
+
+    monkeypatch.setattr(rate_limiter.urllib.request, "urlopen", fake_urlopen)
+    sleeps = _record_sleeps(monkeypatch)
+
+    rate_limiter.make_request_with_backoff(
+        "https://api.github.test/search",
+        max_retries=2,
+        initial_backoff=0.5,
+        max_backoff=10,
+    )
+
+    assert sleeps == [0.5]
+    assert seen_global_sleep == [real_sleep, real_sleep]
+    assert time.sleep is real_sleep
