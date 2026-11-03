@@ -1587,6 +1587,32 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5796 · Add Epic 5796 Test-Hardening Closure Registry and Evidence Doc
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5796
+- **Branch:** cursor/epic-5796-checklist-evidence-0e28
+- **PR:** #5960
+- **Paths:** see #5960
+- **Started:** 2026-11-02
+- **Last verified:** 2026-11-02 (`d46ef2f1`; collated from changes/5796-add-epic-5796-test-hardening-closure-reg.md)
+- **Summary:** Add epic 5796 test-hardening closure registry and evidence doc
+- **Next step:** Merge after CI; sync epic checklist from evidence doc
+
+### DL-#5924 · Narrow P1AM Main Import Skips to Missing Modules; Add Import Guard and Shard Ownership Tests
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5924
+- **Branch:** merged via #5942
+- **PR:** #5942
+- **Paths:** see #5942
+- **Started:** 2026-11-02
+- **Last verified:** 2026-11-02 (`1df39544`; collated from changes/5924-narrow-p1am-main-import-skips-to-missing.md)
+- **Summary:** Narrow P1AM main import skips to missing modules; add import guard and shard ownership tests
+- **Next step:** Shipped in PR #5942.
+
 ### DL-#5957 · Nightly Installs Pyproject's [Build-System] Requires (Setuptools, Wheel) With the Build Pin and Keeps Setup-Python's Tool Cache in Runner.Temp Outside the Checkout, so Both Standalone-Wheel Tests Pass.
 
 - **State:** shipped
