@@ -65,7 +65,7 @@ def test_tauri_rust_jobs_use_isolated_toolchain_homes() -> None:
     build_setup_index = next(
         index
         for index, step in enumerate(build_steps)
-        if step.get("name") == "Setup Rust"
+        if step.get("name") == "Setup Rust (Linux)"
     )
     build_isolate_steps = [
         step
@@ -163,7 +163,63 @@ def test_tauri_local_node_selection_skips_broken_npm_toolcaches() -> None:
             in script
         )
         assert "runner externals, /opt/hostedtoolcache/node, or PATH" in script
-        assert '[ -z "$node_dir" ] || [ ! -x "$node_dir/node" ]' in script
+        assert 'echo "found=false" >> "$GITHUB_OUTPUT"' in script
+        assert 'echo "found=true" >> "$GITHUB_OUTPUT"' in script
+
+
+def _setup_node_fallback_steps(workflow: dict) -> list[dict]:
+    return [
+        step
+        for job_name in ("check", "build")
+        for step in workflow["jobs"][job_name]["steps"]
+        if step.get("name", "").startswith("Setup Node.js")
+        and "fallback" in step.get("name", "").lower()
+    ]
+
+
+def test_tauri_linux_node_steps_fallback_to_setup_node() -> None:
+    workflow = yaml.safe_load(TAURI_WORKFLOW.read_text(encoding="utf-8"))
+    fallback_steps = _setup_node_fallback_steps(workflow)
+
+    assert len(fallback_steps) == 2
+    for step in fallback_steps:
+        assert step["uses"].startswith("actions/setup-node")
+        assert step["with"]["node-version"] == "24"
+        assert "steps.local-node.outputs.found != 'true'" in step["if"]
+
+
+def test_tauri_build_job_runs_on_workflow_dispatch() -> None:
+    workflow = yaml.safe_load(TAURI_WORKFLOW.read_text(encoding="utf-8"))
+    build_if = workflow["jobs"]["build"]["if"]
+
+    assert "workflow_dispatch" in build_if
+
+
+def test_tauri_build_windows_rust_setup_uses_powershell_not_dtolnay() -> None:
+    workflow = yaml.safe_load(TAURI_WORKFLOW.read_text(encoding="utf-8"))
+    build_steps = workflow["jobs"]["build"]["steps"]
+
+    windows_rust_steps = [
+        step for step in build_steps if step.get("name") == "Setup Rust (Windows)"
+    ]
+    linux_rust_steps = [
+        step for step in build_steps if step.get("name") == "Setup Rust (Linux)"
+    ]
+    legacy_rust_steps = [
+        step for step in build_steps if step.get("name") == "Setup Rust"
+    ]
+
+    assert len(windows_rust_steps) == 1
+    assert windows_rust_steps[0]["shell"] == "pwsh"
+    assert "matrix.platform.label == 'windows-x64'" in windows_rust_steps[0]["if"]
+    assert "rustup" in windows_rust_steps[0]["run"]
+    assert "rustfmt" in windows_rust_steps[0]["run"]
+    assert "clippy" in windows_rust_steps[0]["run"]
+
+    assert len(linux_rust_steps) == 1
+    assert linux_rust_steps[0]["uses"].startswith("dtolnay/rust-toolchain")
+    assert "matrix.platform.label == 'linux-x64'" in linux_rust_steps[0]["if"]
+    assert legacy_rust_steps == []
 
 
 def _linux_build_node_steps() -> list[dict]:

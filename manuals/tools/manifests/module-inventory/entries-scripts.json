@@ -11053,10 +11053,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5523,
+      "bytes_lf": 7840,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f3b17834af3ae9efe95894ea9e447b60ee98c2b8a148e939d2b658bb5e17c08a",
+      "content_sha256_lf": "67a19a2a34e87f36848ea7755363856a3b117453c26d524ba7adab116f852b84",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-VALIDATE-THEMES-PY-A1AC2F099CAC",
       "language": "python",
@@ -11076,7 +11076,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "not-applicable"
       },
@@ -11141,7 +11141,9 @@
             "signature": ""
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/shared/python/theme/test_themes_catalog.py"
+        ],
         "unit_mentions": [
           "g",
           "s"

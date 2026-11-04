@@ -154,6 +154,64 @@ def validate() -> list[str]:
                     f"{prefix}: text/bg contrast {ratio:.1f}:1 < 4.5:1 (WCAG AA)"
                 )
 
+        # Secondary text/labels (4.5:1), accents (3:1), selection (4.5:1)
+        for key in ("text_secondary", "label"):
+            for bg_k in ("bg", "group_bg"):
+                if (
+                    key in colors
+                    and bg_k in colors
+                    and contrast_ratio(colors[key], colors[bg_k]) < 4.5
+                ):
+                    errors.append(f"{prefix}: {key}/{bg_k} contrast < 4.5:1 (WCAG AA)")
+        if (
+            "accent" in colors
+            and "bg" in colors
+            and contrast_ratio(colors["accent"], colors["bg"]) < 3.0
+        ):
+            errors.append(f"{prefix}: accent/bg contrast < 3:1 (WCAG AA UI controls)")
+        if (
+            "selection_text" in semantic
+            and "selection_bg" in semantic
+            and contrast_ratio(semantic["selection_text"], semantic["selection_bg"])
+            < 4.5
+        ):
+            errors.append(
+                f"{prefix}: selection_text/selection_bg contrast < 4.5:1 (WCAG AA)"
+            )
+
+        # Semantic status colors pairwise lightness difference (ΔL* >= 15)
+        if all(k in semantic for k in ("success", "warning", "error")):
+
+            def _l(c: str) -> float:
+                h = c.lstrip("#")[:6]
+                lin = [
+                    (int(h[i : i + 2], 16) / 255) / 12.92
+                    if (int(h[i : i + 2], 16) / 255) <= 0.03928
+                    else (((int(h[i : i + 2], 16) / 255) + 0.055) / 1.055) ** 2.4
+                    for i in (0, 2, 4)
+                ]
+                y = 0.2126 * lin[0] + 0.7152 * lin[1] + 0.0722 * lin[2]
+                return (
+                    float(116.0 * (y ** (1.0 / 3.0)) - 16.0)
+                    if y > 0.008856
+                    else float(903.3 * y)
+                )
+
+            s, w, e = (
+                _l(semantic["success"]),
+                _l(semantic["warning"]),
+                _l(semantic["error"]),
+            )
+            for c1, c2, d in (
+                ("success", "warning", abs(s - w)),
+                ("success", "error", abs(s - e)),
+                ("warning", "error", abs(w - e)),
+            ):
+                if d < 15.0:
+                    errors.append(
+                        f"{prefix}: semantic {c1}/{c2} lightness diff ΔL*={d:.1f} < 15.0"
+                    )
+
     return errors
 
 
