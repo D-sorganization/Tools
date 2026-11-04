@@ -22,6 +22,23 @@ from shared.python.swing_sim.putting import GreenConditions, PuttLaunch, simulat
 
 pytestmark = [pytest.mark.unit, pytest.mark.headless_safe]
 
+#: Wall-clock budget for planning a 30,001-sample putt in an uninstrumented run.
+_PLAN_BUDGET_S = 0.1
+
+
+def _wall_clock_budget_applies() -> bool:
+    """Return whether a wall-clock budget measures the code under test.
+
+    The budget is meaningless in two lanes. The xdist GUI lane deliberately
+    creates heavy CPU contention. Coverage tracing, as in the nightly
+    ``-n 0 --cov=.`` lane, slows the planner about 2.6x (#5977), so the
+    timing would report the tracer rather than the planner. Any other run,
+    such as a plain focused ``pytest -n 0``, still enforces the budget.
+    """
+    if "PYTEST_XDIST_WORKER" in os.environ:
+        return False
+    return coverage.Coverage.current() is None
+
 
 def _golden() -> dict[str, object]:
     path = (
@@ -188,10 +205,8 @@ def test_real_legal_30001_sample_putt_plans_linearly_and_stays_bounded() -> None
     assert plan.displayed_raw_indices[0] == 0
     assert plan.displayed_raw_indices[-1] == 30_000
     assert result.skid_end_index in plan.displayed_raw_indices
-    # The target is meaningful only for the isolated focused gate; the full
-    # 14-worker GUI lane deliberately creates heavy CPU contention.
-    if "PYTEST_XDIST_WORKER" not in os.environ:
-        assert elapsed < 0.1
+    if _wall_clock_budget_applies():
+        assert elapsed < _PLAN_BUDGET_S
 
 
 class _ActiveCoverage:
