@@ -1587,18 +1587,31 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5916 · Curate Built-In Theme Set With Dim, High Contrast Light, CVD Safe and Strengthen Contrast Checks in validate_themes.py
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5916
+- **Branch:** feat/5916-theme-contrast-checks
+- **PR:** #5974
+- **Paths:** see #5974
+- **Started:** 2026-11-04
+- **Last verified:** 2026-11-04 (`a9490350`; collated from changes/5916-curate-built-in-theme-set-with-dim-high.md)
+- **Summary:** Curate built-in theme set with Dim, High Contrast Light, CVD Safe and strengthen contrast checks in validate_themes.py
+- **Next step:** Merge the PR.
+
 ### DL-#5972 · Tauri Build Linux Legs Fall Back to Actions/Setup-Node When the Runner Has No Working Npm, and Build Runs on Workflow_Dispatch so Branch Fixes Can Be Proven
 
 - **State:** shipped
 - **Owner:** unassigned
 - **Issue:** #5972
 - **Branch:** merged via #5973
-- **PR:** #5973
+- **PR:** #5973, #5975
 - **Paths:** see #5973
 - **Started:** 2026-11-03
-- **Last verified:** 2026-11-03 (`1100d7ab`; collated from changes/5972-tauri-build-linux-legs-fall-back-to-acti.md)
+- **Last verified:** 2026-11-04 (`38f16588`; collated from changes/5972-tauri-build-linux-setup-node-fallback-on.md)
 - **Summary:** Tauri Build Linux legs fall back to actions/setup-node when the runner has no working npm, and build runs on workflow_dispatch so branch fixes can be proven
-- **Next step:** Shipped in PR #5973.
+- **Next step:** Wait for CI green, then squash auto-merge
 
 ### DL-#5968 · Record the Ud-Tools-Theme Workspace in the Root Package-Lock so Tauri Build Npm Ci Installs Again
 

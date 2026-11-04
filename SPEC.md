@@ -5947,7 +5947,8 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
-| 2026-11-03 | #5974 | Curate balanced built-in theme set with Dim, High Contrast Light, and CVD Safe; enforce WCAG AA and semantic lightness checks |
+| 2026-11-04 | #5975 | Tauri Build: Linux setup-node fallback on check/build and pwsh rustup on Windows |
+| 2026-11-03 | #5974 | Curate balanced built-in theme set with Dim, High Contrast Light, and CVD Safe; enforce WCAG AA and semantic lightness checks; Curate built-in theme set with Dim, High Contrast Light, CVD Safe and strengthen contrast checks in validate_themes.py |
 | 2026-11-03 | #5973 | Tauri Build Linux legs fall back to actions/setup-node when the runner has no working npm, and build runs on workflow_dispatch so branch fixes can be proven |
 | 2026-11-03 | #5969 | Record the ud-tools-theme workspace in the root package-lock so Tauri Build npm ci installs again |
 | 2026-11-03 | #5965 | Single-source theme definitions in Tools themes.json with automated design-tokens sync and drift enforcement, non-launcher registration, and module inventory |
