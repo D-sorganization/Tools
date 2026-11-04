@@ -1587,6 +1587,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5977 · Nightly No Longer Fails the 30001-Sample Putt Wall-Clock Budget: The 0.1 s Gate Is Skipped While Coverage Traces, as It Already Was Under Xdist
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5977
+- **Branch:** merged via #5978
+- **PR:** #5978
+- **Paths:** see #5978
+- **Started:** 2026-11-04
+- **Last verified:** 2026-11-04 (`deed35a8`; collated from changes/5977-nightly-no-longer-fails-the-30001-sample.md)
+- **Summary:** Nightly no longer fails the 30001-sample putt wall-clock budget: the 0.1 s gate is skipped while coverage traces, as it already was under xdist
+- **Next step:** Shipped in PR #5978.
+
 ### DL-#5916 · Curate Built-In Theme Set With Dim, High Contrast Light, CVD Safe and Strengthen Contrast Checks in validate_themes.py
 
 - **State:** shipped
