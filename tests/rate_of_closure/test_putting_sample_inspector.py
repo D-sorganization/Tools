@@ -7,6 +7,7 @@ import os
 import time
 from pathlib import Path
 
+import coverage
 import pytest
 
 from rate_of_closure.putting_result_contract import validate_putting_result_summary
@@ -191,6 +192,38 @@ def test_real_legal_30001_sample_putt_plans_linearly_and_stays_bounded() -> None
     # 14-worker GUI lane deliberately creates heavy CPU contention.
     if "PYTEST_XDIST_WORKER" not in os.environ:
         assert elapsed < 0.1
+
+
+class _ActiveCoverage:
+    """Stand-in for a measuring ``coverage.Coverage`` instance."""
+
+
+def test_wall_clock_budget_is_off_under_xdist(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.setenv("PYTEST_XDIST_WORKER", "gw0")
+    monkeypatch.setattr(coverage.Coverage, "current", staticmethod(lambda: None))
+    assert _wall_clock_budget_applies() is False
+
+
+def test_wall_clock_budget_is_off_while_coverage_measures(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    # Nightly runs ``-n 0 --cov=.``: tracing costs ~2.6x (#5977), so a
+    # wall-clock budget measured there reports the tracer, not the planner.
+    monkeypatch.delenv("PYTEST_XDIST_WORKER", raising=False)
+    monkeypatch.setattr(
+        coverage.Coverage, "current", staticmethod(lambda: _ActiveCoverage())
+    )
+    assert _wall_clock_budget_applies() is False
+
+
+def test_wall_clock_budget_applies_in_a_plain_run(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    monkeypatch.delenv("PYTEST_XDIST_WORKER", raising=False)
+    monkeypatch.setattr(coverage.Coverage, "current", staticmethod(lambda: None))
+    assert _wall_clock_budget_applies() is True
 
 
 def test_nearest_rejects_outside_hit_radius_and_invalid_projection() -> None:
