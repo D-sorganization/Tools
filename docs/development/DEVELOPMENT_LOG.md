@@ -1587,6 +1587,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5972 · Tauri Build Linux Legs Fall Back to Actions/Setup-Node When the Runner Has No Working Npm, and Build Runs on Workflow_Dispatch so Branch Fixes Can Be Proven
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5972
+- **Branch:** merged via #5973
+- **PR:** #5973
+- **Paths:** see #5973
+- **Started:** 2026-11-03
+- **Last verified:** 2026-11-03 (`1100d7ab`; collated from changes/5972-tauri-build-linux-legs-fall-back-to-acti.md)
+- **Summary:** Tauri Build Linux legs fall back to actions/setup-node when the runner has no working npm, and build runs on workflow_dispatch so branch fixes can be proven
+- **Next step:** Shipped in PR #5973.
+
 ### DL-#5968 · Record the Ud-Tools-Theme Workspace in the Root Package-Lock so Tauri Build Npm Ci Installs Again
 
 - **State:** shipped
