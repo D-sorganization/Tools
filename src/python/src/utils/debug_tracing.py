@@ -49,6 +49,9 @@ class ExecutionTracer:
         self._depth = 0
         self._trace_log: list[str] = []
         self._active = False
+        # Trace function installed before start(); restored by stop() so we do
+        # not clobber coverage's tracer (Tools #5981).
+        self._previous_trace: Callable[..., Any] | None = None
 
     def _should_trace(self, frame: Any) -> bool:
         """Check if frame should be traced."""
@@ -103,6 +106,7 @@ class ExecutionTracer:
         self._active = True
         self._depth = 0
         self._trace_log = []
+        self._previous_trace = sys.gettrace()
         sys.settrace(self._trace_calls)
 
     def stop(self) -> list[str]:
@@ -111,7 +115,8 @@ class ExecutionTracer:
         Returns:
             List of trace entries
         """
-        sys.settrace(None)
+        sys.settrace(self._previous_trace)
+        self._previous_trace = None
         self._active = False
         return self._trace_log
 
