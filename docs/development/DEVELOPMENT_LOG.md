@@ -1587,6 +1587,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5981 · Nightly Full Suite Installs the Codemap Extra so Codemap Tests Run Instead of Skipping (Slice 1 Of 3)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5981
+- **Branch:** merged via #5982
+- **PR:** #5982
+- **Paths:** see #5982
+- **Started:** 2026-11-05
+- **Last verified:** 2026-11-05 (`54c13a3a`; collated from changes/5981-nightly-full-suite-installs-the-codemap.md)
+- **Summary:** Nightly full suite installs the codemap extra so codemap tests run instead of skipping (slice 1 of 3)
+- **Next step:** Shipped in PR #5982.
+
 ### DL-#5977 · Nightly No Longer Fails the 30001-Sample Putt Wall-Clock Budget: The 0.1 s Gate Is Skipped While Coverage Traces, as It Already Was Under Xdist
 
 - **State:** shipped
