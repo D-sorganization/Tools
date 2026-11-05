@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+import importlib.util
+import logging
+import sys
+import types
 from collections.abc import Callable
 from typing import Any
 
@@ -186,3 +190,68 @@ def test_adaptive_filters_require_signal(
 
     with pytest.raises(ValueError, match="signal must be provided"):
         method(None, reference)
+
+
+def _load_with_tools_core(
+    monkeypatch: pytest.MonkeyPatch, tools_core: types.ModuleType | None
+) -> types.ModuleType:
+    """Execute adaptive_filter.py afresh with ``tools_core`` stubbed (#5981).
+
+    The nightly has no tools_core wheel, so the import-time dispatch branch is
+    exercised here against an in-memory stub instead of a wheel install.
+    """
+    monkeypatch.setitem(sys.modules, "tools_core", tools_core)
+    name = "signal_toolkit._adaptive_filter_probe"
+    spec = importlib.util.spec_from_file_location(name, adaptive_filter.__file__)
+    assert spec is not None and spec.loader is not None
+    module = importlib.util.module_from_spec(spec)
+    monkeypatch.setitem(sys.modules, name, module)
+    spec.loader.exec_module(module)
+    return module
+
+
+def _tools_core_stub(**kernels: Callable[..., Any]) -> types.ModuleType:
+    tools_core = types.ModuleType("tools_core")
+    tools_core.signal = types.SimpleNamespace(**kernels)  # type: ignore[attr-defined]
+    return tools_core
+
+
+def test_import_binds_rust_kernels_when_tools_core_present(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    def lms(*_args: Any, **_kwargs: Any) -> None:
+        return None
+
+    def rls(*_args: Any, **_kwargs: Any) -> None:
+        return None
+
+    with caplog.at_level(logging.DEBUG):
+        module = _load_with_tools_core(
+            monkeypatch, _tools_core_stub(lms_filter=lms, rls_filter=rls)
+        )
+
+    assert module._rust_lms is lms
+    assert module._rust_rls is rls
+    assert "Rust LMS/RLS kernels active" in caplog.text
+
+
+def test_import_falls_back_when_tools_core_lacks_kernels(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    with caplog.at_level(logging.DEBUG):
+        module = _load_with_tools_core(monkeypatch, _tools_core_stub())
+
+    assert module._rust_lms is None
+    assert module._rust_rls is None
+    assert "Python fallback" in caplog.text
+
+
+def test_import_falls_back_when_tools_core_missing(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    with caplog.at_level(logging.WARNING):
+        module = _load_with_tools_core(monkeypatch, None)
+
+    assert module._rust_lms is None
+    assert module._rust_rls is None
+    assert "tools_core wheel not available" in caplog.text
