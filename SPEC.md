@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-05 | #5983 | Nightly coverage: ExecutionTracer restores the prior trace function (no more clobbered coverage tracer) and the legacy upstream_drift_tools shim is executed in-process (slice 2 of 3) |
 | 2026-11-05 | #5982 | Nightly full suite installs the codemap extra so codemap tests run instead of skipping (slice 1 of 3) |
 | 2026-11-04 | #5978 | Nightly no longer fails the 30001-sample putt wall-clock budget: the 0.1 s gate is skipped while coverage traces, as it already was under xdist |
 | 2026-11-04 | #5975 | Tauri Build: Linux setup-node fallback on check/build and pwsh rustup on Windows |
