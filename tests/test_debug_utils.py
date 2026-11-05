@@ -249,6 +249,32 @@ class TestExecutionTracing:
         # Should have traced the calls
         assert isinstance(trace_log, list)
 
+    def test_tracer_restores_previous_trace_function(self) -> None:
+        """Stopping must hand tracing back to the prior tracer (#5981).
+
+        ``sys.settrace(None)`` used to clobber coverage's tracer on Python
+        3.11, so every test after the first ``tracer.trace()`` block scored 0%
+        in the nightly full-suite run even though it passed.
+        """
+        import sys
+
+        def previous_tracer(frame: Any, event: str, arg: Any) -> Any:
+            return previous_tracer
+
+        original = sys.gettrace()
+        sys.settrace(previous_tracer)
+        try:
+            tracer = ExecutionTracer(max_depth=5)
+            with tracer.trace():
+                pass
+            assert sys.gettrace() is previous_tracer
+
+            tracer.start()
+            tracer.stop()
+            assert sys.gettrace() is previous_tracer
+        finally:
+            sys.settrace(original)
+
     def test_trace_calls_decorator(self) -> None:
         """Test trace_calls decorator."""
         set_debug_mode(True)

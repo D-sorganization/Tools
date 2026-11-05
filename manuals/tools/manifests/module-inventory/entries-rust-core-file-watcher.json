@@ -202,6 +202,7 @@
           "tests/architecture/test_gh1696_god_modules.py",
           "tests/architecture/test_import_resolvability.py",
           "tests/architecture/test_layer_boundaries.py",
+          "tests/architecture/test_legacy_shim_execution_5981.py",
           "tests/architecture/test_mocap_authority_program.py",
           "tests/architecture/test_shared_import_aliases_3316.py",
           "tests/architecture/test_sidekick_external_imports_3316.py",
