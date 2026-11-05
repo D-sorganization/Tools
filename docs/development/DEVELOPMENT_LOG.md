@@ -1593,10 +1593,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #5981
 - **Branch:** merged via #5982
-- **PR:** #5982
+- **PR:** #5982, #5983
 - **Paths:** see #5982
 - **Started:** 2026-11-05
-- **Last verified:** 2026-11-05 (`54c13a3a`; collated from changes/5981-nightly-full-suite-installs-the-codemap.md)
+- **Last verified:** 2026-11-05 (`dce3f30b`; collated from changes/5981-nightly-coverage-tracer-and-shim.md)
 - **Summary:** Nightly full suite installs the codemap extra so codemap tests run instead of skipping (slice 1 of 3)
 - **Next step:** Shipped in PR #5982.
 
