@@ -42,7 +42,7 @@ def test_full_suite_test_extra_declares_collection_runtime_dependencies() -> Non
     workflow = WORKFLOW.read_text(encoding="utf-8")
     config = tomllib.loads((REPO_ROOT / "pyproject.toml").read_text(encoding="utf-8"))
 
-    assert 'pip install -e ".[dev,test]"' in workflow
+    assert 'pip install -e ".[dev,test,codemap]"' in workflow
     assert "|| pip install -e ." not in workflow
 
     test_deps = config["project"]["optional-dependencies"]["test"]
@@ -166,3 +166,18 @@ def test_full_suite_nightly_keeps_the_tool_cache_outside_the_checkout() -> None:
     )
     # `runner` is only available in step-level env, not job-level env.
     assert setup["env"]["AGENT_TOOLSDIRECTORY"] == "${{ runner.temp }}/_tool_cache"
+
+
+def test_full_suite_nightly_installs_the_codemap_extra() -> None:
+    """Without the extra the codemap tests skip and coverage reads ~26% (#5981)."""
+    config = tomllib.loads((REPO_ROOT / "pyproject.toml").read_text(encoding="utf-8"))
+    assert "codemap" in config["project"]["optional-dependencies"]
+
+    install = next(
+        line
+        for line in _step_script("Install Python dependencies").splitlines()
+        if 'pip install -e ".[' in line
+    )
+    extras = re.search(r'pip install -e "\.\[([^\]]+)\]', install)
+    assert extras is not None
+    assert "codemap" in extras.group(1).split(",")
