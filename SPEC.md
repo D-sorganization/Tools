@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-06 | #5988 | Benchmark wall-clock budgets scale 2x only while coverage tracing is active, so the nightly reaches its Coverage Policy Gate |
 | 2026-11-05 | #5986 | Cover adaptive_filter's tools_core import branch with an in-memory stub so the nightly coverage gate clears its 95% ratchet without the wheel (slice 3) |
 | 2026-11-05 | #5983 | Nightly coverage: ExecutionTracer restores the prior trace function (no more clobbered coverage tracer) and the legacy upstream_drift_tools shim is executed in-process (slice 2 of 3) |
 | 2026-11-05 | #5982 | Nightly full suite installs the codemap extra so codemap tests run instead of skipping (slice 1 of 3) |
