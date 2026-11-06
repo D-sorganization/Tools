@@ -123,10 +123,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 862,
+      "bytes_lf": 8200,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8ba0c3d565d61a6a3cc625ec97de70a5ee0237637ebaa929b98f26ad358bd6fd",
+      "content_sha256_lf": "41f760e1a81ffb2b84bdd6a6abd2c6c883a5da4194bef6b0cf18bc8c67b669a6",
       "family": "repository-governance-non-calculation",
       "id": "TOOLS-MODULE-CONFIG-DEFERRED-BOARD-5807-VERIFIED-ROWS-JSON-1750DF60573C",
       "language": "json",
