@@ -1593,10 +1593,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #5981
 - **Branch:** merged via #5982
-- **PR:** #5982, #5983, #5986, #5988
+- **PR:** #5982, #5983, #5986, #5988, #5991
 - **Paths:** see #5982
 - **Started:** 2026-11-05
-- **Last verified:** 2026-11-06 (`659e35bf`; collated from changes/5981-benchmark-wall-clock-budgets-scale-2x-on.md)
+- **Last verified:** 2026-11-06 (`cefc5df0`; collated from changes/5981-nightly-coverage-policy-gate-closure.md)
 - **Summary:** Nightly full suite installs the codemap extra so codemap tests run instead of skipping (slice 1 of 3)
 - **Next step:** Shipped in PR #5982.
 
