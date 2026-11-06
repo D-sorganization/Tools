@@ -108,5 +108,24 @@
     "TOOLS-27",
     "TOOLS-28",
     "TOOLS-29"
+  ],
+  "deferred_5807_landed_tests": [
+    {"finding_ids": ["TOOLS-01"], "issue": 5851, "pr": 5853, "path": "tests/shared/python/process_calculators/test_acid_gas_dewpoint_edge_cases.py", "names": ["test_hcl_aqueous_dewpoint_at_atmospheric_flue_gas"]},
+    {"finding_ids": ["TOOLS-04"], "issue": 5821, "pr": 5822, "path": "tests/shared/python/process_calculators/test_syngas_compression_engine.py", "names": ["test_tools_04_mixture_heat_capacity_ratio_uses_molar_heat_capacities"]},
+    {"finding_ids": ["TOOLS-07"], "issue": 5823, "pr": 5824, "path": "tests/shared/python/calculators/thermo/test_thermo_properties.py", "names": ["test_tools_07_mixture_entropy_includes_entropy_of_mixing"]},
+    {"finding_ids": ["TOOLS-09"], "issue": 5847, "pr": 5848, "path": "src/vessel_drafter/tests/test_electrode_advisor_defaults.py", "names": ["test_default_electrode_placement_current_matches_operating_current"]},
+    {"finding_ids": ["TOOLS-12"], "issue": 5830, "pr": 5831, "path": "tests/shared/python/process_calculators/test_pressure_drop_engine.py", "names": ["test_compressible_flow_includes_elevation_pressure_drop"]},
+    {"finding_ids": ["TOOLS-13"], "issue": 5840, "pr": 5841, "path": "tests/shared/python/process_calculators/test_pressure_drop_engine.py", "names": ["test_tools_13_colebrook_solver_docstring_and_regime_documentation"]},
+    {"finding_ids": ["TOOLS-14"], "issue": 5828, "pr": 5829, "path": "src/shared/python/sidekick/tests/process_calculators/test_pipe_database.py", "names": ["test_sizes_are_in_ascending_numerical_order"]},
+    {"finding_ids": ["TOOLS-17"], "issue": null, "pr": 5850, "path": "src/inertia_calculator/tests/test_inertia_calculator_gui.py", "names": ["test_validate_inertia_returns_errors_for_principal_triangle_inequality_violation"]},
+    {"finding_ids": ["TOOLS-21"], "issue": 5852, "pr": 5854, "path": "tests/shared/python/process_calculators/test_scrubber_calculator.py", "names": ["test_gas_viscosity_physical_ordering_co2_vs_n2"]},
+    {"finding_ids": ["TOOLS-22"], "issue": 5836, "pr": 5838, "path": "tests/shared/python/process_calculators/test_scrubber_calculator.py", "names": ["test_tools_22_kg_to_mg_constant_physical_value"]},
+    {"finding_ids": ["TOOLS-23"], "issue": 5834, "pr": 5835, "path": "tests/shared/python/process_calculators/test_thermal_profile.py", "names": ["test_fit_heating_parameters_bounds_prevents_negative_thermal_mass_crash"]},
+    {"finding_ids": ["TOOLS-24"], "issue": 5842, "pr": 5843, "path": "tests/shared/python/process_calculators/test_baghouse_calculator.py", "names": ["test_volume_flow_standard_basis"]},
+    {"finding_ids": ["TOOLS-25"], "issue": 5844, "pr": 5845, "path": "tests/shared/python/process_calculators/test_baghouse_calculator.py", "names": ["test_no_dead_has_thermo_module_symbols", "test_docstring_reflects_standalone_contract"]},
+    {"finding_ids": ["TOOLS-26"], "issue": null, "pr": null, "path": "tests/shared/python/process_calculators/test_flare_calculator.py", "names": ["test_flare_size_calculation"]},
+    {"finding_ids": ["TOOLS-27"], "issue": 5825, "pr": 5827, "path": "src/pendulum_simulator/tests/test_simulation_core.py", "names": ["test_tools_27_integrate_ode_includes_t_end_in_output_grid", "test_tools_27_non_aligned_t_end_reaches_endpoint"]},
+    {"finding_ids": ["TOOLS-28"], "issue": 5832, "pr": 5833, "path": "tests/rotation_converter/test_rotation_core.py", "names": ["test_euler_extraction_near_gimbal_lock_precision"]},
+    {"finding_ids": ["TOOLS-29"], "issue": null, "pr": null, "path": "tests/rate_of_closure/test_impact_kinematics.py", "names": ["test_face_center_dplane_uses_rigid_body_point_velocity"]}
   ]
 }

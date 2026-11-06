@@ -1,23 +1,200 @@
 [
   {
-    "finding_id": "TOOLS-14",
+    "finding_id": "TOOLS-01",
     "board_epic": 5796,
     "tracker_issue": 5807,
-    "implementation_issue": 5828,
-    "merge_pr": 5829,
-    "test_module": "src/shared/python/sidekick/tests/process_calculators/test_pipe_database.py",
-    "test_names": ["test_sizes_are_in_ascending_numerical_order"],
-    "notes": "Verified on main: fractional NPS keys sort by parsed diameter, not string replace."
-  }
-,
+    "implementation_issue": 5851,
+    "merge_pr": 5853,
+    "merge_commit": "6f637141f6",
+    "test_module": "tests/shared/python/process_calculators/test_acid_gas_dewpoint_edge_cases.py",
+    "test_names": ["test_hcl_aqueous_dewpoint_at_atmospheric_flue_gas"],
+    "notes": "Verified on main: evaluate aqueous acid dewpoint for HCl-H2O systems instead of pure-component Antoine."
+  },
   {
     "finding_id": "TOOLS-04",
     "board_epic": 5796,
     "tracker_issue": 5807,
     "implementation_issue": 5821,
     "merge_pr": 5822,
+    "merge_commit": "6d2c9def64",
     "test_module": "tests/shared/python/process_calculators/test_syngas_compression_engine.py",
     "test_names": ["test_tools_04_mixture_heat_capacity_ratio_uses_molar_heat_capacities"],
     "notes": "Verified on main: mixture gamma from molar Cp, not linear mole-fraction average of component gammas."
+  },
+  {
+    "finding_id": "TOOLS-07",
+    "board_epic": 5796,
+    "tracker_issue": 5807,
+    "implementation_issue": 5823,
+    "merge_pr": 5824,
+    "merge_commit": "03870cc9d5",
+    "test_module": "tests/shared/python/calculators/thermo/test_thermo_properties.py",
+    "test_names": ["test_tools_07_mixture_entropy_includes_entropy_of_mixing"],
+    "notes": "Verified on main: ideal gas mixture entropy includes entropy of mixing Delta S_mix = -R sum(x_i ln x_i)."
+  },
+  {
+    "finding_id": "TOOLS-09",
+    "board_epic": 5796,
+    "tracker_issue": 5807,
+    "implementation_issue": 5847,
+    "merge_pr": 5848,
+    "merge_commit": "438e29a7db",
+    "test_module": "src/vessel_drafter/tests/test_electrode_advisor_defaults.py",
+    "test_names": ["test_default_electrode_placement_current_matches_operating_current"],
+    "notes": "Verified on main: assign operating_current_a directly without dividing by electrode count."
+  },
+  {
+    "finding_id": "TOOLS-12",
+    "board_epic": 5796,
+    "tracker_issue": 5807,
+    "implementation_issue": 5830,
+    "merge_pr": 5831,
+    "merge_commit": "fb8648a4dc",
+    "test_module": "tests/shared/python/process_calculators/test_pressure_drop_engine.py",
+    "test_names": ["test_compressible_flow_includes_elevation_pressure_drop"],
+    "notes": "Verified on main: include elevation pressure drop in compressible flow engine."
+  },
+  {
+    "finding_id": "TOOLS-13",
+    "board_epic": 5796,
+    "tracker_issue": 5807,
+    "implementation_issue": 5840,
+    "merge_pr": 5841,
+    "merge_commit": "81d3338b32",
+    "test_module": "tests/shared/python/process_calculators/test_pressure_drop_engine.py",
+    "test_names": ["test_tools_13_colebrook_solver_docstring_and_regime_documentation"],
+    "notes": "Verified on main: docstring and comments correctly document Colebrook friction factor solver as Picard iteration."
+  },
+  {
+    "finding_id": "TOOLS-14",
+    "board_epic": 5796,
+    "tracker_issue": 5807,
+    "implementation_issue": 5828,
+    "merge_pr": 5829,
+    "merge_commit": "62c61158c2",
+    "test_module": "src/shared/python/sidekick/tests/process_calculators/test_pipe_database.py",
+    "test_names": ["test_sizes_are_in_ascending_numerical_order"],
+    "notes": "Verified on main: fractional NPS keys sort by parsed diameter, not string replace."
+  },
+  {
+    "finding_id": "TOOLS-17",
+    "board_epic": 5796,
+    "tracker_issue": 5807,
+    "implementation_issue": null,
+    "merge_pr": 5850,
+    "merge_commit": "cf72fa6d97",
+    "test_module": "src/inertia_calculator/tests/test_inertia_calculator_gui.py",
+    "test_names": ["test_validate_inertia_returns_errors_for_principal_triangle_inequality_violation"],
+    "notes": "Verified on main: validate triangle inequality on principal moments of inertia."
+  },
+  {
+    "finding_id": "TOOLS-19",
+    "board_epic": 5796,
+    "tracker_issue": 5807,
+    "implementation_issue": null,
+    "merge_pr": null,
+    "merge_commit": null,
+    "test_module": null,
+    "test_names": [],
+    "notes": "Refuted by symbolic Euler-Lagrange proof in absolute coordinates (see proof receipts 6463173275 and 6465492193 on #5807); cross-velocity Coriolis terms identically cancel."
+  },
+  {
+    "finding_id": "TOOLS-21",
+    "board_epic": 5796,
+    "tracker_issue": 5807,
+    "implementation_issue": 5852,
+    "merge_pr": 5854,
+    "merge_commit": "f3989e0735",
+    "test_module": "tests/shared/python/process_calculators/test_scrubber_calculator.py",
+    "test_names": ["test_gas_viscosity_physical_ordering_co2_vs_n2"],
+    "notes": "Verified on main: use physical species parameters and bounds in calculate_gas_viscosity."
+  },
+  {
+    "finding_id": "TOOLS-22",
+    "board_epic": 5796,
+    "tracker_issue": 5807,
+    "implementation_issue": 5836,
+    "merge_pr": 5838,
+    "merge_commit": "f1050eddb7",
+    "test_module": "tests/shared/python/process_calculators/test_scrubber_calculator.py",
+    "test_names": ["test_tools_22_kg_to_mg_constant_physical_value"],
+    "notes": "Verified on main: correct KG_TO_MG constant from 1000.0 to 1e6."
+  },
+  {
+    "finding_id": "TOOLS-23",
+    "board_epic": 5796,
+    "tracker_issue": 5807,
+    "implementation_issue": 5834,
+    "merge_pr": 5835,
+    "merge_commit": "bfbaff966a",
+    "test_module": "tests/shared/python/process_calculators/test_thermal_profile.py",
+    "test_names": ["test_fit_heating_parameters_bounds_prevents_negative_thermal_mass_crash"],
+    "notes": "Verified on main: physical bounds in fit_heating_parameters prevent optimizer crash on negative thermal mass."
+  },
+  {
+    "finding_id": "TOOLS-24",
+    "board_epic": 5796,
+    "tracker_issue": 5807,
+    "implementation_issue": 5842,
+    "merge_pr": 5843,
+    "merge_commit": "f8a0705e78",
+    "test_module": "tests/shared/python/process_calculators/test_baghouse_calculator.py",
+    "test_names": ["test_volume_flow_standard_basis"],
+    "notes": "Verified on main: support configurable standard temperature reference basis for SCFM calculation."
+  },
+  {
+    "finding_id": "TOOLS-25",
+    "board_epic": 5796,
+    "tracker_issue": 5807,
+    "implementation_issue": 5844,
+    "merge_pr": 5845,
+    "merge_commit": "83258d3a1b",
+    "test_module": "tests/shared/python/process_calculators/test_baghouse_calculator.py",
+    "test_names": ["test_no_dead_has_thermo_module_symbols", "test_docstring_reflects_standalone_contract"],
+    "notes": "Verified on main: removed dead unreachable HAS_THERMO branches and updated contract docstrings."
+  },
+  {
+    "finding_id": "TOOLS-26",
+    "board_epic": 5796,
+    "tracker_issue": 5807,
+    "implementation_issue": null,
+    "merge_pr": null,
+    "merge_commit": null,
+    "test_module": "tests/shared/python/process_calculators/test_flare_calculator.py",
+    "test_names": ["test_flare_size_calculation"],
+    "notes": "Verified conservative point-source sizing (see receipt 6466029983 on #5807); core flare sizing validated."
+  },
+  {
+    "finding_id": "TOOLS-27",
+    "board_epic": 5796,
+    "tracker_issue": 5807,
+    "implementation_issue": 5825,
+    "merge_pr": 5827,
+    "merge_commit": "253e297fcb",
+    "test_module": "src/pendulum_simulator/tests/test_simulation_core.py",
+    "test_names": ["test_tools_27_integrate_ode_includes_t_end_in_output_grid", "test_tools_27_non_aligned_t_end_reaches_endpoint"],
+    "notes": "Verified on main: integrate_ode includes t_end in uniform output grid."
+  },
+  {
+    "finding_id": "TOOLS-28",
+    "board_epic": 5796,
+    "tracker_issue": 5807,
+    "implementation_issue": 5832,
+    "merge_pr": 5833,
+    "merge_commit": "17af7269f7",
+    "test_module": "tests/rotation_converter/test_rotation_core.py",
+    "test_names": ["test_euler_extraction_near_gimbal_lock_precision"],
+    "notes": "Verified on main: atan2 and hypot for Euler pitch angle extraction near gimbal lock."
+  },
+  {
+    "finding_id": "TOOLS-29",
+    "board_epic": 5796,
+    "tracker_issue": 5807,
+    "implementation_issue": null,
+    "merge_pr": null,
+    "merge_commit": null,
+    "test_module": "tests/rate_of_closure/test_impact_kinematics.py",
+    "test_names": ["test_face_center_dplane_uses_rigid_body_point_velocity"],
+    "notes": "Verified rigid-body point kinematics boundary (see receipt 6466025121 on #5807); face center point velocity includes cross-product term."
   }
 ]
