@@ -384,3 +384,23 @@ class TestSolutionCacheBenchmark:
             f"Cache speedup only {ratio:.1f}x (miss={t_miss:.3f}s, "
             f"hit={per_hit_s * 1000:.4f}ms; limit: 100x)"
         )
+
+
+class TestCoverageAwareBudget:
+    """Wall-clock budgets account for coverage tracing (Tools #5981)."""
+
+    def test_budget_unchanged_without_coverage(self) -> None:
+        assert _budget_ms(5.0, coverage_active=False) == 5.0
+
+    def test_budget_scaled_under_coverage(self) -> None:
+        assert _budget_ms(5.0, coverage_active=True) == 5.0 * _COVERAGE_OVERHEAD_FACTOR
+
+    def test_budget_rejects_non_positive_base(self) -> None:
+        import pytest
+
+        with pytest.raises(ValueError, match="base_ms"):
+            _budget_ms(0.0, coverage_active=False)
+
+    def test_detects_active_coverage(self) -> None:
+        coverage = __import__("pytest").importorskip("coverage")
+        assert _coverage_active() is (coverage.Coverage.current() is not None)
