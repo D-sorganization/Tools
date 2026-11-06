@@ -229,3 +229,125 @@ def test_coverage_policy_tracks_safe_eval_files() -> None:
         >= 95.0
     )
     assert policy["tracked_packages"]["src/shared/python/upstream_drift_tools"] >= 100.0
+
+
+def test_coverage_policy_tracks_issue_5981_ratchets() -> None:
+    """Tools #5981: all four nightly ratchets remain configured without loosening."""
+    policy_path = (
+        Path(__file__).resolve().parents[2] / "config" / "coverage_policy.json"
+    )
+    policy = json.loads(policy_path.read_text(encoding="utf-8"))
+    tracked = policy["tracked_packages"]
+
+    assert tracked["src/shared/python/codemap"] >= 70.0
+    assert (
+        tracked["src/shared/python/sidekick/calculators/conversion/service.py"] >= 90.0
+    )
+    assert tracked["src/shared/python/signal_toolkit/adaptive_filter.py"] >= 95.0
+    assert tracked["src/shared/python/upstream_drift_tools"] >= 100.0
+
+
+def test_parse_coverage_evaluates_issue_5981_targets(tmp_path: Path) -> None:
+    """Validate that parse_coverage accurately resolves all 5981 target packages."""
+    module = _load_coverage_policy_module()
+    coverage_xml = tmp_path / "coverage.xml"
+    coverage_xml.write_text(
+        """<?xml version="1.0" ?>
+<coverage line-rate="0.95">
+  <sources>
+    <source>src/shared/python</source>
+  </sources>
+  <packages>
+    <package name="codemap">
+      <classes>
+        <class name="analyzer.py" filename="codemap/analyzer.py">
+          <lines>
+            <line number="1" hits="1" />
+            <line number="2" hits="1" />
+            <line number="3" hits="1" />
+            <line number="4" hits="0" />
+          </lines>
+        </class>
+      </classes>
+    </package>
+    <package name="sidekick.calculators.conversion">
+      <classes>
+        <class name="service.py" filename="sidekick/calculators/conversion/service.py">
+          <lines>
+            <line number="1" hits="1" />
+            <line number="2" hits="1" />
+            <line number="3" hits="1" />
+            <line number="4" hits="1" />
+            <line number="5" hits="1" />
+            <line number="6" hits="1" />
+            <line number="7" hits="1" />
+            <line number="8" hits="1" />
+            <line number="9" hits="1" />
+            <line number="10" hits="0" />
+          </lines>
+        </class>
+      </classes>
+    </package>
+    <package name="signal_toolkit">
+      <classes>
+        <class name="adaptive_filter.py" filename="signal_toolkit/adaptive_filter.py">
+          <lines>
+            <line number="1" hits="1" />
+            <line number="2" hits="1" />
+            <line number="3" hits="1" />
+            <line number="4" hits="1" />
+            <line number="5" hits="1" />
+            <line number="6" hits="1" />
+            <line number="7" hits="1" />
+            <line number="8" hits="1" />
+            <line number="9" hits="1" />
+            <line number="10" hits="1" />
+            <line number="11" hits="1" />
+            <line number="12" hits="1" />
+            <line number="13" hits="1" />
+            <line number="14" hits="1" />
+            <line number="15" hits="1" />
+            <line number="16" hits="1" />
+            <line number="17" hits="1" />
+            <line number="18" hits="1" />
+            <line number="19" hits="1" />
+            <line number="20" hits="0" />
+          </lines>
+        </class>
+      </classes>
+    </package>
+    <package name="upstream_drift_tools">
+      <classes>
+        <class name="__init__.py" filename="upstream_drift_tools/__init__.py">
+          <lines>
+            <line number="1" hits="1" />
+            <line number="2" hits="1" />
+          </lines>
+        </class>
+      </classes>
+    </package>
+  </packages>
+</coverage>
+""",
+        encoding="utf-8",
+    )
+
+    targets = [
+        "src/shared/python/codemap",
+        "src/shared/python/sidekick/calculators/conversion/service.py",
+        "src/shared/python/signal_toolkit/adaptive_filter.py",
+        "src/shared/python/upstream_drift_tools",
+    ]
+    stats = module.parse_coverage(coverage_xml, targets)
+    assert stats["package_percent"]["src/shared/python/codemap"] == 75.0
+    assert (
+        stats["package_percent"][
+            "src/shared/python/sidekick/calculators/conversion/service.py"
+        ]
+        == 90.0
+    )
+    assert (
+        stats["package_percent"]["src/shared/python/signal_toolkit/adaptive_filter.py"]
+        == 95.0
+    )
+    assert stats["package_percent"]["src/shared/python/upstream_drift_tools"] == 100.0
