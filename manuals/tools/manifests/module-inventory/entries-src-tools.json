@@ -182,6 +182,93 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 11085,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8aa09e05407cfbd8b3e9f40868339c56c79c0d5bb6ea23fbc08c15b3df633f69",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-TOOLS-GENERATED-BASELINES-PY-0EBC02F7E104",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/tools/generated_baselines.py",
+      "purpose": "Generated baselines inventory, contract, and bounded views (Tools #5995).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "CANONICAL_INVENTORY",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "find_repo_root",
+            "signature": "start: Path | str | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "load_inventory",
+            "signature": "repo_root: Path | str | None=None, custom_inventory: dict[str, Any] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "query_baseline",
+            "signature": "path_or_id: str, query: str, repo_root: Path | str | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "summarize_baseline",
+            "signature": "path_or_id: str, repo_root: Path | str | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "verify_baseline_integrity",
+            "signature": "repo_root: Path | str | None=None, check_hashes: bool=True, inventory: dict[str, Any] | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/test_generated_baselines_contract.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/unit/test_generated_baselines_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 166,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
