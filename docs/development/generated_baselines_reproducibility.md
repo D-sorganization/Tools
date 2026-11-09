@@ -1,7 +1,7 @@
 # Generated Baselines: Reproducibility Contract & Bounded Views
 
-**Issue:** Tools #5995  
-**Tooling:** `python -m src.tools.generated_baselines --check|--summary|--query`
+**Issue:** Tools #5995, #5998  
+**Tooling:** `python -m src.tools.generated_baselines --check|--print-spec-baseline|--summary|--query`
 
 ---
 
@@ -19,8 +19,8 @@ Repository blob paths total 91.26 MiB; these four files sum ~5.3 MiB (~5.8%).
 ## 2. Reproducibility & Governance
 
 1. **Deterministic vs Environment-Dependent:** API baselines and SPEC changelogs are deterministic AST/fragment extractions. Benchmark baselines reflect hardware timing on clean benchmark runners.
-2. **Reviewed Updates Only:** Baseline regeneration flags (`--regenerate-api-baseline`, `--benchmark-json`) require review approval from respective teams (Sidekick Architecture, Swing Sim, Maintainers).
-3. **Integrity Enforcement:** CI and local developers run `python -m src.tools.generated_baselines --check` to verify exact cryptographic hashes against the canonical inventory.
+2. **Reviewed Updates Only:** Baseline regeneration flags (`--regenerate-api-baseline`, `--benchmark-json`, `--print-spec-baseline`) require review approval from respective teams (Sidekick Architecture, Swing Sim, Maintainers).
+3. **Integrity Enforcement:** CI and local developers run `python -m src.tools.generated_baselines --check`. JSON baselines enforce exact full-file SHA-256 digests; `SPEC.md` (`spec_changelog_collation`) pins SHA-256 digests of non-changelog sections, the change-log header, and the reviewed baseline row tail while requiring any prepended change-log rows to match `changes/*.md` collation provenance in `docs/development/DEVELOPMENT_LOG.md`. Intentional edits to non-changelog `SPEC.md` sections refresh the anchor via `--print-spec-baseline`.
 
 ## 3. Bounded Context Views for AI Agents
 

@@ -975,8 +975,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-theme.json"
     },
     {
-      "content_sha256_lf": "7cf6d68aab886c99c8d3abb78bcebdb305476b80fcf2bd81f8d543ea5ff1c830",
-      "entry_count": 30,
+      "content_sha256_lf": "68b4710a062bf60230ab5aa9629615452d428e99432f1f8d7cc4323133376b04",
+      "entry_count": 31,
       "package": "src/tools",
       "path": "manuals/tools/manifests/module-inventory/entries-src-tools.json"
     },
