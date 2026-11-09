@@ -182,10 +182,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11085,
+      "bytes_lf": 13123,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8aa09e05407cfbd8b3e9f40868339c56c79c0d5bb6ea23fbc08c15b3df633f69",
+      "content_sha256_lf": "3b8aa39696fa7f154e8335a34bc98c9cf95c9b3bc8f84b1d68e971749b8a13f9",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-TOOLS-GENERATED-BASELINES-PY-0EBC02F7E104",
       "language": "python",
@@ -227,6 +227,11 @@
           },
           {
             "kind": "function",
+            "name": "build_spec_changelog_baseline",
+            "signature": "repo_root: Path | str | None=None, spec_rel_path: str='SPEC.md'"
+          },
+          {
+            "kind": "function",
             "name": "find_repo_root",
             "signature": "start: Path | str | None=None"
           },
@@ -238,7 +243,7 @@
           {
             "kind": "function",
             "name": "main",
-            "signature": ""
+            "signature": "argv: list[str] | None=None"
           },
           {
             "kind": "function",
@@ -1983,6 +1988,68 @@
         ],
         "validation_paths": [
           "tests/tools/test_scientific_auditor.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 7577,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b58c8f23056b4b3560d59287ac01677e95808b69dc420715ab3017a6a2d41a09",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-TOOLS-SPEC-BASELINE-INTEGRITY-PY-6C838630C964",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/tools/spec_baseline_integrity.py",
+      "purpose": "SPEC.md structural-anchor computation and collated-changelog verification (#5998).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "compute_spec_changelog_anchors",
+            "signature": "repo_root: Path, spec_rel_path: str='SPEC.md'"
+          },
+          {
+            "kind": "function",
+            "name": "verify_spec_changelog_integrity",
+            "signature": "repo_root: Path, entry: dict[str, Any]"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/test_generated_baselines_contract.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/unit/test_generated_baselines_contract.py"
         ]
       }
     },
