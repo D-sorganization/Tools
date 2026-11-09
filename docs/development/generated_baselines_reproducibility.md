@@ -1,7 +1,7 @@
 # Generated Baselines: Reproducibility Contract & Bounded Views
 
-**Issue:** Tools #5995, #5998  
-**Tooling:** `python -m src.tools.generated_baselines --check|--print-spec-baseline|--summary|--query`
+**Issue:** Tools #5995, #5998, #5999  
+**Tooling:** `python -m src.tools.generated_baselines --check|--print-spec-baseline|--summary|--query [--offset N] [--limit N] [--max-bytes B] [--full]`
 
 ---
 
@@ -27,7 +27,7 @@ Repository blob paths total 91.26 MiB; these four files sum ~5.3 MiB (~5.8%).
 - **The Problem:** Reading 2.1 MB raw JSON consumes ~500k model tokens. In `.benchmarks/baseline.json`, over 98% of payload consists of raw timing sample arrays (`stats["data"]`).
 - **Bounded Tooling Solution:** `src/tools/generated_baselines.py` exposes lightweight views:
   - `--summary`: Strips raw samples, exposing key statistics (`mean`, `min`, `max`, counts) under <2 KB.
-  - `--query <PATTERN> --baseline <ID>`: Filters exact symbols or benchmarks without loading full files.
+  - `--query <PATTERN> --baseline <ID>`: Enforces an explicit serialized UTF-8 cap (`DEFAULT_MAX_QUERY_BYTES = 10_000`, default page limit `25`), reporting exact `match_count` / `total_matches`, `returned_matches`, `truncated`, `has_more`, `item_truncated`, and deterministic `next_offset` continuation (`--offset`, `--limit`, `--max-bytes`). Oversized single modules, symbols, or benchmarks are compacted within `max_bytes` so pagination never stalls; `--full` (`QueryOptions(full_data=True)`) provides an explicit untruncated route when needed.
   - Context footprint drops by >98% while full regression test oracles remain byte-identical on disk.
 
 ## 4. Storage & Ignore Evaluation

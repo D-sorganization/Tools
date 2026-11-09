@@ -1,4 +1,4 @@
-"""Tests for generated baselines inventory and bounded query views (#5995, #5998)."""
+"""Tests for generated baselines inventory and bounded query views (#5995-#5999)."""
 
 from __future__ import annotations
 
@@ -12,6 +12,8 @@ import pytest
 
 from src.tools import generated_baselines as gb
 from src.tools.generated_baselines import (
+    DEFAULT_MAX_QUERY_BYTES,
+    QueryOptions,
     build_spec_changelog_baseline,
     load_inventory,
     query_baseline,
@@ -23,6 +25,10 @@ from src.tools.spec_baseline_integrity import _load_shared
 ROOT = Path(__file__).resolve().parents[2]
 PR_5997_SHA = "2a404a33cb610edaa1cbe0dfa07735c2c80ff5515bb1d461ddebe94a867f9a5a"  # pragma: allowlist secret  # noqa: E501
 _SEP = "| ---------- | ---------- | ---------- |\n"
+
+
+def _cli_bytes(payload: dict[str, Any]) -> int:
+    return len((json.dumps(payload, indent=2) + "\n").encode("utf-8"))
 
 
 def _write_frag(repo: Path, name: str, issue: int, summary: str) -> Path:
@@ -199,24 +205,140 @@ def test_integrity_check_detects_missing_file(tmp_path: Path) -> None:
     assert len(errs) == 1 and "File not found: missing.json" in errs[0]
 
 
+_SK, _SW = "sidekick_api_baseline", "swing_sim_api_baseline"
+_BM, _SP = "benchmarks_baseline", "spec_changelog"
+
+
 @pytest.mark.unit
-def test_bounded_summary_and_query_views() -> None:
-    for b_id in [
-        "benchmarks_baseline",
-        "sidekick_api_baseline",
-        "swing_sim_api_baseline",
+@pytest.mark.parametrize(
+    ("b_id", "query", "min_total"),
+    [
+        (_SK, "", 253),
+        (_SK, "py", 253),
+        (_SK, "calculator", 97),
+        (_SK, "standalone", 6),
+        (_SW, "", 268),
+        (_SW, "py", 268),
+        (_SW, "flight", 53),
+        (_SW, "ImpactSolverAPI", 1),
+        (_BM, "", 9),
+        (_BM, "euler", 1),
+        (_SP, "", 1000),
+    ],
+)
+def test_bounded_summary_and_broad_queries(
+    b_id: str, query: str, min_total: int
+) -> None:
+    s = summarize_baseline(b_id, ROOT)
+    assert _cli_bytes(s) <= DEFAULT_MAX_QUERY_BYTES and s["id"] == b_id
+    res = query_baseline(b_id, query, ROOT)
+    assert _cli_bytes(res) <= DEFAULT_MAX_QUERY_BYTES
+    assert res["match_count"] == res["total_matches"] >= min_total
+    assert res["returned_matches"] == len(res["matches"]) >= 1
+    if res["returned_matches"] < res["total_matches"]:
+        assert res["truncated"] is True and res["has_more"] is True
+        assert res["next_offset"] == res["returned_matches"]
+    if b_id == _SW:
+        first_val = next(iter(res["matches"].values()))
+        assert isinstance(first_val.get("explicit_all"), bool)
+    if b_id == _BM:
+        assert all("data" not in b.get("stats", {}) for b in res["matches"])
+
+
+@pytest.mark.unit
+def test_large_single_entries_bounded_across_formats(tmp_path: Path) -> None:
+    for b_id, q, off in [
+        (_SK, "lab/mocap/__init__.py", 0),
+        (_SK, "ui/tools_sidebar/sidebar.py", 0),
+        (_SK, "UnifiedToolsSidebar", 1),
+        (_SW, "flight/__init__.py", 0),
     ]:
-        s = summarize_baseline(b_id, ROOT)
-        assert (
-            len(json.dumps(s)) < 10000
-            and s["id"] == b_id
-            and s["size_bytes"] > 1000000
-            and "entry_count" in s
-        )
-    sk = query_baseline("sidekick_api_baseline", "standalone", ROOT)
-    assert sk["match_count"] > 0 and all("standalone" in m for m in sk["matches"])
-    bench = query_baseline("benchmarks_baseline", "euler", ROOT)
-    assert bench["match_count"] >= 1 and any(
-        "euler" in b["name"] for b in bench["matches"]
+        res = query_baseline(b_id, q, ROOT, QueryOptions(offset=off))
+        assert _cli_bytes(res) <= DEFAULT_MAX_QUERY_BYTES
+        assert res["returned_matches"] == 1 and res["truncated"] is True
+        assert res["item_truncated"] is True
+    _make_repo(tmp_path)
+    (tmp_path / "SPEC.md").write_text("huge_row " + ("w" * 5000) + "\n", "utf-8")
+    (tmp_path / ".benchmarks").mkdir(parents=True, exist_ok=True)
+    (tmp_path / "tests/api_baselines").mkdir(parents=True, exist_ok=True)
+    big = {f"Sym{i}": {"type": "class", "doc": "x" * 900} for i in range(25)}
+    sk_obj = {"big_sk.py": {"__all__": list(big), "symbols": big}}
+    sw_obj = {"big_sw.py": {"__all__": list(big), "explicit_all": True, "symbols": big}}
+    (tmp_path / "tests/sidekick_api_baseline.json").write_text(json.dumps(sk_obj))
+    sw_p = tmp_path / "tests/api_baselines/swing_sim_api_baseline.json"
+    sw_p.write_text(json.dumps(sw_obj))
+    b_entry = {
+        "name": "huge_bench",
+        "fullname": "pkg::" + ("f" * 4000),
+        "extra_info": {"blob": "z" * 9000},
+        "stats": {"mean": 1.25, "min": 1.0, "max": 1.5, "data": [1.1] * 500},
+    }
+    (tmp_path / ".benchmarks/baseline.json").write_text(
+        json.dumps({"benchmarks": [b_entry]})
     )
-    assert all("data" not in b.get("stats", {}) for b in bench["matches"])
+    tight = QueryOptions(max_bytes=800)
+    for b_id in (_SK, _SW, _BM, _SP):
+        r_t = query_baseline(b_id, "", tmp_path, options=tight)
+        assert _cli_bytes(r_t) <= 800 and r_t["returned_matches"] == 1
+        assert r_t["truncated"] is True and r_t["item_truncated"] is True
+        assert r_t["next_offset"] is None
+
+
+def _walk_pages(b_id: str, q: str, opts: QueryOptions) -> list[Any]:
+    collected: list[Any] = []
+    off: int | None = 0
+    while off is not None:
+        p_opt = QueryOptions(off, opts.limit, opts.max_bytes)
+        page = query_baseline(b_id, q, ROOT, p_opt)
+        assert _cli_bytes(page) <= opts.max_bytes and page["returned_matches"] >= 1
+        m = page["matches"]
+        items = list(m) if isinstance(m, dict) else [r["name"] for r in m]
+        assert set(items).isdisjoint(collected)
+        collected.extend(items)
+        off = page["next_offset"]
+    return collected
+
+
+@pytest.mark.unit
+def test_pagination_completeness_and_full_data_route() -> None:
+    sk_keys = _walk_pages(_SK, "standalone", QueryOptions())
+    assert len(sk_keys) == 6 and sk_keys == sorted(sk_keys)
+    sw_keys = _walk_pages(_SW, "flight", QueryOptions(limit=15, max_bytes=6000))
+    assert len(sw_keys) == 53 and sw_keys == sorted(sw_keys)
+    assert len(_walk_pages(_BM, "", QueryOptions(0, 3, 2500))) == 9
+    full_opt = QueryOptions(limit=1, full_data=True)
+    full_sk = query_baseline(_SK, "lab/mocap/__init__.py", ROOT, full_opt)
+    assert _cli_bytes(full_sk) > 90000 and full_sk["item_truncated"] is False
+    full_sw = query_baseline(_SW, "flight/__init__.py", ROOT, full_opt)
+    sw_mod = full_sw["matches"]["flight/__init__.py"]
+    assert _cli_bytes(full_sw) > 70000 and sw_mod["explicit_all"] is True
+    full_b = query_baseline(_BM, "euler", ROOT, full_opt)
+    b_stats = full_b["matches"][0]["stats"]
+    assert len(b_stats["data"]) > 100
+    past = query_baseline(_BM, "", ROOT, QueryOptions(offset=999))
+    assert past["returned_matches"] == 0 and past["next_offset"] is None
+    for off_v, lim_v, mb_v in [(-1, 1, 1000), (0, 0, 1000), (0, 1, 100)]:
+        with pytest.raises(ValueError):
+            QueryOptions(off_v, lim_v, mb_v)
+
+
+@pytest.mark.unit
+def test_query_cli_sizing_empty_query_and_flags(
+    capsys: pytest.CaptureFixture[str],
+) -> None:
+    base = ["--repo-root", str(ROOT)]
+    for b_id, q in [(_SK, ""), (_SK, "py"), (_SW, ""), (_BM, "")]:
+        rc = gb.main([*base, "--query", q, "--baseline", b_id])
+        raw_out = capsys.readouterr().out
+        assert rc == 0 and len(raw_out.encode("utf-8")) <= DEFAULT_MAX_QUERY_BYTES
+        assert json.loads(raw_out)["returned_matches"] >= 1
+    p_flags = "--query=standalone --offset=1 --limit=2 --max-bytes=4000".split()
+    assert gb.main([*base, f"--baseline={_SK}", *p_flags]) == 0
+    out_p = capsys.readouterr().out
+    assert len(out_p.encode("utf-8")) <= 4000 and json.loads(out_p)["offset"] == 1
+    f_args = [*base, "--query=lab/mocap/__init__.py", f"--baseline={_SK}", "--full"]
+    assert gb.main(f_args) == 0 and len(capsys.readouterr().out.encode("utf-8")) > 90000
+    assert gb.main(["--query", "py"]) == 1
+    assert gb.main(["--query=py", f"--baseline={_SK}", "--offset=-1"]) == 1
+    assert gb.main(["--query=py", "--baseline=unknown_id"]) == 1
+    capsys.readouterr()

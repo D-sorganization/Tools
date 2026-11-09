@@ -54,6 +54,67 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 5939,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b1249f2b612b1d958bfc06fa6e25a9c90bdaec2c59c64d8797b1bf821195faf0",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-TOOLS-BASELINE-QUERY-PY-9651DE7B33EA",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/tools/baseline_query.py",
+      "purpose": "Bounded query pagination and single-entry compaction for generated baselines.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "QueryOptions",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_MAX_QUERY_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "paginate_matches",
+            "signature": "meta: tuple[str, str], items: list[Any], is_map: bool, opts: QueryOptions"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 3273,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -182,10 +243,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13123,
+      "bytes_lf": 13879,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3b8aa39696fa7f154e8335a34bc98c9cf95c9b3bc8f84b1d68e971749b8a13f9",
+      "content_sha256_lf": "7d9921bbe92add5d29ef36a7c30c84564a830b91de05f0564e0e435c2bb21cac",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-TOOLS-GENERATED-BASELINES-PY-0EBC02F7E104",
       "language": "python",
@@ -248,7 +309,7 @@
           {
             "kind": "function",
             "name": "query_baseline",
-            "signature": "path_or_id: str, query: str, repo_root: Path | str | None=None"
+            "signature": "path_or_id: str, query: str, repo_root: Path | str | None=None, options: QueryOptions | None=None"
           },
           {
             "kind": "function",
