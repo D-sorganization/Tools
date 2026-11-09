@@ -1587,6 +1587,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5999 · Bound Generated-Baseline Query Output With Pagination, Truncation Metadata and Explicit --Full Route
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5999
+- **Branch:** merged via #6001
+- **PR:** #6001
+- **Paths:** see #6001
+- **Started:** 2026-11-09
+- **Last verified:** 2026-11-09 (`17389495`; collated from changes/5999-bound-baseline-queries.md)
+- **Summary:** bound generated-baseline query output with pagination, truncation metadata and explicit --full route
+- **Next step:** Shipped in PR #6001.
+
 ### DL-#5998 · Align SPEC.md Baseline Integrity Check With Reviewed Change-Fragment Collation While Failing Closed on Unreviewed Edits
 
 - **State:** shipped
