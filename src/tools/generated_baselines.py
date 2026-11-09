@@ -9,6 +9,11 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from .baseline_query import (
+    DEFAULT_MAX_QUERY_BYTES as DEFAULT_MAX_QUERY_BYTES,
+)
+from .baseline_query import QueryOptions as QueryOptions
+from .baseline_query import paginate_matches
 from .spec_baseline_integrity import (
     compute_spec_changelog_anchors,
     verify_spec_changelog_integrity,
@@ -209,67 +214,52 @@ def summarize_baseline(
 
 
 def query_baseline(
-    path_or_id: str, query: str, repo_root: Path | str | None = None
+    path_or_id: str,
+    query: str,
+    repo_root: Path | str | None = None,
+    options: QueryOptions | None = None,
 ) -> dict[str, Any]:
     """Query a baseline for matching symbols/benchmarks with bounded context."""
+    opts = options or QueryOptions()
     root = find_repo_root(repo_root)
     entry = _resolve_entry(path_or_id, load_inventory(root))
-    fp, b_id, q = root / entry["path"], entry.get("id", ""), query.lower()
+    fp, b_id, q = root / entry["path"], str(entry.get("id", "")), query.lower()
 
     if b_id == "benchmarks_baseline":
         b_raw = json.loads(fp.read_text(encoding="utf-8")).get("benchmarks", [])
-        matches = []
+        matches: list[Any] = []
         for b in b_raw:
             if q in b.get("name", "").lower() or q in b.get("fullname", "").lower():
-                stats = dict(b.get("stats", {}))
-                stats.pop("data", None)
-                matches.append(
-                    {
-                        "name": b.get("name"),
-                        "fullname": b.get("fullname"),
-                        "stats": stats,
-                    }
-                )
-        return {
-            "id": b_id,
-            "query": query,
-            "match_count": len(matches),
-            "matches": matches,
-        }
+                if opts.full_data:
+                    matches.append(dict(b))
+                    continue
+                stats = {k: v for k, v in b.get("stats", {}).items() if k != "data"}
+                row = {**{k: b.get(k) for k in ("name", "fullname")}, "stats": stats}
+                row.update({k: b[k] for k in ("params", "extra_info") if b.get(k)})
+                matches.append(row)
+        return paginate_matches((b_id, query), matches, False, opts)
 
     if b_id in {"sidekick_api_baseline", "swing_sim_api_baseline"}:
         raw_api = json.loads(fp.read_text(encoding="utf-8"))
-        matched_mods: dict[str, Any] = {}
-        for mod, content in raw_api.items():
+        matched_mods: list[tuple[str, Any]] = []
+        for mod, content in sorted(raw_api.items()):
             if q in mod.lower():
-                matched_mods[mod] = content
+                matched_mods.append((mod, content))
             elif isinstance(content, dict) and "symbols" in content:
-                syms = {s: d for s, d in content["symbols"].items() if q in s.lower()}
+                s_map = content["symbols"]
+                syms = {s: d for s, d in sorted(s_map.items()) if q in s.lower()}
                 if syms:
-                    matched_mods[mod] = {
-                        "__all__": content.get("__all__"),
-                        "symbols": syms,
-                    }
-        return {
-            "id": b_id,
-            "query": query,
-            "match_count": len(matched_mods),
-            "matches": matched_mods,
-        }
+                    ks = ("__all__", "explicit_all")
+                    keep = {k: content[k] for k in ks if k in content}
+                    matched_mods.append((mod, {**keep, "symbols": syms}))
+        return paginate_matches((b_id, query), matched_mods, True, opts)
 
     if b_id == "spec_changelog":
         lines = fp.read_text(encoding="utf-8").splitlines()
-        matched = [(i, line) for i, line in enumerate(lines, 1) if q in line.lower()][
-            :50
-        ]
-        return {
-            "id": b_id,
-            "query": query,
-            "match_count": len(matched),
-            "matches": matched,
-        }
+        s_matches = [[i, line] for i, line in enumerate(lines, 1) if q in line.lower()]
+        return paginate_matches((b_id, query), s_matches, False, opts)
 
-    return {"id": b_id, "query": query, "match_count": 0, "matches": []}
+    return paginate_matches((b_id, query), [], False, opts)
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -281,6 +271,10 @@ def main(argv: list[str] | None = None) -> int:
     p.add_argument("--summary", nargs="?", const="ALL", help="Bounded summary.")
     p.add_argument("--query", help="Filter symbols or benchmarks.")
     p.add_argument("--baseline", help="Target baseline ID.")
+    p.add_argument("--offset", type=int, default=0, help="Zero-based query offset.")
+    p.add_argument("--limit", type=int, default=None, help="Max returned matches.")
+    p.add_argument("--max-bytes", type=int, default=DEFAULT_MAX_QUERY_BYTES)
+    p.add_argument("--full", action="store_true", help="Emit full untruncated matches.")
     args = p.parse_args(argv)
 
     if args.print_spec_baseline:
@@ -303,13 +297,17 @@ def main(argv: list[str] | None = None) -> int:
         )
         sys.stdout.write(json.dumps(res, indent=2) + "\n")
         return 0
-    if args.query:
+    if args.query is not None:
         if not args.baseline:
             sys.stderr.write("ERROR: --query requires --baseline <ID>\n")
             return 1
-        sys.stdout.write(
-            json.dumps(query_baseline(args.baseline, args.query), indent=2) + "\n"
-        )
+        try:
+            opts = QueryOptions(args.offset, args.limit, args.max_bytes, args.full)
+            q_out = query_baseline(args.baseline, args.query, args.repo_root, opts)
+        except (KeyError, ValueError) as exc:
+            sys.stderr.write(f"ERROR: {exc}\n")
+            return 1
+        sys.stdout.write(json.dumps(q_out, indent=2) + "\n")
         return 0
     p.print_help()
     return 0
