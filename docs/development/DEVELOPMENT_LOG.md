@@ -1587,6 +1587,32 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5998 · Align SPEC.md Baseline Integrity Check With Reviewed Change-Fragment Collation While Failing Closed on Unreviewed Edits
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5998
+- **Branch:** merged via #6000
+- **PR:** #6000
+- **Paths:** see #6000
+- **Started:** 2026-11-09
+- **Last verified:** 2026-11-09 (`95715cfd`; collated from changes/5998-spec-collation-baseline-integrity.md)
+- **Summary:** align SPEC.md baseline integrity check with reviewed change-fragment collation while failing closed on unreviewed edits
+- **Next step:** Shipped in PR #6000.
+
+### DL-#5995 · Inventory Generated Baselines, Define Reproducibility Contract and Bounded Query Utility
+
+- **State:** shipped
+- **Owner:** agy-desk-001
+- **Issue:** #5995
+- **Branch:** agy/5995-generated-baselines-contract
+- **PR:** #5996
+- **Paths:** see #5996
+- **Started:** 2026-11-09
+- **Last verified:** 2026-11-09 (`0f907c2f`; collated from changes/5995-generated-baselines-reproducibility.md)
+- **Summary:** inventory generated baselines, define reproducibility contract and bounded query utility
+- **Next step:** Merge the PR.
+
 ### DL-#5981 · Nightly Full Suite Installs the Codemap Extra so Codemap Tests Run Instead of Skipping (Slice 1 Of 3)
 
 - **State:** shipped
