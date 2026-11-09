@@ -5947,6 +5947,8 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-09 | #6000 | align SPEC.md baseline integrity check with reviewed change-fragment collation while failing closed on unreviewed edits |
+| 2026-11-09 | #5996 | inventory generated baselines, define reproducibility contract and bounded query utility |
 | 2026-11-06 | #5991 | Nightly Coverage Policy Gate passes repo-wide (codemap extra, tools_core stub, coverage tracing restoration, in-process shim, and benchmark scaling under coverage) |
 | 2026-11-06 | #5988 | Benchmark wall-clock budgets scale 2x only while coverage tracing is active, so the nightly reaches its Coverage Policy Gate |
 | 2026-11-05 | #5986 | Cover adaptive_filter's tools_core import branch with an in-memory stub so the nightly coverage gate clears its 95% ratchet without the wheel (slice 3) |
