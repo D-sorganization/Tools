@@ -104,17 +104,17 @@ def test_real_fragment_collation_reproduces_5997_and_passes(tmp_path: Path) -> N
         "and bounded query utility"
     )
     f5995 = _write_frag(tmp_path, "5995-baselines.md", 5995, summary_5995)
-    collate(tmp_path, [f5995], pr=5996, today=date(2026, 11, 8), sha="0f907c2ffbbc")
-    if b_spec["sha256"].startswith("a81759099c02deec"):
+    collate(tmp_path, [f5995], pr=5996, today=date(2026, 11, 8), sha="0f907c2")
+    if b_spec["baseline_row_count"] == 1293 and b_spec["size_bytes"] == 1048482:
         raw_5997 = (tmp_path / "SPEC.md").read_bytes()
         assert hashlib.sha256(raw_5997).hexdigest() == PR_5997_SHA
     assert verify_baseline_integrity(tmp_path, inventory=spec_inv) == []
     fa = _write_frag(tmp_path, "990001-a.md", 990001, "first collated fix")
     fb = _write_frag(tmp_path, "990002-b.md", 990002, "second collated fix")
-    collate(tmp_path, [fa, fb], pr=990010, today=date(2026, 11, 9), sha="1234567890ab")
+    collate(tmp_path, [fa, fb], pr=990010, today=date(2026, 11, 9), sha="1111111")
     assert verify_baseline_integrity(tmp_path, inventory=spec_inv) == []
     fc = _write_frag(tmp_path, "990001-c.md", 990001, "follow-up slice")
-    collate(tmp_path, [fc], pr=990011, today=date(2026, 11, 10), sha="abcdef123456")
+    collate(tmp_path, [fc], pr=990011, today=date(2026, 11, 10), sha="2222222")
     archive(tmp_path, today=date(2026, 12, 1), days=14)
     assert verify_baseline_integrity(tmp_path, inventory=spec_inv) == []
 
@@ -162,7 +162,7 @@ def test_spec_integrity_rejects_provenance_tampering(tmp_path: Path, kind: str) 
     else:
         collate = _load_shared(ROOT, "changes_fragment_collate").collate
         frag = _write_frag(tmp_path, "6100-x.md", 6100, "valid text")
-        collate(tmp_path, [frag], pr=6101, today=date(2026, 11, 9), sha="deadbeef1234")
+        collate(tmp_path, [frag], pr=6101, today=date(2026, 11, 9), sha="3333333")
         assert verify_baseline_integrity(tmp_path, inventory=inv) == []
         if kind == "tampered_summary":
             _replace_spec(tmp_path, "valid text", "tampered text")
