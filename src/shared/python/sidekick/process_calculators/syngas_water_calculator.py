@@ -32,17 +32,15 @@ from .constants import (  # noqa: E402
     CELSIUS_TO_KELVIN_OFFSET,
     IAPWS_COEFFICIENTS,
     IAPWS_CRITICAL_TEMP,
-    KG_M3_TO_LB_FT3,
     MW_SYNGAS_TYPICAL_GMOL,
     MW_WATER_GMOL,
-    NORMAL_PRESSURE_PA,
-    NORMAL_TEMPERATURE_K,
-    R_GAS_DENSITY,
+    STANDARD_BASIS_LB_MMSCF,
     WATER_VAPOR_A,
     WATER_VAPOR_B,
     WATER_VAPOR_C,
     WATER_VAPOR_D,
 )
+from .water_content_units import WaterContentUnits, water_content_units  # noqa: E402
 from .water_vapor_pressure import (  # noqa: E402
     _EXP_MAX_ARG,
     antoine_pressure_pa,
@@ -167,6 +165,7 @@ class WaterContentResult:
 
     # Additional info
     calculation_method: str
+    water_content_standard_basis: str = STANDARD_BASIS_LB_MMSCF
     timestamp: datetime = field(default_factory=datetime.now)
     warnings: list[str] = field(default_factory=list)
 
@@ -190,6 +189,7 @@ class WaterContentResult:
                 "water_content_ppmv": self.water_content_ppmv,
                 "water_content_g_per_m3": self.water_content_g_per_m3,
                 "water_content_lb_per_mmscf": self.water_content_lb_per_mmscf,
+                "water_content_standard_basis": self.water_content_standard_basis,
                 "dew_point_c": self.dew_point_c,
                 "dew_point_margin_c": self.dew_point_margin_c,
             },
@@ -538,10 +538,11 @@ class SyngasWaterCalculator:
             saturation_temperature_c=temperature_c,
             mole_fraction_water=y_water,
             mass_fraction_water=x_water,
-            water_content_g_per_m3=units["g_m3"],
-            water_content_mg_per_nm3=units["mg_nm3"],
-            water_content_ppmv=units["ppmv"],
-            water_content_lb_per_mmscf=units["lb_mmscf"],
+            water_content_g_per_m3=units.g_m3,
+            water_content_mg_per_nm3=units.mg_nm3,
+            water_content_ppmv=units.ppmv,
+            water_content_lb_per_mmscf=units.lb_mmscf,
+            water_content_standard_basis=units.standard_basis,
             dew_point_c=dew_point_c,
             dew_point_margin_c=dew_point_margin_c,
             relative_humidity=relative_humidity,
@@ -554,36 +555,11 @@ class SyngasWaterCalculator:
         y_water: float,
         vapor_pressure_pa: float,
         temperature_k: float,
-    ) -> dict[str, float]:
+    ) -> WaterContentUnits:
         """Convert water mole fraction to various engineering unit systems."""
-        # Water content at actual conditions (g/m³)
         if y_water is None:
             raise ValueError("y_water must be provided")
-        water_content_g_m3 = (
-            vapor_pressure_pa * self.mw_water / (R_GAS_DENSITY * temperature_k)
-        )
-
-        # Water content at normal conditions (mg/Nm³) — 0°C, 1.01325 bar
-        water_content_mg_nm3 = (
-            y_water
-            * self.mw_water
-            * NORMAL_PRESSURE_PA
-            / (R_GAS_DENSITY * NORMAL_TEMPERATURE_K)
-            * 1e6
-        )
-
-        # Parts per million by volume
-        water_content_ppmv = y_water * 1e6
-
-        # Pounds per million standard cubic feet (US units) — 60°F, 14.696 psia
-        water_content_lb_mmscf = water_content_mg_nm3 * KG_M3_TO_LB_FT3 / 1000
-
-        return {
-            "g_m3": water_content_g_m3,
-            "mg_nm3": water_content_mg_nm3,
-            "ppmv": water_content_ppmv,
-            "lb_mmscf": water_content_lb_mmscf,
-        }
+        return water_content_units(y_water, vapor_pressure_pa, temperature_k)
 
     def _calculate_mixture_mw(self, composition: SyngasComposition) -> float:
         """Calculate molecular weight of dry gas mixture"""

@@ -1098,6 +1098,28 @@ class TestSyngasWaterSanitize:
         resp = _fallback_calculate(req)
         assert resp.water_content.mole_fraction_water >= 0.0
 
+    def test_fallback_lb_mmscf_matches_kernel(self) -> Any:
+        """Fallback path uses shared ``water_content_units`` (#6004)."""
+        from calc_backend.contracts.syngas_water import SyngasWaterRequest
+        from calc_backend.routers.syngas_water import _fallback_calculate
+
+        from shared.python.sidekick.process_calculators.constants import (
+            MW_WATER_GMOL,
+            SCF_PER_LBMOL_60F_14696PSIA,
+        )
+
+        req = SyngasWaterRequest(
+            temperature_c=25.0,
+            pressure_bar=1.0,
+            composition_key="typical_syngas",
+        )
+        resp = _fallback_calculate(req)
+        ppmv = resp.water_content.water_content_ppmv
+        expected = ppmv * MW_WATER_GMOL / SCF_PER_LBMOL_60F_14696PSIA
+        assert resp.water_content.water_content_lb_per_mmscf == pytest.approx(
+            expected, rel=0.01
+        )
+
 
 class TestScrubberAsFloat:
     """Direct unit tests for _as_float helper in scrubber router."""

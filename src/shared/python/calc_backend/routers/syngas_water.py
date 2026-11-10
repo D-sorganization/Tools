@@ -79,24 +79,18 @@ def _fallback_calculate(request: SyngasWaterRequest) -> SyngasWaterResponse:
         CELSIUS_TO_KELVIN_OFFSET,
         MW_WATER_GMOL,
     )
+    from shared.python.sidekick.process_calculators.water_content_units import (
+        water_content_units,
+    )
     from shared.python.sidekick.process_calculators.water_vapor_pressure import (
         antoine_pressure_pa,
         antoine_temperature_c,
     )
-    from shared.python.sidekick.utils.unit_constants import (
-        MOLAR_VOLUME_STP_OLD,
-        R_UNIVERSAL,
-    )
+    from shared.python.sidekick.utils.unit_constants import MOLAR_VOLUME_STP_OLD
 
     A, B, C = ANTOINE_WATER_A, ANTOINE_WATER_B, ANTOINE_WATER_C
-    r_gas = R_UNIVERSAL
     c_to_k = CELSIUS_TO_KELVIN_OFFSET
     mw_water_g_mol = MW_WATER_GMOL
-
-    # lb/mmscf conversion: standard molar volume at 60°F/14.696 psia (385.5
-    # scf/lb-mol) and pounds-to-grams (453.592 g/lb).
-    _scf_per_lbmol_60f = 385.5
-    _grams_per_pound = 453.592
 
     # Antoine equation for water vapor pressure (shared kernel returns Pa).
     vp_bar = antoine_pressure_pa(A, B, C, request.temperature_c) / 1e5
@@ -111,14 +105,13 @@ def _fallback_calculate(request: SyngasWaterRequest) -> SyngasWaterResponse:
     water_pct = water_pct_map.get(request.composition_key, 10.0)
     mole_frac = min(water_pct / 100.0, vp_bar / request.pressure_bar)
 
-    ppmv = mole_frac * 1e6
+    temperature_k = request.temperature_c + c_to_k
+    vapor_pressure_pa = mole_frac * request.pressure_bar * 1e5
+    units = water_content_units(mole_frac, vapor_pressure_pa, temperature_k)
+    ppmv = units.ppmv
     mg_nm3 = mole_frac * (mw_water_g_mol / MOLAR_VOLUME_STP_OLD) * 1000
-    g_m3 = (
-        mole_frac
-        * (mw_water_g_mol * request.pressure_bar * 1e5)
-        / (r_gas * (request.temperature_c + c_to_k))
-    )
-    lb_mmscf = ppmv * mw_water_g_mol / (_scf_per_lbmol_60f * _grams_per_pound) * 1e6
+    g_m3 = units.g_m3
+    lb_mmscf = units.lb_mmscf
 
     # Dew point via inverse Antoine (shared kernel takes Pa).
     pp = mole_frac * request.pressure_bar

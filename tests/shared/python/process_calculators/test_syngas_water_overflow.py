@@ -255,18 +255,28 @@ class TestCalculateWaterContentOverflow:
         assert result.water_content_ppmv >= 0
 
     def test_result_fields_are_finite(self, calculator: SyngasWaterCalculator) -> None:
-        """All numeric result fields must be finite for a normal calculation."""
+        """Water content at 40 °C must match independent ideal-gas golden values."""
+        from sidekick.process_calculators.constants import MW_WATER_GMOL
+        from sidekick.utils.unit_constants import R_UNIVERSAL
+
         result = calculator.calculate_water_content(
             temperature_c=40.0,
-            pressure_bar=30.0,
+            pressure_bar=1.01325,
+            gas_composition="typical_syngas",
         )
+        t_k = result.temperature_k
+        expected_g = (
+            result.vapor_pressure_pa * MW_WATER_GMOL / (R_UNIVERSAL * t_k)
+        )
+        assert result.water_content_g_per_m3 == pytest.approx(expected_g, rel=0.01)
+        assert result.water_content_g_per_m3 == pytest.approx(51.1, rel=0.01)
+        expected_lb = result.water_content_ppmv * MW_WATER_GMOL / 379.49
+        assert result.water_content_lb_per_mmscf == pytest.approx(expected_lb, rel=0.01)
         for field_name in (
             "mole_fraction_water",
             "mass_fraction_water",
-            "water_content_g_per_m3",
             "water_content_mg_per_nm3",
             "water_content_ppmv",
-            "water_content_lb_per_mmscf",
             "dew_point_c",
             "relative_humidity",
         ):
