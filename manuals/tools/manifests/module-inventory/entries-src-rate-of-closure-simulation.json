@@ -655,7 +655,8 @@
           "tests/rate_of_closure/test_golfer_anthropometry.py",
           "tests/rate_of_closure/test_movement_optimizer_swing_source.py",
           "tests/rate_of_closure/test_optimized_swing_source.py",
-          "tests/shared/python/humanoid/test_anthropometry.py"
+          "tests/shared/python/humanoid/test_anthropometry.py",
+          "tests/unit/test_result_default_false_oracles.py"
         ],
         "unit_mentions": [
           "kg",
@@ -2072,10 +2073,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 9903,
+      "bytes_lf": 9905,
       "classification": "calculation",
       "classification_basis": "path-marker:simulation",
-      "content_sha256_lf": "c900962d91ffea227a558b445fb1d88df93c530bb82fbdc3c1f361b5cfdef9a4",
+      "content_sha256_lf": "b0c4b22d39f0f325da4f14bc3f0888260377b8ed7426576ef4473d236a723444",
       "family": "rate-of-closure-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-SIMULATION-OPTIMIZED-SWING-PY-E6870A388AFA",
       "language": "python",
@@ -2125,7 +2126,8 @@
           }
         ],
         "test_paths": [
-          "tests/rate_of_closure/test_optimized_swing_source.py"
+          "tests/rate_of_closure/test_optimized_swing_source.py",
+          "tests/unit/test_result_default_false_oracles.py"
         ],
         "unit_mentions": [
           "J",

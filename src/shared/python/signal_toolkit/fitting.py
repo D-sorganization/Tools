@@ -51,7 +51,7 @@ class FitResult:
     rmse: float
     fitted_signal: Signal
     residuals: np.ndarray
-    success: bool = True
+    success: bool = False
     message: str = ""
 
     def get_function_string(self) -> str:

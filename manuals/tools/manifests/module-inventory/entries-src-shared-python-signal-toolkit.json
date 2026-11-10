@@ -433,7 +433,8 @@
           "tests/shared/python/signal_toolkit/test_signal_loader.py",
           "tests/shared/python/signal_toolkit/test_widget_mixins.py",
           "tests/test_signal_core_coverage.py",
-          "tests/test_signal_processing_expanded.py"
+          "tests/test_signal_processing_expanded.py",
+          "tests/unit/test_result_default_false_oracles.py"
         ],
         "unit_mentions": [
           "Hz",
@@ -584,10 +585,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 26132,
+      "bytes_lf": 26133,
       "classification": "calculation",
       "classification_basis": "path-marker:signal",
-      "content_sha256_lf": "27272e45bf96df2335dc041a4a3f5a82b1e8c21800785e3be3875bf0c1801071",
+      "content_sha256_lf": "0981b8f7a7ef3890fd4b4ec83811f420cc8e007fc6d8ffb684a34f49810307fa",
       "family": "signal-processing-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-FITTING-PY-38C1998A2327",
       "language": "python",
@@ -672,7 +673,8 @@
           "tests/shared/python/signal_toolkit/test_fitting.py",
           "tests/shared/python/signal_toolkit/test_fitting_consumer_contracts.py",
           "tests/shared/python/signal_toolkit/test_import_identity.py",
-          "tests/shared/python/signal_toolkit/test_widget_mixins.py"
+          "tests/shared/python/signal_toolkit/test_widget_mixins.py",
+          "tests/unit/test_result_default_false_oracles.py"
         ],
         "unit_mentions": [
           "deg",

@@ -62,7 +62,7 @@ class TestFitResult:
             fitted_signal=Signal(time=t, values=np.ones(10)),
             residuals=np.array([0.01]),
         )
-        assert result.success is True
+        assert result.success is False
         assert result.message == ""
 
 

@@ -215,10 +215,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 7183,
+      "bytes_lf": 7184,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "af0cfd19fe88a3a23b53463db2e73053f76d083b3e7c4227fae49dc9d03f9baa",
+      "content_sha256_lf": "ee7805fb0e2665d5d5302964c19e69c2dc9024d19d763325e51f8f58bfcbbed6",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-PRESSURE-DROP-CALCULATOR-MODELS-PY-80A3F3AE8848",
       "language": "python",
@@ -230,7 +230,6 @@
         "public-api",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -242,7 +241,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "unavailable"
       },
@@ -268,7 +267,9 @@
             "signature": null
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/unit/test_result_default_false_oracles.py"
+        ],
         "unit_mentions": [
           "Pa",
           "bar",
@@ -559,6 +560,7 @@
           "tests/unit/sidekick/test_runtime_tab_settings.py",
           "tests/unit/sidekick/test_sidekick_ux_hardening.py",
           "tests/unit/test_contracts.py",
+          "tests/unit/test_result_default_false_oracles.py",
           "tests/vessel_drafter/test_dbc_lod.py"
         ],
         "unit_mentions": [],
