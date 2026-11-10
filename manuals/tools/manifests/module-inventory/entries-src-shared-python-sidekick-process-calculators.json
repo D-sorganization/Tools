@@ -1424,6 +1424,7 @@
         "test_paths": [
           "src/shared/python/sidekick/tests/process_calculators/test_mmhg_constant_unified_3676.py",
           "src/shared/python/sidekick/tests/test_process_constants.py",
+          "tests/shared/python/process_calculators/test_syngas_water_overflow.py",
           "tests/shared/python/process_calculators/test_water_vapor_pressure_shared.py"
         ],
         "unit_mentions": [
@@ -5684,10 +5685,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 23622,
+      "bytes_lf": 26201,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "db8312634dfe429b4d1ab83268ff6f91a020c1e78a098178e807089e4c628508",
+      "content_sha256_lf": "7e61e14c3b3f8adbaa2783b3e562d64f0309f3cec2cd13b075971dbd4bd8856b",
       "family": "process-calculators-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-SYNGAS-WATER-CALCULATOR-PY-68CB6AC70ACE",
       "language": "python",
@@ -5761,11 +5762,11 @@
           "src/shared/python/sidekick/tests/process_calculators/test_syngas_water_calculator.py",
           "src/shared/python/sidekick/tests/test_hypothesis_calculators.py",
           "src/shared/python/sidekick/tests/test_syngas_water_calculator.py",
+          "tests/shared/python/process_calculators/test_syngas_water_overflow.py",
           "tests/shared/python/process_calculators/test_water_vapor_pressure_shared.py"
         ],
         "unit_mentions": [
           "MPa",
-          "Nm",
           "Pa",
           "bar",
           "g",
@@ -5928,6 +5929,7 @@
           }
         ],
         "test_paths": [
+          "tests/shared/python/process_calculators/test_syngas_water_overflow.py",
           "tests/shared/python/process_calculators/test_water_vapor_pressure.py",
           "tests/shared/python/process_calculators/test_water_vapor_pressure_shared.py"
         ],

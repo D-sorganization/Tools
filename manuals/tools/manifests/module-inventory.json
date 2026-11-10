@@ -609,7 +609,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-ai.json"
     },
     {
-      "content_sha256_lf": "327dbfd3bf3f37747907a336c868c67ee978b6610876dc57983c553c1a683df2",
+      "content_sha256_lf": "29e2b25ff93298e227b46ee517badb4c8317f70bcea706400510ae16a01d4fb2",
       "entry_count": 37,
       "package": "src/shared/python/calc_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-calc-backend.json"
@@ -795,7 +795,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-persistence.json"
     },
     {
-      "content_sha256_lf": "ed200c0491576da2606d7e88470c7f89620e9b5fc3bd5da33b897c8d83fb84a7",
+      "content_sha256_lf": "8fad1659308dbe18a0002a01831a52c74e0885835197113a244fb8a32afb6c22",
       "entry_count": 59,
       "package": "src/shared/python/sidekick/process_calculators",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-process-calculators.json"

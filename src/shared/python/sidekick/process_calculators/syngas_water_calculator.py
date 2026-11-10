@@ -14,12 +14,13 @@ import logging  # noqa: E402
 import math  # noqa: E402
 from dataclasses import dataclass, field  # noqa: E402
 from datetime import datetime  # noqa: E402
-from typing import Any  # noqa: E402
+from typing import Any, Final  # noqa: E402
 
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
 
 from shared.python.contracts import require, require_positive  # noqa: E402
+from shared.python.sidekick.utils.unit_constants import R_UNIVERSAL  # noqa: E402
 
 from .constants import (  # noqa: E402
     ANTOINE_WATER_A,
@@ -32,12 +33,10 @@ from .constants import (  # noqa: E402
     CELSIUS_TO_KELVIN_OFFSET,
     IAPWS_COEFFICIENTS,
     IAPWS_CRITICAL_TEMP,
-    KG_M3_TO_LB_FT3,
     MW_SYNGAS_TYPICAL_GMOL,
     MW_WATER_GMOL,
     NORMAL_PRESSURE_PA,
     NORMAL_TEMPERATURE_K,
-    R_GAS_DENSITY,
     WATER_VAPOR_A,
     WATER_VAPOR_B,
     WATER_VAPOR_C,
@@ -51,6 +50,9 @@ from .water_vapor_pressure import (  # noqa: E402
     magnus_pressure_pa,
     safe_exp,
 )
+
+STANDARD_BASIS: Final[str] = "60F_14.696psia"
+STANDARD_MOLAR_VOLUME_SCF_LBMOL: Final[float] = 379.49
 
 __all__ = [
     "SYNGAS_PRESETS",
@@ -136,6 +138,77 @@ class SyngasComposition:
         )
 
 
+@dataclass(frozen=True)
+class WaterContentUnits:
+    """Water content across engineering unit systems."""
+
+    ppmv: float
+    g_m3: float
+    mg_nm3: float
+    lb_mmscf: float
+    standard_basis: str = STANDARD_BASIS
+
+    def to_dict(self) -> dict[str, Any]:
+        """Convert to dictionary."""
+        return {
+            "ppmv": self.ppmv,
+            "g_m3": self.g_m3,
+            "mg_nm3": self.mg_nm3,
+            "lb_mmscf": self.lb_mmscf,
+            "standard_basis": self.standard_basis,
+        }
+
+
+def water_content_units(
+    y_water: float,
+    p_pa: float,
+    t_k: float,
+    mw_water: float = MW_WATER_GMOL,
+) -> WaterContentUnits:
+    """Convert water mole fraction to various engineering unit systems.
+
+    Physics & Unit Formulas (#6004):
+    - ppmv = y_water * 1e6
+    - water_content_g_m3 = (y_water * p_pa * mw_water) / (R_UNIVERSAL * t_k)
+    - water_content_mg_nm3 = (y_water * NORMAL_PRESSURE_PA * mw_water)
+      / (R_UNIVERSAL * NORMAL_TEMPERATURE_K) * 1000.0
+    - water_content_lb_mmscf = ppmv * mw_water / STANDARD_MOLAR_VOLUME_SCF_LBMOL
+      (on the 60F_14.696psia standard gas molar volume basis 379.49 scf/lbmol)
+    """
+    if not (
+        isinstance(y_water, (int, float))
+        and math.isfinite(y_water)
+        and 0.0 <= y_water <= 1.0
+    ):
+        raise ValueError("y_water must be a finite float between 0.0 and 1.0")
+    if not (isinstance(p_pa, (int, float)) and math.isfinite(p_pa) and p_pa > 0.0):
+        raise ValueError("p_pa must be a positive finite float")
+    if not (isinstance(t_k, (int, float)) and math.isfinite(t_k) and t_k > 0.0):
+        raise ValueError("t_k must be a positive finite float")
+    if not (
+        isinstance(mw_water, (int, float))
+        and math.isfinite(mw_water)
+        and mw_water > 0.0
+    ):
+        raise ValueError("mw_water must be a positive finite float")
+
+    ppmv = y_water * 1e6
+    g_m3 = (y_water * p_pa * mw_water) / (R_UNIVERSAL * t_k)
+    mg_nm3 = (
+        (y_water * NORMAL_PRESSURE_PA * mw_water)
+        / (R_UNIVERSAL * NORMAL_TEMPERATURE_K)
+        * 1000.0
+    )
+    lb_mmscf = ppmv * mw_water / STANDARD_MOLAR_VOLUME_SCF_LBMOL
+    return WaterContentUnits(
+        ppmv=ppmv,
+        g_m3=g_m3,
+        mg_nm3=mg_nm3,
+        lb_mmscf=lb_mmscf,
+        standard_basis=STANDARD_BASIS,
+    )
+
+
 @dataclass
 class WaterContentResult:
     """Comprehensive water content calculation results"""
@@ -167,6 +240,7 @@ class WaterContentResult:
 
     # Additional info
     calculation_method: str
+    standard_basis: str = STANDARD_BASIS
     timestamp: datetime = field(default_factory=datetime.now)
     warnings: list[str] = field(default_factory=list)
 
@@ -190,6 +264,7 @@ class WaterContentResult:
                 "water_content_ppmv": self.water_content_ppmv,
                 "water_content_g_per_m3": self.water_content_g_per_m3,
                 "water_content_lb_per_mmscf": self.water_content_lb_per_mmscf,
+                "standard_basis": self.standard_basis,
                 "dew_point_c": self.dew_point_c,
                 "dew_point_margin_c": self.dew_point_margin_c,
             },
@@ -198,6 +273,7 @@ class WaterContentResult:
                 "bar": self.vapor_pressure_bar,
             },
             "method": self.calculation_method,
+            "standard_basis": self.standard_basis,
             "warnings": self.warnings,
         }
 
@@ -307,11 +383,13 @@ class SyngasWaterCalculator:
 
     def _antoine_equation(self, temperature_c: float) -> float:
         """Antoine equation for vapor pressure (delegates to shared kernel)."""
-        return antoine_pressure_pa(
-            self.antoine_constants["A"],
-            self.antoine_constants["B"],
-            self.antoine_constants["C"],
-            temperature_c,
+        return float(
+            antoine_pressure_pa(
+                self.antoine_constants["A"],
+                self.antoine_constants["B"],
+                self.antoine_constants["C"],
+                temperature_c,
+            )
         )
 
     def _buck_equation(self, temperature_c: float) -> float:
@@ -334,7 +412,7 @@ class SyngasWaterCalculator:
         else:
             # Below freezing
             a, b, c, d = WATER_VAPOR_A, WATER_VAPOR_B, WATER_VAPOR_C, WATER_VAPOR_D
-        return buck_pressure_pa(a, b, c, d, temperature_c)
+        return float(buck_pressure_pa(a, b, c, d, temperature_c))
 
     def _iapws_equation(self, temperature_c: float) -> float:
         """Calculate vapor pressure using IAPWS-IF97 formulation.
@@ -352,11 +430,11 @@ class SyngasWaterCalculator:
         Raises:
             ValueError: If temperature is outside valid range (0.01°C to 373.946°C)
         """
-        return iapws_pressure_pa(temperature_c)
+        return float(iapws_pressure_pa(temperature_c))
 
     def _magnus_equation(self, temperature_c: float) -> float:
         """Magnus equation for vapor pressure (very accurate for 0-100°C)."""
-        return magnus_pressure_pa(temperature_c)
+        return float(magnus_pressure_pa(temperature_c))
 
     def _init_vapor_pressure_table(self) -> None:
         """Init Vapor Pressure Table method."""
@@ -508,9 +586,10 @@ class SyngasWaterCalculator:
 
         # Convert to various unit systems
         units = self._convert_water_content_units(
-            y_water,
-            vapor_pressure_pa,
-            temperature_k,
+            y_water=y_water,
+            vapor_pressure_pa=vapor_pressure_pa,
+            temperature_k=temperature_k,
+            pressure_pa=pressure_pa,
         )
 
         # Calculate dew point
@@ -538,14 +617,15 @@ class SyngasWaterCalculator:
             saturation_temperature_c=temperature_c,
             mole_fraction_water=y_water,
             mass_fraction_water=x_water,
-            water_content_g_per_m3=units["g_m3"],
-            water_content_mg_per_nm3=units["mg_nm3"],
-            water_content_ppmv=units["ppmv"],
-            water_content_lb_per_mmscf=units["lb_mmscf"],
+            water_content_g_per_m3=float(units["g_m3"]),
+            water_content_mg_per_nm3=float(units["mg_nm3"]),
+            water_content_ppmv=float(units["ppmv"]),
+            water_content_lb_per_mmscf=float(units["lb_mmscf"]),
             dew_point_c=dew_point_c,
             dew_point_margin_c=dew_point_margin_c,
             relative_humidity=relative_humidity,
             calculation_method=method_used,
+            standard_basis=str(units.get("standard_basis", STANDARD_BASIS)),
             warnings=warnings,
         )
 
@@ -554,35 +634,30 @@ class SyngasWaterCalculator:
         y_water: float,
         vapor_pressure_pa: float,
         temperature_k: float,
-    ) -> dict[str, float]:
+        pressure_pa: float | None = None,
+    ) -> dict[str, Any]:
         """Convert water mole fraction to various engineering unit systems."""
-        # Water content at actual conditions (g/m³)
         if y_water is None:
             raise ValueError("y_water must be provided")
-        water_content_g_m3 = (
-            vapor_pressure_pa * self.mw_water / (R_GAS_DENSITY * temperature_k)
+        p_pa = (
+            pressure_pa
+            if pressure_pa is not None
+            else (
+                (vapor_pressure_pa / y_water) if y_water > 0.0 else NORMAL_PRESSURE_PA
+            )
         )
-
-        # Water content at normal conditions (mg/Nm³) — 0°C, 1.01325 bar
-        water_content_mg_nm3 = (
-            y_water
-            * self.mw_water
-            * NORMAL_PRESSURE_PA
-            / (R_GAS_DENSITY * NORMAL_TEMPERATURE_K)
-            * 1e6
+        u = water_content_units(
+            y_water=y_water,
+            p_pa=p_pa,
+            t_k=temperature_k,
+            mw_water=self.mw_water,
         )
-
-        # Parts per million by volume
-        water_content_ppmv = y_water * 1e6
-
-        # Pounds per million standard cubic feet (US units) — 60°F, 14.696 psia
-        water_content_lb_mmscf = water_content_mg_nm3 * KG_M3_TO_LB_FT3 / 1000
-
         return {
-            "g_m3": water_content_g_m3,
-            "mg_nm3": water_content_mg_nm3,
-            "ppmv": water_content_ppmv,
-            "lb_mmscf": water_content_lb_mmscf,
+            "g_m3": u.g_m3,
+            "mg_nm3": u.mg_nm3,
+            "ppmv": u.ppmv,
+            "lb_mmscf": u.lb_mmscf,
+            "standard_basis": u.standard_basis,
         }
 
     def _calculate_mixture_mw(self, composition: SyngasComposition) -> float:
