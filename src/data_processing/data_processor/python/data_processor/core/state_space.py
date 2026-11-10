@@ -114,7 +114,7 @@ class StateSpaceResult:
     mae: float = 0.0
 
     # Convergence
-    converged: bool = True
+    converged: bool = False
     n_iterations: int = 0
 
 

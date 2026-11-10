@@ -746,10 +746,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 1862,
+      "bytes_lf": 1833,
       "classification": "calculation",
       "classification_basis": "path-marker:solver",
-      "content_sha256_lf": "069e30199939ff94d786239774d344e6370862ae59754c1c3fa5c37bb177ca06",
+      "content_sha256_lf": "8702cb108d232c119f8789194e265b550b1795bdc630cb66212af04234addf30",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-CONTRACTS-ODE-SOLVER-PY-57F43494A90E",
       "language": "python",
@@ -809,7 +809,8 @@
           "src/shared/python/sidekick/tests/process_calculators/test_ode_solver.py",
           "src/shared/python/sidekick/tests/test_ode_solver.py",
           "tests/contract/test_calc_backend_contract_surface.py",
-          "tests/shared/python/process_calculators/test_ode_solver.py"
+          "tests/shared/python/process_calculators/test_ode_solver.py",
+          "tests/unit/test_result_default_false_oracles.py"
         ],
         "unit_mentions": [
           "g"
@@ -2025,10 +2026,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 4293,
+      "bytes_lf": 4365,
       "classification": "calculation",
       "classification_basis": "path-marker:solver",
-      "content_sha256_lf": "12e380ed3b60b7d6db39ae34e9a48f4637b9db56f2820005623757148305ee65",
+      "content_sha256_lf": "5f4bfeebe3fe0e1abb3fa9417ef84f41448be0bfc55316ef095a66e39cad0d84",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-ODE-SOLVER-PY-B4A413C51C57",
       "language": "python",
@@ -2077,7 +2078,8 @@
           "src/shared/python/sidekick/tests/process_calculators/test_ode_solver.py",
           "src/shared/python/sidekick/tests/test_ode_solver.py",
           "tests/shared/python/calc_backend/test_ode_solver_guards.py",
-          "tests/shared/python/process_calculators/test_ode_solver.py"
+          "tests/shared/python/process_calculators/test_ode_solver.py",
+          "tests/unit/test_result_default_false_oracles.py"
         ],
         "unit_mentions": [],
         "validation_paths": []

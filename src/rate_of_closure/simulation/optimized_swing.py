@@ -50,7 +50,7 @@ class OptimizedSwingResult:
     joint_positions_m: np.ndarray | None = None
     joint_ids: tuple[str, ...] | None = None
     joint_torques_nm: np.ndarray | None = None
-    success: bool = True
+    success: bool = False
 
     def __post_init__(self) -> None:
         times = np.asarray(self.time_s, dtype=float)
@@ -154,7 +154,7 @@ class OptimizedSwingSource:
                 joint_positions_m=getattr(result, "joint_positions_m", None),
                 joint_ids=getattr(result, "joint_ids", None),
                 joint_torques_nm=getattr(result, "joint_torques_nm", None),
-                success=bool(getattr(result, "success", True)),
+                success=bool(getattr(result, "success", False)),
             )
         self._result = result
         require(

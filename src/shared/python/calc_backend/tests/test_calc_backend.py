@@ -867,8 +867,8 @@ class TestODEContracts:
                 )
             ],
         )
-        assert resp.success is True
-        assert "computed" in resp.message
+        assert resp.success is False
+        assert resp.message == ""
 
     def test_thermal_profile_request_defaults(self) -> Any:
         from calc_backend.contracts.thermal_profile import ThermalProfileRequest

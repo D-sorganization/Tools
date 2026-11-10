@@ -483,6 +483,7 @@
           "tests/unit/sidekick/test_runtime_tab_settings.py",
           "tests/unit/sidekick/test_sidekick_ux_hardening.py",
           "tests/unit/test_contracts.py",
+          "tests/unit/test_result_default_false_oracles.py",
           "tests/vessel_drafter/test_dbc_lod.py"
         ],
         "unit_mentions": [],
