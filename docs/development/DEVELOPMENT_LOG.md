@@ -1587,6 +1587,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#6003 · Add Canonical Lifecycle Contract ADR, Shared.Python.Lifecycle Kernel, and Syngas Water Boolean Type Checks
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6003
+- **Branch:** merged via #6012
+- **PR:** #6012
+- **Paths:** see #6012
+- **Started:** 2026-11-10
+- **Last verified:** 2026-11-10 (`310a4e67`; collated from changes/6003-lifecycle-kernel.md)
+- **Summary:** Add canonical lifecycle contract ADR, shared.python.lifecycle kernel, and syngas water boolean type checks
+- **Next step:** Shipped in PR #6012.
+
 ### DL-#6004 · Fix Syngas Water Unit Conversions in G/M3 and Lb/MMscf, Router Fallback, Standard Basis, and Strict Finite Input Validation
 
 - **State:** shipped
