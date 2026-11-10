@@ -9,6 +9,7 @@ starts and selection of the best result.  Separating them keeps
 from __future__ import annotations
 
 import logging
+import math
 from collections.abc import Callable
 from concurrent.futures import FIRST_COMPLETED, Future, ThreadPoolExecutor, wait
 from typing import Any, Protocol
@@ -148,13 +149,15 @@ def _parse_start_entry(
 ) -> tuple[Any, float, bool, int, int | None]:
     res = item[0] if isinstance(item, (tuple, list)) else item
     evals = int(item[1]) if isinstance(item, (tuple, list)) and len(item) > 1 and not isinstance(item[1], bool) else 0
-    if is_feasible_fn is not None:
+    cost = float(getattr(res, "fun", getattr(res, "cost", 0.0)))
+    if not math.isfinite(cost):
+        feasible = False
+    elif is_feasible_fn is not None:
         feasible = bool(is_feasible_fn(res))
     elif isinstance(item, (tuple, list)) and len(item) >= 3 and isinstance(item[2], bool):
         feasible = item[2]
     else:
         feasible = bool(getattr(res, "feasible", getattr(res, "success", True)))
-    cost = float(getattr(res, "fun", getattr(res, "cost", 0.0)))
     seed = item[3] if isinstance(item, (tuple, list)) and len(item) >= 4 and isinstance(item[3], int) else getattr(res, "seed", idx)
     return res, cost, feasible, evals, seed
 
@@ -176,7 +179,14 @@ def select_best_result(
         raise ValueError("select_best_result requires at least one result")
 
     parsed = [_parse_start_entry(item, idx, is_feasible_fn) for idx, item in enumerate(results)]
-    best_entry = min(parsed, key=lambda e: (not e[2], e[1]))
+    best_entry = min(
+        parsed,
+        key=lambda e: (
+            not e[2],
+            not math.isfinite(e[1]),
+            e[1] if math.isfinite(e[1]) else float("inf"),
+        ),
+    )
     total_evals = sum(e[3] for e in parsed)
     n_starts_feasible = sum(1 for e in parsed if e[2])
 

@@ -388,8 +388,7 @@ class TrajectoryOptimizer:
                 mode="single",
             )
             raise CancelledError("Optimization cancelled by user")
-        result = self._package_results(out, self._progress.elapsed(), best_start_seed=0)
-        result.n_starts_feasible = 1 if result.success else 0
+        result = self._package_results(out, self._progress.elapsed(), selection=None)
         self._record_result_metrics(result, mode="single")
         return result
 
@@ -420,8 +419,7 @@ class TrajectoryOptimizer:
             best_res,
             elapsed,
             total_evals,
-            best_start_seed=getattr(selection, "best_seed", None),
-            n_starts_feasible=getattr(selection, "n_starts_feasible", 0),
+            selection=selection,
         )
         self._record_result_metrics(result, mode="parallel")
         return result
@@ -455,8 +453,7 @@ class TrajectoryOptimizer:
         res: Any,
         elapsed: float = 0.0,
         n_evals: int = 0,
-        best_start_seed: int | None = None,
-        n_starts_feasible: int = 0,
+        selection: Any = None,
     ) -> OptimizationResult:
         """Evaluate trajectories, assess feasibility, and build the result."""
         q, qd, qdd, torques, power, com_traj, bar_traj, com_x = evaluate_solution(
@@ -492,6 +489,6 @@ class TrajectoryOptimizer:
         return populate_result_metadata(
             result,
             res,
-            best_start_seed=best_start_seed,
-            n_starts_feasible=n_starts_feasible,
+            best_start_seed=0 if selection is None else getattr(selection, "best_seed", None),
+            n_starts_feasible=(1 if success else 0) if selection is None else getattr(selection, "n_starts_feasible", 0),
         )

@@ -188,8 +188,12 @@ def _validate_provenance_metadata(meta_dict: dict[str, Any]) -> None:
     for k, exp in (("solver_message", str), ("backend", str), ("n_iterations", int), ("n_starts_feasible", int)):
         if k in meta_dict:
             _require_type(meta_dict[k], exp, f"metadata.{k}")
+            if exp is int and meta_dict[k] < 0:
+                raise InvalidStateFileError(f"field 'metadata.{k}': must be >= 0")
     if meta_dict.get("best_start_seed") is not None:
         _require_type(meta_dict["best_start_seed"], int, "metadata.best_start_seed")
+        if meta_dict["best_start_seed"] < 0:
+            raise InvalidStateFileError("field 'metadata.best_start_seed': must be >= 0")
 
 
 def _validate_metadata_block(metadata: Any, context: str) -> None:

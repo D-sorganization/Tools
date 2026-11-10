@@ -15,6 +15,7 @@ from movement_optimizer.persistence import (
     SCHEMA_VERSION,
     InvalidStateFileError,
     _dict_to_result,
+    _validate_provenance_metadata,
     load_app_state,
     load_solution,
     save_app_state,
@@ -84,6 +85,8 @@ class TestSaveSolution:
 
         v1 = _dict_to_result({"arrays": loaded["arrays"], "metadata": {"success": True, "cost": 30.0, "com_horizontal_range_cm": 2.0}})
         assert v1.status == OptimizationStatus.CONVERGED and v1.best_start_seed is None and v1.backend == "SLSQP"
+        with pytest.raises(InvalidStateFileError, match="must be >= 0"):
+            _validate_provenance_metadata({"n_iterations": -1})
 
     def test_round_trip_preserves_arrays(self, tmp_path):
         result = make_test_result()

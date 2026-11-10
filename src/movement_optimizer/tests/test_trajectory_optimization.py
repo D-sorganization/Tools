@@ -292,10 +292,13 @@ def _make_mock_res(**kw: object) -> _MockOptRes:
 
 
 class TestConvergenceAndFeasibilitySelection:
-    def test_select_best_result_prioritizes_feasibility_over_cost(self) -> None:
+    def test_select_best_result_feasibility_and_nan_ranking(self) -> None:
         inf, feas = _make_mock_res(fun=1.0, feasible=False), _make_mock_res(fun=2.0, feasible=True)
         best, total_evals = select_best_result([(inf, 50), (feas, 60)])
         assert best is feas and total_evals == 110
+        nan_res, finite_res = _make_mock_res(fun=float("nan"), feasible=True), _make_mock_res(fun=10.0, feasible=True)
+        sel = select_best_result([(nan_res, 10, True, 0), (finite_res, 20, True, 1)])
+        assert sel[0] is finite_res and sel[1] == 30 and sel.best_seed == 1 and sel.n_starts_feasible == 1
 
     def test_optimization_status_enum_values(self) -> None:
         for name in ("CONVERGED", "ITERATION_LIMIT", "STALLED", "INFEASIBLE", "NUMERICAL_FAILURE"):
