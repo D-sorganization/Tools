@@ -12,14 +12,14 @@ testable and keeps the class focused on orchestration.
 from __future__ import annotations
 
 import logging
-from typing import Any, Protocol
+from typing import Protocol
 
 import numpy as np
 from numpy.typing import NDArray
 
 from ..backend import PhysicsBackend
 from ..constants import COM_FEASIBILITY_TOL_M, JOINT_FEASIBILITY_TOL_RAD
-from .result import OptimizationResult, OptimizationStatus
+from .result import OptimizationResult
 
 
 class _OptimizeResult(Protocol):
@@ -198,12 +198,6 @@ def build_result_object(
     n_evals: int,
     clubhead_poses: NDArray[np.float64] | None = None,
     clubhead_twists: NDArray[np.float64] | None = None,
-    status: OptimizationStatus = OptimizationStatus.CONVERGED,
-    solver_message: str = "",
-    n_iterations: int = 0,
-    best_start_seed: int | None = None,
-    n_starts_feasible: int = 0,
-    backend: str = "SLSQP",
 ) -> OptimizationResult:
     """Assemble the final OptimizationResult dataclass from solver outputs.
 
@@ -230,99 +224,4 @@ def build_result_object(
         n_joint_limit_violations=n_joint_limit_violations,
         clubhead_poses=clubhead_poses,
         clubhead_twists=clubhead_twists,
-        status=status,
-        solver_message=solver_message,
-        n_iterations=n_iterations,
-        best_start_seed=best_start_seed,
-        n_starts_feasible=n_starts_feasible,
-        backend=backend,
-    )
-
-
-def derive_optimization_status(
-    res: Any,
-    cost_finite: bool,
-    is_feasible: bool,
-) -> OptimizationStatus:
-    """Derive OptimizationStatus from SciPy result flags and physical feasibility."""
-    if not cost_finite:
-        return OptimizationStatus.NUMERICAL_FAILURE
-    if not is_feasible:
-        return OptimizationStatus.INFEASIBLE
-
-    scipy_success = bool(getattr(res, "success", True))
-    if not scipy_success:
-        status_code = getattr(res, "status", None)
-        msg = str(getattr(res, "message", "")).lower()
-        if (
-            status_code == 9
-            or "iteration limit" in msg
-            or ("iteration" in msg and ("maximum" in msg or "exceed" in msg))
-        ):
-            return OptimizationStatus.ITERATION_LIMIT
-        return OptimizationStatus.STALLED
-
-    return OptimizationStatus.CONVERGED
-
-
-_derive_optimization_status = derive_optimization_status
-
-
-def package_optimization_result(
-    opt: Any,
-    res: Any,
-    elapsed: float = 0.0,
-    n_evals: int = 0,
-    best_start_seed: int | None = None,
-    n_starts_feasible: int = 0,
-) -> OptimizationResult:
-    """Evaluate trajectories, assess feasibility, and build the result object."""
-    q, qd, qdd, torques, power, com_traj, bar_traj, com_x = evaluate_solution(
-        res,
-        opt.dynamics,
-        opt.exercise_type,
-        opt.bar_mass,
-        opt.build_splines,
-        opt.eval_trajectory,
-    )
-    cost_val = float(res.fun)
-    cost_finite = cost_val < float("inf") and not np.isnan(cost_val)
-    success, n_viol = opt._check_solution_feasibility(res, q, com_x)
-    status = derive_optimization_status(res, cost_finite, success)
-    solver_msg = str(getattr(res, "message", ""))
-    n_iters = int(getattr(res, "nit", 0))
-
-    clubhead_poses: NDArray[np.float64] | None = None
-    clubhead_twists: NDArray[np.float64] | None = None
-    if hasattr(opt.dynamics, "clubhead_pose"):
-        clubhead_poses = np.empty((len(opt.t_eval), 4, 4), dtype=np.float64)
-        for n in range(len(opt.t_eval)):
-            clubhead_poses[n] = opt.dynamics.clubhead_pose(q[n])
-    if hasattr(opt.dynamics, "clubhead_twist"):
-        clubhead_twists = np.empty((len(opt.t_eval), 6), dtype=np.float64)
-        for n in range(len(opt.t_eval)):
-            clubhead_twists[n] = opt.dynamics.clubhead_twist(q[n], qd[n])
-    return build_result_object(
-        t_eval=opt.t_eval,
-        res=res,
-        q=q,
-        qd=qd,
-        qdd=qdd,
-        torques=torques,
-        power=power,
-        com_traj=com_traj,
-        bar_traj=bar_traj,
-        com_x=com_x,
-        success=success,
-        n_joint_limit_violations=n_viol,
-        elapsed=elapsed,
-        n_evals=n_evals or getattr(opt._progress, "iteration_count", 0),
-        clubhead_poses=clubhead_poses,
-        clubhead_twists=clubhead_twists,
-        status=status,
-        solver_message=solver_msg,
-        n_iterations=n_iters,
-        best_start_seed=best_start_seed,
-        n_starts_feasible=n_starts_feasible,
-        backend="SLSQP",
     )

@@ -348,7 +348,6 @@
         "public_routes": [],
         "public_surfaces": [],
         "test_paths": [
-          "src/movement_optimizer/tests/test_issue_6005_convergence_and_feasibility.py",
           "src/movement_optimizer/tests/test_scipy_dependency_contract.py",
           "src/p1am_control_system/backend/tests/test_asset_health.py",
           "src/p1am_control_system/backend/tests/test_safety_state_machine.py",

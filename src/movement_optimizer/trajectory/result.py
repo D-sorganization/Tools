@@ -6,7 +6,9 @@ from __future__ import annotations
 import warnings
 from dataclasses import dataclass, field
 from enum import Enum
+from typing import Any
 
+import numpy as np
 from numpy.typing import NDArray
 
 
@@ -18,6 +20,47 @@ class OptimizationStatus(str, Enum):
     STALLED = "STALLED"
     INFEASIBLE = "INFEASIBLE"
     NUMERICAL_FAILURE = "NUMERICAL_FAILURE"
+
+
+def derive_optimization_status(
+    res: Any, cost_finite: bool, is_feasible: bool
+) -> OptimizationStatus:
+    """Derive OptimizationStatus from SciPy result flags and physical feasibility."""
+    if not cost_finite:
+        return OptimizationStatus.NUMERICAL_FAILURE
+    if not is_feasible:
+        return OptimizationStatus.INFEASIBLE
+    if not getattr(res, "success", True):
+        msg = str(getattr(res, "message", "")).lower()
+        if getattr(res, "status", None) == 9 or "iteration limit" in msg or ("iteration" in msg and ("maximum" in msg or "exceed" in msg)):
+            return OptimizationStatus.ITERATION_LIMIT
+        return OptimizationStatus.STALLED
+    return OptimizationStatus.CONVERGED
+
+
+def populate_result_metadata(
+    result: OptimizationResult, res: Any, best_start_seed: int | None = None, n_starts_feasible: int = 0
+) -> OptimizationResult:
+    """Attach status, solver message, iterations, and seed provenance to result."""
+    cost_val = float(getattr(res, "fun", result.cost))
+    cost_finite = cost_val < float("inf") and not np.isnan(cost_val)
+    result.status = derive_optimization_status(res, cost_finite, result.success)
+    result.solver_message = str(getattr(res, "message", ""))
+    result.n_iterations = int(getattr(res, "nit", 0))
+    result.best_start_seed = best_start_seed
+    result.n_starts_feasible = n_starts_feasible
+    result.backend = "SLSQP"
+    return result
+
+
+def extract_clubhead_kinematics(
+    dynamics: Any, t_eval: NDArray, q: NDArray, qd: NDArray
+) -> tuple[NDArray | None, NDArray | None]:
+    """Extract clubhead poses and twists if supported by dynamics."""
+    n = len(t_eval)
+    poses = np.array([dynamics.clubhead_pose(q[i]) for i in range(n)], dtype=np.float64) if hasattr(dynamics, "clubhead_pose") else None
+    twists = np.array([dynamics.clubhead_twist(q[i], qd[i]) for i in range(n)], dtype=np.float64) if hasattr(dynamics, "clubhead_twist") else None
+    return poses, twists
 
 
 @dataclass
@@ -33,10 +76,8 @@ class OptimizationResult:
         power: Per-joint mechanical power, shape ``(N, n_dof)`` in W.
         com: Whole-body COM trajectory ``(x, y)``, shape ``(N, 2)`` in m.
         bar: Barbell trajectory ``(x, y)``, shape ``(N, 2)`` in m.
-        success: True when all hard constraints (COM in inner BOS, joint
-            limits) are satisfied. During the deprecation transition period,
-            a DeprecationWarning is emitted if success is True while status
-            is not CONVERGED.
+        success: True when the optimiser converged and all hard
+            constraints (COM in inner BOS, joint limits) are satisfied.
         cost: Final scalar cost (lower is better).
         com_horizontal_range_cm: Peak-to-peak horizontal COM excursion.
         elapsed_s: Wall-clock seconds spent in :meth:`optimize`.

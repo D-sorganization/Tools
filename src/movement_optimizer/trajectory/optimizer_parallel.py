@@ -137,29 +137,17 @@ def run_parallel_starts(
         optimizer work performed by each submitted start.
     """
     with ThreadPoolExecutor(max_workers=n_workers) as pool:
-        pending: set[Future] = {pool.submit(run_single_fn, seed) for seed in range(n_starts)}
+        pending: set[Future] = {
+            pool.submit(run_single_fn, seed) for seed in range(n_starts)
+        }
         return collect_future_results(pending, cancel_check, record_progress)
 
 
 def _parse_start_entry(
-    item: Any,
-    idx: int,
-    is_feasible_fn: Callable[[Any], bool] | None = None,
+    item: Any, idx: int, is_feasible_fn: Callable[[Any], bool] | None = None
 ) -> tuple[Any, float, bool, int, int | None]:
-    """Parse start item into (res, cost, is_feasible, evals, seed)."""
-    if (
-        isinstance(item, (tuple, list))
-        and len(item) == 2
-        and isinstance(item[0], bool)
-        and isinstance(item[1], (int, float))
-    ):
-        return item[0], float(item[1]), item[0], 0, idx
     res = item[0] if isinstance(item, (tuple, list)) else item
-    evals = (
-        int(item[1])
-        if isinstance(item, (tuple, list)) and len(item) > 1 and not isinstance(item[1], bool)
-        else 0
-    )
+    evals = int(item[1]) if isinstance(item, (tuple, list)) and len(item) > 1 and not isinstance(item[1], bool) else 0
     if is_feasible_fn is not None:
         feasible = bool(is_feasible_fn(res))
     elif isinstance(item, (tuple, list)) and len(item) >= 3 and isinstance(item[2], bool):
@@ -167,11 +155,7 @@ def _parse_start_entry(
     else:
         feasible = bool(getattr(res, "feasible", getattr(res, "success", True)))
     cost = float(getattr(res, "fun", getattr(res, "cost", 0.0)))
-    seed = (
-        item[3]
-        if isinstance(item, (tuple, list)) and len(item) >= 4 and isinstance(item[3], int)
-        else getattr(res, "seed", idx)
-    )
+    seed = item[3] if isinstance(item, (tuple, list)) and len(item) >= 4 and isinstance(item[3], int) else getattr(res, "seed", idx)
     return res, cost, feasible, evals, seed
 
 

@@ -1100,7 +1100,6 @@
           "src/media_processing/audio_processor/matlab/audio_signal_processor/tests/test_fft_filters.m",
           "src/media_processing/video_processor/python/tests_video_processor/test_api.py",
           "src/media_processing/video_processor/python/tests_video_processor/test_logger_utils_mock.py",
-          "src/movement_optimizer/tests/test_issue_6005_convergence_and_feasibility.py",
           "src/movement_optimizer/tests/test_main_window.py",
           "src/multi_param_analysis/tests/test_multi_param_analysis_gui.py",
           "src/p1am_control_system/backend/tests/test_data_explorer_stats.py",

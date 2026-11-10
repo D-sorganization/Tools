@@ -34,10 +34,10 @@ from .optimizer_guess import (
     perturb_waypoints,
 )
 from .optimizer_packaging import (
+    build_result_object,
     check_com_feasibility,
     count_joint_limit_violations,
     evaluate_solution,
-    package_optimization_result,
 )
 from .optimizer_parallel import run_parallel_starts, select_best_result
 from .optimizer_progress import ProgressTracker, detect_stall
@@ -55,6 +55,8 @@ from .result import (
     CancelledError,
     OptimizationResult,
     ProgressReport,
+    extract_clubhead_kinematics,
+    populate_result_metadata,
 )
 from .tuning import (
     BALANCE_CENTER_WEIGHT,
@@ -118,28 +120,20 @@ class TrajectoryOptimizer:
             q_start: Initial joint-angle vector, shape ``(n_dof,)`` in rad.
             q_end: Final joint-angle vector, shape ``(n_dof,)`` in rad.
             q_bounds: Per-joint ``(lo, hi)`` limits, shape ``(n_dof, 2)``.
-            q_via: Optional intermediate waypoint inserted at the time-grid
-                midpoint, or a :class:`ViaSchedule` of ordered via points each
-                pinned at its own time fraction (multi-phase lifts such as the
-                snatch). Defaults to None.
+            q_via: Optional intermediate waypoint or :class:`ViaSchedule`. Defaults to None.
             duration: Movement duration in seconds.
-            n_waypoints: Number of free interior control points (must be
-                >= 4).
+            n_waypoints: Number of free interior control points (>= 4).
             n_eval: Number of evaluation samples on the dense grid.
             jerk_weight: Weight on integrated squared jerk.
             torque_rate_weight: Weight on integrated squared torque rate.
             endpoint_weight: Weight on endpoint velocity/acceleration damping.
-            smoothness: Global multiplier applied to the three
-                smoothness weights above.
+            smoothness: Global multiplier applied to smoothness weights.
             n_starts: Number of multi-start SLSQP runs to launch.
-            progress_cb: Optional callback receiving :class:`ProgressReport`
-                snapshots.
-            cancel_event: Optional event; setting it terminates
-                :meth:`optimize` with :class:`CancelledError`.
+            progress_cb: Optional callback receiving :class:`ProgressReport`.
+            cancel_event: Optional event terminating :meth:`optimize`.
 
         Raises:
-            ValueError: If ``n_waypoints < 4`` or ``q_bounds`` has the
-                wrong shape.
+            ValueError: If ``n_waypoints < 4`` or ``q_bounds`` has the wrong shape.
         """
         if n_waypoints < 4:
             raise ValueError("need >= 4 waypoints")
@@ -330,10 +324,9 @@ class TrajectoryOptimizer:
         )
         if out is None:
             return None
-        res, n_evals = out
         with contextlib.suppress(AttributeError, TypeError):
-            res.seed = seed
-        return res, n_evals, seed
+            out[0].seed = seed
+        return out[0], out[1], seed
 
     def optimize(self) -> OptimizationResult:
         """Run parallel multi-start SLSQP and return the best result.
@@ -407,15 +400,8 @@ class TrajectoryOptimizer:
 
         def _is_res_feasible(r: Any) -> bool:
             try:
-                q, _, _, _, _, _, _, com_x = evaluate_solution(
-                    r,
-                    self.dynamics,
-                    self.exercise_type,
-                    self.bar_mass,
-                    self.build_splines,
-                    self.eval_trajectory,
-                )
-                return self._check_solution_feasibility(r, q, com_x)[0]
+                args = (self.dynamics, self.exercise_type, self.bar_mass, self.build_splines, self.eval_trajectory)
+                return self._check_solution_feasibility(r, *evaluate_solution(r, *args)[::7])[0]
             except Exception:
                 return False
 
@@ -454,23 +440,7 @@ class TrajectoryOptimizer:
         metrics.observe("trajectory_optimization_evaluations", result.n_evals, **labels)
 
     def _check_solution_feasibility(self, res: Any, q: NDArray, com_x: NDArray) -> tuple[bool, int]:
-        """Assess cost finiteness, COM bounds, and joint-limit violations.
-
-        SLSQP can report ``success`` while sitting on a point that the
-        re-evaluated spline pushes outside the hard constraints (inner-BOS
-        COM bound or joint limits).  A finite-cost-but-infeasible trajectory
-        must NOT be surfaced as a valid lift, so any constraint violation
-        (beyond the documented numerical tolerances) marks the result as
-        unsuccessful.
-
-        Args:
-            res: SciPy OptimizeResult (provides ``res.fun``).
-            q: Joint-angle trajectory, shape (N, 3).
-            com_x: Horizontal COM trajectory, shape (N,).
-
-        Returns:
-            ``(success, n_joint_limit_violations)``
-        """
+        """Assess cost finiteness, COM bounds, and joint-limit violations."""
         cost_val = float(res.fun)  # type: ignore[attr-defined]
         cost_finite = cost_val < float("inf") and not np.isnan(cost_val)
         com_in_bounds = check_com_feasibility(
@@ -489,11 +459,39 @@ class TrajectoryOptimizer:
         n_starts_feasible: int = 0,
     ) -> OptimizationResult:
         """Evaluate trajectories, assess feasibility, and build the result."""
-        return package_optimization_result(
-            self,
+        q, qd, qdd, torques, power, com_traj, bar_traj, com_x = evaluate_solution(
             res,
+            self.dynamics,
+            self.exercise_type,
+            self.bar_mass,
+            self.build_splines,
+            self.eval_trajectory,
+        )
+        success, n_viol = self._check_solution_feasibility(res, q, com_x)
+        clubhead_poses, clubhead_twists = extract_clubhead_kinematics(
+            self.dynamics, self.t_eval, q, qd
+        )
+        result = build_result_object(
+            t_eval=self.t_eval,
+            res=res,
+            q=q,
+            qd=qd,
+            qdd=qdd,
+            torques=torques,
+            power=power,
+            com_traj=com_traj,
+            bar_traj=bar_traj,
+            com_x=com_x,
+            success=success,
+            n_joint_limit_violations=n_viol,
             elapsed=elapsed,
-            n_evals=n_evals,
+            n_evals=n_evals or self._progress.iteration_count,
+            clubhead_poses=clubhead_poses,
+            clubhead_twists=clubhead_twists,
+        )
+        return populate_result_metadata(
+            result,
+            res,
             best_start_seed=best_start_seed,
             n_starts_feasible=n_starts_feasible,
         )
