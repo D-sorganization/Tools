@@ -6792,6 +6792,68 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 1285,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8d3f81471259669765224504e79b58f1335e35742ae1313516d6ce73878fd57b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-NOT-IMPLEMENTED-PAYLOAD-PY-5B0B84417918",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/not_implemented_payload.py",
+      "purpose": "Shared honest ``not_implemented`` verdict payloads for AI tools and agent control.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "NOT_IMPLEMENTED_STATUS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_RESERVED_VERDICT_KEYS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_not_implemented_payload",
+            "signature": "*, capability: str, message: str, **metadata: Any"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2312,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -9350,10 +9412,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 24094,
+      "bytes_lf": 24028,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0fc7a9824099376a1e5441fc8f64faa137196977d39a29f831499b1d43da53f2",
+      "content_sha256_lf": "854d84fae8060adc92df0593804223421e0449d776647b76a4648c82fc95fcfa",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-TOOLS-AGENT-CONTROL-PY-4218BF2AF4A2",
       "language": "python",
