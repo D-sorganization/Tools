@@ -11,7 +11,9 @@ import pytest
 
 from movement_optimizer.persistence import _dict_to_result, load_solution, save_solution
 from movement_optimizer.trajectory import OptimizationResult, OptimizationStatus
-from movement_optimizer.trajectory.optimizer import _derive_optimization_status
+from movement_optimizer.trajectory.optimizer_packaging import (
+    _derive_optimization_status,
+)
 from movement_optimizer.trajectory.optimizer_parallel import select_best_result
 
 from .conftest import make_test_result

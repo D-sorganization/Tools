@@ -111,7 +111,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "d57f817543e76a04447a630898582e220458d09e39d68490d0c3cf8846441e44",
+      "content_sha256_lf": "76666ec874a349c4304cda786cede0e35d515bb6e28ded94c417ad3d841ed059",
       "entry_count": 14,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "be6a523137729b779494277e2528e7b9c4ee359ce058dc46a499da370dcd951a",
+      "content_sha256_lf": "299e51fb122d4d9f735c8df94e752de92492969dd0be50dc6f3267440562b9d2",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -357,7 +357,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-model-generation.json"
     },
     {
-      "content_sha256_lf": "e4a0a2c11b5387874f558c8ec83a5460f00c85c299b6f67dc90c067cb39a6983",
+      "content_sha256_lf": "b34603f8b0eb4ce7a0918bee04e574f36157fe126001ca990cc827e71eaf2b12",
       "entry_count": 95,
       "package": "src/movement_optimizer",
       "path": "manuals/tools/manifests/module-inventory/entries-src-movement-optimizer.json"
@@ -597,7 +597,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "b4a1645374f1e1879216a730537abfe5cd33044f42f7f0a334a533ad9edf6692",
+      "content_sha256_lf": "6ad8b8f63f3f33bc6f31d3d2710319a9d0014ec6968fbd9b7b2abc01f3057278",
       "entry_count": 9,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"

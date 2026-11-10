@@ -34,10 +34,10 @@ from .optimizer_guess import (
     perturb_waypoints,
 )
 from .optimizer_packaging import (
-    build_result_object,
     check_com_feasibility,
     count_joint_limit_violations,
     evaluate_solution,
+    package_optimization_result,
 )
 from .optimizer_parallel import run_parallel_starts, select_best_result
 from .optimizer_progress import ProgressTracker, detect_stall
@@ -54,7 +54,6 @@ from .optimizer_via import (
 from .result import (
     CancelledError,
     OptimizationResult,
-    OptimizationStatus,
     ProgressReport,
 )
 from .tuning import (
@@ -69,36 +68,6 @@ from .tuning import (
 )
 
 logger = logging.getLogger(__name__)
-
-
-def _derive_optimization_status(
-    res: Any,
-    cost_finite: bool,
-    is_feasible: bool,
-) -> OptimizationStatus:
-    """Derive OptimizationStatus from SciPy result flags and physical feasibility.
-
-    Decision hierarchy:
-    1. Numerical failure (infinite or NaN cost).
-    2. Physical infeasibility (joint limit or COM balance violation).
-    3. Iteration limit (SciPy status 9 or iteration limit message).
-    4. Stalled (SciPy unconverged / other failure mode).
-    5. Converged (SciPy success and physical constraints satisfied).
-    """
-    if not cost_finite:
-        return OptimizationStatus.NUMERICAL_FAILURE
-    if not is_feasible:
-        return OptimizationStatus.INFEASIBLE
-
-    scipy_success = bool(getattr(res, "success", True))
-    if not scipy_success:
-        status_code = getattr(res, "status", None)
-        msg = str(getattr(res, "message", "")).lower()
-        if status_code == 9 or "iteration limit" in msg or ("iteration" in msg and ("maximum" in msg or "exceed" in msg)):
-            return OptimizationStatus.ITERATION_LIMIT
-        return OptimizationStatus.STALLED
-
-    return OptimizationStatus.CONVERGED
 
 
 class TrajectoryOptimizer:
@@ -446,8 +415,7 @@ class TrajectoryOptimizer:
                     self.build_splines,
                     self.eval_trajectory,
                 )
-                feasible, _ = self._check_solution_feasibility(r, q, com_x)
-                return feasible
+                return self._check_solution_feasibility(r, q, com_x)[0]
             except Exception:
                 return False
 
@@ -520,58 +488,12 @@ class TrajectoryOptimizer:
         best_start_seed: int | None = None,
         n_starts_feasible: int = 0,
     ) -> OptimizationResult:
-        """Evaluate trajectories, assess feasibility, and build the result.
-
-        Complexity:
-            O(N * D) time and memory to evaluate kinematics, dynamics, COM, and
-            result arrays for ``N`` samples and ``D`` degrees of freedom.
-        """
-        q, qd, qdd, torques, power, com_traj, bar_traj, com_x = evaluate_solution(
+        """Evaluate trajectories, assess feasibility, and build the result."""
+        return package_optimization_result(
+            self,
             res,
-            self.dynamics,
-            self.exercise_type,
-            self.bar_mass,
-            self.build_splines,
-            self.eval_trajectory,
-        )
-        cost_val = float(res.fun)  # type: ignore[attr-defined]
-        cost_finite = cost_val < float("inf") and not np.isnan(cost_val)
-        success, n_viol = self._check_solution_feasibility(res, q, com_x)
-        status = _derive_optimization_status(res, cost_finite, success)
-        solver_msg = str(getattr(res, "message", ""))
-        n_iters = int(getattr(res, "nit", 0))
-
-        clubhead_poses: NDArray[np.float64] | None = None
-        clubhead_twists: NDArray[np.float64] | None = None
-        if hasattr(self.dynamics, "clubhead_pose"):
-            clubhead_poses = np.empty((len(self.t_eval), 4, 4), dtype=np.float64)
-            for n in range(len(self.t_eval)):
-                clubhead_poses[n] = self.dynamics.clubhead_pose(q[n])
-        if hasattr(self.dynamics, "clubhead_twist"):
-            clubhead_twists = np.empty((len(self.t_eval), 6), dtype=np.float64)
-            for n in range(len(self.t_eval)):
-                clubhead_twists[n] = self.dynamics.clubhead_twist(q[n], qd[n])
-        return build_result_object(
-            t_eval=self.t_eval,
-            res=res,
-            q=q,
-            qd=qd,
-            qdd=qdd,
-            torques=torques,
-            power=power,
-            com_traj=com_traj,
-            bar_traj=bar_traj,
-            com_x=com_x,
-            success=success,
-            n_joint_limit_violations=n_viol,
             elapsed=elapsed,
-            n_evals=n_evals or self._progress.iteration_count,
-            clubhead_poses=clubhead_poses,
-            clubhead_twists=clubhead_twists,
-            status=status,
-            solver_message=solver_msg,
-            n_iterations=n_iters,
+            n_evals=n_evals,
             best_start_seed=best_start_seed,
             n_starts_feasible=n_starts_feasible,
-            backend="SLSQP",
         )

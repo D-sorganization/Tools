@@ -260,6 +260,7 @@
           "src/movement_optimizer/tests/test_import.py",
           "src/movement_optimizer/tests/test_issue_217_decompose.py",
           "src/movement_optimizer/tests/test_issue_222_decompose.py",
+          "src/movement_optimizer/tests/test_issue_6005_convergence_and_feasibility.py",
           "src/movement_optimizer/tests/test_main_window.py",
           "src/movement_optimizer/tests/test_observability_metrics.py",
           "src/movement_optimizer/tests/test_optimization_mixin.py",

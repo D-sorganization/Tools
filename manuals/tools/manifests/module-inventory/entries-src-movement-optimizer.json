@@ -5616,10 +5616,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 16780,
+      "bytes_lf": 18600,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "4169ceb4f4f2a708a9773dba7250333213b30ceb374df36d77346e669766817a",
+      "content_sha256_lf": "a5a9fd9185b4d15d0fa53c441d338e3381e77176be4a19cd1b6a4dec24bd6840",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-PERSISTENCE-PY-D56764B1C053",
       "language": "python",
@@ -5720,6 +5720,7 @@
         ],
         "test_paths": [
           "src/movement_optimizer/tests/test_import.py",
+          "src/movement_optimizer/tests/test_issue_6005_convergence_and_feasibility.py",
           "src/movement_optimizer/tests/test_persistence.py"
         ],
         "unit_mentions": [
@@ -6229,10 +6230,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 1640,
+      "bytes_lf": 1727,
       "classification": "calculation",
       "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "4108336b045f05e094b04e05e3a70bf88ee31c36f33e2695592930a197c83478",
+      "content_sha256_lf": "eb2930fcb3a02f8a588f6d9e444371c4e9d3ad20ff5ebae6f2773c3d136abc19",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-TRAJECTORY-INIT-PY-BE32D5D6A3A7",
       "language": "python",
@@ -6284,6 +6285,11 @@
           {
             "kind": "re-export",
             "name": "OptimizationResult",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "OptimizationStatus",
             "signature": null
           },
           {
@@ -6428,10 +6434,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 19372,
+      "bytes_lf": 19091,
       "classification": "calculation",
       "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "9567817687fd98bcc4293db65e4d57dc8527da718e33239868f5d9d9b06441f2",
+      "content_sha256_lf": "a76d74fdeaf335d5a6739ece1488e3e5e1fd3fe7e29c46fb321f7168171df974",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-TRAJECTORY-OPTIMIZER-PY-A585A29C490E",
       "language": "python",
@@ -6443,7 +6449,6 @@
         "public-api",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -6455,7 +6460,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "unavailable"
       },
@@ -6476,7 +6481,9 @@
             "signature": null
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_issue_6005_convergence_and_feasibility.py"
+        ],
         "unit_mentions": [
           "N",
           "W",
@@ -6722,7 +6729,6 @@
         "public-api",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -6734,7 +6740,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "unavailable",
         "validation": "unavailable"
       },
@@ -6765,7 +6771,9 @@
             "signature": "seed: int, perturbed_guess_fn: Callable[[int], NDArray], compute_cost_fn: Callable[[NDArray], float], bounds: list[tuple[float, float]], constraints: list[dict], cancel_event"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_issue_6005_convergence_and_feasibility.py"
+        ],
         "unit_mentions": [],
         "validation_paths": []
       }
@@ -6844,10 +6852,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 6907,
+      "bytes_lf": 10377,
       "classification": "calculation",
       "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "091cbaa61e1a2512114ec184ebe13032835e71dbab194332a9b7eab2469e8b48",
+      "content_sha256_lf": "52bb0849f061f52ec57c8d4762da4c4fedf6da8c07bc1a3298846eb35d046aac",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-TRAJECTORY-OPTIMIZER-PACKAGING-PY-85AA40DB8730",
       "language": "python",
@@ -6859,7 +6867,6 @@
         "public-api",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -6871,7 +6878,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "unavailable"
       },
@@ -6889,7 +6896,7 @@
           {
             "kind": "function",
             "name": "build_result_object",
-            "signature": "*, t_eval: NDArray[np.float64], res: _OptimizeResult, q: NDArray[np.float64], qd: NDArray[np.float64], qdd: NDArray[np.float64], torques: NDArray[np.float64], power: NDArray[np.float64], com_traj: NDArray[np.float64], bar_traj: NDArray[np.float64], com_x: NDArray[np.float64], success: bool, n_joint_limit_violations: int, elapsed: float, n_evals: int, clubhead_poses: NDArray[np.float64] | None=None, clubhead_twists: NDArray[np.float64] | None=None"
+            "signature": "*, t_eval: NDArray[np.float64], res: _OptimizeResult, q: NDArray[np.float64], qd: NDArray[np.float64], qdd: NDArray[np.float64], torques: NDArray[np.float64], power: NDArray[np.float64], com_traj: NDArray[np.float64], bar_traj: NDArray[np.float64], com_x: NDArray[np.float64], success: bool, n_joint_limit_violations: int, elapsed: float, n_evals: int, clubhead_poses: NDArray[np.float64] | None=None, clubhead_twists: NDArray[np.float64] | None=None, status: OptimizationStatus=OptimizationStatus.CONVERGED, solver_message: str='', n_iterations: int=0, best_start_seed: int | None=None, n_starts_feasible: int=0, backend: str='SLSQP'"
           },
           {
             "kind": "function",
@@ -6907,7 +6914,9 @@
             "signature": "res: _OptimizeResult, dynamics: PhysicsBackend, exercise_type: str, bar_mass: float, build_splines_fn: _SplineCallable, eval_trajectory_fn: _TrajectoryCallable"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_issue_6005_convergence_and_feasibility.py"
+        ],
         "unit_mentions": [
           "bar",
           "kg",
@@ -6918,10 +6927,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 4330,
+      "bytes_lf": 6540,
       "classification": "calculation",
       "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "77e948d87c8e6305445adf4229e3e28972f1659d370addc89f5e45086ddc3084",
+      "content_sha256_lf": "e367911a905cd92b9da1e24c9df26d590e190779f8ab033ee5e8a6e591c19de5",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-TRAJECTORY-OPTIMIZER-PARALLEL-PY-96D69412FBCE",
       "language": "python",
@@ -6933,7 +6942,6 @@
         "public-api",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -6945,7 +6953,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "unavailable",
         "validation": "unavailable"
       },
@@ -6961,6 +6969,11 @@
         "public_routes": [],
         "public_surfaces": [
           {
+            "kind": "class",
+            "name": "SelectionResult",
+            "signature": null
+          },
+          {
             "kind": "function",
             "name": "collect_future_results",
             "signature": "pending: set[Future], cancel_check: Callable[[], bool], record_progress: Callable[[float, int], None]"
@@ -6973,10 +6986,12 @@
           {
             "kind": "function",
             "name": "select_best_result",
-            "signature": "results: list[tuple[_HasFun, int]]"
+            "signature": "results: list[Any], *, is_feasible_fn: Callable[[Any], bool] | None=None"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_issue_6005_convergence_and_feasibility.py"
+        ],
         "unit_mentions": [],
         "validation_paths": []
       }
@@ -7199,10 +7214,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 3058,
+      "bytes_lf": 4732,
       "classification": "calculation",
       "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "9caf666fdbc95d5cd404275d26a19034890c31df14d5088432026f2d25c35354",
+      "content_sha256_lf": "19724bed503d956b8fb36643141735f30b50e2f0d594c74e64c4af6a13a50a5c",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-TRAJECTORY-RESULT-PY-9405027640B1",
       "language": "python",
@@ -7252,6 +7267,11 @@
           },
           {
             "kind": "class",
+            "name": "OptimizationStatus",
+            "signature": null
+          },
+          {
+            "kind": "class",
             "name": "ProgressReport",
             "signature": null
           }
@@ -7289,7 +7309,6 @@
         "public-api",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -7301,7 +7320,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "unavailable",
         "validation": "unavailable"
       },
@@ -7382,7 +7401,9 @@
             "signature": null
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_issue_6005_convergence_and_feasibility.py"
+        ],
         "unit_mentions": [],
         "validation_paths": []
       }
