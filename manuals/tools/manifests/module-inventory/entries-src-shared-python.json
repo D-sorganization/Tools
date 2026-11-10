@@ -1092,6 +1092,128 @@
       }
     },
     {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5675,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "22dc085b753d583f924f5a8aff45795a7d8c85f7dd32c8f92d574b65fd29383c",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LIFECYCLE-PY-B7A84AFEE675",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/lifecycle.py",
+      "purpose": "Canonical lifecycle kernel and state machine transitions.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "IllegalTransitionError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LifecycleFailure",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LifecycleSnapshot",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "LifecycleStatus",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CANONICAL_LIFECYCLE_TRANSITIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CANONICAL_LIFECYCLE_WORDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "TERMINAL_LIFECYCLE_STATES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "is_terminal",
+            "signature": "state: Any"
+          },
+          {
+            "kind": "function",
+            "name": "transition",
+            "signature": "table: Mapping[Any, Any], current: Any, target_or_event: Any"
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/chat/tests/test_chat_routing_lifecycle.py",
+          "tests/camera/test_camera_sources.py",
+          "tests/contracts/test_chat_service_conformance.py",
+          "tests/integration/sidekick/test_sidekick_host_integration.py",
+          "tests/ops/test_no_legacy_agent_tree.py",
+          "tests/ops/test_rate_web_playwright_workflow.py",
+          "tests/rate_of_closure/pyqt_variation_visual_state_probe.py",
+          "tests/rate_of_closure/test_durable_ensemble_authority_contracts.py",
+          "tests/rate_of_closure/test_durable_ensemble_authority_host.py",
+          "tests/rate_of_closure/test_durable_ensemble_authority_registry.py",
+          "tests/rate_of_closure/test_morris_authority_router.py",
+          "tests/rate_of_closure/test_morris_authority_runtime.py",
+          "tests/rate_of_closure/test_pyqt_variation_visual_state_rendered.py",
+          "tests/rate_of_closure/test_regional_ground_authority_jobs.py",
+          "tests/rate_of_closure/test_variation_ensemble_chunks.py",
+          "tests/rate_of_closure/test_web_companion_runtime.py",
+          "tests/shared/python/chat/test_indexing_controller.py",
+          "tests/shared/python/launch_monitor/test_dataset_reference_jobs.py",
+          "tests/shared/python/test_lifecycle_contract.py",
+          "tests/test_dry_compliance.py",
+          "tests/test_gui_launcher_web.py",
+          "tests/test_launch_utils.py",
+          "tests/unit/ai/mcp/test_pool.py",
+          "tests/unit/sidekick/test_sidebar_shutdown.py",
+          "tests/unit/sidekick/test_terminal_backend.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": [
+          "tests/contracts/test_chat_service_conformance.py",
+          "tests/rate_of_closure/test_durable_ensemble_authority_contracts.py",
+          "tests/shared/python/test_lifecycle_contract.py"
+        ]
+      }
+    },
+    {
       "authority_status": "provisional",
       "bytes_lf": 16639,
       "classification": "calculation",

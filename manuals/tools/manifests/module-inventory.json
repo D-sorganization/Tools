@@ -597,8 +597,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "b4a1645374f1e1879216a730537abfe5cd33044f42f7f0a334a533ad9edf6692",
-      "entry_count": 9,
+      "content_sha256_lf": "9653afc3c9e0d01e57a5e59ac6795803cabf68dfa8811c3a5df0478c1d972564",
+      "entry_count": 10,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
     },
@@ -795,7 +795,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-persistence.json"
     },
     {
-      "content_sha256_lf": "8fad1659308dbe18a0002a01831a52c74e0885835197113a244fb8a32afb6c22",
+      "content_sha256_lf": "06b30cbc16508da010269869b252a8093f0c43f61c160d1babad520dded4bb05",
       "entry_count": 59,
       "package": "src/shared/python/sidekick/process_calculators",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-process-calculators.json"
