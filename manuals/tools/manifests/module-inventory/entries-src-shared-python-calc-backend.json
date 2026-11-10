@@ -214,7 +214,8 @@
           "src/shared/python/calc_backend/tests/test_symbolic_solver.py",
           "tests/calc_backend/test_calc_backend_api.py",
           "tests/calc_backend/test_new_endpoints.py",
-          "tests/calc_backend/test_rotation_converter_api.py"
+          "tests/calc_backend/test_rotation_converter_api.py",
+          "tests/unit/test_syngas_water_nonfinite_oracle6.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -1198,10 +1199,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1472,
+      "bytes_lf": 2360,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "a8bc552959e8fcda95957f468c11fb965ece8563a7e5484dc0637dc71a4c8256",
+      "content_sha256_lf": "952193f1933579e3885dcc92185370470d604ef6eb58cabe70658e2b118bd764",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-CONTRACTS-SYNGAS-WATER-PY-5EEDC8D6194B",
       "language": "python",
@@ -1244,6 +1245,16 @@
           },
           {
             "kind": "class",
+            "name": "SyngasCalculationStatus",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SyngasNumericalFailureError",
+            "signature": null
+          },
+          {
+            "kind": "class",
             "name": "SyngasWaterRequest",
             "signature": null
           },
@@ -1260,7 +1271,8 @@
         ],
         "test_paths": [
           "src/shared/python/calc_backend/tests/test_calc_backend.py",
-          "tests/shared/python/process_calculators/test_syngas_water_overflow.py"
+          "tests/shared/python/process_calculators/test_syngas_water_overflow.py",
+          "tests/unit/test_syngas_water_nonfinite_oracle6.py"
         ],
         "unit_mentions": [
           "bar"
@@ -2450,10 +2462,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 5254,
+      "bytes_lf": 6620,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "c8a5814fcc87812f999775b082ba658f3ae2601c7a680a05755f6535bad586e2",
+      "content_sha256_lf": "d4c44dc20818ad97aed1d405104db4c7b39b72db1840dbec42e7ec8fd4f58cf1",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-SYNGAS-WATER-PY-C52D9CF2DC26",
       "language": "python",
@@ -2500,7 +2512,8 @@
         ],
         "test_paths": [
           "src/shared/python/calc_backend/tests/test_calc_backend.py",
-          "tests/shared/python/process_calculators/test_syngas_water_overflow.py"
+          "tests/shared/python/process_calculators/test_syngas_water_overflow.py",
+          "tests/unit/test_syngas_water_nonfinite_oracle6.py"
         ],
         "unit_mentions": [
           "Pa"

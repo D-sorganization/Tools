@@ -2755,6 +2755,7 @@
           "tests/test_calculators_expanded.py",
           "tests/tools/test_scientific_auditor.py",
           "tests/unit/sidekick/test_python_repl_widget.py",
+          "tests/unit/test_syngas_water_nonfinite_oracle6.py",
           "tests/vessel_drafter/test_contracts_unified.py"
         ],
         "unit_mentions": [
