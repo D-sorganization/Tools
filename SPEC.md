@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-10 | #6015 | Adopt canonical lifecycle vocabulary and kernel in AuthorityJobStatus and video_processor.JobStatus with Oracle 7 ratchet test |
 | 2026-11-10 | #6012 | Add canonical lifecycle contract ADR, shared.python.lifecycle kernel, and syngas water boolean type checks |
 | 2026-11-10 | #6009 | Fix syngas water unit conversions in g/m3 and lb/MMscf, router fallback, standard basis, and strict finite input validation |
 | 2026-11-10 | #6006 | movement_optimizer: SciPy convergence status, feasibility-first selection, and provenance (#6005) |

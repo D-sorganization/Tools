@@ -1593,10 +1593,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #6003
 - **Branch:** merged via #6012
-- **PR:** #6012
+- **PR:** #6012, #6015
 - **Paths:** see #6012
 - **Started:** 2026-11-10
-- **Last verified:** 2026-11-10 (`310a4e67`; collated from changes/6003-lifecycle-kernel.md)
+- **Last verified:** 2026-11-10 (`fd5def6b`; collated from changes/6003-lifecycle-vocabulary-adoption.md)
 - **Summary:** Add canonical lifecycle contract ADR, shared.python.lifecycle kernel, and syngas water boolean type checks
 - **Next step:** Shipped in PR #6012.
 
