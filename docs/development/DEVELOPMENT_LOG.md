@@ -1587,6 +1587,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#6005 · Movement_Optimizer: SciPy Convergence Status, Feasibility-First Selection, and Provenance (#6005)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6005
+- **Branch:** merged via #6006
+- **PR:** #6006
+- **Paths:** see #6006
+- **Started:** 2026-11-10
+- **Last verified:** 2026-11-10 (`c0bae274`; collated from changes/6005-movement-optimizer-convergence.md)
+- **Summary:** movement_optimizer: SciPy convergence status, feasibility-first selection, and provenance (#6005)
+- **Next step:** Shipped in PR #6006.
+
 ### DL-#5999 · Bound Generated-Baseline Query Output With Pagination, Truncation Metadata and Explicit --Full Route
 
 - **State:** shipped
