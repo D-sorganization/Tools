@@ -20,12 +20,16 @@ from .optimizer_via import ViaPoint as ViaPoint
 from .optimizer_via import ViaSchedule as ViaSchedule
 from .result import CancelledError as CancelledError
 from .result import OptimizationResult as OptimizationResult
+from .result import OptimizationStatus as OptimizationStatus
 from .result import ProgressReport as ProgressReport
+from .result import derive_optimization_status as derive_optimization_status
+from .result import populate_result_metadata as populate_result_metadata
 
 __all__ = [
     "CancelledError",
     "MetricSample",
     "OptimizationResult",
+    "OptimizationStatus",
     "ProgressReport",
     "ProgressTracker",
     "SolutionCache",
@@ -36,9 +40,11 @@ __all__ = [
     "build_initial_guess",
     "build_perturbed_guess",
     "build_splines",
+    "derive_optimization_status",
     "detect_stall",
     "eval_trajectory",
     "metrics",
+    "populate_result_metadata",
     "run_minimize",
     "run_single_start",
 ]
