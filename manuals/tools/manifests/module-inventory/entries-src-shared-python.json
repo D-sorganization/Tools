@@ -1205,7 +1205,8 @@
           "tests/test_launch_utils.py",
           "tests/unit/ai/mcp/test_pool.py",
           "tests/unit/sidekick/test_sidebar_shutdown.py",
-          "tests/unit/sidekick/test_terminal_backend.py"
+          "tests/unit/sidekick/test_terminal_backend.py",
+          "tests/unit/test_lifecycle_vocabulary.py"
         ],
         "unit_mentions": [],
         "validation_paths": [
