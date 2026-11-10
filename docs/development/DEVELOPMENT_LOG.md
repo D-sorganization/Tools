@@ -1587,6 +1587,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#6004 · Fix Syngas Water Unit Conversions in G/M3 and Lb/MMscf, Router Fallback, Standard Basis, and Strict Finite Input Validation
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6004
+- **Branch:** merged via #6009
+- **PR:** #6009
+- **Paths:** see #6009
+- **Started:** 2026-11-10
+- **Last verified:** 2026-11-10 (`c59570ac`; collated from changes/6004-syngas-water-units.md)
+- **Summary:** Fix syngas water unit conversions in g/m3 and lb/MMscf, router fallback, standard basis, and strict finite input validation
+- **Next step:** Shipped in PR #6009.
+
 ### DL-#6005 · Movement_Optimizer: SciPy Convergence Status, Feasibility-First Selection, and Provenance (#6005)
 
 - **State:** shipped
