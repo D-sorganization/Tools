@@ -513,3 +513,10 @@ class TestSyngasWaterUnits:
                 water_content_units(
                     y_water=0.01, p_pa=101325.0, t_k=293.15, mw_water=invalid_mw
                 )
+
+        for b in (True, False):
+            for kw in ("y_water", "p_pa", "t_k", "mw_water"):
+                base = {"y_water": 0.01, "p_pa": 1e5, "t_k": 293.15, "mw_water": 18.0}
+                base[kw] = b
+                with pytest.raises(ValueError, match=kw):
+                    water_content_units(**base)

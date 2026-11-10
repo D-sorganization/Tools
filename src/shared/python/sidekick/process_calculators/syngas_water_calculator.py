@@ -177,16 +177,28 @@ def water_content_units(
     """
     if not (
         isinstance(y_water, (int, float))
+        and not isinstance(y_water, bool)
         and math.isfinite(y_water)
         and 0.0 <= y_water <= 1.0
     ):
         raise ValueError("y_water must be a finite float between 0.0 and 1.0")
-    if not (isinstance(p_pa, (int, float)) and math.isfinite(p_pa) and p_pa > 0.0):
+    if not (
+        isinstance(p_pa, (int, float))
+        and not isinstance(p_pa, bool)
+        and math.isfinite(p_pa)
+        and p_pa > 0.0
+    ):
         raise ValueError("p_pa must be a positive finite float")
-    if not (isinstance(t_k, (int, float)) and math.isfinite(t_k) and t_k > 0.0):
+    if not (
+        isinstance(t_k, (int, float))
+        and not isinstance(t_k, bool)
+        and math.isfinite(t_k)
+        and t_k > 0.0
+    ):
         raise ValueError("t_k must be a positive finite float")
     if not (
         isinstance(mw_water, (int, float))
+        and not isinstance(mw_water, bool)
         and math.isfinite(mw_water)
         and mw_water > 0.0
     ):
