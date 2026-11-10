@@ -151,7 +151,7 @@ class PressureDropOutput(BaseModel):
     calculation_method: str = Field(
         default="", description="Friction factor correlation method used"
     )
-    success: bool = Field(default=True, description="Whether calculation succeeded")
+    success: bool = Field(default=False, description="Whether calculation succeeded")
     error_message: str = Field(
         default="", description="Error message if calculation failed"
     )

@@ -335,6 +335,7 @@
           "tests/unit/sidekick/agent/test_action_service.py",
           "tests/unit/sidekick/test_standalone_canonical_package.py",
           "tests/unit/test_contracts.py",
+          "tests/unit/test_result_default_false_oracles.py",
           "tests/vessel_drafter/test_contracts_fallback.py",
           "tests/vessel_drafter/test_contracts_unified.py"
         ],

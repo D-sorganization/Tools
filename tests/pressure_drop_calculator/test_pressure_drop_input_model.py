@@ -27,6 +27,7 @@ def test_pressure_drop_input_exports_from_package_surface() -> None:
         pressure_drop_bar=0.001,
         pressure_drop_psi=0.0145,
         outlet_temperature_k=300.0,
+        success=True,
     )
 
     assert request.gas_composition == {"N2": 0.79, "O2": 0.21}
