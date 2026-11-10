@@ -28,10 +28,34 @@ class _HasFun(Protocol):
 logger = logging.getLogger(__name__)
 
 __all__ = [
+    "SelectionResult",
     "collect_future_results",
     "run_parallel_starts",
     "select_best_result",
 ]
+
+
+class SelectionResult(tuple):
+    """2-tuple of (best_res, total_evals) with optional provenance attributes."""
+
+    best_res: Any
+    total_evals: int
+    best_seed: int | None
+    n_starts_feasible: int
+
+    def __new__(
+        cls,
+        best_res: Any,
+        total_evals: int,
+        best_seed: int | None = None,
+        n_starts_feasible: int = 0,
+    ) -> SelectionResult:
+        obj = super().__new__(cls, (best_res, total_evals))
+        obj.best_res = best_res
+        obj.total_evals = total_evals
+        obj.best_seed = best_seed
+        obj.n_starts_feasible = n_starts_feasible
+        return obj
 
 
 def collect_future_results(
@@ -74,7 +98,7 @@ def collect_future_results(
             result = future.result()
             if result is not None:
                 results.append(result)
-                res, n_evals = result
+                res, n_evals = result[:2]
                 total_evals += n_evals
                 cost_val = float(res.fun)
                 record_progress(cost_val, total_evals)
@@ -113,25 +137,68 @@ def run_parallel_starts(
         optimizer work performed by each submitted start.
     """
     with ThreadPoolExecutor(max_workers=n_workers) as pool:
-        pending: set[Future] = {
-            pool.submit(run_single_fn, seed) for seed in range(n_starts)
-        }
+        pending: set[Future] = {pool.submit(run_single_fn, seed) for seed in range(n_starts)}
         return collect_future_results(pending, cancel_check, record_progress)
 
 
+def _parse_start_entry(
+    item: Any,
+    idx: int,
+    is_feasible_fn: Callable[[Any], bool] | None = None,
+) -> tuple[Any, float, bool, int, int | None]:
+    """Parse start item into (res, cost, is_feasible, evals, seed)."""
+    if (
+        isinstance(item, (tuple, list))
+        and len(item) == 2
+        and isinstance(item[0], bool)
+        and isinstance(item[1], (int, float))
+    ):
+        return item[0], float(item[1]), item[0], 0, idx
+    res = item[0] if isinstance(item, (tuple, list)) else item
+    evals = (
+        int(item[1])
+        if isinstance(item, (tuple, list)) and len(item) > 1 and not isinstance(item[1], bool)
+        else 0
+    )
+    if is_feasible_fn is not None:
+        feasible = bool(is_feasible_fn(res))
+    elif isinstance(item, (tuple, list)) and len(item) >= 3 and isinstance(item[2], bool):
+        feasible = item[2]
+    else:
+        feasible = bool(getattr(res, "feasible", getattr(res, "success", True)))
+    cost = float(getattr(res, "fun", getattr(res, "cost", 0.0)))
+    seed = (
+        item[3]
+        if isinstance(item, (tuple, list)) and len(item) >= 4 and isinstance(item[3], int)
+        else getattr(res, "seed", idx)
+    )
+    return res, cost, feasible, evals, seed
+
+
 def select_best_result(
-    results: list[tuple[_HasFun, int]],
-) -> tuple[_HasFun, int]:
-    """Return the (scipy_result, total_evals) pair with the lowest cost.
+    results: list[Any],
+    *,
+    is_feasible_fn: Callable[[Any], bool] | None = None,
+) -> SelectionResult:
+    """Return the (scipy_result, total_evals) pair ranked by (feasible desc, cost asc).
 
     Preconditions:
         len(results) >= 1
 
     Complexity:
-        O(R) time and O(1) extra memory for ``R`` completed start results.
+        O(R) time and O(R) extra memory for ``R`` completed start results.
     """
     if not results:
         raise ValueError("select_best_result requires at least one result")
-    best_res, _ = min(results, key=lambda r: float(r[0].fun))
-    total_evals = sum(n for _, n in results)
-    return best_res, total_evals
+
+    parsed = [_parse_start_entry(item, idx, is_feasible_fn) for idx, item in enumerate(results)]
+    best_entry = min(parsed, key=lambda e: (not e[2], e[1]))
+    total_evals = sum(e[3] for e in parsed)
+    n_starts_feasible = sum(1 for e in parsed if e[2])
+
+    return SelectionResult(
+        best_res=best_entry[0],
+        total_evals=total_evals,
+        best_seed=best_entry[4],
+        n_starts_feasible=n_starts_feasible,
+    )

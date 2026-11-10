@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import logging
 import os
 import threading
@@ -50,7 +51,12 @@ from .optimizer_via import (
     via_initial_guess,
     via_layout,
 )
-from .result import CancelledError, OptimizationResult, ProgressReport
+from .result import (
+    CancelledError,
+    OptimizationResult,
+    OptimizationStatus,
+    ProgressReport,
+)
 from .tuning import (
     BALANCE_CENTER_WEIGHT,
     DEFAULT_ENDPOINT_WEIGHT,
@@ -63,6 +69,36 @@ from .tuning import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+def _derive_optimization_status(
+    res: Any,
+    cost_finite: bool,
+    is_feasible: bool,
+) -> OptimizationStatus:
+    """Derive OptimizationStatus from SciPy result flags and physical feasibility.
+
+    Decision hierarchy:
+    1. Numerical failure (infinite or NaN cost).
+    2. Physical infeasibility (joint limit or COM balance violation).
+    3. Iteration limit (SciPy status 9 or iteration limit message).
+    4. Stalled (SciPy unconverged / other failure mode).
+    5. Converged (SciPy success and physical constraints satisfied).
+    """
+    if not cost_finite:
+        return OptimizationStatus.NUMERICAL_FAILURE
+    if not is_feasible:
+        return OptimizationStatus.INFEASIBLE
+
+    scipy_success = bool(getattr(res, "success", True))
+    if not scipy_success:
+        status_code = getattr(res, "status", None)
+        msg = str(getattr(res, "message", "")).lower()
+        if status_code == 9 or "iteration limit" in msg or ("iteration" in msg and ("maximum" in msg or "exceed" in msg)):
+            return OptimizationStatus.ITERATION_LIMIT
+        return OptimizationStatus.STALLED
+
+    return OptimizationStatus.CONVERGED
 
 
 class TrajectoryOptimizer:
@@ -314,8 +350,8 @@ class TrajectoryOptimizer:
             max_iter=max_iter,
         )
 
-    def _run_single_start(self, seed: int) -> tuple[Any, int] | None:
-        return run_single_start(
+    def _run_single_start(self, seed: int) -> tuple[Any, int, int] | None:
+        out = run_single_start(
             seed,
             self._perturbed_guess,
             self._compute_cost,
@@ -323,6 +359,12 @@ class TrajectoryOptimizer:
             self._build_constraints(),
             self.cancel_event,
         )
+        if out is None:
+            return None
+        res, n_evals = out
+        with contextlib.suppress(AttributeError, TypeError):
+            res.seed = seed
+        return res, n_evals, seed
 
     def optimize(self) -> OptimizationResult:
         """Run parallel multi-start SLSQP and return the best result.
@@ -384,16 +426,33 @@ class TrajectoryOptimizer:
                 mode="single",
             )
             raise CancelledError("Optimization cancelled by user")
-        result = self._package_results(out, self._progress.elapsed())
+        result = self._package_results(out, self._progress.elapsed(), best_start_seed=0)
+        result.n_starts_feasible = 1 if result.success else 0
         self._record_result_metrics(result, mode="single")
         return result
 
-    def _finalize_parallel_results(self, results: list[tuple[Any, int]]) -> OptimizationResult:
+    def _finalize_parallel_results(self, results: list[tuple[Any, ...]]) -> OptimizationResult:
         """Select the best result, log summary, and package output."""
         if not results:
             raise CancelledError("All optimization starts were cancelled")
 
-        best_res, total_evals = select_best_result(results)
+        def _is_res_feasible(r: Any) -> bool:
+            try:
+                q, _, _, _, _, _, _, com_x = evaluate_solution(
+                    r,
+                    self.dynamics,
+                    self.exercise_type,
+                    self.bar_mass,
+                    self.build_splines,
+                    self.eval_trajectory,
+                )
+                feasible, _ = self._check_solution_feasibility(r, q, com_x)
+                return feasible
+            except Exception:
+                return False
+
+        selection = select_best_result(results, is_feasible_fn=_is_res_feasible)
+        best_res, total_evals = selection
         elapsed = self._progress.elapsed()
 
         logger.info(
@@ -403,7 +462,13 @@ class TrajectoryOptimizer:
             len(results),
             elapsed,
         )
-        result = self._package_results(best_res, elapsed, total_evals)
+        result = self._package_results(
+            best_res,
+            elapsed,
+            total_evals,
+            best_start_seed=getattr(selection, "best_seed", None),
+            n_starts_feasible=getattr(selection, "n_starts_feasible", 0),
+        )
         self._record_result_metrics(result, mode="parallel")
         return result
 
@@ -448,7 +513,12 @@ class TrajectoryOptimizer:
         return cost_finite and com_in_bounds and joint_feasible, n_viol
 
     def _package_results(
-        self, res: Any, elapsed: float = 0.0, n_evals: int = 0
+        self,
+        res: Any,
+        elapsed: float = 0.0,
+        n_evals: int = 0,
+        best_start_seed: int | None = None,
+        n_starts_feasible: int = 0,
     ) -> OptimizationResult:
         """Evaluate trajectories, assess feasibility, and build the result.
 
@@ -464,7 +534,13 @@ class TrajectoryOptimizer:
             self.build_splines,
             self.eval_trajectory,
         )
+        cost_val = float(res.fun)  # type: ignore[attr-defined]
+        cost_finite = cost_val < float("inf") and not np.isnan(cost_val)
         success, n_viol = self._check_solution_feasibility(res, q, com_x)
+        status = _derive_optimization_status(res, cost_finite, success)
+        solver_msg = str(getattr(res, "message", ""))
+        n_iters = int(getattr(res, "nit", 0))
+
         clubhead_poses: NDArray[np.float64] | None = None
         clubhead_twists: NDArray[np.float64] | None = None
         if hasattr(self.dynamics, "clubhead_pose"):
@@ -492,4 +568,10 @@ class TrajectoryOptimizer:
             n_evals=n_evals or self._progress.iteration_count,
             clubhead_poses=clubhead_poses,
             clubhead_twists=clubhead_twists,
+            status=status,
+            solver_message=solver_msg,
+            n_iterations=n_iters,
+            best_start_seed=best_start_seed,
+            n_starts_feasible=n_starts_feasible,
+            backend="SLSQP",
         )

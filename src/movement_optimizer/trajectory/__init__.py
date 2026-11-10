@@ -20,12 +20,14 @@ from .optimizer_via import ViaPoint as ViaPoint
 from .optimizer_via import ViaSchedule as ViaSchedule
 from .result import CancelledError as CancelledError
 from .result import OptimizationResult as OptimizationResult
+from .result import OptimizationStatus as OptimizationStatus
 from .result import ProgressReport as ProgressReport
 
 __all__ = [
     "CancelledError",
     "MetricSample",
     "OptimizationResult",
+    "OptimizationStatus",
     "ProgressReport",
     "ProgressTracker",
     "SolutionCache",

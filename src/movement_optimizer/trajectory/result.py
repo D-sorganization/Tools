@@ -3,9 +3,21 @@
 
 from __future__ import annotations
 
+import warnings
 from dataclasses import dataclass, field
+from enum import Enum
 
 from numpy.typing import NDArray
+
+
+class OptimizationStatus(str, Enum):
+    """Categorical status of an optimisation solve."""
+
+    CONVERGED = "CONVERGED"
+    ITERATION_LIMIT = "ITERATION_LIMIT"
+    STALLED = "STALLED"
+    INFEASIBLE = "INFEASIBLE"
+    NUMERICAL_FAILURE = "NUMERICAL_FAILURE"
 
 
 @dataclass
@@ -21,14 +33,22 @@ class OptimizationResult:
         power: Per-joint mechanical power, shape ``(N, n_dof)`` in W.
         com: Whole-body COM trajectory ``(x, y)``, shape ``(N, 2)`` in m.
         bar: Barbell trajectory ``(x, y)``, shape ``(N, 2)`` in m.
-        success: True when the optimiser converged and all hard
-            constraints (COM in inner BOS, joint limits) are satisfied.
+        success: True when all hard constraints (COM in inner BOS, joint
+            limits) are satisfied. During the deprecation transition period,
+            a DeprecationWarning is emitted if success is True while status
+            is not CONVERGED.
         cost: Final scalar cost (lower is better).
         com_horizontal_range_cm: Peak-to-peak horizontal COM excursion.
         elapsed_s: Wall-clock seconds spent in :meth:`optimize`.
         n_evals: Total cost evaluations across all starts.
         n_joint_limit_violations: Number of trajectory samples whose
             joint angles fall outside ``q_bounds``.
+        status: Categorical status of the optimization solve.
+        solver_message: Status or termination message from the solver.
+        n_iterations: Number of solver iterations completed.
+        best_start_seed: Multi-start seed index that yielded this result.
+        n_starts_feasible: Total number of starts that yielded a feasible solution.
+        backend: Solver backend identifier string (default: "SLSQP").
     """
 
     t: NDArray
@@ -50,6 +70,25 @@ class OptimizationResult:
     frame_convention: str | None = None
     joint_positions_m: NDArray | None = None
     joint_ids: tuple[str, ...] | None = None
+    status: OptimizationStatus = OptimizationStatus.CONVERGED
+    solver_message: str = ""
+    n_iterations: int = 0
+    best_start_seed: int | None = None
+    n_starts_feasible: int = 0
+    backend: str = "SLSQP"
+
+    def __post_init__(self) -> None:
+        status_val: object = self.status
+        if not isinstance(status_val, OptimizationStatus):
+            object.__setattr__(self, "status", OptimizationStatus(str(status_val)))
+        if self.success and self.status is not OptimizationStatus.CONVERGED:
+            warnings.warn(
+                "OptimizationResult has success=True but status is not CONVERGED. "
+                "In a future release, success will strictly require "
+                "status == OptimizationStatus.CONVERGED.",
+                DeprecationWarning,
+                stacklevel=2,
+            )
 
     def torque_joint_count(self) -> int:
         """Return the number of torque columns in the trajectory."""

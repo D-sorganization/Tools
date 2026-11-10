@@ -28,7 +28,7 @@ from typing import Any
 import numpy as np
 
 from .config import load_app_paths
-from .trajectory import OptimizationResult
+from .trajectory import OptimizationResult, OptimizationStatus
 from .validation import (
     BAR_MASS_RANGE,
     BODY_MASS_RANGE,
@@ -109,9 +109,7 @@ class InvalidStateFileError(ValueError):
 def _require_mapping(data: Any, context: str) -> dict[str, Any]:
     """Return ``data`` as a dict or raise with a descriptive context."""
     if not isinstance(data, dict):
-        raise InvalidStateFileError(
-            f"{context}: expected JSON object, got {type(data).__name__}"
-        )
+        raise InvalidStateFileError(f"{context}: expected JSON object, got {type(data).__name__}")
     return data
 
 
@@ -144,9 +142,7 @@ def _require_type(value: Any, expected: type | tuple[type, ...], field: str) -> 
 def _require_range(value: float, bounds: tuple[float, float], field: str) -> None:
     low, high = bounds
     if not (low <= value <= high):
-        raise InvalidStateFileError(
-            f"field '{field}': value {value} out of range [{low}, {high}]"
-        )
+        raise InvalidStateFileError(f"field '{field}': value {value} out of range [{low}, {high}]")
 
 
 def _validate_schema_version(data: dict[str, Any], context: str) -> None:
@@ -180,6 +176,23 @@ def _validate_arrays_block(arrays: Any, context: str) -> None:
             )
 
 
+def _validate_provenance_metadata(meta_dict: dict[str, Any]) -> None:
+    """Validate optional solver provenance fields (#6005)."""
+    if "status" in meta_dict:
+        status_val = meta_dict["status"]
+        if not isinstance(status_val, str) or status_val not in OptimizationStatus.__members__:
+            raise InvalidStateFileError(f"field 'metadata.status': invalid status '{status_val}'")
+    if "solver_message" in meta_dict:
+        _require_type(meta_dict["solver_message"], str, "metadata.solver_message")
+    for int_key in ("n_iterations", "n_starts_feasible"):
+        if int_key in meta_dict:
+            _require_type(meta_dict[int_key], int, f"metadata.{int_key}")
+    if "best_start_seed" in meta_dict and meta_dict["best_start_seed"] is not None:
+        _require_type(meta_dict["best_start_seed"], int, "metadata.best_start_seed")
+    if "backend" in meta_dict:
+        _require_type(meta_dict["backend"], str, "metadata.backend")
+
+
 def _validate_metadata_block(metadata: Any, context: str) -> None:
     meta_dict = _require_mapping(metadata, f"{context}: 'metadata'")
     required_types: dict[str, type | tuple[type, ...]] = {
@@ -189,9 +202,7 @@ def _validate_metadata_block(metadata: Any, context: str) -> None:
     }
     for key, expected in required_types.items():
         if key not in meta_dict:
-            raise InvalidStateFileError(
-                f"{context}: missing required metadata key '{key}'"
-            )
+            raise InvalidStateFileError(f"{context}: missing required metadata key '{key}'")
         # ``success`` is bool and must be checked separately to avoid the
         # numeric-bool guard in ``_require_type``.
         if expected is bool:
@@ -205,6 +216,7 @@ def _validate_metadata_block(metadata: Any, context: str) -> None:
     for opt_key in ("elapsed_s", "n_evals", "n_joint_limit_violations"):
         if opt_key in meta_dict:
             _require_type(meta_dict[opt_key], (int, float), f"metadata.{opt_key}")
+    _validate_provenance_metadata(meta_dict)
 
 
 def _validate_solution_schema(data: dict[str, Any]) -> None:
@@ -273,9 +285,7 @@ def _validate_app_state_schema(data: dict[str, Any]) -> None:
             )
         sub = _require_mapping(payload, f"results.{etype}")
         if "arrays" not in sub or "metadata" not in sub:
-            raise InvalidStateFileError(
-                f"results.{etype}: must contain 'arrays' and 'metadata'"
-            )
+            raise InvalidStateFileError(f"results.{etype}: must contain 'arrays' and 'metadata'")
         _validate_arrays_block(sub["arrays"], f"results.{etype}")
         _validate_metadata_block(sub["metadata"], f"results.{etype}")
 
@@ -289,6 +299,14 @@ def _result_to_dict(result: OptimizationResult) -> dict[str, Any]:
     """Convert an OptimizationResult to a JSON-serializable dict."""
     arrays = {k: getattr(result, k).tolist() for k in _ARRAY_FIELDS}
     metadata = {k: getattr(result, k) for k in _METADATA_FIELDS}
+    metadata["status"] = (
+        result.status.value if isinstance(result.status, OptimizationStatus) else str(result.status)
+    )
+    metadata["solver_message"] = result.solver_message
+    metadata["n_iterations"] = result.n_iterations
+    metadata["best_start_seed"] = result.best_start_seed
+    metadata["n_starts_feasible"] = result.n_starts_feasible
+    metadata["backend"] = result.backend
     return {"arrays": arrays, "metadata": metadata}
 
 
@@ -296,6 +314,12 @@ def _dict_to_result(d: dict[str, Any]) -> OptimizationResult:
     """Reconstruct an OptimizationResult from a dict."""
     arrays = {k: np.array(d["arrays"][k]) for k in _ARRAY_FIELDS}
     meta = d["metadata"]
+    status_raw = meta.get("status")
+    status = (
+        OptimizationStatus[status_raw]
+        if status_raw in OptimizationStatus.__members__
+        else (OptimizationStatus.CONVERGED if meta["success"] else OptimizationStatus.INFEASIBLE)
+    )
     return OptimizationResult(
         t=arrays["t"],
         q=arrays["q"],
@@ -311,6 +335,12 @@ def _dict_to_result(d: dict[str, Any]) -> OptimizationResult:
         elapsed_s=meta.get("elapsed_s", 0.0),
         n_evals=meta.get("n_evals", 0),
         n_joint_limit_violations=meta.get("n_joint_limit_violations", 0),
+        status=status,
+        solver_message=meta.get("solver_message", ""),
+        n_iterations=meta.get("n_iterations", 0),
+        best_start_seed=meta.get("best_start_seed"),
+        n_starts_feasible=meta.get("n_starts_feasible", 0),
+        backend=meta.get("backend", "SLSQP"),
     )
 
 
@@ -406,9 +436,7 @@ def save_app_state(
         slider_values maps slider_name -> float value.
     """
     state_path = (
-        load_app_paths().state_file
-        if state_dir is None
-        else Path(state_dir) / "last_state.json"
+        load_app_paths().state_file if state_dir is None else Path(state_dir) / "last_state.json"
     )
     state_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -436,9 +464,7 @@ def load_app_state(*, state_dir: str | Path | None = None) -> dict[str, Any] | N
     state is incompatible rather than being silently discarded.
     """
     state_path = (
-        load_app_paths().state_file
-        if state_dir is None
-        else Path(state_dir) / "last_state.json"
+        load_app_paths().state_file if state_dir is None else Path(state_dir) / "last_state.json"
     )
 
     if not state_path.exists():

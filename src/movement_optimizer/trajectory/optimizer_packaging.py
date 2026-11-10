@@ -19,7 +19,7 @@ from numpy.typing import NDArray
 
 from ..backend import PhysicsBackend
 from ..constants import COM_FEASIBILITY_TOL_M, JOINT_FEASIBILITY_TOL_RAD
-from .result import OptimizationResult
+from .result import OptimizationResult, OptimizationStatus
 
 
 class _OptimizeResult(Protocol):
@@ -198,6 +198,12 @@ def build_result_object(
     n_evals: int,
     clubhead_poses: NDArray[np.float64] | None = None,
     clubhead_twists: NDArray[np.float64] | None = None,
+    status: OptimizationStatus = OptimizationStatus.CONVERGED,
+    solver_message: str = "",
+    n_iterations: int = 0,
+    best_start_seed: int | None = None,
+    n_starts_feasible: int = 0,
+    backend: str = "SLSQP",
 ) -> OptimizationResult:
     """Assemble the final OptimizationResult dataclass from solver outputs.
 
@@ -224,4 +230,10 @@ def build_result_object(
         n_joint_limit_violations=n_joint_limit_violations,
         clubhead_poses=clubhead_poses,
         clubhead_twists=clubhead_twists,
+        status=status,
+        solver_message=solver_message,
+        n_iterations=n_iterations,
+        best_start_seed=best_start_seed,
+        n_starts_feasible=n_starts_feasible,
+        backend=backend,
     )
