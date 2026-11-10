@@ -11,6 +11,7 @@ from rate_of_closure.application._workspace_validation import exact_mapping, sta
 from rate_of_closure.application.regional_ground_execution_job import (
     RegionalGroundExecutionJob,
 )
+from shared.python.lifecycle import LifecycleStatus, is_terminal, transition
 from shared.python.swing_sim.canonical_numeric_json import (
     MAX_CANONICAL_SAFE_INTEGER,
     canonical_numeric_json,
@@ -72,6 +73,55 @@ class AuthorityJobStatus(StrEnum):
     SUCCEEDED = "succeeded"
     FAILED = "failed"
     CANCELLED = "cancelled"
+
+    def to_lifecycle(self) -> LifecycleStatus:
+        """Convert this authority status to canonical LifecycleStatus."""
+        return LifecycleStatus(self.value)
+
+    def is_terminal(self) -> bool:
+        """Return True if this status is a terminal lifecycle state."""
+        return bool(is_terminal(self))
+
+
+AUTHORITY_JOB_TRANSITIONS: Final[
+    dict[AuthorityJobStatus, frozenset[AuthorityJobStatus]]
+] = {
+    AuthorityJobStatus.QUEUED: frozenset(
+        {
+            AuthorityJobStatus.RUNNING,
+            AuthorityJobStatus.CANCEL_REQUESTED,
+            AuthorityJobStatus.CANCELLED,
+            AuthorityJobStatus.FAILED,
+        }
+    ),
+    AuthorityJobStatus.RUNNING: frozenset(
+        {
+            AuthorityJobStatus.CANCEL_REQUESTED,
+            AuthorityJobStatus.SUCCEEDED,
+            AuthorityJobStatus.FAILED,
+            AuthorityJobStatus.CANCELLED,
+        }
+    ),
+    AuthorityJobStatus.CANCEL_REQUESTED: frozenset(
+        {
+            AuthorityJobStatus.CANCELLED,
+            AuthorityJobStatus.SUCCEEDED,
+            AuthorityJobStatus.FAILED,
+        }
+    ),
+    AuthorityJobStatus.SUCCEEDED: frozenset(),
+    AuthorityJobStatus.FAILED: frozenset(),
+    AuthorityJobStatus.CANCELLED: frozenset(),
+}
+
+
+def transition_authority_job(
+    current: AuthorityJobStatus, target: AuthorityJobStatus
+) -> AuthorityJobStatus:
+    """Execute an AuthorityJobStatus transition via the lifecycle kernel."""
+    return cast(
+        AuthorityJobStatus, transition(AUTHORITY_JOB_TRANSITIONS, current, target)
+    )
 
 
 class AuthorityJobFailureWire(TypedDict):
@@ -177,6 +227,26 @@ class AuthorityJobSnapshot:
             "failure": None if self.failure is None else self.failure.to_wire(),
         }
 
+    @property
+    def done(self) -> bool:
+        """Return True if the job has reached a terminal lifecycle state."""
+        return bool(is_terminal(self.status))
+
+    @property
+    def ok(self) -> bool:
+        """Return True if the job succeeded."""
+        return self.status is AuthorityJobStatus.SUCCEEDED
+
+    @property
+    def success(self) -> bool:
+        """Alias for ok."""
+        return self.ok
+
+    @property
+    def cancelled(self) -> bool:
+        """Return True if the job was cancelled."""
+        return self.status is AuthorityJobStatus.CANCELLED
+
 
 def _failure_from_wire(value: object) -> AuthorityJobFailure | None:
     if value is None:
@@ -265,6 +335,7 @@ def regional_ground_authority_job_status_to_json(
 
 __all__ = [
     "AUTHORITY_JOB_STATUS_SCHEMA_VERSION",
+    "AUTHORITY_JOB_TRANSITIONS",
     "MAX_AUTHORITY_JOB_STATUS_BYTES",
     "AuthorityFailureCode",
     "AuthorityFailureStage",
@@ -274,4 +345,5 @@ __all__ = [
     "regional_ground_authority_job_status_from_json",
     "regional_ground_authority_job_status_from_wire",
     "regional_ground_authority_job_status_to_json",
+    "transition_authority_job",
 ]
