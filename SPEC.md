@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-10 | #6006 | movement_optimizer: SciPy convergence status, feasibility-first selection, and provenance (#6005) |
 | 2026-11-09 | #6001 | bound generated-baseline query output with pagination, truncation metadata and explicit --full route |
 | 2026-11-09 | #6000 | align SPEC.md baseline integrity check with reviewed change-fragment collation while failing closed on unreviewed edits |
 | 2026-11-09 | #5996 | inventory generated baselines, define reproducibility contract and bounded query utility |
