@@ -16,10 +16,7 @@ Bootstrap pattern mirrors ``test_ollama_adapter.py`` to work around the broken
 from __future__ import annotations
 
 import os
-import subprocess
 from unittest.mock import MagicMock, patch
-
-from src.shared.python.ai.adapters.cli_subprocess_runner import CliSubprocessResult
 
 import pytest
 
@@ -28,6 +25,7 @@ from src.shared.python.ai.adapters.claude_code_adapter import (  # noqa: E402
     ClaudeCodeAdapter,
     _resolve_binary,
 )
+from src.shared.python.ai.adapters.cli_subprocess_runner import CliSubprocessResult
 from src.shared.python.ai.exceptions import (  # noqa: E402
     AIConnectionError,
     AIProviderError,
@@ -109,13 +107,18 @@ class TestClaudeCodeAdapter:
             assert "not found" in msg.lower()
 
     def test_validate_connection_runs_version_subprocess(self) -> None:
-        fake = CliSubprocessResult(returncode=0, stdout="2.1.91 (Claude Code)\n", stderr="")
+        fake = CliSubprocessResult(
+            returncode=0, stdout="2.1.91 (Claude Code)\n", stderr=""
+        )
         with (
             patch(
                 "src.shared.python.ai.adapters.claude_code_adapter._resolve_binary",
                 return_value="/bin/claude",
             ),
-            patch("src.shared.python.ai.adapters.claude_code_adapter.invoke_cli_subprocess_for_adapter", return_value=fake) as mock_run,
+            patch(
+                "src.shared.python.ai.adapters.claude_code_adapter.invoke_cli_subprocess_for_adapter",
+                return_value=fake,
+            ) as mock_run,
         ):
             adapter = ClaudeCodeAdapter()
             ok, msg = adapter.validate_connection()
@@ -131,7 +134,10 @@ class TestClaudeCodeAdapter:
                 "src.shared.python.ai.adapters.claude_code_adapter._resolve_binary",
                 return_value="/bin/claude",
             ),
-            patch("src.shared.python.ai.adapters.claude_code_adapter.invoke_cli_subprocess_for_adapter", return_value=fake),
+            patch(
+                "src.shared.python.ai.adapters.claude_code_adapter.invoke_cli_subprocess_for_adapter",
+                return_value=fake,
+            ),
         ):
             adapter = ClaudeCodeAdapter()
             ok, msg = adapter.validate_connection()
@@ -145,7 +151,10 @@ class TestClaudeCodeAdapter:
                 "src.shared.python.ai.adapters.claude_code_adapter._resolve_binary",
                 return_value="/bin/claude",
             ),
-            patch("src.shared.python.ai.adapters.claude_code_adapter.invoke_cli_subprocess_for_adapter", return_value=fake) as mock_run,
+            patch(
+                "src.shared.python.ai.adapters.claude_code_adapter.invoke_cli_subprocess_for_adapter",
+                return_value=fake,
+            ) as mock_run,
         ):
             adapter = ClaudeCodeAdapter(model="sonnet")
             response = adapter.send_message("ping", ConversationContext(), tools=[])
@@ -170,7 +179,10 @@ class TestClaudeCodeAdapter:
                 "src.shared.python.ai.adapters.claude_code_adapter._resolve_binary",
                 return_value="/bin/claude",
             ),
-            patch("src.shared.python.ai.adapters.claude_code_adapter.invoke_cli_subprocess_for_adapter", return_value=fake) as mock_run,
+            patch(
+                "src.shared.python.ai.adapters.claude_code_adapter.invoke_cli_subprocess_for_adapter",
+                return_value=fake,
+            ) as mock_run,
         ):
             adapter = ClaudeCodeAdapter()
             adapter.send_message("follow-up", ctx, tools=[])
@@ -213,7 +225,10 @@ class TestClaudeCodeAdapter:
                 "src.shared.python.ai.adapters.claude_code_adapter._resolve_binary",
                 return_value="/bin/claude",
             ),
-            patch("src.shared.python.ai.adapters.claude_code_adapter.invoke_cli_subprocess_for_adapter", return_value=fake),
+            patch(
+                "src.shared.python.ai.adapters.claude_code_adapter.invoke_cli_subprocess_for_adapter",
+                return_value=fake,
+            ),
         ):
             adapter = ClaudeCodeAdapter()
             with pytest.raises(AIProviderError, match="rate limited"):
@@ -235,7 +250,10 @@ class TestClaudeCodeAdapter:
                 "src.shared.python.ai.adapters.claude_code_adapter._resolve_binary",
                 return_value="/bin/claude",
             ),
-            patch("src.shared.python.ai.adapters.claude_code_adapter.invoke_cli_subprocess_for_adapter", return_value=fake),
+            patch(
+                "src.shared.python.ai.adapters.claude_code_adapter.invoke_cli_subprocess_for_adapter",
+                return_value=fake,
+            ),
         ):
             adapter = ClaudeCodeAdapter()
             chunks = list(

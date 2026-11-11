@@ -17,7 +17,9 @@ from src.shared.python.ai.types import ConversationContext
 
 pytestmark = pytest.mark.unit
 
-_RUN = "src.shared.python.ai.adapters.codex_cli_adapter.invoke_cli_subprocess_for_adapter"
+_RUN = (
+    "src.shared.python.ai.adapters.codex_cli_adapter.invoke_cli_subprocess_for_adapter"
+)
 
 
 def _adapter() -> CodexCliAdapter:
@@ -26,7 +28,9 @@ def _adapter() -> CodexCliAdapter:
     return adapter
 
 
-def _completed(returncode: int, stdout: str = "", stderr: str = "") -> CliSubprocessResult:
+def _completed(
+    returncode: int, stdout: str = "", stderr: str = ""
+) -> CliSubprocessResult:
     return CliSubprocessResult(returncode=returncode, stdout=stdout, stderr=stderr)
 
 
