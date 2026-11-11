@@ -283,8 +283,6 @@ def _graceful_then_forced_kill(
     proc: subprocess.Popen[bytes], *, grace_kill_seconds: float
 ) -> None:
     pid = proc.pid
-    if pid is None:
-        return
     if os.name == "nt":
         _windows_kill_process_tree(
             pid, graceful=True, grace_kill_seconds=grace_kill_seconds
