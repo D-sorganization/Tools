@@ -34,11 +34,6 @@ on:
       - "src/shared/python/ai/adapters/rust_adapter.py"
       - "tests/shared/python/ai/test_rust_adapter_wheel_smoke.py"
   workflow_dispatch:
-    inputs:
-      publish:
-        description: "Publish wheels to PyPI after build"
-        required: false
-        default: "false"
 
 concurrency:
   group: maturin-ai-backend-${{ github.ref }}

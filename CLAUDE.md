@@ -221,18 +221,20 @@ those paths are disabled in this project (see comment in
 
 ### CI — Maturin Wheel Build
 
-The workflow `.github/workflows/maturin-ai-backend.yml` builds wheels for:
+The workflow `.github/workflows/maturin-ai-backend.yml` builds wheels on the
+native **Linux** fleet runner (`d-sorg-fleet`) only:
 
-- **Platforms:** `ubuntu-latest`, `windows-latest`, `macos-latest`
-- **Python versions:** 3.10, 3.11, 3.12, 3.13
-- **Features:** `python` (standard) and optionally `python,local-embeddings`
-  (manual dispatch only, Linux only due to build time)
+- **Qualified today:** native Linux × Python 3.10, 3.11, 3.12, 3.13 (`python`
+  feature; smoke import + wheel-tag evidence per matrix cell).
+- **Not qualified yet:** native Windows and macOS wheels remain open in issue
+  #5684 — do not document or imply three-OS CI coverage until that issue
+  closes with real native import evidence.
+- **Optional manual path:** `workflow_dispatch` job `build-local-embeddings`
+  (Linux, `python,local-embeddings` only).
 
-The workflow triggers on push/PR to `main` whenever files under
-`rust_core/ai_backend/**` or `Cargo.toml` change.
-
-Each built wheel is uploaded as a GitHub Actions artifact
-(`wheel-<os>-py<version>`) with a 14-day retention window.
+Triggers on push/PR to `main` when `rust_core/ai_backend/**`, `Cargo.toml`, or
+related adapter/smoke paths change. Artifacts use
+`wheel-${{ runner.os }}-${{ runner.arch }}-py<version>` (14-day retention).
 
 ## Slash Commands
 
