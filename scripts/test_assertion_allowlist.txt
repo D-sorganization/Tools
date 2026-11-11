@@ -89,3 +89,6 @@ src/p1am_control_system/backend/tests/_route_authz_helpers.py
 # requires_build123d tests on the tests/vessel_drafter MagicMock stub (#5874).
 # Its behaviour is asserted in test_build123d_stub_isolation.py.
 src/vessel_drafter/tests/conftest.py
+# Tier-1 fake claude/codex/agy CLI executable for Popen runner oracles (#5727);
+# behavioural assertions live in test_cli_subprocess_runner_oracles.py.
+tests/fixtures/fake_subscription_cli.py
