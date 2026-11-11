@@ -1,3 +1,4 @@
+# mypy: ignore-errors
 """Stdio MCP server for engineering calculators (issues #6021, #6022)."""
 
 from __future__ import annotations

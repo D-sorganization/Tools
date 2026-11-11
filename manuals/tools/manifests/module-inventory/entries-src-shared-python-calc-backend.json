@@ -65,6 +65,120 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 3231,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "afe70d336e3bbd2b8a5c9d326b5a27330dca6be7985fd547ffc37bca90ce2e26",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-AGENT-API-PY-C3DE0A077D91",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/agent_api.py",
+      "purpose": "Fleet Agent API v1 helpers for calculator MCP (issues #6021, #6022).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "CONTRACT_VERSION",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_CALCULATION_STATUS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_CALL_SECONDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MAX_OUTPUT_BYTES",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_result",
+            "signature": "*, calculator_id: str, formula_ids: tuple[str, ...], outputs: dict[str, Any], warnings: list[str], units: dict[str, str], status: str"
+          },
+          {
+            "kind": "function",
+            "name": "calculation_status",
+            "signature": "formula_ids: tuple[str, ...]"
+          },
+          {
+            "kind": "function",
+            "name": "enforce_output_cap",
+            "signature": "payload: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "git_sha",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "main_module",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "parse_inputs",
+            "signature": "model: type[BaseModel], raw: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "serialize_outputs",
+            "signature": "value: Any"
+          },
+          {
+            "kind": "function",
+            "name": "tools_version",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "validation_problems",
+            "signature": "exc: ValidationError"
+          }
+        ],
+        "test_paths": [
+          "tests/calc_backend/test_agent_api_output_cap.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 616,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -1512,6 +1626,72 @@
         "test_paths": [],
         "unit_mentions": [
           "g",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6223,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "48181c3d9df8cf28873c534d26e0fa417b94f199f41ae97122d2c6c9484f411b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-MCP-SERVER-PY-C6975E2D2358",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/mcp_server.py",
+      "purpose": "Stdio MCP server for engineering calculators (issues #6021, #6022).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_CONVERT_UNITS_ID",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_LIST_DEFAULT_LIMIT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/calc_backend/mcp_probe.py"
+        ],
+        "unit_mentions": [
           "s"
         ],
         "validation_paths": []

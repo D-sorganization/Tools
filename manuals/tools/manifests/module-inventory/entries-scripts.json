@@ -3422,10 +3422,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6977,
+      "bytes_lf": 7018,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d1d66ef6955b5ef8f4314dc672c8c8e3b2dd35583598e7ab32e056f74ff4e04c",
+      "content_sha256_lf": "e1a72f5ff2858f50449ec67cfa09fce37c1380ac41c0392b94c9350292d9aa81",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-CHECK-ROOT-ALLOWLIST-PY-94782E1774B7",
       "language": "python",
@@ -6290,10 +6290,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 23702,
+      "bytes_lf": 24064,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0b33920adbe4ff5b6116b1305dabcfb3498c5a0a5e0af1885bf26dd1f4cb5e2a",
+      "content_sha256_lf": "73fcbaf23221c9dc154cf6a97ac104d9b82048134be86bacf539e6376d8548e9",
       "family": "repository-tooling-non-calculation",
       "id": "TOOLS-MODULE-SCRIPTS-GENERATE-TOOLS-JSON-PY-4CB9321263B8",
       "language": "python",
@@ -6340,6 +6340,11 @@
           {
             "kind": "constant",
             "name": "MATURITIES",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "MCP_SURFACE_TOOLS",
             "signature": null
           },
           {
@@ -8420,6 +8425,63 @@
         ],
         "unit_mentions": [
           "N",
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5037,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d13a4be9ed9429ffebe1b3f7109c90cd46660a28026259e3ed7ef812b711e45e",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-RUN-AGENT-API-CONFORMANCE-PY-0695BD7F5531",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/run_agent_api_conformance.py",
+      "purpose": "Run the vendored Fleet Agent API conformance template (issue #6022).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "TEMPLATE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
           "s"
         ],
         "validation_paths": []

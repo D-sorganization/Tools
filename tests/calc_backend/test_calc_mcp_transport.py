@@ -10,7 +10,7 @@ from pathlib import Path
 import pytest
 
 
-def test_real_mcp_lists_and_runs_three_calculators(repository: Path) -> None:
+def test_real_mcp_lists_and_runs_three_calculators(repo_root: Path) -> None:
     probe_import = subprocess.run(
         [
             sys.executable,
@@ -28,9 +28,9 @@ def test_real_mcp_lists_and_runs_three_calculators(repository: Path) -> None:
 
     probe = Path(__file__).with_name("mcp_probe.py")
     result = subprocess.run(
-        [sys.executable, str(probe), str(repository)],
-        cwd=repository,
-        env={**os.environ, "PYTHONPATH": str(repository / "src")},
+        [sys.executable, str(probe), str(repo_root)],
+        cwd=repo_root,
+        env={**os.environ, "PYTHONPATH": str(repo_root / "src")},
         capture_output=True,
         text=True,
         timeout=120,

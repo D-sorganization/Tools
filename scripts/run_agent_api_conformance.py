@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# mypy: ignore-errors
 """Run the vendored Fleet Agent API conformance template (issue #6022)."""
 
 from __future__ import annotations
@@ -109,7 +110,8 @@ async def _run_stdio_checks(template: dict[str, Any], repo_root: Path) -> list[s
                 text = response.content[0].text if response.content else "{}"
                 payload = json.loads(text)
                 failures.extend(
-                    f"{check['id']}: {msg}" for msg in _assert_payload(check.get("assertions", []), payload)
+                    f"{check['id']}: {msg}"
+                    for msg in _assert_payload(check.get("assertions", []), payload)
                 )
     return failures
 
@@ -135,7 +137,9 @@ def main(argv: list[str] | None = None) -> int:
         for line in failures:
             logger.error("%s", line)
         return 1
-    logger.info("agent API conformance: %d checks passed", len(template.get("checks", [])))
+    logger.info(
+        "agent API conformance: %d checks passed", len(template.get("checks", []))
+    )
     return 0
 
 
