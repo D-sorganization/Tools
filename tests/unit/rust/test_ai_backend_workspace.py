@@ -227,6 +227,7 @@ def test_linux_wheel_qualify_job_runs_clean_install_auditwheel_smoke_and_mismatc
 
     smoke = qualify_steps["Rust-path smoke (oracle 5)"]
     assert smoke["env"]["AI_BACKEND_WHEEL_REQUIRED"] == "1"
+    assert "src" in smoke["env"]["PYTHONPATH"]
     assert "ai_backend_available" in smoke["run"]
     assert "RustAgentAdapter" in smoke["run"]
     assert "pytest tests/shared" not in smoke["run"]
