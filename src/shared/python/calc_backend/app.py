@@ -20,6 +20,8 @@ from fastapi import APIRouter, FastAPI, HTTPException, Request
 from shared.python.cors import add_cors_middleware
 
 from .health import CheckStatus, get_health_checker
+from .registry.store import materialize_openapi_schemas
+from .registry.wire import wire_calculator_registry
 from .routers import (
     acid_gas_dewpoint,
     baghouse,
@@ -72,8 +74,12 @@ add_cors_middleware(app)
 # Include routers
 # ---------------------------------------------------------------------------
 
+wire_calculator_registry()
+
 for router in CALCULATOR_ROUTERS:
     app.include_router(router)
+
+materialize_openapi_schemas(app.openapi())
 
 
 # ---------------------------------------------------------------------------

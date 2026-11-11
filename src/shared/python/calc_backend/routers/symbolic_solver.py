@@ -7,6 +7,15 @@ from pydantic import BaseModel, Field
 
 from shared.python.safe_eval import validate_expression
 
+from ..contracts.symbolic_solver import (
+    SymbolicDerivativeRequest,
+    SymbolicDerivativeResponse,
+    SymbolicSimplifyRequest,
+    SymbolicSimplifyResponse,
+    SymbolicSolveRequest,
+    SymbolicSolveResponse,
+)
+
 try:
     import sympy as sp
     from sympy.parsing.sympy_parser import (
@@ -22,51 +31,6 @@ except ImportError:
 
 
 router = APIRouter(prefix="/api/calc/symbolic", tags=["symbolic-solver"])
-
-
-class SymbolicSolveRequest(BaseModel):
-    """Request model for symbolic equation solving."""
-
-    equation: str = Field(..., description="Equation to solve (e.g., 'x**2 - 4 = 0')")
-    variable: str = Field(..., description="Variable to solve for (e.g., 'x')")
-
-
-class SymbolicSolveResponse(BaseModel):
-    """Response model for symbolic equation solving."""
-
-    solutions: list[str] = Field(default_factory=list)
-    raw_result: str | None = None
-    available: bool = Field(default=SYMPY_AVAILABLE)
-    error: str | None = None
-
-
-class SymbolicDerivativeRequest(BaseModel):
-    """Request model for symbolic differentiation."""
-
-    expression: str = Field(..., description="Expression to differentiate")
-    variable: str = Field(..., description="Variable with respect to")
-
-
-class SymbolicDerivativeResponse(BaseModel):
-    """Response model for symbolic differentiation."""
-
-    derivative: str | None = None
-    available: bool = Field(default=SYMPY_AVAILABLE)
-    error: str | None = None
-
-
-class SymbolicSimplifyRequest(BaseModel):
-    """Request model for symbolic simplification."""
-
-    expression: str = Field(..., description="Expression to simplify")
-
-
-class SymbolicSimplifyResponse(BaseModel):
-    """Response model for symbolic simplification."""
-
-    simplified: str | None = None
-    available: bool = Field(default=SYMPY_AVAILABLE)
-    error: str | None = None
 
 
 class SymbolicHelpResponse(BaseModel):
@@ -154,6 +118,7 @@ def solve_equation(request: SymbolicSolveRequest) -> SymbolicSolveResponse:
         return SymbolicSolveResponse(
             solutions=solution_strings,
             raw_result=str(solutions),
+            available=SYMPY_AVAILABLE,
         )
     except Exception as e:  # noqa: BLE001 - user-facing error message
         return SymbolicSolveResponse(error=f"Failed to solve equation: {e!s}")
@@ -179,7 +144,10 @@ def compute_derivative(
         variable = sp.Symbol(request.variable)
         derivative = sp.diff(expr, variable)
 
-        return SymbolicDerivativeResponse(derivative=str(derivative))
+        return SymbolicDerivativeResponse(
+            derivative=str(derivative),
+            available=SYMPY_AVAILABLE,
+        )
     except Exception as e:  # noqa: BLE001 - user-facing error message
         return SymbolicDerivativeResponse(error=f"Failed to compute derivative: {e!s}")
 
@@ -201,6 +169,9 @@ def simplify_expression(request: SymbolicSimplifyRequest) -> SymbolicSimplifyRes
         )
         simplified = sp.simplify(expr)
 
-        return SymbolicSimplifyResponse(simplified=str(simplified))
+        return SymbolicSimplifyResponse(
+            simplified=str(simplified),
+            available=SYMPY_AVAILABLE,
+        )
     except Exception as e:  # noqa: BLE001 - user-facing error message
         return SymbolicSimplifyResponse(error=f"Failed to simplify expression: {e!s}")
