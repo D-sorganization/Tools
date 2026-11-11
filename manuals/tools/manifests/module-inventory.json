@@ -609,8 +609,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-ai.json"
     },
     {
-      "content_sha256_lf": "0e7deb47d517dbb10676d288c15848f31e9c0ffaf872d7feeaa3240b7a348bf4",
-      "entry_count": 37,
+      "content_sha256_lf": "4aec134dd7076a8b4c9b452af0e0e4ae365a2d8d3cdd8a04642e3fc39e3cff89",
+      "entry_count": 42,
       "package": "src/shared/python/calc_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-calc-backend.json"
     },
