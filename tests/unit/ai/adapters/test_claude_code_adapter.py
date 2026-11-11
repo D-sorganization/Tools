@@ -14,12 +14,12 @@ binary, asserting:
 
 from __future__ import annotations
 
-import subprocess
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
 from src.shared.python.ai.adapters.claude_code_adapter import ClaudeCodeAdapter
+from src.shared.python.ai.adapters.cli_subprocess_runner import CliSubprocessResult
 from src.shared.python.ai.exceptions import (
     AIConnectionError,
     AIProviderError,
@@ -29,7 +29,10 @@ from src.shared.python.ai.types import ConversationContext
 
 pytestmark = pytest.mark.unit
 
-_RUN = "src.shared.python.ai.adapters.claude_code_adapter.subprocess.run"
+_RUN = (
+    "src.shared.python.ai.adapters.claude_code_adapter."
+    "invoke_cli_subprocess_for_adapter"
+)
 
 
 def _adapter() -> ClaudeCodeAdapter:
@@ -39,12 +42,10 @@ def _adapter() -> ClaudeCodeAdapter:
     return adapter
 
 
-def _completed(returncode: int, stdout: str = "", stderr: str = "") -> MagicMock:
-    result = MagicMock()
-    result.returncode = returncode
-    result.stdout = stdout
-    result.stderr = stderr
-    return result
+def _completed(
+    returncode: int, stdout: str = "", stderr: str = ""
+) -> CliSubprocessResult:
+    return CliSubprocessResult(returncode=returncode, stdout=stdout, stderr=stderr)
 
 
 class TestSendMessage:
@@ -79,7 +80,10 @@ class TestSendMessage:
     def test_timeout_raises_timeout_error(self) -> None:
         adapter = _adapter()
         with (
-            patch(_RUN, side_effect=subprocess.TimeoutExpired(cmd="claude", timeout=1)),
+            patch(
+                _RUN,
+                side_effect=AITimeoutError("timed out", provider="claude_code"),
+            ),
             pytest.raises(AITimeoutError),
         ):
             adapter.send_message("hi", ConversationContext(), [])
@@ -87,7 +91,10 @@ class TestSendMessage:
     def test_file_not_found_midrun_raises_connection_error(self) -> None:
         adapter = _adapter()
         with (
-            patch(_RUN, side_effect=FileNotFoundError("gone")),
+            patch(
+                _RUN,
+                side_effect=AIConnectionError("gone", provider="claude_code"),
+            ),
             pytest.raises(AIConnectionError),
         ):
             adapter.send_message("hi", ConversationContext(), [])
@@ -117,16 +124,17 @@ class TestValidateConnection:
 
     def test_version_timeout_reports_failure(self) -> None:
         adapter = _adapter()
-        with patch(
-            _RUN, side_effect=subprocess.TimeoutExpired(cmd="claude", timeout=10)
-        ):
+        with patch(_RUN, side_effect=AITimeoutError("slow", provider="claude_code")):
             ok, msg = adapter.validate_connection()
         assert ok is False
         assert "did not respond" in msg
 
     def test_version_oserror_reports_failure(self) -> None:
         adapter = _adapter()
-        with patch(_RUN, side_effect=OSError("exec format error")):
+        with patch(
+            _RUN,
+            side_effect=AIConnectionError("exec format error", provider="claude_code"),
+        ):
             ok, msg = adapter.validate_connection()
         assert ok is False
-        assert "Could not execute" in msg
+        assert "exec format error" in msg

@@ -35,13 +35,17 @@ import os
 import re
 import secrets
 import shutil
-import signal
-import subprocess
 from collections.abc import Iterator, Mapping, Sequence
 from pathlib import Path
 from typing import Any
 
 from shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
+from shared.python.ai.adapters.cli_subprocess_runner import (  # noqa: F401
+    PromptDelivery,
+    invoke_cli_subprocess_for_adapter,
+    scrub_cli_subprocess_env,
+    terminate_cli_process_group,
+)
 from shared.python.ai.exceptions import (
     AIConnectionError,
     AIProviderError,
@@ -85,33 +89,10 @@ _STATIC_MODELS: tuple[str, ...] = (
 )
 
 
-_SENSITIVE_ENV_SUFFIXES = ("_SECRET", "_PASSWORD", "_PRIVATE_KEY", "_TOKEN")
 _ENVELOPE_RE = re.compile(
     r'<sidekick_tool_call\s+nonce="([^"]+)"\s*>(.*?)</sidekick_tool_call>',
     re.DOTALL,
 )
-
-
-def scrub_cli_subprocess_env(env: Mapping[str, str] | None = None) -> dict[str, str]:
-    """Return a copy of ``env`` stripped of vault secrets and raw credential tokens."""
-    source = os.environ if env is None else env
-    return {
-        k: v
-        for k, v in source.items()
-        if not k.upper().startswith("VAULT_SECRET_")
-        and not any(k.upper().endswith(s) for s in _SENSITIVE_ENV_SUFFIXES)
-    }
-
-
-def terminate_cli_process_group(pid: int | None) -> bool:
-    """Best-effort SIGKILL of the CLI process group on timeout or cancellation."""
-    if pid is None or pid <= 0 or not hasattr(os, "killpg"):
-        return False
-    try:
-        os.killpg(os.getpgid(pid), signal.SIGKILL)
-        return True
-    except OSError:
-        return False
 
 
 def build_cli_tool_prompt_section(tools: Sequence[ToolDeclaration], nonce: str) -> str:
@@ -198,7 +179,6 @@ def _resolve_binary(explicit: str | None = None) -> str | None:
     found = shutil.which("claude")
     if found:
         return found
-    import os
 
     for candidate in _FALLBACK_PATHS:
         expanded = os.path.expanduser(os.path.expandvars(candidate))
@@ -316,29 +296,14 @@ class ClaudeCodeAdapter(BaseAgentAdapter):
         if self.model:
             args += ["--model", self.model]
 
-        try:
-            result = subprocess.run(
-                args,
-                input=prompt,
-                capture_output=True,
-                text=True,
-                timeout=self.timeout,
-                check=False,
-                encoding="utf-8",
-                env=scrub_cli_subprocess_env(),
-                start_new_session=(os.name != "nt"),
-            )
-        except subprocess.TimeoutExpired as exc:
-            terminate_cli_process_group(getattr(exc, "pid", None))
-            raise AITimeoutError(
-                f"Claude Code CLI timed out after {self.timeout}s",
-                provider=self.PROVIDER_NAME,
-            ) from exc
-        except FileNotFoundError as exc:
-            raise AIConnectionError(
-                f"Claude Code binary at {self.binary} disappeared mid-invocation",
-                provider=self.PROVIDER_NAME,
-            ) from exc
+        result = invoke_cli_subprocess_for_adapter(
+            self.binary,
+            args,
+            provider=self.PROVIDER_NAME,
+            prompt=prompt,
+            prompt_delivery=PromptDelivery.STDIN,
+            timeout=self.timeout,
+        )
 
         if result.returncode != 0:
             stderr_tail = (result.stderr or "")[-500:]
@@ -403,18 +368,16 @@ class ClaudeCodeAdapter(BaseAgentAdapter):
                 "Claude Code CLI not found. Install: https://claude.com/claude-code"
             )
         try:
-            result = subprocess.run(
+            result = invoke_cli_subprocess_for_adapter(
+                self.binary,
                 [self.binary, "--version"],
-                capture_output=True,
-                text=True,
+                provider=self.PROVIDER_NAME,
                 timeout=10.0,
-                check=False,
-                encoding="utf-8",
             )
-        except subprocess.TimeoutExpired:
+        except AITimeoutError:
             return False, "Claude Code CLI did not respond to --version within 10s"
-        except OSError as exc:
-            return False, f"Could not execute {self.binary}: {exc}"
+        except AIConnectionError as exc:
+            return False, str(exc)
 
         if result.returncode != 0:
             return False, (
