@@ -1,0 +1,27 @@
+# ud-tools (D-sorganization/Tools)
+
+> Engineering calculators, process models, and agent-facing MCP surfaces.
+
+## Agent API (MCP)
+
+- MCP entry: `.mcp.json` registers `ud-tools-mcp` (stdio calculator server).
+- Console script: `ud-tools-mcp` (optional install: `pip install '.[calc-mcp]'`).
+- Operator guide: `AGENTS.md` section "Agent API (engineering calculators over MCP)".
+
+## Catalog and schemas
+
+- Tool catalog: `tools.json` (generated from `src/**/gui_registration.py`).
+- Cross-repo surface contract: `tool_surface_contract.json` (`surfaces.mcp` marks calculator tools).
+- Calculator REST OpenAPI: run `uvicorn calc_backend.app:app` and open `/openapi.json`.
+- CalculatorSpec registry: `src/shared/python/calc_backend/registry/`.
+
+## Design manual formula IDs
+
+- Governance: `config/design_manual_governance.json`
+- Editable manual source: `manuals/tools/` (QMD; generated PDF/HTML are not editable).
+- Module inventory: `manuals/tools/manifests/module-inventory.json`
+
+## Conformance
+
+- Vendored Fleet Agent API conformance template: `config/fleet_agent_api_conformance/v1/template.json`
+- CI runner: `python scripts/run_agent_api_conformance.py`

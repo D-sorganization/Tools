@@ -1,0 +1,19 @@
+{
+  "mcpServers": {
+    "ud-tools-calculators": {
+      "command": "ud-tools-mcp",
+      "env": {}
+    },
+    "codemap": {
+      "command": "codemap-mcp",
+      "env": {
+        "CODEMAP_REPO_ROOT": "."
+      }
+    },
+    "agent-context": {
+      "command": "python",
+      "args": ["-m", "agent_context.mcp_server", "--root", "."],
+      "env": {}
+    }
+  }
+}
