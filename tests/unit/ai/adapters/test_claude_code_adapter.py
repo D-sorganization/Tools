@@ -124,9 +124,7 @@ class TestValidateConnection:
 
     def test_version_timeout_reports_failure(self) -> None:
         adapter = _adapter()
-        with patch(
-            _RUN, side_effect=AITimeoutError("slow", provider="claude_code")
-        ):
+        with patch(_RUN, side_effect=AITimeoutError("slow", provider="claude_code")):
             ok, msg = adapter.validate_connection()
         assert ok is False
         assert "did not respond" in msg
