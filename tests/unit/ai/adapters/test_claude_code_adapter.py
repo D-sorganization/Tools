@@ -29,7 +29,10 @@ from src.shared.python.ai.types import ConversationContext
 
 pytestmark = pytest.mark.unit
 
-_RUN = "src.shared.python.ai.adapters.claude_code_adapter.invoke_cli_subprocess_for_adapter"
+_RUN = (
+    "src.shared.python.ai.adapters.claude_code_adapter."
+    "invoke_cli_subprocess_for_adapter"
+)
 
 
 def _adapter() -> ClaudeCodeAdapter:
@@ -39,7 +42,9 @@ def _adapter() -> ClaudeCodeAdapter:
     return adapter
 
 
-def _completed(returncode: int, stdout: str = "", stderr: str = "") -> CliSubprocessResult:
+def _completed(
+    returncode: int, stdout: str = "", stderr: str = ""
+) -> CliSubprocessResult:
     return CliSubprocessResult(returncode=returncode, stdout=stdout, stderr=stderr)
 
 
@@ -75,7 +80,10 @@ class TestSendMessage:
     def test_timeout_raises_timeout_error(self) -> None:
         adapter = _adapter()
         with (
-            patch(_RUN, side_effect=AITimeoutError("timed out", provider="claude_code")),
+            patch(
+                _RUN,
+                side_effect=AITimeoutError("timed out", provider="claude_code"),
+            ),
             pytest.raises(AITimeoutError),
         ):
             adapter.send_message("hi", ConversationContext(), [])
