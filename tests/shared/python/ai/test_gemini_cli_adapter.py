@@ -18,13 +18,11 @@ Gemini-specific contracts pinned here:
 from __future__ import annotations
 
 import os
-import subprocess
 from unittest.mock import MagicMock, patch
-
-from src.shared.python.ai.adapters.cli_subprocess_runner import CliSubprocessResult
 
 import pytest
 
+from src.shared.python.ai.adapters.cli_subprocess_runner import CliSubprocessResult
 from src.shared.python.ai.adapters.gemini_cli_adapter import (  # noqa: E402
     DEFAULT_GEMINI_CLI_TIMEOUT,
     GeminiCliAdapter,
@@ -98,7 +96,10 @@ class TestGeminiCliAdapter:
                 "src.shared.python.ai.adapters.gemini_cli_adapter._resolve_binary",
                 return_value="/bin/gemini",
             ),
-            patch("src.shared.python.ai.adapters.gemini_cli_adapter.invoke_cli_subprocess_for_adapter", return_value=fake) as mock_run,
+            patch(
+                "src.shared.python.ai.adapters.gemini_cli_adapter.invoke_cli_subprocess_for_adapter",
+                return_value=fake,
+            ) as mock_run,
         ):
             ok, msg = GeminiCliAdapter().validate_connection()
             assert ok is True
@@ -118,7 +119,10 @@ class TestGeminiCliAdapter:
                 "src.shared.python.ai.adapters.gemini_cli_adapter._resolve_binary",
                 return_value="/bin/gemini",
             ),
-            patch("src.shared.python.ai.adapters.gemini_cli_adapter.invoke_cli_subprocess_for_adapter", return_value=fake) as mock_run,
+            patch(
+                "src.shared.python.ai.adapters.gemini_cli_adapter.invoke_cli_subprocess_for_adapter",
+                return_value=fake,
+            ) as mock_run,
         ):
             adapter = GeminiCliAdapter(model="gemini-2.5-flash")
             response = adapter.send_message("ping", ConversationContext(), tools=[])
@@ -143,7 +147,10 @@ class TestGeminiCliAdapter:
                 "src.shared.python.ai.adapters.gemini_cli_adapter._resolve_binary",
                 return_value="/bin/gemini",
             ),
-            patch("src.shared.python.ai.adapters.gemini_cli_adapter.invoke_cli_subprocess_for_adapter", return_value=fake) as mock_run,
+            patch(
+                "src.shared.python.ai.adapters.gemini_cli_adapter.invoke_cli_subprocess_for_adapter",
+                return_value=fake,
+            ) as mock_run,
         ):
             GeminiCliAdapter().send_message("second turn", ctx, tools=[])
             _, kwargs = mock_run.call_args
@@ -183,7 +190,10 @@ class TestGeminiCliAdapter:
                 "src.shared.python.ai.adapters.gemini_cli_adapter._resolve_binary",
                 return_value="/bin/gemini",
             ),
-            patch("src.shared.python.ai.adapters.gemini_cli_adapter.invoke_cli_subprocess_for_adapter", return_value=fake),
+            patch(
+                "src.shared.python.ai.adapters.gemini_cli_adapter.invoke_cli_subprocess_for_adapter",
+                return_value=fake,
+            ),
         ):
             with pytest.raises(AIProviderError, match="not authenticated"):
                 GeminiCliAdapter().send_message("hi", ConversationContext(), tools=[])

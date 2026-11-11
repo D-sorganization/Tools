@@ -674,10 +674,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 16906,
+      "bytes_lf": 15509,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "575366c8273ede46cd031c3e87809223b63d6861c1c9e4f0e1ff443b1e9e331b",
+      "content_sha256_lf": "187ae6120bedd74392e0c9dc51e008fbdc38349913cc869dcc4799362664e55c",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLAUDE-CODE-ADAPTER-PY-7E66ECB121E5",
       "language": "python",
@@ -737,11 +737,6 @@
           },
           {
             "kind": "constant",
-            "name": "_SENSITIVE_ENV_SUFFIXES",
-            "signature": null
-          },
-          {
-            "kind": "constant",
             "name": "_STATIC_MODELS",
             "signature": null
           },
@@ -754,22 +749,13 @@
             "kind": "function",
             "name": "parse_cli_tool_envelopes",
             "signature": "raw_text: str, *, expected_nonce: str, tools: Sequence[ToolDeclaration]"
-          },
-          {
-            "kind": "function",
-            "name": "scrub_cli_subprocess_env",
-            "signature": "env: Mapping[str, str] | None=None"
-          },
-          {
-            "kind": "function",
-            "name": "terminate_cli_process_group",
-            "signature": "pid: int | None"
           }
         ],
         "test_paths": [
           "tests/shared/python/ai/test_claude_code_adapter.py",
           "tests/unit/ai/adapters/test_claude_code_adapter.py",
-          "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py"
+          "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
+          "tests/unit/ai/adapters/test_cli_subprocess_runner_oracles.py"
         ],
         "unit_mentions": [
           "g",
@@ -861,6 +847,125 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 12315,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "cc2c7f29c945d99eda27ffb62b09a0fb4660497c8791521c95f586b1926d8983",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLI-SUBPROCESS-RUNNER-PY-73F30E6F7DA8",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/adapters/cli_subprocess_runner.py",
+      "purpose": "Shared ``Popen`` runner for subscription CLI adapters (Tools #5727 wave 1.2).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CliSubprocessResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CliSubprocessTimeoutError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "PromptDelivery",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_GRACE_KILL_SECONDS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_OUTPUT_BYTE_CAP",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_TRUNCATION_MARKER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_WINDOWS_ARGV_PROMPT_LIMIT",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "ensure_executable",
+            "signature": "binary_path: str"
+          },
+          {
+            "kind": "function",
+            "name": "invoke_cli_subprocess_for_adapter",
+            "signature": "binary: str, argv: Sequence[str], *, provider: str, prompt: str | None=None, prompt_delivery: PromptDelivery=PromptDelivery.STDIN, timeout: float"
+          },
+          {
+            "kind": "function",
+            "name": "run_cli_subprocess",
+            "signature": "argv: Sequence[str], *, prompt: str | None=None, prompt_delivery: PromptDelivery=PromptDelivery.STDIN, timeout: float, env: Mapping[str, str] | None=None, output_byte_cap: int=DEFAULT_OUTPUT_BYTE_CAP, grace_kill_seconds: float=DEFAULT_GRACE_KILL_SECONDS, encoding: str='utf-8'"
+          },
+          {
+            "kind": "function",
+            "name": "scrub_cli_subprocess_env",
+            "signature": "env: Mapping[str, str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "terminate_cli_process_group",
+            "signature": "pid: int | None"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/ai/test_claude_code_adapter.py",
+          "tests/shared/python/ai/test_codex_cli_adapter.py",
+          "tests/shared/python/ai/test_gemini_cli_adapter.py",
+          "tests/unit/ai/adapters/test_antigravity_and_staff_adapter.py",
+          "tests/unit/ai/adapters/test_claude_code_adapter.py",
+          "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
+          "tests/unit/ai/adapters/test_cli_subprocess_runner_oracles.py",
+          "tests/unit/ai/adapters/test_codex_cli_adapter.py",
+          "tests/unit/ai/adapters/test_gemini_cli_adapter.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 11878,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -937,10 +1042,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13705,
+      "bytes_lf": 13051,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f97cc6fef6c1c46c3502861ea26374cecefffa33c64efb4361c6651cb754211e",
+      "content_sha256_lf": "3125a06e1bce970e27a5cd81947923592d3a6785b2491019e14788df538dd780",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CODEX-CLI-ADAPTER-PY-7AFE11EBF925",
       "language": "python",
@@ -1000,6 +1105,7 @@
         "test_paths": [
           "tests/shared/python/ai/test_codex_cli_adapter.py",
           "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
+          "tests/unit/ai/adapters/test_cli_subprocess_runner_oracles.py",
           "tests/unit/ai/adapters/test_codex_cli_adapter.py"
         ],
         "unit_mentions": [
@@ -1150,10 +1256,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11907,
+      "bytes_lf": 11276,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "392ba73c90859383f0b98845df752be387a8dd679e78dd646da4c52f60c97d0d",
+      "content_sha256_lf": "786f225633d5a021e30370880d8b29235fc7b55dd6367b5be0b09186a5fc6716",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-GEMINI-CLI-ADAPTER-PY-68DBE34F3E89",
       "language": "python",
@@ -1212,6 +1318,7 @@
         ],
         "test_paths": [
           "tests/shared/python/ai/test_gemini_cli_adapter.py",
+          "tests/unit/ai/adapters/test_cli_subprocess_runner_oracles.py",
           "tests/unit/ai/adapters/test_gemini_cli_adapter.py"
         ],
         "unit_mentions": [
@@ -2135,6 +2242,7 @@
           "tests/unit/ai/adapters/test_antigravity_and_staff_adapter.py",
           "tests/unit/ai/adapters/test_claude_code_adapter.py",
           "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
+          "tests/unit/ai/adapters/test_cli_subprocess_runner_oracles.py",
           "tests/unit/ai/adapters/test_cline_adapter.py",
           "tests/unit/ai/adapters/test_codex_cli_adapter.py",
           "tests/unit/ai/adapters/test_gemini_cli_adapter.py",
@@ -9879,6 +9987,7 @@
           "tests/unit/ai/adapters/test_antigravity_and_staff_adapter.py",
           "tests/unit/ai/adapters/test_claude_code_adapter.py",
           "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
+          "tests/unit/ai/adapters/test_cli_subprocess_runner_oracles.py",
           "tests/unit/ai/adapters/test_cline_adapter.py",
           "tests/unit/ai/adapters/test_codex_cli_adapter.py",
           "tests/unit/ai/adapters/test_gemini_cli_adapter.py",

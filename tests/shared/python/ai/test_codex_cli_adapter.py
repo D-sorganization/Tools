@@ -21,13 +21,11 @@ Bootstrap pattern mirrors ``test_ollama_adapter.py`` to work around the broken
 from __future__ import annotations
 
 import os
-import subprocess
 from unittest.mock import MagicMock, patch
-
-from src.shared.python.ai.adapters.cli_subprocess_runner import CliSubprocessResult
 
 import pytest
 
+from src.shared.python.ai.adapters.cli_subprocess_runner import CliSubprocessResult
 from src.shared.python.ai.adapters.codex_cli_adapter import (  # noqa: E402
     DEFAULT_CODEX_CLI_TIMEOUT,
     CodexCliAdapter,
@@ -95,13 +93,18 @@ class TestCodexCliAdapter:
             assert "not found" in msg.lower()
 
     def test_validate_connection_runs_version_subprocess(self) -> None:
-        fake = CliSubprocessResult(returncode=0, stdout="codex-cli 0.118.0\n", stderr="")
+        fake = CliSubprocessResult(
+            returncode=0, stdout="codex-cli 0.118.0\n", stderr=""
+        )
         with (
             patch(
                 "src.shared.python.ai.adapters.codex_cli_adapter._resolve_binary",
                 return_value="/bin/codex",
             ),
-            patch("src.shared.python.ai.adapters.codex_cli_adapter.invoke_cli_subprocess_for_adapter", return_value=fake) as mock_run,
+            patch(
+                "src.shared.python.ai.adapters.codex_cli_adapter.invoke_cli_subprocess_for_adapter",
+                return_value=fake,
+            ) as mock_run,
         ):
             ok, msg = CodexCliAdapter().validate_connection()
             assert ok is True
@@ -122,7 +125,10 @@ class TestCodexCliAdapter:
                 "src.shared.python.ai.adapters.codex_cli_adapter._resolve_binary",
                 return_value="/bin/codex",
             ),
-            patch("src.shared.python.ai.adapters.codex_cli_adapter.invoke_cli_subprocess_for_adapter", return_value=fake) as mock_run,
+            patch(
+                "src.shared.python.ai.adapters.codex_cli_adapter.invoke_cli_subprocess_for_adapter",
+                return_value=fake,
+            ) as mock_run,
         ):
             adapter = CodexCliAdapter(model="gpt-5-mini")
             response = adapter.send_message("ping", ConversationContext(), tools=[])
@@ -149,7 +155,10 @@ class TestCodexCliAdapter:
                 "src.shared.python.ai.adapters.codex_cli_adapter._resolve_binary",
                 return_value="/bin/codex",
             ),
-            patch("src.shared.python.ai.adapters.codex_cli_adapter.invoke_cli_subprocess_for_adapter", return_value=fake),
+            patch(
+                "src.shared.python.ai.adapters.codex_cli_adapter.invoke_cli_subprocess_for_adapter",
+                return_value=fake,
+            ),
         ):
             response = CodexCliAdapter().send_message(
                 "hi", ConversationContext(), tools=[]
@@ -170,7 +179,10 @@ class TestCodexCliAdapter:
                 "src.shared.python.ai.adapters.codex_cli_adapter._resolve_binary",
                 return_value="/bin/codex",
             ),
-            patch("src.shared.python.ai.adapters.codex_cli_adapter.invoke_cli_subprocess_for_adapter", return_value=fake) as mock_run,
+            patch(
+                "src.shared.python.ai.adapters.codex_cli_adapter.invoke_cli_subprocess_for_adapter",
+                return_value=fake,
+            ) as mock_run,
         ):
             CodexCliAdapter().send_message("second turn", ctx, tools=[])
             _, kwargs = mock_run.call_args
@@ -210,7 +222,10 @@ class TestCodexCliAdapter:
                 "src.shared.python.ai.adapters.codex_cli_adapter._resolve_binary",
                 return_value="/bin/codex",
             ),
-            patch("src.shared.python.ai.adapters.codex_cli_adapter.invoke_cli_subprocess_for_adapter", return_value=fake),
+            patch(
+                "src.shared.python.ai.adapters.codex_cli_adapter.invoke_cli_subprocess_for_adapter",
+                return_value=fake,
+            ),
         ):
             with pytest.raises(AIProviderError, match="not authenticated"):
                 CodexCliAdapter().send_message("hi", ConversationContext(), tools=[])
