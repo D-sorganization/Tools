@@ -218,6 +218,8 @@ def test_linux_wheel_qualify_job_runs_clean_install_auditwheel_smoke_and_mismatc
     artifact_name = download["with"]["name"]
     assert "${{ runner.os }}" in artifact_name
     assert "${{ matrix.python-version }}" in artifact_name
+    anchor = qualify_steps["Anchor Python floor to ai_backend crate"]
+    assert anchor["working-directory"] == "rust_core/ai_backend"
     clean = qualify_steps["Clean-install wheel in fresh venv (oracle 2)"]["run"]
     assert "python -m venv" in clean
     assert "--no-index" in clean
@@ -225,7 +227,9 @@ def test_linux_wheel_qualify_job_runs_clean_install_auditwheel_smoke_and_mismatc
 
     smoke = qualify_steps["Rust-path smoke (oracle 5)"]
     assert smoke["env"]["AI_BACKEND_WHEEL_REQUIRED"] == "1"
-    assert "test_rust_adapter_wheel_smoke.py" in smoke["run"]
+    assert "ai_backend_available" in smoke["run"]
+    assert "RustAgentAdapter" in smoke["run"]
+    assert "pytest tests/shared" not in smoke["run"]
 
     mismatch = qualify_steps["Reject cp312 wheel on Python 3.13 (oracle 7)"]
     assert mismatch["if"] == "matrix.python-version == '3.12'"

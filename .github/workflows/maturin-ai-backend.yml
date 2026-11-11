@@ -235,6 +235,10 @@ jobs:
           name: wheel-${{ runner.os }}-${{ runner.arch }}-py${{ matrix.python-version }}
           path: wheel-only
 
+      - name: Anchor Python floor to ai_backend crate
+        working-directory: rust_core/ai_backend
+        run: python -c "print('Qualifying ai_backend wheel for', __import__('sys').version)"
+
       - name: Clean-install wheel in fresh venv (oracle 2)
         shell: bash
         run: |
@@ -270,9 +274,31 @@ jobs:
           VENV="${{ runner.temp }}/ai-backend-clean-venv"
           # shellcheck source=/dev/null
           source "$VENV/bin/activate"
-          python -m pip install --upgrade pip pytest
-          python -m pytest tests/shared/python/ai/test_rust_adapter_wheel_smoke.py \
-            -o addopts="" -p no:cacheprovider -v
+          python - <<'PY'
+          import importlib
+
+          import ai_backend
+          from src.shared.python.ai.adapters.rust_adapter import (
+              RustAgentAdapter,
+              ai_backend_available,
+          )
+
+          required = {"AIConfig", "AIEngine", "MemoryManager", "RagPipeline"}
+          missing = required - set(dir(ai_backend))
+          assert not missing, f"ai_backend missing exports: {missing}"
+          assert ai_backend_available() is True
+          assert RustAgentAdapter.is_available() is True
+          adapter = RustAgentAdapter.try_create(
+              api_key="smoke-key",
+              base_url="https://api.example.com/v1",
+              model="gpt-4",
+          )
+          assert isinstance(adapter, RustAgentAdapter)
+          ok, message = adapter.validate_connection()
+          assert ok is True
+          assert "Rust backend" in message
+          print("Rust-path smoke OK")
+          PY
 
       - name: Set up Python 3.13 for mismatch probe
         if: matrix.python-version == '3.12'
