@@ -20,26 +20,26 @@ REPO_ROOT = Path(__file__).resolve().parents[5 if "tests" in __file__ else 4]
 TOOLS_BASELINE_HASHES: dict[str, str] = {
     "src/shared/python/chat/_chat_dock_widget_qt.py": "".join(
         (
-            "31a1e00d",
-            "f85c68ed",
-            "f7cd9e56",
-            "f8f1687c",
-            "02969bef",
-            "57fbf185",
-            "26dbd518",
-            "8995a6e5",
+            "b1a1812c",
+            "4a98167b",
+            "cc1ee002",
+            "cccccaa8",
+            "37850288",
+            "4dd510d9",
+            "e3a31607",
+            "a17faada",
         )
     ),
     "src/shared/python/chat/_qt/messaging.py": "".join(
         (
-            "1a34a5dd",
-            "b455aacd",
-            "9023f171",
-            "eac85a0b",
-            "96fb5b6a",
-            "6c13a9cc",
-            "706deb35",
-            "ee6868c1",
+            "03760877",
+            "980cc37e",
+            "864531f5",
+            "c9421872",
+            "b9666b87",
+            "2581ef07",
+            "89710adf",
+            "4fe64a20",
         )
     ),
     "src/shared/python/chat/_qt/streaming.py": "".join(

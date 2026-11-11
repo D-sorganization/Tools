@@ -226,9 +226,7 @@ class MessagingMixin:
         pixmap.save(buffer, "PNG")
         b64 = base64.b64encode(ba.data()).decode("ascii")
         filename = "screenshot.png"
-        self._send_ws(
-            {"action": "file_upload", "filename": filename, "content": b64}
-        )
+        self._send_ws({"action": "file_upload", "filename": filename, "content": b64})
         if FILE_UPLOAD_BACKEND_DELIVERED:
             self._add_bubble("user", "[Captured screenshot]")
         else:
