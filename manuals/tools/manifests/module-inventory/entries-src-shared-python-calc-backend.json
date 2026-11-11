@@ -137,10 +137,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8750,
+      "bytes_lf": 8930,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "803f63ece4dbdc786cc57163a65e41408df0fc79f37bca36b6f747c723f89025",
+      "content_sha256_lf": "85be336d2a9ac7f3d9e95b226a5fcc0c213c6a71e54f35862f7875c136b9202a",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-APP-PY-EA1FF1BC7C57",
       "language": "python",
@@ -163,7 +163,7 @@
         "routes": "mapped",
         "tests": "mapped",
         "units": "not-applicable",
-        "validation": "not-applicable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -213,12 +213,16 @@
           "src/shared/python/calc_backend/tests/test_endpoint_inventory.py",
           "src/shared/python/calc_backend/tests/test_symbolic_solver.py",
           "tests/calc_backend/test_calc_backend_api.py",
+          "tests/calc_backend/test_calc_backend_openapi_stable.py",
+          "tests/calc_backend/test_calculator_registry_contract.py",
           "tests/calc_backend/test_new_endpoints.py",
           "tests/calc_backend/test_rotation_converter_api.py",
           "tests/unit/test_syngas_water_nonfinite_oracle6.py"
         ],
         "unit_mentions": [],
-        "validation_paths": []
+        "validation_paths": [
+          "tests/calc_backend/test_calculator_registry_contract.py"
+        ]
       }
     },
     {
@@ -1708,6 +1712,379 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 556,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "9db4175a1ecf1b9fdedeb9980e6ae5645d30be3f6faa8315a8b9b862b86ea0ee",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-REGISTRY-INIT-PY-CA5921D8428D",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/registry/__init__.py",
+      "purpose": "CalculatorSpec registry for REST and MCP schema parity (issue #6020).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "re-export",
+            "name": "CALCULATOR_REGISTRY",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "CalculatorSpec",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "FieldMetadata",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "WorkedExample",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "bind_calculator_route",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "describe_calculator",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "http_path_for",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "register_from_catalog",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "registered_calculators",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 12634,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c05c1131ce5ce394c3a5ed87f6f4eed309ad9b0cb8c4da6ba21f097d133e560b",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-REGISTRY-CATALOG-PY-F93F79962E77",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/registry/catalog.py",
+      "purpose": "Static CalculatorSpec metadata (handlers attached at router import).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "CATALOG",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/calc_backend/test_calculator_registry_contract.py"
+        ],
+        "unit_mentions": [
+          "J",
+          "Pa",
+          "bar",
+          "kg",
+          "s"
+        ],
+        "validation_paths": [
+          "tests/calc_backend/test_calculator_registry_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1074,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "ffeadcc1f191d6d4afaedf89c80f782fd136859ea364229070267f3fc6cbcb23",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-REGISTRY-SPEC-PY-F52B255A8114",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/registry/spec.py",
+      "purpose": "CalculatorSpec types for the calc_backend registry.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CalculatorSpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "FieldMetadata",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WorkedExample",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "src/shared/python/swing_sim/variation/tests/test_spec.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6601,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "0efceea3d74cd35b3c16ffde5f8feb4d2d56b385cd00cdbb1f19f8e8a2bbf884",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-REGISTRY-STORE-PY-F9111F6BE813",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/registry/store.py",
+      "purpose": "In-memory CalculatorSpec registry.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "mapped"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "RegisteredCalculator",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "CALCULATOR_REGISTRY",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_BRACKET_UNITS_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_OPENAPI_SCHEMA_CACHE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "bind_calculator_route",
+            "signature": "spec: CalculatorSpec, *, router: APIRouter"
+          },
+          {
+            "kind": "function",
+            "name": "describe_calculator",
+            "signature": "calculator_id: str"
+          },
+          {
+            "kind": "function",
+            "name": "http_path_for",
+            "signature": "calculator_id: str"
+          },
+          {
+            "kind": "function",
+            "name": "materialize_openapi_schemas",
+            "signature": "openapi: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "register_from_catalog",
+            "signature": "catalog_id: str, *, router: APIRouter, fn: Any"
+          },
+          {
+            "kind": "function",
+            "name": "registered_calculators",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/calc_backend/test_calculator_registry_contract.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": [
+          "tests/calc_backend/test_calculator_registry_contract.py"
+        ]
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3189,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "372b2e34a39e5ea2b552e2c68fd7aa61e83f9192337db87248468ed65954d1f9",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-REGISTRY-WIRE-PY-876DE2B8B559",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/registry/wire.py",
+      "purpose": "Attach catalog specs to imported router handlers (issue #6020).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "wire_calculator_registry",
+            "signature": ""
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 69,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -2349,10 +2726,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 6806,
+      "bytes_lf": 5803,
       "classification": "calculation",
       "classification_basis": "path-marker:solver",
-      "content_sha256_lf": "9d2c1b78aa22601be390feb3166f212c88dfc0d4e99d0bcd631bac92de61ab5a",
+      "content_sha256_lf": "f25ee8dcd732e6c254e78d69eff2477a985b1122dc91e7556dc095b9a7700a14",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-SYMBOLIC-SOLVER-PY-F8C824FA5CED",
       "language": "python",
@@ -2398,37 +2775,7 @@
         "public_surfaces": [
           {
             "kind": "class",
-            "name": "SymbolicDerivativeRequest",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SymbolicDerivativeResponse",
-            "signature": null
-          },
-          {
-            "kind": "class",
             "name": "SymbolicHelpResponse",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SymbolicSimplifyRequest",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SymbolicSimplifyResponse",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SymbolicSolveRequest",
-            "signature": null
-          },
-          {
-            "kind": "class",
-            "name": "SymbolicSolveResponse",
             "signature": null
           },
           {
@@ -2456,7 +2803,6 @@
           "src/shared/python/calc_backend/tests/test_symbolic_solver.py"
         ],
         "unit_mentions": [
-          "g",
           "s"
         ],
         "validation_paths": []

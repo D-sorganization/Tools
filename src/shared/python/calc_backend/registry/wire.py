@@ -2,6 +2,10 @@
 
 from __future__ import annotations
 
+from collections.abc import Callable
+
+from fastapi import APIRouter
+
 from ..routers.acid_gas_dewpoint import calculate_acid_gas_dewpoint
 from ..routers.acid_gas_dewpoint import router as acid_router
 from ..routers.baghouse import calculate_baghouse
@@ -44,7 +48,7 @@ from .store import register_from_catalog
 
 def wire_calculator_registry() -> None:
     """Register every POST calculator exposed by ``CALCULATOR_ROUTERS``."""
-    pairs: tuple[tuple[str, object, object], ...] = (
+    pairs: tuple[tuple[str, APIRouter, Callable[..., object]], ...] = (
         ("acid-gas-dewpoint", acid_router, calculate_acid_gas_dewpoint),
         ("baghouse", baghouse_router, calculate_baghouse),
         ("financial", financial_router, calculate_financial),
