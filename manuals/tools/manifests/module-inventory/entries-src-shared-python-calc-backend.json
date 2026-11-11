@@ -2726,10 +2726,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 5803,
+      "bytes_lf": 5598,
       "classification": "calculation",
       "classification_basis": "path-marker:solver",
-      "content_sha256_lf": "f25ee8dcd732e6c254e78d69eff2477a985b1122dc91e7556dc095b9a7700a14",
+      "content_sha256_lf": "695801203d476c7e520a0933838a1a5c4143f8cfd94ea2e5678d7f0f3932c37e",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-SYMBOLIC-SOLVER-PY-F8C824FA5CED",
       "language": "python",
@@ -2773,11 +2773,6 @@
           "/solve"
         ],
         "public_surfaces": [
-          {
-            "kind": "class",
-            "name": "SymbolicHelpResponse",
-            "signature": null
-          },
           {
             "kind": "function",
             "name": "compute_derivative",
