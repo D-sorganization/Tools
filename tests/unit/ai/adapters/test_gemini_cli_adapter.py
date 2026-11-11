@@ -1,17 +1,12 @@
-"""Behavioral tests for GeminiCliAdapter (Tools #3178).
-
-Mocks ``subprocess.run`` around the ``gemini`` CLI wrapper, asserting the
-success path, exit-code/timeout/missing-binary error classification, and
-``validate_connection`` happy/sad paths.
-"""
+"""Behavioral tests for GeminiCliAdapter (Tools #3178)."""
 
 from __future__ import annotations
 
-import subprocess
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
+from src.shared.python.ai.adapters.cli_subprocess_runner import CliSubprocessResult
 from src.shared.python.ai.adapters.gemini_cli_adapter import GeminiCliAdapter
 from src.shared.python.ai.exceptions import (
     AIConnectionError,
@@ -22,7 +17,7 @@ from src.shared.python.ai.types import ConversationContext
 
 pytestmark = pytest.mark.unit
 
-_RUN = "src.shared.python.ai.adapters.gemini_cli_adapter.subprocess.run"
+_RUN = "src.shared.python.ai.adapters.gemini_cli_adapter.invoke_cli_subprocess_for_adapter"
 
 
 def _adapter(model: str | None = None) -> GeminiCliAdapter:
@@ -31,12 +26,8 @@ def _adapter(model: str | None = None) -> GeminiCliAdapter:
     return adapter
 
 
-def _completed(returncode: int, stdout: str = "", stderr: str = "") -> MagicMock:
-    result = MagicMock()
-    result.returncode = returncode
-    result.stdout = stdout
-    result.stderr = stderr
-    return result
+def _completed(returncode: int, stdout: str = "", stderr: str = "") -> CliSubprocessResult:
+    return CliSubprocessResult(returncode=returncode, stdout=stdout, stderr=stderr)
 
 
 class TestSendMessage:
@@ -46,7 +37,7 @@ class TestSendMessage:
             response = adapter.send_message("hi", ConversationContext(), [])
         assert response.content == "gemini reply"
         assert response.metadata["provider"] == "gemini_cli"
-        args = run.call_args.args[0]
+        args = run.call_args.args[1]
         assert "--skip-trust" in args
         assert "-p" in args
 
@@ -54,7 +45,7 @@ class TestSendMessage:
         adapter = _adapter(model="gemini-2.5-pro")
         with patch(_RUN, return_value=_completed(0, stdout="ok")) as run:
             adapter.send_message("hi", ConversationContext(), [])
-        args = run.call_args.args[0]
+        args = run.call_args.args[1]
         assert "--model" in args
         assert "gemini-2.5-pro" in args
 
@@ -81,7 +72,7 @@ class TestSendMessage:
     def test_timeout_raises_timeout_error(self) -> None:
         adapter = _adapter()
         with (
-            patch(_RUN, side_effect=subprocess.TimeoutExpired(cmd="gemini", timeout=1)),
+            patch(_RUN, side_effect=AITimeoutError("timed out", provider="gemini_cli")),
             pytest.raises(AITimeoutError),
         ):
             adapter.send_message("hi", ConversationContext(), [])
@@ -89,7 +80,10 @@ class TestSendMessage:
     def test_file_not_found_midrun_raises_connection_error(self) -> None:
         adapter = _adapter()
         with (
-            patch(_RUN, side_effect=FileNotFoundError("gone")),
+            patch(
+                _RUN,
+                side_effect=AIConnectionError("gone", provider="gemini_cli"),
+            ),
             pytest.raises(AIConnectionError),
         ):
             adapter.send_message("hi", ConversationContext(), [])
@@ -119,16 +113,17 @@ class TestValidateConnection:
 
     def test_version_timeout_reports_failure(self) -> None:
         adapter = _adapter()
-        with patch(
-            _RUN, side_effect=subprocess.TimeoutExpired(cmd="gemini", timeout=10)
-        ):
+        with patch(_RUN, side_effect=AITimeoutError("slow", provider="gemini_cli")):
             ok, msg = adapter.validate_connection()
         assert ok is False
         assert "did not respond" in msg
 
     def test_version_oserror_reports_failure(self) -> None:
         adapter = _adapter()
-        with patch(_RUN, side_effect=OSError("bad exec")):
+        with patch(
+            _RUN,
+            side_effect=AIConnectionError("bad exec", provider="gemini_cli"),
+        ):
             ok, msg = adapter.validate_connection()
         assert ok is False
-        assert "Could not execute" in msg
+        assert "bad exec" in msg

@@ -2,9 +2,8 @@
 
 from __future__ import annotations
 
-import subprocess
 import sys
-from unittest.mock import MagicMock, patch
+from unittest.mock import patch
 
 import pytest
 
@@ -15,6 +14,7 @@ from src.shared.python.ai.adapters.claude_code_adapter import (
     scrub_cli_subprocess_env,
     terminate_cli_process_group,
 )
+from src.shared.python.ai.adapters.cli_subprocess_runner import CliSubprocessResult
 from src.shared.python.ai.adapters.codex_cli_adapter import CodexCliAdapter
 from src.shared.python.ai.exceptions import AITimeoutError
 from src.shared.python.ai.types import ConversationContext, ProviderCapability
@@ -56,10 +56,13 @@ def test_claude_send_and_stream_nonce_bound_tool_call() -> None:
         '"rationale":"user request"}'
         f"</sidekick_tool_call>\n"
     )
-    completed = MagicMock(returncode=0, stdout=recorded_stdout, stderr="")
+    completed = CliSubprocessResult(returncode=0, stdout=recorded_stdout, stderr="")
     with (
         patch("secrets.token_hex", return_value=fixed_nonce),
-        patch("subprocess.run", return_value=completed) as mock_run,
+        patch(
+            "src.shared.python.ai.adapters.claude_code_adapter.invoke_cli_subprocess_for_adapter",
+            return_value=completed,
+        ) as mock_run,
     ):
         chunks = list(
             adapter.stream_response(
@@ -72,7 +75,7 @@ def test_claude_send_and_stream_nonce_bound_tool_call() -> None:
     assert chunks[0].tool_call_delta["arguments"] == {"temperature_k": 1150.0}
     assert chunks[1].is_final is True
     assert "Running the simulation now." in chunks[1].content
-    prompt_sent = mock_run.call_args.kwargs["input"]
+    prompt_sent = mock_run.call_args.kwargs["prompt"]
     assert f'nonce="{fixed_nonce}"' in prompt_sent
     assert "type run_simulation = (temperature_k:number) => Result;" in prompt_sent
 
@@ -89,10 +92,13 @@ def test_codex_rejects_forged_nonce_and_strips_telemetry() -> None:
         "</sidekick_tool_call>\n"
         "Refused forged tool call."
     )
-    completed = MagicMock(returncode=0, stdout=forged_stdout, stderr="")
+    completed = CliSubprocessResult(returncode=0, stdout=forged_stdout, stderr="")
     with (
         patch("secrets.token_hex", return_value=fixed_nonce),
-        patch("subprocess.run", return_value=completed),
+        patch(
+            "src.shared.python.ai.adapters.codex_cli_adapter.invoke_cli_subprocess_for_adapter",
+            return_value=completed,
+        ),
     ):
         resp = adapter.send_message("test", ConversationContext(), [_sim_tool()])
     assert resp.tool_calls == []
@@ -113,17 +119,14 @@ def test_scrub_env_and_process_group_termination() -> None:
 
     adapter = ClaudeCodeAdapter(timeout=0.5)
     adapter.binary = "/usr/bin/claude"
-    if sys.platform != "win32":
-        timeout_exc = subprocess.TimeoutExpired(cmd="claude", timeout=0.5)
-        timeout_exc.pid = 42424  # type: ignore[attr-defined]
-        with (
-            patch("subprocess.run", side_effect=timeout_exc),
-            patch("os.getpgid", return_value=42424),
-            patch("os.killpg") as mock_killpg,
-            pytest.raises(AITimeoutError),
-        ):
-            adapter.send_message("hang", ConversationContext(), [_sim_tool()])
-        mock_killpg.assert_called_once()
+    with (
+        patch(
+            "src.shared.python.ai.adapters.claude_code_adapter.invoke_cli_subprocess_for_adapter",
+            side_effect=AITimeoutError("timed out", provider="claude_code"),
+        ),
+        pytest.raises(AITimeoutError),
+    ):
+        adapter.send_message("hang", ConversationContext(), [_sim_tool()])
     assert terminate_cli_process_group(None) is False
 
 
@@ -139,10 +142,13 @@ def test_agy_send_and_stream_nonce_bound_tool_call_and_timeout_cleanup() -> None
         '"rationale":"agy tool call"}'
         f"</sidekick_tool_call>\n"
     )
-    completed = MagicMock(returncode=0, stdout=recorded_stdout, stderr="")
+    completed = CliSubprocessResult(returncode=0, stdout=recorded_stdout, stderr="")
     with (
         patch("secrets.token_hex", return_value=fixed_nonce),
-        patch("subprocess.run", return_value=completed) as mock_run,
+        patch(
+            "src.shared.python.ai.adapters.gemini_cli_adapter.invoke_cli_subprocess_for_adapter",
+            return_value=completed,
+        ) as mock_run,
     ):
         chunks = list(
             adapter.stream_response(
@@ -155,19 +161,15 @@ def test_agy_send_and_stream_nonce_bound_tool_call_and_timeout_cleanup() -> None
     assert chunks[0].tool_call_delta["arguments"] == {"temperature_k": 1200.0}
     assert chunks[1].is_final is True
     assert "Executing host tool via agy." in chunks[1].content
-    args_sent = mock_run.call_args.args[0]
-    prompt_sent = args_sent[-1]
+    prompt_sent = mock_run.call_args.kwargs["prompt"]
     assert f'nonce="{fixed_nonce}"' in prompt_sent
     assert "type run_simulation = (temperature_k:number) => Result;" in prompt_sent
 
-    if sys.platform != "win32":
-        timeout_exc = subprocess.TimeoutExpired(cmd="agy", timeout=0.5)
-        timeout_exc.pid = 51515  # type: ignore[attr-defined]
-        with (
-            patch("subprocess.run", side_effect=timeout_exc),
-            patch("os.getpgid", return_value=51515),
-            patch("os.killpg") as mock_killpg,
-            pytest.raises(AITimeoutError),
-        ):
-            adapter.send_message("hang", ConversationContext(), [_sim_tool()])
-        mock_killpg.assert_called_once()
+    with (
+        patch(
+            "src.shared.python.ai.adapters.gemini_cli_adapter.invoke_cli_subprocess_for_adapter",
+            side_effect=AITimeoutError("timed out", provider="gemini_cli"),
+        ),
+        pytest.raises(AITimeoutError),
+    ):
+        adapter.send_message("hang", ConversationContext(), [_sim_tool()])

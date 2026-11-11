@@ -21,6 +21,8 @@ import os
 import subprocess
 from unittest.mock import MagicMock, patch
 
+from src.shared.python.ai.adapters.cli_subprocess_runner import CliSubprocessResult
+
 import pytest
 
 from src.shared.python.ai.adapters.gemini_cli_adapter import (  # noqa: E402
@@ -90,19 +92,19 @@ class TestGeminiCliAdapter:
             assert "not found" in msg.lower()
 
     def test_validate_connection_runs_version_subprocess(self) -> None:
-        fake = MagicMock(returncode=0, stdout="0.39.1\n", stderr="")
+        fake = CliSubprocessResult(returncode=0, stdout="0.39.1\n", stderr="")
         with (
             patch(
                 "src.shared.python.ai.adapters.gemini_cli_adapter._resolve_binary",
                 return_value="/bin/gemini",
             ),
-            patch("subprocess.run", return_value=fake) as mock_run,
+            patch("src.shared.python.ai.adapters.gemini_cli_adapter.invoke_cli_subprocess_for_adapter", return_value=fake) as mock_run,
         ):
             ok, msg = GeminiCliAdapter().validate_connection()
             assert ok is True
             assert "0.39" in msg
             args, _ = mock_run.call_args
-            assert args[0] == ["/bin/gemini", "--version"]
+            assert args[1] == ["/bin/gemini", "--version"]
 
     def test_send_message_passes_skip_trust_flag(self) -> None:
         """Always include ``--skip-trust``.
@@ -110,28 +112,27 @@ class TestGeminiCliAdapter:
         Without it the CLI refuses to run from non-whitelisted workspaces,
         which the chat UI cannot guarantee.
         """
-        fake = MagicMock(returncode=0, stdout="PONG", stderr="")
+        fake = CliSubprocessResult(returncode=0, stdout="PONG", stderr="")
         with (
             patch(
                 "src.shared.python.ai.adapters.gemini_cli_adapter._resolve_binary",
                 return_value="/bin/gemini",
             ),
-            patch("subprocess.run", return_value=fake) as mock_run,
+            patch("src.shared.python.ai.adapters.gemini_cli_adapter.invoke_cli_subprocess_for_adapter", return_value=fake) as mock_run,
         ):
             adapter = GeminiCliAdapter(model="gemini-2.5-flash")
             response = adapter.send_message("ping", ConversationContext(), tools=[])
             assert response.content == "PONG"
-            args, _ = mock_run.call_args
-            argv = args[0]
+            call = mock_run.call_args
+            argv = call.args[1]
             assert "--skip-trust" in argv
             assert "-p" in argv
             assert "--model" in argv
             assert "gemini-2.5-flash" in argv
-            # Prompt is the value of -p, the LAST arg.
-            assert argv[-1].endswith("User: ping")
+            assert call.kwargs["prompt"].endswith("User: ping")
 
     def test_send_message_renders_history(self) -> None:
-        fake = MagicMock(returncode=0, stdout="ok", stderr="")
+        fake = CliSubprocessResult(returncode=0, stdout="ok", stderr="")
         ctx = ConversationContext()
         ctx.messages = [  # type: ignore[attr-defined]
             MagicMock(role="user", content="first turn"),
@@ -142,11 +143,11 @@ class TestGeminiCliAdapter:
                 "src.shared.python.ai.adapters.gemini_cli_adapter._resolve_binary",
                 return_value="/bin/gemini",
             ),
-            patch("subprocess.run", return_value=fake) as mock_run,
+            patch("src.shared.python.ai.adapters.gemini_cli_adapter.invoke_cli_subprocess_for_adapter", return_value=fake) as mock_run,
         ):
             GeminiCliAdapter().send_message("second turn", ctx, tools=[])
-            args, _ = mock_run.call_args
-            prompt = args[0][-1]
+            _, kwargs = mock_run.call_args
+            prompt = kwargs["prompt"]
             assert "User: first turn" in prompt
             assert "Assistant: first reply" in prompt
             assert prompt.endswith("User: second turn")
@@ -166,8 +167,8 @@ class TestGeminiCliAdapter:
                 return_value="/bin/gemini",
             ),
             patch(
-                "subprocess.run",
-                side_effect=subprocess.TimeoutExpired(cmd="gemini", timeout=1.0),
+                "src.shared.python.ai.adapters.gemini_cli_adapter.invoke_cli_subprocess_for_adapter",
+                side_effect=AITimeoutError("timed out", provider="gemini_cli"),
             ),
         ):
             with pytest.raises(AITimeoutError):
@@ -176,13 +177,13 @@ class TestGeminiCliAdapter:
                 )
 
     def test_send_message_maps_nonzero_exit_to_provider_error(self) -> None:
-        fake = MagicMock(returncode=2, stdout="", stderr="not authenticated")
+        fake = CliSubprocessResult(returncode=2, stdout="", stderr="not authenticated")
         with (
             patch(
                 "src.shared.python.ai.adapters.gemini_cli_adapter._resolve_binary",
                 return_value="/bin/gemini",
             ),
-            patch("subprocess.run", return_value=fake),
+            patch("src.shared.python.ai.adapters.gemini_cli_adapter.invoke_cli_subprocess_for_adapter", return_value=fake),
         ):
             with pytest.raises(AIProviderError, match="not authenticated"):
                 GeminiCliAdapter().send_message("hi", ConversationContext(), tools=[])

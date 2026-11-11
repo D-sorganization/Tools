@@ -19,6 +19,8 @@ import os
 import subprocess
 from unittest.mock import MagicMock, patch
 
+from src.shared.python.ai.adapters.cli_subprocess_runner import CliSubprocessResult
+
 import pytest
 
 from src.shared.python.ai.adapters.claude_code_adapter import (  # noqa: E402
@@ -107,29 +109,29 @@ class TestClaudeCodeAdapter:
             assert "not found" in msg.lower()
 
     def test_validate_connection_runs_version_subprocess(self) -> None:
-        fake = MagicMock(returncode=0, stdout="2.1.91 (Claude Code)\n", stderr="")
+        fake = CliSubprocessResult(returncode=0, stdout="2.1.91 (Claude Code)\n", stderr="")
         with (
             patch(
                 "src.shared.python.ai.adapters.claude_code_adapter._resolve_binary",
                 return_value="/bin/claude",
             ),
-            patch("subprocess.run", return_value=fake) as mock_run,
+            patch("src.shared.python.ai.adapters.claude_code_adapter.invoke_cli_subprocess_for_adapter", return_value=fake) as mock_run,
         ):
             adapter = ClaudeCodeAdapter()
             ok, msg = adapter.validate_connection()
             assert ok is True
             assert "2.1.91" in msg
             args, _ = mock_run.call_args
-            assert args[0] == ["/bin/claude", "--version"]
+            assert args[1] == ["/bin/claude", "--version"]
 
     def test_validate_connection_handles_nonzero_exit(self) -> None:
-        fake = MagicMock(returncode=2, stdout="", stderr="auth missing")
+        fake = CliSubprocessResult(returncode=2, stdout="", stderr="auth missing")
         with (
             patch(
                 "src.shared.python.ai.adapters.claude_code_adapter._resolve_binary",
                 return_value="/bin/claude",
             ),
-            patch("subprocess.run", return_value=fake),
+            patch("src.shared.python.ai.adapters.claude_code_adapter.invoke_cli_subprocess_for_adapter", return_value=fake),
         ):
             adapter = ClaudeCodeAdapter()
             ok, msg = adapter.validate_connection()
@@ -137,25 +139,26 @@ class TestClaudeCodeAdapter:
             assert "auth missing" in msg
 
     def test_send_message_passes_prompt_via_stdin(self) -> None:
-        fake = MagicMock(returncode=0, stdout="PONG\n", stderr="")
+        fake = CliSubprocessResult(returncode=0, stdout="PONG\n", stderr="")
         with (
             patch(
                 "src.shared.python.ai.adapters.claude_code_adapter._resolve_binary",
                 return_value="/bin/claude",
             ),
-            patch("subprocess.run", return_value=fake) as mock_run,
+            patch("src.shared.python.ai.adapters.claude_code_adapter.invoke_cli_subprocess_for_adapter", return_value=fake) as mock_run,
         ):
             adapter = ClaudeCodeAdapter(model="sonnet")
             response = adapter.send_message("ping", ConversationContext(), tools=[])
             assert response.content == "PONG"
             assert response.metadata.get("provider") == "claude_code"
-            args, kwargs = mock_run.call_args
-            assert args[0] == ["/bin/claude", "-p", "--model", "sonnet"]
+            call = mock_run.call_args
+            kwargs = call.kwargs
+            assert call.args[1] == ["/bin/claude", "-p", "--model", "sonnet"]
             # Prompt MUST go via stdin (-p without an argument), not as argv.
-            assert kwargs["input"] == "User: ping"
+            assert kwargs["prompt"] == "User: ping"
 
     def test_send_message_renders_history(self) -> None:
-        fake = MagicMock(returncode=0, stdout="ok", stderr="")
+        fake = CliSubprocessResult(returncode=0, stdout="ok", stderr="")
         ctx = ConversationContext()
         # Build history without depending on Message-class internals.
         ctx.messages = [  # type: ignore[attr-defined]
@@ -167,12 +170,12 @@ class TestClaudeCodeAdapter:
                 "src.shared.python.ai.adapters.claude_code_adapter._resolve_binary",
                 return_value="/bin/claude",
             ),
-            patch("subprocess.run", return_value=fake) as mock_run,
+            patch("src.shared.python.ai.adapters.claude_code_adapter.invoke_cli_subprocess_for_adapter", return_value=fake) as mock_run,
         ):
             adapter = ClaudeCodeAdapter()
             adapter.send_message("follow-up", ctx, tools=[])
             _, kwargs = mock_run.call_args
-            prompt = kwargs["input"]
+            prompt = kwargs["prompt"]
             assert "User: hello" in prompt
             assert "Assistant: hi there" in prompt
             assert "User: follow-up" in prompt
@@ -195,8 +198,8 @@ class TestClaudeCodeAdapter:
                 return_value="/bin/claude",
             ),
             patch(
-                "subprocess.run",
-                side_effect=subprocess.TimeoutExpired(cmd="claude", timeout=1.0),
+                "src.shared.python.ai.adapters.claude_code_adapter.invoke_cli_subprocess_for_adapter",
+                side_effect=AITimeoutError("timed out", provider="claude_code"),
             ),
         ):
             adapter = ClaudeCodeAdapter(timeout=1.0)
@@ -204,13 +207,13 @@ class TestClaudeCodeAdapter:
                 adapter.send_message("hi", ConversationContext(), tools=[])
 
     def test_send_message_maps_nonzero_exit_to_provider_error(self) -> None:
-        fake = MagicMock(returncode=1, stdout="", stderr="rate limited")
+        fake = CliSubprocessResult(returncode=1, stdout="", stderr="rate limited")
         with (
             patch(
                 "src.shared.python.ai.adapters.claude_code_adapter._resolve_binary",
                 return_value="/bin/claude",
             ),
-            patch("subprocess.run", return_value=fake),
+            patch("src.shared.python.ai.adapters.claude_code_adapter.invoke_cli_subprocess_for_adapter", return_value=fake),
         ):
             adapter = ClaudeCodeAdapter()
             with pytest.raises(AIProviderError, match="rate limited"):
@@ -226,13 +229,13 @@ class TestClaudeCodeAdapter:
                 adapter.send_message("   ", ConversationContext(), tools=[])
 
     def test_stream_response_yields_single_final_chunk(self) -> None:
-        fake = MagicMock(returncode=0, stdout="streamed", stderr="")
+        fake = CliSubprocessResult(returncode=0, stdout="streamed", stderr="")
         with (
             patch(
                 "src.shared.python.ai.adapters.claude_code_adapter._resolve_binary",
                 return_value="/bin/claude",
             ),
-            patch("subprocess.run", return_value=fake),
+            patch("src.shared.python.ai.adapters.claude_code_adapter.invoke_cli_subprocess_for_adapter", return_value=fake),
         ):
             adapter = ClaudeCodeAdapter()
             chunks = list(
