@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-11 | #6025 | Add UpstreamDrift tests/helpers to cross-repo sparse checkout; ai_backend maturin and ort documentation truth-up |
 | 2026-11-10 | #6017 | Syngas _sanitize typed failure in place of 0.0 (oracle 6) and test updates |
 | 2026-11-10 | #6014 | Remove default-true success and converged flags on solver and calculation outputs (Slice 4) |
 | 2026-11-10 | #6015 | Adopt canonical lifecycle vocabulary and kernel in AuthorityJobStatus and video_processor.JobStatus with Oracle 7 ratchet test |
