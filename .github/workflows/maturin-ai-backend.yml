@@ -26,6 +26,8 @@ on:
       - "rust-toolchain.toml"
       - "src/shared/python/ai/adapters/rust_adapter.py"
       - "tests/shared/python/ai/test_rust_adapter_wheel_smoke.py"
+      - ".github/workflows/maturin-ai-backend.yml"
+      - "tests/unit/rust/test_ai_backend_workspace.py"
   pull_request:
     paths:
       - "rust_core/ai_backend/**"
@@ -33,6 +35,8 @@ on:
       - "rust-toolchain.toml"
       - "src/shared/python/ai/adapters/rust_adapter.py"
       - "tests/shared/python/ai/test_rust_adapter_wheel_smoke.py"
+      - ".github/workflows/maturin-ai-backend.yml"
+      - "tests/unit/rust/test_ai_backend_workspace.py"
   workflow_dispatch:
     inputs:
       publish:
@@ -110,6 +114,32 @@ jobs:
         working-directory: rust_core/ai_backend
         run: maturin build --release --features python,extension-module --out ../../dist/${{ runner.os }}/${{ runner.arch }}/py${{ matrix.python-version }}
 
+      - name: Assert wheel manylinux policy (oracle 3)
+        shell: bash
+        run: |
+          set -euo pipefail
+          python -m pip install --upgrade pip auditwheel
+          shopt -s nullglob
+          WHEELS=(dist/${{ runner.os }}/${{ runner.arch }}/py${{ matrix.python-version }}/*.whl)
+          if (( ${#WHEELS[@]} != 1 )); then
+            printf 'Expected exactly one wheel, found %s\n' "${#WHEELS[@]}" >&2
+            exit 1
+          fi
+          WHEEL="${WHEELS[0]}"
+          auditwheel show "$WHEEL" | tee /tmp/auditwheel-show.txt
+          if ! grep -qi manylinux /tmp/auditwheel-show.txt; then
+            repair_dir="dist/${{ runner.os }}/${{ runner.arch }}/py${{ matrix.python-version }}/repaired"
+            mkdir -p "$repair_dir"
+            auditwheel repair -w "$repair_dir" "$WHEEL"
+            REPAIRED=$(ls "$repair_dir"/*.whl | head -1)
+            auditwheel show "$REPAIRED" | tee /tmp/auditwheel-repaired.txt
+            if ! grep -qi manylinux /tmp/auditwheel-repaired.txt; then
+              echo "Repaired wheel still lacks a manylinux policy tag" >&2
+              exit 1
+            fi
+            mv "$REPAIRED" "$WHEEL"
+          fi
+
       - name: Record native wheel evidence
         shell: bash
         run: |
@@ -176,6 +206,93 @@ jobs:
           name: wheel-${{ runner.os }}-${{ runner.arch }}-py${{ matrix.python-version }}
           path: dist/${{ runner.os }}/${{ runner.arch }}/py${{ matrix.python-version }}/*
           retention-days: 14
+
+  linux-wheel-qualify:
+    # Fork PRs never run on the self-hosted fleet (#4464).
+    if: >-
+      (!github.event.pull_request ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+    name: Linux wheel qualify (Python ${{ matrix.python-version }})
+    needs: build-wheels
+    runs-on: d-sorg-fleet
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v7
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Download wheel artifact
+        uses: actions/download-artifact@v7
+        with:
+          name: wheel-${{ runner.os }}-${{ runner.arch }}-py${{ matrix.python-version }}
+          path: wheel-only
+
+      - name: Clean-install wheel in fresh venv (oracle 2)
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          WHEELS=(wheel-only/*.whl)
+          if (( ${#WHEELS[@]} != 1 )); then
+            printf 'Expected exactly one wheel artifact, found %s\n' "${#WHEELS[@]}" >&2
+            exit 1
+          fi
+          VENV="${{ runner.temp }}/ai-backend-clean-venv"
+          python -m venv "$VENV"
+          # shellcheck source=/dev/null
+          source "$VENV/bin/activate"
+          python -m pip install --upgrade pip
+          pip install --no-index --find-links wheel-only "${WHEELS[0]}"
+          python - <<'PY'
+          import ai_backend
+
+          required = {"AIConfig", "AIEngine", "MemoryManager", "RagPipeline"}
+          missing = required - set(dir(ai_backend))
+          assert not missing, f"ai_backend missing exports: {missing}"
+          print("clean-install import OK:", sorted(required))
+          PY
+
+      - name: Rust-path smoke (oracle 5)
+        shell: bash
+        env:
+          AI_BACKEND_WHEEL_REQUIRED: "1"
+          PYTHONPATH: .
+        run: |
+          set -euo pipefail
+          VENV="${{ runner.temp }}/ai-backend-clean-venv"
+          # shellcheck source=/dev/null
+          source "$VENV/bin/activate"
+          python -m pip install --upgrade pip pytest
+          python -m pytest tests/shared/python/ai/test_rust_adapter_wheel_smoke.py \
+            -o addopts="" -p no:cacheprovider -v
+
+      - name: Set up Python 3.13 for mismatch probe
+        if: matrix.python-version == '3.12'
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.13"
+
+      - name: Reject cp312 wheel on Python 3.13 (oracle 7)
+        if: matrix.python-version == '3.12'
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          WHEELS=(wheel-only/*.whl)
+          WHEEL="${WHEELS[0]}"
+          if python3.13 -m pip install --no-deps "$WHEEL"; then
+            echo "cp312 wheel installed on Python 3.13 — ABI tags are not enforced" >&2
+            exit 1
+          fi
+          echo "Interpreter mismatch correctly rejected for ${WHEEL}"
 
   # ── Consumption gate: build + install the wheel and exercise the adapter ────
   # Without this, the wheel was only uploaded as an artifact and never installed,
@@ -319,7 +436,7 @@ jobs:
   summary:
     timeout-minutes: 60
     name: Wheel build summary
-    needs: build-wheels
+    needs: [build-wheels, linux-wheel-qualify]
     runs-on: d-sorg-fleet
     # Fork PRs never run on the self-hosted fleet (#4464).
     if: >-
@@ -335,6 +452,7 @@ jobs:
             echo "| Platform | Status |"
             echo "|----------|--------|"
             echo "| Native Linux Python matrix | ${{ needs.build-wheels.result }} |"
+            echo "| Linux wheel qualification (clean install / smoke) | ${{ needs.linux-wheel-qualify.result }} |"
             echo ""
             echo "Python versions: 3.10, 3.11, 3.12, 3.13"
             echo "See each build-wheels matrix job summary for observed runner OS, architecture, interpreter, wheel tags, and artifact identity."
