@@ -3,13 +3,13 @@
 from __future__ import annotations
 
 from fastapi import APIRouter
-from pydantic import BaseModel, Field
 
 from shared.python.safe_eval import validate_expression
 
 from ..contracts.symbolic_solver import (
     SymbolicDerivativeRequest,
     SymbolicDerivativeResponse,
+    SymbolicHelpResponse,
     SymbolicSimplifyRequest,
     SymbolicSimplifyResponse,
     SymbolicSolveRequest,
@@ -31,14 +31,6 @@ except ImportError:
 
 
 router = APIRouter(prefix="/api/calc/symbolic", tags=["symbolic-solver"])
-
-
-class SymbolicHelpResponse(BaseModel):
-    """Help metadata for symbolic calculator capabilities."""
-
-    supported_operations: list[str]
-    examples: list[dict[str, str]]
-    available: bool = Field(default=SYMPY_AVAILABLE)
 
 
 @router.get("/help", response_model=SymbolicHelpResponse)
@@ -70,6 +62,7 @@ def get_symbolic_help() -> SymbolicHelpResponse:
                 "description": "Simplify rational expression",
             },
         ],
+        available=SYMPY_AVAILABLE,
     )
 
 
