@@ -101,6 +101,7 @@ jobs:
             install: CI= SKIP_UI_BUILD=1 pip install -e ".[dev,gui-test]"
             test_command: xvfb-run --auto-servernum pytest tests/shared_contracts/ -n 0 --timeout=60 --timeout-method=thread -v --tb=short
             env_name: REQUIRE_REAL_TOOLS_REPO
+            # UD #14986 / Tools #6024: conftest imports tests.helpers.suite_marker_reach.
             sparse_checkout: |
               README.md
               build_hooks.py
@@ -115,7 +116,6 @@ jobs:
               src/engines/pendulum_models/python/double_pendulum_model
               src/shared
               tests/conftest.py
-              # UD #14986: conftest imports tests.helpers.suite_marker_reach (Tools #6024).
               tests/helpers
               tests/shared_contracts
               tests/support
