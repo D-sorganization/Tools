@@ -651,10 +651,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 15927,
+      "bytes_lf": 15905,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "02d54b39599c1f4632baf395c58c12d6d5a531cc2cd6b4fda83a81538ef8d176",
+      "content_sha256_lf": "03760877980cc37e864531f5c9421872b9666b872581ef0789710adf4fe64a20",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CHAT-QT-MESSAGING-PY-75F0D893F0A0",
       "language": "python",

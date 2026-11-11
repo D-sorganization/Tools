@@ -621,7 +621,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-camera.json"
     },
     {
-      "content_sha256_lf": "706177fe41ca317a35b7d761da294fd0b28dee2cb92cdf6d852565ad441bb803",
+      "content_sha256_lf": "d4928d36ee8b465608526f7bd4c88aa3168b145edd1f2396959ddd70a15b5b08",
       "entry_count": 51,
       "package": "src/shared/python/chat",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-chat.json"
