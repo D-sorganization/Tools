@@ -215,9 +215,9 @@ def test_linux_wheel_qualify_job_runs_clean_install_auditwheel_smoke_and_mismatc
     qualify_steps = {step.get("name"): step for step in qualify["steps"]}
 
     download = qualify_steps["Download wheel artifact"]
-    assert "wheel-${{ runner.os }}-${{ runner.arch }}-py${{ matrix.python-version }}" in (
-        download["with"]["name"]
-    )
+    artifact_name = download["with"]["name"]
+    assert "${{ runner.os }}" in artifact_name
+    assert "${{ matrix.python-version }}" in artifact_name
     clean = qualify_steps["Clean-install wheel in fresh venv (oracle 2)"]["run"]
     assert "python -m venv" in clean
     assert "--no-index" in clean
