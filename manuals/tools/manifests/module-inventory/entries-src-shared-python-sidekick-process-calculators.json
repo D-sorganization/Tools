@@ -358,10 +358,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 27488,
+      "bytes_lf": 27792,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "97e75a4ca6e0f7ec9789a570c15cb23e5feb79f3503d74097cf558368dc84303",
+      "content_sha256_lf": "f4c2c18065cd4d6f934c5e7f7705b6c64b1ef625269dcc895cdf998efe63dcff",
       "family": "process-calculators-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-CONSTANTS-PY-4A2923A7CE8A",
       "language": "python",
@@ -1202,6 +1202,11 @@
           },
           {
             "kind": "constant",
+            "name": "SCF_PER_LBMOL_60F_14696PSIA",
+            "signature": null
+          },
+          {
+            "kind": "constant",
             "name": "SCRUBBER_OUTLET_GAS_TEMP",
             "signature": null
           },
@@ -1213,6 +1218,11 @@
           {
             "kind": "constant",
             "name": "SECONDS_PER_MINUTE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "STANDARD_BASIS_LB_MMSCF",
             "signature": null
           },
           {
@@ -1422,6 +1432,7 @@
           }
         ],
         "test_paths": [
+          "src/shared/python/calc_backend/tests/test_calc_backend.py",
           "src/shared/python/sidekick/tests/process_calculators/test_mmhg_constant_unified_3676.py",
           "src/shared/python/sidekick/tests/test_process_constants.py",
           "tests/shared/python/process_calculators/test_syngas_water_overflow.py",
