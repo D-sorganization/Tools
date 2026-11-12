@@ -1196,6 +1196,7 @@
           "tests/shared/python/chat/test_cli_agent_adapters.py",
           "tests/shared/python/chat/test_cli_provider_dropdown.py",
           "tests/shared/python/chat/test_history_sidebar.py",
+          "tests/shared/python/chat/test_honest_attachment_chip_6023.py",
           "tests/shared/python/chat/test_indexing_controller.py",
           "tests/shared/python/chat/test_message_display.py",
           "tests/shared/python/chat/test_panel_header.py",

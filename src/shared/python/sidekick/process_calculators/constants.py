@@ -217,9 +217,11 @@ __all__ = [
     "R_GAS_J_MOL_K",
     "R_UNIVERSAL_KMOL",
     "SATP_TEMPERATURE_C",
+    "SCF_PER_LBMOL_60F_14696PSIA",
     "SCRUBBER_OUTLET_GAS_TEMP",
     "SECONDS_PER_HOUR",
     "SECONDS_PER_MINUTE",
+    "STANDARD_BASIS_LB_MMSCF",
     "STANDARD_STATE_PRESSURE_PA",
     "STEFAN_BOLTZMANN",
     "STP_PRESSURE_KPA",
@@ -515,6 +517,11 @@ FT_S_TO_M_S: Final[float] = 0.3048
 
 # Density conversion: kg/m3 to lb/ft3
 KG_M3_TO_LB_FT3: Final[float] = 0.062428
+
+# US customary gas-industry basis for lb/MMscf (60 °F, 14.696 psia).
+# Molar volume ≈ 379.49 scf/lb-mol (GPSA / AGA customary).
+SCF_PER_LBMOL_60F_14696PSIA: Final[float] = 379.49
+STANDARD_BASIS_LB_MMSCF: Final[str] = "60F_14.696psia"
 
 # Molecular weight conversion: g/mol to kg/mol
 G_MOL_TO_KG_MOL: Final[float] = 1000.0
