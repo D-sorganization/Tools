@@ -55,6 +55,8 @@ ROOT_ALLOWLIST: frozenset[str] = frozenset(
         "AGENT_HANDOFF.md",
         "CHANGELOG.md",
         "CLAUDE.md",
+        ".mcp.json",
+        "llms.txt",
         "CONTRIBUTING.md",
         "Cargo.toml",
         "Chaotic_Pendulum",  # legacy top-level tool; relocation is Phase 1 work
