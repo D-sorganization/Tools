@@ -7592,10 +7592,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8285,
+      "bytes_lf": 9050,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3de4fb2bbb4af066862a4055cf6a15733b5198e55954853a50cf56a9148ca762",
+      "content_sha256_lf": "c7cfd7594d6cc87427a84475ab2d9b3eacd52be5fb3387c3d6b154082e0a83a1",
       "family": "media-processing-non-calculation",
       "id": "TOOLS-MODULE-SRC-MEDIA-PROCESSING-VIDEO-PROCESSOR-PYTHON-VIDEO-PROCESSOR-SRC-API-PY-8FC21ED57BEE",
       "language": "python",
@@ -7710,7 +7710,8 @@
           }
         ],
         "test_paths": [
-          "src/media_processing/video_processor/python/tests_video_processor/test_api.py"
+          "src/media_processing/video_processor/python/tests_video_processor/test_api.py",
+          "tests/unit/test_lifecycle_vocabulary.py"
         ],
         "unit_mentions": [
           "s"

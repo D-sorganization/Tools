@@ -867,8 +867,8 @@ class TestODEContracts:
                 )
             ],
         )
-        assert resp.success is True
-        assert "computed" in resp.message
+        assert resp.success is False
+        assert resp.message == ""
 
     def test_thermal_profile_request_defaults(self) -> Any:
         from calc_backend.contracts.thermal_profile import ThermalProfileRequest
@@ -1019,11 +1019,15 @@ class TestSyngasWaterSanitize:
     """Direct unit tests for _sanitize and _fallback helper in syngas_water."""
 
     def test_sanitize_nan(self) -> Any:
+        from calc_backend.contracts.syngas_water import SyngasNumericalFailureError
         from calc_backend.routers.syngas_water import _sanitize
 
-        assert _sanitize(float("nan")) == 0.0
-        assert _sanitize(float("inf")) == 0.0
-        assert _sanitize(float("-inf")) == 0.0
+        with pytest.raises(SyngasNumericalFailureError):
+            _sanitize(float("nan"))
+        with pytest.raises(SyngasNumericalFailureError):
+            _sanitize(float("inf"))
+        with pytest.raises(SyngasNumericalFailureError):
+            _sanitize(float("-inf"))
         assert _sanitize(1.5) == pytest.approx(1.5)
         assert _sanitize(0) == 0.0
 

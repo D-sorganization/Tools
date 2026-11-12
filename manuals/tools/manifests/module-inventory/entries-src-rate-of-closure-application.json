@@ -3572,10 +3572,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9783,
+      "bytes_lf": 12032,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b8f799da3e551c0f4b92e10b635b60fae39b4d9153d751c34200b96baffd9937",
+      "content_sha256_lf": "9723e00681f96665f2a41cb656528127be3a769bf0cff6ed5739db34f337307d",
       "family": "rate-of-closure-non-calculation",
       "id": "TOOLS-MODULE-SRC-RATE-OF-CLOSURE-APPLICATION-REGIONAL-GROUND-AUTHORITY-STATUS-PY-90B5AA6BAB0F",
       "language": "python",
@@ -3632,6 +3632,11 @@
           },
           {
             "kind": "constant",
+            "name": "AUTHORITY_JOB_TRANSITIONS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
             "name": "MAX_AUTHORITY_JOB_STATUS_BYTES",
             "signature": null
           },
@@ -3649,6 +3654,11 @@
             "kind": "function",
             "name": "regional_ground_authority_job_status_to_json",
             "signature": "status: AuthorityJobSnapshot, expected_job: RegionalGroundExecutionJob"
+          },
+          {
+            "kind": "function",
+            "name": "transition_authority_job",
+            "signature": "current: AuthorityJobStatus, target: AuthorityJobStatus"
           }
         ],
         "test_paths": [
@@ -3656,7 +3666,8 @@
           "tests/rate_of_closure/test_regional_ground_authority_store.py",
           "tests/rate_of_closure/test_regional_ground_real_loopback.py",
           "tests/rate_of_closure/test_web_companion_app.py",
-          "tests/rate_of_closure/test_web_companion_runtime.py"
+          "tests/rate_of_closure/test_web_companion_runtime.py",
+          "tests/unit/test_lifecycle_vocabulary.py"
         ],
         "unit_mentions": [],
         "validation_paths": []

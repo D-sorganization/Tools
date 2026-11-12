@@ -5947,6 +5947,12 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-10 | #6017 | Syngas _sanitize typed failure in place of 0.0 (oracle 6) and test updates |
+| 2026-11-10 | #6014 | Remove default-true success and converged flags on solver and calculation outputs (Slice 4) |
+| 2026-11-10 | #6015 | Adopt canonical lifecycle vocabulary and kernel in AuthorityJobStatus and video_processor.JobStatus with Oracle 7 ratchet test |
+| 2026-11-10 | #6012 | Add canonical lifecycle contract ADR, shared.python.lifecycle kernel, and syngas water boolean type checks |
+| 2026-11-10 | #6009 | Fix syngas water unit conversions in g/m3 and lb/MMscf, router fallback, standard basis, and strict finite input validation |
+| 2026-11-10 | #6006 | movement_optimizer: SciPy convergence status, feasibility-first selection, and provenance (#6005) |
 | 2026-11-09 | #6001 | bound generated-baseline query output with pagination, truncation metadata and explicit --full route |
 | 2026-11-09 | #6000 | align SPEC.md baseline integrity check with reviewed change-fragment collation while failing closed on unreviewed edits |
 | 2026-11-09 | #5996 | inventory generated baselines, define reproducibility contract and bounded query utility |

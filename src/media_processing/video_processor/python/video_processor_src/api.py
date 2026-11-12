@@ -25,6 +25,7 @@ from fastapi import FastAPI, HTTPException, UploadFile
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel, Field
 from shared.python.cors import add_cors_middleware
+from shared.python.lifecycle import LifecycleStatus, is_terminal
 from utils.compatibility import StrEnum
 
 logger = logging.getLogger(__name__)
@@ -45,13 +46,30 @@ ALLOWED_EXTENSIONS = {".mp4", ".avi", ".mov", ".mkv", ".webm"}
 
 
 class JobStatus(StrEnum):
-    """Processing job status."""
+    """Processing job status with canonical lifecycle mapping and aliases."""
 
     QUEUED = "queued"
-    PROCESSING = "processing"
-    COMPLETED = "completed"
+    RUNNING = "processing"
+    PROCESSING = RUNNING
+    SUCCEEDED = "completed"
+    COMPLETED = SUCCEEDED
     FAILED = "failed"
     CANCELLED = "cancelled"
+
+    def to_lifecycle(self) -> LifecycleStatus:
+        """Map this status to canonical LifecycleStatus."""
+        mapping = {
+            JobStatus.QUEUED: LifecycleStatus.QUEUED,
+            JobStatus.RUNNING: LifecycleStatus.RUNNING,
+            JobStatus.SUCCEEDED: LifecycleStatus.SUCCEEDED,
+            JobStatus.FAILED: LifecycleStatus.FAILED,
+            JobStatus.CANCELLED: LifecycleStatus.CANCELLED,
+        }
+        return mapping[self]
+
+    def is_terminal(self) -> bool:
+        """Return True if this status is a terminal lifecycle state."""
+        return is_terminal(self.to_lifecycle())
 
 
 class ProcessingJob(BaseModel):

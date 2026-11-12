@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import contextlib
 import logging
 import os
 import threading
@@ -50,7 +51,13 @@ from .optimizer_via import (
     via_initial_guess,
     via_layout,
 )
-from .result import CancelledError, OptimizationResult, ProgressReport
+from .result import (
+    CancelledError,
+    OptimizationResult,
+    ProgressReport,
+    extract_clubhead_kinematics,
+    populate_result_metadata,
+)
 from .tuning import (
     BALANCE_CENTER_WEIGHT,
     DEFAULT_ENDPOINT_WEIGHT,
@@ -113,28 +120,20 @@ class TrajectoryOptimizer:
             q_start: Initial joint-angle vector, shape ``(n_dof,)`` in rad.
             q_end: Final joint-angle vector, shape ``(n_dof,)`` in rad.
             q_bounds: Per-joint ``(lo, hi)`` limits, shape ``(n_dof, 2)``.
-            q_via: Optional intermediate waypoint inserted at the time-grid
-                midpoint, or a :class:`ViaSchedule` of ordered via points each
-                pinned at its own time fraction (multi-phase lifts such as the
-                snatch). Defaults to None.
+            q_via: Optional intermediate waypoint or :class:`ViaSchedule`. Defaults to None.
             duration: Movement duration in seconds.
-            n_waypoints: Number of free interior control points (must be
-                >= 4).
+            n_waypoints: Number of free interior control points (>= 4).
             n_eval: Number of evaluation samples on the dense grid.
             jerk_weight: Weight on integrated squared jerk.
             torque_rate_weight: Weight on integrated squared torque rate.
             endpoint_weight: Weight on endpoint velocity/acceleration damping.
-            smoothness: Global multiplier applied to the three
-                smoothness weights above.
+            smoothness: Global multiplier applied to smoothness weights.
             n_starts: Number of multi-start SLSQP runs to launch.
-            progress_cb: Optional callback receiving :class:`ProgressReport`
-                snapshots.
-            cancel_event: Optional event; setting it terminates
-                :meth:`optimize` with :class:`CancelledError`.
+            progress_cb: Optional callback receiving :class:`ProgressReport`.
+            cancel_event: Optional event terminating :meth:`optimize`.
 
         Raises:
-            ValueError: If ``n_waypoints < 4`` or ``q_bounds`` has the
-                wrong shape.
+            ValueError: If ``n_waypoints < 4`` or ``q_bounds`` has the wrong shape.
         """
         if n_waypoints < 4:
             raise ValueError("need >= 4 waypoints")
@@ -314,8 +313,8 @@ class TrajectoryOptimizer:
             max_iter=max_iter,
         )
 
-    def _run_single_start(self, seed: int) -> tuple[Any, int] | None:
-        return run_single_start(
+    def _run_single_start(self, seed: int) -> tuple[Any, int, int] | None:
+        out = run_single_start(
             seed,
             self._perturbed_guess,
             self._compute_cost,
@@ -323,6 +322,11 @@ class TrajectoryOptimizer:
             self._build_constraints(),
             self.cancel_event,
         )
+        if out is None:
+            return None
+        with contextlib.suppress(AttributeError, TypeError):
+            out[0].seed = seed
+        return out[0], out[1], seed
 
     def optimize(self) -> OptimizationResult:
         """Run parallel multi-start SLSQP and return the best result.
@@ -384,16 +388,24 @@ class TrajectoryOptimizer:
                 mode="single",
             )
             raise CancelledError("Optimization cancelled by user")
-        result = self._package_results(out, self._progress.elapsed())
+        result = self._package_results(out, self._progress.elapsed(), selection=None)
         self._record_result_metrics(result, mode="single")
         return result
 
-    def _finalize_parallel_results(self, results: list[tuple[Any, int]]) -> OptimizationResult:
+    def _finalize_parallel_results(self, results: list[tuple[Any, ...]]) -> OptimizationResult:
         """Select the best result, log summary, and package output."""
         if not results:
             raise CancelledError("All optimization starts were cancelled")
 
-        best_res, total_evals = select_best_result(results)
+        def _is_res_feasible(r: Any) -> bool:
+            try:
+                args = (self.dynamics, self.exercise_type, self.bar_mass, self.build_splines, self.eval_trajectory)
+                return self._check_solution_feasibility(r, *evaluate_solution(r, *args)[::7])[0]
+            except Exception:
+                return False
+
+        selection = select_best_result(results, is_feasible_fn=_is_res_feasible)
+        best_res, total_evals = selection
         elapsed = self._progress.elapsed()
 
         logger.info(
@@ -403,7 +415,12 @@ class TrajectoryOptimizer:
             len(results),
             elapsed,
         )
-        result = self._package_results(best_res, elapsed, total_evals)
+        result = self._package_results(
+            best_res,
+            elapsed,
+            total_evals,
+            selection=selection,
+        )
         self._record_result_metrics(result, mode="parallel")
         return result
 
@@ -421,23 +438,7 @@ class TrajectoryOptimizer:
         metrics.observe("trajectory_optimization_evaluations", result.n_evals, **labels)
 
     def _check_solution_feasibility(self, res: Any, q: NDArray, com_x: NDArray) -> tuple[bool, int]:
-        """Assess cost finiteness, COM bounds, and joint-limit violations.
-
-        SLSQP can report ``success`` while sitting on a point that the
-        re-evaluated spline pushes outside the hard constraints (inner-BOS
-        COM bound or joint limits).  A finite-cost-but-infeasible trajectory
-        must NOT be surfaced as a valid lift, so any constraint violation
-        (beyond the documented numerical tolerances) marks the result as
-        unsuccessful.
-
-        Args:
-            res: SciPy OptimizeResult (provides ``res.fun``).
-            q: Joint-angle trajectory, shape (N, 3).
-            com_x: Horizontal COM trajectory, shape (N,).
-
-        Returns:
-            ``(success, n_joint_limit_violations)``
-        """
+        """Assess cost finiteness, COM bounds, and joint-limit violations."""
         cost_val = float(res.fun)  # type: ignore[attr-defined]
         cost_finite = cost_val < float("inf") and not np.isnan(cost_val)
         com_in_bounds = check_com_feasibility(
@@ -448,14 +449,13 @@ class TrajectoryOptimizer:
         return cost_finite and com_in_bounds and joint_feasible, n_viol
 
     def _package_results(
-        self, res: Any, elapsed: float = 0.0, n_evals: int = 0
+        self,
+        res: Any,
+        elapsed: float = 0.0,
+        n_evals: int = 0,
+        selection: Any = None,
     ) -> OptimizationResult:
-        """Evaluate trajectories, assess feasibility, and build the result.
-
-        Complexity:
-            O(N * D) time and memory to evaluate kinematics, dynamics, COM, and
-            result arrays for ``N`` samples and ``D`` degrees of freedom.
-        """
+        """Evaluate trajectories, assess feasibility, and build the result."""
         q, qd, qdd, torques, power, com_traj, bar_traj, com_x = evaluate_solution(
             res,
             self.dynamics,
@@ -465,17 +465,10 @@ class TrajectoryOptimizer:
             self.eval_trajectory,
         )
         success, n_viol = self._check_solution_feasibility(res, q, com_x)
-        clubhead_poses: NDArray[np.float64] | None = None
-        clubhead_twists: NDArray[np.float64] | None = None
-        if hasattr(self.dynamics, "clubhead_pose"):
-            clubhead_poses = np.empty((len(self.t_eval), 4, 4), dtype=np.float64)
-            for n in range(len(self.t_eval)):
-                clubhead_poses[n] = self.dynamics.clubhead_pose(q[n])
-        if hasattr(self.dynamics, "clubhead_twist"):
-            clubhead_twists = np.empty((len(self.t_eval), 6), dtype=np.float64)
-            for n in range(len(self.t_eval)):
-                clubhead_twists[n] = self.dynamics.clubhead_twist(q[n], qd[n])
-        return build_result_object(
+        clubhead_poses, clubhead_twists = extract_clubhead_kinematics(
+            self.dynamics, self.t_eval, q, qd
+        )
+        result = build_result_object(
             t_eval=self.t_eval,
             res=res,
             q=q,
@@ -492,4 +485,10 @@ class TrajectoryOptimizer:
             n_evals=n_evals or self._progress.iteration_count,
             clubhead_poses=clubhead_poses,
             clubhead_twists=clubhead_twists,
+        )
+        return populate_result_metadata(
+            result,
+            res,
+            best_start_seed=0 if selection is None else getattr(selection, "best_seed", None),
+            n_starts_feasible=(1 if success else 0) if selection is None else getattr(selection, "n_starts_feasible", 0),
         )

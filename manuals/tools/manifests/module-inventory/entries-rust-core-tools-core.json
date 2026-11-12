@@ -2737,6 +2737,7 @@
           "tests/shared/python/process_calculators/test_syngas_compression_engine.py",
           "tests/shared/python/process_calculators/test_syngas_water_calculator_edge_cases.py",
           "tests/shared/python/process_calculators/test_syngas_water_overflow.py",
+          "tests/shared/python/process_calculators/test_syngas_water_units.py",
           "tests/shared/python/process_calculators/test_water_vapor_pressure_shared.py",
           "tests/shared/python/process_calculators/test_wave1_process_numerics.py",
           "tests/shared/python/process_calculators/test_wgs_reactor_calculator.py",
@@ -2755,6 +2756,7 @@
           "tests/test_calculators_expanded.py",
           "tests/tools/test_scientific_auditor.py",
           "tests/unit/sidekick/test_python_repl_widget.py",
+          "tests/unit/test_syngas_water_nonfinite_oracle6.py",
           "tests/vessel_drafter/test_contracts_unified.py"
         ],
         "unit_mentions": [

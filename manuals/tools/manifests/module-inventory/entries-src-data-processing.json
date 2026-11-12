@@ -4581,10 +4581,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 33690,
+      "bytes_lf": 33691,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "295330455626345fafbe4e9b1e282f0ec0c38ea93f742db58e1f35ef37fd33ab",
+      "content_sha256_lf": "db43732944d10b40bca3dd057dce20d861c41ed3cbadd176183e89db28cfda8d",
       "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-STATE-SPACE-PY-8C6042936D88",
       "language": "python",
@@ -4688,7 +4688,8 @@
           "src/data_processing/data_processor/python/tests/test_state_space.py",
           "tests/data_processing/data_processor/test_core_modules_smoke.py",
           "tests/data_processing/data_processor/test_numba_method_decorators.py",
-          "tests/data_processing/data_processor/test_numba_method_regressions.py"
+          "tests/data_processing/data_processor/test_numba_method_regressions.py",
+          "tests/unit/test_result_default_false_oracles.py"
         ],
         "unit_mentions": [
           "J",

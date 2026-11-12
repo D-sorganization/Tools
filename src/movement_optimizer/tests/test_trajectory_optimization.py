@@ -9,6 +9,7 @@ stall detection.
 from __future__ import annotations
 
 import threading
+import warnings
 
 import numpy as np
 import pytest
@@ -20,9 +21,12 @@ from movement_optimizer.models import (
 from movement_optimizer.trajectory import (
     CancelledError,
     OptimizationResult,
+    OptimizationStatus,
     ProgressReport,
     TrajectoryOptimizer,
+    derive_optimization_status,
 )
+from movement_optimizer.trajectory.optimizer_parallel import select_best_result
 
 # ==============================================================
 # Optimisation
@@ -275,3 +279,60 @@ class TestProgressReporting:
         opt._cost_history = list(np.linspace(1000, 100, 100))
         is_stalled, _ = opt._detect_stall()
         assert not is_stalled
+
+
+class _MockOptRes:
+    pass
+
+
+def _make_mock_res(**kw: object) -> _MockOptRes:
+    obj = _MockOptRes()
+    vars(obj).update(kw)
+    return obj
+
+
+class TestConvergenceAndFeasibilitySelection:
+    def test_select_best_result_feasibility_and_nan_ranking(self) -> None:
+        inf, feas = _make_mock_res(fun=1.0, feasible=False), _make_mock_res(fun=2.0, feasible=True)
+        best, total_evals = select_best_result([(inf, 50), (feas, 60)])
+        assert best is feas and total_evals == 110
+        nan_res, finite_res = _make_mock_res(fun=float("nan"), feasible=True), _make_mock_res(fun=10.0, feasible=True)
+        sel = select_best_result([(nan_res, 10, True, 0), (finite_res, 20, True, 1)])
+        assert sel[0] is finite_res and sel[1] == 30 and sel.best_seed == 1 and sel.n_starts_feasible == 1
+
+    def test_optimization_status_enum_values(self) -> None:
+        for name in ("CONVERGED", "ITERATION_LIMIT", "STALLED", "INFEASIBLE", "NUMERICAL_FAILURE"):
+            assert getattr(OptimizationStatus, name).value == name
+
+    def test_deprecation_warning_when_success_and_status_not_converged(self) -> None:
+        z3, z2, z1 = np.zeros((1, 3)), np.zeros((1, 2)), np.zeros(1)
+        kw = dict(t=z1, q=z3, qd=z3, qdd=z3, torques=z3, power=z3, com=z2, bar=z2, cost=10.0, com_horizontal_range_cm=2.0)
+        with pytest.deprecated_call(match="success=True but status is not CONVERGED"):
+            OptimizationResult(**kw, success=True, status=OptimizationStatus.ITERATION_LIMIT)
+
+        with warnings.catch_warnings():
+            warnings.simplefilter("error", DeprecationWarning)
+            OptimizationResult(**kw, success=True, status=OptimizationStatus.CONVERGED)
+            OptimizationResult(**kw, success=False, status=OptimizationStatus.ITERATION_LIMIT)
+
+    def test_derive_optimization_status(self) -> None:
+        cases = [
+            (_make_mock_res(fun=float("nan"), success=True), False, False, OptimizationStatus.NUMERICAL_FAILURE),
+            (_make_mock_res(fun=5.0, success=True), True, False, OptimizationStatus.INFEASIBLE),
+            (_make_mock_res(fun=5.0, success=False, status=9, message="Iteration limit reached"), True, True, OptimizationStatus.ITERATION_LIMIT),
+            (_make_mock_res(fun=5.0, success=False, status=2, message="Maximum iterations exceeded"), True, True, OptimizationStatus.ITERATION_LIMIT),
+            (_make_mock_res(fun=5.0, success=False, status=8, message="Positive directional derivative"), True, True, OptimizationStatus.STALLED),
+            (_make_mock_res(fun=5.0, success=True, status=0, message="Optimization terminated"), True, True, OptimizationStatus.CONVERGED),
+        ]
+        for res, cost_finite, is_feasible, expected in cases:
+            assert derive_optimization_status(res, cost_finite=cost_finite, is_feasible=is_feasible) == expected
+
+    def test_max_iter_patched_to_1_produces_iteration_limit(self, squat_optimizer, monkeypatch) -> None:
+        from movement_optimizer.trajectory import optimizer as opt_mod
+        from movement_optimizer.trajectory import optimizer_diagnostics as diag_mod
+        from movement_optimizer.trajectory import tuning as tuning_mod
+
+        for m in (tuning_mod, opt_mod, diag_mod):
+            monkeypatch.setattr(m, "MAX_ITER_PER_START", 1)
+        opt, _, _, _, _ = squat_optimizer
+        assert opt.optimize().status == OptimizationStatus.ITERATION_LIMIT

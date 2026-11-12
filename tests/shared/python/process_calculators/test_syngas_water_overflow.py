@@ -265,9 +265,7 @@ class TestCalculateWaterContentOverflow:
             gas_composition="typical_syngas",
         )
         t_k = result.temperature_k
-        expected_g = (
-            result.vapor_pressure_pa * MW_WATER_GMOL / (R_UNIVERSAL * t_k)
-        )
+        expected_g = result.vapor_pressure_pa * MW_WATER_GMOL / (R_UNIVERSAL * t_k)
         assert result.water_content_g_per_m3 == pytest.approx(expected_g, rel=0.01)
         assert result.water_content_g_per_m3 == pytest.approx(51.1, rel=0.01)
         expected_lb = result.water_content_ppmv * MW_WATER_GMOL / 379.49
@@ -378,3 +376,155 @@ class TestPerformanceBenchmarks:
             f"({best_safe:.4f}s vs {best_base:.4f}s)"
         )
         assert min_ratio < 25.0, msg
+
+
+# ---------------------------------------------------------------------------
+# Unit conversions and basis tests (#6004)
+# ---------------------------------------------------------------------------
+
+
+class TestSyngasWaterUnits:
+    """Tests for syngas water unit conversions and standard basis (#6004)."""
+
+    def test_forty_c_saturated_returns_51_g_per_m3(self) -> None:
+        """40 °C saturated at 1 atm (101325 Pa) returns 51.1 g/m³ within 1%."""
+        calc = SyngasWaterCalculator()
+        res = calc.calculate_water_content(temperature_c=40.0, pressure_bar=1.01325)
+        assert 50.59 <= res.water_content_g_per_m3 <= 51.61, (
+            f"Expected ~51.1 g/m3 (+-1%), got {res.water_content_g_per_m3}"
+        )
+
+    def test_thousand_ppmv_returns_47_5_lb_per_mmscf(self) -> None:
+        """1000 ppmv (y_water = 0.001) returns 47.5 lb/MMscf within 1%."""
+        from calc_backend.contracts.syngas_water import SyngasWaterRequest
+        from calc_backend.routers.syngas_water import _fallback_calculate
+
+        from shared.python.sidekick.process_calculators.constants import (
+            ANTOINE_WATER_A,
+            ANTOINE_WATER_B,
+            ANTOINE_WATER_C,
+        )
+        from shared.python.sidekick.process_calculators.syngas_water_calculator import (
+            water_content_units,
+        )
+        from shared.python.sidekick.process_calculators.water_vapor_pressure import (
+            antoine_pressure_pa,
+        )
+
+        units = water_content_units(y_water=0.001, p_pa=101325.0, t_k=293.15)
+        assert 47.0 <= units.lb_mmscf <= 48.0, (
+            f"Expected ~47.5 lb/MMscf (+-1%), got {units.lb_mmscf}"
+        )
+
+        calc = SyngasWaterCalculator()
+        engine_units = calc._convert_water_content_units(
+            y_water=0.001,
+            vapor_pressure_pa=101.325,
+            temperature_k=293.15,
+            pressure_pa=101325.0,
+        )
+        assert 47.0 <= engine_units["lb_mmscf"] <= 48.0
+
+        # Router fallback test at y_water = 0.001 (1000 ppmv)
+        vp_pa = antoine_pressure_pa(
+            ANTOINE_WATER_A, ANTOINE_WATER_B, ANTOINE_WATER_C, 25.0
+        )
+        p_bar = (vp_pa / 1e5) / 0.001
+        req = SyngasWaterRequest(
+            temperature_c=25.0, pressure_bar=p_bar, composition_key="typical_syngas"
+        )
+        resp = _fallback_calculate(req)
+        assert resp.water_content.water_content_ppmv == pytest.approx(1000.0, rel=1e-3)
+        assert 47.0 <= resp.water_content.water_content_lb_per_mmscf <= 48.0
+
+    def test_engine_and_router_fallback_agree_on_units(self) -> None:
+        """Engine and router fallback agree on all four units for same conditions."""
+        from calc_backend.contracts.syngas_water import SyngasWaterRequest
+        from calc_backend.routers.syngas_water import _fallback_calculate
+
+        from shared.python.sidekick.process_calculators.syngas_water_calculator import (
+            water_content_units,
+        )
+
+        req = SyngasWaterRequest(
+            temperature_c=80.0, pressure_bar=10.0, composition_key="typical_syngas"
+        )
+        resp = _fallback_calculate(req)
+        y_water = resp.water_content.mole_fraction_water
+        p_pa = 10.0 * 1e5
+        t_k = 80.0 + 273.15
+
+        units = water_content_units(y_water=y_water, p_pa=p_pa, t_k=t_k)
+        assert resp.water_content.water_content_ppmv == pytest.approx(units.ppmv)
+        assert resp.water_content.water_content_g_per_m3 == pytest.approx(units.g_m3)
+        assert resp.water_content.water_content_mg_per_nm3 == pytest.approx(
+            units.mg_nm3
+        )
+        assert resp.water_content.water_content_lb_per_mmscf == pytest.approx(
+            units.lb_mmscf
+        )
+
+    def test_cross_unit_consistency_mg_nm3_and_g_m3(self) -> None:
+        """Cross-unit consistency: g/m3 at normal conds * 1000 equals mg/Nm3."""
+        from shared.python.sidekick.process_calculators.syngas_water_calculator import (
+            water_content_units,
+        )
+
+        units = water_content_units(y_water=0.025, p_pa=101325.0, t_k=273.15)
+        assert units.g_m3 * 1000.0 == pytest.approx(units.mg_nm3)
+
+    def test_standard_basis_field_present(self) -> None:
+        """Result states standard_basis == '60F_14.696psia'."""
+        from calc_backend.contracts.syngas_water import SyngasWaterRequest
+        from calc_backend.routers.syngas_water import _fallback_calculate
+
+        from shared.python.sidekick.process_calculators.syngas_water_calculator import (
+            SyngasWaterCalculator,
+            water_content_units,
+        )
+
+        units = water_content_units(y_water=0.01, p_pa=101325.0, t_k=298.15)
+        assert units.standard_basis == "60F_14.696psia"
+        assert units.to_dict()["standard_basis"] == "60F_14.696psia"
+
+        calc = SyngasWaterCalculator()
+        res = calc.calculate_water_content(40.0, 1.0)
+        assert res.standard_basis == "60F_14.696psia"
+        assert res.to_dict()["results"]["standard_basis"] == "60F_14.696psia"
+
+        req = SyngasWaterRequest(temperature_c=40.0, pressure_bar=1.0)
+        resp = _fallback_calculate(req)
+        assert resp.water_content.standard_basis == "60F_14.696psia"
+
+    def test_water_content_units_input_validation(self) -> None:
+        """Validate rejection of NaN, Inf, out-of-range y_water,
+        and non-positive p/t/mw.
+        """
+        from shared.python.sidekick.process_calculators.syngas_water_calculator import (
+            water_content_units,
+        )
+
+        for invalid_y in [-0.01, 1.05, float("nan"), float("inf"), float("-inf")]:
+            with pytest.raises(ValueError, match="y_water"):
+                water_content_units(y_water=invalid_y, p_pa=101325.0, t_k=293.15)
+
+        for invalid_p in [0.0, -100.0, float("nan"), float("inf")]:
+            with pytest.raises(ValueError, match="p_pa"):
+                water_content_units(y_water=0.01, p_pa=invalid_p, t_k=293.15)
+
+        for invalid_t in [0.0, -273.15, float("nan"), float("inf")]:
+            with pytest.raises(ValueError, match="t_k"):
+                water_content_units(y_water=0.01, p_pa=101325.0, t_k=invalid_t)
+
+        for invalid_mw in [0.0, -18.0, float("nan"), float("inf")]:
+            with pytest.raises(ValueError, match="mw_water"):
+                water_content_units(
+                    y_water=0.01, p_pa=101325.0, t_k=293.15, mw_water=invalid_mw
+                )
+
+        for b in (True, False):
+            for kw in ("y_water", "p_pa", "t_k", "mw_water"):
+                base = {"y_water": 0.01, "p_pa": 1e5, "t_k": 293.15, "mw_water": 18.0}
+                base[kw] = b
+                with pytest.raises(ValueError, match=kw):
+                    water_content_units(**base)

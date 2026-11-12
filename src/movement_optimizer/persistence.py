@@ -28,7 +28,7 @@ from typing import Any
 import numpy as np
 
 from .config import load_app_paths
-from .trajectory import OptimizationResult
+from .trajectory import OptimizationResult, OptimizationStatus
 from .validation import (
     BAR_MASS_RANGE,
     BODY_MASS_RANGE,
@@ -180,6 +180,22 @@ def _validate_arrays_block(arrays: Any, context: str) -> None:
             )
 
 
+def _validate_provenance_metadata(meta_dict: dict[str, Any]) -> None:
+    """Validate optional solver provenance fields (#6005)."""
+    st = meta_dict.get("status")
+    if st is not None and (not isinstance(st, str) or st not in OptimizationStatus.__members__):
+        raise InvalidStateFileError(f"field 'metadata.status': invalid status '{st}'")
+    for k, exp in (("solver_message", str), ("backend", str), ("n_iterations", int), ("n_starts_feasible", int)):
+        if k in meta_dict:
+            _require_type(meta_dict[k], exp, f"metadata.{k}")
+            if exp is int and meta_dict[k] < 0:
+                raise InvalidStateFileError(f"field 'metadata.{k}': must be >= 0")
+    if meta_dict.get("best_start_seed") is not None:
+        _require_type(meta_dict["best_start_seed"], int, "metadata.best_start_seed")
+        if meta_dict["best_start_seed"] < 0:
+            raise InvalidStateFileError("field 'metadata.best_start_seed': must be >= 0")
+
+
 def _validate_metadata_block(metadata: Any, context: str) -> None:
     meta_dict = _require_mapping(metadata, f"{context}: 'metadata'")
     required_types: dict[str, type | tuple[type, ...]] = {
@@ -205,6 +221,7 @@ def _validate_metadata_block(metadata: Any, context: str) -> None:
     for opt_key in ("elapsed_s", "n_evals", "n_joint_limit_violations"):
         if opt_key in meta_dict:
             _require_type(meta_dict[opt_key], (int, float), f"metadata.{opt_key}")
+    _validate_provenance_metadata(meta_dict)
 
 
 def _validate_solution_schema(data: dict[str, Any]) -> None:
@@ -289,6 +306,14 @@ def _result_to_dict(result: OptimizationResult) -> dict[str, Any]:
     """Convert an OptimizationResult to a JSON-serializable dict."""
     arrays = {k: getattr(result, k).tolist() for k in _ARRAY_FIELDS}
     metadata = {k: getattr(result, k) for k in _METADATA_FIELDS}
+    metadata["status"] = (
+        result.status.value if isinstance(result.status, OptimizationStatus) else str(result.status)
+    )
+    metadata["solver_message"] = result.solver_message
+    metadata["n_iterations"] = result.n_iterations
+    metadata["best_start_seed"] = result.best_start_seed
+    metadata["n_starts_feasible"] = result.n_starts_feasible
+    metadata["backend"] = result.backend
     return {"arrays": arrays, "metadata": metadata}
 
 
@@ -296,6 +321,8 @@ def _dict_to_result(d: dict[str, Any]) -> OptimizationResult:
     """Reconstruct an OptimizationResult from a dict."""
     arrays = {k: np.array(d["arrays"][k]) for k in _ARRAY_FIELDS}
     meta = d["metadata"]
+    raw = meta.get("status")
+    status = OptimizationStatus[raw] if raw in OptimizationStatus.__members__ else (OptimizationStatus.CONVERGED if meta["success"] else OptimizationStatus.INFEASIBLE)
     return OptimizationResult(
         t=arrays["t"],
         q=arrays["q"],
@@ -311,6 +338,12 @@ def _dict_to_result(d: dict[str, Any]) -> OptimizationResult:
         elapsed_s=meta.get("elapsed_s", 0.0),
         n_evals=meta.get("n_evals", 0),
         n_joint_limit_violations=meta.get("n_joint_limit_violations", 0),
+        status=status,
+        solver_message=meta.get("solver_message", ""),
+        n_iterations=meta.get("n_iterations", 0),
+        best_start_seed=meta.get("best_start_seed"),
+        n_starts_feasible=meta.get("n_starts_feasible", 0),
+        backend=meta.get("backend", "SLSQP"),
     )
 
 

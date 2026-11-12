@@ -5616,10 +5616,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 16780,
+      "bytes_lf": 18686,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "4169ceb4f4f2a708a9773dba7250333213b30ceb374df36d77346e669766817a",
+      "content_sha256_lf": "31a252bb28ba3e56426054ea97b394e9a0fe9c45733e9bbcf6525a3fe1591ad8",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-PERSISTENCE-PY-D56764B1C053",
       "language": "python",
@@ -6229,10 +6229,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 1640,
+      "bytes_lf": 1943,
       "classification": "calculation",
       "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "4108336b045f05e094b04e05e3a70bf88ee31c36f33e2695592930a197c83478",
+      "content_sha256_lf": "ecbca33a5b1cfd2dd4cd5194ff099f6ae612ac7cbe0d4a87495e6efbf6fdb70f",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-TRAJECTORY-INIT-PY-BE32D5D6A3A7",
       "language": "python",
@@ -6288,6 +6288,11 @@
           },
           {
             "kind": "re-export",
+            "name": "OptimizationStatus",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "ProgressReport",
             "signature": null
           },
@@ -6338,6 +6343,11 @@
           },
           {
             "kind": "re-export",
+            "name": "derive_optimization_status",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
             "name": "detect_stall",
             "signature": null
           },
@@ -6349,6 +6359,11 @@
           {
             "kind": "re-export",
             "name": "metrics",
+            "signature": null
+          },
+          {
+            "kind": "re-export",
+            "name": "populate_result_metadata",
             "signature": null
           },
           {
@@ -6428,10 +6443,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 19372,
+      "bytes_lf": 18828,
       "classification": "calculation",
       "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "9567817687fd98bcc4293db65e4d57dc8527da718e33239868f5d9d9b06441f2",
+      "content_sha256_lf": "2e157b853ed2dd9799b1cbdd204e6dcacc7fdc95da57690556a2be314f83e3a5",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-TRAJECTORY-OPTIMIZER-PY-A585A29C490E",
       "language": "python",
@@ -6918,10 +6933,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 4330,
+      "bytes_lf": 6402,
       "classification": "calculation",
       "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "77e948d87c8e6305445adf4229e3e28972f1659d370addc89f5e45086ddc3084",
+      "content_sha256_lf": "c70f6e35b4e40e0089eda38c0f416941ac2c2d9e7a8e7766a5ab2bb09b097a4f",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-TRAJECTORY-OPTIMIZER-PARALLEL-PY-96D69412FBCE",
       "language": "python",
@@ -6933,7 +6948,6 @@
         "public-api",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -6945,7 +6959,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "unavailable",
         "validation": "unavailable"
       },
@@ -6961,6 +6975,11 @@
         "public_routes": [],
         "public_surfaces": [
           {
+            "kind": "class",
+            "name": "SelectionResult",
+            "signature": null
+          },
+          {
             "kind": "function",
             "name": "collect_future_results",
             "signature": "pending: set[Future], cancel_check: Callable[[], bool], record_progress: Callable[[float, int], None]"
@@ -6973,10 +6992,12 @@
           {
             "kind": "function",
             "name": "select_best_result",
-            "signature": "results: list[tuple[_HasFun, int]]"
+            "signature": "results: list[Any], *, is_feasible_fn: Callable[[Any], bool] | None=None"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_trajectory_optimization.py"
+        ],
         "unit_mentions": [],
         "validation_paths": []
       }
@@ -7199,10 +7220,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 3058,
+      "bytes_lf": 6613,
       "classification": "calculation",
       "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "9caf666fdbc95d5cd404275d26a19034890c31df14d5088432026f2d25c35354",
+      "content_sha256_lf": "1c773d2300ae357e0bc4602d2b5f8eb019fdd3cc601f4eb89c263abf5093cd03",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-TRAJECTORY-RESULT-PY-9405027640B1",
       "language": "python",
@@ -7252,8 +7273,28 @@
           },
           {
             "kind": "class",
+            "name": "OptimizationStatus",
+            "signature": null
+          },
+          {
+            "kind": "class",
             "name": "ProgressReport",
             "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "derive_optimization_status",
+            "signature": "res: Any, cost_finite: bool, is_feasible: bool"
+          },
+          {
+            "kind": "function",
+            "name": "extract_clubhead_kinematics",
+            "signature": "dynamics: Any, t_eval: NDArray, q: NDArray, qd: NDArray"
+          },
+          {
+            "kind": "function",
+            "name": "populate_result_metadata",
+            "signature": "result: OptimizationResult, res: Any, best_start_seed: int | None=None, n_starts_feasible: int=0"
           }
         ],
         "test_paths": [

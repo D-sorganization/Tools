@@ -1587,6 +1587,45 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#6003 · Add Canonical Lifecycle Contract ADR, Shared.Python.Lifecycle Kernel, and Syngas Water Boolean Type Checks
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6003
+- **Branch:** merged via #6012
+- **PR:** #6012, #6015, #6014, #6017
+- **Paths:** see #6012
+- **Started:** 2026-11-10
+- **Last verified:** 2026-11-10 (`0cf7f77a`; collated from changes/6003-syngas-nonfinite-failure.md)
+- **Summary:** Add canonical lifecycle contract ADR, shared.python.lifecycle kernel, and syngas water boolean type checks
+- **Next step:** Shipped in PR #6012.
+
+### DL-#6004 · Fix Syngas Water Unit Conversions in G/M3 and Lb/MMscf, Router Fallback, Standard Basis, and Strict Finite Input Validation
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6004
+- **Branch:** merged via #6009
+- **PR:** #6009
+- **Paths:** see #6009
+- **Started:** 2026-11-10
+- **Last verified:** 2026-11-10 (`c59570ac`; collated from changes/6004-syngas-water-units.md)
+- **Summary:** Fix syngas water unit conversions in g/m3 and lb/MMscf, router fallback, standard basis, and strict finite input validation
+- **Next step:** Shipped in PR #6009.
+
+### DL-#6005 · Movement_Optimizer: SciPy Convergence Status, Feasibility-First Selection, and Provenance (#6005)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6005
+- **Branch:** merged via #6006
+- **PR:** #6006
+- **Paths:** see #6006
+- **Started:** 2026-11-10
+- **Last verified:** 2026-11-10 (`c0bae274`; collated from changes/6005-movement-optimizer-convergence.md)
+- **Summary:** movement_optimizer: SciPy convergence status, feasibility-first selection, and provenance (#6005)
+- **Next step:** Shipped in PR #6006.
+
 ### DL-#5999 · Bound Generated-Baseline Query Output With Pagination, Truncation Metadata and Explicit --Full Route
 
 - **State:** shipped
@@ -1769,7 +1808,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Summary:** Nightly installs the same pinned build as ci-standard so the Sidekick wheel test can run python -m build.
 - **Next step:** Shipped in PR #5955.
 
-### DL-#5951 · Rust_Adapter Joins the _RustStreamWorker QThread After Its Event Loop Quits, so a Still-Running Thread Is Never Destroyed (Merge_Group Abort)
+### DL-#5951 · Rust_Adapter Joins the \_RustStreamWorker QThread After Its Event Loop Quits, so a Still-Running Thread Is Never Destroyed (Merge_Group Abort)
 
 - **State:** shipped
 - **Owner:** unassigned
@@ -1779,7 +1818,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Paths:** see #5952
 - **Started:** 2026-11-02
 - **Last verified:** 2026-11-02 (`5e85cc21`; collated from changes/5951-rust-adapter-joins-the-ruststreamworker.md)
-- **Summary:** rust_adapter joins the _RustStreamWorker QThread after its event loop quits, so a still-running thread is never destroyed (merge_group abort)
+- **Summary:** rust_adapter joins the \_RustStreamWorker QThread after its event loop quits, so a still-running thread is never destroyed (merge_group abort)
 - **Next step:** Shipped in PR #5952.
 
 ### DL-#5948 · Nightly Chromium Provisioning Passes LD_LIBRARY_PATH Through Sudo so the Workspace Tool-Cache Python Can Load Libpython (Regression From #5912).
@@ -2016,7 +2055,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Summary:** wave_solver main() tests pass an explicit WaveConfig instead of parsing the test runner's argv
 - **Next step:** Merge after required checks; confirm on the next nightly.
 
-### DL-#5871 · Run the Scipy.Signal Eager-Import Boundary Check in a Fresh Interpreter so It No Longer Pops Scipy.Signal From Sys.Modules and Breaks 17 Nightly Tests With _Signal_Api NameError
+### DL-#5871 · Run the Scipy.Signal Eager-Import Boundary Check in a Fresh Interpreter so It No Longer Pops Scipy.Signal From Sys.Modules and Breaks 17 Nightly Tests With \_Signal_Api NameError
 
 - **State:** shipped
 - **Owner:** unassigned
@@ -2026,7 +2065,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Paths:** see #5872
 - **Started:** 2026-10-31
 - **Last verified:** 2026-10-31 (`e019d2a2`; collated from changes/5871-run-the-scipy-signal-eager-import-bounda.md)
-- **Summary:** Run the scipy.signal eager-import boundary check in a fresh interpreter so it no longer pops scipy.signal from sys.modules and breaks 17 nightly tests with _signal_api NameError
+- **Summary:** Run the scipy.signal eager-import boundary check in a fresh interpreter so it no longer pops scipy.signal from sys.modules and breaks 17 nightly tests with \_signal_api NameError
 - **Next step:** Shipped in PR #5872.
 
 ### DL-#5868 · Stop Verification Test Playwright Stubs Leaking Into Pytest Collection
@@ -2302,7 +2341,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Summary:** Fix box inertia tensor axis alignment in anthropometric_model.py
 - **Next step:** Merge PR
 
-### DL-#5798 · Use Polytropic Exponent (Gamma-1)/(Gamma*Eta) for Discharge Temperature and Work (TOOLS-03)
+### DL-#5798 · Use Polytropic Exponent (Gamma-1)/(Gamma\*Eta) for Discharge Temperature and Work (TOOLS-03)
 
 - **State:** shipped
 - **Owner:** unassigned
@@ -2312,7 +2351,7 @@ reachable from any live state and `abandoned` from `parked`.
 - **Paths:** see #5816
 - **Started:** 2026-10-27
 - **Last verified:** 2026-10-27 (`273c280b`; collated from changes/5798-polytropic-exponent-irreversibility.md)
-- **Summary:** Use polytropic exponent (gamma-1)/(gamma*eta) for discharge temperature and work (TOOLS-03)
+- **Summary:** Use polytropic exponent (gamma-1)/(gamma\*eta) for discharge temperature and work (TOOLS-03)
 - **Next step:** Merge the PR.
 
 ### DL-#5797 · Compute Isentropic Efficiency as W_Isentropic / W_Actual <= 1 and Allow Low-Efficiency Warning (TOOLS-02)

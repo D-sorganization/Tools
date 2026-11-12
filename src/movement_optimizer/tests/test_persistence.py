@@ -14,11 +14,14 @@ from movement_optimizer.persistence import (
     RESULT_FORMAT_VERSION,
     SCHEMA_VERSION,
     InvalidStateFileError,
+    _dict_to_result,
+    _validate_provenance_metadata,
     load_app_state,
     load_solution,
     save_app_state,
     save_solution,
 )
+from movement_optimizer.trajectory import OptimizationResult, OptimizationStatus
 
 from .conftest import make_test_result
 
@@ -47,6 +50,43 @@ class TestSaveSolution:
         assert loaded["metadata"]["com_horizontal_range_cm"] == pytest.approx(3.2)
         assert loaded["metadata"]["elapsed_s"] == pytest.approx(1.5)
         assert loaded["metadata"]["n_evals"] == 100
+
+    def test_roundtrip_new_metadata_fields_and_schema_v1_compatibility(self, tmp_path):
+        base = make_test_result()
+        kw = {k: getattr(base, k) for k in ("t", "q", "qd", "qdd", "torques", "power", "com", "bar")}
+        res = OptimizationResult(
+            **kw,
+            success=True,
+            cost=25.0,
+            com_horizontal_range_cm=1.5,
+            status=OptimizationStatus.CONVERGED,
+            solver_message="Optimization terminated successfully",
+            n_iterations=42,
+            best_start_seed=3,
+            n_starts_feasible=5,
+            backend="SLSQP",
+        )
+        path = tmp_path / "solution_v2.json"
+        save_solution(str(path), res, {"body_mass": 80.0, "height": 1.80}, "squat", 60.0)
+        loaded = load_solution(str(path))
+        for k, v in [
+            ("status", "CONVERGED"),
+            ("solver_message", "Optimization terminated successfully"),
+            ("n_iterations", 42),
+            ("best_start_seed", 3),
+            ("n_starts_feasible", 5),
+            ("backend", "SLSQP"),
+        ]:
+            assert loaded["metadata"][k] == v
+
+        rec = _dict_to_result(loaded)
+        assert rec.status == OptimizationStatus.CONVERGED and rec.solver_message == "Optimization terminated successfully"
+        assert rec.n_iterations == 42 and rec.best_start_seed == 3 and rec.n_starts_feasible == 5 and rec.backend == "SLSQP"
+
+        v1 = _dict_to_result({"arrays": loaded["arrays"], "metadata": {"success": True, "cost": 30.0, "com_horizontal_range_cm": 2.0}})
+        assert v1.status == OptimizationStatus.CONVERGED and v1.best_start_seed is None and v1.backend == "SLSQP"
+        with pytest.raises(InvalidStateFileError, match="must be >= 0"):
+            _validate_provenance_metadata({"n_iterations": -1})
 
     def test_round_trip_preserves_arrays(self, tmp_path):
         result = make_test_result()
