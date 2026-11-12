@@ -9,7 +9,6 @@ import asyncio
 import json
 import logging
 import os
-import shutil
 import sys
 from pathlib import Path
 from typing import Any
@@ -73,16 +72,9 @@ async def _run_stdio_checks(template: dict[str, Any], repo_root: Path) -> list[s
     except ImportError as exc:
         return [f"MCP SDK not installed: {exc}"]
 
-    command = template["server"]["command"]
-    if shutil.which(command) is None:
-        command = sys.executable
-        args = ["-m", "shared.python.calc_backend.mcp_server"]
-    else:
-        args = []
-
     server = StdioServerParameters(
-        command=command,
-        args=args,
+        command=sys.executable,
+        args=["-m", "shared.python.calc_backend.mcp_server"],
         env={**os.environ, "PYTHONPATH": str(repo_root / "src")},
     )
     failures: list[str] = []

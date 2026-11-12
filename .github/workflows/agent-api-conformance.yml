@@ -96,6 +96,7 @@ jobs:
           grep -v -E '^mypy==' requirements.txt > requirements-ci.txt
           python -m pip install --ignore-installed -r requirements-ci.txt
           pip install -e ".[calc-mcp,test]"
+          python -m pip install --force-reinstall "scipy>=1.10.0,<1.18"
 
       - name: Run Fleet Agent API conformance
         env:
