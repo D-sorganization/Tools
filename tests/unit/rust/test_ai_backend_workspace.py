@@ -22,6 +22,7 @@ import yaml
 REPO_ROOT = pathlib.Path(__file__).parent.parent.parent.parent
 WORKFLOW = REPO_ROOT / ".github" / "workflows" / "maturin-ai-backend.yml"
 PYTHON_VERSIONS = ["3.10", "3.11", "3.12", "3.13"]
+LINUX_QUALIFY_JOB = "linux-wheel-qualify"
 
 
 def _workflow() -> dict[str, Any]:
@@ -193,6 +194,51 @@ def test_wheel_smoke_requires_exactly_one_match_before_install(
             f"<{wheel_dir.relative_to(tmp_path).as_posix()}/{expected_install}>",
         ]
         assert python_log.exists()
+
+
+@pytest.mark.unit
+def test_linux_wheel_qualify_job_runs_clean_install_auditwheel_smoke_and_mismatch() -> (
+    None
+):
+    """Wave 1.3 / #5684 slice 3: oracles 2, 3, 5, 7 on every Linux matrix cell."""
+    workflow = _workflow()
+    jobs = workflow["jobs"]
+    qualify = jobs[LINUX_QUALIFY_JOB]
+    build = jobs["build-wheels"]
+
+    needs = qualify["needs"]
+    if isinstance(needs, str):
+        needs = [needs]
+    assert needs == ["build-wheels"]
+    assert qualify["runs-on"] == "d-sorg-fleet"
+    assert qualify["strategy"]["matrix"]["python-version"] == PYTHON_VERSIONS
+    qualify_steps = {step.get("name"): step for step in qualify["steps"]}
+
+    download = qualify_steps["Download wheel artifact"]
+    artifact_name = download["with"]["name"]
+    assert "${{ runner.os }}" in artifact_name
+    assert "${{ matrix.python-version }}" in artifact_name
+    anchor = qualify_steps["Anchor Python floor to ai_backend crate"]
+    assert anchor["working-directory"] == "rust_core/ai_backend"
+    clean = qualify_steps["Clean-install wheel in fresh venv (oracle 2)"]["run"]
+    assert "python -m venv" in clean
+    assert "--no-index" in clean
+    assert "import ai_backend" in clean
+
+    smoke = qualify_steps["Rust-path smoke (oracle 5)"]
+    assert smoke["env"]["AI_BACKEND_WHEEL_REQUIRED"] == "1"
+    assert "src" in smoke["env"]["PYTHONPATH"]
+    assert "ai_backend_available" in smoke["run"]
+    assert "RustAgentAdapter" in smoke["run"]
+    assert "pytest tests/shared" not in smoke["run"]
+
+    mismatch = qualify_steps["Reject cp312 wheel on Python 3.13 (oracle 7)"]
+    assert mismatch["if"] == "matrix.python-version == '3.12'"
+    assert "pip install" in mismatch["run"]
+
+    audit = _step(build, "Assert wheel manylinux policy (oracle 3)")["run"]
+    assert "auditwheel show" in audit
+    assert "manylinux" in audit.lower()
 
 
 @pytest.mark.unit

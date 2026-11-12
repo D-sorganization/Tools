@@ -30,6 +30,7 @@ REQUIRED_SPARSE_PATHS = {
         "src/engines/pendulum_models/python/double_pendulum_model",
         "src/shared",
         "tests/conftest.py",
+        "tests/helpers",
         "tests/shared_contracts",
         "tests/support",
     },

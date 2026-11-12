@@ -17,16 +17,26 @@ Run conditions:
 
 from __future__ import annotations
 
+import os
+
 import pytest
+
+_WHEEL_REQUIRED = os.environ.get("AI_BACKEND_WHEEL_REQUIRED") == "1"
 
 # Hard requirement: this whole module is the wheel-present gate. When the
 # extension is not installed the module is skipped (so it is inert in suites
 # that lack a compiled wheel), but the maturin CI job installs the wheel first
-# so the skip never triggers there.
-ai_backend = pytest.importorskip(
-    "ai_backend",
-    reason="ai_backend Rust wheel not installed; built+installed by maturin CI",
-)
+# so the skip never triggers there. With AI_BACKEND_WHEEL_REQUIRED=1, a missing
+# wheel is a hard failure (Linux qualification oracle 5).
+if _WHEEL_REQUIRED:
+    import importlib
+
+    ai_backend = importlib.import_module("ai_backend")
+else:
+    ai_backend = pytest.importorskip(
+        "ai_backend",
+        reason="ai_backend Rust wheel not installed; built+installed by maturin CI",
+    )
 
 from src.shared.python.ai.adapters.rust_adapter import (  # noqa: E402
     RustAgentAdapter,
