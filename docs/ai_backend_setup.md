@@ -26,12 +26,13 @@ maturin develop --features python,local-embeddings
 The `local-embeddings` feature enables offline embedding via an
 `all-MiniLM-L6-v2` ONNX model instead of a remote HTTP endpoint.
 
-### Why `ort = "=2.0.0-rc.10"` is pinned
+### Why `ort = "=2.0.0-rc.14"` is pinned
 
 `ort` 2.x is still in release-candidate. The API surface moves between RC
 releases and there was an ort/ureq/TLS breakage on Windows MSVC that made the
 `download-binaries` build-time path unusable (see crate issue #5227). We pin
-`ort = "=2.0.0-rc.10"` and `ort-sys = "=2.0.0-rc.10"` so:
+`ort = "=2.0.0-rc.14"` and `ort-sys = "=2.0.0-rc.14"` (see
+`rust_core/ai_backend/Cargo.toml`) so:
 
 - Every developer and CI runner uses an identical, tested crate API.
 - The build does **not** try to download onnxruntime binaries at compile time.
@@ -55,7 +56,7 @@ Pick the release that matches your platform and architecture. You want the
 | Windows x64  | `onnxruntime-win-x64-*.zip`    |
 
 Use version **1.18.x** or **1.19.x** — these are the versions validated against
-`ort 2.0.0-rc.10`.
+`ort 2.0.0-rc.14`.
 
 ---
 
@@ -148,7 +149,7 @@ check_ort_loadable()  # raises RuntimeError on failure, returns None on success
 
 ### Version mismatch
 
-`ort 2.0.0-rc.10` expects an ONNX Runtime **C API** at version ≥ 1.17.
+`ort 2.0.0-rc.14` expects an ONNX Runtime **C API** at version ≥ 1.17.
 Using a library older than 1.17 will cause a version-check panic at startup.
 
 Check the version of an extracted release:
