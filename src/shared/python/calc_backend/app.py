@@ -79,8 +79,6 @@ wire_calculator_registry()
 for router in CALCULATOR_ROUTERS:
     app.include_router(router)
 
-materialize_openapi_schemas(app.openapi())
-
 
 # ---------------------------------------------------------------------------
 # Health check endpoints
@@ -170,6 +168,9 @@ def list_endpoints(request: Request) -> dict[str, list[str]]:
     _ensure_calculator_routes_registered(active_app, expected=expected)
     calculators = _registered_calculator_route_signatures(active_app) | expected
     return {"calculators": sorted(f"{method} {path}" for method, path in calculators)}
+
+
+materialize_openapi_schemas(app.openapi())
 
 
 def _calculator_route_signatures(
