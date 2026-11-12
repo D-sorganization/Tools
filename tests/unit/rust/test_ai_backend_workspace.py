@@ -11,6 +11,7 @@ Run with:
 
 import os
 import pathlib
+import re
 import shutil
 import subprocess
 from typing import Any, cast
@@ -21,13 +22,38 @@ import yaml
 # Resolve repo root relative to this test file (tests/unit/rust/ -> repo root)
 REPO_ROOT = pathlib.Path(__file__).parent.parent.parent.parent
 WORKFLOW = REPO_ROOT / ".github" / "workflows" / "maturin-ai-backend.yml"
+AI_BACKEND_WORKFLOW_NAME = "maturin-ai-backend.yml"
 PYTHON_VERSIONS = ["3.10", "3.11", "3.12", "3.13"]
 LINUX_QUALIFY_JOB = "linux-wheel-qualify"
+ORT_CARGO_TOML = REPO_ROOT / "rust_core" / "ai_backend" / "Cargo.toml"
+AI_BACKEND_SETUP_DOC = REPO_ROOT / "docs" / "ai_backend_setup.md"
+
+
+def _pinned_ort_versions_from_cargo() -> tuple[str, str]:
+    """Return exact `ort` and `ort-sys` version pins from the crate manifest."""
+    cargo_text = ORT_CARGO_TOML.read_text(encoding="utf-8")
+    ort_match = re.search(r'^ort = \{ version = "(=.+?)"', cargo_text, re.MULTILINE)
+    ort_sys_match = re.search(
+        r'^ort-sys = \{ version = "(=.+?)"', cargo_text, re.MULTILINE
+    )
+    assert ort_match and ort_sys_match, (
+        "rust_core/ai_backend/Cargo.toml must pin ort and ort-sys versions"
+    )
+    return ort_match.group(1), ort_sys_match.group(1)
 
 
 def _workflow() -> dict[str, Any]:
     """Read the workflow as YAML so comments and cosmetic labels cannot pass."""
     return cast(dict[str, Any], yaml.safe_load(WORKFLOW.read_text(encoding="utf-8")))
+
+
+def _workflow_triggers(workflow: dict[str, Any]) -> dict[str, Any]:
+    """Return the workflow ``on`` mapping (YAML 1.1 may key it as bool True)."""
+    on = workflow.get("on")
+    if on is None and True in workflow:
+        on = workflow[True]
+    assert isinstance(on, dict), "workflow trigger block missing"
+    return cast(dict[str, Any], on)
 
 
 def _step(job: dict[str, Any], name: str) -> dict[str, Any]:
@@ -282,6 +308,42 @@ def test_workflow_keeps_windows_and_macos_qualification_explicitly_open() -> Non
 
 
 @pytest.mark.unit
+def test_workflow_dispatch_has_no_dead_publish_input() -> None:
+    """Slice 4: remove or wire `publish`; today nothing consumes a dispatch input."""
+    on_block = _workflow_triggers(_workflow())
+    assert "workflow_dispatch" in on_block
+    dispatch = on_block["workflow_dispatch"]
+    assert dispatch is None or "inputs" not in (dispatch or {}), (
+        "workflow_dispatch.inputs.publish is unused — "
+        "drop inputs or implement PyPI publish"
+    )
+
+
+@pytest.mark.unit
+def test_ai_backend_setup_ort_pin_matches_cargo_toml() -> None:
+    """Documented ort pins must match rust_core/ai_backend/Cargo.toml."""
+    ort_pin, ort_sys_pin = _pinned_ort_versions_from_cargo()
+    setup_text = AI_BACKEND_SETUP_DOC.read_text(encoding="utf-8")
+    rc_version = ort_pin.removeprefix("=")
+
+    assert f'`ort = "{ort_pin}"`' in setup_text
+    assert f'`ort-sys = "{ort_sys_pin}"`' in setup_text
+    assert f"ort {rc_version}" in setup_text
+
+
+@pytest.mark.unit
+def test_claude_md_does_not_claim_three_os_maturin_qualification() -> None:
+    """CLAUDE.md must not imply hosted three-OS ai_backend wheel CI."""
+    claude = (REPO_ROOT / "CLAUDE.md").read_text(encoding="utf-8")
+    claude_lower = claude.lower()
+    assert "ubuntu-latest" not in claude_lower
+    assert "windows-latest" not in claude_lower
+    assert "macos-latest" not in claude_lower
+    assert "native **linux** fleet runner" in claude_lower
+    assert "#5684" in claude
+
+
+@pytest.mark.unit
 def test_ai_backend_in_cargo_workspace():
     """ai_backend must be a declared workspace member in the root Cargo.toml."""
     cargo_toml = (REPO_ROOT / "Cargo.toml").read_text(encoding="utf-8")
@@ -314,7 +376,7 @@ def test_maturin_ci_workflow_exists():
 
 @pytest.mark.unit
 def test_maturin_ci_covers_all_platforms():
-    """CI workflow must target Windows, macOS, and Linux runners."""
+    """ai_backend is Linux-qualified only; other maturin workflows stay fleet Linux."""
     workflows_dir = REPO_ROOT / ".github" / "workflows"
     candidates = (
         list(workflows_dir.glob("*maturin*"))
@@ -324,13 +386,19 @@ def test_maturin_ci_covers_all_platforms():
     assert candidates, "No maturin CI workflow found — cannot check platform coverage."
 
     for wf_path in candidates:
+        raw = wf_path.read_text(encoding="utf-8")
+        parsed = cast(dict[str, Any], yaml.safe_load(raw))
+        if wf_path.name == AI_BACKEND_WORKFLOW_NAME:
+            build = parsed["jobs"]["build-wheels"]
+            assert build["runs-on"] == "d-sorg-fleet"
+            on_block = _workflow_triggers(parsed)
+            dispatch = on_block.get("workflow_dispatch")
+            assert dispatch is None or "inputs" not in (dispatch or {})
+            continue
+
         content = wf_path.read_text(encoding="utf-8").lower()
-        assert "windows" in content, f"{wf_path.name}: missing Windows runner"
-        assert "ubuntu" in content or "linux" in content, (
-            f"{wf_path.name}: missing Ubuntu/Linux runner"
-        )
-        assert "macos" in content or "mac" in content, (
-            f"{wf_path.name}: missing macOS runner"
+        assert "d-sorg-fleet" in content or "linux" in content, (
+            f"{wf_path.name}: expected fleet Linux runner reference"
         )
 
 
