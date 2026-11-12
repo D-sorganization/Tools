@@ -47,7 +47,7 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from shared.python.launch_monitor.profiles import PROFILES, detect_profile
+from shared.python.launch_monitor.profiles import PROFILES, ImportProfile, detect_profile
 from shared.python.launch_monitor.schema import (
     IDENTITY_COLUMNS,
     METRICS,
@@ -103,7 +103,7 @@ def _resolve_metric_source_unit(
     target: str,
     mapping: ColumnMapping,
     header_unit: str | None,
-    profile,
+    profile: ImportProfile,
     config: ImportOptions,
     file_length_unit: str | None,
 ) -> tuple[str, str]:
