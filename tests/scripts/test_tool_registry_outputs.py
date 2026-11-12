@@ -115,7 +115,7 @@ def test_contract_key_set_is_frozen(gen: ModuleType, repo: Path) -> None:
     contract = gen.generate_contract_data(repo)
     for tool in contract["tools"]:
         assert set(tool) == {"id", "name", "description", "category", "surfaces"}
-        assert set(tool["surfaces"]) == {"pyqt6", "web", "legacy_gui"}
+        assert set(tool["surfaces"]) == {"pyqt6", "web", "legacy_gui", "mcp"}
 
 
 def _squash_table_padding(text: str) -> str:

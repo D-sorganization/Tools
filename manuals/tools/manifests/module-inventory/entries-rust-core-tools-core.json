@@ -2737,6 +2737,7 @@
           "tests/shared/python/process_calculators/test_syngas_compression_engine.py",
           "tests/shared/python/process_calculators/test_syngas_water_calculator_edge_cases.py",
           "tests/shared/python/process_calculators/test_syngas_water_overflow.py",
+          "tests/shared/python/process_calculators/test_syngas_water_units.py",
           "tests/shared/python/process_calculators/test_water_vapor_pressure_shared.py",
           "tests/shared/python/process_calculators/test_wave1_process_numerics.py",
           "tests/shared/python/process_calculators/test_wgs_reactor_calculator.py",
@@ -3363,6 +3364,7 @@
           "tests/data_processing/data_processor/test_ui_thread_workers.py",
           "tests/data_processing/data_processor/test_vectorized_filter_split.py",
           "tests/data_processor_io/test_rust_engine_contract.py",
+          "tests/fixtures/fake_subscription_cli.py",
           "tests/heavy_integration/test_tools_contracts.py",
           "tests/ops/test_ci_bounded_apt_install_codex.py",
           "tests/ops/test_mirror_freshness.py",
@@ -3394,6 +3396,7 @@
           "tests/test_properties.py",
           "tests/test_signal_processing_expanded.py",
           "tests/tools/gui/test_search_engine.py",
+          "tests/unit/ai/adapters/test_cli_subprocess_runner_oracles.py",
           "tests/unit/lower_body_model/test_public_api_contract.py",
           "tests/unit/lower_body_model/test_simulator.py",
           "tests/unit/sidekick/test_sidekick_ux_hardening.py"

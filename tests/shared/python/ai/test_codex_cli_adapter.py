@@ -21,11 +21,11 @@ Bootstrap pattern mirrors ``test_ollama_adapter.py`` to work around the broken
 from __future__ import annotations
 
 import os
-import subprocess
 from unittest.mock import MagicMock, patch
 
 import pytest
 
+from src.shared.python.ai.adapters.cli_subprocess_runner import CliSubprocessResult
 from src.shared.python.ai.adapters.codex_cli_adapter import (  # noqa: E402
     DEFAULT_CODEX_CLI_TIMEOUT,
     CodexCliAdapter,
@@ -93,19 +93,24 @@ class TestCodexCliAdapter:
             assert "not found" in msg.lower()
 
     def test_validate_connection_runs_version_subprocess(self) -> None:
-        fake = MagicMock(returncode=0, stdout="codex-cli 0.118.0\n", stderr="")
+        fake = CliSubprocessResult(
+            returncode=0, stdout="codex-cli 0.118.0\n", stderr=""
+        )
         with (
             patch(
                 "src.shared.python.ai.adapters.codex_cli_adapter._resolve_binary",
                 return_value="/bin/codex",
             ),
-            patch("subprocess.run", return_value=fake) as mock_run,
+            patch(
+                "src.shared.python.ai.adapters.codex_cli_adapter.invoke_cli_subprocess_for_adapter",
+                return_value=fake,
+            ) as mock_run,
         ):
             ok, msg = CodexCliAdapter().validate_connection()
             assert ok is True
             assert "0.118" in msg
             args, _ = mock_run.call_args
-            assert args[0] == ["/bin/codex", "--version"]
+            assert args[1] == ["/bin/codex", "--version"]
 
     def test_send_message_passes_skip_git_repo_flag(self) -> None:
         """Always include ``--skip-git-repo-check``.
@@ -114,25 +119,27 @@ class TestCodexCliAdapter:
         the chat UI cannot guarantee. Regressing this breaks chat for
         every user not running from inside a git repo.
         """
-        fake = MagicMock(returncode=0, stdout="PONG", stderr="")
+        fake = CliSubprocessResult(returncode=0, stdout="PONG", stderr="")
         with (
             patch(
                 "src.shared.python.ai.adapters.codex_cli_adapter._resolve_binary",
                 return_value="/bin/codex",
             ),
-            patch("subprocess.run", return_value=fake) as mock_run,
+            patch(
+                "src.shared.python.ai.adapters.codex_cli_adapter.invoke_cli_subprocess_for_adapter",
+                return_value=fake,
+            ) as mock_run,
         ):
             adapter = CodexCliAdapter(model="gpt-5-mini")
             response = adapter.send_message("ping", ConversationContext(), tools=[])
             assert response.content == "PONG"
-            args, _ = mock_run.call_args
-            argv = args[0]
+            call = mock_run.call_args
+            argv = call.args[1]
             assert "exec" in argv
             assert "--skip-git-repo-check" in argv
             assert "--model" in argv
             assert "gpt-5-mini" in argv
-            # Prompt is positional, last arg.
-            assert argv[-1].endswith("User: ping")
+            assert call.kwargs["prompt"].endswith("User: ping")
 
     def test_send_message_strips_telemetry_preamble(self) -> None:
         """Codex prefixes responses with timestamp banners. Drop them."""
@@ -142,13 +149,16 @@ class TestCodexCliAdapter:
             "\n"
             "Hello! Your real answer is here.\n"
         )
-        fake = MagicMock(returncode=0, stdout=noisy, stderr="")
+        fake = CliSubprocessResult(returncode=0, stdout=noisy, stderr="")
         with (
             patch(
                 "src.shared.python.ai.adapters.codex_cli_adapter._resolve_binary",
                 return_value="/bin/codex",
             ),
-            patch("subprocess.run", return_value=fake),
+            patch(
+                "src.shared.python.ai.adapters.codex_cli_adapter.invoke_cli_subprocess_for_adapter",
+                return_value=fake,
+            ),
         ):
             response = CodexCliAdapter().send_message(
                 "hi", ConversationContext(), tools=[]
@@ -158,7 +168,7 @@ class TestCodexCliAdapter:
             assert "[2026" not in response.content
 
     def test_send_message_renders_history(self) -> None:
-        fake = MagicMock(returncode=0, stdout="ok", stderr="")
+        fake = CliSubprocessResult(returncode=0, stdout="ok", stderr="")
         ctx = ConversationContext()
         ctx.messages = [  # type: ignore[attr-defined]
             MagicMock(role="user", content="first turn"),
@@ -169,11 +179,14 @@ class TestCodexCliAdapter:
                 "src.shared.python.ai.adapters.codex_cli_adapter._resolve_binary",
                 return_value="/bin/codex",
             ),
-            patch("subprocess.run", return_value=fake) as mock_run,
+            patch(
+                "src.shared.python.ai.adapters.codex_cli_adapter.invoke_cli_subprocess_for_adapter",
+                return_value=fake,
+            ) as mock_run,
         ):
             CodexCliAdapter().send_message("second turn", ctx, tools=[])
-            args, _ = mock_run.call_args
-            prompt = args[0][-1]
+            _, kwargs = mock_run.call_args
+            prompt = kwargs["prompt"]
             assert "User: first turn" in prompt
             assert "Assistant: first reply" in prompt
             assert prompt.endswith("User: second turn")
@@ -193,8 +206,8 @@ class TestCodexCliAdapter:
                 return_value="/bin/codex",
             ),
             patch(
-                "subprocess.run",
-                side_effect=subprocess.TimeoutExpired(cmd="codex", timeout=1.0),
+                "src.shared.python.ai.adapters.codex_cli_adapter.invoke_cli_subprocess_for_adapter",
+                side_effect=AITimeoutError("timed out", provider="codex_cli"),
             ),
         ):
             with pytest.raises(AITimeoutError):
@@ -203,13 +216,16 @@ class TestCodexCliAdapter:
                 )
 
     def test_send_message_maps_nonzero_exit_to_provider_error(self) -> None:
-        fake = MagicMock(returncode=2, stdout="", stderr="not authenticated")
+        fake = CliSubprocessResult(returncode=2, stdout="", stderr="not authenticated")
         with (
             patch(
                 "src.shared.python.ai.adapters.codex_cli_adapter._resolve_binary",
                 return_value="/bin/codex",
             ),
-            patch("subprocess.run", return_value=fake),
+            patch(
+                "src.shared.python.ai.adapters.codex_cli_adapter.invoke_cli_subprocess_for_adapter",
+                return_value=fake,
+            ),
         ):
             with pytest.raises(AIProviderError, match="not authenticated"):
                 CodexCliAdapter().send_message("hi", ConversationContext(), tools=[])

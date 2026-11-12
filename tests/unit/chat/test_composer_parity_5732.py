@@ -27,6 +27,7 @@ if importlib.util.find_spec("PyQt6") is None:
 from src.shared.python.chat._qt.messaging import (
     ActionChipModel,
     MessagingMixin,
+    attachment_bubble_implies_accepted,
     compute_attachment_intake,
     format_action_chip_text,
 )
@@ -43,6 +44,15 @@ def _make_wav_bytes(duration_ms: int = 50) -> bytes:
     return buf.getvalue()
 
 
+class _FakeBubble:
+    def __init__(self, role: str, content: str) -> None:
+        self.role = role
+        self._content = content
+
+    def set_content(self, text: str) -> None:
+        self._content = text
+
+
 class _FakeDock(MessagingMixin):
     def __init__(self) -> None:
         self.sent_ws: list[dict[str, Any]] = []
@@ -54,9 +64,10 @@ class _FakeDock(MessagingMixin):
     def _send_ws(self, payload: dict[str, Any]) -> None:
         self.sent_ws.append(payload)
 
-    def _add_bubble(self, role: str, content: str) -> Any:
+    def _add_bubble(self, role: str, content: str) -> _FakeBubble:
         self.bubbles.append((role, content))
-        return {"role": role, "content": content}
+        bubble = _FakeBubble(role, content)
+        return bubble
 
 
 def test_attachment_intake_sha256_deduplication_and_manifest(tmp_path: Path) -> None:
@@ -77,7 +88,10 @@ def test_attachment_intake_sha256_deduplication_and_manifest(tmp_path: Path) -> 
     assert entry2.sha256 == entry1.sha256
     # Duplicate file must not re-upload over WebSocket
     assert len(dock.sent_ws) == 1
-    assert "deduplicated" in dock.bubbles[-1][1]
+    dup_text = dock.bubbles[-1][1].lower()
+    assert "deduplicated" in dup_text or "not delivered" in dup_text
+    for _role, text in dock.bubbles:
+        assert not attachment_bubble_implies_accepted(text)
     manifest = dock.attachment_manifest()
     assert len(manifest) == 1
     assert manifest[0]["filename"] == "sim_report.json"

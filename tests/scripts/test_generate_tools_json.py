@@ -255,15 +255,17 @@ class TestContractGeneration:
             )
 
     def test_contract_surfaces_structure(self, manifest_gen_module, mock_repo_root):
-        """Each tool's surfaces dict must have exactly pyqt6 and web booleans."""
+        """Each tool's surfaces dict must include gui and mcp booleans."""
         contract = manifest_gen_module.generate_contract_data(mock_repo_root)
 
         for tool in contract["tools"]:
             surfaces = tool["surfaces"]
             assert "pyqt6" in surfaces, f"Missing 'pyqt6' in surfaces for {tool['id']}"
             assert "web" in surfaces, f"Missing 'web' in surfaces for {tool['id']}"
+            assert "mcp" in surfaces, f"Missing 'mcp' in surfaces for {tool['id']}"
             assert isinstance(surfaces["pyqt6"], bool)
             assert isinstance(surfaces["web"], bool)
+            assert isinstance(surfaces["mcp"], bool)
 
     def test_contract_dual_surface_tool(self, manifest_gen_module, mock_repo_root):
         """Electrode advisor with both surfaces should show pyqt6=True, web=True."""
@@ -331,7 +333,7 @@ class TestContractGeneration:
 
         # Each tool entry
         expected_tool_keys = {"id", "name", "description", "category", "surfaces"}
-        expected_surface_keys = {"pyqt6", "web", "legacy_gui"}
+        expected_surface_keys = {"pyqt6", "web", "legacy_gui", "mcp"}
 
         for tool in contract["tools"]:
             assert set(tool.keys()) == expected_tool_keys, (

@@ -35,7 +35,6 @@ from __future__ import annotations
 import os
 import secrets
 import shutil
-import subprocess
 from collections.abc import Iterator, Sequence
 from pathlib import Path
 from typing import Any
@@ -44,8 +43,10 @@ from shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
 from shared.python.ai.adapters.claude_code_adapter import (
     build_cli_tool_prompt_section,
     parse_cli_tool_envelopes,
-    scrub_cli_subprocess_env,
-    terminate_cli_process_group,
+)
+from shared.python.ai.adapters.cli_subprocess_runner import (
+    PromptDelivery,
+    invoke_cli_subprocess_for_adapter,
 )
 from shared.python.ai.exceptions import (
     AIConnectionError,
@@ -217,30 +218,14 @@ class CodexCliAdapter(BaseAgentAdapter):
         args = [self.binary, "exec", "--skip-git-repo-check"]
         if self.model:
             args += ["--model", self.model]
-        args.append(prompt)
-
-        try:
-            result = subprocess.run(
-                args,
-                capture_output=True,
-                text=True,
-                timeout=self.timeout,
-                check=False,
-                encoding="utf-8",
-                env=scrub_cli_subprocess_env(),
-                start_new_session=(os.name != "nt"),
-            )
-        except subprocess.TimeoutExpired as exc:
-            terminate_cli_process_group(getattr(exc, "pid", None))
-            raise AITimeoutError(
-                f"Codex CLI timed out after {self.timeout}s",
-                provider=self.PROVIDER_NAME,
-            ) from exc
-        except FileNotFoundError as exc:
-            raise AIConnectionError(
-                f"Codex binary at {self.binary} disappeared mid-invocation",
-                provider=self.PROVIDER_NAME,
-            ) from exc
+        result = invoke_cli_subprocess_for_adapter(
+            self.binary,
+            args,
+            provider=self.PROVIDER_NAME,
+            prompt=prompt,
+            prompt_delivery=PromptDelivery.AUTO,
+            timeout=self.timeout,
+        )
 
         if result.returncode != 0:
             stderr_tail = (result.stderr or "")[-500:]
@@ -302,18 +287,16 @@ class CodexCliAdapter(BaseAgentAdapter):
         if self.binary is None:
             return False, ("Codex CLI not found. Install: npm install -g @openai/codex")
         try:
-            result = subprocess.run(
+            result = invoke_cli_subprocess_for_adapter(
+                self.binary,
                 [self.binary, "--version"],
-                capture_output=True,
-                text=True,
+                provider=self.PROVIDER_NAME,
                 timeout=10.0,
-                check=False,
-                encoding="utf-8",
             )
-        except subprocess.TimeoutExpired:
+        except AITimeoutError:
             return False, "Codex CLI did not respond to --version within 10s"
-        except OSError as exc:
-            return False, f"Could not execute {self.binary}: {exc}"
+        except AIConnectionError as exc:
+            return False, str(exc)
 
         if result.returncode != 0:
             return False, (

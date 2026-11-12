@@ -680,6 +680,32 @@ To maintain a clean repository root, all development-related documentation (summ
 - **DO NOT** create new `.md` files in the root unless they are critical project-wide files (e.g., README, AGENTS, CHANGELOG).
 - Prefer creating issues for task tracking rather than temporary markdown files.
 
+---
+
+## Agent API (engineering calculators over MCP)
+
+Fleet epic **#6019** exposes `calc_backend` calculators over stdio MCP per Fleet Agent API Standard v1.
+
+### Start the calculator MCP server
+
+After installing the optional extra (`pip install -e '.[calc-mcp]'`), agents can use the committed [`.mcp.json`](.mcp.json):
+
+- **`ud-tools-mcp`** — `list_calculators`, `describe_calculator`, `run_calculation`, `convert_units` over registered `CalculatorSpec` entries (`src/shared/python/calc_backend/registry/`).
+- **`codemap-mcp`** and **`agent_context.mcp_server`** remain code-navigation MCPs (not calculation).
+
+No extra repo setup is required beyond the editable install and the `calc-mcp` extra; CI runs `python scripts/run_agent_api_conformance.py` against the vendored template in `config/fleet_agent_api_conformance/v1/`.
+
+### Surfaces and discovery
+
+- `tool_surface_contract.json` adds `surfaces.mcp` for catalog tools backed by the calculator MCP (regenerated via `python scripts/generate_tools_json.py`).
+- [`llms.txt`](llms.txt) links the tool catalog, OpenAPI schemas, design-manual formula inventory, and conformance paths for LLM-oriented clients.
+
+### Result conventions
+
+MCP `run_calculation` responses use lifecycle status words (`SUCCEEDED` / `FAILED`), structured validation errors (`field`, `problem`, `allowed_range`, `example`), and `provenance` including `contract_version`, `formula_ids`, and conservative `calculation_status` (design-manual approval is never implied).
+
+---
+
 <!-- BEGIN FLEET-MANAGED: network-api-hygiene -->
 
 ### GitHub API Quotas

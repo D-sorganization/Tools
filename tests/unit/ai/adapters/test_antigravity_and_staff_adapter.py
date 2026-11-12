@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import json
-import subprocess
 import urllib.error
 from pathlib import Path
 from unittest.mock import MagicMock, patch
@@ -18,6 +17,7 @@ from shared.python.ai.adapters.antigravity_cli_adapter import (
     probe_runner_dashboard_staff,
 )
 from shared.python.ai.adapters.cli_provider_setup import get_cli_setup_status
+from shared.python.ai.adapters.cli_subprocess_runner import CliSubprocessResult
 from shared.python.ai.adapters.factory import AdapterFactory
 from shared.python.ai.exceptions import (
     AIConnectionError,
@@ -26,12 +26,12 @@ from shared.python.ai.exceptions import (
 )
 from shared.python.ai.types import ConversationContext
 
-_RUN = "shared.python.ai.adapters.gemini_cli_adapter.subprocess.run"
+_RUN = "shared.python.ai.adapters.gemini_cli_adapter.invoke_cli_subprocess_for_adapter"
 _URLOPEN = "shared.python.ai.adapters.antigravity_cli_adapter.urllib.request.urlopen"
 
 
-def _completed(rc: int = 0, stdout: str = "", stderr: str = "") -> MagicMock:
-    return MagicMock(returncode=rc, stdout=stdout, stderr=stderr)
+def _completed(rc: int = 0, stdout: str = "", stderr: str = "") -> CliSubprocessResult:
+    return CliSubprocessResult(returncode=rc, stdout=stdout, stderr=stderr)
 
 
 def test_normalize_and_legacy_deprecation_shim() -> None:
@@ -61,12 +61,12 @@ def test_antigravity_cli_adapter_send_and_errors(tmp_path: Path) -> None:
         resp = adapter.send_message("hello agy", ConversationContext(), [])
     assert resp.content == "agy reply"
     assert resp.metadata["provider"] == "agy"
-    assert "--skip-trust" in run_mock.call_args.args[0]
+    assert "--skip-trust" in run_mock.call_args.args[1]
 
     with pytest.raises(ValueError, match="non-empty"):
         adapter.send_message("   ", ConversationContext(), [])
     with (
-        patch(_RUN, side_effect=subprocess.TimeoutExpired(cmd="agy", timeout=5.0)),
+        patch(_RUN, side_effect=AITimeoutError("slow", provider="agy")),
         pytest.raises(AITimeoutError),
     ):
         adapter.send_message("slow", ConversationContext(), [])

@@ -44,9 +44,9 @@ CANONICAL_INVENTORY: dict[str, Any] = {
         {
             "id": "sidekick_api_baseline",
             "path": "tests/sidekick_api_baseline.json",
-            "size_bytes": 1109927,
+            "size_bytes": 1116760,
             "sha256": (
-                "e7df3e82b7f092d6eb3f8103eef88bdf5dc2ac91660972bf8846d052826f62a4"  # pragma: allowlist secret  # noqa: E501
+                "c47c4bc0b3e57a8ed1d1d6959f2387f48026d0dbf8574ab2737d47ef69368c3f"  # pragma: allowlist secret  # noqa: E501
             ),
             "classification": "api_ast_contract",
             "determinism": "deterministic",
