@@ -117,12 +117,11 @@ def run_cli_subprocess(
     )
     temp_paths = [prompt_file] if prompt_file else []
     try:
-        if stdin_payload is not None and proc.stdin is not None:
-            proc.stdin.write(stdin_payload)
-            proc.stdin.close()
         readers = _start_bounded_readers(proc, output_byte_cap)
+        deadline = time.monotonic() + timeout
+        stdin_writer = _start_stdin_writer(proc, stdin_payload)
         try:
-            proc.wait(timeout=timeout)
+            _wait_for_process(proc, deadline)
         except subprocess.TimeoutExpired as exc:
             _graceful_then_forced_kill(proc, grace_kill_seconds=grace_kill_seconds)
             timeout_error = CliSubprocessTimeoutError(
@@ -130,6 +129,9 @@ def run_cli_subprocess(
             )
             timeout_error.pid = proc.pid  # type: ignore[attr-defined]
             raise timeout_error from exc
+        finally:
+            if stdin_writer is not None:
+                stdin_writer.join(timeout=1.0)
         assert readers.stdout is not None and readers.stderr is not None
         stdout_raw, stdout_extra = readers.stdout.result()
         stderr_raw, stderr_extra = readers.stderr.result()
@@ -213,6 +215,37 @@ def _creation_flags() -> int:
     if hasattr(subprocess, "CREATE_BREAKAWAY_FROM_JOB"):
         flags |= subprocess.CREATE_BREAKAWAY_FROM_JOB
     return int(flags)
+
+
+def _start_stdin_writer(
+    proc: subprocess.Popen[bytes], stdin_payload: bytes | None
+) -> threading.Thread | None:
+    stdin_stream = proc.stdin
+    if stdin_payload is None or stdin_stream is None:
+        return None
+    payload = stdin_payload
+
+    def _run() -> None:
+        stdin_stream.write(payload)
+        stdin_stream.close()
+
+    thread = threading.Thread(
+        target=_run, name="cli-subprocess-stdin-writer", daemon=True
+    )
+    thread.start()
+    return thread
+
+
+def _wait_for_process(proc: subprocess.Popen[bytes], deadline: float) -> None:
+    while proc.poll() is None:
+        remaining = deadline - time.monotonic()
+        if remaining <= 0:
+            raise subprocess.TimeoutExpired(proc.args, 0)
+        try:
+            proc.wait(timeout=remaining)
+        except subprocess.TimeoutExpired as exc:
+            if time.monotonic() >= deadline:
+                raise exc
 
 
 def _start_bounded_readers(

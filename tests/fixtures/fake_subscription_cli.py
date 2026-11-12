@@ -58,6 +58,20 @@ def _mode_sleep_tree() -> int:
     return 0
 
 
+def _mode_output_before_stdin() -> int:
+    """Fill stdout before stdin; parent deadlocks unless streams drain first."""
+    mebibytes = int(os.environ.get(_OUTPUT_MB, "5"))
+    chunk = b"y" * (1024 * 1024)
+    for _ in range(mebibytes):
+        sys.stdout.buffer.write(chunk)
+        sys.stdout.buffer.flush()
+    if not sys.stdin.isatty():
+        payload = sys.stdin.buffer.read()
+        sys.stderr.buffer.write(payload)
+        sys.stderr.buffer.flush()
+    return 0
+
+
 def _mode_large_output() -> int:
     mebibytes = int(os.environ.get(_OUTPUT_MB, "5"))
     chunk = b"x" * (1024 * 1024)
@@ -120,6 +134,8 @@ def _dispatch() -> int:
         return _mode_sleep_tree()
     if mode == "large_output":
         return _mode_large_output()
+    if mode == "output_before_stdin":
+        return _mode_output_before_stdin()
     if mode == "stdin_eof":
         return _mode_stdin_eof()
     if mode == "echo_prompt":

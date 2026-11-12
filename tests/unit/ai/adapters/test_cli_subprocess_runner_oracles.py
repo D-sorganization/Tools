@@ -99,6 +99,28 @@ def test_oracle_04_graceful_then_forced(
         )
 
 
+def test_oracle_output_before_stdin_no_deadlock(
+    fake_bin_dir: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Child emits bulk stdout before consuming stdin; runner must not pipe-deadlock."""
+    monkeypatch.setenv("TOOLS_FAKE_CLI_MODE", "output_before_stdin")
+    monkeypatch.setenv("TOOLS_FAKE_CLI_OUTPUT_MB", "5")
+    binary = install_fake_cli(fake_bin_dir, "codex")
+    prompt = "stdin-after-bulk-output"
+    started = time.monotonic()
+    result = run_cli_subprocess(
+        [str(binary)],
+        prompt=prompt,
+        prompt_delivery=PromptDelivery.STDIN,
+        timeout=10.0,
+        output_byte_cap=DEFAULT_OUTPUT_BYTE_CAP,
+    )
+    assert time.monotonic() - started < 8.0
+    assert result.returncode == 0
+    assert result.stdout_truncated_bytes > 0
+    assert prompt in result.stderr
+
+
 def test_oracle_06_large_output_no_deadlock(
     fake_bin_dir: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:

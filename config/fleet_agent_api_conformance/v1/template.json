@@ -1,0 +1,107 @@
+{
+  "schema_version": "fleet-agent-api-conformance/v1",
+  "standard_ref": "D-sorganization/Tools#6019 (Fleet Agent API Standard v1; RM template pending #2885 visibility)",
+  "server": {
+    "command": "ud-tools-mcp",
+    "transport": "stdio"
+  },
+  "required_tools": [
+    "list_calculators",
+    "describe_calculator",
+    "run_calculation",
+    "convert_units"
+  ],
+  "checks": [
+    {
+      "id": "stdio_initialize",
+      "kind": "handshake"
+    },
+    {
+      "id": "tools_present",
+      "kind": "list_tools",
+      "required": ["list_calculators", "describe_calculator", "run_calculation", "convert_units"]
+    },
+    {
+      "id": "list_calculators_bounded",
+      "kind": "call",
+      "tool": "list_calculators",
+      "arguments": { "limit": 50 },
+      "assertions": ["contract_version", "max_items:50"]
+    },
+    {
+      "id": "describe_flow_rate",
+      "kind": "call",
+      "tool": "describe_calculator",
+      "arguments": { "id": "flow-rate" },
+      "assertions": ["contract_version", "request_schema"]
+    },
+    {
+      "id": "run_flow_rate",
+      "kind": "call",
+      "tool": "run_calculation",
+      "arguments": {
+        "id": "flow-rate",
+        "inputs": {
+          "value": 100.0,
+          "from_unit": "kg/h",
+          "to_unit": "kg/s",
+          "category": "mass"
+        }
+      },
+      "assertions": ["status:SUCCEEDED", "provenance.contract_version"]
+    },
+    {
+      "id": "run_financial",
+      "kind": "call",
+      "tool": "run_calculation",
+      "arguments": {
+        "id": "financial",
+        "inputs": {
+          "plant_capacity_tpd": 25.0,
+          "product_price_per_ton": 80.0,
+          "feedstock_cost_per_ton": 20.0
+        }
+      },
+      "assertions": ["status:SUCCEEDED"]
+    },
+    {
+      "id": "run_acid_gas",
+      "kind": "call",
+      "tool": "run_calculation",
+      "arguments": {
+        "id": "acid-gas-dewpoint",
+        "inputs": { "temperature_c": 80.0, "pressure_bar": 1.2, "method": "antoine" }
+      },
+      "assertions": ["status:SUCCEEDED"]
+    },
+    {
+      "id": "validation_error",
+      "kind": "call",
+      "tool": "run_calculation",
+      "arguments": {
+        "id": "acid-gas-dewpoint",
+        "inputs": { "temperature_c": 80.0, "pressure_bar": -1.0, "method": "antoine" }
+      },
+      "assertions": ["status:FAILED", "structured_errors"]
+    },
+    {
+      "id": "convert_units",
+      "kind": "call",
+      "tool": "convert_units",
+      "arguments": {
+        "value": 1.0,
+        "from_unit": "kg/h",
+        "to_unit": "kg/s",
+        "category": "mass"
+      },
+      "assertions": ["status:SUCCEEDED"]
+    }
+  ],
+  "exceptions": [
+    {
+      "check": "long_running_execution",
+      "status": "not_applicable",
+      "reason": "Calculator MCP has no async job queue in v1"
+    }
+  ]
+}

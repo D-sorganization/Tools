@@ -1,0 +1,104 @@
+name: agent-api-conformance
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: true
+
+on:
+  pull_request:
+    paths:
+      - "src/shared/python/calc_backend/**"
+      - "config/fleet_agent_api_conformance/**"
+      - "scripts/run_agent_api_conformance.py"
+      - ".github/workflows/agent-api-conformance.yml"
+      - ".mcp.json"
+      - "pyproject.toml"
+      - "llms.txt"
+  push:
+    branches: [main]
+    paths:
+      - "src/shared/python/calc_backend/**"
+      - "config/fleet_agent_api_conformance/**"
+      - "scripts/run_agent_api_conformance.py"
+      - ".github/workflows/agent-api-conformance.yml"
+      - ".mcp.json"
+      - "pyproject.toml"
+      - "llms.txt"
+  merge_group:
+
+jobs:
+  pick-runner:
+    if: >-
+      (!github.event.pull_request ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+    runs-on: d-sorg-fleet
+    timeout-minutes: 2
+    outputs:
+      runner: ${{ steps.check.outputs.runner }}
+    steps:
+      - name: Check for self-hosted runner
+        id: check
+        env:
+          GH_TOKEN: ${{ secrets.RUNNER_CHECK_TOKEN }}
+          LOCAL_MODE: ${{ vars.CI_RUNNER_MODE || vars.LOCAL_RUNNER_MODE }}
+          REPOSITORY_PRIVATE: ${{ github.event.repository.private }}
+        shell: bash
+        run: |
+          MODE="${LOCAL_MODE:-local}"
+          echo "Fleet mode: $MODE"
+
+          case "$MODE" in
+            local)
+              echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
+              echo "Routing to self-hosted fleet (mode=local)"
+              ;;
+            disabled)
+              echo "::error::No local self-hosted runner available; failing closed"
+              exit 1
+              ;;
+            *)
+              if [ "$REPOSITORY_PRIVATE" != "true" ]; then
+                echo "runner=ubuntu-latest" >> $GITHUB_OUTPUT
+                echo "Public repo - routing to free hosted runner (mode=$MODE)"
+                exit 0
+              fi
+              AVAILABLE=$(gh api /orgs/${{ github.repository_owner }}/actions/runners \
+                --jq '[.runners[] | select(.status == "online") | select(.busy == false) | select(.labels[].name == "d-sorg-fleet")] | length' \
+                2>/dev/null || echo "0")
+              if [[ "$AVAILABLE" -gt 0 ]]; then
+                echo "runner=d-sorg-fleet" >> $GITHUB_OUTPUT
+                echo "$AVAILABLE idle fleet runner(s) - routing locally"
+              else
+                echo "::error::No local self-hosted runner available; failing closed"
+                exit 1
+              fi
+              ;;
+          esac
+
+  conformance:
+    if: >-
+      (!github.event.pull_request ||
+      github.event.pull_request.head.repo.full_name == github.repository)
+    needs: pick-runner
+    runs-on: d-sorg-fleet
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install package with MCP extra
+        run: |
+          python -m pip install --upgrade pip
+          grep -v -E '^mypy==' requirements.txt > requirements-ci.txt
+          python -m pip install --ignore-installed -r requirements-ci.txt
+          pip install -e ".[calc-mcp,test]"
+          python -m pip install --force-reinstall "scipy>=1.10.0,<1.18"
+
+      - name: Run Fleet Agent API conformance
+        env:
+          TOOLS_GIT_SHA: ${{ github.sha }}
+        run: python scripts/run_agent_api_conformance.py

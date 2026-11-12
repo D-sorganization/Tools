@@ -56,6 +56,17 @@ _SEPARATOR_CELL = re.compile(r"^:?-+:?$")
 # Prettier never renders a delimiter cell narrower than three dashes.
 _MIN_COLUMN_WIDTH = 3
 
+# Catalog tools whose engineering calculators are exposed via ``ud-tools-mcp``.
+MCP_SURFACE_TOOLS: frozenset[str] = frozenset(
+    {
+        "financial_calculator",
+        "flow_rate_converter",
+        "pressure_drop_calculator",
+        "ode_solver",
+        "rotation_converter",
+    }
+)
+
 
 def _emit_stdout(message: str) -> None:
     """Write a single line to stdout for the CLI contract."""
@@ -286,7 +297,7 @@ def generate_contract_data(repo_root: Path) -> dict[str, Any]:
         - "name": human-readable display name
         - "description": tool description
         - "category": tool category
-        - "surfaces": {"pyqt6": bool, "web": bool, "legacy_gui": bool}
+        - "surfaces": {"pyqt6": bool, "web": bool, "legacy_gui": bool, "mcp": bool}
     The key set is frozen: downstream repos compare it verbatim.
     """
     registrations = _discover_registrations(repo_root)
@@ -303,6 +314,7 @@ def generate_contract_data(repo_root: Path) -> dict[str, Any]:
                     "pyqt6": reg.has_pyqt6,
                     "web": reg.has_web,
                     "legacy_gui": reg.has_legacy_gui,
+                    "mcp": reg.id in MCP_SURFACE_TOOLS,
                 },
             }
         )

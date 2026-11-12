@@ -1350,6 +1350,7 @@
         "test_paths": [
           "src/pendulum_simulator/tests/test_unit_converter.py",
           "src/shared/python/sidekick/tests/process_calculators/test_mmhg_constant_unified_3676.py",
+          "tests/shared/python/process_calculators/test_syngas_water_overflow.py",
           "tests/shared/python/utils/test_unit_constants.py"
         ],
         "unit_mentions": [
