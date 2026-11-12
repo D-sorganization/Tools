@@ -181,6 +181,9 @@ class ImportOptions:
     monitor_model: str | None = None
     software_version: str | None = None
     tags: tuple[str, ...] = ()
+    length_unit: str | None = None
+    """Default length unit for distance metrics (canonical metres) when neither the
+    column header nor an explicit :class:`ColumnMapping` declares one."""
 
 
 @dataclass(frozen=True)

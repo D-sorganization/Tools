@@ -249,6 +249,57 @@ def test_importer_refuses_an_unknown_profile_id(fixtures_dir: Path) -> None:
         )
 
 
+def test_length_metric_metres_from_import_options(tmp_path: Path) -> None:
+    source = tmp_path / "shots.csv"
+    source.write_text("distance,speed\n100,90\n", encoding="utf-8")
+    session = import_session(
+        source,
+        ImportOptions(
+            profile_id="generic",
+            length_unit="m",
+            mappings=(
+                ColumnMapping("speed", "club_speed", "mph"),
+                ColumnMapping("distance", "carry_distance"),
+            ),
+        ),
+    )
+    assert session.shots.loc[0, "carry_distance"] == pytest.approx(100.0)
+    assert session.manifest.unit_evidence["carry_distance"] == "options"
+
+
+def test_unlabeled_length_metric_fails_without_unit_declaration(tmp_path: Path) -> None:
+    source = tmp_path / "shots.csv"
+    source.write_text("distance,speed\n150,90\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="Length unit required"):
+        import_session(
+            source,
+            ImportOptions(
+                profile_id="generic",
+                mappings=(
+                    ColumnMapping("speed", "club_speed", "mph"),
+                    ColumnMapping("distance", "carry_distance"),
+                ),
+            ),
+        )
+
+
+def test_unknown_length_unit_fails(tmp_path: Path) -> None:
+    source = tmp_path / "shots.csv"
+    source.write_text("distance,speed\n150,90\n", encoding="utf-8")
+    with pytest.raises(ValueError, match="Unknown length unit"):
+        import_session(
+            source,
+            ImportOptions(
+                profile_id="generic",
+                length_unit="furlongs",
+                mappings=(
+                    ColumnMapping("speed", "club_speed", "mph"),
+                    ColumnMapping("distance", "carry_distance"),
+                ),
+            ),
+        )
+
+
 def test_json_scalar_payload_is_refused(tmp_path: Path) -> None:
     """A JSON number is neither a shot record nor a list of them."""
     source = tmp_path / "shots.json"

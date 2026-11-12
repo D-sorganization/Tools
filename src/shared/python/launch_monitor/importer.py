@@ -19,7 +19,8 @@ other, so nothing here re-exports or aliases anything there:
   :class:`~shared.python.launch_monitor.schema.ImportManifest` recording the
   file digest, the profile, the row count, and — per metric — the source
   column, the source unit, and *how that unit was established*
-  (``"mapping"`` > ``"header"`` > ``"profile-default"``).
+  (``"mapping"`` > ``"header"`` > ``"options"`` / ``"file"`` for lengths, else
+  ``"profile-default"`` for non-length metrics only).
 
 **Conversion is reversible because nothing is thrown away.** Every source
 column is retained verbatim as ``source::<column>`` alongside the converted
@@ -46,7 +47,11 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from shared.python.launch_monitor.profiles import PROFILES, detect_profile
+from shared.python.launch_monitor.profiles import (
+    PROFILES,
+    ImportProfile,
+    detect_profile,
+)
 from shared.python.launch_monitor.schema import (
     IDENTITY_COLUMNS,
     METRICS,
@@ -57,6 +62,72 @@ from shared.python.launch_monitor.schema import (
 )
 
 __all__ = ["import_session"]
+
+_LENGTH_UNIT_ALIASES = {
+    "yd": "yd",
+    "yds": "yd",
+    "yard": "yd",
+    "yards": "yd",
+    "m": "m",
+    "meter": "m",
+    "meters": "m",
+    "metre": "m",
+    "metres": "m",
+    "ft": "ft",
+    "feet": "ft",
+    "foot": "ft",
+    "in": "in",
+    "inch": "in",
+    "inches": "in",
+    "cm": "cm",
+    "mm": "mm",
+}
+
+
+def _normalize_length_unit(unit: str) -> str:
+    key = unit.strip().lower()
+    if key not in _LENGTH_UNIT_ALIASES:
+        raise ValueError(f"Unknown length unit: {unit!r}")
+    return _LENGTH_UNIT_ALIASES[key]
+
+
+def _json_declared_length_unit(path: Path) -> str | None:
+    if path.suffix.lower() != ".json":
+        return None
+    payload = json.loads(path.read_text(encoding="utf-8-sig"))
+    if not isinstance(payload, dict):
+        return None
+    raw = payload.get("Units") or payload.get("units")
+    if raw is None:
+        return None
+    return _normalize_length_unit(str(raw))
+
+
+def _resolve_metric_source_unit(
+    target: str,
+    mapping: ColumnMapping,
+    header_unit: str | None,
+    profile: ImportProfile,
+    config: ImportOptions,
+    file_length_unit: str | None,
+) -> tuple[str, str]:
+    if mapping.source_unit:
+        return mapping.source_unit, "mapping"
+    if header_unit:
+        return header_unit, "header"
+    if METRICS[target].canonical_unit == "m":
+        if config.length_unit:
+            return _normalize_length_unit(config.length_unit), "options"
+        if file_length_unit:
+            return file_length_unit, "file"
+        raise ValueError(
+            f"Length unit required for {target!r} "
+            f"(source column {mapping.source_column!r}): declare units in the "
+            "column header, pass ImportOptions.length_unit, or provide a JSON "
+            "Units field."
+        )
+    return profile.default_units[target], "profile-default"
+
 
 _UNIT_ALIASES = {
     "mph": "mph",
@@ -215,6 +286,7 @@ def import_session(
     if not path.is_file():
         raise ValueError(f"Launch-monitor source does not exist: {path}")
     config = options or ImportOptions()
+    file_length_unit = _json_declared_length_unit(path)
     raw = _read_source(path)
     if raw.empty:
         raise ValueError(f"Launch-monitor source contains no rows: {path}")
@@ -245,21 +317,21 @@ def import_session(
         if target in METRICS:
             definition = METRICS[target]
             header_unit = _unit_from_header(mapping.source_column)
-            source_unit = (
-                mapping.source_unit or header_unit or profile.default_units[target]
-            )
-            evidence = (
-                "mapping"
-                if mapping.source_unit
-                else "header"
-                if header_unit
-                else "profile-default"
-            )
             try:
+                source_unit, evidence = _resolve_metric_source_unit(
+                    target,
+                    mapping,
+                    header_unit,
+                    profile,
+                    config,
+                    file_length_unit,
+                )
                 converted = _convert(
                     source_values, source_unit, definition.canonical_unit
                 )
             except ValueError as exc:
+                if METRICS[target].canonical_unit == "m":
+                    raise
                 warnings.append(f"{target}: {exc}")
                 continue
             output[target] = converted * mapping.multiplier
