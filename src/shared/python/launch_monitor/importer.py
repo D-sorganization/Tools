@@ -47,7 +47,11 @@ from pathlib import Path
 import numpy as np
 import pandas as pd
 
-from shared.python.launch_monitor.profiles import PROFILES, ImportProfile, detect_profile
+from shared.python.launch_monitor.profiles import (
+    PROFILES,
+    ImportProfile,
+    detect_profile,
+)
 from shared.python.launch_monitor.schema import (
     IDENTITY_COLUMNS,
     METRICS,
