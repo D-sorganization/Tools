@@ -19,6 +19,7 @@ from typing import Any, Protocol
 from .planner import ToolCall
 
 DEFAULT_MAX_GOAL_STEPS = 5
+MAX_GOAL_REPAIRS = 1
 MAX_TOOL_OUTPUT_BYTES = 2048
 _NONCE_BYTES = 8
 _LOOKALIKE_TAG_RE = re.compile(r"<\s*(/?)\s*sidekick_tool_call\b", re.IGNORECASE)
@@ -26,8 +27,11 @@ _VAULT_HANDLE_RE = re.compile(r"\$vault:([A-Za-z0-9_.-]{1,64})")
 _SENSITIVE_ENV_SUFFIXES = ("_API_KEY", "_SECRET", "_TOKEN", "_PASSWORD", "_PRIVATE_KEY")
 _PINNED_CLI_VERSION_PREFIXES: dict[str, tuple[str, ...]] = {
     "claude": ("1.", "2.", "claude-code/"),
+    "claude_code": ("1.", "2.", "claude-code/"),
     "codex": ("0.", "1.", "codex-cli/"),
+    "codex_cli": ("0.", "1.", "codex-cli/"),
     "agy": ("0.", "1.", "2.", "antigravity/"),
+    "gemini_cli": ("0.", "1.", "2.", "gemini-cli/", "antigravity/"),
 }
 
 
@@ -130,7 +134,7 @@ def format_minified_tool_stubs(
             else ""
         )
         desc = " ".join(tool.description.split())
-        lines.append(f"type {tool.name} = ({sig}) =>Result; // {desc}")
+        lines.append(f"type {tool.name} = ({sig}) => Result; // {desc}")
     return "\n".join(lines)
 
 
@@ -299,6 +303,14 @@ class FakeCliAdapter:
         return self._builders.pop(0)(prompt, nonce)
 
 
+def validate_cli_goal_loop_bounds(max_steps: int, max_repairs: int) -> None:
+    """Validate bounded CLI goal-loop step and repair limits."""
+    if not 1 <= max_steps <= DEFAULT_MAX_GOAL_STEPS:
+        raise ValueError(f"max_steps must be between 1 and {DEFAULT_MAX_GOAL_STEPS}")
+    if not 0 <= max_repairs <= MAX_GOAL_REPAIRS:
+        raise ValueError(f"max_repairs must be between 0 and {MAX_GOAL_REPAIRS}")
+
+
 def run_bounded_cli_goal_loop(
     goal_prompt: str,
     *,
@@ -306,11 +318,10 @@ def run_bounded_cli_goal_loop(
     tools: Sequence[ToolStubSpec],
     executor: Callable[[ToolCall], str],
     max_steps: int = DEFAULT_MAX_GOAL_STEPS,
-    max_repairs: int = 1,
+    max_repairs: int = MAX_GOAL_REPAIRS,
 ) -> CliBridgeGoalOutcome:
     """Execute a host-orchestrated CLI goal loop with ``max_steps`` & 1 repair turn."""
-    if max_steps < 1:
-        raise ValueError("max_steps must be >= 1")
+    validate_cli_goal_loop_bounds(max_steps, max_repairs)
     tool_map = {t.name: t for t in tools}
     executed: list[ToolCall] = []
     repairs_used, rolling = 0, goal_prompt
