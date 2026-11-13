@@ -1587,6 +1587,32 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#6045 · Stabilize CLI Subprocess Timeout Tree-Kill Oracle and Windows Test Portability
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6045
+- **Branch:** merged via #6046
+- **PR:** #6046
+- **Paths:** see #6046
+- **Started:** 2026-11-13
+- **Last verified:** 2026-11-13 (`e41ca6e3`; collated from changes/6045-subprocess-oracle-race.md)
+- **Summary:** Stabilize CLI subprocess timeout tree-kill oracle and Windows test portability
+- **Next step:** Shipped in PR #6046.
+
+### DL-#6041 · Harden Rate Web Playwright Trusted Apt/Dpkg Lock Waiting and Retry on Transient Contention
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6041
+- **Branch:** merged via #6044
+- **PR:** #6044
+- **Paths:** see #6044
+- **Started:** 2026-11-13
+- **Last verified:** 2026-11-13 (`378cdf17`; collated from changes/6041-harden-playwright-apt-lock-retry.md)
+- **Summary:** Harden Rate Web Playwright Trusted apt/dpkg lock waiting and retry on transient contention
+- **Next step:** Shipped in PR #6044.
+
 ### DL-#6021 · Harden Stdio MCP Calculator Server Provenance, Timeout/Output Bounds, Read-Only Hints, and Mcp Extras Parity
 
 - **State:** shipped
@@ -2555,10 +2581,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #5727
 - **Branch:** merged via #5785
-- **PR:** #5785
+- **PR:** #5785, #6042
 - **Paths:** see #5785
 - **Started:** 2026-10-25
-- **Last verified:** 2026-10-25 (`c5abe04b`; collated from changes/5727-wire-antigravity-agy-cli-adapter-to-nonc.md)
+- **Last verified:** 2026-11-13 (`5c30c632`; collated from changes/5727-cli-bridge-optin.md)
 - **Summary:** Wire Antigravity (agy) CLI adapter to nonce-bound tool bridge and add AgenticAppHost protocol.
 - **Next step:** Shipped in PR #5785.
 
