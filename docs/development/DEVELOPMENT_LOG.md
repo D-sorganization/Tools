@@ -1587,6 +1587,32 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#6022 · Agent API Conformance CI, .mcp.json, AGENTS.md, Surfaces.Mcp, Llms.Txt, and Ud-Tools-Mcp Stdio Server
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6022
+- **Branch:** merged via #6033
+- **PR:** #6033
+- **Paths:** see #6033
+- **Started:** 2026-11-13
+- **Last verified:** 2026-11-13 (`98e196e2`; collated from changes/6022-agent-api-conformance-registration-docs.md)
+- **Summary:** Agent API conformance CI, .mcp.json, AGENTS.md, surfaces.mcp, llms.txt, and ud-tools-mcp stdio server
+- **Next step:** Shipped in PR #6033.
+
+### DL-#6020 · Add CalculatorSpec Registry Wiring All Calc_Backend Routers With OpenAPI Parity Tests
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6020
+- **Branch:** cursor/calculator-spec-registry-f98f
+- **PR:** #6029
+- **Paths:** see #6029
+- **Started:** 2026-11-13
+- **Last verified:** 2026-11-13 (`193c1349`; collated from changes/6020-add-calculatorspec-registry-wiring-all-c.md)
+- **Summary:** Add CalculatorSpec registry wiring all calc_backend routers with OpenAPI parity tests
+- **Next step:** Merge after CI green.
+
 ### DL-#6024 · Add UpstreamDrift Tests/Helpers to Cross-Repo Sparse Checkout and Ai_Backend Maturin Doc Truth-Up
 
 - **State:** shipped
