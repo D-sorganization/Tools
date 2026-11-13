@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import contextlib
 import ctypes
+import os
 import re
 import signal
 import subprocess
@@ -90,6 +91,10 @@ class CliCancelToken:
         """Return ``True`` if cancellation has been requested."""
         return self._event.is_set()
 
+    def check_cancelled(self) -> bool:
+        """Return ``True`` if cancellation has been requested."""
+        return self._event.is_set()
+
     def attach(
         self, pid: int | None, killer: Callable[[int | None], bool] | None = None
     ) -> bool:
@@ -120,8 +125,10 @@ class CliCancelToken:
 
 def attach_kill_on_parent_exit(proc: subprocess.Popen[bytes]) -> int | None:
     """Attach a Windows Job Object with KILL_ON_JOB_CLOSE to ``proc``."""
+    if os.name != "nt":
+        return None
     proc_handle = getattr(proc, "_handle", None)
-    if sys.platform != "win32" or not proc_handle:
+    if not proc_handle:
         return None
     try:
         from ctypes import wintypes
@@ -154,7 +161,10 @@ def attach_kill_on_parent_exit(proc: subprocess.Popen[bytes]) -> int | None:
                 ("PeakJobMemoryUsed", ctypes.c_size_t),
             ]
 
-        k32 = ctypes.windll.kernel32
+        windll = getattr(ctypes, "windll", None)
+        if windll is None:
+            return None
+        k32 = windll.kernel32
         k32.CreateJobObjectW.restype = wintypes.HANDLE
         k32.SetInformationJobObject.argtypes = [
             wintypes.HANDLE,

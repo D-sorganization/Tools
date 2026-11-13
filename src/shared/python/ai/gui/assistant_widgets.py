@@ -229,7 +229,7 @@ class StreamWorker(QThread):
     def run(self) -> None:
         """Execute streaming in background thread."""
         try:
-            if self._cancel_token.is_cancelled:
+            if self._cancel_token.check_cancelled():
                 self.cancelled.emit()
                 return
             for chunk in self._adapter.stream_response(
@@ -237,7 +237,7 @@ class StreamWorker(QThread):
                 self._context,
                 self._tools,
             ):
-                if self._cancel_token.is_cancelled:
+                if self._cancel_token.check_cancelled():
                     self.cancelled.emit()
                     return
                 if chunk.content:
