@@ -527,7 +527,8 @@
         ],
         "test_paths": [
           "tests/unit/ai/adapters/test_antigravity_and_staff_adapter.py",
-          "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py"
+          "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
+          "tests/unit/ai/adapters/test_cli_bridge_and_optin_oracles.py"
         ],
         "unit_mentions": [
           "s"
@@ -593,6 +594,7 @@
           "tests/shared/python/chat/test_ai_memory_manager.py",
           "tests/shared/python/chat/test_ollama_latency_tuning.py",
           "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
+          "tests/unit/ai/adapters/test_cli_bridge_and_optin_oracles.py",
           "tests/unit/ai/test_gemini_adapter.py",
           "tests/unit/chat/test_adapter_capabilities.py"
         ],
@@ -740,6 +742,7 @@
           "tests/shared/python/ai/test_claude_code_adapter.py",
           "tests/unit/ai/adapters/test_claude_code_adapter.py",
           "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
+          "tests/unit/ai/adapters/test_cli_bridge_and_optin_oracles.py",
           "tests/unit/ai/adapters/test_cli_subprocess_runner_oracles.py"
         ],
         "unit_mentions": [
@@ -944,10 +947,90 @@
           "tests/unit/ai/adapters/test_antigravity_and_staff_adapter.py",
           "tests/unit/ai/adapters/test_claude_code_adapter.py",
           "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
+          "tests/unit/ai/adapters/test_cli_bridge_and_optin_oracles.py",
           "tests/unit/ai/adapters/test_cli_subprocess_runner_oracles.py",
           "tests/unit/ai/adapters/test_codex_cli_adapter.py",
           "tests/unit/ai/adapters/test_gemini_cli_adapter.py"
         ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5535,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "b4a3a3708de3b3e8f97efe03477ca8293f379ae37d6bf2d95b0044ece6388210",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLI-TOOL-BRIDGE-PY-BBB5B5113006",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/adapters/cli_tool_bridge.py",
+      "purpose": "Shared bridge glue connecting CLI adapters to ``sidekick.agent.cli_bridge``.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_ENVELOPE_RE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_cli_tool_prompt_section",
+            "signature": "tools: Sequence[ToolDeclaration | ToolStubSpec], nonce: str, *, fallback_full_schema: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "parse_cli_tool_envelopes",
+            "signature": "raw_text: str, *, expected_nonce: str, tools: Sequence[ToolDeclaration]"
+          },
+          {
+            "kind": "function",
+            "name": "parse_cli_tool_envelopes_with_diagnostics",
+            "signature": "raw_text: str, *, expected_nonce: str, tools: Sequence[ToolDeclaration | ToolStubSpec]"
+          },
+          {
+            "kind": "function",
+            "name": "run_adapter_cli_goal_loop",
+            "signature": "adapter: BaseAgentAdapter, goal_prompt: str, *, tools: Sequence[ToolDeclaration | ToolStubSpec], executor: Callable[[Any], str], max_steps: int=DEFAULT_MAX_GOAL_STEPS, max_repairs: int=1, probe_version: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "tool_declaration_to_stub_spec",
+            "signature": "tool: ToolDeclaration | ToolStubSpec"
+          }
+        ],
+        "test_paths": [],
         "unit_mentions": [
           "s"
         ],
@@ -1095,6 +1178,7 @@
         "test_paths": [
           "tests/shared/python/ai/test_codex_cli_adapter.py",
           "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
+          "tests/unit/ai/adapters/test_cli_bridge_and_optin_oracles.py",
           "tests/unit/ai/adapters/test_cli_subprocess_runner_oracles.py",
           "tests/unit/ai/adapters/test_codex_cli_adapter.py"
         ],
@@ -1166,7 +1250,8 @@
           "src/shared/python/ai/tests/test_adapter_factory.py",
           "tests/shared/python/ai/test_adapter_factory.py",
           "tests/shared/python/ai/test_shared_dependency_imports.py",
-          "tests/unit/ai/adapters/test_antigravity_and_staff_adapter.py"
+          "tests/unit/ai/adapters/test_antigravity_and_staff_adapter.py",
+          "tests/unit/ai/adapters/test_cli_bridge_and_optin_oracles.py"
         ],
         "unit_mentions": [
           "g",
@@ -1308,6 +1393,7 @@
         ],
         "test_paths": [
           "tests/shared/python/ai/test_gemini_cli_adapter.py",
+          "tests/unit/ai/adapters/test_cli_bridge_and_optin_oracles.py",
           "tests/unit/ai/adapters/test_cli_subprocess_runner_oracles.py",
           "tests/unit/ai/adapters/test_gemini_cli_adapter.py"
         ],
@@ -9977,6 +10063,7 @@
           "tests/unit/ai/adapters/test_antigravity_and_staff_adapter.py",
           "tests/unit/ai/adapters/test_claude_code_adapter.py",
           "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
+          "tests/unit/ai/adapters/test_cli_bridge_and_optin_oracles.py",
           "tests/unit/ai/adapters/test_cli_subprocess_runner_oracles.py",
           "tests/unit/ai/adapters/test_cline_adapter.py",
           "tests/unit/ai/adapters/test_codex_cli_adapter.py",

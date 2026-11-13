@@ -908,6 +908,7 @@
           }
         ],
         "test_paths": [
+          "tests/unit/ai/adapters/test_cli_bridge_and_optin_oracles.py",
           "tests/unit/sidekick/agent/test_cli_bridge.py"
         ],
         "unit_mentions": [
