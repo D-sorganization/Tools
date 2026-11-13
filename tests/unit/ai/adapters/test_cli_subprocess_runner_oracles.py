@@ -62,9 +62,34 @@ def _is_zombie_proc(pid: int, *, proc_root: Path = Path("/proc")) -> bool:
     return rest.startswith("Z")
 
 
+def _windows_proc_alive(pid: int) -> bool:
+    try:
+        import psutil
+
+        return psutil.pid_exists(pid)
+    except ImportError:
+        pass
+    import ctypes
+    from ctypes import wintypes
+
+    kernel32 = ctypes.windll.kernel32
+    handle = kernel32.OpenProcess(0x1000, False, pid)
+    if not handle:
+        return False
+    exit_code = wintypes.DWORD()
+    try:
+        if not kernel32.GetExitCodeProcess(handle, ctypes.byref(exit_code)):
+            return False
+        return int(exit_code.value) == 259
+    finally:
+        kernel32.CloseHandle(handle)
+
+
 def _proc_alive(pid: int) -> bool:
     if pid <= 0:
         return False
+    if sys.platform == "win32":
+        return _windows_proc_alive(pid)
     try:
         os.kill(pid, 0)
     except OSError:
