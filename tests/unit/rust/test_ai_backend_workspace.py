@@ -397,8 +397,12 @@ def test_maturin_ci_covers_all_platforms():
             continue
 
         content = wf_path.read_text(encoding="utf-8").lower()
-        assert "d-sorg-fleet" in content or "linux" in content, (
-            f"{wf_path.name}: expected fleet Linux runner reference"
+        assert "windows" in content, f"{wf_path.name}: missing Windows runner"
+        assert "ubuntu" in content or "linux" in content, (
+            f"{wf_path.name}: missing Ubuntu/Linux runner"
+        )
+        assert "macos" in content or "mac" in content, (
+            f"{wf_path.name}: missing macOS runner"
         )
 
 
