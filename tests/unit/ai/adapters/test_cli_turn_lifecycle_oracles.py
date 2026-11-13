@@ -34,6 +34,7 @@ from shared.python.ai.types import ConversationContext
 from shared.python.lifecycle import LifecycleSnapshot, LifecycleStatus
 from tests.unit.ai.adapters.test_cli_subprocess_runner_oracles import (
     _proc_alive,
+    _wait_proc_dead,
     install_fake_cli,
 )
 
@@ -123,7 +124,7 @@ def test_oracle_03_pre_cancel_double_cancel_and_stream_worker_cancel(
 def test_oracle_05_parent_exit_kills_child(
     tmp_path: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
-    """Oracle 5: hard-killing parent process reaps the fake CLI child."""
+    """Oracle 5: hard-killing parent process reaps fake CLI and grandchild."""
     env = {
         **os.environ,
         "TOOLS_FAKE_CLI_MODE": "sleep_tree",
@@ -150,13 +151,11 @@ def test_oracle_05_parent_exit_kills_child(
             time.sleep(0.05)
         assert pid_file.exists(), "fake CLI did not start in time"
         lines = pid_file.read_text(encoding="utf-8").splitlines()
-        fake_pid = int(lines[0])
+        fake_pid, grandchild_pid = (int(line) for line in lines[:2])
         helper.kill()
         helper.wait(timeout=5.0)
-        reap_deadline = time.monotonic() + 2.5
-        while time.monotonic() < reap_deadline and _proc_alive(fake_pid):
-            time.sleep(0.05)
-        assert not _proc_alive(fake_pid)
+        assert _wait_proc_dead(fake_pid, timeout_sec=2.5)
+        assert _wait_proc_dead(grandchild_pid, timeout_sec=2.5)
     finally:
         if helper.poll() is None:
             helper.kill()

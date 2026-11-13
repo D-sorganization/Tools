@@ -22,7 +22,6 @@ from shared.python.ai.adapters.cli_turn_lifecycle import (
     CliSubprocessIdleTimeoutError,
     attach_kill_on_parent_exit,
     close_parent_exit_guard,
-    posix_pdeathsig_preexec,
 )
 from shared.python.logging_pkg.logging_config import get_logger
 
@@ -121,7 +120,6 @@ def run_cli_subprocess(
         env=child_env,
         creationflags=_creation_flags(),
         start_new_session=(os.name != "nt"),
-        preexec_fn=posix_pdeathsig_preexec(),
     )
     parent_guard = attach_kill_on_parent_exit(proc)
     temp_paths = [prompt_file] if prompt_file else []

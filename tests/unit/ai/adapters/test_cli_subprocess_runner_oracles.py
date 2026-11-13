@@ -47,13 +47,62 @@ def install_fake_cli(tmp_path: Path, name: str = "claude") -> Path:
     return dest
 
 
+def _is_zombie_proc(pid: int, *, proc_root: Path = Path("/proc")) -> bool:
+    """Return True when Linux ``<proc_root>/<pid>/stat`` reports zombie state."""
+    stat_path = proc_root / str(pid) / "stat"
+    try:
+        raw = stat_path.read_text(encoding="utf-8", errors="ignore")
+    except OSError:
+        return False
+    rparen = raw.rfind(")")
+    if rparen == -1:
+        return False
+    rest = raw[rparen + 1 :].lstrip()
+    return rest.startswith("Z")
+
+
+def _windows_proc_alive(pid: int) -> bool:
+    try:
+        import psutil
+
+        return psutil.pid_exists(pid)
+    except ImportError:
+        pass
+    import ctypes
+    from ctypes import wintypes
+
+    kernel32 = ctypes.windll.kernel32
+    handle = kernel32.OpenProcess(0x1000, False, pid)
+    if not handle:
+        return False
+    exit_code = wintypes.DWORD()
+    try:
+        if not kernel32.GetExitCodeProcess(handle, ctypes.byref(exit_code)):
+            return False
+        return int(exit_code.value) == 259
+    finally:
+        kernel32.CloseHandle(handle)
+
+
 def _proc_alive(pid: int) -> bool:
     if pid <= 0:
         return False
+    if sys.platform == "win32":
+        return _windows_proc_alive(pid)
     try:
         os.kill(pid, 0)
     except OSError:
         return False
+    return not _is_zombie_proc(pid)
+
+
+def _wait_proc_dead(pid: int, timeout_sec: float = 3.0) -> bool:
+    """Poll until ``pid`` exits (or becomes a reaped zombie) within ``timeout_sec``."""
+    deadline = time.monotonic() + timeout_sec
+    while _proc_alive(pid):
+        if time.monotonic() >= deadline:
+            return False
+        time.sleep(0.02)
     return True
 
 
@@ -78,8 +127,8 @@ def test_oracle_01_timeout_kills_grandchild_tree(
         adapter.send_message("hang", ConversationContext(), [])
     assert pid_file.exists()
     parent_pid, child_pid = (int(line) for line in pid_file.read_text().splitlines())
-    assert not _proc_alive(parent_pid)
-    assert not _proc_alive(child_pid)
+    assert _wait_proc_dead(parent_pid)
+    assert _wait_proc_dead(child_pid)
 
 
 def test_oracle_04_graceful_then_forced(
