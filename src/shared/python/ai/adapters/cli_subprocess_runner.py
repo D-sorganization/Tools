@@ -12,8 +12,13 @@ import threading
 import time
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from enum import StrEnum
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from enum import StrEnum
+else:
+    from shared.python.compatibility import StrEnum
 from typing import IO
 
 from shared.python.logging_pkg.logging_config import get_logger
