@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5406,
+      "bytes_lf": 5898,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d6af1675742657928fc0dac4735a669d797be4a385c4bbc1b86d1e568d9dae47",
+      "content_sha256_lf": "5fb95b6619519d9a7d819aee8eb14b12223037986c2c3e9e00f430ee0925fa82",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-INIT-PY-CE66AF77D5E7",
       "language": "python",
@@ -448,10 +448,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 7572,
+      "bytes_lf": 7730,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4b7bb146403cff566cec99dc39f5916352abe757702738a2a4b0182245ce0015",
+      "content_sha256_lf": "721cf65901d27d71d51ef3b1da6347ea784773f80bcfa899825397cdb154d34d",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-ANTIGRAVITY-CLI-ADAPTER-PY-B0B9F6FA112C",
       "language": "python",
@@ -674,10 +674,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 15509,
+      "bytes_lf": 15930,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "187ae6120bedd74392e0c9dc51e008fbdc38349913cc869dcc4799362664e55c",
+      "content_sha256_lf": "bcb418fa516d053fb6de6a5850b140e1f419a12fe8a17335b1f4ef4533c26b52",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLAUDE-CODE-ADAPTER-PY-7E66ECB121E5",
       "language": "python",
@@ -847,10 +847,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13267,
+      "bytes_lf": 16870,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e4fdc65bc86108024b2fc51ee65e97d201601e7db70c6c9e2ab50272e3d32704",
+      "content_sha256_lf": "5ba72abdb54e34f86e0bc71cb367eb9a13cbdeeb0e3dc5a28d611c16c04fb670",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLI-SUBPROCESS-RUNNER-PY-73F30E6F7DA8",
       "language": "python",
@@ -929,12 +929,12 @@
           {
             "kind": "function",
             "name": "invoke_cli_subprocess_for_adapter",
-            "signature": "binary: str, argv: Sequence[str], *, provider: str, prompt: str | None=None, prompt_delivery: PromptDelivery=PromptDelivery.STDIN, timeout: float"
+            "signature": "binary: str, argv: Sequence[str], *, provider: str, prompt: str | None=None, prompt_delivery: PromptDelivery=PromptDelivery.STDIN, timeout: float, idle_timeout: float | None=None, cancel_token: CliCancelToken | None=None"
           },
           {
             "kind": "function",
             "name": "run_cli_subprocess",
-            "signature": "argv: Sequence[str], *, prompt: str | None=None, prompt_delivery: PromptDelivery=PromptDelivery.STDIN, timeout: float, env: Mapping[str, str] | None=None, output_byte_cap: int=DEFAULT_OUTPUT_BYTE_CAP, grace_kill_seconds: float=DEFAULT_GRACE_KILL_SECONDS, encoding: str='utf-8'"
+            "signature": "argv: Sequence[str], *, prompt: str | None=None, prompt_delivery: PromptDelivery=PromptDelivery.STDIN, timeout: float, idle_timeout: float | None=None, cancel_token: CliCancelToken | None=None, env: Mapping[str, str] | None=None, output_byte_cap: int=DEFAULT_OUTPUT_BYTE_CAP, grace_kill_seconds: float=DEFAULT_GRACE_KILL_SECONDS, encoding: str='utf-8'"
           },
           {
             "kind": "function",
@@ -1042,10 +1042,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13051,
+      "bytes_lf": 13477,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3125a06e1bce970e27a5cd81947923592d3a6785b2491019e14788df538dd780",
+      "content_sha256_lf": "8afdb1e9dcbfeef75989623371bec750406bd9d1318dc80e5d217520a8ec4467",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CODEX-CLI-ADAPTER-PY-7AFE11EBF925",
       "language": "python",
@@ -1256,10 +1256,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11276,
+      "bytes_lf": 11702,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "786f225633d5a021e30370880d8b29235fc7b55dd6367b5be0b09186a5fc6716",
+      "content_sha256_lf": "13a72bd3eb12c23759ca450228a17a16962b5009fcc491f310851be2b7119874",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-GEMINI-CLI-ADAPTER-PY-68DBE34F3E89",
       "language": "python",
@@ -2145,10 +2145,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8867,
+      "bytes_lf": 10995,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f6eacb878037c3dec19684bf5dd8701f43ed7558f5720dcf14a22834797bda8b",
+      "content_sha256_lf": "9d756849ca22be45ac62d91e11e054fa74a4d31a19f52ac19f0b68100b8cf9cf",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-EXCEPTIONS-PY-5353301F531C",
       "language": "python",
@@ -2186,12 +2186,27 @@
         "public_surfaces": [
           {
             "kind": "class",
+            "name": "AIAuthenticationError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "AICancelledError",
+            "signature": null
+          },
+          {
+            "kind": "class",
             "name": "AIConnectionError",
             "signature": null
           },
           {
             "kind": "class",
             "name": "AIError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "AIIdleTimeoutError",
             "signature": null
           },
           {
@@ -2207,6 +2222,11 @@
           {
             "kind": "class",
             "name": "AITimeoutError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "AIUsageExhaustedError",
             "signature": null
           },
           {
@@ -3281,10 +3301,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10860,
+      "bytes_lf": 11576,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8b682d8120c5597e30ee839256297cd4795d410553d1b3e501094740b0f8452d",
+      "content_sha256_lf": "25a21696f2eee52524c758ecb9082f78bbcec1cb2dda54b143c1c7250b28fac0",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-GUI-ASSISTANT-WIDGETS-PY-CA08F57C9704",
       "language": "python",

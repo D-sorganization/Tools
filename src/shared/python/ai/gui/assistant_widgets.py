@@ -22,6 +22,8 @@ from PyQt6.QtWidgets import (
     QWidget,
 )
 
+from shared.python.ai.adapters.cli_turn_lifecycle import CliCancelToken
+from shared.python.ai.exceptions import AICancelledError
 from shared.python.ai.types import ConversationContext
 from shared.python.compatibility import UTC
 from shared.python.logging_pkg.logging_config import get_logger
@@ -197,6 +199,7 @@ class StreamWorker(QThread):
 
     chunk_received = pyqtSignal(str)
     finished = pyqtSignal()
+    cancelled = pyqtSignal()
     error = pyqtSignal(str)
 
     def __init__(
@@ -208,24 +211,39 @@ class StreamWorker(QThread):
     ) -> None:
         if adapter is None:
             raise ValueError("adapter must be provided")
-        if adapter is None:
-            raise ValueError("adapter must be provided")
         super().__init__()
         self._adapter = adapter
         self._message = message
         self._context = context
         self._tools = tools
+        self._cancel_token = CliCancelToken()
+
+    def cancel(self) -> bool:
+        """Cancel the in-flight streaming turn idempotently."""
+        changed = self._cancel_token.cancel()
+        adapter_cancel = getattr(self._adapter, "cancel", None)
+        if callable(adapter_cancel):
+            adapter_cancel()
+        return bool(changed)
 
     def run(self) -> None:
         """Execute streaming in background thread."""
         try:
+            if self._cancel_token.is_cancelled:
+                self.cancelled.emit()
+                return
             for chunk in self._adapter.stream_response(
                 self._message,
                 self._context,
                 self._tools,
             ):
+                if self._cancel_token.is_cancelled:
+                    self.cancelled.emit()
+                    return
                 if chunk.content:
                     self.chunk_received.emit(chunk.content)
+        except AICancelledError:
+            self.cancelled.emit()
         except (RuntimeError, ValueError, OSError) as e:
             logger.exception("Streaming error")
             self.error.emit(str(e))
