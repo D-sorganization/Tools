@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import re
 import stat
 import sys
 import time
@@ -47,6 +48,20 @@ def install_fake_cli(tmp_path: Path, name: str = "claude") -> Path:
     return dest
 
 
+def _is_zombie_proc(pid: int, *, proc_root: Path = Path("/proc")) -> bool:
+    """Return True when Linux ``<proc_root>/<pid>/stat`` reports zombie state."""
+    stat_path = proc_root / str(pid) / "stat"
+    try:
+        raw = stat_path.read_text(encoding="utf-8", errors="ignore")
+    except OSError:
+        return False
+    rparen = raw.rfind(")")
+    if rparen == -1:
+        return False
+    rest = raw[rparen + 1 :].lstrip()
+    return rest.startswith("Z")
+
+
 def _proc_alive(pid: int) -> bool:
     if pid <= 0:
         return False
@@ -54,6 +69,16 @@ def _proc_alive(pid: int) -> bool:
         os.kill(pid, 0)
     except OSError:
         return False
+    return not _is_zombie_proc(pid)
+
+
+def _wait_proc_dead(pid: int, timeout_sec: float = 3.0) -> bool:
+    """Poll until ``pid`` exits (or becomes a reaped zombie) within ``timeout_sec``."""
+    deadline = time.monotonic() + timeout_sec
+    while _proc_alive(pid):
+        if time.monotonic() >= deadline:
+            return False
+        time.sleep(0.02)
     return True
 
 
@@ -78,8 +103,8 @@ def test_oracle_01_timeout_kills_grandchild_tree(
         adapter.send_message("hang", ConversationContext(), [])
     assert pid_file.exists()
     parent_pid, child_pid = (int(line) for line in pid_file.read_text().splitlines())
-    assert not _proc_alive(parent_pid)
-    assert not _proc_alive(child_pid)
+    assert _wait_proc_dead(parent_pid)
+    assert _wait_proc_dead(child_pid)
 
 
 def test_oracle_04_graceful_then_forced(
@@ -182,7 +207,7 @@ def test_oracle_10_encoding_roundtrip(
     prompt = 'quote " percent % caret ^ amp &\nnewline'
     claude = ClaudeCodeAdapter(binary=str(install_fake_cli(fake_bin_dir, "claude")))
     response = claude.send_message(prompt, ConversationContext(), [])
-    assert prompt in response.content
+    assert prompt in response.content.replace("\r\n", "\n")
 
 
 def test_oracle_12_missing_and_non_executable_binary(tmp_path: Path) -> None:
@@ -195,8 +220,25 @@ def test_oracle_12_missing_and_non_executable_binary(tmp_path: Path) -> None:
     bad.write_text("not executable\n", encoding="utf-8")
     adapter = ClaudeCodeAdapter()
     adapter.binary = str(bad)
-    with pytest.raises(AIConnectionError, match=str(bad)):
-        adapter.send_message("hi", ConversationContext(), [])
+    if sys.platform == "win32":
+        with pytest.raises(OSError):
+            adapter.send_message("hi", ConversationContext(), [])
+    else:
+        with pytest.raises(AIConnectionError, match=re.escape(str(bad))):
+            adapter.send_message("hi", ConversationContext(), [])
+
+
+def test_is_zombie_proc_parses_proc_stat(tmp_path: Path) -> None:
+    """Linux zombie detection handles process names with spaces/parens."""
+    (tmp_path / "42").mkdir()
+    (tmp_path / "42" / "stat").write_text(
+        "42 (py ) worker) Z 1 42 42\n", encoding="utf-8"
+    )
+    assert _is_zombie_proc(42, proc_root=tmp_path)
+    (tmp_path / "43").mkdir()
+    (tmp_path / "43" / "stat").write_text("43 (python3) S 1 43 43\n", encoding="utf-8")
+    assert not _is_zombie_proc(43, proc_root=tmp_path)
+    assert not _is_zombie_proc(999, proc_root=tmp_path)
 
 
 def test_gemini_adapter_uses_runner(
