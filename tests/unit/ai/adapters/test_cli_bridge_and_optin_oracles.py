@@ -233,7 +233,9 @@ def test_oracle_optin_disabled_by_default_enforced_before_construction() -> None
     assert isinstance(opted, AntigravityCliAdapter)
     with pytest.raises(ValueError, match="opt_in=True"):
         AdapterFactory.create("agy", host="/usr/bin/agy")
-    with patch.object(opted, "validate_connection", return_value=(True, "ok")):
+    with patch.object(
+        AntigravityCliAdapter, "validate_connection", return_value=(True, "ok")
+    ):
         assert "agy" in AdapterFactory.get_available_providers(
             opt_in_providers=("agy",)
         )
