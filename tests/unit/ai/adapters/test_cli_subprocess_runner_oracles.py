@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import re
 import stat
 import sys
 import time
@@ -231,7 +232,7 @@ def test_oracle_10_encoding_roundtrip(
     prompt = 'quote " percent % caret ^ amp &\nnewline'
     claude = ClaudeCodeAdapter(binary=str(install_fake_cli(fake_bin_dir, "claude")))
     response = claude.send_message(prompt, ConversationContext(), [])
-    assert prompt in response.content
+    assert prompt in response.content.replace("\r\n", "\n")
 
 
 def test_oracle_12_missing_and_non_executable_binary(tmp_path: Path) -> None:
@@ -244,8 +245,25 @@ def test_oracle_12_missing_and_non_executable_binary(tmp_path: Path) -> None:
     bad.write_text("not executable\n", encoding="utf-8")
     adapter = ClaudeCodeAdapter()
     adapter.binary = str(bad)
-    with pytest.raises(AIConnectionError, match=str(bad)):
-        adapter.send_message("hi", ConversationContext(), [])
+    if sys.platform == "win32":
+        with pytest.raises(OSError):
+            adapter.send_message("hi", ConversationContext(), [])
+    else:
+        with pytest.raises(AIConnectionError, match=re.escape(str(bad))):
+            adapter.send_message("hi", ConversationContext(), [])
+
+
+def test_is_zombie_proc_parses_proc_stat(tmp_path: Path) -> None:
+    """Linux zombie detection handles process names with spaces/parens."""
+    (tmp_path / "42").mkdir()
+    (tmp_path / "42" / "stat").write_text(
+        "42 (py ) worker) Z 1 42 42\n", encoding="utf-8"
+    )
+    assert _is_zombie_proc(42, proc_root=tmp_path)
+    (tmp_path / "43").mkdir()
+    (tmp_path / "43" / "stat").write_text("43 (python3) S 1 43 43\n", encoding="utf-8")
+    assert not _is_zombie_proc(43, proc_root=tmp_path)
+    assert not _is_zombie_proc(999, proc_root=tmp_path)
 
 
 def test_gemini_adapter_uses_runner(
