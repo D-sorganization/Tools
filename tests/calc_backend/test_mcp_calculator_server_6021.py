@@ -98,6 +98,7 @@ def test_build_result_enforces_canonical_lifecycle_words() -> None:
 
 def test_fastmcp_tools_expose_readonly_and_idempotent_hints() -> None:
     """All four calculator MCP tools expose readOnlyHint and idempotentHint."""
+    pytest.importorskip("mcp.server.fastmcp")
     server = mcp_server._build_fastmcp()
     tools = asyncio.run(server.list_tools())
     by_name = {tool.name: tool for tool in tools}
