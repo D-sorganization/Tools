@@ -140,6 +140,7 @@
           "tests/architecture/test_import_resolvability.py",
           "tests/architecture/test_license_denylist.py",
           "tests/architecture/test_sidekick_external_imports_3316.py",
+          "tests/calc_backend/test_mcp_calculator_server_6021.py",
           "tests/camera/test_camera_sources.py",
           "tests/data_processing/data_processor/test_background_thread_errors.py",
           "tests/data_processing/data_processor/test_ui_thread_workers.py",
@@ -1183,6 +1184,7 @@
         ],
         "test_paths": [
           "src/shared/python/chat/tests/test_chat_routing_lifecycle.py",
+          "tests/calc_backend/test_mcp_calculator_server_6021.py",
           "tests/camera/test_camera_sources.py",
           "tests/contracts/test_chat_service_conformance.py",
           "tests/integration/sidekick/test_sidekick_host_integration.py",
