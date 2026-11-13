@@ -25,6 +25,9 @@ _CONVERT_UNITS_ID = "flow-rate"
 
 
 def _ensure_registry() -> None:
+    from shared.python.calc_backend.agent_api import prime_agent_api_metadata
+
+    prime_agent_api_metadata()
     if CALCULATOR_REGISTRY:
         return
     wire_calculator_registry()
@@ -67,7 +70,12 @@ def _list_page(
     }
 
 
-def _run_calculator(calculator_id: str, inputs: dict[str, Any]) -> dict[str, Any]:
+def _run_calculator(
+    calculator_id: str,
+    inputs: dict[str, Any],
+    *,
+    timeout_s: float | None = None,
+) -> dict[str, Any]:
     _ensure_registry()
     entry = CALCULATOR_REGISTRY.get(calculator_id)
     if entry is None:
@@ -96,12 +104,38 @@ def _run_calculator(calculator_id: str, inputs: dict[str, Any]) -> dict[str, Any
                 "provenance": {"contract_version": CONTRACT_VERSION},
             }
         raise
+    from concurrent.futures import ThreadPoolExecutor
+    from concurrent.futures import TimeoutError as FuturesTimeoutError
+
+    from shared.python.calc_backend.agent_api import MAX_CALL_SECONDS
+    from shared.python.lifecycle import LifecycleStatus
+
+    effective_timeout = MAX_CALL_SECONDS if timeout_s is None else timeout_s
+    pool = ThreadPoolExecutor(max_workers=1)
+    timed_out = False
     try:
-        raw = spec.fn(request)
+        future = pool.submit(spec.fn, request)
+        raw = future.result(timeout=effective_timeout)
+    except FuturesTimeoutError:
+        timed_out = True
+        future.cancel()
+        return {
+            "status": LifecycleStatus.FAILED.name,
+            "errors": [
+                {
+                    "field": "timeout",
+                    "message": (
+                        f"calculator {calculator_id} exceeded "
+                        f"{effective_timeout}s limit"
+                    ),
+                }
+            ],
+            "provenance": {"contract_version": CONTRACT_VERSION},
+        }
     except Exception as exc:
         logger.exception("calculator %s failed", calculator_id)
         return {
-            "status": "FAILED",
+            "status": LifecycleStatus.FAILED.name,
             "errors": [
                 {
                     "field": "inputs",
@@ -114,15 +148,24 @@ def _run_calculator(calculator_id: str, inputs: dict[str, Any]) -> dict[str, Any
             ],
             "provenance": {"contract_version": CONTRACT_VERSION},
         }
+    finally:
+        pool.shutdown(wait=not timed_out, cancel_futures=timed_out)
     outputs, warnings = serialize_outputs(raw)
-    return build_result(
-        calculator_id=calculator_id,
-        formula_ids=spec.formula_ids,
-        outputs=outputs,
-        warnings=warnings,
-        units=dict(spec.units),
-        status="SUCCEEDED",
-    )
+    try:
+        return build_result(
+            calculator_id=calculator_id,
+            formula_ids=spec.formula_ids,
+            outputs=outputs,
+            warnings=warnings,
+            units=dict(spec.units),
+            status=LifecycleStatus.SUCCEEDED.name,
+        )
+    except ValueError as exc:
+        return {
+            "status": LifecycleStatus.FAILED.name,
+            "errors": [{"field": "outputs", "message": str(exc)}],
+            "provenance": {"contract_version": CONTRACT_VERSION},
+        }
 
 
 def _build_fastmcp():
@@ -163,7 +206,7 @@ def _build_fastmcp():
         payload["contract_version"] = CONTRACT_VERSION
         return payload
 
-    @mcp.tool(annotations={"idempotentHint": True})
+    @mcp.tool(annotations={"readOnlyHint": True, "idempotentHint": True})
     def run_calculation(
         id: str, inputs: dict[str, Any], options: dict[str, Any] | None = None
     ) -> dict[str, Any]:
@@ -171,7 +214,7 @@ def _build_fastmcp():
         _ = options
         return _run_calculator(id, inputs)
 
-    @mcp.tool(annotations={"idempotentHint": True})
+    @mcp.tool(annotations={"readOnlyHint": True, "idempotentHint": True})
     def convert_units(
         value: float,
         from_unit: str,
