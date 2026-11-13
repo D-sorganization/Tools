@@ -1587,6 +1587,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#6024 · Add UpstreamDrift Tests/Helpers to Cross-Repo Sparse Checkout and Ai_Backend Maturin Doc Truth-Up
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6024
+- **Branch:** cursor/wave0-upstreamdrift-5684-3f74
+- **PR:** #6025
+- **Paths:** see #6025
+- **Started:** 2026-11-11
+- **Last verified:** 2026-11-11 (`7727dd33`; collated from changes/6024-wave0-sparse-helpers.md)
+- **Summary:** Add UpstreamDrift tests/helpers to cross-repo sparse checkout and ai_backend maturin doc truth-up
+- **Next step:** Shipped in PR #6025.
+
 ### DL-#6003 · Add Canonical Lifecycle Contract ADR, Shared.Python.Lifecycle Kernel, and Syngas Water Boolean Type Checks
 
 - **State:** shipped
