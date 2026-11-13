@@ -10,6 +10,7 @@ from shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
 from shared.python.ai.types import ConversationContext, ToolCall
 from shared.python.sidekick.agent.cli_bridge import (
     DEFAULT_MAX_GOAL_STEPS,
+    MAX_GOAL_REPAIRS,
     CliBridgeGoalOutcome,
     CliBridgeLoopStatus,
     CliTurnResponse,
@@ -18,6 +19,7 @@ from shared.python.sidekick.agent.cli_bridge import (
     parse_nonce_tool_envelopes,
     probe_cli_tool_capability,
     run_bounded_cli_goal_loop,
+    validate_cli_goal_loop_bounds,
 )
 
 _ENVELOPE_RE = re.compile(
@@ -131,10 +133,11 @@ def run_adapter_cli_goal_loop(
     tools: Sequence[ToolDeclaration | ToolStubSpec],
     executor: Callable[[Any], str],
     max_steps: int = DEFAULT_MAX_GOAL_STEPS,
-    max_repairs: int = 1,
+    max_repairs: int = MAX_GOAL_REPAIRS,
     probe_version: bool = False,
 ) -> CliBridgeGoalOutcome:
     """Run ``cli_bridge.run_bounded_cli_goal_loop`` backed by a CLI adapter."""
+    validate_cli_goal_loop_bounds(max_steps, max_repairs)
     stubs = tuple(tool_declaration_to_stub_spec(tool) for tool in tools)
     if probe_version:
         ok, msg = adapter.validate_connection()

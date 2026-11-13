@@ -960,10 +960,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5535,
+      "bytes_lf": 5665,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b4a3a3708de3b3e8f97efe03477ca8293f379ae37d6bf2d95b0044ece6388210",
+      "content_sha256_lf": "41eaba7cea6ebe3be05247e2ce3bafe8053aee5e8721c0b055fc2ed2831b87ed",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLI-TOOL-BRIDGE-PY-BBB5B5113006",
       "language": "python",
@@ -1022,7 +1022,7 @@
           {
             "kind": "function",
             "name": "run_adapter_cli_goal_loop",
-            "signature": "adapter: BaseAgentAdapter, goal_prompt: str, *, tools: Sequence[ToolDeclaration | ToolStubSpec], executor: Callable[[Any], str], max_steps: int=DEFAULT_MAX_GOAL_STEPS, max_repairs: int=1, probe_version: bool=False"
+            "signature": "adapter: BaseAgentAdapter, goal_prompt: str, *, tools: Sequence[ToolDeclaration | ToolStubSpec], executor: Callable[[Any], str], max_steps: int=DEFAULT_MAX_GOAL_STEPS, max_repairs: int=MAX_GOAL_REPAIRS, probe_version: bool=False"
           },
           {
             "kind": "function",

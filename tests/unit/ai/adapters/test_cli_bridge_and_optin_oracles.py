@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import json
+import os
 import stat
 import subprocess
 import sys
@@ -22,7 +23,11 @@ from src.shared.python.ai.adapters.codex_cli_adapter import CodexCliAdapter
 from src.shared.python.ai.adapters.factory import AdapterFactory
 from src.shared.python.ai.adapters.gemini_cli_adapter import GeminiCliAdapter
 from src.shared.python.ai.types import ConversationContext
-from src.shared.python.sidekick.agent.cli_bridge import CliBridgeLoopStatus
+from src.shared.python.sidekick.agent.cli_bridge import (
+    CliBridgeLoopStatus,
+    FakeCliAdapter,
+    run_bounded_cli_goal_loop,
+)
 
 pytestmark = pytest.mark.unit
 
@@ -34,7 +39,7 @@ _FAKE_GOAL_SCRIPT = (
 @pytest.fixture(autouse=True)
 def _strip_nested_job_breakaway(monkeypatch: pytest.MonkeyPatch) -> None:
     """Allow Windows nested Job Object Popen before #6039 removes breakaway."""
-    if sys.platform != "win32":
+    if os.name != "nt":
         return
     orig = getattr(_runner_mod, "_creation_flags", None)
     breakaway = getattr(subprocess, "CREATE_BREAKAWAY_FROM_JOB", 0)
@@ -240,3 +245,72 @@ def test_oracle_optin_disabled_by_default_enforced_before_construction() -> None
             opt_in_providers=("agy",)
         )
     AdapterFactory.clear_cache()
+
+
+def test_goal_loop_enforces_max_steps_and_single_repair_bounds(
+    tmp_path: Path,
+) -> None:
+    """Enforce 1 <= max_steps <= 5 and 0 <= max_repairs <= 1 before CLI turns."""
+    binary = _install_goal_cli(tmp_path, "claude")
+    adapter = ClaudeCodeAdapter(binary=str(binary))
+    with patch.object(
+        ClaudeCodeAdapter,
+        "validate_connection",
+        side_effect=AssertionError("bounds check must run before validate_connection"),
+    ):
+        for bad_steps in (0, 6):
+            with pytest.raises(ValueError, match="max_steps"):
+                adapter.run_goal_loop(
+                    "Simulate",
+                    tools=[_sim_tool()],
+                    executor=lambda _c: "ok",
+                    max_steps=bad_steps,
+                    probe_version=True,
+                )
+        for bad_repairs in (-1, 2):
+            with pytest.raises(ValueError, match="max_repairs"):
+                adapter.run_goal_loop(
+                    "Simulate",
+                    tools=[_sim_tool()],
+                    executor=lambda _c: "ok",
+                    max_repairs=bad_repairs,
+                    probe_version=True,
+                )
+
+    for bad_steps in (0, 6):
+        with pytest.raises(ValueError, match="max_steps"):
+            run_bounded_cli_goal_loop(
+                "Simulate",
+                transport=FakeCliAdapter([]),
+                tools=(),
+                executor=lambda _c: "ok",
+                max_steps=bad_steps,
+            )
+    for bad_repairs in (-1, 2):
+        with pytest.raises(ValueError, match="max_repairs"):
+            run_bounded_cli_goal_loop(
+                "Simulate",
+                transport=FakeCliAdapter([]),
+                tools=(),
+                executor=lambda _c: "ok",
+                max_repairs=bad_repairs,
+            )
+
+    ok_zero = run_bounded_cli_goal_loop(
+        "Simulate",
+        transport=FakeCliAdapter([]),
+        tools=(),
+        executor=lambda _c: "ok",
+        max_steps=5,
+        max_repairs=0,
+    )
+    ok_one = run_bounded_cli_goal_loop(
+        "Simulate",
+        transport=FakeCliAdapter([]),
+        tools=(),
+        executor=lambda _c: "ok",
+        max_steps=5,
+        max_repairs=1,
+    )
+    assert ok_zero.status == CliBridgeLoopStatus.COMPLETED
+    assert ok_one.status == CliBridgeLoopStatus.COMPLETED

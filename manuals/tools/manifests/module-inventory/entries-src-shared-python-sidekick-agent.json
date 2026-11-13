@@ -727,10 +727,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 15142,
+      "bytes_lf": 15577,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "7e0818e453e2fe3980e6d281f569ad8b3db7e9ce15461498df731d27fe676348",
+      "content_sha256_lf": "19fc85835dee5650aa36f8124e8215a1435d1740ea3aa718d88fd6cad6e1820b",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-CLI-BRIDGE-PY-55C5DD26D464",
       "language": "python",
@@ -823,6 +823,11 @@
           },
           {
             "kind": "constant",
+            "name": "MAX_GOAL_REPAIRS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
             "name": "MAX_TOOL_OUTPUT_BYTES",
             "signature": null
           },
@@ -899,12 +904,17 @@
           {
             "kind": "function",
             "name": "run_bounded_cli_goal_loop",
-            "signature": "goal_prompt: str, *, transport: CliTurnTransport, tools: Sequence[ToolStubSpec], executor: Callable[[ToolCall], str], max_steps: int=DEFAULT_MAX_GOAL_STEPS, max_repairs: int=1"
+            "signature": "goal_prompt: str, *, transport: CliTurnTransport, tools: Sequence[ToolStubSpec], executor: Callable[[ToolCall], str], max_steps: int=DEFAULT_MAX_GOAL_STEPS, max_repairs: int=MAX_GOAL_REPAIRS"
           },
           {
             "kind": "function",
             "name": "scrub_cli_environment",
             "signature": "env: Mapping[str, str]"
+          },
+          {
+            "kind": "function",
+            "name": "validate_cli_goal_loop_bounds",
+            "signature": "max_steps: int, max_repairs: int"
           }
         ],
         "test_paths": [
