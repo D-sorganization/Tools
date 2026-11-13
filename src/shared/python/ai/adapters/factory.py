@@ -231,8 +231,9 @@ class AdapterFactory:
             adapter = local_cls(host=host, timeout=timeout)
 
         elif provider == "bitnet":
-            assert local_cls is not None
-            adapter = local_cls(model=model, bitnet_root=host)
+            from shared.python.ai.adapters.bitnet_adapter import BitnetAdapter
+
+            adapter = BitnetAdapter(model=model, bitnet_root=host)
 
         elif provider in {"claude_code", "codex_cli", "agy", "gemini_cli"}:
             assert local_cls is not None
