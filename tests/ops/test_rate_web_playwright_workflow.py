@@ -378,6 +378,17 @@ def test_trusted_playwright_install_serializes_shared_runner_apt_access() -> Non
     assert "npx --no-install playwright install --with-deps chromium" in command
 
 
+def test_trusted_playwright_install_lock_frontend_and_retry() -> None:
+    trusted_job = _workflow(TRUSTED_WORKFLOW_PATH)["jobs"]["push-production-worker-e2e"]
+    command = _run_steps(trusted_job)["Install Playwright-pinned Chromium runtime"]
+
+    install_cmd = "if npx --no-install playwright install --with-deps chromium; then"
+    assert "sudo -n fuser /var/lib/dpkg/lock-frontend" in command
+    assert "for attempt in 1 2 3; do" in command
+    assert install_cmd in command
+    assert "return 0" in command
+
+
 def test_full_pyqt_window_dependency_is_declared_by_shared_gui_extra() -> None:
     """Both rendered lanes install the extra needed by every registered tab."""
     project = tomllib.loads((REPO_ROOT / "pyproject.toml").read_text(encoding="utf-8"))
