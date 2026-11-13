@@ -116,7 +116,10 @@ def test_detect_forbidden_api_key_env_and_qualification_validation() -> None:
     clean_env = {"PATH": "/usr/bin", "HOME": "/tmp"}
     assert detect_forbidden_api_key_env(clean_env) == ()
 
-    dirty_env = {"ANTHROPIC_API_KEY": "sk-ant-not-allowed", "GEMINI_API_KEY": "   "}
+    dirty_env = {
+        "ANTHROPIC_API_KEY": "sk-ant-not-allowed",  # pragma: allowlist secret
+        "GEMINI_API_KEY": "   ",
+    }
     assert detect_forbidden_api_key_env(dirty_env) == ("ANTHROPIC_API_KEY",)
 
     valid_record = CliQualificationRecord(
