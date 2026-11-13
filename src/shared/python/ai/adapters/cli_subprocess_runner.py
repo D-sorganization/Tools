@@ -16,6 +16,14 @@ from enum import StrEnum
 from pathlib import Path
 from typing import IO
 
+from shared.python.ai.adapters.cli_turn_lifecycle import (
+    CliCancelToken,
+    CliSubprocessCancelledError,
+    CliSubprocessIdleTimeoutError,
+    attach_kill_on_parent_exit,
+    close_parent_exit_guard,
+    posix_pdeathsig_preexec,
+)
 from shared.python.logging_pkg.logging_config import get_logger
 
 logger = get_logger(__name__)
@@ -84,44 +92,75 @@ def run_cli_subprocess(
     prompt: str | None = None,
     prompt_delivery: PromptDelivery = PromptDelivery.STDIN,
     timeout: float,
+    idle_timeout: float | None = None,
+    cancel_token: CliCancelToken | None = None,
     env: Mapping[str, str] | None = None,
     output_byte_cap: int = DEFAULT_OUTPUT_BYTE_CAP,
     grace_kill_seconds: float = DEFAULT_GRACE_KILL_SECONDS,
     encoding: str = "utf-8",
 ) -> CliSubprocessResult:
     """Run ``argv`` with bounded I/O, closed stdin (unless prompting), and tree kill."""
-    if timeout <= 0:
-        raise ValueError("timeout must be positive")
+    if timeout <= 0 or (idle_timeout is not None and idle_timeout <= 0):
+        raise ValueError("timeout and idle_timeout must be positive")
     if not argv:
         raise ValueError("argv must be non-empty")
+    if cancel_token is not None and cancel_token.is_cancelled:
+        raise CliSubprocessCancelledError("CLI subprocess cancelled before spawn")
     launch_argv, prompt_file, stdin_payload = _prepare_argv_and_prompt(
         list(argv), prompt=prompt, prompt_delivery=prompt_delivery
     )
     child_env = scrub_cli_subprocess_env(env)
     if prompt_file is not None:
         child_env = {**child_env, "SIDEKICK_CLI_PROMPT_FILE": prompt_file}
-    creationflags = _creation_flags()
-    stdin_handle: int | IO[bytes] | None
-    if stdin_payload is not None:
-        stdin_handle = subprocess.PIPE
-    else:
-        stdin_handle = subprocess.DEVNULL
     proc = subprocess.Popen(
         launch_argv,
-        stdin=stdin_handle,
+        stdin=subprocess.PIPE if stdin_payload is not None else subprocess.DEVNULL,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
         env=child_env,
-        creationflags=creationflags,
+        creationflags=_creation_flags(),
         start_new_session=(os.name != "nt"),
+        preexec_fn=posix_pdeathsig_preexec(),
     )
+    parent_guard = attach_kill_on_parent_exit(proc)
     temp_paths = [prompt_file] if prompt_file else []
     try:
+        if cancel_token is not None and not cancel_token.attach(
+            proc.pid, terminate_cli_process_group
+        ):
+            _graceful_then_forced_kill(
+                proc, grace_kill_seconds=min(grace_kill_seconds, 0.25)
+            )
+            raise CliSubprocessCancelledError(
+                "CLI subprocess cancelled during startup", pid=proc.pid
+            )
         readers = _start_bounded_readers(proc, output_byte_cap)
         deadline = time.monotonic() + timeout
         stdin_writer = _start_stdin_writer(proc, stdin_payload)
         try:
-            _wait_for_process(proc, deadline)
+            _wait_for_process(
+                proc,
+                deadline,
+                readers=readers,
+                idle_timeout=idle_timeout,
+                cancel_token=cancel_token,
+            )
+        except CliSubprocessCancelledError as exc:
+            _graceful_then_forced_kill(
+                proc, grace_kill_seconds=min(grace_kill_seconds, 0.25)
+            )
+            exc.partial_output = _collect_partial_stdout(readers, encoding)
+            raise
+        except CliSubprocessIdleTimeoutError as exc:
+            _graceful_then_forced_kill(
+                proc, grace_kill_seconds=min(grace_kill_seconds, 0.25)
+            )
+            raise CliSubprocessIdleTimeoutError(
+                launch_argv,
+                idle_timeout or timeout,
+                partial_output=_collect_partial_stdout(readers, encoding),
+                pid=proc.pid,
+            ) from exc
         except subprocess.TimeoutExpired as exc:
             _graceful_then_forced_kill(proc, grace_kill_seconds=grace_kill_seconds)
             timeout_error = CliSubprocessTimeoutError(
@@ -130,6 +169,8 @@ def run_cli_subprocess(
             timeout_error.pid = proc.pid  # type: ignore[attr-defined]
             raise timeout_error from exc
         finally:
+            if cancel_token is not None:
+                cancel_token.clear()
             if stdin_writer is not None:
                 stdin_writer.join(timeout=1.0)
         assert readers.stdout is not None and readers.stderr is not None
@@ -149,6 +190,7 @@ def run_cli_subprocess(
         _cleanup_temp_paths(temp_paths)
         if proc.poll() is None:
             _graceful_then_forced_kill(proc, grace_kill_seconds=grace_kill_seconds)
+        close_parent_exit_guard(parent_guard)
 
 
 def _prepare_argv_and_prompt(
@@ -211,10 +253,7 @@ def _write_temp_prompt(prompt: str) -> str:
 def _creation_flags() -> int:
     if os.name != "nt":
         return 0
-    flags = getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0)
-    if hasattr(subprocess, "CREATE_BREAKAWAY_FROM_JOB"):
-        flags |= subprocess.CREATE_BREAKAWAY_FROM_JOB
-    return int(flags)
+    return int(getattr(subprocess, "CREATE_NEW_PROCESS_GROUP", 0))
 
 
 def _start_stdin_writer(
@@ -236,27 +275,40 @@ def _start_stdin_writer(
     return thread
 
 
-def _wait_for_process(proc: subprocess.Popen[bytes], deadline: float) -> None:
+def _wait_for_process(
+    proc: subprocess.Popen[bytes],
+    deadline: float,
+    *,
+    readers: _BoundedReaders | None = None,
+    idle_timeout: float | None = None,
+    cancel_token: CliCancelToken | None = None,
+) -> None:
     while proc.poll() is None:
-        remaining = deadline - time.monotonic()
+        if cancel_token is not None and cancel_token.is_cancelled:
+            raise CliSubprocessCancelledError("CLI subprocess cancelled", pid=proc.pid)
+        now = time.monotonic()
+        remaining = deadline - now
         if remaining <= 0:
             raise subprocess.TimeoutExpired(proc.args, 0)
-        try:
-            proc.wait(timeout=remaining)
-        except subprocess.TimeoutExpired as exc:
-            if time.monotonic() >= deadline:
-                raise exc
+        slice_wait = min(remaining, 0.05)
+        if idle_timeout is not None and readers is not None:
+            idle_remaining = (readers.last_activity + idle_timeout) - now
+            if idle_remaining <= 0:
+                raise CliSubprocessIdleTimeoutError(
+                    proc.args, idle_timeout, pid=proc.pid
+                )
+            slice_wait = min(slice_wait, idle_remaining)
+        with contextlib.suppress(subprocess.TimeoutExpired):
+            proc.wait(timeout=max(slice_wait, 0.005))
+    if cancel_token is not None and cancel_token.is_cancelled:
+        raise CliSubprocessCancelledError("CLI subprocess cancelled", pid=proc.pid)
 
 
-def _start_bounded_readers(
-    proc: subprocess.Popen[bytes],
-    cap: int,
-) -> _BoundedReaders:
-    assert proc.stdout is not None
-    assert proc.stderr is not None
+def _start_bounded_readers(proc: subprocess.Popen[bytes], cap: int) -> _BoundedReaders:
+    assert proc.stdout is not None and proc.stderr is not None
     readers = _BoundedReaders()
-    readers.stdout = _spawn_reader(proc.stdout, cap)
-    readers.stderr = _spawn_reader(proc.stderr, cap)
+    readers.stdout = _spawn_reader(proc.stdout, cap, readers)
+    readers.stderr = _spawn_reader(proc.stderr, cap, readers)
     return readers
 
 
@@ -264,45 +316,65 @@ def _start_bounded_readers(
 class _BoundedReaders:
     stdout: _ReaderHandle | None = None
     stderr: _ReaderHandle | None = None
+    lock: threading.Lock = None  # type: ignore[assignment]
+    last_activity: float = 0.0
+
+    def __post_init__(self) -> None:
+        self.lock, self.last_activity = threading.Lock(), time.monotonic()
+
+    def touch(self) -> None:
+        with self.lock:
+            self.last_activity = time.monotonic()
 
 
 @dataclass
 class _ReaderHandle:
     thread: threading.Thread
-    payload: list[tuple[bytes, int]]
+    chunks: list[bytes]
+    truncated: list[int]
+    lock: threading.Lock
+
+    def snapshot(self) -> tuple[bytes, int]:
+        with self.lock:
+            return b"".join(self.chunks), self.truncated[0]
 
     def result(self) -> tuple[bytes, int]:
         self.thread.join()
-        return self.payload[0]
+        return self.snapshot()
 
 
-def _spawn_reader(pipe: IO[bytes], cap: int) -> _ReaderHandle:
-    payload: list[tuple[bytes, int]] = []
+def _spawn_reader(pipe: IO[bytes], cap: int, state: _BoundedReaders) -> _ReaderHandle:
+    handle = _ReaderHandle(threading.Thread(), [], [0], threading.Lock())
+    handle.thread = threading.Thread(
+        target=lambda: _read_bounded(pipe, cap, handle, state),
+        name="cli-subprocess-reader",
+        daemon=True,
+    )
+    handle.thread.start()
+    return handle
 
-    def _run() -> None:
-        payload.append(_read_bounded(pipe, cap))
 
-    thread = threading.Thread(target=_run, name="cli-subprocess-reader", daemon=True)
-    thread.start()
-    return _ReaderHandle(thread=thread, payload=payload)
-
-
-def _read_bounded(pipe: IO[bytes], cap: int) -> tuple[bytes, int]:
-    chunks: list[bytes] = []
+def _read_bounded(
+    pipe: IO[bytes], cap: int, handle: _ReaderHandle, state: _BoundedReaders
+) -> None:
+    read_fn = getattr(pipe, "read1", None) or pipe.read
     kept = 0
-    truncated = 0
-    while True:
-        piece = pipe.read(65536)
-        if not piece:
-            break
-        if kept < cap:
-            allowed = min(len(piece), cap - kept)
-            chunks.append(piece[:allowed])
-            kept += allowed
-            truncated += len(piece) - allowed
-        else:
-            truncated += len(piece)
-    return b"".join(chunks), truncated
+    while piece := read_fn(65536):
+        state.touch()
+        with handle.lock:
+            allowed = min(len(piece), cap - kept) if kept < cap else 0
+            if allowed:
+                handle.chunks.append(piece[:allowed])
+                kept += allowed
+            handle.truncated[0] += len(piece) - allowed
+
+
+def _collect_partial_stdout(readers: _BoundedReaders, encoding: str) -> str:
+    if readers.stdout is None:
+        return ""
+    readers.stdout.thread.join(timeout=0.5)
+    raw, trunc = readers.stdout.snapshot()
+    return _decode_with_marker(raw, trunc, encoding)[0]
 
 
 def _decode_with_marker(raw: bytes, truncated: int, encoding: str) -> tuple[str, int]:
@@ -315,40 +387,40 @@ def _decode_with_marker(raw: bytes, truncated: int, encoding: str) -> tuple[str,
 def _graceful_then_forced_kill(
     proc: subprocess.Popen[bytes], *, grace_kill_seconds: float
 ) -> None:
+    if proc.poll() is not None:
+        return
     pid = proc.pid
     if os.name == "nt":
-        _windows_kill_process_tree(
-            pid, graceful=True, grace_kill_seconds=grace_kill_seconds
-        )
+        if grace_kill_seconds > 0:
+            with contextlib.suppress(Exception):
+                subprocess.run(
+                    ["taskkill", "/PID", str(pid), "/T"],
+                    check=False,
+                    capture_output=True,
+                    timeout=grace_kill_seconds,
+                )
+        deadline = time.monotonic() + grace_kill_seconds
+        while proc.poll() is None and time.monotonic() < deadline:
+            time.sleep(0.05)
+        if proc.poll() is None:
+            _windows_kill_process_tree(pid, timeout=max(grace_kill_seconds, 2.0))
         return
     with contextlib.suppress(ProcessLookupError, PermissionError):
         os.killpg(os.getpgid(pid), signal.SIGTERM)
     deadline = time.monotonic() + grace_kill_seconds
-    while time.monotonic() < deadline:
-        if proc.poll() is not None:
-            return
+    while proc.poll() is None and time.monotonic() < deadline:
         time.sleep(0.05)
-    terminate_cli_process_group(pid)
+    if proc.poll() is None:
+        terminate_cli_process_group(pid)
 
 
-def _windows_kill_process_tree(
-    pid: int, *, graceful: bool = False, grace_kill_seconds: float = 0.0
-) -> bool:
-    if graceful and grace_kill_seconds > 0:
-        with contextlib.suppress(Exception):
-            subprocess.run(
-                ["taskkill", "/PID", str(pid), "/T"],
-                check=False,
-                capture_output=True,
-                timeout=grace_kill_seconds,
-            )
-        time.sleep(grace_kill_seconds)
+def _windows_kill_process_tree(pid: int, *, timeout: float = 2.0) -> bool:
     with contextlib.suppress(Exception):
         subprocess.run(
             ["taskkill", "/PID", str(pid), "/T", "/F"],
             check=False,
             capture_output=True,
-            timeout=max(grace_kill_seconds, 2.0),
+            timeout=timeout,
         )
     return True
 
@@ -378,6 +450,8 @@ def invoke_cli_subprocess_for_adapter(
     prompt: str | None = None,
     prompt_delivery: PromptDelivery = PromptDelivery.STDIN,
     timeout: float,
+    idle_timeout: float | None = None,
+    cancel_token: CliCancelToken | None = None,
 ) -> CliSubprocessResult:
     """Run a subscription CLI binary, mapping filesystem errors to provider errors."""
     executable = binary
@@ -404,6 +478,8 @@ def invoke_cli_subprocess_for_adapter(
             prompt=prompt,
             prompt_delivery=prompt_delivery,
             timeout=timeout,
+            idle_timeout=idle_timeout,
+            cancel_token=cancel_token,
         )
     except CliSubprocessTimeoutError as exc:
         from shared.python.ai.exceptions import AITimeoutError

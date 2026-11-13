@@ -46,9 +46,12 @@ from shared.python.ai.adapters.cli_subprocess_runner import (  # noqa: F401
     scrub_cli_subprocess_env,
     terminate_cli_process_group,
 )
+from shared.python.ai.adapters.cli_turn_lifecycle import (
+    CliCancelToken,
+    run_adapter_cli_turn,
+)
 from shared.python.ai.exceptions import (
     AIConnectionError,
-    AIProviderError,
     AITimeoutError,
 )
 from shared.python.ai.types import (
@@ -59,6 +62,7 @@ from shared.python.ai.types import (
     ProviderCapability,
     ToolCall,
 )
+from shared.python.lifecycle import LifecycleSnapshot
 from shared.python.logging_pkg.logging_config import get_logger
 
 logger = get_logger(__name__)
@@ -209,6 +213,7 @@ class ClaudeCodeAdapter(BaseAgentAdapter):
         binary: str | None = None,
         model: str | None = None,
         timeout: float | None = None,
+        idle_timeout: float | None = None,
     ) -> None:
         """Initialize the adapter.
 
@@ -221,12 +226,16 @@ class ClaudeCodeAdapter(BaseAgentAdapter):
                 ``None`` uses the CLI default.
             timeout: Subprocess timeout per call. Defaults to
                 ``DEFAULT_CLAUDE_CODE_TIMEOUT``.
+            idle_timeout: Optional silence timeout between stdout/stderr reads.
         """
         self.binary = _resolve_binary(binary)
         self.model = model
         self.timeout = (
             float(timeout) if timeout is not None else DEFAULT_CLAUDE_CODE_TIMEOUT
         )
+        self.idle_timeout = float(idle_timeout) if idle_timeout is not None else None
+        self._active_cancel_token: CliCancelToken | None = None
+        self.last_turn_lifecycle: LifecycleSnapshot | None = None
         self._capabilities = ProviderCapabilities(
             supported=frozenset(
                 {
@@ -262,11 +271,18 @@ class ClaudeCodeAdapter(BaseAgentAdapter):
 
         return make_none_only_capabilities(provider=self.PROVIDER_NAME)
 
+    def cancel(self) -> bool:
+        """Cancel the currently active CLI turn, if one is running."""
+        token = self._active_cancel_token
+        return token.cancel() if token is not None else False
+
     def send_message(
         self,
         message: str,
         context: ConversationContext,
         tools: list[ToolDeclaration],  # noqa: ARG002 (CLI is its own tool host)
+        *,
+        cancel_token: CliCancelToken | None = None,
     ) -> AgentResponse:
         """Send a message and return the CLI's response.
 
@@ -283,34 +299,25 @@ class ClaudeCodeAdapter(BaseAgentAdapter):
         """
         if message is None or not message.strip():
             raise ValueError("message must be a non-empty string")
-        if self.binary is None:
-            raise AIConnectionError(
-                "Claude Code CLI not found on PATH. Install from "
-                "https://claude.com/claude-code or set the binary path explicitly.",
-                provider=self.PROVIDER_NAME,
-            )
 
         nonce = secrets.token_hex(8) if tools else None
         prompt = self._build_prompt(message, context, tools=tools, nonce=nonce)
-        args = [self.binary, "-p"]
+        args = [self.binary or "claude", "-p"]
         if self.model:
             args += ["--model", self.model]
 
-        result = invoke_cli_subprocess_for_adapter(
-            self.binary,
+        result = run_adapter_cli_turn(
+            self,
             args,
-            provider=self.PROVIDER_NAME,
+            runner_fn=invoke_cli_subprocess_for_adapter,
             prompt=prompt,
             prompt_delivery=PromptDelivery.STDIN,
-            timeout=self.timeout,
+            cancel_token=cancel_token,
+            missing_binary_message=(
+                "Claude Code CLI not found on PATH. Install from "
+                "https://claude.com/claude-code or set the binary path explicitly."
+            ),
         )
-
-        if result.returncode != 0:
-            stderr_tail = (result.stderr or "")[-500:]
-            raise AIProviderError(
-                f"Claude Code CLI exited {result.returncode}: {stderr_tail}",
-                provider=self.PROVIDER_NAME,
-            )
 
         raw_stdout = (result.stdout or "").strip()
         tool_calls: list[ToolCall] = []

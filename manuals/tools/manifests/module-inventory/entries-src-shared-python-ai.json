@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5406,
+      "bytes_lf": 5898,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "d6af1675742657928fc0dac4735a669d797be4a385c4bbc1b86d1e568d9dae47",
+      "content_sha256_lf": "5fb95b6619519d9a7d819aee8eb14b12223037986c2c3e9e00f430ee0925fa82",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-INIT-PY-CE66AF77D5E7",
       "language": "python",
@@ -448,10 +448,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 7572,
+      "bytes_lf": 7664,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4b7bb146403cff566cec99dc39f5916352abe757702738a2a4b0182245ce0015",
+      "content_sha256_lf": "9a7fb110172c3bc18f08338cc99aa6d079a6f277f7764dc423c99dbd331d1968",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-ANTIGRAVITY-CLI-ADAPTER-PY-B0B9F6FA112C",
       "language": "python",
@@ -674,10 +674,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 15509,
+      "bytes_lf": 15930,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "187ae6120bedd74392e0c9dc51e008fbdc38349913cc869dcc4799362664e55c",
+      "content_sha256_lf": "bcb418fa516d053fb6de6a5850b140e1f419a12fe8a17335b1f4ef4533c26b52",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLAUDE-CODE-ADAPTER-PY-7E66ECB121E5",
       "language": "python",
@@ -755,7 +755,8 @@
           "tests/shared/python/ai/test_claude_code_adapter.py",
           "tests/unit/ai/adapters/test_claude_code_adapter.py",
           "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
-          "tests/unit/ai/adapters/test_cli_subprocess_runner_oracles.py"
+          "tests/unit/ai/adapters/test_cli_subprocess_runner_oracles.py",
+          "tests/unit/ai/adapters/test_cli_turn_lifecycle_oracles.py"
         ],
         "unit_mentions": [
           "g",
@@ -847,10 +848,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13267,
+      "bytes_lf": 16870,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e4fdc65bc86108024b2fc51ee65e97d201601e7db70c6c9e2ab50272e3d32704",
+      "content_sha256_lf": "5ba72abdb54e34f86e0bc71cb367eb9a13cbdeeb0e3dc5a28d611c16c04fb670",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLI-SUBPROCESS-RUNNER-PY-73F30E6F7DA8",
       "language": "python",
@@ -929,12 +930,12 @@
           {
             "kind": "function",
             "name": "invoke_cli_subprocess_for_adapter",
-            "signature": "binary: str, argv: Sequence[str], *, provider: str, prompt: str | None=None, prompt_delivery: PromptDelivery=PromptDelivery.STDIN, timeout: float"
+            "signature": "binary: str, argv: Sequence[str], *, provider: str, prompt: str | None=None, prompt_delivery: PromptDelivery=PromptDelivery.STDIN, timeout: float, idle_timeout: float | None=None, cancel_token: CliCancelToken | None=None"
           },
           {
             "kind": "function",
             "name": "run_cli_subprocess",
-            "signature": "argv: Sequence[str], *, prompt: str | None=None, prompt_delivery: PromptDelivery=PromptDelivery.STDIN, timeout: float, env: Mapping[str, str] | None=None, output_byte_cap: int=DEFAULT_OUTPUT_BYTE_CAP, grace_kill_seconds: float=DEFAULT_GRACE_KILL_SECONDS, encoding: str='utf-8'"
+            "signature": "argv: Sequence[str], *, prompt: str | None=None, prompt_delivery: PromptDelivery=PromptDelivery.STDIN, timeout: float, idle_timeout: float | None=None, cancel_token: CliCancelToken | None=None, env: Mapping[str, str] | None=None, output_byte_cap: int=DEFAULT_OUTPUT_BYTE_CAP, grace_kill_seconds: float=DEFAULT_GRACE_KILL_SECONDS, encoding: str='utf-8'"
           },
           {
             "kind": "function",
@@ -955,8 +956,125 @@
           "tests/unit/ai/adapters/test_claude_code_adapter.py",
           "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
           "tests/unit/ai/adapters/test_cli_subprocess_runner_oracles.py",
+          "tests/unit/ai/adapters/test_cli_turn_lifecycle_oracles.py",
           "tests/unit/ai/adapters/test_codex_cli_adapter.py",
           "tests/unit/ai/adapters/test_gemini_cli_adapter.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 11799,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "dc51ae39458824091fd217a4f7abc37589d3f87176f39d03b29d879a9bf6cc65",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLI-TURN-LIFECYCLE-PY-1E0901A36778",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/adapters/cli_turn_lifecycle.py",
+      "purpose": "Turn lifecycle, cancellation, idle timeout, and exit classification (#5727).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CliCancelToken",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CliSubprocessCancelledError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CliSubprocessIdleTimeoutError",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_AUTH_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_RATE_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_RETRY_AFTER_RE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_USAGE_RE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "attach_kill_on_parent_exit",
+            "signature": "proc: subprocess.Popen[bytes]"
+          },
+          {
+            "kind": "function",
+            "name": "build_turn_lifecycle_snapshot",
+            "signature": "status: LifecycleStatus, outcome: str, *, message: str | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "classify_cli_nonzero_exit",
+            "signature": "provider: str, returncode: int, stderr: str, stdout: str=''"
+          },
+          {
+            "kind": "function",
+            "name": "close_parent_exit_guard",
+            "signature": "guard: int | None"
+          },
+          {
+            "kind": "function",
+            "name": "posix_pdeathsig_preexec",
+            "signature": ""
+          },
+          {
+            "kind": "function",
+            "name": "run_adapter_cli_turn",
+            "signature": "adapter: Any, argv: Sequence[str], *, runner_fn: Callable[..., CliSubprocessResult], prompt: str | None, prompt_delivery: PromptDelivery, cancel_token: CliCancelToken | None=None, missing_binary_message: str='CLI binary not found on PATH.'"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/ai/adapters/test_cli_turn_lifecycle_oracles.py"
         ],
         "unit_mentions": [
           "s"
@@ -1042,10 +1160,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13051,
+      "bytes_lf": 13477,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3125a06e1bce970e27a5cd81947923592d3a6785b2491019e14788df538dd780",
+      "content_sha256_lf": "8afdb1e9dcbfeef75989623371bec750406bd9d1318dc80e5d217520a8ec4467",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CODEX-CLI-ADAPTER-PY-7AFE11EBF925",
       "language": "python",
@@ -1106,6 +1224,7 @@
           "tests/shared/python/ai/test_codex_cli_adapter.py",
           "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
           "tests/unit/ai/adapters/test_cli_subprocess_runner_oracles.py",
+          "tests/unit/ai/adapters/test_cli_turn_lifecycle_oracles.py",
           "tests/unit/ai/adapters/test_codex_cli_adapter.py"
         ],
         "unit_mentions": [
@@ -1256,10 +1375,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11276,
+      "bytes_lf": 11702,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "786f225633d5a021e30370880d8b29235fc7b55dd6367b5be0b09186a5fc6716",
+      "content_sha256_lf": "13a72bd3eb12c23759ca450228a17a16962b5009fcc491f310851be2b7119874",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-GEMINI-CLI-ADAPTER-PY-68DBE34F3E89",
       "language": "python",
@@ -1319,6 +1438,7 @@
         "test_paths": [
           "tests/shared/python/ai/test_gemini_cli_adapter.py",
           "tests/unit/ai/adapters/test_cli_subprocess_runner_oracles.py",
+          "tests/unit/ai/adapters/test_cli_turn_lifecycle_oracles.py",
           "tests/unit/ai/adapters/test_gemini_cli_adapter.py"
         ],
         "unit_mentions": [
@@ -2145,10 +2265,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8867,
+      "bytes_lf": 10995,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f6eacb878037c3dec19684bf5dd8701f43ed7558f5720dcf14a22834797bda8b",
+      "content_sha256_lf": "9d756849ca22be45ac62d91e11e054fa74a4d31a19f52ac19f0b68100b8cf9cf",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-EXCEPTIONS-PY-5353301F531C",
       "language": "python",
@@ -2186,12 +2306,27 @@
         "public_surfaces": [
           {
             "kind": "class",
+            "name": "AIAuthenticationError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "AICancelledError",
+            "signature": null
+          },
+          {
+            "kind": "class",
             "name": "AIConnectionError",
             "signature": null
           },
           {
             "kind": "class",
             "name": "AIError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "AIIdleTimeoutError",
             "signature": null
           },
           {
@@ -2207,6 +2342,11 @@
           {
             "kind": "class",
             "name": "AITimeoutError",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "AIUsageExhaustedError",
             "signature": null
           },
           {
@@ -2243,6 +2383,7 @@
           "tests/unit/ai/adapters/test_claude_code_adapter.py",
           "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
           "tests/unit/ai/adapters/test_cli_subprocess_runner_oracles.py",
+          "tests/unit/ai/adapters/test_cli_turn_lifecycle_oracles.py",
           "tests/unit/ai/adapters/test_cline_adapter.py",
           "tests/unit/ai/adapters/test_codex_cli_adapter.py",
           "tests/unit/ai/adapters/test_gemini_cli_adapter.py",
@@ -3281,10 +3422,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10860,
+      "bytes_lf": 11586,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8b682d8120c5597e30ee839256297cd4795d410553d1b3e501094740b0f8452d",
+      "content_sha256_lf": "6ddf195655edae353d387bb8b9009b6c311621155817edb933fca56274a709bc",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-GUI-ASSISTANT-WIDGETS-PY-CA08F57C9704",
       "language": "python",
@@ -3342,6 +3483,7 @@
           }
         ],
         "test_paths": [
+          "tests/unit/ai/adapters/test_cli_turn_lifecycle_oracles.py",
           "tests/unit/ai/gui/test_chat_export.py",
           "tests/unit/ai/gui/test_main_thread_dispatcher.py",
           "tests/unit/ai/gui/test_message_widget_copy_timer.py"
@@ -9988,6 +10130,7 @@
           "tests/unit/ai/adapters/test_claude_code_adapter.py",
           "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
           "tests/unit/ai/adapters/test_cli_subprocess_runner_oracles.py",
+          "tests/unit/ai/adapters/test_cli_turn_lifecycle_oracles.py",
           "tests/unit/ai/adapters/test_cline_adapter.py",
           "tests/unit/ai/adapters/test_codex_cli_adapter.py",
           "tests/unit/ai/adapters/test_gemini_cli_adapter.py",

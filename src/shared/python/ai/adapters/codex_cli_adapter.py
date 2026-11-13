@@ -48,9 +48,12 @@ from shared.python.ai.adapters.cli_subprocess_runner import (
     PromptDelivery,
     invoke_cli_subprocess_for_adapter,
 )
+from shared.python.ai.adapters.cli_turn_lifecycle import (
+    CliCancelToken,
+    run_adapter_cli_turn,
+)
 from shared.python.ai.exceptions import (
     AIConnectionError,
-    AIProviderError,
     AITimeoutError,
 )
 from shared.python.ai.types import (
@@ -61,6 +64,7 @@ from shared.python.ai.types import (
     ProviderCapability,
     ToolCall,
 )
+from shared.python.lifecycle import LifecycleSnapshot
 from shared.python.logging_pkg.logging_config import get_logger
 
 logger = get_logger(__name__)
@@ -139,6 +143,7 @@ class CodexCliAdapter(BaseAgentAdapter):
         binary: str | None = None,
         model: str | None = None,
         timeout: float | None = None,
+        idle_timeout: float | None = None,
     ) -> None:
         """Initialize the adapter.
 
@@ -148,12 +153,16 @@ class CodexCliAdapter(BaseAgentAdapter):
             model: Optional model identifier.
             timeout: Subprocess timeout. Defaults to
                 ``DEFAULT_CODEX_CLI_TIMEOUT``.
+            idle_timeout: Optional silence timeout between stdout/stderr reads.
         """
         self.binary = _resolve_binary(binary)
         self.model = model
         self.timeout = (
             float(timeout) if timeout is not None else DEFAULT_CODEX_CLI_TIMEOUT
         )
+        self.idle_timeout = float(idle_timeout) if idle_timeout is not None else None
+        self._active_cancel_token: CliCancelToken | None = None
+        self.last_turn_lifecycle: LifecycleSnapshot | None = None
         self._capabilities = ProviderCapabilities(
             supported=frozenset(
                 {
@@ -185,11 +194,18 @@ class CodexCliAdapter(BaseAgentAdapter):
 
         return make_none_only_capabilities(provider=self.PROVIDER_NAME)
 
+    def cancel(self) -> bool:
+        """Cancel the currently active CLI turn, if one is running."""
+        token = self._active_cancel_token
+        return token.cancel() if token is not None else False
+
     def send_message(
         self,
         message: str,
         context: ConversationContext,
         tools: list[ToolDeclaration],  # noqa: ARG002 (CLI is its own tool host)
+        *,
+        cancel_token: CliCancelToken | None = None,
     ) -> AgentResponse:
         """Send a message and return the CLI's response.
 
@@ -206,33 +222,24 @@ class CodexCliAdapter(BaseAgentAdapter):
         """
         if message is None or not message.strip():
             raise ValueError("message must be a non-empty string")
-        if self.binary is None:
-            raise AIConnectionError(
-                "Codex CLI not found on PATH. Install with "
-                "`npm install -g @openai/codex` and run `codex login`.",
-                provider=self.PROVIDER_NAME,
-            )
 
         nonce = secrets.token_hex(8) if tools else None
         prompt = self._build_prompt(message, context, tools=tools, nonce=nonce)
-        args = [self.binary, "exec", "--skip-git-repo-check"]
+        args = [self.binary or "codex", "exec", "--skip-git-repo-check"]
         if self.model:
             args += ["--model", self.model]
-        result = invoke_cli_subprocess_for_adapter(
-            self.binary,
+        result = run_adapter_cli_turn(
+            self,
             args,
-            provider=self.PROVIDER_NAME,
+            runner_fn=invoke_cli_subprocess_for_adapter,
             prompt=prompt,
             prompt_delivery=PromptDelivery.AUTO,
-            timeout=self.timeout,
+            cancel_token=cancel_token,
+            missing_binary_message=(
+                "Codex CLI not found on PATH. Install with "
+                "`npm install -g @openai/codex` and run `codex login`."
+            ),
         )
-
-        if result.returncode != 0:
-            stderr_tail = (result.stderr or "")[-500:]
-            raise AIProviderError(
-                f"Codex CLI exited {result.returncode}: {stderr_tail}",
-                provider=self.PROVIDER_NAME,
-            )
 
         cleaned_stdout = self._strip_telemetry(result.stdout or "")
         tool_calls: list[ToolCall] = []
