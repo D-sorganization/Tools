@@ -13,8 +13,12 @@ import re
 import secrets
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
-from enum import StrEnum
-from typing import Any, Protocol
+from typing import TYPE_CHECKING, Any, Protocol
+
+if TYPE_CHECKING:
+    from enum import StrEnum
+else:
+    from shared.python.compatibility import StrEnum
 
 from .planner import ToolCall
 

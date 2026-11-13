@@ -727,10 +727,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 15577,
+      "bytes_lf": 15673,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "19fc85835dee5650aa36f8124e8215a1435d1740ea3aa718d88fd6cad6e1820b",
+      "content_sha256_lf": "e8cf7f6eceefe59b5b49ac8010d31edf2d057200c988a3d6444bf5eb7bffa327",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-AGENT-CLI-BRIDGE-PY-55C5DD26D464",
       "language": "python",

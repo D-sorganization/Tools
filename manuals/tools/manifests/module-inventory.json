@@ -759,7 +759,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick.json"
     },
     {
-      "content_sha256_lf": "5cc41ee4b98de42d1e7f61a70678eff8e28cb410013cab41446b6b5d35889b67",
+      "content_sha256_lf": "2b63c13c303c69137351426a53aaf9a006f69d774156b406a6798b8d709aae88",
       "entry_count": 15,
       "package": "src/shared/python/sidekick/agent",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-agent.json"
