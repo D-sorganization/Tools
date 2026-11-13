@@ -65,10 +65,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3231,
+      "bytes_lf": 5505,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "afe70d336e3bbd2b8a5c9d326b5a27330dca6be7985fd547ffc37bca90ce2e26",
+      "content_sha256_lf": "4f37cb3760ddd6e26afa98f61e70b7bcf9c6243468cf679c0daac6c03feffec1",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-AGENT-API-PY-C3DE0A077D91",
       "language": "python",
@@ -125,6 +125,11 @@
             "signature": null
           },
           {
+            "kind": "constant",
+            "name": "_REGISTRY_PATH",
+            "signature": null
+          },
+          {
             "kind": "function",
             "name": "build_result",
             "signature": "*, calculator_id: str, formula_ids: tuple[str, ...], outputs: dict[str, Any], warnings: list[str], units: dict[str, str], status: str"
@@ -153,6 +158,11 @@
             "kind": "function",
             "name": "parse_inputs",
             "signature": "model: type[BaseModel], raw: dict[str, Any]"
+          },
+          {
+            "kind": "function",
+            "name": "prime_agent_api_metadata",
+            "signature": ""
           },
           {
             "kind": "function",
@@ -1633,10 +1643,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6245,
+      "bytes_lf": 7836,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6acb773a28f91173e58a64c357ebff247a7502a2fbfab111bb9fb052efed7848",
+      "content_sha256_lf": "4b6c8885204cec5bcaa67c5d62b36c766dfb6c024e46b8ca14a7c76f13cf862f",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-MCP-SERVER-PY-C6975E2D2358",
       "language": "python",

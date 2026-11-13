@@ -5947,6 +5947,8 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-13 | #6033 | Agent API conformance CI, .mcp.json, AGENTS.md, surfaces.mcp, llms.txt, and ud-tools-mcp stdio server |
+| 2026-11-13 | #6029 | Add CalculatorSpec registry wiring all calc_backend routers with OpenAPI parity tests |
 | 2026-11-11 | #6025 | Add UpstreamDrift tests/helpers to cross-repo sparse checkout and ai_backend maturin doc truth-up |
 | 2026-11-10 | #6017 | Syngas _sanitize typed failure in place of 0.0 (oracle 6) and test updates |
 | 2026-11-10 | #6014 | Remove default-true success and converged flags on solver and calculation outputs (Slice 4) |

@@ -5,16 +5,27 @@ from __future__ import annotations
 import json
 import os
 import subprocess
+from functools import lru_cache
+from pathlib import Path
 from typing import Any
 
 from pydantic import BaseModel, ValidationError
+
+from shared.python.lifecycle import CANONICAL_LIFECYCLE_WORDS
 
 CONTRACT_VERSION = "fleet-agent-api/v1"
 MAX_OUTPUT_BYTES = 32 * 1024
 MAX_CALL_SECONDS = 10
 DEFAULT_CALCULATION_STATUS = "verified-unapproved"
+_REGISTRY_PATH = (
+    Path(__file__).resolve().parents[4]
+    / "manuals"
+    / "tools"
+    / "calculation-registry.json"
+)
 
 
+@lru_cache(maxsize=1)
 def tools_version() -> str:
     try:
         from importlib.metadata import version
@@ -24,6 +35,7 @@ def tools_version() -> str:
         return "0.0.0"
 
 
+@lru_cache(maxsize=1)
 def git_sha() -> str:
     env = os.environ.get("TOOLS_GIT_SHA")
     if env:
@@ -31,6 +43,7 @@ def git_sha() -> str:
     try:
         result = subprocess.run(  # nosec B603 - fixed argv
             ["git", "rev-parse", "HEAD"],
+            stdin=subprocess.DEVNULL,
             capture_output=True,
             text=True,
             timeout=2,
@@ -43,9 +56,59 @@ def git_sha() -> str:
     return "unknown"
 
 
+@lru_cache(maxsize=1)
+def _calculation_registry_status_index() -> dict[str, str]:
+    """Load calculation/equation ID -> status mapping with approval gate enforcement."""
+    if not _REGISTRY_PATH.is_file():
+        return {}
+    try:
+        payload = json.loads(_REGISTRY_PATH.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {}
+    index: dict[str, str] = {}
+    for entry in payload.get("calculations", []):
+        if not isinstance(entry, dict):
+            continue
+        raw_status = str(entry.get("status") or DEFAULT_CALCULATION_STATUS)
+        approval = entry.get("approval")
+        approval_state = (
+            str(approval.get("state") or "") if isinstance(approval, dict) else ""
+        )
+        effective = (
+            DEFAULT_CALCULATION_STATUS
+            if raw_status == "approved" and approval_state != "approved"
+            else raw_status
+        )
+        calc_id = entry.get("calculation_id")
+        if isinstance(calc_id, str) and calc_id:
+            index[calc_id] = effective
+        for equation in entry.get("equations", []):
+            if isinstance(equation, dict):
+                eq_id = equation.get("equation_id")
+                if isinstance(eq_id, str) and eq_id:
+                    index[eq_id] = effective
+    return index
+
+
+def prime_agent_api_metadata() -> None:
+    """Warm cached provenance metadata at startup so tool handlers avoid I/O."""
+    tools_version()
+    git_sha()
+    _calculation_registry_status_index()
+
+
 def calculation_status(formula_ids: tuple[str, ...]) -> str:
-    """Conservative default until design-manual links are complete per calculator."""
-    return DEFAULT_CALCULATION_STATUS if not formula_ids else "registered"
+    """Resolve calculation approval status from calculation-registry.json."""
+    if not formula_ids:
+        return DEFAULT_CALCULATION_STATUS
+    index = _calculation_registry_status_index()
+    resolved = [index.get(fid) for fid in formula_ids]
+    if any(status is None for status in resolved):
+        return DEFAULT_CALCULATION_STATUS
+    for status in resolved:
+        if status is not None and status != "approved":
+            return status
+    return "approved"
 
 
 def validation_problems(exc: ValidationError) -> list[dict[str, Any]]:
@@ -90,6 +153,8 @@ def build_result(
     units: dict[str, str],
     status: str,
 ) -> dict[str, Any]:
+    if status not in CANONICAL_LIFECYCLE_WORDS:
+        raise ValueError(f"Unsupported lifecycle status: {status!r}")
     body = {
         "status": status,
         "outputs": outputs,
