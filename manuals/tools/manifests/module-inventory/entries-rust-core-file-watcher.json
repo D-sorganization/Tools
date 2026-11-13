@@ -298,7 +298,6 @@
           "tests/tools/test_config_loader.py",
           "tests/tools/test_launch_utils.py",
           "tests/tools/test_scientific_auditor.py",
-          "tests/unit/ai/adapters/test_cli_discovery_qualification.py",
           "tests/unit/ai/gui/test_chat_export.py",
           "tests/unit/ai/gui/test_session_manager_2872.py",
           "tests/unit/ai/mcp/test_claude_desktop_import.py",
