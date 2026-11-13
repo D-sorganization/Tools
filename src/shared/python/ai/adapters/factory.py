@@ -25,6 +25,10 @@ Usage::
 
 from __future__ import annotations
 
+import importlib
+from collections.abc import Collection
+from typing import Any
+
 from shared.python.ai.adapters.base import BaseAgentAdapter
 from shared.python.logging_pkg.logging_config import get_logger
 
@@ -121,6 +125,41 @@ class AdapterFactory:
         }
     )
 
+    _LOCAL_PROVIDERS: dict[str, tuple[str, str]] = {
+        "ollama": ("shared.python.ai.adapters.ollama_adapter", "OllamaAdapter"),
+        "cline": ("shared.python.ai.adapters.cline_adapter", "ClineAdapter"),
+        "bitnet": ("shared.python.ai.adapters.bitnet_adapter", "BitnetAdapter"),
+        "claude_code": (
+            "shared.python.ai.adapters.claude_code_adapter",
+            "ClaudeCodeAdapter",
+        ),
+        "codex_cli": (
+            "shared.python.ai.adapters.codex_cli_adapter",
+            "CodexCliAdapter",
+        ),
+        "agy": (
+            "shared.python.ai.adapters.antigravity_cli_adapter",
+            "AntigravityCliAdapter",
+        ),
+        "runner_dashboard_staff": (
+            "shared.python.ai.adapters.antigravity_cli_adapter",
+            "RunnerDashboardStaffAdapter",
+        ),
+        "gemini_cli": (
+            "shared.python.ai.adapters.gemini_cli_adapter",
+            "GeminiCliAdapter",
+        ),
+    }
+
+    @classmethod
+    def _resolve_local_adapter_class(cls, provider: str) -> Any:
+        entry = cls._LOCAL_PROVIDERS.get(provider)
+        if entry is None:
+            return None
+        module_path, class_name = entry
+        adapter_cls: Any = getattr(importlib.import_module(module_path), class_name)
+        return adapter_cls
+
     @classmethod
     def create(
         cls,
@@ -130,6 +169,7 @@ class AdapterFactory:
         model: str | None = None,
         host: str | None = None,
         timeout: float | None = None,
+        opt_in: bool = False,
     ) -> BaseAgentAdapter:
         """Create an adapter for a specific provider.
 
@@ -144,12 +184,14 @@ class AdapterFactory:
             model: Model override.
             host: Host URL override (for ollama/cline).
             timeout: Request timeout override.
+            opt_in: Required to construct adapters with
+                ``ENABLED_BY_DEFAULT = False``.
 
         Returns:
             Configured adapter instance (may be a previously cached object).
 
         Raises:
-            ValueError: If provider is unknown or empty.
+            ValueError: If provider is unknown, empty, or disabled without opt-in.
 
         Contract:
             Pre: provider is a non-empty string.
@@ -159,6 +201,16 @@ class AdapterFactory:
             raise ValueError("provider must be a non-empty string")
 
         provider = provider.lower().strip()
+        local_cls = cls._resolve_local_adapter_class(provider)
+        if (
+            local_cls is not None
+            and not getattr(local_cls, "ENABLED_BY_DEFAULT", True)
+            and not opt_in
+        ):
+            raise ValueError(
+                f"Provider '{provider}' is disabled by default "
+                "(ENABLED_BY_DEFAULT=False); pass opt_in=True to enable it."
+            )
 
         # Check cache before constructing a new adapter
         cache_key: _CacheKey = (provider, api_key, model, host, timeout)
@@ -171,61 +223,25 @@ class AdapterFactory:
 
         # Local adapters — no API key required
         if provider == "ollama":
-            from shared.python.ai.adapters.ollama_adapter import OllamaAdapter
-
-            adapter = OllamaAdapter(host=host, model=model, timeout=timeout)
+            assert local_cls is not None
+            adapter = local_cls(host=host, model=model, timeout=timeout)
 
         elif provider == "cline":
-            from shared.python.ai.adapters.cline_adapter import ClineAdapter
-
-            adapter = ClineAdapter(host=host, timeout=timeout)
+            assert local_cls is not None
+            adapter = local_cls(host=host, timeout=timeout)
 
         elif provider == "bitnet":
             from shared.python.ai.adapters.bitnet_adapter import BitnetAdapter
 
-            # Bitnet uses 'host' param as bitnet_root in this context if provided
             adapter = BitnetAdapter(model=model, bitnet_root=host)
 
-        elif provider == "claude_code":
-            from shared.python.ai.adapters.claude_code_adapter import (
-                ClaudeCodeAdapter,
-            )
-
-            # `host` is reused here as an explicit binary path override —
-            # the CLI's "host" is its own filesystem path, not a URL.
-            adapter = ClaudeCodeAdapter(binary=host, model=model, timeout=timeout)
-
-        elif provider == "codex_cli":
-            from shared.python.ai.adapters.codex_cli_adapter import (
-                CodexCliAdapter,
-            )
-
-            # `host` reused as explicit binary path override (see claude_code above).
-            adapter = CodexCliAdapter(binary=host, model=model, timeout=timeout)
-
-        elif provider == "agy":
-            from shared.python.ai.adapters.antigravity_cli_adapter import (
-                AntigravityCliAdapter,
-            )
-
-            adapter = AntigravityCliAdapter(binary=host, model=model, timeout=timeout)
+        elif provider in {"claude_code", "codex_cli", "agy", "gemini_cli"}:
+            assert local_cls is not None
+            adapter = local_cls(binary=host, model=model, timeout=timeout)
 
         elif provider == "runner_dashboard_staff":
-            from shared.python.ai.adapters.antigravity_cli_adapter import (
-                RunnerDashboardStaffAdapter,
-            )
-
-            adapter = RunnerDashboardStaffAdapter(
-                base_url=host, model=model, timeout=timeout
-            )
-
-        elif provider == "gemini_cli":
-            from shared.python.ai.adapters.gemini_cli_adapter import (
-                GeminiCliAdapter,
-            )
-
-            # `host` reused as explicit binary path override (see claude_code above).
-            adapter = GeminiCliAdapter(binary=host, model=model, timeout=timeout)
+            assert local_cls is not None
+            adapter = local_cls(base_url=host, model=model, timeout=timeout)
 
         else:
             # Historical "codex" alias resolves to OpenAI API.
@@ -300,6 +316,7 @@ class AdapterFactory:
         *,
         prefer_local: bool = True,
         app_context: str = "assistant",
+        opt_in_providers: Collection[str] = (),
     ) -> BaseAgentAdapter | None:
         """Find the best available provider and return its adapter.
 
@@ -309,15 +326,22 @@ class AdapterFactory:
         Args:
             prefer_local: If True, try local providers first.
             app_context: Application context for system prompts.
+            opt_in_providers: Providers with ``ENABLED_BY_DEFAULT=False``
+                explicitly enabled for this lookup.
 
         Returns:
             A connected adapter, or None if no providers available.
         """
         order = _LOCAL_FIRST_ORDER if prefer_local else _CLOUD_FIRST_ORDER
+        opted_in = {p.lower().strip() for p in opt_in_providers}
 
         for provider in order:
             try:
-                adapter = cls._try_create(provider)
+                adapter = (
+                    cls._try_create(provider, opt_in=True)
+                    if provider in opted_in
+                    else cls._try_create(provider)
+                )
                 if adapter is None:
                     continue
 
@@ -339,16 +363,25 @@ class AdapterFactory:
         return None
 
     @classmethod
-    def get_available_providers(cls) -> list[str]:
+    def get_available_providers(
+        cls,
+        *,
+        opt_in_providers: Collection[str] = (),
+    ) -> list[str]:
         """List providers that pass connection validation.
 
         Returns:
             List of available provider names.
         """
         available: list[str] = []
+        opted_in = {p.lower().strip() for p in opt_in_providers}
         for provider in _LOCAL_FIRST_ORDER:
             try:
-                adapter = cls._try_create(provider)
+                adapter = (
+                    cls._try_create(provider, opt_in=True)
+                    if provider in opted_in
+                    else cls._try_create(provider)
+                )
                 if adapter is None:
                     continue
                 success, _ = adapter.validate_connection()
@@ -359,10 +392,12 @@ class AdapterFactory:
         return available
 
     @classmethod
-    def _try_create(cls, provider: str) -> BaseAgentAdapter | None:
+    def _try_create(
+        cls, provider: str, *, opt_in: bool = False
+    ) -> BaseAgentAdapter | None:
         """Try to create an adapter, returning None on failure."""
         try:
-            return cls.create(provider)
+            return cls.create(provider, opt_in=opt_in)
         except (ValueError, ImportError):
             return None
 

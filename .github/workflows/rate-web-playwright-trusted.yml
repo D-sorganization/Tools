@@ -129,10 +129,20 @@ jobs:
         run: |
           set -euo pipefail
           install_playwright_runtime() {
-            while sudo -n fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo -n fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo -n fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do
-              sleep 1
+            local attempt
+            for attempt in 1 2 3; do
+              while sudo -n fuser /var/lib/dpkg/lock >/dev/null 2>&1 || sudo -n fuser /var/lib/dpkg/lock-frontend >/dev/null 2>&1 || sudo -n fuser /var/lib/apt/lists/lock >/dev/null 2>&1 || sudo -n fuser /var/cache/apt/archives/lock >/dev/null 2>&1; do
+                sleep 1
+              done
+              if npx --no-install playwright install --with-deps chromium; then
+                return 0
+              fi
+              if [ "$attempt" -lt 3 ]; then
+                echo "::warning::Playwright runtime install attempt ${attempt}/3 failed; waiting on apt/dpkg locks before retrying."
+                sleep 5
+              fi
             done
-            npx --no-install playwright install --with-deps chromium
+            return 1
           }
           if ! sudo -n true 2>/dev/null; then
             echo "::error::Passwordless sudo is required for Playwright system dependencies."

@@ -1587,6 +1587,58 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#6021 · Harden Stdio MCP Calculator Server Provenance, Timeout/Output Bounds, Read-Only Hints, and Mcp Extras Parity
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6021
+- **Branch:** merged via #6038
+- **PR:** #6038
+- **Paths:** see #6038
+- **Started:** 2026-11-13
+- **Last verified:** 2026-11-13 (`3462749d`; collated from changes/6021-stdio-mcp-calculator-bounds-provenance.md)
+- **Summary:** Harden stdio MCP calculator server provenance, timeout/output bounds, read-only hints, and mcp extras parity
+- **Next step:** Shipped in PR #6038.
+
+### DL-#6022 · Agent API Conformance CI, .mcp.json, AGENTS.md, Surfaces.Mcp, Llms.Txt, and Ud-Tools-Mcp Stdio Server
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6022
+- **Branch:** merged via #6033
+- **PR:** #6033
+- **Paths:** see #6033
+- **Started:** 2026-11-13
+- **Last verified:** 2026-11-13 (`98e196e2`; collated from changes/6022-agent-api-conformance-registration-docs.md)
+- **Summary:** Agent API conformance CI, .mcp.json, AGENTS.md, surfaces.mcp, llms.txt, and ud-tools-mcp stdio server
+- **Next step:** Shipped in PR #6033.
+
+### DL-#6020 · Add CalculatorSpec Registry Wiring All Calc_Backend Routers With OpenAPI Parity Tests
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6020
+- **Branch:** cursor/calculator-spec-registry-f98f
+- **PR:** #6029
+- **Paths:** see #6029
+- **Started:** 2026-11-13
+- **Last verified:** 2026-11-13 (`193c1349`; collated from changes/6020-add-calculatorspec-registry-wiring-all-c.md)
+- **Summary:** Add CalculatorSpec registry wiring all calc_backend routers with OpenAPI parity tests
+- **Next step:** Merge after CI green.
+
+### DL-#6024 · Add UpstreamDrift Tests/Helpers to Cross-Repo Sparse Checkout and Ai_Backend Maturin Doc Truth-Up
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6024
+- **Branch:** cursor/wave0-upstreamdrift-5684-3f74
+- **PR:** #6025
+- **Paths:** see #6025
+- **Started:** 2026-11-11
+- **Last verified:** 2026-11-11 (`7727dd33`; collated from changes/6024-wave0-sparse-helpers.md)
+- **Summary:** Add UpstreamDrift tests/helpers to cross-repo sparse checkout and ai_backend maturin doc truth-up
+- **Next step:** Shipped in PR #6025.
+
 ### DL-#6003 · Add Canonical Lifecycle Contract ADR, Shared.Python.Lifecycle Kernel, and Syngas Water Boolean Type Checks
 
 - **State:** shipped
