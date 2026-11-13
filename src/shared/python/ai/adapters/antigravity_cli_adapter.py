@@ -116,13 +116,9 @@ def probe_runner_dashboard_staff(
         raise ValueError("base_url must be a non-empty string")
     if timeout <= 0:
         raise ValueError("timeout must be positive")
-    req = urllib.request.Request(
-        f"{base_url.rstrip('/')}/api/staff/summary"
-    )  # noqa: S310
+    req = urllib.request.Request(f"{base_url.rstrip('/')}/api/staff/summary")  # noqa: S310
     try:
-        with urllib.request.urlopen(
-            req, timeout=timeout
-        ) as resp:  # noqa: S310 # nosec B310
+        with urllib.request.urlopen(req, timeout=timeout) as resp:  # noqa: S310 # nosec B310
             if getattr(resp, "status", 200) == 200:
                 return True, f"Runner Dashboard Staff available at {base_url}"
             return False, f"Runner Dashboard Staff returned HTTP {resp.status}"
@@ -184,9 +180,7 @@ class RunnerDashboardStaffAdapter(BaseAgentAdapter):
             method="POST",
         )
         try:
-            with urllib.request.urlopen(
-                req, timeout=self.timeout
-            ) as resp:  # noqa: S310 # nosec B310
+            with urllib.request.urlopen(req, timeout=self.timeout) as resp:  # noqa: S310 # nosec B310
                 raw = resp.read().decode("utf-8")
         except TimeoutError as exc:
             raise AITimeoutError(f"Staff timed out after {self.timeout}s") from exc

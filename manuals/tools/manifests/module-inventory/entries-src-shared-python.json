@@ -1204,6 +1204,7 @@
           "tests/test_dry_compliance.py",
           "tests/test_gui_launcher_web.py",
           "tests/test_launch_utils.py",
+          "tests/unit/ai/adapters/test_cli_turn_lifecycle_oracles.py",
           "tests/unit/ai/mcp/test_pool.py",
           "tests/unit/sidekick/test_sidebar_shutdown.py",
           "tests/unit/sidekick/test_terminal_backend.py",
