@@ -527,7 +527,8 @@
         ],
         "test_paths": [
           "tests/unit/ai/adapters/test_antigravity_and_staff_adapter.py",
-          "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py"
+          "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
+          "tests/unit/ai/adapters/test_cli_bridge_and_optin_oracles.py"
         ],
         "unit_mentions": [
           "s"
@@ -593,6 +594,7 @@
           "tests/shared/python/chat/test_ai_memory_manager.py",
           "tests/shared/python/chat/test_ollama_latency_tuning.py",
           "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
+          "tests/unit/ai/adapters/test_cli_bridge_and_optin_oracles.py",
           "tests/unit/ai/test_gemini_adapter.py",
           "tests/unit/chat/test_adapter_capabilities.py"
         ],
@@ -674,10 +676,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 15930,
+      "bytes_lf": 14352,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "bcb418fa516d053fb6de6a5850b140e1f419a12fe8a17335b1f4ef4533c26b52",
+      "content_sha256_lf": "24b7aa64df0d453c5f599d41655f57ef018749a207e6335995f594b31a387256",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLAUDE-CODE-ADAPTER-PY-7E66ECB121E5",
       "language": "python",
@@ -727,11 +729,6 @@
           },
           {
             "kind": "constant",
-            "name": "_ENVELOPE_RE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
             "name": "_FALLBACK_PATHS",
             "signature": null
           },
@@ -739,22 +736,13 @@
             "kind": "constant",
             "name": "_STATIC_MODELS",
             "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_cli_tool_prompt_section",
-            "signature": "tools: Sequence[ToolDeclaration], nonce: str"
-          },
-          {
-            "kind": "function",
-            "name": "parse_cli_tool_envelopes",
-            "signature": "raw_text: str, *, expected_nonce: str, tools: Sequence[ToolDeclaration]"
           }
         ],
         "test_paths": [
           "tests/shared/python/ai/test_claude_code_adapter.py",
           "tests/unit/ai/adapters/test_claude_code_adapter.py",
           "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
+          "tests/unit/ai/adapters/test_cli_bridge_and_optin_oracles.py",
           "tests/unit/ai/adapters/test_cli_subprocess_runner_oracles.py",
           "tests/unit/ai/adapters/test_cli_turn_lifecycle_oracles.py"
         ],
@@ -944,10 +932,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 16870,
+      "bytes_lf": 17152,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "5ba72abdb54e34f86e0bc71cb367eb9a13cbdeeb0e3dc5a28d611c16c04fb670",
+      "content_sha256_lf": "ffcdb1e8007946d559bdc4efe427b39cfb4025a6a5f8792528334514a8eee3ea",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLI-SUBPROCESS-RUNNER-PY-73F30E6F7DA8",
       "language": "python",
@@ -1019,6 +1007,11 @@
             "signature": null
           },
           {
+            "kind": "constant",
+            "name": "_WIN_CMD_UNSAFE_CHARS",
+            "signature": null
+          },
+          {
             "kind": "function",
             "name": "ensure_executable",
             "signature": "binary_path: str"
@@ -1051,11 +1044,91 @@
           "tests/unit/ai/adapters/test_antigravity_and_staff_adapter.py",
           "tests/unit/ai/adapters/test_claude_code_adapter.py",
           "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
+          "tests/unit/ai/adapters/test_cli_bridge_and_optin_oracles.py",
           "tests/unit/ai/adapters/test_cli_subprocess_runner_oracles.py",
           "tests/unit/ai/adapters/test_cli_turn_lifecycle_oracles.py",
           "tests/unit/ai/adapters/test_codex_cli_adapter.py",
           "tests/unit/ai/adapters/test_gemini_cli_adapter.py"
         ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 5665,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "41eaba7cea6ebe3be05247e2ce3bafe8053aee5e8721c0b055fc2ed2831b87ed",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLI-TOOL-BRIDGE-PY-BBB5B5113006",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/adapters/cli_tool_bridge.py",
+      "purpose": "Shared bridge glue connecting CLI adapters to ``sidekick.agent.cli_bridge``.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "_ENVELOPE_RE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "build_cli_tool_prompt_section",
+            "signature": "tools: Sequence[ToolDeclaration | ToolStubSpec], nonce: str, *, fallback_full_schema: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "parse_cli_tool_envelopes",
+            "signature": "raw_text: str, *, expected_nonce: str, tools: Sequence[ToolDeclaration]"
+          },
+          {
+            "kind": "function",
+            "name": "parse_cli_tool_envelopes_with_diagnostics",
+            "signature": "raw_text: str, *, expected_nonce: str, tools: Sequence[ToolDeclaration | ToolStubSpec]"
+          },
+          {
+            "kind": "function",
+            "name": "run_adapter_cli_goal_loop",
+            "signature": "adapter: BaseAgentAdapter, goal_prompt: str, *, tools: Sequence[ToolDeclaration | ToolStubSpec], executor: Callable[[Any], str], max_steps: int=DEFAULT_MAX_GOAL_STEPS, max_repairs: int=MAX_GOAL_REPAIRS, probe_version: bool=False"
+          },
+          {
+            "kind": "function",
+            "name": "tool_declaration_to_stub_spec",
+            "signature": "tool: ToolDeclaration | ToolStubSpec"
+          }
+        ],
+        "test_paths": [],
         "unit_mentions": [
           "s"
         ],
@@ -1180,10 +1253,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11878,
+      "bytes_lf": 12010,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b3ec336c6c8243bcb825641364321d1558a9f49999fdb4a8582c4bdf48a53c7b",
+      "content_sha256_lf": "1daf5fbb46998d03509d86429abd9a9f4a9fc0a970e98428d03f0c02a12eceea",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLINE-ADAPTER-PY-F0F36B57553B",
       "language": "python",
@@ -1256,10 +1329,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13477,
+      "bytes_lf": 14528,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8afdb1e9dcbfeef75989623371bec750406bd9d1318dc80e5d217520a8ec4467",
+      "content_sha256_lf": "e0a1ff519a52576187764e3c8c65f951de1513dd19f809f2058937d35afc19ba",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CODEX-CLI-ADAPTER-PY-7AFE11EBF925",
       "language": "python",
@@ -1319,6 +1392,7 @@
         "test_paths": [
           "tests/shared/python/ai/test_codex_cli_adapter.py",
           "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
+          "tests/unit/ai/adapters/test_cli_bridge_and_optin_oracles.py",
           "tests/unit/ai/adapters/test_cli_subprocess_runner_oracles.py",
           "tests/unit/ai/adapters/test_cli_turn_lifecycle_oracles.py",
           "tests/unit/ai/adapters/test_codex_cli_adapter.py"
@@ -1332,10 +1406,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 14558,
+      "bytes_lf": 15820,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "618c055f2d739d205a73d93c73a3eb277db82635c43a5699e6e9292ab8c2eb6a",
+      "content_sha256_lf": "8f975bca910450475e963a6c19580a6b62fd5eed01e6608b64971f6ae1072c5f",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-FACTORY-PY-DD109CF427F5",
       "language": "python",
@@ -1391,7 +1465,8 @@
           "src/shared/python/ai/tests/test_adapter_factory.py",
           "tests/shared/python/ai/test_adapter_factory.py",
           "tests/shared/python/ai/test_shared_dependency_imports.py",
-          "tests/unit/ai/adapters/test_antigravity_and_staff_adapter.py"
+          "tests/unit/ai/adapters/test_antigravity_and_staff_adapter.py",
+          "tests/unit/ai/adapters/test_cli_bridge_and_optin_oracles.py"
         ],
         "unit_mentions": [
           "g",
@@ -1471,10 +1546,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11702,
+      "bytes_lf": 12753,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "13a72bd3eb12c23759ca450228a17a16962b5009fcc491f310851be2b7119874",
+      "content_sha256_lf": "c713aee5ad0e2b8131e9aa67ef4fc49d571880693cfd3c2d4110550e4b670aad",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-GEMINI-CLI-ADAPTER-PY-68DBE34F3E89",
       "language": "python",
@@ -1533,6 +1608,7 @@
         ],
         "test_paths": [
           "tests/shared/python/ai/test_gemini_cli_adapter.py",
+          "tests/unit/ai/adapters/test_cli_bridge_and_optin_oracles.py",
           "tests/unit/ai/adapters/test_cli_subprocess_runner_oracles.py",
           "tests/unit/ai/adapters/test_cli_turn_lifecycle_oracles.py",
           "tests/unit/ai/adapters/test_gemini_cli_adapter.py"
@@ -10225,6 +10301,7 @@
           "tests/unit/ai/adapters/test_antigravity_and_staff_adapter.py",
           "tests/unit/ai/adapters/test_claude_code_adapter.py",
           "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
+          "tests/unit/ai/adapters/test_cli_bridge_and_optin_oracles.py",
           "tests/unit/ai/adapters/test_cli_subprocess_runner_oracles.py",
           "tests/unit/ai/adapters/test_cli_turn_lifecycle_oracles.py",
           "tests/unit/ai/adapters/test_cline_adapter.py",
