@@ -148,7 +148,7 @@ codemap = [
 ]
 # Optional MCP server for external coding agents (Codex, Claude Code).
 codemap-mcp = [
-    "mcp>=1.0.0",
+    "mcp>=1.2,<2",
 ]
 calc-mcp = [
     "mcp>=1.2,<2",
