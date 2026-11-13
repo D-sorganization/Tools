@@ -30,12 +30,10 @@ Example::
 
 from __future__ import annotations
 
-import json
 import os
-import re
 import secrets
 import shutil
-from collections.abc import Iterator, Mapping, Sequence
+from collections.abc import Callable, Iterator, Sequence
 from pathlib import Path
 from typing import Any
 
@@ -45,6 +43,12 @@ from shared.python.ai.adapters.cli_subprocess_runner import (  # noqa: F401
     invoke_cli_subprocess_for_adapter,
     scrub_cli_subprocess_env,
     terminate_cli_process_group,
+)
+from shared.python.ai.adapters.cli_tool_bridge import (  # noqa: F401
+    build_cli_tool_prompt_section,
+    parse_cli_tool_envelopes,
+    parse_cli_tool_envelopes_with_diagnostics,
+    run_adapter_cli_goal_loop,
 )
 from shared.python.ai.exceptions import (
     AIConnectionError,
@@ -60,6 +64,11 @@ from shared.python.ai.types import (
     ToolCall,
 )
 from shared.python.logging_pkg.logging_config import get_logger
+from shared.python.sidekick.agent.cli_bridge import (
+    DEFAULT_MAX_GOAL_STEPS,
+    CliBridgeGoalOutcome,
+    ToolStubSpec,
+)
 
 logger = get_logger(__name__)
 
@@ -87,77 +96,6 @@ _STATIC_MODELS: tuple[str, ...] = (
     "opus",
     "haiku",
 )
-
-
-_ENVELOPE_RE = re.compile(
-    r'<sidekick_tool_call\s+nonce="([^"]+)"\s*>(.*?)</sidekick_tool_call>',
-    re.DOTALL,
-)
-
-
-def build_cli_tool_prompt_section(tools: Sequence[ToolDeclaration], nonce: str) -> str:
-    """Format compact TypeScript tool stubs bound to per-turn CSPRNG ``nonce``."""
-    if not nonce or not isinstance(nonce, str):
-        raise ValueError("nonce must be a non-empty string")
-    lines: list[str] = []
-    for tool in tools:
-        req = set(tool.required or ())
-        sig = ", ".join(
-            f"{k}{'' if k in req else '?'}:{v.get('type', 'any') if isinstance(v, Mapping) else 'any'}"  # noqa: E501
-            for k, v in (tool.parameters or {}).items()
-        )
-        desc = " ".join((tool.description or "").split())
-        lines.append(f"type {tool.name} = ({sig}) => Result; // {desc}")
-    stubs = "\n".join(lines) if lines else "// No tools registered."
-    return (
-        f"Available host tools:\n{stubs}\nTo invoke a tool, emit ONLY:\n"
-        f'<sidekick_tool_call nonce="{nonce}">'
-        f'{{"action_id":"<tool_name>","params":{{...}},"rationale":"..."}}'
-        f"</sidekick_tool_call>"
-    )
-
-
-def parse_cli_tool_envelopes(
-    raw_text: str, *, expected_nonce: str, tools: Sequence[ToolDeclaration]
-) -> tuple[str, list[ToolCall], int]:
-    """Extract nonce-verified ``ToolCall`` requests from CLI assistant output."""
-    if not expected_nonce:
-        raise ValueError("expected_nonce must be non-empty")
-    allowed = {t.name: t for t in tools}
-    calls: list[ToolCall] = []
-    rejected = 0
-    spans: list[tuple[int, int]] = []
-    for match in _ENVELOPE_RE.finditer(raw_text or ""):
-        found_nonce, raw_json = match.group(1), match.group(2).strip()
-        if not secrets.compare_digest(found_nonce, expected_nonce):
-            rejected += 1
-            continue
-        try:
-            payload = json.loads(raw_json)
-        except json.JSONDecodeError:
-            continue
-        if not isinstance(payload, Mapping):
-            continue
-        action_id = payload.get("action_id") or payload.get("name")
-        params = (
-            payload.get("params")
-            if "params" in payload
-            else payload.get("arguments", {})
-        )
-        if (
-            not isinstance(action_id, str)
-            or action_id not in allowed
-            or not isinstance(params, Mapping)
-        ):
-            continue
-        if set(allowed[action_id].required or ()) - set(params.keys()):
-            continue
-        calls.append(ToolCall.create(name=action_id, arguments=dict(params)))
-        spans.append(match.span())
-    cleaned = raw_text or ""
-    for s, e in reversed(spans):
-        cleaned = (cleaned[:s] + cleaned[e:]).strip()
-    return cleaned.strip(), calls, rejected
 
 
 def _resolve_binary(explicit: str | None = None) -> str | None:
@@ -320,11 +258,15 @@ class ClaudeCodeAdapter(BaseAgentAdapter):
             "stderr": (result.stderr or "")[-500:],
         }
         if tools and nonce is not None:
-            raw_stdout, tool_calls, rejected = parse_cli_tool_envelopes(
-                raw_stdout, expected_nonce=nonce, tools=tools
+            raw_stdout, tool_calls, rejected, envelope_errors = (
+                parse_cli_tool_envelopes_with_diagnostics(
+                    raw_stdout, expected_nonce=nonce, tools=tools
+                )
             )
             meta["turn_nonce"] = nonce
             meta["rejected_tool_nonces"] = rejected
+            meta["tool_envelope_errors"] = list(envelope_errors)
+            meta["tool_envelope_error_count"] = len(envelope_errors)
         return AgentResponse(
             content=raw_stdout,
             tool_calls=tool_calls,
@@ -419,3 +361,24 @@ class ClaudeCodeAdapter(BaseAgentAdapter):
                 parts.append(f"{role}: {content}")
         parts.append(f"User: {message}")
         return "\n\n".join(parts)
+
+    def run_goal_loop(
+        self,
+        goal_prompt: str,
+        *,
+        tools: Sequence[ToolDeclaration | ToolStubSpec],
+        executor: Callable[[Any], str],
+        max_steps: int = DEFAULT_MAX_GOAL_STEPS,
+        max_repairs: int = 1,
+        probe_version: bool = False,
+    ) -> CliBridgeGoalOutcome:
+        """Execute a bounded host-orchestrated tool loop via ``cli_bridge``."""
+        return run_adapter_cli_goal_loop(
+            self,
+            goal_prompt,
+            tools=tools,
+            executor=executor,
+            max_steps=max_steps,
+            max_repairs=max_repairs,
+            probe_version=probe_version,
+        )

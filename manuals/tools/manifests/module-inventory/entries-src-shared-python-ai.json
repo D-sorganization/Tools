@@ -674,10 +674,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 15509,
+      "bytes_lf": 13931,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "187ae6120bedd74392e0c9dc51e008fbdc38349913cc869dcc4799362664e55c",
+      "content_sha256_lf": "a4f03a439d79375a13aa95c80507f517734e27b2bd4fc7feadbe76583db18d72",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLAUDE-CODE-ADAPTER-PY-7E66ECB121E5",
       "language": "python",
@@ -727,11 +727,6 @@
           },
           {
             "kind": "constant",
-            "name": "_ENVELOPE_RE",
-            "signature": null
-          },
-          {
-            "kind": "constant",
             "name": "_FALLBACK_PATHS",
             "signature": null
           },
@@ -739,16 +734,6 @@
             "kind": "constant",
             "name": "_STATIC_MODELS",
             "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "build_cli_tool_prompt_section",
-            "signature": "tools: Sequence[ToolDeclaration], nonce: str"
-          },
-          {
-            "kind": "function",
-            "name": "parse_cli_tool_envelopes",
-            "signature": "raw_text: str, *, expected_nonce: str, tools: Sequence[ToolDeclaration]"
           }
         ],
         "test_paths": [
@@ -847,10 +832,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13267,
+      "bytes_lf": 13549,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e4fdc65bc86108024b2fc51ee65e97d201601e7db70c6c9e2ab50272e3d32704",
+      "content_sha256_lf": "75714f8fb8ffd04146b0c341d80535c5e718c400be0994d3949b84bbf74024f2",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLI-SUBPROCESS-RUNNER-PY-73F30E6F7DA8",
       "language": "python",
@@ -922,6 +907,11 @@
             "signature": null
           },
           {
+            "kind": "constant",
+            "name": "_WIN_CMD_UNSAFE_CHARS",
+            "signature": null
+          },
+          {
             "kind": "function",
             "name": "ensure_executable",
             "signature": "binary_path: str"
@@ -966,10 +956,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11878,
+      "bytes_lf": 12010,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "b3ec336c6c8243bcb825641364321d1558a9f49999fdb4a8582c4bdf48a53c7b",
+      "content_sha256_lf": "1daf5fbb46998d03509d86429abd9a9f4a9fc0a970e98428d03f0c02a12eceea",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLINE-ADAPTER-PY-F0F36B57553B",
       "language": "python",
@@ -1042,10 +1032,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13051,
+      "bytes_lf": 14102,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3125a06e1bce970e27a5cd81947923592d3a6785b2491019e14788df538dd780",
+      "content_sha256_lf": "5f6ae47a91a65006655b373fbcedd5c488d636024ae76b5bb9361804fec5a9c5",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CODEX-CLI-ADAPTER-PY-7AFE11EBF925",
       "language": "python",
@@ -1117,10 +1107,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 14558,
+      "bytes_lf": 15777,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "618c055f2d739d205a73d93c73a3eb277db82635c43a5699e6e9292ab8c2eb6a",
+      "content_sha256_lf": "e2abc872b2d25f65e8524a8e0798ca36aff09a845aea51a634c28f79b880e8a5",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-FACTORY-PY-DD109CF427F5",
       "language": "python",
@@ -1256,10 +1246,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11276,
+      "bytes_lf": 12327,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "786f225633d5a021e30370880d8b29235fc7b55dd6367b5be0b09186a5fc6716",
+      "content_sha256_lf": "038a9584ec4d80445f5b3556a853d785264148087170825daa7d218eeea7d87f",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-GEMINI-CLI-ADAPTER-PY-68DBE34F3E89",
       "language": "python",

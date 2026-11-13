@@ -26,8 +26,11 @@ _VAULT_HANDLE_RE = re.compile(r"\$vault:([A-Za-z0-9_.-]{1,64})")
 _SENSITIVE_ENV_SUFFIXES = ("_API_KEY", "_SECRET", "_TOKEN", "_PASSWORD", "_PRIVATE_KEY")
 _PINNED_CLI_VERSION_PREFIXES: dict[str, tuple[str, ...]] = {
     "claude": ("1.", "2.", "claude-code/"),
+    "claude_code": ("1.", "2.", "claude-code/"),
     "codex": ("0.", "1.", "codex-cli/"),
+    "codex_cli": ("0.", "1.", "codex-cli/"),
     "agy": ("0.", "1.", "2.", "antigravity/"),
+    "gemini_cli": ("0.", "1.", "2.", "gemini-cli/", "antigravity/"),
 }
 
 
@@ -130,7 +133,7 @@ def format_minified_tool_stubs(
             else ""
         )
         desc = " ".join(tool.description.split())
-        lines.append(f"type {tool.name} = ({sig}) =>Result; // {desc}")
+        lines.append(f"type {tool.name} = ({sig}) => Result; // {desc}")
     return "\n".join(lines)
 
 

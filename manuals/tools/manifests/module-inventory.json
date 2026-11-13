@@ -603,7 +603,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
     },
     {
-      "content_sha256_lf": "93540009d184a3c9d11c07d34bfd8c78df52bd87a344c4302a8e331f208a2d60",
+      "content_sha256_lf": "8f430047557a81f4bbd583d4bf898b09eacf4606165f3079450092677cb42fb0",
       "entry_count": 126,
       "package": "src/shared/python/ai",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-ai.json"
@@ -759,7 +759,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick.json"
     },
     {
-      "content_sha256_lf": "0058bf5bae79e421abf2785f36bda5a509209ad726e57aedbdbbb2ffa2ba4794",
+      "content_sha256_lf": "b55890f76ce4efff41c445d40a82ad5e80dc24f614f8d4dcd6e43021ae2390b0",
       "entry_count": 15,
       "package": "src/shared/python/sidekick/agent",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-agent.json"

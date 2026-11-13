@@ -248,6 +248,11 @@ class ClineAdapter(BaseAgentAdapter):
             Tuple of (success, diagnostic_message).
         """
         try:
+            import httpx
+        except ImportError:
+            return False, "httpx not installed"
+
+        try:
             client = self._get_client()
             resp = client.get("/v1/models")
             if resp.status_code == 200:
@@ -255,7 +260,7 @@ class ClineAdapter(BaseAgentAdapter):
             return False, f"Cline returned status {resp.status_code}"
         except AIProviderError:
             return False, "httpx not installed"
-        except (ConnectionError, TimeoutError, OSError) as e:
+        except (ConnectionError, TimeoutError, OSError, httpx.HTTPError) as e:
             return False, f"Cannot connect to Cline at {self._host}: {e}"
 
     def _format_messages(
