@@ -123,10 +123,53 @@ class CliCancelToken:
         return True
 
 
+_POSIX_PARENT_EXIT_WATCHER = (
+    "import os,signal,time\n"
+    "parent=int(os.environ['SIDEKICK_CLI_PARENT_PID'])\n"
+    "pgid=int(os.environ['SIDEKICK_CLI_PGID'])\n"
+    "while True:\n"
+    "    try:\n"
+    "        os.kill(parent, 0)\n"
+    "    except OSError:\n"
+    "        break\n"
+    "    time.sleep(0.05)\n"
+    "with __import__('contextlib').suppress(OSError):\n"
+    "    os.killpg(pgid, signal.SIGKILL)\n"
+)
+
+
 def attach_kill_on_parent_exit(proc: subprocess.Popen[bytes]) -> int | None:
-    """Attach a Windows Job Object with KILL_ON_JOB_CLOSE to ``proc``."""
-    if os.name != "nt":
+    """Attach parent-exit cleanup (Win job object or POSIX process-group watcher)."""
+    if os.name == "nt":
+        return _attach_windows_kill_on_job_close(proc)
+    return _attach_posix_parent_exit_watcher(proc)
+
+
+def _attach_posix_parent_exit_watcher(proc: subprocess.Popen[bytes]) -> int | None:
+    """Spawn a detached watcher that ``killpg`` when the spawning parent dies."""
+    if proc.pid is None or not hasattr(os, "killpg"):
         return None
+    try:
+        pgid = os.getpgid(proc.pid)
+    except OSError:
+        return None
+    watcher = subprocess.Popen(
+        [sys.executable, "-c", _POSIX_PARENT_EXIT_WATCHER],
+        env={
+            **os.environ,
+            "SIDEKICK_CLI_PARENT_PID": str(os.getpid()),
+            "SIDEKICK_CLI_PGID": str(pgid),
+        },
+        stdin=subprocess.DEVNULL,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+        start_new_session=True,
+    )
+    return watcher.pid
+
+
+def _attach_windows_kill_on_job_close(proc: subprocess.Popen[bytes]) -> int | None:
+    """Attach a Windows Job Object with KILL_ON_JOB_CLOSE to ``proc``."""
     proc_handle = getattr(proc, "_handle", None)
     if not proc_handle:
         return None
@@ -191,20 +234,15 @@ def attach_kill_on_parent_exit(proc: subprocess.Popen[bytes]) -> int | None:
 
 
 def close_parent_exit_guard(guard: int | None) -> None:
-    """Close parent-exit Job Object handle after child process termination."""
-    if sys.platform == "win32" and guard:
+    """Release parent-exit guard (Job handle or POSIX watcher PID)."""
+    if guard is None:
+        return
+    if sys.platform == "win32":
         with contextlib.suppress(OSError, AttributeError):
             ctypes.windll.kernel32.CloseHandle(guard)
-
-
-def posix_pdeathsig_preexec() -> Callable[[], None] | None:
-    """Return a Linux ``preexec_fn`` setting PR_SET_PDEATHSIG(SIGTERM)."""
-
-    def _set_pdeathsig() -> None:
-        with contextlib.suppress(Exception):
-            ctypes.CDLL("libc.so.6").prctl(1, signal.SIGTERM, 0, 0, 0)
-
-    return _set_pdeathsig if sys.platform.startswith("linux") else None
+        return
+    with contextlib.suppress(ProcessLookupError, OSError):
+        os.kill(guard, signal.SIGTERM)
 
 
 def classify_cli_nonzero_exit(

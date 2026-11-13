@@ -1587,6 +1587,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#6021 · Harden Stdio MCP Calculator Server Provenance, Timeout/Output Bounds, Read-Only Hints, and Mcp Extras Parity
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6021
+- **Branch:** merged via #6038
+- **PR:** #6038
+- **Paths:** see #6038
+- **Started:** 2026-11-13
+- **Last verified:** 2026-11-13 (`3462749d`; collated from changes/6021-stdio-mcp-calculator-bounds-provenance.md)
+- **Summary:** Harden stdio MCP calculator server provenance, timeout/output bounds, read-only hints, and mcp extras parity
+- **Next step:** Shipped in PR #6038.
+
 ### DL-#6022 · Agent API Conformance CI, .mcp.json, AGENTS.md, Surfaces.Mcp, Llms.Txt, and Ud-Tools-Mcp Stdio Server
 
 - **State:** shipped

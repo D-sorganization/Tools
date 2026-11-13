@@ -932,10 +932,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 17152,
+      "bytes_lf": 17077,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ffcdb1e8007946d559bdc4efe427b39cfb4025a6a5f8792528334514a8eee3ea",
+      "content_sha256_lf": "82434cc60827fbc414627776ce8e0965ab2007b7a527e03e57cc60f186139649",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLI-SUBPROCESS-RUNNER-PY-73F30E6F7DA8",
       "language": "python",
@@ -1137,10 +1137,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11799,
+      "bytes_lf": 12989,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "dc51ae39458824091fd217a4f7abc37589d3f87176f39d03b29d879a9bf6cc65",
+      "content_sha256_lf": "e0295a39cda245a7ba7e6a6d2a1e3ab4d9df9cef527135c83ab47098296de79f",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLI-TURN-LIFECYCLE-PY-1E0901A36778",
       "language": "python",
@@ -1198,6 +1198,11 @@
           },
           {
             "kind": "constant",
+            "name": "_POSIX_PARENT_EXIT_WATCHER",
+            "signature": null
+          },
+          {
+            "kind": "constant",
             "name": "_RATE_RE",
             "signature": null
           },
@@ -1230,11 +1235,6 @@
             "kind": "function",
             "name": "close_parent_exit_guard",
             "signature": "guard: int | None"
-          },
-          {
-            "kind": "function",
-            "name": "posix_pdeathsig_preexec",
-            "signature": ""
           },
           {
             "kind": "function",
