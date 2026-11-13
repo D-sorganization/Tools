@@ -31,6 +31,7 @@ logger = get_logger(__name__)
 DEFAULT_OUTPUT_BYTE_CAP = 512 * 1024
 DEFAULT_GRACE_KILL_SECONDS = 2.0
 _WINDOWS_ARGV_PROMPT_LIMIT = 30_000
+_WIN_CMD_UNSAFE_CHARS = ("\r", "\n", '"', "%", "^", "&", "<", ">", "|")
 _TRUNCATION_MARKER = "[truncated {n} bytes]"
 
 
@@ -222,6 +223,13 @@ def _resolve_prompt_delivery(
     if delivery is not PromptDelivery.AUTO:
         return delivery
     if len(prompt) > _WINDOWS_ARGV_PROMPT_LIMIT:
+        return PromptDelivery.STDIN
+    if (
+        os.name == "nt"
+        and argv
+        and argv[0].lower().endswith((".cmd", ".bat"))
+        and any(ch in prompt for ch in _WIN_CMD_UNSAFE_CHARS)
+    ):
         return PromptDelivery.STDIN
     argv_style = "-p" in argv or "exec" in argv
     return PromptDelivery.ARGV if argv_style else PromptDelivery.STDIN

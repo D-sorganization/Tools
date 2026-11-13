@@ -35,18 +35,19 @@ from __future__ import annotations
 import os
 import secrets
 import shutil
-from collections.abc import Iterator, Sequence
+from collections.abc import Callable, Iterator, Sequence
 from pathlib import Path
 from typing import Any
 
 from shared.python.ai.adapters.base import BaseAgentAdapter, ToolDeclaration
-from shared.python.ai.adapters.claude_code_adapter import (
-    build_cli_tool_prompt_section,
-    parse_cli_tool_envelopes,
-)
 from shared.python.ai.adapters.cli_subprocess_runner import (
     PromptDelivery,
     invoke_cli_subprocess_for_adapter,
+)
+from shared.python.ai.adapters.cli_tool_bridge import (
+    build_cli_tool_prompt_section,
+    parse_cli_tool_envelopes_with_diagnostics,
+    run_adapter_cli_goal_loop,
 )
 from shared.python.ai.adapters.cli_turn_lifecycle import (
     CliCancelToken,
@@ -66,6 +67,11 @@ from shared.python.ai.types import (
 )
 from shared.python.lifecycle import LifecycleSnapshot
 from shared.python.logging_pkg.logging_config import get_logger
+from shared.python.sidekick.agent.cli_bridge import (
+    DEFAULT_MAX_GOAL_STEPS,
+    CliBridgeGoalOutcome,
+    ToolStubSpec,
+)
 
 logger = get_logger(__name__)
 
@@ -249,11 +255,15 @@ class CodexCliAdapter(BaseAgentAdapter):
             "stderr": (result.stderr or "")[-500:],
         }
         if tools and nonce is not None:
-            cleaned_stdout, tool_calls, rejected = parse_cli_tool_envelopes(
-                cleaned_stdout, expected_nonce=nonce, tools=tools
+            cleaned_stdout, tool_calls, rejected, envelope_errors = (
+                parse_cli_tool_envelopes_with_diagnostics(
+                    cleaned_stdout, expected_nonce=nonce, tools=tools
+                )
             )
             meta["turn_nonce"] = nonce
             meta["rejected_tool_nonces"] = rejected
+            meta["tool_envelope_errors"] = list(envelope_errors)
+            meta["tool_envelope_error_count"] = len(envelope_errors)
         return AgentResponse(
             content=cleaned_stdout,
             tool_calls=tool_calls,
@@ -362,3 +372,24 @@ class CodexCliAdapter(BaseAgentAdapter):
                 continue
             break
         return "\n".join(lines[first_real:]).strip()
+
+    def run_goal_loop(
+        self,
+        goal_prompt: str,
+        *,
+        tools: Sequence[ToolDeclaration | ToolStubSpec],
+        executor: Callable[[Any], str],
+        max_steps: int = DEFAULT_MAX_GOAL_STEPS,
+        max_repairs: int = 1,
+        probe_version: bool = False,
+    ) -> CliBridgeGoalOutcome:
+        """Execute a bounded host-orchestrated tool loop via ``cli_bridge``."""
+        return run_adapter_cli_goal_loop(
+            self,
+            goal_prompt,
+            tools=tools,
+            executor=executor,
+            max_steps=max_steps,
+            max_repairs=max_repairs,
+            probe_version=probe_version,
+        )

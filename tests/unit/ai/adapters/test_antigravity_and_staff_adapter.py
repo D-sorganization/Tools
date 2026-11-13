@@ -93,11 +93,16 @@ def test_antigravity_cli_adapter_send_and_errors(tmp_path: Path) -> None:
 
 def test_runner_dashboard_staff_adapter_and_factory() -> None:
     AdapterFactory.clear_cache()
+    with pytest.raises(ValueError, match="opt_in=True"):
+        AdapterFactory.create("agy", host="/usr/bin/agy")
+    with pytest.raises(ValueError, match="opt_in=True"):
+        AdapterFactory.create("runner_dashboard_staff", host="http://127.0.0.1:8321")
     assert isinstance(
-        AdapterFactory.create("agy", host="/usr/bin/agy"), AntigravityCliAdapter
+        AdapterFactory.create("agy", host="/usr/bin/agy", opt_in=True),
+        AntigravityCliAdapter,
     )
     staff = AdapterFactory.create(
-        "runner_dashboard_staff", host="http://127.0.0.1:8321"
+        "runner_dashboard_staff", host="http://127.0.0.1:8321", opt_in=True
     )
     assert isinstance(staff, RunnerDashboardStaffAdapter)
     assert staff.ENABLED_BY_DEFAULT is False
