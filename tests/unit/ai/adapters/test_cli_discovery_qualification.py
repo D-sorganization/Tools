@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import os
 import stat
+import sys
 from pathlib import Path
 
 import pytest
@@ -25,11 +26,14 @@ def _create_fake_cli_script(tmp_path: Path, name: str, script_body: str) -> str:
     py_path.write_text(script_body, encoding="utf-8")
     if os.name == "nt":
         cmd_path = tmp_path / f"{name}.cmd"
-        cmd_path.write_text(f'@echo off\npython "{py_path}" %*\n', encoding="utf-8")
+        cmd_path.write_text(
+            f'@echo off\n"{sys.executable}" "{py_path}" %*\n', encoding="utf-8"
+        )
         return str(cmd_path)
     sh_path = tmp_path / name
     sh_path.write_text(
-        f'#!/usr/bin/env sh\nexec python "{py_path}" "$@"\n', encoding="utf-8"
+        f'#!/usr/bin/env sh\nexec "{sys.executable}" "{py_path}" "$@"\n',
+        encoding="utf-8",
     )
     sh_path.chmod(sh_path.stat().st_mode | stat.S_IXUSR | stat.S_IXGRP | stat.S_IXOTH)
     return str(sh_path)
@@ -74,6 +78,56 @@ def test_probe_valid_cli_verifies_version_and_required_flags(tmp_path: Path) -> 
     assert result.resolved_path == exe
     assert "agy 2.4.1" in (result.version_output or "")
     assert result.missing_flags == ()
+
+
+def test_probe_failing_version_probe_sets_probe_ok_false(tmp_path: Path) -> None:
+    """Nonzero --version exit fails discovery with probe_ok and flags_accepted false."""
+    exe = _create_fake_cli_script(
+        tmp_path,
+        "codex",
+        (
+            "import sys\n"
+            "if '--version' in sys.argv[1:]:\n"
+            "    sys.stderr.write('broken\\n')\n"
+            "    sys.exit(17)\n"
+            "print('Usage: codex exec -p')\n"
+        ),
+    )
+    result = probe_cli_provider_discovery(
+        provider="codex_cli",
+        binary_path=exe,
+        required_help_flags=("exec",),
+    )
+    assert not result.probe_ok
+    assert not result.flags_accepted
+    assert result.resolved_path == exe
+    assert "17" in result.detail or "version" in result.detail.lower()
+
+
+def test_probe_failing_help_probe_sets_probe_ok_false(tmp_path: Path) -> None:
+    """Fake CLI exiting nonzero on --help fails discovery even when --version ok."""
+    exe = _create_fake_cli_script(
+        tmp_path,
+        "claude",
+        (
+            "import sys\n"
+            "args = sys.argv[1:]\n"
+            "if '--version' in args:\n"
+            "    print('claude 1.0.0')\n"
+            "elif '--help' in args:\n"
+            "    sys.exit(2)\n"
+        ),
+    )
+    result = probe_cli_provider_discovery(
+        provider="claude_code",
+        binary_path=exe,
+        required_help_flags=("-p",),
+    )
+    assert not result.probe_ok
+    assert not result.flags_accepted
+    assert result.resolved_path == exe
+    assert "claude 1.0.0" in (result.version_output or "")
+    assert "2" in result.detail or "help" in result.detail.lower()
 
 
 def test_probe_detects_unsupported_required_flags(tmp_path: Path) -> None:
@@ -172,5 +226,9 @@ def test_tier2_installed_cli_discovery_no_model_call() -> None:
         )
         assert isinstance(result, CliDiscoveryProbeResult)
         assert result.resolved_path == found
+        assert result.probe_ok, f"{spec.provider} failed discovery: {result.detail}"
+        assert result.flags_accepted, (
+            f"{spec.provider} missing flags: {result.missing_flags}"
+        )
     if checked == 0:
         pytest.skip("No live subscription CLI binaries on PATH in this environment")
