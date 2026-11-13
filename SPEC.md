@@ -5947,6 +5947,9 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-13 | #6046 | Stabilize CLI subprocess timeout tree-kill oracle and Windows test portability |
+| 2026-11-13 | #6044 | Harden Rate Web Playwright Trusted apt/dpkg lock waiting and retry on transient contention |
+| 2026-11-13 | #6042 | Wire CLI adapters to sidekick cli_bridge and enforce ENABLED_BY_DEFAULT opt-in (Wave 2.3) |
 | 2026-11-13 | #6038 | Harden stdio MCP calculator server provenance, timeout/output bounds, read-only hints, and mcp extras parity |
 | 2026-11-13 | #6033 | Agent API conformance CI, .mcp.json, AGENTS.md, surfaces.mcp, llms.txt, and ud-tools-mcp stdio server |
 | 2026-11-13 | #6029 | Add CalculatorSpec registry wiring all calc_backend routers with OpenAPI parity tests |
