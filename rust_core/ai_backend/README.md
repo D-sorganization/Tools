@@ -58,7 +58,7 @@ export ORT_DYLIB_PATH=/path/to/onnxruntime-osx-arm64-1.18.1/lib/libonnxruntime.d
 python -m src.shared.python.ai._onnx_preflight
 ```
 
-## Why `ort = "=2.0.0-rc.10"` is pinned
+## Why `ort = "=2.0.0-rc.14"` is pinned
 
 `ort` 2.x is still in release-candidate with a moving API surface. We also
 compile with `features = ["load-dynamic"]` to avoid the build-time
