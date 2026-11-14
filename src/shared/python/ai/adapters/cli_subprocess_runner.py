@@ -62,7 +62,7 @@ class CliSubprocessTimeoutError(subprocess.TimeoutExpired):
 def scrub_cli_subprocess_env(env: Mapping[str, str] | None = None) -> dict[str, str]:
     """Return a copy of ``env`` stripped of vault secrets and raw credential tokens."""
     source = os.environ if env is None else env
-    sensitive_suffixes = ("_SECRET", "_PASSWORD", "_PRIVATE_KEY", "_TOKEN")
+    sensitive_suffixes = ("_API_KEY", "_SECRET", "_PASSWORD", "_PRIVATE_KEY", "_TOKEN")
     return {
         key: value
         for key, value in source.items()

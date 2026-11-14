@@ -484,6 +484,7 @@
         ],
         "test_paths": [
           "tests/shared/python/file_watcher/test_file_watcher.py",
+          "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
           "tests/unit/codemap/test_codemap_watcher.py"
         ],
         "unit_mentions": [

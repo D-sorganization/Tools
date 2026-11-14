@@ -836,10 +836,106 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 17077,
+      "bytes_lf": 8891,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "82434cc60827fbc414627776ce8e0965ab2007b7a527e03e57cc60f186139649",
+      "content_sha256_lf": "bba4f6e14d6a29f35d6a92a01e5f7001dd4afd82316fc11e26ea70ca92e1b518",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLI-QUALIFICATION-PY-00ED9615FCE7",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/adapters/cli_qualification.py",
+      "purpose": "Tier-2 CLI discovery probe and Tier-3 subscription qualification checks (#5727).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "CliDiscoveryProbeResult",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CliDiscoverySpec",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "CliQualificationRecord",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_CLI_DISCOVERY_SPECS",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "DEFAULT_DISCOVERY_TIMEOUT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "FORBIDDEN_API_KEY_ENV_VARS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "detect_forbidden_api_key_env",
+            "signature": "env: Mapping[str, str] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "probe_cli_provider_discovery",
+            "signature": "provider: str, binary_path: str, required_help_flags: tuple[str, ...]=(), *, env: Mapping[str, str] | None=None, timeout: float=DEFAULT_DISCOVERY_TIMEOUT"
+          },
+          {
+            "kind": "function",
+            "name": "validate_qualification_record",
+            "signature": "record: CliQualificationRecord, *, env: Mapping[str, str] | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/ai/adapters/test_cli_discovery_qualification.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 17089,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "8298cab2ba822eafa83f6831469e14e2f985e22485589d8c93898f74dcb4dfd3",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLI-SUBPROCESS-RUNNER-PY-73F30E6F7DA8",
       "language": "python",
@@ -1041,10 +1137,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12989,
+      "bytes_lf": 13109,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e0295a39cda245a7ba7e6a6d2a1e3ab4d9df9cef527135c83ab47098296de79f",
+      "content_sha256_lf": "d3a752ce391a2e25de3185566de5ca3f5998ab7647a25b5c1b76368ba5fb8ec6",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLI-TURN-LIFECYCLE-PY-1E0901A36778",
       "language": "python",
@@ -1147,6 +1243,7 @@
           }
         ],
         "test_paths": [
+          "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
           "tests/unit/ai/adapters/test_cli_turn_lifecycle_oracles.py"
         ],
         "unit_mentions": [

@@ -129,7 +129,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
     },
     {
-      "content_sha256_lf": "7047ac4c446238e85022d33e64688d2ff2e9728df2779efe09c9c99aada35f68",
+      "content_sha256_lf": "b3998fce6e68cb7e85affbd967777a50a50b7d9ab31af1bf6bbf990e4b9a5d43",
       "entry_count": 5,
       "package": "rust_core/file_watcher",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
@@ -603,8 +603,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
     },
     {
-      "content_sha256_lf": "b607730cd9fb13746458274b86a4c103ef3087030b7e3179f53618cdf23ae063",
-      "entry_count": 128,
+      "content_sha256_lf": "2f8b8a0966992e48e0861eade0d8d5ff9915c0af1c8c24922445609adfb03783",
+      "entry_count": 129,
       "package": "src/shared/python/ai",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-ai.json"
     },
