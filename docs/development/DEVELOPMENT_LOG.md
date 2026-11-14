@@ -2581,10 +2581,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #5727
 - **Branch:** merged via #5785
-- **PR:** #5785, #6042, #6039
+- **PR:** #5785, #6042, #6039, #6043
 - **Paths:** see #5785
 - **Started:** 2026-10-25
-- **Last verified:** 2026-11-13 (`bebb338f`; collated from changes/5727-cli-cancel-idle-outcomes.md)
+- **Last verified:** 2026-11-14 (`ca360881`; collated from changes/5727-cli-discovery-qualification.md)
 - **Summary:** Wire Antigravity (agy) CLI adapter to nonce-bound tool bridge and add AgenticAppHost protocol.
 - **Next step:** Shipped in PR #5785.
 
