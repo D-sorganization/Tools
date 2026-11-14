@@ -932,10 +932,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 17077,
+      "bytes_lf": 17089,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "82434cc60827fbc414627776ce8e0965ab2007b7a527e03e57cc60f186139649",
+      "content_sha256_lf": "8298cab2ba822eafa83f6831469e14e2f985e22485589d8c93898f74dcb4dfd3",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLI-SUBPROCESS-RUNNER-PY-73F30E6F7DA8",
       "language": "python",
@@ -1137,10 +1137,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12989,
+      "bytes_lf": 13109,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e0295a39cda245a7ba7e6a6d2a1e3ab4d9df9cef527135c83ab47098296de79f",
+      "content_sha256_lf": "d3a752ce391a2e25de3185566de5ca3f5998ab7647a25b5c1b76368ba5fb8ec6",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLI-TURN-LIFECYCLE-PY-1E0901A36778",
       "language": "python",
@@ -1243,6 +1243,7 @@
           }
         ],
         "test_paths": [
+          "tests/unit/ai/adapters/test_cli_adapters_tool_bridge.py",
           "tests/unit/ai/adapters/test_cli_turn_lifecycle_oracles.py"
         ],
         "unit_mentions": [
