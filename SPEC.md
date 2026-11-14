@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-13 | #6039 | Add CLI turn cancellation, incremental idle timeout, parent-death reaper, and typed lifecycle outcomes (Wave 2.2) |
 | 2026-11-13 | #6046 | Stabilize CLI subprocess timeout tree-kill oracle and Windows test portability |
 | 2026-11-13 | #6044 | Harden Rate Web Playwright Trusted apt/dpkg lock waiting and retry on transient contention |
 | 2026-11-13 | #6042 | Wire CLI adapters to sidekick cli_bridge and enforce ENABLED_BY_DEFAULT opt-in (Wave 2.3) |
