@@ -40,7 +40,6 @@ ROOT_ALLOWLIST: frozenset[str] = frozenset(
         ".dockerignore",
         ".editorconfig",
         ".env.example",
-        ".gaai",  # GAAI agent knowledge base (tracked docs)
         ".gitattributes",
         ".github",
         ".gitignore",
@@ -116,7 +115,6 @@ ROOT_ALLOWLIST: frozenset[str] = frozenset(
         "setup_dev.py",
         "shared_scripts",  # fleet_hooks.py shared with downstream repos
         "src",
-        "start-gaai-daemon.sh",
         "tests",
         "tool_surface_contract.json",
         "tools.json",  # generated tool registry (scripts/generate_tools_json.py)

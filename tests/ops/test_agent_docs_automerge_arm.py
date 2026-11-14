@@ -14,7 +14,6 @@ _AGENT_DOC_ROOTS: tuple[Path, ...] = (
     _REPO_ROOT / "AGENTS.md",
     _REPO_ROOT / "CLAUDE.md",
     _REPO_ROOT / "CONTRIBUTING.md",
-    _REPO_ROOT / ".gaai" / "core" / "contexts" / "rules" / "orchestration.rules.md",
     _REPO_ROOT / "docs" / "ci-cd" / "AUTO_ISSUE_RESOLVER.md",
 )
 

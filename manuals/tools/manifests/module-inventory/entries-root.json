@@ -904,51 +904,6 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5071,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4c95047ae629557606c912e64860db256332e0034528256edf53a7baf6424499",
-      "family": "shared-tools-non-calculation",
-      "id": "TOOLS-MODULE-START-GAAI-DAEMON-SH-CD0EC4600C2A",
-      "language": "shell",
-      "maintainer": "Tools module maintainers",
-      "path": "start-gaai-daemon.sh",
-      "purpose": null,
-      "review_status": "inventory-baseline",
-      "risk_tags": [],
-      "states": {
-        "adrs": "unavailable",
-        "artifacts": "not-applicable",
-        "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
-        "public_surfaces": "unavailable",
-        "publication": "blocked",
-        "routes": "not-applicable",
-        "tests": "mapped",
-        "units": "mapped",
-        "validation": "not-applicable"
-      },
-      "traceability": {
-        "adr_paths": [],
-        "artifact_sha256": [],
-        "chapter_paths": [],
-        "citation_refs": [],
-        "equation_refs": [],
-        "public_routes": [],
-        "public_surfaces": [],
-        "test_paths": [
-          "tests/scripts/test_start_gaai_daemon.py"
-        ],
-        "unit_mentions": [
-          "g",
-          "s"
-        ],
-        "validation_paths": []
-      }
-    },
-    {
-      "authority_status": "not-applicable",
       "bytes_lf": 5009,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",

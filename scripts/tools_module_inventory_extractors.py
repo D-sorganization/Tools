@@ -49,7 +49,6 @@ CODE_SUFFIXES = frozenset(LANGUAGES) - CONFIG_SUFFIXES
 EXCLUDED_PARTS = frozenset(
     {
         ".agents",
-        ".gaai",
         ".github",
         ".venv",
         "archive",

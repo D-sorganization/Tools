@@ -37,7 +37,6 @@ EXCLUDE_PREFIXES: tuple[str, ...] = (
     "docs/assessments/",
     "docs/changelog_archive/",
     "docs/agent_handoff_archive/",
-    ".gaai/",
 )
 
 # Files that intentionally mention patterns in negative tests or guard docs.

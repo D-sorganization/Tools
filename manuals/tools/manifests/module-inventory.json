@@ -22,7 +22,6 @@
     "discovery": "tracked-implementation-and-governed-configuration-modules",
     "exclusions": [
       ".agents",
-      ".gaai",
       ".github",
       ".venv",
       "archive",
@@ -111,13 +110,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "d57f817543e76a04447a630898582e220458d09e39d68490d0c3cf8846441e44",
-      "entry_count": 14,
+      "content_sha256_lf": "ceb43dd2c200f12627c276b1655dad09b58290a3dba400aedd94a108ed19cf2f",
+      "entry_count": 13,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "bc1f01ac64a3b8fd98ab3c2abcf166f86f646b7c8694c3238bef3d29e348e482",
+      "content_sha256_lf": "8d060991c5437d2ed0827fe99781285601a32a59f89ad69e3fdec48c08c9ae32",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
@@ -159,7 +158,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "7e0b814efaf49e7da815e033fb1f3eabef955bb2113270afcb4c2c667e44356f",
+      "content_sha256_lf": "2e566bf435aeb0f4bdb5228d73b0c2ad98d83d089d2b6737a0caf8c9ec375716",
       "entry_count": 124,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
@@ -597,7 +596,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "5369e004388356b4949c4504eae4bd16e2416ee1b15d37f191f55977790161f0",
+      "content_sha256_lf": "80dd0a55e9b9ca5dfc89842a874cb0f2ff4f09be458c639f39ce20a80659190e",
       "entry_count": 10,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
