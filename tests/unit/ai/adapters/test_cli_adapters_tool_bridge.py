@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import os
 from unittest.mock import patch
 
 import pytest
@@ -104,6 +105,51 @@ def test_codex_rejects_forged_nonce_and_strips_telemetry() -> None:
     assert resp.finish_reason == "stop"
     assert resp.metadata["rejected_tool_nonces"] == 1
     assert "Refused forged tool call." in resp.content
+
+
+@pytest.mark.skipif(os.name == "nt", reason="POSIX parent-exit watcher only")
+def test_posix_parent_exit_watcher_inherits_scrubbed_cli_env(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """POSIX watcher subprocess must not inherit raw ``os.environ`` secrets."""
+    from unittest.mock import MagicMock, patch
+
+    from shared.python.ai.adapters.cli_turn_lifecycle import attach_kill_on_parent_exit
+
+    # pragma: allowlist next secret
+    monkeypatch.setenv("GITHUB_TOKEN", "ghp_sentinel_must_not_leak")
+    # pragma: allowlist next secret
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-sentinel-must-not-inherit")
+    monkeypatch.setenv("PATH", "/usr/bin/scrub-allowlisted")
+
+    captured_env: dict[str, str] = {}
+
+    def _recording_popen(*_args: object, **kwargs: object) -> MagicMock:
+        env = kwargs.get("env")
+        assert isinstance(env, dict)
+        captured_env.update(env)
+        mock = MagicMock()
+        mock.pid = 424242
+        return mock
+
+    cli_proc = MagicMock()
+    cli_proc.pid = os.getpid()
+
+    with patch(
+        "shared.python.ai.adapters.cli_turn_lifecycle.subprocess.Popen",
+        side_effect=_recording_popen,
+    ):
+        attach_kill_on_parent_exit(cli_proc)
+
+    assert "GITHUB_TOKEN" not in captured_env
+    assert "ANTHROPIC_API_KEY" not in captured_env
+    assert captured_env.get("PATH") == "/usr/bin/scrub-allowlisted"
+    assert captured_env.get("SIDEKICK_CLI_PARENT_PID") == str(os.getpid())
+    assert "SIDEKICK_CLI_PGID" in captured_env
+    for key, value in captured_env.items():
+        if key.startswith("SIDEKICK_CLI_"):
+            continue
+        assert scrub_cli_subprocess_env().get(key) == value
 
 
 def test_scrub_env_and_process_group_termination() -> None:

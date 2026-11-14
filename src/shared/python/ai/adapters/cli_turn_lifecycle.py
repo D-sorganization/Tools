@@ -153,13 +153,16 @@ def _attach_posix_parent_exit_watcher(proc: subprocess.Popen[bytes]) -> int | No
         pgid = os.getpgid(proc.pid)
     except OSError:
         return None
+    from shared.python.ai.adapters.cli_subprocess_runner import scrub_cli_subprocess_env
+
+    watcher_env = {
+        **scrub_cli_subprocess_env(),
+        "SIDEKICK_CLI_PARENT_PID": str(os.getpid()),
+        "SIDEKICK_CLI_PGID": str(pgid),
+    }
     watcher = subprocess.Popen(
         [sys.executable, "-c", _POSIX_PARENT_EXIT_WATCHER],
-        env={
-            **os.environ,
-            "SIDEKICK_CLI_PARENT_PID": str(os.getpid()),
-            "SIDEKICK_CLI_PGID": str(pgid),
-        },
+        env=watcher_env,
         stdin=subprocess.DEVNULL,
         stdout=subprocess.DEVNULL,
         stderr=subprocess.DEVNULL,
