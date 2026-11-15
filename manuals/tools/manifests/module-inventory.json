@@ -123,7 +123,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
     },
     {
-      "content_sha256_lf": "b09213111b7ca28399a71d60a65ab2798e07c37e5adfcc4c930db4815b2e7df6",
+      "content_sha256_lf": "2423766b85757052de8fa9f35df07442f68ee5f93dc7fe6e00e356c48f09b99e",
       "entry_count": 5,
       "package": "rust_core/data-processor-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
@@ -159,8 +159,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-schemas.json"
     },
     {
-      "content_sha256_lf": "7e0b814efaf49e7da815e033fb1f3eabef955bb2113270afcb4c2c667e44356f",
-      "entry_count": 124,
+      "content_sha256_lf": "c6c054492716823d18d4f91f59381bf75d10066b67ceeb063c948dcbb16380c7",
+      "entry_count": 125,
       "package": "scripts",
       "path": "manuals/tools/manifests/module-inventory/entries-scripts.json"
     },
@@ -603,7 +603,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
     },
     {
-      "content_sha256_lf": "88993e6be9d223b608b48068fba864a6422e2b72f5b7374065f782a89945cd65",
+      "content_sha256_lf": "aa1240fbe1a019f67339576e0fe15e249b8437e2aecb4ed0621d076714cac455",
       "entry_count": 129,
       "package": "src/shared/python/ai",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-ai.json"
