@@ -9,6 +9,7 @@ from typing import Any
 
 from .agent_api import (
     CONTRACT_VERSION,
+    build_provenance,
     build_result,
     parse_inputs,
     serialize_outputs,
@@ -89,7 +90,7 @@ def _run_calculator(
                     "example": "flow-rate",
                 }
             ],
-            "provenance": {"contract_version": CONTRACT_VERSION},
+            "provenance": build_provenance(),
         }
     spec = entry.spec
     try:
@@ -101,7 +102,9 @@ def _run_calculator(
             return {
                 "status": "FAILED",
                 "errors": validation_problems(exc),
-                "provenance": {"contract_version": CONTRACT_VERSION},
+                "provenance": build_provenance(
+                    calculator_id=calculator_id, formula_ids=spec.formula_ids
+                ),
             }
         raise
     from concurrent.futures import ThreadPoolExecutor
@@ -130,7 +133,9 @@ def _run_calculator(
                     ),
                 }
             ],
-            "provenance": {"contract_version": CONTRACT_VERSION},
+            "provenance": build_provenance(
+                calculator_id=calculator_id, formula_ids=spec.formula_ids
+            ),
         }
     except Exception as exc:
         logger.exception("calculator %s failed", calculator_id)
@@ -146,7 +151,9 @@ def _run_calculator(
                     ],
                 }
             ],
-            "provenance": {"contract_version": CONTRACT_VERSION},
+            "provenance": build_provenance(
+                calculator_id=calculator_id, formula_ids=spec.formula_ids
+            ),
         }
     finally:
         pool.shutdown(wait=not timed_out, cancel_futures=timed_out)
@@ -164,7 +171,9 @@ def _run_calculator(
         return {
             "status": LifecycleStatus.FAILED.name,
             "errors": [{"field": "outputs", "message": str(exc)}],
-            "provenance": {"contract_version": CONTRACT_VERSION},
+            "provenance": build_provenance(
+                calculator_id=calculator_id, formula_ids=spec.formula_ids
+            ),
         }
 
 
