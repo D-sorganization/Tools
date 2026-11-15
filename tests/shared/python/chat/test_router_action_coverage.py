@@ -15,6 +15,7 @@ not yet handle can be listed in ``KNOWN_UNHANDLED`` with a tracking issue.
 from __future__ import annotations
 
 import ast
+import re
 from pathlib import Path
 
 import pytest
@@ -33,8 +34,8 @@ PROTOCOL = CHAT_DIR / "websocket_protocol.py"
 # Actions that senders emit but the router intentionally does not handle
 # yet.  Each entry must reference a tracking issue.
 KNOWN_UNHANDLED: dict[str, str] = {
-    # file_upload: tracked separately (not part of #2751 scope)
-    "file_upload": "tracked separately",
+    # file_upload: server handler lands in #5727 wave 3.3 (honest chip is wave 3.2).
+    "file_upload": "#5727",
 }
 
 
@@ -116,6 +117,22 @@ def test_every_sent_action_has_router_branch() -> None:
         "the shared protocol/router has no matching branch or handler. "
         "Either add a handler or list the action in "
         f"KNOWN_UNHANDLED with a tracking issue."
+    )
+
+
+_ISSUE_REF = re.compile(r"#\d+")
+
+
+def test_known_unhandled_entries_cite_tracking_issues() -> None:
+    """Every deferred router action must name an open tracking issue (#5727)."""
+    invalid = {
+        action: ref
+        for action, ref in KNOWN_UNHANDLED.items()
+        if not _ISSUE_REF.search(ref)
+    }
+    assert not invalid, (
+        "KNOWN_UNHANDLED values must include a GitHub issue reference "
+        f"(e.g. '#5727'). Invalid: {invalid}"
     )
 
 
