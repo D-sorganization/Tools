@@ -14,6 +14,7 @@ HOSTED_WORKFLOW_FILES = frozenset(
         "anti-phantom-merge.yml",
         "full-suite-nightly.yml",
         "nightly-full-repo-quality.yml",
+        "topology-governance.yml",
     }
 )
 

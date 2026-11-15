@@ -63,6 +63,7 @@ jobs:
               "workflow-lint.yml",
               "Merge-Hold-Guard.yml",
               "detect-secrets.yml",
+              "topology-governance.yml",
               "anti-phantom-merge.yml",
               # GitHub-hosted nightly lanes (public repo; #5700, #5703).
               "full-suite-nightly.yml",

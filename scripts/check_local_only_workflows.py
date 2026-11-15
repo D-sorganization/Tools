@@ -37,6 +37,7 @@ LEGACY_HOSTED_RUNNER_ALLOWLIST = {
     ".github/workflows/workflow-lint.yml",
     ".github/workflows/Merge-Hold-Guard.yml",
     ".github/workflows/detect-secrets.yml",
+    ".github/workflows/topology-governance.yml",
 }
 HOSTED_RUNNER_ALLOWLIST = {
     (".github/workflows/anti-phantom-merge.yml", "guard"),
