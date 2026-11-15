@@ -11,6 +11,7 @@ Run with:
 
 import os
 import pathlib
+import re
 import shutil
 import subprocess
 from typing import Any, cast
@@ -23,6 +24,20 @@ REPO_ROOT = pathlib.Path(__file__).parent.parent.parent.parent
 WORKFLOW = REPO_ROOT / ".github" / "workflows" / "maturin-ai-backend.yml"
 PYTHON_VERSIONS = ["3.10", "3.11", "3.12", "3.13"]
 LINUX_QUALIFY_JOB = "linux-wheel-qualify"
+ORT_CARGO_TOML = REPO_ROOT / "rust_core" / "ai_backend" / "Cargo.toml"
+
+
+def _pinned_ort_versions_from_cargo() -> tuple[str, str]:
+    """Return exact `ort` and `ort-sys` version pins from the crate manifest."""
+    cargo_text = ORT_CARGO_TOML.read_text(encoding="utf-8")
+    ort_match = re.search(r'^ort = \{ version = "(=.+?)"', cargo_text, re.MULTILINE)
+    ort_sys_match = re.search(
+        r'^ort-sys = \{ version = "(=.+?)"', cargo_text, re.MULTILINE
+    )
+    assert ort_match and ort_sys_match, (
+        "rust_core/ai_backend/Cargo.toml must pin ort and ort-sys versions"
+    )
+    return ort_match.group(1), ort_sys_match.group(1)
 
 
 def _workflow() -> dict[str, Any]:
@@ -270,6 +285,37 @@ def test_adapter_gate_remains_independent_and_manual_feature_build_is_unchanged(
     assert (
         "local-embeddings" in _step(optional, "Build wheel (local-embeddings)")["run"]
     )
+
+
+@pytest.mark.unit
+def test_oracle5_import_chain_avoids_stdlib_strenum() -> None:
+    """Oracle 5 loads adapters.__init__ and lifecycle before rust_adapter on 3.10."""
+    chain = (
+        "src/shared/python/ai/adapters/cli_subprocess_runner.py",
+        "src/shared/python/lifecycle.py",
+        "src/shared/python/sidekick/agent/cli_bridge.py",
+    )
+    for rel in chain:
+        text = (REPO_ROOT / rel).read_text(encoding="utf-8")
+        assert "shared.python.compatibility import StrEnum" in text
+        assert not re.search(r"^from enum import StrEnum\s*$", text, re.MULTILINE)
+
+
+@pytest.mark.unit
+def test_operator_facing_ort_strings_match_cargo_pin() -> None:
+    """Slice 1 (#5684): operator docs must not drift from Cargo.toml ort pins."""
+    ort_pin, _ort_sys_pin = _pinned_ort_versions_from_cargo()
+    rc_version = ort_pin.removeprefix("=")
+    readme = (REPO_ROOT / "rust_core" / "ai_backend" / "README.md").read_text(
+        encoding="utf-8"
+    )
+    preflight = (
+        REPO_ROOT / "src" / "shared" / "python" / "ai" / "_onnx_preflight.py"
+    ).read_text(encoding="utf-8")
+    assert f'ort = "{ort_pin}"' in readme
+    assert rc_version in preflight
+    assert "rc.10" not in readme
+    assert "rc.10" not in preflight
 
 
 @pytest.mark.unit

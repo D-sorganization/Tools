@@ -95,7 +95,7 @@ def check_ort_loadable(dylib_path: str | None = None) -> None:
             "  - On Windows: the DLL's own dependencies"
             " (e.g. MSVC runtime) are missing.\n"
             f"  - On Linux: run `ldd {path}` to find missing dependencies.\n"
-            f"  - Version mismatch: ort 2.0.0-rc.10 requires ONNX Runtime >= 1.17.\n"
+            f"  - Version mismatch: ort 2.0.0-rc.14 requires ONNX Runtime >= 1.17.\n"
             f"\n"
             f"Download a compatible release from:\n"
             f"  {_RELEASES_URL}\n"
