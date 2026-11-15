@@ -1,0 +1,59 @@
+name: CLI Subscription Discovery (Tier 2)
+
+# Tier-2 discovery only: --version/--help probes, no live model turns (#5727).
+# Advisory on the fleet: missing CLIs on a runner record probe_ok=false but do not
+# block merge gates. Invalid runs that set pay-per-use API keys fail the job.
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "15 7 * * 1" # weekly Monday 07:15 UTC
+
+concurrency:
+  group: cli-subscription-discovery
+  cancel-in-progress: false
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  tier2-cli-discovery:
+    name: Tier-2 CLI discovery probes
+    runs-on: d-sorg-fleet
+    timeout-minutes: 15
+    continue-on-error: true
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v7
+
+      - name: Set up Python
+        env:
+          AGENT_TOOLSDIRECTORY: ${{ runner.temp }}/_tool_cache
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+
+      - name: Install Tools (editable)
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e .
+
+      - name: Run Tier-2 CLI discovery probes
+        run: |
+          set -o pipefail
+          python3 scripts/run_cli_discovery_probes.py --output cli-discovery-results.json
+          status=$?
+          if [ "$status" -eq 2 ]; then
+            echo "::error::Discovery refused: pay-per-use API keys in environment"
+            exit 2
+          fi
+          exit 0
+
+      - name: Upload discovery report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cli-discovery-results
+          path: cli-discovery-results.json
+          if-no-files-found: ignore
