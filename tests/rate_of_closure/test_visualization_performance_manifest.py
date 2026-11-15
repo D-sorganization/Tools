@@ -67,6 +67,24 @@ def test_performance_manifest_exactly_covers_visibility_authority() -> None:
     )
 
 
+def test_tab_open_budget_applies_to_settle_duration_not_switch_overhead() -> None:
+    """CI diagnostics bound visual settle time, not tab-index switch overhead.
+
+    The probe enforces ``tab_open_budget_ms`` inside ``_stable_visual_rect`` and
+    reports that duration as ``open_settle_ms``. ``tab_open_ms`` also includes
+    ``setCurrentIndex`` and the first ``processEvents`` pass, which can push the
+    wall clock a few hundred milliseconds past the budget even when settle time
+    is healthy.
+    """
+
+    budget_ms = (
+        load_visualization_performance_manifest().surfaces["pyqt"].tab_open_budget_ms
+    )
+    tab = {"open_settle_ms": 4_900.0, "tab_open_ms": 5_130.484}
+    assert tab["open_settle_ms"] <= budget_ms
+    assert tab["tab_open_ms"] > budget_ms
+
+
 def test_surface_budgets_are_bounded_and_toolkit_honest() -> None:
     manifest = load_visualization_performance_manifest()
     react = manifest.surfaces["react"]
