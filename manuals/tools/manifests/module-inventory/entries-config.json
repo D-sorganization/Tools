@@ -3,6 +3,46 @@
   "entries": [
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 1549,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c4993e6454016466c987282697d92026fcd1ee87fd8dd8186e2f242e78576dae",
+      "family": "repository-governance-non-calculation",
+      "id": "TOOLS-MODULE-CONFIG-AI-BACKEND-DOWNSTREAM-CONSUMER-SURVEY-JSON-0A4EA269884D",
+      "language": "json",
+      "maintainer": "Repository governance maintainers",
+      "path": "config/ai_backend_downstream_consumer_survey.json",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1297,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
