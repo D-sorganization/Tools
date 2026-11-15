@@ -91,6 +91,22 @@ def test_gate_accepts_pair_reference() -> None:
     assert code == 0
 
 
+def test_calc_backend_mcp_paths_require_ud_pair_in_pr_body() -> None:
+    """package:calc_backend is deferred; MCP/agent_api edits need UD-PAIR (#6053)."""
+    document = mod.load_ledger()
+    touched = [
+        "src/shared/python/calc_backend/agent_api.py",
+        "src/shared/python/calc_backend/mcp_server.py",
+    ]
+    code, lines = mod.gate(document, touched, body="")
+    assert code == 1
+    assert any("package:calc_backend" in line for line in lines)
+    paired = "UD-PAIR: D-sorganization/UpstreamDrift#14976\n"
+    code, lines = mod.gate(document, touched, body=paired)
+    assert code == 0
+    assert any("paired UpstreamDrift PR #14976" in line for line in lines)
+
+
 @pytest.mark.parametrize(
     "overrides",
     [{"ruling": "tools-canonical"}, {"status": "ud-copy-deleted"}],
