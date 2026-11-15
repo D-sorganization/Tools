@@ -626,6 +626,12 @@ jobs:
       # workflow fail to load with zero jobs created (run 31894981880). GitHub
       # Actions has no YAML anchors, so duplication is the only option and this
       # comment is the guard.
+      #
+      # Hash tracked files only. The root Cargo.lock is git-ignored: it is absent
+      # when this step runs and written by the build before the save step runs,
+      # so a key that hashed it differed between restore and save and no restore
+      # ever matched (0 hits in 22 restores, Repository_Management#2894).
+      # tests/ops/test_ci_standard_tools_core_wheel.py holds this in place.
       - name: Restore cached tools_core wheel
         id: toolscore_wheel
         if: ${{ matrix.python-version == '3.11' }}
@@ -634,7 +640,7 @@ jobs:
           path: dist/tools-core-wheels
           key: >-
             toolscore-wheel-${{ runner.os }}-py${{ matrix.python-version }}-${{
-            hashFiles('rust-toolchain.toml', 'Cargo.toml', 'Cargo.lock',
+            hashFiles('rust-toolchain.toml', 'Cargo.toml',
                       'rust_core/tools-core/Cargo.toml',
                       'rust_core/tools-core/pyproject.toml',
                       'rust_core/tools-core/src/**/*.rs') }}
@@ -796,7 +802,7 @@ jobs:
           path: dist/tools-core-wheels
           key: >-
             toolscore-wheel-${{ runner.os }}-py${{ matrix.python-version }}-${{
-            hashFiles('rust-toolchain.toml', 'Cargo.toml', 'Cargo.lock',
+            hashFiles('rust-toolchain.toml', 'Cargo.toml',
                       'rust_core/tools-core/Cargo.toml',
                       'rust_core/tools-core/pyproject.toml',
                       'rust_core/tools-core/src/**/*.rs') }}
