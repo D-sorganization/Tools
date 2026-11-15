@@ -13,6 +13,7 @@ HOSTED_CORE_JOBS = {
     "anti-phantom-merge.yml": ("guard", "ubuntu-latest"),
     "detect-secrets.yml": ("detect-secrets", "ubuntu-latest"),
     "Merge-Hold-Guard.yml": ("enforce-holds", "ubuntu-latest"),
+    "topology-governance.yml": ("topology-check", "ubuntu-latest"),
 }
 
 
