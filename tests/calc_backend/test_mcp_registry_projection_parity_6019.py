@@ -2,17 +2,32 @@
 
 from __future__ import annotations
 
+import asyncio
+from typing import Any
+
 import pytest
 
 pytest.importorskip("fastapi")
 pytest.importorskip("calc_backend")
 
 from shared.python.calc_backend import mcp_server
+from shared.python.calc_backend.agent_api import CONTRACT_VERSION
 from shared.python.calc_backend.registry.store import (
     CALCULATOR_REGISTRY,
     describe_calculator,
     registered_calculators,
 )
+
+
+async def _mcp_describe_via_fastmcp(calculator_id: str) -> dict[str, Any]:
+    """Invoke the real MCP describe_calculator tool closure (_build_fastmcp)."""
+    pytest.importorskip("mcp.server.fastmcp")
+    server = mcp_server._build_fastmcp()
+    assert server is not None
+    _content, payload = await server.call_tool(
+        "describe_calculator", {"id": calculator_id}
+    )
+    return payload
 
 
 @pytest.mark.unit
@@ -37,14 +52,19 @@ def test_list_calculators_projection_carries_registry_metadata() -> None:
 
 
 @pytest.mark.unit
-def test_mcp_describe_projection_matches_registry_for_every_calculator() -> None:
-    from shared.python.calc_backend.agent_api import CONTRACT_VERSION
+def test_mcp_describe_unknown_id_uses_tool_error_envelope() -> None:
+    """Guards against comparing registry_describe only (KeyError, not FAILED envelope)."""
+    mcp_server._ensure_registry()
+    payload = asyncio.run(_mcp_describe_via_fastmcp("not-a-registered-calculator-id"))
+    assert payload.get("status") == "FAILED"
+    assert payload["errors"][0]["field"] == "id"
 
+
+@pytest.mark.unit
+def test_mcp_describe_projection_matches_registry_for_every_calculator() -> None:
     mcp_server._ensure_registry()
     for calculator_id in CALCULATOR_REGISTRY:
-        registry_payload = describe_calculator(calculator_id)
-        projected = dict(mcp_server.registry_describe(calculator_id))
-        projected["contract_version"] = CONTRACT_VERSION
-        expected = dict(registry_payload)
+        projected = asyncio.run(_mcp_describe_via_fastmcp(calculator_id))
+        expected = dict(describe_calculator(calculator_id))
         expected["contract_version"] = CONTRACT_VERSION
         assert projected == expected, calculator_id
