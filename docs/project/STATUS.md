@@ -40,9 +40,9 @@
 
 | Workflow                      | Status                                                                                                       |
 | ----------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| CI Standard (`tests (3.11)`)  | success — latest `main` push run 43562592702 on sha `ca3608812`                                             |
-| Heavy Integration Tests       | success (`main` sha `ff32037c6`)                                                                             |
-| Cross-Repo Python Integration | success (`main` sha `ca3608812`)                                                                             |
+| CI Standard (`tests (3.11)`)  | success — latest `main` push run 43720133063 on sha `8e74a51fc`                                             |
+| Heavy Integration Tests       | success (`main` sha `8e74a51fc`)                                                                             |
+| Cross-Repo Python Integration | success (`main` sha `8e74a51fc`)                                                                             |
 | Benchmark Suite               | success (2026-11-15 schedule)                                                                                |
 | Nightly Full-Repo Quality     | success (2026-11-15)                                                                                         |
 | Full Test Suite (Nightly)     | **failure** — 2026-11-12 through 2026-11-15 (green 2026-11-07…11-11; red 2026-10-27…11-06 before #5981 fixes) |
@@ -52,9 +52,9 @@
 
 | PR    | Opened     | Title                                                                    | Notes                                         |
 | ----- | ---------- | ------------------------------------------------------------------------ | --------------------------------------------- |
+| #6056 | 2026-11-15 | docs(project): steward status 2026-11-15                                 | project steward                               |
 | #6055 | 2026-11-15 | ci(ops): Tier-2 subscription CLI discovery workflow (#5727)              | epic #5727                                    |
 | #6054 | 2026-11-15 | fix(ai_backend): align ort rc.14 strings in README and preflight         | ai_backend                                    |
-| #6053 | 2026-11-15 | fix(calc-backend): registry provenance on MCP FAILED envelopes           | epic #6019                                    |
 | #6052 | 2026-11-15 | test(calc-backend): lock MCP registry projection parity (refs #6019)     | epic #6019                                    |
 | #6051 | 2026-11-15 | test(ai_backend): record downstream wheel consumer survey (#5684 slice 2) | #5684                                         |
 | #6036 | 2026-11-12 | test(ai_backend): lock wheel contract truth for #5684 slices 1 and 4     | Oldest; BLOCKED, no failing checks, auto-merge not armed; reaches 72 h on 2026-11-15 22:51 UTC |
