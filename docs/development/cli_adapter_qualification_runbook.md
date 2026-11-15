@@ -9,6 +9,16 @@ This runbook documents Tier-2 (no-model-call discovery) and Tier-3 (single-turn 
 
 ## Tier-2: Discovery Probe (`--version` / `--help` Only)
 
+### Scheduled / manual workflow
+
+The advisory GitHub Actions workflow `.github/workflows/cli-subscription-discovery.yml` runs
+`python3 scripts/run_cli_discovery_probes.py` on `workflow_dispatch` and weekly (Monday
+07:15 UTC). It uploads `cli-discovery-results.json` as a workflow artifact. The job is
+`continue-on-error: true` so absent CLIs on a runner record `probe_ok=false` without blocking
+`main`; runs that set pay-per-use API keys exit **2** and fail the job.
+
+### Local / programmatic
+
 Run against `DEFAULT_CLI_DISCOVERY_SPECS`:
 
 - `claude_code` (`claude`): checks `-p`, `--model`

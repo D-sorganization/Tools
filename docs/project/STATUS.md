@@ -2,65 +2,69 @@
 
 # Tools Project Status
 
-> Updated by Project Steward. Reflects state as of **2026-10-25**.
+> Updated by Project Steward. Reflects state as of **2026-11-15**.
 > This is a current-state snapshot; history lives in git and SPEC.md §12.
 
-## What Moved (since 2026-09-23)
+## What Moved (since 2026-10-25)
 
-| Area                | What shipped                                                                | PR/Issue      |
-| ------------------- | --------------------------------------------------------------------------- | ------------- |
-| Release             | Bumped to **v1.20.2 → v1.21.0 → v1.21.1 → v1.21.2**                         | #5330–#5342   |
-| AI knowledge        | Knowledge-pack engine (stdlib+PyYAML BM25 SQLite retrieval)                 | #5345 / #5348 |
-| AI knowledge        | Sidekick Wizards: per-product knowledge injected into every chat turn       | #5346 / #5350 |
-| AI knowledge        | Golden Q&A evaluation + optional MiniLM hybrid ranking (BM25+cosine RRF)    | #5347 / #5351 |
-| CI hygiene          | Retired review-comment-to-issue converter workflow (RM#1755)                | #5344         |
-| rate_of_closure     | Integrated movement-optimizer as `SwingSource` with golfer anthropometry    | #5331         |
-| rate_of_closure     | Bolt: single-pass loops, inline sqrt, green topography GC pressure          | #5327–#5340   |
-| Accessibility       | Improved focus ring visibility for unit converter inputs                    | #5341         |
-| Process calculators | Optimized `safe_exp` and resilient benchmark                                | #5333 / #5334 |
-| Epics closed        | Swing-Impact-Ball-Flight (#4103), Design Manual (#4707), Putting LM (#5218), Mocap (#4706) | closed        |
-| Blockers resolved   | Renderer source provenance (#5303), RUNNER_CHECK_TOKEN (#5305)              | closed        |
+| Area                    | What shipped                                                                                                       | PR/Issue               |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------ | ---------------------- |
+| Security (P0)           | Fork PRs kept off the self-hosted fleet; #4464 closed by merged PR (closed 2026-10-05)                             | #5427 / #4464          |
+| Epics closed            | #4433, #4377, #4260, #5068, #4267, #4729, #4706, #4249, #4089, #4046, #4149 closed 2026-10-14 as completed ("all child sub-issues implemented and verified on main") | #5613 / #5614          |
+| Calculation correctness | Fleet Critic TOOLS-01…TOOLS-31 fixes: syngas, steam, WGS, scrubber, baghouse, thermo, pressure drop, URDF inertia   | e.g. #5813 / #5822 / #5853 |
+| Syngas water            | Unit conversions corrected, typed non-finite failure, router fallback                                              | #6007 / #6009 / #6017  |
+| Lifecycle contract      | Canonical lifecycle vocabulary and ADR; default-true success flags removed (part of #6003)                         | #6012 / #6014 / #6015  |
+| Agent API (#6019)       | `CalculatorSpec` registry, stdio MCP server hardening, conformance CI, `.mcp.json`, `llms.txt`                      | #6029 / #6033 / #6038  |
+| Sidekick CLI bridge (#5727) | Shared Popen CLI runner, bridge wiring with opt-in parity, turn cancel/idle timeout, Tier-2/3 discovery probes | #6030 / #6039 / #6042 / #6043 |
+| ai_backend wheels (#5684) | Linux wheel qualification hardening; UpstreamDrift consumer-contract sparse checkout                              | #6025 / #6028 / #6031  |
+| Theme                   | `themes.json` single source of theme colours, drift check, curated set with contrast checks                        | #5946 / #5965 / #5974  |
+| Baselines               | Baseline inventory, reproducibility contract, bounded query utility                                                | #5996 / #6001          |
+| CI hygiene              | Nightly coverage gate repaired (#5981), xdist crash fail-fast, Tauri/Playwright/apt hardening, `scripts/pre_pr`    | #5866 / #5900 / #5991 / #6044 |
 
 ## What Is Stuck
 
-| Item                                       | Epic / Issue     | Blocker                                                                                                                                                                                                                                                                                |
-| ------------------------------------------ | ---------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **P0 security: fork-PR policy**            | #4464            | No PR; requires explicit Board decision on fork approval policy for public repo with self-hosted runners; unchanged since 2026-09-10                                                                                                                                                   |
-| Impact acoustics — physical evidence       | #5068            | Traceable apparatus, calibration, operating strain, and participant data unavailable; deferred to Board resource allocation                                                                                                                                                            |
-| Ball landing / surface physical validation | #4267            | Same physical evidence gap; deferred in planning catalog                                                                                                                                                                                                                               |
-| Qt worker losses (#5114)                   | #5114            | Partial cleanup on separate branch; root cause unexplained (3 workers lost after 2,880 passes)                                                                                                                                                                                         |
-| Duplicate v1.22.0 release PRs              | #5349, #5352     | Two bot-generated v1.22.0 bump PRs open simultaneously; one should be closed                                                                                                                                                                                                           |
+| Item                                    | Epic / Issue        | Blocker                                                                                                                                                       |
+| --------------------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Full Test Suite (Nightly) red           | #5684 (related)     | Red every night since 2026-11-12: 2 failures in `tests/shared/python/ai/test_rust_adapter_wheel_smoke.py` (24,921 passed) on run 43679519063; no tracking issue |
+| Physical validation (DV-5068/4729/4267) | #5068, #4729, #4267 | Software epics closed, but the planning catalog records stay parked; issue closure is not physical validation (see Charter Non-Goals)                          |
+| Native Windows/macOS ai_backend wheels  | #5684               | Linux-only qualification today; native wheel evidence outstanding                                                                                             |
 
 ## What Is Next (Ordered)
 
-1. **Board decision on #4464 (P0)** — fork-PR policy for public repo with self-hosted runners; unchanged for 2+ weeks.
-2. **Close duplicate release PR** — #5349 or #5352 (both bump v1.22.0); one must be closed.
-3. **Physical validation Board decisions** (#5068, #4729, #4267) — resource allocation still pending.
+1. **Nightly suite back to green** — diagnose the two `test_rust_adapter_wheel_smoke` failures (likely tied to the open #5684 wheel PRs #6036/#6051/#6054).
+2. **Land the open Agent API / CLI-bridge PRs** (#6051–#6055) under epics #6019 and #5727.
+3. **Work the 2026-11-10 backlog plan** (#6023) and the adversarial architecture review wave 1 (#6003).
+4. **Physical validation Board decisions** (DV-5068, DV-4729, DV-4267) — resource allocation still pending.
 
-## CI Health (2026-10-25)
+## CI Health (2026-11-15)
 
-| Workflow                  | Status                                                                                    |
-| ------------------------- | ----------------------------------------------------------------------------------------- |
-| tests (3.11)              | **success** — CI Standard run [40201013093](https://github.com/D-sorganization/Tools/actions/runs/40201013093) on `main` sha `a4cd7239` |
-| tests (3.12)              | success                                                                                   |
-| Benchmark Suite           | success                                                                                   |
-| Heavy Integration Tests   | success                                                                                   |
-| Full Test Suite (Nightly) | failure (2026-10-25 nightly on `main`)                                                  |
-| Merge Hold Guard          | success                                                                                   |
+| Workflow                      | Status                                                                                                       |
+| ----------------------------- | ------------------------------------------------------------------------------------------------------------ |
+| CI Standard (`tests (3.11)`)  | success — latest `main` push run 43720133063 on sha `8e74a51fc`                                             |
+| Heavy Integration Tests       | success (`main` sha `8e74a51fc`)                                                                             |
+| Cross-Repo Python Integration | success (`main` sha `8e74a51fc`)                                                                             |
+| Benchmark Suite               | success (2026-11-15 schedule)                                                                                |
+| Nightly Full-Repo Quality     | success (2026-11-15)                                                                                         |
+| Full Test Suite (Nightly)     | **failure** — 2026-11-12 through 2026-11-15 (green 2026-11-07…11-11; red 2026-10-27…11-06 before #5981 fixes) |
+| Merge Hold Guard              | success                                                                                                      |
 
-## Open PRs (2026-09-26)
+## Open PRs (2026-11-15)
 
-| PR    | Title                                                | Notes                      |
-| ----- | ---------------------------------------------------- | -------------------------- |
-| #5355 | Bolt: Replace .reduce() with single-pass loops       | Bolt perf; not draft       |
-| #5354 | Bolt: Use explicit set population instead of flatMap | Bolt perf; not draft       |
-| #5352 | chore(release): bump version to v1.22.0              | Bot release PR (duplicate) |
-| #5349 | chore(release): bump version to v1.22.0              | Bot release PR (duplicate) |
+| PR    | Opened     | Title                                                                    | Notes                                         |
+| ----- | ---------- | ------------------------------------------------------------------------ | --------------------------------------------- |
+| #6056 | 2026-11-15 | docs(project): steward status 2026-11-15                                 | project steward                               |
+| #6055 | 2026-11-15 | ci(ops): Tier-2 subscription CLI discovery workflow (#5727)              | epic #5727                                    |
+| #6054 | 2026-11-15 | fix(ai_backend): align ort rc.14 strings in README and preflight         | ai_backend                                    |
+| #6052 | 2026-11-15 | test(calc-backend): lock MCP registry projection parity (refs #6019)     | epic #6019                                    |
+| #6051 | 2026-11-15 | test(ai_backend): record downstream wheel consumer survey (#5684 slice 2) | #5684                                         |
+| #6036 | 2026-11-12 | test(ai_backend): lock wheel contract truth for #5684 slices 1 and 4     | Oldest; BLOCKED, no failing checks, auto-merge not armed; reaches 72 h on 2026-11-15 22:51 UTC |
+
+Open epics: #6019 (Agent API over MCP), #6003 (adversarial architecture review wave 1), #5727 (Sidekick agentic platform / CLI bridge); plus #5684 and backlog plan #6023.
 
 ## Decisions Needed
 
-- **P0 — Fork-PR security (#4464).** First appeared 2026-09-10. The public repo uses self-hosted runners; any non-new GitHub account can trigger workflow execution on personal hardware. Requires explicit Board policy ruling (restrict fork PR approvals, make repo private, or accept the risk). No agent can make this change. **Age: 16 days — approaching Board proposal threshold.**
-- **Physical validation resource allocation (#5068, #4729, #4267).** Three deferred validation plans are in `docs/development/planning/`. Each needs Board approval plus verified equipment and participant access before any physical or acoustic claim can be made. Software work continues independently.
+- **Nightly Full Test Suite red for 4 days (first appeared 2026-11-15).** CI on a `main` workflow has been red for more than a day with no tracking issue; owner or lane assignment needed for the two `test_rust_adapter_wheel_smoke` failures. Required PR gates on `main` remain green.
+- **Physical validation resource allocation (DV-5068, DV-4729, DV-4267; first appeared 2026-09-23).** The software epics #5068, #4729 and #4267 were closed as completed on 2026-10-14, but the three deferred validation plans in `docs/development/planning/` are unchanged and still need Board approval plus verified equipment and participant access before any physical or acoustic claim can be made.
 - DV-5068: Board decision pending on whether to resource the [Owner Plan](https://github.com/D-sorganization/Tools/blob/main/docs/development/planning/DV-5068.md); accountable owner, access dates, funding and execution capacity are unverified.
 - DV-5068: Decide how to obtain and qualify equipment-specific shaft/head/grip measurements with calibration and operating-strain evidence; prerequisite evidence remains unavailable.
 - DV-5068: Decide how to obtain and qualify synchronized force, ball spin/launch and structural-motion measurements over held-out impact positions; prerequisite evidence remains unavailable.
@@ -72,13 +76,15 @@
 - DV-4267: Decide how to obtain and qualify named ground surfaces with controlled condition metadata; prerequisite evidence remains unavailable.
 - DV-4267: Decide how to obtain and qualify calibrated ball position/velocity/spin observations and independent trials; prerequisite evidence remains unavailable.
 
+Resolved since last run: **P0 fork-PR security (#4464)** — closed 2026-10-05 by merged PR #5427 ("keep fork PRs off the self-hosted fleet").
+
 ## Reactivation
 
 Follow the original owner plan: record the Board decision and accountable owner,
 verify prerequisite evidence, and link the bounded activation issue in the catalog.
 Synthetic tests do not satisfy physical or participant acceptance.
 
-## Progress (Deferred Validation — unchanged from 2026-09-23)
+## Progress (Deferred Validation — catalog unchanged since #5306, 2026-09-23)
 
 | ID      | Feature                                                                  | Status | Progress                        | Last Change |
 | ------- | ------------------------------------------------------------------------ | ------ | ------------------------------- | ----------- |

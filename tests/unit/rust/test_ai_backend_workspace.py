@@ -26,6 +26,7 @@ AI_BACKEND_WORKFLOW_NAME = "maturin-ai-backend.yml"
 PYTHON_VERSIONS = ["3.10", "3.11", "3.12", "3.13"]
 LINUX_QUALIFY_JOB = "linux-wheel-qualify"
 ORT_CARGO_TOML = REPO_ROOT / "rust_core" / "ai_backend" / "Cargo.toml"
+AI_BACKEND_WORKFLOW_NAME = "maturin-ai-backend.yml"
 AI_BACKEND_SETUP_DOC = REPO_ROOT / "docs" / "ai_backend_setup.md"
 
 
@@ -299,6 +300,37 @@ def test_adapter_gate_remains_independent_and_manual_feature_build_is_unchanged(
 
 
 @pytest.mark.unit
+def test_oracle5_import_chain_avoids_stdlib_strenum() -> None:
+    """Oracle 5 loads adapters.__init__ and lifecycle before rust_adapter on 3.10."""
+    chain = (
+        "src/shared/python/ai/adapters/cli_subprocess_runner.py",
+        "src/shared/python/lifecycle.py",
+        "src/shared/python/sidekick/agent/cli_bridge.py",
+    )
+    for rel in chain:
+        text = (REPO_ROOT / rel).read_text(encoding="utf-8")
+        assert "shared.python.compatibility import StrEnum" in text
+        assert not re.search(r"^from enum import StrEnum\s*$", text, re.MULTILINE)
+
+
+@pytest.mark.unit
+def test_operator_facing_ort_strings_match_cargo_pin() -> None:
+    """Slice 1 (#5684): operator docs must not drift from Cargo.toml ort pins."""
+    ort_pin, _ort_sys_pin = _pinned_ort_versions_from_cargo()
+    rc_version = ort_pin.removeprefix("=")
+    readme = (REPO_ROOT / "rust_core" / "ai_backend" / "README.md").read_text(
+        encoding="utf-8"
+    )
+    preflight = (
+        REPO_ROOT / "src" / "shared" / "python" / "ai" / "_onnx_preflight.py"
+    ).read_text(encoding="utf-8")
+    assert f'ort = "{ort_pin}"' in readme
+    assert rc_version in preflight
+    assert "rc.10" not in readme
+    assert "rc.10" not in preflight
+
+
+@pytest.mark.unit
 def test_workflow_keeps_windows_and_macos_qualification_explicitly_open() -> None:
     """Removing duplicate Linux jobs must not imply three-OS qualification."""
     content = WORKFLOW.read_text(encoding="utf-8").lower()
@@ -494,22 +526,6 @@ def test_maturin_workflow_references_maturin_action_or_command():
 
 
 @pytest.mark.unit
-def test_operator_facing_ort_strings_match_cargo_pin() -> None:
-    """README and preflight errors must cite the same ort pin as Cargo.toml."""
-    ort_pin, _ = _pinned_ort_versions_from_cargo()
-    rc_version = ort_pin.removeprefix("=")
-    readme = (REPO_ROOT / "rust_core" / "ai_backend" / "README.md").read_text(
-        encoding="utf-8"
-    )
-    preflight = (REPO_ROOT / "src/shared/python/ai/_onnx_preflight.py").read_text(
-        encoding="utf-8"
-    )
-
-    assert ort_pin in readme
-    assert f"ort {rc_version}" in preflight
-
-
-@pytest.mark.unit
 def test_cli_subprocess_runner_strenum_compatible_with_python310() -> None:
     """Maturin 3.10 smoke imports adapters without stdlib-only StrEnum."""
     runner_path = (
@@ -523,7 +539,7 @@ def test_cli_subprocess_runner_strenum_compatible_with_python310() -> None:
 @pytest.mark.unit
 def test_lifecycle_strenum_compatible_with_python310() -> None:
     """Rust-path Maturin 3.10 smoke imports lifecycle via cli_turn_lifecycle."""
-    lifecycle_path = REPO_ROOT / "src/shared/python" / "lifecycle.py"
+    lifecycle_path = REPO_ROOT / "src/shared/python/lifecycle.py"
     source = lifecycle_path.read_text(encoding="utf-8")
-    assert "from enum import StrEnum" not in source
     assert "shared.python.compatibility import StrEnum" in source
+    assert not re.search(r"^from enum import StrEnum\s*$", source, re.MULTILINE)

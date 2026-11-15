@@ -337,6 +337,7 @@
           "tests/unit/ai/mcp/test_presets.py",
           "tests/unit/ai/mcp/widgets/test_mcp_servers_prefs_widget.py",
           "tests/unit/ai/test_peer_review.py",
+          "tests/unit/rust/test_ai_backend_downstream_consumers_5684.py",
           "tests/unit/sidekick/test_runtime_tab_settings.py",
           "tests/unit/sidekick/test_standalone_runtime.py",
           "tests/unit/test_check_coverage_policy.py",

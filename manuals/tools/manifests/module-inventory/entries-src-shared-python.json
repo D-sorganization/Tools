@@ -1099,10 +1099,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 5698,
+      "bytes_lf": 5771,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "ab68870575fdbbc7831babd1914f484dbcb13546148b7b2afba87ae18b68a7c7",
+      "content_sha256_lf": "106c749654622431b468d9e1d84c21ab58acff9c31eb52a36ed811ac5a38968e",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LIFECYCLE-PY-B7A84AFEE675",
       "language": "python",
