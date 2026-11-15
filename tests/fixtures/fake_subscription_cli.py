@@ -18,6 +18,9 @@ _GRANDCHILD_GRACE_SEC = "TOOLS_FAKE_CLI_GRANDCHILD_GRACE_SEC"
 _OUTPUT_MB = "TOOLS_FAKE_CLI_OUTPUT_MB"
 _VERSION_ENV = "TOOLS_FAKE_CLI_VERSION"
 _ENCODING_SAMPLE_ENV = "TOOLS_FAKE_CLI_ENCODING_SAMPLE"
+_BEATS_ENV = "TOOLS_FAKE_CLI_BEATS"
+_STDERR_FILE_ENV = "TOOLS_FAKE_CLI_STDERR_FILE"
+_EXIT_CODE_ENV = "TOOLS_FAKE_CLI_EXIT_CODE"
 
 
 def _read_prompt() -> str:
@@ -122,6 +125,30 @@ def _mode_encoding_roundtrip() -> int:
     return 0
 
 
+def _mode_stall_after_line() -> int:
+    sys.stdout.write("first partial line\n")
+    sys.stdout.flush()
+    time.sleep(30.0)
+    return 0
+
+
+def _mode_heartbeat_lines() -> int:
+    beats = int(os.environ.get(_BEATS_ENV, "8"))
+    for i in range(beats):
+        sys.stdout.write(f"beat {i}\n")
+        sys.stdout.flush()
+        time.sleep(0.15)
+    return 0
+
+
+def _mode_stderr_fixture() -> int:
+    if fixture_path := os.environ.get(_STDERR_FILE_ENV):
+        text = Path(fixture_path).read_text(encoding="utf-8")
+        sys.stderr.write(text)
+        sys.stderr.flush()
+    return int(os.environ.get(_EXIT_CODE_ENV, "1"))
+
+
 def _dispatch() -> int:
     if "--version" in sys.argv:
         print(os.environ.get(_VERSION_ENV, "fake-cli 0.0.0-test"))
@@ -144,6 +171,12 @@ def _dispatch() -> int:
         return _mode_trap_term()
     if mode == "encoding_roundtrip":
         return _mode_encoding_roundtrip()
+    if mode == "stall_after_line":
+        return _mode_stall_after_line()
+    if mode == "heartbeat_lines":
+        return _mode_heartbeat_lines()
+    if mode == "stderr_fixture":
+        return _mode_stderr_fixture()
     sys.stderr.write(f"unknown fake cli mode: {mode}\n")
     return 2
 

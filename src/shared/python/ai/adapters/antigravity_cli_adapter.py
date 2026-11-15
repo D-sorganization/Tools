@@ -77,9 +77,12 @@ class AntigravityCliAdapter(GeminiCliAdapter):
         binary: str | None = None,
         model: str | None = None,
         timeout: float | None = None,
+        idle_timeout: float | None = None,
     ) -> None:
         resolved = DEFAULT_AGY_MODEL if model in (None, "", "default") else str(model)
-        super().__init__(binary=binary, model=resolved, timeout=timeout)
+        super().__init__(
+            binary=binary, model=resolved, timeout=timeout, idle_timeout=idle_timeout
+        )
         self.binary = _resolve_binary(binary)
         self.model = resolved
 

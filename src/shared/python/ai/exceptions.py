@@ -170,6 +170,69 @@ class AITimeoutError(AIProviderError):
         self.timeout = timeout
 
 
+class AIIdleTimeoutError(AITimeoutError):
+    """Raised when a CLI turn is silent past ``idle_timeout``."""
+
+    def __init__(
+        self,
+        message: str,
+        provider: str = "unknown",
+        timeout: float | None = None,
+        partial_output: str = "",
+        is_partial: bool | None = None,
+        details: dict[str, object] | None = None,
+    ) -> None:
+        if message is None:
+            raise ValueError("message must be provided")
+        super().__init__(message, provider=provider, timeout=timeout, details=details)
+        self.partial_output = partial_output
+        self.is_partial = bool(partial_output) if is_partial is None else is_partial
+
+
+class AIAuthenticationError(AIProviderError):
+    """Raised when a CLI or provider session is unauthenticated."""
+
+    def __init__(
+        self,
+        message: str,
+        provider: str = "unknown",
+        details: dict[str, object] | None = None,
+    ) -> None:
+        if message is None:
+            raise ValueError("message must be provided")
+        super().__init__(message, provider=provider, status_code=401, details=details)
+
+
+class AIUsageExhaustedError(AIProviderError):
+    """Raised when subscription quota or billing cycle allowance is exhausted."""
+
+    def __init__(
+        self,
+        message: str,
+        provider: str = "unknown",
+        details: dict[str, object] | None = None,
+    ) -> None:
+        if message is None:
+            raise ValueError("message must be provided")
+        super().__init__(message, provider=provider, status_code=402, details=details)
+
+
+class AICancelledError(AIProviderError):
+    """Raised when an active AI turn is cancelled by the caller or UI."""
+
+    def __init__(
+        self,
+        message: str = "AI request cancelled",
+        provider: str = "unknown",
+        partial_output: str = "",
+        details: dict[str, object] | None = None,
+    ) -> None:
+        if message is None:
+            raise ValueError("message must be provided")
+        super().__init__(message, provider=provider, status_code=None, details=details)
+        self.partial_output = partial_output
+
+
 class ScientificValidationError(AIError):
     """Exception for scientific validation failures.
 
