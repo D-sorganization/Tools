@@ -53,7 +53,7 @@ def test_list_calculators_projection_carries_registry_metadata() -> None:
 
 @pytest.mark.unit
 def test_mcp_describe_unknown_id_uses_tool_error_envelope() -> None:
-    """Guards against comparing registry_describe only (KeyError, not FAILED envelope)."""
+    """Unknown calculator ids must get FAILED envelope via FastMCP, not KeyError."""
     mcp_server._ensure_registry()
     payload = asyncio.run(_mcp_describe_via_fastmcp("not-a-registered-calculator-id"))
     assert payload.get("status") == "FAILED"
