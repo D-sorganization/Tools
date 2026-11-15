@@ -12,9 +12,13 @@ import threading
 import time
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from enum import StrEnum
 from pathlib import Path
-from typing import IO
+from typing import IO, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from enum import StrEnum
+else:
+    from shared.python.compatibility import StrEnum
 
 from shared.python.ai.adapters.cli_turn_lifecycle import (
     CliCancelToken,

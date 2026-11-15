@@ -288,6 +288,23 @@ def test_adapter_gate_remains_independent_and_manual_feature_build_is_unchanged(
 
 
 @pytest.mark.unit
+def test_cli_subprocess_runner_strenum_compatible_with_python310() -> None:
+    """Oracle 5 imports adapters.__init__, which loads the CLI stack on 3.10."""
+    runner = (
+        REPO_ROOT
+        / "src"
+        / "shared"
+        / "python"
+        / "ai"
+        / "adapters"
+        / "cli_subprocess_runner.py"
+    )
+    text = runner.read_text(encoding="utf-8")
+    assert "shared.python.compatibility import StrEnum" in text
+    assert not re.search(r"^from enum import StrEnum\s*$", text, re.MULTILINE)
+
+
+@pytest.mark.unit
 def test_operator_facing_ort_strings_match_cargo_pin() -> None:
     """Slice 1 (#5684): operator docs must not drift from Cargo.toml ort pins."""
     ort_pin, _ort_sys_pin = _pinned_ort_versions_from_cargo()
