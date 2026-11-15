@@ -1587,6 +1587,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#6019 · MCP FAILED Envelopes Include Registry-Backed Provenance.Calculation_Status (UD-PAIR UpstreamDrift#14976 for Package Calc_Backend)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6019
+- **Branch:** merged via #6053
+- **PR:** #6053
+- **Paths:** see #6053
+- **Started:** 2026-11-15
+- **Last verified:** 2026-11-15 (`8e74a51f`; collated from changes/6019-mcp-failed-envelopes-include-registry-ba.md)
+- **Summary:** MCP FAILED envelopes include registry-backed provenance.calculation_status (UD-PAIR UpstreamDrift#14976 for package calc_backend)
+- **Next step:** Shipped in PR #6053.
+
 ### DL-#6045 · Stabilize CLI Subprocess Timeout Tree-Kill Oracle and Windows Test Portability
 
 - **State:** shipped
