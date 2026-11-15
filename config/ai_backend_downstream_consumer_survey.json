@@ -1,5 +1,6 @@
 {
   "issue": 5684,
+  "github_issue_linkage": "refs_only",
   "surveyed_at": "2026-11-15",
   "method": "GitHub code search via fleet App for import ai_backend / from ai_backend in downstream repos; in-repo paths confirmed on main.",
   "conclusion": "no_downstream_wheel_consumer",

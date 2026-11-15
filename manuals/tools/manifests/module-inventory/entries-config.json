@@ -3,10 +3,10 @@
   "entries": [
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 1510,
+      "bytes_lf": 1549,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2475a19e70bc049d938a5292825c7f6e93edb4bb3abcbc4f0647ce14867a2ad1",
+      "content_sha256_lf": "c4993e6454016466c987282697d92026fcd1ee87fd8dd8186e2f242e78576dae",
       "family": "repository-governance-non-calculation",
       "id": "TOOLS-MODULE-CONFIG-AI-BACKEND-DOWNSTREAM-CONSUMER-SURVEY-JSON-0A4EA269884D",
       "language": "json",

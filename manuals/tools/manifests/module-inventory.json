@@ -99,7 +99,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-benchmarks.json"
     },
     {
-      "content_sha256_lf": "3a182351f8a83e983ad3dc90063153cf4b24415de8e689e4f66e79eee732a87e",
+      "content_sha256_lf": "b197598700edcdb5b2da0720cab000973ee4b68f2b8f466cc0d65da03577ece2",
       "entry_count": 10,
       "package": "config",
       "path": "manuals/tools/manifests/module-inventory/entries-config.json"

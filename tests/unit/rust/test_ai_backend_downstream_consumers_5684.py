@@ -12,6 +12,17 @@ _SURVEY_PATH = _REPO_ROOT / "config" / "ai_backend_downstream_consumer_survey.js
 
 
 @pytest.mark.unit
+def test_survey_github_issue_linkage_refs_only_not_fixes() -> None:
+    """Slice 2 must not auto-close epic #5684 (Windows/macOS wheel evidence still open)."""
+    payload = json.loads(_SURVEY_PATH.read_text(encoding="utf-8"))
+    linkage = payload.get("github_issue_linkage")
+    assert linkage == "refs_only", (
+        "survey PRs must use Refs #5684 in title/body, not Fixes — "
+        "native Win/macOS qualification is unmet"
+    )
+
+
+@pytest.mark.unit
 def test_downstream_consumer_survey_artifact_exists_and_is_valid() -> None:
     """Slice 2 acceptance: survey is recorded in-repo, not only in issue comments."""
     assert _SURVEY_PATH.is_file(), f"missing {_SURVEY_PATH.relative_to(_REPO_ROOT)}"
