@@ -42,8 +42,10 @@ jobs:
       - name: Run Tier-2 CLI discovery probes
         run: |
           set -o pipefail
+          set +e
           python3 scripts/run_cli_discovery_probes.py --output cli-discovery-results.json
           status=$?
+          set -e
           if [ "$status" -eq 2 ]; then
             echo "::error::Discovery refused: pay-per-use API keys in environment"
             exit 2
