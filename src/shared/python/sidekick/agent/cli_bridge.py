@@ -13,8 +13,9 @@ import re
 import secrets
 from collections.abc import Callable, Mapping, Sequence
 from dataclasses import dataclass, field
-from enum import StrEnum
 from typing import Any, Protocol
+
+from shared.python.compatibility import StrEnum
 
 from .planner import ToolCall
 

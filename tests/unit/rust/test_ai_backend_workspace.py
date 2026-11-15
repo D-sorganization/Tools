@@ -293,6 +293,7 @@ def test_oracle5_import_chain_avoids_stdlib_strenum() -> None:
     chain = (
         "src/shared/python/ai/adapters/cli_subprocess_runner.py",
         "src/shared/python/lifecycle.py",
+        "src/shared/python/sidekick/agent/cli_bridge.py",
     )
     for rel in chain:
         text = (REPO_ROOT / rel).read_text(encoding="utf-8")
