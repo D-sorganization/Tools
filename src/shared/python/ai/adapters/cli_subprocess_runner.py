@@ -15,8 +15,6 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import IO
 
-from shared.python.compatibility import StrEnum
-
 from shared.python.ai.adapters.cli_turn_lifecycle import (
     CliCancelToken,
     CliSubprocessCancelledError,
@@ -24,6 +22,7 @@ from shared.python.ai.adapters.cli_turn_lifecycle import (
     attach_kill_on_parent_exit,
     close_parent_exit_guard,
 )
+from shared.python.compatibility import StrEnum
 from shared.python.logging_pkg.logging_config import get_logger
 
 logger = get_logger(__name__)

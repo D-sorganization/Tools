@@ -382,6 +382,7 @@
           "tests/test_dry_compliance.py",
           "tests/test_waves_2_3_imports.py",
           "tests/tools/test_mypy_autofix_agent.py",
+          "tests/unit/rust/test_ai_backend_workspace.py",
           "tests/unit/rust/test_movement_optimizer_maturin_workflow.py",
           "tests/unit/sidekick/test_python_repl_cancel_namespace_3715.py",
           "tests/unit/sidekick/test_standalone_canonical_package.py",
