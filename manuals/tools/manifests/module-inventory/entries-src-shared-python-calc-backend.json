@@ -181,7 +181,8 @@
           }
         ],
         "test_paths": [
-          "tests/calc_backend/test_agent_api_output_cap.py"
+          "tests/calc_backend/test_agent_api_output_cap.py",
+          "tests/calc_backend/test_mcp_registry_projection_parity_6019.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -2211,7 +2212,8 @@
           }
         ],
         "test_paths": [
-          "tests/calc_backend/test_calculator_registry_contract.py"
+          "tests/calc_backend/test_calculator_registry_contract.py",
+          "tests/calc_backend/test_mcp_registry_projection_parity_6019.py"
         ],
         "unit_mentions": [
           "s"
