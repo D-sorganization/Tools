@@ -144,6 +144,24 @@ def enforce_output_cap(payload: dict[str, Any]) -> None:
         )
 
 
+def build_provenance(
+    *,
+    calculator_id: str | None = None,
+    formula_ids: tuple[str, ...] = (),
+) -> dict[str, Any]:
+    """Registry-backed provenance block shared by SUCCEEDED and FAILED envelopes."""
+    block: dict[str, Any] = {
+        "tools_version": tools_version(),
+        "git_sha": git_sha(),
+        "formula_ids": list(formula_ids),
+        "calculation_status": calculation_status(formula_ids),
+        "contract_version": CONTRACT_VERSION,
+    }
+    if calculator_id is not None:
+        block["calculator_id"] = calculator_id
+    return block
+
+
 def build_result(
     *,
     calculator_id: str,
@@ -160,14 +178,9 @@ def build_result(
         "outputs": outputs,
         "units": units,
         "warnings": warnings,
-        "provenance": {
-            "tools_version": tools_version(),
-            "git_sha": git_sha(),
-            "formula_ids": list(formula_ids),
-            "calculation_status": calculation_status(formula_ids),
-            "contract_version": CONTRACT_VERSION,
-            "calculator_id": calculator_id,
-        },
+        "provenance": build_provenance(
+            calculator_id=calculator_id, formula_ids=formula_ids
+        ),
     }
     enforce_output_cap(body)
     return body
