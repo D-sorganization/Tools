@@ -9,8 +9,9 @@ from __future__ import annotations
 from collections.abc import Mapping
 from collections.abc import Set as AbstractSet
 from dataclasses import dataclass
-from enum import StrEnum
 from typing import Any
+
+from shared.python.compatibility import StrEnum
 
 __all__ = [
     "CANONICAL_LIFECYCLE_TRANSITIONS",

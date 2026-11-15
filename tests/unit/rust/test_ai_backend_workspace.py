@@ -518,3 +518,12 @@ def test_cli_subprocess_runner_strenum_compatible_with_python310() -> None:
     source = runner_path.read_text(encoding="utf-8")
     assert "from enum import StrEnum" not in source
     assert "shared.python.compatibility import StrEnum" in source
+
+
+@pytest.mark.unit
+def test_lifecycle_strenum_compatible_with_python310() -> None:
+    """Rust-path Maturin 3.10 smoke imports lifecycle via cli_turn_lifecycle."""
+    lifecycle_path = REPO_ROOT / "src/shared/python" / "lifecycle.py"
+    source = lifecycle_path.read_text(encoding="utf-8")
+    assert "from enum import StrEnum" not in source
+    assert "shared.python.compatibility import StrEnum" in source
