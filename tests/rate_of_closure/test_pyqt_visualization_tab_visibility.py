@@ -234,7 +234,7 @@ def test_all_primary_tab_visuals_are_visible_and_nonoverlapping_at_both_dpis(
         assert len(manifest["tabs"]) == 10
         for tab in manifest["tabs"]:
             assert tab["workload"] == "initial-production-state", tab["tab_id"]
-            assert tab["tab_open_ms"] <= budget.tab_open_budget_ms, tab["tab_id"]
+            assert tab["open_settle_ms"] <= budget.tab_open_budget_ms, tab["tab_id"]
             assert tab["resize_settle_ms"] <= budget.resize_settle_budget_ms, tab[
                 "tab_id"
             ]
