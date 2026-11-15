@@ -1,0 +1,35 @@
+{
+  "issue": 5684,
+  "surveyed_at": "2026-11-15",
+  "method": "GitHub code search via fleet App for import ai_backend / from ai_backend in downstream repos; in-repo paths confirmed on main.",
+  "conclusion": "no_downstream_wheel_consumer",
+  "downstream_repos": [
+    {
+      "repo": "D-sorganization/UpstreamDrift",
+      "imports_ai_backend_wheel": false,
+      "evidence": "No matching import of the ai_backend maturin wheel module at Tools pin (code search 2026-11-15). Tools is vendored as ud-tools source; consumers use pure-Python facades with optional Rust acceleration."
+    },
+    {
+      "repo": "D-sorganization/Gasification_Model",
+      "imports_ai_backend_wheel": false,
+      "evidence": "No matching import of the ai_backend maturin wheel module (code search 2026-11-15). AI entry points reference ai_backend naming but not the native wheel import path."
+    }
+  ],
+  "tools_in_repo_importers": [
+    {
+      "path": "src/shared/python/ai/adapters/rust_adapter.py",
+      "wheel_required": false,
+      "notes": "Optional Rust path; try_create and ai_backend_available degrade when wheel absent."
+    },
+    {
+      "path": "src/shared/python/ai/knowledge/pack.py",
+      "wheel_required": false,
+      "notes": "Prefers ai_backend.LocalEmbedder when present; falls back to sentence-transformers."
+    },
+    {
+      "path": "tests/shared/python/ai/test_rust_adapter_wheel_smoke.py",
+      "wheel_required": true,
+      "notes": "CI oracle 5 gate when AI_BACKEND_WHEEL_REQUIRED=1."
+    }
+  ]
+}
