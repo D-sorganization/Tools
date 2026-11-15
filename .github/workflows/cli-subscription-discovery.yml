@@ -10,7 +10,7 @@ on:
 
 concurrency:
   group: cli-subscription-discovery
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 defaults:
   run:
