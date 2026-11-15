@@ -54,7 +54,8 @@ def test_run_cli_discovery_probes_rejects_api_key_env(tmp_path: Path) -> None:
         cwd=str(REPO_ROOT),
         env={
             "PYTHONPATH": str(REPO_ROOT / "src"),
-            "ANTHROPIC_API_KEY": "sk-test",
+            # pragma: allowlist secret
+            "ANTHROPIC_API_KEY": "sk-ant-not-allowed",
         },
         capture_output=True,
         text=True,

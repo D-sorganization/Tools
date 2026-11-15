@@ -8489,6 +8489,60 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 2344,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f3ad89f083cb3d76b6a2e031309717a1adc6686a1dd44136b0a55e01faa94386",
+      "family": "repository-tooling-non-calculation",
+      "id": "TOOLS-MODULE-SCRIPTS-RUN-CLI-DISCOVERY-PROBES-PY-8F03936324E9",
+      "language": "python",
+      "maintainer": "Repository tooling maintainers",
+      "path": "scripts/run_cli_discovery_probes.py",
+      "purpose": "Run Tier-2 subscription CLI discovery probes for all default providers (#5727).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "main",
+            "signature": "argv: list[str] | None=None"
+          }
+        ],
+        "test_paths": [
+          "tests/scripts/test_run_cli_discovery_probes.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2112,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",

@@ -922,6 +922,7 @@
           }
         ],
         "test_paths": [
+          "tests/scripts/test_run_cli_discovery_probes.py",
           "tests/unit/ai/adapters/test_cli_discovery_qualification.py"
         ],
         "unit_mentions": [

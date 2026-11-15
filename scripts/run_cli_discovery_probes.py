@@ -6,22 +6,11 @@ from __future__ import annotations
 import argparse
 import json
 import logging
-import sys
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any
 
 logger = logging.getLogger(__name__)
-
-
-def _repo_root() -> Path:
-    return Path(__file__).resolve().parents[1]
-
-
-def _ensure_src_on_path() -> None:
-    src = _repo_root() / "src"
-    if str(src) not in sys.path:
-        sys.path.insert(0, str(src))
 
 
 def _build_report() -> dict[str, Any]:
@@ -66,7 +55,6 @@ def _build_report() -> dict[str, Any]:
 def main(argv: list[str] | None = None) -> int:
     """Run discovery probes and write a JSON report."""
     logging.basicConfig(level=logging.INFO, format="%(levelname)s: %(message)s")
-    _ensure_src_on_path()
 
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument(
