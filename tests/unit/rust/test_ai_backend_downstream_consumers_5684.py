@@ -13,7 +13,7 @@ _SURVEY_PATH = _REPO_ROOT / "config" / "ai_backend_downstream_consumer_survey.js
 
 @pytest.mark.unit
 def test_survey_github_issue_linkage_refs_only_not_fixes() -> None:
-    """Slice 2 must not auto-close epic #5684 (Windows/macOS wheel evidence still open)."""
+    """Slice 2 must use Refs #5684, not Fixes (Win/macOS qualification still open)."""
     payload = json.loads(_SURVEY_PATH.read_text(encoding="utf-8"))
     linkage = payload.get("github_issue_linkage")
     assert linkage == "refs_only", (
