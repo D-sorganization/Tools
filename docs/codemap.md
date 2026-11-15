@@ -19,6 +19,31 @@ edit the vendor implementation. The smaller `fleet-agent-context` package has
 no CodeMap parser dependencies: install this optional environment separately.
 For reviewed module relationships, see [Local Agent Context](agent-context.md).
 
+## Agent entry points in this repo
+
+Checked against the source on 2026-11-15:
+
+- **No agent-context catalog here.** Tools provides the `agent-context`
+  package (`src/agent_context/`, `packages/agent-context/`) but has no
+  `docs/agent_context/catalog.json` of its own. The repo-context rule in
+  `AGENTS.md` therefore falls through to this guide, a local `.codemap/`, `rg`
+  and the tests. Running `agent-context --root .` in Tools fails because the
+  catalog is missing. That is expected, not a broken install.
+- **`.mcp.json` servers.** `codemap` runs `codemap-mcp` with
+  `CODEMAP_REPO_ROOT=.` and is the navigation server to use here.
+  `agent-context` needs `python` on `PATH` and a catalog, so it serves nothing
+  in Tools. `ud-tools-calculators` runs calculations and does not navigate
+  code. Each server fails to connect until its extra is installed
+  (`[codemap,codemap-mcp]`, `[calc-mcp]`).
+- **Import path.** The canonical package is `shared.python.codemap`.
+  `src/codemap/` is only a compatibility shim. The `codemap`, `codemap-watch`
+  and `codemap-mcp` console scripts point at the canonical modules.
+- **Refresh.** Tools has no scheduled CodeMap workflow. Refreshing is manual:
+  run `codemap rebuild` after you pull or switch branches, use
+  `--since <rev>` for an incremental pass, or keep `codemap-watch` running.
+  Each worktree keeps its own ignored `.codemap/`. Queries reject a stale index
+  instead of returning a stale answer.
+
 ### Windows note
 
 `tree_sitter_languages` is incompatible with `tree_sitter >= 0.22` on
@@ -158,7 +183,7 @@ line ranges; the chat backend opens the file on click-through.
 The design calls for an opt-in semantic search layer (`onnxruntime` +
 `gte-small`, stored in a `sqlite-vec` virtual table). That layer is
 **not** in this release; the placeholder lives at
-`codemap/embeddings.py` and a future PR will wire it in behind
+`src/shared/python/codemap/embeddings.py` and a future PR will wire it in behind
 `codemap rebuild --embed`.
 
 ## Tests
