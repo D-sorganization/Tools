@@ -134,3 +134,29 @@ def test_cleanup_preserves_paths_shared_with_age_protected_entry(
     assert model_file.read_text(encoding="utf-8") == "<robot/>"
     assert cache.get("fresh") is fresh
     assert ModelCache(cache.config).get("fresh") is not None
+
+
+@pytest.mark.parametrize("overlap", ["same", "older_parent", "newer_parent"])
+def test_count_cleanup_preserves_retained_eligible_alias(
+    tmp_path: Path, overlap: str
+) -> None:
+    """Evicting an eligible alias must not corrupt the newer LRU survivor."""
+    cache = _make_cache(tmp_path, 10, min_age_days=0)
+    folder = tmp_path / "shared-model"
+    folder.mkdir()
+    model_file = folder / "model.urdf"
+    model_file.write_text("<robot/>", encoding="utf-8")
+    older = cache.put("older", folder if overlap == "older_parent" else model_file)
+    newer = cache.put("newer", folder if overlap == "newer_parent" else model_file)
+    older.cached_at = older.last_accessed = 0.0
+    newer.cached_at = newer.last_accessed = 1.0
+    cache.config.max_entries = 2
+
+    active = _add_model(cache, "active")
+
+    assert len(cache) == 2
+    assert cache.get("older") is None
+    assert cache.get("newer") is newer
+    assert cache.get("active") is active
+    assert model_file.read_text(encoding="utf-8") == "<robot/>"
+    assert ModelCache(cache.config).get("newer") is not None

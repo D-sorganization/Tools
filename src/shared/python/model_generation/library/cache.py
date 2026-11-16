@@ -299,7 +299,7 @@ class ModelCache:
         """Remove eligible old LRU entries toward both size and count targets.
 
         Retain the active insertion and entries protected by minimum age.
-        Their overlapping paths inherit protection from deletion by another ID.
+        Never delete files still referenced by a retained entry.
         """
         logger.info("Running cache cleanup...")
 
@@ -309,8 +309,11 @@ class ModelCache:
         min_age = time.time() - (self.config.min_age_days * 24 * 60 * 60)
         max_size = self.config.max_size_mb * 1024 * 1024
         target_size = max_size * 0.7  # Clean to 70%
+        remaining_paths = {
+            entry.model_id: entry.local_path.resolve() for entry in sorted_entries
+        }
         protected_paths = {
-            entry.model_id: entry.local_path.resolve()
+            entry.model_id: remaining_paths[entry.model_id]
             for entry in sorted_entries
             if entry.model_id == protected_model_id or entry.cached_at > min_age
         }
@@ -328,7 +331,7 @@ class ModelCache:
                 continue
             # Removing a directory also removes descendants; removing a child
             # can corrupt a retained directory model. Protect both directions.
-            entry_path = entry.local_path.resolve()
+            entry_path = remaining_paths[entry.model_id]
             if any(
                 entry_path.is_relative_to(protected_path)
                 or protected_path.is_relative_to(entry_path)
@@ -336,7 +339,16 @@ class ModelCache:
             ):
                 continue
 
-            self.remove(entry.model_id)
+            # Eligible aliases may be evicted from the index to meet count
+            # pressure, but their newer LRU survivors still need the files.
+            delete_files = not any(
+                entry_path.is_relative_to(other_path)
+                or other_path.is_relative_to(entry_path)
+                for model_id, other_path in remaining_paths.items()
+                if model_id != entry.model_id
+            )
+            self.remove(entry.model_id, delete_files=delete_files)
+            remaining_paths.pop(entry.model_id)
             removed += 1
 
         logger.info(f"Cleanup removed {removed} entries")
