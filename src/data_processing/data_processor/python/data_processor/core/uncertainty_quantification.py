@@ -849,10 +849,9 @@ class UncertaintyQuantifier:
         z_alpha_lower = self._normal_ppf(alpha / 2)
         z_alpha_upper = self._normal_ppf(1 - alpha / 2)
 
-        # BCa adjustment
+        # BCa adjustment: Phi(z0 + (z0 + z) / (1 - a (z0 + z))), which is
+        # Phi(2 z0 + z) when a == 0, so no special case is needed for it.
         def adjusted_percentile(z_alpha: float) -> float:
-            if a == 0:
-                return self._normal_cdf(z0 + z_alpha)
             numer = z0 + z_alpha
             denom = 1 - a * (z0 + z_alpha)
             if denom == 0:
