@@ -657,7 +657,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-data-processor-io.json"
     },
     {
-      "content_sha256_lf": "e1a23ba5cee635694b5706bde96b467a9731c957cb96aa4eb155a9e21161eac3",
+      "content_sha256_lf": "7e4e9ff75da3caa6054cbc4f23106a40e8cd8e5006305aa5fd3cf61bc50bc05a",
       "entry_count": 2,
       "package": "src/shared/python/file_watcher",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-file-watcher.json"
