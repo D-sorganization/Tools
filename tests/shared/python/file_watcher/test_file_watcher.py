@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import builtins
 import sys
+import threading
 import types
 from pathlib import Path
 from types import SimpleNamespace
@@ -280,23 +281,24 @@ def test_flush_loop_polls_until_stop_flag(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
     watcher = FileWatcher(tmp_path, debounce_ms=0, respect_gitignore=False)
-    sleeps: list[float] = []
+    waits: list[float] = []
     maybe_flush_calls = 0
 
-    def _sleep(delay: float) -> None:
-        sleeps.append(delay)
+    def _wait(delay: float) -> bool:
+        waits.append(delay)
+        return False
 
     def _maybe_flush() -> None:
         nonlocal maybe_flush_calls
         maybe_flush_calls += 1
         watcher._stop_flag.set()
 
-    monkeypatch.setattr(_fallback.time, "sleep", _sleep)
+    monkeypatch.setattr(watcher._stop_flag, "wait", _wait)
     monkeypatch.setattr(watcher, "_maybe_flush", _maybe_flush)
 
     watcher._flush_loop()
 
-    assert sleeps == [0.005]
+    assert waits == [0.005]
     assert maybe_flush_calls == 1
 
 
@@ -354,3 +356,36 @@ def test_gitignore_build_handles_missing_pathspec_and_unreadable_file(
     )
 
     assert FileWatcher(tmp_path)._gitignore_matcher is None
+
+
+def test_stop_interrupts_long_debounce_wait(
+    tmp_path: Path,
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """Stopping must join the worker even when its quiet period is long."""
+    _install_fake_watchdog(monkeypatch)
+    watcher = FileWatcher(tmp_path, debounce_ms=60_000, respect_gitignore=False)
+    poll_started = threading.Event()
+    original_is_set = watcher._stop_flag.is_set
+
+    def _report_poll_started() -> bool:
+        stopped = original_is_set()
+        if not stopped:
+            poll_started.set()
+        return stopped
+
+    monkeypatch.setattr(watcher._stop_flag, "is_set", _report_poll_started)
+    observed: list[list[ChangeEvent]] = []
+    watcher.on_change(observed.append)
+    watcher.start()
+    worker = watcher._flush_thread
+    source = str(tmp_path / "pending.py")
+    try:
+        assert worker is not None
+        assert poll_started.wait(timeout=5)
+        watcher._enqueue(source, "modify")
+    finally:
+        watcher.stop()
+
+    assert not worker.is_alive()
+    assert observed == [[ChangeEvent(path=source, kind="modify")]]
