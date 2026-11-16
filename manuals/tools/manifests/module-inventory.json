@@ -711,7 +711,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-plot-engine.json"
     },
     {
-      "content_sha256_lf": "34b9c11d006ae629e527ebea5398ddcdb0aa80f2a6b007c24518b8796f928744",
+      "content_sha256_lf": "c507b1fa42accd004c2ccf7b592a50805f8476dbd9c5ee9879f9195d26a0ff84",
       "entry_count": 4,
       "package": "src/shared/python/plot_theme",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-plot-theme.json"
