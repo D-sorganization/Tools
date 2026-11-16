@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 import os
 
 
@@ -95,7 +96,10 @@ def get_env_float(
     min_value: float | None = None,
     max_value: float | None = None,
 ) -> float | None:
-    """Read a float environment variable with optional bounds."""
+    """Read a float environment variable with optional bounds.
+
+    NaN cannot satisfy a declared numeric bound and raises EnvironmentError.
+    """
     value = get_env(name)
     if value is None:
         return default
@@ -108,6 +112,8 @@ def get_env_float(
             expected="float",
             actual=value,
         ) from exc
+    if (min_value is not None or max_value is not None) and math.isnan(parsed):
+        raise EnvironmentError(name, "NaN cannot satisfy numeric bounds", actual=value)
     if min_value is not None and parsed < min_value:
         raise EnvironmentError(name, "Value below minimum", actual=str(parsed))
     if max_value is not None and parsed > max_value:

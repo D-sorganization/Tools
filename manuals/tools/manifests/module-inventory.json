@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "72dd5f642effa996fdfb7dbbb9145c7c79de47ff761f811f683e8a1207749d06",
+      "content_sha256_lf": "c668a8ae30003d3aac057bb5a9ed810a1425ac0d673f7f0aa7155756ff44bdc7",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -639,7 +639,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-codemap.json"
     },
     {
-      "content_sha256_lf": "ff9a3bb0e68078bb1c0c322df0d1e73fca90329e63cbe301c2993a14156710b0",
+      "content_sha256_lf": "15522195ca52d289c8f127c630a5536bd554172ea123978f424ec95143c57d1c",
       "entry_count": 2,
       "package": "src/shared/python/config",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-config.json"
