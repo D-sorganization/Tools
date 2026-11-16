@@ -299,6 +299,7 @@ class ModelCache:
         """Remove eligible old LRU entries toward both size and count targets.
 
         Retain the active insertion and entries protected by minimum age.
+        Evict overlapping index entries without deleting the active model's files.
         """
         logger.info("Running cache cleanup...")
 
@@ -309,6 +310,12 @@ class ModelCache:
         max_size = self.config.max_size_mb * 1024 * 1024
         target_size = max_size * 0.7  # Clean to 70%
 
+        protected = (
+            self._entries.get(protected_model_id)
+            if protected_model_id is not None
+            else None
+        )
+        protected_path = protected.local_path.resolve() if protected else None
         removed = 0
         for entry in sorted_entries:
             if (
@@ -321,7 +328,13 @@ class ModelCache:
             if entry.model_id == protected_model_id or entry.cached_at > min_age:
                 continue
 
-            self.remove(entry.model_id)
+            # Overlapping index entries can share the active model's files.
+            path = entry.local_path.resolve()
+            delete_files = protected_path is None or not (
+                path.is_relative_to(protected_path)
+                or protected_path.is_relative_to(path)
+            )
+            self.remove(entry.model_id, delete_files=delete_files)
             removed += 1
 
         logger.info(f"Cleanup removed {removed} entries")

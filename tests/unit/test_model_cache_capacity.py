@@ -85,3 +85,27 @@ def test_put_keeps_new_model_when_it_alone_exceeds_size_limit(tmp_path: Path) ->
     entry = cache.put("large", path)
     assert entry.local_path.exists()
     assert cache.get("large") is entry
+
+
+@pytest.mark.parametrize("overlap", ["same", "old_parent", "new_parent"])
+def test_cleanup_preserves_files_shared_with_active_insertion(
+    tmp_path: Path, overlap: str
+) -> None:
+    """Evicting an old index entry must not delete the newly inserted model."""
+    cache = _make_cache(tmp_path, 1, min_age_days=0)
+    folder = tmp_path / "model"
+    folder.mkdir()
+    model_file = folder / "model.urdf"
+    model_file.write_text("<robot/>", encoding="utf-8")
+    old_path = folder if overlap == "old_parent" else model_file
+    new_path = folder if overlap == "new_parent" else model_file
+    old = cache.put("old", old_path)
+    old.cached_at = old.last_accessed = 0.0
+    new = cache.put("new", new_path)
+
+    assert len(cache) == 1
+    assert cache.get("old") is None
+    assert model_file.read_text(encoding="utf-8") == "<robot/>"
+    assert cache.get("new") is new
+    restored = ModelCache(cache.config)
+    assert restored.get("new") is not None
