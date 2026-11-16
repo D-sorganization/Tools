@@ -5161,6 +5161,7 @@
         "test_paths": [
           "src/data_processing/data_processor/python/tests/test_advanced_analysis.py",
           "src/data_processing/data_processor/python/tests/test_bootstrap_bca_interval.py",
+          "src/data_processing/data_processor/python/tests/test_uncertainty_exact_quantiles.py",
           "tests/data_processing/data_processor/test_core_modules_smoke.py",
           "tests/data_processing/data_processor/test_numba_method_decorators.py",
           "tests/data_processing/data_processor/test_uncertainty_quantification_contracts.py"
