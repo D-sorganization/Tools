@@ -68,6 +68,7 @@ def validate_pandas_formula(
     The accepted grammar is intentionally small: column names, numeric/boolean
     constants, arithmetic, boolean operations, and comparisons. Function calls,
     attribute access, indexing, comprehensions, and unknown names are rejected.
+    Numeric exponent literals may have one leading plus or minus sign.
     """
     if not isinstance(expression, str) or not expression.strip():
         raise ValueError("Formula expression must be a non-empty string")
@@ -123,9 +124,13 @@ def log_formula_rejected(expression: str, reason: Exception) -> None:
 def _validate_power(node: ast.BinOp) -> None:
     """Reject unbounded exponent expressions."""
     exponent = node.right
+    if isinstance(exponent, ast.UnaryOp) and isinstance(
+        exponent.op, ast.UAdd | ast.USub
+    ):
+        exponent = exponent.operand
     if not isinstance(exponent, ast.Constant) or not isinstance(
         exponent.value, int | float
     ):
         raise ValueError("Formula exponent must be a numeric constant")
-    if abs(float(exponent.value)) > MAX_POWER_EXPONENT:
+    if abs(exponent.value) > MAX_POWER_EXPONENT:
         raise ValueError("Formula exponent is too large")
