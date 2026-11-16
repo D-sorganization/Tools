@@ -72,10 +72,10 @@ def cylinder_cross_section(
         # Degenerate segment: return a tiny square
         return np.array(
             [
-                start - radius,
-                start + np.array([radius, 0]),
-                start + radius,
-                start - np.array([radius, 0]),
+                start + np.array([-radius, -radius]),
+                start + np.array([radius, -radius]),
+                start + np.array([radius, radius]),
+                start + np.array([-radius, radius]),
             ]
         )
 
