@@ -103,9 +103,34 @@ def test_cleanup_preserves_files_shared_with_active_insertion(
     old.cached_at = old.last_accessed = 0.0
     new = cache.put("new", new_path)
 
-    assert len(cache) == 1
-    assert cache.get("old") is None
+    # The limit is soft when the old entry aliases a retained model.
+    assert len(cache) == 2
+    assert cache.get("old") is old
     assert model_file.read_text(encoding="utf-8") == "<robot/>"
     assert cache.get("new") is new
     restored = ModelCache(cache.config)
     assert restored.get("new") is not None
+
+
+@pytest.mark.parametrize("overlap", ["same", "old_parent", "fresh_parent"])
+def test_cleanup_preserves_paths_shared_with_age_protected_entry(
+    tmp_path: Path, overlap: str
+) -> None:
+    """An old alias cannot remove a model retained by the minimum-age rule."""
+    cache = _make_cache(tmp_path, 10)
+    folder = tmp_path / "shared-model"
+    folder.mkdir()
+    model_file = folder / "model.urdf"
+    model_file.write_text("<robot/>", encoding="utf-8")
+    old_path = folder if overlap == "old_parent" else model_file
+    fresh_path = folder if overlap == "fresh_parent" else model_file
+    old = cache.put("old", old_path)
+    old.cached_at = old.last_accessed = 0.0
+    fresh = cache.put("fresh", fresh_path)
+    cache.config.max_entries = 1
+
+    cache._cleanup()
+
+    assert model_file.read_text(encoding="utf-8") == "<robot/>"
+    assert cache.get("fresh") is fresh
+    assert ModelCache(cache.config).get("fresh") is not None

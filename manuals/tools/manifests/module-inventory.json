@@ -693,7 +693,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-logging-pkg.json"
     },
     {
-      "content_sha256_lf": "620dceeb05285d0e3db6472555999e6d3cd4e83c1414aa4205109a757156b1f4",
+      "content_sha256_lf": "7cc3872fa206ac7f96508b202389ecfd6697cd1fcb2eb8e054a092fd87e018fb",
       "entry_count": 62,
       "package": "src/shared/python/model_generation",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-model-generation.json"

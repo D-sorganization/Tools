@@ -299,7 +299,7 @@ class ModelCache:
         """Remove eligible old LRU entries toward both size and count targets.
 
         Retain the active insertion and entries protected by minimum age.
-        Evict overlapping index entries without deleting the active model's files.
+        Their overlapping paths inherit protection from deletion by another ID.
         """
         logger.info("Running cache cleanup...")
 
@@ -309,13 +309,12 @@ class ModelCache:
         min_age = time.time() - (self.config.min_age_days * 24 * 60 * 60)
         max_size = self.config.max_size_mb * 1024 * 1024
         target_size = max_size * 0.7  # Clean to 70%
+        protected_paths = {
+            entry.model_id: entry.local_path.resolve()
+            for entry in sorted_entries
+            if entry.model_id == protected_model_id or entry.cached_at > min_age
+        }
 
-        protected = (
-            self._entries.get(protected_model_id)
-            if protected_model_id is not None
-            else None
-        )
-        protected_path = protected.local_path.resolve() if protected else None
         removed = 0
         for entry in sorted_entries:
             if (
@@ -325,16 +324,19 @@ class ModelCache:
                 break
 
             # Keep the current insertion and files protected by minimum age.
-            if entry.model_id == protected_model_id or entry.cached_at > min_age:
+            if entry.model_id in protected_paths:
+                continue
+            # Removing a directory also removes descendants; removing a child
+            # can corrupt a retained directory model. Protect both directions.
+            entry_path = entry.local_path.resolve()
+            if any(
+                entry_path.is_relative_to(protected_path)
+                or protected_path.is_relative_to(entry_path)
+                for protected_path in protected_paths.values()
+            ):
                 continue
 
-            # Overlapping index entries can share the active model's files.
-            path = entry.local_path.resolve()
-            delete_files = protected_path is None or not (
-                path.is_relative_to(protected_path)
-                or protected_path.is_relative_to(path)
-            )
-            self.remove(entry.model_id, delete_files=delete_files)
+            self.remove(entry.model_id)
             removed += 1
 
         logger.info(f"Cleanup removed {removed} entries")
