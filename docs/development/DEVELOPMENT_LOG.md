@@ -94,10 +94,10 @@ feature, from proposal to ship. See the `development-logs` section of
 - **Owner:** claude
 - **Issue:** #4433
 - **Branch:** `claude/issue-4433`
-- **PR:** #5424 (draft), #5447
+- **PR:** #5424 (draft), #5447, #6056
 - **Paths:** `tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py`, `tests/rate_of_closure/pyqt_launch_monitor_state_probe.py`, `src/rate_of_closure/web/e2e/visualization-tab-visibility.spec.ts`, `docs/audits/rate_of_closure_visual_first_epic_4433.v1.json`
 - **Started:** 2026-10-04
-- **Last verified:** 2026-10-06 (`8c3cc237`; collated from changes/4433-launch-monitor-analytics-no-longer-scrol.md)
+- **Last verified:** 2026-11-16 (`41d47357`; collated from changes/4433-lock-pyqt-tab-open-budget-to-open-settle.md)
 - **Summary:** First tab pair (Launch Monitor Analytics) of the epic's state-by-state geometry gap: the primary scatter stays in the first viewport through result, error, loading and empty on React (3 reference viewports) and PyQt (1.0/1.5 DPI). Other pairs, approved baselines and the AT protocol stay open under the epic.
 - **Next step:** Shipped via PR #5424 and #5447; epic issue #4433 closed completed 2026-10-14.
 
@@ -2607,10 +2607,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #5727
 - **Branch:** merged via #5785
-- **PR:** #5785, #6042, #6039, #6043
+- **PR:** #5785, #6042, #6039, #6043, #6055
 - **Paths:** see #5785
 - **Started:** 2026-10-25
-- **Last verified:** 2026-11-14 (`ca360881`; collated from changes/5727-cli-discovery-qualification.md)
+- **Last verified:** 2026-11-16 (`4a81ec70`; collated from changes/5727-tier-2-cli-discovery-workflow-and-run-cl.md)
 - **Summary:** Wire Antigravity (agy) CLI adapter to nonce-bound tool bridge and add AgenticAppHost protocol.
 - **Next step:** Shipped in PR #5785.
 
