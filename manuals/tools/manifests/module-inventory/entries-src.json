@@ -238,6 +238,7 @@
           "src/shared/python/swing_sim/variation/tests/test_web_parity_fixture.py",
           "src/shared/python/tests/test_contracts_shared.py",
           "src/shared/python/tests/test_cors.py",
+          "src/solar_system_model/solar_system/tests/test_moon_systems.py",
           "src/urdf_builder_gui/tests/test_urdf_builder_gui.py",
           "tests/_import_contract_bootstrap.py",
           "tests/architecture/test_design_manual_governance_contract.py",

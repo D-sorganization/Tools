@@ -2655,6 +2655,7 @@
           "src/shared/python/swing_sim/variation/tests/test_dispersion_metrics.py",
           "src/shared/python/swing_sim/variation/tests/test_execution_metadata.py",
           "src/shared/python/swing_sim/variation/tests/test_sobol_sensitivity.py",
+          "src/solar_system_model/solar_system/tests/test_moon_systems.py",
           "src/solar_system_model/solar_system/tests/test_orbital_mechanics.py",
           "src/solar_system_model/solar_system/tests/test_parametrized.py",
           "src/vessel_drafter/tests/test_cylindrical_bath_layout.py",
