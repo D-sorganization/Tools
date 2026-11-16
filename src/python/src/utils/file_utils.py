@@ -71,7 +71,7 @@ def safe_read_json(file_path: Path | str, default: Any = None) -> Any:
     try:
         with open(path, encoding="utf-8") as f:
             return json.load(f)
-    except json.JSONDecodeError as e:
+    except (json.JSONDecodeError, UnicodeDecodeError) as e:
         logger.error(f"Invalid JSON in {path}: {e}")
         return default
     except (PermissionError, OSError) as e:
