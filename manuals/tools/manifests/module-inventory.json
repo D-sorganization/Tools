@@ -957,7 +957,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-signal-toolkit.json"
     },
     {
-      "content_sha256_lf": "4980a6082c3d963e4492d024cfd23372a2b0194bbe084cb568ac09873f5ddf89",
+      "content_sha256_lf": "b93e15540433dc65b249f3912b5b7ff93a89f2a71616f00a568b58f9c0ee682d",
       "entry_count": 50,
       "package": "src/solar_system_model",
       "path": "manuals/tools/manifests/module-inventory/entries-src-solar-system-model.json"
