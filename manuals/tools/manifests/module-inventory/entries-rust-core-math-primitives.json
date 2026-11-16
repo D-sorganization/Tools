@@ -1237,6 +1237,7 @@
           "tests/test_cross_repo_import_compatibility.py",
           "tests/test_data_processor_embedding.py",
           "tests/test_data_processor_tab_export.py",
+          "tests/test_debug_memory_lifecycle.py",
           "tests/test_dry_compliance.py",
           "tests/test_launch_cli_output.py",
           "tests/test_pendulum_discovery.py",
