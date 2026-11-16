@@ -261,6 +261,7 @@
         ],
         "test_paths": [
           "src/shared/python/plot_theme/tests/test_plot_theme.py",
+          "tests/shared/python/plot_theme/test_callback_delivery.py",
           "tests/shared/python/plot_theme/test_integration.py",
           "tests/shared/python/plot_theme/test_manager.py"
         ],
@@ -414,6 +415,7 @@
         ],
         "test_paths": [
           "src/shared/python/plot_theme/tests/test_plot_theme.py",
+          "tests/shared/python/plot_theme/test_callback_delivery.py",
           "tests/shared/python/plot_theme/test_manager.py",
           "tests/shared/python/plot_theme/test_themes.py"
         ],
