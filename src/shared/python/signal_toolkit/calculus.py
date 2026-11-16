@@ -281,6 +281,23 @@ class Differentiator:
         return float(derivative_signal.values[idx])
 
 
+def _cumulative_trapezoid(
+    y: np.ndarray, t: np.ndarray, initial_value: float
+) -> np.ndarray:
+    """Running trapezoid integral offset by ``initial_value``.
+
+    ``scipy.integrate.cumulative_trapezoid`` only accepts ``initial`` of
+    ``None`` or ``0``, so the offset is added to every sample here.
+
+    Raises:
+        ValueError: If ``initial_value`` is not finite.
+    """
+    if not np.isfinite(initial_value):
+        raise ValueError(f"initial_value must be finite, got {initial_value}")
+    cumulative = integrate.cumulative_trapezoid(y, t, initial=0)
+    return np.asarray(cumulative + initial_value)
+
+
 class Integrator:
     """Class for computing signal integrals."""
 
@@ -410,7 +427,7 @@ class Integrator:
             value = _trapz(y_range, t_range)
 
         # Compute cumulative integral
-        cumulative = integrate.cumulative_trapezoid(y, t, initial=initial_value)
+        cumulative = _cumulative_trapezoid(y, t, initial_value)
         cumulative_signal = Signal(
             time=t,
             values=cumulative,
@@ -452,11 +469,7 @@ class Integrator:
         # ``python -O`` (issue #3182 / #3344).
         if signal is None:
             raise ValueError("signal must be provided")
-        cumulative = integrate.cumulative_trapezoid(
-            signal.values,
-            signal.time,
-            initial=initial_value,
-        )
+        cumulative = _cumulative_trapezoid(signal.values, signal.time, initial_value)
 
         return Signal(
             time=signal.time,

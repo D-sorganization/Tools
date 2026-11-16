@@ -226,10 +226,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 24860,
+      "bytes_lf": 25395,
       "classification": "calculation",
       "classification_basis": "path-marker:calculus",
-      "content_sha256_lf": "16e0ab6b0c88a9c5aad0c659ddc70de43982515164fb6084d880dfd3fc710135",
+      "content_sha256_lf": "3af710a0d1eb3a0763db93263bfb8aead3d5668516bdc8964f4a27909904899e",
       "family": "signal-processing-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIGNAL-TOOLKIT-CALCULUS-PY-78480075D93D",
       "language": "python",
@@ -341,6 +341,7 @@
         ],
         "test_paths": [
           "src/shared/python/signal_toolkit/tests/test_bound_validation_3182.py",
+          "src/shared/python/signal_toolkit/tests/test_cumulative_initial_value.py",
           "src/shared/python/signal_toolkit/tests/test_signal_toolkit.py",
           "src/shared/python/signal_toolkit/tests/test_signal_toolkit_extended.py",
           "tests/shared/python/signal_toolkit/test_calculus.py",
@@ -413,6 +414,7 @@
         "test_paths": [
           "src/shared/python/signal_toolkit/tests/test_bilateral_rust_parity.py",
           "src/shared/python/signal_toolkit/tests/test_bound_validation_3182.py",
+          "src/shared/python/signal_toolkit/tests/test_cumulative_initial_value.py",
           "src/shared/python/signal_toolkit/tests/test_limits.py",
           "src/shared/python/signal_toolkit/tests/test_noise.py",
           "src/shared/python/signal_toolkit/tests/test_series.py",
