@@ -700,6 +700,7 @@
           "tests/rotation_converter/test_converter.py",
           "tests/rotation_converter/test_modern_robotics.py",
           "tests/rotation_converter/test_modern_robotics_public_surface_3689.py",
+          "tests/rotation_converter/test_project_to_so3_nearest.py",
           "tests/rotation_converter/test_rigid_transform.py",
           "tests/rotation_converter/test_rotation_converter_advanced.py",
           "tests/rotation_converter/test_rotation_core.py",
