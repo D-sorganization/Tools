@@ -1223,6 +1223,7 @@
           "tests/shared/python/signal_toolkit/test_adaptive_filter.py",
           "tests/shared/python/test_compatibility.py",
           "tests/shared/python/test_safe_eval.py",
+          "tests/shared/python/test_trusted_git.py",
           "tests/shared/python/theme/test_icon_utils.py",
           "tests/shared/python/theme/test_typography.py",
           "tests/shared/python/ui/test_wave1_widget_state.py",
