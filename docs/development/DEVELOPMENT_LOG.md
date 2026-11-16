@@ -1587,6 +1587,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#5684 · Align Ai_Backend README and Onnx Preflight Ort Pin Strings With Cargo.Toml
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5684
+- **Branch:** merged via #6054
+- **PR:** #6054
+- **Paths:** see #6054
+- **Started:** 2026-11-15
+- **Last verified:** 2026-11-15 (`ceb432ca`; collated from changes/5684-align-ai-backend-readme-and-onnx-preflig.md)
+- **Summary:** Align ai_backend README and onnx preflight ort pin strings with Cargo.toml
+- **Next step:** Shipped in PR #6054.
+
 ### DL-#6019 · MCP FAILED Envelopes Include Registry-Backed Provenance.Calculation_Status (UD-PAIR UpstreamDrift#14976 for Package Calc_Backend)
 
 - **State:** shipped

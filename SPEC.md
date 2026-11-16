@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-15 | #6054 | Align ai_backend README and onnx preflight ort pin strings with Cargo.toml |
 | 2026-11-15 | #6053 | MCP FAILED envelopes include registry-backed provenance.calculation_status (UD-PAIR UpstreamDrift#14976 for package calc_backend) |
 | 2026-11-14 | #6043 | Add CLI discovery probe and subscription qualification validator (Slice 9) |
 | 2026-11-13 | #6039 | Add CLI turn cancellation, incremental idle timeout, parent-death reaper, and typed lifecycle outcomes (Wave 2.2) |
