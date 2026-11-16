@@ -1194,7 +1194,6 @@
           "tests/camera/test_camera_sources.py",
           "tests/contracts/test_chat_service_conformance.py",
           "tests/integration/sidekick/test_sidekick_host_integration.py",
-          "tests/ops/test_no_legacy_agent_tree.py",
           "tests/ops/test_rate_web_playwright_workflow.py",
           "tests/rate_of_closure/pyqt_variation_visual_state_probe.py",
           "tests/rate_of_closure/test_durable_ensemble_authority_contracts.py",
