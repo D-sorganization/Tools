@@ -12,11 +12,21 @@ which backend is in use. Provides:
 from __future__ import annotations
 
 import logging
+import os
 import threading
 import time
 from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from watchdog.events import (
+        FileSystemEvent,
+        FileSystemEventHandler,
+        FileSystemMovedEvent,
+    )
+    from watchdog.observers.api import BaseObserver
 
 logger = logging.getLogger(__name__)
 
@@ -70,8 +80,8 @@ class FileWatcher:
         self._debounce = debounce_ms / 1000.0
         self._respect_gitignore = respect_gitignore
         self._callback: EventCallback | None = None
-        self._observer = None  # watchdog Observer; created on start()
-        self._handler = None
+        self._observer: BaseObserver | None = None
+        self._handler: FileSystemEventHandler | None = None
         self._pending: dict[tuple[str, str], ChangeEvent] = {}
         self._lock = threading.Lock()
         self._last_event_at: float | None = None
@@ -112,21 +122,21 @@ class FileWatcher:
         watcher = self  # bound for the inner class
 
         class _Handler(FileSystemEventHandler):
-            def on_created(self, event) -> None:
-                watcher._enqueue(event.src_path, "create")
+            def on_created(self, event: FileSystemEvent) -> None:
+                watcher._enqueue(os.fsdecode(event.src_path), "create")
 
-            def on_modified(self, event) -> None:
+            def on_modified(self, event: FileSystemEvent) -> None:
                 if event.is_directory:
                     return
-                watcher._enqueue(event.src_path, "modify")
+                watcher._enqueue(os.fsdecode(event.src_path), "modify")
 
-            def on_deleted(self, event) -> None:
-                watcher._enqueue(event.src_path, "delete")
+            def on_deleted(self, event: FileSystemEvent) -> None:
+                watcher._enqueue(os.fsdecode(event.src_path), "delete")
 
-            def on_moved(self, event) -> None:
-                watcher._enqueue(event.src_path, "rename")
+            def on_moved(self, event: FileSystemMovedEvent) -> None:
+                watcher._enqueue(os.fsdecode(event.src_path), "rename")
                 if getattr(event, "dest_path", None):
-                    watcher._enqueue(event.dest_path, "rename")
+                    watcher._enqueue(os.fsdecode(event.dest_path), "rename")
 
         self._handler = _Handler()
         self._observer = Observer()
@@ -175,7 +185,7 @@ class FileWatcher:
     def _flush_loop(self) -> None:
         poll = max(self._debounce / 4.0, 0.005)
         while not self._stop_flag.is_set():
-            time.sleep(poll)
+            self._stop_flag.wait(poll)
             self._maybe_flush()
 
     def _maybe_flush(self) -> None:
@@ -223,7 +233,7 @@ class FileWatcher:
         if not gi_file.exists():
             return None
         try:
-            import pathspec  # type: ignore[import-not-found]
+            import pathspec
         except ImportError:
             logger.debug("pathspec not installed; skipping .gitignore rules")
             return None
