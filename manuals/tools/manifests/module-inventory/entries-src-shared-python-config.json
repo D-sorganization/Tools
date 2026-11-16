@@ -74,34 +74,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
-      "bytes_lf": 3490,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "8cf487df26d39cdd033f23eb92f387d8b6a559b240ef9d39e76027b36470c88e",
-      "family": "shared-tools-non-calculation",
+      "authority_status": "provisional",
+      "bytes_lf": 3753,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "249c2788bbfb63a9a95797c7aeaf55b9ca4ffe60107c4fa00ee1932674cd224e",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CONFIG-ENVIRONMENT-PY-6A1979F29846",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/shared/python/config/environment.py",
       "purpose": "Environment variable helpers for shared Tools modules.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
         "downstream-consumer-risk",
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
-        "validation": "not-applicable"
+        "units": "unavailable",
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [

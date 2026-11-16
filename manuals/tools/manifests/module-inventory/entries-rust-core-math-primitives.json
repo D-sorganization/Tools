@@ -1230,6 +1230,7 @@
           "tests/shared/python/ui/test_window_icon.py",
           "tests/shared/test_theme_single_source.py",
           "tests/shared_scripts/test_fleet_hooks_root_clutter.py",
+          "tests/test_config_loader_boundaries.py",
           "tests/test_cross_repo_import_compatibility.py",
           "tests/test_data_processor_embedding.py",
           "tests/test_data_processor_tab_export.py",
