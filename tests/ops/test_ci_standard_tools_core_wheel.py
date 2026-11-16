@@ -55,6 +55,48 @@ def test_ci_tests_job_caches_builds_and_verifies_tools_core_required_lane() -> N
     assert "import tools_core" in verify_step["run"]
 
 
+def _hash_files_patterns(key: str) -> list[str]:
+    """The quoted patterns inside the key's ``hashFiles(...)`` call."""
+    inside = key.split("hashFiles(", 1)[1].split(")", 1)[0]
+    return [part.strip().strip("'") for part in inside.split(",") if part.strip()]
+
+
+def _tracked(pattern: str) -> list[str]:
+    import shutil
+    import subprocess
+
+    git = shutil.which("git")
+    if git is None:
+        pytest.skip("git is not available")
+    listing = subprocess.run(
+        [git, "ls-files", "--", f":(glob){pattern}"],
+        cwd=REPO_ROOT,
+        capture_output=True,
+        text=True,
+        timeout=60,
+        check=True,
+    )
+    return [line for line in listing.stdout.splitlines() if line]
+
+
+def test_tools_core_wheel_cache_key_hashes_only_tracked_files() -> None:
+    """A key input the build creates makes the save key differ from the restore key.
+
+    Repository_Management#2894 measured 0 hits in 22 restores. The key hashed
+    the root ``Cargo.lock``, which is git-ignored: it is absent when the cache
+    is restored and written by the build before the cache is saved, so the two
+    steps computed different keys and no restore could ever match a save.
+    """
+    steps = _ci_standard_workflow()["jobs"]["tests"]["steps"]
+    key = _step_by_name(steps, "Restore cached tools_core wheel")["with"]["key"]
+
+    patterns = _hash_files_patterns(key)
+    untracked = [pattern for pattern in patterns if not _tracked(pattern)]
+
+    assert patterns
+    assert untracked == []
+
+
 def test_ci_tests_job_runs_non_skippable_tools_core_contract_in_required_lane(
     monkeypatch: pytest.MonkeyPatch,
 ) -> None:
