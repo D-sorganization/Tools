@@ -88,16 +88,16 @@ def test_loading_discovered_file_sets_values_without_overriding_existing_values(
     isolated_search: Path, monkeypatch: pytest.MonkeyPatch
 ) -> None:
     monkeypatch.setattr(os, "environ", os.environ.copy())
-    monkeypatch.delenv("TOOLS_ENV_BOUNDARY_NEW", raising=False)
-    monkeypatch.setenv("TOOLS_ENV_BOUNDARY_EXISTING", "operator")
+    monkeypatch.delenv("ENV_TEST_NEW", raising=False)
+    monkeypatch.setenv("ENV_TEST_SET", "operator")
     candidate = isolated_search / "working" / ".env"
     candidate.write_text(
-        "TOOLS_ENV_BOUNDARY_NEW=loaded\nTOOLS_ENV_BOUNDARY_EXISTING=file\n",
+        "ENV_TEST_NEW=loaded\nENV_TEST_SET=file\n",
         encoding="utf-8",
     )
     assert env_utils.load_env_file() is True
-    assert env_utils.get_env_var("TOOLS_ENV_BOUNDARY_NEW") == "loaded"
-    assert env_utils.get_env_var("TOOLS_ENV_BOUNDARY_EXISTING") == "operator"
+    assert env_utils.get_env_var("ENV_TEST_NEW") == "loaded"
+    assert env_utils.get_env_var("ENV_TEST_SET") == "operator"
 
 
 def test_missing_dotenv_returns_false_with_diagnostic(
