@@ -117,7 +117,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "17295b8ad4de7dc9445d00dd7c55571af0f1fca1e6f68bb0dad87d8e3b113c78",
+      "content_sha256_lf": "e9f46e2d7dab028076c96281199204fd0c51204b3eb37e4f4d57298ea1b721d6",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "1820933cac5a9f78bc8940b11167c7829bd62271db79f782e3a65e7d15b8e25c",
+      "content_sha256_lf": "6b959588fd7585689a4af349db367004d0d1d7328f54d79422043ebd7d1d2f27",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
