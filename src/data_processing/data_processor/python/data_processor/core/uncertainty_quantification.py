@@ -27,6 +27,7 @@ from enum import Enum
 from typing import Any, cast
 
 import numpy as np
+from scipy import stats
 
 logger = logging.getLogger(__name__)
 
@@ -1020,32 +1021,23 @@ class UncertaintyQuantifier:
             raise ValueError("p must be finite")
         if p <= 0 or p >= 1:
             raise ValueError("p must be between 0 and 1")
-        if p < 0.5:
-            return -self._normal_ppf(1 - p)
-
-        t = np.sqrt(-2 * np.log(1 - p))
-        c0, c1, c2 = 2.515517, 0.802853, 0.010328
-        d1, d2, d3 = 1.432788, 0.189269, 0.001308
-
-        return t - (c0 + c1 * t + c2 * t**2) / (1 + d1 * t + d2 * t**2 + d3 * t**3)
+        return float(stats.norm.ppf(p))
 
     def _normal_cdf(self, x: float) -> float:
         """Standard normal CDF."""
-        return 0.5 * (1 + np.tanh(np.sqrt(2 / np.pi) * (x + 0.044715 * x**3)))
+        return float(stats.norm.cdf(x))
 
     def _t_ppf(self, p: float, df: int) -> float:
-        """Inverse t-distribution CDF (approximation)."""
+        """Inverse Student-t CDF.
+
+        Exact rather than a normal expansion: the expansion understated
+        t_{0.975, 2} by 10%, narrowing small-sample prediction intervals.
+        """
         if p is None:
             raise ValueError("p must be provided")
-        if df > 30:
-            return self._normal_ppf(p)
-
-        # Use normal approximation with adjustment
-        z = self._normal_ppf(p)
-        g1 = (z**3 + z) / 4
-        g2 = (5 * z**5 + 16 * z**3 + 3 * z) / 96
-
-        return z + g1 / df + g2 / df**2
+        if df <= 0:
+            raise ValueError("df must be positive")
+        return float(stats.t.ppf(p, df))
 
 
 def bootstrap_confidence_interval(
