@@ -292,10 +292,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 15499,
+      "bytes_lf": 15442,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "9d10e2947cfd6345ec72d411c9a74953fd5e8d6e948f08bba8d733d92a810223",
+      "content_sha256_lf": "3f8a850d5eb5311f52b3da7bb964551aab5a6901bc81d620a62336ffaf3fd4ad",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-UI-CAMERA-CONTROLS-CONTROLS-PY-29DCBB0342B0",
       "language": "python",
@@ -318,7 +318,7 @@
         "routes": "not-applicable",
         "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -343,21 +343,24 @@
           }
         ],
         "test_paths": [
-          "tests/programmatic_pid/test_controls.py"
+          "tests/programmatic_pid/test_controls.py",
+          "tests/unit/test_camera_zoom_validation.py"
         ],
         "unit_mentions": [
           "bar",
           "s"
         ],
-        "validation_paths": []
+        "validation_paths": [
+          "tests/unit/test_camera_zoom_validation.py"
+        ]
       }
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 8483,
+      "bytes_lf": 8748,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "630732acb3573b95d651d1c07bf1a1c9c6ae62b9f8f84373a3de3912a25551ee",
+      "content_sha256_lf": "1d7fefabaaf2caa3ac598c2aaad90d805c22e13df987d1ddc50b4baaa0cf5a19",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-UI-CAMERA-CONTROLS-MODELS-PY-E137BC2F2219",
       "language": "python",
@@ -370,7 +373,6 @@
         "public-api",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -382,9 +384,9 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "mapped",
-        "validation": "unavailable"
+        "validation": "mapped"
       },
       "traceability": {
         "adr_paths": [
@@ -468,12 +470,16 @@
             "signature": "state: CameraState, subject_m: Vector3, max_step_m: float"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/unit/test_camera_zoom_validation.py"
+        ],
         "unit_mentions": [
           "deg",
           "rad"
         ],
-        "validation_paths": []
+        "validation_paths": [
+          "tests/unit/test_camera_zoom_validation.py"
+        ]
       }
     },
     {
