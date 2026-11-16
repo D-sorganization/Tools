@@ -90,10 +90,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 4805,
+      "bytes_lf": 4819,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "38d45653f43bcbe4c23518e9ead4efd280fdc33f2f20861044198c8823f9062a",
+      "content_sha256_lf": "aac2242e3de05fbb7ed1af96b366a3469b9f2696be80405e08cd8bfbab3e4b1c",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-EXPLORER-DATA-EXPLORER-APP-PY-002254440DD5",
       "language": "python",
@@ -113,7 +113,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "not-applicable"
       },
@@ -149,7 +149,9 @@
             "signature": ""
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/data_explorer/test_data_explorer_app.py"
+        ],
         "unit_mentions": [
           "s"
         ],

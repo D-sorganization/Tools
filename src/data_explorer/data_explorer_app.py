@@ -21,6 +21,7 @@ Design by Contract:
 
 from __future__ import annotations
 
+import csv
 import sys
 from pathlib import Path
 from typing import Any
@@ -105,9 +106,9 @@ def _get_csv_columns(filepath: Path) -> list[str]:
         List of column header strings
     """
     try:
-        with open(filepath, encoding="utf-8") as f:
-            header_line = f.readline().strip()
-        return [col.strip().strip('"') for col in header_line.split(",")]
+        with open(filepath, encoding="utf-8", newline="") as f:
+            columns = next(csv.reader(f), [""])
+        return [column.strip() for column in (columns or [""])]
     except (FileNotFoundError, PermissionError, OSError) as e:
         logger.warning("Could not parse CSV headers from %s: %s", filepath, e)
         return []

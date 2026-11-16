@@ -117,7 +117,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "17295b8ad4de7dc9445d00dd7c55571af0f1fca1e6f68bb0dad87d8e3b113c78",
+      "content_sha256_lf": "e9f46e2d7dab028076c96281199204fd0c51204b3eb37e4f4d57298ea1b721d6",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "1820933cac5a9f78bc8940b11167c7829bd62271db79f782e3a65e7d15b8e25c",
+      "content_sha256_lf": "6b959588fd7585689a4af349db367004d0d1d7328f54d79422043ebd7d1d2f27",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "72dd5f642effa996fdfb7dbbb9145c7c79de47ff761f811f683e8a1207749d06",
+      "content_sha256_lf": "c668a8ae30003d3aac057bb5a9ed810a1425ac0d673f7f0aa7155756ff44bdc7",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -237,7 +237,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-core.json"
     },
     {
-      "content_sha256_lf": "1ea75c9946691c63b378aa20ca846aa23f2d6e8e2383d1d43d199c98f90e75bf",
+      "content_sha256_lf": "1f9b3b3830ab15f7b360a13d75a056fa46d972647d3280fc2a5589d7039462c5",
       "entry_count": 6,
       "package": "src/data_explorer",
       "path": "manuals/tools/manifests/module-inventory/entries-src-data-explorer.json"
@@ -435,7 +435,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-putting-launch-monitor.json"
     },
     {
-      "content_sha256_lf": "bef7d628df5d248386e7b0bb22976e263a1120e565ef5c16a9986e3f784d1f74",
+      "content_sha256_lf": "19dc59829198a84d1f229f413a9f4c8714d59cb6950986ccc7557909988b78a8",
       "entry_count": 33,
       "package": "src/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-python.json"
@@ -639,7 +639,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-codemap.json"
     },
     {
-      "content_sha256_lf": "ff9a3bb0e68078bb1c0c322df0d1e73fca90329e63cbe301c2993a14156710b0",
+      "content_sha256_lf": "15522195ca52d289c8f127c630a5536bd554172ea123978f424ec95143c57d1c",
       "entry_count": 2,
       "package": "src/shared/python/config",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-config.json"
@@ -657,7 +657,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-data-processor-io.json"
     },
     {
-      "content_sha256_lf": "e1a23ba5cee635694b5706bde96b467a9731c957cb96aa4eb155a9e21161eac3",
+      "content_sha256_lf": "7e4e9ff75da3caa6054cbc4f23106a40e8cd8e5006305aa5fd3cf61bc50bc05a",
       "entry_count": 2,
       "package": "src/shared/python/file_watcher",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-file-watcher.json"
