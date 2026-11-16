@@ -258,3 +258,57 @@ class TestStateVector(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
+
+
+class TestStateToElementsDegenerateOrbits(unittest.TestCase):
+    """State conversion keeps angular information for degenerate orbits."""
+
+    def assert_state_round_trip(self, elements: tuple[float, ...]) -> dict:
+        a, e, inclination, ascending_node, argument_periapsis, true_anomaly = elements
+        position, velocity = OrbitalMechanics.elements_to_state(
+            a,
+            e,
+            inclination,
+            ascending_node,
+            argument_periapsis,
+            true_anomaly,
+            3.986e14,
+        )
+        recovered = OrbitalMechanics.state_to_elements(position, velocity, 3.986e14)
+        rebuilt_position, rebuilt_velocity = OrbitalMechanics.elements_to_state(
+            recovered["semi_major_axis"],
+            recovered["eccentricity"],
+            math.radians(recovered["inclination"]),
+            math.radians(recovered["longitude_ascending"]),
+            math.radians(recovered["argument_periapsis"]),
+            math.radians(recovered["true_anomaly"]),
+            3.986e14,
+        )
+        np.testing.assert_allclose(rebuilt_position, position, rtol=1e-12, atol=1e-6)
+        np.testing.assert_allclose(rebuilt_velocity, velocity, rtol=1e-12, atol=1e-9)
+        return recovered
+
+    def test_periapsis_on_node_does_not_raise(self) -> None:
+        recovered = self.assert_state_round_trip((2.4e7, 0.3, 0.5, 0.3, 0.0, 0.0))
+        self.assertAlmostEqual(recovered["true_anomaly"], 0.0, places=9)
+
+    def test_equatorial_eccentric_orbit_preserves_periapsis_longitude(self) -> None:
+        recovered = self.assert_state_round_trip(
+            (2.4e7, 0.3, 0.0, 0.0, math.radians(70), 0.2)
+        )
+        self.assertAlmostEqual(recovered["argument_periapsis"], 70.0, places=8)
+
+    def test_retrograde_equatorial_eccentric_orbit_round_trips(self) -> None:
+        self.assert_state_round_trip((2.4e7, 0.3, math.pi, 0.0, math.radians(70), 0.2))
+
+    def test_circular_inclined_orbit_preserves_argument_of_latitude(self) -> None:
+        recovered = self.assert_state_round_trip(
+            (2.4e7, 0.0, 0.5, 0.3, 0.0, math.radians(110))
+        )
+        self.assertAlmostEqual(recovered["true_anomaly"], 110.0, places=8)
+
+    def test_circular_equatorial_orbit_preserves_true_longitude(self) -> None:
+        recovered = self.assert_state_round_trip(
+            (2.4e7, 0.0, 0.0, 0.0, 0.0, math.radians(110))
+        )
+        self.assertAlmostEqual(recovered["true_anomaly"], 110.0, places=8)

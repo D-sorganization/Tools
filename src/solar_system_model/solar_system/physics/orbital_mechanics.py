@@ -455,14 +455,28 @@ class OrbitalMechanics:
         Returns:
             Dictionary with orbital elements
         """
-        if position is None:
-            raise ValueError("position must be provided")
+        if position is None or velocity is None:
+            raise ValueError("position and velocity must be provided")
+        position = np.asarray(position, dtype=float)
+        velocity = np.asarray(velocity, dtype=float)
+        if position.shape != (3,) or velocity.shape != (3,):
+            raise ValueError("position and velocity must be three-dimensional vectors")
+        if not np.all(np.isfinite(position)) or not np.all(np.isfinite(velocity)):
+            raise ValueError("position and velocity must contain finite values")
+        if not math.isfinite(mu) or mu <= 0:
+            raise ValueError("mu must be a finite positive value")
         r = np.linalg.norm(position)
         v = np.linalg.norm(velocity)
+        if r == 0:
+            raise ValueError("position magnitude must be nonzero")
 
         # Specific angular momentum
         h_vec = np.cross(position, velocity)
         h = np.linalg.norm(h_vec)
+        if h == 0:
+            raise ValueError(
+                "position and velocity must define nonzero angular momentum"
+            )
 
         # Node vector
         n_vec = np.cross([0, 0, 1], h_vec)
@@ -481,31 +495,50 @@ class OrbitalMechanics:
         a = float("inf") if abs(e - 1.0) < 1e-10 else -mu / (2 * energy)
 
         # Inclination
-        i = math.acos(h_vec[2] / h)
+        h_hat = h_vec / h
+        i = math.atan2(np.linalg.norm(h_vec[:2]), h_vec[2])
 
         # Right ascension of ascending node
-        if n > 1e-10:
-            ascending_node = math.acos(n_vec[0] / n)
-            if n_vec[1] < 0:
-                ascending_node = 2 * math.pi - ascending_node
+        node_is_defined = n > h * 1e-10
+        eccentricity_is_defined = e > 1e-10
+        if node_is_defined:
+            ascending_node = math.atan2(n_vec[1], n_vec[0]) % (2 * math.pi)
         else:
             ascending_node = 0.0
 
         # Argument of periapsis
-        if n > 1e-10 and e > 1e-10:
-            omega = math.acos(np.dot(n_vec, e_vec) / (n * e))
-            if e_vec[2] < 0:
-                omega = 2 * math.pi - omega
+        if node_is_defined and eccentricity_is_defined:
+            n_hat = n_vec / n
+            periapsis_unit = e_vec / e
+            omega = math.atan2(
+                np.dot(np.cross(n_hat, periapsis_unit), h_hat),
+                np.dot(n_hat, periapsis_unit),
+            ) % (2 * math.pi)
+        elif eccentricity_is_defined:
+            # With no node, use the periapsis longitude in the orbit plane.
+            direction = 1.0 if h_vec[2] >= 0 else -1.0
+            omega = math.atan2(direction * e_vec[1], e_vec[0]) % (2 * math.pi)
         else:
             omega = 0.0
 
         # True anomaly
-        if e > 1e-10:
-            nu = math.acos(np.dot(e_vec, position) / (e * r))
-            if np.dot(position, velocity) < 0:
-                nu = 2 * math.pi - nu
+        if eccentricity_is_defined:
+            nu = math.atan2(
+                np.dot(np.cross(e_vec, position), h_hat),
+                np.dot(e_vec, position),
+            ) % (2 * math.pi)
+        elif node_is_defined:
+            # For a circular inclined orbit, true anomaly is argument of latitude.
+            n_hat = n_vec / n
+            nu = math.atan2(
+                np.dot(np.cross(n_hat, position), h_hat),
+                np.dot(n_hat, position),
+            ) % (2 * math.pi)
         else:
-            nu = 0.0
+            # A circular equatorial orbit has only true longitude; with the
+            # conventional zero node/periapsis, account for orbit direction.
+            direction = 1.0 if h_vec[2] >= 0 else -1.0
+            nu = math.atan2(direction * position[1], position[0]) % (2 * math.pi)
 
         return {
             "semi_major_axis": a,
