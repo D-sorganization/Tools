@@ -1035,6 +1035,10 @@ class UncertaintyQuantifier:
         """
         if p is None:
             raise ValueError("p must be provided")
+        if not np.isfinite(p):
+            raise ValueError("p must be finite")
+        if p <= 0 or p >= 1:
+            raise ValueError("p must be between 0 and 1")
         if df <= 0:
             raise ValueError("df must be positive")
         return float(stats.t.ppf(p, df))

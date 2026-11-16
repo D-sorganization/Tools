@@ -61,3 +61,12 @@ def test_normal_quantile_and_cdf_are_exact(p: float) -> None:
 def test_normal_quantile_rejects_out_of_range(p: float) -> None:
     with pytest.raises(ValueError):
         _quantifier()._normal_ppf(p)
+
+
+@pytest.mark.parametrize(
+    "p", [0.0, 1.0, -0.1, 1.1, float("nan"), float("inf"), float("-inf")]
+)
+def test_student_t_quantile_rejects_invalid_probability(p: float) -> None:
+    """The exact Student-t path preserves the former probability contract."""
+    with pytest.raises(ValueError, match="p must"):
+        _quantifier()._t_ppf(p, 2)
