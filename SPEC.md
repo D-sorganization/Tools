@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-16 | #6061 | The tools_core wheel cache key no longer hashes the git-ignored Cargo.lock, so the restore and save steps compute the same key and the cache can hit (Repository_Management#2894) |
 | 2026-11-16 | #6055 | Tier-2 CLI discovery workflow and run_cli_discovery_probes runner |
 | 2026-11-16 | #6056 | Lock PyQt tab-open budget to open_settle_ms and refresh project steward STATUS/CHARTER for 2026-11-15 |
 | 2026-11-15 | #6054 | Align ai_backend README and onnx preflight ort pin strings with Cargo.toml |
