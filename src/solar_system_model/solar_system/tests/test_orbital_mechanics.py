@@ -256,5 +256,119 @@ class TestStateVector(unittest.TestCase):
         self.assertEqual(copy.position[0], 1)
 
 
+class TestStateToElementsSpecialCases(unittest.TestCase):
+    """state_to_elements at exact perigee/apogee, equatorial and circular orbits.
+
+    Expected values are built by hand from the geometry (perigee on the line of
+    nodes, vis-viva speeds), never by calling ``elements_to_state``, except for
+    the final round-trip invariant.
+    """
+
+    MU = 3.986004418e14
+    A = 2.4e7
+    E = 0.3
+
+    @staticmethod
+    def _wrapped(angle_deg: float) -> float:
+        """Map an angle in degrees to (-180, 180] so 359.9999 compares with 0."""
+        return (angle_deg + 180.0) % 360.0 - 180.0
+
+    def _peri_apo_speeds(self) -> tuple[float, float, float, float]:
+        rp = self.A * (1 - self.E)
+        ra = self.A * (1 + self.E)
+        vp = math.sqrt(self.MU * (2 / rp - 1 / self.A))
+        va = math.sqrt(self.MU * (2 / ra - 1 / self.A))
+        return rp, ra, vp, va
+
+    def test_perigee_on_line_of_nodes_does_not_raise(self) -> None:
+        """omega = 0, nu = 0 puts e_vec parallel to n_vec: acos arg may be 1+eps."""
+        rp, _, vp, _ = self._peri_apo_speeds()
+        for inc_deg in (10.0, 28.5, 63.4, 98.0, 135.0):
+            for node_deg in (0.0, 17.0, 123.4, 250.0, 359.0):
+                i, om = math.radians(inc_deg), math.radians(node_deg)
+                pos = rp * np.array([math.cos(om), math.sin(om), 0.0])
+                vel = vp * np.array(
+                    [
+                        -math.sin(om) * math.cos(i),
+                        math.cos(om) * math.cos(i),
+                        math.sin(i),
+                    ]
+                )
+                el = OrbitalMechanics.state_to_elements(pos, vel, self.MU)
+                self.assertAlmostEqual(el["inclination"], inc_deg, places=6)
+                self.assertAlmostEqual(el["longitude_ascending"], node_deg, places=6)
+                self.assertAlmostEqual(el["eccentricity"], self.E, places=9)
+                self.assertAlmostEqual(
+                    self._wrapped(el["argument_periapsis"]), 0.0, places=4
+                )
+                self.assertAlmostEqual(self._wrapped(el["true_anomaly"]), 0.0, places=4)
+
+    def test_apogee_on_line_of_nodes_does_not_raise(self) -> None:
+        _, ra, _, va = self._peri_apo_speeds()
+        i, om = math.radians(51.6), math.radians(40.0)
+        pos = -ra * np.array([math.cos(om), math.sin(om), 0.0])
+        vel = -va * np.array(
+            [-math.sin(om) * math.cos(i), math.cos(om) * math.cos(i), math.sin(i)]
+        )
+        el = OrbitalMechanics.state_to_elements(pos, vel, self.MU)
+        self.assertAlmostEqual(self._wrapped(el["argument_periapsis"]), 0.0, places=4)
+        self.assertAlmostEqual(abs(self._wrapped(el["true_anomaly"])), 180.0, places=4)
+
+    def test_equatorial_prograde_reports_longitude_of_periapsis(self) -> None:
+        rp, _, vp, _ = self._peri_apo_speeds()
+        varpi = math.radians(70.0)
+        pos = rp * np.array([math.cos(varpi), math.sin(varpi), 0.0])
+        vel = vp * np.array([-math.sin(varpi), math.cos(varpi), 0.0])
+        el = OrbitalMechanics.state_to_elements(pos, vel, self.MU)
+        self.assertAlmostEqual(el["inclination"], 0.0, places=6)
+        self.assertAlmostEqual(el["longitude_ascending"], 0.0, places=9)
+        self.assertAlmostEqual(el["argument_periapsis"], 70.0, places=6)
+        self.assertAlmostEqual(self._wrapped(el["true_anomaly"]), 0.0, places=4)
+
+    def test_circular_inclined_reports_argument_of_latitude(self) -> None:
+        r = 7.0e6
+        vc = math.sqrt(self.MU / r)
+        i, om, u = math.radians(40.0), math.radians(25.0), math.radians(110.0)
+        ci, si = math.cos(i), math.sin(i)
+        co, so = math.cos(om), math.sin(om)
+        cu, su = math.cos(u), math.sin(u)
+        pos = r * np.array([co * cu - so * ci * su, so * cu + co * ci * su, si * su])
+        vel = vc * np.array([-co * su - so * ci * cu, -so * su + co * ci * cu, si * cu])
+        el = OrbitalMechanics.state_to_elements(pos, vel, self.MU)
+        self.assertAlmostEqual(el["eccentricity"], 0.0, places=9)
+        self.assertAlmostEqual(
+            (el["argument_periapsis"] + el["true_anomaly"]) % 360.0, 110.0, places=5
+        )
+
+    def test_round_trip_reproduces_state_for_special_angle_grid(self) -> None:
+        """elements_to_state(state_to_elements(x)) == x, incl. degenerate angles."""
+        angles = (0.0, math.pi / 3, math.pi, 4.0)
+        for e in (0.0, 0.3, 0.9):
+            for inc in (0.0, 0.7, math.pi / 2, math.pi):
+                for node in (0.0, 2.0):
+                    for peri in (0.0, 1.1):
+                        for nu in angles:
+                            pos, vel = OrbitalMechanics.elements_to_state(
+                                self.A, e, inc, node, peri, nu, self.MU
+                            )
+                            el = OrbitalMechanics.state_to_elements(pos, vel, self.MU)
+                            pos2, vel2 = OrbitalMechanics.elements_to_state(
+                                el["semi_major_axis"],
+                                el["eccentricity"],
+                                math.radians(el["inclination"]),
+                                math.radians(el["longitude_ascending"]),
+                                math.radians(el["argument_periapsis"]),
+                                math.radians(el["true_anomaly"]),
+                                self.MU,
+                            )
+                            msg = f"e={e} i={inc} node={node} peri={peri} nu={nu}"
+                            np.testing.assert_allclose(
+                                pos2, pos, rtol=0, atol=1e-3, err_msg=msg
+                            )
+                            np.testing.assert_allclose(
+                                vel2, vel, rtol=0, atol=1e-6, err_msg=msg
+                            )
+
+
 if __name__ == "__main__":
     unittest.main()
