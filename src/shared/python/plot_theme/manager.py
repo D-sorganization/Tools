@@ -104,6 +104,9 @@ class PlotThemeManager:
     def set_theme(self, name: str, save: bool = True) -> None:
         """Set the current theme by name.
 
+        Subscribers are snapshotted for each notification. Adding or removing
+        callbacks during delivery affects the next theme change.
+
         Args:
             name: Theme name
             save: Whether to persist the choice
@@ -120,7 +123,7 @@ class PlotThemeManager:
             self._save_theme()
 
         # Notify callbacks
-        for callback in self._callbacks:
+        for callback in tuple(self._callbacks):
             try:
                 callback(theme)
             except (ValueError, TypeError, RuntimeError) as e:
@@ -163,7 +166,7 @@ class PlotThemeManager:
             # Apply to matplotlib
             for key, value in params.items():
                 try:
-                    mpl.rcParams[key] = value
+                    mpl.rcParams.update(mpl.RcParams({key: value}))
                 except (KeyError, ValueError) as e:
                     logger.debug(f"Could not set rcParam {key}: {e}")
 
