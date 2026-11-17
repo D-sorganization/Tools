@@ -217,32 +217,35 @@
       }
     },
     {
-      "authority_status": "not-applicable",
-      "bytes_lf": 8173,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "29a623d618e8e6e9c5b7b14b0c8285c258b213de0f66c6bf36fff7e37bffa98f",
-      "family": "shared-tools-non-calculation",
+      "authority_status": "provisional",
+      "bytes_lf": 8738,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "621e84d63a96c2aebdd969b257e9b0233c739e3cefeabc466b926afa999f75cc",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-FOLDER-TOOL-FILE-VALIDATION-PY-A9DE9BA73016",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/folder_tool/file_validation.py",
       "purpose": "FileValidationMixin -- File validation methods for FolderProcessorApp.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
+        "units": "unavailable",
         "validation": "mapped"
       },
       "traceability": {
