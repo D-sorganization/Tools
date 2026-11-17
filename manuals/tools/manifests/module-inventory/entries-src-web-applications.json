@@ -915,10 +915,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 21485,
+      "bytes_lf": 21509,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "35cd7d11fff3e0f2ad8c342b34a870a1e52ef2ca4395531c221d46b12c6fb278",
+      "content_sha256_lf": "5ebe4ed9261b57692fe277cb7476047f8f63ace858b301e8d64b373e319c96b6",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-WEB-APPLICATIONS-UNIT-CONVERTER-CONVERTER-PY-A426DE44F718",
       "language": "python",

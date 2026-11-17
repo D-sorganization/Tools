@@ -192,3 +192,25 @@ class TestAllCategoriesHaveUnits:
         for category in CONVERSION_FACTORS:
             units = converter.get_units_for_category(category)
             assert len(units) > 0, f"Category '{category}' has no units"
+
+
+class TestHeatingValueBtuPerPound:
+    """BTU/lb must use the same International Table BTU as every other unit."""
+
+    def test_one_mj_per_kg_in_btu_per_lb(self, converter: UnitConverter) -> None:
+        # 1 BTU_IT/lb = 1055.056 J / 0.45359237 kg = 2326.000 J/kg (exact by
+        # definition), so 1 MJ/kg = 1e6 / 2326 BTU/lb.
+        result = converter.convert(1.0, "MJ/kg", "BTU/lb").result
+        assert result == pytest.approx(1.0e6 / 2326.0, rel=1e-6)
+
+    def test_btu_per_lb_to_kj_per_kg(self, converter: UnitConverter) -> None:
+        result = converter.convert(1.0, "BTU/lb", "kJ/kg").result
+        assert result == pytest.approx(2.326, rel=1e-6)
+
+    def test_consistent_with_specific_heat_btu_per_lb_f(
+        self, converter: UnitConverter
+    ) -> None:
+        # 1 BTU/lb.F is 1.8 x 1 BTU/lb per kelvin, so the two factors must agree.
+        hv = converter.convert(1.0, "BTU/lb", "J/kg").result
+        cp = converter.convert(1.0, "BTU/lb.F", "J/kg.K").result
+        assert cp == pytest.approx(1.8 * hv, rel=1e-6)
