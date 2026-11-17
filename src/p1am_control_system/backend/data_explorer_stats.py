@@ -413,10 +413,10 @@ def _spectrum_welch(
         spec = np.fft.rfft(segment * win)
         psd = (np.abs(spec) ** 2) * scale
         # Single-sided: double interior bins (not DC / Nyquist).
-        if psd.size > 2:
-            psd[1:-1] *= 2.0
-            if seg % 2 != 0:
-                psd[-1] *= 2.0
+        # An even segment ends on the Nyquist bin; an odd one has none, so its
+        # last bin is interior and is doubled too.
+        interior_end = psd.size - 1 if seg % 2 == 0 else psd.size
+        psd[1:interior_end] *= 2.0
         accum += psd
     accum /= len(starts)
     return freqs, accum

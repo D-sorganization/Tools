@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "6b959588fd7585689a4af349db367004d0d1d7328f54d79422043ebd7d1d2f27",
+      "content_sha256_lf": "f4a6b4b95b4fef69a011d78ce8ea0c2f625dfb114e6ef3bd22ab721e6d1a2be4",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -243,7 +243,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-data-explorer.json"
     },
     {
-      "content_sha256_lf": "2b65eae95b95e97b6ab345bb3f17fa6987c6570f84cec1eec010d5ff2182ed44",
+      "content_sha256_lf": "d52d0e61a3ace350b0ebc3b066440906598f85a5bdd10e18a1ac46d0d94cf8d5",
       "entry_count": 137,
       "package": "src/data_processing",
       "path": "manuals/tools/manifests/module-inventory/entries-src-data-processing.json"
@@ -285,7 +285,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-folder-packer-pro.json"
     },
     {
-      "content_sha256_lf": "a17af10cccd44fa7fbac5b24077ce2732fbe94eed695c50c778cde7c60dab60b",
+      "content_sha256_lf": "bff20859cb6edc3fbe2d29a4bef859f9a3bf38ff33beba12d1359ecfb2023781",
       "entry_count": 15,
       "package": "src/folder_tool",
       "path": "manuals/tools/manifests/module-inventory/entries-src-folder-tool.json"
@@ -357,7 +357,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-model-generation.json"
     },
     {
-      "content_sha256_lf": "f3b310ae2910df234f11897e4244fe8b3deba31c721333895a59909be0ee0810",
+      "content_sha256_lf": "7dc9edd4bf21fbeb070d36f10333c656dd0bcfc747a0578af3e791c1dd25970d",
       "entry_count": 95,
       "package": "src/movement_optimizer",
       "path": "manuals/tools/manifests/module-inventory/entries-src-movement-optimizer.json"
@@ -387,13 +387,13 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-optimizer-gui.json"
     },
     {
-      "content_sha256_lf": "d2a67789e6fa5ec683ce7222e591ba60f7b6d40b318b25ac10bd382f7f513f6f",
+      "content_sha256_lf": "b0837baa3f40251a4c7206307ab642b2f45a2ccf387c0825181837eb66e5480a",
       "entry_count": 264,
       "package": "src/p1am_control_system",
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
     {
-      "content_sha256_lf": "146a69abdc83adaa82bd8f3dbc26c1f4da7b768d19b53d96d8a80d5ef3469154",
+      "content_sha256_lf": "40e2561377c04531739e3d1985ff2ad2960af39690d247631655e12eff4b9d6a",
       "entry_count": 171,
       "package": "src/pendulum_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pendulum-simulator.json"
@@ -435,7 +435,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-putting-launch-monitor.json"
     },
     {
-      "content_sha256_lf": "19dc59829198a84d1f229f413a9f4c8714d59cb6950986ccc7557909988b78a8",
+      "content_sha256_lf": "dc348fbccb473698e19580435bbe9d857f2372afab67193e59a23bf3f2597d67",
       "entry_count": 33,
       "package": "src/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-python.json"
@@ -585,7 +585,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rotation-transforms.json"
     },
     {
-      "content_sha256_lf": "96261d2bd430489d11784d51ac9621f7e80231f44f949f13018fc5214dddec1b",
+      "content_sha256_lf": "ac82c3c4f6409adfa55ffebe0ccf607c658ef1a84d3a97d6ffaf7f6045e9be65",
       "entry_count": 26,
       "package": "src/rrt_path_planner",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rrt-path-planner.json"
@@ -597,7 +597,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "6564f73f58ace22be7f447a224a5ee363458232ac36c5eb20abe28d18fb6ada5",
+      "content_sha256_lf": "f41471b021c38355dc128fd71d49cbb56b8b546d9fbe034b5e544847f2486aaf",
       "entry_count": 10,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"

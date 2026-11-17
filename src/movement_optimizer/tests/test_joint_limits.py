@@ -516,3 +516,60 @@ class TestMaxLoad:
                 "squat",
                 load_range=(-10.0, 100.0),
             )
+
+
+# ==============================================================
+# Utilization: concentric/eccentric follows the REQUIRED torque direction
+# ==============================================================
+
+
+class TestUtilizationContractionMode:
+    """A muscle shortens when joint velocity and torque share a sign.
+
+    Independent expectations come from the Hill hyperbola
+    ``(v_max - v) / (v_max + v / k)`` evaluated by hand, not from the code.
+    """
+
+    V = 2.0  # rad/s
+
+    @staticmethod
+    def _single_joint_set() -> JointTorqueSet:
+        return JointTorqueSet(
+            joint_names=("j",),
+            max_torques={"j": 100.0},
+            optimal_angles={"j": 0.0},
+            v_max=10.0,
+        )
+
+    def _util(self, qd: float, tau: float) -> float:
+        ts = self._single_joint_set()
+        util = ts.torque_utilization(
+            np.array([[0.0]]), np.array([[qd]]), np.array([[tau]])
+        )
+        return float(util[0, 0])
+
+    def test_positive_torque_positive_velocity_is_concentric(self) -> None:
+        # factor = (10 - 2) / (10 + 2 / 0.25) = 8 / 18; utilization = 50 / (100 * 8/18)
+        assert self._util(+self.V, +50.0) == pytest.approx(50.0 / (100.0 * 8.0 / 18.0))
+
+    def test_negative_torque_negative_velocity_is_concentric(self) -> None:
+        assert self._util(-self.V, -50.0) == pytest.approx(50.0 / (100.0 * 8.0 / 18.0))
+
+    def test_utilization_is_invariant_to_flipping_both_signs(self) -> None:
+        # Mirror-image motion of the same joint must load the muscle equally.
+        assert self._util(+self.V, +50.0) == pytest.approx(self._util(-self.V, -50.0))
+
+    def test_opposed_signs_are_eccentric(self) -> None:
+        # ecc factor = (1 + 0.3 * 2) / (1 + 2 / 0.25) = 1.6 / 9
+        assert self._util(+self.V, -50.0) == pytest.approx(50.0 / (100.0 * 1.6 / 9.0))
+        assert self._util(-self.V, +50.0) == pytest.approx(50.0 / (100.0 * 1.6 / 9.0))
+
+
+class TestSetMaxTorqueContract:
+    @pytest.mark.parametrize("bad", [float("nan"), float("inf"), -float("inf")])
+    def test_non_finite_tau_max_rejected_and_state_kept(self, bad: float) -> None:
+        ts = make_default_torque_set()
+        before = ts.get_max_torque("knee")
+        with pytest.raises(ValueError, match="tau_max"):
+            ts.set_max_torque("knee", bad)
+        assert ts.get_max_torque("knee") == before

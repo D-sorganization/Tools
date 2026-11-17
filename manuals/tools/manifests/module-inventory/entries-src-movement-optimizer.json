@@ -6039,10 +6039,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 10285,
+      "bytes_lf": 11211,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "d72d944e02e47ecaf4243c35812214cf00928997051439e4516cb75ad3a040a7",
+      "content_sha256_lf": "64f0832e8e97868e5a906573c5ae62a3877e7790f849e40e1fdebda96039cae3",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-STRENGTH-PY-91E6805C6FA9",
       "language": "python",

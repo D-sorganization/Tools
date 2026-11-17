@@ -1587,6 +1587,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#2894 · The Tools_Core Wheel Cache Key No Longer Hashes the Git-Ignored Cargo.Lock, so the Restore and Save Steps Compute the Same Key and the Cache Can Hit (Repository_Management#2894)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #2894
+- **Branch:** merged via #6061
+- **PR:** #6061
+- **Paths:** see #6061
+- **Started:** 2026-11-16
+- **Last verified:** 2026-11-16 (`099f897a`; collated from changes/2894-toolscore-wheel-cache-key.md)
+- **Summary:** The tools_core wheel cache key no longer hashes the git-ignored Cargo.lock, so the restore and save steps compute the same key and the cache can hit (Repository_Management#2894)
+- **Next step:** Shipped in PR #6061.
+
 ### DL-#5684 · Align Ai_Backend README and Onnx Preflight Ort Pin Strings With Cargo.Toml
 
 - **State:** shipped

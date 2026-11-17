@@ -305,6 +305,38 @@ class TestGetXdgConfigDir:
         result = get_xdg_config_dir("myapp")
         assert result == Path.home() / ".config" / "myapp"
 
+    def test_ignores_relative_xdg_config_home(self, monkeypatch):
+        """Relative XDG roots are ignored per the XDG specification."""
+        import sys
+        from pathlib import Path
+
+        if sys.platform == "win32":
+            pytest.skip("XDG_CONFIG_HOME is a POSIX convention")
+
+        monkeypatch.setenv("XDG_CONFIG_HOME", "relative/config")
+        from utils.config_loader import get_xdg_config_dir
+
+        assert get_xdg_config_dir("myapp") == Path.home() / ".config" / "myapp"
+
+    def test_ignores_relative_appdata(self, monkeypatch):
+        """Relative APPDATA values also fall back to an absolute config root."""
+        import sys
+        from pathlib import Path
+
+        monkeypatch.setattr(sys, "platform", "win32")
+        monkeypatch.setenv("APPDATA", "relative/appdata")
+        from utils.config_loader import get_xdg_config_dir
+
+        assert get_xdg_config_dir("myapp") == Path.home() / ".config" / "myapp"
+
+    @pytest.mark.parametrize("app_name", [".", ".."])
+    def test_rejects_dot_segment_application_names(self, app_name):
+        """Dot segments cannot escape or alias the configuration root."""
+        from utils.config_loader import get_xdg_config_dir
+
+        with pytest.raises(ValueError, match="dot segment"):
+            get_xdg_config_dir(app_name)
+
     def test_does_not_create_directory(self, monkeypatch, tmp_path):
         """get_xdg_config_dir must NOT create the directory."""
         import sys
