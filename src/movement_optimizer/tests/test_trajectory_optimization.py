@@ -55,17 +55,14 @@ class TestOptimization:
         opt, _, _, _, _ = squat_optimizer
         wp = opt._initial_guess()
         cost = opt._compute_cost(wp.flatten())
-        assert cost < float(
-            "inf"
-        ), "Precondition violated: initial objective is not finite"
+        assert cost < float("inf"), "Precondition violated: initial objective is not finite"
 
-    def test_postcondition_kkt_within_tol(self, squat_optimizer) -> None:
+    def test_postcondition_optimize_converges_and_feasible(self, squat_optimizer) -> None:
         opt, _, _, _, _ = squat_optimizer
-        # We assume the optimization result includes 'success' which means KKT conditions are within tolerance
         result = opt.optimize()
-        assert (
-            result.success
-        ), "Postcondition violated: optimization did not satisfy KKT within tolerance"
+        assert result.status is OptimizationStatus.CONVERGED
+        assert result.is_feasible is True
+        assert result.success is True
 
     def test_cost_decreases(self) -> None:
         """With enough waypoints, optimization should reduce cost."""
@@ -140,12 +137,12 @@ class TestOptimization:
         )
         result = opt.optimize()
         com_x = result.com[:, 0]
-        assert np.all(
-            com_x >= body.inner_heel - 0.01
-        ), f"COM below inner_heel: min={com_x.min():.4f}, bound={body.inner_heel:.4f}"
-        assert np.all(
-            com_x <= body.inner_toe + 0.01
-        ), f"COM above inner_toe: max={com_x.max():.4f}, bound={body.inner_toe:.4f}"
+        assert np.all(com_x >= body.inner_heel - 0.01), (
+            f"COM below inner_heel: min={com_x.min():.4f}, bound={body.inner_heel:.4f}"
+        )
+        assert np.all(com_x <= body.inner_toe + 0.01), (
+            f"COM above inner_toe: max={com_x.max():.4f}, bound={body.inner_toe:.4f}"
+        )
         assert result.success, "Optimization should report success with COM in bounds"
 
 
@@ -296,9 +293,17 @@ class TestConvergenceAndFeasibilitySelection:
         inf, feas = _make_mock_res(fun=1.0, feasible=False), _make_mock_res(fun=2.0, feasible=True)
         best, total_evals = select_best_result([(inf, 50), (feas, 60)])
         assert best is feas and total_evals == 110
-        nan_res, finite_res = _make_mock_res(fun=float("nan"), feasible=True), _make_mock_res(fun=10.0, feasible=True)
+        nan_res, finite_res = (
+            _make_mock_res(fun=float("nan"), feasible=True),
+            _make_mock_res(fun=10.0, feasible=True),
+        )
         sel = select_best_result([(nan_res, 10, True, 0), (finite_res, 20, True, 1)])
-        assert sel[0] is finite_res and sel[1] == 30 and sel.best_seed == 1 and sel.n_starts_feasible == 1
+        assert (
+            sel[0] is finite_res
+            and sel[1] == 30
+            and sel.best_seed == 1
+            and sel.n_starts_feasible == 1
+        )
 
     def test_optimization_status_enum_values(self) -> None:
         for name in ("CONVERGED", "ITERATION_LIMIT", "STALLED", "INFEASIBLE", "NUMERICAL_FAILURE"):
@@ -306,9 +311,24 @@ class TestConvergenceAndFeasibilitySelection:
 
     def test_deprecation_warning_when_success_and_status_not_converged(self) -> None:
         z3, z2, z1 = np.zeros((1, 3)), np.zeros((1, 2)), np.zeros(1)
-        kw = dict(t=z1, q=z3, qd=z3, qdd=z3, torques=z3, power=z3, com=z2, bar=z2, cost=10.0, com_horizontal_range_cm=2.0)
+        kw = dict(
+            t=z1,
+            q=z3,
+            qd=z3,
+            qdd=z3,
+            torques=z3,
+            power=z3,
+            com=z2,
+            bar=z2,
+            cost=10.0,
+            com_horizontal_range_cm=2.0,
+        )
         with pytest.deprecated_call(match="success=True but status is not CONVERGED"):
-            OptimizationResult(**kw, success=True, status=OptimizationStatus.ITERATION_LIMIT)
+            coerced = OptimizationResult(
+                **kw, success=True, status=OptimizationStatus.ITERATION_LIMIT
+            )
+        assert coerced.success is False
+        assert coerced.is_feasible is True
 
         with warnings.catch_warnings():
             warnings.simplefilter("error", DeprecationWarning)
@@ -317,17 +337,51 @@ class TestConvergenceAndFeasibilitySelection:
 
     def test_derive_optimization_status(self) -> None:
         cases = [
-            (_make_mock_res(fun=float("nan"), success=True), False, False, OptimizationStatus.NUMERICAL_FAILURE),
+            (
+                _make_mock_res(fun=float("nan"), success=True),
+                False,
+                False,
+                OptimizationStatus.NUMERICAL_FAILURE,
+            ),
             (_make_mock_res(fun=5.0, success=True), True, False, OptimizationStatus.INFEASIBLE),
-            (_make_mock_res(fun=5.0, success=False, status=9, message="Iteration limit reached"), True, True, OptimizationStatus.ITERATION_LIMIT),
-            (_make_mock_res(fun=5.0, success=False, status=2, message="Maximum iterations exceeded"), True, True, OptimizationStatus.ITERATION_LIMIT),
-            (_make_mock_res(fun=5.0, success=False, status=8, message="Positive directional derivative"), True, True, OptimizationStatus.STALLED),
-            (_make_mock_res(fun=5.0, success=True, status=0, message="Optimization terminated"), True, True, OptimizationStatus.CONVERGED),
+            (
+                _make_mock_res(fun=5.0, success=False, status=9, message="Iteration limit reached"),
+                True,
+                True,
+                OptimizationStatus.ITERATION_LIMIT,
+            ),
+            (
+                _make_mock_res(
+                    fun=5.0, success=False, status=2, message="Maximum iterations exceeded"
+                ),
+                True,
+                True,
+                OptimizationStatus.ITERATION_LIMIT,
+            ),
+            (
+                _make_mock_res(
+                    fun=5.0, success=False, status=8, message="Positive directional derivative"
+                ),
+                True,
+                True,
+                OptimizationStatus.STALLED,
+            ),
+            (
+                _make_mock_res(fun=5.0, success=True, status=0, message="Optimization terminated"),
+                True,
+                True,
+                OptimizationStatus.CONVERGED,
+            ),
         ]
         for res, cost_finite, is_feasible, expected in cases:
-            assert derive_optimization_status(res, cost_finite=cost_finite, is_feasible=is_feasible) == expected
+            assert (
+                derive_optimization_status(res, cost_finite=cost_finite, is_feasible=is_feasible)
+                == expected
+            )
 
-    def test_max_iter_patched_to_1_produces_iteration_limit(self, squat_optimizer, monkeypatch) -> None:
+    def test_max_iter_patched_to_1_produces_iteration_limit(
+        self, squat_optimizer, monkeypatch
+    ) -> None:
         from movement_optimizer.trajectory import optimizer as opt_mod
         from movement_optimizer.trajectory import optimizer_diagnostics as diag_mod
         from movement_optimizer.trajectory import tuning as tuning_mod
