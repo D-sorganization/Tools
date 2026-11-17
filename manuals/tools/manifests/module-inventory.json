@@ -435,7 +435,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-putting-launch-monitor.json"
     },
     {
-      "content_sha256_lf": "dc348fbccb473698e19580435bbe9d857f2372afab67193e59a23bf3f2597d67",
+      "content_sha256_lf": "55bb21e8365994d6ca31692dbc2efd88d602cb2bf148055b9273208e82f0edd0",
       "entry_count": 33,
       "package": "src/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-python.json"
