@@ -5947,6 +5947,14 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-16 | #6088 | Parse quoted CSV headers correctly in Data Explorer |
+| 2026-11-16 | #6085 | movement_optimizer strength: torque utilization picks concentric/eccentric from the required torque direction; set_max_torque rejects non-finite values |
+| 2026-11-16 | #6083 | Reject NaN environment floats when numeric bounds are requested. |
+| 2026-11-16 | #6082 | Return the documented JSON fallback on invalid UTF-8 and cover file helper failure boundaries |
+| 2026-11-16 | #6079 | Interrupt the file-watcher debounce wait on stop so long quiet periods cannot leave a worker alive. |
+| 2026-11-16 | #6072 | data_processor uncertainty: BCa bootstrap interval applies the full bias correction when the acceleration is 0; regenerate module inventory hashes and regression-test links |
+| 2026-11-16 | #6073 | Cover configuration loader fallback, platform and input boundaries |
+| 2026-11-16 | #6065 | Cover isolated environment file discovery fallbacks and input contracts |
 | 2026-11-16 | #6061 | The tools_core wheel cache key no longer hashes the git-ignored Cargo.lock, so the restore and save steps compute the same key and the cache can hit (Repository_Management#2894) |
 | 2026-11-16 | #6055 | Tier-2 CLI discovery workflow and run_cli_discovery_probes runner |
 | 2026-11-16 | #6056 | Lock PyQt tab-open budget to open_settle_ms and refresh project steward STATUS/CHARTER for 2026-11-15 |

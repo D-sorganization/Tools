@@ -1587,6 +1587,110 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#6086 · Parse Quoted CSV Headers Correctly in Data Explorer
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6086
+- **Branch:** codex/burn1116-tools-6086
+- **PR:** #6088
+- **Paths:** src/data_explorer/data_explorer_app.py, tests/data_explorer/test_data_explorer_app.py
+- **Started:** 2026-11-16
+- **Last verified:** 2026-11-16 (`32eb0987`; collated from changes/6086-parse-quoted-csv-headers-correctly-in-da.md)
+- **Summary:** Parse quoted CSV headers correctly in Data Explorer
+- **Next step:** Review and merge the CSV parsing fix.
+
+### DL-#6084 · Movement_Optimizer Strength: Torque Utilization Picks Concentric/Eccentric From the Required Torque Direction; Set_Max_Torque Rejects Non-Finite Values
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6084
+- **Branch:** merged via #6085
+- **PR:** #6085
+- **Paths:** see #6085
+- **Started:** 2026-11-16
+- **Last verified:** 2026-11-16 (`23a113a9`; collated from changes/6084-movement-optimizer-torque-utilization-contraction-mode.md)
+- **Summary:** movement_optimizer strength: torque utilization picks concentric/eccentric from the required torque direction; set_max_torque rejects non-finite values
+- **Next step:** Shipped in PR #6085.
+
+### DL-#6081 · Reject NaN Environment Floats When Numeric Bounds Are Requested.
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6081
+- **Branch:** merged via #6083
+- **PR:** #6083
+- **Paths:** see #6083
+- **Started:** 2026-11-16
+- **Last verified:** 2026-11-16 (`49b6f4d2`; collated from changes/6081-reject-nan-environment-floats-when-numer.md)
+- **Summary:** Reject NaN environment floats when numeric bounds are requested.
+- **Next step:** Shipped in PR #6083.
+
+### DL-#6080 · Return the Documented JSON Fallback on Invalid UTF-8 and Cover File Helper Failure Boundaries
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6080
+- **Branch:** codex/burn1116-6078-file-utils
+- **PR:** #6082
+- **Paths:** see #6082
+- **Started:** 2026-11-16
+- **Last verified:** 2026-11-16 (`58cb9e0c`; collated from changes/6080-return-the-documented-json-fallback-on-i.md)
+- **Summary:** Return the documented JSON fallback on invalid UTF-8 and cover file helper failure boundaries
+- **Next step:** Review and CI
+
+### DL-#6075 · Interrupt the File-Watcher Debounce Wait on Stop so Long Quiet Periods Cannot Leave a Worker Alive.
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6075
+- **Branch:** merged via #6079
+- **PR:** #6079
+- **Paths:** see #6079
+- **Started:** 2026-11-16
+- **Last verified:** 2026-11-16 (`e1cec795`; collated from changes/6075-interrupt-the-file-watcher-debounce-wait.md)
+- **Summary:** Interrupt the file-watcher debounce wait on stop so long quiet periods cannot leave a worker alive.
+- **Next step:** Shipped in PR #6079.
+
+### DL-#6071 · Data_Processor Uncertainty: BCa Bootstrap Interval Applies the Full Bias Correction When the Acceleration Is 0; Regenerate Module Inventory Hashes and Regression-Test Links
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6071
+- **Branch:** merged via #6072
+- **PR:** #6072
+- **Paths:** see #6072
+- **Started:** 2026-11-16
+- **Last verified:** 2026-11-16 (`f13da0b9`; collated from changes/6071-data-processor-uncertainty-bca-bootstrap.md)
+- **Summary:** data_processor uncertainty: BCa bootstrap interval applies the full bias correction when the acceleration is 0; regenerate module inventory hashes and regression-test links
+- **Next step:** Shipped in PR #6072.
+
+### DL-#6070 · Cover Configuration Loader Fallback, Platform and Input Boundaries
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6070
+- **Branch:** codex/burn1116-6070-config-loader
+- **PR:** #6073
+- **Paths:** see #6073
+- **Started:** 2026-11-16
+- **Last verified:** 2026-11-16 (`6b329fe5`; collated from changes/6070-cover-configuration-loader-fallback-plat.md)
+- **Summary:** Cover configuration loader fallback, platform and input boundaries
+- **Next step:** Review and CI
+
+### DL-#6064 · Cover Isolated Environment File Discovery Fallbacks and Input Contracts
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6064
+- **Branch:** codex/burn1116-6064-env-utils
+- **PR:** #6065
+- **Paths:** see #6065
+- **Started:** 2026-11-16
+- **Last verified:** 2026-11-16 (`b452eed0`; collated from changes/6064-cover-isolated-environment-file-discover.md)
+- **Summary:** Cover isolated environment file discovery fallbacks and input contracts
+- **Next step:** Review and CI
+
 ### DL-#2894 · The Tools_Core Wheel Cache Key No Longer Hashes the Git-Ignored Cargo.Lock, so the Restore and Save Steps Compute the Same Key and the Cache Can Hit (Repository_Management#2894)
 
 - **State:** shipped
