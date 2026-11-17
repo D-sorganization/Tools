@@ -243,7 +243,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-data-explorer.json"
     },
     {
-      "content_sha256_lf": "d52d0e61a3ace350b0ebc3b066440906598f85a5bdd10e18a1ac46d0d94cf8d5",
+      "content_sha256_lf": "e417ed1d1cc8bd4dd5e471e3e89d23a89e6497896bd0b3ed0c22e8e468aa2086",
       "entry_count": 137,
       "package": "src/data_processing",
       "path": "manuals/tools/manifests/module-inventory/entries-src-data-processing.json"
