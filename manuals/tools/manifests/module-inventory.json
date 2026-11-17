@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "65a762dbbcd4359985b8ff916245a3618bf3383656792cf8153e079b424467cd",
+      "content_sha256_lf": "c5655f8d94120383bfc3703823d9c7412383c0a4d0ccb032a655b77cbc488ff3",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -357,7 +357,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-model-generation.json"
     },
     {
-      "content_sha256_lf": "7dc9edd4bf21fbeb070d36f10333c656dd0bcfc747a0578af3e791c1dd25970d",
+      "content_sha256_lf": "b6e857258056e9491eb941f893889b9d7fecd358b94c9a0189d0bdfd4d40913c",
       "entry_count": 95,
       "package": "src/movement_optimizer",
       "path": "manuals/tools/manifests/module-inventory/entries-src-movement-optimizer.json"
@@ -687,7 +687,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-launch-monitor.json"
     },
     {
-      "content_sha256_lf": "b09680e06d482d1be3f05f01a50f2ebe1a2303fe9c4ce2e5d459e9d50f41200d",
+      "content_sha256_lf": "5cf04a582d261ff4348c15c454204909a0062d6c6ba69f281ea70e4d8e01264f",
       "entry_count": 3,
       "package": "src/shared/python/logging_pkg",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-logging-pkg.json"
@@ -711,7 +711,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-plot-engine.json"
     },
     {
-      "content_sha256_lf": "34b9c11d006ae629e527ebea5398ddcdb0aa80f2a6b007c24518b8796f928744",
+      "content_sha256_lf": "c51a94c50c91aa5e9e197b76371e63e395ebffd1b404ec0271e1cbfd2a0b20e8",
       "entry_count": 4,
       "package": "src/shared/python/plot_theme",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-plot-theme.json"
@@ -825,7 +825,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-utils.json"
     },
     {
-      "content_sha256_lf": "43f28ce6edb0d29cc8508e1cbfe3a7cfb9dd46f88c0753165e2a4fd60fde1eb8",
+      "content_sha256_lf": "17d84fdca7fc576b90d29717231c0e08113e8a3f0d4a34e99b13d5298e41d2f9",
       "entry_count": 18,
       "package": "src/shared/python/signal_toolkit",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-signal-toolkit.json"
@@ -1011,7 +1011,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-video-analyzer.json"
     },
     {
-      "content_sha256_lf": "2e9a60f06119cd496fa18878de5ed3f9a49b70f98178130798e9402f723adb3f",
+      "content_sha256_lf": "831cd450d7a4777e6263c7cff0a8ee7125fe9e235aa3159f95778bdf9e8e0d61",
       "entry_count": 33,
       "package": "src/web_applications",
       "path": "manuals/tools/manifests/module-inventory/entries-src-web-applications.json"

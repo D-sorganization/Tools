@@ -35,9 +35,9 @@ from .optimizer_guess import (
 )
 from .optimizer_packaging import (
     build_result_object,
-    check_com_feasibility,
-    count_joint_limit_violations,
+    check_solution_feasibility,
     evaluate_solution,
+    record_result_metrics,
 )
 from .optimizer_parallel import run_parallel_starts, select_best_result
 from .optimizer_progress import ProgressTracker, detect_stall
@@ -389,7 +389,7 @@ class TrajectoryOptimizer:
             )
             raise CancelledError("Optimization cancelled by user")
         result = self._package_results(out, self._progress.elapsed(), selection=None)
-        self._record_result_metrics(result, mode="single")
+        record_result_metrics(result, self.exercise_type, "single")
         return result
 
     def _finalize_parallel_results(self, results: list[tuple[Any, ...]]) -> OptimizationResult:
@@ -399,8 +399,17 @@ class TrajectoryOptimizer:
 
         def _is_res_feasible(r: Any) -> bool:
             try:
-                args = (self.dynamics, self.exercise_type, self.bar_mass, self.build_splines, self.eval_trajectory)
-                return self._check_solution_feasibility(r, *evaluate_solution(r, *args)[::7])[0]
+                args = (
+                    self.dynamics,
+                    self.exercise_type,
+                    self.bar_mass,
+                    self.build_splines,
+                    self.eval_trajectory,
+                )
+                evaluated = evaluate_solution(r, *args)
+                return self._check_solution_feasibility(
+                    r, evaluated[0], evaluated[7], evaluated[1:7]
+                )[0]
             except Exception:
                 return False
 
@@ -421,32 +430,18 @@ class TrajectoryOptimizer:
             total_evals,
             selection=selection,
         )
-        self._record_result_metrics(result, mode="parallel")
+        record_result_metrics(result, self.exercise_type, "parallel")
         return result
 
-    def _record_result_metrics(self, result: OptimizationResult, *, mode: str) -> None:
-        """Publish summary metrics for a completed optimization."""
-        labels = {"exercise_type": self.exercise_type, "mode": mode}
-        metrics.increment(
-            "trajectory_optimization_completed_total",
-            outcome="success" if result.success else "failed",
-            exercise_type=self.exercise_type,
-            mode=mode,
-        )
-        metrics.observe("trajectory_optimization_elapsed_seconds", result.elapsed_s, **labels)
-        metrics.observe("trajectory_optimization_cost", result.cost, **labels)
-        metrics.observe("trajectory_optimization_evaluations", result.n_evals, **labels)
-
-    def _check_solution_feasibility(self, res: Any, q: NDArray, com_x: NDArray) -> tuple[bool, int]:
-        """Assess cost finiteness, COM bounds, and joint-limit violations."""
-        cost_val = float(res.fun)  # type: ignore[attr-defined]
-        cost_finite = cost_val < float("inf") and not np.isnan(cost_val)
-        com_in_bounds = check_com_feasibility(
-            cost_finite, com_x, self.exercise_type, self.inner_heel, self.inner_toe
-        )
-        n_viol = count_joint_limit_violations(q, self.q_bounds)
-        joint_feasible = n_viol == 0
-        return cost_finite and com_in_bounds and joint_feasible, n_viol
+    def _check_solution_feasibility(
+        self,
+        res: Any,
+        q: NDArray,
+        com_x: NDArray,
+        additional_trajectories: tuple[NDArray, ...] = (),
+    ) -> tuple[bool, int]:
+        """Assess numerical validity, COM bounds, and joint-limit violations."""
+        return check_solution_feasibility(self, res, q, com_x, additional_trajectories)
 
     def _package_results(
         self,
@@ -464,7 +459,9 @@ class TrajectoryOptimizer:
             self.build_splines,
             self.eval_trajectory,
         )
-        success, n_viol = self._check_solution_feasibility(res, q, com_x)
+        success, n_viol = self._check_solution_feasibility(
+            res, q, com_x, (qd, qdd, torques, power, com_traj, bar_traj)
+        )
         clubhead_poses, clubhead_twists = extract_clubhead_kinematics(
             self.dynamics, self.t_eval, q, qd
         )
@@ -490,5 +487,7 @@ class TrajectoryOptimizer:
             result,
             res,
             best_start_seed=0 if selection is None else getattr(selection, "best_seed", None),
-            n_starts_feasible=(1 if success else 0) if selection is None else getattr(selection, "n_starts_feasible", 0),
+            n_starts_feasible=(1 if success else 0)
+            if selection is None
+            else getattr(selection, "n_starts_feasible", 0),
         )

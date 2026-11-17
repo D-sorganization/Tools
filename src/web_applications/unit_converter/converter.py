@@ -257,7 +257,7 @@ HEATING_VALUE_FACTORS: dict[str, float | None] = {
     "J/kg": 1e-6,
     "cal/g": 0.004184,
     "kcal/kg": 0.004184,
-    "BTU/lb": 0.00232444,
+    "BTU/lb": 1055.05585262 / 0.45359237 / 1.0e6,
     "kWh/kg": 3.6,
     "MJ/Nm3": None,
     "BTU/scf": None,

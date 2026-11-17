@@ -31,6 +31,17 @@ from .core import Signal
 _trapz = np.trapezoid
 
 
+def _cumulative_with_offset(signal: Signal, initial_value: float) -> np.ndarray:
+    """Integrate from the first sample, offset by a finite initial value."""
+    if not np.isfinite(initial_value):
+        raise ValueError("initial_value must be finite")
+    return typing.cast(
+        np.ndarray,
+        integrate.cumulative_trapezoid(signal.values, signal.time, initial=0)
+        + initial_value,
+    )
+
+
 class DifferentiationMethod(Enum):
     """Methods for computing derivatives."""
 
@@ -356,8 +367,8 @@ class Integrator:
 
         Raises:
             ValueError: If ``signal`` is ``None``; if either bound is NaN;
-                if ``lower_bound > upper_bound`` (inverted); or if either
-                bound falls outside the signal's time range
+                if ``initial_value`` is not finite; if the bounds are inverted;
+                or if either bound falls outside the signal's time range
                 ``[signal.time[0], signal.time[-1]]``.
         """
         # DbC preconditions. Explicit ValueError guards (not bare ``assert``)
@@ -410,7 +421,7 @@ class Integrator:
             value = _trapz(y_range, t_range)
 
         # Compute cumulative integral
-        cumulative = integrate.cumulative_trapezoid(y, t, initial=initial_value)
+        cumulative = _cumulative_with_offset(signal, initial_value)
         cumulative_signal = Signal(
             time=t,
             values=cumulative,
@@ -446,17 +457,13 @@ class Integrator:
             Signal with cumulative integral values.
 
         Raises:
-            ValueError: If ``signal`` is ``None``.
+            ValueError: If ``signal`` is ``None`` or ``initial_value`` is not finite.
         """
         # Explicit ValueError guard (not bare ``assert``) so it survives
         # ``python -O`` (issue #3182 / #3344).
         if signal is None:
             raise ValueError("signal must be provided")
-        cumulative = integrate.cumulative_trapezoid(
-            signal.values,
-            signal.time,
-            initial=initial_value,
-        )
+        cumulative = _cumulative_with_offset(signal, initial_value)
 
         return Signal(
             time=signal.time,
