@@ -12095,10 +12095,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 8499,
+      "bytes_lf": 8553,
       "classification": "calculation",
       "classification_basis": "path-marker:geometry",
-      "content_sha256_lf": "e17cce25822da0ef907eab720f912380454d0e4fecce2d5d92cc9ad41524bbbb",
+      "content_sha256_lf": "27042a7cf1fe00f08cc40e20f7d64af084d70c6a713babf0a5f465e22fded3a9",
       "family": "pendulum-calculation",
       "id": "TOOLS-MODULE-SRC-PENDULUM-SIMULATOR-SRC-DOUBLE-PENDULUM-GOLF-SEGMENT-GEOMETRY-PY-896D172F283D",
       "language": "python",

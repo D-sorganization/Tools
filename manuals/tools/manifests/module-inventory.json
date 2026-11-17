@@ -243,7 +243,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-data-explorer.json"
     },
     {
-      "content_sha256_lf": "a6e5ac0a56ee4454be0a1041069b14d35b8886eff373cf84d3228d6016bb0678",
+      "content_sha256_lf": "e417ed1d1cc8bd4dd5e471e3e89d23a89e6497896bd0b3ed0c22e8e468aa2086",
       "entry_count": 137,
       "package": "src/data_processing",
       "path": "manuals/tools/manifests/module-inventory/entries-src-data-processing.json"
@@ -357,7 +357,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-model-generation.json"
     },
     {
-      "content_sha256_lf": "f3b310ae2910df234f11897e4244fe8b3deba31c721333895a59909be0ee0810",
+      "content_sha256_lf": "7dc9edd4bf21fbeb070d36f10333c656dd0bcfc747a0578af3e791c1dd25970d",
       "entry_count": 95,
       "package": "src/movement_optimizer",
       "path": "manuals/tools/manifests/module-inventory/entries-src-movement-optimizer.json"
@@ -393,7 +393,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
     {
-      "content_sha256_lf": "146a69abdc83adaa82bd8f3dbc26c1f4da7b768d19b53d96d8a80d5ef3469154",
+      "content_sha256_lf": "40e2561377c04531739e3d1985ff2ad2960af39690d247631655e12eff4b9d6a",
       "entry_count": 171,
       "package": "src/pendulum_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pendulum-simulator.json"
