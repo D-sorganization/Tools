@@ -64,14 +64,16 @@ class ComparisonDialog(QWidget):
 
     def _build_metrics_table(self, metrics: list[dict]) -> str:
         lines = [
-            f"{'Trial':<30} {'Ankle':>8} {'Knee':>8} {'Hip':>8} {'Work':>10} {'COM sway':>10}"
+            f"{'Trial':<30} {'Ankle':>8} {'Knee':>8} {'Hip':>8} "
+            f"{'Net Work (J)':>13} {'Abs Joint Work (J)':>19} {'COM sway':>10}"
         ]
-        lines.append("-" * 80)
+        lines.append("-" * 102)
         for m in metrics:
             pt = m["peak_torques"]
             lines.append(
                 f"{m['name']:<30} {pt[0]:>8.1f} {pt[1]:>8.1f} {pt[2]:>8.1f} "
-                f"{m['total_work']:>10.1f} {m['com_sway_cm']:>10.2f} cm"
+                f"{m['total_work']:>13.1f} {m['abs_joint_work_j']:>19.1f} "
+                f"{m['com_sway_cm']:>10.2f} cm"
             )
         return "\n".join(lines)
 
