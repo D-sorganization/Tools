@@ -393,7 +393,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
     {
-      "content_sha256_lf": "146a69abdc83adaa82bd8f3dbc26c1f4da7b768d19b53d96d8a80d5ef3469154",
+      "content_sha256_lf": "40e2561377c04531739e3d1985ff2ad2960af39690d247631655e12eff4b9d6a",
       "entry_count": 171,
       "package": "src/pendulum_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pendulum-simulator.json"
