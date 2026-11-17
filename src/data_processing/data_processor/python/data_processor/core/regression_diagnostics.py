@@ -259,9 +259,10 @@ class DiagnosticsMixin:
             student_residuals = residuals / np.sqrt(mse * (1 - leverage))
             student_residuals = np.nan_to_num(student_residuals)
 
-        # Cook's distance
+        # Cook's distance uses the *studentized* residual: e_i / s alone
+        # understates it by (1 - h_i), most at the high-leverage points.
         with np.errstate(divide="ignore", invalid="ignore"):
-            cooks_d = (std_residuals**2 / (p + 1)) * (leverage / (1 - leverage))
+            cooks_d = (student_residuals**2 / (p + 1)) * (leverage / (1 - leverage))
             cooks_d = np.nan_to_num(cooks_d)
 
         # Durbin-Watson statistic

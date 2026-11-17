@@ -45,16 +45,32 @@ def get_xdg_config_dir(app_name: str) -> Path:
         raise TypeError(f"app_name must be a str, got {type(app_name).__name__}")
     if not app_name:
         raise ValueError("app_name must not be empty")
+    if app_name in {".", ".."}:
+        raise ValueError(f"app_name must not be a dot segment, got {app_name!r}")
     if "/" in app_name or "\\" in app_name:
         raise ValueError(f"app_name must not contain path separators, got {app_name!r}")
 
     if sys.platform == "win32":
-        base = Path(os.environ.get("APPDATA") or Path.home() / ".config")
+        appdata = os.environ.get("APPDATA", "")
+        appdata_path = Path(appdata) if appdata else None
+        base = (
+            appdata_path
+            if appdata_path is not None and appdata_path.is_absolute()
+            else Path.home() / ".config"
+        )
     else:
         xdg_home = os.environ.get("XDG_CONFIG_HOME", "")
-        base = Path(xdg_home) if xdg_home else Path.home() / ".config"
+        xdg_path = Path(xdg_home) if xdg_home else None
+        base = (
+            xdg_path
+            if xdg_path is not None and xdg_path.is_absolute()
+            else Path.home() / ".config"
+        )
 
-    return base / app_name
+    result = base / app_name
+    if not result.is_absolute():
+        raise RuntimeError("configuration directory must be absolute")
+    return result
 
 
 class ConfigLoader:
