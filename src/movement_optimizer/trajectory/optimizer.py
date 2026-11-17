@@ -401,7 +401,13 @@ class TrajectoryOptimizer:
 
         def _is_res_feasible(r: Any) -> bool:
             try:
-                args = (self.dynamics, self.exercise_type, self.bar_mass, self.build_splines, self.eval_trajectory)
+                args = (
+                    self.dynamics,
+                    self.exercise_type,
+                    self.bar_mass,
+                    self.build_splines,
+                    self.eval_trajectory,
+                )
                 return self._check_solution_feasibility(r, *evaluate_solution(r, *args)[::7])[0]
             except Exception:
                 return False
@@ -501,5 +507,7 @@ class TrajectoryOptimizer:
             result,
             res,
             best_start_seed=0 if selection is None else getattr(selection, "best_seed", None),
-            n_starts_feasible=(1 if success else 0) if selection is None else getattr(selection, "n_starts_feasible", 0),
+            n_starts_feasible=(1 if success else 0)
+            if selection is None
+            else getattr(selection, "n_starts_feasible", 0),
         )

@@ -33,14 +33,21 @@ def derive_optimization_status(
         return OptimizationStatus.INFEASIBLE
     if not getattr(res, "success", True):
         msg = str(getattr(res, "message", "")).lower()
-        if getattr(res, "status", None) == 9 or "iteration limit" in msg or ("iteration" in msg and ("maximum" in msg or "exceed" in msg)):
+        if (
+            getattr(res, "status", None) == 9
+            or "iteration limit" in msg
+            or ("iteration" in msg and ("maximum" in msg or "exceed" in msg))
+        ):
             return OptimizationStatus.ITERATION_LIMIT
         return OptimizationStatus.STALLED
     return OptimizationStatus.CONVERGED
 
 
 def populate_result_metadata(
-    result: OptimizationResult, res: Any, best_start_seed: int | None = None, n_starts_feasible: int = 0
+    result: OptimizationResult,
+    res: Any,
+    best_start_seed: int | None = None,
+    n_starts_feasible: int = 0,
 ) -> OptimizationResult:
     """Attach status, solver message, iterations, and seed provenance to result.
 
@@ -63,8 +70,16 @@ def extract_clubhead_kinematics(
 ) -> tuple[NDArray | None, NDArray | None]:
     """Extract clubhead poses and twists if supported by dynamics."""
     n = len(t_eval)
-    poses = np.array([dynamics.clubhead_pose(q[i]) for i in range(n)], dtype=np.float64) if hasattr(dynamics, "clubhead_pose") else None
-    twists = np.array([dynamics.clubhead_twist(q[i], qd[i]) for i in range(n)], dtype=np.float64) if hasattr(dynamics, "clubhead_twist") else None
+    poses = (
+        np.array([dynamics.clubhead_pose(q[i]) for i in range(n)], dtype=np.float64)
+        if hasattr(dynamics, "clubhead_pose")
+        else None
+    )
+    twists = (
+        np.array([dynamics.clubhead_twist(q[i], qd[i]) for i in range(n)], dtype=np.float64)
+        if hasattr(dynamics, "clubhead_twist")
+        else None
+    )
     return poses, twists
 
 
