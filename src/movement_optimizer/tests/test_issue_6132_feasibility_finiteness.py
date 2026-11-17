@@ -22,6 +22,7 @@ from movement_optimizer.trajectory import (
     populate_result_metadata,
 )
 from movement_optimizer.trajectory.optimizer_packaging import (
+    check_solution_feasibility,
     find_invalid_trajectory_data,
 )
 
@@ -52,6 +53,24 @@ def _valid_com(opt: TrajectoryOptimizer, n: int = N_EVAL) -> np.ndarray:
     return np.full(n, opt.inner_center)
 
 
+def _valid_additional_trajectories() -> tuple[np.ndarray, ...]:
+    return (
+        np.zeros((N_EVAL, N_DOF)),
+        np.zeros((N_EVAL, N_DOF)),
+        np.zeros((N_EVAL, N_DOF)),
+        np.zeros((N_EVAL, N_DOF)),
+        np.zeros((N_EVAL, 2)),
+        np.zeros((N_EVAL, 2)),
+    )
+
+
+def _check_solution(opt, res, q, com_x, additional_trajectories=None):
+    """Call the feasibility boundary with every required trajectory array."""
+    if additional_trajectories is None:
+        additional_trajectories = _valid_additional_trajectories()
+    return check_solution_feasibility(opt, res, q, com_x, additional_trajectories)
+
+
 def _res(cost: float) -> SimpleNamespace:
     return SimpleNamespace(fun=cost, success=True, message="", nit=1)
 
@@ -59,9 +78,7 @@ def _res(cost: float) -> SimpleNamespace:
 @pytest.mark.parametrize("cost", [float("-inf"), float("inf"), float("nan")])
 def test_non_finite_cost_is_infeasible(squat_optimizer, cost: float) -> None:
     q = np.zeros((N_EVAL, N_DOF))
-    success, n_viol = squat_optimizer._check_solution_feasibility(
-        _res(cost), q, _valid_com(squat_optimizer)
-    )
+    success, n_viol = _check_solution(squat_optimizer, _res(cost), q, _valid_com(squat_optimizer))
     assert success is False
     assert n_viol == 0
 
@@ -70,8 +87,34 @@ def test_non_finite_cost_is_infeasible(squat_optimizer, cost: float) -> None:
 def test_non_finite_joint_samples_are_infeasible(squat_optimizer, bad: float) -> None:
     q = np.zeros((N_EVAL, N_DOF))
     q[N_EVAL // 2, 1] = bad
-    success, _ = squat_optimizer._check_solution_feasibility(
-        _res(1.0), q, _valid_com(squat_optimizer)
+    success, _ = _check_solution(squat_optimizer, _res(1.0), q, _valid_com(squat_optimizer))
+    assert success is False
+
+
+@pytest.mark.parametrize("index", range(6))
+def test_non_finite_derived_trajectory_is_infeasible(squat_optimizer, index: int) -> None:
+    trajectories = list(_valid_additional_trajectories())
+    trajectories[index].flat[0] = np.nan
+    success, _ = _check_solution(
+        squat_optimizer,
+        _res(1.0),
+        np.zeros((N_EVAL, N_DOF)),
+        _valid_com(squat_optimizer),
+        tuple(trajectories),
+    )
+    assert success is False
+
+
+@pytest.mark.parametrize("index", range(6))
+def test_malformed_derived_trajectory_is_infeasible(squat_optimizer, index: int) -> None:
+    trajectories = list(_valid_additional_trajectories())
+    trajectories[index] = trajectories[index][:-1]
+    success, _ = _check_solution(
+        squat_optimizer,
+        _res(1.0),
+        np.zeros((N_EVAL, N_DOF)),
+        _valid_com(squat_optimizer),
+        tuple(trajectories),
     )
     assert success is False
 
@@ -80,17 +123,13 @@ def test_all_nan_joints_infeasible_but_not_counted_as_violations(
     squat_optimizer,
 ) -> None:
     q = np.full((N_EVAL, N_DOF), np.nan)
-    success, n_viol = squat_optimizer._check_solution_feasibility(
-        _res(1.0), q, _valid_com(squat_optimizer)
-    )
+    success, n_viol = _check_solution(squat_optimizer, _res(1.0), q, _valid_com(squat_optimizer))
     assert success is False
     assert n_viol == 0
 
 
 def test_empty_trajectory_is_infeasible(squat_optimizer) -> None:
-    success, _ = squat_optimizer._check_solution_feasibility(
-        _res(1.0), np.zeros((0, N_DOF)), np.zeros(0)
-    )
+    success, _ = _check_solution(squat_optimizer, _res(1.0), np.zeros((0, N_DOF)), np.zeros(0))
     assert success is False
 
 
@@ -99,15 +138,21 @@ def test_empty_trajectory_is_infeasible(squat_optimizer) -> None:
     [((N_EVAL, N_DOF - 1), N_EVAL), ((N_EVAL, N_DOF), N_EVAL - 1), ((N_EVAL,), N_EVAL)],
 )
 def test_shape_mismatch_is_infeasible(squat_optimizer, q_shape, com_len) -> None:
-    success, _ = squat_optimizer._check_solution_feasibility(
-        _res(1.0), np.zeros(q_shape), _valid_com(squat_optimizer, com_len)
+    success, _ = _check_solution(
+        squat_optimizer,
+        _res(1.0),
+        np.zeros(q_shape),
+        _valid_com(squat_optimizer, com_len),
     )
     assert success is False
 
 
 def test_valid_data_reports_no_problem() -> None:
     q = np.zeros((N_EVAL, N_DOF))
-    assert find_invalid_trajectory_data(q, np.zeros(N_EVAL), N_DOF) is None
+    assert (
+        find_invalid_trajectory_data(q, np.zeros(N_EVAL), N_DOF, _valid_additional_trajectories())
+        is None
+    )
 
 
 @pytest.mark.parametrize(
@@ -121,7 +166,7 @@ def test_valid_data_reports_no_problem() -> None:
     ],
 )
 def test_invalid_data_is_described(q, com_x, fragment: str) -> None:
-    reason = find_invalid_trajectory_data(q, com_x, N_DOF)
+    reason = find_invalid_trajectory_data(q, com_x, N_DOF, _valid_additional_trajectories())
     assert reason is not None
     assert fragment in reason
 
@@ -129,7 +174,12 @@ def test_invalid_data_is_described(q, com_x, fragment: str) -> None:
 def test_non_finite_com_rejected_even_when_com_constraint_exempt() -> None:
     # Bench press skips the COM bound check, but NaN COM data is still invalid.
     com_x = np.full(N_EVAL, np.nan)
-    assert find_invalid_trajectory_data(np.zeros((N_EVAL, N_DOF)), com_x, N_DOF)
+    assert find_invalid_trajectory_data(
+        np.zeros((N_EVAL, N_DOF)),
+        com_x,
+        N_DOF,
+        _valid_additional_trajectories(),
+    )
 
 
 def _result(q: np.ndarray, cost: float) -> OptimizationResult:
@@ -159,5 +209,13 @@ def test_negative_infinite_cost_reports_numerical_failure() -> None:
 
 def test_non_finite_trajectory_reports_numerical_failure() -> None:
     result = _result(np.full((N_EVAL, N_DOF), np.nan), 1.0)
+    populate_result_metadata(result, _res(1.0))
+    assert result.status is OptimizationStatus.NUMERICAL_FAILURE
+
+
+@pytest.mark.parametrize("field", ["t", "qd", "qdd", "torques", "power", "com", "bar"])
+def test_non_finite_derived_result_reports_numerical_failure(field: str) -> None:
+    result = _result(np.zeros((N_EVAL, N_DOF)), 1.0)
+    getattr(result, field).flat[0] = np.inf
     populate_result_metadata(result, _res(1.0))
     assert result.status is OptimizationStatus.NUMERICAL_FAILURE

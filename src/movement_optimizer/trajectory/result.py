@@ -51,11 +51,36 @@ def populate_result_metadata(
 ) -> OptimizationResult:
     """Attach status, solver message, iterations, and seed provenance to result.
 
-    A non-finite cost (including ``-inf``) or a non-finite joint trajectory
-    is reported as ``NUMERICAL_FAILURE`` rather than a bound violation (#6132).
+    Non-finite or malformed outputs and non-finite cost are reported as
+    ``NUMERICAL_FAILURE`` rather than physical bound violations (#6132).
     """
     cost_val = float(getattr(res, "fun", result.cost))
-    numerically_valid = math.isfinite(cost_val) and bool(np.all(np.isfinite(result.q)))
+    q = np.asarray(result.q)
+    n = q.shape[0] if q.ndim == 2 else 0
+    n_dof = q.shape[1] if q.ndim == 2 else 0
+    arrays = (
+        (result.t, (n,)),
+        (result.q, (n, n_dof)),
+        (result.qd, (n, n_dof)),
+        (result.qdd, (n, n_dof)),
+        (result.torques, (n, n_dof)),
+        (result.power, (n, n_dof)),
+        (result.com, (n, 2)),
+        (result.bar, (n, 2)),
+    )
+    trajectories_valid = (
+        n > 0
+        and n_dof > 0
+        and all(
+            np.asarray(values).shape == shape and bool(np.all(np.isfinite(values)))
+            for values, shape in arrays
+        )
+    )
+    numerically_valid = (
+        math.isfinite(cost_val)
+        and math.isfinite(float(result.com_horizontal_range_cm))
+        and trajectories_valid
+    )
     result.status = derive_optimization_status(res, numerically_valid, result.success)
     result.solver_message = str(getattr(res, "message", ""))
     result.n_iterations = int(getattr(res, "nit", 0))
