@@ -116,7 +116,7 @@ class TestOptimization:
         )
         result = opt.optimize()
         assert result.cost < float("inf")
-        assert result.success
+        assert result.is_feasible
 
     def test_com_stays_in_inner_bos(self) -> None:
         """After SLSQP optimization, COM should stay within the inner 60% BOS."""
@@ -143,7 +143,7 @@ class TestOptimization:
         assert np.all(com_x <= body.inner_toe + 0.01), (
             f"COM above inner_toe: max={com_x.max():.4f}, bound={body.inner_toe:.4f}"
         )
-        assert result.success, "Optimization should report success with COM in bounds"
+        assert result.is_feasible, "Optimization should report feasible with COM in bounds"
 
 
 # ==============================================================

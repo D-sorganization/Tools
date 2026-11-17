@@ -12,7 +12,6 @@ from __future__ import annotations
 from pathlib import Path
 from types import SimpleNamespace
 
-import openpyxl
 import pytest
 
 from movement_optimizer import cli
@@ -96,6 +95,7 @@ def test_cli_summary_and_exit_report_categorical_status(
 
 
 def test_export_excel_summary_reports_categorical_status(tmp_path: Path) -> None:
+    openpyxl = pytest.importorskip("openpyxl")
     result = _make_valid_result(success=True)
     res = SimpleNamespace(
         fun=5.0, success=False, status=9, message="Iteration limit reached", nit=10
