@@ -687,7 +687,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-launch-monitor.json"
     },
     {
-      "content_sha256_lf": "b09680e06d482d1be3f05f01a50f2ebe1a2303fe9c4ce2e5d459e9d50f41200d",
+      "content_sha256_lf": "5cf04a582d261ff4348c15c454204909a0062d6c6ba69f281ea70e4d8e01264f",
       "entry_count": 3,
       "package": "src/shared/python/logging_pkg",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-logging-pkg.json"
