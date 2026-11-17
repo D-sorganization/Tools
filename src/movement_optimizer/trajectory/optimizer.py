@@ -5,6 +5,7 @@ from __future__ import annotations
 
 import contextlib
 import logging
+import math
 import os
 import threading
 from collections.abc import Callable
@@ -38,6 +39,7 @@ from .optimizer_packaging import (
     check_com_feasibility,
     count_joint_limit_violations,
     evaluate_solution,
+    find_invalid_trajectory_data,
 )
 from .optimizer_parallel import run_parallel_starts, select_best_result
 from .optimizer_progress import ProgressTracker, detect_stall
@@ -438,9 +440,18 @@ class TrajectoryOptimizer:
         metrics.observe("trajectory_optimization_evaluations", result.n_evals, **labels)
 
     def _check_solution_feasibility(self, res: Any, q: NDArray, com_x: NDArray) -> tuple[bool, int]:
-        """Assess cost finiteness, COM bounds, and joint-limit violations."""
+        """Assess numerical validity, COM bounds, and joint-limit violations.
+
+        The returned count covers physical joint-limit violations only;
+        non-finite or malformed data makes the candidate infeasible and is
+        logged separately (#6132).
+        """
         cost_val = float(res.fun)  # type: ignore[attr-defined]
-        cost_finite = cost_val < float("inf") and not np.isnan(cost_val)
+        invalid_reason = find_invalid_trajectory_data(q, com_x, self.n_dof)
+        if invalid_reason is not None:
+            logger.warning("Rejecting numerically invalid solution: %s", invalid_reason)
+            return False, 0
+        cost_finite = math.isfinite(cost_val)
         com_in_bounds = check_com_feasibility(
             cost_finite, com_x, self.exercise_type, self.inner_heel, self.inner_toe
         )

@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import math
 import warnings
 from dataclasses import dataclass, field
 from enum import Enum
@@ -41,10 +42,14 @@ def derive_optimization_status(
 def populate_result_metadata(
     result: OptimizationResult, res: Any, best_start_seed: int | None = None, n_starts_feasible: int = 0
 ) -> OptimizationResult:
-    """Attach status, solver message, iterations, and seed provenance to result."""
+    """Attach status, solver message, iterations, and seed provenance to result.
+
+    A non-finite cost (including ``-inf``) or a non-finite joint trajectory
+    is reported as ``NUMERICAL_FAILURE`` rather than a bound violation (#6132).
+    """
     cost_val = float(getattr(res, "fun", result.cost))
-    cost_finite = cost_val < float("inf") and not np.isnan(cost_val)
-    result.status = derive_optimization_status(res, cost_finite, result.success)
+    numerically_valid = math.isfinite(cost_val) and bool(np.all(np.isfinite(result.q)))
+    result.status = derive_optimization_status(res, numerically_valid, result.success)
     result.solver_message = str(getattr(res, "message", ""))
     result.n_iterations = int(getattr(res, "nit", 0))
     result.best_start_seed = best_start_seed

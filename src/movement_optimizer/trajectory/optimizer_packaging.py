@@ -65,7 +65,43 @@ __all__ = [
     "check_com_feasibility",
     "count_joint_limit_violations",
     "evaluate_solution",
+    "find_invalid_trajectory_data",
 ]
+
+
+def find_invalid_trajectory_data(
+    q: NDArray[np.float64],
+    com_x: NDArray[np.float64],
+    n_dof: int,
+) -> str | None:
+    """Describe why a trajectory is numerically unusable, or return None.
+
+    This check is separate from physical bound checks. NaN compares False
+    against every bound, so a NaN trajectory would otherwise show zero
+    joint-limit or COM violations and look feasible (#6132).
+
+    Parameters:
+        q: joint trajectory, expected shape ``(N, n_dof)`` with ``N >= 1``.
+        com_x: horizontal COM trajectory, expected shape ``(N,)``.
+        n_dof: expected number of joint columns.
+
+    Returns:
+        A short reason string when the data is empty, malformed, or
+        non-finite; ``None`` when the data is valid.
+    """
+    q_arr = np.asarray(q)
+    com_arr = np.asarray(com_x)
+    if q_arr.size == 0 or com_arr.size == 0:
+        return "empty trajectory"
+    if q_arr.ndim != 2 or q_arr.shape[1] != n_dof:
+        return f"q shape {q_arr.shape} does not match (N, {n_dof})"
+    if com_arr.shape != (q_arr.shape[0],):
+        return f"com_x shape {com_arr.shape} does not match ({q_arr.shape[0]},)"
+    n_bad = int(np.count_nonzero(~np.isfinite(q_arr)))
+    n_bad += int(np.count_nonzero(~np.isfinite(com_arr)))
+    if n_bad:
+        return f"{n_bad} non-finite trajectory sample(s)"
+    return None
 
 
 def evaluate_solution(
