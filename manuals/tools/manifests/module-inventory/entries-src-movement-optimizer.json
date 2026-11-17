@@ -6446,10 +6446,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 18828,
+      "bytes_lf": 18184,
       "classification": "calculation",
       "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "2e157b853ed2dd9799b1cbdd204e6dcacc7fdc95da57690556a2be314f83e3a5",
+      "content_sha256_lf": "44d44655935be0a00482fcfcf64abac6308fe65cda4bf34780edf6089b623739",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-TRAJECTORY-OPTIMIZER-PY-A585A29C490E",
       "language": "python",
@@ -6862,10 +6862,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 6907,
+      "bytes_lf": 11741,
       "classification": "calculation",
       "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "091cbaa61e1a2512114ec184ebe13032835e71dbab194332a9b7eab2469e8b48",
+      "content_sha256_lf": "4a93a24a07b1741d2b3a0fa19721152a50e91214f717a56106be8def60bef9aa",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-TRAJECTORY-OPTIMIZER-PACKAGING-PY-85AA40DB8730",
       "language": "python",
@@ -6877,7 +6877,6 @@
         "public-api",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -6889,7 +6888,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "unavailable"
       },
@@ -6916,6 +6915,11 @@
           },
           {
             "kind": "function",
+            "name": "check_solution_feasibility",
+            "signature": "context: _FeasibilityContext, res: _OptimizeResult, q: NDArray, com_x: NDArray, additional_trajectories: tuple[NDArray, ...]=()"
+          },
+          {
+            "kind": "function",
             "name": "count_joint_limit_violations",
             "signature": "q: NDArray[np.float64], q_bounds: NDArray[np.float64] | None"
           },
@@ -6923,10 +6927,23 @@
             "kind": "function",
             "name": "evaluate_solution",
             "signature": "res: _OptimizeResult, dynamics: PhysicsBackend, exercise_type: str, bar_mass: float, build_splines_fn: _SplineCallable, eval_trajectory_fn: _TrajectoryCallable"
+          },
+          {
+            "kind": "function",
+            "name": "find_invalid_trajectory_data",
+            "signature": "q: NDArray[np.float64], com_x: NDArray[np.float64], n_dof: int, additional_trajectories: tuple[NDArray, ...]=()"
+          },
+          {
+            "kind": "function",
+            "name": "record_result_metrics",
+            "signature": "result: OptimizationResult, exercise_type: str, mode: str"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_issue_6132_feasibility_finiteness.py"
+        ],
         "unit_mentions": [
+          "N",
           "bar",
           "kg",
           "s"
@@ -7223,10 +7240,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 6613,
+      "bytes_lf": 7613,
       "classification": "calculation",
       "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "1c773d2300ae357e0bc4602d2b5f8eb019fdd3cc601f4eb89c263abf5093cd03",
+      "content_sha256_lf": "8240ca697adb698ef474f95fbd0d0f1597da300e6430e2e5ebeee411dbd08ce2",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-TRAJECTORY-RESULT-PY-9405027640B1",
       "language": "python",
