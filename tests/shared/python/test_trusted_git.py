@@ -1,8 +1,12 @@
 from __future__ import annotations
 
+import os
 import subprocess
 from pathlib import Path
+from types import SimpleNamespace
 from unittest.mock import MagicMock
+
+import pytest
 
 from shared.python import trusted_git
 from shared.python.codemap import api as codemap_api
@@ -99,3 +103,42 @@ def test_current_commit_falls_back_without_trusted_git(
 
     monkeypatch.setattr(codemap_indexer, "resolve_trusted_git_executable", lambda: None)
     monkeypatch.setattr(codemap_indexer.subprocess, "check_output", check_output)
+
+
+@pytest.mark.skipif(os.name == "nt", reason="POSIX execute bits and symlinks")
+@pytest.mark.parametrize("candidate_kind", ["nonexecutable", "symlink_loop"])
+def test_unusable_override_falls_back_to_executable_candidate(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, candidate_kind: str
+) -> None:
+    """Broken override paths must not prevent a usable trusted fallback."""
+    bad = tmp_path / "broken-git"
+    if candidate_kind == "nonexecutable":
+        bad.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+        bad.chmod(0o644)
+    else:
+        other = tmp_path / "cycle"
+        bad.symlink_to(other)
+        other.symlink_to(bad)
+    fallback = tmp_path / "working-git"
+    fallback.write_text("#!/bin/sh\nexit 0\n", encoding="utf-8")
+    fallback.chmod(0o755)
+    monkeypatch.setattr(trusted_git, "_default_git_candidates", lambda env: (fallback,))
+
+    result = trusted_git.resolve_trusted_git_executable(
+        {trusted_git.TRUSTED_GIT_ENV_VAR: str(bad)}
+    )
+    assert result == str(fallback.resolve())
+
+
+def test_windows_discovery_preserves_regular_file_behavior(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Windows candidates retain their existing non-POSIX permission handling."""
+    candidate = tmp_path / "git.exe"
+    candidate.write_text("placeholder", encoding="utf-8")
+    candidate.chmod(0o644)
+    monkeypatch.setattr(trusted_git, "os", SimpleNamespace(name="nt"))
+    monkeypatch.setattr(trusted_git, "_default_git_candidates", lambda env: ())
+    assert trusted_git.resolve_trusted_git_executable(
+        {trusted_git.TRUSTED_GIT_ENV_VAR: str(candidate)}
+    ) == str(candidate.resolve())

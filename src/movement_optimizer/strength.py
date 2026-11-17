@@ -97,10 +97,21 @@ class HillTorqueModel:
         factor = np.where(is_concentric, conc, ecc)
         return np.clip(factor, 0.0, self.max_ecc_ratio)
 
-    def available_torque(self, q: float | NDArray, qd: float | NDArray) -> NDArray:
-        """Maximum torque the joint can produce at given angle and velocity."""
+    def available_torque(
+        self,
+        q: float | NDArray,
+        qd: float | NDArray,
+        torque_sign: float | NDArray = -1.0,
+    ) -> NDArray:
+        """Maximum torque the joint can produce at given angle and velocity.
+
+        ``torque_sign`` is the direction of the torque being produced; see
+        :meth:`torque_velocity_factor`.
+        """
         return (
-            self.tau_max * self.torque_angle_factor(q) * self.torque_velocity_factor(qd)
+            self.tau_max
+            * self.torque_angle_factor(q)
+            * self.torque_velocity_factor(qd, torque_sign)
         )
 
 
@@ -135,8 +146,8 @@ class JointTorqueSet:
         """Update the maximum isometric torque for a joint."""
         if joint_name not in self._models:
             raise ValueError(f"Unknown joint: {joint_name}")
-        if tau_max <= 0:
-            raise ValueError("tau_max must be positive")
+        if not np.isfinite(tau_max) or tau_max <= 0:
+            raise ValueError("tau_max must be a finite positive number")
         self._models[joint_name].tau_max = tau_max
 
     def get_max_torque(self, joint_name: str) -> float:
@@ -152,20 +163,36 @@ class JointTorqueSet:
             result[index] = self._models[name].available_torque(q[index], qd[index])
         return result
 
-    def available_torques_batch(self, q: NDArray, qd: NDArray) -> NDArray:
-        """Compute available torque at each joint for N poses."""
+    def available_torques_batch(
+        self,
+        q: NDArray,
+        qd: NDArray,
+        torque_sign: float | NDArray = -1.0,
+    ) -> NDArray:
+        """Compute available torque at each joint for N poses.
+
+        ``torque_sign`` is a scalar or an ``(N, n_joints)`` array giving the
+        direction of the torque being produced (default: flexor-dominant -1).
+        """
+        sign = np.broadcast_to(np.asarray(torque_sign, dtype=float), q.shape)
         result = np.empty((q.shape[0], len(self.joint_names)))
         for index, name in enumerate(self.joint_names):
             result[:, index] = self._models[name].available_torque(
-                q[:, index], qd[:, index]
+                q[:, index], qd[:, index], sign[:, index]
             )
         return result
 
     def torque_utilization(
         self, q: NDArray, qd: NDArray, required_torques: NDArray
     ) -> NDArray:
-        """Ratio of required torque to available torque."""
-        available = self.available_torques_batch(q, qd)
+        """Ratio of required torque to available torque.
+
+        The contraction mode follows the direction of the required torque: the
+        muscle shortens (concentric) when ``qd`` and the required torque share
+        a sign and lengthens (eccentric) otherwise.
+        """
+        torque_sign = np.where(np.asarray(required_torques) > 0, 1.0, -1.0)
+        available = self.available_torques_batch(q, qd, torque_sign)
         safe_available = np.maximum(available, 1e-10)
         return np.abs(required_torques) / safe_available
 

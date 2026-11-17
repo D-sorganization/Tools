@@ -176,9 +176,7 @@ class TestCylinderCrossSection:
 
     def test_negative_radius_raises(self) -> None:
         with pytest.raises((ValueError, TypeError)):
-            cylinder_cross_section(
-                np.array([0.0, 0.0]), np.array([1.0, 0.0]), radius=-0.1
-            )
+            cylinder_cross_section(np.array([0.0, 0.0]), np.array([1.0, 0.0]), radius=-0.1)
 
     def test_degenerate_segment(self) -> None:
         """Zero-length segment should not crash."""
@@ -186,6 +184,25 @@ class TestCylinderCrossSection:
         end = np.array([0.5, 0.5])
         corners = cylinder_cross_section(start, end, radius=0.1)
         assert corners.shape == (4, 2)
+
+    def test_degenerate_segment_is_square_centred_on_point(self) -> None:
+        """A zero-length segment gives an axis-aligned 2r x 2r square about it.
+
+        Closed form: square of half-width r has area (2r)^2 = 4 r^2 and its
+        vertex set is {c +/- r} x {c +/- r}.
+        """
+        centre = np.array([0.5, -0.25])
+        r = 0.1
+        corners = cylinder_cross_section(centre, centre.copy(), radius=r)
+        x, y = corners[:, 0], corners[:, 1]
+        shoelace = 0.5 * abs(np.dot(x, np.roll(y, -1)) - np.dot(y, np.roll(x, -1)))
+        assert shoelace == pytest.approx(4 * r * r)
+        assert sorted(x) == pytest.approx(
+            sorted([centre[0] - r, centre[0] - r, centre[0] + r, centre[0] + r])
+        )
+        assert sorted(y) == pytest.approx(
+            sorted([centre[1] - r, centre[1] - r, centre[1] + r, centre[1] + r])
+        )
 
     def test_symmetric_about_axis(self) -> None:
         """Corners should be symmetric about the segment axis."""
@@ -235,9 +252,7 @@ class TestTaperedCylinderCrossSection:
     def test_shape(self) -> None:
         start = np.array([0.0, 0.0])
         end = np.array([0.0, 1.0])
-        corners = tapered_cylinder_cross_section(
-            start, end, radius_start=0.2, radius_end=0.05
-        )
+        corners = tapered_cylinder_cross_section(start, end, radius_start=0.2, radius_end=0.05)
         assert corners.shape == (4, 2)
 
     def test_finite(self) -> None:

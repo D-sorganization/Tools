@@ -284,8 +284,10 @@ class RRTPlanner:
             raise TypeError("origin must not be None")
         direction = target - origin
         distance = float(np.linalg.norm(direction))
-        if distance == 0.0:
-            return origin.copy()
+        if distance <= self.step_size:
+            # Target is within one step: land on it rather than overshooting
+            # past it (and potentially out of the planner bounds).
+            return np.asarray(target, dtype=np.float64).copy()
         return origin + self.step_size * direction / distance
 
     def _check_collision(

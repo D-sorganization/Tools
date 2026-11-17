@@ -469,3 +469,20 @@ def test_histogram_rejects_nan() -> None:
 def test_histogram_rejects_bins_type() -> None:
     with pytest.raises(TypeError):
         histogram(np.arange(10, dtype=float), bins=2.0, density=False)  # type: ignore[arg-type]
+
+
+# --------------------------------------------------------------------------- #
+# Welch single-sided scaling (Parseval)
+# --------------------------------------------------------------------------- #
+
+
+@pytest.mark.parametrize("seg", [1, 2, 3, 4, 5, 6, 7, 8, 9])
+def test_spectrum_welch_psd_integrates_to_mean_square(seg: int) -> None:
+    """Parseval: with a rectangular window, ``sum(PSD) * df`` equals the mean
+    square of the segment, for both even and odd segment lengths."""
+    fs = 8.0
+    y = np.array([1.0, -2.0, 0.5, 3.0, -1.5, 2.0, 0.25, -0.75, 1.25])[:seg]
+    freqs, psd = spectrum(y, fs, "welch", "none", seg, detrend=False)
+    df = fs / seg
+    assert float(np.sum(psd) * df) == pytest.approx(float(np.mean(y**2)), rel=1e-12)
+    assert freqs.size == psd.size == seg // 2 + 1

@@ -236,6 +236,19 @@ class TestDbCNoneInputs(unittest.TestCase):
         with self.assertRaises(TypeError):
             self.planner._extract_path(None, 0)
 
+    def test_steer_does_not_overshoot_a_nearby_target(self) -> None:
+        """_steer moves at most step_size: a target closer than that is reached."""
+        planner = RRTPlanner(np.array([0.0, 1.0, 0.0, 1.0, 0.0, 1.0]), seed=1)
+        origin = np.array([0.99, 0.5, 0.5])
+        target = np.array([1.0, 0.5, 0.5])  # 0.01 away, step_size is 0.05
+        np.testing.assert_allclose(planner._steer(origin, target), target)
+
+    def test_steer_moves_exactly_step_size_when_target_is_far(self) -> None:
+        origin = np.array([0.0, 0.0, 0.0])
+        target = np.array([0.6, 0.8, 0.0])  # unit direction (0.6, 0.8, 0)
+        expected = origin + self.planner.step_size * np.array([0.6, 0.8, 0.0])
+        np.testing.assert_allclose(self.planner._steer(origin, target), expected)
+
 
 if __name__ == "__main__":
     unittest.main()
