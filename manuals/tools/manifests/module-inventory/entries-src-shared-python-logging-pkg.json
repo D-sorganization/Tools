@@ -115,10 +115,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 1476,
+      "bytes_lf": 1783,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "4cd72a2b54ba30a47f76cd18325b83166666517554a8bdfab58b4d563cc168dd",
+      "content_sha256_lf": "536036d1302f180490739bbb9527c8caae3eac6ae31fbacc5c93e45b96c7ea60",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-LOGGING-PKG-LOGGER-UTILS-PY-CDB9E19913DB",
       "language": "python",

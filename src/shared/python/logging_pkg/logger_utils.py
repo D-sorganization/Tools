@@ -16,9 +16,16 @@ LOG_LEVEL = logging.INFO
 
 
 def set_seeds(seed: int = DEFAULT_SEED, *, validate: bool = True) -> None:
-    """Seed Python and NumPy random generators when available."""
-    if validate and seed < 0:
-        raise ValueError("expected non-negative integer for seed")
+    """Seed Python and NumPy generators with a common unsigned-32-bit seed.
+
+    Default validation rejects invalid seeds before changing either generator.
+    Set ``validate=False`` to delegate validation to the installed backends.
+    """
+    if validate:
+        if not isinstance(seed, int):
+            raise TypeError("expected integer for seed")
+        if not 0 <= seed < 2**32:
+            raise ValueError("expected non-negative integer below 2**32 for seed")
     random.seed(seed)
     try:
         import numpy as np

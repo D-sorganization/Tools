@@ -209,10 +209,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 10478,
+      "bytes_lf": 10651,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "caa213aca0d42b058df707739dd3fe04d08ae5853702e925ab4ea2c48defcb95",
+      "content_sha256_lf": "1001b8eedb5a7b69cedb8929ad90f8ae88342fba2042921495b42c177d50f2e9",
       "family": "plot-theme-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-THEME-MANAGER-PY-2C1661C5880B",
       "language": "python",
@@ -261,6 +261,7 @@
         ],
         "test_paths": [
           "src/shared/python/plot_theme/tests/test_plot_theme.py",
+          "tests/shared/python/plot_theme/test_callback_delivery.py",
           "tests/shared/python/plot_theme/test_integration.py",
           "tests/shared/python/plot_theme/test_manager.py"
         ],
@@ -414,6 +415,7 @@
         ],
         "test_paths": [
           "src/shared/python/plot_theme/tests/test_plot_theme.py",
+          "tests/shared/python/plot_theme/test_callback_delivery.py",
           "tests/shared/python/plot_theme/test_manager.py",
           "tests/shared/python/plot_theme/test_themes.py"
         ],
