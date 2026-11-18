@@ -1574,6 +1574,45 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#6130 · Require CONVERGED Status for OptimizationResult.Success, Add Is_Feasible, Expose Status in CLI/Excel, and Align Feasibility Tests.
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6130
+- **Branch:** merged via #6136
+- **PR:** #6136
+- **Paths:** see #6136
+- **Started:** 2026-11-18
+- **Last verified:** 2026-11-18 (`6d07a6b7`; collated from changes/6130-success-requires-converged.md)
+- **Summary:** Require CONVERGED status for OptimizationResult.success, add is_feasible, expose status in CLI/Excel, and align feasibility tests.
+- **Next step:** Shipped in PR #6136.
+
+### DL-#6114 · Consider Inserted Models and Entry-Count Pressure When Evicting Eligible Old Cache Entries
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6114
+- **Branch:** merged via #6119
+- **PR:** #6119
+- **Paths:** see #6119
+- **Started:** 2026-11-18
+- **Last verified:** 2026-11-18 (`89054a07`; collated from changes/6114-consider-inserted-models-and-entry-count.md)
+- **Summary:** Consider inserted models and entry-count pressure when evicting eligible old cache entries
+- **Next step:** Shipped in PR #6119.
+
+### DL-#6095 · UncertaintyQuantifier Uses Exact Scipy T/Normal Quantiles; Small-Sample Prediction Intervals Were ~10% Too Narrow
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6095
+- **Branch:** merged via #6096
+- **PR:** #6096
+- **Paths:** see #6096
+- **Started:** 2026-11-18
+- **Last verified:** 2026-11-18 (`3224f894`; collated from changes/6095-uncertaintyquantifier-uses-exact-scipy-t.md)
+- **Summary:** UncertaintyQuantifier uses exact scipy t/normal quantiles; small-sample prediction intervals were ~10% too narrow
+- **Next step:** Shipped in PR #6096.
+
 ### DL-#6132 · Movement_Optimizer: A Non-Finite Cost (Including -Inf) or a NaN/Inf, Empty or Mis-Shaped Trajectory No Longer Passes the Feasibility Boundary; Invalid Data Is Reported Apart From Joint-Limit Violations and Maps to NUMERICAL_FAILURE
 
 - **State:** shipped
