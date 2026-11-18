@@ -81,7 +81,10 @@ def populate_result_metadata(
         and math.isfinite(float(result.com_horizontal_range_cm))
         and trajectories_valid
     )
-    result.status = derive_optimization_status(res, numerically_valid, result.success)
+    feasible = bool(result.is_feasible if result.is_feasible is not None else result.success)
+    result.status = derive_optimization_status(res, numerically_valid, feasible)
+    result.is_feasible = bool(numerically_valid and feasible)
+    result.success = result.status is OptimizationStatus.CONVERGED
     result.solver_message = str(getattr(res, "message", ""))
     result.n_iterations = int(getattr(res, "nit", 0))
     result.best_start_seed = best_start_seed
@@ -130,6 +133,9 @@ class OptimizationResult:
         n_joint_limit_violations: Number of trajectory samples whose
             joint angles fall outside ``q_bounds``.
         status: Categorical status of the optimization solve.
+        is_feasible: True when numerical validity and physical constraints
+            (COM in inner BOS, joint limits) are satisfied, even if the
+            solver hit an iteration limit or stalled.
         solver_message: Status or termination message from the solver.
         n_iterations: Number of solver iterations completed.
         best_start_seed: Multi-start seed index that yielded this result.
@@ -157,6 +163,7 @@ class OptimizationResult:
     joint_positions_m: NDArray | None = None
     joint_ids: tuple[str, ...] | None = None
     status: OptimizationStatus = OptimizationStatus.CONVERGED
+    is_feasible: bool | None = None
     solver_message: str = ""
     n_iterations: int = 0
     best_start_seed: int | None = None
@@ -167,14 +174,23 @@ class OptimizationResult:
         status_val: object = self.status
         if not isinstance(status_val, OptimizationStatus):
             object.__setattr__(self, "status", OptimizationStatus(str(status_val)))
+        if self.is_feasible is None:
+            inferred_feasible = (
+                False
+                if self.status
+                in (OptimizationStatus.INFEASIBLE, OptimizationStatus.NUMERICAL_FAILURE)
+                else bool(self.success)
+            )
+            object.__setattr__(self, "is_feasible", inferred_feasible)
         if self.success and self.status is not OptimizationStatus.CONVERGED:
             warnings.warn(
                 "OptimizationResult has success=True but status is not CONVERGED. "
-                "In a future release, success will strictly require "
+                "Coercing success=False because success requires "
                 "status == OptimizationStatus.CONVERGED.",
                 DeprecationWarning,
                 stacklevel=2,
             )
+            object.__setattr__(self, "success", False)
 
     def torque_joint_count(self) -> int:
         """Return the number of torque columns in the trajectory."""

@@ -47,7 +47,9 @@ def _write_summary_sheet(
     """Populate the Summary worksheet."""
     rows: list[tuple[str, object]] = [
         ("Exercise", exercise_name or "-"),
+        ("Status", result.status.value),
         ("Converged", "Yes" if result.success else "No"),
+        ("Feasible", "Yes" if result.is_feasible else "No"),
         ("Cost", round(float(result.cost), 6)),
         ("Duration (s)", round(float(result.t[-1] - result.t[0]), 4)),
         ("Samples (N)", len(result.t)),
