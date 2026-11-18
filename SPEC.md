@@ -5947,6 +5947,9 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-18 | #6136 | Require CONVERGED status for OptimizationResult.success, add is_feasible, expose status in CLI/Excel, and align feasibility tests. |
+| 2026-11-18 | #6119 | Consider inserted models and entry-count pressure when evicting eligible old cache entries |
+| 2026-11-18 | #6096 | UncertaintyQuantifier uses exact scipy t/normal quantiles; small-sample prediction intervals were ~10% too narrow |
 | 2026-11-17 | #6134 | movement_optimizer: a non-finite cost (including -inf) or a NaN/inf, empty or mis-shaped trajectory no longer passes the feasibility boundary; invalid data is reported apart from joint-limit violations and maps to NUMERICAL_FAILURE |
 | 2026-11-17 | #6125 | Use the International Table BTU for the unit converter BTU/lb heating-value factor (2326 J/kg) |
 | 2026-11-17 | #6122 | Skip nonexecutable POSIX Git candidates and symlink loops during trusted discovery |
