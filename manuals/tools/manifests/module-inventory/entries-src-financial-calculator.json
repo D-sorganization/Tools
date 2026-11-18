@@ -495,6 +495,7 @@
           "tests/unit/sidekick/test_runtime_split_coverage.py",
           "tests/unit/sidekick/test_runtime_tab_settings.py",
           "tests/unit/sidekick/test_sidekick_ux_hardening.py",
+          "tests/unit/test_camera_zoom_validation.py",
           "tests/unit/test_contracts.py",
           "tests/unit/test_result_default_false_oracles.py",
           "tests/vessel_drafter/test_dbc_lod.py"
@@ -514,6 +515,7 @@
           "tests/shared/python/chat/test_chat_dock_split_contract.py",
           "tests/shared/python/test_contracts.py",
           "tests/test_src_package_import_contract.py",
+          "tests/unit/test_camera_zoom_validation.py",
           "tests/unit/test_contracts.py"
         ]
       }
