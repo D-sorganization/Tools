@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "c668a8ae30003d3aac057bb5a9ed810a1425ac0d673f7f0aa7155756ff44bdc7",
+      "content_sha256_lf": "9327588e38ccda423b95ea94ab8efd8069e2bdc99bcc3fe21de92cf1a85d97df",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -171,7 +171,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-shared-scripts.json"
     },
     {
-      "content_sha256_lf": "2db8ebf8a9c58f6022d8d4e6506d1ebfd3e56a9388e2dc139830b991482ac0f1",
+      "content_sha256_lf": "f7f922181fdfb1995fb85518a3c3281098f8cc722b30a5be3a95788d59794892",
       "entry_count": 1,
       "package": "src",
       "path": "manuals/tools/manifests/module-inventory/entries-src.json"
@@ -597,7 +597,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "f41471b021c38355dc128fd71d49cbb56b8b546d9fbe034b5e544847f2486aaf",
+      "content_sha256_lf": "1b03f11b236fd633a3934ae2814c1d72fbe9e992117453e28b26d765105e867f",
       "entry_count": 10,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
@@ -957,7 +957,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-signal-toolkit.json"
     },
     {
-      "content_sha256_lf": "4e620850752cf8e6037ee9b480d756ed4a87863971828925c7c867e1cc13b50a",
+      "content_sha256_lf": "72ec01caa26a0569e71e48e92f7499dd80ce79323a108c3c62184d6a1c820242",
       "entry_count": 50,
       "package": "src/solar_system_model",
       "path": "manuals/tools/manifests/module-inventory/entries-src-solar-system-model.json"
