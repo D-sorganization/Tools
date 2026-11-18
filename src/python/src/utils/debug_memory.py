@@ -79,6 +79,10 @@ def memory_tracker(
         name: Name for the tracked block
         log_result: Whether to log the result
 
+    Existing tracing sessions are reused and left active on exit. A session
+    started here is stopped even when setup, the block, or snapshot collection
+    fails. Current and peak allocation values remain process-wide.
+
     Yields:
         MemoryStats object (populated after block completes)
     """
@@ -90,35 +94,42 @@ def memory_tracker(
     # Force garbage collection before measuring
     gc.collect()
 
-    tracemalloc.start()
-    start_memory = get_memory_usage()
-
-    stats = MemoryStats(
-        current_mb=0.0,
-        peak_mb=0.0,
-        diff_mb=0.0,
-        top_allocations=[],
-    )
-
+    owns_tracing = not tracemalloc.is_tracing()
+    if owns_tracing:
+        tracemalloc.start()
     try:
-        yield stats
+        start_memory = get_memory_usage()
+
+        stats = MemoryStats(
+            current_mb=0.0,
+            peak_mb=0.0,
+            diff_mb=0.0,
+            top_allocations=[],
+        )
+
+        try:
+            yield stats
+        finally:
+            gc.collect()
+            current, peak = tracemalloc.get_traced_memory()
+            snapshot = tracemalloc.take_snapshot()
+
+            # Get top allocations
+            top_stats = snapshot.statistics("lineno")[:10]
+            stats.top_allocations = [
+                (str(stat.traceback), stat.size) for stat in top_stats
+            ]
+
+            end_memory = get_memory_usage()
+            stats.current_mb = current / (1024 * 1024)
+            stats.peak_mb = peak / (1024 * 1024)
+            stats.diff_mb = end_memory - start_memory
+
+            if log_result and is_debug_mode():
+                logger.debug("Memory stats for '%s': %s", name, stats)
     finally:
-        gc.collect()
-        current, peak = tracemalloc.get_traced_memory()
-        snapshot = tracemalloc.take_snapshot()
-        tracemalloc.stop()
-
-        # Get top allocations
-        top_stats = snapshot.statistics("lineno")[:10]
-        stats.top_allocations = [(str(stat.traceback), stat.size) for stat in top_stats]
-
-        end_memory = get_memory_usage()
-        stats.current_mb = current / (1024 * 1024)
-        stats.peak_mb = peak / (1024 * 1024)
-        stats.diff_mb = end_memory - start_memory
-
-        if log_result and is_debug_mode():
-            logger.debug("Memory stats for '%s': %s", name, stats)
+        if owns_tracing:
+            tracemalloc.stop()
 
 
 def memory_profile(func: F) -> F:
