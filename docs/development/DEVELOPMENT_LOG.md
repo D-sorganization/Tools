@@ -148,19 +148,6 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Active
 
-### DL-#5884 · Chat Dock Tests Close Leftover Parentless Docks After Each Test so a Deferred Scroll Cannot Fire on a GC-Freed Scroll Bar and Segfault the Xdist Worker
-
-- **State:** in_review
-- **Owner:** unassigned
-- **Issue:** #5884
-- **Branch:** brick/ci-toolchain/5884-chat-scroll-segfault
-- **PR:** #5886
-- **Paths:** see #5886
-- **Started:** 2026-10-31
-- **Last verified:** 2026-10-31 (`80347f1a`; collated from changes/5884-chat-dock-tests-close-leftover-parentles.md)
-- **Summary:** Chat dock tests close leftover parentless docks after each test so a deferred scroll cannot fire on a GC-freed scroll bar and segfault the xdist worker
-- **Next step:** Merge after acceptance review
-
 ### DL-#5646 · Adversarial Review 2026-10-16: 38 Findings With Draft PR Pitches Under Docs/Development/Adversarial-Review/
 
 - **State:** in_review
@@ -1586,6 +1573,188 @@ reachable from any live state and `abandoned` from `parked`.
   definition.
 
 ## Shipped (Last 90 Days)
+
+### DL-#6132 · Movement_Optimizer: A Non-Finite Cost (Including -Inf) or a NaN/Inf, Empty or Mis-Shaped Trajectory No Longer Passes the Feasibility Boundary; Invalid Data Is Reported Apart From Joint-Limit Violations and Maps to NUMERICAL_FAILURE
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6132
+- **Branch:** merged via #6134
+- **PR:** #6134
+- **Paths:** see #6134
+- **Started:** 2026-11-17
+- **Last verified:** 2026-11-17 (`b654097e`; collated from changes/6132-movement-optimizer-feasibility-rejects-non-finite.md)
+- **Summary:** movement_optimizer: a non-finite cost (including -inf) or a NaN/inf, empty or mis-shaped trajectory no longer passes the feasibility boundary; invalid data is reported apart from joint-limit violations and maps to NUMERICAL_FAILURE
+- **Next step:** Shipped in PR #6134.
+
+### DL-#6124 · Use the International Table BTU for the Unit Converter BTU/Lb Heating-Value Factor (2326 J/kg)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6124
+- **Branch:** claude-desk/t4-btu-lb
+- **PR:** #6125
+- **Paths:** see #6125
+- **Started:** 2026-11-17
+- **Last verified:** 2026-11-17 (`add8f67b`; collated from changes/6124-btu-per-lb-heating-value-factor.md)
+- **Summary:** Use the International Table BTU for the unit converter BTU/lb heating-value factor (2326 J/kg)
+- **Next step:** Review and CI
+
+### DL-#6121 · Skip Nonexecutable POSIX Git Candidates and Symlink Loops During Trusted Discovery
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6121
+- **Branch:** merged via #6122
+- **PR:** #6122
+- **Paths:** see #6122
+- **Started:** 2026-11-17
+- **Last verified:** 2026-11-17 (`bed69c83`; collated from changes/6121-skip-nonexecutable-posix-git-candidates.md)
+- **Summary:** Skip nonexecutable POSIX Git candidates and symlink loops during trusted discovery
+- **Next step:** Shipped in PR #6122.
+
+### DL-#6120 · Reject Nonfinite File-Size Bounds Consistently Without Silently Broadening Subsequent File Filters
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6120
+- **Branch:** codex/6120-finite-folder-size
+- **PR:** #6123
+- **Paths:** see #6123
+- **Started:** 2026-11-17
+- **Last verified:** 2026-11-17 (`ccb377a8`; collated from changes/6120-reject-nonfinite-file-size-bounds-consis.md)
+- **Summary:** Reject nonfinite file-size bounds consistently without silently broadening subsequent file filters
+- **Next step:** Independent review and required CI
+
+### DL-#6116 · P1am Data_Explorer_Stats: Welch PSD Doubles the Last Interior Bin for Odd Segment Lengths (Segment_Size 3 Was Half Power); Regenerate Module Inventory Hashes
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6116
+- **Branch:** merged via #6118
+- **PR:** #6118
+- **Paths:** see #6118
+- **Started:** 2026-11-17
+- **Last verified:** 2026-11-17 (`9c0708e1`; collated from changes/6116-p1am-welch-odd-segment.md)
+- **Summary:** p1am data_explorer_stats: Welch PSD doubles the last interior bin for odd segment lengths (segment_size 3 was half power); regenerate module inventory hashes
+- **Next step:** Shipped in PR #6118.
+
+### DL-#6111 · Rrt_Path_Planner: RRTPlanner._Steer Lands on a Target Closer Than Step_Size Instead of Overshooting It and the Planner Bounds
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6111
+- **Branch:** merged via #6115
+- **PR:** #6115
+- **Paths:** see #6115
+- **Started:** 2026-11-17
+- **Last verified:** 2026-11-17 (`441fdb5c`; collated from changes/6111-rrt-steer-overshoot.md)
+- **Summary:** rrt_path_planner: RRTPlanner._steer lands on a target closer than step_size instead of overshooting it and the planner bounds
+- **Next step:** Shipped in PR #6115.
+
+### DL-#6110 · Keep XDG Config Paths Absolute and Reject Dot-Segment App Names
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6110
+- **Branch:** codex/burn1116-xdg-config
+- **PR:** #6117
+- **Paths:** see #6117
+- **Started:** 2026-11-17
+- **Last verified:** 2026-11-17 (`aadf3135`; collated from changes/6110-keep-xdg-config-paths-absolute-and-rejec.md)
+- **Summary:** Keep XDG config paths absolute and reject dot-segment app names
+- **Next step:** Merge the PR.
+
+### DL-#6099 · Pendulum_Simulator: Cylinder_Cross_Section Returns a True 2R X 2R Square for a Zero-Length Segment Instead of a Half-Area Parallelogram
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6099
+- **Branch:** merged via #6101
+- **PR:** #6101
+- **Paths:** see #6101
+- **Started:** 2026-11-17
+- **Last verified:** 2026-11-17 (`1fa7580d`; collated from changes/6099-pendulum-simulator-cylinder-degenerate-square.md)
+- **Summary:** pendulum_simulator: cylinder_cross_section returns a true 2r x 2r square for a zero-length segment instead of a half-area parallelogram
+- **Next step:** Shipped in PR #6101.
+
+### DL-#6098 · Reject Invalid Shared RNG Seeds Before Changing Python or NumPy Random State
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6098
+- **Branch:** merged via #6100
+- **PR:** #6100
+- **Paths:** see #6100
+- **Started:** 2026-11-17
+- **Last verified:** 2026-11-17 (`84cb2bbb`; collated from changes/6098-reject-invalid-shared-rng-seeds-before-c.md)
+- **Summary:** Reject invalid shared RNG seeds before changing Python or NumPy random state
+- **Next step:** Shipped in PR #6100.
+
+### DL-#6092 · Snapshot Plot-Theme Subscribers so Self-Unsubscription Does Not Skip Later Callbacks
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6092
+- **Branch:** merged via #6097
+- **PR:** #6097
+- **Paths:** see #6097
+- **Started:** 2026-11-17
+- **Last verified:** 2026-11-17 (`255808d7`; collated from changes/6092-snapshot-plot-theme-subscribers-so-self.md)
+- **Summary:** Snapshot plot-theme subscribers so self-unsubscription does not skip later callbacks
+- **Next step:** Shipped in PR #6097.
+
+### DL-#6074 · Apply Finite Initial Values as Offsets to Cumulative Signal Integrals.
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6074
+- **Branch:** merged via #6076
+- **PR:** #6076
+- **Paths:** see #6076
+- **Started:** 2026-11-17
+- **Last verified:** 2026-11-17 (`c73a90c5`; collated from changes/6074-cumulative-integral-offset.md)
+- **Summary:** Apply finite initial values as offsets to cumulative signal integrals.
+- **Next step:** Shipped in PR #6076.
+
+### DL-#6068 · Data_Processor Regression: Cook's Distance Now Uses the Studentized Residual and Matches Its Leave-One-Out Definition
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6068
+- **Branch:** merged via #6069
+- **PR:** #6069
+- **Paths:** see #6069
+- **Started:** 2026-11-17
+- **Last verified:** 2026-11-17 (`834badf0`; collated from changes/6068-data-processor-regression-cook-s-distanc.md)
+- **Summary:** data_processor regression: Cook's distance now uses the studentized residual and matches its leave-one-out definition
+- **Next step:** Shipped in PR #6069.
+
+### DL-#6023 · Yield Stable Absolute Paths From Relative Directory Contexts
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6023
+- **Branch:** merged via #6127
+- **PR:** #6127
+- **Paths:** see #6127
+- **Started:** 2026-11-17
+- **Last verified:** 2026-11-17 (`a9b11df7`; collated from changes/6023-anchor-directory-context-paths.md)
+- **Summary:** Yield stable absolute paths from relative directory contexts
+- **Next step:** Shipped in PR #6127.
+
+### DL-#5884 · Chat Dock Tests Close Leftover Parentless Docks After Each Test so a Deferred Scroll Cannot Fire on a GC-Freed Scroll Bar and Segfault the Xdist Worker
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5884
+- **Branch:** brick/ci-toolchain/5884-chat-scroll-segfault
+- **PR:** #5886, #6133
+- **Paths:** see #5886
+- **Started:** 2026-10-31
+- **Last verified:** 2026-11-17 (`b5db3e75`; collated from changes/5884-reconcile-merged-development-log-entry.md)
+- **Summary:** Chat dock tests close leftover parentless docks after each test so a deferred scroll cannot fire on a GC-freed scroll bar and segfault the xdist worker
+- **Next step:** None; PR #5886 merged on 2026-10-31.
 
 ### DL-#6086 · Parse Quoted CSV Headers Correctly in Data Explorer
 

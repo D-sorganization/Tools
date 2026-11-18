@@ -5947,6 +5947,20 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-17 | #6134 | movement_optimizer: a non-finite cost (including -inf) or a NaN/inf, empty or mis-shaped trajectory no longer passes the feasibility boundary; invalid data is reported apart from joint-limit violations and maps to NUMERICAL_FAILURE |
+| 2026-11-17 | #6125 | Use the International Table BTU for the unit converter BTU/lb heating-value factor (2326 J/kg) |
+| 2026-11-17 | #6122 | Skip nonexecutable POSIX Git candidates and symlink loops during trusted discovery |
+| 2026-11-17 | #6123 | Reject nonfinite file-size bounds consistently without silently broadening subsequent file filters |
+| 2026-11-17 | #6118 | p1am data_explorer_stats: Welch PSD doubles the last interior bin for odd segment lengths (segment_size 3 was half power); regenerate module inventory hashes |
+| 2026-11-17 | #6115 | rrt_path_planner: RRTPlanner._steer lands on a target closer than step_size instead of overshooting it and the planner bounds |
+| 2026-11-17 | #6117 | Keep XDG config paths absolute and reject dot-segment app names |
+| 2026-11-17 | #6101 | pendulum_simulator: cylinder_cross_section returns a true 2r x 2r square for a zero-length segment instead of a half-area parallelogram |
+| 2026-11-17 | #6100 | Reject invalid shared RNG seeds before changing Python or NumPy random state |
+| 2026-11-17 | #6097 | Snapshot plot-theme subscribers so self-unsubscription does not skip later callbacks |
+| 2026-11-17 | #6076 | Apply finite initial values as offsets to cumulative signal integrals. |
+| 2026-11-17 | #6069 | data_processor regression: Cook's distance now uses the studentized residual and matches its leave-one-out definition |
+| 2026-11-17 | #6127 | Yield stable absolute paths from relative directory contexts |
+| 2026-11-17 | #6133 | Reconcile DL-#5884 after its fix PR merged |
 | 2026-11-16 | #6088 | Parse quoted CSV headers correctly in Data Explorer |
 | 2026-11-16 | #6085 | movement_optimizer strength: torque utilization picks concentric/eccentric from the required torque direction; set_max_torque rejects non-finite values |
 | 2026-11-16 | #6083 | Reject NaN environment floats when numeric bounds are requested. |
