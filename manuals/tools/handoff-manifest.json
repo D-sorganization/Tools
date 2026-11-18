@@ -194,8 +194,8 @@
     },
     "src/rotation_converter/AGENT_HANDOFF.md": {
       "path": "src/rotation_converter/AGENT_HANDOFF.md",
-      "sha256_lf": "ebaddae562be5663d591de4c95851b52263f81c027966071a22748d8558559d4",
-      "line_count": 76,
+      "sha256_lf": "57b78f4ff948819586f67bd9432b30354bde07c4671555a1098fe193e72a4dc9",
+      "line_count": 81,
       "max_line_budget": 150,
       "required_sections": [
         "## Where This Tool Is Headed",
