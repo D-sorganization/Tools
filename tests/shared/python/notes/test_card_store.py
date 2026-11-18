@@ -306,3 +306,24 @@ def test_timestamp_and_note_id_helpers_return_expected_shapes() -> None:
     assert re.fullmatch(r"\d{8}T\d{6}Z", _timestamp(compact=True))
     assert _timestamp().endswith("Z")
     assert re.fullmatch(r"note_[0-9a-f]{16}", _new_note_id())
+
+
+def test_same_second_deletions_preserve_each_snapshot(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Deleting a recreated ID must preserve both versions and undo order."""
+    monkeypatch.setattr(
+        "notes.card_store._timestamp", lambda **kwargs: "20261116T180000Z"
+    )
+    store = NoteCardStore(tmp_path)
+    first_card = store.save_note(make_card("note_repeat", body="first version"))
+    first = store.delete_note(first_card.note_id)
+    second_card = store.save_note(make_card("note_repeat", body="second version"))
+    second = store.delete_note(second_card.note_id)
+
+    assert first.item_id != second.item_id
+    assert store.latest_recycled_id() == second.item_id
+    assert store.restore_note(second.item_id) == second_card
+    assert store.latest_recycled_id() == first.item_id
+    assert store.restore_note(first.item_id) == first_card
+    assert store.latest_recycled_id() is None

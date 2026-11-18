@@ -197,6 +197,14 @@ def update_tracking_target(
     return replace(state, target_m=target)
 
 
+def _bounded_zoom(zoom: float) -> float:
+    """Return finite zoom clamped to the shared viewport limits."""
+    value = float(zoom)
+    if not math.isfinite(value):
+        raise ValueError("zoom must be finite")
+    return max(_MIN_ZOOM, min(_MAX_ZOOM, value))
+
+
 def safe_tracking_zoom(
     requested_zoom: float,
     subject_radius_m: float,

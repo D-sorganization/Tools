@@ -1,5 +1,7 @@
+import datetime as dt
 import json
 from pathlib import Path
+from types import SimpleNamespace
 
 import pytest
 from notes.models import RecycledNoteItem
@@ -184,3 +186,30 @@ def test_read_index_rehydrates_items_from_json(tmp_path: Path) -> None:
             deleted_at="20260101T000000Z",
         )
     ]
+
+
+def test_same_second_recycling_preserves_versions_and_undo_order(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch
+) -> None:
+    """Repeated deletion must preserve separate, ordered text snapshots."""
+
+    class FrozenDatetime(dt.datetime):
+        @classmethod
+        def now(cls, tz: dt.tzinfo | None = None) -> dt.datetime:
+            return cls(2026, 11, 16, 18, tzinfo=tz)
+
+    monkeypatch.setattr("notes.storage.dt", SimpleNamespace(datetime=FrozenDatetime))
+    storage = NotesStorage(tmp_path)
+    storage.save_text("first version")
+    first = storage.move_to_recycle()
+    storage.save_text("second version")
+    second = storage.move_to_recycle()
+
+    assert first.item_id != second.item_id
+    assert storage.latest_recycled_id() == second.item_id
+    assert storage.restore(second.item_id) is not None
+    assert storage.load_text() == "second version"
+    assert storage.latest_recycled_id() == first.item_id
+    assert storage.restore(first.item_id) is not None
+    assert storage.load_text() == "first version"
+    assert storage.latest_recycled_id() is None

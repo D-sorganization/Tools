@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "3e2c6aefd023a1aca2d18407f67c2454b83fa7b4686cf7fe51f4a910d1209b8e",
+      "content_sha256_lf": "17e034e36d2de472c27babd254238868638cf08a7477dbe949925fb08aef1154",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "e9b49c099552656011fd8901f55dd16cfb26fd854ab33e91f3ea562742541d5c",
+      "content_sha256_lf": "5bc1b0d88420fee37137cfaf0930c0f98383f228bfdcc3188f38a6ce1b0147e2",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -171,7 +171,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-shared-scripts.json"
     },
     {
-      "content_sha256_lf": "f59252ab086f5faa8d651ac388423c6cc5aded23feac9dfc7a602655f76794ec",
+      "content_sha256_lf": "b64919c90435bf6dcd5170be867a0ccda6a36565d06fa499a22e863680d3e9b8",
       "entry_count": 1,
       "package": "src",
       "path": "manuals/tools/manifests/module-inventory/entries-src.json"
@@ -267,7 +267,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-file-watcher.json"
     },
     {
-      "content_sha256_lf": "8df86d88c89e9e88cb4d04d3053192e6f016ddaade45d05caff13f4c5d22144d",
+      "content_sha256_lf": "d6346118c9aab76e2fe4f8358be415e4bfd1c0df76ae369c8b1bbac9fecc241a",
       "entry_count": 18,
       "package": "src/financial_calculator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-financial-calculator.json"
@@ -297,7 +297,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-folder-tool-pro.json"
     },
     {
-      "content_sha256_lf": "ca52fa3b422269277e23cc848b87d2b1dabf1ce7a2dfacf5715c72cc52799391",
+      "content_sha256_lf": "e5300896c5af7967e3c3954d82968eedc647972cc5b8d29b3d9e9ad1eb3c9869",
       "entry_count": 17,
       "package": "src/function_generator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-function-generator.json"
@@ -393,7 +393,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
     },
     {
-      "content_sha256_lf": "40e2561377c04531739e3d1985ff2ad2960af39690d247631655e12eff4b9d6a",
+      "content_sha256_lf": "5b39a422965bddd7226c13aac9aaef6c1f549166d98b0d24733e7b6a0dd3e980",
       "entry_count": 171,
       "package": "src/pendulum_simulator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pendulum-simulator.json"
@@ -411,7 +411,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-plant-simulator.json"
     },
     {
-      "content_sha256_lf": "ad218560492b041c0c1c909f3566e83bab1f04b3d3bd734571d2001c33ea6684",
+      "content_sha256_lf": "538c9058b913db4610598aceadc4f9d03e90cb847b06ad752c94864077fa92fb",
       "entry_count": 18,
       "package": "src/pressure_drop_calculator",
       "path": "manuals/tools/manifests/module-inventory/entries-src-pressure-drop-calculator.json"
@@ -435,7 +435,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-putting-launch-monitor.json"
     },
     {
-      "content_sha256_lf": "f42e6f52d19e7e86a9f9f4deafcefe0a723c5b01f780ed6088162355c8a45450",
+      "content_sha256_lf": "d5e326ec777872f260e0cb1125f4dab09537ab2cae1cb220ce4c29ff2cd412c1",
       "entry_count": 33,
       "package": "src/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-python.json"
@@ -585,7 +585,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rotation-transforms.json"
     },
     {
-      "content_sha256_lf": "f4105f07a5f38c9655724835288937fe000bcf6cae3e9e6c061da8c81f9af32e",
+      "content_sha256_lf": "225f8887b5968ae259c70d1d54ac26049016820a6dcae895f4162df19fef5299",
       "entry_count": 26,
       "package": "src/rrt_path_planner",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rrt-path-planner.json"
@@ -597,7 +597,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "a7df20a333f81a18905f7888ab8c5ff787365fce39c20c15a78559ea34cd2de3",
+      "content_sha256_lf": "3451c2d04d7c6db21d95958bfb812fb2314d6d311d3f53f422adb205af6c882b",
       "entry_count": 10,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
@@ -699,7 +699,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-model-generation.json"
     },
     {
-      "content_sha256_lf": "e35c36a79ad1aba45ffd4ead1962685049c8cf1459a026b8416722d9dcccf719",
+      "content_sha256_lf": "bdb3e5b5ec6e96fbbb8662d740369009f279f87a9b937086ac268259623ad29a",
       "entry_count": 6,
       "package": "src/shared/python/notes",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-notes.json"
@@ -927,7 +927,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-theme.json"
     },
     {
-      "content_sha256_lf": "495ea539ccf97c805879d53441042a6e5c33a15ead706a58ccc2d5490ef7f663",
+      "content_sha256_lf": "f2ffa11da0987108b1f260bad22259d73fb871062bc4518370e2dc4a68b0fedd",
       "entry_count": 10,
       "package": "src/shared/python/ui",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-ui.json"
@@ -957,7 +957,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-signal-toolkit.json"
     },
     {
-      "content_sha256_lf": "4ce3e7a900728bf726f0258c95cc1fc8217c5010dfa08f2e88183e120241205b",
+      "content_sha256_lf": "527450a17b6e1afe8599cad8de664e0c2623437ecbebdf2740341173aadcf395",
       "entry_count": 50,
       "package": "src/solar_system_model",
       "path": "manuals/tools/manifests/module-inventory/entries-src-solar-system-model.json"

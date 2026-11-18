@@ -1377,7 +1377,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "not-applicable",
         "validation": "not-applicable"
       },
@@ -1408,7 +1408,9 @@
             "signature": ""
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "src/solar_system_model/solar_system/tests/test_moon_systems.py"
+        ],
         "unit_mentions": [],
         "validation_paths": []
       }
