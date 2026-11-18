@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "6b0375cb9ed961ed08c047bd15c5fbc2b66d4be44be20818feadda04274da7ac",
+      "content_sha256_lf": "3955c996f0185ed8d9014e01a068c120508cfcfc2e4c79cb9cf9da3cc326f24d",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -573,7 +573,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rate-of-closure-web-distribution.json"
     },
     {
-      "content_sha256_lf": "0f01769943a2179a3e5e9fc8716f497d08470328cda0e780b4dfabf1bf87107b",
+      "content_sha256_lf": "13e72572f3c979c890715c4b15ce8bbd016072018c50073e65c5d0c441c47b69",
       "entry_count": 50,
       "package": "src/rotation_converter",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rotation-converter.json"
