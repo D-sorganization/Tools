@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "7750c6f30d5921d13f1842067b773602d9a81a9602d967dda31c3313bee941d6",
+      "content_sha256_lf": "6b0375cb9ed961ed08c047bd15c5fbc2b66d4be44be20818feadda04274da7ac",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -957,7 +957,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-signal-toolkit.json"
     },
     {
-      "content_sha256_lf": "4980a6082c3d963e4492d024cfd23372a2b0194bbe084cb568ac09873f5ddf89",
+      "content_sha256_lf": "4e620850752cf8e6037ee9b480d756ed4a87863971828925c7c867e1cc13b50a",
       "entry_count": 50,
       "package": "src/solar_system_model",
       "path": "manuals/tools/manifests/module-inventory/entries-src-solar-system-model.json"

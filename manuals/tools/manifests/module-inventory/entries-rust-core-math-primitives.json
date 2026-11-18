@@ -187,6 +187,7 @@
           "src/shared/python/swing_sim/solver/tests/test_spatial_targets.py",
           "src/shared/python/swing_sim/solver/tests/test_targets.py",
           "src/shared/python/swing_sim/variation/tests/test_global_sensitivity.py",
+          "src/solar_system_model/solar_system/tests/test_orbital_mechanics.py",
           "tests/architecture/test_tools_manual_qa_contract.py",
           "tests/heavy_integration/test_tools_contracts.py",
           "tests/programmatic_pid/test_geometry.py",

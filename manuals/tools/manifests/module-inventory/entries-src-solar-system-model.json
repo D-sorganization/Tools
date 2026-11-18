@@ -1808,10 +1808,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 17397,
+      "bytes_lf": 18837,
       "classification": "calculation",
       "classification_basis": "path-marker:physics",
-      "content_sha256_lf": "77736e2bb20e5472282a86321ae3ad1579bf26ca5a7fd0bd84b2dbcf109e5304",
+      "content_sha256_lf": "c335eddc77cdc84ff07c3d727cdb6e103496ea8c67f97beb9ecfe8f9ff227c62",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SOLAR-SYSTEM-MODEL-SOLAR-SYSTEM-PHYSICS-ORBITAL-MECHANICS-PY-61770CC97228",
       "language": "python",
@@ -1857,6 +1857,11 @@
           {
             "kind": "class",
             "name": "OrbitalParameters",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_DEGENERACY_TOL",
             "signature": null
           }
         ],

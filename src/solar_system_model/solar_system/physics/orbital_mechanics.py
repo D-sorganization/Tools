@@ -16,6 +16,22 @@ from dataclasses import dataclass
 
 import numpy as np
 
+#: Relative threshold below which the node vector (|n| / h) or the eccentricity
+#: counts as zero, i.e. the orbit is equatorial or circular.
+_DEGENERACY_TOL = 1e-10
+
+
+def _angle_about(u: np.ndarray, v: np.ndarray, axis: np.ndarray) -> float:
+    """Counter-clockwise angle in [0, 2*pi) from ``u`` to ``v`` about ``axis``.
+
+    Uses ``atan2`` of the triple product and the dot product instead of
+    ``acos`` of a normalised dot product: ``acos`` raises when rounding pushes
+    a mathematically +-1 ratio one ulp outside [-1, 1] (perigee on the line of
+    nodes, apogee, ...) and loses half the digits near 0 and pi.
+    """
+    sine = float(np.dot(np.cross(u, v), axis)) / float(np.linalg.norm(axis))
+    return math.atan2(sine, float(np.dot(u, v))) % (2 * math.pi)
+
 
 @dataclass
 class OrbitalParameters:
@@ -481,31 +497,38 @@ class OrbitalMechanics:
         a = float("inf") if abs(e - 1.0) < 1e-10 else -mu / (2 * energy)
 
         # Inclination
-        i = math.acos(h_vec[2] / h)
+        i = math.atan2(math.hypot(h_vec[0], h_vec[1]), h_vec[2])
+
+        # The node vector vanishes for equatorial orbits and the eccentricity
+        # vector for circular ones; the classical angles are then undefined
+        # and the conventional substitutes are used (longitude of periapsis,
+        # argument of latitude, true longitude).  Tolerances are relative so
+        # an inclination of exactly pi (n ~ 1e-16 h) is recognised as equatorial.
+        equatorial = n <= _DEGENERACY_TOL * h
+        circular = e <= _DEGENERACY_TOL
+        x_axis = np.array([1.0, 0.0, 0.0])
+        z_axis = np.array([0.0, 0.0, 1.0])
 
         # Right ascension of ascending node
-        if n > 1e-10:
-            ascending_node = math.acos(n_vec[0] / n)
-            if n_vec[1] < 0:
-                ascending_node = 2 * math.pi - ascending_node
-        else:
-            ascending_node = 0.0
+        ascending_node = 0.0 if equatorial else _angle_about(x_axis, n_vec, z_axis)
 
-        # Argument of periapsis
-        if n > 1e-10 and e > 1e-10:
-            omega = math.acos(np.dot(n_vec, e_vec) / (n * e))
-            if e_vec[2] < 0:
-                omega = 2 * math.pi - omega
-        else:
+        # Argument of periapsis (longitude of periapsis when equatorial,
+        # measured from +X in the direction of motion)
+        if circular:
             omega = 0.0
-
-        # True anomaly
-        if e > 1e-10:
-            nu = math.acos(np.dot(e_vec, position) / (e * r))
-            if np.dot(position, velocity) < 0:
-                nu = 2 * math.pi - nu
+        elif equatorial:
+            omega = _angle_about(x_axis, e_vec, h_vec)
         else:
-            nu = 0.0
+            omega = _angle_about(n_vec, e_vec, h_vec)
+
+        # True anomaly (argument of latitude when circular and inclined, true
+        # longitude when circular and equatorial)
+        if not circular:
+            nu = _angle_about(e_vec, position, h_vec)
+        elif equatorial:
+            nu = _angle_about(x_axis, position, h_vec)
+        else:
+            nu = _angle_about(n_vec, position, h_vec)
 
         return {
             "semi_major_axis": a,
