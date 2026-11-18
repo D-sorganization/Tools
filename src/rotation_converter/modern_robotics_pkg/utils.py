@@ -49,9 +49,12 @@ def AxisAng6(expc6: np.ndarray) -> tuple[np.ndarray, float]:
 def ProjectToSO3(mat: np.ndarray) -> np.ndarray:
     """Returns a projection of mat into SO(3) via SVD."""
     U, s, Vh = np.linalg.svd(mat)
+    if np.linalg.det(np.dot(U, Vh)) < 0:
+        # Reflection: flip the singular vector of the smallest singular value
+        # (U @ diag(1, 1, -1) @ Vh), the nearest rotation; negating a column of
+        # U @ Vh instead gives a rotation that can be far from mat.
+        U[:, 2] = -U[:, 2]
     R = np.dot(U, Vh)
-    if np.linalg.det(R) < 0:
-        R[:, 2] = -R[:, 2]
     return cast(np.ndarray, np.asarray(R, dtype=float))
 
 

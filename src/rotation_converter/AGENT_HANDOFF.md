@@ -1,7 +1,7 @@
 # AGENT_HANDOFF — rotation_converter
 
 > **Update this file with every PR and every push to main.**
-> Last updated: 2026-08-04
+> Last updated: 2026-11-16
 
 ## Where This Tool Is Headed
 
@@ -21,6 +21,11 @@ public functions in `_mr_kinematics.py`, `twist_screw.py`, and
 repo now, not just UpstreamDrift.
 
 ## Recent Activity (grounding — `git log --oneline -15 -- src/rotation_converter`)
+
+`ProjectToSO3` (and so `ProjectToSE3`) now returns the nearest rotation for
+reflected inputs in all three copies (`_mr_rotation_matrices.py`,
+`modern_robotics.py`, `modern_robotics_pkg/utils.py`; #6066). Merging those
+three duplicate copies is still an open DRY follow-up.
 
 Recent history is accessibility/consolidation maintenance: Palette
 focus-visible states (#3967), a batched agent/dependabot consolidation
