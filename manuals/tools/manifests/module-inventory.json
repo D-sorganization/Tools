@@ -111,7 +111,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "d57f817543e76a04447a630898582e220458d09e39d68490d0c3cf8846441e44",
+      "content_sha256_lf": "b5e3149ebd90a4007dc0936e2d297d805a9fbabffdd6d3d281f75b8f4a13ae47",
       "entry_count": 14,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "f5e544b81c77096c3bead0a4b72b21cdd8f4fb4bd8aebd00a19a3fc36329f82f",
+      "content_sha256_lf": "7750c6f30d5921d13f1842067b773602d9a81a9602d967dda31c3313bee941d6",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -243,7 +243,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-data-explorer.json"
     },
     {
-      "content_sha256_lf": "d52d0e61a3ace350b0ebc3b066440906598f85a5bdd10e18a1ac46d0d94cf8d5",
+      "content_sha256_lf": "e417ed1d1cc8bd4dd5e471e3e89d23a89e6497896bd0b3ed0c22e8e468aa2086",
       "entry_count": 137,
       "package": "src/data_processing",
       "path": "manuals/tools/manifests/module-inventory/entries-src-data-processing.json"
@@ -357,7 +357,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-model-generation.json"
     },
     {
-      "content_sha256_lf": "2509f700cbec1ce0f0cb49b5c3fa720dbc00243f5a95c451b82a8ebb26bc785e",
+      "content_sha256_lf": "ea774f8e19006ed4116ff22cd9a1deb1fc3c0e5a820cbbe645b31c1360266e28",
       "entry_count": 95,
       "package": "src/movement_optimizer",
       "path": "manuals/tools/manifests/module-inventory/entries-src-movement-optimizer.json"
@@ -435,7 +435,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-putting-launch-monitor.json"
     },
     {
-      "content_sha256_lf": "dc348fbccb473698e19580435bbe9d857f2372afab67193e59a23bf3f2597d67",
+      "content_sha256_lf": "55bb21e8365994d6ca31692dbc2efd88d602cb2bf148055b9273208e82f0edd0",
       "entry_count": 33,
       "package": "src/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-python.json"
@@ -693,7 +693,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-logging-pkg.json"
     },
     {
-      "content_sha256_lf": "153cb8c96172e8b4417619a7871e1f3cc15cda61ecf401f1211f694c21159f9c",
+      "content_sha256_lf": "ee2ae06b45765eea90de9894537ab9b46388c46b6ed458d7f2372cc3702a2e6d",
       "entry_count": 62,
       "package": "src/shared/python/model_generation",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-model-generation.json"

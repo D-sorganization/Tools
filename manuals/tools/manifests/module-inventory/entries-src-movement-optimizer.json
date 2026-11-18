@@ -159,10 +159,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 10803,
+      "bytes_lf": 10793,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "a0e98b0c241750dfd3060ac133bfba6e10d58e8791a566f1c0b3d34596e8403c",
+      "content_sha256_lf": "c48c24f074ed7b3358e3647ba6bc9a074060ee69981c57e66b97056101badc89",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-CLI-PY-B49008F9101C",
       "language": "python",
@@ -1397,10 +1397,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 7546,
+      "bytes_lf": 7648,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "81107f146f21658365e3fa3d7d0e5637198ed09e87b1be4544a5a42d2e415299",
+      "content_sha256_lf": "741d8c433c1136d78be5665895f81263fae0aa37000342472f1acad0b33f6584",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-EXPORT-EXCEL-PY-6F1B5BB8A0D4",
       "language": "python",
@@ -1446,7 +1446,8 @@
         ],
         "test_paths": [
           "src/movement_optimizer/tests/test_export.py",
-          "src/movement_optimizer/tests/test_export_excel.py"
+          "src/movement_optimizer/tests/test_export_excel.py",
+          "src/movement_optimizer/tests/test_issue_6130_success_converged.py"
         ],
         "unit_mentions": [
           "N",
@@ -7240,10 +7241,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 7613,
+      "bytes_lf": 8457,
       "classification": "calculation",
       "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "8240ca697adb698ef474f95fbd0d0f1597da300e6430e2e5ebeee411dbd08ce2",
+      "content_sha256_lf": "010e5d853b5a5aacc067e13c5b0098894e187a99bd1d2a0d0de7c27a4c17f117",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-TRAJECTORY-RESULT-PY-9405027640B1",
       "language": "python",
