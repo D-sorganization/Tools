@@ -1879,10 +1879,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #6023
 - **Branch:** merged via #6127
-- **PR:** #6127, #6105, #6113
+- **PR:** #6127, #6105, #6113, #6126
 - **Paths:** see #6127
 - **Started:** 2026-11-17
-- **Last verified:** 2026-11-18 (`d77e480d`; collated from changes/6023-add-full-behavioral-coverage-for-determi.md)
+- **Last verified:** 2026-11-18 (`e6ced9bf`; collated from changes/6023-preserve-memory-tracing-ownership.md)
 - **Summary:** Yield stable absolute paths from relative directory contexts
 - **Next step:** Merge the PR.
 
