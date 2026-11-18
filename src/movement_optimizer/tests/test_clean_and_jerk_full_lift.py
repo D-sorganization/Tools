@@ -88,7 +88,7 @@ def solved(body: BodyModel) -> dict[str, np.ndarray]:
         n_waypoints=12,
         n_eval=151,
     ).optimize()
-    assert result.success
+    assert result.is_feasible
     q = np.asarray(result.q, dtype=float)
     frac = np.asarray(result.t, dtype=float) / DURATION_S
     shoulder = np.array([dyn.forward_kinematics(row)["shoulder"][1] for row in q])

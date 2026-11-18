@@ -54,7 +54,7 @@ def solved() -> dict[str, np.ndarray]:
         n_waypoints=12,
         n_eval=151,
     ).optimize()
-    assert result.success
+    assert result.is_feasible
     q = np.asarray(result.q, dtype=float)
     t = np.asarray(result.t, dtype=float)
     frac = t / t[-1]

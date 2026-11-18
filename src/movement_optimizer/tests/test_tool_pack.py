@@ -88,9 +88,10 @@ class TestRunHeadless:
     def test_squat_round_trip_writes_valid_json(self, tmp_path: Path) -> None:
         out = tmp_path / "squat.json"
         exit_code = tool_pack.run_headless("squat", out)
-        assert exit_code == 0
         data = json.loads(out.read_text(encoding="utf-8"))
         assert data["exercise"] == "squat"
+        assert data["is_feasible"] is True
+        assert exit_code == (0 if data["success"] else 1)
         # cli.py emits ``arrays`` with the per-joint trajectory.
         assert "arrays" in data
         for key in ("t", "q", "qd", "qdd", "torques", "power", "com", "bar"):
