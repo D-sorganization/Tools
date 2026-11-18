@@ -5947,6 +5947,12 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-18 | #6106 | Reject nonfinite camera zoom before state replacement and preference notifications |
+| 2026-11-18 | #6104 | Search all parent directories, including root, for nearest path matches. |
+| 2026-11-18 | #6091 | Preserve same-second markdown and text note recycle snapshots with unique IDs and newest-first undo ties |
+| 2026-11-18 | #6067 | rotation_converter ProjectToSO3 (all three copies) returns the nearest rotation for reflected inputs (Kabsch flip of U), not U Vh with a negated column |
+| 2026-11-18 | #6113 | Add full behavioral coverage for deterministic asteroid belt particle generation and catalog invariants |
+| 2026-11-18 | #6105 | Add behavior and catalogue invariants for the previously uncovered moon grouping module |
 | 2026-11-18 | #6135 | Add abs_joint_work_j observable and defensive ComparisonStore trial snapshots. |
 | 2026-11-18 | #6112 | Accept bounded signed numeric exponent literals and reject oversized integers as ValueError |
 | 2026-11-18 | #6109 | Return CSV fallback for filesystem read errors |

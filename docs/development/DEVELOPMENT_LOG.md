@@ -1574,6 +1574,58 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#6103 · Reject Nonfinite Camera Zoom Before State Replacement and Preference Notifications
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6103
+- **Branch:** merged via #6106
+- **PR:** #6106
+- **Paths:** see #6106
+- **Started:** 2026-11-18
+- **Last verified:** 2026-11-18 (`dd9a7bcc`; collated from changes/6103-reject-nonfinite-camera-zoom-before-stat.md)
+- **Summary:** Reject nonfinite camera zoom before state replacement and preference notifications
+- **Next step:** Shipped in PR #6106.
+
+### DL-#6102 · Search All Parent Directories, Including Root, for Nearest Path Matches.
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6102
+- **Branch:** merged via #6104
+- **PR:** #6104
+- **Paths:** see #6104
+- **Started:** 2026-11-18
+- **Last verified:** 2026-11-18 (`a3d8b9ea`; collated from changes/6102-upward-path-search.md)
+- **Summary:** Search all parent directories, including root, for nearest path matches.
+- **Next step:** Shipped in PR #6104.
+
+### DL-#6089 · Preserve Same-Second Markdown and Text Note Recycle Snapshots With Unique IDs and Newest-First Undo Ties
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6089
+- **Branch:** merged via #6091
+- **PR:** #6091
+- **Paths:** see #6091
+- **Started:** 2026-11-18
+- **Last verified:** 2026-11-18 (`7dfacd1c`; collated from changes/6089-preserve-same-second-markdown-and-text-n.md)
+- **Summary:** Preserve same-second markdown and text note recycle snapshots with unique IDs and newest-first undo ties
+- **Next step:** Shipped in PR #6091.
+
+### DL-#6066 · Rotation_Converter ProjectToSO3 (All Three Copies) Returns the Nearest Rotation for Reflected Inputs (Kabsch Flip of U), Not U Vh With a Negated Column
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6066
+- **Branch:** merged via #6067
+- **PR:** #6067
+- **Paths:** see #6067
+- **Started:** 2026-11-18
+- **Last verified:** 2026-11-18 (`87f824a6`; collated from changes/6066-project-to-so3-nearest.md)
+- **Summary:** rotation_converter ProjectToSO3 (all three copies) returns the nearest rotation for reflected inputs (Kabsch flip of U), not U Vh with a negated column
+- **Next step:** Shipped in PR #6067.
+
 ### DL-#6131 · Add Abs_Joint_Work_J Observable and Defensive ComparisonStore Trial Snapshots.
 
 - **State:** shipped
@@ -1827,12 +1879,12 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #6023
 - **Branch:** merged via #6127
-- **PR:** #6127
+- **PR:** #6127, #6105, #6113
 - **Paths:** see #6127
 - **Started:** 2026-11-17
-- **Last verified:** 2026-11-17 (`a9b11df7`; collated from changes/6023-anchor-directory-context-paths.md)
+- **Last verified:** 2026-11-18 (`d77e480d`; collated from changes/6023-add-full-behavioral-coverage-for-determi.md)
 - **Summary:** Yield stable absolute paths from relative directory contexts
-- **Next step:** Shipped in PR #6127.
+- **Next step:** Merge the PR.
 
 ### DL-#5884 · Chat Dock Tests Close Leftover Parentless Docks After Each Test so a Deferred Scroll Cannot Fire on a GC-Freed Scroll Bar and Segfault the Xdist Worker
 
