@@ -357,7 +357,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-model-generation.json"
     },
     {
-      "content_sha256_lf": "9ee21e45b0033720efc7e9f7aea418161d50451ae5e0ea6c0fdb5c3d3bbc8beb",
+      "content_sha256_lf": "ea774f8e19006ed4116ff22cd9a1deb1fc3c0e5a820cbbe645b31c1360266e28",
       "entry_count": 95,
       "package": "src/movement_optimizer",
       "path": "manuals/tools/manifests/module-inventory/entries-src-movement-optimizer.json"

@@ -227,10 +227,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 3161,
+      "bytes_lf": 4306,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "1a5d875b4544f5789b3ad75d91e04eb74660857a9373f843e5029af642c1610a",
+      "content_sha256_lf": "63907fdaa1d5e25c07a5a7c5762f41aeee9277dc861a7532983ea84eeefa3237",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-COMPARISON-PY-13C44EB75694",
       "language": "python",
@@ -284,6 +284,8 @@
           "tests/shared/python/launch_monitor/test_comparison.py"
         ],
         "unit_mentions": [
+          "J",
+          "Nm",
           "bar",
           "cm"
         ],
@@ -2025,10 +2027,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 6118,
+      "bytes_lf": 6221,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "b871f64407209a8025012c2da7f55ba4853ad3658fa64317b39575b27b360f4b",
+      "content_sha256_lf": "f63c4eb94da19e16730987694ea88a68984666aa8b7a3c0b94770cc78b4eb1f4",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-GUI-COMPARISON-DIALOG-PY-9EE337316FE9",
       "language": "python",
@@ -2075,6 +2077,7 @@
         ],
         "test_paths": [],
         "unit_mentions": [
+          "J",
           "Nm",
           "cm",
           "deg",
