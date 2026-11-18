@@ -1574,6 +1574,58 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#6131 · Add Abs_Joint_Work_J Observable and Defensive ComparisonStore Trial Snapshots.
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6131
+- **Branch:** merged via #6135
+- **PR:** #6135
+- **Paths:** see #6135
+- **Started:** 2026-11-18
+- **Last verified:** 2026-11-18 (`3c4946f6`; collated from changes/6131-comparison-work-snapshots.md)
+- **Summary:** Add abs_joint_work_j observable and defensive ComparisonStore trial snapshots.
+- **Next step:** Shipped in PR #6135.
+
+### DL-#6108 · Accept Bounded Signed Numeric Exponent Literals and Reject Oversized Integers as ValueError
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6108
+- **Branch:** merged via #6112
+- **PR:** #6112
+- **Paths:** see #6112
+- **Started:** 2026-11-18
+- **Last verified:** 2026-11-18 (`6742a9cb`; collated from changes/6108-accept-bounded-signed-numeric-exponent-l.md)
+- **Summary:** Accept bounded signed numeric exponent literals and reject oversized integers as ValueError
+- **Next step:** Shipped in PR #6112.
+
+### DL-#6107 · Return CSV Fallback for Filesystem Read Errors
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6107
+- **Branch:** codex/burn1116-6107-csv-read
+- **PR:** #6109
+- **Paths:** see #6109
+- **Started:** 2026-11-18
+- **Last verified:** 2026-11-18 (`334cdde2`; collated from changes/6107-csv-read-fallback.md)
+- **Summary:** Return CSV fallback for filesystem read errors
+- **Next step:** Review the PR.
+
+### DL-#6090 · Solar_System_Model: State_to_Elements No Longer Raises on Perigee/Apogee at the Node and Reports Longitude of Periapsis, Argument of Latitude and True Longitude for Equatorial or Circular Orbits; Regenerate Module Inventory Hashes
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6090
+- **Branch:** merged via #6094
+- **PR:** #6094
+- **Paths:** see #6094
+- **Started:** 2026-11-18
+- **Last verified:** 2026-11-18 (`88f702f1`; collated from changes/6090-solar-system-state-to-elements-degenerate.md)
+- **Summary:** solar_system_model: state_to_elements no longer raises on perigee/apogee at the node and reports longitude of periapsis, argument of latitude and true longitude for equatorial or circular orbits; regenerate module inventory hashes
+- **Next step:** Shipped in PR #6094.
+
 ### DL-#6130 · Require CONVERGED Status for OptimizationResult.Success, Add Is_Feasible, Expose Status in CLI/Excel, and Align Feasibility Tests.
 
 - **State:** shipped
@@ -2932,10 +2984,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #5727
 - **Branch:** merged via #5785
-- **PR:** #5785, #6042, #6039, #6043, #6055
+- **PR:** #5785, #6042, #6039, #6043, #6055, #6062
 - **Paths:** see #5785
 - **Started:** 2026-10-25
-- **Last verified:** 2026-11-16 (`4a81ec70`; collated from changes/5727-tier-2-cli-discovery-workflow-and-run-cl.md)
+- **Last verified:** 2026-11-18 (`8bda0028`; collated from changes/5727-prd-sidekick-request-to-action.md)
 - **Summary:** Wire Antigravity (agy) CLI adapter to nonce-bound tool bridge and add AgenticAppHost protocol.
 - **Next step:** Shipped in PR #5785.
 

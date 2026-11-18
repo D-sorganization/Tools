@@ -5947,6 +5947,11 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-18 | #6135 | Add abs_joint_work_j observable and defensive ComparisonStore trial snapshots. |
+| 2026-11-18 | #6112 | Accept bounded signed numeric exponent literals and reject oversized integers as ValueError |
+| 2026-11-18 | #6109 | Return CSV fallback for filesystem read errors |
+| 2026-11-18 | #6094 | solar_system_model: state_to_elements no longer raises on perigee/apogee at the node and reports longitude of periapsis, argument of latitude and true longitude for equatorial or circular orbits; regenerate module inventory hashes |
+| 2026-11-18 | #6062 | PRD: Sidekick request-to-action definition of done (docs/project/prd/sidekick-request-to-action.md) |
 | 2026-11-18 | #6136 | Require CONVERGED status for OptimizationResult.success, add is_feasible, expose status in CLI/Excel, and align feasibility tests. |
 | 2026-11-18 | #6119 | Consider inserted models and entry-count pressure when evicting eligible old cache entries |
 | 2026-11-18 | #6096 | UncertaintyQuantifier uses exact scipy t/normal quantiles; small-sample prediction intervals were ~10% too narrow |
