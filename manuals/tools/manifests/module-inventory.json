@@ -111,7 +111,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-matlab.json"
     },
     {
-      "content_sha256_lf": "b5e3149ebd90a4007dc0936e2d297d805a9fbabffdd6d3d281f75b8f4a13ae47",
+      "content_sha256_lf": "2b49dbb40848931f5fa043f613b435fc0cebc4727b368b28d65e4e567192a648",
       "entry_count": 14,
       "package": "root",
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
@@ -135,7 +135,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-file-watcher.json"
     },
     {
-      "content_sha256_lf": "6b0375cb9ed961ed08c047bd15c5fbc2b66d4be44be20818feadda04274da7ac",
+      "content_sha256_lf": "a1ef35e9fa610efdbac735a881315ab73e5d2d2ad0ed8f846867bcdda3f5bed2",
       "entry_count": 9,
       "package": "rust_core/math-primitives",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-math-primitives.json"
@@ -435,7 +435,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-putting-launch-monitor.json"
     },
     {
-      "content_sha256_lf": "aa0a036630526c2c166bb466d73d166ef97b50f74899d974c1dc13522def1092",
+      "content_sha256_lf": "f42e6f52d19e7e86a9f9f4deafcefe0a723c5b01f780ed6088162355c8a45450",
       "entry_count": 33,
       "package": "src/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-python.json"
@@ -585,7 +585,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-rotation-transforms.json"
     },
     {
-      "content_sha256_lf": "ac82c3c4f6409adfa55ffebe0ccf607c658ef1a84d3a97d6ffaf7f6045e9be65",
+      "content_sha256_lf": "f4105f07a5f38c9655724835288937fe000bcf6cae3e9e6c061da8c81f9af32e",
       "entry_count": 26,
       "package": "src/rrt_path_planner",
       "path": "manuals/tools/manifests/module-inventory/entries-src-rrt-path-planner.json"
