@@ -2000,10 +2000,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12634,
+      "bytes_lf": 12932,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c05c1131ce5ce394c3a5ed87f6f4eed309ad9b0cb8c4da6ba21f097d133e560b",
+      "content_sha256_lf": "3711833891efee36fa829fc1a8e0e3b6a45d8e6f004fc0471bc34aa061676ac3",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-REGISTRY-CATALOG-PY-F93F79962E77",
       "language": "python",
@@ -2051,6 +2051,7 @@
         "unit_mentions": [
           "J",
           "Pa",
+          "W",
           "bar",
           "kg",
           "s"
