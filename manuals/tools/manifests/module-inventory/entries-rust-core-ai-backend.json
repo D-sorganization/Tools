@@ -296,7 +296,6 @@
           "tests/scada/test_historian_compose.py",
           "tests/scripts/test_module_inventory_merge_driver.py",
           "tests/scripts/test_release_changelog.py",
-          "tests/scripts/test_start_gaai_daemon.py",
           "tests/shared/python/ai/integrations/test_credential_isolation.py",
           "tests/shared/python/ai/knowledge/conftest.py",
           "tests/shared/python/ai/knowledge/test_wizard.py",
