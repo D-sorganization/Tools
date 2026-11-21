@@ -99,7 +99,7 @@ CATALOG: dict[str, CatalogEntry] = {
                 "feedstock_cost_per_ton": 100.0,
                 "total_capital_investment": 1_000_000.0,
             },
-            response_summary={"annual_revenue": "> 0"},
+            response_summary={"results.total_revenue": "> 0"},
         ),
         "route_subpath": "",
     },

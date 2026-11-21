@@ -123,6 +123,17 @@ def test_all_catalog_units_reference_real_request_fields() -> None:
         )
 
 
+def test_financial_example_summary_matches_actual_response() -> None:
+    from fastapi.testclient import TestClient
+
+    example = CALCULATOR_REGISTRY["financial"].spec.worked_example
+    response = TestClient(app).post(http_path_for("financial"), json=example.request)
+    assert response.status_code == 200
+    summary = example.response_summary
+    assert summary == {"results.total_revenue": "> 0"}
+    assert response.json()["results"]["total_revenue"] > 0
+
+
 def test_registry_covers_every_calculator_post_route() -> None:
     app.openapi_schema = None
     openapi = app.openapi()
