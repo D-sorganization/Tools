@@ -109,9 +109,7 @@ class InvalidStateFileError(ValueError):
 def _require_mapping(data: Any, context: str) -> dict[str, Any]:
     """Return ``data`` as a dict or raise with a descriptive context."""
     if not isinstance(data, dict):
-        raise InvalidStateFileError(
-            f"{context}: expected JSON object, got {type(data).__name__}"
-        )
+        raise InvalidStateFileError(f"{context}: expected JSON object, got {type(data).__name__}")
     return data
 
 
@@ -144,9 +142,7 @@ def _require_type(value: Any, expected: type | tuple[type, ...], field: str) -> 
 def _require_range(value: float, bounds: tuple[float, float], field: str) -> None:
     low, high = bounds
     if not (low <= value <= high):
-        raise InvalidStateFileError(
-            f"field '{field}': value {value} out of range [{low}, {high}]"
-        )
+        raise InvalidStateFileError(f"field '{field}': value {value} out of range [{low}, {high}]")
 
 
 def _validate_schema_version(data: dict[str, Any], context: str) -> None:
@@ -185,7 +181,12 @@ def _validate_provenance_metadata(meta_dict: dict[str, Any]) -> None:
     st = meta_dict.get("status")
     if st is not None and (not isinstance(st, str) or st not in OptimizationStatus.__members__):
         raise InvalidStateFileError(f"field 'metadata.status': invalid status '{st}'")
-    for k, exp in (("solver_message", str), ("backend", str), ("n_iterations", int), ("n_starts_feasible", int)):
+    for k, exp in (
+        ("solver_message", str),
+        ("backend", str),
+        ("n_iterations", int),
+        ("n_starts_feasible", int),
+    ):
         if k in meta_dict:
             _require_type(meta_dict[k], exp, f"metadata.{k}")
             if exp is int and meta_dict[k] < 0:
@@ -205,9 +206,7 @@ def _validate_metadata_block(metadata: Any, context: str) -> None:
     }
     for key, expected in required_types.items():
         if key not in meta_dict:
-            raise InvalidStateFileError(
-                f"{context}: missing required metadata key '{key}'"
-            )
+            raise InvalidStateFileError(f"{context}: missing required metadata key '{key}'")
         # ``success`` is bool and must be checked separately to avoid the
         # numeric-bool guard in ``_require_type``.
         if expected is bool:
@@ -221,6 +220,10 @@ def _validate_metadata_block(metadata: Any, context: str) -> None:
     for opt_key in ("elapsed_s", "n_evals", "n_joint_limit_violations"):
         if opt_key in meta_dict:
             _require_type(meta_dict[opt_key], (int, float), f"metadata.{opt_key}")
+    if "is_feasible" in meta_dict and not isinstance(meta_dict["is_feasible"], (bool, type(None))):
+        raise InvalidStateFileError(
+            f"field 'metadata.is_feasible': expected bool, got {type(meta_dict['is_feasible']).__name__}"
+        )
     _validate_provenance_metadata(meta_dict)
 
 
@@ -290,9 +293,7 @@ def _validate_app_state_schema(data: dict[str, Any]) -> None:
             )
         sub = _require_mapping(payload, f"results.{etype}")
         if "arrays" not in sub or "metadata" not in sub:
-            raise InvalidStateFileError(
-                f"results.{etype}: must contain 'arrays' and 'metadata'"
-            )
+            raise InvalidStateFileError(f"results.{etype}: must contain 'arrays' and 'metadata'")
         _validate_arrays_block(sub["arrays"], f"results.{etype}")
         _validate_metadata_block(sub["metadata"], f"results.{etype}")
 
@@ -314,6 +315,7 @@ def _result_to_dict(result: OptimizationResult) -> dict[str, Any]:
     metadata["best_start_seed"] = result.best_start_seed
     metadata["n_starts_feasible"] = result.n_starts_feasible
     metadata["backend"] = result.backend
+    metadata["is_feasible"] = result.is_feasible
     return {"arrays": arrays, "metadata": metadata}
 
 
@@ -322,7 +324,11 @@ def _dict_to_result(d: dict[str, Any]) -> OptimizationResult:
     arrays = {k: np.array(d["arrays"][k]) for k in _ARRAY_FIELDS}
     meta = d["metadata"]
     raw = meta.get("status")
-    status = OptimizationStatus[raw] if raw in OptimizationStatus.__members__ else (OptimizationStatus.CONVERGED if meta["success"] else OptimizationStatus.INFEASIBLE)
+    status = (
+        OptimizationStatus[raw]
+        if raw in OptimizationStatus.__members__
+        else (OptimizationStatus.CONVERGED if meta["success"] else OptimizationStatus.INFEASIBLE)
+    )
     return OptimizationResult(
         t=arrays["t"],
         q=arrays["q"],
@@ -344,6 +350,9 @@ def _dict_to_result(d: dict[str, Any]) -> OptimizationResult:
         best_start_seed=meta.get("best_start_seed"),
         n_starts_feasible=meta.get("n_starts_feasible", 0),
         backend=meta.get("backend", "SLSQP"),
+        # Absent in legacy files -> None -> OptimizationResult infers it
+        # fail-closed from ``success`` / ``status``.
+        is_feasible=meta.get("is_feasible"),
     )
 
 
@@ -439,9 +448,7 @@ def save_app_state(
         slider_values maps slider_name -> float value.
     """
     state_path = (
-        load_app_paths().state_file
-        if state_dir is None
-        else Path(state_dir) / "last_state.json"
+        load_app_paths().state_file if state_dir is None else Path(state_dir) / "last_state.json"
     )
     state_path.parent.mkdir(parents=True, exist_ok=True)
 
@@ -469,9 +476,7 @@ def load_app_state(*, state_dir: str | Path | None = None) -> dict[str, Any] | N
     state is incompatible rather than being silently discarded.
     """
     state_path = (
-        load_app_paths().state_file
-        if state_dir is None
-        else Path(state_dir) / "last_state.json"
+        load_app_paths().state_file if state_dir is None else Path(state_dir) / "last_state.json"
     )
 
     if not state_path.exists():

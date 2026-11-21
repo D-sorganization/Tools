@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import dataclasses
 import json
 from pathlib import Path
 
@@ -20,10 +21,19 @@ from movement_optimizer.persistence import (
     load_solution,
     save_app_state,
     save_solution,
+    solution_data_to_result,
 )
 from movement_optimizer.trajectory import OptimizationResult, OptimizationStatus
 
 from .conftest import make_test_result
+
+
+def _iter_metadata_blocks(data):
+    """Yield every ``metadata`` dict in a saved solution payload."""
+    if "metadata" in data:
+        yield data["metadata"]
+    for sub in data.get("results", {}).values():
+        yield sub["metadata"]
 
 
 class TestSaveSolution:
@@ -53,7 +63,9 @@ class TestSaveSolution:
 
     def test_roundtrip_new_metadata_fields_and_schema_v1_compatibility(self, tmp_path):
         base = make_test_result()
-        kw = {k: getattr(base, k) for k in ("t", "q", "qd", "qdd", "torques", "power", "com", "bar")}
+        kw = {
+            k: getattr(base, k) for k in ("t", "q", "qd", "qdd", "torques", "power", "com", "bar")
+        }
         res = OptimizationResult(
             **kw,
             success=True,
@@ -80,13 +92,92 @@ class TestSaveSolution:
             assert loaded["metadata"][k] == v
 
         rec = _dict_to_result(loaded)
-        assert rec.status == OptimizationStatus.CONVERGED and rec.solver_message == "Optimization terminated successfully"
-        assert rec.n_iterations == 42 and rec.best_start_seed == 3 and rec.n_starts_feasible == 5 and rec.backend == "SLSQP"
+        assert (
+            rec.status == OptimizationStatus.CONVERGED
+            and rec.solver_message == "Optimization terminated successfully"
+        )
+        assert (
+            rec.n_iterations == 42
+            and rec.best_start_seed == 3
+            and rec.n_starts_feasible == 5
+            and rec.backend == "SLSQP"
+        )
 
-        v1 = _dict_to_result({"arrays": loaded["arrays"], "metadata": {"success": True, "cost": 30.0, "com_horizontal_range_cm": 2.0}})
-        assert v1.status == OptimizationStatus.CONVERGED and v1.best_start_seed is None and v1.backend == "SLSQP"
+        v1 = _dict_to_result(
+            {
+                "arrays": loaded["arrays"],
+                "metadata": {"success": True, "cost": 30.0, "com_horizontal_range_cm": 2.0},
+            }
+        )
+        assert (
+            v1.status == OptimizationStatus.CONVERGED
+            and v1.best_start_seed is None
+            and v1.backend == "SLSQP"
+        )
         with pytest.raises(InvalidStateFileError, match="must be >= 0"):
             _validate_provenance_metadata({"n_iterations": -1})
+
+    def test_feasible_iteration_limit_round_trips_is_feasible(self, tmp_path):
+        base = make_test_result()
+        result = dataclasses.replace(
+            base,
+            success=False,
+            status=OptimizationStatus.ITERATION_LIMIT,
+            is_feasible=True,
+        )
+        assert result.is_feasible is True
+        path = tmp_path / "limit.json"
+        save_solution(str(path), result, {"body_mass": 80.0}, "squat", 60.0)
+
+        loaded = solution_data_to_result(load_solution(str(path)))
+
+        assert loaded.status is OptimizationStatus.ITERATION_LIMIT
+        assert loaded.success is False
+        assert loaded.is_feasible is True
+
+    def test_infeasible_round_trip_stays_infeasible(self, tmp_path):
+        result = dataclasses.replace(
+            make_test_result(),
+            success=False,
+            status=OptimizationStatus.ITERATION_LIMIT,
+            is_feasible=False,
+        )
+        path = tmp_path / "infeasible.json"
+        save_solution(str(path), result, {"body_mass": 80.0}, "squat", 60.0)
+
+        loaded = solution_data_to_result(load_solution(str(path)))
+
+        assert loaded.is_feasible is False
+
+    def test_legacy_file_without_is_feasible_loads_fail_closed(self, tmp_path):
+        result = dataclasses.replace(
+            make_test_result(),
+            success=False,
+            status=OptimizationStatus.ITERATION_LIMIT,
+            is_feasible=True,
+        )
+        path = tmp_path / "legacy.json"
+        save_solution(str(path), result, {"body_mass": 80.0}, "squat", 60.0)
+        data = json.loads(path.read_text(encoding="utf-8"))
+        for payload in _iter_metadata_blocks(data):
+            payload.pop("is_feasible", None)
+        path.write_text(json.dumps(data), encoding="utf-8")
+
+        loaded = solution_data_to_result(load_solution(str(path)))
+
+        assert loaded.success is False
+        assert loaded.is_feasible is False
+
+    def test_non_bool_is_feasible_is_rejected(self, tmp_path):
+        path = tmp_path / "bad.json"
+        save_solution(str(path), make_test_result(), {"body_mass": 80.0}, "squat", 60.0)
+        data = json.loads(path.read_text(encoding="utf-8"))
+        for payload in _iter_metadata_blocks(data):
+            payload["is_feasible"] = "yes"
+        path.write_text(json.dumps(data), encoding="utf-8")
+
+        with pytest.raises(InvalidStateFileError):
+            load_solution(str(path))
 
     def test_round_trip_preserves_arrays(self, tmp_path):
         result = make_test_result()
