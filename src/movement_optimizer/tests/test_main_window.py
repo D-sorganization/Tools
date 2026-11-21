@@ -41,6 +41,7 @@ def _make_result(cost: float = 42.0, success: bool = True) -> Any:
 
     r = make_test_result(cost=cost)
     r.success = success
+    r.is_feasible = success
     r.elapsed_s = 3.2
     r.n_evals = 150
     r.com_horizontal_range_cm = 2.5
