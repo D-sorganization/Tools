@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-22 | #6143 | Align CalculatorSpec catalog worked examples and units with request contracts (#6019) |
 | 2026-11-18 | #6126 | Preserve caller-owned tracemalloc sessions and clean up owned memory trackers on failure |
 | 2026-11-18 | #6106 | Reject nonfinite camera zoom before state replacement and preference notifications |
 | 2026-11-18 | #6104 | Search all parent directories, including root, for nearest path matches. |
