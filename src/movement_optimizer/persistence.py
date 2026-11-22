@@ -39,14 +39,10 @@ from .validation import (
 
 logger = logging.getLogger(__name__)
 
-# Schema version persisted on every save. Bump when the on-disk layout
-# changes incompatibly. Loaders reject other versions until a migration
-# is implemented.
+# Schema version persisted on every save. Loaders reject incompatible versions.
 SCHEMA_VERSION = 1
 
-# Public result-format version for saved solution payloads. This is separate
-# from ``SCHEMA_VERSION`` so loaders can reject newer result formats while
-# still keeping app-state schema validation stable.
+# Public result-format version for saved solution payloads.
 RESULT_FORMAT_VERSION = 2
 
 # Known exercise identifiers accepted by ``save_solution``. Keep in sync
@@ -101,9 +97,7 @@ class InvalidStateFileError(ValueError):
     """
 
 
-# ---------------------------------------------------------------------------
 # Schema validation helpers
-# ---------------------------------------------------------------------------
 
 
 def _require_mapping(data: Any, context: str) -> dict[str, Any]:
@@ -298,9 +292,7 @@ def _validate_app_state_schema(data: dict[str, Any]) -> None:
         _validate_metadata_block(sub["metadata"], f"results.{etype}")
 
 
-# ---------------------------------------------------------------------------
 # Result <-> dict helpers
-# ---------------------------------------------------------------------------
 
 
 def _result_to_dict(result: OptimizationResult) -> dict[str, Any]:
@@ -375,9 +367,7 @@ def solution_data_to_result(data: dict[str, Any]) -> OptimizationResult:
     return _dict_to_result(data)
 
 
-# ---------------------------------------------------------------------------
 # Public save/load API
-# ---------------------------------------------------------------------------
 
 
 def save_solution(
