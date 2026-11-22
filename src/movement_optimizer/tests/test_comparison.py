@@ -64,8 +64,93 @@ class TestComparisonStore:
         assert fresh[0]["bar_mass"] == 60.0
         assert fresh[0]["body_params"] == {"body_mass": 75.0, "nested": {"k": 1}}
         assert fresh[0]["result"].cost == original_cost
-        # Large arrays are shared rather than deep-copied.
-        assert np.shares_memory(fresh[0]["result"].power, r.power)
+
+    def test_caller_array_mutation_after_add_does_not_corrupt_store(self):
+        store = ComparisonStore()
+        r = make_test_result(seed=4)
+        before = comparison_metrics(
+            [{"name": "A", "result": r, "body_params": {}, "bar_mass": 1.0}]
+        )
+        store.add_trial("A", r, {}, 1.0)
+
+        # In-place mutation of the caller's arrays must not reach the store.
+        r.power *= 1000.0
+        r.torques[:] = 0.0
+        r.t[:] = 0.0
+
+        stored = store.get_trials()
+        assert not np.shares_memory(stored[0]["result"].power, r.power)
+        assert comparison_metrics(stored) == before
+
+    def test_stored_arrays_are_frozen_and_not_shared_with_caller(self):
+        store = ComparisonStore()
+        r = make_test_result(seed=5)
+        store.add_trial("A", r, {}, 1.0)
+
+        stored = store.get_trials()[0]["result"]
+        for field in ("t", "q", "qd", "qdd", "torques", "power", "com", "bar"):
+            arr = getattr(stored, field)
+            assert not np.shares_memory(arr, getattr(r, field))
+            assert arr.flags.writeable is False
+            with pytest.raises(ValueError):
+                arr[...] = 0.0
+        # Caller's own arrays stay writeable.
+        assert r.power.flags.writeable is True
+
+    def test_get_trials_mutation_cannot_corrupt_stored_metrics(self):
+        store = ComparisonStore()
+        r = make_test_result(seed=6)
+        store.add_trial("A", r, {}, 1.0)
+        expected = comparison_metrics(store.get_trials())
+
+        handed_out = store.get_trials()[0]["result"]
+        with pytest.raises(ValueError):
+            handed_out.torques[:] = 0.0
+        handed_out.power = handed_out.power * 0.0  # rebinding only hits the copy
+
+        assert comparison_metrics(store.get_trials()) == expected
+
+    def test_pre_frozen_caller_array_writeable_reset_does_not_corrupt_store(
+        self,
+    ) -> None:
+        store = ComparisonStore()
+        r = make_test_result(seed=7)
+        r.power.flags.writeable = False
+        r.torques.flags.writeable = False
+        before = comparison_metrics(
+            [{"name": "A", "result": r, "body_params": {}, "bar_mass": 1.0}]
+        )
+        store.add_trial("A", r, {}, 1.0)
+
+        # Caller resets writeable flag on pre-frozen input and mutates it.
+        r.power.flags.writeable = True
+        r.power *= 1000.0
+        r.torques.flags.writeable = True
+        r.torques[:] = 0.0
+
+        stored = store.get_trials()
+        assert not np.shares_memory(stored[0]["result"].power, r.power)
+        assert comparison_metrics(stored) == before
+
+    def test_get_trials_writeable_reset_mutation_does_not_corrupt_store(
+        self,
+    ) -> None:
+        store = ComparisonStore()
+        r = make_test_result(seed=8)
+        store.add_trial("A", r, {}, 1.0)
+        expected = comparison_metrics(store.get_trials())
+
+        # Consumer retrieves trials, forcibly sets flags.writeable = True, and mutates arrays
+        consumer_result = store.get_trials()[0]["result"]
+        consumer_result.power.flags.writeable = True
+        consumer_result.power *= 999.0
+        consumer_result.torques.flags.writeable = True
+        consumer_result.torques[:] = 0.0
+
+        # Fresh retrieval from store must still have original metrics and untouched data
+        fresh = store.get_trials()
+        assert comparison_metrics(fresh) == expected
+        assert not np.shares_memory(fresh[0]["result"].power, consumer_result.power)
 
 
 class TestComparisonMetrics:

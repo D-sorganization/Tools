@@ -227,10 +227,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 4306,
+      "bytes_lf": 5372,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "63907fdaa1d5e25c07a5a7c5762f41aeee9277dc861a7532983ea84eeefa3237",
+      "content_sha256_lf": "8ed207f975e729694603bd9e65cedbe015fe3b3cc887c585697a69795265a862",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-COMPARISON-PY-13C44EB75694",
       "language": "python",

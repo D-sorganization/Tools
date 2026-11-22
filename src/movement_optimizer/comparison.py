@@ -13,6 +13,7 @@ Design Principles:
 from __future__ import annotations
 
 import copy
+import dataclasses
 import threading
 from typing import Any
 
@@ -22,16 +23,43 @@ from .constants import trapezoid
 from .trajectory import OptimizationResult
 
 
+def _frozen_array(value: np.ndarray) -> np.ndarray:
+    """Return an isolated read-only copy of an array.
+
+    Arrays are copied unconditionally before setting ``writeable=False``
+    so that neither caller flag-resetting after ingest nor consumer
+    flag-resetting after retrieval can alias and mutate stored data.
+    """
+    frozen = np.array(value, copy=True)
+    frozen.flags.writeable = False
+    return frozen
+
+
+def _snapshot_result(result: OptimizationResult) -> OptimizationResult:
+    """Return a copy of ``result`` whose NumPy fields are frozen private copies."""
+    snapshot = copy.copy(result)
+    for field in dataclasses.fields(snapshot):
+        value = getattr(snapshot, field.name)
+        if isinstance(value, np.ndarray):
+            setattr(snapshot, field.name, _frozen_array(value))
+    return snapshot
+
+
 def _snapshot_trial(
     name: str,
     result: OptimizationResult,
     body_params: dict[str, Any],
     bar_mass: float,
 ) -> dict[str, Any]:
-    """Return an isolated trial record without deep-copying large result arrays."""
+    """Return an isolated trial record.
+
+    Trajectory arrays are copied unconditionally and frozen (``writeable=False``),
+    ensuring that neither the caller nor a ``get_trials()`` consumer can mutate
+    stored data in place even if NumPy array writeability flags are toggled back.
+    """
     return {
         "name": name,
-        "result": copy.copy(result),
+        "result": _snapshot_result(result),
         "body_params": copy.deepcopy(body_params),
         "bar_mass": bar_mass,
     }
