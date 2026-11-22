@@ -9,7 +9,7 @@ import pytest
 
 from movement_optimizer.errors import OptimizationError
 from movement_optimizer.gui.main_window import MainWindow
-from movement_optimizer.trajectory.result import ProgressReport
+from movement_optimizer.trajectory.result import OptimizationStatus, ProgressReport
 
 from .conftest import make_test_result
 
@@ -65,9 +65,7 @@ def test_on_cancelled_resets_state(window) -> None:
 
 def test_on_err_with_structured_and_plain_errors(window) -> None:
     window._opt_running = True
-    window._on_err(
-        OptimizationError("boom", error_code="OPT_X", suggestion="try again")
-    )
+    window._on_err(OptimizationError("boom", error_code="OPT_X", suggestion="try again"))
     assert "OPT_X" in window.status_label.text()
     window._on_err("plain failure")
     assert "plain failure" in window.status_label.text()
@@ -89,10 +87,49 @@ def test_on_done_success_and_warning_paths(window) -> None:
     window._on_done(0, make_test_result(), body, 60.0, None)
     assert not window._opt_running  # finished (no chain)
 
-    failed = dataclasses.replace(make_test_result(), success=False)
+    failed = dataclasses.replace(make_test_result(), success=False, is_feasible=False)
     window._opt_running = True
     window._on_done(0, failed, body, 60.0, None)
     assert not window._opt_running
+    assert not window.sidebar.stall_label.isHidden()
+
+
+def _iteration_limit_result(*, feasible: bool):
+    return dataclasses.replace(
+        make_test_result(),
+        success=False,
+        status=OptimizationStatus.ITERATION_LIMIT,
+        is_feasible=feasible,
+    )
+
+
+def test_on_done_feasible_iteration_limit_has_no_balance_warning(window) -> None:
+    window._resolve_exercise_params(0)
+    body = window.exercise_states[0].body
+    window._opt_running = True
+    window._on_done(0, _iteration_limit_result(feasible=True), body, 60.0, None)
+    assert window.sidebar.stall_label.isHidden()
+    assert "WARNING" not in window.status_label.text()
+
+
+def test_on_done_infeasible_iteration_limit_warns(window) -> None:
+    window._resolve_exercise_params(0)
+    body = window.exercise_states[0].body
+    window._opt_running = True
+    window._on_done(0, _iteration_limit_result(feasible=False), body, 60.0, None)
+    assert not window.sidebar.stall_label.isHidden()
+    assert "WARNING" in window.status_label.text()
+
+
+def test_result_summary_balance_follows_feasibility(window) -> None:
+    window._update_result_summary(
+        "Squat", _iteration_limit_result(feasible=True), exercise_type="squat"
+    )
+    assert "BALANCED" in window.sidebar.result_label.text()
+    window._update_result_summary(
+        "Squat", _iteration_limit_result(feasible=False), exercise_type="squat"
+    )
+    assert "OUT OF BOUNDS" in window.sidebar.result_label.text()
 
 
 def test_completed_single_exercise_autoplays_when_enabled(window, monkeypatch) -> None:
@@ -118,9 +155,7 @@ def test_completed_single_exercise_autoplays_when_enabled(window, monkeypatch) -
 
 def test_finish_or_chain_advances_then_chain(window, monkeypatch) -> None:
     calls: list[tuple[int, list[int] | None]] = []
-    monkeypatch.setattr(
-        window, "_run_exercise", lambda idx, rest=None: calls.append((idx, rest))
-    )
+    monkeypatch.setattr(window, "_run_exercise", lambda idx, rest=None: calls.append((idx, rest)))
     window._finish_or_chain([1, 2], "msg")
     assert calls == [(1, [2])]
 

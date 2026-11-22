@@ -108,18 +108,14 @@ class OptimizationMixin:
         with self._opt_lock:
             self.exercise_states[idx].anim_frame = frame
 
-    def _set_exercise_result(
-        self, idx: int, result: OptimizationResult, *, frame: int = 0
-    ) -> None:
+    def _set_exercise_result(self, idx: int, result: OptimizationResult, *, frame: int = 0) -> None:
         """Atomically publish an optimization result and reset playback frame."""
         with self._opt_lock:
             state = self.exercise_states[idx]
             state.result = result
             state.anim_frame = frame
 
-    def _resolve_exercise_params(
-        self, idx: int
-    ) -> tuple[Any, Any, str, float, float, float]:
+    def _resolve_exercise_params(self, idx: int) -> tuple[Any, Any, str, float, float, float]:
         body = self.sidebar.get_body_model()
         bar, dur, smoothness = self.sidebar.get_optimization_params()
         _, etype = self.EXERCISE_CONFIGS[idx]
@@ -254,9 +250,7 @@ class OptimizationMixin:
             validation_err = ValidationError(
                 f"Invalid parameters: {exc}",
                 error_code="VALIDATION_ERROR",
-                suggestion=(
-                    "Check that all body and exercise parameters are within valid ranges."
-                ),
+                suggestion=("Check that all body and exercise parameters are within valid ranges."),
             )
             self._sig_error.emit(validation_err)
         except (RuntimeError, OSError) as exc:
@@ -308,13 +302,11 @@ class OptimizationMixin:
             tab.draw_anim_frame(0, result, dyn, body, etype)
             elapsed = result.elapsed_s
             t_str = (
-                f"{elapsed:.1f}s"
-                if elapsed < 60
-                else f"{int(elapsed // 60)}m {elapsed % 60:.0f}s"
+                f"{elapsed:.1f}s" if elapsed < 60 else f"{int(elapsed // 60)}m {elapsed % 60:.0f}s"
             )
             self.sidebar.set_progress_done(t_str, result.n_evals)
             self._enable_post_run_buttons()
-            if result.success:
+            if result.is_feasible:
                 self.sidebar.clear_stall_message()
                 status_msg = f"{name} optimization complete in {t_str}!"
             else:
@@ -388,7 +380,7 @@ class OptimizationMixin:
                 f"  Wrist:    {pk[2]:>6.0f} N\u00b7m"
             )
         else:
-            balance_ok = "BALANCED" if r.success else "OUT OF BOUNDS"
+            balance_ok = "BALANCED" if r.is_feasible else "OUT OF BOUNDS"
             joint_lines = (
                 f"  Ankle: {pk[0]:>6.0f} N\u00b7m\n"
                 f"  Knee:  {pk[1]:>6.0f} N\u00b7m\n"
@@ -396,9 +388,7 @@ class OptimizationMixin:
                 f"  COM sway: {r.com_horizontal_range_cm:.1f} cm\n"
                 f"  Balance: {balance_ok}"
             )
-        self.sidebar.set_result_label(
-            f"{name} results:\n{joint_lines}\n  Work: {work:>6.0f} J"
-        )
+        self.sidebar.set_result_label(f"{name} results:\n{joint_lines}\n  Work: {work:>6.0f} J")
 
     def _on_err(self, err: object) -> None:
         """Handle optimizer errors (called from main thread via signal)."""
