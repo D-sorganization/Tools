@@ -1574,6 +1574,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#6144 · Persist Is_Feasible in Saved Solutions and Branch the GUI Balance Warning and Summary on Feasibility, so Feasible ITERATION_LIMIT Runs Are No Longer Reported as COM Violations
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6144
+- **Branch:** claude/6144-persist-is-feasible
+- **PR:** #6147
+- **Paths:** see #6147
+- **Started:** 2026-11-22
+- **Last verified:** 2026-11-22 (`57d39841`; collated from changes/6144-persist-is-feasible-in-saved-solutions-a.md)
+- **Summary:** Persist is_feasible in saved solutions and branch the GUI balance warning and summary on feasibility, so feasible ITERATION_LIMIT runs are no longer reported as COM violations
+- **Next step:** Merge the PR.
+
 ### DL-#6145 · Copy NumPy Trajectory Arrays Unconditionally in ComparisonStore Snapshots to Ensure Bidirectional Isolation Across Writeable Flag Resets
 
 - **State:** shipped
