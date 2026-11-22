@@ -24,13 +24,12 @@ from .trajectory import OptimizationResult
 
 
 def _frozen_array(value: np.ndarray) -> np.ndarray:
-    """Return a read-only array that is safe to share between snapshots.
+    """Return an isolated read-only copy of an array.
 
-    Already-frozen arrays are reused (they own their data and cannot be
-    mutated); anything else is copied and the copy is frozen.
+    Arrays are copied unconditionally before setting ``writeable=False``
+    so that neither caller flag-resetting after ingest nor consumer
+    flag-resetting after retrieval can alias and mutate stored data.
     """
-    if not value.flags.writeable and value.base is None:
-        return value
     frozen = np.array(value, copy=True)
     frozen.flags.writeable = False
     return frozen
@@ -54,9 +53,9 @@ def _snapshot_trial(
 ) -> dict[str, Any]:
     """Return an isolated trial record.
 
-    Trajectory arrays are copied once on ingest and frozen (``writeable=False``),
-    so later snapshots share them without copying and neither the caller nor a
-    ``get_trials()`` consumer can mutate stored data in place.
+    Trajectory arrays are copied unconditionally and frozen (``writeable=False``),
+    ensuring that neither the caller nor a ``get_trials()`` consumer can mutate
+    stored data in place even if NumPy array writeability flags are toggled back.
     """
     return {
         "name": name,
