@@ -5620,10 +5620,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 19094,
+      "bytes_lf": 18401,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "db255e25fd2fd1021ee893fa1c9954f82cb6ee5b523e2859df5a5386bea720fc",
+      "content_sha256_lf": "881f061f2dedd34e6b3471f91db9b02f028ba4a58038d16b7076673033d8f488",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-PERSISTENCE-PY-D56764B1C053",
       "language": "python",
