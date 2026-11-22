@@ -1574,6 +1574,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#6145 · Copy NumPy Trajectory Arrays Unconditionally in ComparisonStore Snapshots to Ensure Bidirectional Isolation Across Writeable Flag Resets
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6145
+- **Branch:** claude/6145-snapshot-trial-copy
+- **PR:** #6146
+- **Paths:** see #6146
+- **Started:** 2026-11-22
+- **Last verified:** 2026-11-22 (`abff52c2`; collated from changes/6145-freeze-and-privately-copy-numpy-trajecto.md)
+- **Summary:** Copy NumPy trajectory arrays unconditionally in ComparisonStore snapshots to ensure bidirectional isolation across writeable flag resets
+- **Next step:** Merge the PR.
+
 ### DL-#6103 · Reject Nonfinite Camera Zoom Before State Replacement and Preference Notifications
 
 - **State:** shipped
