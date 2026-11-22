@@ -2035,12 +2035,12 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #6019
 - **Branch:** merged via #6053
-- **PR:** #6053
+- **PR:** #6053, #6143
 - **Paths:** see #6053
 - **Started:** 2026-11-15
-- **Last verified:** 2026-11-15 (`8e74a51f`; collated from changes/6019-mcp-failed-envelopes-include-registry-ba.md)
-- **Summary:** MCP FAILED envelopes include registry-backed provenance.calculation_status (UD-PAIR UpstreamDrift#14976 for package calc_backend)
-- **Next step:** Shipped in PR #6053.
+- **Last verified:** 2026-11-22 (`3929a8ef`; collated from changes/6019-align-calculatorspec-catalog-worked-exam.md)
+- **Summary:** PR #6053 added registry-backed provenance.calculation_status to MCP FAILED envelopes (UD-PAIR UpstreamDrift#14976 for package calc_backend); PR #6143 aligned CalculatorSpec catalog worked examples and units with request contracts.
+- **Next step:** Both PRs are merged; complete any remaining #6019 registry acceptance.
 
 ### DL-#6045 · Stabilize CLI Subprocess Timeout Tree-Kill Oracle and Windows Test Portability
 
