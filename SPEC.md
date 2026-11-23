@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-23 | #6158 | Maturin run summary lists native Windows/macOS ai_backend wheels as OPEN blockers instead of omitting them. |
 | 2026-11-23 | #6155 | Fix CLI timeout process-group kill via shared runner helper (#6023 C1). |
 | 2026-11-23 | #6154 | Truth up rust_distribution.md for Linux-only ai_backend wheel CI (#5684 slice docs). |
 | 2026-11-23 | #6152 | Wire CalculatorSpec formula_ids from calculation-registry agent_api bindings |
