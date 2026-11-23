@@ -2063,6 +2063,87 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 5348,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d4c2004046db3f07da426e685b5f11a10170f4e5212ecca63fc40bbc770979b1",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-REGISTRY-FORMULA-LINKAGE-PY-23598BB29248",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/registry/formula_linkage.py",
+      "purpose": "Resolve Agent API calculator formula_ids from the design-manual registry.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [
+          "entry.get"
+        ],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "FormulaLinkageError",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_BINDINGS_PATH",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_MANUAL_ROOT",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_REGISTRY_PATH",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "expected_formula_ids",
+            "signature": "calculator_id: str, *, bindings_payload: dict[str, Any] | None=None, registry_payload: dict[str, Any] | None=None"
+          },
+          {
+            "kind": "function",
+            "name": "load_agent_api_bindings",
+            "signature": ""
+          }
+        ],
+        "test_paths": [
+          "tests/calc_backend/test_calc_backend_formula_ids_6019.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 1074,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -2218,6 +2299,7 @@
           }
         ],
         "test_paths": [
+          "tests/calc_backend/test_calc_backend_formula_ids_6019.py",
           "tests/calc_backend/test_calculator_registry_contract.py",
           "tests/calc_backend/test_mcp_registry_projection_parity_6019.py"
         ],
@@ -2255,7 +2337,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "not-applicable",
         "validation": "not-applicable"
       },
@@ -2276,7 +2358,9 @@
             "signature": ""
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/calc_backend/test_calc_backend_formula_ids_6019.py"
+        ],
         "unit_mentions": [],
         "validation_paths": []
       }
