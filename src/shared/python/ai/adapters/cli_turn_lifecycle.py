@@ -309,6 +309,10 @@ def run_adapter_cli_turn(
     missing_binary_message: str = "CLI binary not found on PATH.",
 ) -> CliSubprocessResult:
     """Run an adapter CLI turn via ``runner_fn`` and record ``last_turn_lifecycle``."""
+    from shared.python.ai.adapters.cli_subprocess_runner import (
+        terminate_cli_subprocess_after_error,
+    )
+
     binary: str | None = adapter.binary
     provider: str = adapter.PROVIDER_NAME
     timeout: float = adapter.timeout
@@ -347,11 +351,13 @@ def run_adapter_cli_turn(
             _record(LifecycleStatus.FAILED, "connection_error", str(exc))
             raise
         except CliSubprocessCancelledError as exc:
+            terminate_cli_subprocess_after_error(exc)
             _record(LifecycleStatus.CANCELLED, "cancelled")
             raise AICancelledError(
                 str(exc), provider=provider, partial_output=exc.partial_output
             ) from exc
         except CliSubprocessIdleTimeoutError as exc:
+            terminate_cli_subprocess_after_error(exc)
             _record(LifecycleStatus.FAILED, "idle_timeout", str(exc))
             raise AIIdleTimeoutError(
                 f"{provider} CLI idle timed out after {idle_timeout}s",
@@ -361,6 +367,7 @@ def run_adapter_cli_turn(
                 is_partial=exc.is_partial,
             ) from exc
         except AITimeoutError as exc:
+            terminate_cli_subprocess_after_error(exc)
             _record(LifecycleStatus.FAILED, "timeout", str(exc))
             raise
         if result.returncode != 0:

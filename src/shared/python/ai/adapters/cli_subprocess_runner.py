@@ -58,6 +58,48 @@ class CliSubprocessResult:
 class CliSubprocessTimeoutError(subprocess.TimeoutExpired):
     """Raised when a CLI subprocess exceeds its wall-clock timeout."""
 
+    def __init__(
+        self,
+        cmd: Sequence[str] | bytes | None,
+        timeout: float,
+        *,
+        output: bytes | None = None,
+        stderr: bytes | None = None,
+        pid: int | None = None,
+    ) -> None:
+        super().__init__(cmd, timeout, output=output, stderr=stderr)
+        self.pid = pid
+
+
+def cli_subprocess_pid_from_error(exc: BaseException | None) -> int | None:
+    """Return a child PID from CLI runner exceptions, walking ``__cause__``."""
+    seen: set[int] = set()
+    current: BaseException | None = exc
+    while current is not None and id(current) not in seen:
+        seen.add(id(current))
+        pid = getattr(current, "pid", None)
+        if isinstance(pid, int) and pid > 0:
+            return pid
+        current = current.__cause__
+    return None
+
+
+def terminate_cli_subprocess_after_error(
+    exc: BaseException | None,
+    *,
+    proc: subprocess.Popen[bytes] | None = None,
+    grace_kill_seconds: float = DEFAULT_GRACE_KILL_SECONDS,
+) -> bool:
+    """Kill a CLI child using a live ``Popen`` handle and/or exception-bound PID."""
+    killed = False
+    if proc is not None and proc.poll() is None:
+        _graceful_then_forced_kill(proc, grace_kill_seconds=grace_kill_seconds)
+        killed = True
+    pid = cli_subprocess_pid_from_error(exc)
+    if pid is not None and (proc is None or proc.poll() is not None):
+        killed = terminate_cli_process_group(pid) or killed
+    return killed
+
 
 def scrub_cli_subprocess_env(env: Mapping[str, str] | None = None) -> dict[str, str]:
     """Return a copy of ``env`` stripped of vault secrets and raw credential tokens."""
@@ -145,14 +187,18 @@ def run_cli_subprocess(
                 cancel_token=cancel_token,
             )
         except CliSubprocessCancelledError as exc:
-            _graceful_then_forced_kill(
-                proc, grace_kill_seconds=min(grace_kill_seconds, 0.25)
+            terminate_cli_subprocess_after_error(
+                exc,
+                proc=proc,
+                grace_kill_seconds=min(grace_kill_seconds, 0.25),
             )
             exc.partial_output = _collect_partial_stdout(readers, encoding)
             raise
         except CliSubprocessIdleTimeoutError as exc:
-            _graceful_then_forced_kill(
-                proc, grace_kill_seconds=min(grace_kill_seconds, 0.25)
+            terminate_cli_subprocess_after_error(
+                exc,
+                proc=proc,
+                grace_kill_seconds=min(grace_kill_seconds, 0.25),
             )
             raise CliSubprocessIdleTimeoutError(
                 launch_argv,
@@ -161,11 +207,18 @@ def run_cli_subprocess(
                 pid=proc.pid,
             ) from exc
         except subprocess.TimeoutExpired as exc:
-            _graceful_then_forced_kill(proc, grace_kill_seconds=grace_kill_seconds)
             timeout_error = CliSubprocessTimeoutError(
-                launch_argv, timeout, output=None, stderr=None
+                launch_argv,
+                timeout,
+                output=None,
+                stderr=None,
+                pid=proc.pid,
             )
-            timeout_error.pid = proc.pid  # type: ignore[attr-defined]
+            terminate_cli_subprocess_after_error(
+                timeout_error,
+                proc=proc,
+                grace_kill_seconds=grace_kill_seconds,
+            )
             raise timeout_error from exc
         finally:
             if cancel_token is not None:
@@ -188,7 +241,11 @@ def run_cli_subprocess(
     finally:
         _cleanup_temp_paths(temp_paths)
         if proc.poll() is None:
-            _graceful_then_forced_kill(proc, grace_kill_seconds=grace_kill_seconds)
+            terminate_cli_subprocess_after_error(
+                None,
+                proc=proc,
+                grace_kill_seconds=grace_kill_seconds,
+            )
         close_parent_exit_guard(parent_guard)
 
 
@@ -490,7 +547,7 @@ def invoke_cli_subprocess_for_adapter(
     except CliSubprocessTimeoutError as exc:
         from shared.python.ai.exceptions import AITimeoutError
 
-        terminate_cli_process_group(getattr(exc, "pid", None))
+        terminate_cli_subprocess_after_error(exc)
         raise AITimeoutError(
             f"{provider} CLI timed out after {timeout}s",
             provider=provider,
