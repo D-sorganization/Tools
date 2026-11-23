@@ -245,6 +245,7 @@
           "tests/architecture/test_shared_import_aliases_3316.py",
           "tests/architecture/test_tools_module_inventory_contract.py",
           "tests/benchmarks/conftest.py",
+          "tests/calc_backend/test_epic_6019_acceptance_checklist.py",
           "tests/conftest.py",
           "tests/data_processing/data_processor/test_core_modules_smoke.py",
           "tests/data_processing/data_processor/test_neural_network.py",
