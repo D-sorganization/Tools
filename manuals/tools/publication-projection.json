@@ -8,9 +8,9 @@
   "repository_license": "MIT",
   "private_content_allowed": false,
   "evidence": {
-    "immutable_source_commit": "920e6fd633e796cf311cfd16f294fd45f5ad8cb1",
-    "source_tree_sha256": "e2ea298055d03302eee1d9e186d1e1e894412137",
-    "calculation_registry_sha256": "a1bc45cb5f76e36b1488bc508a05acd800167776f7ebd5b825ea272ba93910a6",
+    "immutable_source_commit": "cfec5462b844d23196ab45856923ea1652c58417",
+    "source_tree_sha256": "1b9f1df9decb920cb09e4170a89ecd4a10cd5a38",
+    "calculation_registry_sha256": "d0ab64e3f05de4f544745042169433effdbfd12237bc0d05c178db7142375df4",
     "toolchain_lock_sha256": "62915da70f09da3fead98ae71ccb94c2afaec7db2de390faa97234e103426b9b",
     "artifact_sha256": {
       "docx": {
