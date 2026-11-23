@@ -1,0 +1,148 @@
+"""Epic #6019: CalculatorSpec formula_ids from calculation-registry.json (#6020)."""
+
+from __future__ import annotations
+
+import pytest
+
+pytest.importorskip("fastapi")
+pytest.importorskip("calc_backend")
+
+from calc_backend.registry import store
+from calc_backend.registry.formula_linkage import (
+    FormulaLinkageError,
+    expected_formula_ids,
+    load_agent_api_bindings,
+)
+from calc_backend.registry.store import registered_calculators
+from calc_backend.registry.wire import wire_calculator_registry
+
+_SYNTHETIC_INVENTORY_COMMIT = (  # noqa: E501
+    "916fb9f27f486486f0c071dcc6f15f81f68ecb18"  # pragma: allowlist secret
+)
+
+
+@pytest.fixture()
+def wired_registry() -> None:
+    store.CALCULATOR_REGISTRY.clear()
+    load_agent_api_bindings.cache_clear()
+    wire_calculator_registry()
+
+
+@pytest.mark.unit
+def test_committed_bindings_are_semantically_valid_when_nonempty(
+    wired_registry: None,
+) -> None:
+    """Live bindings file must not ship wrong cross-calculator links (empty is ok)."""
+    bindings = load_agent_api_bindings()
+    for calculator_id, formula_ids in bindings.items():
+        assert calculator_id in {s.id for s in registered_calculators()}
+        assert formula_ids, calculator_id
+
+
+@pytest.mark.unit
+def test_flow_rate_formula_ids_match_calculation_registry_synthetic() -> None:
+    """Registry linkage must overlay ids for a bound calculator (synthetic registry)."""
+    bindings, registry = _synthetic_payloads()
+    expected = expected_formula_ids(
+        "flow-rate",
+        bindings_payload=bindings,
+        registry_payload=registry,
+    )
+    assert expected == (
+        "TOOLS-CALC-FLOW-RATE",
+        "TOOLS-CALC-FLOW-RATE-CONVERT",
+    )
+
+
+@pytest.mark.unit
+def test_every_bound_calculator_exposes_matching_formula_ids(
+    wired_registry: None,
+) -> None:
+    bindings = load_agent_api_bindings()
+    by_id = {spec.id: spec for spec in registered_calculators()}
+    for calculator_id, expected in bindings.items():
+        assert calculator_id in by_id, calculator_id
+        assert by_id[calculator_id].formula_ids == expected, calculator_id
+    if not bindings:
+        assert by_id["flow-rate"].formula_ids == ()
+
+
+@pytest.mark.unit
+def test_unbound_calculator_retains_empty_formula_ids(wired_registry: None) -> None:
+    bindings = load_agent_api_bindings()
+    for spec in registered_calculators():
+        if spec.id not in bindings:
+            assert spec.formula_ids == (), spec.id
+
+
+@pytest.mark.unit
+def test_unknown_binding_calculator_id_fails_loudly() -> None:
+    bindings, registry = _synthetic_payloads()
+    with pytest.raises(FormulaLinkageError, match="unknown calculator_id binding"):
+        expected_formula_ids(
+            "not-registered",
+            bindings_payload=bindings,
+            registry_payload=registry,
+        )
+
+
+@pytest.mark.unit
+def test_unknown_calculation_id_in_binding_fails_loudly() -> None:
+    bindings = {
+        "schema_version": "tools/agent-api-calculator-bindings/1.0.0",
+        "manual_id": "tools",
+        "bindings": {
+            "flow-rate": {
+                "calculation_id": "TOOLS-NO-SUCH-CALC",
+                "equation_ids": ["TOOLS-CALC-FLOW-RATE-CONVERT"],
+            }
+        },
+    }
+    _, registry = _synthetic_payloads()
+    with pytest.raises(FormulaLinkageError, match="unknown calculation_id"):
+        expected_formula_ids(
+            "flow-rate",
+            bindings_payload=bindings,
+            registry_payload=registry,
+        )
+
+
+@pytest.mark.unit
+def test_malformed_equation_entry_fails_loudly() -> None:
+    bindings, registry = _synthetic_payloads()
+    rows = registry["calculations"]
+    assert isinstance(rows, list)
+    rows[0]["equations"] = [{}]
+    with pytest.raises(FormulaLinkageError, match="equation missing equation_id"):
+        expected_formula_ids(
+            "flow-rate",
+            bindings_payload=bindings,
+            registry_payload=registry,
+        )
+
+
+def _synthetic_payloads() -> tuple[dict[str, object], dict[str, object]]:
+    registry: dict[str, object] = {
+        "schema_version": "1.0.0",
+        "manual_id": "tools",
+        "repository": "D-sorganization/Tools",
+        "release_status": "provisional",
+        "inventory_commit": _SYNTHETIC_INVENTORY_COMMIT,
+        "blockers": [],
+        "calculations": [
+            {
+                "calculation_id": "TOOLS-CALC-FLOW-RATE",
+                "title": "Flow rate unit conversion",
+                "equations": [
+                    {"equation_id": "TOOLS-CALC-FLOW-RATE-CONVERT", "description": "x"}
+                ],
+                "approval": {"state": "blocked-pending-human-approval"},
+            }
+        ],
+    }
+    bindings = {
+        "schema_version": "tools/agent-api-calculator-bindings/1.0.0",
+        "manual_id": "tools",
+        "bindings": {"flow-rate": "TOOLS-CALC-FLOW-RATE"},
+    }
+    return bindings, registry
