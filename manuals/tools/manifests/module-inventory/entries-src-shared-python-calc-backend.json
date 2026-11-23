@@ -267,10 +267,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8931,
+      "bytes_lf": 8982,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4b008f08cf87e141b24ea5027f2e4ed3d7df607cdea5fa0fd78daca1edd3417f",
+      "content_sha256_lf": "872b22c9bc2346bfddf10e6b6fbdcc1e4c7af2aea058797d68ee0663f2aabc01",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-APP-PY-EA1FF1BC7C57",
       "language": "python",
@@ -346,6 +346,7 @@
           "tests/calc_backend/test_calc_backend_openapi_stable.py",
           "tests/calc_backend/test_calculator_registry_contract.py",
           "tests/calc_backend/test_new_endpoints.py",
+          "tests/calc_backend/test_pressure_drop_v2_mcp.py",
           "tests/calc_backend/test_rotation_converter_api.py",
           "tests/unit/test_syngas_water_nonfinite_oracle6.py"
         ],
@@ -1705,7 +1706,9 @@
           }
         ],
         "test_paths": [
-          "tests/calc_backend/mcp_probe.py"
+          "tests/calc_backend/mcp_probe.py",
+          "tests/calc_backend/pressure_drop_v2_probe.py",
+          "tests/calc_backend/test_pressure_drop_v2_mcp.py"
         ],
         "unit_mentions": [
           "s"
@@ -2000,10 +2003,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12939,
+      "bytes_lf": 13123,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e3aea8259def12c0ecb1c138d96cc220b7d76b463d696df21292ab4b62fcf87a",
+      "content_sha256_lf": "3d5bec92b0e8e158292c0554aa600cb5f25bacf7fac8d3423be07a045434de6b",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-REGISTRY-CATALOG-PY-F93F79962E77",
       "language": "python",
@@ -2059,6 +2062,71 @@
         "validation_paths": [
           "tests/calc_backend/test_calculator_registry_contract.py"
         ]
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 1591,
+      "classification": "calculation",
+      "classification_basis": "path-marker:pressure_drop",
+      "content_sha256_lf": "94bf50bd3ebc066b100a60372dc22626ddb64ed3f2b0000d4140e20e5e0510ad",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-REGISTRY-CATALOG-PRESSURE-DROP-V2-PY-DC3555EEBF3F",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/registry/catalog_pressure_drop_v2.py",
+      "purpose": "Typed pressure-drop-v2 calculator metadata (Refs #6019).",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "test-evidence-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "unavailable",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "PRESSURE_DROP_V2",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "PRESSURE_DROP_V2_VALIDATE",
+            "signature": null
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "Pa",
+          "kg",
+          "s"
+        ],
+        "validation_paths": []
       }
     },
     {
@@ -2301,7 +2369,8 @@
         "test_paths": [
           "tests/calc_backend/test_calc_backend_formula_ids_6019.py",
           "tests/calc_backend/test_calculator_registry_contract.py",
-          "tests/calc_backend/test_mcp_registry_projection_parity_6019.py"
+          "tests/calc_backend/test_mcp_registry_projection_parity_6019.py",
+          "tests/calc_backend/test_pressure_drop_v2_mcp.py"
         ],
         "unit_mentions": [
           "s"
@@ -2313,10 +2382,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3189,
+      "bytes_lf": 3579,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "372b2e34a39e5ea2b552e2c68fd7aa61e83f9192337db87248468ed65954d1f9",
+      "content_sha256_lf": "dbd9dab0d37c998a559794b65a4815a045a92d98cfbcd6d154f1812e1883cafb",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-REGISTRY-WIRE-PY-876DE2B8B559",
       "language": "python",
