@@ -5,7 +5,6 @@ from __future__ import annotations
 import contextlib
 import errno
 import os
-import signal
 import subprocess
 import tempfile
 import threading
@@ -13,8 +12,13 @@ import time
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
-from typing import IO
+from typing import IO, Any
 
+from shared.python.ai.adapters.cli_subprocess_termination import (
+    DEFAULT_GRACE_KILL_SECONDS,
+    terminate_cli_process_group,
+    terminate_cli_subprocess_after_error,
+)
 from shared.python.ai.adapters.cli_turn_lifecycle import (
     CliCancelToken,
     CliSubprocessCancelledError,
@@ -28,7 +32,6 @@ from shared.python.logging_pkg.logging_config import get_logger
 logger = get_logger(__name__)
 
 DEFAULT_OUTPUT_BYTE_CAP = 512 * 1024
-DEFAULT_GRACE_KILL_SECONDS = 2.0
 _WINDOWS_ARGV_PROMPT_LIMIT = 30_000
 _WIN_CMD_UNSAFE_CHARS = ("\r", "\n", '"', "%", "^", "&", "<", ">", "|")
 _TRUNCATION_MARKER = "[truncated {n} bytes]"
@@ -60,7 +63,7 @@ class CliSubprocessTimeoutError(subprocess.TimeoutExpired):
 
     def __init__(
         self,
-        cmd: Sequence[str] | bytes | None,
+        cmd: Any,
         timeout: float,
         *,
         output: bytes | None = None,
@@ -69,36 +72,6 @@ class CliSubprocessTimeoutError(subprocess.TimeoutExpired):
     ) -> None:
         super().__init__(cmd, timeout, output=output, stderr=stderr)
         self.pid = pid
-
-
-def cli_subprocess_pid_from_error(exc: BaseException | None) -> int | None:
-    """Return a child PID from CLI runner exceptions, walking ``__cause__``."""
-    seen: set[int] = set()
-    current: BaseException | None = exc
-    while current is not None and id(current) not in seen:
-        seen.add(id(current))
-        pid = getattr(current, "pid", None)
-        if isinstance(pid, int) and pid > 0:
-            return pid
-        current = current.__cause__
-    return None
-
-
-def terminate_cli_subprocess_after_error(
-    exc: BaseException | None,
-    *,
-    proc: subprocess.Popen[bytes] | None = None,
-    grace_kill_seconds: float = DEFAULT_GRACE_KILL_SECONDS,
-) -> bool:
-    """Kill a CLI child using a live ``Popen`` handle and/or exception-bound PID."""
-    killed = False
-    if proc is not None and proc.poll() is None:
-        _graceful_then_forced_kill(proc, grace_kill_seconds=grace_kill_seconds)
-        killed = True
-    pid = cli_subprocess_pid_from_error(exc)
-    if pid is not None and (proc is None or proc.poll() is not None):
-        killed = terminate_cli_process_group(pid) or killed
-    return killed
 
 
 def scrub_cli_subprocess_env(env: Mapping[str, str] | None = None) -> dict[str, str]:
@@ -111,21 +84,6 @@ def scrub_cli_subprocess_env(env: Mapping[str, str] | None = None) -> dict[str, 
         if not key.upper().startswith("VAULT_SECRET_")
         and not any(key.upper().endswith(suffix) for suffix in sensitive_suffixes)
     }
-
-
-def terminate_cli_process_group(pid: int | None) -> bool:
-    """Best-effort kill of the CLI process group on timeout or cancellation."""
-    if pid is None or pid <= 0:
-        return False
-    if os.name == "nt":
-        return _windows_kill_process_tree(pid)
-    if not hasattr(os, "killpg"):
-        return False
-    try:
-        os.killpg(os.getpgid(pid), signal.SIGKILL)
-        return True
-    except OSError:
-        return False
 
 
 def run_cli_subprocess(
@@ -169,8 +127,10 @@ def run_cli_subprocess(
         if cancel_token is not None and not cancel_token.attach(
             proc.pid, terminate_cli_process_group
         ):
-            _graceful_then_forced_kill(
-                proc, grace_kill_seconds=min(grace_kill_seconds, 0.25)
+            terminate_cli_subprocess_after_error(
+                None,
+                proc=proc,
+                grace_kill_seconds=min(grace_kill_seconds, 0.25),
             )
             raise CliSubprocessCancelledError(
                 "CLI subprocess cancelled during startup", pid=proc.pid
@@ -445,47 +405,6 @@ def _decode_with_marker(raw: bytes, truncated: int, encoding: str) -> tuple[str,
     if truncated > 0:
         text = f"{text}{_TRUNCATION_MARKER.format(n=truncated)}"
     return text, truncated
-
-
-def _graceful_then_forced_kill(
-    proc: subprocess.Popen[bytes], *, grace_kill_seconds: float
-) -> None:
-    if proc.poll() is not None:
-        return
-    pid = proc.pid
-    if os.name == "nt":
-        if grace_kill_seconds > 0:
-            with contextlib.suppress(Exception):
-                subprocess.run(
-                    ["taskkill", "/PID", str(pid), "/T"],
-                    check=False,
-                    capture_output=True,
-                    timeout=grace_kill_seconds,
-                )
-        deadline = time.monotonic() + grace_kill_seconds
-        while proc.poll() is None and time.monotonic() < deadline:
-            time.sleep(0.05)
-        if proc.poll() is None:
-            _windows_kill_process_tree(pid, timeout=max(grace_kill_seconds, 2.0))
-        return
-    with contextlib.suppress(ProcessLookupError, PermissionError):
-        os.killpg(os.getpgid(pid), signal.SIGTERM)
-    deadline = time.monotonic() + grace_kill_seconds
-    while proc.poll() is None and time.monotonic() < deadline:
-        time.sleep(0.05)
-    if proc.poll() is None:
-        terminate_cli_process_group(pid)
-
-
-def _windows_kill_process_tree(pid: int, *, timeout: float = 2.0) -> bool:
-    with contextlib.suppress(Exception):
-        subprocess.run(
-            ["taskkill", "/PID", str(pid), "/T", "/F"],
-            check=False,
-            capture_output=True,
-            timeout=timeout,
-        )
-    return True
 
 
 def _cleanup_temp_paths(paths: Sequence[str | None]) -> None:

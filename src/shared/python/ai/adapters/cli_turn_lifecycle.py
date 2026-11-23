@@ -309,7 +309,7 @@ def run_adapter_cli_turn(
     missing_binary_message: str = "CLI binary not found on PATH.",
 ) -> CliSubprocessResult:
     """Run an adapter CLI turn via ``runner_fn`` and record ``last_turn_lifecycle``."""
-    from shared.python.ai.adapters.cli_subprocess_runner import (
+    from shared.python.ai.adapters.cli_subprocess_termination import (
         terminate_cli_subprocess_after_error,
     )
 

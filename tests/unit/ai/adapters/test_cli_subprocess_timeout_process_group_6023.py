@@ -8,8 +8,10 @@ import pytest
 
 from shared.python.ai.adapters.cli_subprocess_runner import (
     CliSubprocessTimeoutError,
-    cli_subprocess_pid_from_error,
     invoke_cli_subprocess_for_adapter,
+)
+from shared.python.ai.adapters.cli_subprocess_termination import (
+    cli_subprocess_pid_from_error,
     terminate_cli_process_group,
     terminate_cli_subprocess_after_error,
 )
@@ -42,7 +44,7 @@ def test_terminate_cli_subprocess_after_error_uses_popen_without_pid_on_exc(
         calls.append(proc.pid)
 
     monkeypatch.setattr(
-        "shared.python.ai.adapters.cli_subprocess_runner._graceful_then_forced_kill",
+        "shared.python.ai.adapters.cli_subprocess_termination._graceful_then_forced_kill",
         _record_grace,
     )
     exc = CliSubprocessTimeoutError(["cmd"], 1.0)
@@ -67,7 +69,7 @@ def test_invoke_timeout_terminates_process_group_with_child_pid(
         return terminate_cli_process_group(pid)
 
     with patch(
-        "shared.python.ai.adapters.cli_subprocess_runner.terminate_cli_process_group",
+        "shared.python.ai.adapters.cli_subprocess_termination.terminate_cli_process_group",
         side_effect=_record,
     ):
         with pytest.raises(AITimeoutError):
@@ -99,7 +101,7 @@ def test_codex_adapter_timeout_invokes_group_termination(
         return terminate_cli_process_group(pid)
 
     with patch(
-        "shared.python.ai.adapters.cli_subprocess_runner.terminate_cli_process_group",
+        "shared.python.ai.adapters.cli_subprocess_termination.terminate_cli_process_group",
         side_effect=_record,
     ):
         adapter = CodexCliAdapter(binary=str(binary), timeout=0.5)
