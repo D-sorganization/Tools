@@ -93,47 +93,34 @@ print(ai_backend.__doc__)            # should print the crate doc string
 
 ---
 
-## The CI Gap
+## CI wheel qualification (in-repo today)
 
-**Today there is no automated wheel build in CI.**
+Several maturin workflows build and smoke-test wheels on the **fleet Linux
+runner** (`d-sorg-fleet`). They upload PR artifacts; they do **not** ship wheels
+on every `pip install tools`.
 
-The consequence is that `pip install tools` (or any `pip install` of downstream
-packages that depend on this repo) will install the pure-Python fallback paths
-only. Users who want Rust acceleration must run `maturin develop` manually.
+| Crate / package | Workflow | Qualified today |
+| --- | --- | --- |
+| `ai_backend` | `.github/workflows/maturin-ai-backend.yml` | Native **Linux** × Python 3.10–3.13: `build-wheels`, `linux-wheel-qualify` (clean install, auditwheel, Rust-path smoke, cp312/cp313 mismatch guard) |
+| `tools_core` | `.github/workflows/maturin-tools-core.yml` | Fleet Linux build + import smoke (see workflow) |
+| Other Rust sub-apps | `maturin-*` workflows under `.github/workflows/` | Per-workflow matrices (still Linux fleet unless noted in the workflow) |
 
-The missing workflow would need to:
+**`ai_backend` Windows and macOS wheels are not qualified in CI.** Native
+import evidence for those OSes remains open in issue
+[#5684](https://github.com/D-sorganization/Tools/issues/5684). Do not document or
+imply three-OS `ai_backend` coverage until that issue closes with real evidence.
 
-1. Build a maturin wheel for each `(OS, Python version)` combination.
-2. Upload the wheels as release assets or to a private PyPI index.
-3. Run the test suite against the compiled wheel (not the pure-Python path).
+`CLAUDE.md` matches this contract (Linux fleet runner only for
+`maturin-ai-backend.yml`).
 
-### Required CI Workflow Spec
+## Distribution gap (pip installs)
 
-A future `build-rust-wheels.yml` workflow (ops ticket, separate from
-CLAUDE.md-governed files) should implement:
-
-```yaml
-matrix:
-  os: [ubuntu-latest, macos-latest, windows-latest]
-  python-version: ["3.10", "3.11", "3.12", "3.13"]
-
-steps:
-  - uses: actions/checkout@v4
-  - uses: PyO3/maturin-action@v1 # OR use cibuildwheel
-    with:
-      command: build
-      args: --release --features python
-      working-directory: rust_core/tools-core
-  # repeat for rust_core/ai_backend
-  - uses: actions/upload-artifact@v4
-    with:
-      name: wheels-${{ matrix.os }}-${{ matrix.python-version }}
-      path: target/wheels/*.whl
-```
-
-Alternative: `cibuildwheel` with a `[tool.cibuildwheel]` section in each
-crate's `pyproject.toml`. Both approaches are viable; `maturin-action` is
-simpler for pure-Rust wheels without C dependencies.
+Downstream `pip install` of the root Tools distribution still does **not**
+bundle prebuilt Rust wheels for every crate. Consumers get pure-Python fallbacks
+unless they install a wheel from CI artifacts, a release, or run `maturin develop`
+locally. The in-repo survey for slice 2 (`config/ai_backend_downstream_consumer_survey.json`)
+records no DownstreamDrift / Gasification_Model requirement for the native
+`ai_backend` wheel at their pinned Tools commits.
 
 ---
 
