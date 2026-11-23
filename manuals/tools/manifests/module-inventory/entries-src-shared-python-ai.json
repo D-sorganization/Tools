@@ -933,10 +933,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 16037,
+      "bytes_lf": 16003,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "cee36eedfbe8e898ab9b5f13aed066da5e1fcef90f239071dbbd0851287cc521",
+      "content_sha256_lf": "97e925411849221f85d527a8482049acb0e3204839161c590b8e56cd4e84f405",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLI-SUBPROCESS-RUNNER-PY-73F30E6F7DA8",
       "language": "python",
@@ -1045,6 +1045,75 @@
         "unit_mentions": [
           "s"
         ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 3231,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "95a407117f07b63d487d3971c38709d092ee89ba1e984eb368d5eda9e09ba7a4",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLI-SUBPROCESS-TERMINATION-PY-21F015F95243",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/ai/adapters/cli_subprocess_termination.py",
+      "purpose": "Process-tree termination helpers for subscription CLI adapters (#5727 / #6023).",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "constant",
+            "name": "DEFAULT_GRACE_KILL_SECONDS",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "cli_subprocess_pid_from_error",
+            "signature": "exc: BaseException | None"
+          },
+          {
+            "kind": "function",
+            "name": "terminate_cli_process_group",
+            "signature": "pid: int | None"
+          },
+          {
+            "kind": "function",
+            "name": "terminate_cli_subprocess_after_error",
+            "signature": "exc: BaseException | None, *, proc: subprocess.Popen[bytes] | None=None, grace_kill_seconds: float=DEFAULT_GRACE_KILL_SECONDS"
+          }
+        ],
+        "test_paths": [
+          "tests/unit/ai/adapters/test_cli_subprocess_timeout_process_group_6023.py"
+        ],
+        "unit_mentions": [],
         "validation_paths": []
       }
     },
