@@ -186,8 +186,7 @@
           }
         ],
         "test_paths": [
-          "tests/calc_backend/test_agent_api_output_cap.py",
-          "tests/calc_backend/test_mcp_registry_projection_parity_6019.py"
+          "tests/calc_backend/test_agent_api_output_cap.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -1649,10 +1648,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8114,
+      "bytes_lf": 8033,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3844be521b48adb61b5f1c8b4206eafbb9d84588c27d224dcd2a91158e7df6f7",
+      "content_sha256_lf": "24b203696ae92586b7e9e7193bc60734a78de95c6ee34dc067dbfb2f7176d569",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-MCP-SERVER-PY-C6975E2D2358",
       "language": "python",
@@ -2127,10 +2126,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6601,
+      "bytes_lf": 7012,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0efceea3d74cd35b3c16ffde5f8feb4d2d56b385cd00cdbb1f19f8e8a2bbf884",
+      "content_sha256_lf": "86adae2420d3b2b8cc9bcadcf2d44d1b52b74e94cd47912431752e89c183fca8",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-REGISTRY-STORE-PY-F9111F6BE813",
       "language": "python",

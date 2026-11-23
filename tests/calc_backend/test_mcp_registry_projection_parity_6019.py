@@ -11,7 +11,6 @@ pytest.importorskip("fastapi")
 pytest.importorskip("calc_backend")
 
 from shared.python.calc_backend import mcp_server
-from shared.python.calc_backend.agent_api import CONTRACT_VERSION
 from shared.python.calc_backend.registry.store import (
     CALCULATOR_REGISTRY,
     describe_calculator,
@@ -65,6 +64,5 @@ def test_mcp_describe_projection_matches_registry_for_every_calculator() -> None
     mcp_server._ensure_registry()
     for calculator_id in CALCULATOR_REGISTRY:
         projected = asyncio.run(_mcp_describe_via_fastmcp(calculator_id))
-        expected = dict(describe_calculator(calculator_id))
-        expected["contract_version"] = CONTRACT_VERSION
+        expected = describe_calculator(calculator_id)
         assert projected == expected, calculator_id
