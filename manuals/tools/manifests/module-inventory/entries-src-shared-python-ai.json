@@ -836,10 +836,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8891,
+      "bytes_lf": 9404,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "bba4f6e14d6a29f35d6a92a01e5f7001dd4afd82316fc11e26ea70ca92e1b518",
+      "content_sha256_lf": "f61f371c8d44fa3346ef5be111e0c919864e1c00029ffc37d29ccf589a2e9dc1",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLI-QUALIFICATION-PY-00ED9615FCE7",
       "language": "python",
@@ -913,7 +913,7 @@
           {
             "kind": "function",
             "name": "probe_cli_provider_discovery",
-            "signature": "provider: str, binary_path: str, required_help_flags: tuple[str, ...]=(), *, env: Mapping[str, str] | None=None, timeout: float=DEFAULT_DISCOVERY_TIMEOUT"
+            "signature": "provider: str, binary_path: str, required_help_flags: tuple[str, ...]=(), *, help_subcommand: str | None=None, env: Mapping[str, str] | None=None, timeout: float=DEFAULT_DISCOVERY_TIMEOUT"
           },
           {
             "kind": "function",
