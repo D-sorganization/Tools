@@ -1,10 +1,5 @@
 {
   "schema_version": "tools/agent-api-calculator-bindings/1.0.0",
   "manual_id": "tools",
-  "bindings": {
-    "flow-rate": {
-      "calculation_id": "TOOLS-DPLANE-GEOMETRY",
-      "equation_ids": ["TOOLS-DPLANE-NORMAL"]
-    }
-  }
+  "bindings": {}
 }

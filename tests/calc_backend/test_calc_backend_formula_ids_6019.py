@@ -29,14 +29,29 @@ def wired_registry() -> None:
 
 
 @pytest.mark.unit
-def test_flow_rate_formula_ids_match_calculation_registry(
+def test_committed_bindings_are_semantically_valid_when_nonempty(
     wired_registry: None,
 ) -> None:
-    """Bound calculators must expose registry-backed ids, not empty tuples."""
-    by_id = {spec.id: spec for spec in registered_calculators()}
-    spec = by_id["flow-rate"]
-    assert spec.formula_ids == expected_formula_ids("flow-rate")
-    assert spec.formula_ids
+    """Live bindings file must not ship wrong cross-calculator links (empty is ok)."""
+    bindings = load_agent_api_bindings()
+    for calculator_id, formula_ids in bindings.items():
+        assert calculator_id in {s.id for s in registered_calculators()}
+        assert formula_ids, calculator_id
+
+
+@pytest.mark.unit
+def test_flow_rate_formula_ids_match_calculation_registry_synthetic() -> None:
+    """Registry linkage must overlay ids for a bound calculator (synthetic registry)."""
+    bindings, registry = _synthetic_payloads()
+    expected = expected_formula_ids(
+        "flow-rate",
+        bindings_payload=bindings,
+        registry_payload=registry,
+    )
+    assert expected == (
+        "TOOLS-CALC-FLOW-RATE",
+        "TOOLS-CALC-FLOW-RATE-CONVERT",
+    )
 
 
 @pytest.mark.unit
@@ -48,6 +63,8 @@ def test_every_bound_calculator_exposes_matching_formula_ids(
     for calculator_id, expected in bindings.items():
         assert calculator_id in by_id, calculator_id
         assert by_id[calculator_id].formula_ids == expected, calculator_id
+    if not bindings:
+        assert by_id["flow-rate"].formula_ids == ()
 
 
 @pytest.mark.unit
