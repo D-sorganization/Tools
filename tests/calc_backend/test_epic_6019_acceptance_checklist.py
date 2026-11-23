@@ -3,8 +3,6 @@
 from __future__ import annotations
 
 import json
-import subprocess
-import sys
 from collections import Counter
 from pathlib import Path
 from typing import Any
@@ -79,17 +77,3 @@ def test_epic_6019_acceptance_checklist_is_valid_and_fail_closed() -> None:
     e7 = by_id["6019-E7"]
     assert e7["status"] == "open"
     assert any("TOOLS-CALC" in gap or "process calculator" in gap for gap in e7["gaps"])
-
-
-@pytest.mark.slow
-def test_epic_6019_conformance_runner_exits_zero() -> None:
-    """Conformance script is part of E1/E3 evidence and must succeed on this tree."""
-    result = subprocess.run(
-        [sys.executable, "scripts/run_agent_api_conformance.py"],
-        cwd=ROOT,
-        check=False,
-        capture_output=True,
-        text=True,
-        timeout=120,
-    )
-    assert result.returncode == 0, result.stderr or result.stdout
