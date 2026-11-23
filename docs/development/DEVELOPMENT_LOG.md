@@ -2048,10 +2048,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #5684
 - **Branch:** merged via #6054
-- **PR:** #6054, #6154
+- **PR:** #6054, #6154, #6158
 - **Paths:** see #6054
 - **Started:** 2026-11-15
-- **Last verified:** 2026-11-23 (`4435c53b`; collated from changes/5684-rust-distribution-linux-truth.md)
+- **Last verified:** 2026-11-23 (`f468d80f`; collated from changes/5684-summary-open-blockers.md)
 - **Summary:** Align ai_backend README and onnx preflight ort pin strings with Cargo.toml
 - **Next step:** Shipped in PR #6054.
 
