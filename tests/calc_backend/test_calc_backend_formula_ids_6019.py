@@ -28,7 +28,7 @@ def wired_registry() -> None:
 def test_flow_rate_formula_ids_match_calculation_registry(
     wired_registry: None,
 ) -> None:
-    """Wave-1 calculators must expose design-manual ids, not empty tuples."""
+    """Bound calculators must expose registry-backed ids, not empty tuples."""
     by_id = {spec.id: spec for spec in registered_calculators()}
     spec = by_id["flow-rate"]
     assert spec.formula_ids == expected_formula_ids("flow-rate")
@@ -70,7 +70,12 @@ def test_unknown_calculation_id_in_binding_fails_loudly() -> None:
     bindings = {
         "schema_version": "tools/agent-api-calculator-bindings/1.0.0",
         "manual_id": "tools",
-        "bindings": {"flow-rate": "TOOLS-NO-SUCH-CALC"},
+        "bindings": {
+            "flow-rate": {
+                "calculation_id": "TOOLS-NO-SUCH-CALC",
+                "equation_ids": ["TOOLS-CALC-FLOW-RATE-CONVERT"],
+            }
+        },
     }
     _, registry = _synthetic_payloads()
     with pytest.raises(FormulaLinkageError, match="unknown calculation_id"):
@@ -101,6 +106,7 @@ def _synthetic_payloads() -> tuple[dict[str, object], dict[str, object]]:
         "manual_id": "tools",
         "repository": "D-sorganization/Tools",
         "release_status": "provisional",
+        # pragma: allowlist secret
         "inventory_commit": "916fb9f27f486486f0c071dcc6f15f81f68ecb18",
         "blockers": [],
         "calculations": [

@@ -2,8 +2,9 @@
   "schema_version": "tools/agent-api-calculator-bindings/1.0.0",
   "manual_id": "tools",
   "bindings": {
-    "acid-gas-dewpoint": "TOOLS-CALC-ACID-GAS-DEWPOINT",
-    "flare": "TOOLS-CALC-FLARE",
-    "flow-rate": "TOOLS-CALC-FLOW-RATE"
+    "flow-rate": {
+      "calculation_id": "TOOLS-DPLANE-GEOMETRY",
+      "equation_ids": ["TOOLS-DPLANE-NORMAL"]
+    }
   }
 }

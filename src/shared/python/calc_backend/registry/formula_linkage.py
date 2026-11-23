@@ -43,41 +43,94 @@ def _calculations_index(payload: dict[str, Any]) -> dict[str, dict[str, Any]]:
     return index
 
 
-def _formula_ids_for_row(calculation: dict[str, Any]) -> tuple[str, ...]:
+def _equation_ids_for_calculation(calculation: dict[str, Any]) -> frozenset[str]:
     calc_id = calculation["calculation_id"]
     equations = calculation.get("equations")
     if not isinstance(equations, list):
         raise FormulaLinkageError(f"{calc_id}: equations must be a list")
-    ids: list[str] = [calc_id]
+    ids: set[str] = set()
     for entry in equations:
         if not isinstance(entry, dict):
             raise FormulaLinkageError(f"{calc_id}: invalid equation entry")
         equation_id = entry.get("equation_id")
         if not isinstance(equation_id, str) or not equation_id.strip():
             raise FormulaLinkageError(f"{calc_id}: equation missing equation_id")
-        ids.append(equation_id)
-    return tuple(dict.fromkeys(ids))
+        ids.add(equation_id)
+    return frozenset(ids)
+
+
+def _parse_binding_target(
+    calculator_id: str,
+    raw_target: object,
+) -> tuple[str, frozenset[str] | None]:
+    if isinstance(raw_target, str) and raw_target.strip():
+        return raw_target.strip(), None
+    if isinstance(raw_target, dict):
+        calculation_id = raw_target.get("calculation_id")
+        if not isinstance(calculation_id, str) or not calculation_id.strip():
+            raise FormulaLinkageError(
+                f"{calculator_id}: binding object requires calculation_id"
+            )
+        equation_ids = raw_target.get("equation_ids")
+        if equation_ids is None:
+            return calculation_id.strip(), None
+        if not isinstance(equation_ids, list) or not equation_ids:
+            raise FormulaLinkageError(
+                f"{calculator_id}: equation_ids must be a non-empty list"
+            )
+        parsed: list[str] = []
+        for item in equation_ids:
+            if not isinstance(item, str) or not item.strip():
+                raise FormulaLinkageError(
+                    f"{calculator_id}: equation_ids entries must be non-empty strings"
+                )
+            parsed.append(item.strip())
+        return calculation_id.strip(), frozenset(parsed)
+    raise FormulaLinkageError(
+        f"{calculator_id}: binding must be a calculation_id string or object"
+    )
+
+
+def _formula_ids_for_binding(
+    calculation: dict[str, Any],
+    *,
+    equation_filter: frozenset[str] | None,
+) -> tuple[str, ...]:
+    calc_id = calculation["calculation_id"]
+    available = _equation_ids_for_calculation(calculation)
+    if equation_filter is None:
+        return (calc_id, *sorted(available))
+    missing = sorted(equation_filter - available)
+    if missing:
+        raise FormulaLinkageError(
+            f"{calc_id}: equation_ids not in registry: {', '.join(missing)}"
+        )
+    ordered = [calc_id, *sorted(equation_filter)]
+    return tuple(dict.fromkeys(ordered))
 
 
 def _resolve_bindings(
-    bindings: dict[str, str],
+    bindings: dict[str, object],
     calculations: dict[str, dict[str, Any]],
 ) -> dict[str, tuple[str, ...]]:
     resolved: dict[str, tuple[str, ...]] = {}
-    for calculator_id, calculation_id in bindings.items():
+    for calculator_id, raw_target in bindings.items():
         if not isinstance(calculator_id, str) or not calculator_id.strip():
             raise FormulaLinkageError("binding key must be a non-empty calculator id")
-        if not isinstance(calculation_id, str) or not calculation_id.strip():
-            raise FormulaLinkageError(
-                f"{calculator_id}: bound calculation_id must be a non-empty string"
-            )
-        if calculation_id not in calculations:
-            raise FormulaLinkageError(f"unknown calculation_id: {calculation_id!r}")
         if calculator_id in resolved:
             raise FormulaLinkageError(
                 f"duplicate agent_api calculator id: {calculator_id!r}"
             )
-        resolved[calculator_id] = _formula_ids_for_row(calculations[calculation_id])
+        calculation_id, equation_filter = _parse_binding_target(
+            calculator_id,
+            raw_target,
+        )
+        if calculation_id not in calculations:
+            raise FormulaLinkageError(f"unknown calculation_id: {calculation_id!r}")
+        resolved[calculator_id] = _formula_ids_for_binding(
+            calculations[calculation_id],
+            equation_filter=equation_filter,
+        )
     return resolved
 
 
@@ -89,10 +142,7 @@ def _bindings_from_payloads(
     raw_bindings = bindings_payload.get("bindings")
     if not isinstance(raw_bindings, dict):
         raise FormulaLinkageError("bindings must be an object")
-    bindings = {
-        str(key): str(value) for key, value in raw_bindings.items() if value is not None
-    }
-    return _resolve_bindings(bindings, _calculations_index(registry_payload))
+    return _resolve_bindings(raw_bindings, _calculations_index(registry_payload))
 
 
 @lru_cache(maxsize=1)
