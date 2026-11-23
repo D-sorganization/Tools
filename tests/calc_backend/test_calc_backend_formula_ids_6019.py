@@ -16,6 +16,10 @@ from calc_backend.registry.formula_linkage import (
 from calc_backend.registry.store import registered_calculators
 from calc_backend.registry.wire import wire_calculator_registry
 
+_SYNTHETIC_INVENTORY_COMMIT = (  # noqa: E501
+    "916fb9f27f486486f0c071dcc6f15f81f68ecb18"  # pragma: allowlist secret
+)
+
 
 @pytest.fixture()
 def wired_registry() -> None:
@@ -106,8 +110,7 @@ def _synthetic_payloads() -> tuple[dict[str, object], dict[str, object]]:
         "manual_id": "tools",
         "repository": "D-sorganization/Tools",
         "release_status": "provisional",
-        # pragma: allowlist secret
-        "inventory_commit": "916fb9f27f486486f0c071dcc6f15f81f68ecb18",
+        "inventory_commit": _SYNTHETIC_INVENTORY_COMMIT,
         "blockers": [],
         "calculations": [
             {
