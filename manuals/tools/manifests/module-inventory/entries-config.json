@@ -248,6 +248,55 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 5211,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "29b10d25327094e17c351abb80d30ebe420e6a69b3fc66175e89232a6d335010",
+      "family": "repository-governance-non-calculation",
+      "id": "TOOLS-MODULE-CONFIG-EPIC-6019-ACCEPTANCE-CHECKLIST-JSON-1DE2AE41EC87",
+      "language": "json",
+      "maintainer": "Repository governance maintainers",
+      "path": "config/epic_6019_acceptance_checklist.json",
+      "purpose": null,
+      "review_status": "inventory-baseline",
+      "risk_tags": [],
+      "states": {
+        "adrs": "unavailable",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "mapped",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "unavailable",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [
+          "https://github.com/D-sorganization/Tools/issues/6019",
+          "https://github.com/D-sorganization/Tools/pull/6020",
+          "https://github.com/D-sorganization/Tools/pull/6021",
+          "https://github.com/D-sorganization/Tools/pull/6022",
+          "https://github.com/D-sorganization/Tools/pull/6151",
+          "https://github.com/D-sorganization/Tools/pull/6152"
+        ],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [],
+        "test_paths": [
+          "tests/calc_backend/test_epic_6019_acceptance_checklist.py"
+        ],
+        "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2793,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
