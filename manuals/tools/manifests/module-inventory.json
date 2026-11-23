@@ -99,8 +99,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-benchmarks.json"
     },
     {
-      "content_sha256_lf": "b197598700edcdb5b2da0720cab000973ee4b68f2b8f466cc0d65da03577ece2",
-      "entry_count": 10,
+      "content_sha256_lf": "990848587a15ae50d7d1efae60a4705b293cc23a15b0efecef11c04649a11dbc",
+      "entry_count": 11,
       "package": "config",
       "path": "manuals/tools/manifests/module-inventory/entries-config.json"
     },
@@ -117,7 +117,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-root.json"
     },
     {
-      "content_sha256_lf": "e9f46e2d7dab028076c96281199204fd0c51204b3eb37e4f4d57298ea1b721d6",
+      "content_sha256_lf": "dc7a3411779ac5c444deea83f6995faab3a1533fa6ec613cb31df135c043a8d4",
       "entry_count": 8,
       "package": "rust_core/ai_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
@@ -603,14 +603,14 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
     },
     {
-      "content_sha256_lf": "aa1240fbe1a019f67339576e0fe15e249b8437e2aecb4ed0621d076714cac455",
-      "entry_count": 129,
+      "content_sha256_lf": "b16164d3e006699dc7a195faa137b33b4099ae1f6d94b8dfe277b0a8e8cdb1c2",
+      "entry_count": 130,
       "package": "src/shared/python/ai",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-ai.json"
     },
     {
-      "content_sha256_lf": "0e3d446f5d127955ad17a6617823b0f4524b7299fc2d3c3cad3e145bf6bc5933",
-      "entry_count": 44,
+      "content_sha256_lf": "e868e4c9da75b3bf3f786c4922a52f757307e00705fe33078261b45706a2e499",
+      "entry_count": 45,
       "package": "src/shared/python/calc_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-calc-backend.json"
     },

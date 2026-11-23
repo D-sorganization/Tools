@@ -1,0 +1,132 @@
+{
+  "schema_id": "tools/epic-6019-acceptance-checklist",
+  "schema_version": 1,
+  "epic_url": "https://github.com/D-sorganization/Tools/issues/6019",
+  "epic_acceptance_source": "Issue #6019 epic acceptance section (2026-11-10)",
+  "overall_status": "open",
+  "status_counts": {
+    "proven": 4,
+    "open": 4
+  },
+  "items": [
+    {
+      "item_id": "6019-E1",
+      "requirement": "A stdio MCP server lists, describes, and runs the registered calculators.",
+      "status": "proven",
+      "evidence_files": [
+        "src/shared/python/calc_backend/mcp_server.py",
+        "tests/calc_backend/test_mcp_calculator_server_6021.py",
+        "tests/calc_backend/mcp_probe.py",
+        "scripts/run_agent_api_conformance.py"
+      ],
+      "pull_requests": [
+        "https://github.com/D-sorganization/Tools/pull/6020",
+        "https://github.com/D-sorganization/Tools/pull/6021"
+      ],
+      "gaps": []
+    },
+    {
+      "item_id": "6019-E2",
+      "requirement": "REST and MCP schemas come from one registry and a test proves they are identical.",
+      "status": "proven",
+      "evidence_files": [
+        "src/shared/python/calc_backend/registry/store.py",
+        "tests/calc_backend/test_mcp_registry_projection_parity_6019.py",
+        "tests/calc_backend/test_calculator_registry_contract.py",
+        "tests/calc_backend/test_calc_backend_openapi_stable.py"
+      ],
+      "pull_requests": [
+        "https://github.com/D-sorganization/Tools/pull/6020"
+      ],
+      "gaps": []
+    },
+    {
+      "item_id": "6019-E3",
+      "requirement": "The Repository_Management Fleet Agent API conformance template is green in Tools CI.",
+      "status": "proven",
+      "evidence_files": [
+        ".github/workflows/agent-api-conformance.yml",
+        "scripts/run_agent_api_conformance.py",
+        "config/fleet_agent_api_conformance/v1/template.json"
+      ],
+      "pull_requests": [
+        "https://github.com/D-sorganization/Tools/pull/6022"
+      ],
+      "gaps": []
+    },
+    {
+      "item_id": "6019-E4",
+      "requirement": "provenance.calculation_status mirrors the design-manual registry so MCP output never implies approval.",
+      "status": "proven",
+      "evidence_files": [
+        "src/shared/python/calc_backend/agent_api.py",
+        "tests/calc_backend/test_mcp_failure_provenance_6019.py",
+        "tests/calc_backend/test_mcp_calculator_server_6021.py"
+      ],
+      "pull_requests": [
+        "https://github.com/D-sorganization/Tools/pull/6021"
+      ],
+      "gaps": []
+    },
+    {
+      "item_id": "6019-E5",
+      "requirement": "Registered calculators with design-manual bindings expose matching formula_ids from calculation-registry.json (fail-loud on unknown ids).",
+      "status": "open",
+      "evidence_files": [
+        "manuals/tools/calculation-registry.json",
+        "tests/calc_backend/test_mcp_registry_projection_parity_6019.py"
+      ],
+      "pull_requests": [
+        "https://github.com/D-sorganization/Tools/pull/6152"
+      ],
+      "gaps": [
+        "Linkage mechanism pending merge (PR #6152); committed live bindings are empty until truthful TOOLS-CALC-* rows exist.",
+        "Synthetic contract tests prove resolution; production process calculators still expose empty formula_ids until bindings are populated."
+      ]
+    },
+    {
+      "item_id": "6019-E6",
+      "requirement": "describe_calculator() is the single source for MCP describe payloads including contract_version (no MCP-side patch).",
+      "status": "open",
+      "evidence_files": [
+        "tests/calc_backend/test_mcp_registry_projection_parity_6019.py",
+        "src/shared/python/calc_backend/mcp_server.py"
+      ],
+      "pull_requests": [
+        "https://github.com/D-sorganization/Tools/pull/6151"
+      ],
+      "gaps": [
+        "PR #6151 not on main; parity test still injects contract_version in expectations today.",
+        "Evidence test file lands with #6151."
+      ]
+    },
+    {
+      "item_id": "6019-E7",
+      "requirement": "Governance slice: register TOOLS-CALC-* process calculator rows in calculation-registry.json without breaking calculation_count == 1 and formula traceability gates.",
+      "status": "open",
+      "evidence_files": [
+        "manuals/tools/calculation-registry.json",
+        "tests/architecture/test_design_manual_governance_contract.py",
+        "tests/architecture/test_tools_formula_traceability_contract.py"
+      ],
+      "pull_requests": [],
+      "gaps": [
+        "Do not add provisional phantom rows in agent-API waves; requires a dedicated design-manual governance PR.",
+        "Until registered, agent_api_calculator_bindings.json must bind only semantically correct calculation/equation ids."
+      ]
+    },
+    {
+      "item_id": "6019-E8",
+      "requirement": "Epic #6019 acceptance checkboxes on the GitHub issue may be closed with evidence links.",
+      "status": "open",
+      "evidence_files": [
+        "config/epic_6019_acceptance_checklist.json",
+        "tests/calc_backend/test_epic_6019_acceptance_checklist.py"
+      ],
+      "pull_requests": [],
+      "gaps": [
+        "overall_status remains open until #6019-E5, #6019-E6, and #6019-E7 are proven and children PRs are merged."
+      ]
+    }
+  ]
+}

@@ -1574,6 +1574,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#6144 · Persist Is_Feasible in Saved Solutions and Branch the GUI Balance Warning and Summary on Feasibility, so Feasible ITERATION_LIMIT Runs Are No Longer Reported as COM Violations
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6144
+- **Branch:** claude/6144-persist-is-feasible
+- **PR:** #6147
+- **Paths:** see #6147
+- **Started:** 2026-11-22
+- **Last verified:** 2026-11-22 (`57d39841`; collated from changes/6144-persist-is-feasible-in-saved-solutions-a.md)
+- **Summary:** Persist is_feasible in saved solutions and branch the GUI balance warning and summary on feasibility, so feasible ITERATION_LIMIT runs are no longer reported as COM violations
+- **Next step:** Merge the PR.
+
 ### DL-#6145 · Copy NumPy Trajectory Arrays Unconditionally in ComparisonStore Snapshots to Ensure Bidirectional Isolation Across Writeable Flag Resets
 
 - **State:** shipped
@@ -2035,10 +2048,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #5684
 - **Branch:** merged via #6054
-- **PR:** #6054
+- **PR:** #6054, #6154
 - **Paths:** see #6054
 - **Started:** 2026-11-15
-- **Last verified:** 2026-11-15 (`ceb432ca`; collated from changes/5684-align-ai-backend-readme-and-onnx-preflig.md)
+- **Last verified:** 2026-11-23 (`4435c53b`; collated from changes/5684-rust-distribution-linux-truth.md)
 - **Summary:** Align ai_backend README and onnx preflight ort pin strings with Cargo.toml
 - **Next step:** Shipped in PR #6054.
 
@@ -2048,12 +2061,12 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #6019
 - **Branch:** merged via #6053
-- **PR:** #6053, #6143
+- **PR:** #6053, #6143, #6153, #6152
 - **Paths:** see #6053
 - **Started:** 2026-11-15
-- **Last verified:** 2026-11-22 (`3929a8ef`; collated from changes/6019-align-calculatorspec-catalog-worked-exam.md)
+- **Last verified:** 2026-11-23 (`c229fd3d`; collated from changes/6019-wire-calculatorspec-formula-ids-from-cal.md)
 - **Summary:** PR #6053 added registry-backed provenance.calculation_status to MCP FAILED envelopes (UD-PAIR UpstreamDrift#14976 for package calc_backend); PR #6143 aligned CalculatorSpec catalog worked examples and units with request contracts.
-- **Next step:** Both PRs are merged; complete any remaining #6019 registry acceptance.
+- **Next step:** Merge follow-up PRs #6151 and #6152; close epic when checklist is proven.
 
 ### DL-#6045 · Stabilize CLI Subprocess Timeout Tree-Kill Oracle and Windows Test Portability
 
@@ -3049,10 +3062,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #5727
 - **Branch:** merged via #5785
-- **PR:** #5785, #6042, #6039, #6043, #6055, #6062
+- **PR:** #5785, #6042, #6039, #6043, #6055, #6062, #6155
 - **Paths:** see #5785
 - **Started:** 2026-10-25
-- **Last verified:** 2026-11-18 (`8bda0028`; collated from changes/5727-prd-sidekick-request-to-action.md)
+- **Last verified:** 2026-11-23 (`6d5a1e64`; collated from changes/5727-cli-timeout-process-group.md)
 - **Summary:** Wire Antigravity (agy) CLI adapter to nonce-bound tool bridge and add AgenticAppHost protocol.
 - **Next step:** Shipped in PR #5785.
 
