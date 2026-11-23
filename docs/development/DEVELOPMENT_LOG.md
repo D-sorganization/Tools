@@ -2048,10 +2048,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #5684
 - **Branch:** merged via #6054
-- **PR:** #6054
+- **PR:** #6054, #6154
 - **Paths:** see #6054
 - **Started:** 2026-11-15
-- **Last verified:** 2026-11-15 (`ceb432ca`; collated from changes/5684-align-ai-backend-readme-and-onnx-preflig.md)
+- **Last verified:** 2026-11-23 (`4435c53b`; collated from changes/5684-rust-distribution-linux-truth.md)
 - **Summary:** Align ai_backend README and onnx preflight ort pin strings with Cargo.toml
 - **Next step:** Shipped in PR #6054.
 
@@ -3062,10 +3062,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #5727
 - **Branch:** merged via #5785
-- **PR:** #5785, #6042, #6039, #6043, #6055, #6062
+- **PR:** #5785, #6042, #6039, #6043, #6055, #6062, #6155
 - **Paths:** see #5785
 - **Started:** 2026-10-25
-- **Last verified:** 2026-11-18 (`8bda0028`; collated from changes/5727-prd-sidekick-request-to-action.md)
+- **Last verified:** 2026-11-23 (`6d5a1e64`; collated from changes/5727-cli-timeout-process-group.md)
 - **Summary:** Wire Antigravity (agy) CLI adapter to nonce-bound tool bridge and add AgenticAppHost protocol.
 - **Next step:** Shipped in PR #5785.
 
