@@ -5947,6 +5947,8 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-23 | #6152 | Wire CalculatorSpec formula_ids from calculation-registry agent_api bindings |
+| 2026-11-23 | #6153 | Executable epic #6019 acceptance checklist (JSON + contract tests). |
 | 2026-11-22 | #6147 | Persist is_feasible in saved solutions and branch the GUI balance warning and summary on feasibility, so feasible ITERATION_LIMIT runs are no longer reported as COM violations |
 | 2026-11-22 | #6146 | Copy NumPy trajectory arrays unconditionally in ComparisonStore snapshots to ensure bidirectional isolation across writeable flag resets |
 | 2026-11-22 | #6143 | Align CalculatorSpec catalog worked examples and units with request contracts (#6019) |
