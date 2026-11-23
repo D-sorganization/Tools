@@ -98,6 +98,7 @@ def test_invalid_inputs_rejected_by_both_projections(field: str, value: object) 
 
 def test_real_stdio_mcp_discovery_describe_and_run(repo_root: Path) -> None:
     """The real SDK must discover and execute the new registry entry."""
+    pytest.importorskip("mcp", reason="Optional calc-mcp extra is not installed")
     from mcp import ClientSession, StdioServerParameters
     from mcp.client.stdio import stdio_client
 
