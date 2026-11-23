@@ -11,6 +11,7 @@ from fastapi import APIRouter
 from pydantic import BaseModel
 
 from .catalog import CATALOG
+from .formula_linkage import load_agent_api_bindings
 from .spec import CalculatorSpec, FieldMetadata
 
 _BRACKET_UNITS_RE = re.compile(r"\[([^\]]+)\]\s*$")
@@ -194,6 +195,9 @@ def register_from_catalog(
     """Build a :class:`CalculatorSpec` from :mod:`catalog` and register it."""
     if catalog_id not in CATALOG:
         raise KeyError(f"unknown catalog id: {catalog_id!r}")
-    meta = CATALOG[catalog_id]
+    meta = dict(CATALOG[catalog_id])
+    bindings = load_agent_api_bindings()
+    if catalog_id in bindings:
+        meta["formula_ids"] = bindings[catalog_id]
     spec = CalculatorSpec(fn=fn, **meta)
     bind_calculator_route(spec, router=router)
