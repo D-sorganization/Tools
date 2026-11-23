@@ -267,10 +267,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8931,
+      "bytes_lf": 8992,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "4b008f08cf87e141b24ea5027f2e4ed3d7df607cdea5fa0fd78daca1edd3417f",
+      "content_sha256_lf": "6d031f7201d22bcca58ee412c7ea4ec18ef867e7d233e2157941a58a020bba0f",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-APP-PY-EA1FF1BC7C57",
       "language": "python",
@@ -345,6 +345,7 @@
           "tests/calc_backend/test_calc_backend_api.py",
           "tests/calc_backend/test_calc_backend_openapi_stable.py",
           "tests/calc_backend/test_calculator_registry_contract.py",
+          "tests/calc_backend/test_electrode_advancement_api.py",
           "tests/calc_backend/test_new_endpoints.py",
           "tests/calc_backend/test_rotation_converter_api.py",
           "tests/unit/test_syngas_water_nonfinite_oracle6.py"
@@ -676,6 +677,65 @@
           "kg",
           "s"
         ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 914,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f6c396557f9948cc8b020bce22f47dc63c714c06622f97f02651dc02e5f19905",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-CONTRACTS-ELECTRODE-ADVANCEMENT-PY-55A38C5D1C9A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/contracts/electrode_advancement.py",
+      "purpose": "Typed electrode consumption contract shared by REST and MCP.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ElectrodeAdvancementRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ElectrodeAdvancementResponse",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/process_calculators/test_electrode_advancement.py"
+        ],
+        "unit_mentions": [],
         "validation_paths": []
       }
     },
@@ -1705,7 +1765,8 @@
           }
         ],
         "test_paths": [
-          "tests/calc_backend/mcp_probe.py"
+          "tests/calc_backend/mcp_probe.py",
+          "tests/calc_backend/test_electrode_advancement_api.py"
         ],
         "unit_mentions": [
           "s"
@@ -2000,10 +2061,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 12939,
+      "bytes_lf": 13765,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "e3aea8259def12c0ecb1c138d96cc220b7d76b463d696df21292ab4b62fcf87a",
+      "content_sha256_lf": "c2313389b8111b4e060afe6b0482c99f6f5eaa0b0b40fd122f6e43662e9d1c61",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-REGISTRY-CATALOG-PY-F93F79962E77",
       "language": "python",
@@ -2301,6 +2362,7 @@
         "test_paths": [
           "tests/calc_backend/test_calc_backend_formula_ids_6019.py",
           "tests/calc_backend/test_calculator_registry_contract.py",
+          "tests/calc_backend/test_electrode_advancement_api.py",
           "tests/calc_backend/test_mcp_registry_projection_parity_6019.py"
         ],
         "unit_mentions": [
@@ -2313,10 +2375,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3189,
+      "bytes_lf": 3422,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "372b2e34a39e5ea2b552e2c68fd7aa61e83f9192337db87248468ed65954d1f9",
+      "content_sha256_lf": "acb2b560550a41b77431ffee88f3c814944f59b009b6a9b965633e41fcc9f61f",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-REGISTRY-WIRE-PY-876DE2B8B559",
       "language": "python",
@@ -2517,6 +2579,65 @@
           "src/shared/python/calc_backend/tests/test_calc_backend_gaps.py"
         ],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 1367,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "5bd5308fc77c9e665aea0cc8c7f382769b0936e7458b1a53f7358f90169e7506",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-ELECTRODE-ADVANCEMENT-PY-32D2E402E799",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/routers/electrode_advancement.py",
+      "purpose": "REST adapter for the existing linear electrode consumption engine.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "calculate_electrode_advancement",
+            "signature": "request: ElectrodeAdvancementRequest"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/process_calculators/test_electrode_advancement.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
         "validation_paths": []
       }
     },
