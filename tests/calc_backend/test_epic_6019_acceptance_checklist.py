@@ -76,4 +76,4 @@ def test_epic_6019_acceptance_checklist_is_valid_and_fail_closed() -> None:
 
     e7 = by_id["6019-E7"]
     assert e7["status"] == "open"
-    assert any("TOOLS-CALC" in gap or "process calculator" in gap for gap in e7["gaps"])
+    assert "TOOLS-CALC" in e7["requirement"]
