@@ -5947,6 +5947,8 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-23 | #6155 | Fix CLI timeout process-group kill via shared runner helper (#6023 C1). |
+| 2026-11-23 | #6154 | Truth up rust_distribution.md for Linux-only ai_backend wheel CI (#5684 slice docs). |
 | 2026-11-23 | #6152 | Wire CalculatorSpec formula_ids from calculation-registry agent_api bindings |
 | 2026-11-23 | #6153 | Executable epic #6019 acceptance checklist (JSON + contract tests). |
 | 2026-11-22 | #6147 | Persist is_feasible in saved solutions and branch the GUI balance warning and summary on feasibility, so feasible ITERATION_LIMIT runs are no longer reported as COM violations |
