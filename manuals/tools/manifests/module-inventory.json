@@ -705,7 +705,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-notes.json"
     },
     {
-      "content_sha256_lf": "80f74e0ccf4fe192321ecda091271684a43a082e5727eaf338d1ab67cb89bdbe",
+      "content_sha256_lf": "1af82bc7bec470ed817fa7bd9a66df807ff05cdeb2fc78e6d031317854ba2c00",
       "entry_count": 8,
       "package": "src/shared/python/plot_engine",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-plot-engine.json"
