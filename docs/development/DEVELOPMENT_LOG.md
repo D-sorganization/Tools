@@ -2152,10 +2152,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #6003
 - **Branch:** merged via #6012
-- **PR:** #6012, #6015, #6014, #6017
+- **PR:** #6012, #6015, #6014, #6017, #6163
 - **Paths:** see #6012
 - **Started:** 2026-11-10
-- **Last verified:** 2026-11-10 (`0cf7f77a`; collated from changes/6003-syngas-nonfinite-failure.md)
+- **Last verified:** 2026-11-24 (`5f7b1898`; collated from changes/6003-trendline-fit-method-provenance.md)
 - **Summary:** Add canonical lifecycle contract ADR, shared.python.lifecycle kernel, and syngas water boolean type checks
 - **Next step:** Shipped in PR #6012.
 
@@ -3062,10 +3062,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #5727
 - **Branch:** merged via #5785
-- **PR:** #5785, #6042, #6039, #6043, #6055, #6062, #6155
+- **PR:** #5785, #6042, #6039, #6043, #6055, #6062, #6155, #6162
 - **Paths:** see #5785
 - **Started:** 2026-10-25
-- **Last verified:** 2026-11-23 (`6d5a1e64`; collated from changes/5727-cli-timeout-process-group.md)
+- **Last verified:** 2026-11-24 (`975fec8e`; collated from changes/5727-probe-codex-exec-help-for-adapter-flags.md)
 - **Summary:** Wire Antigravity (agy) CLI adapter to nonce-bound tool bridge and add AgenticAppHost protocol.
 - **Next step:** Shipped in PR #5785.
 

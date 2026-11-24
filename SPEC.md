@@ -5947,6 +5947,8 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-24 | #6163 | TrendlineResult records fit_method; exponential curve_fit failure is logged and reported as log_linear_fallback instead of passing silently as a fit |
+| 2026-11-24 | #6162 | Probe Codex exec help for adapter flags, opt in per-provider live qualification, and use a portable temporary-directory fixture |
 | 2026-11-24 | #6151 | Registry describe includes contract_version; epic 6019 acceptance contract tests |
 | 2026-11-23 | #6158 | Maturin run summary lists native Windows/macOS ai_backend wheels as OPEN blockers instead of omitting them. |
 | 2026-11-23 | #6155 | Fix CLI timeout process-group kill via shared runner helper (#6023 C1). |
