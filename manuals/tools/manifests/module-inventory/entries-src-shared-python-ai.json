@@ -1116,6 +1116,7 @@
           }
         ],
         "test_paths": [
+          "tests/unit/ai/adapters/test_cli_subprocess_termination_windows_6167.py",
           "tests/unit/ai/adapters/test_cli_subprocess_timeout_process_group_6023.py"
         ],
         "unit_mentions": [
