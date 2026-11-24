@@ -597,19 +597,19 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "3451c2d04d7c6db21d95958bfb812fb2314d6d311d3f53f422adb205af6c882b",
+      "content_sha256_lf": "2c0a0900188960a318db0dc80236fd8b1a838917f75fee03b387fa0c811f329c",
       "entry_count": 10,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
     },
     {
-      "content_sha256_lf": "b16164d3e006699dc7a195faa137b33b4099ae1f6d94b8dfe277b0a8e8cdb1c2",
+      "content_sha256_lf": "40f88205ca96486c2913ad93306b27aee8109ebcc5737df3c9f24f9f9aafc011",
       "entry_count": 130,
       "package": "src/shared/python/ai",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-ai.json"
     },
     {
-      "content_sha256_lf": "0912050a0a70d67e2986fa7c57a8a9b4314ba9c0f438679e56010c8665a88f85",
+      "content_sha256_lf": "8a1bb5b47fbf819ff08c0d8c6c66a3caca8e215cd67e13bbb1d53362713c15c8",
       "entry_count": 45,
       "package": "src/shared/python/calc_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-calc-backend.json"
