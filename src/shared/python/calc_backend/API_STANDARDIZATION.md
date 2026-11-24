@@ -36,7 +36,7 @@ from upstream_drift_tools.api import (
 response = StandardResponse.success(
     data={"result": 123.4, "status": "ok"},
     processing_time_ms=125.0,
-    request_id="req-12345"  # optional, auto-generated if not provided
+    request_id="req-12345",  # optional, auto-generated if not provided
 )
 ```
 
@@ -48,10 +48,7 @@ error = ErrorDetail(
     message="Validation failed",
     details={"field": "pipe_diameter_m", "reason": "must be > 0"},
 )
-response = StandardResponse.error(
-    error=error,
-    processing_time_ms=50.0
-)
+response = StandardResponse.error(error=error, processing_time_ms=50.0)
 ```
 
 ## Pressure Drop API Example
@@ -154,6 +151,7 @@ from upstream_drift_tools.api import StandardResponse, ErrorDetail, ErrorCode
 from calc_backend.models.pressure_drop import PressureDropRequest, PressureDropResponse
 
 router = APIRouter(prefix="/api/calc/pressure-drop", tags=["pressure-drop"])
+
 
 @router.post("")
 def calculate_pressure_drop(request: PressureDropRequest) -> dict[str, Any]:
