@@ -204,7 +204,9 @@ repos:
         types_or: [yaml, markdown, json]
         # The module manifest has a deterministic Python serializer; another
         # formatter would make the immediately preceding freshness gate stale.
-        exclude: '(\.py|\.m|\.qmd|package-lock\.json|\.ipynb|manuals/tools/manifests/module-inventory(?:\.json|/.*\.json))$'
+        # The calc_backend OpenAPI baseline is compact json.dumps output that
+        # test_calc_backend_openapi_stable compares byte-for-byte.
+        exclude: '(\.py|\.m|\.qmd|package-lock\.json|\.ipynb|manuals/tools/manifests/module-inventory(?:\.json|/.*\.json)|tests/calc_backend/fixtures/calc_backend_openapi_baseline\.v1\.json)$'
 
   # -------------------------------------------------------------------------
   # Stage 4: Pre-push Hooks (Slower - PYTHON FILES ONLY)

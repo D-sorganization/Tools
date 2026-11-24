@@ -20,6 +20,9 @@ from ..routers.ode_solver import router as ode_router
 from ..routers.ode_solver import solve_ode
 from ..routers.pressure_drop import calculate_pressure_drop
 from ..routers.pressure_drop import router as pressure_router
+from ..routers.pressure_drop_v2 import calculate_pressure_drop as calculate_pressure_v2
+from ..routers.pressure_drop_v2 import router as pressure_v2_router
+from ..routers.pressure_drop_v2 import validate_request as validate_pressure_v2
 from ..routers.rotation_converter import (
     compute_reference_frame_conversion,
     compute_rotation,
@@ -56,6 +59,8 @@ def wire_calculator_registry() -> None:
         ("flow-rate", flow_rate_router, convert_flow_rate),
         ("ode-solver", ode_router, solve_ode),
         ("pressure-drop", pressure_router, calculate_pressure_drop),
+        ("pressure-drop-v2", pressure_v2_router, calculate_pressure_v2),
+        ("pressure-drop-v2-validate", pressure_v2_router, validate_pressure_v2),
         ("rotation-converter", rotation_router, compute_rotation),
         (
             "rotation-reference-frame",
