@@ -44,3 +44,7 @@ docs/scada/f_matrix.md
 # Prettier rewrites this protocol's `____` signature blanks into bold
 # asterisk runs, which changes what the page renders.
 docs/development/rate-visualization-at-protocol.md
+
+# OpenAPI baseline is byte-compared against compact sorted JSON in
+# tests/calc_backend/test_calc_backend_openapi_stable.py; reformatting breaks it.
+tests/calc_backend/fixtures/calc_backend_openapi_baseline.v1.json
