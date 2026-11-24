@@ -202,6 +202,9 @@ repos:
       - id: prettier
         name: "prettier (yaml/json/md)"
         types_or: [yaml, markdown, json]
+        # Commit time only: at pre-push it would reformat files from every
+        # commit in the pushed range (including main's), failing rebased pushes.
+        stages: [pre-commit]
         # The module manifest has a deterministic Python serializer; another
         # formatter would make the immediately preceding freshness gate stale.
         # DEVELOPMENT_LOG.md is written by collate-changes.yml and compared to

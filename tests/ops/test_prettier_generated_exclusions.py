@@ -12,7 +12,7 @@ import yaml
 _REPO_ROOT = Path(__file__).resolve().parents[2]
 
 
-def _prettier_exclude() -> re.Pattern[str]:
+def _prettier_hook() -> dict[str, Any]:
     config = cast(
         dict[str, Any],
         yaml.safe_load(
@@ -22,8 +22,17 @@ def _prettier_exclude() -> re.Pattern[str]:
     for repo in config["repos"]:
         for hook in repo.get("hooks", []):
             if hook.get("id") == "prettier":
-                return re.compile(cast(str, hook["exclude"]))
+                return cast(dict[str, Any], hook)
     raise AssertionError("prettier hook is missing")
+
+
+def _prettier_exclude() -> re.Pattern[str]:
+    return re.compile(cast(str, _prettier_hook()["exclude"]))
+
+
+def test_prettier_runs_only_at_commit_time() -> None:
+    """At pre-push, prettier would rewrite other commits' files in the range."""
+    assert _prettier_hook().get("stages") == ["pre-commit"]
 
 
 @pytest.mark.parametrize(
