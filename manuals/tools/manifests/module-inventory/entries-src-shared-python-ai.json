@@ -1050,10 +1050,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3231,
+      "bytes_lf": 4430,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "95a407117f07b63d487d3971c38709d092ee89ba1e984eb368d5eda9e09ba7a4",
+      "content_sha256_lf": "64318614b9b4a02c492b98eeeff72e38ee72594a3cff8210246c89d463b365db",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-AI-ADAPTERS-CLI-SUBPROCESS-TERMINATION-PY-21F015F95243",
       "language": "python",
@@ -1075,7 +1075,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
+        "units": "mapped",
         "validation": "not-applicable"
       },
       "traceability": {
@@ -1095,6 +1095,11 @@
             "signature": null
           },
           {
+            "kind": "constant",
+            "name": "_TASKKILL_PROCESS_NOT_FOUND",
+            "signature": null
+          },
+          {
             "kind": "function",
             "name": "cli_subprocess_pid_from_error",
             "signature": "exc: BaseException | None"
@@ -1111,9 +1116,12 @@
           }
         ],
         "test_paths": [
+          "tests/unit/ai/adapters/test_cli_subprocess_termination_windows_6167.py",
           "tests/unit/ai/adapters/test_cli_subprocess_timeout_process_group_6023.py"
         ],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "s"
+        ],
         "validation_paths": []
       }
     },
