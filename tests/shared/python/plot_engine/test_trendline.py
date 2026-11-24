@@ -162,3 +162,44 @@ def test_private_fit_helpers_validate_x() -> None:
             np.array([1.0, 2.0]),
             degree=1,
         )
+
+
+# --- #6003 result convention: a fit never hides which method produced it ---
+
+
+def test_exponential_fit_reports_least_squares_when_curve_fit_converges() -> None:
+    x = np.array([0.0, 1.0, 2.0, 3.0])
+    y = 2.0 * np.exp(0.25 * x)
+
+    result = compute_trendline(x, y, trend_type="exponential", n_points=3)
+
+    assert result.fit_method == "least_squares"
+
+
+def test_exponential_fallback_is_reported_and_logged(
+    monkeypatch: pytest.MonkeyPatch, caplog: pytest.LogCaptureFixture
+) -> None:
+    def raise_runtime_error(*_args: object, **_kwargs: object) -> tuple[object, object]:
+        raise RuntimeError("Optimal parameters not found")
+
+    monkeypatch.setattr(trendline_module, "curve_fit", raise_runtime_error)
+    x = np.array([0.0, 1.0, 2.0])
+    y = 2.0 * np.exp(0.25 * x)
+
+    with caplog.at_level("WARNING", logger=trendline_module.__name__):
+        result = compute_trendline(x, y, trend_type="exponential", n_points=3)
+
+    assert result.fit_method == "log_linear_fallback"
+    assert "Optimal parameters not found" in caplog.text
+    # Coefficients stay the documented log-linear estimate (behaviour unchanged).
+    assert result.coefficients == pytest.approx([2.0, 0.25])
+
+
+@pytest.mark.parametrize("trend_type", ["linear", "polynomial", "power"])
+def test_closed_form_trendlines_report_closed_form(trend_type: str) -> None:
+    x = np.array([1.0, 2.0, 3.0, 4.0])
+    y = np.array([2.0, 4.1, 5.9, 8.2])
+
+    result = compute_trendline(x, y, trend_type=trend_type, n_points=4)  # type: ignore[arg-type]
+
+    assert result.fit_method == "closed_form"
