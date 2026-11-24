@@ -39,6 +39,7 @@ def _build_report() -> dict[str, Any]:
                 spec.provider,
                 spec.binary_name,
                 spec.required_help_flags,
+                help_subcommand=spec.help_subcommand,
             )
         )
         for spec in DEFAULT_CLI_DISCOVERY_SPECS

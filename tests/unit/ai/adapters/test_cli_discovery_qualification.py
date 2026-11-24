@@ -193,7 +193,7 @@ def test_default_discovery_specs_cover_all_three_subscription_clis() -> None:
     by_provider = {spec.provider: spec for spec in DEFAULT_CLI_DISCOVERY_SPECS}
     assert isinstance(by_provider["codex_cli"], CliDiscoverySpec)
     assert "--skip-git-repo-check" in by_provider["codex_cli"].required_help_flags
-    assert "--skip-trust" in by_provider["agy"].required_help_flags
+    assert by_provider["agy"].required_help_flags == ("-p", "--model")
 
 
 @pytest.mark.parametrize("subcommand", ["", "-p", "exec --help", "exec\n"])
