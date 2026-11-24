@@ -155,6 +155,37 @@ def test_probe_detects_unsupported_required_flags(tmp_path: Path) -> None:
     assert "--skip-trust" in result.detail
 
 
+def test_probe_checks_subcommand_help_without_a_model_call(tmp_path: Path) -> None:
+    """Codex exec flags live in exec help, never in a prompt invocation."""
+    exe = _create_fake_cli_script(
+        tmp_path,
+        "codex",
+        (
+            "import sys\n"
+            "args = sys.argv[1:]\n"
+            "if args == ['--version']:\n"
+            "    print('codex 1.0.0')\n"
+            "elif args == ['exec', '--help']:\n"
+            "    print('Usage: codex exec --skip-git-repo-check --model')\n"
+            "elif args == ['--help']:\n"
+            "    print('Usage: codex exec --model')\n"
+            "else:\n"
+            "    sys.exit(19)\n"
+        ),
+    )
+    spec = next(s for s in DEFAULT_CLI_DISCOVERY_SPECS if s.provider == "codex_cli")
+    assert spec.help_subcommand == "exec"
+    result = probe_cli_provider_discovery(
+        provider=spec.provider,
+        binary_path=exe,
+        required_help_flags=spec.required_help_flags,
+        help_subcommand=spec.help_subcommand,
+    )
+    assert result.probe_ok, result.detail
+    assert result.flags_accepted
+    assert result.missing_flags == ()
+
+
 def test_default_discovery_specs_cover_all_three_subscription_clis() -> None:
     """Discovery matrix defines specs for claude_code, codex_cli, and agy."""
     providers = {spec.provider for spec in DEFAULT_CLI_DISCOVERY_SPECS}
@@ -165,9 +196,18 @@ def test_default_discovery_specs_cover_all_three_subscription_clis() -> None:
     assert "--skip-trust" in by_provider["agy"].required_help_flags
 
 
-def test_detect_forbidden_api_key_env_and_qualification_validation() -> None:
+@pytest.mark.parametrize("subcommand", ["", "-p", "exec --help", "exec\n"])
+def test_probe_rejects_invalid_help_subcommand(subcommand: str) -> None:
+    """Reject malformed commands before resolving or launching any binary."""
+    with pytest.raises(ValueError, match="one non-option command token"):
+        probe_cli_provider_discovery("codex_cli", "missing", help_subcommand=subcommand)
+
+
+def test_detect_forbidden_api_key_env_and_qualification_validation(
+    tmp_path: Path,
+) -> None:
     """Qualification records using an API key env var or invalid fields fail."""
-    clean_env = {"PATH": "/usr/bin", "HOME": "/tmp"}
+    clean_env = {"PATH": os.defpath, "HOME": str(tmp_path)}
     assert detect_forbidden_api_key_env(clean_env) == ()
 
     dirty_env = {
@@ -209,26 +249,27 @@ def test_detect_forbidden_api_key_env_and_qualification_validation() -> None:
     assert any("used_api_key_env" in reason for reason in reasons_flagged)
 
 
-def test_tier2_installed_cli_discovery_no_model_call() -> None:
-    """Optional Tier-2 check verifies --version/--help on any locally installed CLI."""
+@pytest.mark.skipif(
+    os.environ.get("TOOLS_RUN_LIVE_CLI_DISCOVERY") != "1",
+    reason="Set TOOLS_RUN_LIVE_CLI_DISCOVERY=1 for host CLI qualification",
+)
+@pytest.mark.parametrize(
+    "spec", DEFAULT_CLI_DISCOVERY_SPECS, ids=lambda spec: spec.provider
+)
+def test_tier2_installed_cli_discovery_no_model_call(spec: CliDiscoverySpec) -> None:
+    """Opt-in Tier-2 host check; incompatible installed CLIs must fail qualification."""
     import shutil
 
-    checked = 0
-    for spec in DEFAULT_CLI_DISCOVERY_SPECS:
-        found = shutil.which(spec.binary_name)
-        if not found:
-            continue
-        checked += 1
-        result = probe_cli_provider_discovery(
-            provider=spec.provider,
-            binary_path=found,
-            required_help_flags=spec.required_help_flags,
-        )
-        assert isinstance(result, CliDiscoveryProbeResult)
-        assert result.resolved_path == found
-        assert result.probe_ok, f"{spec.provider} failed discovery: {result.detail}"
-        assert result.flags_accepted, (
-            f"{spec.provider} missing flags: {result.missing_flags}"
-        )
-    if checked == 0:
-        pytest.skip("No live subscription CLI binaries on PATH in this environment")
+    found = shutil.which(spec.binary_name)
+    if not found:
+        pytest.skip(f"No {spec.binary_name} binary on PATH in this environment")
+    result = probe_cli_provider_discovery(
+        provider=spec.provider,
+        binary_path=found,
+        required_help_flags=spec.required_help_flags,
+        help_subcommand=spec.help_subcommand,
+    )
+    assert isinstance(result, CliDiscoveryProbeResult)
+    assert result.resolved_path == found
+    assert result.probe_ok, f"{spec.provider} failed discovery: {result.detail}"
+    assert result.flags_accepted, str(result.missing_flags)
