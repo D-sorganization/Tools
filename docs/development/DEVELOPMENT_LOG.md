@@ -1574,6 +1574,32 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#6171 · Run Prettier Only at Commit Time and Exclude the Collated DEVELOPMENT_LOG.md so Rebased Pushes and the Baselines Contract Stop Breaking
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6171
+- **Branch:** claude/6171-prettier-devlog-exclude
+- **PR:** #6172
+- **Paths:** see #6172
+- **Started:** 2026-11-25
+- **Last verified:** 2026-11-25 (`bcaea604`; collated from changes/6171-exclude-the-collated-development-log-md.md)
+- **Summary:** Run prettier only at commit time and exclude the collated DEVELOPMENT_LOG.md so rebased pushes and the baselines contract stop breaking
+- **Next step:** Independent exact-head review, then arm.
+
+### DL-#6167 · Surface Windows Taskkill Failures in Cli_Subprocess_Termination and Verify the Child Exited After a Forced Kill
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6167
+- **Branch:** claude/6167-taskkill-failures
+- **PR:** #6175
+- **Paths:** see #6175
+- **Started:** 2026-11-25
+- **Last verified:** 2026-11-25 (`f7d6a6bd`; collated from changes/6167-surface-windows-taskkill-failures.md)
+- **Summary:** Surface Windows taskkill failures in cli_subprocess_termination and verify the child exited after a forced kill
+- **Next step:** Independent exact-head review, then arm.
+
 ### DL-#6144 · Persist Is_Feasible in Saved Solutions and Branch the GUI Balance Warning and Summary on Feasibility, so Feasible ITERATION_LIMIT Runs Are No Longer Reported as COM Violations
 
 - **State:** shipped
@@ -2061,12 +2087,12 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #6019
 - **Branch:** merged via #6053
-- **PR:** #6053, #6143, #6153, #6152, #6151
+- **PR:** #6053, #6143, #6153, #6152, #6151, #6161
 - **Paths:** see #6053
 - **Started:** 2026-11-15
-- **Last verified:** 2026-11-24 (`845ecd73`; collated from changes/6019-registry-describe-includes-contract-vers.md)
+- **Last verified:** 2026-11-25 (`be1393a5`; collated from changes/6019-expose-water-saturation-vapor-pressure-i.md)
 - **Summary:** PR #6053 added registry-backed provenance.calculation_status to MCP FAILED envelopes (UD-PAIR UpstreamDrift#14976 for package calc_backend); PR #6143 aligned CalculatorSpec catalog worked examples and units with request contracts.
-- **Next step:** Merge follow-up PRs #6151 and #6152; close epic when checklist is proven.
+- **Next step:** Independent review; leave PR unarmed per owner instruction.
 
 ### DL-#6045 · Stabilize CLI Subprocess Timeout Tree-Kill Oracle and Windows Test Portability
 
