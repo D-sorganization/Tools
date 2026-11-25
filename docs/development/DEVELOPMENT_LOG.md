@@ -2087,10 +2087,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #6019
 - **Branch:** merged via #6053
-- **PR:** #6053, #6143, #6153, #6152, #6151, #6161
+- **PR:** #6053, #6143, #6153, #6152, #6151, #6161, #6165
 - **Paths:** see #6053
 - **Started:** 2026-11-15
-- **Last verified:** 2026-11-25 (`be1393a5`; collated from changes/6019-expose-water-saturation-vapor-pressure-i.md)
+- **Last verified:** 2026-11-25 (`07f48b77`; collated from changes/6019-baghouse-mcp-acceptance.md)
 - **Summary:** PR #6053 added registry-backed provenance.calculation_status to MCP FAILED envelopes (UD-PAIR UpstreamDrift#14976 for package calc_backend); PR #6143 aligned CalculatorSpec catalog worked examples and units with request contracts.
 - **Next step:** Independent review; leave PR unarmed per owner instruction.
 
