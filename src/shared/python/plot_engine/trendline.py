@@ -9,16 +9,26 @@ Extracted from data_processor/core/signal_processing.py for DRY reuse.
 
 from __future__ import annotations
 
+import logging
 from dataclasses import dataclass, field
 from typing import Literal
 
 import numpy as np
 from scipy.optimize import curve_fit
 
+logger = logging.getLogger(__name__)
+
+FitMethod = Literal["closed_form", "least_squares", "log_linear_fallback"]
+
 
 @dataclass
 class TrendlineResult:
-    """Result of a trendline computation."""
+    """Result of a trendline computation.
+
+    ``fit_method`` has no default so a result cannot hide how it was produced:
+    ``closed_form`` (polyfit), ``least_squares`` (``curve_fit`` converged) or
+    ``log_linear_fallback`` (``curve_fit`` failed; log-space estimate returned).
+    """
 
     trend_type: str
     coefficients: list[float]
@@ -26,6 +36,7 @@ class TrendlineResult:
     r_squared: float
     x_pred: np.ndarray = field(repr=False)
     y_pred: np.ndarray = field(repr=False)
+    fit_method: FitMethod
 
 
 def compute_trendline(
@@ -105,6 +116,7 @@ def _linear(x: np.ndarray, y: np.ndarray, x_pred: np.ndarray) -> TrendlineResult
         r_squared=r2,
         x_pred=x_pred,
         y_pred=y_pred,
+        fit_method="closed_form",
     )
 
 
@@ -143,6 +155,7 @@ def _polynomial(
         r_squared=r2,
         x_pred=x_pred,
         y_pred=y_pred,
+        fit_method="closed_form",
     )
 
 
@@ -165,11 +178,18 @@ def _exponential(x: np.ndarray, y: np.ndarray, x_pred: np.ndarray) -> TrendlineR
         result: np.ndarray = a * np.exp(b * xv)
         return result
 
+    fit_method: FitMethod = "least_squares"
     try:
         popt, _ = curve_fit(exp_func, x_pos, y_pos, p0=[a_init, b_init], maxfev=5000)
         a, b = popt
-    except RuntimeError:
+    except RuntimeError as exc:
+        logger.warning(
+            "Exponential curve_fit did not converge (%s); "
+            "using the log-linear estimate instead",
+            exc,
+        )
         a, b = a_init, b_init
+        fit_method = "log_linear_fallback"
 
     y_fit = exp_func(x_pos, a, b)
     y_pred_arr = exp_func(x_pred, a, b)
@@ -184,6 +204,7 @@ def _exponential(x: np.ndarray, y: np.ndarray, x_pred: np.ndarray) -> TrendlineR
         r_squared=r2,
         x_pred=x_pred,
         y_pred=y_pred_arr,
+        fit_method=fit_method,
     )
 
 
@@ -217,4 +238,5 @@ def _power(x: np.ndarray, y: np.ndarray, x_pred: np.ndarray) -> TrendlineResult:
         r_squared=r2,
         x_pred=x_pred_pos,
         y_pred=y_pred_arr,
+        fit_method="closed_form",
     )

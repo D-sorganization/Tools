@@ -4438,10 +4438,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 11192,
+      "bytes_lf": 12989,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "0fac63297ebc9245b9b29150a9c634bb4e9b3ab7eaf02a712e9c96748c12cbac",
+      "content_sha256_lf": "98ec93f0b5b87f1f5e8123148b9cb5bc1c7a7e92a6763cd2cb9a40436ba52284",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-MODEL-GENERATION-LIBRARY-CACHE-PY-453BD54FF773",
       "language": "python",
@@ -4463,7 +4463,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "not-applicable",
+        "units": "mapped",
         "validation": "not-applicable"
       },
       "traceability": {
@@ -4495,9 +4495,12 @@
         ],
         "test_paths": [
           "src/document_processing/pdf_renamer/tests/test_cache.py",
-          "src/shared/python/model_generation/tests/test_library.py"
+          "src/shared/python/model_generation/tests/test_library.py",
+          "tests/unit/test_model_cache_capacity.py"
         ],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "s"
+        ],
         "validation_paths": []
       }
     },

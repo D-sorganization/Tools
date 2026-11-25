@@ -41,6 +41,35 @@ def sample_file(tmp_path):
     return str(file_path)
 
 
+@pytest.mark.parametrize("field", ["min_file_size", "max_file_size"])
+@pytest.mark.parametrize("invalid", ["NaN", "inf", "-inf", "1e309"])
+def test_size_input_validation_rejects_nonfinite_bound(
+    app: DummyApp, field: str, invalid: str
+) -> None:
+    """Invalid bounds remain visible for correction instead of becoming defaults."""
+    app.min_file_size.set("0")
+    app.max_file_size.set("1")
+    getattr(app, field).set(invalid)
+    with patch("folder_tool.file_validation.messagebox") as feedback:
+        assert not app.validate_size_inputs()
+    assert getattr(app, field).get() == invalid
+    feedback.showerror.assert_called_once()
+
+
+@pytest.mark.parametrize("field", ["min_file_size", "max_file_size"])
+@pytest.mark.parametrize("invalid", ["NaN", "inf", "-inf", "1e309"])
+def test_file_filter_repeatedly_rejects_nonfinite_bound(
+    app: DummyApp, sample_file: str, field: str, invalid: str
+) -> None:
+    """Reject every file while a bound is invalid; never silently broaden it."""
+    app.min_file_size.set("0")
+    app.max_file_size.set("1")
+    getattr(app, field).set(invalid)
+    assert not app.validate_file_filters(sample_file)
+    assert not app.validate_file_filters(sample_file)
+    assert getattr(app, field).get() == invalid
+
+
 class TestFileValidation:
     def test_validate_file_filters_cancel(self, app, sample_file):
         app.cancel_operation = True

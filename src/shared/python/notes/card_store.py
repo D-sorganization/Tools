@@ -111,12 +111,12 @@ class NoteCardStore:
         note_id: str,
         reason: str = "manual_delete",
     ) -> RecycledNoteItem:
-        """Move a note markdown file to the recycle bin."""
+        """Move a note to a uniquely identified, independently restorable snapshot."""
         path = self._note_path(note_id)
         if not path.exists():
             raise FileNotFoundError("note card does not exist")
         timestamp = _timestamp(compact=True)
-        item_id = f"{timestamp}_{note_id}"
+        item_id = f"{timestamp}_{uuid4().hex}_{note_id}"
         self.recycle_bin_dir.mkdir(parents=True, exist_ok=True)
         recycle_path = self.recycle_bin_dir / f"{item_id}.md"
         shutil.move(str(path), str(recycle_path))
@@ -149,6 +149,7 @@ class NoteCardStore:
         items = [
             item for item in self._read_index() if item.path.lower().endswith(".md")
         ]
+        items.reverse()
         items.sort(key=lambda item: item.deleted_at, reverse=True)
         return items[0].item_id if items else None
 

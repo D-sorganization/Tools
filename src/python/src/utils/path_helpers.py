@@ -66,6 +66,17 @@ def get_relative_path(from_path: Path | str, to_path: Path | str) -> Path:
         return to_p
 
 
+def _find_ancestor_match(name: str, start: Path, *, directory: bool) -> Path | None:
+    """Search the resolved start and all parents, including the root."""
+    current = start.resolve()
+    for ancestor in (current, *current.parents):
+        candidate = ancestor / name
+        matches = candidate.is_dir() if directory else candidate.is_file()
+        if matches:
+            return candidate
+    return None
+
+
 def find_nearest_file(
     filename: str, start_path: Path | str | None = None
 ) -> Path | None:
@@ -82,18 +93,7 @@ def find_nearest_file(
         raise ValueError("filename must be provided")
     start_path = Path.cwd() if start_path is None else Path(start_path)
 
-    current = start_path.resolve()
-    max_depth = 20
-    depth = 0
-
-    while current != current.parent and depth < max_depth:
-        candidate = current / filename
-        if candidate.exists() and candidate.is_file():
-            return candidate
-        current = current.parent
-        depth += 1
-
-    return None
+    return _find_ancestor_match(filename, start_path, directory=False)
 
 
 def find_nearest_dir(dirname: str, start_path: Path | str | None = None) -> Path | None:
@@ -110,18 +110,7 @@ def find_nearest_dir(dirname: str, start_path: Path | str | None = None) -> Path
         raise ValueError("dirname must be provided")
     start_path = Path.cwd() if start_path is None else Path(start_path)
 
-    current = start_path.resolve()
-    max_depth = 20
-    depth = 0
-
-    while current != current.parent and depth < max_depth:
-        candidate = current / dirname
-        if candidate.exists() and candidate.is_dir():
-            return candidate
-        current = current.parent
-        depth += 1
-
-    return None
+    return _find_ancestor_match(dirname, start_path, directory=True)
 
 
 def normalize_path(path: Path | str) -> Path:

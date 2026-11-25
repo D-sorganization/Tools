@@ -44,9 +44,11 @@ def _resolve_absolute_candidate(candidate: str | os.PathLike[str]) -> str | None
         return None
     try:
         resolved = path.resolve(strict=True)
-    except OSError:
+    except (OSError, RuntimeError):
         return None
     if not resolved.is_file():
+        return None
+    if os.name != "nt" and not os.access(resolved, os.X_OK):
         return None
     return str(resolved)
 
@@ -54,7 +56,10 @@ def _resolve_absolute_candidate(candidate: str | os.PathLike[str]) -> str | None
 def resolve_trusted_git_executable(
     env: Mapping[str, str] | None = None,
 ) -> str | None:
-    """Return a trusted absolute Git executable path, or ``None``."""
+    """Return a trusted absolute Git executable path, or ``None``.
+
+    POSIX candidates must have execute permission.
+    """
     environment = os.environ if env is None else env
 
     override = environment.get(TRUSTED_GIT_ENV_VAR)

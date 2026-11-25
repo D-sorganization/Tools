@@ -462,10 +462,12 @@ def ProjectToSO3(mat: Any) -> np.ndarray:
                   [-0.63218672,  0.61642804,  0.46942137]])
     """
     U, s, Vh = np.linalg.svd(mat)
+    if np.linalg.det(np.dot(U, Vh)) < 0:
+        # Reflection: flip the singular vector of the smallest singular value
+        # (U @ diag(1, 1, -1) @ Vh), the nearest rotation; negating a column of
+        # U @ Vh instead gives a rotation that can be far from mat.
+        U[:, 2] = -U[:, 2]
     R = np.dot(U, Vh)
-    if np.linalg.det(R) < 0:
-        # In this case the result may be far from mat.
-        R[:, 2] = -R[:, 2]
     return R
 
 

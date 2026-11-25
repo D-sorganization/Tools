@@ -32,6 +32,10 @@ pytest.importorskip("sqlmodel")
 pytest.importorskip("httpx")
 fastapi_testclient = pytest.importorskip("fastapi.testclient")
 
+_EXTERNAL_OPTIONAL_DEPS = frozenset(
+    {"fastapi", "sqlmodel", "httpx", "pydantic", "starlette"}
+)
+
 try:
     import main  # type: ignore[import-not-found]
     import project_import  # type: ignore[import-not-found]
@@ -42,10 +46,13 @@ try:
         TagDefinitionDb,
     )
 except ModuleNotFoundError as exc:  # pragma: no cover - environment-dependent
-    # Only a genuinely missing module skips this suite. A NameError /
-    # SyntaxError / ImportError inside main.py or models.py is a real defect
-    # in the security-critical backend and must fail loudly, not silently
-    # skip the entire auth/zip-bomb suite (issue #3745).
+    # Only a genuinely missing external dependency skips this suite. A
+    # NameError / SyntaxError / ImportError or internal ModuleNotFoundError
+    # inside main.py or models.py is a real defect in the security-critical
+    # backend and must fail loudly, not silently skip (issue #3745).
+    root_pkg = (exc.name or "").split(".", 1)[0]
+    if root_pkg not in _EXTERNAL_OPTIONAL_DEPS:
+        raise
     pytest.skip(
         f"P1AM backend not importable in this environment: {exc}",
         allow_module_level=True,

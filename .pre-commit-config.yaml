@@ -202,9 +202,15 @@ repos:
       - id: prettier
         name: "prettier (yaml/json/md)"
         types_or: [yaml, markdown, json]
+        # Commit time only: at pre-push it would reformat files from every
+        # commit in the pushed range (including main's), failing rebased pushes.
+        stages: [pre-commit]
         # The module manifest has a deterministic Python serializer; another
         # formatter would make the immediately preceding freshness gate stale.
-        exclude: '(\.py|\.m|\.qmd|package-lock\.json|\.ipynb|manuals/tools/manifests/module-inventory(?:\.json|/.*\.json))$'
+        # DEVELOPMENT_LOG.md is written by collate-changes.yml and compared to
+        # SPEC.md rows by the baselines contract; prettier 3.1 escapes its
+        # underscores and breaks that comparison (#6171).
+        exclude: '(\.py|\.m|\.qmd|package-lock\.json|\.ipynb|manuals/tools/manifests/module-inventory(?:\.json|/.*\.json)|docs/development/DEVELOPMENT_LOG\.md)$'
 
   # -------------------------------------------------------------------------
   # Stage 4: Pre-push Hooks (Slower - PYTHON FILES ONLY)

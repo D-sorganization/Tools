@@ -3917,6 +3917,7 @@
           }
         ],
         "test_paths": [
+          "src/data_processing/data_processor/python/tests/test_regression_cooks_distance.py",
           "src/data_processing/data_processor/python/tests/test_statistical_analysis.py"
         ],
         "unit_mentions": [
@@ -3927,10 +3928,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 11727,
+      "bytes_lf": 11851,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "16f85922be410de768b31849a619acc70dcc1dfb6e9aaa9f5bc6cc1032d8ef37",
+      "content_sha256_lf": "46c416a86e305432e0c413315a6b6574e301c4af1907fab8e5f5a1f6d98cb71b",
       "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-REGRESSION-DIAGNOSTICS-PY-5B11F800AFD7",
       "language": "python",
@@ -5061,10 +5062,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 35932,
+      "bytes_lf": 35867,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "9a4442b006d20458004712cfaa649d3bd348e898b0a276eefeff03492c2c9e43",
+      "content_sha256_lf": "484f62b546d74ec584aeaaf5e94d88d45ddd44f3ec9baaa9f7d85c4ee9758181",
       "family": "data-processing-calculation",
       "id": "TOOLS-MODULE-SRC-DATA-PROCESSING-DATA-PROCESSOR-PYTHON-DATA-PROCESSOR-CORE-UNCERTAINTY-QUANTIFICATION-PY-50078FEFC77A",
       "language": "python",
@@ -5160,6 +5161,8 @@
         ],
         "test_paths": [
           "src/data_processing/data_processor/python/tests/test_advanced_analysis.py",
+          "src/data_processing/data_processor/python/tests/test_bootstrap_bca_interval.py",
+          "src/data_processing/data_processor/python/tests/test_uncertainty_exact_quantiles.py",
           "tests/data_processing/data_processor/test_core_modules_smoke.py",
           "tests/data_processing/data_processor/test_numba_method_decorators.py",
           "tests/data_processing/data_processor/test_uncertainty_quantification_contracts.py"

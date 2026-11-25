@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import math
 import warnings
 from dataclasses import dataclass, field
 from enum import Enum
@@ -32,19 +33,58 @@ def derive_optimization_status(
         return OptimizationStatus.INFEASIBLE
     if not getattr(res, "success", True):
         msg = str(getattr(res, "message", "")).lower()
-        if getattr(res, "status", None) == 9 or "iteration limit" in msg or ("iteration" in msg and ("maximum" in msg or "exceed" in msg)):
+        if (
+            getattr(res, "status", None) == 9
+            or "iteration limit" in msg
+            or ("iteration" in msg and ("maximum" in msg or "exceed" in msg))
+        ):
             return OptimizationStatus.ITERATION_LIMIT
         return OptimizationStatus.STALLED
     return OptimizationStatus.CONVERGED
 
 
 def populate_result_metadata(
-    result: OptimizationResult, res: Any, best_start_seed: int | None = None, n_starts_feasible: int = 0
+    result: OptimizationResult,
+    res: Any,
+    best_start_seed: int | None = None,
+    n_starts_feasible: int = 0,
 ) -> OptimizationResult:
-    """Attach status, solver message, iterations, and seed provenance to result."""
+    """Attach status, solver message, iterations, and seed provenance to result.
+
+    Non-finite or malformed outputs and non-finite cost are reported as
+    ``NUMERICAL_FAILURE`` rather than physical bound violations (#6132).
+    """
     cost_val = float(getattr(res, "fun", result.cost))
-    cost_finite = cost_val < float("inf") and not np.isnan(cost_val)
-    result.status = derive_optimization_status(res, cost_finite, result.success)
+    q = np.asarray(result.q)
+    n = q.shape[0] if q.ndim == 2 else 0
+    n_dof = q.shape[1] if q.ndim == 2 else 0
+    arrays = (
+        (result.t, (n,)),
+        (result.q, (n, n_dof)),
+        (result.qd, (n, n_dof)),
+        (result.qdd, (n, n_dof)),
+        (result.torques, (n, n_dof)),
+        (result.power, (n, n_dof)),
+        (result.com, (n, 2)),
+        (result.bar, (n, 2)),
+    )
+    trajectories_valid = (
+        n > 0
+        and n_dof > 0
+        and all(
+            np.asarray(values).shape == shape and bool(np.all(np.isfinite(values)))
+            for values, shape in arrays
+        )
+    )
+    numerically_valid = (
+        math.isfinite(cost_val)
+        and math.isfinite(float(result.com_horizontal_range_cm))
+        and trajectories_valid
+    )
+    feasible = bool(result.is_feasible if result.is_feasible is not None else result.success)
+    result.status = derive_optimization_status(res, numerically_valid, feasible)
+    result.is_feasible = bool(numerically_valid and feasible)
+    result.success = result.status is OptimizationStatus.CONVERGED
     result.solver_message = str(getattr(res, "message", ""))
     result.n_iterations = int(getattr(res, "nit", 0))
     result.best_start_seed = best_start_seed
@@ -58,8 +98,16 @@ def extract_clubhead_kinematics(
 ) -> tuple[NDArray | None, NDArray | None]:
     """Extract clubhead poses and twists if supported by dynamics."""
     n = len(t_eval)
-    poses = np.array([dynamics.clubhead_pose(q[i]) for i in range(n)], dtype=np.float64) if hasattr(dynamics, "clubhead_pose") else None
-    twists = np.array([dynamics.clubhead_twist(q[i], qd[i]) for i in range(n)], dtype=np.float64) if hasattr(dynamics, "clubhead_twist") else None
+    poses = (
+        np.array([dynamics.clubhead_pose(q[i]) for i in range(n)], dtype=np.float64)
+        if hasattr(dynamics, "clubhead_pose")
+        else None
+    )
+    twists = (
+        np.array([dynamics.clubhead_twist(q[i], qd[i]) for i in range(n)], dtype=np.float64)
+        if hasattr(dynamics, "clubhead_twist")
+        else None
+    )
     return poses, twists
 
 
@@ -85,6 +133,9 @@ class OptimizationResult:
         n_joint_limit_violations: Number of trajectory samples whose
             joint angles fall outside ``q_bounds``.
         status: Categorical status of the optimization solve.
+        is_feasible: True when numerical validity and physical constraints
+            (COM in inner BOS, joint limits) are satisfied, even if the
+            solver hit an iteration limit or stalled.
         solver_message: Status or termination message from the solver.
         n_iterations: Number of solver iterations completed.
         best_start_seed: Multi-start seed index that yielded this result.
@@ -112,6 +163,7 @@ class OptimizationResult:
     joint_positions_m: NDArray | None = None
     joint_ids: tuple[str, ...] | None = None
     status: OptimizationStatus = OptimizationStatus.CONVERGED
+    is_feasible: bool | None = None
     solver_message: str = ""
     n_iterations: int = 0
     best_start_seed: int | None = None
@@ -122,14 +174,23 @@ class OptimizationResult:
         status_val: object = self.status
         if not isinstance(status_val, OptimizationStatus):
             object.__setattr__(self, "status", OptimizationStatus(str(status_val)))
+        if self.is_feasible is None:
+            inferred_feasible = (
+                False
+                if self.status
+                in (OptimizationStatus.INFEASIBLE, OptimizationStatus.NUMERICAL_FAILURE)
+                else bool(self.success)
+            )
+            object.__setattr__(self, "is_feasible", inferred_feasible)
         if self.success and self.status is not OptimizationStatus.CONVERGED:
             warnings.warn(
                 "OptimizationResult has success=True but status is not CONVERGED. "
-                "In a future release, success will strictly require "
+                "Coercing success=False because success requires "
                 "status == OptimizationStatus.CONVERGED.",
                 DeprecationWarning,
                 stacklevel=2,
             )
+            object.__setattr__(self, "success", False)
 
     def torque_joint_count(self) -> int:
         """Return the number of torque columns in the trajectory."""

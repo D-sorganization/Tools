@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import logging
+import math
 import os
 from datetime import datetime
 from pathlib import Path
@@ -14,6 +15,18 @@ from Folders_Tool_r0 import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+class _NonFiniteFileSizeError(ValueError):
+    """A nonfinite bound must stay invalid until the user corrects it."""
+
+
+def _parse_finite_size_mb(value: str | float) -> float:
+    """Parse a finite size without silently broadening an invalid filter."""
+    size = float(value)
+    if not math.isfinite(size):
+        raise _NonFiniteFileSizeError("File size must be finite")
+    return size
 
 
 class FileValidationMixin:
@@ -51,7 +64,7 @@ class FileValidationMixin:
             file_size_mb = file_size_bytes / (1024 * 1024)
 
             # Validate minimum size
-            min_size_mb = float(self.min_file_size.get() or 0)  # type: ignore[attr-defined]
+            min_size_mb = _parse_finite_size_mb(self.min_file_size.get() or 0)  # type: ignore[attr-defined]
             if min_size_mb < 0:
                 min_size_mb = 0  # Reset invalid negative values
                 self.min_file_size.set("0")  # type: ignore[attr-defined]
@@ -62,7 +75,7 @@ class FileValidationMixin:
             max_size_str = self.max_file_size.get().strip()  # type: ignore[attr-defined]
             if max_size_str:
                 try:
-                    max_size_mb = float(max_size_str)
+                    max_size_mb = _parse_finite_size_mb(max_size_str)
                     if max_size_mb < 0:
                         max_size_mb = MAX_FILE_SIZE_MB  # Reset invalid negative values
                         self.max_file_size.set(str(MAX_FILE_SIZE_MB))  # type: ignore[attr-defined]
@@ -74,6 +87,8 @@ class FileValidationMixin:
                         max_size_mb = MAX_FILE_SIZE_MB
                         self.max_file_size.set(str(MAX_FILE_SIZE_MB))  # type: ignore[attr-defined]
                         return False
+                except _NonFiniteFileSizeError:
+                    return False
                 except ValueError:
                     # Invalid input, reset to empty
                     self.max_file_size.set("")  # type: ignore[attr-defined]
@@ -94,7 +109,7 @@ class FileValidationMixin:
             # Validate minimum size
             min_size_str = self.min_file_size.get().strip()  # type: ignore[attr-defined]
             if min_size_str:
-                min_size_mb = float(min_size_str)
+                min_size_mb = _parse_finite_size_mb(min_size_str)
                 if min_size_mb < 0:
                     messagebox.showwarning(
                         "Invalid Input",
@@ -114,7 +129,7 @@ class FileValidationMixin:
             # Validate maximum size
             max_size_str = self.max_file_size.get().strip()  # type: ignore[attr-defined]
             if max_size_str:
-                max_size_mb = float(max_size_str)
+                max_size_mb = _parse_finite_size_mb(max_size_str)
                 if max_size_mb < 0:
                     messagebox.showwarning(
                         "Invalid Input",
@@ -133,7 +148,7 @@ class FileValidationMixin:
                     return False
 
                 # Check if min > max
-                if min_size_str and float(min_size_str) > max_size_mb:
+                if min_size_str and _parse_finite_size_mb(min_size_str) > max_size_mb:
                     messagebox.showwarning(
                         "Invalid Input",
                         "Minimum file size cannot be greater than maximum file size.",

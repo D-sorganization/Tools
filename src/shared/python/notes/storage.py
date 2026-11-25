@@ -6,6 +6,7 @@ import datetime as dt
 import json
 import shutil
 from pathlib import Path
+from uuid import uuid4
 
 from .models import RecycledNoteItem
 
@@ -52,12 +53,12 @@ class NotesStorage:
         return self.save_text("")
 
     def move_to_recycle(self, reason: str = "manual_delete") -> RecycledNoteItem:
-        """Move notes file to recycle bin and track it in an index."""
+        """Move notes to a uniquely identified, independently restorable snapshot."""
         if not self.notes_path.exists():
             raise FileNotFoundError("notes file does not exist")
 
         timestamp = dt.datetime.now(tz=UTC).strftime("%Y%m%dT%H%M%SZ")
-        item_id = f"{timestamp}_{self.notes_path.stem}"
+        item_id = f"{timestamp}_{uuid4().hex}_{self.notes_path.stem}"
 
         self.recycle_bin_dir.mkdir(parents=True, exist_ok=True)
         recycle_path = self.recycle_bin_dir / f"{item_id}.txt"
@@ -105,8 +106,9 @@ class NotesStorage:
         return True
 
     def list_recycled(self) -> list[RecycledNoteItem]:
-        """Return recycled items, newest first."""
+        """Return recycled items newest first, breaking timestamp ties by insertion."""
         items = self._read_index()
+        items.reverse()
         items.sort(key=lambda item: item.deleted_at, reverse=True)
         return items
 

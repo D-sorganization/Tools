@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import math
+
 import pytest
 
 from config import EnvironmentError, get_env, get_env_bool, get_env_float, get_env_int
@@ -120,3 +122,31 @@ def test_get_env_float_parses_defaults_and_bounds(
     assert error.actual == "not-float"
     assert "expected float" in str(error)
     assert "actual 'not-float'" in str(error)
+
+
+@pytest.mark.parametrize(
+    "bounds",
+    [
+        {"min_value": 0.0},
+        {"max_value": 1.0},
+        {"min_value": 0.0, "max_value": 1.0},
+    ],
+    ids=["lower", "upper", "both"],
+)
+def test_get_env_float_rejects_nan_when_bounded(
+    monkeypatch: pytest.MonkeyPatch,
+    bounds: dict[str, float],
+) -> None:
+    """NaN cannot satisfy a requested lower or upper numeric bound."""
+    monkeypatch.setenv("TOOLS_ENV_FLOAT", "nan")
+    with pytest.raises(EnvironmentError, match="NaN cannot satisfy numeric bounds"):
+        get_env_float("TOOLS_ENV_FLOAT", **bounds)
+
+
+def test_get_env_float_preserves_unbounded_nan_parsing(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The bounded-value contract does not change unbounded float parsing."""
+    monkeypatch.setenv("TOOLS_ENV_FLOAT", "nan")
+    value = get_env_float("TOOLS_ENV_FLOAT")
+    assert value is not None and math.isnan(value)

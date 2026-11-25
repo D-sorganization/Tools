@@ -94,10 +94,10 @@ feature, from proposal to ship. See the `development-logs` section of
 - **Owner:** claude
 - **Issue:** #4433
 - **Branch:** `claude/issue-4433`
-- **PR:** #5424 (draft), #5447
+- **PR:** #5424 (draft), #5447, #6056
 - **Paths:** `tests/rate_of_closure/test_pyqt_visualization_tab_visibility.py`, `tests/rate_of_closure/pyqt_launch_monitor_state_probe.py`, `src/rate_of_closure/web/e2e/visualization-tab-visibility.spec.ts`, `docs/audits/rate_of_closure_visual_first_epic_4433.v1.json`
 - **Started:** 2026-10-04
-- **Last verified:** 2026-10-06 (`8c3cc237`; collated from changes/4433-launch-monitor-analytics-no-longer-scrol.md)
+- **Last verified:** 2026-11-16 (`41d47357`; collated from changes/4433-lock-pyqt-tab-open-budget-to-open-settle.md)
 - **Summary:** First tab pair (Launch Monitor Analytics) of the epic's state-by-state geometry gap: the primary scatter stays in the first viewport through result, error, loading and empty on React (3 reference viewports) and PyQt (1.0/1.5 DPI). Other pairs, approved baselines and the AT protocol stay open under the epic.
 - **Next step:** Shipped via PR #5424 and #5447; epic issue #4433 closed completed 2026-10-14.
 
@@ -147,19 +147,6 @@ reachable from any live state and `abandoned` from `parked`.
 `shipped` never returns to `in_progress`; open a new entry instead.
 
 ## Active
-
-### DL-#5884 · Chat Dock Tests Close Leftover Parentless Docks After Each Test so a Deferred Scroll Cannot Fire on a GC-Freed Scroll Bar and Segfault the Xdist Worker
-
-- **State:** in_review
-- **Owner:** unassigned
-- **Issue:** #5884
-- **Branch:** brick/ci-toolchain/5884-chat-scroll-segfault
-- **PR:** #5886
-- **Paths:** see #5886
-- **Started:** 2026-10-31
-- **Last verified:** 2026-10-31 (`80347f1a`; collated from changes/5884-chat-dock-tests-close-leftover-parentles.md)
-- **Summary:** Chat dock tests close leftover parentless docks after each test so a deferred scroll cannot fire on a GC-freed scroll bar and segfault the xdist worker
-- **Next step:** Merge after acceptance review
 
 ### DL-#5646 · Adversarial Review 2026-10-16: 38 Findings With Draft PR Pitches Under Docs/Development/Adversarial-Review/
 
@@ -1587,18 +1574,538 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#6177 · Install the MCP SDK in the Required Tests-Rest CI Shard so Stdio Acceptance Probes Execute.
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6177
+- **Branch:** merged via #6178
+- **PR:** #6178
+- **Paths:** see #6178
+- **Started:** 2026-11-25
+- **Last verified:** 2026-11-25 (`118a28dc`; collated from changes/6177-install-the-mcp-sdk-in-the-required-test.md)
+- **Summary:** Install the MCP SDK in the required tests-rest CI shard so stdio acceptance probes execute.
+- **Next step:** Shipped in PR #6178.
+
+### DL-#6171 · Run Prettier Only at Commit Time and Exclude the Collated DEVELOPMENT_LOG.md so Rebased Pushes and the Baselines Contract Stop Breaking
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6171
+- **Branch:** claude/6171-prettier-devlog-exclude
+- **PR:** #6172
+- **Paths:** see #6172
+- **Started:** 2026-11-25
+- **Last verified:** 2026-11-25 (`bcaea604`; collated from changes/6171-exclude-the-collated-development-log-md.md)
+- **Summary:** Run prettier only at commit time and exclude the collated DEVELOPMENT_LOG.md so rebased pushes and the baselines contract stop breaking
+- **Next step:** Independent exact-head review, then arm.
+
+### DL-#6167 · Surface Windows Taskkill Failures in Cli_Subprocess_Termination and Verify the Child Exited After a Forced Kill
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6167
+- **Branch:** claude/6167-taskkill-failures
+- **PR:** #6175
+- **Paths:** see #6175
+- **Started:** 2026-11-25
+- **Last verified:** 2026-11-25 (`f7d6a6bd`; collated from changes/6167-surface-windows-taskkill-failures.md)
+- **Summary:** Surface Windows taskkill failures in cli_subprocess_termination and verify the child exited after a forced kill
+- **Next step:** Independent exact-head review, then arm.
+
+### DL-#6144 · Persist Is_Feasible in Saved Solutions and Branch the GUI Balance Warning and Summary on Feasibility, so Feasible ITERATION_LIMIT Runs Are No Longer Reported as COM Violations
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6144
+- **Branch:** claude/6144-persist-is-feasible
+- **PR:** #6147
+- **Paths:** see #6147
+- **Started:** 2026-11-22
+- **Last verified:** 2026-11-22 (`57d39841`; collated from changes/6144-persist-is-feasible-in-saved-solutions-a.md)
+- **Summary:** Persist is_feasible in saved solutions and branch the GUI balance warning and summary on feasibility, so feasible ITERATION_LIMIT runs are no longer reported as COM violations
+- **Next step:** Merge the PR.
+
+### DL-#6145 · Copy NumPy Trajectory Arrays Unconditionally in ComparisonStore Snapshots to Ensure Bidirectional Isolation Across Writeable Flag Resets
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6145
+- **Branch:** claude/6145-snapshot-trial-copy
+- **PR:** #6146
+- **Paths:** see #6146
+- **Started:** 2026-11-22
+- **Last verified:** 2026-11-22 (`abff52c2`; collated from changes/6145-freeze-and-privately-copy-numpy-trajecto.md)
+- **Summary:** Copy NumPy trajectory arrays unconditionally in ComparisonStore snapshots to ensure bidirectional isolation across writeable flag resets
+- **Next step:** Merge the PR.
+
+### DL-#6103 · Reject Nonfinite Camera Zoom Before State Replacement and Preference Notifications
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6103
+- **Branch:** merged via #6106
+- **PR:** #6106
+- **Paths:** see #6106
+- **Started:** 2026-11-18
+- **Last verified:** 2026-11-18 (`dd9a7bcc`; collated from changes/6103-reject-nonfinite-camera-zoom-before-stat.md)
+- **Summary:** Reject nonfinite camera zoom before state replacement and preference notifications
+- **Next step:** Shipped in PR #6106.
+
+### DL-#6102 · Search All Parent Directories, Including Root, for Nearest Path Matches.
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6102
+- **Branch:** merged via #6104
+- **PR:** #6104
+- **Paths:** see #6104
+- **Started:** 2026-11-18
+- **Last verified:** 2026-11-18 (`a3d8b9ea`; collated from changes/6102-upward-path-search.md)
+- **Summary:** Search all parent directories, including root, for nearest path matches.
+- **Next step:** Shipped in PR #6104.
+
+### DL-#6089 · Preserve Same-Second Markdown and Text Note Recycle Snapshots With Unique IDs and Newest-First Undo Ties
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6089
+- **Branch:** merged via #6091
+- **PR:** #6091
+- **Paths:** see #6091
+- **Started:** 2026-11-18
+- **Last verified:** 2026-11-18 (`7dfacd1c`; collated from changes/6089-preserve-same-second-markdown-and-text-n.md)
+- **Summary:** Preserve same-second markdown and text note recycle snapshots with unique IDs and newest-first undo ties
+- **Next step:** Shipped in PR #6091.
+
+### DL-#6066 · Rotation_Converter ProjectToSO3 (All Three Copies) Returns the Nearest Rotation for Reflected Inputs (Kabsch Flip of U), Not U Vh With a Negated Column
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6066
+- **Branch:** merged via #6067
+- **PR:** #6067
+- **Paths:** see #6067
+- **Started:** 2026-11-18
+- **Last verified:** 2026-11-18 (`87f824a6`; collated from changes/6066-project-to-so3-nearest.md)
+- **Summary:** rotation_converter ProjectToSO3 (all three copies) returns the nearest rotation for reflected inputs (Kabsch flip of U), not U Vh with a negated column
+- **Next step:** Shipped in PR #6067.
+
+### DL-#6131 · Add Abs_Joint_Work_J Observable and Defensive ComparisonStore Trial Snapshots.
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6131
+- **Branch:** merged via #6135
+- **PR:** #6135
+- **Paths:** see #6135
+- **Started:** 2026-11-18
+- **Last verified:** 2026-11-18 (`3c4946f6`; collated from changes/6131-comparison-work-snapshots.md)
+- **Summary:** Add abs_joint_work_j observable and defensive ComparisonStore trial snapshots.
+- **Next step:** Shipped in PR #6135.
+
+### DL-#6108 · Accept Bounded Signed Numeric Exponent Literals and Reject Oversized Integers as ValueError
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6108
+- **Branch:** merged via #6112
+- **PR:** #6112
+- **Paths:** see #6112
+- **Started:** 2026-11-18
+- **Last verified:** 2026-11-18 (`6742a9cb`; collated from changes/6108-accept-bounded-signed-numeric-exponent-l.md)
+- **Summary:** Accept bounded signed numeric exponent literals and reject oversized integers as ValueError
+- **Next step:** Shipped in PR #6112.
+
+### DL-#6107 · Return CSV Fallback for Filesystem Read Errors
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6107
+- **Branch:** codex/burn1116-6107-csv-read
+- **PR:** #6109
+- **Paths:** see #6109
+- **Started:** 2026-11-18
+- **Last verified:** 2026-11-18 (`334cdde2`; collated from changes/6107-csv-read-fallback.md)
+- **Summary:** Return CSV fallback for filesystem read errors
+- **Next step:** Review the PR.
+
+### DL-#6090 · Solar_System_Model: State_to_Elements No Longer Raises on Perigee/Apogee at the Node and Reports Longitude of Periapsis, Argument of Latitude and True Longitude for Equatorial or Circular Orbits; Regenerate Module Inventory Hashes
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6090
+- **Branch:** merged via #6094
+- **PR:** #6094
+- **Paths:** see #6094
+- **Started:** 2026-11-18
+- **Last verified:** 2026-11-18 (`88f702f1`; collated from changes/6090-solar-system-state-to-elements-degenerate.md)
+- **Summary:** solar_system_model: state_to_elements no longer raises on perigee/apogee at the node and reports longitude of periapsis, argument of latitude and true longitude for equatorial or circular orbits; regenerate module inventory hashes
+- **Next step:** Shipped in PR #6094.
+
+### DL-#6130 · Require CONVERGED Status for OptimizationResult.Success, Add Is_Feasible, Expose Status in CLI/Excel, and Align Feasibility Tests.
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6130
+- **Branch:** merged via #6136
+- **PR:** #6136
+- **Paths:** see #6136
+- **Started:** 2026-11-18
+- **Last verified:** 2026-11-18 (`6d07a6b7`; collated from changes/6130-success-requires-converged.md)
+- **Summary:** Require CONVERGED status for OptimizationResult.success, add is_feasible, expose status in CLI/Excel, and align feasibility tests.
+- **Next step:** Shipped in PR #6136.
+
+### DL-#6114 · Consider Inserted Models and Entry-Count Pressure When Evicting Eligible Old Cache Entries
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6114
+- **Branch:** merged via #6119
+- **PR:** #6119
+- **Paths:** see #6119
+- **Started:** 2026-11-18
+- **Last verified:** 2026-11-18 (`89054a07`; collated from changes/6114-consider-inserted-models-and-entry-count.md)
+- **Summary:** Consider inserted models and entry-count pressure when evicting eligible old cache entries
+- **Next step:** Shipped in PR #6119.
+
+### DL-#6095 · UncertaintyQuantifier Uses Exact Scipy T/Normal Quantiles; Small-Sample Prediction Intervals Were ~10% Too Narrow
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6095
+- **Branch:** merged via #6096
+- **PR:** #6096
+- **Paths:** see #6096
+- **Started:** 2026-11-18
+- **Last verified:** 2026-11-18 (`3224f894`; collated from changes/6095-uncertaintyquantifier-uses-exact-scipy-t.md)
+- **Summary:** UncertaintyQuantifier uses exact scipy t/normal quantiles; small-sample prediction intervals were ~10% too narrow
+- **Next step:** Shipped in PR #6096.
+
+### DL-#6132 · Movement_Optimizer: A Non-Finite Cost (Including -Inf) or a NaN/Inf, Empty or Mis-Shaped Trajectory No Longer Passes the Feasibility Boundary; Invalid Data Is Reported Apart From Joint-Limit Violations and Maps to NUMERICAL_FAILURE
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6132
+- **Branch:** merged via #6134
+- **PR:** #6134
+- **Paths:** see #6134
+- **Started:** 2026-11-17
+- **Last verified:** 2026-11-17 (`b654097e`; collated from changes/6132-movement-optimizer-feasibility-rejects-non-finite.md)
+- **Summary:** movement_optimizer: a non-finite cost (including -inf) or a NaN/inf, empty or mis-shaped trajectory no longer passes the feasibility boundary; invalid data is reported apart from joint-limit violations and maps to NUMERICAL_FAILURE
+- **Next step:** Shipped in PR #6134.
+
+### DL-#6124 · Use the International Table BTU for the Unit Converter BTU/Lb Heating-Value Factor (2326 J/kg)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6124
+- **Branch:** claude-desk/t4-btu-lb
+- **PR:** #6125
+- **Paths:** see #6125
+- **Started:** 2026-11-17
+- **Last verified:** 2026-11-17 (`add8f67b`; collated from changes/6124-btu-per-lb-heating-value-factor.md)
+- **Summary:** Use the International Table BTU for the unit converter BTU/lb heating-value factor (2326 J/kg)
+- **Next step:** Review and CI
+
+### DL-#6121 · Skip Nonexecutable POSIX Git Candidates and Symlink Loops During Trusted Discovery
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6121
+- **Branch:** merged via #6122
+- **PR:** #6122
+- **Paths:** see #6122
+- **Started:** 2026-11-17
+- **Last verified:** 2026-11-17 (`bed69c83`; collated from changes/6121-skip-nonexecutable-posix-git-candidates.md)
+- **Summary:** Skip nonexecutable POSIX Git candidates and symlink loops during trusted discovery
+- **Next step:** Shipped in PR #6122.
+
+### DL-#6120 · Reject Nonfinite File-Size Bounds Consistently Without Silently Broadening Subsequent File Filters
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6120
+- **Branch:** codex/6120-finite-folder-size
+- **PR:** #6123
+- **Paths:** see #6123
+- **Started:** 2026-11-17
+- **Last verified:** 2026-11-17 (`ccb377a8`; collated from changes/6120-reject-nonfinite-file-size-bounds-consis.md)
+- **Summary:** Reject nonfinite file-size bounds consistently without silently broadening subsequent file filters
+- **Next step:** Independent review and required CI
+
+### DL-#6116 · P1am Data_Explorer_Stats: Welch PSD Doubles the Last Interior Bin for Odd Segment Lengths (Segment_Size 3 Was Half Power); Regenerate Module Inventory Hashes
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6116
+- **Branch:** merged via #6118
+- **PR:** #6118
+- **Paths:** see #6118
+- **Started:** 2026-11-17
+- **Last verified:** 2026-11-17 (`9c0708e1`; collated from changes/6116-p1am-welch-odd-segment.md)
+- **Summary:** p1am data_explorer_stats: Welch PSD doubles the last interior bin for odd segment lengths (segment_size 3 was half power); regenerate module inventory hashes
+- **Next step:** Shipped in PR #6118.
+
+### DL-#6111 · Rrt_Path_Planner: RRTPlanner._Steer Lands on a Target Closer Than Step_Size Instead of Overshooting It and the Planner Bounds
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6111
+- **Branch:** merged via #6115
+- **PR:** #6115
+- **Paths:** see #6115
+- **Started:** 2026-11-17
+- **Last verified:** 2026-11-17 (`441fdb5c`; collated from changes/6111-rrt-steer-overshoot.md)
+- **Summary:** rrt_path_planner: RRTPlanner._steer lands on a target closer than step_size instead of overshooting it and the planner bounds
+- **Next step:** Shipped in PR #6115.
+
+### DL-#6110 · Keep XDG Config Paths Absolute and Reject Dot-Segment App Names
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6110
+- **Branch:** codex/burn1116-xdg-config
+- **PR:** #6117
+- **Paths:** see #6117
+- **Started:** 2026-11-17
+- **Last verified:** 2026-11-17 (`aadf3135`; collated from changes/6110-keep-xdg-config-paths-absolute-and-rejec.md)
+- **Summary:** Keep XDG config paths absolute and reject dot-segment app names
+- **Next step:** Merge the PR.
+
+### DL-#6099 · Pendulum_Simulator: Cylinder_Cross_Section Returns a True 2R X 2R Square for a Zero-Length Segment Instead of a Half-Area Parallelogram
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6099
+- **Branch:** merged via #6101
+- **PR:** #6101
+- **Paths:** see #6101
+- **Started:** 2026-11-17
+- **Last verified:** 2026-11-17 (`1fa7580d`; collated from changes/6099-pendulum-simulator-cylinder-degenerate-square.md)
+- **Summary:** pendulum_simulator: cylinder_cross_section returns a true 2r x 2r square for a zero-length segment instead of a half-area parallelogram
+- **Next step:** Shipped in PR #6101.
+
+### DL-#6098 · Reject Invalid Shared RNG Seeds Before Changing Python or NumPy Random State
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6098
+- **Branch:** merged via #6100
+- **PR:** #6100
+- **Paths:** see #6100
+- **Started:** 2026-11-17
+- **Last verified:** 2026-11-17 (`84cb2bbb`; collated from changes/6098-reject-invalid-shared-rng-seeds-before-c.md)
+- **Summary:** Reject invalid shared RNG seeds before changing Python or NumPy random state
+- **Next step:** Shipped in PR #6100.
+
+### DL-#6092 · Snapshot Plot-Theme Subscribers so Self-Unsubscription Does Not Skip Later Callbacks
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6092
+- **Branch:** merged via #6097
+- **PR:** #6097
+- **Paths:** see #6097
+- **Started:** 2026-11-17
+- **Last verified:** 2026-11-17 (`255808d7`; collated from changes/6092-snapshot-plot-theme-subscribers-so-self.md)
+- **Summary:** Snapshot plot-theme subscribers so self-unsubscription does not skip later callbacks
+- **Next step:** Shipped in PR #6097.
+
+### DL-#6074 · Apply Finite Initial Values as Offsets to Cumulative Signal Integrals.
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6074
+- **Branch:** merged via #6076
+- **PR:** #6076
+- **Paths:** see #6076
+- **Started:** 2026-11-17
+- **Last verified:** 2026-11-17 (`c73a90c5`; collated from changes/6074-cumulative-integral-offset.md)
+- **Summary:** Apply finite initial values as offsets to cumulative signal integrals.
+- **Next step:** Shipped in PR #6076.
+
+### DL-#6068 · Data_Processor Regression: Cook's Distance Now Uses the Studentized Residual and Matches Its Leave-One-Out Definition
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6068
+- **Branch:** merged via #6069
+- **PR:** #6069
+- **Paths:** see #6069
+- **Started:** 2026-11-17
+- **Last verified:** 2026-11-17 (`834badf0`; collated from changes/6068-data-processor-regression-cook-s-distanc.md)
+- **Summary:** data_processor regression: Cook's distance now uses the studentized residual and matches its leave-one-out definition
+- **Next step:** Shipped in PR #6069.
+
+### DL-#6023 · Yield Stable Absolute Paths From Relative Directory Contexts
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6023
+- **Branch:** merged via #6127
+- **PR:** #6127, #6105, #6113, #6126
+- **Paths:** see #6127
+- **Started:** 2026-11-17
+- **Last verified:** 2026-11-18 (`e6ced9bf`; collated from changes/6023-preserve-memory-tracing-ownership.md)
+- **Summary:** Yield stable absolute paths from relative directory contexts
+- **Next step:** Merge the PR.
+
+### DL-#5884 · Chat Dock Tests Close Leftover Parentless Docks After Each Test so a Deferred Scroll Cannot Fire on a GC-Freed Scroll Bar and Segfault the Xdist Worker
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5884
+- **Branch:** brick/ci-toolchain/5884-chat-scroll-segfault
+- **PR:** #5886, #6133
+- **Paths:** see #5886
+- **Started:** 2026-10-31
+- **Last verified:** 2026-11-17 (`b5db3e75`; collated from changes/5884-reconcile-merged-development-log-entry.md)
+- **Summary:** Chat dock tests close leftover parentless docks after each test so a deferred scroll cannot fire on a GC-freed scroll bar and segfault the xdist worker
+- **Next step:** None; PR #5886 merged on 2026-10-31.
+
+### DL-#6086 · Parse Quoted CSV Headers Correctly in Data Explorer
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6086
+- **Branch:** codex/burn1116-tools-6086
+- **PR:** #6088
+- **Paths:** src/data_explorer/data_explorer_app.py, tests/data_explorer/test_data_explorer_app.py
+- **Started:** 2026-11-16
+- **Last verified:** 2026-11-16 (`32eb0987`; collated from changes/6086-parse-quoted-csv-headers-correctly-in-da.md)
+- **Summary:** Parse quoted CSV headers correctly in Data Explorer
+- **Next step:** Review and merge the CSV parsing fix.
+
+### DL-#6084 · Movement_Optimizer Strength: Torque Utilization Picks Concentric/Eccentric From the Required Torque Direction; Set_Max_Torque Rejects Non-Finite Values
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6084
+- **Branch:** merged via #6085
+- **PR:** #6085
+- **Paths:** see #6085
+- **Started:** 2026-11-16
+- **Last verified:** 2026-11-16 (`23a113a9`; collated from changes/6084-movement-optimizer-torque-utilization-contraction-mode.md)
+- **Summary:** movement_optimizer strength: torque utilization picks concentric/eccentric from the required torque direction; set_max_torque rejects non-finite values
+- **Next step:** Shipped in PR #6085.
+
+### DL-#6081 · Reject NaN Environment Floats When Numeric Bounds Are Requested.
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6081
+- **Branch:** merged via #6083
+- **PR:** #6083
+- **Paths:** see #6083
+- **Started:** 2026-11-16
+- **Last verified:** 2026-11-16 (`49b6f4d2`; collated from changes/6081-reject-nan-environment-floats-when-numer.md)
+- **Summary:** Reject NaN environment floats when numeric bounds are requested.
+- **Next step:** Shipped in PR #6083.
+
+### DL-#6080 · Return the Documented JSON Fallback on Invalid UTF-8 and Cover File Helper Failure Boundaries
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6080
+- **Branch:** codex/burn1116-6078-file-utils
+- **PR:** #6082
+- **Paths:** see #6082
+- **Started:** 2026-11-16
+- **Last verified:** 2026-11-16 (`58cb9e0c`; collated from changes/6080-return-the-documented-json-fallback-on-i.md)
+- **Summary:** Return the documented JSON fallback on invalid UTF-8 and cover file helper failure boundaries
+- **Next step:** Review and CI
+
+### DL-#6075 · Interrupt the File-Watcher Debounce Wait on Stop so Long Quiet Periods Cannot Leave a Worker Alive.
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6075
+- **Branch:** merged via #6079
+- **PR:** #6079
+- **Paths:** see #6079
+- **Started:** 2026-11-16
+- **Last verified:** 2026-11-16 (`e1cec795`; collated from changes/6075-interrupt-the-file-watcher-debounce-wait.md)
+- **Summary:** Interrupt the file-watcher debounce wait on stop so long quiet periods cannot leave a worker alive.
+- **Next step:** Shipped in PR #6079.
+
+### DL-#6071 · Data_Processor Uncertainty: BCa Bootstrap Interval Applies the Full Bias Correction When the Acceleration Is 0; Regenerate Module Inventory Hashes and Regression-Test Links
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6071
+- **Branch:** merged via #6072
+- **PR:** #6072
+- **Paths:** see #6072
+- **Started:** 2026-11-16
+- **Last verified:** 2026-11-16 (`f13da0b9`; collated from changes/6071-data-processor-uncertainty-bca-bootstrap.md)
+- **Summary:** data_processor uncertainty: BCa bootstrap interval applies the full bias correction when the acceleration is 0; regenerate module inventory hashes and regression-test links
+- **Next step:** Shipped in PR #6072.
+
+### DL-#6070 · Cover Configuration Loader Fallback, Platform and Input Boundaries
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6070
+- **Branch:** codex/burn1116-6070-config-loader
+- **PR:** #6073
+- **Paths:** see #6073
+- **Started:** 2026-11-16
+- **Last verified:** 2026-11-16 (`6b329fe5`; collated from changes/6070-cover-configuration-loader-fallback-plat.md)
+- **Summary:** Cover configuration loader fallback, platform and input boundaries
+- **Next step:** Review and CI
+
+### DL-#6064 · Cover Isolated Environment File Discovery Fallbacks and Input Contracts
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6064
+- **Branch:** codex/burn1116-6064-env-utils
+- **PR:** #6065
+- **Paths:** see #6065
+- **Started:** 2026-11-16
+- **Last verified:** 2026-11-16 (`b452eed0`; collated from changes/6064-cover-isolated-environment-file-discover.md)
+- **Summary:** Cover isolated environment file discovery fallbacks and input contracts
+- **Next step:** Review and CI
+
+### DL-#2894 · The Tools_Core Wheel Cache Key No Longer Hashes the Git-Ignored Cargo.Lock, so the Restore and Save Steps Compute the Same Key and the Cache Can Hit (Repository_Management#2894)
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #2894
+- **Branch:** merged via #6061
+- **PR:** #6061
+- **Paths:** see #6061
+- **Started:** 2026-11-16
+- **Last verified:** 2026-11-16 (`099f897a`; collated from changes/2894-toolscore-wheel-cache-key.md)
+- **Summary:** The tools_core wheel cache key no longer hashes the git-ignored Cargo.lock, so the restore and save steps compute the same key and the cache can hit (Repository_Management#2894)
+- **Next step:** Shipped in PR #6061.
+
+### DL-#5684 · Align Ai_Backend README and Onnx Preflight Ort Pin Strings With Cargo.Toml
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #5684
+- **Branch:** merged via #6054
+- **PR:** #6054, #6154, #6158
+- **Paths:** see #6054
+- **Started:** 2026-11-15
+- **Last verified:** 2026-11-23 (`f468d80f`; collated from changes/5684-summary-open-blockers.md)
+- **Summary:** Align ai_backend README and onnx preflight ort pin strings with Cargo.toml
+- **Next step:** Shipped in PR #6054.
+
 ### DL-#6019 · MCP FAILED Envelopes Include Registry-Backed Provenance.Calculation_Status (UD-PAIR UpstreamDrift#14976 for Package Calc_Backend)
 
 - **State:** shipped
 - **Owner:** unassigned
 - **Issue:** #6019
 - **Branch:** merged via #6053
-- **PR:** #6053
+- **PR:** #6053, #6143, #6153, #6152, #6151, #6161, #6165, #6166
 - **Paths:** see #6053
 - **Started:** 2026-11-15
-- **Last verified:** 2026-11-15 (`8e74a51f`; collated from changes/6019-mcp-failed-envelopes-include-registry-ba.md)
-- **Summary:** MCP FAILED envelopes include registry-backed provenance.calculation_status (UD-PAIR UpstreamDrift#14976 for package calc_backend)
-- **Next step:** Shipped in PR #6053.
+- **Last verified:** 2026-11-25 (`6b6b2171`; collated from changes/6019-flare-mcp-acceptance.md)
+- **Summary:** PR #6053 added registry-backed provenance.calculation_status to MCP FAILED envelopes (UD-PAIR UpstreamDrift#14976 for package calc_backend); PR #6143 aligned CalculatorSpec catalog worked examples and units with request contracts.
+- **Next step:** Independent review; leave PR unarmed per owner instruction.
 
 ### DL-#6045 · Stabilize CLI Subprocess Timeout Tree-Kill Oracle and Windows Test Portability
 
@@ -1684,10 +2191,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #6003
 - **Branch:** merged via #6012
-- **PR:** #6012, #6015, #6014, #6017
+- **PR:** #6012, #6015, #6014, #6017, #6163
 - **Paths:** see #6012
 - **Started:** 2026-11-10
-- **Last verified:** 2026-11-10 (`0cf7f77a`; collated from changes/6003-syngas-nonfinite-failure.md)
+- **Last verified:** 2026-11-24 (`5f7b1898`; collated from changes/6003-trendline-fit-method-provenance.md)
 - **Summary:** Add canonical lifecycle contract ADR, shared.python.lifecycle kernel, and syngas water boolean type checks
 - **Next step:** Shipped in PR #6012.
 
@@ -2594,10 +3101,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #5727
 - **Branch:** merged via #5785
-- **PR:** #5785, #6042, #6039, #6043
+- **PR:** #5785, #6042, #6039, #6043, #6055, #6062, #6155, #6162
 - **Paths:** see #5785
 - **Started:** 2026-10-25
-- **Last verified:** 2026-11-14 (`ca360881`; collated from changes/5727-cli-discovery-qualification.md)
+- **Last verified:** 2026-11-24 (`975fec8e`; collated from changes/5727-probe-codex-exec-help-for-adapter-flags.md)
 - **Summary:** Wire Antigravity (agy) CLI adapter to nonce-bound tool bridge and add AgenticAppHost protocol.
 - **Next step:** Shipped in PR #5785.
 

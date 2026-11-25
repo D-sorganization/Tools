@@ -53,7 +53,7 @@ def change_directory(path: Path | str) -> Iterator[Path]:
         path: Directory to change to
 
     Yields:
-        Path object of the new directory
+        Absolute resolved path of the new directory, stable across cwd changes
 
     Example:
         with change_directory("/tmp"):
@@ -62,7 +62,7 @@ def change_directory(path: Path | str) -> Iterator[Path]:
         # Back to original directory
     """
     original_dir = Path.cwd()
-    target_dir = Path(path)
+    target_dir = Path(path).resolve()
 
     if not target_dir.exists():
         raise FileNotFoundError(f"Directory does not exist: {target_dir}")
