@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-25 | #6173 | Stdio MCP acceptance probe for registered thermal-profile calculator (#6019) |
 | 2026-11-25 | #6169 | agy adapter stops sending --skip-trust (agy 1.5.15 exits 2 on it); discovery runner forwards help_subcommand |
 | 2026-11-25 | #6166 | Tests-only stdio MCP acceptance slice for the flare calculator |
 | 2026-11-25 | #6178 | Install the MCP SDK in the required tests-rest CI shard so stdio acceptance probes execute. |
