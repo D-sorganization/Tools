@@ -5947,6 +5947,64 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-25 | #6166 | Tests-only stdio MCP acceptance slice for the flare calculator |
+| 2026-11-25 | #6178 | Install the MCP SDK in the required tests-rest CI shard so stdio acceptance probes execute. |
+| 2026-11-25 | #6165 | Stdio MCP acceptance probe for registered baghouse calculator (#6019) |
+| 2026-11-25 | #6172 | Run prettier only at commit time and exclude the collated DEVELOPMENT_LOG.md so rebased pushes and the baselines contract stop breaking |
+| 2026-11-25 | #6175 | Surface Windows taskkill failures in cli_subprocess_termination and verify the child exited after a forced kill |
+| 2026-11-25 | #6161 | Expose water saturation vapor pressure (IAPWS-IF97, Buck, Magnus) over REST/MCP with typed units, bounds, and a worked example. |
+| 2026-11-24 | #6163 | TrendlineResult records fit_method; exponential curve_fit failure is logged and reported as log_linear_fallback instead of passing silently as a fit |
+| 2026-11-24 | #6162 | Probe Codex exec help for adapter flags, opt in per-provider live qualification, and use a portable temporary-directory fixture |
+| 2026-11-24 | #6151 | Registry describe includes contract_version; epic 6019 acceptance contract tests |
+| 2026-11-23 | #6158 | Maturin run summary lists native Windows/macOS ai_backend wheels as OPEN blockers instead of omitting them. |
+| 2026-11-23 | #6155 | Fix CLI timeout process-group kill via shared runner helper (#6023 C1). |
+| 2026-11-23 | #6154 | Truth up rust_distribution.md for Linux-only ai_backend wheel CI (#5684 slice docs). |
+| 2026-11-23 | #6152 | Wire CalculatorSpec formula_ids from calculation-registry agent_api bindings |
+| 2026-11-23 | #6153 | Executable epic #6019 acceptance checklist (JSON + contract tests). |
+| 2026-11-22 | #6147 | Persist is_feasible in saved solutions and branch the GUI balance warning and summary on feasibility, so feasible ITERATION_LIMIT runs are no longer reported as COM violations |
+| 2026-11-22 | #6146 | Copy NumPy trajectory arrays unconditionally in ComparisonStore snapshots to ensure bidirectional isolation across writeable flag resets |
+| 2026-11-22 | #6143 | Align CalculatorSpec catalog worked examples and units with request contracts (#6019) |
+| 2026-11-18 | #6126 | Preserve caller-owned tracemalloc sessions and clean up owned memory trackers on failure |
+| 2026-11-18 | #6106 | Reject nonfinite camera zoom before state replacement and preference notifications |
+| 2026-11-18 | #6104 | Search all parent directories, including root, for nearest path matches. |
+| 2026-11-18 | #6091 | Preserve same-second markdown and text note recycle snapshots with unique IDs and newest-first undo ties |
+| 2026-11-18 | #6067 | rotation_converter ProjectToSO3 (all three copies) returns the nearest rotation for reflected inputs (Kabsch flip of U), not U Vh with a negated column |
+| 2026-11-18 | #6113 | Add full behavioral coverage for deterministic asteroid belt particle generation and catalog invariants |
+| 2026-11-18 | #6105 | Add behavior and catalogue invariants for the previously uncovered moon grouping module |
+| 2026-11-18 | #6135 | Add abs_joint_work_j observable and defensive ComparisonStore trial snapshots. |
+| 2026-11-18 | #6112 | Accept bounded signed numeric exponent literals and reject oversized integers as ValueError |
+| 2026-11-18 | #6109 | Return CSV fallback for filesystem read errors |
+| 2026-11-18 | #6094 | solar_system_model: state_to_elements no longer raises on perigee/apogee at the node and reports longitude of periapsis, argument of latitude and true longitude for equatorial or circular orbits; regenerate module inventory hashes |
+| 2026-11-18 | #6062 | PRD: Sidekick request-to-action definition of done (docs/project/prd/sidekick-request-to-action.md) |
+| 2026-11-18 | #6136 | Require CONVERGED status for OptimizationResult.success, add is_feasible, expose status in CLI/Excel, and align feasibility tests. |
+| 2026-11-18 | #6119 | Consider inserted models and entry-count pressure when evicting eligible old cache entries |
+| 2026-11-18 | #6096 | UncertaintyQuantifier uses exact scipy t/normal quantiles; small-sample prediction intervals were ~10% too narrow |
+| 2026-11-17 | #6134 | movement_optimizer: a non-finite cost (including -inf) or a NaN/inf, empty or mis-shaped trajectory no longer passes the feasibility boundary; invalid data is reported apart from joint-limit violations and maps to NUMERICAL_FAILURE |
+| 2026-11-17 | #6125 | Use the International Table BTU for the unit converter BTU/lb heating-value factor (2326 J/kg) |
+| 2026-11-17 | #6122 | Skip nonexecutable POSIX Git candidates and symlink loops during trusted discovery |
+| 2026-11-17 | #6123 | Reject nonfinite file-size bounds consistently without silently broadening subsequent file filters |
+| 2026-11-17 | #6118 | p1am data_explorer_stats: Welch PSD doubles the last interior bin for odd segment lengths (segment_size 3 was half power); regenerate module inventory hashes |
+| 2026-11-17 | #6115 | rrt_path_planner: RRTPlanner._steer lands on a target closer than step_size instead of overshooting it and the planner bounds |
+| 2026-11-17 | #6117 | Keep XDG config paths absolute and reject dot-segment app names |
+| 2026-11-17 | #6101 | pendulum_simulator: cylinder_cross_section returns a true 2r x 2r square for a zero-length segment instead of a half-area parallelogram |
+| 2026-11-17 | #6100 | Reject invalid shared RNG seeds before changing Python or NumPy random state |
+| 2026-11-17 | #6097 | Snapshot plot-theme subscribers so self-unsubscription does not skip later callbacks |
+| 2026-11-17 | #6076 | Apply finite initial values as offsets to cumulative signal integrals. |
+| 2026-11-17 | #6069 | data_processor regression: Cook's distance now uses the studentized residual and matches its leave-one-out definition |
+| 2026-11-17 | #6127 | Yield stable absolute paths from relative directory contexts |
+| 2026-11-17 | #6133 | Reconcile DL-#5884 after its fix PR merged |
+| 2026-11-16 | #6088 | Parse quoted CSV headers correctly in Data Explorer |
+| 2026-11-16 | #6085 | movement_optimizer strength: torque utilization picks concentric/eccentric from the required torque direction; set_max_torque rejects non-finite values |
+| 2026-11-16 | #6083 | Reject NaN environment floats when numeric bounds are requested. |
+| 2026-11-16 | #6082 | Return the documented JSON fallback on invalid UTF-8 and cover file helper failure boundaries |
+| 2026-11-16 | #6079 | Interrupt the file-watcher debounce wait on stop so long quiet periods cannot leave a worker alive. |
+| 2026-11-16 | #6072 | data_processor uncertainty: BCa bootstrap interval applies the full bias correction when the acceleration is 0; regenerate module inventory hashes and regression-test links |
+| 2026-11-16 | #6073 | Cover configuration loader fallback, platform and input boundaries |
+| 2026-11-16 | #6065 | Cover isolated environment file discovery fallbacks and input contracts |
+| 2026-11-16 | #6061 | The tools_core wheel cache key no longer hashes the git-ignored Cargo.lock, so the restore and save steps compute the same key and the cache can hit (Repository_Management#2894) |
+| 2026-11-16 | #6055 | Tier-2 CLI discovery workflow and run_cli_discovery_probes runner |
+| 2026-11-16 | #6056 | Lock PyQt tab-open budget to open_settle_ms and refresh project steward STATUS/CHARTER for 2026-11-15 |
+| 2026-11-15 | #6054 | Align ai_backend README and onnx preflight ort pin strings with Cargo.toml |
 | 2026-11-15 | #6053 | MCP FAILED envelopes include registry-backed provenance.calculation_status (UD-PAIR UpstreamDrift#14976 for package calc_backend) |
 | 2026-11-14 | #6043 | Add CLI discovery probe and subscription qualification validator (Slice 9) |
 | 2026-11-13 | #6039 | Add CLI turn cancellation, incremental idle timeout, parent-death reaper, and typed lifecycle outcomes (Wave 2.2) |

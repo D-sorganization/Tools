@@ -102,3 +102,45 @@ def test_catalog_specs_reference_callable_handlers() -> None:
     for entry in CALCULATOR_REGISTRY.values():
         assert callable(entry.spec.fn)
         assert inspect.isfunction(entry.spec.fn)
+
+
+def test_all_worked_examples_validate_against_request_models() -> None:
+    for spec in registered_calculators():
+        example = spec.worked_example.request
+        assert example, f"{spec.id}: worked_example.request must be non-empty"
+        unknown = set(example) - set(spec.request_model.model_fields)
+        assert not unknown, (
+            f"{spec.id}: worked_example.request has unknown fields {sorted(unknown)}"
+        )
+        spec.request_model.model_validate(example)
+
+
+def test_all_catalog_units_reference_real_request_fields() -> None:
+    for spec in registered_calculators():
+        unknown = set(spec.units) - set(spec.request_model.model_fields)
+        assert not unknown, (
+            f"{spec.id}: units references unknown fields {sorted(unknown)}"
+        )
+
+
+def test_financial_example_summary_matches_actual_response() -> None:
+    from fastapi.testclient import TestClient
+
+    example = CALCULATOR_REGISTRY["financial"].spec.worked_example
+    response = TestClient(app).post(http_path_for("financial"), json=example.request)
+    assert response.status_code == 200
+    summary = example.response_summary
+    assert summary == {"results.total_revenue": "> 0"}
+    assert response.json()["results"]["total_revenue"] > 0
+
+
+def test_registry_covers_every_calculator_post_route() -> None:
+    app.openapi_schema = None
+    openapi = app.openapi()
+    post_paths = {
+        path
+        for path, item in openapi["paths"].items()
+        if path.startswith("/api/calc/") and "post" in item
+    }
+    registered_paths = {http_path_for(spec.id) for spec in registered_calculators()}
+    assert registered_paths == post_paths

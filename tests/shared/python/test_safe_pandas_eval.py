@@ -92,3 +92,40 @@ def test_data_processor_apply_formula_rejects_unknown_columns() -> None:
         processor.apply_formula("bad", "value + missing")
 
     assert "bad" not in processor.dataframe.columns
+
+
+@pytest.mark.parametrize(
+    ("expression", "expected"),
+    [
+        ("value ** -1", [0.5, 0.25]),
+        ("value ** (-2)", [0.25, 0.0625]),
+        ("value ** +2", [4.0, 16.0]),
+        ("value ** -6", [1.0 / 64.0, 1.0 / 4096.0]),
+        ("value ** +6", [64.0, 4096.0]),
+    ],
+)
+def test_data_processor_accepts_signed_bounded_exponents(
+    expression: str, expected: list[float]
+) -> None:
+    """Signed numeric powers remain bounded and evaluate through the real API."""
+    processor = DataProcessor().load_dataframe(pd.DataFrame({"value": [2.0, 4.0]}))
+    processor.apply_formula("power", expression)
+    assert processor.dataframe["power"].tolist() == pytest.approx(expected)
+
+
+@pytest.mark.parametrize(
+    ("expression", "match"),
+    [
+        ("value ** -7", "too large"),
+        ("value ** +7", "too large"),
+        ("value ** " + "9" * 320, "too large"),
+        ("value ** -scale", "numeric constant"),
+        ("value ** -(2 + 2)", "numeric constant"),
+    ],
+)
+def test_signed_or_large_exponents_retain_literal_and_magnitude_guards(
+    expression: str, match: str
+) -> None:
+    """Exponents outside the original magnitude limit fail as ValueError."""
+    with pytest.raises(ValueError, match=match):
+        validate_pandas_formula(expression, allowed_columns={"value", "scale"})

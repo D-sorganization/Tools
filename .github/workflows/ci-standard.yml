@@ -626,6 +626,12 @@ jobs:
       # workflow fail to load with zero jobs created (run 31894981880). GitHub
       # Actions has no YAML anchors, so duplication is the only option and this
       # comment is the guard.
+      #
+      # Hash tracked files only. The root Cargo.lock is git-ignored: it is absent
+      # when this step runs and written by the build before the save step runs,
+      # so a key that hashed it differed between restore and save and no restore
+      # ever matched (0 hits in 22 restores, Repository_Management#2894).
+      # tests/ops/test_ci_standard_tools_core_wheel.py holds this in place.
       - name: Restore cached tools_core wheel
         id: toolscore_wheel
         if: ${{ matrix.python-version == '3.11' }}
@@ -634,7 +640,7 @@ jobs:
           path: dist/tools-core-wheels
           key: >-
             toolscore-wheel-${{ runner.os }}-py${{ matrix.python-version }}-${{
-            hashFiles('rust-toolchain.toml', 'Cargo.toml', 'Cargo.lock',
+            hashFiles('rust-toolchain.toml', 'Cargo.toml',
                       'rust_core/tools-core/Cargo.toml',
                       'rust_core/tools-core/pyproject.toml',
                       'rust_core/tools-core/src/**/*.rs') }}
@@ -739,6 +745,14 @@ jobs:
           python -m pip check
           python -c "import cv2, numpy, scipy; from scipy.signal import butter; assert cv2.__version__; assert numpy.__version__; assert scipy.__version__; butter(2, 0.2)"
 
+      # The required tests-rest shard contains the stdio MCP acceptance probes.
+      # Fail at setup if the SDK is unavailable instead of silently skipping them.
+      - name: Provision MCP SDK for acceptance probes
+        if: ${{ matrix.shard == 'tests-rest' }}
+        run: |
+          python -m pip install "mcp>=1,<2"
+          python -c "from mcp.server.fastmcp import FastMCP; from mcp.client.stdio import stdio_client"
+          python -m pip check
       - name: Provision bundled Chromium for unit-converter regressions
         if: ${{ matrix.shard == 'src-rest' }}
         shell: bash
@@ -796,7 +810,7 @@ jobs:
           path: dist/tools-core-wheels
           key: >-
             toolscore-wheel-${{ runner.os }}-py${{ matrix.python-version }}-${{
-            hashFiles('rust-toolchain.toml', 'Cargo.toml', 'Cargo.lock',
+            hashFiles('rust-toolchain.toml', 'Cargo.toml',
                       'rust_core/tools-core/Cargo.toml',
                       'rust_core/tools-core/pyproject.toml',
                       'rust_core/tools-core/src/**/*.rs') }}

@@ -62,3 +62,50 @@ def test_run_cli_discovery_probes_rejects_api_key_env(tmp_path: Path) -> None:
     )
     assert proc.returncode == 2, proc.stdout
     assert not out.exists()
+
+
+@pytest.mark.unit
+def test_run_cli_discovery_probes_forwards_help_subcommand(
+    monkeypatch: pytest.MonkeyPatch,
+) -> None:
+    """The runner probes each spec's help subcommand, e.g. ``codex exec --help``."""
+    import importlib.util
+
+    from shared.python.ai.adapters import cli_qualification
+
+    for key in cli_qualification.FORBIDDEN_API_KEY_ENV_VARS:
+        monkeypatch.delenv(key, raising=False)
+    calls: dict[str, str | None] = {}
+
+    def fake_probe(
+        provider: str,
+        binary_path: str,
+        required_help_flags: tuple[str, ...] = (),
+        *,
+        help_subcommand: str | None = None,
+    ) -> cli_qualification.CliDiscoveryProbeResult:
+        calls[provider] = help_subcommand
+        return cli_qualification.CliDiscoveryProbeResult(
+            provider=provider,
+            os_name=os.name,
+            resolved_path=None,
+            version_output=None,
+            flags_accepted=False,
+            missing_flags=required_help_flags,
+            probe_ok=False,
+            detail="stubbed",
+        )
+
+    monkeypatch.setattr(cli_qualification, "probe_cli_provider_discovery", fake_probe)
+    module_spec = importlib.util.spec_from_file_location("_cli_probe_runner", SCRIPT)
+    assert module_spec is not None and module_spec.loader is not None
+    runner = importlib.util.module_from_spec(module_spec)
+    module_spec.loader.exec_module(runner)
+
+    report = runner._build_report()
+
+    assert len(report["probes"]) == len(DEFAULT_CLI_DISCOVERY_SPECS)
+    assert calls == {
+        spec.provider: spec.help_subcommand for spec in DEFAULT_CLI_DISCOVERY_SPECS
+    }
+    assert calls["codex_cli"] == "exec"

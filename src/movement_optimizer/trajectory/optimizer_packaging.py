@@ -19,6 +19,7 @@ from numpy.typing import NDArray
 
 from ..backend import PhysicsBackend
 from ..constants import COM_FEASIBILITY_TOL_M, JOINT_FEASIBILITY_TOL_RAD
+from ..observability import metrics
 from .result import OptimizationResult
 
 
@@ -58,14 +59,141 @@ class _TrajectoryCallable(Protocol):
         ...
 
 
+class _FeasibilityContext(Protocol):
+    """Optimizer values needed to evaluate a candidate's physical bounds."""
+
+    n_dof: int
+    exercise_type: str
+    inner_heel: float
+    inner_toe: float
+    q_bounds: NDArray
+
+
 logger = logging.getLogger(__name__)
 
 __all__ = [
     "build_result_object",
     "check_com_feasibility",
+    "check_solution_feasibility",
     "count_joint_limit_violations",
     "evaluate_solution",
+    "find_invalid_trajectory_data",
+    "record_result_metrics",
 ]
+
+
+def find_invalid_trajectory_data(
+    q: NDArray[np.float64],
+    com_x: NDArray[np.float64],
+    n_dof: int,
+    additional_trajectories: tuple[NDArray, ...] = (),
+) -> str | None:
+    """Describe why a trajectory is numerically unusable, or return None.
+
+    This check is separate from physical bound checks. NaN compares False
+    against every bound, so a NaN trajectory would otherwise show zero
+    joint-limit or COM violations and look feasible (#6132).
+
+    Parameters:
+        q: joint trajectory, expected shape ``(N, n_dof)`` with ``N >= 1``.
+        com_x: horizontal COM trajectory, expected shape ``(N,)``.
+        n_dof: expected number of joint columns.
+        additional_trajectories: ``(qd, qdd, torques, power, com, bar)``
+            arrays, validated against their corresponding trajectory shapes.
+
+    Returns:
+        A short reason string when the data is empty, malformed, or
+        non-finite; ``None`` when the data is valid.
+    """
+    if n_dof < 1:
+        return "n_dof must be positive"
+    q_arr = np.asarray(q)
+    com_arr = np.asarray(com_x)
+    if q_arr.size == 0 or com_arr.size == 0:
+        return "empty trajectory"
+    if q_arr.ndim != 2 or q_arr.shape[1] != n_dof:
+        return f"q shape {q_arr.shape} does not match (N, {n_dof})"
+    if com_arr.shape != (q_arr.shape[0],):
+        return f"com_x shape {com_arr.shape} does not match ({q_arr.shape[0]},)"
+    n_samples = q_arr.shape[0]
+    if additional_trajectories and len(additional_trajectories) != 6:
+        return "expected qd, qdd, torques, power, com and bar trajectories"
+    named_arrays = [("q", q_arr), ("com_x", com_arr)]
+    if additional_trajectories:
+        named_arrays.extend(
+            zip(
+                ("qd", "qdd", "torques", "power", "com", "bar"),
+                map(np.asarray, additional_trajectories),
+                strict=True,
+            )
+        )
+    joint_shape = (n_samples, n_dof)
+    expected_shapes = {
+        "q": joint_shape,
+        "com_x": (n_samples,),
+        "qd": joint_shape,
+        "qdd": joint_shape,
+        "torques": joint_shape,
+        "power": joint_shape,
+        "com": (n_samples, 2),
+        "bar": (n_samples, 2),
+    }
+    return _invalid_trajectory_array_reason(named_arrays, expected_shapes)
+
+
+def _invalid_trajectory_array_reason(
+    named_arrays: list[tuple[str, NDArray]], expected_shapes: dict[str, tuple[int, ...]]
+) -> str | None:
+    """Validate named numeric arrays against their expected trajectory shapes."""
+    for name, array in named_arrays:
+        if array.size == 0:
+            return f"empty {name} trajectory"
+        if array.shape != expected_shapes[name]:
+            return f"{name} shape {array.shape} does not match {expected_shapes[name]}"
+        if not np.all(np.isfinite(array)):
+            return f"{name} trajectory contains non-finite samples"
+    return None
+
+
+def check_solution_feasibility(
+    context: _FeasibilityContext,
+    res: _OptimizeResult,
+    q: NDArray,
+    com_x: NDArray,
+    additional_trajectories: tuple[NDArray, ...] = (),
+) -> tuple[bool, int]:
+    """Check numerical validity before applying physical feasibility bounds."""
+    cost_finite = bool(np.isfinite(float(res.fun)))
+    invalid_reason = find_invalid_trajectory_data(q, com_x, context.n_dof, additional_trajectories)
+    if not cost_finite or invalid_reason is not None:
+        logger.warning(
+            "Rejecting numerically invalid solution: %s",
+            invalid_reason or "non-finite cost",
+        )
+        return False, 0
+    com_in_bounds = check_com_feasibility(
+        cost_finite,
+        com_x,
+        context.exercise_type,
+        context.inner_heel,
+        context.inner_toe,
+    )
+    n_viol = count_joint_limit_violations(q, context.q_bounds)
+    return com_in_bounds and n_viol == 0, n_viol
+
+
+def record_result_metrics(result: OptimizationResult, exercise_type: str, mode: str) -> None:
+    """Publish summary metrics for a completed optimization."""
+    labels = {"exercise_type": exercise_type, "mode": mode}
+    metrics.increment(
+        "trajectory_optimization_completed_total",
+        outcome="success" if result.success else "failed",
+        exercise_type=exercise_type,
+        mode=mode,
+    )
+    metrics.observe("trajectory_optimization_elapsed_seconds", result.elapsed_s, **labels)
+    metrics.observe("trajectory_optimization_cost", result.cost, **labels)
+    metrics.observe("trajectory_optimization_evaluations", result.n_evals, **labels)
 
 
 def evaluate_solution(

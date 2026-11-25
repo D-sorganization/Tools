@@ -36,6 +36,24 @@ class TestSafeReadCsv:
         result = safe_read_csv(tmp_path / "missing.csv", default=default)
         pd.testing.assert_frame_equal(result, default)
 
+    @pytest.mark.parametrize("use_default", [False, True])
+    def test_unreadable_path_returns_fallback(
+        self, tmp_path: Path, monkeypatch: pytest.MonkeyPatch, use_default: bool
+    ) -> None:
+        csv_path = tmp_path / "unreadable.csv"
+        csv_path.touch()
+        default = pd.DataFrame({"a": [1]}) if use_default else None
+
+        def deny_read(*args: object, **kwargs: object) -> None:
+            raise PermissionError("read denied")
+
+        monkeypatch.setattr(pd, "read_csv", deny_read)
+        result = safe_read_csv(csv_path, default=default)
+        if default is None:
+            assert result.empty
+        else:
+            assert result is default
+
     def test_valid_file(self, tmp_path: Path) -> None:
         csv_path = tmp_path / "data.csv"
         df = pd.DataFrame({"x": [1, 2, 3], "y": [4, 5, 6]})

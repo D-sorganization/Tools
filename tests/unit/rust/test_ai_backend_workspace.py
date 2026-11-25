@@ -22,7 +22,6 @@ import yaml
 # Resolve repo root relative to this test file (tests/unit/rust/ -> repo root)
 REPO_ROOT = pathlib.Path(__file__).parent.parent.parent.parent
 WORKFLOW = REPO_ROOT / ".github" / "workflows" / "maturin-ai-backend.yml"
-AI_BACKEND_WORKFLOW_NAME = "maturin-ai-backend.yml"
 PYTHON_VERSIONS = ["3.10", "3.11", "3.12", "3.13"]
 LINUX_QUALIFY_JOB = "linux-wheel-qualify"
 ORT_CARGO_TOML = REPO_ROOT / "rust_core" / "ai_backend" / "Cargo.toml"
@@ -543,3 +542,22 @@ def test_lifecycle_strenum_compatible_with_python310() -> None:
     source = lifecycle_path.read_text(encoding="utf-8")
     assert "shared.python.compatibility import StrEnum" in source
     assert not re.search(r"^from enum import StrEnum\s*$", source, re.MULTILINE)
+
+
+@pytest.mark.unit
+def test_summary_reports_native_windows_macos_as_open_blockers() -> None:
+    """Summary must show missing native wheels as open, never a pass (#5684)."""
+    summary_job = _workflow()["jobs"]["summary"]
+    report = _step(summary_job, "Report results")["run"]
+
+    for platform_label in ("Native Windows", "Native macOS"):
+        rows = [line for line in report.splitlines() if platform_label in line]
+        assert len(rows) == 1, f"summary needs exactly one '{platform_label}' row"
+        row = rows[0]
+        assert "OPEN" in row and "#5684" in row
+        # A static row must not interpolate a job result that could read success.
+        assert "needs." not in row
+        assert "success" not in row.lower()
+
+    # The blocker rows must not change which jobs gate the summary.
+    assert summary_job["needs"] == ["build-wheels", "linux-wheel-qualify"]

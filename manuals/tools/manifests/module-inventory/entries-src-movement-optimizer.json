@@ -159,10 +159,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 10803,
+      "bytes_lf": 10793,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "a0e98b0c241750dfd3060ac133bfba6e10d58e8791a566f1c0b3d34596e8403c",
+      "content_sha256_lf": "c48c24f074ed7b3358e3647ba6bc9a074060ee69981c57e66b97056101badc89",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-CLI-PY-B49008F9101C",
       "language": "python",
@@ -227,10 +227,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 3161,
+      "bytes_lf": 5372,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "1a5d875b4544f5789b3ad75d91e04eb74660857a9373f843e5029af642c1610a",
+      "content_sha256_lf": "8ed207f975e729694603bd9e65cedbe015fe3b3cc887c585697a69795265a862",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-COMPARISON-PY-13C44EB75694",
       "language": "python",
@@ -284,6 +284,8 @@
           "tests/shared/python/launch_monitor/test_comparison.py"
         ],
         "unit_mentions": [
+          "J",
+          "Nm",
           "bar",
           "cm"
         ],
@@ -1395,10 +1397,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 7546,
+      "bytes_lf": 7648,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "81107f146f21658365e3fa3d7d0e5637198ed09e87b1be4544a5a42d2e415299",
+      "content_sha256_lf": "741d8c433c1136d78be5665895f81263fae0aa37000342472f1acad0b33f6584",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-EXPORT-EXCEL-PY-6F1B5BB8A0D4",
       "language": "python",
@@ -1444,7 +1446,8 @@
         ],
         "test_paths": [
           "src/movement_optimizer/tests/test_export.py",
-          "src/movement_optimizer/tests/test_export_excel.py"
+          "src/movement_optimizer/tests/test_export_excel.py",
+          "src/movement_optimizer/tests/test_issue_6130_success_converged.py"
         ],
         "unit_mentions": [
           "N",
@@ -2024,10 +2027,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 6118,
+      "bytes_lf": 6221,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "b871f64407209a8025012c2da7f55ba4853ad3658fa64317b39575b27b360f4b",
+      "content_sha256_lf": "f63c4eb94da19e16730987694ea88a68984666aa8b7a3c0b94770cc78b4eb1f4",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-GUI-COMPARISON-DIALOG-PY-9EE337316FE9",
       "language": "python",
@@ -2074,6 +2077,7 @@
         ],
         "test_paths": [],
         "unit_mentions": [
+          "J",
           "Nm",
           "cm",
           "deg",
@@ -2853,10 +2857,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 15674,
+      "bytes_lf": 15562,
       "classification": "calculation",
       "classification_basis": "path-marker:optimization",
-      "content_sha256_lf": "ac7eb9f80fb5dcd95f054a84b55279cd30a6cb58cb7522c1cbf144b919c39533",
+      "content_sha256_lf": "c2a1c931326d2a00f8f89dc775d71e5fc57a832529cb37a372511851175ce289",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-GUI-OPTIMIZATION-MIXIN-PY-95AFB6E3A3B7",
       "language": "python",
@@ -5616,10 +5620,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 18686,
+      "bytes_lf": 18401,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "31a252bb28ba3e56426054ea97b394e9a0fe9c45733e9bbcf6525a3fe1591ad8",
+      "content_sha256_lf": "881f061f2dedd34e6b3471f91db9b02f028ba4a58038d16b7076673033d8f488",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-PERSISTENCE-PY-D56764B1C053",
       "language": "python",
@@ -6039,10 +6043,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 10285,
+      "bytes_lf": 11211,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "d72d944e02e47ecaf4243c35812214cf00928997051439e4516cb75ad3a040a7",
+      "content_sha256_lf": "64f0832e8e97868e5a906573c5ae62a3877e7790f849e40e1fdebda96039cae3",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-STRENGTH-PY-91E6805C6FA9",
       "language": "python",
@@ -6443,10 +6447,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 18828,
+      "bytes_lf": 18184,
       "classification": "calculation",
       "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "2e157b853ed2dd9799b1cbdd204e6dcacc7fdc95da57690556a2be314f83e3a5",
+      "content_sha256_lf": "44d44655935be0a00482fcfcf64abac6308fe65cda4bf34780edf6089b623739",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-TRAJECTORY-OPTIMIZER-PY-A585A29C490E",
       "language": "python",
@@ -6859,10 +6863,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 6907,
+      "bytes_lf": 11741,
       "classification": "calculation",
       "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "091cbaa61e1a2512114ec184ebe13032835e71dbab194332a9b7eab2469e8b48",
+      "content_sha256_lf": "4a93a24a07b1741d2b3a0fa19721152a50e91214f717a56106be8def60bef9aa",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-TRAJECTORY-OPTIMIZER-PACKAGING-PY-85AA40DB8730",
       "language": "python",
@@ -6874,7 +6878,6 @@
         "public-api",
         "scientific-review-required",
         "source-provenance-unmapped",
-        "test-evidence-unmapped",
         "unit-contract-review"
       ],
       "states": {
@@ -6886,7 +6889,7 @@
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "unavailable",
+        "tests": "mapped",
         "units": "mapped",
         "validation": "unavailable"
       },
@@ -6913,6 +6916,11 @@
           },
           {
             "kind": "function",
+            "name": "check_solution_feasibility",
+            "signature": "context: _FeasibilityContext, res: _OptimizeResult, q: NDArray, com_x: NDArray, additional_trajectories: tuple[NDArray, ...]=()"
+          },
+          {
+            "kind": "function",
             "name": "count_joint_limit_violations",
             "signature": "q: NDArray[np.float64], q_bounds: NDArray[np.float64] | None"
           },
@@ -6920,10 +6928,23 @@
             "kind": "function",
             "name": "evaluate_solution",
             "signature": "res: _OptimizeResult, dynamics: PhysicsBackend, exercise_type: str, bar_mass: float, build_splines_fn: _SplineCallable, eval_trajectory_fn: _TrajectoryCallable"
+          },
+          {
+            "kind": "function",
+            "name": "find_invalid_trajectory_data",
+            "signature": "q: NDArray[np.float64], com_x: NDArray[np.float64], n_dof: int, additional_trajectories: tuple[NDArray, ...]=()"
+          },
+          {
+            "kind": "function",
+            "name": "record_result_metrics",
+            "signature": "result: OptimizationResult, exercise_type: str, mode: str"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "src/movement_optimizer/tests/test_issue_6132_feasibility_finiteness.py"
+        ],
         "unit_mentions": [
+          "N",
           "bar",
           "kg",
           "s"
@@ -7220,10 +7241,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 6613,
+      "bytes_lf": 8457,
       "classification": "calculation",
       "classification_basis": "path-marker:trajectory",
-      "content_sha256_lf": "1c773d2300ae357e0bc4602d2b5f8eb019fdd3cc601f4eb89c263abf5093cd03",
+      "content_sha256_lf": "010e5d853b5a5aacc067e13c5b0098894e187a99bd1d2a0d0de7c27a4c17f117",
       "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-MOVEMENT-OPTIMIZER-TRAJECTORY-RESULT-PY-9405027640B1",
       "language": "python",

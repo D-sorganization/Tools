@@ -16,6 +16,7 @@ from .models import (
     CameraState,
     FaceOnSide,
     Vector3,
+    _bounded_zoom,
     apply_camera_preset,
     apply_manual_override,
     recenter_camera,
@@ -88,8 +89,8 @@ try:
 except ImportError:
     _PYQT6_AVAILABLE = False
     Axes3D = Any
-    Qt = Any  # type: ignore[misc,assignment]
-    QWidget = object  # type: ignore[misc,assignment]
+    Qt = Any
+    QWidget = object
 
 
 if _PYQT6_AVAILABLE:
@@ -281,8 +282,8 @@ class CameraViewportMixin:
         return float(self._camera_state.zoom)
 
     def set_camera_zoom(self, zoom: float) -> None:
-        """Set bounded zoom, applying opt-in subject clearance when enabled."""
-        requested = max(0.25, min(8.0, float(zoom)))
+        """Reject nonfinite zoom; clamp finite zoom and apply opt-in clearance."""
+        requested = _bounded_zoom(zoom)
         if self._camera_state.auto_fit_enabled:
             requested = safe_tracking_zoom(
                 requested,
