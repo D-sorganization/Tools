@@ -1190,6 +1190,7 @@
         ],
         "test_paths": [
           "src/shared/python/chat/tests/test_chat_routing_lifecycle.py",
+          "tests/calc_backend/test_epic_6019_registry_acceptance.py",
           "tests/calc_backend/test_mcp_calculator_server_6021.py",
           "tests/camera/test_camera_sources.py",
           "tests/contracts/test_chat_service_conformance.py",

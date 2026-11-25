@@ -745,6 +745,14 @@ jobs:
           python -m pip check
           python -c "import cv2, numpy, scipy; from scipy.signal import butter; assert cv2.__version__; assert numpy.__version__; assert scipy.__version__; butter(2, 0.2)"
 
+      # The required tests-rest shard contains the stdio MCP acceptance probes.
+      # Fail at setup if the SDK is unavailable instead of silently skipping them.
+      - name: Provision MCP SDK for acceptance probes
+        if: ${{ matrix.shard == 'tests-rest' }}
+        run: |
+          python -m pip install "mcp>=1,<2"
+          python -c "from mcp.server.fastmcp import FastMCP; from mcp.client.stdio import stdio_client"
+          python -m pip check
       - name: Provision bundled Chromium for unit-converter regressions
         if: ${{ matrix.shard == 'src-rest' }}
         shell: bash

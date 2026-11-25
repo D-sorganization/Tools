@@ -187,7 +187,7 @@
         ],
         "test_paths": [
           "tests/calc_backend/test_agent_api_output_cap.py",
-          "tests/calc_backend/test_mcp_registry_projection_parity_6019.py"
+          "tests/calc_backend/test_epic_6019_registry_acceptance.py"
         ],
         "unit_mentions": [],
         "validation_paths": []
@@ -267,10 +267,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8992,
+      "bytes_lf": 9051,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6d031f7201d22bcca58ee412c7ea4ec18ef867e7d233e2157941a58a020bba0f",
+      "content_sha256_lf": "332ab17fef661cb45df10dc88dda8bdc24b1661c1b95d36d1937d1bf9f232f5d",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-APP-PY-EA1FF1BC7C57",
       "language": "python",
@@ -348,6 +348,7 @@
           "tests/calc_backend/test_electrode_advancement_api.py",
           "tests/calc_backend/test_new_endpoints.py",
           "tests/calc_backend/test_rotation_converter_api.py",
+          "tests/calc_backend/test_water_vapor_pressure_api.py",
           "tests/unit/test_syngas_water_nonfinite_oracle6.py"
         ],
         "unit_mentions": [],
@@ -1550,6 +1551,73 @@
     },
     {
       "authority_status": "not-applicable",
+      "bytes_lf": 1545,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c9c69bf3a94c614f510cab4fa3ddec4024a973a5cc77a259e93a92655a786f23",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-CONTRACTS-WATER-VAPOR-PRESSURE-PY-231B5894F691",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/contracts/water_vapor_pressure.py",
+      "purpose": "Typed water saturation-pressure contract shared by REST and MCP.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "WaterVaporPressureRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "WaterVaporPressureResponse",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "EMPIRICAL_MAX_TEMPERATURE_C",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/process_calculators/test_water_vapor_pressure.py"
+        ],
+        "unit_mentions": [
+          "Pa",
+          "g"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
       "bytes_lf": 2141,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
@@ -1709,10 +1777,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 8114,
+      "bytes_lf": 8033,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3844be521b48adb61b5f1c8b4206eafbb9d84588c27d224dcd2a91158e7df6f7",
+      "content_sha256_lf": "24b203696ae92586b7e9e7193bc60734a78de95c6ee34dc067dbfb2f7176d569",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-MCP-SERVER-PY-C6975E2D2358",
       "language": "python",
@@ -1765,8 +1833,11 @@
           }
         ],
         "test_paths": [
+          "tests/calc_backend/baghouse_mcp_probe.py",
+          "tests/calc_backend/flare_mcp_probe.py",
           "tests/calc_backend/mcp_probe.py",
-          "tests/calc_backend/test_electrode_advancement_api.py"
+          "tests/calc_backend/test_electrode_advancement_api.py",
+          "tests/calc_backend/test_water_vapor_pressure_api.py"
         ],
         "unit_mentions": [
           "s"
@@ -2061,10 +2132,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13765,
+      "bytes_lf": 14455,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c2313389b8111b4e060afe6b0482c99f6f5eaa0b0b40fd122f6e43662e9d1c61",
+      "content_sha256_lf": "321972c925ad2b6da3575859475ed0926701c100e9e1e29f18fcd86fd5654f49",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-REGISTRY-CATALOG-PY-F93F79962E77",
       "language": "python",
@@ -2269,10 +2340,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6783,
+      "bytes_lf": 7194,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "6239f4227dd79db4234476a15ebbc3a199ef868c6e4fd1d88ed61ab3197eb25a",
+      "content_sha256_lf": "2a9d3a4ebbb92215ed43e25c2c1363ea506e33075371b11e3f2179f277ec0214",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-REGISTRY-STORE-PY-F9111F6BE813",
       "language": "python",
@@ -2363,7 +2434,9 @@
           "tests/calc_backend/test_calc_backend_formula_ids_6019.py",
           "tests/calc_backend/test_calculator_registry_contract.py",
           "tests/calc_backend/test_electrode_advancement_api.py",
-          "tests/calc_backend/test_mcp_registry_projection_parity_6019.py"
+          "tests/calc_backend/test_epic_6019_registry_acceptance.py",
+          "tests/calc_backend/test_mcp_registry_projection_parity_6019.py",
+          "tests/calc_backend/test_water_vapor_pressure_api.py"
         ],
         "unit_mentions": [
           "s"
@@ -2375,10 +2448,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3422,
+      "bytes_lf": 3701,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "acb2b560550a41b77431ffee88f3c814944f59b009b6a9b965633e41fcc9f61f",
+      "content_sha256_lf": "b14534a702d267484d9f23caae90d90bc17464e848c79e1c2559215a3127a5b5",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-REGISTRY-WIRE-PY-876DE2B8B559",
       "language": "python",
@@ -3322,6 +3395,63 @@
           "tests/shared/python/process_calculators/test_thermal_profile.py"
         ],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 1260,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "d227f2b0758f41ee58865a73a6936bb8a897bd5785ec52c12c6ce4cc4d764ee3",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-WATER-VAPOR-PRESSURE-PY-FA62946F2B9A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/routers/water_vapor_pressure.py",
+      "purpose": "REST adapter for the shared water saturation-pressure correlations.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "calculate_water_vapor_pressure",
+            "signature": "request: WaterVaporPressureRequest"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/process_calculators/test_water_vapor_pressure.py"
+        ],
+        "unit_mentions": [
+          "Pa",
+          "s"
+        ],
         "validation_paths": []
       }
     },

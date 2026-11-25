@@ -43,6 +43,8 @@ from ..routers.syngas_water import calculate_syngas_water
 from ..routers.syngas_water import router as syngas_router
 from ..routers.thermal_profile import predict_thermal_profile
 from ..routers.thermal_profile import router as thermal_router
+from ..routers.water_vapor_pressure import calculate_water_vapor_pressure
+from ..routers.water_vapor_pressure import router as water_vapor_router
 from ..routers.wgs_reactor import calculate_wgs
 from ..routers.wgs_reactor import router as wgs_router
 from .store import register_from_catalog
@@ -71,6 +73,11 @@ def wire_calculator_registry() -> None:
         ("symbolic-simplify", symbolic_router, simplify_expression),
         ("syngas-water", syngas_router, calculate_syngas_water),
         ("thermal-profile", thermal_router, predict_thermal_profile),
+        (
+            "water-vapor-pressure",
+            water_vapor_router,
+            calculate_water_vapor_pressure,
+        ),
         ("wgs-reactor", wgs_router, calculate_wgs),
     )
     for catalog_id, router, handler in pairs:

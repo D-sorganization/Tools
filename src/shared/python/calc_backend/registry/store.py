@@ -10,6 +10,7 @@ from typing import Any
 from fastapi import APIRouter
 from pydantic import BaseModel
 
+from ..agent_api import CONTRACT_VERSION
 from .catalog import CATALOG
 from .formula_linkage import load_agent_api_bindings
 from .spec import CalculatorSpec, FieldMetadata
@@ -129,7 +130,16 @@ def registered_calculators() -> Iterator[CalculatorSpec]:
 
 
 def describe_calculator(calculator_id: str) -> dict[str, Any]:
-    """Return units, valid ranges, and worked example for one calculator."""
+    """Return units, valid ranges, and worked example for one calculator.
+
+    Preconditions:
+        ``calculator_id`` is registered in :data:`CALCULATOR_REGISTRY`.
+
+    Postconditions:
+        The payload includes ``contract_version`` for Agent API v1 parity with MCP.
+    """
+    if calculator_id not in CALCULATOR_REGISTRY:
+        raise KeyError(f"unknown calculator id: {calculator_id!r}")
     entry = CALCULATOR_REGISTRY[calculator_id]
     spec = entry.spec
     fields = _field_metadata(spec.request_model, dict(spec.units))
@@ -162,6 +172,7 @@ def describe_calculator(calculator_id: str) -> dict[str, Any]:
     }
     if response_schema is not None:
         payload["response_schema"] = response_schema
+    payload["contract_version"] = CONTRACT_VERSION
     return payload
 
 

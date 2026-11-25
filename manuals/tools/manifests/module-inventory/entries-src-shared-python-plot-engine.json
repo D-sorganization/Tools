@@ -559,10 +559,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 6322,
+      "bytes_lf": 7112,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "c89d799e31c01ff150cce72ea2a19fb9e16a671fbadd5bb0c9911f0db56dddbd",
+      "content_sha256_lf": "96ba7aa88f12b96860e7367ddf3687e713580a94355773e0052b55916609c322",
       "family": "plot-engine-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-ENGINE-TRENDLINE-PY-B8DF87BE68EB",
       "language": "python",
@@ -587,7 +587,7 @@
         "publication": "blocked",
         "routes": "not-applicable",
         "tests": "mapped",
-        "units": "unavailable",
+        "units": "mapped",
         "validation": "unavailable"
       },
       "traceability": {
@@ -616,7 +616,9 @@
           "src/shared/python/plot_engine/tests/test_trendline.py",
           "tests/shared/python/plot_engine/test_trendline.py"
         ],
-        "unit_mentions": [],
+        "unit_mentions": [
+          "s"
+        ],
         "validation_paths": []
       }
     }

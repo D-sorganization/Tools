@@ -5947,6 +5947,16 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-25 | #6166 | Tests-only stdio MCP acceptance slice for the flare calculator |
+| 2026-11-25 | #6178 | Install the MCP SDK in the required tests-rest CI shard so stdio acceptance probes execute. |
+| 2026-11-25 | #6165 | Stdio MCP acceptance probe for registered baghouse calculator (#6019) |
+| 2026-11-25 | #6172 | Run prettier only at commit time and exclude the collated DEVELOPMENT_LOG.md so rebased pushes and the baselines contract stop breaking |
+| 2026-11-25 | #6175 | Surface Windows taskkill failures in cli_subprocess_termination and verify the child exited after a forced kill |
+| 2026-11-25 | #6161 | Expose water saturation vapor pressure (IAPWS-IF97, Buck, Magnus) over REST/MCP with typed units, bounds, and a worked example. |
+| 2026-11-24 | #6163 | TrendlineResult records fit_method; exponential curve_fit failure is logged and reported as log_linear_fallback instead of passing silently as a fit |
+| 2026-11-24 | #6162 | Probe Codex exec help for adapter flags, opt in per-provider live qualification, and use a portable temporary-directory fixture |
+| 2026-11-24 | #6151 | Registry describe includes contract_version; epic 6019 acceptance contract tests |
+| 2026-11-23 | #6158 | Maturin run summary lists native Windows/macOS ai_backend wheels as OPEN blockers instead of omitting them. |
 | 2026-11-23 | #6155 | Fix CLI timeout process-group kill via shared runner helper (#6023 C1). |
 | 2026-11-23 | #6154 | Truth up rust_distribution.md for Linux-only ai_backend wheel CI (#5684 slice docs). |
 | 2026-11-23 | #6152 | Wire CalculatorSpec formula_ids from calculation-registry agent_api bindings |

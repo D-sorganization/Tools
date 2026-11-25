@@ -3,12 +3,17 @@
 from __future__ import annotations
 
 import contextlib
+import logging
 import os
 import signal
 import subprocess
 import time
 
+logger = logging.getLogger(__name__)
+
 DEFAULT_GRACE_KILL_SECONDS = 2.0
+# taskkill exits 128 when the PID no longer exists: the child is already gone.
+_TASKKILL_PROCESS_NOT_FOUND = 128
 
 
 def cli_subprocess_pid_from_error(exc: BaseException | None) -> int | None:
@@ -75,7 +80,9 @@ def _graceful_then_forced_kill(
         while proc.poll() is None and time.monotonic() < deadline:
             time.sleep(0.05)
         if proc.poll() is None:
-            _windows_kill_process_tree(pid, timeout=max(grace_kill_seconds, 2.0))
+            kill_timeout = max(grace_kill_seconds, 2.0)
+            _windows_kill_process_tree(pid, timeout=kill_timeout)
+            _verify_child_exited(proc, timeout=kill_timeout)
         return
     with contextlib.suppress(ProcessLookupError, PermissionError):
         os.killpg(os.getpgid(pid), signal.SIGTERM)
@@ -86,12 +93,38 @@ def _graceful_then_forced_kill(
         terminate_cli_process_group(pid)
 
 
+def _verify_child_exited(proc: subprocess.Popen[bytes], *, timeout: float) -> bool:
+    """Wait briefly for ``proc`` to exit after a forced kill; log if it survives."""
+    try:
+        proc.wait(timeout=timeout)
+    except subprocess.TimeoutExpired:
+        logger.warning(
+            "CLI child pid=%s still running %.1fs after forced taskkill",
+            proc.pid,
+            timeout,
+        )
+        return False
+    return True
+
+
 def _windows_kill_process_tree(pid: int, *, timeout: float = 2.0) -> bool:
-    with contextlib.suppress(Exception):
-        subprocess.run(
+    """Run ``taskkill /T /F``; return True only if the tree is (already) gone."""
+    try:
+        result = subprocess.run(
             ["taskkill", "/PID", str(pid), "/T", "/F"],
             check=False,
             capture_output=True,
             timeout=timeout,
         )
+    except (OSError, subprocess.SubprocessError) as exc:
+        logger.warning("taskkill failed for pid=%s: %r", pid, exc)
+        return False
+    if result.returncode not in (0, _TASKKILL_PROCESS_NOT_FOUND):
+        logger.warning(
+            "taskkill exited %s for pid=%s: %s",
+            result.returncode,
+            pid,
+            (result.stderr or b"").decode(errors="replace").strip(),
+        )
+        return False
     return True

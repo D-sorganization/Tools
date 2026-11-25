@@ -40,6 +40,7 @@ class CliDiscoverySpec:
     provider: str
     binary_name: str
     required_help_flags: tuple[str, ...]
+    help_subcommand: str | None = None
 
 
 DEFAULT_CLI_DISCOVERY_SPECS: tuple[CliDiscoverySpec, ...] = (
@@ -52,11 +53,13 @@ DEFAULT_CLI_DISCOVERY_SPECS: tuple[CliDiscoverySpec, ...] = (
         provider="codex_cli",
         binary_name="codex",
         required_help_flags=("exec", "--skip-git-repo-check", "--model"),
+        help_subcommand="exec",
     ),
     CliDiscoverySpec(
         provider="agy",
         binary_name="agy",
-        required_help_flags=("--skip-trust", "-p", "--model"),
+        # agy >= 1.5.15 has no --skip-trust; the adapter no longer sends it.
+        required_help_flags=("-p", "--model"),
     ),
 )
 
@@ -115,14 +118,16 @@ def probe_cli_provider_discovery(
     binary_path: str,
     required_help_flags: tuple[str, ...] = (),
     *,
+    help_subcommand: str | None = None,
     env: Mapping[str, str] | None = None,
     timeout: float = DEFAULT_DISCOVERY_TIMEOUT,
 ) -> CliDiscoveryProbeResult:
-    """Probe ``binary_path`` with ``--version`` and ``--help`` only (no model call).
+    """Probe version and root/subcommand help only, without a model call.
 
     Preconditions:
         - ``provider`` and ``binary_path`` are non-empty strings.
         - ``timeout`` is strictly positive.
+        - ``help_subcommand``, when supplied, is one non-option command token.
     Postconditions:
         - Never invokes a live prompt turn.
         - ``probe_ok`` is True iff the binary exists, ``--version`` exited 0,
@@ -132,6 +137,12 @@ def probe_cli_provider_discovery(
         raise ValueError("provider must be a non-empty string")
     if timeout <= 0:
         raise ValueError("timeout must be positive")
+    if help_subcommand is not None and (
+        not help_subcommand
+        or help_subcommand.startswith("-")
+        or any(char.isspace() for char in help_subcommand)
+    ):
+        raise ValueError("help_subcommand must be one non-option command token")
 
     os_name = os.name
     resolved = _resolve_target_binary(binary_path)
@@ -155,7 +166,7 @@ def probe_cli_provider_discovery(
             timeout=timeout,
             env=env,
         )
-    except Exception as exc:  # noqa: BLE001 — surface discovery failures without crashing
+    except Exception as exc:  # noqa: BLE001 — return a failed probe
         logger.warning("Discovery --version probe failed for %s: %s", provider, exc)
         return CliDiscoveryProbeResult(
             provider=provider,
@@ -182,14 +193,17 @@ def probe_cli_provider_discovery(
         )
 
     try:
+        help_args = [resolved]
+        if help_subcommand is not None:
+            help_args.append(help_subcommand)
         help_res = run_cli_subprocess(
-            [resolved, "--help"],
+            [*help_args, "--help"],
             prompt=None,
             prompt_delivery=PromptDelivery.STDIN,
             timeout=timeout,
             env=env,
         )
-    except Exception as exc:  # noqa: BLE001 — surface discovery failures without crashing
+    except Exception as exc:  # noqa: BLE001 — return a failed probe
         logger.warning("Discovery --help probe failed for %s: %s", provider, exc)
         return CliDiscoveryProbeResult(
             provider=provider,
