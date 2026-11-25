@@ -2113,10 +2113,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #6019
 - **Branch:** merged via #6053
-- **PR:** #6053, #6143, #6153, #6152, #6151, #6161, #6165, #6166
+- **PR:** #6053, #6143, #6153, #6152, #6151, #6161, #6165, #6166, #6173
 - **Paths:** see #6053
 - **Started:** 2026-11-15
-- **Last verified:** 2026-11-25 (`6b6b2171`; collated from changes/6019-flare-mcp-acceptance.md)
+- **Last verified:** 2026-11-25 (`9f3a7938`; collated from changes/6019-thermal-mcp-acceptance.md)
 - **Summary:** PR #6053 added registry-backed provenance.calculation_status to MCP FAILED envelopes (UD-PAIR UpstreamDrift#14976 for package calc_backend); PR #6143 aligned CalculatorSpec catalog worked examples and units with request contracts.
 - **Next step:** Independent review; leave PR unarmed per owner instruction.
 
