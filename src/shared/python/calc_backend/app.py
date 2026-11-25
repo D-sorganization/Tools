@@ -36,6 +36,7 @@ from .routers import (
     symbolic_solver,
     syngas_water,
     thermal_profile,
+    water_vapor_pressure,
     wgs_reactor,
 )
 
@@ -53,6 +54,7 @@ CALCULATOR_ROUTERS: tuple[APIRouter, ...] = (
     flow_rate.router,
     syngas_water.router,
     thermal_profile.router,
+    water_vapor_pressure.router,
     ode_solver.router,
     rotation_converter.router,
     symbolic_solver.router,

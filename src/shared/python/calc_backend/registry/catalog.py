@@ -30,6 +30,10 @@ from ..contracts.symbolic_solver import (
 )
 from ..contracts.syngas_water import SyngasWaterRequest, SyngasWaterResponse
 from ..contracts.thermal_profile import ThermalProfileRequest, ThermalProfileResponse
+from ..contracts.water_vapor_pressure import (
+    WaterVaporPressureRequest,
+    WaterVaporPressureResponse,
+)
 from ..contracts.wgs_reactor import WGSReactorRequest, WGSReactorResponse
 from ..models.pressure_drop import PressureDropRequest
 from .catalog_pressure_drop_v2 import PRESSURE_DROP_V2, PRESSURE_DROP_V2_VALIDATE
@@ -351,6 +355,21 @@ CATALOG: dict[str, CatalogEntry] = {
                 "t_end_s": 3600.0,
             },
             response_summary={"final_temp_c": "> initial"},
+        ),
+        "route_subpath": "",
+    },
+    "water-vapor-pressure": {
+        "id": "water-vapor-pressure",
+        "title": "Water saturation vapor pressure",
+        "category": "process",
+        "request_model": WaterVaporPressureRequest,
+        "response_model": WaterVaporPressureResponse,
+        "maturity": "beta",
+        "formula_ids": (),
+        "units": {"temperature_c": "degC"},
+        "worked_example": WorkedExample(
+            request={"temperature_c": 20.0, "method": "iapws"},
+            response_summary={"pressure_pa": "~2339 (steam tables)"},
         ),
         "route_subpath": "",
     },

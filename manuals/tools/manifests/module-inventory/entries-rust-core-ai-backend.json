@@ -261,6 +261,7 @@
           "tests/ops/test_ci_test_shards.py",
           "tests/ops/test_deferred_board_5807_verified_rows.py",
           "tests/ops/test_full_suite_nightly_workflow.py",
+          "tests/ops/test_prettier_generated_exclusions.py",
           "tests/ops/test_quality_gate_diff_history.py",
           "tests/ops/test_rate_web_playwright_workflow.py",
           "tests/ops/test_test_hardening_epic_5796_registry.py",

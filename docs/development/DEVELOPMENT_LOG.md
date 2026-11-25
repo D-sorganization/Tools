@@ -1574,6 +1574,45 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#6177 · Install the MCP SDK in the Required Tests-Rest CI Shard so Stdio Acceptance Probes Execute.
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6177
+- **Branch:** merged via #6178
+- **PR:** #6178
+- **Paths:** see #6178
+- **Started:** 2026-11-25
+- **Last verified:** 2026-11-25 (`118a28dc`; collated from changes/6177-install-the-mcp-sdk-in-the-required-test.md)
+- **Summary:** Install the MCP SDK in the required tests-rest CI shard so stdio acceptance probes execute.
+- **Next step:** Shipped in PR #6178.
+
+### DL-#6171 · Run Prettier Only at Commit Time and Exclude the Collated DEVELOPMENT_LOG.md so Rebased Pushes and the Baselines Contract Stop Breaking
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6171
+- **Branch:** claude/6171-prettier-devlog-exclude
+- **PR:** #6172
+- **Paths:** see #6172
+- **Started:** 2026-11-25
+- **Last verified:** 2026-11-25 (`bcaea604`; collated from changes/6171-exclude-the-collated-development-log-md.md)
+- **Summary:** Run prettier only at commit time and exclude the collated DEVELOPMENT_LOG.md so rebased pushes and the baselines contract stop breaking
+- **Next step:** Independent exact-head review, then arm.
+
+### DL-#6167 · Surface Windows Taskkill Failures in Cli_Subprocess_Termination and Verify the Child Exited After a Forced Kill
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6167
+- **Branch:** claude/6167-taskkill-failures
+- **PR:** #6175
+- **Paths:** see #6175
+- **Started:** 2026-11-25
+- **Last verified:** 2026-11-25 (`f7d6a6bd`; collated from changes/6167-surface-windows-taskkill-failures.md)
+- **Summary:** Surface Windows taskkill failures in cli_subprocess_termination and verify the child exited after a forced kill
+- **Next step:** Independent exact-head review, then arm.
+
 ### DL-#6144 · Persist Is_Feasible in Saved Solutions and Branch the GUI Balance Warning and Summary on Feasibility, so Feasible ITERATION_LIMIT Runs Are No Longer Reported as COM Violations
 
 - **State:** shipped
@@ -2048,10 +2087,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #5684
 - **Branch:** merged via #6054
-- **PR:** #6054, #6154
+- **PR:** #6054, #6154, #6158
 - **Paths:** see #6054
 - **Started:** 2026-11-15
-- **Last verified:** 2026-11-23 (`4435c53b`; collated from changes/5684-rust-distribution-linux-truth.md)
+- **Last verified:** 2026-11-23 (`f468d80f`; collated from changes/5684-summary-open-blockers.md)
 - **Summary:** Align ai_backend README and onnx preflight ort pin strings with Cargo.toml
 - **Next step:** Shipped in PR #6054.
 
@@ -2061,12 +2100,12 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #6019
 - **Branch:** merged via #6053
-- **PR:** #6053, #6143, #6153, #6152
+- **PR:** #6053, #6143, #6153, #6152, #6151, #6161, #6165, #6166
 - **Paths:** see #6053
 - **Started:** 2026-11-15
-- **Last verified:** 2026-11-23 (`c229fd3d`; collated from changes/6019-wire-calculatorspec-formula-ids-from-cal.md)
+- **Last verified:** 2026-11-25 (`6b6b2171`; collated from changes/6019-flare-mcp-acceptance.md)
 - **Summary:** PR #6053 added registry-backed provenance.calculation_status to MCP FAILED envelopes (UD-PAIR UpstreamDrift#14976 for package calc_backend); PR #6143 aligned CalculatorSpec catalog worked examples and units with request contracts.
-- **Next step:** Merge follow-up PRs #6151 and #6152; close epic when checklist is proven.
+- **Next step:** Independent review; leave PR unarmed per owner instruction.
 
 ### DL-#6045 · Stabilize CLI Subprocess Timeout Tree-Kill Oracle and Windows Test Portability
 
@@ -2152,10 +2191,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #6003
 - **Branch:** merged via #6012
-- **PR:** #6012, #6015, #6014, #6017
+- **PR:** #6012, #6015, #6014, #6017, #6163
 - **Paths:** see #6012
 - **Started:** 2026-11-10
-- **Last verified:** 2026-11-10 (`0cf7f77a`; collated from changes/6003-syngas-nonfinite-failure.md)
+- **Last verified:** 2026-11-24 (`5f7b1898`; collated from changes/6003-trendline-fit-method-provenance.md)
 - **Summary:** Add canonical lifecycle contract ADR, shared.python.lifecycle kernel, and syngas water boolean type checks
 - **Next step:** Shipped in PR #6012.
 
@@ -3062,10 +3101,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #5727
 - **Branch:** merged via #5785
-- **PR:** #5785, #6042, #6039, #6043, #6055, #6062, #6155
+- **PR:** #5785, #6042, #6039, #6043, #6055, #6062, #6155, #6162
 - **Paths:** see #5785
 - **Started:** 2026-10-25
-- **Last verified:** 2026-11-23 (`6d5a1e64`; collated from changes/5727-cli-timeout-process-group.md)
+- **Last verified:** 2026-11-24 (`975fec8e`; collated from changes/5727-probe-codex-exec-help-for-adapter-flags.md)
 - **Summary:** Wire Antigravity (agy) CLI adapter to nonce-bound tool bridge and add AgenticAppHost protocol.
 - **Next step:** Shipped in PR #5785.
 

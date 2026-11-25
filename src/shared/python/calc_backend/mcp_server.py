@@ -211,9 +211,7 @@ def _build_fastmcp():
                     }
                 ],
             }
-        payload = registry_describe(id)
-        payload["contract_version"] = CONTRACT_VERSION
-        return payload
+        return registry_describe(id)
 
     @mcp.tool(annotations={"readOnlyHint": True, "idempotentHint": True})
     def run_calculation(

@@ -71,6 +71,8 @@ class AntigravityCliAdapter(GeminiCliAdapter):
 
     PROVIDER_NAME = "agy"
     ENABLED_BY_DEFAULT = SUBSCRIPTION_CLI_ENABLED_BY_DEFAULT
+    # agy >= 1.5.15 has no --skip-trust and exits 2 on it (#6168).
+    TRUST_FLAGS: tuple[str, ...] = ()
 
     def __init__(
         self,
