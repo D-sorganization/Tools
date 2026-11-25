@@ -1574,6 +1574,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#6168 · Agy Adapter Stops Sending --Skip-Trust (Agy 1.5.15 Exits 2 on It); Discovery Runner Forwards Help_Subcommand
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6168
+- **Branch:** claude/6168-codex-exec-help-probe
+- **PR:** #6169
+- **Paths:** see #6169
+- **Started:** 2026-11-25
+- **Last verified:** 2026-11-25 (`7b009763`; collated from changes/6168-agy-adapter-stops-sending-skip-trust-agy.md)
+- **Summary:** agy adapter stops sending --skip-trust (agy 1.5.15 exits 2 on it); discovery runner forwards help_subcommand
+- **Next step:** Independent exact-head review of the unarmed PR, then arm.
+
 ### DL-#6177 · Install the MCP SDK in the Required Tests-Rest CI Shard so Stdio Acceptance Probes Execute.
 
 - **State:** shipped
