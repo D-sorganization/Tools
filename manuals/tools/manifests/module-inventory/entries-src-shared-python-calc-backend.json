@@ -1774,6 +1774,7 @@
         ],
         "test_paths": [
           "tests/calc_backend/baghouse_mcp_probe.py",
+          "tests/calc_backend/flare_mcp_probe.py",
           "tests/calc_backend/mcp_probe.py",
           "tests/calc_backend/test_water_vapor_pressure_api.py",
           "tests/calc_backend/thermal_profile_mcp_probe.py"

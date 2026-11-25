@@ -132,6 +132,9 @@ class GeminiCliAdapter(BaseAgentAdapter):
     """
 
     PROVIDER_NAME = "gemini_cli"
+    # Flags that let the CLI run non-interactively in an untrusted workspace.
+    # Subclasses wrapping CLIs without this flag override it (see agy, #6168).
+    TRUST_FLAGS: tuple[str, ...] = ("--skip-trust",)
 
     def __init__(
         self,
@@ -221,7 +224,7 @@ class GeminiCliAdapter(BaseAgentAdapter):
         # `--skip-trust` because the chat UI is not necessarily launched from
         # a workspace the user has explicitly trusted; the CLI otherwise
         # refuses to run in non-interactive mode against an untrusted dir.
-        args = [self.binary or "gemini", "--skip-trust", "-p", ""]
+        args = [self.binary or "gemini", *self.TRUST_FLAGS, "-p", ""]
         if self.model:
             args[1:1] = ["--model", self.model]
 
