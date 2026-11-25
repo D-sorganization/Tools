@@ -58,7 +58,8 @@ DEFAULT_CLI_DISCOVERY_SPECS: tuple[CliDiscoverySpec, ...] = (
     CliDiscoverySpec(
         provider="agy",
         binary_name="agy",
-        required_help_flags=("--skip-trust", "-p", "--model"),
+        # agy >= 1.5.15 has no --skip-trust; the adapter no longer sends it.
+        required_help_flags=("-p", "--model"),
     ),
 )
 

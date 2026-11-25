@@ -61,7 +61,12 @@ def test_antigravity_cli_adapter_send_and_errors(tmp_path: Path) -> None:
         resp = adapter.send_message("hello agy", ConversationContext(), [])
     assert resp.content == "agy reply"
     assert resp.metadata["provider"] == "agy"
-    assert "--skip-trust" in run_mock.call_args.args[1]
+    argv = run_mock.call_args.args[1]
+    # agy >= 1.5.15 rejects --skip-trust ("flags provided but not defined",
+    # exit 2), so the Gemini-inherited trust flag must not reach agy (#6168).
+    assert "--skip-trust" not in argv
+    assert argv[0] == str(fake_bin)
+    assert "-p" in argv
 
     with pytest.raises(ValueError, match="non-empty"):
         adapter.send_message("   ", ConversationContext(), [])
