@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-25 | #6166 | Tests-only stdio MCP acceptance slice for the flare calculator |
 | 2026-11-25 | #6178 | Install the MCP SDK in the required tests-rest CI shard so stdio acceptance probes execute. |
 | 2026-11-25 | #6165 | Stdio MCP acceptance probe for registered baghouse calculator (#6019) |
 | 2026-11-25 | #6172 | Run prettier only at commit time and exclude the collated DEVELOPMENT_LOG.md so rebased pushes and the baselines contract stop breaking |
