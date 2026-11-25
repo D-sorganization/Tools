@@ -1574,6 +1574,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#6177 · Install the MCP SDK in the Required Tests-Rest CI Shard so Stdio Acceptance Probes Execute.
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6177
+- **Branch:** merged via #6178
+- **PR:** #6178
+- **Paths:** see #6178
+- **Started:** 2026-11-25
+- **Last verified:** 2026-11-25 (`118a28dc`; collated from changes/6177-install-the-mcp-sdk-in-the-required-test.md)
+- **Summary:** Install the MCP SDK in the required tests-rest CI shard so stdio acceptance probes execute.
+- **Next step:** Shipped in PR #6178.
+
 ### DL-#6171 · Run Prettier Only at Commit Time and Exclude the Collated DEVELOPMENT_LOG.md so Rebased Pushes and the Baselines Contract Stop Breaking
 
 - **State:** shipped
