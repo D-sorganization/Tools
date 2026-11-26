@@ -142,7 +142,15 @@ def test_clean_pr_is_not_held() -> None:
 
 
 @pytest.mark.parametrize(
-    "label", ["do-not-merge", "blocked", "do-not-automate", "Do-Not-Merge"]
+    "label",
+    [
+        "do-not-merge",
+        "blocked",
+        "do-not-automate",
+        "Do-Not-Merge",
+        "needs-owner",
+        "hold",
+    ],
 )
 def test_hold_labels_block_arming(label: str) -> None:
     verdict = automerge_guard.evaluate_hold("o/r", 1, runner=FakeGh(labels=[label]))

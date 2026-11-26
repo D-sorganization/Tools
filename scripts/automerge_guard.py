@@ -50,7 +50,9 @@ logger = logging.getLogger(__name__)
 #: ``do-not-automate`` is the pre-existing fleet-wide convention
 #: (shared_scripts/agent_identity.DO_NOT_AUTOMATE_LABEL); honouring it here
 #: keeps one vocabulary rather than a parallel one.
-HOLD_LABELS = frozenset({"do-not-merge", "blocked", "do-not-automate"})
+HOLD_LABELS = frozenset(
+    {"do-not-merge", "blocked", "do-not-automate", "needs-owner", "hold"}
+)
 
 #: Label that acknowledges an intentional deletion of tracked files.
 DELETIONS_ACK_LABEL = "deletions-acknowledged"
