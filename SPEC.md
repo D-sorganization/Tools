@@ -5947,6 +5947,7 @@ Rows are keyed by pull request, not by a serial spec version: `| YYYY-MM-DD | #<
 
 | Date       | PR         | Changes    |
 | ---------- | ---------- | ---------- |
+| 2026-11-26 | #6036 | Add ai_backend wheel contract regression tests for ort doc pins and Linux-only CI truth |
 | 2026-11-26 | #6184 | Expose single-stage syngas compression over REST and MCP |
 | 2026-11-25 | #6173 | Stdio MCP acceptance probe for registered thermal-profile calculator (#6019) |
 | 2026-11-25 | #6169 | agy adapter stops sending --skip-trust (agy 1.5.15 exits 2 on it); discovery runner forwards help_subcommand |
