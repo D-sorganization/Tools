@@ -40,6 +40,10 @@ from ..contracts.water_vapor_pressure import (
 )
 from ..contracts.wgs_reactor import WGSReactorRequest, WGSReactorResponse
 from ..models.pressure_drop import PressureDropRequest
+from ..routers.syngas_compression import (
+    SyngasCompressionRequest,
+    SyngasCompressionResponse,
+)
 from .spec import WorkedExample
 
 CatalogEntry = dict[str, Any]
@@ -332,6 +336,36 @@ CATALOG: dict[str, CatalogEntry] = {
             response_summary={"simplified": "2*x"},
         ),
         "route_subpath": "simplify",
+    },
+    "syngas-compression": {
+        "id": "syngas-compression",
+        "title": "Syngas compression stage",
+        "category": "process",
+        "request_model": SyngasCompressionRequest,
+        "response_model": SyngasCompressionResponse,
+        "maturity": "beta",
+        "formula_ids": (),
+        "units": {
+            "inlet_pressure_bar": "bar",
+            "outlet_pressure_bar": "bar",
+            "inlet_temperature_k": "K",
+            "flow_rate_kmol_h": "kmol/h",
+            "isentropic_efficiency": "—",
+            "composition": "mol fraction",
+        },
+        "worked_example": WorkedExample(
+            request={
+                "composition": {"H2": 1.0},
+                "inlet_pressure_bar": 1.0,
+                "outlet_pressure_bar": 3.0,
+                "inlet_temperature_k": 300.0,
+                "isentropic_efficiency": 0.85,
+                "flow_rate_kmol_h": 100.0,
+                "compression_type": "isentropic",
+            },
+            response_summary={"power_hp": "> 0"},
+        ),
+        "route_subpath": "",
     },
     "syngas-water": {
         "id": "syngas-water",

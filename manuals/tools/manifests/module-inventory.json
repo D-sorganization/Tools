@@ -123,7 +123,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-ai-backend.json"
     },
     {
-      "content_sha256_lf": "901f0005fb87a100ac4ec8819a4a5e71bc6f8d48f18627cc4b25c3ce963a1185",
+      "content_sha256_lf": "7ce843437cf5133a715149b9f3f9c4acc363e7e22214dcf5bb0a6079c050524d",
       "entry_count": 5,
       "package": "rust_core/data-processor-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-data-processor-core.json"
@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "5bc1b0d88420fee37137cfaf0930c0f98383f228bfdcc3188f38a6ce1b0147e2",
+      "content_sha256_lf": "5c014af758650f195e27781cf53ecaa4c9054860d48a653680a2f53824275efe",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -609,8 +609,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-ai.json"
     },
     {
-      "content_sha256_lf": "b98d13b1532c779cc4415a0cef2553074ca07fbffc864df0ca423072ace6b5ef",
-      "entry_count": 49,
+      "content_sha256_lf": "96d9197fe7db80ae00ee47b42bec5b14c146a32497c1a5ecfdf09a79eeeb9ec5",
+      "entry_count": 50,
       "package": "src/shared/python/calc_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-calc-backend.json"
     },

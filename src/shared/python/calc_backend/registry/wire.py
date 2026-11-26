@@ -39,6 +39,8 @@ from ..routers.symbolic_solver import (
 from ..routers.symbolic_solver import (
     router as symbolic_router,
 )
+from ..routers.syngas_compression import calculate_syngas_compression
+from ..routers.syngas_compression import router as syngas_compression_router
 from ..routers.syngas_water import calculate_syngas_water
 from ..routers.syngas_water import router as syngas_router
 from ..routers.thermal_profile import predict_thermal_profile
@@ -71,6 +73,11 @@ def wire_calculator_registry() -> None:
         ("symbolic-solve", symbolic_router, solve_equation),
         ("symbolic-derivative", symbolic_router, compute_derivative),
         ("symbolic-simplify", symbolic_router, simplify_expression),
+        (
+            "syngas-compression",
+            syngas_compression_router,
+            calculate_syngas_compression,
+        ),
         ("syngas-water", syngas_router, calculate_syngas_water),
         ("thermal-profile", thermal_router, predict_thermal_profile),
         (
