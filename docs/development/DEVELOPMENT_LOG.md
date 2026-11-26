@@ -1574,6 +1574,19 @@ reachable from any live state and `abandoned` from `parked`.
 
 ## Shipped (Last 90 Days)
 
+### DL-#6168 · Agy Adapter Stops Sending --Skip-Trust (Agy 1.5.15 Exits 2 on It); Discovery Runner Forwards Help_Subcommand
+
+- **State:** shipped
+- **Owner:** unassigned
+- **Issue:** #6168
+- **Branch:** claude/6168-codex-exec-help-probe
+- **PR:** #6169
+- **Paths:** see #6169
+- **Started:** 2026-11-25
+- **Last verified:** 2026-11-25 (`7b009763`; collated from changes/6168-agy-adapter-stops-sending-skip-trust-agy.md)
+- **Summary:** agy adapter stops sending --skip-trust (agy 1.5.15 exits 2 on it); discovery runner forwards help_subcommand
+- **Next step:** Independent exact-head review of the unarmed PR, then arm.
+
 ### DL-#6177 · Install the MCP SDK in the Required Tests-Rest CI Shard so Stdio Acceptance Probes Execute.
 
 - **State:** shipped
@@ -2100,10 +2113,10 @@ reachable from any live state and `abandoned` from `parked`.
 - **Owner:** unassigned
 - **Issue:** #6019
 - **Branch:** merged via #6053
-- **PR:** #6053, #6143, #6153, #6152, #6151, #6161, #6165, #6166
+- **PR:** #6053, #6143, #6153, #6152, #6151, #6161, #6165, #6166, #6173
 - **Paths:** see #6053
 - **Started:** 2026-11-15
-- **Last verified:** 2026-11-25 (`6b6b2171`; collated from changes/6019-flare-mcp-acceptance.md)
+- **Last verified:** 2026-11-25 (`9f3a7938`; collated from changes/6019-thermal-mcp-acceptance.md)
 - **Summary:** PR #6053 added registry-backed provenance.calculation_status to MCP FAILED envelopes (UD-PAIR UpstreamDrift#14976 for package calc_backend); PR #6143 aligned CalculatorSpec catalog worked examples and units with request contracts.
 - **Next step:** Independent review; leave PR unarmed per owner instruction.
 

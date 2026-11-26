@@ -267,10 +267,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9041,
+      "bytes_lf": 9096,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "31b67f3fe7796dd1411d17e15a5ba106c4bf58c844d6cf3e9a994be0a2c2209e",
+      "content_sha256_lf": "da8da6a8c2a0a7ad0f75baf01132009b10e0d26e4d14d20a326dba88a0b4dcc5",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-APP-PY-EA1FF1BC7C57",
       "language": "python",
@@ -348,6 +348,7 @@
           "tests/calc_backend/test_new_endpoints.py",
           "tests/calc_backend/test_pressure_drop_v2_mcp.py",
           "tests/calc_backend/test_rotation_converter_api.py",
+          "tests/calc_backend/test_syngas_compression_api.py",
           "tests/calc_backend/test_water_vapor_pressure_api.py",
           "tests/unit/test_syngas_water_nonfinite_oracle6.py"
         ],
@@ -1779,7 +1780,9 @@
           "tests/calc_backend/mcp_probe.py",
           "tests/calc_backend/pressure_drop_v2_probe.py",
           "tests/calc_backend/test_pressure_drop_v2_mcp.py",
-          "tests/calc_backend/test_water_vapor_pressure_api.py"
+          "tests/calc_backend/test_syngas_compression_api.py",
+          "tests/calc_backend/test_water_vapor_pressure_api.py",
+          "tests/calc_backend/thermal_profile_mcp_probe.py"
         ],
         "unit_mentions": [
           "s"
@@ -2074,10 +2077,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 13813,
+      "bytes_lf": 14992,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "3698bece8afda6145c7e1c5c68a78a58ee733281be9c8a51c1326d4104324b12",
+      "content_sha256_lf": "3469cdddb883309cb781012c502582ff0aad4f6a9ce060ddf43db94c61a4ef67",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-REGISTRY-CATALOG-PY-F93F79962E77",
       "language": "python",
@@ -2443,6 +2446,7 @@
           "tests/calc_backend/test_epic_6019_registry_acceptance.py",
           "tests/calc_backend/test_mcp_registry_projection_parity_6019.py",
           "tests/calc_backend/test_pressure_drop_v2_mcp.py",
+          "tests/calc_backend/test_syngas_compression_api.py",
           "tests/calc_backend/test_water_vapor_pressure_api.py"
         ],
         "unit_mentions": [
@@ -2455,10 +2459,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3858,
+      "bytes_lf": 4141,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "2ef57c3240fcbb8387fa094ec34067e115ebedadad1f71ef798a769fb4a03101",
+      "content_sha256_lf": "906fd8f9d99a3d8fb149f593a956809e1c97c69767edcbe68a30b0dcd1390bf9",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-REGISTRY-WIRE-PY-876DE2B8B559",
       "language": "python",
@@ -3223,6 +3227,76 @@
         ],
         "unit_mentions": [
           "s"
+        ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 6470,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "c7af57c2c90fbe4479c4b48aa7ba4279abc86479c9ab1a70d5e09386c4dcb2d1",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-SYNGAS-COMPRESSION-PY-E4F35D4EAB65",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/routers/syngas_compression.py",
+      "purpose": "REST adapter and typed contract for one-stage syngas compression.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "not-applicable",
+        "units": "mapped",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "SyngasCompressionRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "SyngasCompressionResponse",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "_PRESSURE_RATIO_TOLERANCE",
+            "signature": null
+          },
+          {
+            "kind": "function",
+            "name": "calculate_syngas_compression",
+            "signature": "request: SyngasCompressionRequest"
+          }
+        ],
+        "test_paths": [],
+        "unit_mentions": [
+          "J",
+          "bar"
         ],
         "validation_paths": []
       }
