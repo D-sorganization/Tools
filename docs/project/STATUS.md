@@ -2,68 +2,66 @@
 
 # Tools Project Status
 
-> Updated by Project Steward. Reflects state as of **2026-11-15**.
+> Updated by Project Steward. Reflects state as of **2026-11-28**.
 > This is a current-state snapshot; history lives in git and SPEC.md §12.
 
-## What Moved (since 2026-10-25)
+## What Moved (since 2026-11-15)
 
-| Area                    | What shipped                                                                                                       | PR/Issue               |
-| ----------------------- | ------------------------------------------------------------------------------------------------------------------ | ---------------------- |
-| Security (P0)           | Fork PRs kept off the self-hosted fleet; #4464 closed by merged PR (closed 2026-10-05)                             | #5427 / #4464          |
-| Epics closed            | #4433, #4377, #4260, #5068, #4267, #4729, #4706, #4249, #4089, #4046, #4149 closed 2026-10-14 as completed ("all child sub-issues implemented and verified on main") | #5613 / #5614          |
-| Calculation correctness | Fleet Critic TOOLS-01…TOOLS-31 fixes: syngas, steam, WGS, scrubber, baghouse, thermo, pressure drop, URDF inertia   | e.g. #5813 / #5822 / #5853 |
-| Syngas water            | Unit conversions corrected, typed non-finite failure, router fallback                                              | #6007 / #6009 / #6017  |
-| Lifecycle contract      | Canonical lifecycle vocabulary and ADR; default-true success flags removed (part of #6003)                         | #6012 / #6014 / #6015  |
-| Agent API (#6019)       | `CalculatorSpec` registry, stdio MCP server hardening, conformance CI, `.mcp.json`, `llms.txt`                      | #6029 / #6033 / #6038  |
-| Sidekick CLI bridge (#5727) | Shared Popen CLI runner, bridge wiring with opt-in parity, turn cancel/idle timeout, Tier-2/3 discovery probes | #6030 / #6039 / #6042 / #6043 |
-| ai_backend wheels (#5684) | Linux wheel qualification hardening; UpstreamDrift consumer-contract sparse checkout                              | #6025 / #6028 / #6031  |
-| Theme                   | `themes.json` single source of theme colours, drift check, curated set with contrast checks                        | #5946 / #5965 / #5974  |
-| Baselines               | Baseline inventory, reproducibility contract, bounded query utility                                                | #5996 / #6001          |
-| CI hygiene              | Nightly coverage gate repaired (#5981), xdist crash fail-fast, Tauri/Playwright/apt hardening, `scripts/pre_pr`    | #5866 / #5900 / #5991 / #6044 |
+94 commits landed on `main` (including fragment collations), all through the merge queue.
+
+| Area                        | What shipped                                                                                                      | PR/Issue                                |
+| --------------------------- | ----------------------------------------------------------------------------------------------------------------- | --------------------------------------- |
+| Agent API (#6019)           | Registry acceptance contracts, design-manual `formula_ids`, stdio MCP acceptance for flare/baghouse/thermal profile; water vapour pressure and syngas compression exposed over REST/MCP; MCP probes run in the required shard | #6151 / #6152 / #6165 / #6173 / #6161 / #6184 / #6178 |
+| ai_backend wheels (#5684)   | Wheel contract truth locked for slices 1 and 4; Linux `rust_distribution` docs; native Windows/macOS listed as OPEN blockers | #6036 / #6154 / #6158                   |
+| Sidekick CLI bridge (#5727) | Process-group kill on CLI timeout, Windows `taskkill` verification, Codex exec help probe, `agy --skip-trust` removed; request-to-action PRD | #6155 / #6175 / #6162 / #6169 / #6062   |
+| Architecture review (#6003) | Trendline `fit_method` reported instead of hiding a `curve_fit` failure                                           | #6163                                   |
+| Calculation correctness     | Movement optimizer (CONVERGED-only success, feasibility, torque direction, abs joint work), Cook's distance, BCa interval, t/normal quantiles, Welch PSD, IT BTU, SO(3) projection, orbit elements | e.g. #6136 / #6069 / #6072 / #6096 / #6118 / #6125 / #6067 / #6094 |
+| Robustness fixes            | Non-finite input rejection (camera, config, folder tool, formula), UTF-8/CSV fallbacks, file-watcher shutdown, cache pressure | e.g. #6106 / #6083 / #6123 / #6112 / #6082 / #6079 / #6119 |
+| CI                          | `tools_core` wheel cache key fixed                                                                                | #6061                                   |
+| Fleet Critic                | November 2026 calculator Agent API provenance critique filed; follow-ups #6187–#6190                              | #6191                                   |
 
 ## What Is Stuck
 
-| Item                                    | Epic / Issue        | Blocker                                                                                                                                                       |
-| --------------------------------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Full Test Suite (Nightly) red           | #5684 (related)     | Red every night since 2026-11-12: 2 failures in `tests/shared/python/ai/test_rust_adapter_wheel_smoke.py` (24,921 passed) on run 43679519063; no tracking issue |
-| Physical validation (DV-5068/4729/4267) | #5068, #4729, #4267 | Software epics closed, but the planning catalog records stay parked; issue closure is not physical validation (see Charter Non-Goals)                          |
-| Native Windows/macOS ai_backend wheels  | #5684               | Linux-only qualification today; native wheel evidence outstanding                                                                                             |
+| Item                                    | Epic / Issue        | Blocker                                                                                                                                                                                                    |
+| --------------------------------------- | ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Full Test Suite (Nightly) red           | #5684, #6019        | Red 17 nights in a row (2026-11-12 → 2026-11-28); no tracking issue. 2026-11-27 run 45943643343: 3 failed / 25,308 passed (two `test_rust_adapter_wheel_smoke` tests, plus `test_fleet_agent_api_conformance_script_exits_zero` — "MCP SDK not installed"). 2026-11-28 run 46110450179 aborted (`Fatal Python error: Aborted`) at ~15% during `tests/rate_of_closure/test_morris_pyqt_workflow.py` |
+| Physical validation (DV-5068/4729/4267) | #5068, #4729, #4267 | Software epics closed, but the planning catalog records stay parked; issue closure is not physical validation (see Charter Non-Goals)                                                                       |
+| Native Windows/macOS ai_backend wheels  | #5684               | Linux-only qualification today; native wheel evidence outstanding                                                                                                                                          |
 
 ## What Is Next (Ordered)
 
-1. **Nightly suite back to green** — diagnose the two `test_rust_adapter_wheel_smoke` failures (likely tied to the open #5684 wheel PRs #6036/#6051/#6054).
-2. **Land the open Agent API / CLI-bridge PRs** (#6051–#6055) under epics #6019 and #5727.
-3. **Work the 2026-11-10 backlog plan** (#6023) and the adversarial architecture review wave 1 (#6003).
+1. **Nightly suite back to green** — install the MCP SDK extra (`calc-mcp`) in the nightly job or gate the conformance test on it, rerun the wheel-smoke pair now that #6036 merged, and find the Qt abort in the Morris PyQt workflow tests.
+2. **Land the open Agent API PRs** #6159 and #6160 (#6019), and the trendline follow-up #6192 (#6190).
+3. **Work the Fleet Critic follow-ups** #6187–#6190, the 2026-11-10 backlog plan (#6023) and architecture review wave 1 (#6003).
 4. **Physical validation Board decisions** (DV-5068, DV-4729, DV-4267) — resource allocation still pending.
 
-## CI Health (2026-11-15)
+## CI Health (2026-11-28)
 
-| Workflow                      | Status                                                                                                       |
-| ----------------------------- | ------------------------------------------------------------------------------------------------------------ |
-| CI Standard (`tests (3.11)`)  | success — latest `main` push run 43720133063 on sha `8e74a51fc`                                             |
-| Heavy Integration Tests       | success (`main` sha `8e74a51fc`)                                                                             |
-| Cross-Repo Python Integration | success (`main` sha `8e74a51fc`)                                                                             |
-| Benchmark Suite               | success (2026-11-15 schedule)                                                                                |
-| Nightly Full-Repo Quality     | success (2026-11-15)                                                                                         |
-| Full Test Suite (Nightly)     | **failure** — 2026-11-12 through 2026-11-15 (green 2026-11-07…11-11; red 2026-10-27…11-06 before #5981 fixes) |
-| Merge Hold Guard              | success                                                                                                      |
+| Workflow                      | Status                                                                                    |
+| ----------------------------- | ----------------------------------------------------------------------------------------- |
+| CI Standard (`tests (3.11)`)  | success — latest `main` push run 45811378943 on sha `782afea9f` (2026-11-26)              |
+| Heavy Integration Tests       | success (2026-11-28 schedule, sha `e08f453d9`)                                            |
+| Cross-Repo Python Integration | success (sha `0afb67f1b`, 2026-11-26)                                                     |
+| Benchmark Suite               | success (sha `0afb67f1b`, 2026-11-26)                                                     |
+| agent-api-conformance         | success (sha `0afb67f1b`, 2026-11-26)                                                     |
+| Maturin — ai_backend Wheels   | success (sha `782afea9f`, 2026-11-26)                                                     |
+| Full Test Suite (Nightly)     | **failure** — every night 2026-11-12 through 2026-11-28 (last green 2026-11-11)           |
+| Merge Hold Guard              | success                                                                                   |
 
-## Open PRs (2026-11-15)
+## Open PRs (2026-11-28)
 
-| PR    | Opened     | Title                                                                    | Notes                                         |
-| ----- | ---------- | ------------------------------------------------------------------------ | --------------------------------------------- |
-| #6056 | 2026-11-15 | docs(project): steward status 2026-11-15                                 | project steward                               |
-| #6055 | 2026-11-15 | ci(ops): Tier-2 subscription CLI discovery workflow (#5727)              | epic #5727                                    |
-| #6054 | 2026-11-15 | fix(ai_backend): align ort rc.14 strings in README and preflight         | ai_backend                                    |
-| #6052 | 2026-11-15 | test(calc-backend): lock MCP registry projection parity (refs #6019)     | epic #6019                                    |
-| #6051 | 2026-11-15 | test(ai_backend): record downstream wheel consumer survey (#5684 slice 2) | #5684                                         |
-| #6036 | 2026-11-12 | test(ai_backend): lock wheel contract truth for #5684 slices 1 and 4     | Oldest; BLOCKED, no failing checks, auto-merge not armed; reaches 72 h on 2026-11-15 22:51 UTC |
+| PR    | Opened     | Title                                                               | Notes                                    |
+| ----- | ---------- | ------------------------------------------------------------------- | ---------------------------------------- |
+| #6192 | 2026-11-28 | fix(trendline): keep calendar-year exponential fits finite          | #6190; BLOCKED (checks pending)          |
+| #6160 | 2026-11-23 | feat(calc-backend): expose electrode consumption over REST/MCP      | #6019; CLEAN, auto-merge not armed       |
+| #6159 | 2026-11-23 | feat(calc-backend): expose pressure drop v2 over MCP                | #6019; BLOCKED, auto-merge not armed     |
+| #6087 | 2026-11-16 | chore: remove the retired vendored GAAI tree (RM #2725)             | Oldest; CLEAN, auto-merge not armed      |
 
-Open epics: #6019 (Agent API over MCP), #6003 (adversarial architecture review wave 1), #5727 (Sidekick agentic platform / CLI bridge); plus #5684 and backlog plan #6023.
+Open epics: #6019 (Agent API over MCP), #6003 (adversarial architecture review wave 1), #5727 (Sidekick agentic platform / CLI bridge); plus #5684 and backlog plan #6023. Nine open issues in total.
 
 ## Decisions Needed
 
-- **Nightly Full Test Suite red for 4 days (first appeared 2026-11-15).** CI on a `main` workflow has been red for more than a day with no tracking issue; owner or lane assignment needed for the two `test_rust_adapter_wheel_smoke` failures. Required PR gates on `main` remain green.
+- **Nightly Full Test Suite red for 17 days (first appeared 2026-11-15).** CI on a `main` workflow has been red for more than a day with no tracking issue; owner or lane assignment needed. The failure mix has shifted (wheel smoke + missing MCP SDK on 2026-11-27, a Qt abort on 2026-11-28). Required PR gates on `main` remain green. Routine CI item, not architectural, so no Board proposal.
 - **Physical validation resource allocation (DV-5068, DV-4729, DV-4267; first appeared 2026-09-23).** The software epics #5068, #4729 and #4267 were closed as completed on 2026-10-14, but the three deferred validation plans in `docs/development/planning/` are unchanged and still need Board approval plus verified equipment and participant access before any physical or acoustic claim can be made.
 - DV-5068: Board decision pending on whether to resource the [Owner Plan](https://github.com/D-sorganization/Tools/blob/main/docs/development/planning/DV-5068.md); accountable owner, access dates, funding and execution capacity are unverified.
 - DV-5068: Decide how to obtain and qualify equipment-specific shaft/head/grip measurements with calibration and operating-strain evidence; prerequisite evidence remains unavailable.
@@ -75,8 +73,6 @@ Open epics: #6019 (Agent API over MCP), #6003 (adversarial architecture review w
 - DV-4267: Board decision pending on whether to resource the [Owner Plan](https://github.com/D-sorganization/Tools/blob/main/docs/development/planning/DV-4267.md); accountable owner, access dates, funding and execution capacity are unverified.
 - DV-4267: Decide how to obtain and qualify named ground surfaces with controlled condition metadata; prerequisite evidence remains unavailable.
 - DV-4267: Decide how to obtain and qualify calibrated ball position/velocity/spin observations and independent trials; prerequisite evidence remains unavailable.
-
-Resolved since last run: **P0 fork-PR security (#4464)** — closed 2026-10-05 by merged PR #5427 ("keep fork PRs off the self-hosted fleet").
 
 ## Reactivation
 
