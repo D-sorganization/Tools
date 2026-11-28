@@ -358,10 +358,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 28457,
+      "bytes_lf": 28331,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "bdaf1ec7cf0c88b36f2041098339e62a856084325396e1a585a0ff31d333a52c",
+      "content_sha256_lf": "00b36616119ae96991995d0faa0c2e7a7beedb65b993d2b6c652f6d94f772d99",
       "family": "process-calculators-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-CONSTANTS-PY-4A2923A7CE8A",
       "language": "python",
@@ -833,16 +833,6 @@
           {
             "kind": "constant",
             "name": "IAPWS_CRITICAL_TEMP",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "IAPWS_MAX_TEMPERATURE_C",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "IAPWS_MIN_TEMPERATURE_C",
             "signature": null
           },
           {
@@ -1343,16 +1333,6 @@
           {
             "kind": "constant",
             "name": "WATER_VAPOR_D",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "WATER_VAPOR_SCHEMA_MAX_C",
-            "signature": null
-          },
-          {
-            "kind": "constant",
-            "name": "WATER_VAPOR_SCHEMA_MIN_C",
             "signature": null
           },
           {
