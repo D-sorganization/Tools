@@ -34,8 +34,6 @@ from .constants import (  # noqa: E402
     CELSIUS_TO_KELVIN_OFFSET,
     IAPWS_COEFFICIENTS,
     IAPWS_CRITICAL_TEMP,
-    IAPWS_MAX_TEMPERATURE_C,
-    IAPWS_TRIPLE_POINT_TEMP,
     MW_SYNGAS_TYPICAL_GMOL,
     MW_WATER_GMOL,
     NORMAL_PRESSURE_PA,
@@ -44,6 +42,8 @@ from .constants import (  # noqa: E402
     WATER_VAPOR_B,
     WATER_VAPOR_C,
     WATER_VAPOR_D,
+    WATER_VAPOR_SCHEMA_MAX_C,
+    WATER_VAPOR_SCHEMA_MIN_C,
 )
 from .water_vapor_pressure import (  # noqa: E402
     _EXP_MAX_ARG,
@@ -59,13 +59,17 @@ from .water_vapor_pressure import (  # noqa: E402
 def _shared_vapor_pressure_table():
     """IAPWS saturation table shared by every calculator instance.
 
-    Nodes are the closed Kelvin interval from the triple point to the
-    critical temperature. ``iapws_pressure_pa`` accepts that whole interval,
-    so the table has no NaN bin near 0.1 degC.
+    Nodes cover the public schema interval, 0 C through 374 C. The kernel
+    clamps the two endpoints onto IAPWS-IF97, so the first bin near 0.1 C
+    is finite.
     """
     from scipy.interpolate import interp1d
 
-    temperatures_k = np.linspace(IAPWS_TRIPLE_POINT_TEMP, IAPWS_CRITICAL_TEMP, 1000)
+    temperatures_k = np.linspace(
+        WATER_VAPOR_SCHEMA_MIN_C + CELSIUS_TO_KELVIN_OFFSET,
+        WATER_VAPOR_SCHEMA_MAX_C + CELSIUS_TO_KELVIN_OFFSET,
+        1000,
+    )
     pressures_pa = [
         iapws_pressure_pa(float(temperature_k) - CELSIUS_TO_KELVIN_OFFSET)
         for temperature_k in temperatures_k
@@ -411,7 +415,7 @@ class SyngasWaterCalculator:
             return self._magnus_equation(temperature_c), "Magnus Equation (auto)"
         if -20 <= temperature_c <= 100:
             return self._buck_equation(temperature_c), "Buck Equation (auto)"
-        if 100 < temperature_c <= IAPWS_MAX_TEMPERATURE_C:
+        if 100 < temperature_c <= WATER_VAPOR_SCHEMA_MAX_C:
             return self._iapws_equation(temperature_c), "IAPWS-IF97 (auto)"
         return self._antoine_equation(temperature_c), "Antoine Equation (auto)"
 

@@ -246,6 +246,8 @@ __all__ = [
     "WATER_VAPOR_B",
     "WATER_VAPOR_C",
     "WATER_VAPOR_D",
+    "WATER_VAPOR_SCHEMA_MAX_C",
+    "WATER_VAPOR_SCHEMA_MIN_C",
     "WATER_VISCOSITY_25C",
     "WATTS_PER_HP",
     "WGS_CATALYST_VOLUME_FRACTION",
@@ -724,14 +726,16 @@ IAPWS_CRITICAL_PRESSURE: Final[float] = 22064000.0
 # Triple point temperature of water [K]
 IAPWS_TRIPLE_POINT_TEMP: Final[float] = 273.16
 
-# Published Celsius bounds of the IAPWS-IF97 saturation line. These are the
-# triple-point and critical temperatures in degC. The request schema and
-# ``iapws_pressure_pa`` both use this pair so 0.0 C and 374.0 C stay outside
-# the contract while 0.01 C and 373.946 C stay inside it. Comparing the
-# Kelvin constants after ``t + 273.15`` rejects the 0.01 C literal, because
-# that sum lands one ulp below 273.16 K.
+# IAPWS-IF97 saturation interval in degC. 0.01 is not a safe Field bound:
+# the float ``0.01 + 273.15`` lands one ulp below the triple point.
 IAPWS_MIN_TEMPERATURE_C: Final[float] = 0.01
 IAPWS_MAX_TEMPERATURE_C: Final[float] = 373.946
+
+# Public water-vapor schema interval. The pydantic field is ``ge=0, le=374``.
+# Those endpoints sit just outside IF97; the solver clamps them onto the
+# interval above so the correlation stays real and finite.
+WATER_VAPOR_SCHEMA_MIN_C: Final[float] = 0.0
+WATER_VAPOR_SCHEMA_MAX_C: Final[float] = 374.0
 
 # IAPWS saturation pressure correlation coefficients
 IAPWS_COEFFICIENTS: Final[list[float]] = [

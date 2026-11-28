@@ -6,15 +6,13 @@ import math
 
 import pytest
 from calc_backend.app import app
-from calc_backend.contracts.water_vapor_pressure import WaterVaporPressureRequest
 from calc_backend.mcp_server import _run_calculator
 from calc_backend.registry.store import describe_calculator
 from fastapi.testclient import TestClient
-from pydantic import ValidationError
 
 from shared.python.sidekick.process_calculators.constants import (
-    IAPWS_MAX_TEMPERATURE_C,
-    IAPWS_MIN_TEMPERATURE_C,
+    WATER_VAPOR_SCHEMA_MAX_C,
+    WATER_VAPOR_SCHEMA_MIN_C,
 )
 
 CALCULATOR_ID = "water-vapor-pressure"
@@ -35,8 +33,8 @@ def test_discovery_schema_units_bounds_and_worked_example() -> None:
     fields = {field["name"]: field for field in description["request_fields"]}
     assert fields["temperature_c"]["units"] == "degC"
     assert fields["temperature_c"]["valid_range"] == {
-        "minimum": IAPWS_MIN_TEMPERATURE_C,
-        "maximum": IAPWS_MAX_TEMPERATURE_C,
+        "minimum": WATER_VAPOR_SCHEMA_MIN_C,
+        "maximum": WATER_VAPOR_SCHEMA_MAX_C,
     }
     output = description["response_schema"]["properties"]["pressure_pa"]
     assert output["description"].endswith("[Pa]")
@@ -85,27 +83,25 @@ def test_empirical_methods_track_reference_within_stated_tolerance(
     )
 
 
-def test_published_bounds_match_iapws_if97_domain() -> None:
-    """Schema envelope is the IAPWS saturation interval, not 0 C to 374 C.
+@pytest.mark.parametrize(
+    ("schema_c", "iapws_c"),
+    [(0.0, 0.01), (374.0, 373.946)],
+)
+def test_schema_endpoints_clamp_onto_iapws(schema_c: float, iapws_c: float) -> None:
+    """0.0 C and 374.0 C return the finite pressure of the nearest IF97 bound.
 
-    0.0 C is below the triple point and 374.0 C is above the critical point.
-    Both must be schema-invalid so a client is not offered a temperature the
-    solver then rejects.
+    The schema accepts both. The correlation is evaluated at 0.01 C and
+    373.946 C so the result is real rather than a 422 or a NaN.
     """
-    description = describe_calculator(CALCULATOR_ID)
-    fields = {field["name"]: field for field in description["request_fields"]}
-    bounds = fields["temperature_c"]["valid_range"]
-    assert bounds["minimum"] == pytest.approx(0.01)
-    assert bounds["maximum"] == pytest.approx(373.946)
-    assert bounds["minimum"] > 0.0
-    assert bounds["maximum"] < 374.0
-
-
-@pytest.mark.parametrize("temperature_c", [0.0, 374.0])
-def test_schema_rejects_temperatures_outside_iapws(temperature_c: float) -> None:
-    """The request model rejects the two endpoints the solver cannot evaluate."""
-    with pytest.raises(ValidationError):
-        WaterVaporPressureRequest(temperature_c=temperature_c, method="iapws")
+    client = TestClient(app)
+    outer = client.post(PATH, json={"temperature_c": schema_c, "method": "iapws"})
+    inner = client.post(PATH, json={"temperature_c": iapws_c, "method": "iapws"})
+    assert outer.status_code == 200, outer.text
+    assert inner.status_code == 200, inner.text
+    pressure_pa = outer.json()["pressure_pa"]
+    assert math.isfinite(pressure_pa)
+    assert pressure_pa > 0
+    assert pressure_pa == pytest.approx(inner.json()["pressure_pa"])
 
 
 @pytest.mark.parametrize("temperature_c", [0.01, 373.946])

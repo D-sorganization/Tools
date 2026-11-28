@@ -38,6 +38,8 @@ from .constants import (
     MAGNUS_B,
     MAGNUS_C,
     MMHG_TO_PA_CONV,
+    WATER_VAPOR_SCHEMA_MAX_C,
+    WATER_VAPOR_SCHEMA_MIN_C,
 )
 
 __all__ = [
@@ -179,17 +181,25 @@ def iapws_pressure_pa(temperature_c: float) -> float:
         Saturation pressure in Pascal.
 
     Raises:
-        ValueError: If the temperature is outside the published IAPWS-IF97
-            saturation interval, ``[0.01, 373.946]`` degC.
+        ValueError: If the temperature is outside the public schema interval
+            ``[0, 374]`` degC.
+
+    The correlation itself is valid on ``[0.01, 373.946]`` degC. Schema
+    endpoints 0.0 C and 374.0 C clamp onto that interval so the result stays
+    finite instead of failing a request the schema already accepted.
     """
     if temperature_c is None:
         raise ValueError("temperature_c must be provided")
     if (
-        temperature_c < IAPWS_MIN_TEMPERATURE_C
-        or temperature_c > IAPWS_MAX_TEMPERATURE_C
+        temperature_c < WATER_VAPOR_SCHEMA_MIN_C
+        or temperature_c > WATER_VAPOR_SCHEMA_MAX_C
     ):
         raise ValueError("Temperature out of IAPWS-IF97 range")
-    temperature_k = temperature_c + CELSIUS_TO_KELVIN_OFFSET
+    evaluation_c = min(
+        max(float(temperature_c), IAPWS_MIN_TEMPERATURE_C),
+        IAPWS_MAX_TEMPERATURE_C,
+    )
+    temperature_k = evaluation_c + CELSIUS_TO_KELVIN_OFFSET
     tc = IAPWS_CRITICAL_TEMP
     pc = IAPWS_CRITICAL_PRESSURE
     theta = 1 - temperature_k / tc
