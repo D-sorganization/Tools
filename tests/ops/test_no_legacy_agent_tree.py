@@ -29,11 +29,7 @@ def test_root_allowlist_drops_legacy_agent_entry() -> None:
     assert ".agent" not in ROOT_ALLOWLIST
 
 
-def test_gaai_project_rules_fence_ci_watch_and_fix() -> None:
-    # The core skill keeps a session alive for CI; the fleet PR lifecycle
-    # ends it at PR open, so the project layer fences it (RM #2567).
-    rules = REPO_ROOT / ".gaai" / "project" / "contexts" / "rules"
-    text = (rules / "project.rules.md").read_text(encoding="utf-8")
-    assert "invoke the `ci-watch-and-fix` skill" not in text
-    assert "Do not run core skill `delivery/ci-watch-and-fix`" in text
-    assert "fleet-pr-lifecycle" in text
+def test_gaai_tree_is_removed() -> None:
+    # GAAI is retired (RM #2725). The project-rules fence is gone with the tree.
+    assert not (REPO_ROOT / ".gaai").exists()
+    assert not (REPO_ROOT / "start-gaai-daemon.sh").exists()
