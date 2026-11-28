@@ -358,10 +358,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 27792,
+      "bytes_lf": 28457,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "f4c2c18065cd4d6f934c5e7f7705b6c64b1ef625269dcc895cdf998efe63dcff",
+      "content_sha256_lf": "bdaf1ec7cf0c88b36f2041098339e62a856084325396e1a585a0ff31d333a52c",
       "family": "process-calculators-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-CONSTANTS-PY-4A2923A7CE8A",
       "language": "python",
@@ -833,6 +833,16 @@
           {
             "kind": "constant",
             "name": "IAPWS_CRITICAL_TEMP",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "IAPWS_MAX_TEMPERATURE_C",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "IAPWS_MIN_TEMPERATURE_C",
             "signature": null
           },
           {
@@ -1337,6 +1347,16 @@
           },
           {
             "kind": "constant",
+            "name": "WATER_VAPOR_SCHEMA_MAX_C",
+            "signature": null
+          },
+          {
+            "kind": "constant",
+            "name": "WATER_VAPOR_SCHEMA_MIN_C",
+            "signature": null
+          },
+          {
+            "kind": "constant",
             "name": "WATER_VISCOSITY_25C",
             "signature": null
           },
@@ -1435,6 +1455,7 @@
           "src/shared/python/calc_backend/tests/test_calc_backend.py",
           "src/shared/python/sidekick/tests/process_calculators/test_mmhg_constant_unified_3676.py",
           "src/shared/python/sidekick/tests/test_process_constants.py",
+          "tests/calc_backend/test_water_vapor_pressure_api.py",
           "tests/shared/python/process_calculators/test_syngas_water_overflow.py",
           "tests/shared/python/process_calculators/test_water_vapor_pressure_shared.py"
         ],
@@ -5696,10 +5717,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 26423,
+      "bytes_lf": 27099,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "a277a0d363726087b0846bfed9f6a41e51c50a382453dc6ef1c054b4c3bb7035",
+      "content_sha256_lf": "557b835cf6f2d26844046ffa754b5d8d92b321b9ae7fd7015316a290bdc26ca5",
       "family": "process-calculators-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-SYNGAS-WATER-CALCULATOR-PY-68CB6AC70ACE",
       "language": "python",
@@ -5856,10 +5877,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 7831,
+      "bytes_lf": 8288,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "1e341ebbcc2339648370a712089a4b203e87daabd228e64cf003291156de2eff",
+      "content_sha256_lf": "c8fe882b682df4ff077d547a28c91ee9af9c015f925f0068f890588772bf8125",
       "family": "process-calculators-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-WATER-VAPOR-PRESSURE-PY-D5FD51A4BC05",
       "language": "python",
