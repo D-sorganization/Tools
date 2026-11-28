@@ -559,10 +559,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 7112,
+      "bytes_lf": 8485,
       "classification": "calculation",
       "classification_basis": "scientific-library-import",
-      "content_sha256_lf": "96ba7aa88f12b96860e7367ddf3687e713580a94355773e0052b55916609c322",
+      "content_sha256_lf": "449c20c02da60a34c393ed608fd9cc025fc928c8bd66c989ebe400c10a991e06",
       "family": "plot-engine-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-PLOT-ENGINE-TRENDLINE-PY-B8DF87BE68EB",
       "language": "python",
