@@ -16,13 +16,10 @@ from typing import Literal
 import numpy as np
 from scipy.optimize import curve_fit
 
-try:
-    from exponential_trend import fit_log_linear_exponential, stabilize_exponential
-except ImportError:  # imported as shared.python.plot_engine
-    from shared.python.exponential_trend import (
-        fit_log_linear_exponential,
-        stabilize_exponential,
-    )
+from shared.python.exponential_trend import (
+    fit_log_linear_exponential,
+    stabilize_exponential,
+)
 
 logger = logging.getLogger(__name__)
 
