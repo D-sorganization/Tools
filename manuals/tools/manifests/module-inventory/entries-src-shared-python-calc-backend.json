@@ -348,6 +348,7 @@
           "tests/calc_backend/test_new_endpoints.py",
           "tests/calc_backend/test_rotation_converter_api.py",
           "tests/calc_backend/test_syngas_compression_api.py",
+          "tests/calc_backend/test_syngas_compression_efficiency_6189.py",
           "tests/calc_backend/test_water_vapor_pressure_api.py",
           "tests/unit/test_syngas_water_nonfinite_oracle6.py"
         ],
@@ -3164,10 +3165,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 6470,
+      "bytes_lf": 7356,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c7af57c2c90fbe4479c4b48aa7ba4279abc86479c9ab1a70d5e09386c4dcb2d1",
+      "content_sha256_lf": "0811b76c1b253fc30903cad90c9e7ba55b5229b734666ac8c29ebe6efe66874e",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-SYNGAS-COMPRESSION-PY-E4F35D4EAB65",
       "language": "python",
@@ -3227,7 +3228,8 @@
         "test_paths": [],
         "unit_mentions": [
           "J",
-          "bar"
+          "bar",
+          "s"
         ],
         "validation_paths": []
       }

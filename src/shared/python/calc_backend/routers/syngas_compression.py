@@ -10,6 +10,7 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 from shared.python.sidekick.process_calculators.syngas_compression_engine import (
     CompressionStage,
     SyngasCompressionEngine,
+    polytropic_efficiency_from_isentropic,
 )
 
 CompressionType = Literal["isentropic", "polytropic", "isothermal"]
@@ -75,6 +76,28 @@ def _is_finite(value: float) -> bool:
     return value == value and abs(value) != float("inf")
 
 
+def _pressure_ratio(request: SyngasCompressionRequest) -> float:
+    return request.outlet_pressure_bar / request.inlet_pressure_bar
+
+
+def _stage_efficiency(
+    request: SyngasCompressionRequest, heat_capacity_ratio: float
+) -> float:
+    """Precondition: the request's efficiency is isentropic, the stage's is not.
+
+    ``CompressionStage.efficiency`` is the mode-native efficiency, so an
+    isentropic value only belongs there unchanged in isentropic mode. The other
+    two modes need the equivalent small-stage efficiency (Tools issue #6189).
+    """
+    if request.compression_type == "isentropic":
+        return request.isentropic_efficiency
+    return polytropic_efficiency_from_isentropic(
+        heat_capacity_ratio,
+        _pressure_ratio(request),
+        request.isentropic_efficiency,
+    )
+
+
 def _reject_unknown_species(
     engine: SyngasCompressionEngine, composition: dict[str, float]
 ) -> None:
@@ -94,7 +117,7 @@ def _response_from_engine(
     outlet = float(raw["temp_out_actual"])
     power = float(raw["power_hp"])
     heat_rise = float(raw["heat_rise"])
-    expected = request.outlet_pressure_bar / request.inlet_pressure_bar
+    expected = _pressure_ratio(request)
     values = (pressure_ratio, work, outlet, power, heat_rise, gamma)
     if not all(_is_finite(value) for value in values):
         raise RuntimeError("compression result is not finite")
@@ -125,15 +148,16 @@ def _evaluate(request: SyngasCompressionRequest) -> SyngasCompressionResponse:
     engine = SyngasCompressionEngine()
     _reject_unknown_species(engine, request.composition)
     props = engine.calculate_mixture_properties(request.composition)
+    heat_capacity_ratio = float(props["heat_capacity_ratio"])
     stage = CompressionStage(
         inlet_pressure=request.inlet_pressure_bar,
         outlet_pressure=request.outlet_pressure_bar,
         inlet_temperature=request.inlet_temperature_k,
-        efficiency=request.isentropic_efficiency,
+        efficiency=_stage_efficiency(request, heat_capacity_ratio),
         compression_type=request.compression_type,
     )
     raw = engine.calculate_compression_work(stage, request.flow_rate_kmol_h, props)
-    return _response_from_engine(request, raw, float(props["heat_capacity_ratio"]))
+    return _response_from_engine(request, raw, heat_capacity_ratio)
 
 
 @router.post("", response_model=SyngasCompressionResponse)
