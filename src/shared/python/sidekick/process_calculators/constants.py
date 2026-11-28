@@ -144,6 +144,8 @@ __all__ = [
     "IAPWS_COEFFICIENTS",
     "IAPWS_CRITICAL_PRESSURE",
     "IAPWS_CRITICAL_TEMP",
+    "IAPWS_MAX_TEMPERATURE_C",
+    "IAPWS_MIN_TEMPERATURE_C",
     "IAPWS_TRIPLE_POINT_TEMP",
     "INH2O_TO_PA",
     "INTERCOOLER_OUTLET_TEMP_K",
@@ -721,6 +723,15 @@ IAPWS_CRITICAL_PRESSURE: Final[float] = 22064000.0
 
 # Triple point temperature of water [K]
 IAPWS_TRIPLE_POINT_TEMP: Final[float] = 273.16
+
+# Published Celsius bounds of the IAPWS-IF97 saturation line. These are the
+# triple-point and critical temperatures in degC. The request schema and
+# ``iapws_pressure_pa`` both use this pair so 0.0 C and 374.0 C stay outside
+# the contract while 0.01 C and 373.946 C stay inside it. Comparing the
+# Kelvin constants after ``t + 273.15`` rejects the 0.01 C literal, because
+# that sum lands one ulp below 273.16 K.
+IAPWS_MIN_TEMPERATURE_C: Final[float] = 0.01
+IAPWS_MAX_TEMPERATURE_C: Final[float] = 373.946
 
 # IAPWS saturation pressure correlation coefficients
 IAPWS_COEFFICIENTS: Final[list[float]] = [

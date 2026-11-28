@@ -32,7 +32,8 @@ from .constants import (
     IAPWS_COEFFICIENTS,
     IAPWS_CRITICAL_PRESSURE,
     IAPWS_CRITICAL_TEMP,
-    IAPWS_TRIPLE_POINT_TEMP,
+    IAPWS_MAX_TEMPERATURE_C,
+    IAPWS_MIN_TEMPERATURE_C,
     MAGNUS_A,
     MAGNUS_B,
     MAGNUS_C,
@@ -178,16 +179,19 @@ def iapws_pressure_pa(temperature_c: float) -> float:
         Saturation pressure in Pascal.
 
     Raises:
-        ValueError: If the temperature is outside the IAPWS-IF97 saturation
-            range (triple point to critical point).
+        ValueError: If the temperature is outside the published IAPWS-IF97
+            saturation interval, ``[0.01, 373.946]`` degC.
     """
     if temperature_c is None:
         raise ValueError("temperature_c must be provided")
+    if (
+        temperature_c < IAPWS_MIN_TEMPERATURE_C
+        or temperature_c > IAPWS_MAX_TEMPERATURE_C
+    ):
+        raise ValueError("Temperature out of IAPWS-IF97 range")
     temperature_k = temperature_c + CELSIUS_TO_KELVIN_OFFSET
     tc = IAPWS_CRITICAL_TEMP
     pc = IAPWS_CRITICAL_PRESSURE
-    if temperature_k < IAPWS_TRIPLE_POINT_TEMP or tc < temperature_k:
-        raise ValueError("Temperature out of IAPWS-IF97 range")
     theta = 1 - temperature_k / tc
     a = IAPWS_COEFFICIENTS
     ln_p = (

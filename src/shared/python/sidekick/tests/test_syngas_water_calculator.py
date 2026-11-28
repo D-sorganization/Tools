@@ -70,13 +70,13 @@ class TestCalculateVaporPressure:
         assert "Buck" in method
 
     def test_auto_select_iapws_range(self):
-        """Lines 303-304: 100 < T <= 374 → IAPWS auto."""
+        """Above 100 C and through the critical point, auto selects IAPWS."""
         calc = SyngasWaterCalculator()
         _, method = calc.calculate_vapor_pressure(150.0, "auto")
         assert "IAPWS" in method
 
     def test_auto_select_extreme_temp_antoine(self):
-        """Line 305: T > 374 → Antoine auto."""
+        """Above the IAPWS critical temperature, auto selects Antoine."""
         calc = SyngasWaterCalculator()
         _, method = calc.calculate_vapor_pressure(500.0, "auto")
         assert "Antoine" in method
