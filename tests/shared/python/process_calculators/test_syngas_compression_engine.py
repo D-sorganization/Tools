@@ -12,6 +12,8 @@ from upstream_drift_tools.process_calculators.syngas_compression_calculator impo
     SyngasCompressionEngine,
 )
 
+from shared.python.sidekick.process_calculators import constants as const
+
 
 @pytest.fixture
 def engine() -> SyngasCompressionEngine:
@@ -494,3 +496,25 @@ class TestMixtureProperties:
             assert props["heat_capacity_ratio"] == pytest.approx(
                 expected_gamma, rel=1e-5
             )
+
+
+class TestH2SHeatCapacityRatio:
+    """Issue #6189: pure H2S must not fall through to the diatomic default."""
+
+    #: Engineering ToolBox "Gases - Ratios of Specific Heat" and the NIST
+    #: WebBook Shomate ideal-gas Cp(298.15 K), as k = Cp / (Cp - R).
+    _CITED_GAMMA = 1.32
+
+    def test_h2s_is_tabulated(self, engine: SyngasCompressionEngine) -> None:
+        """H2S needs its own entry or the diatomic default answers for it."""
+        assert engine._APPROX_GAMMA["H2S"] == pytest.approx(self._CITED_GAMMA)
+
+    def test_pure_h2s_gamma_is_not_diatomic(
+        self, engine: SyngasCompressionEngine
+    ) -> None:
+        """H2S is a non-linear triatomic, so its ratio sits well below 1.40."""
+        props = engine.calculate_mixture_properties({"H2S": 1.0})
+        assert props["heat_capacity_ratio"] == pytest.approx(self._CITED_GAMMA)
+        assert props["heat_capacity_ratio"] != pytest.approx(
+            const.DEFAULT_GAMMA_DIATOMIC, abs=0.05
+        )

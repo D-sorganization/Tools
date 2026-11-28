@@ -34,11 +34,30 @@ def _power_hp(work_j_per_mol: float) -> float:
     return mol_per_s * work_j_per_mol / _WATTS_PER_HP
 
 
+def _polytropic_efficiency(
+    gamma: float, pressure_ratio: float, isentropic_efficiency: float
+) -> float:
+    """eta_p equivalent to a nameplate eta_s.
+
+    The engine's polytropic and isothermal branches are graded on the machine's
+    own small-stage efficiency, so this oracle converts instead of reusing
+    eta_s (issue #6189).
+    """
+    exponent = (gamma - 1.0) / gamma
+    return (
+        exponent
+        * math.log(pressure_ratio)
+        / math.log(1.0 + (pressure_ratio**exponent - 1.0) / isentropic_efficiency)
+    )
+
+
 def _reference(kind: str, gamma: float) -> tuple[float, float]:
     """Textbook shaft work [J/mol] and discharge temperature [K]."""
     temperature_k = float(_BASE["inlet_temperature_k"])
     pressure_ratio = 3.0
     efficiency = float(_BASE["isentropic_efficiency"])
+    if kind != "isentropic":
+        efficiency = _polytropic_efficiency(gamma, pressure_ratio, efficiency)
     if kind == "isothermal":
         work = _R_J_PER_MOL_K * temperature_k * math.log(pressure_ratio) / efficiency
         return work, temperature_k

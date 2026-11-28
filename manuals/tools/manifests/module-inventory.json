@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "5c014af758650f195e27781cf53ecaa4c9054860d48a653680a2f53824275efe",
+      "content_sha256_lf": "ccb6963a1ba6ad76538dc06276dc2beeeecbf089854bad8e3054e7748d7bea0b",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -609,7 +609,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-ai.json"
     },
     {
-      "content_sha256_lf": "d88ad5900cddd384c662c5a80ca713ff63fe95e2a70b44c30479ee29307bae76",
+      "content_sha256_lf": "f83da6ab35f58856cd2b9517e02dc7dae131d8bab59df54f79f4ff66eca5e89a",
       "entry_count": 48,
       "package": "src/shared/python/calc_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-calc-backend.json"
@@ -795,7 +795,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-persistence.json"
     },
     {
-      "content_sha256_lf": "54238ec504933db0dceaf6d87000b8a6aa5b5351ef5a28130fd1e35685d7a600",
+      "content_sha256_lf": "ad7da27b80fb36d7085f8e5b2aa242b4237cc548cc4f690698f737df6a6b139d",
       "entry_count": 59,
       "package": "src/shared/python/sidekick/process_calculators",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-sidekick-process-calculators.json"

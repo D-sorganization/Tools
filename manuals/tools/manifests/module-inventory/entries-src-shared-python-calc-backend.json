@@ -348,6 +348,7 @@
           "tests/calc_backend/test_new_endpoints.py",
           "tests/calc_backend/test_rotation_converter_api.py",
           "tests/calc_backend/test_syngas_compression_api.py",
+          "tests/calc_backend/test_syngas_compression_efficiency_6189.py",
           "tests/calc_backend/test_water_vapor_pressure_api.py",
           "tests/unit/test_syngas_water_nonfinite_oracle6.py"
         ],
@@ -3163,34 +3164,37 @@
       }
     },
     {
-      "authority_status": "not-applicable",
-      "bytes_lf": 6470,
-      "classification": "non-calculation",
-      "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "c7af57c2c90fbe4479c4b48aa7ba4279abc86479c9ab1a70d5e09386c4dcb2d1",
-      "family": "shared-tools-non-calculation",
+      "authority_status": "provisional",
+      "bytes_lf": 10028,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "70220de870f2ead2b51341010dbd83986bf3f4a3d40c8e3dc3a7d7424462501b",
+      "family": "shared-tools-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-SYNGAS-COMPRESSION-PY-E4F35D4EAB65",
       "language": "python",
       "maintainer": "Tools module maintainers",
       "path": "src/shared/python/calc_backend/routers/syngas_compression.py",
       "purpose": "REST adapter and typed contract for one-stage syngas compression.",
-      "review_status": "inventory-baseline",
+      "review_status": "review-required",
       "risk_tags": [
         "downstream-consumer-risk",
-        "public-api"
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
       ],
       "states": {
         "adrs": "mapped",
-        "artifacts": "not-applicable",
+        "artifacts": "unmapped-pending-TOOLS-D7",
         "chapters": "unmapped-pending-TOOLS-D4",
-        "citations": "not-applicable",
-        "equation_pathway": "not-applicable",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
         "public_surfaces": "mapped",
         "publication": "blocked",
         "routes": "not-applicable",
-        "tests": "not-applicable",
+        "tests": "mapped",
         "units": "mapped",
-        "validation": "not-applicable"
+        "validation": "unavailable"
       },
       "traceability": {
         "adr_paths": [
@@ -3215,6 +3219,11 @@
           },
           {
             "kind": "constant",
+            "name": "_EFFICIENCY_ROUNDING_TOLERANCE",
+            "signature": null
+          },
+          {
+            "kind": "constant",
             "name": "_PRESSURE_RATIO_TOLERANCE",
             "signature": null
           },
@@ -3222,12 +3231,20 @@
             "kind": "function",
             "name": "calculate_syngas_compression",
             "signature": "request: SyngasCompressionRequest"
+          },
+          {
+            "kind": "function",
+            "name": "polytropic_efficiency_from_isentropic",
+            "signature": "heat_capacity_ratio: float, pressure_ratio: float, isentropic_efficiency: float"
           }
         ],
-        "test_paths": [],
+        "test_paths": [
+          "tests/calc_backend/test_syngas_compression_efficiency_6189.py"
+        ],
         "unit_mentions": [
           "J",
-          "bar"
+          "bar",
+          "s"
         ],
         "validation_paths": []
       }

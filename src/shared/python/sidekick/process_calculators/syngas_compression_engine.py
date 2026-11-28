@@ -109,7 +109,7 @@ class CompressionStage:
     inlet_pressure: float  # bar
     outlet_pressure: float  # bar
     inlet_temperature: float  # K
-    efficiency: float  # isentropic efficiency
+    efficiency: float  # mode-native: eta_s for 'isentropic', eta_p otherwise
     compression_type: str  # 'isentropic', 'polytropic', 'isothermal'
 
 
@@ -129,6 +129,7 @@ class SyngasCompressionEngine:
         "CH4": 1.32,
         "N2": 1.40,
         "H2O": 1.33,
+        "H2S": 1.32,  # not diatomic; Engineering ToolBox / NIST Shomate #6189
         "Ar": 1.67,
     }
 
