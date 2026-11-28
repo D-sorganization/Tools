@@ -121,6 +121,18 @@ class TestExponentialTrendline:
         with pytest.raises(ValueError, match="positive y"):
             compute_trendline(x, y, "exponential")
 
+    def test_calendar_years_stay_finite(self):
+        """Calendar years must not underflow to ``y = 0 * exp(...)`` (#6190)."""
+        x = np.array([2020.0, 2021.0, 2022.0])
+        y = np.array([1.0, 2.0, 4.0])
+        result = compute_trendline(x, y, "exponential")
+
+        assert np.all(np.isfinite(result.y_pred))
+        assert np.isfinite(result.r_squared)
+        assert result.r_squared > 0.99
+        assert not result.equation.startswith("y = 0 ")
+        assert np.all(np.isfinite(result.coefficients))
+
 
 # ── Power trendline ──────────────────────────────────────────────────────────
 
@@ -169,17 +181,22 @@ class TestEdgeCases:
         with pytest.raises(ValueError):
             compute_trendline(np.array([]), np.array([]), "linear")
 
-    def test_nan_handling(self):
+    def test_nan_input_is_validation_error(self):
         x = np.array([0.0, 1.0, np.nan, 3.0, 4.0])
         y = np.array([0.0, 2.0, 4.0, np.nan, 8.0])
-        result = compute_trendline(x, y, "linear")
-        # Should have filtered to 3 valid points: (0,0), (1,2), (4,8)
-        assert result.r_squared > 0.9
+        with pytest.raises(ValueError, match="finite"):
+            compute_trendline(x, y, "linear")
+
+    def test_inf_input_is_validation_error(self):
+        x = np.array([0.0, 1.0, np.inf])
+        y = np.array([1.0, 2.0, 3.0])
+        with pytest.raises(ValueError, match="finite"):
+            compute_trendline(x, y, "linear")
 
     def test_all_nan(self):
         x = np.array([np.nan, np.nan])
         y = np.array([np.nan, np.nan])
-        with pytest.raises(ValueError, match="At least 2"):
+        with pytest.raises(ValueError, match="finite"):
             compute_trendline(x, y, "linear")
 
     def test_unknown_trend_type(self):

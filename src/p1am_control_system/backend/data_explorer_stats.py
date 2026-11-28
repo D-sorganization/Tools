@@ -2,15 +2,19 @@
 
 This module hosts the numeric heart of the descriptive/spectral/correlation
 analyses offered by the Data Explorer. It is intentionally a *shallow* module
-(LOD): it imports nothing from the DB, PLC, FastAPI, or sibling analysis
-packages — only ``numpy`` — so it is unit-testable in isolation and light
-enough to run on a Raspberry Pi.
+(LOD): it imports nothing from the DB, PLC, or FastAPI. Numeric work is
+numpy, plus the shared calendar-year exponential rule in
+``shared.python.exponential_trend``, so this kernel and the plot engine cannot
+drift. It stays unit-testable without the PLC stack and light enough for a
+Raspberry Pi.
 
 Design notes:
-    - numpy ONLY. No scipy/sklearn/pandas. Welch PSD is implemented by
-      segmenting + windowing + averaging periodograms; PCA via the numpy SVD;
-      Spearman correlation via rank-then-Pearson; exponential/power trendlines
-      via log/linear fits with the reported R^2 computed in the ORIGINAL space.
+    - numpy ONLY, plus the numpy-only calendar-year exponential helper in
+      ``shared.python.exponential_trend`` (the same rule the plot engine uses).
+      No scipy/sklearn/pandas. Welch PSD is implemented by segmenting +
+      windowing + averaging periodograms; PCA via the numpy SVD; Spearman
+      correlation via rank-then-Pearson; power trendlines via log/linear fits.
+      R^2 is computed in the ORIGINAL space.
     - DbC: every public entry point validates its inputs (``TypeError`` for
       wrong types, ``ValueError`` for empty/NaN/out-of-range/length-mismatch)
       and documents its pre/postconditions.
@@ -28,6 +32,11 @@ from collections.abc import Mapping, Sequence
 from typing import cast
 
 import numpy as np
+
+from shared.python.exponential_trend import (
+    fit_log_linear_exponential,
+    stabilize_exponential,
+)
 
 __all__ = [
     "describe",
@@ -447,8 +456,11 @@ def fit_trendline(
 
     Returns:
         ``{"coefficients", "equation", "r_squared", "x_fit", "y_fit"}``.
-        ``coefficients`` is a list of floats; for exponential/power it is
-        ``[a, b]``. ``r_squared`` is computed in the ORIGINAL (un-logged) space.
+        ``coefficients`` is a list of floats; for power, and for an exponential
+        whose uncentered form stays finite, it is ``[a, b]`` in
+        ``y = a*exp(b*x)``. An exponential on a large abscissa (calendar years)
+        keeps the centered form and returns ``[scale, rate, origin]``.
+        ``r_squared`` is computed in the ORIGINAL (un-logged) space.
         ``x_fit`` is ``linspace(min(x), max(x), num_points)``.
 
     Raises:
@@ -497,14 +509,16 @@ def fit_trendline(
     elif kind == "exponential":
         if np.any(array_y <= 0.0):
             raise ValueError("exponential fit requires all y > 0")
-        # ln(y) = ln(a) + b x
-        b_ln_a = np.polyfit(array_x, np.log(array_y), 1)
-        b = float(b_ln_a[0])
-        a = float(np.exp(b_ln_a[1]))
-        y_pred = a * np.exp(b * array_x)
-        y_fit = a * np.exp(b * x_fit)
-        equation = f"y = {a:.6g} * exp({b:.6g} * x)"
-        coefficients = [a, b]
+        scale, rate, origin = fit_log_linear_exponential(array_x, array_y)
+        model = stabilize_exponential(
+            scale, rate, origin, np.concatenate((array_x, x_fit))
+        )
+        y_pred = model.predict(array_x)
+        y_fit = model.predict(x_fit)
+        if not np.all(np.isfinite(y_pred)) or not np.all(np.isfinite(y_fit)):
+            raise ValueError("exponential fit produced non-finite predictions")
+        equation = model.equation(precision=".6g", spaced=True)
+        coefficients = model.coefficients()
     else:  # power
         if np.any(array_x <= 0.0):
             raise ValueError("power fit requires all x > 0")
