@@ -277,6 +277,18 @@ def test_fit_trendline_polynomial_exact() -> None:
     assert result["r_squared"] == pytest.approx(1.0)
 
 
+def test_fit_trendline_exponential_calendar_years_stay_finite() -> None:
+    """Years must not publish ``y = 0 * exp(...)`` or NaN predictions (#6190)."""
+    x = np.array([2020.0, 2021.0, 2022.0])
+    y = np.array([1.0, 2.0, 4.0])
+    result = fit_trendline(x, y, "exponential", 1)
+    assert np.all(np.isfinite(result["y_fit"]))
+    assert np.isfinite(result["r_squared"])
+    assert result["r_squared"] == pytest.approx(1.0)
+    assert not str(result["equation"]).startswith("y = 0 ")
+    assert all(np.isfinite(c) for c in result["coefficients"])
+
+
 def test_fit_trendline_exponential_recovers_b() -> None:
     x = np.linspace(0.0, 2.0, 40)
     a_true, b_true = 1.5, 0.7

@@ -9,10 +9,10 @@ from plot_engine.trendline import (
 )
 
 
-def test_linear_trendline_filters_nan_pairs_and_predicts_requested_points() -> None:
+def test_linear_trendline_predicts_requested_points() -> None:
     result = compute_trendline(
-        np.array([0.0, 1.0, 2.0, np.nan]),
-        np.array([-1.0, 1.0, 3.0, 99.0]),
+        np.array([0.0, 1.0, 2.0]),
+        np.array([-1.0, 1.0, 3.0]),
         trend_type="linear",
         n_points=5,
     )
@@ -25,14 +25,23 @@ def test_linear_trendline_filters_nan_pairs_and_predicts_requested_points() -> N
     assert result.y_pred == pytest.approx(np.array([-1.0, 0.0, 1.0, 2.0, 3.0]))
 
 
+def test_linear_trendline_rejects_nonfinite_inputs() -> None:
+    with pytest.raises(ValueError, match="finite"):
+        compute_trendline(
+            np.array([0.0, 1.0, 2.0, np.nan]),
+            np.array([-1.0, 1.0, 3.0, 99.0]),
+            trend_type="linear",
+        )
+
+
 def test_compute_trendline_rejects_insufficient_valid_points() -> None:
     with pytest.raises(
         ValueError,
         match="At least 2 valid data points required for trendline",
     ):
         compute_trendline(
-            np.array([1.0, np.nan]),
-            np.array([2.0, 3.0]),
+            np.array([1.0]),
+            np.array([2.0]),
         )
 
 

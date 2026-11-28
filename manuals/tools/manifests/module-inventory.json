@@ -387,7 +387,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-optimizer-gui.json"
     },
     {
-      "content_sha256_lf": "b0837baa3f40251a4c7206307ab642b2f45a2ccf387c0825181837eb66e5480a",
+      "content_sha256_lf": "9658be452cf4e496b9c8ad9206f0409b1dae100969e9527c8cd7af2463261df4",
       "entry_count": 264,
       "package": "src/p1am_control_system",
       "path": "manuals/tools/manifests/module-inventory/entries-src-p1am-control-system.json"
@@ -597,8 +597,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared.json"
     },
     {
-      "content_sha256_lf": "2c0a0900188960a318db0dc80236fd8b1a838917f75fee03b387fa0c811f329c",
-      "entry_count": 10,
+      "content_sha256_lf": "536668eb65356bc9c3e6b15a8402fe3c52a18329eb04330be7ab81ed6b69655f",
+      "entry_count": 11,
       "package": "src/shared/python",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python.json"
     },
@@ -705,7 +705,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-notes.json"
     },
     {
-      "content_sha256_lf": "1af82bc7bec470ed817fa7bd9a66df807ff05cdeb2fc78e6d031317854ba2c00",
+      "content_sha256_lf": "f4140c56ac45f06707db103ab65e8a7a263fcf8bb1f4e14c4c3ba4d7ead0cee1",
       "entry_count": 8,
       "package": "src/shared/python/plot_engine",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-plot-engine.json"

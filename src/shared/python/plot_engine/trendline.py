@@ -16,6 +16,11 @@ from typing import Literal
 import numpy as np
 from scipy.optimize import curve_fit
 
+from shared.python.exponential_trend import (
+    fit_log_linear_exponential,
+    stabilize_exponential,
+)
+
 logger = logging.getLogger(__name__)
 
 FitMethod = Literal["closed_form", "least_squares", "log_linear_fallback"]
@@ -59,18 +64,22 @@ def compute_trendline(
         TrendlineResult with coefficients, equation, R², and prediction arrays.
 
     Raises:
-        ValueError: If insufficient data points or invalid data for the fit type.
+        ValueError: If inputs are non-finite, there are fewer than two points,
+            or the values are invalid for the fit type.
     """
     x = np.asarray(x, dtype=np.float64)
     y = np.asarray(y, dtype=np.float64)
-
-    # Remove NaN pairs
-    valid = ~(np.isnan(x) | np.isnan(y))
-    x_valid = x[valid]
-    y_valid = y[valid]
-
-    if len(x_valid) < 2:
+    if x.ndim != 1 or y.ndim != 1 or x.shape != y.shape:
+        raise ValueError("x and y must be equal-length 1-D arrays")
+    # NaN used to be dropped pairwise. #6190 requires a validation error
+    # instead, including for inf, which previously raised LinAlgError.
+    if x.size == 0 or not np.all(np.isfinite(x)) or not np.all(np.isfinite(y)):
+        raise ValueError("trendline inputs must be finite (no inf or NaN)")
+    if x.size < 2:
         raise ValueError("At least 2 valid data points required for trendline")
+
+    x_valid = x
+    y_valid = y
 
     x_pred = np.linspace(x_valid.min(), x_valid.max(), n_points)
 
@@ -160,47 +169,60 @@ def _polynomial(
 
 
 def _exponential(x: np.ndarray, y: np.ndarray, x_pred: np.ndarray) -> TrendlineResult:
-    """Exponential trendline: y = a * exp(b * x)."""
+    """Exponential trendline.
+
+    Small abscissas stay ``y = a * exp(b * x)``. Large abscissas (calendar
+    years) keep ``y = scale * exp(rate * (x - origin))`` so the scale cannot
+    underflow to 0. Preconditions: finite ``x``, ``y``, ``x_pred`` and at
+    least two positive ``y`` values.
+    """
     mask = y > 0
     if mask.sum() < 2:
         raise ValueError("Exponential fit requires at least 2 positive y values")
 
     x_pos = x[mask]
     y_pos = y[mask]
+    log_scale, log_rate, origin = fit_log_linear_exponential(x_pos, y_pos)
+    x_check = np.concatenate((x_pos, x_pred))
 
-    # Log-transform for initial estimate
-    log_y = np.log(y_pos)
-    init_coeffs = np.polyfit(x_pos, log_y, 1)
-    b_init = init_coeffs[0]
-    a_init = np.exp(init_coeffs[1])
-
-    def exp_func(xv: np.ndarray, a: float, b: float) -> np.ndarray:
-        result: np.ndarray = a * np.exp(b * xv)
-        return result
+    def _centered(
+        shift: np.ndarray, fitted_scale: float, fitted_rate: float
+    ) -> np.ndarray:
+        return fitted_scale * np.exp(fitted_rate * shift)
 
     fit_method: FitMethod = "least_squares"
     try:
-        popt, _ = curve_fit(exp_func, x_pos, y_pos, p0=[a_init, b_init], maxfev=5000)
-        a, b = popt
-    except RuntimeError as exc:
+        fitted, _ = curve_fit(
+            _centered,
+            x_pos - origin,
+            y_pos,
+            p0=[log_scale, log_rate],
+            maxfev=5000,
+        )
+        model = stabilize_exponential(
+            float(fitted[0]), float(fitted[1]), origin, x_check
+        )
+    except (RuntimeError, ValueError) as exc:
         logger.warning(
             "Exponential curve_fit did not converge (%s); "
             "using the log-linear estimate instead",
             exc,
         )
-        a, b = a_init, b_init
+        model = stabilize_exponential(log_scale, log_rate, origin, x_check)
         fit_method = "log_linear_fallback"
 
-    y_fit = exp_func(x_pos, a, b)
-    y_pred_arr = exp_func(x_pred, a, b)
+    y_fit = model.predict(x_pos)
+    y_pred_arr = model.predict(x_pred)
+    if not np.all(np.isfinite(y_fit)) or not np.all(np.isfinite(y_pred_arr)):
+        raise ValueError("exponential fit produced non-finite predictions")
     r2 = _r_squared(y_pos, y_fit)
-
-    equation = f"y = {a:.4g} * exp({b:.4g}x)"
+    if not np.isfinite(r2):
+        raise ValueError("exponential fit produced a non-finite r_squared")
 
     return TrendlineResult(
         trend_type="exponential",
-        coefficients=[float(a), float(b)],
-        equation=equation,
+        coefficients=model.coefficients(),
+        equation=model.equation(precision=".4g", spaced=False),
         r_squared=r2,
         x_pred=x_pred,
         y_pred=y_pred_arr,
