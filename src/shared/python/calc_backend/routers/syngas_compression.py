@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import math
 from typing import Any, Literal
 
 from fastapi import APIRouter, HTTPException
@@ -10,7 +11,6 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 from shared.python.sidekick.process_calculators.syngas_compression_engine import (
     CompressionStage,
     SyngasCompressionEngine,
-    polytropic_efficiency_from_isentropic,
 )
 
 CompressionType = Literal["isentropic", "polytropic", "isothermal"]
@@ -74,6 +74,76 @@ _PRESSURE_RATIO_TOLERANCE = 1e-9
 
 def _is_finite(value: float) -> bool:
     return value == value and abs(value) != float("inf")
+
+
+# Float slack for the efficiency bounds only; eta_p = 1 is reachable at eta_s = 1.
+_EFFICIENCY_ROUNDING_TOLERANCE = 1e-12
+
+
+def polytropic_efficiency_from_isentropic(
+    heat_capacity_ratio: float,
+    pressure_ratio: float,
+    isentropic_efficiency: float,
+) -> float:
+    """Convert a nameplate isentropic efficiency into a polytropic one.
+
+    ``CompressionStage.efficiency`` is the mode-native efficiency: the engine's
+    ``polytropic`` branch uses the exponent ``(gamma - 1) / (gamma * eta_p)``
+    (F-TL-010) and its ``isothermal`` branch models a perfectly intercooled
+    train. Both expect ``eta_p``. Handing them ``eta_s`` instead over-states
+    shaft power by 7.37 % at pressure ratio 4, gamma 1.40 and ``eta_s`` 0.75
+    (Tools issue #6189).
+
+    Both definitions share one adiabatic end state, so
+
+        eta_s = (PR**z - 1) / (PR**(z / eta_p) - 1),  z = (gamma - 1) / gamma
+
+    which solves to ``eta_p = z * ln(PR) / ln(1 + (PR**z - 1) / eta_s)``.
+
+    Args:
+        heat_capacity_ratio: Ideal-gas Cp/Cv of the gas. Must be greater than 1.
+        pressure_ratio: Discharge pressure over suction pressure. Must exceed 1.
+        isentropic_efficiency: Nameplate isentropic efficiency in ``(0, 1]``.
+
+    Returns:
+        The equivalent polytropic efficiency, always in ``(eta_s, 1]``.
+
+    Raises:
+        ValueError: If a precondition is violated, or the converted efficiency
+            is not physical for a compressor.
+    """
+    if heat_capacity_ratio <= 1.0:
+        raise ValueError(
+            f"Precondition violated: heat_capacity_ratio {heat_capacity_ratio} "
+            "must be > 1"
+        )
+    if pressure_ratio <= 1.0:
+        raise ValueError(
+            f"Precondition violated: pressure_ratio {pressure_ratio} must be > 1"
+        )
+    if not 0.0 < isentropic_efficiency <= 1.0:
+        raise ValueError(
+            f"Precondition violated: isentropic efficiency {isentropic_efficiency} "
+            "must be in (0, 1]"
+        )
+
+    isentropic_exponent = (heat_capacity_ratio - 1.0) / heat_capacity_ratio
+    polytropic_exponent = math.log(
+        1.0 + (pressure_ratio**isentropic_exponent - 1.0) / isentropic_efficiency
+    ) / math.log(pressure_ratio)
+    efficiency = isentropic_exponent / polytropic_exponent
+
+    if not (
+        isentropic_efficiency - _EFFICIENCY_ROUNDING_TOLERANCE
+        <= efficiency
+        <= 1.0 + _EFFICIENCY_ROUNDING_TOLERANCE
+    ):
+        raise ValueError(
+            f"Postcondition violated: converted efficiency {efficiency} must lie "
+            f"between {isentropic_efficiency} and 1"
+        )
+    # eta_s = 1 has eta_p = 1 exactly; the two logarithms land a few ulps off.
+    return min(efficiency, 1.0)
 
 
 def _pressure_ratio(request: SyngasCompressionRequest) -> float:

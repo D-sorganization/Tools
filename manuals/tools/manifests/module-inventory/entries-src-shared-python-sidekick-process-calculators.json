@@ -5628,10 +5628,10 @@
     },
     {
       "authority_status": "provisional",
-      "bytes_lf": 22029,
+      "bytes_lf": 18891,
       "classification": "calculation",
       "classification_basis": "path-marker:calculator",
-      "content_sha256_lf": "fc9594bdd923e554131f4ea7074a5597dfa6634b41a5384a71996c4b702ce464",
+      "content_sha256_lf": "583f562a5cb814a6d9451d20afb808d76742cbc8298092ecf735a03ee9a2a611",
       "family": "process-calculators-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-SIDEKICK-PROCESS-CALCULATORS-SYNGAS-COMPRESSION-ENGINE-PY-C481B6083F52",
       "language": "python",
@@ -5679,15 +5679,11 @@
             "kind": "class",
             "name": "SyngasCompressionEngine",
             "signature": null
-          },
-          {
-            "kind": "function",
-            "name": "polytropic_efficiency_from_isentropic",
-            "signature": "heat_capacity_ratio: float, pressure_ratio: float, isentropic_efficiency: float"
           }
         ],
         "test_paths": [
           "src/shared/python/sidekick/tests/process_calculators/test_syngas_compression_engine.py",
+          "tests/calc_backend/test_syngas_compression_efficiency_6189.py",
           "tests/shared/python/process_calculators/test_syngas_compression_engine.py"
         ],
         "unit_mentions": [

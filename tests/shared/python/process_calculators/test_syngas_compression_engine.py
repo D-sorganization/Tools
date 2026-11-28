@@ -13,9 +13,6 @@ from upstream_drift_tools.process_calculators.syngas_compression_calculator impo
 )
 
 from shared.python.sidekick.process_calculators import constants as const
-from shared.python.sidekick.process_calculators.syngas_compression_engine import (
-    polytropic_efficiency_from_isentropic,
-)
 
 
 @pytest.fixture
@@ -520,79 +517,4 @@ class TestH2SHeatCapacityRatio:
         assert props["heat_capacity_ratio"] == pytest.approx(self._CITED_GAMMA)
         assert props["heat_capacity_ratio"] != pytest.approx(
             const.DEFAULT_GAMMA_DIATOMIC, abs=0.05
-        )
-
-
-class TestIsentropicToPolytropicConversion:
-    """Issue #6189: the modes are graded on their own efficiency, not eta_s."""
-
-    _GAMMA = 1.40
-
-    def test_round_trips_through_the_isentropic_definition(self) -> None:
-        """eta_p must reproduce the supplied eta_s on the same end state."""
-        pressure_ratio = 4.0
-        eta_s = 0.75
-        eta_p = polytropic_efficiency_from_isentropic(
-            self._GAMMA, pressure_ratio, eta_s
-        )
-        exponent = (self._GAMMA - 1.0) / self._GAMMA
-        recovered = (pressure_ratio**exponent - 1.0) / (
-            pressure_ratio ** (exponent / eta_p) - 1.0
-        )
-        assert recovered == pytest.approx(eta_s, rel=1e-12)
-
-    @pytest.mark.parametrize("eta_s", [0.50, 0.75, 0.90])
-    def test_result_lies_between_the_input_and_unity(self, eta_s: float) -> None:
-        """Pre: eta_s < 1. Post: eta_s < eta_p <= 1 for a compressor."""
-        eta_p = polytropic_efficiency_from_isentropic(self._GAMMA, 4.0, eta_s)
-        assert eta_s < eta_p <= 1.0
-
-    def test_unit_isentropic_efficiency_is_the_identity(self) -> None:
-        """A reversible machine has eta_p = eta_s = 1."""
-        assert polytropic_efficiency_from_isentropic(self._GAMMA, 4.0, 1.0) == (
-            pytest.approx(1.0)
-        )
-
-    def test_reference_value_at_the_issue_conditions(self) -> None:
-        """eta_p(1.40, PR 4, eta_s 0.75) = 0.7929, the #6189 reference point."""
-        eta_p = polytropic_efficiency_from_isentropic(self._GAMMA, 4.0, 0.75)
-        assert eta_p == pytest.approx(0.7928694, abs=1e-7)
-
-    @pytest.mark.parametrize(
-        ("gamma", "pressure_ratio", "eta_s"),
-        [
-            (1.0, 4.0, 0.75),
-            (0.9, 4.0, 0.75),
-            (1.4, 1.0, 0.75),
-            (1.4, 0.5, 0.75),
-            (1.4, 4.0, 0.0),
-            (1.4, 4.0, -0.2),
-            (1.4, 4.0, 1.2),
-        ],
-    )
-    def test_preconditions_rejected(
-        self, gamma: float, pressure_ratio: float, eta_s: float
-    ) -> None:
-        """A conversion is only defined for gamma > 1, PR > 1, eta_s in (0, 1]."""
-        with pytest.raises(ValueError):
-            polytropic_efficiency_from_isentropic(gamma, pressure_ratio, eta_s)
-
-    def test_engine_polytropic_branch_matches_isentropic_work(
-        self, engine: SyngasCompressionEngine
-    ) -> None:
-        """Same machine, same duty: the two modes must agree once converted."""
-        mixture = {"molecular_weight": 28.0, "heat_capacity_ratio": self._GAMMA}
-        eta_s = 0.75
-        eta_p = polytropic_efficiency_from_isentropic(self._GAMMA, 4.0, eta_s)
-        isentropic = engine.calculate_compression_work(
-            CompressionStage(1.0, 4.0, 300.0, eta_s, "isentropic"), 100.0, mixture
-        )
-        polytropic = engine.calculate_compression_work(
-            CompressionStage(1.0, 4.0, 300.0, eta_p, "polytropic"), 100.0, mixture
-        )
-        assert polytropic["work_actual"] == pytest.approx(
-            isentropic["work_actual"], rel=1e-9
-        )
-        assert polytropic["temp_out_actual"] == pytest.approx(
-            isentropic["temp_out_actual"], rel=1e-9
         )
