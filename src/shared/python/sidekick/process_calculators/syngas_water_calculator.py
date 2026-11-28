@@ -10,11 +10,13 @@ Provides calculation methods without GUI dependencies.
 
 from __future__ import annotations  # noqa: E402, F404
 
+import functools  # noqa: E402
 import logging  # noqa: E402
 import math  # noqa: E402
+from collections.abc import Callable  # noqa: E402
 from dataclasses import dataclass, field  # noqa: E402
 from datetime import datetime  # noqa: E402
-from typing import Any, Final  # noqa: E402
+from typing import Any, Final, cast  # noqa: E402
 
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
@@ -41,6 +43,8 @@ from .constants import (  # noqa: E402
     WATER_VAPOR_B,
     WATER_VAPOR_C,
     WATER_VAPOR_D,
+    WATER_VAPOR_SCHEMA_MAX_C,
+    WATER_VAPOR_SCHEMA_MIN_C,
 )
 from .water_vapor_pressure import (  # noqa: E402
     _EXP_MAX_ARG,
@@ -50,6 +54,32 @@ from .water_vapor_pressure import (  # noqa: E402
     magnus_pressure_pa,
     safe_exp,
 )
+
+
+@functools.cache
+def _shared_vapor_pressure_table() -> Callable[[float], Any]:
+    """IAPWS saturation table shared by every calculator instance.
+
+    Nodes cover the public schema interval, 0 C through 374 C. The kernel
+    clamps the two endpoints onto IAPWS-IF97, so the first bin near 0.1 C
+    is finite.
+    """
+    from scipy.interpolate import interp1d
+
+    temperatures_k = np.linspace(
+        WATER_VAPOR_SCHEMA_MIN_C + CELSIUS_TO_KELVIN_OFFSET,
+        WATER_VAPOR_SCHEMA_MAX_C + CELSIUS_TO_KELVIN_OFFSET,
+        1000,
+    )
+    pressures_pa = [
+        iapws_pressure_pa(float(temperature_k) - CELSIUS_TO_KELVIN_OFFSET)
+        for temperature_k in temperatures_k
+    ]
+    table = interp1d(
+        temperatures_k, pressures_pa, bounds_error=False, fill_value=np.nan
+    )
+    return cast(Callable[[float], Any], table)
+
 
 STANDARD_BASIS: Final[str] = "60F_14.696psia"
 STANDARD_MOLAR_VOLUME_SCF_LBMOL: Final[float] = 379.49
@@ -389,7 +419,7 @@ class SyngasWaterCalculator:
             return self._magnus_equation(temperature_c), "Magnus Equation (auto)"
         if -20 <= temperature_c <= 100:
             return self._buck_equation(temperature_c), "Buck Equation (auto)"
-        if 100 < temperature_c <= 374:
+        if 100 < temperature_c <= WATER_VAPOR_SCHEMA_MAX_C:
             return self._iapws_equation(temperature_c), "IAPWS-IF97 (auto)"
         return self._antoine_equation(temperature_c), "Antoine Equation (auto)"
 
@@ -449,28 +479,21 @@ class SyngasWaterCalculator:
         return float(magnus_pressure_pa(temperature_c))
 
     def _init_vapor_pressure_table(self) -> None:
-        """Init Vapor Pressure Table method."""
-        T_range = np.linspace(273.15, 647.0, 1000)
-        P_sat_range = []
-        for T in T_range:
-            try:
-                P_sat = self._iapws_equation(T - 273.15)
-                P_sat_range.append(P_sat)
-            except (ValueError, OverflowError) as vapor_pressure_error:
-                _logger.debug(
-                    "Skipping vapor pressure calculation at %s K: %s",
-                    T,
-                    vapor_pressure_error,
-                )
-                P_sat_range.append(np.nan)
-        from scipy.interpolate import interp1d  # lazy import
+        """Attach the shared IAPWS table.
 
-        self.vapor_pressure_table = interp1d(
-            T_range, P_sat_range, bounds_error=False, fill_value=np.nan
-        )
+        The table is built once, from the triple point to the critical
+        temperature. Later instances reuse that object instead of evaluating
+        a thousand saturation pressures per request.
+        """
+        self.vapor_pressure_table = _shared_vapor_pressure_table()
 
     def vapor_pressure_fast(self, temperature_k: float) -> float:
-        """Fast vapor pressure lookup using pre-computed interpolation table.
+        """Fast vapor pressure lookup using the shared interpolation table.
+
+        Preconditions: ``temperature_k`` is not None. Temperatures outside
+        the table return NaN, matching the historical out-of-range contract.
+        Postcondition: an in-range lookup is the interpolated saturation
+        pressure in Pa.
 
         Args:
             temperature_k: Temperature in Kelvin

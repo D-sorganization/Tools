@@ -2,11 +2,18 @@
 
 from __future__ import annotations
 
+import math
+
 import pytest
 from calc_backend.app import app
 from calc_backend.mcp_server import _run_calculator
 from calc_backend.registry.store import describe_calculator
 from fastapi.testclient import TestClient
+
+from shared.python.sidekick.process_calculators.constants import (
+    WATER_VAPOR_SCHEMA_MAX_C,
+    WATER_VAPOR_SCHEMA_MIN_C,
+)
 
 CALCULATOR_ID = "water-vapor-pressure"
 PATH = "/api/calc/water-vapor-pressure"
@@ -25,7 +32,10 @@ def test_discovery_schema_units_bounds_and_worked_example() -> None:
     assert description["request_schema"] == app.openapi()["components"]["schemas"][name]
     fields = {field["name"]: field for field in description["request_fields"]}
     assert fields["temperature_c"]["units"] == "degC"
-    assert fields["temperature_c"]["valid_range"] == {"minimum": 0.0, "maximum": 374.0}
+    assert fields["temperature_c"]["valid_range"] == {
+        "minimum": WATER_VAPOR_SCHEMA_MIN_C,
+        "maximum": WATER_VAPOR_SCHEMA_MAX_C,
+    }
     output = description["response_schema"]["properties"]["pressure_pa"]
     assert output["description"].endswith("[Pa]")
     assert output["minimum"] == 0
@@ -71,6 +81,39 @@ def test_empirical_methods_track_reference_within_stated_tolerance(
     assert response.json()["pressure_pa"] == pytest.approx(
         STEAM_TABLE_PA[temperature_c], rel=tolerance
     )
+
+
+@pytest.mark.parametrize(
+    ("schema_c", "iapws_c"),
+    [(0.0, 0.01), (374.0, 373.946)],
+)
+def test_schema_endpoints_clamp_onto_iapws(schema_c: float, iapws_c: float) -> None:
+    """0.0 C and 374.0 C return the finite pressure of the nearest IF97 bound.
+
+    The schema accepts both. The correlation is evaluated at 0.01 C and
+    373.946 C so the result is real rather than a 422 or a NaN.
+    """
+    client = TestClient(app)
+    outer = client.post(PATH, json={"temperature_c": schema_c, "method": "iapws"})
+    inner = client.post(PATH, json={"temperature_c": iapws_c, "method": "iapws"})
+    assert outer.status_code == 200, outer.text
+    assert inner.status_code == 200, inner.text
+    pressure_pa = outer.json()["pressure_pa"]
+    assert math.isfinite(pressure_pa)
+    assert pressure_pa > 0
+    assert pressure_pa == pytest.approx(inner.json()["pressure_pa"])
+
+
+@pytest.mark.parametrize("temperature_c", [0.01, 373.946])
+def test_iapws_domain_endpoints_return_finite_pressure(temperature_c: float) -> None:
+    """Triple-point and critical-point temperatures stay inside the contract."""
+    response = TestClient(app).post(
+        PATH, json={"temperature_c": temperature_c, "method": "iapws"}
+    )
+    assert response.status_code == 200, response.text
+    pressure_pa = response.json()["pressure_pa"]
+    assert math.isfinite(pressure_pa)
+    assert pressure_pa > 0
 
 
 @pytest.mark.parametrize(

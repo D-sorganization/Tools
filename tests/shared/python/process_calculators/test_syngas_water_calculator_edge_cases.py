@@ -294,6 +294,28 @@ class TestVaporPressureFastLookup:
             if math.isfinite(vp_fast) and math.isfinite(vp_iapws):
                 assert vp_fast == pytest.approx(vp_iapws, rel=0.01)
 
+    def test_near_0_1_c_is_finite(self, calculator):
+        """Bin 0 must not poison 273.25 K (0.1 C) with a NaN neighbor.
+
+        Precondition: temperature is inside the IAPWS-IF97 saturation interval.
+        Postcondition: pressure is finite and positive.
+        """
+        pressure_pa = calculator.vapor_pressure_fast(273.25)
+        assert math.isfinite(pressure_pa)
+        assert pressure_pa > 0
+
+    def test_iapws_kelvin_endpoints_are_finite(self, calculator):
+        """The table covers the triple point and the critical temperature."""
+        for temperature_k in (273.16, 647.096):
+            pressure_pa = calculator.vapor_pressure_fast(temperature_k)
+            assert math.isfinite(pressure_pa)
+            assert pressure_pa > 0
+
+    def test_table_is_built_once(self, calculator):
+        """A second calculator reuses the interpolation table."""
+        other = SyngasWaterCalculator()
+        assert calculator.vapor_pressure_table is other.vapor_pressure_table
+
 
 # ---------------------------------------------------------------------------
 # Tests: quick_water_content convenience function
