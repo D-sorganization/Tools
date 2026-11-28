@@ -25,6 +25,7 @@ from .registry.wire import wire_calculator_registry
 from .routers import (
     acid_gas_dewpoint,
     baghouse,
+    electrode_advancement,
     financial,
     flare,
     flow_rate,
@@ -46,6 +47,7 @@ CALCULATOR_ROUTERS: tuple[APIRouter, ...] = (
     flare.router,
     wgs_reactor.router,
     baghouse.router,
+    electrode_advancement.router,
     scrubber.router,
     financial.router,
     acid_gas_dewpoint.router,

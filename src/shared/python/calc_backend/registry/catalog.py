@@ -9,6 +9,10 @@ from ..contracts.acid_gas_dewpoint import (
     AcidGasDewpointResponse,
 )
 from ..contracts.baghouse import BaghouseRequest, BaghouseResponse
+from ..contracts.electrode_advancement import (
+    ElectrodeAdvancementRequest,
+    ElectrodeAdvancementResponse,
+)
 from ..contracts.financial import FinancialRequest, FinancialResponse
 from ..contracts.flare import FlareRequest, FlareResponse
 from ..contracts.flow_rate import FlowRateConvertRequest, FlowRateConvertResponse
@@ -84,6 +88,26 @@ CATALOG: dict[str, CatalogEntry] = {
             response_summary={"air_to_cloth_ratio": "> 0"},
         ),
         "route_subpath": "",
+    },
+    "electrode-advancement": {
+        "id": "electrode-advancement",
+        "title": "Electrode consumption at constant current",
+        "category": "process",
+        "request_model": ElectrodeAdvancementRequest,
+        "response_model": ElectrodeAdvancementResponse,
+        "maturity": "beta",
+        "formula_ids": (),
+        "units": {
+            "consumption_rate_in_per_kah": "in/(kA*h)",
+            "current_ka": "kA",
+            "time_hrs": "h",
+        },
+        "worked_example": WorkedExample(
+            request=dict(
+                consumption_rate_in_per_kah=0.5, current_ka=20.0, time_hrs=2.0
+            ),
+            response_summary={"consumption_in": 20.0},
+        ),
     },
     "financial": {
         "id": "financial",

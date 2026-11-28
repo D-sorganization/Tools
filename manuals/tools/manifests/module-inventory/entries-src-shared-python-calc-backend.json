@@ -267,10 +267,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 9045,
+      "bytes_lf": 9106,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "932c05152019631deec31aa451b653fc4a0ba35863b4675f74d59173bad36adf",
+      "content_sha256_lf": "9cb8d55fbef26ff2f385c5a7d08f4c7aa7a8a32e4b05cd3619e5305efd6c0bca",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-APP-PY-EA1FF1BC7C57",
       "language": "python",
@@ -345,6 +345,7 @@
           "tests/calc_backend/test_calc_backend_api.py",
           "tests/calc_backend/test_calc_backend_openapi_stable.py",
           "tests/calc_backend/test_calculator_registry_contract.py",
+          "tests/calc_backend/test_electrode_advancement_api.py",
           "tests/calc_backend/test_new_endpoints.py",
           "tests/calc_backend/test_rotation_converter_api.py",
           "tests/calc_backend/test_syngas_compression_api.py",
@@ -678,6 +679,65 @@
           "kg",
           "s"
         ],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "not-applicable",
+      "bytes_lf": 914,
+      "classification": "non-calculation",
+      "classification_basis": "no-conservative-calculation-signal",
+      "content_sha256_lf": "f6c396557f9948cc8b020bce22f47dc63c714c06622f97f02651dc02e5f19905",
+      "family": "shared-tools-non-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-CONTRACTS-ELECTRODE-ADVANCEMENT-PY-55A38C5D1C9A",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/contracts/electrode_advancement.py",
+      "purpose": "Typed electrode consumption contract shared by REST and MCP.",
+      "review_status": "inventory-baseline",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "not-applicable",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "not-applicable",
+        "equation_pathway": "not-applicable",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "not-applicable",
+        "validation": "not-applicable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "class",
+            "name": "ElectrodeAdvancementRequest",
+            "signature": null
+          },
+          {
+            "kind": "class",
+            "name": "ElectrodeAdvancementResponse",
+            "signature": null
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/process_calculators/test_electrode_advancement.py"
+        ],
+        "unit_mentions": [],
         "validation_paths": []
       }
     },
@@ -1777,6 +1837,7 @@
           "tests/calc_backend/baghouse_mcp_probe.py",
           "tests/calc_backend/flare_mcp_probe.py",
           "tests/calc_backend/mcp_probe.py",
+          "tests/calc_backend/test_electrode_advancement_api.py",
           "tests/calc_backend/test_syngas_compression_api.py",
           "tests/calc_backend/test_water_vapor_pressure_api.py",
           "tests/calc_backend/thermal_profile_mcp_probe.py"
@@ -2074,10 +2135,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 14808,
+      "bytes_lf": 15634,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "27fb200bf8f989a3703b6cecb28682db07d1c8c3475b8877fa8b1c002d9342dc",
+      "content_sha256_lf": "5749971270cbedbb6db3e24c113d20236a300cf101d8e1574eebab2aad9c72af",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-REGISTRY-CATALOG-PY-F93F79962E77",
       "language": "python",
@@ -2375,6 +2436,7 @@
         "test_paths": [
           "tests/calc_backend/test_calc_backend_formula_ids_6019.py",
           "tests/calc_backend/test_calculator_registry_contract.py",
+          "tests/calc_backend/test_electrode_advancement_api.py",
           "tests/calc_backend/test_epic_6019_registry_acceptance.py",
           "tests/calc_backend/test_mcp_registry_projection_parity_6019.py",
           "tests/calc_backend/test_syngas_compression_api.py",
@@ -2390,10 +2452,10 @@
     },
     {
       "authority_status": "not-applicable",
-      "bytes_lf": 3751,
+      "bytes_lf": 3984,
       "classification": "non-calculation",
       "classification_basis": "no-conservative-calculation-signal",
-      "content_sha256_lf": "f3f3674e746fb05a2b288e8f11193a13192b743e92c5095073967fed3b2acf10",
+      "content_sha256_lf": "c4a8eb526fb9e869191d3c5aaddf11546339b532f3e25d6f6f4de21d2b9b4173",
       "family": "shared-tools-non-calculation",
       "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-REGISTRY-WIRE-PY-876DE2B8B559",
       "language": "python",
@@ -2594,6 +2656,65 @@
           "src/shared/python/calc_backend/tests/test_calc_backend_gaps.py"
         ],
         "unit_mentions": [],
+        "validation_paths": []
+      }
+    },
+    {
+      "authority_status": "provisional",
+      "bytes_lf": 1367,
+      "classification": "calculation",
+      "classification_basis": "scientific-library-import",
+      "content_sha256_lf": "5bd5308fc77c9e665aea0cc8c7f382769b0936e7458b1a53f7358f90169e7506",
+      "family": "shared-tools-calculation",
+      "id": "TOOLS-MODULE-SRC-SHARED-PYTHON-CALC-BACKEND-ROUTERS-ELECTRODE-ADVANCEMENT-PY-32D2E402E799",
+      "language": "python",
+      "maintainer": "Tools module maintainers",
+      "path": "src/shared/python/calc_backend/routers/electrode_advancement.py",
+      "purpose": "REST adapter for the existing linear electrode consumption engine.",
+      "review_status": "review-required",
+      "risk_tags": [
+        "downstream-consumer-risk",
+        "public-api",
+        "scientific-review-required",
+        "source-provenance-unmapped",
+        "unit-contract-review"
+      ],
+      "states": {
+        "adrs": "mapped",
+        "artifacts": "unmapped-pending-TOOLS-D7",
+        "chapters": "unmapped-pending-TOOLS-D4",
+        "citations": "unavailable",
+        "equation_pathway": "unmapped-pending-TOOLS-D4",
+        "public_surfaces": "mapped",
+        "publication": "blocked",
+        "routes": "not-applicable",
+        "tests": "mapped",
+        "units": "mapped",
+        "validation": "unavailable"
+      },
+      "traceability": {
+        "adr_paths": [
+          "docs/adr/ADR-002-shared-library-module-structure.md",
+          "docs/adr/ADR-003-api-stability-policy.md"
+        ],
+        "artifact_sha256": [],
+        "chapter_paths": [],
+        "citation_refs": [],
+        "equation_refs": [],
+        "public_routes": [],
+        "public_surfaces": [
+          {
+            "kind": "function",
+            "name": "calculate_electrode_advancement",
+            "signature": "request: ElectrodeAdvancementRequest"
+          }
+        ],
+        "test_paths": [
+          "tests/shared/python/process_calculators/test_electrode_advancement.py"
+        ],
+        "unit_mentions": [
+          "s"
+        ],
         "validation_paths": []
       }
     },

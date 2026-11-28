@@ -10,6 +10,8 @@ from ..routers.acid_gas_dewpoint import calculate_acid_gas_dewpoint
 from ..routers.acid_gas_dewpoint import router as acid_router
 from ..routers.baghouse import calculate_baghouse
 from ..routers.baghouse import router as baghouse_router
+from ..routers.electrode_advancement import calculate_electrode_advancement
+from ..routers.electrode_advancement import router as electrode_router
 from ..routers.financial import calculate_financial
 from ..routers.financial import router as financial_router
 from ..routers.flare import calculate_flare
@@ -55,6 +57,7 @@ def wire_calculator_registry() -> None:
     pairs: tuple[tuple[str, APIRouter, Callable[..., object]], ...] = (
         ("acid-gas-dewpoint", acid_router, calculate_acid_gas_dewpoint),
         ("baghouse", baghouse_router, calculate_baghouse),
+        ("electrode-advancement", electrode_router, calculate_electrode_advancement),
         ("financial", financial_router, calculate_financial),
         ("flare", flare_router, calculate_flare),
         ("flow-rate", flow_rate_router, convert_flow_rate),
