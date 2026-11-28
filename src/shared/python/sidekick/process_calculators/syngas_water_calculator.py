@@ -13,9 +13,10 @@ from __future__ import annotations  # noqa: E402, F404
 import functools  # noqa: E402
 import logging  # noqa: E402
 import math  # noqa: E402
+from collections.abc import Callable  # noqa: E402
 from dataclasses import dataclass, field  # noqa: E402
 from datetime import datetime  # noqa: E402
-from typing import Any, Final  # noqa: E402
+from typing import Any, Final, cast  # noqa: E402
 
 import numpy as np  # noqa: E402
 import pandas as pd  # noqa: E402
@@ -56,7 +57,7 @@ from .water_vapor_pressure import (  # noqa: E402
 
 
 @functools.cache
-def _shared_vapor_pressure_table():
+def _shared_vapor_pressure_table() -> Callable[[float], Any]:
     """IAPWS saturation table shared by every calculator instance.
 
     Nodes cover the public schema interval, 0 C through 374 C. The kernel
@@ -74,7 +75,10 @@ def _shared_vapor_pressure_table():
         iapws_pressure_pa(float(temperature_k) - CELSIUS_TO_KELVIN_OFFSET)
         for temperature_k in temperatures_k
     ]
-    return interp1d(temperatures_k, pressures_pa, bounds_error=False, fill_value=np.nan)
+    table = interp1d(
+        temperatures_k, pressures_pa, bounds_error=False, fill_value=np.nan
+    )
+    return cast(Callable[[float], Any], table)
 
 
 STANDARD_BASIS: Final[str] = "60F_14.696psia"
