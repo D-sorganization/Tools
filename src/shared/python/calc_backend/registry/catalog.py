@@ -40,6 +40,7 @@ from ..routers.syngas_compression import (
     SyngasCompressionRequest,
     SyngasCompressionResponse,
 )
+from .catalog_pressure_drop_v2 import PRESSURE_DROP_V2, PRESSURE_DROP_V2_VALIDATE
 from .spec import WorkedExample
 
 CatalogEntry = dict[str, Any]
@@ -206,6 +207,8 @@ CATALOG: dict[str, CatalogEntry] = {
         ),
         "route_subpath": "",
     },
+    "pressure-drop-v2": PRESSURE_DROP_V2,
+    "pressure-drop-v2-validate": PRESSURE_DROP_V2_VALIDATE,
     "rotation-converter": {
         "id": "rotation-converter",
         "title": "Rotation representation converter",

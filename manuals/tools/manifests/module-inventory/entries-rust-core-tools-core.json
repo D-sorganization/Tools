@@ -2663,6 +2663,7 @@
           "src/vessel_drafter/tests/test_electrode_advisor_defaults.py",
           "tests/architecture/test_tools_module_inventory_contract.py",
           "tests/calc_backend/test_new_endpoints.py",
+          "tests/calc_backend/test_pressure_drop_v2_mcp.py",
           "tests/calc_backend/test_syngas_compression_api.py",
           "tests/helpers/numerical.py",
           "tests/integration/sidekick/test_sidekick_host_integration.py",

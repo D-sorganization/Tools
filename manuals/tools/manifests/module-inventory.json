@@ -147,7 +147,7 @@
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-swing-core.json"
     },
     {
-      "content_sha256_lf": "5c014af758650f195e27781cf53ecaa4c9054860d48a653680a2f53824275efe",
+      "content_sha256_lf": "16ed19c2eef1cd93ce19620ccadba82f652022f4e8ef22713de29e19926fdb23",
       "entry_count": 38,
       "package": "rust_core/tools-core",
       "path": "manuals/tools/manifests/module-inventory/entries-rust-core-tools-core.json"
@@ -609,8 +609,8 @@
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-ai.json"
     },
     {
-      "content_sha256_lf": "d88ad5900cddd384c662c5a80ca713ff63fe95e2a70b44c30479ee29307bae76",
-      "entry_count": 48,
+      "content_sha256_lf": "a38c4a8aef015663c8a86cf0cff3dbb6601d51665559b23549b15456481b07d1",
+      "entry_count": 49,
       "package": "src/shared/python/calc_backend",
       "path": "manuals/tools/manifests/module-inventory/entries-src-shared-python-calc-backend.json"
     },
