@@ -79,6 +79,7 @@ __all__ = [
     "evaluate_solution",
     "find_invalid_trajectory_data",
     "record_result_metrics",
+    "reject_nonfinite_iterate",
 ]
 
 
@@ -196,6 +197,22 @@ def record_result_metrics(result: OptimizationResult, exercise_type: str, mode: 
     metrics.observe("trajectory_optimization_evaluations", result.n_evals, **labels)
 
 
+def reject_nonfinite_iterate(x: NDArray) -> None:
+    """Refuse a solver iterate that CubicSpline cannot represent.
+
+    Preconditions:
+        ``x`` is array-like.
+    Postconditions:
+        Returns only when every element is finite.
+    Raises:
+        ValueError: ``x`` is empty or contains NaN or infinity. Callers must
+        not build a spline after this raises.
+    """
+    values = np.asarray(x, dtype=float)
+    if values.size == 0 or not bool(np.all(np.isfinite(values))):
+        raise ValueError("solver iterate contains non-finite values; refusing CubicSpline")
+
+
 def evaluate_solution(
     res: _OptimizeResult,
     dynamics: PhysicsBackend,
@@ -224,10 +241,15 @@ def evaluate_solution(
         build_splines_fn: callable(x) -> CubicSpline.
         eval_trajectory_fn: callable(splines) -> (q, qd, qdd, qddd).
 
+    Preconditions:
+        ``res.x`` is non-empty and finite. A non-finite iterate is rejected
+        before any spline is built.
+
     Returns:
         Tuple of (q, qd, qdd, torques, power, com_traj, bar_traj, com_x),
         each as float64 NDArray.
     """
+    reject_nonfinite_iterate(res.x)
     splines = build_splines_fn(res.x)
     q, qd, qdd, _ = eval_trajectory_fn(splines)
 

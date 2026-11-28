@@ -28,6 +28,7 @@ from ..trajectory import (
     SolutionCache,
     TrajectoryOptimizer,
 )
+from .run_completion import balance_word, describe_run_completion
 
 if TYPE_CHECKING:
     from PyQt6.QtCore import pyqtBoundSignal
@@ -294,7 +295,7 @@ class OptimizationMixin:
         try:
             name = self.EXERCISE_CONFIGS[idx][0]
             _, etype = self.EXERCISE_CONFIGS[idx]
-            self._update_result_summary(name, result, exercise_type=etype)
+            self._update_result_summary(name, result, exercise_type=etype, body=body)
             tab = self.exercise_tabs[idx]
             tab.draw_all_plots(result, body, bar, exercise_type=etype)
             with self._opt_lock:
@@ -306,16 +307,18 @@ class OptimizationMixin:
             )
             self.sidebar.set_progress_done(t_str, result.n_evals)
             self._enable_post_run_buttons()
-            if result.is_feasible:
+            notice = describe_run_completion(
+                result,
+                exercise_name=name,
+                exercise_type=etype,
+                body=body,
+                elapsed_label=t_str,
+            )
+            if notice.stall_message is None:
                 self.sidebar.clear_stall_message()
-                status_msg = f"{name} optimization complete in {t_str}!"
             else:
-                self.sidebar.set_stall_message(
-                    "\u26a0 COM went outside the inner 60% BOS zone. "
-                    "Try increasing smoothness or adjusting body parameters."
-                )
-                status_msg = f"{name} done in {t_str} -- WARNING: COM balance violated"
-            self._finish_or_chain(then_chain, status_msg)
+                self.sidebar.set_stall_message(notice.stall_message)
+            self._finish_or_chain(then_chain, notice.status_message)
             self._maybe_autoplay_completed_result(idx, result, then_chain)
         except (ValueError, RuntimeError, OSError, AttributeError) as exc:
             with self._opt_lock:
@@ -368,9 +371,17 @@ class OptimizationMixin:
         self.status_label.setText("Optimization cancelled by user.")
 
     def _update_result_summary(
-        self, name: str, r: OptimizationResult, exercise_type: str = "squat"
+        self,
+        name: str,
+        r: OptimizationResult,
+        exercise_type: str = "squat",
+        body: BodyModel | None = None,
     ) -> None:
-        """Build and display the results summary in the sidebar."""
+        """Build and display the results summary in the sidebar.
+
+        When ``body`` is provided, the balance word follows the COM constraint
+        rather than treating every infeasible solve as a balance failure.
+        """
         pk = np.max(np.abs(r.torques), axis=0)
         work = trapezoid(np.sum(np.abs(r.power), axis=1), r.t)
         if exercise_type == "bench_press":
@@ -380,7 +391,10 @@ class OptimizationMixin:
                 f"  Wrist:    {pk[2]:>6.0f} N\u00b7m"
             )
         else:
-            balance_ok = "BALANCED" if r.is_feasible else "OUT OF BOUNDS"
+            if body is None:
+                balance_ok = "BALANCED" if r.is_feasible else "OUT OF BOUNDS"
+            else:
+                balance_ok = balance_word(r, exercise_type, body)
             joint_lines = (
                 f"  Ankle: {pk[0]:>6.0f} N\u00b7m\n"
                 f"  Knee:  {pk[1]:>6.0f} N\u00b7m\n"

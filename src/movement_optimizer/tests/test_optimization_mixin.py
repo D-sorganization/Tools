@@ -103,13 +103,17 @@ def _iteration_limit_result(*, feasible: bool):
     )
 
 
-def test_on_done_feasible_iteration_limit_has_no_balance_warning(window) -> None:
+def test_on_done_feasible_iteration_limit_surfaces_nonconvergence(window) -> None:
+    """Feasible ITERATION_LIMIT is not a COM failure and must not look converged."""
     window._resolve_exercise_params(0)
     body = window.exercise_states[0].body
     window._opt_running = True
     window._on_done(0, _iteration_limit_result(feasible=True), body, 60.0, None)
-    assert window.sidebar.stall_label.isHidden()
-    assert "WARNING" not in window.status_label.text()
+    status = window.status_label.text().lower()
+    stall = window.sidebar.stall_label.text().lower()
+    assert "iteration" in status or "iteration" in stall
+    assert "bos" not in status
+    assert "bos" not in stall
 
 
 def test_on_done_infeasible_iteration_limit_warns(window) -> None:
@@ -163,3 +167,94 @@ def test_finish_or_chain_advances_then_chain(window, monkeypatch) -> None:
 def test_reset_clears_cache_and_status(window) -> None:
     window._reset()
     assert "Defaults restored" in window.status_label.text()
+
+
+def _exercise_index(window: MainWindow, exercise_type: str) -> int:
+    for index, (_name, etype) in enumerate(window.EXERCISE_CONFIGS):
+        if etype == exercise_type:
+            return index
+    raise AssertionError(f"missing exercise {exercise_type}")
+
+
+def _com_inside(result, body):
+    mid = 0.5 * (body.inner_heel + body.inner_toe)
+    result.com[:, 0] = mid
+    result.com[:, 1] = 0.9
+    result.com_horizontal_range_cm = 1.5
+    return result
+
+
+def test_on_done_bench_infeasible_has_no_com_bos_warning(window, monkeypatch) -> None:
+    idx = _exercise_index(window, "bench_press")
+    window._resolve_exercise_params(idx)
+    tab = window.exercise_tabs[idx]
+    # Isolate the completion notice from bench-frame rendering.
+    monkeypatch.setattr(tab, "draw_all_plots", lambda *_a, **_k: None)
+    monkeypatch.setattr(tab, "draw_anim_frame", lambda *_a, **_k: None)
+    body = window.exercise_states[idx].body
+    failed = dataclasses.replace(
+        make_test_result(),
+        success=False,
+        is_feasible=False,
+        status=OptimizationStatus.INFEASIBLE,
+        n_joint_limit_violations=2,
+    )
+    window._on_done(idx, failed, body, 60.0, None)
+    blob = f"{window.status_label.text()} {window.sidebar.stall_label.text()}".lower()
+    assert "bos" not in blob
+    assert "com balance" not in blob
+
+
+def test_on_done_joint_limit_only_squat_has_no_com_bos_warning(window) -> None:
+    window._resolve_exercise_params(0)
+    body = window.exercise_states[0].body
+    failed = _com_inside(
+        dataclasses.replace(
+            make_test_result(),
+            success=False,
+            is_feasible=False,
+            status=OptimizationStatus.INFEASIBLE,
+            n_joint_limit_violations=4,
+        ),
+        body,
+    )
+    window._on_done(0, failed, body, 60.0, None)
+    blob = f"{window.status_label.text()} {window.sidebar.stall_label.text()}".lower()
+    assert "bos" not in blob
+    assert "com balance" not in blob
+    assert "joint" in blob
+    window._update_result_summary("Squat", failed, exercise_type="squat", body=body)
+    assert "BALANCED" in window.sidebar.result_label.text()
+    assert "OUT OF BOUNDS" not in window.sidebar.result_label.text()
+
+
+def test_on_done_numerical_failure_has_no_com_bos_warning(window) -> None:
+    window._resolve_exercise_params(0)
+    body = window.exercise_states[0].body
+    failed = dataclasses.replace(
+        make_test_result(),
+        success=False,
+        is_feasible=False,
+        status=OptimizationStatus.NUMERICAL_FAILURE,
+    )
+    window._on_done(0, failed, body, 60.0, None)
+    blob = f"{window.status_label.text()} {window.sidebar.stall_label.text()}".lower()
+    assert "bos" not in blob
+    assert "numerical" in blob
+
+
+def test_on_done_real_com_violation_still_warns_bos(window) -> None:
+    window._resolve_exercise_params(0)
+    body = window.exercise_states[0].body
+    failed = dataclasses.replace(
+        make_test_result(),
+        success=False,
+        is_feasible=False,
+        status=OptimizationStatus.INFEASIBLE,
+        n_joint_limit_violations=0,
+        com_horizontal_range_cm=12.0,
+    )
+    failed.com[:, 0] = body.inner_toe + 0.05
+    window._on_done(0, failed, body, 60.0, None)
+    blob = f"{window.status_label.text()} {window.sidebar.stall_label.text()}".lower()
+    assert "bos" in blob
